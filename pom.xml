@@ -22,9 +22,9 @@
 		<version>2</version>
 	</parent>
 	<scm>
-		<url>http://ormlite.svn.sourceforge.net/tags/ormlite-2.5</url>
-		<connection>scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite/tags/ormlite-2.5</connection>
-		<developerConnection>scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite/tags/ormlite-2.5</developerConnection>
+		<url>http://ormlite.svn.sourceforge.net/viewvc/ormlite/ormlite/trunk/</url>
+		<connection>scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite/trunk</connection>
+		<developerConnection>scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite/trunk</developerConnection>
 	</scm>
 	<developers>
 		<developer>
