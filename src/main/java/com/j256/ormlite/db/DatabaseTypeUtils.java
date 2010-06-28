@@ -65,7 +65,7 @@ public class DatabaseTypeUtils {
 	}
 
 	/**
-	 * Creates and returns a {@link SingleConnectionDataSource} associated with the databaseUrl and optional userName
+	 * Creates and returns a {@link SimpleDataSource} associated with the databaseUrl and optional userName
 	 * and password. Calls {@link #loadDriver} as well. You can, of course, provide your own {@link DataSource} for use
 	 * with the package.
 	 * 
@@ -77,7 +77,7 @@ public class DatabaseTypeUtils {
 	}
 
 	/**
-	 * Creates and returns a {@link SingleConnectionDataSource} associated with the databaseUrl and optional userName
+	 * Creates and returns a {@link SimpleDataSource} associated with the databaseUrl and optional userName
 	 * and password. Calls {@link #loadDriver} as well.
 	 * 
 	 * @throws SQLException

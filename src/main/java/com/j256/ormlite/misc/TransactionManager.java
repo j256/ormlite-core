@@ -13,8 +13,7 @@ import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 
 /**
- * Wrapper around the Spring Framework's {@link DataSourceTransactionManager} providing basic transaction support for a
- * particular {@link DataSource}.
+ * Provides basic transaction support for a particular {@link DataSource}.
  * 
  * <p>
  * <b>NOTE:</b> For transactions to work, the database being used must support the functionality.

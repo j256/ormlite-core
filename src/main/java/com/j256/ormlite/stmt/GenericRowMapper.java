@@ -3,10 +3,8 @@ package com.j256.ormlite.stmt;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import javax.swing.tree.RowMapper;
-
 /**
- * Parameterized version of {@link RowMapper} so we can better genericize things.
+ * Parameterized version similar to Spring's RowMapper.
  * 
  * @param <T>
  *            Type that the mapRow returns.
