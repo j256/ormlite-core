@@ -43,9 +43,6 @@
 	<profiles>
 		<profile>
 			<id>sourceforge</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
 			<distributionManagement>
 				<repository>
 					<id>sourceforge</id>
@@ -61,9 +58,6 @@
 		</profile>
 		<profile>
 			<id>sonatype</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
 			<distributionManagement>
 				<repository>
 					<id>sonatype-nexus-staging</id>
