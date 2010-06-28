@@ -1,0 +1,56 @@
+package com.j256.ormlite.stmt.query;
+
+import java.util.List;
+
+import com.j256.ormlite.db.DatabaseType;
+import com.j256.ormlite.stmt.SelectArg;
+
+/**
+ * Internal class that handles the AND sql operation which takes two {@link Clause} parts.
+ * 
+ * @author graywatson
+ */
+abstract class BaseBinaryClause implements NeedsFutureClause {
+
+	private Clause left;
+	private Clause right = null;
+
+	protected BaseBinaryClause(Clause left) {
+		this.left = left;
+	}
+
+	protected BaseBinaryClause(Clause left, Clause right) {
+		this.left = left;
+		this.right = right;
+	}
+
+	/**
+	 * Append the associated operation to the StringBuilder.
+	 */
+	public abstract StringBuilder appendOperation(StringBuilder sb);
+
+	public StringBuilder appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> columnArgList) {
+		sb.append("(");
+		left.appendSql(databaseType, sb, columnArgList);
+		appendOperation(sb);
+		right.appendSql(databaseType, sb, columnArgList);
+		sb.append(") ");
+		return sb;
+	}
+
+	public void setMissingClause(Clause right) {
+		if (this.right != null) {
+			throw new IllegalStateException("Operation already has a right side set: " + this);
+		}
+		this.right = right;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(left).append(' ');
+		appendOperation(sb);
+		sb.append(right);
+		return sb.toString();
+	}
+}

@@ -1,0 +1,443 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
+<html>
+<!-- Created on June, 24 2010 by texi2html 1.70 -->
+<!--
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Many creative people <dev@texi2html.cvshome.org>
+Send bugs and suggestions to <users@texi2html.cvshome.org>
+
+-->
+<head>
+<title>ORM Lite Package: 5. Advanced Concepts</title>
+
+<meta name="description" content="ORM Lite Package: 5. Advanced Concepts">
+<meta name="keywords" content="ORM Lite Package: 5. Advanced Concepts">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2html 1.70">
+<meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+pre.display {font-family: serif}
+pre.format {font-family: serif}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: serif; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: serif; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+ul.toc {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+
+<a name="NOD21"></a>
+<a name="SEC20"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="ormlite_4.html#SEC19" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC21" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite_4.html#SEC19" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h1 class="chapter"> 5. Advanced Concepts </h1>
+
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top"><a href="#SEC21">5.1 Spring Configuration</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">       How to wire ORMLite in Spring.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC22">5.2 Class Configuration</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">        Alternate ways to configure your classes.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC23">5.3 Database Specific Code</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">              Description of the database specific code.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC24">5.4 ORMLite Logging</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                    How to log messages with ORMLite.
+</td></tr>
+</table>
+
+<hr size="6">
+<a name="NOD22"></a>
+<a name="SEC21"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC20" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC22" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC20" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC20" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 5.1 Spring Configuration </h2>
+
+<p>ORMLite contains some classes which make it easy to configure the various database classes using
+the Spring framework.  For more information about the Spring Framework, see <a href="http://www.springsource.org/">http://www.springsource.org/</a>.
+
+</p><dl compact="compact">
+<dt><code> DatabaseTypeFactory</code></dt>
+<dd>
+<a name="IDX122"></a>
+<p>This factory class is used for Spring injections of the database types to the DAOs and other classes.  Often, the
+<code>databaseUrl</code> parameter is provided by a system property.
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">&lt;!-- database type factory-bean which is a databaseType --&gt;
+&lt;bean id=&quot;databaseTypeFactory&quot;
+    class=&quot;com.j256.ormlite.db.DatabaseTypeFactory&quot;
+    init-method=&quot;initialize&quot;&gt;
+    &lt;property name=&quot;databaseUrl&quot; value=&quot;jdbc:h2:mem:account&quot; /&gt;
+&lt;/bean&gt;
+&lt;bean id=&quot;databaseType&quot; class=&quot;com.j256.ormlite.db.DatabaseType&quot;
+    factory-bean=&quot;databaseTypeFactory&quot;
+    factory-method=&quot;getDatabaseType&quot; /&gt;
+&lt;bean id=&quot;driverClassName&quot; class=&quot;java.lang.String&quot;
+    factory-bean=&quot;databaseTypeFactory&quot;
+    factory-method=&quot;getDriverClassName&quot; /&gt;
+</pre></td></tr></table>
+</dd>
+<dt><code> TableCreator</code></dt>
+<dd>
+<a name="IDX123"></a>
+<a name="IDX124"></a>
+<a name="IDX125"></a>
+<a name="IDX126"></a>
+<p>Spring bean that auto-creates any tables that it finds DAOs for if the system property <code>ormlite.auto.create.tables</code>
+has been set to true. It will also auto-drop any tables that were auto-created if the property
+<code>ormlite.auto.drop.tables</code> has been set to true.  This should be used carefully and probably only in tests.
+
+</p></dd>
+</dl>
+
+<a name="IDX127"></a>
+<p>Here's an example of a full Spring configuration.
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">&lt;!-- URL used for database, probably should be in properties file --&gt;
+&lt;bean id=&quot;databaseUrl&quot; class=&quot;java.lang.String&quot;&gt;
+    &lt;!-- we are using the in-memory H2 database in this example --&gt;
+    &lt;constructor-arg index=&quot;0&quot; value=&quot;jdbc:h2:mem:account&quot; /&gt;
+&lt;/bean&gt;
+&lt;!-- database type factory --&gt;
+&lt;bean id=&quot;databaseTypeFactory&quot;
+    class=&quot;com.j256.ormlite.db.DatabaseTypeFactory&quot;
+    init-method=&quot;initialize&quot;&gt;
+    &lt;property name=&quot;databaseUrl&quot; value=&quot;jdbc:h2:mem:account&quot; /&gt;
+&lt;/bean&gt;
+&lt;!-- used to get database-type out of database-type factory --&gt;
+&lt;bean id=&quot;databaseType&quot; class=&quot;com.j256.ormlite.db.DatabaseType&quot;
+    factory-bean=&quot;databaseTypeFactory&quot;
+    factory-method=&quot;getDatabaseType&quot; /&gt;
+&lt;!-- used to get driver-class name out of database-type factory --&gt;
+&lt;bean id=&quot;driverClassName&quot; class=&quot;java.lang.String&quot;
+    factory-bean=&quot;databaseTypeFactory&quot;
+    factory-method=&quot;getDriverClassName&quot; /&gt;
+
+&lt;!-- datasource used by ORMLite to connect to the database --&gt;
+&lt;bean id=&quot;dataSource&quot;
+    class=&quot;com.j256.ormlite.support.SimpleDataSource&quot;
+    init-method=&quot;initialize&quot;&gt;
+    &lt;property name=&quot;url&quot; ref=&quot;databaseUrl&quot; /&gt;
+    &lt;!-- probably should use system properties for these too --&gt;
+    &lt;property name=&quot;username&quot; value=&quot;foo&quot; /&gt;
+    &lt;property name=&quot;password&quot; value=&quot;bar&quot; /&gt;
+&lt;/bean&gt;
+
+&lt;!-- abstract dao that is common to all defined daos --&gt;
+&lt;bean id=&quot;baseDao&quot; abstract=&quot;true&quot; init-method=&quot;initialize&quot;&gt;
+    &lt;property name=&quot;dataSource&quot; ref=&quot;dataSource&quot; /&gt;
+    &lt;property name=&quot;databaseType&quot; ref=&quot;databaseType&quot; /&gt;
+&lt;/bean&gt;
+
+&lt;!-- our daos --&gt;
+&lt;bean id=&quot;accountDao&quot;
+    class=&quot;com.j256.ormlite.examples.common.AccountJdbcDao&quot;
+    parent=&quot;baseDao&quot; /&gt;
+</pre></td></tr></table>
+<hr size="6">
+<a name="NOD23"></a>
+<a name="SEC22"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC21" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC23" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC20" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC20" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 5.2 Class Configuration </h2>
+
+<p>The simplest mechanism for configuring a class to be persisted by ORMLite is to use the <code>@DatabaseTable</code>
+and <code>@DatabaseField</code> annotations.  See section <a href="ormlite_1.html#SEC4">Adding ORMLite Annotations to Your Classes</a>.  However if you do not own the class you are
+persisting or there are permission problems with the class, you may want to configure the class using Java code instead.
+
+</p><a name="IDX128"></a>
+<p>To configure a class in code, you use the <code>DatabaseFieldConfig</code> and <code>DatabaseTableConfig</code> objects.
+The field config object holds all of the details that are in the <code>@DatabaseField</code> annotation as well as
+the name of the corresponding field in the object.  The <code>DatabaseTableConfig</code> object holds the class and the
+corresponding list of <code>DatabaseFieldConfig</code>s.  For example, to configure the <code>Account</code> object using Java code
+you'd do something like the following:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">List&lt;DatabaseFieldConfig&gt; fieldConfigs =
+    new ArrayList&lt;DatabaseFieldConfig&gt;();
+fieldConfigs.add(new DatabaseFieldConfig(&quot;name&quot;, null, JdbcType.UNKNOWN,
+    null, 0, false, false, true, null, false, null, false));
+fieldConfigs.add(new DatabaseFieldConfig(&quot;password&quot;, null,
+    JdbcType.UNKNOWN, null, 0, false, false, false, null, false, null,
+    false));
+DatabaseTableConfig&lt;Account&gt; accountTableConfig
+    = new DatabaseTableConfig&lt;Account&gt;(Account.class, fieldConfigs);
+
+AccountJdbcDao accountJdbcDao = new AccountJdbcDao();
+// set our table config on the dao
+accountJdbcDao.setTableConfig(accountTableConfig);
+accountJdbcDao.setDatabaseType(databaseType);
+accountJdbcDao.setDataSource(dataSource);
+accountJdbcDao.afterPropertiesSet();
+</pre></td></tr></table>
+<a name="IDX129"></a>
+<p>See the Javadocs for the <code>DatabaseFieldConfig</code> class for the fields to pass to the constructor.  You can also
+use the no-argument constructor and call the setters for each field.  You use the setters as well when you are
+configuring a class using Spring wiring.  Here is the above example in Spring:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">&lt;bean id=&quot;accountTableConfig&quot;
+  class=&quot;com.j256.ormlite.table.DatabaseTableConfig&quot;&gt;
+    &lt;property name=&quot;dataClass&quot;
+        value=&quot;com.j256.ormlite.examples.common.Account&quot; /&gt;
+    &lt;property name=&quot;tableName&quot; value=&quot;account&quot; /&gt;
+    &lt;property name=&quot;fieldConfigs&quot;&gt;
+        &lt;list&gt;
+            &lt;bean class=&quot;com.j256.ormlite.field.DatabaseFieldConfig&quot;&gt;
+                &lt;property name=&quot;fieldName&quot; value=&quot;name&quot; /&gt;
+                &lt;property name=&quot;id&quot; value=&quot;true&quot; /&gt;
+            &lt;/bean&gt;
+            &lt;bean class=&quot;com.j256.ormlite.field.DatabaseFieldConfig&quot;&gt;
+                &lt;property name=&quot;fieldName&quot; value=&quot;password&quot; /&gt;
+                &lt;property name=&quot;canBeNull&quot; value=&quot;false&quot; /&gt;
+            &lt;/bean&gt;
+        &lt;/list&gt;
+    &lt;/property&gt;
+&lt;/bean&gt;
+</pre></td></tr></table>
+<hr size="6">
+<a name="NOD24"></a>
+<a name="SEC23"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC22" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC24" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC20" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC20" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 5.3 Database Specific Code </h2>
+
+<p>ORMLite isolates the database-specific code in the <code>DatabaseType</code> classes found in
+<code>com.j256.ormlite.db</code>.  Each of the supported databases has a class there which implements the code needed to
+handle the unique features of the database (H2DatabaseType, MySqlDatabaseType, etc.).   If you want to help develop
+and test against other SQL databases, a externally available server that the author could connect to and test
+against would be appreciated.  Please contact the author if your database is not supported or if you want to help.
+
+</p><p>The following methods are currently used by the system to isolate the database specific behavior in one place.
+See the javadocs for the <code>DatabaseType</code> class for more information.
+
+</p><dl compact="compact">
+<dt><code> getDriverUrlPart</code></dt>
+<dd>
+<p>Return the part in the database URI which identifies the particular database.  Usually the
+URI is in the form jdbc:XXX:&hellip; where XXX is the driver url part.
+
+</p></dd>
+<dt><code> getDriverClassName</code></dt>
+<dd>
+<p>Returns the class name of the driver that may or may not be in the ClassPath depending on what database is
+being used.
+
+</p></dd>
+<dt><code> loadDriver</code></dt>
+<dd>
+<p>Load the driver class associated with this database so it can wire itself into JDBC.
+
+</p></dd>
+<dt><code> appendColumnArg</code></dt>
+<dd>
+<p>Takes a field type and appends the SQL necessary to create the field.  It may also generate arguments
+for the end of the table create statement or commands that must run before or after the table create.
+
+</p></dd>
+<dt><code> dropColumnArg</code></dt>
+<dd>
+<p>Takes a field type and adds all of the commands necessary to drop the column from the database.
+
+</p></dd>
+<dt><code> appendEscapedEntityName</code></dt>
+<dd>
+<p>Add a entity-name (table or column name) word to the SQL wrapped in the proper characters to escape it.
+This avoids problems with table, column, and sequence-names being reserved words.
+
+</p></dd>
+<dt><code> appendEscapedWord</code></dt>
+<dd>
+<p>Add the word to the string builder wrapped in the proper characters to escape it. This avoids problems with
+data values being reserved words.
+
+</p></dd>
+<dt><code> generateIdSequenceName</code></dt>
+<dd>
+<p>Return the name of an ID sequence based on the tableName and the fieldType of the id.  This is required
+by some database types when we have generated ids.
+
+</p></dd>
+<dt><code> getCommentLinePrefix</code></dt>
+<dd>
+<p>Return the prefix to put at the front of a SQL line to mark it as a comment.
+
+</p></dd>
+<dt><code> isIdSequenceNeeded</code></dt>
+<dd>
+<p>Return true if the database needs a sequence when you insert for generated IDs.  Some databases handle
+generated ids internally.
+
+</p></dd>
+<dt><code> getFieldConverter</code></dt>
+<dd>
+<p>Return the field converter associated with a particular field type.  This allows the database instance to
+convert a field as necessary before it goes to the database.
+
+</p></dd>
+<dt><code> isVarcharFieldWidthSupported</code></dt>
+<dd>
+<p>Return true if the database supports the width parameter on VARCHAR fields.
+
+</p></dd>
+<dt><code> isLimitSupported</code></dt>
+<dd>
+<p>Return true if the database supports the LIMIT sql command.
+
+</p></dd>
+<dt><code> isLimitAfterSelect</code></dt>
+<dd>
+<p>Return true if the LIMIT should be called after SELECT otherwise at the end of the WHERE (the default).
+
+</p></dd>
+<dt><code> appendLimitValue</code></dt>
+<dd>
+<p>Add the necessary SQL to limit the results to a certain number.
+
+</p></dd>
+<dt><code> appendSelectNextValFromSequence</code></dt>
+<dd>
+<p>Add the SQL necessary to get the next-value from a sequence. This is only necessary if
+isIdSequenceNeeded returns true.
+
+</p></dd>
+<dt><code> appendCreateTableSuffix</code></dt>
+<dd>
+<p>Append the SQL necessary to properly finish a CREATE TABLE line.
+
+</p></dd>
+</dl>
+
+<hr size="6">
+<a name="NOD25"></a>
+<a name="SEC24"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC23" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC20" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC20" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 5.4 ORMLite Logging </h2>
+
+<p>ORMLite uses a loose wrapper around Apache commons logging that provides simple {} argument expansion
+like slf4j.  You can use something like the following as your log4j.properties file to see details about the SQL calls.
+
+</p><a name="IDX130"></a>
+<table><tr><td>&nbsp;</td><td><pre class="example">log4j.rootLogger=INFO, stdout
+
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+
+# print the date in ISO 8601 format
+log4j.appender.stdout.layout.ConversionPattern=%d{ISO8601} [%p] %c{1} %m%n
+
+# be more verbose with our code
+log4j.logger.com.j256.ormlite=DEBUG
+
+# to enable logging of arguments to all of the SQL calls
+# uncomment the following line
+#log4j.logger.com.j256.ormlite.stmt.mapped.BaseMappedStatement=TRACE
+</pre></td></tr></table>
+<a name="IDX131"></a>
+<a name="IDX132"></a>
+<p><em>Notice</em> that you can uncomment the last line in the above log4j.properties file to log the arguments to the
+various SQL calls.  This may expose passwords or other sensitive information in the database so probably should
+only be used during debugging and should not be the default.
+
+</p><hr size="6">
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC20" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<p>
+ <font size="-1">
+  This document was generated by <em>Gray Watson</em> on <em>June, 24 2010</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+ </font>
+ <br>
+
+</p>
+</body>
+</html>

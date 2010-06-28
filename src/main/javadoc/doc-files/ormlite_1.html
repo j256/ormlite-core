@@ -1,0 +1,929 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
+<html>
+<!-- Created on June, 24 2010 by texi2html 1.70 -->
+<!--
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Many creative people <dev@texi2html.cvshome.org>
+Send bugs and suggestions to <users@texi2html.cvshome.org>
+
+-->
+<head>
+<title>ORM Lite Package: 1. Getting Started</title>
+
+<meta name="description" content="ORM Lite Package: 1. Getting Started">
+<meta name="keywords" content="ORM Lite Package: 1. Getting Started">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2html 1.70">
+<meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+pre.display {font-family: serif}
+pre.format {font-family: serif}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: serif; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: serif; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+ul.toc {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+
+<a name="NOD2"></a>
+<a name="SEC1"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC2" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[ &lt;&lt; ]</td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_2.html#SEC12" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h1 class="chapter"> 1. Getting Started </h1>
+
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top"><a href="#SEC2">1.1 External Dependencies</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                The external dependencies of ORMLite.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC3">1.2 Setting Up Your Classes</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 How to setup your classes to be persisted.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC7">1.3 Types That can be Persisted</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">             The data types that are persisted.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC8">1.4 Defining the DAOs</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                        How to configure the Database Access Objects.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC9">1.5 JDBC Data Sources</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                  Setting up your JDBC data source.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC10">1.6 Database Connections</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                  How to connect to your database.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC11">1.7 Tying It All Together</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">             Tying all of the wiring together.
+</td></tr>
+</table>
+
+<hr size="6">
+<a name="NOD3"></a>
+<a name="SEC2"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC1" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC3" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC1" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC1" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_2.html#SEC12" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 1.1 External Dependencies </h2>
+
+<p>ORMLite depends on the following external packages.  You must make sure
+that these are listed in your Maven, Ant, or &hellip; configuration files.
+
+</p><dl compact="compact">
+<dt><code> org.apache.commons.logging</code></dt>
+<dd>
+<p>For logging, ORMLite has a loose wrapper around apache commons-logging.  You
+can remove this dependency by editing <code>com.j256.ormlite.logger.Logger</code>.  As of
+this writing, we use version 1.1.1 of commons logging.  Previous or later versions 
+should also work.
+
+</p></dd>
+<dt><code> javax.persistence</code></dt>
+<dd>
+<p>To provide compatibility with other persistence packages, ORMLite depends on
+the JavaX persistence annotations.  As of this writing, we use version 1.0 of the
+persistence package.
+
+</p></dd>
+</dl>
+
+<p>For those maven-ites, here is the section from the pom that you will need to mirror.
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">&lt;properties&gt;
+    &lt;ormlite-version&gt;2.3&lt;/ormlite-version&gt;
+    &lt;persistence-api-version&gt;1.0&lt;/persistence-api-version&gt;
+    &lt;commons-logging-version&gt;1.1.1&lt;/commons-logging-version&gt;
+    &hellip;
+&lt;/properties&gt;
+&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.j256&lt;/groupId&gt;
+        &lt;artifactId&gt;ormlite&lt;/artifactId&gt;
+        &lt;version&gt;${ormlite-version}&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;javax.persistence&lt;/groupId&gt;
+        &lt;artifactId&gt;persistence-api&lt;/artifactId&gt;
+        &lt;version&gt;${persistence-api-version}&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;commons-logging&lt;/groupId&gt;
+        &lt;artifactId&gt;commons-logging&lt;/artifactId&gt;
+        &lt;version&gt;${commons-logging-version}&lt;/version&gt;
+    &lt;/dependency&gt;
+    &hellip;
+&lt;/dependencies&gt;
+</pre></td></tr></table>
+
+<p>If you want to get the ORMLite Junit tests to run, there are test dependencies on the following packages:
+
+</p><dl compact="compact">
+<dt><code> org.junit</code></dt>
+<dd>
+<p>We use Junit for our unit tasks.  Pretty simple/easy.
+
+</p></dd>
+<dt><code> org.easymock.easymock</code></dt>
+<dd>
+<p>We use, and are in love with, EasyMock.  <a href="http://easymock.org/">http://easymock.org/</a>.  It allows us to mock out dependencies so we can
+concentrate on testing a particular class instead of the whole package. 
+
+</p></dd>
+<dt><code> com.h2database</code></dt>
+<dd>
+<p>As a test database implementation, H2 is fast and easy to use.  Not as recommended as a production level database.
+
+</p></dd>
+<dt><code> org.apache.log4j</code></dt>
+<dd>
+<p>For logging to files using the <code>log4j.properties</code> config.  In the log4j package, you can exclude the following:
+<code>com.sun.jmx.jmxri</code>, <code>com.sun.jdmk.jmxtools</code>, <code>javax.activation.activation</code>, <code>javax.jms.jms</code>,
+<code>javax.mail.mail</code>.
+
+</p></dd>
+</dl>
+
+<hr size="6">
+<a name="NOD4"></a>
+<a name="SEC3"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC2" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC4" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC1" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC1" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_2.html#SEC12" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 1.2 Setting Up Your Classes </h2>
+
+<p>To setup your classes to be persisted you need to do the following things:
+
+</p><ol>
+<li><p> Add the @DatabaseTable annotation to the top of our class.  You can also use @Entity
+</p></li><li><p> Add the @DatabaseField annotation right before each field to be persisted.  You can also use @Column and others.
+</p></li><li><p> Add a no-argument constructor with at least package permissions.
+</p></li></ol>
+
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top"><a href="#SEC4">1.2.1 Adding ORMLite Annotations to Your Classes</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Adding the annotations to your classes.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC5">1.2.2 Using javax.persistence Annotations Instead</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">    Using javax.persistence annotations instead.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC6">1.2.3 Adding a No Argument Constructor to Your Class</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">               No argument constructor is also required.
+</td></tr>
+</table>
+
+<hr size="6">
+<a name="NOD5"></a>
+<a name="SEC4"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC3" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC5" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC1" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC3" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_2.html#SEC12" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h3 class="subsection"> 1.2.1 Adding ORMLite Annotations to Your Classes </h3>
+
+<p>Annotations are special code markers have have been available in Java since version 5 that provide meta information
+about classes, methods, or fields.  To specify what classes and fields to store in the database, ORMLite
+supports either its own annotations (<code>@DatabaseTable</code> and <code>@DatabaseField</code>) or the more standard
+annotations from the <code>javax.persistence</code> package.  See section <a href="#SEC5">Using javax.persistence Annotations Instead</a>.   Annotations are the
+easiest way to configure your classes but you can also configure the class using Java code or Spring XML.
+See section <a href="ormlite_5.html#SEC22">Class Configuration</a>.
+
+</p><p>With ORMLite annotations, for each of the Java classes that you would like to persist to your SQL database, you
+will need to add the <code>@DatabaseTable</code> annotation right above the <code>public class</code> line.  Each class marked with
+one of these annotations will be persisted into its own database table.  For example:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">@DatabaseTable(tableName = &quot;accounts&quot;)
+public class Account {
+&hellip;
+</pre></td></tr></table>
+<p>The <code>@DatabaseTable</code> annotations can have an optional <code>tableName</code> argument which specifies the name of the table
+that corresponds to the class.   If not specified, the class name all lowercase is used by default.
+
+</p><a name="IDX10"></a>
+<a name="IDX11"></a>
+<p>Additionally, for each of the classes, you will need to add a <code>@DatabaseField</code> annotation to each of the <em>fields</em>
+in the class that are to be persisted to the database.  Each field is persisted as a column of a database row.  For example:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">@DatabaseTable(tableName = &quot;accounts&quot;)
+public class Account {
+
+    @DatabaseField(id = true)
+    private String name;
+
+    @DatabaseField(canBeNull = false)
+    private String password;
+    &hellip;
+</pre></td></tr></table>
+<p>The @DatabaseField annotation can have the following fields:
+
+</p><dl compact="compact">
+<dd>
+<a name="IDX12"></a>
+<a name="IDX13"></a>
+</dd>
+<dt><code> columName</code></dt>
+<dd>
+<p>String name of the column in the database that will hold this field. If not set then the field name all lowercase is used instead.
+
+</p><a name="IDX14"></a>
+<a name="IDX15"></a>
+<a name="IDX16"></a>
+</dd>
+<dt><code> jdbcType</code></dt>
+<dd>
+<p>The type of the field as the JdbcType class.  Usually the type is taken from Java class of the field and does not need
+to be specified.  This corresponds to the SQL type.  See section <a href="#SEC7">Types That can be Persisted</a>.
+
+</p><a name="IDX17"></a>
+</dd>
+<dt><code> defaultValue</code></dt>
+<dd>
+<p>String default value of the field when we are creating a new row in the table.  Default is none.
+
+</p><a name="IDX18"></a>
+<a name="IDX19"></a>
+<a name="IDX20"></a>
+</dd>
+<dt><code> width</code></dt>
+<dd>
+<p>Integer width of array fields - usually for strings.  Some databases do not support this unfortunately.  Default for 
+those that do is 255.
+
+</p><a name="IDX21"></a>
+<a name="IDX22"></a>
+</dd>
+<dt><code> canBeNull</code></dt>
+<dd>
+<p>Boolean whether the field can be assigned to null or have no value. Default is true.
+
+</p><a name="IDX23"></a>
+</dd>
+<dt><code> id</code></dt>
+<dd>
+<p>Boolean whether the field is the id field or not. Default is false. Only one field can have this set in a class. Id fields
+uniquely identity a row.  If you don't have it set then you won't be able to use the query, update, refresh, and delete by
+ID methods. Only one of this, <code>generatedId</code>, and <code>generatedIdSequence</code> can be specified.
+
+</p><a name="IDX24"></a>
+<a name="IDX25"></a>
+</dd>
+<dt><code> generatedId</code></dt>
+<dd>
+<p>Boolean whether the field is an auto-generated id field. Default is false.  Only one field can have this set in a class.
+This tells the database to auto-generate a corresponding id for every row inserted.  Some databases require sequences for
+generated ids in which case the sequence name will be auto-generated. To specify the name of the sequence use
+<code>generatedIdSequence</code>. Only one of this, <code>id</code>, and <code>generatedIdSequence</code> can be specified.
+
+</p><a name="IDX26"></a>
+<a name="IDX27"></a>
+<a name="IDX28"></a>
+</dd>
+<dt><code> generatedIdSequence</code></dt>
+<dd>
+<p>String name of the sequence number to be used to generate this value.  Same as <code>generatedId</code> but you can specify the
+sequence name to use.  Default is none. Only one field can have this set in a class. This is only necessary for databases
+which require sequences for generated ids.  If you use generatedId instead then the code will auto-generate a sequence name.
+Only one of this, <code>id</code>, and <code>generatedId</code> can be specified.
+
+</p><a name="IDX29"></a>
+<a name="IDX30"></a>
+</dd>
+<dt><code> foreign</code></dt>
+<dd>
+<a name="IDX31"></a>
+<p>Boolean setting which identifies this field as corresponding to another class that is also stored in the database.
+Default is false.  The field must not be a primitive type.  The other class must have an id field (either <code>id</code>,
+<code>generatedId</code>, or <code>generatedIdSequence</code>) which will be stored in this table. When an object is returned
+from a query call, any foreign objects will just have the id field set in it.  See section <a href="ormlite_4.html#SEC19">Foreign Object Fields</a>.
+
+</p><a name="IDX32"></a>
+<a name="IDX33"></a>
+<a name="IDX34"></a>
+<a name="IDX35"></a>
+</dd>
+<dt><code> useGetSet</code></dt>
+<dd>
+<p>Boolean that says that the field should be accessed with get and set methods.  Default is false which instead uses
+direct field access via Java reflection.  This may be necessary if the object you are storing has
+protections around it.
+
+</p><p><em>NOTE:</em> The name of the get method <em>must</em> match getXxx() where Xxx is the name of the field with the first
+letter capitalized. The get <em>must</em> return a class which matches the field's exactly. The set method <em>must</em>
+match setXxx(), have a single argument whose class matches the field's exactly, and return void.  For example:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">@DatabaseField
+private Integer orderCount;
+
+public Integer getOrderCount() {
+  return orderCount;
+}
+
+public void setOrderCount(Integer orderCount) {
+  this.orderCount = orderCount;
+}
+</pre></td></tr></table>
+<a name="IDX36"></a>
+<a name="IDX37"></a>
+</dd>
+<dt><code> unknownEnumName</code></dt>
+<dd>
+<p>If the field is a Java enumerated type then you can specify the name of a enumerated value which will be used if the
+value of a database row is not found in the enumerated type.  If this is not specified and a row <em>does</em> contain
+an unknown name or ordinal value then a <code>SQLException</code> is thrown.  This is useful to handle backwards compatibility
+when handling out-of-date database values as well as forwards compatibility if old software is accessing up-to-date
+data or if you have to roll a release back.
+
+</p><a name="IDX38"></a>
+<a name="IDX39"></a>
+<a name="IDX40"></a>
+</dd>
+<dt><code> throwIfNull</code></dt>
+<dd>
+<p>Boolean that tells ORMLite to throw an exception if it sees a null value in a row and is trying to store it in
+a primitive field.  By default it is false.  If it is false and the database field is null, then the value of the
+primitive will be set to 0.  This can only be used on a primitive field.
+
+</p></dd>
+</dl>
+
+<hr size="6">
+<a name="NOD6"></a>
+<a name="SEC5"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC4" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC6" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC1" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC3" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_2.html#SEC12" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h3 class="subsection"> 1.2.2 Using javax.persistence Annotations Instead </h3>
+
+<p>Instead of using the ORMLite annotations (see section <a href="#SEC4">Adding ORMLite Annotations to Your Classes</a>), you can use the more standard
+annotations from the <code>javax.persistence</code> package.  In place of the <code>@DatabaseTable</code> annotation, you can
+use the <code>javax.persistence</code> <code>@Entity</code> annotation.  For example:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">@Entity(name = &quot;accounts&quot;)
+public class Account {
+&hellip;
+</pre></td></tr></table>
+<p>The <code>@Entity</code> annotations can have an optional <code>name</code> argument which specifies the table name.   If not
+specified, the class name all lowercase is used by default.
+
+</p><a name="IDX41"></a>
+<a name="IDX42"></a>
+<a name="IDX43"></a>
+<a name="IDX44"></a>
+<a name="IDX45"></a>
+<a name="IDX46"></a>
+<a name="IDX47"></a>
+<a name="IDX48"></a>
+<a name="IDX49"></a>
+<a name="IDX50"></a>
+<p>Instead of using the <code>@DatabaseField</code> annotation on each of the fields, you can use the <code>javax.persistence</code>
+annotations: <code>@Column</code>, <code>@Id</code>, <code>@GeneratedValue</code>, <code>@OneToOne</code>, and <code>@ManyToOne</code>. For example:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">@Entity(name = &quot;accounts&quot;)
+public class Account {
+
+    @Id
+    private String name;
+
+    @Column(nullable = false)
+    private String password;
+    &hellip;
+</pre></td></tr></table>
+<p>The following <code>javax.persistence</code> annotations and fields are supported:
+
+</p><dl compact="compact">
+<dt><code> @Column</code></dt>
+<dd>
+<p>Specifies the field to be persisted to the database.  You can also just specify the <code>@Id</code> annotation.  The
+following annotation fields are supported, the rest are ignored.
+
+</p><dl compact="compact">
+<dt><code> name</code></dt>
+<dd>
+<p>Used to specify the name of the associated database column.  If not provided then the field name is taken.
+
+</p><a name="IDX51"></a>
+<a name="IDX52"></a>
+<a name="IDX53"></a>
+</dd>
+<dt><code> length</code></dt>
+<dd>
+<p>Specifies the length (or width) of the database field.  Maybe only applicable for Strings and only supported by
+certain database types.  Default for those that do is 255.   Same as the <code>width</code> field in the
+<code>@DatabaseField</code> annotation.
+
+</p><a name="IDX54"></a>
+<a name="IDX55"></a>
+</dd>
+<dt><code> nullable</code></dt>
+<dd>
+<p>Set to true to have a field not be able to be inserted into the database with a null value.  Same as the
+<code>canBeNull</code> field in the <code>@DatabaseField</code> annotation.
+
+</p></dd>
+</dl>
+
+</dd>
+<dt><code> @Id</code></dt>
+<dd>
+<p>Used to specify a field to be persisted to the database as a primary row-id.  If you want to have the id be
+auto-generated, you will need to also specify the <code>@GeneratedValue</code> annotation.
+
+</p></dd>
+<dt><code> @GeneratedValue</code></dt>
+<dd>
+<p>Used to define an id field as having a auto-generated value.  This is only used in addition to the <code>@Id</code>
+annotation.  See the <code>generatedId</code> field in the <code>@DatabaseField</code> annotation for more details.
+
+</p></dd>
+<dt><code> @OneToOne or @ManyToOne</code></dt>
+<dd>
+<p>Fields with these annotations are assumed to be foreign fields.  See section <a href="ormlite_4.html#SEC19">Foreign Object Fields</a>.  ORMLite does
+<em>not</em> enforce the many or one relationship nor does it use any of the annotation fields.  It just uses the
+existence of either of these annotations to indicate that it is a foreign object.
+
+</p></dd>
+</dl>
+
+<p>If the <code>@Column</code> annotation is used on a field that has a unknown type then it is assumed to be a
+Serializable field and the object should implement <code>java.io.Serializable</code>.  See section <a href="#SEC7">Types That can be Persisted</a>.
+
+</p><hr size="6">
+<a name="NOD7"></a>
+<a name="SEC6"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC5" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC7" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC1" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC3" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_2.html#SEC12" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h3 class="subsection"> 1.2.3 Adding a No Argument Constructor to Your Class </h3>
+
+<p>After you have added the class and field annotations, you will also need to add a no-argument constructor with
+<em>at least</em> package visibility.  When an object is returned from a query, ORMLite constructs the object
+using Java reflection and a constructor needs to be called.
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">Account() {
+  	// all persisted classes must define a no-arg constructor
+  	// with at least package visibility
+}
+</pre></td></tr></table>
+<p>So your final example Account class with annotations and constructor would look like:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">@DatabaseTable(tableName = &quot;accounts&quot;)
+public class Account {
+	
+    @DatabaseField(id = true)
+    private String name;
+    
+    @DatabaseField(canBeNull = false)
+    private String password;
+    &hellip;
+
+    Account() {
+        // all persisted classes must define a no-arg constructor
+        // with at least package visibility
+    }
+    &hellip;
+}
+</pre></td></tr></table>
+<hr size="6">
+<a name="NOD8"></a>
+<a name="SEC7"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC6" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC8" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC1" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC1" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_2.html#SEC12" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 1.3 Types That can be Persisted </h2>
+
+<p>The following Java types can be persisted to the database by ORMLite.  Database specific code
+helps to translate between the SQL types and the database specific handling of those types.
+See section <a href="ormlite_5.html#SEC23">Database Specific Code</a>.
+
+</p><dl compact="compact">
+<dd>
+<a name="IDX56"></a>
+</dd>
+<dt><code> String</code></dt>
+<dd>
+<p>Persisted as SQL type VARCHAR.
+
+</p><a name="IDX57"></a>
+</dd>
+<dt><code> Boolean or boolean</code></dt>
+<dd>
+<p>Persisted as SQL type BOOLEAN.
+
+</p><a name="IDX58"></a>
+</dd>
+<dt><code> java.util.Date</code></dt>
+<dd>
+<p>Persisted as SQL type TIMESTAMP.  <em>NOTE:</em> This is <em>not</em> <code>java.sql.Date</code> which is a different
+class.
+
+</p><a name="IDX59"></a>
+</dd>
+<dt><code> Byte or byte</code></dt>
+<dd>
+<p>Persisted as SQL type TINYINT.
+
+</p><a name="IDX60"></a>
+</dd>
+<dt><code> Short or short</code></dt>
+<dd>
+<p>Persisted as SQL type SMALLINT.
+
+</p><a name="IDX61"></a>
+</dd>
+<dt><code> Integer or int</code></dt>
+<dd>
+<p>Persisted as SQL type INTEGER.
+
+</p><a name="IDX62"></a>
+</dd>
+<dt><code> Long or long</code></dt>
+<dd>
+<p>Persisted as SQL type BIGINT.
+
+</p><a name="IDX63"></a>
+</dd>
+<dt><code> Float or float</code></dt>
+<dd>
+<p>Persisted as SQL type FLOAT.
+
+</p><a name="IDX64"></a>
+</dd>
+<dt><code> Double or double</code></dt>
+<dd>
+<p>Persisted as SQL type DOUBLE.
+
+</p><a name="IDX65"></a>
+<a name="IDX66"></a>
+</dd>
+<dt><code> Serializable</code></dt>
+<dd>
+<p>Persisted as SQL type VARBINARY.  This is a special type that serializes an object as a sequence of bytes
+and then deserializes it on the way back.  The field must be an object that implements the <code>java.io.Serializable</code>
+interface.  Depending on the database type, there will be limits to the size of the object that can be stored.  YMMV.
+
+</p><a name="IDX67"></a>
+<a name="IDX68"></a>
+</dd>
+<dt><code> Enum or enum</code></dt>
+<dd>
+<p>Persisted by default as the enumerated value's string <em>name</em> as a VARCHAR type.  You can also specify the
+<code>jdbcType</code> field to the <code>@DatabaseField</code> annotation as a <code>JdbcType.ENUM_INTEGER</code> in which case the
+<code>ordinal</code> of the enum value will be stored as an INTEGER.  The name is the default (and recommended) because
+it allows you to add additional enums anywhere in the list without worrying about having to convert data later.
+
+</p><a name="IDX69"></a>
+<p>You can also also specify an <em>unknownEnumName</em> name with the <code>@DatabaseField</code> annotation which will be
+used if an unknown value is found in the database. See section <a href="#SEC4">Adding ORMLite Annotations to Your Classes</a>. 
+
+</p></dd>
+</dl>
+
+<p><em>NOTE:</em> ORMLite also supports the concept of foreign objects where the id of another object is
+stored in the database.  See section <a href="ormlite_4.html#SEC19">Foreign Object Fields</a>.
+
+</p><hr size="6">
+<a name="NOD9"></a>
+<a name="SEC8"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC7" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC9" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC1" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC1" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_2.html#SEC12" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 1.4 Defining the DAOs </h2>
+
+<p>A typical Java pattern is to isolate the database operations in Database Access Objects or DAO classes.  Each DAO
+provides create, delete, update, etc. type of functionality and usually specialize in the handling a particular
+persisted class.
+
+</p><a name="IDX70"></a>
+<a name="IDX71"></a>
+<p>Once you have annotated your classes, you will need to create the DAO class(es).  The pattern that we recommend
+is to define a DAO interface which extends the <code>BaseDao</code> interface and will be used in the code.  The interface
+isn't required but it is a good pattern so your code is less tied to JDBC for persistence.  Each DAO has two generic
+parameters: the class we are persisting with the DAO, and the class of the ID-column that will be used to
+identify a specific database row.  If you class does not have an ID field, you can put <code>Object</code> or <code>Void</code>
+as the 2nd argument.  For example, in the above <code>Account</code> class, the &quot;name&quot; field is the ID column (id = true)
+so the ID class is <code>String</code>.  Example:
+
+</p><a name="IDX72"></a>
+<table><tr><td>&nbsp;</td><td><pre class="example">/** Account DAO which has a String id (Account.name) */
+public interface AccountDao extends BaseDao&lt;Account, String&gt; {
+    // empty wrapper, you can add additional DAO methods here
+}
+</pre></td></tr></table>
+<p>The implementation of this interface takes a <code>DatabaseType</code> object in its constructor which identifies the
+per-database flavor class.  See section <a href="ormlite_5.html#SEC23">Database Specific Code</a>.  Example:
+
+</p><a name="IDX73"></a>
+<table><tr><td>&nbsp;</td><td><pre class="example">/** JDBC implementation of the AccountDao interface. */
+public class AccountJdbcDao extends BaseJdbcDao&lt;Account, String&gt;
+  implements AccountDao {
+    public AccountJdbcDao(DatabaseType databaseType) {
+        super(databaseType, Account.class);
+    }
+}
+</pre></td></tr></table>
+<p>That's all you need to define your DAO classes.  You are free to add more methods to your DAO interfaces and
+implementations if there are specific operations that are needed and not provided by the Dao base classes.
+More on how to use these DAOs later. See section <a href="ormlite_2.html#SEC12">Using the DAOs</a>.
+
+</p><hr size="6">
+<a name="NOD10"></a>
+<a name="SEC9"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC8" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC10" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC1" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC1" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_2.html#SEC12" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 1.5 JDBC Data Sources </h2>
+
+<p>To use the database and the DAO objects, you will need to configure what JDBC calls a <code>DataSource</code> (see the
+<code>javax.sql.DataSource</code> class).  The <code>DataSource</code> is a factory for connections to the physical SQL
+database.  Here is a code example that creates a simple data source.
+
+</p><a name="IDX74"></a>
+<a name="IDX75"></a>
+<a name="IDX76"></a>
+<table><tr><td>&nbsp;</td><td><pre class="example">// single connection data source example
+DataSource dataSource =
+  DatabaseTypeUtils.createSimpleDataSource(&quot;jdbc:h2:mem:account&quot;);
+</pre></td></tr></table>
+<a name="IDX77"></a>
+<a name="IDX78"></a>
+<p>There are many other data sources that can be used instead, including pooled connections which will create new
+connections on demand and re-use existing dormant connections. You can instantiate your own without the
+DatabaseTypeUtils and set it on the DAOs directly.
+
+</p><a name="IDX79"></a>
+<a name="IDX80"></a>
+<p>When you are done with your DataSource, you will want to call the close() or destroy() method to close any underlying 
+<code>java.sql.Connection</code> objects.  Something like the following pattern is recommended.
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">SimpleDataSource dataSource = null;
+try {
+    dataSource = new SimpleDataSource();
+    dataSource.setURL(&quot;jdbc:h2:mem:account&quot;);
+    dataSource.setUsername(&quot;billy&quot;);
+    dataSource.setPassword(&quot;_secret&quot;);
+    // work with the data-source and DAOs
+    &hellip;
+} finally {
+    if (dataSource != null) {
+        dataSource.close();
+    }
+}
+</pre></td></tr></table>
+<hr size="6">
+<a name="NOD11"></a>
+<a name="SEC10"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC9" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC11" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC1" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC1" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_2.html#SEC12" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 1.6 Database Connections </h2>
+
+<p>ORMLite works with a <code>DatabaseType</code> object which defines all of the per-database information necessary to
+support the various features on all of the different database types.  See section <a href="ormlite_5.html#SEC23">Database Specific Code</a>.  To instantiate a
+<code>DatabaseType</code>, you can either use the <code>DatabaseTypeUtils</code> class or call your database class directly.  You
+can pass in the database URL or pass in an already created <code>DataSource</code> object:
+
+</p><dl compact="compact">
+<dt> use the DatabaseTypeUtils class with the database URI</dt>
+<dd><table><tr><td>&nbsp;</td><td><pre class="example">DatabaseType databaseType =
+  DatabaseTypeUtils.createDatabaseType(&quot;jdbc:h2:mem:account&quot;);
+</pre></td></tr></table>
+</dd>
+<dt> use DatabaseTypeUtils with an already established javax.sql.DataSource</dt>
+<dd><table><tr><td>&nbsp;</td><td><pre class="example">DatabaseType databaseType =
+  DatabaseTypeUtils.createDatabaseType(dataSource);
+</pre></td></tr></table>
+</dd>
+<dt> instantiate a DatabaseType class directly </dt>
+<dd><table><tr><td>&nbsp;</td><td><pre class="example">DatabaseType databaseType = new H2DatabaseType();
+</pre></td></tr></table>
+</dd>
+</dl>
+
+<a name="IDX81"></a>
+<a name="IDX82"></a>
+<p>After you instantiate your DatabaseType, you will need to call the loadDriver() method to make sure that
+the driver has wired itself into JDBC appropriately.
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">DatabaseType databaseType = new H2DatabaseType();
+databaseType.loadDriver();
+</pre></td></tr></table>
+<p>For more information about the database specific code in the DatabaseType.  See section <a href="ormlite_5.html#SEC23">Database Specific Code</a>.
+
+</p><hr size="6">
+<a name="NOD12"></a>
+<a name="SEC11"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC10" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_2.html#SEC12" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC1" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC1" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_2.html#SEC12" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 1.7 Tying It All Together </h2>
+
+<p>So you have annotated the objects to persist, added the no-arg constructor, defined your DAO classes, established your
+DatabaseType, and created your DataSource.  You are ready to start persisting and querying your database objects.  The
+following code ties it all together:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">// h2 by default but change to match your database
+String databaseUrl = &quot;jdbc:h2:mem:account&quot;;
+SingleConnectionDataSource dataSource =
+  DatabaseTypeUtils.createSimpleDataSource(databaseUrl);
+DatabaseType databaseType =
+  DatabaseTypeUtils.createDatabaseType(dataSource);
+databaseType.loadDriver();
+
+// instantiate the dao
+AccountJdbcDao accountDao = new AccountJdbcDao(databaseType);
+accountDao.setDataSource(dataSource);
+// _must_ make this call after the setters
+accountDao.initialize();
+
+// if you need to create the 'accounts' table make this call
+TableUtils.createTable(databaseType, dataSource, Account.class);
+
+// create an instance of Account
+Account account = new Account();
+account.name = &quot;Jim Coakley&quot;;
+
+// persist the account object to the database
+// it should return 1 for the 1 row inserted
+if (accountDao.create(account) != 1) {
+  error handling &hellip; 
+}
+&hellip;
+
+// destroy the data source which should close underlying connections
+dataSource.destroy();
+</pre></td></tr></table>
+<a name="IDX83"></a>
+<a name="IDX84"></a>
+<p><em>NOTE:</em> as you see in the above example, if you are instantiating a DAO class outside of Spring
+then you will need to call <code>initialize()</code> method to properly initialize the class.
+
+</p><a name="IDX85"></a>
+<p>For more examples, see the <code>com.j256.ormlite.examples</code> package test classes in the Java sources jar down in
+<code>src/test/java</code>.
+
+</p><hr size="6">
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC1" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_2.html#SEC12" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<p>
+ <font size="-1">
+  This document was generated by <em>Gray Watson</em> on <em>June, 24 2010</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+ </font>
+ <br>
+
+</p>
+</body>
+</html>

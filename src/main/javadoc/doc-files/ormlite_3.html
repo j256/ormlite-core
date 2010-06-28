@@ -1,0 +1,278 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
+<html>
+<!-- Created on June, 24 2010 by texi2html 1.70 -->
+<!--
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Many creative people <dev@texi2html.cvshome.org>
+Send bugs and suggestions to <users@texi2html.cvshome.org>
+
+-->
+<head>
+<title>ORM Lite Package: 3. Custom Query Builder</title>
+
+<meta name="description" content="ORM Lite Package: 3. Custom Query Builder">
+<meta name="keywords" content="ORM Lite Package: 3. Custom Query Builder">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2html 1.70">
+<meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+pre.display {font-family: serif}
+pre.format {font-family: serif}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: serif; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: serif; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+ul.toc {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+
+<a name="NOD16"></a>
+<a name="SEC15"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="ormlite_2.html#SEC14" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC16" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite_2.html#SEC12" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_4.html#SEC19" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h1 class="chapter"> 3. Custom Query Builder </h1>
+
+<p>The DOAs have methods to query for an object that matches an id field (<code>queryForId</code>) as well as query for all
+objects (<code>queryForAll</code>) and iterating through all of the objects in a table (<code>iterator</code>).  For more specified
+queries, there is also a <code>queryBuilder()</code> method which returns a <code>QueryBuilder</code> object for the DAO with which
+you can construct custom queries to return a sub-set of the table.
+
+</p><table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top"><a href="#SEC16">3.1 Query Builder Basics</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">         How to start using the Query Builder.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC17">3.2 Building Queries</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">            How to build simple and complex queries.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC18">3.3 Using Select Arguments</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">            Using arguments to queries.
+</td></tr>
+</table>
+
+<hr size="6">
+<a name="NOD17"></a>
+<a name="SEC16"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC15" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC15" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC15" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_4.html#SEC19" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 3.1 Query Builder Basics </h2>
+
+<p>Here's how you use the query builder to construct custom queries.  First, it is a good pattern to set the column
+names of the fields with Java constants so you can use them in queries.  For example:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">@DatabaseTable(tableName = &quot;accounts&quot;)
+public class Account {
+    public static final String PASSWORD_FIELD_NAME = &quot;password&quot;; 
+	
+	&hellip;
+    @DatabaseField(canBeNull = false, columnName = PASSWORD_FIELD_NAME)
+    private String password;
+	&hellip;
+</pre></td></tr></table>
+<p>This allows us to construct queries using the password field name without having the renaming of a field in the future break
+our queries.  This should be done <em>even</em> if the name of the field and the column name are the same.
+
+</p><a name="IDX110"></a>
+<table><tr><td>&nbsp;</td><td><pre class="example">// get our QueryBuilder from the DAO
+QueryBuilder&lt;Account, String&gt; queryBuilder = accountDao.queryBuilder();
+// set the WHERE to: the 'password' field must be equal to &quot;qwerty&quot;
+queryBuilder.where().eq(Account.PASSWORD_FIELD_NAME, &quot;qwerty&quot;);
+PreparedQuery&lt;Account, String&gt; preparedQuery =
+  queryBuilder.prepareQuery();
+// query for all accounts that have that password
+List&lt;Account&gt; accountList = accountDao.query(preparedQuery);
+</pre></td></tr></table>
+<a name="IDX111"></a>
+<p>You get a <code>QueryBuilder</code> object from DAO, call methods on it to build your custom query, call <code>queryBuilder.prepareQuery()</code>
+which returns a <code>PreparedQuery</code> object, and then pass the <code>PreparedQuery</code> to the query or iterator methods.
+
+</p><hr size="6">
+<a name="NOD18"></a>
+<a name="SEC17"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC16" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC18" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC15" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC15" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_4.html#SEC19" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 3.2 Building Queries </h2>
+
+<p>There are a couple of different ways that you can build queries.  The QueryBuilder has been written for ease of use
+as well for power users.  Simple queries can be done linearly:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">QueryBuilder&lt;Account, String&gt; queryBuilder = accountDao.queryBuilder();
+// get the WHERE object to build our query
+Where where = queryBuilder.where();
+// the name field must be equal to &quot;foo&quot;
+where.eq(Account.NAME_FIELD_NAME, &quot;foo&quot;);
+// and
+where.and();
+// the password field must be equal to &quot;_secret&quot;
+where.eq(Account.PASSWORD_FIELD_NAME, &quot;_secret&quot;);
+PreparedQuery&lt;Account, String&gt; preparedQuery =
+  queryBuilder.prepareQuery();
+</pre></td></tr></table>
+<p>The SQL query that will be generated from the above example will be approximately:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">SELECT * FROM account
+  WHERE (name = 'foo' AND password = '_secret')
+</pre></td></tr></table>
+<a name="IDX112"></a>
+<p>If you'd rather chain the methods onto one line (like StringBuilder), this can also be written as:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">queryBuilder.where()
+  .eq(Account.NAME_FIELD_NAME, &quot;foo&quot;)
+  .and()
+  .eq(Account.PASSWORD_FIELD_NAME, &quot;_secret&quot;);
+</pre></td></tr></table>
+<p>If you'd rather use parenthesis to group the comparisons properly then you can call:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">Where where = queryBuilder.where();
+where.and(where.eq(Account.NAME_FIELD_NAME, &quot;foo&quot;),
+          where.eq(Account.PASSWORD_FIELD_NAME, &quot;_secret&quot;));
+</pre></td></tr></table>
+<a name="IDX113"></a>
+<p>All three of the above call formats produce the same SQL.  For complex queries that mix ANDs and ORs, the last
+format may be necessary to get the grouping correct.  For example, here's a complex query:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">Where where = queryBuilder.where();
+where.or(
+  where.and(
+    where.eq(Account.NAME_FIELD_NAME, &quot;foo&quot;),
+    where.eq(Account.PASSWORD_FIELD_NAME, &quot;_secret&quot;)),
+  where.and(
+    where.eq(Account.NAME_FIELD_NAME, &quot;bar&quot;),
+    where.eq(Account.PASSWORD_FIELD_NAME, &quot;qwerty&quot;)));
+</pre></td></tr></table>
+<p>This produces the following approximate SQL:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">SELECT * FROM account
+  WHERE ((name = 'foo' AND password = '_secret')
+         OR (name = 'bar' AND password = 'qwerty'))
+</pre></td></tr></table>
+<a name="IDX114"></a>
+<a name="IDX115"></a>
+<a name="IDX116"></a>
+<a name="IDX117"></a>
+<a name="IDX118"></a>
+<a name="IDX119"></a>
+<p>The <code>QueryBuilder</code> also allows you to set what specific columns you want returned, specify the 'ORDER BY' and 'GROUP BY'
+fields, and various other SQL features (LIKE, IN, &gt;, &gt;=, &lt;, &lt;=, &lt;&gt;, IS NULL, &hellip;).  See the javadocs on <code>QueryBuilder</code>
+and <code>Where</code> classes for more information.  A good SQL reference site can be found at <a href="http://www.w3schools.com/Sql/">http://www.w3schools.com/Sql/</a>.
+
+</p><hr size="6">
+<a name="NOD19"></a>
+<a name="SEC18"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC17" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_4.html#SEC19" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC15" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC15" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_4.html#SEC19" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 3.3 Using Select Arguments </h2>
+
+<p>The arguments that are used in WHERE operations can be specified directly as value arguments (as in the above examples) or as a
+<code>SelectArg</code> object.  SelectArgs are used to set the value of an argument at a later time - they generate a SQL '<code>?</code>'.
+For example:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">QueryBuilder&lt;Account, String&gt; queryBuilder =
+  accountDao.queryBuilder();
+Where where = queryBuilder.where();
+SelectArg selectArg = new SelectArg();
+// define our query as 'name = ?'
+where.eq(Account.NAME_FIELD_NAME, selectArg);
+// prepare it so it is ready for later query or iterator calls
+PreparedQuery&lt;Account, String&gt; preparedQuery =
+  queryBuilder.prepareQuery();
+
+// later we can set the select argument and issue the query
+selectArg.setValue(&quot;foo&quot;);
+List&lt;Account&gt; accounts = accountDao.query(preparedQuery);
+// then we can set the select argument to another
+// value and re-run the query
+selectArg.setValue(&quot;bar&quot;);
+accounts = accountDao.query(preparedQuery);
+</pre></td></tr></table>
+<p><em>NOTE:</em> <code>SelectArg</code> objects have protection against being used in more than one column name.  You must instantiate a
+new object if you want to use a <code>SelectArg</code> with another column.
+
+</p><hr size="6">
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC15" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_4.html#SEC19" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<p>
+ <font size="-1">
+  This document was generated by <em>Gray Watson</em> on <em>June, 24 2010</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+ </font>
+ <br>
+
+</p>
+</body>
+</html>

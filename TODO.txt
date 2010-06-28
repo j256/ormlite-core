@@ -1,0 +1,44 @@
+- allow any field as the remote id column (not just the id field)
+	- specify the field in the remote object (must match the name directly)
+	- creates a prepared query 'WHERE field = value'
+	- uses queryForFirst to return object
+	- creates account_field-name instead of account_id field in local table 
+
+- think about proxy objects for foreign objects that can throw if they do anything but getId()
+	- expensive indirection?
+	- cglib dependency?
+	- this starts down the road towards caching the DataSource in some proxy object
+		- maybe just heavily document it and say to use the refresh directly if want to
+		- reinventing the hibernate wheel?
+	- or maybe they just auto-refresh when someone accesses a field
+	- maybe it has a null object initially and replaces it with a real object to invoke on 
+	- just extend BaseJdbcDao so it can query the class by itself
+		- maybe ask the class loader if it has a Dao for that class?
+
+- how can we use the query builder with foreign fields
+	- right now we have to know that we are storing the id and we have to pass in the right id type argument
+	- could it look to see if the field was the type of the argument and then call get id on the argument?
+	- acct = new Account(); ... were.eq("account_id", acct);
+	- maybe it is fine the way it is
+	- maybe see if the argument (SelectArg or direct) is the same as the field type in which case we extract the id automagically
+	- queries don't have field types or anything, this would be a big change
+
+- how about the avg, sum, etc. stuff, how should those work
+	- we can't create a T object because of the avg field -- where would it go?
+	- maybe allow fields in a T object that are used to store avg and other information returned from them
+	- we would need to auto-group any requested fields
+	- what does it break if we have the sum/group, ordering?
+	- maybe specify the object to fill in with a query
+	- have each of the fields annotated with group(x) or avg(y)
+	- AVG(), COUNT(), FIRST(), LAST(), MAX(), MIN(), SUM(), DISTINCT
+	- maybe just handle with the direct SQL query support
+
+- how can the package help with direct SQL queries?
+	- allow them to submit the query themselves
+	- iterate through the results which would be an array of strings?
+
+- should we handle all non-number arguments to queries to be ? and force internal SelectArgs?
+	- would be better for escaping reasons
+
+- maybe add rawUpdate and rawExecute?
+	- need to document the raw query, iterator, update, execute in .texi

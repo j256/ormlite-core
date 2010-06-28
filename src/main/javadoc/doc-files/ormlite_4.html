@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
+<html>
+<!-- Created on June, 24 2010 by texi2html 1.70 -->
+<!--
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Many creative people <dev@texi2html.cvshome.org>
+Send bugs and suggestions to <users@texi2html.cvshome.org>
+
+-->
+<head>
+<title>ORM Lite Package: 4. Foreign Object Fields</title>
+
+<meta name="description" content="ORM Lite Package: 4. Foreign Object Fields">
+<meta name="keywords" content="ORM Lite Package: 4. Foreign Object Fields">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2html 1.70">
+<meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+pre.display {font-family: serif}
+pre.format {font-family: serif}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: serif; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: serif; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+ul.toc {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+
+<a name="NOD20"></a>
+<a name="SEC19"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="ormlite_3.html#SEC18" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_5.html#SEC20" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC15" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_5.html#SEC20" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h1 class="chapter"> 4. Foreign Object Fields </h1>
+
+<p>ORMLite supports the concept of &quot;foreign&quot; objects where one or more of the fields correspond to an object
+persisted in another table in the same database.  For example, if you had an <code>Order</code> objects in your database
+and each <code>Order</code> had a corresponding <code>Account</code> object, then the <code>Order</code> object would have foreign
+<code>Account</code> field.  With foreign objects, <em>just</em> the id field from the <code>Account</code> is persisted
+to the <code>Order</code> table as the column &quot;<code>account_id</code>&quot;.  For example, the <code>Order</code> class might look
+something like:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">@DatabaseTable(tableName = &quot;orders&quot;)
+public class Order {
+
+    @DatabaseField(generatedId = true)
+    private int id;
+    
+    @DatabaseField(canNull = false, foreign = true)
+    private Account account;
+    &hellip;
+}
+</pre></td></tr></table>
+<p>When the <code>Order</code> table was created, something like the following SQL would be generated:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">CREATE TABLE `orders`
+   (`id` INTEGER AUTO_INCREMENT , `account_id` INTEGER, PRIMARY KEY (`id`)); 
+</pre></td></tr></table>
+<a name="IDX120"></a>
+<a name="IDX121"></a>
+<p>When you query for an order, you will get an <code>Order</code> object with an account field object that <em>only</em> has its id
+field set - all of the fields in the foreign <code>Account</code> object will have default values (null, 0, false, etc.).  If
+you want to use other fields in the <code>Account</code>, you can use a refresh call to set all of the fields in the
+<code>Account</code> object.  For example:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">if (accountDao.refresh(order.getAccount()) != 1) {
+  error handling &hellip; 
+}
+</pre></td></tr></table>
+<p><em>NOTE:</em> Because we use refresh, foreign objects are therefor <em>required</em> to have an id field.
+
+</p><hr size="6">
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="ormlite_3.html#SEC15" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_5.html#SEC20" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<p>
+ <font size="-1">
+  This document was generated by <em>Gray Watson</em> on <em>June, 24 2010</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+ </font>
+ <br>
+
+</p>
+</body>
+</html>

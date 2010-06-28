@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
+<html>
+<!-- Created on June, 24 2010 by texi2html 1.70 -->
+<!--
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Many creative people <dev@texi2html.cvshome.org>
+Send bugs and suggestions to <users@texi2html.cvshome.org>
+
+-->
+<head>
+<title>ORM Lite Package: ORMLite</title>
+
+<meta name="description" content="ORM Lite Package: ORMLite">
+<meta name="keywords" content="ORM Lite Package: ORMLite">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2html 1.70">
+<meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+pre.display {font-family: serif}
+pre.format {font-family: serif}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: serif; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: serif; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+ul.toc {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+
+<a name="NOD1"></a>
+<a name="SEC_Top"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h1 class="settitle">ORMLite</h1>
+
+<p>Version 2.3 - June 2010
+
+</p><a name="IDX1"></a>
+<a name="IDX2"></a>
+<a name="IDX3"></a>
+<a name="IDX4"></a>
+<a name="IDX5"></a>
+<p>ORMLite provides a lightweight Object Relational Mapping between Java classes and SQL databases - see
+<a href="http://en.wikipedia.org/wiki/Object-relational_mapping">http://en.wikipedia.org/wiki/Object-relational_mapping</a>.  There are certainly more mature ORMs which
+provide this functionality including Hibernate and iBatis.  However, the author wanted a simple yet powerful
+wrapper around the JDBC functions and Hibernate and iBatis are significantly more complicated with many
+dependencies.
+
+</p><a name="IDX6"></a>
+<a name="IDX7"></a>
+<p>ORMLite supports natively MySQL, Postgres, Microsoft SQL Server, H2, Derby, HSQLDB, and Sqlite and can be
+extended to additional ones relatively easily.  There are also initial implementations for DB2 and Oracle
+although the author needs access to each of these database types to tune the support.  Contact the author if
+your database is not supported.
+
+</p><a name="IDX8"></a>
+<a name="IDX9"></a>
+<p>To get started quickly with ORMLite, see the code examples down in the <code>com.j256.ormlite.examples</code>
+package test classes in the Java sources jar down in <code>src/test/java</code>.  They contain a couple different
+examples with working code.
+There is also a PDF version of this documentation - see
+<a href="http://ormlite.sourceforge.net/javadoc/doc-files/ormlite.pdf">http://ormlite.sourceforge.net/javadoc/doc-files/ormlite.pdf</a>.
+
+</p><p>Gray Watson <a href="http://256.com/gray/">http://256.com/gray/</a>
+
+</p><table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top"><a href="ormlite_1.html#SEC1">1. Getting Started</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">             How to start to use ORMLite.
+</td></tr>
+<tr><td align="left" valign="top"><a href="ormlite_2.html#SEC12">2. Using the DAOs</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                   Using the Database Access Objects.
+</td></tr>
+<tr><td align="left" valign="top"><a href="ormlite_3.html#SEC15">3. Custom Query Builder</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">               How to utilize the custom query builder.
+</td></tr>
+<tr><td align="left" valign="top"><a href="ormlite_4.html#SEC19">4. Foreign Object Fields</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">             Fields that represent foreign objects.
+</td></tr>
+<tr><td align="left" valign="top"><a href="ormlite_5.html#SEC20">5. Advanced Concepts</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                    More advanced concepts with ORMLite.
+</td></tr>
+<tr><td align="left" valign="top"><a href="ormlite_6.html#SEC25">Index of Concepts</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">           Index of concepts in the manual.
+</td></tr>
+</table>
+
+<hr size="1">
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<p>
+ <font size="-1">
+  This document was generated by <em>Gray Watson</em> on <em>June, 24 2010</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+ </font>
+ <br>
+
+</p>
+</body>
+</html>

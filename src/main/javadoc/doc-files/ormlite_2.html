@@ -1,0 +1,326 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
+<html>
+<!-- Created on June, 24 2010 by texi2html 1.70 -->
+<!--
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Many creative people <dev@texi2html.cvshome.org>
+Send bugs and suggestions to <users@texi2html.cvshome.org>
+
+-->
+<head>
+<title>ORM Lite Package: 2. Using the DAOs</title>
+
+<meta name="description" content="ORM Lite Package: 2. Using the DAOs">
+<meta name="keywords" content="ORM Lite Package: 2. Using the DAOs">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2html 1.70">
+<meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+pre.display {font-family: serif}
+pre.format {font-family: serif}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: serif; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: serif; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+ul.toc {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+
+<a name="NOD13"></a>
+<a name="SEC12"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="ormlite_1.html#SEC11" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC13" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite_1.html#SEC1" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC15" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h1 class="chapter"> 2. Using the DAOs </h1>
+
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top"><a href="#SEC13">2.1 Basic DAO Usage</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">             Basic commands provided by the DAOs.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC14">2.2 DAO Methods</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 What functionality is provided by the DAO.
+</td></tr>
+</table>
+
+<hr size="6">
+<a name="NOD14"></a>
+<a name="SEC13"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC12" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC14" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC12" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC12" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC15" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 2.1 Basic DAO Usage </h2>
+
+<p>The following database operations are easily accomplished by using the DAO classes:
+
+</p><dl compact="compact">
+<dd>
+<a name="IDX86"></a>
+<a name="IDX87"></a>
+<a name="IDX88"></a>
+<a name="IDX89"></a>
+</dd>
+<dt> create and persist an object to the database</dt>
+<dd>
+<p>This inserts a new row to the database table associated with the object.
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">Account account = new Account();
+account.name = &quot;Jim Coakley&quot;;
+// only 1 row should have been affected
+if (accountDao.create(account) != 1) {
+  error handling &hellip; 
+}
+</pre></td></tr></table>
+<a name="IDX90"></a>
+</dd>
+<dt> query for it's id column </dt>
+<dd>
+<p>If the object has an id field defined by the annotations, then we can lookup an object in the database using its id.
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">Account account = accountDao.queryForId(name);
+if (account == null) {
+  account not found handling &hellip; 
+}
+</pre></td></tr></table>
+<a name="IDX91"></a>
+</dd>
+<dt> update the database row associated with the object</dt>
+<dd>
+<p>If you change fields in an object, you must call update to persist those changes to the database.  This also requires
+an id field. 
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">account.password = &quot;_secret&quot;;
+// 1 row should be updated
+if (accountDao.update(account) != 1) {
+  error handling &hellip; 
+}
+</pre></td></tr></table>
+<a name="IDX92"></a>
+</dd>
+<dt> refreshing our object if the database has changed</dt>
+<dd>
+<p>If some other entity has changed a row the database corresponding to an object in memory, you will need to refresh that
+object to get the memory object up-to-date.  This also requires an id field. 
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">// 1 row should be found
+if (accountDao.refresh(account) != 1) {
+  error handling &hellip; 
+}
+</pre></td></tr></table>
+<a name="IDX93"></a>
+</dd>
+<dt> delete the account from the database</dt>
+<dd>
+<p>Removes the row that corresponds to the object from the database.  This also requires an id field.
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">// 1 row should be affected
+if (accountDao.delete(account) != 1) {
+  error handling &hellip; 
+}
+</pre></td></tr></table>
+<a name="IDX94"></a>
+<a name="IDX95"></a>
+</dd>
+<dt> iterate through all of the rows in a table:</dt>
+<dd>
+<p>The DAO is also an iterator so you can easily run through all of the rows in the database:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">// page through all of the accounts in the database
+for (Account account : accountDao) {
+    System.out.println(account.getName());
+}
+</pre></td></tr></table>
+<a name="IDX96"></a>
+<p><em>NOTE:</em> you must page through _all_ items for the iterator to close the underlying SQL object.   If you don't
+go all of the way, the garbage collector will close the SQL statement some time later which is considered bad form.
+
+</p></dd>
+</dl>
+
+<hr size="6">
+<a name="NOD15"></a>
+<a name="SEC14"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC13" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC15" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC12" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC12" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC15" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 2.2 DAO Methods </h2>
+
+<p>The DAO classes provide the following methods that you can use to store your objects to your database.
+This list may be out of date.  See the <code>Dao</code> interface class for the latest methods.
+
+</p><dl compact="compact">
+<dd>
+<a name="IDX97"></a>
+</dd>
+<dt><code> queryForId</code></dt>
+<dd>
+<p>Looks up the id in the database and retrieves an object associated with it.
+
+</p><a name="IDX98"></a>
+</dd>
+<dt><code> queryForFirst</code></dt>
+<dd>
+<p>Query for and return the first item in the object table which matches a prepared query. This can be used to return
+the object that matches a single unique column.  You should use queryForId if you want to query for the id column.
+
+</p><a name="IDX99"></a>
+</dd>
+<dt><code> queryForAll</code></dt>
+<dd>
+<p>Query for all of the items in the object table and return a list of them. For medium sized or large tables,
+you should consider using the iterator method instead.
+
+</p><a name="IDX100"></a>
+</dd>
+<dt><code> queryBuilder</code></dt>
+<dd>
+<p>Create and return a new QueryBuilder object which allows you to build a custom query.  See section <a href="ormlite_3.html#SEC15">Custom Query Builder</a>.
+
+</p><a name="IDX101"></a>
+</dd>
+<dt><code> query</code></dt>
+<dd>
+<p>Query for the items in the object table which match a prepared query.  See section <a href="ormlite_3.html#SEC15">Custom Query Builder</a>.  This returns a
+list of matching objects. For medium sized or large tables, you should consider using the iterator method instead.  
+
+</p><a name="IDX102"></a>
+</dd>
+<dt><code> create</code></dt>
+<dd>
+<p>Create a new entry in the database from an object.  Should return 1 indicating 1 row was inserted.
+
+</p><a name="IDX103"></a>
+</dd>
+<dt><code> update</code></dt>
+<dd>
+<p>Save the fields from an object to the database. If you have made changes to an object, this is how you persist
+those changes to the database. You cannot use this method to update the id field - see updateId.  This should
+return 1 since 1 row was updated.
+
+</p><a name="IDX104"></a>
+</dd>
+<dt><code> updateId</code></dt>
+<dd>
+<p>Update an object in the database to change its id to a new id. The data <em>must</em> have its current id set and
+the new-id is passed in as an argument.  After the id has been updated in the database, the id field of the data
+object will also be changed.  This should return 1 since 1 row was updated.
+
+</p><a name="IDX105"></a>
+</dd>
+<dt><code> refresh</code></dt>
+<dd>
+<p>Does a query for the object's id and copies in each of the field values from the database to refresh the data
+parameter. Any local object changes to persisted fields will be overwritten.  If the database has been updated
+this brings your local object up-to-date.  This should return 1 since 1 row was retrieved.
+
+</p><a name="IDX106"></a>
+</dd>
+<dt><code> delete</code></dt>
+<dd>
+<p>Delete an object from the database.  This should return 1 since 1 row was removed.
+
+</p><a name="IDX107"></a>
+</dd>
+<dt><code> delete (collection)</code></dt>
+<dd>
+<p>Delete a collection of objects from the database using an IN SQL clause.  This returns the number of rows that
+were deleted.
+
+</p><a name="IDX108"></a>
+</dd>
+<dt><code> deleteIds</code></dt>
+<dd>
+<p>Delete the objects that match the collection of ids from the database using an IN SQL clause.   This returns the
+number of rows that were deleted.  
+
+</p><a name="IDX109"></a>
+</dd>
+<dt><code> iterator</code></dt>
+<dd>
+<p>This method satisfies the <code>Iterable</code> Java interface for the class and allows you to iterate through the objects
+in the table using SQL.  This method allows you to do something like:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">for (Account account : accountDao) { &hellip; }
+</pre></td></tr></table>
+<p><em>WARNING:</em> See the <code>Dao</code> class for warnings about using this method.
+
+</p></dd>
+<dt><code> iterator (prepared query)</code></dt>
+<dd>
+<p>Same is the iterator method but with a prepared query parameter. See section <a href="ormlite_3.html#SEC15">Custom Query Builder</a>.
+
+</p></dd>
+</dl>
+
+<hr size="6">
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC12" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC15" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<p>
+ <font size="-1">
+  This document was generated by <em>Gray Watson</em> on <em>June, 24 2010</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+ </font>
+ <br>
+
+</p>
+</body>
+</html>
