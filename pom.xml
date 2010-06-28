@@ -40,7 +40,45 @@
 			<timezone>-5</timezone>
 		</developer>
 	</developers>
-	<build>
+	<profiles>
+		<profile>
+			<id>sourceforge</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<distributionManagement>
+				<repository>
+					<id>sourceforge</id>
+					<name>SourceForge</name>
+					<url>sftp://graywatson,ormlite@frs.sourceforge.net:/home/frs/project/o/or/ormlite/releases</url>
+				</repository>
+				<snapshotRepository>
+					<id>sourceforge</id>
+					<name>SourceForge</name>
+					<url>sftp://graywatson,ormlite@frs.sourceforge.net:/home/frs/project/o/or/ormlite/snapshots</url>
+				</snapshotRepository>
+			</distributionManagement>
+		</profile>
+		<profile>
+			<id>sonatype</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<distributionManagement>
+				<repository>
+					<id>sonatype-nexus-staging</id>
+					<name>Nexus Release Repository</name>
+					<url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+				</repository>
+				<snapshotRepository>
+					<id>sonatype-nexus-snapshots</id>
+					<name>Sonatype Nexus Snapshots</name>
+					<url>http://oss.sonatype.org/content/repositories/snapshots/</url>
+				</snapshotRepository>
+			</distributionManagement>
+		</profile>
+	</profiles>
+   	<build>
 		<finalName>ormlite</finalName>
 		<resources>
 			<resource>
@@ -156,28 +194,6 @@
 			</plugin>
 		</plugins>
 	</build>
-	<distributionManagement>
-		<!-- <repository>
-			<id>sourceforge</id>
-			<name>SourceForge</name>
-			<url>sftp://graywatson,ormlite@frs.sourceforge.net:/home/frs/project/o/or/ormlite/releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>sourceforge</id>
-			<name>SourceForge</name>
-			<url>sftp://graywatson,ormlite@frs.sourceforge.net:/home/frs/project/o/or/ormlite/snapshots</url>
-		</snapshotRepository> -->
-		<repository>
-			<id>sonatype-nexus-staging</id>
-			<name>Nexus Release Repository</name>
-			<url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-		</repository>
-		<snapshotRepository>
-			<id>sonatype-nexus-snapshots</id>
-			<name>Sonatype Nexus Snapshots</name>
-			<url>http://oss.sonatype.org/content/repositories/snapshots/</url>
-		</snapshotRepository>
-    </distributionManagement>
 	<properties>
 		<!--
 			default empty string that can be overridden on command line. due to surefire's parser bug, if we don't have this here
