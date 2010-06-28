@@ -13,7 +13,7 @@ import java.sql.SQLException;
 public interface GenericRowMapper<T> {
 
 	/**
-	 * Used to map a {@link ResultSet} to an object. Part of {@link ParameterizedRowMapper}.
+	 * Used to map a {@link ResultSet} to an object.
 	 * 
 	 * @return The created object with all of the fields set from the {@link ResultSet}.
 	 * @throws SQLException
