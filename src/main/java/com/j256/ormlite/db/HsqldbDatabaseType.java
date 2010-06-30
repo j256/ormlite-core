@@ -95,7 +95,7 @@ public class HsqldbDatabaseType extends BaseDatabaseType implements DatabaseType
 	}
 
 	@Override
-	public boolean isUpCaseEntityNames() {
+	public boolean isEntityNamesMustBeUpCase() {
 		return true;
 	}
 }

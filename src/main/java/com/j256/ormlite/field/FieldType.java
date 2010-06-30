@@ -109,7 +109,7 @@ public class FieldType {
 			this.isGeneratedId = true;
 			if (databaseType.isIdSequenceNeeded()) {
 				String seqName = databaseType.generateIdSequenceName(tableName, this);
-				if (databaseType.isUpCaseEntityNames()) {
+				if (databaseType.isEntityNamesMustBeUpCase()) {
 					seqName = seqName.toUpperCase();
 				}
 				this.generatedIdSequence = seqName;
@@ -120,7 +120,7 @@ public class FieldType {
 			this.isId = true;
 			this.isGeneratedId = true;
 			String seqName = fieldConfig.getGeneratedIdSequence();
-			if (databaseType.isUpCaseEntityNames()) {
+			if (databaseType.isEntityNamesMustBeUpCase()) {
 				seqName = seqName.toUpperCase();
 			}
 			this.generatedIdSequence = seqName;

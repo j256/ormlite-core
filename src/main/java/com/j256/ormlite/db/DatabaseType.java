@@ -122,18 +122,18 @@ public interface DatabaseType {
 	/**
 	 * Returns true if a 'CREATE TABLE' statement should return 0. False if > 0.
 	 */
-	public boolean createTableReturnsZero();
+	public boolean isCreateTableReturnsZero();
 
 	/**
 	 * Returns true if table and field names should be made uppercase.
 	 * 
 	 * <p>
 	 * Turns out that Derby and Hsqldb are doing something wrong (IMO) with entity names. If you create a table with the
-	 * name "footable" (with the quotes) then it will be created as lowercase footable in a case sensitive. However, if
-	 * you then issue the query 'select * from footable' it won't find the table because it gets promoted to be FOOTABLE
-	 * and is searched in a case sensitive manner. So for these databases, entity names have to be forced to be
-	 * uppercase so external queries will also work.
+	 * name "footable" (with the quotes) then it will be created as lowercase footable, case sensitive. However, if you
+	 * then issue the query 'select * from footable' it won't find the table because it gets promoted to be FOOTABLE and
+	 * is searched in a case sensitive manner. So for these databases, entity names have to be forced to be uppercase so
+	 * external queries will also work.
 	 * </p>
 	 */
-	public boolean isUpCaseEntityNames();
+	public boolean isEntityNamesMustBeUpCase();
 }

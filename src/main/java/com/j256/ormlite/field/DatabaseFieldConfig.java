@@ -230,7 +230,7 @@ public class DatabaseFieldConfig {
 
 		DatabaseFieldConfig config = new DatabaseFieldConfig();
 		config.fieldName = field.getName();
-		if (databaseType.isUpCaseEntityNames()) {
+		if (databaseType.isEntityNamesMustBeUpCase()) {
 			config.fieldName = config.fieldName.toUpperCase();
 		}
 		if (column != null) {
@@ -315,7 +315,7 @@ public class DatabaseFieldConfig {
 			DatabaseField databaseField) {
 		DatabaseFieldConfig config = new DatabaseFieldConfig();
 		config.fieldName = field.getName();
-		if (databaseType.isUpCaseEntityNames()) {
+		if (databaseType.isEntityNamesMustBeUpCase()) {
 			config.fieldName = config.fieldName.toUpperCase();
 		}
 		if (databaseField.columnName().length() > 0) {

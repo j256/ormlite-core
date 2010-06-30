@@ -57,7 +57,7 @@ public class HsqldbDatabaseTypeTest extends BaseDatabaseTest {
 		expect(mockDb.isIdSequenceNeeded()).andReturn(false);
 		expect(mockDb.getFieldConverter(isA(FieldType.class))).andReturn(null);
 		expect(mockDb.convertColumnName(isA(String.class))).andReturn("id");
-		expect(mockDb.isUpCaseEntityNames()).andReturn(true);
+		expect(mockDb.isEntityNamesMustBeUpCase()).andReturn(true);
 		replay(mockDb);
 		FieldType fieldType = FieldType.createFieldType(mockDb, "foo", field);
 		verify(mockDb);

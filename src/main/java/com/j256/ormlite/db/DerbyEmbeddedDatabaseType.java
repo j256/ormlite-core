@@ -115,7 +115,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 	}
 
 	@Override
-	public boolean isUpCaseEntityNames() {
+	public boolean isEntityNamesMustBeUpCase() {
 		return true;
 	}
 }

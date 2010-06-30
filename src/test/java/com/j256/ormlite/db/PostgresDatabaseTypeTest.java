@@ -46,7 +46,7 @@ public class PostgresDatabaseTypeTest extends BaseDatabaseTest {
 		expect(mockDb.isIdSequenceNeeded()).andReturn(false);
 		expect(mockDb.getFieldConverter(isA(FieldType.class))).andReturn(null);
 		expect(mockDb.convertColumnName(isA(String.class))).andReturn("id");
-		expect(mockDb.isUpCaseEntityNames()).andReturn(false);
+		expect(mockDb.isEntityNamesMustBeUpCase()).andReturn(false);
 		replay(mockDb);
 		FieldType fieldType = FieldType.createFieldType(mockDb, "foo", field);
 		verify(mockDb);

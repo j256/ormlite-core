@@ -89,7 +89,7 @@ public class TableUtils {
 			// sanity check
 			if (rowC < 0) {
 				throw new SQLException("SQL statement updated " + rowC + " rows, we were expecting >= 0: " + statement);
-			} else if (rowC > 0 && databaseType.createTableReturnsZero()) {
+			} else if (rowC > 0 && databaseType.isCreateTableReturnsZero()) {
 				throw new SQLException("SQL statement updated " + rowC + " rows, we were expecting == 0: " + statement);
 			}
 

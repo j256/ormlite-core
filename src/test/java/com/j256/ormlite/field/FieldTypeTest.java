@@ -133,7 +133,7 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 				return nameResult;
 			}
 		});
-		expect(databaseType.isUpCaseEntityNames()).andReturn(false);
+		expect(databaseType.isEntityNamesMustBeUpCase()).andReturn(false);
 		expect(databaseType.convertColumnName(isA(String.class))).andReturn("name");
 		replay(databaseType);
 		FieldType fieldType = FieldType.createFieldType(databaseType, Foo.class.getSimpleName(), nameField);

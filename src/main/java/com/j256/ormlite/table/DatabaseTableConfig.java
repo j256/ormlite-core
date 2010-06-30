@@ -89,7 +89,7 @@ public class DatabaseTableConfig<T> {
 
 	public static <T> DatabaseTableConfig<T> fromClass(DatabaseType databaseType, Class<T> clazz) {
 		String tableName = extractTableName(clazz);
-		if (databaseType.isUpCaseEntityNames()) {
+		if (databaseType.isEntityNamesMustBeUpCase()) {
 			tableName = tableName.toUpperCase();
 		}
 		return new DatabaseTableConfig<T>(clazz, tableName, extractFieldTypes(databaseType, clazz, tableName));

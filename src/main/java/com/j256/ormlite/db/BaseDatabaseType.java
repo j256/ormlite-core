@@ -320,11 +320,11 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		// noop by default.
 	}
 
-	public boolean createTableReturnsZero() {
+	public boolean isCreateTableReturnsZero() {
 		return true;
 	}
 
-	public boolean isUpCaseEntityNames() {
+	public boolean isEntityNamesMustBeUpCase() {
 		return false;
 	}
 

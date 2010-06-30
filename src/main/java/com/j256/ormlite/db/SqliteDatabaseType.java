@@ -39,7 +39,7 @@ public class SqliteDatabaseType extends BaseDatabaseType implements DatabaseType
 	}
 
 	@Override
-	public boolean createTableReturnsZero() {
+	public boolean isCreateTableReturnsZero() {
 		// 'CREATE TABLE' statements seem to return 1 for some reason
 		return false;
 	}
