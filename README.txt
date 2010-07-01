@@ -45,6 +45,9 @@ Main dependencies:
 	javax-persistence -- 1.0
 	commons-logging -- 1.1.1
 
+	The javax.persistence classes are centralized in the JavaxPersistence misc class.  The commons-logging
+	dependency is in the Logger class.  If you need to remove the dependency, see those classes.
+
 Test dependencies:
 
 	junit -- 4.8.1
