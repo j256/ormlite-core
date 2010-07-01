@@ -3,13 +3,8 @@ package com.j256.ormlite.field;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-
 import com.j256.ormlite.db.DatabaseType;
+import com.j256.ormlite.misc.JavaxPersistence;
 import com.j256.ormlite.table.DatabaseTableConfig;
 
 /**
@@ -209,7 +204,7 @@ public class DatabaseFieldConfig {
 
 	/**
 	 * Create and return a config converted from a {@link Field} that may have either a {@link DatabaseField} annotation
-	 * or {@link Column} annotation.
+	 * or the javax.persistence annotations.
 	 */
 	public static DatabaseFieldConfig fromField(DatabaseType databaseType, Field field) {
 		// first we lookup the DatabaseField annotation
@@ -218,41 +213,15 @@ public class DatabaseFieldConfig {
 			return fromDatabaseField(databaseType, field, databaseField);
 		}
 
-		// then we lookup the Column annotation
-		Column column = field.getAnnotation(Column.class);
-		Id id = field.getAnnotation(Id.class);
-		GeneratedValue generatedValue = field.getAnnotation(GeneratedValue.class);
-		OneToOne oneToOne = field.getAnnotation(OneToOne.class);
-		ManyToOne manyToOne = field.getAnnotation(ManyToOne.class);
-		if (column == null && id == null && oneToOne == null && manyToOne == null) {
-			return null;
+		/*
+		 * NOTE: to remove javax.persistence usage, comment the following lines out
+		 */
+		DatabaseFieldConfig config = JavaxPersistence.createFieldConfig(databaseType, field);
+		if (config != null) {
+			return config;
 		}
 
-		DatabaseFieldConfig config = new DatabaseFieldConfig();
-		config.fieldName = field.getName();
-		if (databaseType.isEntityNamesMustBeUpCase()) {
-			config.fieldName = config.fieldName.toUpperCase();
-		}
-		if (column != null) {
-			if (column.name().length() > 0) {
-				config.columnName = column.name();
-			}
-			config.width = column.length();
-			config.canBeNull = column.nullable();
-		}
-		if (id != null) {
-			if (generatedValue != null) {
-				// generatedValue only works if it is also an id according to {@link GeneratedValue)
-				config.generatedId = true;
-			} else {
-				config.id = true;
-			}
-		}
-		// foreign values are always ones we can't map as primitives (or Strings)
-		config.foreign = (oneToOne != null || manyToOne != null);
-		config.jdbcType = JdbcType.lookupClass(field.getType());
-		config.useGetSet = (findGetMethod(field, false) != null && findSetMethod(field, false) != null);
-		return config;
+		return null;
 	}
 
 	/**

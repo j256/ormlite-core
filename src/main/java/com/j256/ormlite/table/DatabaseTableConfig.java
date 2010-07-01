@@ -4,12 +4,11 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Entity;
-
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.misc.JavaxPersistence;
 
 /**
  * Database table configuration information.
@@ -112,18 +111,20 @@ public class DatabaseTableConfig<T> {
 
 	private static <T> String extractTableName(Class<T> clazz) {
 		DatabaseTable databaseTable = clazz.getAnnotation(DatabaseTable.class);
-		String name;
+		String name = null;
 		if (databaseTable != null && databaseTable.tableName() != null && databaseTable.tableName().length() > 0) {
 			name = databaseTable.tableName();
 		} else {
-			Entity entity = clazz.getAnnotation(Entity.class);
-			if (entity != null && entity.name() != null && entity.name().length() > 0) {
-				name = entity.name();
-			} else {
-				name = clazz.getSimpleName();
+			/*
+			 * NOTE: to remove javax.persistence usage, comment the following line out
+			 */
+			name = JavaxPersistence.getEntityName(clazz);
+			if (name == null) {
+				// if the name isn't specified, it is the class name lowercased
+				name = clazz.getSimpleName().toLowerCase();
 			}
 		}
-		return name.toLowerCase();
+		return name;
 	}
 
 	private FieldType[] convertFieldConfigs(DatabaseType databaseType, String tableName,
