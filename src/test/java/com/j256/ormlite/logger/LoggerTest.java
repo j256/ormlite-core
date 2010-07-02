@@ -7,7 +7,6 @@ import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.apache.commons.logging.Log;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,7 +19,7 @@ public class LoggerTest {
 	@Before
 	public void before() {
 		logger = new Logger(getClass().getName());
-		mockLog = createMock(org.apache.commons.logging.Log.class);
+		mockLog = createMock(Log.class);
 		logger.setLog(mockLog);
 	}
 

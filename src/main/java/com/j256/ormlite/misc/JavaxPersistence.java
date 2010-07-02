@@ -14,7 +14,7 @@ import com.j256.ormlite.field.DatabaseFieldConfig;
 import com.j256.ormlite.field.JdbcType;
 
 /**
- * Wanted to isolate the javax.persistence annotations in one class so it can easily be short-circuited.
+ * Class for isolating the javax.persistence annotations in one class so that dependency can be removed.
  * 
  * @author graywatson
  */

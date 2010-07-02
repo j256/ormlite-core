@@ -2,12 +2,14 @@ package com.j256.ormlite.logger;
 
 import java.util.Arrays;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
- * Class which wraps {@link Log} and provides {} argument features like slf4j. It will also allow us to plug in
- * additional log systems in the future if necessary.
+ * Class which wraps our {@link Log} inteface and provides {} argument features like slf4j. It will also allow us to
+ * plug in additional log systems in the future if necessary.
+ * 
+ * <p>
+ * By default this used the apache commons logging classes but you can change the constructor below to remove the
+ * dependency on commons-logging.
+ * </p>
  * 
  * @author graywatson
  */
@@ -17,7 +19,12 @@ public class Logger {
 	private Log log;
 
 	public Logger(String className) {
-		log = LogFactory.getLog(className);
+		/*
+		 * Uncomment the below line and remove the ApacheCommonsLog reference and import to remove the commons-logging
+		 * dependency.
+		 */
+		// log = new LocalLog(className);
+		log = new ApacheCommonsLog(className);
 	}
 
 	/**
@@ -159,7 +166,7 @@ public class Logger {
 	}
 
 	/**
-	 * Set the delagation {@link Log}. For testing purposes.
+	 * Set the delegation {@link Log}. For testing purposes.
 	 */
 	void setLog(Log log) {
 		this.log = log;
