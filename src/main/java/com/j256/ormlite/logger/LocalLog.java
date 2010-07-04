@@ -22,6 +22,7 @@ public class LocalLog implements Log {
 
 	private final static String LOCAL_LOG_LEVEL_PROPERTY = "com.j256.ormlite.logger.level";
 	private final static String LOCAL_LOG_FILE_PROPERTY = "com.j256.ormlite.logger.file";
+
 	private final static Level DEFAULT_LEVEL = Level.DEBUG;
 	private static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
 
@@ -47,7 +48,7 @@ public class LocalLog implements Log {
 			try {
 				matchedLevel = Level.valueOf(prop.toUpperCase());
 			} catch (IllegalArgumentException e) {
-				matchedLevel = DEFAULT_LEVEL;
+				throw new IllegalArgumentException("Level '" + prop + "' was not found", e);
 			}
 			this.level = matchedLevel;
 		}

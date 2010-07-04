@@ -4,8 +4,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Class which wraps {@link Log} and provides {} argument features like slf4j. It will also allow us to plug in
- * additional log systems in the future if necessary.
+ * Class which implements {@link Log} by delegating the Apache commons logging classes. Yes we are delegating to a
+ * delegating class.
  * 
  * @author graywatson
  */
