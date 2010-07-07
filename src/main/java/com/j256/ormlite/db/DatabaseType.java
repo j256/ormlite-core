@@ -1,5 +1,6 @@
 package com.j256.ormlite.db;
 
+import java.sql.PreparedStatement;
 import java.util.List;
 
 import com.j256.ormlite.field.FieldConverter;
@@ -94,9 +95,10 @@ public interface DatabaseType {
 	public boolean isVarcharFieldWidthSupported();
 
 	/**
-	 * Return true if the database supports the LIMIT sql command.
+	 * Return true if the database supports the LIMIT SQL command. Otherwise we have to use the
+	 * {@link PreparedStatement#setMaxRows} instead. See prepareSqlStatement in MappedPreparedQuery.
 	 */
-	public boolean isLimitSupported();
+	public boolean isLimitSqlSupported();
 
 	/**
 	 * Return true if the LIMIT should be called after SELECT otherwise at the end of the WHERE (the default).

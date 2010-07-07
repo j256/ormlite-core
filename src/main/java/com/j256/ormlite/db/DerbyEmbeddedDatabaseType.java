@@ -75,7 +75,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 	}
 
 	@Override
-	public boolean isLimitSupported() {
+	public boolean isLimitSqlSupported() {
 		return false;
 	}
 

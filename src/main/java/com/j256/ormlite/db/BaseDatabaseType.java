@@ -293,7 +293,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		return true;
 	}
 
-	public boolean isLimitSupported() {
+	public boolean isLimitSqlSupported() {
 		return true;
 	}
 
