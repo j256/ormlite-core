@@ -2,7 +2,6 @@ package com.j256.ormlite.stmt;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import com.j256.ormlite.dao.BaseJdbcDao;
@@ -35,6 +34,9 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 	private T last = null;
 	private int rowC = 0;
 
+	/**
+	 * If the statement parameter is null then this won't log information
+	 */
 	public SelectIterator(Class<T> dataClass, BaseJdbcDao<T, ID> classDao, GenericRowMapper<T> rowMapper,
 			PreparedStatement preparedStatement, String statement) throws SQLException {
 		this.dataClass = dataClass;
@@ -190,12 +192,5 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 				logger.debug("closed iterator @{} after {} rows", hashCode(), rowC);
 			}
 		}
-	}
-
-	/**
-	 * Internal method for getting information about the result set.
-	 */
-	ResultSetMetaData getResultSetMetaData() throws SQLException {
-		return resultSet.getMetaData();
 	}
 }

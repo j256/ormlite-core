@@ -53,7 +53,6 @@ public class StatementExecutor<T, ID> {
 	private final MappedUpdateId<T, ID> mappedUpdateId;
 	private final MappedDelete<T> mappedDelete;
 	private final MappedRefresh<T, ID> mappedRefresh;
-	private final static StringArrayRowMapper stringArrayRowMapper = new StringArrayRowMapper();
 
 	/**
 	 * Provides statements for various SQL operations.
@@ -146,10 +145,9 @@ public class StatementExecutor<T, ID> {
 		SelectIterator<String[], Void> iterator = null;
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(query);
-			iterator =
-					new SelectIterator<String[], Void>(String[].class, null, stringArrayRowMapper, preparedStatement,
-							null /* we don't want it to log */);
-			RawResultsList results = new RawResultsList(iterator.getResultSetMetaData());
+			RawResultsList results = new RawResultsList(preparedStatement.getMetaData());
+			// statement arg is null because we don't want it to double log below
+			iterator = new SelectIterator<String[], Void>(String[].class, null, results, preparedStatement, null);
 			while (iterator.hasNextThrow()) {
 				results.add(iterator.nextThrow());
 			}
@@ -268,24 +266,9 @@ public class StatementExecutor<T, ID> {
 	}
 
 	/**
-	 * Row mapper which handles our String[] raw results.
+	 * Base class for raw results objects. It is also a row mapper to save on another object.
 	 */
-	private static class StringArrayRowMapper implements GenericRowMapper<String[]> {
-		public String[] mapRow(ResultSet rs, int rowNum) throws SQLException {
-			ResultSetMetaData metaData = rs.getMetaData();
-			int colN = metaData.getColumnCount();
-			String[] result = new String[colN];
-			for (int colC = 0; colC < colN; colC++) {
-				result[colC] = rs.getString(colC + 1);
-			}
-			return result;
-		}
-	}
-
-	/**
-	 * Base class for raw results objects;
-	 */
-	private abstract static class BaseRawResults implements RawResults {
+	private abstract static class BaseRawResults implements RawResults, GenericRowMapper<String[]> {
 
 		protected final int columnN;
 		protected final String[] columnNames;
@@ -296,6 +279,25 @@ public class StatementExecutor<T, ID> {
 			for (int colC = 0; colC < this.columnN; colC++) {
 				this.columnNames[colC] = metaData.getColumnName(colC + 1);
 			}
+		}
+
+		public int getNumberColumns() {
+			return columnN;
+		}
+
+		public String[] getColumnNames() {
+			return columnNames;
+		}
+
+		/**
+		 * Row mapper which handles our String[] raw results.
+		 */
+		public String[] mapRow(ResultSet rs, int rowNum) throws SQLException {
+			String[] result = new String[columnN];
+			for (int colC = 0; colC < columnN; colC++) {
+				result[colC] = rs.getString(colC + 1);
+			}
+			return result;
 		}
 	}
 
@@ -310,20 +312,12 @@ public class StatementExecutor<T, ID> {
 			super(metaData);
 		}
 
-		public void add(String[] result) throws SQLException {
+		void add(String[] result) throws SQLException {
 			results.add(result);
 		}
 
-		public int size() {
+		int size() {
 			return results.size();
-		}
-
-		public int getNumberColumns() {
-			return this.columnN;
-		}
-
-		public String[] getColumnNames() {
-			return columnNames;
 		}
 
 		public CloseableIterator<String[]> iterator() {
@@ -369,19 +363,10 @@ public class StatementExecutor<T, ID> {
 			this.statement = statement;
 		}
 
-		public int getNumberColumns() {
-			return this.columnN;
-		}
-
-		public String[] getColumnNames() {
-			return columnNames;
-		}
-
 		public CloseableIterator<String[]> iterator() {
 			try {
 				// we do this so we can iterate through the results multiple times
-				return new SelectIterator<String[], Void>(String[].class, null, StatementExecutor.stringArrayRowMapper,
-						statement, query);
+				return new SelectIterator<String[], Void>(String[].class, null, this, statement, query);
 			} catch (SQLException e) {
 				// we have to do this because iterator can't throw Exceptions
 				throw new RuntimeException(e);
