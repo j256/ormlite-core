@@ -82,6 +82,6 @@ public class DerbyEmbeddedDatabaseTypeTest extends BaseDatabaseTest {
 	@Override
 	@Test
 	public void testLimitSupport() throws Exception {
-		assertFalse(databaseType.isLimitSupported());
+		assertFalse(databaseType.isLimitSqlSupported());
 	}
 }

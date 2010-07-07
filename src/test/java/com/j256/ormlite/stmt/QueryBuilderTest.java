@@ -538,6 +538,24 @@ public class QueryBuilderTest extends BaseOrmLiteTest {
 	}
 
 	@Test
+	public void testLimitDoublePrepare() throws Exception {
+		Dao<Foo, String> fooDao = createTestData();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
+		// no limit the default
+		List<Foo> results = fooDao.query(qb.prepareQuery());
+		assertEquals(2, results.size());
+		assertEquals(foo1, results.get(0));
+		assertEquals(foo2, results.get(1));
+		qb.limit(1);
+		results = fooDao.query(qb.prepareQuery());
+		assertEquals(1, results.size());
+		assertEquals(foo1, results.get(0));
+		results = fooDao.query(qb.prepareQuery());
+		assertEquals(1, results.size());
+		assertEquals(foo1, results.get(0));
+	}
+
+	@Test
 	public void testLimitAfterSelect() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
 		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();

@@ -62,12 +62,12 @@ public class MappedPreparedQueryTest extends BaseOrmLiteTest {
 		TableInfo<Foo> tableInfo = new TableInfo<Foo>(databaseType, Foo.class);
 		MappedPreparedQuery<Foo> preparedQuery =
 				new MappedPreparedQuery<Foo>(tableInfo, "select * from " + TABLE_NAME, new ArrayList<FieldType>(),
-						Arrays.asList(tableInfo.getFieldTypes()), new ArrayList<SelectArg>(), null);
+						Arrays.asList(tableInfo.getFieldTypes()), new ArrayList<SelectArg>(), 1);
 
-		preparedQuery.setLimit(1);
 		checkResults(foos, preparedQuery, 1);
-		// now set for no limit
-		preparedQuery.setLimit(null);
+		preparedQuery =
+				new MappedPreparedQuery<Foo>(tableInfo, "select * from " + TABLE_NAME, new ArrayList<FieldType>(),
+						Arrays.asList(tableInfo.getFieldTypes()), new ArrayList<SelectArg>(), null);
 		checkResults(foos, preparedQuery, 2);
 	}
 

@@ -157,7 +157,7 @@ public class QueryBuilder<T, ID> {
 		List<SelectArg> selectArgList = new ArrayList<SelectArg>();
 		String statement = buildSelectString(argFieldTypeList, resultFieldTypeList, selectArgList);
 		return new MappedPreparedQuery<T>(tableInfo, statement, argFieldTypeList, resultFieldTypeList, selectArgList,
-				limit);
+				(databaseType.isLimitSqlSupported() ? null : limit));
 	}
 
 	/**
@@ -310,10 +310,8 @@ public class QueryBuilder<T, ID> {
 	}
 
 	private void appendLimit(StringBuilder sb) {
-		if (limit != null && databaseType.isLimitSupported()) {
+		if (limit != null && databaseType.isLimitSqlSupported()) {
 			databaseType.appendLimitValue(sb, limit);
-			// we set this to null to not affect the jdbc call later
-			limit = null;
 		}
 	}
 

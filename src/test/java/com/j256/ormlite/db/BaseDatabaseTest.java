@@ -82,7 +82,7 @@ public abstract class BaseDatabaseTest extends BaseOrmLiteTest {
 
 	@Test
 	public void testLimitSupport() throws Exception {
-		assertTrue(databaseType.isLimitSupported());
+		assertTrue(databaseType.isLimitSqlSupported());
 	}
 
 	@Test
@@ -92,7 +92,7 @@ public abstract class BaseDatabaseTest extends BaseOrmLiteTest {
 
 	@Test
 	public void testLimitFormat() throws Exception {
-		if (!databaseType.isLimitSupported()) {
+		if (!databaseType.isLimitSqlSupported()) {
 			return;
 		}
 		TableInfo<Foo> tableInfo = new TableInfo<Foo>(databaseType, Foo.class);
