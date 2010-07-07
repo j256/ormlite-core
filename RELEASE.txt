@@ -33,3 +33,5 @@ To release ORMLite:
 11) Possibly publish to annoucements if the release needs more information.
 
 12) Watch to make sure the central repository was updated.
+
+13) Change the ormliteTest pom.xml to new snapshot version.
