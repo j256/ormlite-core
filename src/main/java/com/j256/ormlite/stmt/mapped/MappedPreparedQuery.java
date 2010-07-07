@@ -19,7 +19,7 @@ import com.j256.ormlite.table.TableInfo;
 public class MappedPreparedQuery<T> extends BaseMappedQuery<T> implements PreparedQuery<T> {
 
 	private final SelectArg[] selectArgs;
-	private Integer limit;
+	private final Integer limit;
 
 	public MappedPreparedQuery(TableInfo<T> tableInfo, String statement, List<FieldType> argFieldTypeList,
 			List<FieldType> resultFieldTypeList, List<SelectArg> selectArgList, Integer limit) {
@@ -63,16 +63,6 @@ public class MappedPreparedQuery<T> extends BaseMappedQuery<T> implements Prepar
 			logger.trace("prepared statement arguments: {}", (Object) args);
 		}
 		return stmt;
-	}
-
-	/**
-	 * Set the limit on the prepared query. Set to null to have no limit. You need to call {@link #prepareSqlStatement}
-	 * after this
-	 * 
-	 * NOTE: Maybe used only for testing.
-	 */
-	public void setLimit(Integer limit) {
-		this.limit = limit;
 	}
 
 	public String getStatement() {
