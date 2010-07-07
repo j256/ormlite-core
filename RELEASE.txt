@@ -6,16 +6,30 @@ To release ORMLite:
 
 3) https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
 
-   mvn release:clean
-   mvn release:prepare
-   mvn release:perform
+   mvn -P st release:clean
+   mvn -P st release:prepare
+   mvn -P st release:perform
 
-4) mvn -P sourceforge
+4) Go into the tags directory.  svn up to get the latest release hierarchy.
 
-5) Go to SF and set the default download to the newest jar
+5) From the tags directory:  mvn -P sf deploy
 
-6) Add a News section to SF.
+6) Go to SF and set the default download to the newest jar
 
-7) Possibly publish to annoucements if the release needs more information.
+7) Create a sf shell.  Explode the javadocs with the newest release:
 
-8) Watch to make sure the central repository was updated.
+   cd ormlite_web/htdocs/javadoc
+   rm -rf * ; unzip ~/frs/releases/com/j256/ormlite/X.X/ormlite-X.X-javadoc.jar
+
+8) Possibly trim the older releases in the release directory.
+
+    cd ~/frs/releases/com/j256/ormlite
+    rm -rf 1.11 1.12
+
+9) shutdown the sf shell
+
+10) Add a News section to SF with the svn log highlights
+
+11) Possibly publish to annoucements if the release needs more information.
+
+12) Watch to make sure the central repository was updated.

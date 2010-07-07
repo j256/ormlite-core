@@ -42,7 +42,7 @@
 	</developers>
 	<profiles>
 		<profile>
-			<id>sourceforge</id>
+			<id>sf</id>
 			<distributionManagement>
 				<repository>
 					<id>sourceforge</id>
@@ -57,7 +57,7 @@
 			</distributionManagement>
 		</profile>
 		<profile>
-			<id>sonatype</id>
+			<id>st</id>
 			<distributionManagement>
 				<repository>
 					<id>sonatype-nexus-staging</id>
