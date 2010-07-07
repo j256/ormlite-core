@@ -17,11 +17,6 @@ import com.j256.ormlite.table.TableUtils;
  * auto-created if the property name in TableCreator.AUTO_DROP_TABLES property has been set to true.
  * 
  * <p>
- * This looks through the context for classes which extend {@link BaseJdbcDao}. For each DAO, it gets the data-class and
- * then creates a table for it if the system property is true.
- * </p>
- * 
- * <p>
  * <b> NOTE: </b> If you are using the Spring type wiring in Java, {@link #initialize} should be called after all of the
  * set methods. In Spring XML, init-method="initialize" should be used.
  * </p>

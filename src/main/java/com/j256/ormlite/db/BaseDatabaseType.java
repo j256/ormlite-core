@@ -7,12 +7,12 @@ import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 
 /**
- * Base class for all of the {@link DatabaseType} classes that provide the per-database type functionality to build
- * tables and queries.
+ * Base class for all of the {@link DatabaseType} classes that provide the per-database type functionality to create
+ * tables and build queries.
  * 
  * <p>
- * Good URL for showing some of the <a href="http://www.1keydata.com/sql/sql-primary-key.html" >differences between SQL
- * versions</a>
+ * Here's a good page which shows some of the <a href="http://www.1keydata.com/sql/sql-primary-key.html" >differences
+ * between SQL versions</a>.
  * </p>
  * 
  * @author graywatson

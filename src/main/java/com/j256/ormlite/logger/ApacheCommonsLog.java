@@ -4,8 +4,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Class which implements {@link Log} by delegating the Apache commons logging classes. Yes we are delegating to a
- * delegating class.
+ * Class which implements our {@link com.j256.ormlite.logger.Log} interface by delegating to the Apache commons logging
+ * classes. Yes we are delegating to a delegating class. This is here so it can easily be removed and be replaced by the
+ * {@link LocalLog} class so we can remove the dependency.
  * 
  * @author graywatson
  */

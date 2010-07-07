@@ -3,12 +3,12 @@ package com.j256.ormlite.logger;
 import java.util.Arrays;
 
 /**
- * Class which wraps our {@link Log} inteface and provides {} argument features like slf4j. It will also allow us to
- * plug in additional log systems in the future if necessary.
+ * Class which wraps our {@link Log} inteface and provides {} argument features like slf4j. It allows us to plug in
+ * additional log systems if necessary.
  * 
  * <p>
- * By default this used the apache commons logging classes but you can change the constructor below to remove the
- * dependency on commons-logging.
+ * <b>NOTE:</b> By default this used the apache commons logging classes but you can change the constructor below to
+ * remove the dependency on commons-logging.
  * </p>
  * 
  * @author graywatson

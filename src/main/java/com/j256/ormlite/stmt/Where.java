@@ -25,11 +25,11 @@ import com.j256.ormlite.stmt.query.Or;
 import com.j256.ormlite.table.TableInfo;
 
 /**
- * Hierarchy of clauses that make up the WHERE statement in a SQL. You get one of these when you call
+ * Manages the various clauses that make up the WHERE part of a SQL statement. You get one of these when you call
  * {@link QueryBuilder#where} or you can set the where clause by calling {@link QueryBuilder#setWhere}.
  * 
  * <p>
- * For a good tutorial of SQL commands, see the following URL: http://www.w3schools.com/Sql/
+ * Here's a page with a <a href="http://www.w3schools.com/Sql/" >good tutorial of SQL commands</a>.
  * </p>
  * 
  * <p>

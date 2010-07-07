@@ -9,17 +9,17 @@ import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.stmt.mapped.MappedPreparedQuery;
-import com.j256.ormlite.stmt.mapped.MappedQueryForId;
 import com.j256.ormlite.stmt.query.OrderBy;
 import com.j256.ormlite.table.TableInfo;
 
 /**
  * Assists in building SQL query (select) statements for a particular table in a particular database. Uses the
- * {@link DatabaseType} to get per-database SQL statements. By default all columns are returned with a blank where
- * clause doing the equivalent of 'select * from table'.
+ * {@link DatabaseType} to get per-database SQL statements. By default the resulting queries will return objects with
+ * all columns -- doing the equivalent of 'select * from table'. See {@link #columns(Iterable)} or
+ * {@link #columns(String...)} to return partial column lists.
  * 
  * <p>
- * For a good tutorial of SQL commands, see the following URL: http://www.w3schools.com/Sql/
+ * Here is a <a href="http://www.w3schools.com/Sql/" >good tutorial of SQL commands</a>.
  * </p>
  * 
  * @param T
@@ -315,7 +315,7 @@ public class QueryBuilder<T, ID> {
 		}
 	}
 
-	/**
+	/*
 	 * Inner class used to hide from the user the {@link QueryBuilder#buildSelectString} method. The buildQuery method
 	 * is needed for mapped mapped statements such as {@link MappedQueryForId} but I didn't want the dao user to access
 	 * it directly.

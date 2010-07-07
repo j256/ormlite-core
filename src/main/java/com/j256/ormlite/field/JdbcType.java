@@ -24,8 +24,8 @@ import com.j256.ormlite.misc.SqlExceptionUtil;
  * </p>
  * 
  * <p>
- * Good URL for type <a href="http://docs.codehaus.org/display/CASTOR/Type+Mapping" >mapping for a number of database
- * types</a>:
+ * Here's a good page about the <a href="http://docs.codehaus.org/display/CASTOR/Type+Mapping" >mapping for a number of
+ * database types</a>:
  * </p>
  * 
  * @author graywatson

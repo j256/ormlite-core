@@ -13,8 +13,8 @@ import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableInfo;
 
 /**
- * Per field information configured with information from the {@link DatabaseField} annotation and the associated
- * {@link Field} in the class. Use the {@link #createFieldType} static method to instantiate the class.
+ * Per field information configured from the {@link DatabaseField} annotation and the associated {@link Field} in the
+ * class. Use the {@link #createFieldType} static method to instantiate the class.
  * 
  * @author graywatson
  */

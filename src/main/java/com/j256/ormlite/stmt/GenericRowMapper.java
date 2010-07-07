@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Parameterized version similar to Spring's RowMapper.
+ * Parameterized version similar to Spring's RowMapper which converts a result row into an object.
  * 
  * @param <T>
  *            Type that the mapRow returns.
@@ -13,7 +13,7 @@ import java.sql.SQLException;
 public interface GenericRowMapper<T> {
 
 	/**
-	 * Used to map a {@link ResultSet} to an object.
+	 * Used to convert a {@link ResultSet} row to an object.
 	 * 
 	 * @return The created object with all of the fields set from the {@link ResultSet}.
 	 * @throws SQLException

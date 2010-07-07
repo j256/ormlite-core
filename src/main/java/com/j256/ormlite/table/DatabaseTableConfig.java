@@ -11,7 +11,8 @@ import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.misc.JavaxPersistence;
 
 /**
- * Database table configuration information.
+ * Database table configuration information either supplied by Spring or direct Java wiring or from a
+ * {@link DatabaseTable} annotation.
  * 
  * @author graywatson
  */
