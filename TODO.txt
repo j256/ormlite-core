@@ -42,3 +42,10 @@
 
 - maybe add rawUpdate and rawExecute?
 	- need to document the raw query, iterator, update, execute in .texi
+	- need to add a section about how to use the raw queries and the RawResults class
+	- need to take about closing of the RawResults
+
+- for objects that a user does not have control over, how about the ability of defining a Method to construct a particular class
+	- when you create the dao, you have to somehow inject a Method which returns a new object of a certain type
+	- this will allow you to call a constructor with (for example) some null fields to get an instance that can be overridden
+	- should we do the same for setters and getters?  use this method to set the field, use this to get it?

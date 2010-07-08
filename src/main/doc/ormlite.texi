@@ -127,7 +127,7 @@ Gray Watson @uref{http://256.com/gray/}
 * Persisted Types::             The data types that are persisted.
 * DAOs::                        How to configure the Database Access Objects.
 * DataSource::                  Setting up your JDBC data source.
-* Connection::                  How to connect to your database.
+* Database Type::               Defining your database type.
 * Complete Wiring::             Tying all of the wiring together.
 @end menu
 
@@ -145,7 +145,12 @@ that these are listed in your Maven, Ant, or @dots{} configuration files.
 For logging, @value{package} has a loose wrapper around apache commons-logging.  You
 can remove this dependency by editing @code{com.j256.ormlite.logger.Logger}.  As of
 this writing, we use version 1.1.1 of commons logging.  Previous or later versions 
-should also work.
+should also work.  With commons logging, you can use @code{log4j} or other logging
+packages to log messages to the terminal or logfiles. 
+
+The commons-logging dependency has been centralized in the @code{ApacheCommonsLog} class.
+If you want to remove the dependency, you can change the constructor in the @code{Logger}
+class to instead use the @code{LocalLog} class as a replacement.
 
 @item javax.persistence
 
@@ -153,31 +158,11 @@ To provide compatibility with other persistence packages, @value{package} depend
 the JavaX persistence annotations.  As of this writing, we use version 1.0 of the
 persistence package.
 
+Usage of the @code{javax.persistence} classes has been centralized in the
+@code{JavaxPersistence} misc class.  You can remove the dependency by returning null
+from the methods there.
+  
 @end table
-
-@emph{NOTE:} Usage of the @code{javax.persistence} classes are centralized in the
-@code{JavaxPersistence} misc class.  You can remove the requirement for that package
-by returning null from the methods there.  The commons-logging dependency is in
-the @code{Logger} class.  You can use the @code{LocalLog} class instead to remove
-that dependency.
-
-For those maven-ites, here is the section from the pom that you will need to have in
-your pom.
-
-@example
-<properties>
-    <ormlite-version>@value{ormlite_version}</ormlite-version>
-    @dots{}
-</properties>
-<dependencies>
-    <dependency>
-        <groupId>com.j256</groupId>
-        <artifactId>ormlite</artifactId>
-        <version>$@{ormlite-version@}</version>
-    </dependency>
-    @dots{}
-</dependencies>
-@end example 
 
 If you want to get the @value{package} Junit tests to run, there are test dependencies on the following packages:
 
@@ -185,7 +170,7 @@ If you want to get the @value{package} Junit tests to run, there are test depend
 
 @item org.junit
 
-We use Junit for our unit tasks.  Pretty simple/easy.
+We use Junit for our unit tasks.
 
 @item org.easymock.easymock
 
@@ -194,13 +179,13 @@ concentrate on testing a particular class instead of the whole package.
 
 @item com.h2database
 
-As a test database implementation, H2 is fast and easy to use.  Not as recommended as a production level database.
+As a test database implementation, H2 is very fast and simple to use.  Not as recommended as a production level database.
 
 @item org.apache.log4j
 
-For logging to files using the @code{log4j.properties} config.  In the log4j package, you can exclude the following:
-@code{com.sun.jmx.jmxri}, @code{com.sun.jdmk.jmxtools}, @code{javax.activation.activation}, @code{javax.jms.jms},
-@code{javax.mail.mail}.
+For logging to files using the @code{log4j.properties} config.  In the log4j package, you can exclude the following
+dependencies: @code{com.sun.jmx.jmxri}, @code{com.sun.jdmk.jmxtools}, @code{javax.activation.activation},
+@code{javax.jms.jms}, @code{javax.mail.mail}.
 
 @end table
 
@@ -211,9 +196,9 @@ For logging to files using the @code{log4j.properties} config.  In the log4j pac
 To setup your classes to be persisted you need to do the following things:
 
 @enumerate
-@item Add the @@DatabaseTable annotation to the top of our class.  You can also use @@Entity
+@item Add the @@DatabaseTable annotation to the top of each class.  You can also use @@Entity.
 @item Add the @@DatabaseField annotation right before each field to be persisted.  You can also use @@Column and others.
-@item Add a no-argument constructor with at least package permissions.
+@item Add a no-argument constructor with at least package permissions to each class.
 @end enumerate
 
 @menu
@@ -248,7 +233,8 @@ public class Account @{
 @end example
 
 The @code{@@DatabaseTable} annotations can have an optional @code{tableName} argument which specifies the name of the table
-that corresponds to the class.   If not specified, the class name all lowercase is used by default.
+that corresponds to the class.   If not specified, the class name all lowercase is used by default.  With the above example
+each @code{Account} object will be persisted as a row in the @code{accounts} table in the database.
 
 @cindex @@DatabaseField
 @cindex DatabaseField annotation
@@ -656,7 +642,7 @@ implementations if there are specific operations that are needed and not provide
 More on how to use these DAOs later. @xref{DAO Usage}.
 
 @c ----------------------------------------------------------------
-@node DataSource, Connection, DAOs, Getting Started
+@node DataSource, Database Type, DAOs, Getting Started
 @section JDBC Data Sources
 
 @cindex data source
@@ -703,8 +689,8 @@ try @{
 @end example
 
 @c ----------------------------------------------------------------
-@node Connection, Complete Wiring, DataSource, Getting Started
-@section Database Connections
+@node Database Type, Complete Wiring, DataSource, Getting Started
+@section Database Type
 
 @cindex database type
 @cindex DatabaseTypeUtils
@@ -744,16 +730,16 @@ DatabaseType databaseType = new H2DatabaseType();
 databaseType.loadDriver();
 @end example
 
-For more information about the database specific code in the DatabaseType.  @xref{Database Type}.
+For more information about the database specific code in the DatabaseType.  @xref{Database Type Details}.
 
 @c ----------------------------------------------------------------
-@node Complete Wiring, DAO Usage, Connection, Getting Started
+@node Complete Wiring, DAO Usage, Database Type, Getting Started
 @section Tying It All Together
 
 @cindex usage example
-So you have annotated the objects to persist, added the no-arg constructor, defined your DAO classes, established your
-DatabaseType, and created your DataSource.  You are ready to start persisting and querying your database objects.  The
-following code ties it all together:
+So you have annotated the objects to be persisted, added the no-arg constructor, defined your DAO classes,
+created your DataSource, and established your DatabaseType.  You are ready to start persisting and querying
+your database objects.  The following code ties it all together:
 
 @example
 // h2 by default but change to match your database
@@ -898,7 +884,7 @@ for (Account account : accountDao) @{
 @end example
 
 @cindex closing an iterator 
-@emph{NOTE:} you must page through _all_ items for the iterator to close the underlying SQL object.   If you don't
+@emph{NOTE:} you must page through @emph{all} items for the iterator to close the underlying SQL object.   If you don't
 go all of the way, the garbage collector will close the SQL statement some time later which is considered bad form.
 
 @end table
@@ -928,7 +914,16 @@ the object that matches a single unique column.  You should use queryForId if yo
 @item queryForAll
 
 Query for all of the items in the object table and return a list of them. For medium sized or large tables,
-you should consider using the iterator method instead.
+this may load a lot of objects into memory so you should consider using the iterator method instead.
+
+@cindex query for all raw
+@cindex raw select statements
+@cindex executing raw select statements
+@item queryForAllRaw
+
+Query for all of the items in the object table that match the SQL select query argument. This method allows you
+to do special queries that aren't supported otherwise. For medium sized or large tables, this may load a lot of 
+objects into memory so you should consider using the @code{iteratorRaw} method instead.
 
 @cindex query builder
 @item queryBuilder
@@ -939,7 +934,8 @@ Create and return a new QueryBuilder object which allows you to build a custom q
 @item query
 
 Query for the items in the object table which match a prepared query.  @xref{Query Builder}.  This returns a
-list of matching objects. For medium sized or large tables, you should consider using the iterator method instead.  
+list of matching objects. For medium sized or large tables, this may load a lot of objects into memory so you
+should consider using the iterator method instead.  
 
 @cindex creating an object
 @item create
@@ -978,7 +974,7 @@ Delete an object from the database.  This should return 1 since 1 row was remove
 Delete a collection of objects from the database using an IN SQL clause.  This returns the number of rows that
 were deleted.
 
-@cindex delete object by id
+@cindex delete objects by id
 @item deleteIds
 
 Delete the objects that match the collection of ids from the database using an IN SQL clause.   This returns the
@@ -999,6 +995,13 @@ for (Account account : accountDao) @{ @dots{} @}
 @item iterator (prepared query)
 
 Same is the iterator method but with a prepared query parameter. @xref{Query Builder}.
+
+@item iteratorRaw
+
+Same as the prepared query iterator except it takes a raw SQL select statement argument.  This is the iterator version
+of the @code{queryForAllRaw} method.  Although you should use the iterator method for most queries, this method
+allows you to do special queries that aren't supported otherwise.  Like the above iterator methods, you must call close
+on the returned RawResults object once you are done with it. 
 
 @end table
 
@@ -1225,7 +1228,7 @@ if (accountDao.refresh(order.getAccount()) != 1) @{
 @menu
 * Spring Configuration::       How to wire @value{package} in Spring.
 * Class Configuration::        Alternate ways to configure your classes.
-* Database Type::              Description of the database specific code.
+* Database Type Details::      Description of the database specific code.
 * Logging::                    How to log messages with @value{package}.
 @end menu
 
@@ -1320,7 +1323,7 @@ Here's an example of a full Spring configuration.
 @end example
 
 @c ----------------------------------------------------------------
-@node Class Configuration, Database Type, Spring Configuration, Advanced
+@node Class Configuration, Database Type Details, Spring Configuration, Advanced
 @section Class Configuration
 
 The simplest mechanism for configuring a class to be persisted by @value{package} is to use the @code{@@DatabaseTable}
@@ -1380,7 +1383,7 @@ configuring a class using Spring wiring.  Here is the above example in Spring:
 @end example
 
 @c ----------------------------------------------------------------
-@node Database Type, Logging, Class Configuration, Advanced
+@node Database Type Details, Logging, Class Configuration, Advanced
 @section Database Specific Code
 
 @cindex database type
@@ -1476,7 +1479,7 @@ Append the SQL necessary to properly finish a CREATE TABLE line.
 @end table
 
 @c ----------------------------------------------------------------
-@node Logging, Index of Concepts, Database Type, Advanced
+@node Logging, Index of Concepts, Database Type Details, Advanced
 @section @value{package} Logging
 
 @cindex logging information

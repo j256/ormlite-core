@@ -48,8 +48,8 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public T queryForFirst(PreparedQuery<T> preparedQuery) throws SQLException;
 
 	/**
-	 * Query for all of the items in the object table. For medium sized or large tables, you should consider using the
-	 * {@link #iterator} method instead.
+	 * Query for all of the items in the object table. For medium sized or large tables, this may load a lot of objects
+	 * into memory so you should consider using the {@link #iterator} method instead.
 	 * 
 	 * @return A list of all of the objects in the table.
 	 * @throws SQLException
@@ -60,8 +60,8 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	/**
 	 * Query for all of the items in the object table that match the SQL select query argument. Although you should use
 	 * the {@link QueryBuilder} for most queries, this method allows you to do special queries that aren't supported
-	 * otherwise. For medium sized or large tables, you should consider using the {@link #iteratorRaw(String)} method
-	 * instead.
+	 * otherwise. For medium sized or large tables, this may load a lot of objects into memory so you should consider
+	 * using the {@link #iteratorRaw(String)} method instead.
 	 * 
 	 * @return A raw results object from which you can get the results.
 	 * @throws SQLException
@@ -82,8 +82,8 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * information.
 	 * 
 	 * <p>
-	 * <b>NOTE:</b> For medium sized or large tables, you should consider using the {@link #iterator(PreparedQuery)}
-	 * method instead.
+	 * <b>NOTE:</b> For medium sized or large tables, this may load a lot of objects into memory so you should consider
+	 * using the {@link #iterator(PreparedQuery)} method instead.
 	 * </p>
 	 * 
 	 * @param preparedQuery
@@ -252,7 +252,8 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	/**
 	 * Same as {@link #iterator(PreparedQuery)} except it returns a RawResults object associated with the SQL select
 	 * query argument. Although you should use the {@link #iterator()} for most queries, this method allows you to do
-	 * special queries that aren't supported otherwise.
+	 * special queries that aren't supported otherwise.  Like the above iterator methods, you must call close on
+	 * the returned RawResults object once you are done with it. 
 	 */
 	public RawResults iteratorRaw(String query) throws SQLException;
 

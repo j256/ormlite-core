@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on July, 7 2010 by texi2html 1.70 -->
+<!-- Created on July, 8 2010 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -64,7 +64,7 @@ ul.toc {list-style: none}
 </td></tr>
 <tr><td align="left" valign="top"><a href="#SEC22">5.2 Class Configuration</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">        Alternate ways to configure your classes.
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC23">5.3 Database Specific Code</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">              Description of the database specific code.
+<tr><td align="left" valign="top"><a href="#SEC23">5.3 Database Specific Code</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">      Description of the database specific code.
 </td></tr>
 <tr><td align="left" valign="top"><a href="#SEC24">5.4 ORMLite Logging</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                    How to log messages with ORMLite.
 </td></tr>
@@ -97,7 +97,7 @@ the Spring framework.  For more information about the Spring Framework, see <a h
 </p><dl compact="compact">
 <dt><code> DatabaseTypeFactory</code></dt>
 <dd>
-<a name="IDX122"></a>
+<a name="IDX125"></a>
 <p>This factory class is used for Spring injections of the database types to the DAOs and other classes.  Often, the
 <code>databaseUrl</code> parameter is provided by a system property.
 
@@ -117,10 +117,10 @@ the Spring framework.  For more information about the Spring Framework, see <a h
 </dd>
 <dt><code> TableCreator</code></dt>
 <dd>
-<a name="IDX123"></a>
-<a name="IDX124"></a>
-<a name="IDX125"></a>
 <a name="IDX126"></a>
+<a name="IDX127"></a>
+<a name="IDX128"></a>
+<a name="IDX129"></a>
 <p>Spring bean that auto-creates any tables that it finds DAOs for if the system property <code>ormlite.auto.create.tables</code>
 has been set to true. It will also auto-drop any tables that were auto-created if the property
 <code>ormlite.auto.drop.tables</code> has been set to true.  This should be used carefully and probably only in tests.
@@ -128,7 +128,7 @@ has been set to true. It will also auto-drop any tables that were auto-created i
 </p></dd>
 </dl>
 
-<a name="IDX127"></a>
+<a name="IDX130"></a>
 <p>Here's an example of a full Spring configuration.
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">&lt;!-- URL used for database, probably should be in properties file --&gt;
@@ -197,7 +197,7 @@ has been set to true. It will also auto-drop any tables that were auto-created i
 and <code>@DatabaseField</code> annotations.  See section <a href="ormlite_1.html#SEC4">Adding ORMLite Annotations to Your Classes</a>.  However if you do not own the class you are
 persisting or there are permission problems with the class, you may want to configure the class using Java code instead.
 
-</p><a name="IDX128"></a>
+</p><a name="IDX131"></a>
 <p>To configure a class in code, you use the <code>DatabaseFieldConfig</code> and <code>DatabaseTableConfig</code> objects.
 The field config object holds all of the details that are in the <code>@DatabaseField</code> annotation as well as
 the name of the corresponding field in the object.  The <code>DatabaseTableConfig</code> object holds the class and the
@@ -221,7 +221,7 @@ accountJdbcDao.setDatabaseType(databaseType);
 accountJdbcDao.setDataSource(dataSource);
 accountJdbcDao.afterPropertiesSet();
 </pre></td></tr></table>
-<a name="IDX129"></a>
+<a name="IDX132"></a>
 <p>See the Javadocs for the <code>DatabaseFieldConfig</code> class for the fields to pass to the constructor.  You can also
 use the no-argument constructor and call the setters for each field.  You use the setters as well when you are
 configuring a class using Spring wiring.  Here is the above example in Spring:
@@ -396,7 +396,7 @@ isIdSequenceNeeded returns true.
 <p>ORMLite uses a loose wrapper around Apache commons logging that provides simple {} argument expansion
 like slf4j.  You can use something like the following as your log4j.properties file to see details about the SQL calls.
 
-</p><a name="IDX130"></a>
+</p><a name="IDX133"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">log4j.rootLogger=INFO, stdout
 
 log4j.appender.stdout=org.apache.log4j.ConsoleAppender
@@ -412,8 +412,8 @@ log4j.logger.com.j256.ormlite=DEBUG
 # uncomment the following line
 #log4j.logger.com.j256.ormlite.stmt.mapped.BaseMappedStatement=TRACE
 </pre></td></tr></table>
-<a name="IDX131"></a>
-<a name="IDX132"></a>
+<a name="IDX134"></a>
+<a name="IDX135"></a>
 <p><em>Notice</em> that you can uncomment the last line in the above log4j.properties file to log the arguments to the
 various SQL calls.  This may expose passwords or other sensitive information in the database so probably should
 only be used during debugging and should not be the default.
@@ -434,7 +434,7 @@ only be used during debugging and should not be the default.
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>July, 7 2010</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>July, 8 2010</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 

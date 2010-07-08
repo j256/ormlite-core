@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on July, 7 2010 by texi2html 1.70 -->
+<!-- Created on July, 8 2010 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -70,7 +70,7 @@ ul.toc {list-style: none}
 </td></tr>
 <tr><td align="left" valign="top"><a href="#SEC9">1.5 JDBC Data Sources</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                  Setting up your JDBC data source.
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC10">1.6 Database Connections</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                  How to connect to your database.
+<tr><td align="left" valign="top"><a href="#SEC10">1.6 Database Type</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">               Defining your database type.
 </td></tr>
 <tr><td align="left" valign="top"><a href="#SEC11">1.7 Tying It All Together</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">             Tying all of the wiring together.
 </td></tr>
@@ -106,7 +106,12 @@ that these are listed in your Maven, Ant, or &hellip; configuration files.
 <p>For logging, ORMLite has a loose wrapper around apache commons-logging.  You
 can remove this dependency by editing <code>com.j256.ormlite.logger.Logger</code>.  As of
 this writing, we use version 1.1.1 of commons logging.  Previous or later versions 
-should also work.
+should also work.  With commons logging, you can use <code>log4j</code> or other logging
+packages to log messages to the terminal or logfiles. 
+
+</p><p>The commons-logging dependency has been centralized in the <code>ApacheCommonsLog</code> class.
+If you want to remove the dependency, you can change the constructor in the <code>Logger</code>
+class to instead use the <code>LocalLog</code> class as a replacement.
 
 </p></dd>
 <dt><code> javax.persistence</code></dt>
@@ -115,38 +120,19 @@ should also work.
 the JavaX persistence annotations.  As of this writing, we use version 1.0 of the
 persistence package.
 
+</p><p>Usage of the <code>javax.persistence</code> classes has been centralized in the
+<code>JavaxPersistence</code> misc class.  You can remove the dependency by returning null
+from the methods there.
+  
 </p></dd>
 </dl>
-
-<p><em>NOTE:</em> Usage of the <code>javax.persistence</code> classes are centralized in the
-<code>JavaxPersistence</code> misc class.  You can remove the requirement for that package
-by returning null from the methods there.  The commons-logging dependency is in
-the <code>Logger</code> class.  You can use the <code>LocalLog</code> class instead to remove
-that dependency.
-
-</p><p>For those maven-ites, here is the section from the pom that you will need to have in
-your pom.
-
-</p><table><tr><td>&nbsp;</td><td><pre class="example">&lt;properties&gt;
-    &lt;ormlite-version&gt;2.6&lt;/ormlite-version&gt;
-    &hellip;
-&lt;/properties&gt;
-&lt;dependencies&gt;
-    &lt;dependency&gt;
-        &lt;groupId&gt;com.j256&lt;/groupId&gt;
-        &lt;artifactId&gt;ormlite&lt;/artifactId&gt;
-        &lt;version&gt;${ormlite-version}&lt;/version&gt;
-    &lt;/dependency&gt;
-    &hellip;
-&lt;/dependencies&gt;
-</pre></td></tr></table>
 
 <p>If you want to get the ORMLite Junit tests to run, there are test dependencies on the following packages:
 
 </p><dl compact="compact">
 <dt><code> org.junit</code></dt>
 <dd>
-<p>We use Junit for our unit tasks.  Pretty simple/easy.
+<p>We use Junit for our unit tasks.
 
 </p></dd>
 <dt><code> org.easymock.easymock</code></dt>
@@ -157,14 +143,14 @@ concentrate on testing a particular class instead of the whole package.
 </p></dd>
 <dt><code> com.h2database</code></dt>
 <dd>
-<p>As a test database implementation, H2 is fast and easy to use.  Not as recommended as a production level database.
+<p>As a test database implementation, H2 is very fast and simple to use.  Not as recommended as a production level database.
 
 </p></dd>
 <dt><code> org.apache.log4j</code></dt>
 <dd>
-<p>For logging to files using the <code>log4j.properties</code> config.  In the log4j package, you can exclude the following:
-<code>com.sun.jmx.jmxri</code>, <code>com.sun.jdmk.jmxtools</code>, <code>javax.activation.activation</code>, <code>javax.jms.jms</code>,
-<code>javax.mail.mail</code>.
+<p>For logging to files using the <code>log4j.properties</code> config.  In the log4j package, you can exclude the following
+dependencies: <code>com.sun.jmx.jmxri</code>, <code>com.sun.jdmk.jmxtools</code>, <code>javax.activation.activation</code>,
+<code>javax.jms.jms</code>, <code>javax.mail.mail</code>.
 
 </p></dd>
 </dl>
@@ -193,9 +179,9 @@ concentrate on testing a particular class instead of the whole package.
 <p>To setup your classes to be persisted you need to do the following things:
 
 </p><ol>
-<li><p> Add the @DatabaseTable annotation to the top of our class.  You can also use @Entity
+<li><p> Add the @DatabaseTable annotation to the top of each class.  You can also use @Entity.
 </p></li><li><p> Add the @DatabaseField annotation right before each field to be persisted.  You can also use @Column and others.
-</p></li><li><p> Add a no-argument constructor with at least package permissions.
+</p></li><li><p> Add a no-argument constructor with at least package permissions to each class.
 </p></li></ol>
 
 <table class="menu" border="0" cellspacing="0">
@@ -244,7 +230,8 @@ public class Account {
 &hellip;
 </pre></td></tr></table>
 <p>The <code>@DatabaseTable</code> annotations can have an optional <code>tableName</code> argument which specifies the name of the table
-that corresponds to the class.   If not specified, the class name all lowercase is used by default.
+that corresponds to the class.   If not specified, the class name all lowercase is used by default.  With the above example
+each <code>Account</code> object will be persisted as a row in the <code>accounts</code> table in the database.
 
 </p><a name="IDX10"></a>
 <a name="IDX11"></a>
@@ -579,7 +566,7 @@ public class Account {
 
 <p>The following Java types can be persisted to the database by ORMLite.  Database specific code
 helps to translate between the SQL types and the database specific handling of those types.
-See section <a href="ormlite_5.html#SEC23">Database Specific Code</a>.
+See section <a href="#SEC10">Database Type</a>.
 
 </p><dl compact="compact">
 <dd>
@@ -709,7 +696,7 @@ public interface AccountDao extends BaseDao&lt;Account, String&gt; {
 }
 </pre></td></tr></table>
 <p>The implementation of this interface takes a <code>DatabaseType</code> object in its constructor which identifies the
-per-database flavor class.  See section <a href="ormlite_5.html#SEC23">Database Specific Code</a>.  Example:
+per-database flavor class.  See section <a href="#SEC10">Database Type</a>.  Example:
 
 </p><a name="IDX73"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">/** JDBC implementation of the AccountDao interface. */
@@ -800,10 +787,10 @@ try {
 <td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 1.6 Database Connections </h2>
+<h2 class="section"> 1.6 Database Type </h2>
 
 <p>ORMLite works with a <code>DatabaseType</code> object which defines all of the per-database information necessary to
-support the various features on all of the different database types.  See section <a href="ormlite_5.html#SEC23">Database Specific Code</a>.  To instantiate a
+support the various features on all of the different database types.  See section <a href="#SEC10">Database Type</a>.  To instantiate a
 <code>DatabaseType</code>, you can either use the <code>DatabaseTypeUtils</code> class or call your database class directly.  You
 can pass in the database URL or pass in an already created <code>DataSource</code> object:
 
@@ -855,9 +842,9 @@ databaseType.loadDriver();
 </tr></table>
 <h2 class="section"> 1.7 Tying It All Together </h2>
 
-<p>So you have annotated the objects to persist, added the no-arg constructor, defined your DAO classes, established your
-DatabaseType, and created your DataSource.  You are ready to start persisting and querying your database objects.  The
-following code ties it all together:
+<p>So you have annotated the objects to be persisted, added the no-arg constructor, defined your DAO classes,
+created your DataSource, and established your DatabaseType.  You are ready to start persisting and querying
+your database objects.  The following code ties it all together:
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">// h2 by default but change to match your database
 String databaseUrl = &quot;jdbc:h2:mem:account&quot;;
@@ -915,7 +902,7 @@ then you will need to call <code>initialize()</code> method to properly initiali
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>July, 7 2010</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>July, 8 2010</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 
