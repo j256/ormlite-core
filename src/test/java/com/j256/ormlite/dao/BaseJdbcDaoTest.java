@@ -55,6 +55,21 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 	}
 
 	@Test
+	public void testCreateDaoStatic() throws Exception {
+		Dao<Foo, Integer> fooDao = BaseJdbcDao.createDao(databaseType, dataSource, Foo.class);
+		String stuff = "stuff";
+		Foo foo = new Foo();
+		foo.stuff = stuff;
+		assertEquals(1, fooDao.create(foo));
+
+		// now we query for foo from the database to make sure it was persisted right
+		Foo foo2 = fooDao.queryForId(foo.id);
+		assertNotNull(foo2);
+		assertEquals(foo.id, foo2.id);
+		assertEquals(stuff, foo2.stuff);
+}
+
+	@Test
 	public void testCreateUpdateDelete() throws Exception {
 		String s1 = "stuff";
 		Foo foo1 = new Foo();

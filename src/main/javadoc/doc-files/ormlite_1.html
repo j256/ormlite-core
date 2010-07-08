@@ -711,6 +711,10 @@ public class AccountJdbcDao extends BaseJdbcDao&lt;Account, String&gt;
 implementations if there are specific operations that are needed and not provided by the Dao base classes.
 More on how to use these DAOs later. See section <a href="ormlite_2.html#SEC12">Using the DAOs</a>.
 
+</p><p>You are not <em>required</em> to create a DAO class for every one of your persisted objects.  You can use the
+<code>createDao</code> static method on the <code>BaseJdbcDao</code> class to create a DAO class without having to define
+one.
+
 </p><hr size="6">
 <a name="NOD10"></a>
 <a name="SEC9"></a>

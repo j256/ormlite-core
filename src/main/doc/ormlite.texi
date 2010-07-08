@@ -641,6 +641,10 @@ That's all you need to define your DAO classes.  You are free to add more method
 implementations if there are specific operations that are needed and not provided by the Dao base classes.
 More on how to use these DAOs later. @xref{DAO Usage}.
 
+You are not @emph{required} to create a DAO class for every one of your persisted objects.  You can use the
+@code{createDao} static method on the @code{BaseJdbcDao} class to create a DAO class without having to define
+one.
+
 @c ----------------------------------------------------------------
 @node DataSource, Database Type, DAOs, Getting Started
 @section JDBC Data Sources

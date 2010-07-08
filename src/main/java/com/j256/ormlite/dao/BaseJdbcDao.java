@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
@@ -279,5 +281,18 @@ public abstract class BaseJdbcDao<T, ID> extends SimpleJdbcDaoSupport implements
 	 */
 	public void setTableConfig(DatabaseTableConfig<T> tableConfig) {
 		this.tableConfig = tableConfig;
+	}
+
+	/**
+	 * Helper method to create a Dao object without having to define a class. Dao classes are supposed to be convenient
+	 * but if you have a lot of classes, they can seem to be a pain.
+	 */
+	public static <T, ID> Dao<T, ID> createDao(DatabaseType databaseType, DataSource dataSource, Class<T> clazz)
+			throws SQLException {
+		BaseJdbcDao<T, ID> dao = new BaseJdbcDao<T, ID>(databaseType, clazz) {
+		};
+		dao.setDataSource(dataSource);
+		dao.initialize();
+		return dao;
 	}
 }

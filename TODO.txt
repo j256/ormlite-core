@@ -49,3 +49,7 @@
 	- when you create the dao, you have to somehow inject a Method which returns a new object of a certain type
 	- this will allow you to call a constructor with (for example) some null fields to get an instance that can be overridden
 	- should we do the same for setters and getters?  use this method to set the field, use this to get it?
+
+- should we consider defining the DatabaseType internally?
+	- just set the datasource on the dao and then determine the database type from the datasource url
+	- maybe add datasource constructor args for daos
