@@ -537,7 +537,9 @@ Persisted as SQL type BOOLEAN.
 @item java.util.Date
 
 Persisted as SQL type TIMESTAMP.  @emph{NOTE:} This is @emph{not} @code{java.sql.Date} which is a different
-class.
+class.  @emph{NOTE:} Certain databases only provide seconds resolution so the milliseconds will be 0.  @emph{NOTE:}
+for MySQL users, we are usign the default @code{TIMESTAMP} field type but you may want to create your database with
+@code{DATETIME} instead.  YMMV. 
 
 @cindex byte
 @item Byte or byte

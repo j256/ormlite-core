@@ -67,7 +67,7 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 		assertNotNull(foo2);
 		assertEquals(foo.id, foo2.id);
 		assertEquals(stuff, foo2.stuff);
-}
+	}
 
 	@Test
 	public void testCreateUpdateDelete() throws Exception {
@@ -1195,6 +1195,34 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 		assertEquals(1, dao.create(foo));
 	}
 
+	@Test
+	public void testDateUpdate() throws Exception {
+		Dao<LocalDate, Object> dao = createDao(LocalDate.class, true);
+		LocalDate localDate = new LocalDate();
+		// note: this does not have milliseconds
+		Date date = new Date(2131232000);
+		localDate.date = date;
+		assertEquals(1, dao.create(localDate));
+		List<LocalDate> allDates = dao.queryForAll();
+		assertEquals(1, allDates.size());
+		assertEquals(date, allDates.get(0).date);
+
+		// now we update it
+		assertEquals(1, dao.update(localDate));
+		allDates = dao.queryForAll();
+		assertEquals(1, allDates.size());
+		assertEquals(date, allDates.get(0).date);
+
+		// now we set it to null
+		localDate.date = null;
+		// now we update it
+		assertEquals(1, dao.update(localDate));
+		allDates = dao.queryForAll();
+		assertEquals(1, allDates.size());
+		// we should get null back and not some auto generated field
+		assertNull(allDates.get(0).date);
+	}
+
 	/* ==================================================================================== */
 
 	@DatabaseTable(tableName = FOO_TABLE_NAME)
@@ -1591,5 +1619,13 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 	protected static class StringDefalt {
 		@DatabaseField(defaultValue = "3")
 		String stuff;
+	}
+
+	@DatabaseTable
+	protected static class LocalDate {
+		@DatabaseField(generatedId = true)
+		public int id;
+		@DatabaseField
+		Date date;
 	}
 }
