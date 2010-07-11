@@ -1,7 +1,7 @@
 PKG = ormlite
 DOCS = $(PKG).info $(PKG).html $(PKG) $(PKG).pdf
 TEXI = $(PKG).texi
-REMOTE ?= shake
+REMOTE ?= outside.256.com
 
 all : $(DOCS)
 
