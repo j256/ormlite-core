@@ -3,7 +3,6 @@ package com.j256.ormlite.db;
 import java.util.List;
 
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.field.JdbcType;
 
 /**
  * MySQL database type information used to create the tables, etc..
@@ -45,6 +44,15 @@ public class MysqlDatabaseType extends BaseDatabaseType implements DatabaseType 
 	}
 
 	@Override
+	protected void appendDateType(StringBuilder sb) {
+		/**
+		 * TIMESTAMP in MySQL does some funky stuff with the last-modification time. Values are 'not null' by default
+		 * with an automatic default of CURRENT_TIMESTAMP. Strange design decision.
+		 */
+		sb.append("DATETIME");
+	}
+
+	@Override
 	protected void appendBooleanType(StringBuilder sb) {
 		sb.append("TINYINT(1)");
 	}
@@ -65,16 +73,5 @@ public class MysqlDatabaseType extends BaseDatabaseType implements DatabaseType 
 	public void appendCreateTableSuffix(StringBuilder sb) {
 		sb.append(createTableSuffix);
 		sb.append(' ');
-	}
-
-	@Override
-	protected void appendCanBeNull(StringBuilder sb, FieldType fieldType) {
-		if (fieldType.getJdbcType() == JdbcType.JAVA_DATE) {
-			/**
-			 * For some reason with MySQL, timestamp values are 'not null' by default with an automatic default of
-			 * CURRENT_TIMESTAMP. Strange design decision. So if the field can be null we must force it to be.
-			 */
-			sb.append("NULL ");
-		}
 	}
 }
