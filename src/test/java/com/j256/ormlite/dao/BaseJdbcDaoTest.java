@@ -1133,7 +1133,7 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 		int colN = results.getNumberColumns();
 		String[] colNames = results.getColumnNames();
 		Field[] fields = Foo.class.getDeclaredFields();
-		for (int colC = 0; colC < fields.length; colC++) {
+		for (int colC = 0; colC < colNames.length; colC++) {
 			assertTrue(fields[colC].getName().equalsIgnoreCase(colNames[colC]));
 		}
 		CloseableIterator<String[]> iterator = results.iterator();
@@ -1165,7 +1165,7 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 		int colN = results.getNumberColumns();
 		String[] colNames = results.getColumnNames();
 		Field[] fields = Foo.class.getDeclaredFields();
-		for (int colC = 0; colC < fields.length; colC++) {
+		for (int colC = 0; colC < colNames.length; colC++) {
 			assertTrue(fields[colC].getName().equalsIgnoreCase(colNames[colC]));
 		}
 		iterator = results.iterator();

@@ -20,8 +20,8 @@ import java.util.Date;
  */
 public class LocalLog implements Log {
 
-	private final static String LOCAL_LOG_LEVEL_PROPERTY = "com.j256.ormlite.logger.level";
-	private final static String LOCAL_LOG_FILE_PROPERTY = "com.j256.ormlite.logger.file";
+	public final static String LOCAL_LOG_LEVEL_PROPERTY = "com.j256.ormlite.logger.level";
+	public final static String LOCAL_LOG_FILE_PROPERTY = "com.j256.ormlite.logger.file";
 
 	private final static Level DEFAULT_LEVEL = Level.DEBUG;
 	private static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
@@ -40,22 +40,22 @@ public class LocalLog implements Log {
 		}
 
 		// see if we have a level set
-		String prop = System.getProperty(LOCAL_LOG_LEVEL_PROPERTY);
-		if (prop == null) {
+		String levelName = System.getProperty(LOCAL_LOG_LEVEL_PROPERTY);
+		if (levelName == null) {
 			this.level = DEFAULT_LEVEL;
 		} else {
 			Level matchedLevel;
 			try {
-				matchedLevel = Level.valueOf(prop.toUpperCase());
+				matchedLevel = Level.valueOf(levelName.toUpperCase());
 			} catch (IllegalArgumentException e) {
-				throw new IllegalArgumentException("Level '" + prop + "' was not found", e);
+				throw new IllegalArgumentException("Level '" + levelName + "' was not found", e);
 			}
 			this.level = matchedLevel;
 		}
 
 		// see if stuff goes to stdout or a file
 		String logPath = System.getProperty(LOCAL_LOG_FILE_PROPERTY);
-		if (prop == null) {
+		if (logPath == null) {
 			this.printStream = System.out;
 		} else {
 			try {
@@ -136,6 +136,13 @@ public class LocalLog implements Log {
 
 	public void fatal(String msg, Throwable throwable) {
 		printMessage(Level.FATAL, msg, throwable);
+	}
+
+	/**
+	 * Flush any IO to disk. For testing purposes.
+	 */
+	void flush() {
+		printStream.flush();
 	}
 
 	private void printMessage(Level level, String message, Throwable throwable) {
