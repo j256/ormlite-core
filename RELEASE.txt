@@ -16,7 +16,13 @@ To release ORMLite:
 
 4) Login to https://oss.sonatype.org/ (graywatson)
 
-5) Select staging from left nav.  Click on com.j256.  Right click on the recent open release, pull down to close.  Description: X.X release
+5) Select staging from left nav.
+
+	- Click on com.j256.
+	- Right click on the recent open release, pull down to close.  Description: X.X release
+	- Right click on closed release and select Promote.  Description: X.X release
+
+	Check Repositories Tab -> Releases -> j256 to see if it is there
 
 6) If there are problems then you will need to drop the release on sonatype.org and re-release:
 
@@ -38,7 +44,7 @@ To release ORMLite:
 
 11) shutdown the sf shell
 
-12) Add a News section to SF with the svn log highlights: released version X.X
+12) Add a News section to SF with the svn log highlights and subject: released version X.X
 
 13) Possibly publish to announcements forum if the release needs more information.
 

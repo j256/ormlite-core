@@ -1,21 +1,22 @@
 package com.j256.ormlite.logger;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * Class which implements our {@link com.j256.ormlite.logger.Log} interface by delegating to the Apache commons logging
- * classes. Yes we are delegating to a delegating class. This is here so it can easily be removed and be replaced by the
- * {@link LocalLog} class so we can remove the dependency.
+ * classes. Yes we are delegating to a delegating class.
+ * 
+ * <p>
+ * <b>NOTE:</b> So this class will be red in your IDE if you don't have commons-log in your classpath. That's by design.
+ * This class will not be instantiated unless the logging code detects the commons-log classes.
+ * </p>
  * 
  * @author graywatson
  */
-public class ApacheCommonsLog implements com.j256.ormlite.logger.Log {
+public class CommonsLoggingLog implements com.j256.ormlite.logger.Log {
 
-	private Log log;
+	private org.apache.commons.logging.Log log;
 
-	public ApacheCommonsLog(String className) {
-		log = LogFactory.getLog(className);
+	public CommonsLoggingLog(String className) {
+		log = org.apache.commons.logging.LogFactory.getLog(className);
 	}
 
 	public boolean isTraceEnabled() {
@@ -43,7 +44,7 @@ public class ApacheCommonsLog implements com.j256.ormlite.logger.Log {
 	}
 
 	public void trace(String msg) {
-		trace(msg, null);
+		log.trace(msg);
 	}
 
 	public void trace(String msg, Throwable throwable) {
@@ -51,7 +52,7 @@ public class ApacheCommonsLog implements com.j256.ormlite.logger.Log {
 	}
 
 	public void debug(String msg) {
-		debug(msg, null);
+		log.debug(msg);
 	}
 
 	public void debug(String msg, Throwable throwable) {
@@ -59,7 +60,7 @@ public class ApacheCommonsLog implements com.j256.ormlite.logger.Log {
 	}
 
 	public void info(String msg) {
-		info(msg, null);
+		log.info(msg);
 	}
 
 	public void info(String msg, Throwable throwable) {
@@ -67,7 +68,7 @@ public class ApacheCommonsLog implements com.j256.ormlite.logger.Log {
 	}
 
 	public void warn(String msg) {
-		warn(msg, null);
+		log.warn(msg);
 	}
 
 	public void warn(String msg, Throwable throwable) {
@@ -75,7 +76,7 @@ public class ApacheCommonsLog implements com.j256.ormlite.logger.Log {
 	}
 
 	public void error(String msg) {
-		error(msg, null);
+		log.error(msg);
 	}
 
 	public void error(String msg, Throwable throwable) {
@@ -83,7 +84,7 @@ public class ApacheCommonsLog implements com.j256.ormlite.logger.Log {
 	}
 
 	public void fatal(String msg) {
-		fatal(msg, null);
+		log.fatal(msg);
 	}
 
 	public void fatal(String msg, Throwable throwable) {

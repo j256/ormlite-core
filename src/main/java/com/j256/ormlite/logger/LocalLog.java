@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Class which implements our {@link Log} interface so we can bypass Apache logging if we want.
+ * Class which implements our {@link Log} interface so we can bypass external logging classes if they are not available.
  * 
  * <p>
  * You can set the log level by setting the System.setProperty(LocalLog.LOCAL_LOG_LEVEL_PROPERTY, "trace"). Acceptable
@@ -140,12 +140,14 @@ public class LocalLog implements Log {
 
 	private void printMessage(Level level, String message, Throwable throwable) {
 		StringBuilder sb = new StringBuilder();
-		long now = System.currentTimeMillis();
-		sb.append(dateFormat.format(new Date(now)));
+		sb.append(dateFormat.format(new Date()));
 		sb.append(" [").append(level.name()).append("] ");
 		sb.append(className).append(' ');
 		sb.append(message);
 		printStream.println(sb.toString());
+		if (throwable != null) {
+			throwable.printStackTrace(printStream);
+		}
 	}
 
 	private boolean isEnabled(Level level) {

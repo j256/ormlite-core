@@ -3,12 +3,12 @@ package com.j256.ormlite.logger;
 import java.util.Arrays;
 
 /**
- * Class which wraps our {@link Log} inteface and provides {} argument features like slf4j. It allows us to plug in
+ * Class which wraps our {@link Log} interface and provides {} argument features like slf4j. It allows us to plug in
  * additional log systems if necessary.
  * 
  * <p>
- * <b>NOTE:</b> By default this used the apache commons logging classes but you can change the constructor below to
- * remove the dependency on commons-logging.
+ * <b>NOTE:</b> By default this uses the apache commons logging classes if they can be found in the classpath. If it
+ * doesn't exist then it will try log4j. If neither then it uses the local log implementation.
  * </p>
  * 
  * @author graywatson
@@ -16,15 +16,11 @@ import java.util.Arrays;
 public class Logger {
 
 	private final static String ARG_STRING = "{}";
-	private Log log;
+	private final static int ARG_STRING_LENGTH = ARG_STRING.length();
+	private final Log log;
 
-	public Logger(String className) {
-		/*
-		 * Uncomment the below line and remove the ApacheCommonsLog reference and import to remove the commons-logging
-		 * dependency.
-		 */
-		// log = new LocalLog(className);
-		log = new ApacheCommonsLog(className);
+	public Logger(Log log) {
+		this.log = log;
 	}
 
 	/**
@@ -166,13 +162,6 @@ public class Logger {
 	}
 
 	/**
-	 * Set the delegation {@link Log}. For testing purposes.
-	 */
-	void setLog(Log log) {
-		this.log = log;
-	}
-
-	/**
 	 * Return a combined single message from the msg (with possible {}) and optional arguments.
 	 */
 	private String buildFullMessage(String msg, Object[] args) {
@@ -188,7 +177,7 @@ public class Logger {
 			// add the string before the arg-string
 			sb.append(msg.substring(lastIndex, argIndex));
 			// shift our last-index past the arg-string
-			lastIndex = argIndex + ARG_STRING.length();
+			lastIndex = argIndex + ARG_STRING_LENGTH;
 			// add the argument, if we still have any
 			if (argC < args.length) {
 				Object arg = args[argC];

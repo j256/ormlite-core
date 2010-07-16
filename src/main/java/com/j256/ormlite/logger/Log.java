@@ -1,7 +1,7 @@
 package com.j256.ormlite.logger;
 
 /**
- * Similar to the org.apache.commons.logging.Log interface so we can replace it locally if we want.
+ * Interface so we can front various log code which may or may not be in the classpath.
  * 
  * @author graywatson
  */

@@ -18,9 +18,8 @@ public class LoggerTest {
 
 	@Before
 	public void before() {
-		logger = new Logger(getClass().getName());
 		mockLog = createMock(Log.class);
-		logger.setLog(mockLog);
+		logger = new Logger(mockLog);
 	}
 
 	@Test

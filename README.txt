@@ -40,19 +40,23 @@ MAVEN DEPENDENCIES:
 The following packages are defined as dependencies in the pom.xml maven configuration file.  The
 versions can be tuned as necessary.
 
-Main dependencies:
+Main Dependencies:
 
 	javax-persistence -- 1.0
-	commons-logging -- 1.1.1
 
-	The javax.persistence classes are centralized in the JavaxPersistence misc class.  The commons-logging
-	dependency is in the Logger class.  If you need to remove the dependency, see those classes.
+	The javax.persistence classes are centralized in the JavaxPersistence misc class.
+	
+Loose Dependencies:
 
-Test dependencies:
+	The commons-logging and the log4j packages are referenced in the Logger classes but ORMLite will
+	not use the classes unless they exist in the classpath.
+
+Test Dependencies:
 
 	junit -- 4.8.1
 	org.easymock -- 2.3
 	com.h2database -- 1.2.134
+	commons-logging -- 1.1.1
 	log4j -- 1.2.15
 
 -------------------------------------------------------------------------------------------------------
