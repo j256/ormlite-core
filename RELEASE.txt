@@ -8,6 +8,8 @@ To release ORMLite:
 	make
 	mv ormlite.pdf ormlite/* ../javadoc/doc-files
 
+	Svn commit doc files
+
 3) Release to Sonatype: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
 
 	mvn -P st release:clean
