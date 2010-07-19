@@ -13,8 +13,8 @@ To release ORMLite:
 3) Release to Sonatype: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
 
 	mvn -P st release:clean
-	mvn -P st release:prepare
-	mvn -P st release:perform
+	mvn -P st release:prepare              (need to type in GPG secret)
+	mvn -P st release:perform              (need to type in GPG secret)
 
 4) Login to https://oss.sonatype.org/ (graywatson)
 
@@ -24,18 +24,21 @@ To release ORMLite:
 	- Right click on the recent open release, pull down to close.  Description: X.X release
 	- Right click on closed release and select Promote.  Description: X.X release
 
-	Check Repositories Tab -> Releases -> j256 to see if it is there
+	Check Repositories tab -> not-bold Releases -> com -> j256 -> ormlite to see if it is there
 
 6) If there are problems then you will need to drop the release on sonatype.org and re-release:
 
 	mvn -P st release:perform -DconnectionUrl=scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite/tags/ormlite-X.X
 
-7) cd to target/checkout which should be the release checked out by release:perform.  Execute:  mvn -P sf deploy
+7) cd to target/checkout which should be the release checked out by release:perform.
+
+	mvn -P sf deploy                       (need to type in GPG secret)
 
 8) Go to SF and set the default download to the newest jar: https://sourceforge.net/project/admin/explorer.php?group_id=297653
 
 9) Create a sf shell.  Explode the javadocs with the newest release:
 
+	create_sf_shell                        (script)
 	cd ormlite_web/htdocs/javadoc
 	rm -rf * ; unzip ~/frs/releases/com/j256/ormlite/X.X/ormlite-X.X-javadoc.jar
 
@@ -44,12 +47,10 @@ To release ORMLite:
 	cd ~/frs/releases/com/j256/ormlite
 	rm -rf 1.11 1.12
 
-11) shutdown the sf shell
+11) run  shutdown  on the sf shell
 
 12) Add a News section to SF with the svn log highlights and subject: released version X.X
 
 13) Possibly publish to announcements forum if the release needs more information.
 
-14) Change the ormliteTest pom.xml to new snapshot version.
-
-15) Watch to make sure the central repository was updated.
+14) Watch to make sure the central repository was updated.
