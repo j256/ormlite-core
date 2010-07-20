@@ -608,9 +608,9 @@ provides create, delete, update, etc. type of functionality and usually speciali
 persisted class.
 
 @cindex id column
-@cindex BaseDao interface
+@cindex Dao interface
 Once you have annotated your classes, you will need to create the DAO class(es).  The pattern that we recommend
-is to define a DAO interface which extends the @code{BaseDao} interface and will be used in the code.  The interface
+is to define a DAO interface which extends the @code{Dao} interface and will be used in the code.  The interface
 isn't required but it is a good pattern so your code is less tied to JDBC for persistence.  Each DAO has two generic
 parameters: the class we are persisting with the DAO, and the class of the ID-column that will be used to
 identify a specific database row.  If you class does not have an ID field, you can put @code{Object} or @code{Void}
@@ -620,7 +620,7 @@ so the ID class is @code{String}.  Example:
 @cindex dao interface
 @example
 /** Account DAO which has a String id (Account.name) */
-public interface AccountDao extends BaseDao<Account, String> @{
+public interface AccountDao extends Dao<Account, String> @{
     // empty wrapper, you can add additional DAO methods here
 @}
 @end example
@@ -643,9 +643,15 @@ That's all you need to define your DAO classes.  You are free to add more method
 implementations if there are specific operations that are needed and not provided by the Dao base classes.
 More on how to use these DAOs later. @xref{DAO Usage}.
 
+@cindex createDao method
 You are not @emph{required} to create a DAO class for every one of your persisted objects.  You can use the
 @code{createDao} static method on the @code{BaseJdbcDao} class to create a DAO class without having to define
-one.
+one.  For example:
+
+@example
+Dao<Account, String> accountDao = BaseJdbcDao.createDao(databaseType, dataSource, Account.class);
+Dao<Order, Integer> orderDao = BaseJdbcDao.createDao(databaseType, dataSource, Order.class);
+@end example
 
 @c ----------------------------------------------------------------
 @node DataSource, Database Type, DAOs, Getting Started
