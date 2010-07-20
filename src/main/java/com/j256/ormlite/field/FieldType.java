@@ -389,6 +389,9 @@ public class FieldType {
 		return throwIfNull;
 	}
 
+	/**
+	 * Return whether this field is a number so needs to be escaped in SQL differently.
+	 */
 	public boolean isNumber() {
 		return jdbcType.isNumber();
 	}
