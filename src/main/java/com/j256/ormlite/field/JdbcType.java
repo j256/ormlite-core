@@ -48,8 +48,11 @@ public enum JdbcType implements FieldConverter {
 	BOOLEAN(Types.BOOLEAN, new int[0], new Class<?>[] { boolean.class, }) {
 		@Override
 		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			checkPrimitiveValue(fieldType, resultSet, columnPos);
-			return (Boolean) resultSet.getBoolean(columnPos);
+			boolean result = resultSet.getBoolean(columnPos);
+			if (result == false) {
+				checkPrimitiveValue(fieldType, resultSet, columnPos);
+			}
+			return (Boolean) result;
 		}
 	},
 
@@ -59,11 +62,11 @@ public enum JdbcType implements FieldConverter {
 	BOOLEAN_OBJ(Types.BOOLEAN, new int[0], new Class<?>[] { Boolean.class }) {
 		@Override
 		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			Object obj = resultSet.getObject(columnPos);
-			if (obj == null) {
+			boolean result = resultSet.getBoolean(columnPos);
+			if (result == false && resultSet.getObject(columnPos) == null) {
 				return null;
 			} else {
-				return (Boolean) resultSet.getBoolean(columnPos);
+				return (Boolean) result;
 			}
 		}
 	},
@@ -98,8 +101,11 @@ public enum JdbcType implements FieldConverter {
 	BYTE(Types.TINYINT, new int[0], new Class<?>[] { byte.class }) {
 		@Override
 		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			checkPrimitiveValue(fieldType, resultSet, columnPos);
-			return (Byte) resultSet.getByte(columnPos);
+			byte result = resultSet.getByte(columnPos);
+			if (result == 0) {
+				checkPrimitiveValue(fieldType, resultSet, columnPos);
+			}
+			return (Byte) result;
 		}
 		@Override
 		public boolean isNumber() {
@@ -113,11 +119,11 @@ public enum JdbcType implements FieldConverter {
 	BYTE_OBJ(Types.TINYINT, new int[0], new Class<?>[] { Byte.class }) {
 		@Override
 		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			Object obj = resultSet.getObject(columnPos);
-			if (obj == null) {
+			byte result = resultSet.getByte(columnPos);
+			if (result == 0 && resultSet.getObject(columnPos) == null) {
 				return null;
 			} else {
-				return (Byte) resultSet.getByte(columnPos);
+				return (Byte) result;
 			}
 		}
 		@Override
@@ -132,8 +138,11 @@ public enum JdbcType implements FieldConverter {
 	SHORT(Types.SMALLINT, new int[0], new Class<?>[] { short.class }) {
 		@Override
 		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			checkPrimitiveValue(fieldType, resultSet, columnPos);
-			return (Short) resultSet.getShort(columnPos);
+			short result = resultSet.getShort(columnPos);
+			if (result == 0) {
+				checkPrimitiveValue(fieldType, resultSet, columnPos);
+			}
+			return (Short) result;
 		}
 		@Override
 		public boolean isNumber() {
@@ -147,11 +156,11 @@ public enum JdbcType implements FieldConverter {
 	SHORT_OBJ(Types.SMALLINT, new int[0], new Class<?>[] { Short.class }) {
 		@Override
 		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			Object obj = resultSet.getObject(columnPos);
-			if (obj == null) {
+			short result = resultSet.getShort(columnPos);
+			if (result == 0 && resultSet.getObject(columnPos) == null) {
 				return null;
 			} else {
-				return (Short) resultSet.getShort(columnPos);
+				return (Short) result;
 			}
 		}
 		@Override
@@ -166,8 +175,11 @@ public enum JdbcType implements FieldConverter {
 	INTEGER(Types.INTEGER, new int[0], new Class<?>[] { int.class }) {
 		@Override
 		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			checkPrimitiveValue(fieldType, resultSet, columnPos);
-			return resultSet.getInt(columnPos);
+			int result = resultSet.getInt(columnPos);
+			if (result == 0) {
+				checkPrimitiveValue(fieldType, resultSet, columnPos);
+			}
+			return (Integer) result;
 		}
 		@Override
 		public Object convertIdNumber(Number number) {
@@ -189,11 +201,11 @@ public enum JdbcType implements FieldConverter {
 	INTEGER_OBJ(Types.INTEGER, new int[0], new Class<?>[] { Integer.class }) {
 		@Override
 		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			Object obj = resultSet.getObject(columnPos);
-			if (obj == null) {
+			int result = resultSet.getInt(columnPos);
+			if (result == 0 && resultSet.getObject(columnPos) == null) {
 				return null;
 			} else {
-				return (Integer) resultSet.getInt(columnPos);
+				return (Integer) result;
 			}
 		}
 		@Override
@@ -216,8 +228,11 @@ public enum JdbcType implements FieldConverter {
 	LONG(Types.BIGINT, new int[] { Types.DECIMAL, Types.NUMERIC }, new Class<?>[] { long.class }) {
 		@Override
 		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			checkPrimitiveValue(fieldType, resultSet, columnPos);
-			return (Long) resultSet.getLong(columnPos);
+			long result = resultSet.getLong(columnPos);
+			if (result == 0L) {
+				checkPrimitiveValue(fieldType, resultSet, columnPos);
+			}
+			return (Long) result;
 		}
 		@Override
 		public Object convertIdNumber(Number number) {
@@ -239,11 +254,11 @@ public enum JdbcType implements FieldConverter {
 	LONG_OBJ(Types.BIGINT, new int[] { Types.DECIMAL, Types.NUMERIC }, new Class<?>[] { Long.class }) {
 		@Override
 		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			Object obj = resultSet.getObject(columnPos);
-			if (obj == null) {
+			long result = resultSet.getLong(columnPos);
+			if (result == 0L && resultSet.getObject(columnPos) == null) {
 				return null;
 			} else {
-				return (Long) resultSet.getLong(columnPos);
+				return (Long) result;
 			}
 		}
 		@Override
@@ -266,8 +281,11 @@ public enum JdbcType implements FieldConverter {
 	FLOAT(Types.FLOAT, new int[0], new Class<?>[] { float.class }) {
 		@Override
 		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			checkPrimitiveValue(fieldType, resultSet, columnPos);
-			return (Float) resultSet.getFloat(columnPos);
+			float result = resultSet.getFloat(columnPos);
+			if (result == 0.0F) {
+				checkPrimitiveValue(fieldType, resultSet, columnPos);
+			}
+			return (Float) result;
 		}
 		@Override
 		public boolean isNumber() {
@@ -281,11 +299,11 @@ public enum JdbcType implements FieldConverter {
 	FLOAT_OBJ(Types.FLOAT, new int[0], new Class<?>[] { Float.class }) {
 		@Override
 		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			Object obj = resultSet.getObject(columnPos);
-			if (obj == null) {
+			float result = resultSet.getFloat(columnPos);
+			if (result == 0.0F && resultSet.getObject(columnPos) == null) {
 				return null;
 			} else {
-				return (Float) resultSet.getFloat(columnPos);
+				return (Float) result;
 			}
 		}
 		@Override
@@ -300,8 +318,11 @@ public enum JdbcType implements FieldConverter {
 	DOUBLE(Types.DOUBLE, new int[0], new Class<?>[] { double.class }) {
 		@Override
 		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			checkPrimitiveValue(fieldType, resultSet, columnPos);
-			return (Double) resultSet.getDouble(columnPos);
+			double result = resultSet.getDouble(columnPos);
+			if (result == 0.0D) {
+				checkPrimitiveValue(fieldType, resultSet, columnPos);
+			}
+			return (Double) result;
 		}
 		@Override
 		public boolean isNumber() {
@@ -315,11 +336,11 @@ public enum JdbcType implements FieldConverter {
 	DOUBLE_OBJ(Types.DOUBLE, new int[0], new Class<?>[] { Double.class }) {
 		@Override
 		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			Object obj = resultSet.getObject(columnPos);
-			if (obj == null) {
+			double result = resultSet.getDouble(columnPos);
+			if (result == 0.0D && resultSet.getObject(columnPos) == null) {
 				return null;
 			} else {
-				return (Double) resultSet.getDouble(columnPos);
+				return (Double) result;
 			}
 		}
 		@Override
@@ -538,6 +559,9 @@ public enum JdbcType implements FieldConverter {
 		}
 	}
 
+	/**
+	 * Return whether this field is a number so needs to be escaped in SQL differently.
+	 */
 	public boolean isNumber() {
 		// can't determine this from the classes because primitives can't do assignable from
 		return false;
