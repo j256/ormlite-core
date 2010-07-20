@@ -1,8 +1,12 @@
 package com.j256.ormlite.db;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
+import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.field.JdbcType;
 
 /**
  * Microsoft SQL server database type information used to create the tables, etc..
@@ -18,12 +22,28 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 	private final static String DATABASE_URL_PORTION = "sqlserver";
 	private final static String DRIVER_CLASS_NAME = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
 
+	private final static FieldConverter byteConverter = new ByteFieldConverter();
+
 	public String getDriverUrlPart() {
 		return DATABASE_URL_PORTION;
 	}
 
 	public String getDriverClassName() {
 		return DRIVER_CLASS_NAME;
+	}
+
+	@Override
+	public FieldConverter getFieldConverter(FieldType fieldType) {
+		// we are only overriding certain types
+		switch (fieldType.getJdbcType()) {
+			case BOOLEAN :
+			case BOOLEAN_OBJ :
+				return booleanConverter;
+			case BYTE :
+				return byteConverter;
+			default :
+				return super.getFieldConverter(fieldType);
+		}
 	}
 
 	@Override
@@ -46,6 +66,11 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 	}
 
 	@Override
+	protected void appendObjectType(StringBuilder sb) {
+		sb.append("IMAGE");
+	}
+
+	@Override
 	protected void configureGeneratedId(StringBuilder sb, FieldType fieldType, List<String> statementsBefore,
 			List<String> additionalArgs, List<String> queriesAfter) {
 		sb.append("IDENTITY ");
@@ -65,5 +90,38 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 	@Override
 	public void appendLimitValue(StringBuilder sb, int limit) {
 		sb.append("TOP ").append(limit).append(' ');
+	}
+
+	/**
+	 * Conversion from the byte Java field to the SMALLINT Jdbc type because TINYINT looks to be 0-255 and unsigned.
+	 */
+	private static class ByteFieldConverter implements FieldConverter {
+		public int getJdbcTypeVal() {
+			// store it as a short
+			return JdbcType.SHORT.getJdbcTypeVal();
+		}
+		public Object parseDefaultString(String defaultStr) {
+			return Short.parseShort(defaultStr);
+		}
+		public Object javaToArg(Object javaObject) {
+			// convert the Byte arg to be a short
+			byte byteVal = (Byte) javaObject;
+			return (short) byteVal;
+		}
+		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int dbColumnPos) throws SQLException {
+			// starts as a short and then gets converted to a byte on the way out
+			short shortVal = resultSet.getShort(dbColumnPos);
+			// make sure the database value doesn't overflow the byte
+			if (shortVal < Byte.MIN_VALUE) {
+				return Byte.MIN_VALUE;
+			} else if (shortVal > Byte.MAX_VALUE) {
+				return Byte.MAX_VALUE;
+			} else {
+				return (byte) shortVal;
+			}
+		}
+		public boolean isStreamType() {
+			return false;
+		}
 	}
 }
