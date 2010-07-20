@@ -12,6 +12,8 @@ import static org.junit.Assert.fail;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -42,7 +44,21 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 	private final static int ALL_TYPES_STRING_WIDTH = 4;
 	private final static String FOO_TABLE_NAME = "footable";
 	private final static String ENUM_TABLE_NAME = "enumtable";
+
+	private final static String NULL_BOOLEAN_TABLE_NAME = "nullbooltable";
 	private final static String NULL_INT_TABLE_NAME = "nullinttable";
+
+	private final static String DEFAULT_BOOLEAN_VALUE = "false";
+	private final static String DEFAULT_STRING_VALUE = "foo";
+	private final static String DEFAULT_DATE_VALUE = "2010-07-16";
+	private static DateFormat defaultDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	private final static String DEFAULT_BYTE_VALUE = "1";
+	private final static String DEFAULT_SHORT_VALUE = "2";
+	private final static String DEFAULT_INT_VALUE = "3";
+	private final static String DEFAULT_LONG_VALUE = "4";
+	private final static String DEFAULT_FLOAT_VALUE = "5";
+	private final static String DEFAULT_DOUBLE_VALUE = "6";
+	private final static String DEFAULT_ENUM_VALUE = "FIRST";
 
 	protected Dao<Foo, Integer> fooDao;
 
@@ -808,6 +824,16 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 	}
 
 	@Test
+	public void testAllTypesDefault() throws Exception {
+		Dao<AllTypes, Object> allDao = createDao(AllTypes.class, true);
+		AllTypes allTypes = new AllTypes();
+		assertEquals(1, allDao.create(allTypes));
+		List<AllTypes> allTypesList = allDao.queryForAll();
+		assertEquals(1, allTypesList.size());
+		assertTrue(allDao.objectsEqual(allTypes, allTypesList.get(0)));
+	}
+
+	@Test
 	public void testNumberTypes() throws Exception {
 		Dao<NumberTypes, Object> numberDao = createDao(NumberTypes.class, true);
 
@@ -1101,19 +1127,76 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 
 	@Test
 	public void testNullHandling() throws Exception {
-		Dao<AllTypesNull, Object> allDao = createDao(AllTypesNull.class, true);
-		AllTypesNull all = new AllTypesNull();
+		Dao<AllObjectTypes, Object> allDao = createDao(AllObjectTypes.class, true);
+		AllObjectTypes all = new AllObjectTypes();
 		assertEquals(1, allDao.create(all));
-		List<AllTypesNull> allList = allDao.queryForAll();
+		List<AllObjectTypes> allList = allDao.queryForAll();
 		assertEquals(1, allList.size());
 		assertTrue(allDao.objectsEqual(all, allList.get(0)));
 	}
 
+	@Test
+	public void testObjectNotNullHandling() throws Exception {
+		Dao<AllObjectTypes, Object> allDao = createDao(AllObjectTypes.class, true);
+		AllObjectTypes all = new AllObjectTypes();
+		all.stringField = "foo";
+		all.booleanField = false;
+		all.dateField = new Date();
+		all.byteField = 0;
+		all.shortField = 0;
+		all.intField = 0;
+		all.longField = 0L;
+		all.floatField = 0F;
+		all.doubleField = 0D;
+		all.objectField = new SerialField();
+		all.ourEnum = OurEnum.FIRST;
+		assertEquals(1, allDao.create(all));
+		List<AllObjectTypes> allList = allDao.queryForAll();
+		assertEquals(1, allList.size());
+		assertTrue(allDao.objectsEqual(all, allList.get(0)));
+	}
+
+	@Test
+	public void testDefaultValueHandling() throws Exception {
+		Dao<AllTypesDefault, Object> allDao = createDao(AllTypesDefault.class, true);
+		AllTypesDefault all = new AllTypesDefault();
+		assertEquals(1, allDao.create(all));
+		List<AllTypesDefault> allList = allDao.queryForAll();
+		assertEquals(1, allList.size());
+		all.stringField = DEFAULT_STRING_VALUE;
+		all.dateField = defaultDateFormat.parse(DEFAULT_DATE_VALUE);
+		all.booleanField = Boolean.parseBoolean(DEFAULT_BOOLEAN_VALUE);
+		all.booleanObj = Boolean.parseBoolean(DEFAULT_BOOLEAN_VALUE);
+		all.byteField = Byte.parseByte(DEFAULT_BYTE_VALUE);
+		all.byteObj = Byte.parseByte(DEFAULT_BYTE_VALUE);
+		all.shortField = Short.parseShort(DEFAULT_SHORT_VALUE);
+		all.shortObj = Short.parseShort(DEFAULT_SHORT_VALUE);
+		all.intField = Integer.parseInt(DEFAULT_INT_VALUE);
+		all.intObj = Integer.parseInt(DEFAULT_INT_VALUE);
+		all.longField = Long.parseLong(DEFAULT_LONG_VALUE);
+		all.longObj = Long.parseLong(DEFAULT_LONG_VALUE);
+		all.floatField = Float.parseFloat(DEFAULT_FLOAT_VALUE);
+		all.floatObj = Float.parseFloat(DEFAULT_FLOAT_VALUE);
+		all.doubleField = Double.parseDouble(DEFAULT_DOUBLE_VALUE);
+		all.doubleObj = Double.parseDouble(DEFAULT_DOUBLE_VALUE);
+		all.ourEnum = OurEnum.valueOf(DEFAULT_ENUM_VALUE);
+		assertFalse(allDao.objectsEqual(all, allList.get(0)));
+	}
+
 	@Test(expected = SQLException.class)
-	public void testNullUnPersistToPrimitive() throws Exception {
+	public void testNullUnPersistToBooleanPrimitive() throws Exception {
+		Dao<NullBoolean1, Object> null1Dao = createDao(NullBoolean1.class, true);
+		NullBoolean1 nullThing = new NullBoolean1();
+		assertEquals(1, null1Dao.create(nullThing));
+		Dao<NullBoolean2, Object> null2Dao = createDao(NullBoolean2.class, false);
+		null2Dao.queryForAll();
+	}
+
+	@Test(expected = SQLException.class)
+	public void testNullUnPersistToIntPrimitive() throws Exception {
 		Dao<NullInt1, Object> null1Dao = createDao(NullInt1.class, true);
-		NullInt1 nullInt1 = new NullInt1();
-		assertEquals(1, null1Dao.create(nullInt1));
+		NullInt1 nullThing = new NullInt1();
+		assertEquals(1, null1Dao.create(nullThing));
 		Dao<NullInt2, Object> null2Dao = createDao(NullInt2.class, false);
 		null2Dao.queryForAll();
 	}
@@ -1381,7 +1464,48 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 		}
 	}
 
-	protected static class AllTypesNull {
+	protected static class AllTypesDefault {
+		@DatabaseField(defaultValue = DEFAULT_STRING_VALUE)
+		String stringField;
+		@DatabaseField(defaultValue = DEFAULT_DATE_VALUE)
+		Date dateField;
+		@DatabaseField(defaultValue = DEFAULT_BOOLEAN_VALUE)
+		boolean booleanField;
+		@DatabaseField(defaultValue = DEFAULT_BOOLEAN_VALUE)
+		Boolean booleanObj;
+		@DatabaseField(defaultValue = DEFAULT_BYTE_VALUE)
+		byte byteField;
+		@DatabaseField(defaultValue = DEFAULT_BYTE_VALUE)
+		Byte byteObj;
+		@DatabaseField(defaultValue = DEFAULT_SHORT_VALUE)
+		short shortField;
+		@DatabaseField(defaultValue = DEFAULT_SHORT_VALUE)
+		Short shortObj;
+		@DatabaseField(defaultValue = DEFAULT_INT_VALUE)
+		int intField;
+		@DatabaseField(defaultValue = DEFAULT_INT_VALUE)
+		Integer intObj;
+		@DatabaseField(defaultValue = DEFAULT_LONG_VALUE)
+		long longField;
+		@DatabaseField(defaultValue = DEFAULT_LONG_VALUE)
+		Long longObj;
+		@DatabaseField(defaultValue = DEFAULT_FLOAT_VALUE)
+		float floatField;
+		@DatabaseField(defaultValue = DEFAULT_FLOAT_VALUE)
+		Float floatObj;
+		@DatabaseField(defaultValue = DEFAULT_DOUBLE_VALUE)
+		double doubleField;
+		@DatabaseField(defaultValue = DEFAULT_DOUBLE_VALUE)
+		Double doubleObj;
+		@DatabaseField
+		SerialField objectField;
+		@DatabaseField(defaultValue = DEFAULT_ENUM_VALUE)
+		OurEnum ourEnum;
+		AllTypesDefault() {
+		}
+	}
+
+	protected static class AllObjectTypes {
 		@DatabaseField
 		String stringField;
 		@DatabaseField
@@ -1404,7 +1528,7 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 		SerialField objectField;
 		@DatabaseField
 		OurEnum ourEnum;
-		AllTypesNull() {
+		AllObjectTypes() {
 		}
 	}
 
@@ -1554,7 +1678,12 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 			if (obj == null || obj.getClass() != getClass()) {
 				return false;
 			}
-			return stuff.equals(((SerialField) obj).stuff);
+			SerialField other = (SerialField) obj;
+			if (stuff == null) {
+				return other.stuff == null;
+			} else {
+				return stuff.equals(other.stuff);
+			}
 		}
 	}
 
@@ -1595,6 +1724,18 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 
 	private enum OurEnum2 {
 		FIRST, ;
+	}
+
+	@DatabaseTable(tableName = NULL_BOOLEAN_TABLE_NAME)
+	protected static class NullBoolean1 {
+		@DatabaseField
+		Boolean val;
+	}
+
+	@DatabaseTable(tableName = NULL_BOOLEAN_TABLE_NAME)
+	protected static class NullBoolean2 {
+		@DatabaseField(throwIfNull = true)
+		boolean val;
 	}
 
 	@DatabaseTable(tableName = NULL_INT_TABLE_NAME)
