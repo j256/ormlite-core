@@ -677,7 +677,7 @@ DataSource dataSource =
 @cindex connection pooling
 There are many other data sources that can be used instead, including pooled connections which will create new
 connections on demand and re-use existing dormant connections. You can instantiate your own without the
-DatabaseTypeUtils and set it on the DAOs directly.
+@code{DatabaseTypeUtils} and set it on the DAOs directly.
 
 @cindex close data source
 @cindex destroy data source
