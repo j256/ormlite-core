@@ -85,20 +85,6 @@ public class JdbcTypeTest extends BaseOrmLiteTest {
 	}
 
 	@Test
-	public void testDateNull() throws Exception {
-		Dao<LocalDate, Object> fooDao = createDao(LocalDate.class, true);
-		LocalDate foo = new LocalDate();
-		assertEquals(1, fooDao.create(foo));
-
-		PreparedStatement stmt = dataSource.getConnection().prepareStatement("select * from " + TABLE_NAME);
-		assertTrue(stmt.execute());
-
-		ResultSet resultSet = stmt.getResultSet();
-		assertTrue(resultSet.next());
-		assertNull(JdbcType.JAVA_DATE.resultToJava(null, resultSet, resultSet.findColumn(DATE_COLUMN)));
-	}
-
-	@Test
 	public void testByte() throws Exception {
 		Dao<LocalByte, Object> fooDao = createDao(LocalByte.class, true);
 		byte byteField = 123;

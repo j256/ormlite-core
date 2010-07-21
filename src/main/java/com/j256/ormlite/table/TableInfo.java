@@ -33,7 +33,7 @@ public class TableInfo<T> {
 	 * @param dataClass
 	 *            Class that we are holding information about.
 	 */
-	public TableInfo(DatabaseType databaseType, Class<T> dataClass) {
+	public TableInfo(DatabaseType databaseType, Class<T> dataClass) throws SQLException {
 		this(databaseType, DatabaseTableConfig.fromClass(databaseType, dataClass));
 	}
 
@@ -45,7 +45,7 @@ public class TableInfo<T> {
 	 * @param tableConfig
 	 *            Configuration for our table.
 	 */
-	public TableInfo(DatabaseType databaseType, DatabaseTableConfig<T> tableConfig) {
+	public TableInfo(DatabaseType databaseType, DatabaseTableConfig<T> tableConfig) throws SQLException {
 		this.dataClass = tableConfig.getDataClass();
 		this.tableName = tableConfig.getTableName();
 		this.fieldTypes = tableConfig.extractFieldTypes(databaseType);

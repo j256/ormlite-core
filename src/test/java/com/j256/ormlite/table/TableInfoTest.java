@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import org.junit.Test;
@@ -19,7 +20,7 @@ public class TableInfoTest extends BaseOrmLiteTest {
 	private final static String COLUMN_NAME = "column2";
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testTableInfo() {
+	public void testTableInfo() throws SQLException {
 		new TableInfo<NoFieldAnnotations>(databaseType, NoFieldAnnotations.class);
 	}
 
@@ -40,17 +41,17 @@ public class TableInfoTest extends BaseOrmLiteTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testObjectNoFields() {
+	public void testObjectNoFields() throws SQLException {
 		new TableInfo<NoFields>(databaseType, NoFields.class);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testObjectDoubleId() {
+	public void testObjectDoubleId() throws SQLException {
 		new TableInfo<DoubleId>(databaseType, DoubleId.class);
 	}
 
 	@Test
-	public void testBasic() {
+	public void testBasic() throws SQLException {
 		TableInfo<Foo> tableInfo = new TableInfo<Foo>(databaseType, Foo.class);
 		assertEquals(Foo.class, tableInfo.getDataClass());
 		assertEquals(TABLE_NAME, tableInfo.getTableName());

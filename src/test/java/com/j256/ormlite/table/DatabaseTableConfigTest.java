@@ -2,6 +2,7 @@ package com.j256.ormlite.table;
 
 import static org.junit.Assert.assertEquals;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class DatabaseTableConfigTest extends BaseOrmLiteTest {
 	private static final String TABLE_NAME = "sometable";
 
 	@Test
-	public void testDatabaseTableConfig() {
+	public void testDatabaseTableConfig() throws SQLException {
 		DatabaseTableConfig<DatabaseTableAnno> dbTableConf =
 				DatabaseTableConfig.fromClass(databaseType, DatabaseTableAnno.class);
 		assertEquals(DatabaseTableAnno.class, dbTableConf.getDataClass());
@@ -31,14 +32,14 @@ public class DatabaseTableConfigTest extends BaseOrmLiteTest {
 	}
 
 	@Test
-	public void testDatabaseTableWithEntity() {
+	public void testDatabaseTableWithEntity() throws SQLException {
 		DatabaseTableConfig<EntityAnno> dbTableConf = DatabaseTableConfig.fromClass(databaseType, EntityAnno.class);
 		assertEquals(EntityAnno.class, dbTableConf.getDataClass());
 		assertEquals(TABLE_NAME, dbTableConf.getTableName());
 	}
 
 	@Test
-	public void testSpringWiring() {
+	public void testSpringWiring() throws SQLException {
 		DatabaseTableConfig<DatabaseTableAnno> dbTableConf = new DatabaseTableConfig<DatabaseTableAnno>();
 		dbTableConf.setDataClass(DatabaseTableAnno.class);
 		dbTableConf.setTableName(TABLE_NAME);
@@ -60,7 +61,7 @@ public class DatabaseTableConfigTest extends BaseOrmLiteTest {
 	}
 
 	@Test
-	public void testFieldConfigConstructor() {
+	public void testFieldConfigConstructor() throws SQLException {
 		List<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
 		fieldConfigs.add(new DatabaseFieldConfig("stuff", null, JdbcType.UNKNOWN, "", 0, true, false, false, null,
 				false, null, false, null, false));
@@ -74,7 +75,7 @@ public class DatabaseTableConfigTest extends BaseOrmLiteTest {
 	}
 
 	@Test
-	public void testSetFieldConfigs() {
+	public void testSetFieldConfigs() throws SQLException {
 		DatabaseTableConfig<DatabaseTableAnno> dbTableConf = new DatabaseTableConfig<DatabaseTableAnno>();
 		dbTableConf.setDataClass(DatabaseTableAnno.class);
 		dbTableConf.setTableName(TABLE_NAME);
@@ -91,7 +92,7 @@ public class DatabaseTableConfigTest extends BaseOrmLiteTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testSetFieldConfigsNoMatchingField() {
+	public void testSetFieldConfigsNoMatchingField() throws SQLException {
 		DatabaseTableConfig<DatabaseTableAnno> dbTableConf = new DatabaseTableConfig<DatabaseTableAnno>();
 		dbTableConf.setDataClass(DatabaseTableAnno.class);
 		dbTableConf.setTableName(TABLE_NAME);
@@ -106,7 +107,7 @@ public class DatabaseTableConfigTest extends BaseOrmLiteTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testSetNoFields() {
+	public void testSetNoFields() throws SQLException {
 		DatabaseTableConfig<DatabaseTableAnno> dbTableConf = new DatabaseTableConfig<DatabaseTableAnno>();
 		dbTableConf.setDataClass(DatabaseTableAnno.class);
 		dbTableConf.setTableName(TABLE_NAME);
@@ -116,7 +117,7 @@ public class DatabaseTableConfigTest extends BaseOrmLiteTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testNoFieldsClass() {
+	public void testNoFieldsClass() throws SQLException {
 		DatabaseTableConfig<NoFields> dbTableConf = new DatabaseTableConfig<NoFields>();
 		dbTableConf.setDataClass(NoFields.class);
 		dbTableConf.initialize();

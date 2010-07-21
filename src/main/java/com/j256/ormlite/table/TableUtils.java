@@ -132,7 +132,8 @@ public class TableUtils {
 	 *            The class for which a table will be created.
 	 * @return The collection of table create statements.
 	 */
-	public static <T> List<String> getCreateTableStatements(DatabaseType databaseType, Class<T> dataClass) {
+	public static <T> List<String> getCreateTableStatements(DatabaseType databaseType, Class<T> dataClass)
+			throws SQLException {
 		return getCreateTableStatements(databaseType, DatabaseTableConfig.fromClass(databaseType, dataClass));
 	}
 
@@ -148,7 +149,7 @@ public class TableUtils {
 	 * @return The collection of table create statements.
 	 */
 	public static <T> List<String> getCreateTableStatements(DatabaseType databaseType,
-			DatabaseTableConfig<T> tableConfig) {
+			DatabaseTableConfig<T> tableConfig) throws SQLException {
 		TableInfo<T> tableInfo = new TableInfo<T>(databaseType, tableConfig);
 		List<String> statements = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();

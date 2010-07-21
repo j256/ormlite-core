@@ -48,10 +48,11 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 	private final static String NULL_BOOLEAN_TABLE_NAME = "nullbooltable";
 	private final static String NULL_INT_TABLE_NAME = "nullinttable";
 
-	private final static String DEFAULT_BOOLEAN_VALUE = "false";
+	private final static String DEFAULT_BOOLEAN_VALUE = "true";
 	private final static String DEFAULT_STRING_VALUE = "foo";
-	private final static String DEFAULT_DATE_VALUE = "2010-07-16";
-	private static DateFormat defaultDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	// this can't have non-zero milliseconds
+	private final static String DEFAULT_DATE_VALUE = "2010-07-16 01:31:17.000000";
+	private static DateFormat defaultDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSSSSS");
 	private final static String DEFAULT_BYTE_VALUE = "1";
 	private final static String DEFAULT_SHORT_VALUE = "2";
 	private final static String DEFAULT_INT_VALUE = "3";
@@ -59,6 +60,7 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 	private final static String DEFAULT_FLOAT_VALUE = "5";
 	private final static String DEFAULT_DOUBLE_VALUE = "6";
 	private final static String DEFAULT_ENUM_VALUE = "FIRST";
+	private final static String DEFAULT_ENUM_NUMBER_VALUE = "1";
 
 	protected Dao<Foo, Integer> fooDao;
 
@@ -1141,7 +1143,8 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 		AllObjectTypes all = new AllObjectTypes();
 		all.stringField = "foo";
 		all.booleanField = false;
-		all.dateField = new Date();
+		Date dateValue = new Date(1279649192000L);
+		all.dateField = dateValue;
 		all.byteField = 0;
 		all.shortField = 0;
 		all.intField = 0;
@@ -1180,6 +1183,18 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 		all.doubleField = Double.parseDouble(DEFAULT_DOUBLE_VALUE);
 		all.doubleObj = Double.parseDouble(DEFAULT_DOUBLE_VALUE);
 		all.ourEnum = OurEnum.valueOf(DEFAULT_ENUM_VALUE);
+		assertFalse(allDao.objectsEqual(all, allList.get(0)));
+	}
+
+	@Test
+	public void testBooleanDefaultValueHandling() throws Exception {
+		Dao<BooleanDefault, Object> allDao = createDao(BooleanDefault.class, true);
+		BooleanDefault all = new BooleanDefault();
+		assertEquals(1, allDao.create(all));
+		List<BooleanDefault> allList = allDao.queryForAll();
+		assertEquals(1, allList.size());
+		all.booleanField = Boolean.parseBoolean(DEFAULT_BOOLEAN_VALUE);
+		all.booleanObj = Boolean.parseBoolean(DEFAULT_BOOLEAN_VALUE);
 		assertFalse(allDao.objectsEqual(all, allList.get(0)));
 	}
 
@@ -1501,7 +1516,18 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 		SerialField objectField;
 		@DatabaseField(defaultValue = DEFAULT_ENUM_VALUE)
 		OurEnum ourEnum;
+		@DatabaseField(defaultValue = DEFAULT_ENUM_NUMBER_VALUE, jdbcType = JdbcType.ENUM_INTEGER)
+		OurEnum ourEnumNumber;
 		AllTypesDefault() {
+		}
+	}
+
+	protected static class BooleanDefault {
+		@DatabaseField(defaultValue = DEFAULT_BOOLEAN_VALUE)
+		boolean booleanField;
+		@DatabaseField(defaultValue = DEFAULT_BOOLEAN_VALUE)
+		Boolean booleanObj;
+		BooleanDefault() {
 		}
 	}
 

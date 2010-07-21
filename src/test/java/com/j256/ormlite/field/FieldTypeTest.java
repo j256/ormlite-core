@@ -16,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.junit.Test;
@@ -57,7 +58,7 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 		fieldType = FieldType.createFieldType(databaseType, Foo.class.getSimpleName(), serialField);
 		assertEquals(serialField.getName(), fieldType.getDbColumnName());
 		assertEquals(JdbcType.INTEGER_OBJ, fieldType.getJdbcType());
-		assertEquals(SERIAL_DEFAULT_VALUE, fieldType.getDefaultValue());
+		assertEquals(Integer.parseInt(SERIAL_DEFAULT_VALUE), fieldType.getDefaultValue());
 
 		fieldType = FieldType.createFieldType(databaseType, Foo.class.getSimpleName(), intLongField);
 		assertEquals(intLongField.getName(), fieldType.getDbColumnName());
@@ -126,11 +127,17 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 			public int getJdbcTypeVal() {
 				return typeVal;
 			}
+			public Object parseDefaultString(String defaultStr) {
+				return defaultStr;
+			}
 			public Object javaToArg(Object javaObject) {
 				return nameArg;
 			}
 			public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
 				return nameResult;
+			}
+			public boolean isStreamType() {
+				return false;
 			}
 		});
 		expect(databaseType.isEntityNamesMustBeUpCase()).andReturn(false);
@@ -147,6 +154,7 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 
 		ResultSet resultMock = createMock(ResultSet.class);
 		expect(resultMock.findColumn("name")).andReturn(0);
+		expect(resultMock.getObject(0)).andReturn(nameResult);
 		replay(resultMock);
 		assertEquals(nameResult, fieldType.resultToJava(resultMock, new HashMap<String, Integer>()));
 		verify(resultMock);
@@ -382,7 +390,7 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 	}
 
 	@Test
-	@ExpectedBehavior(expected = IllegalArgumentException.class)
+	@ExpectedBehavior(expected = SQLException.class)
 	public void testGeneratedIdDefaultValue() throws Exception {
 		Field[] fields = GeneratedIdDefault.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
@@ -391,12 +399,21 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 	}
 
 	@Test
-	@ExpectedBehavior(expected = IllegalArgumentException.class)
+	@ExpectedBehavior(expected = SQLException.class)
 	public void testThrowIfNullNotPrimitive() throws Exception {
 		Field[] fields = ThrowIfNullNonPrimitive.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
 		Field field = fields[0];
 		FieldType.createFieldType(databaseType, ThrowIfNullNonPrimitive.class.getSimpleName(), field);
+	}
+
+	@Test
+	@ExpectedBehavior(expected = SQLException.class)
+	public void testBadDateDefaultValue() throws Exception {
+		Field[] fields = DateDefaultBad.class.getDeclaredFields();
+		assertTrue(fields.length >= 1);
+		Field field = fields[0];
+		FieldType.createFieldType(databaseType, DateDefaultBad.class.getSimpleName(), field);
 	}
 
 	protected static class Foo {
@@ -408,6 +425,16 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 		Integer serial;
 		@DatabaseField(jdbcType = JdbcType.LONG)
 		int intLong;
+	}
+
+	protected static class DateDefaultBad {
+		@DatabaseField(defaultValue = "bad value")
+		Date date;
+	}
+
+	protected static class SerializableDefault {
+		@DatabaseField(defaultValue = "bad value")
+		Date date;
 	}
 
 	protected static class NumberId {

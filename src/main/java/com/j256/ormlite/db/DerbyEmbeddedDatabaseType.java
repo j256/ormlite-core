@@ -13,7 +13,6 @@ import javax.sql.rowset.serial.SerialBlob;
 
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.field.JdbcType;
 import com.j256.ormlite.misc.SqlExceptionUtil;
 
 /**
@@ -38,11 +37,15 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 
 	@Override
 	public FieldConverter getFieldConverter(FieldType fieldType) {
-		if (fieldType.getJdbcType() == JdbcType.SERIALIZABLE) {
-			// we are only overriding the OBJECT type
-			return objectConverter;
-		} else {
-			return super.getFieldConverter(fieldType);
+		// we are only overriding certain types
+		switch (fieldType.getJdbcType()) {
+			case BOOLEAN :
+			case BOOLEAN_OBJ :
+				return booleanConverter;
+			case SERIALIZABLE :
+				return objectConverter;
+			default :
+				return super.getFieldConverter(fieldType);
 		}
 	}
 
@@ -88,9 +91,6 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 			return Types.BLOB;
 		}
 		public Object javaToArg(Object javaObject) throws SQLException {
-			if (javaObject == null) {
-				return null;
-			}
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 			try {
 				ObjectOutputStream objOutStream = new ObjectOutputStream(outStream);
@@ -99,6 +99,9 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 				throw SqlExceptionUtil.create("Could not write serialized object to output stream", e);
 			}
 			return new SerialBlob(outStream.toByteArray());
+		}
+		public Object parseDefaultString(String defaultStr) throws SQLException {
+			throw new SQLException("Default values for serializable types are not supported");
 		}
 		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
 			Blob blob = resultSet.getBlob(columnPos);
@@ -111,6 +114,9 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 			} catch (Exception e) {
 				throw SqlExceptionUtil.create("Could not read serialized object from result blob", e);
 			}
+		}
+		public boolean isStreamType() {
+			return true;
 		}
 	}
 

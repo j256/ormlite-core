@@ -96,13 +96,13 @@ public class MappedPreparedQueryTest extends BaseOrmLiteTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testObjectNoConstructor() {
+	public void testObjectNoConstructor() throws SQLException {
 		new MappedPreparedQuery<NoConstructor>(new TableInfo<NoConstructor>(databaseType, NoConstructor.class), null,
 				new ArrayList<FieldType>(), new ArrayList<FieldType>(), new ArrayList<SelectArg>(), null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testDifferentArgSizes() {
+	public void testDifferentArgSizes() throws SQLException {
 		ArrayList<SelectArg> selectArgList = new ArrayList<SelectArg>();
 		selectArgList.add(new SelectArg());
 		new MappedPreparedQuery<Foo>(new TableInfo<Foo>(databaseType, Foo.class), null, new ArrayList<FieldType>(),

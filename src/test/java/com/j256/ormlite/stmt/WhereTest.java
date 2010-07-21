@@ -2,6 +2,8 @@ package com.j256.ormlite.stmt;
 
 import static org.junit.Assert.assertTrue;
 
+import java.sql.SQLException;
+
 import org.junit.Test;
 
 import com.j256.ormlite.db.H2DatabaseType;
@@ -30,7 +32,7 @@ public class WhereTest {
 		where.and();
 	}
 
-	private TableInfo<?> createTableInfo() {
+	private TableInfo<?> createTableInfo() throws SQLException {
 		return new TableInfo<Foo>(new H2DatabaseType(), Foo.class);
 	}
 

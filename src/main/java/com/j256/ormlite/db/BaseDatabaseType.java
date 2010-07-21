@@ -1,5 +1,8 @@
 package com.j256.ormlite.db;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
 import java.util.List;
 
 import com.j256.ormlite.field.DatabaseField;
@@ -20,6 +23,8 @@ import com.j256.ormlite.field.FieldType;
 public abstract class BaseDatabaseType implements DatabaseType {
 
 	private static int DEFAULT_VARCHAR_WIDTH = 255;
+
+	protected final static FieldConverter booleanConverter = new BooleanNumberFieldConverter();
 
 	public void loadDriver() throws ClassNotFoundException {
 		// this instantiates the driver class which wires in the JDBC glue
@@ -109,14 +114,10 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		}
 		// if we have a generated-id then neither the not-null nor the default make sense and cause syntax errors
 		if (!fieldType.isGeneratedId()) {
-			String defaultValue = fieldType.getDefaultValue();
-			if (defaultValue != null && !defaultValue.equals("")) {
+			Object defaultValue = fieldType.getDefaultValue();
+			if (defaultValue != null) {
 				sb.append("DEFAULT ");
-				if (fieldType.isNumber()) {
-					sb.append(defaultValue);
-				} else {
-					appendEscapedWord(sb, defaultValue);
-				}
+				appendDefaultValue(sb, fieldType, defaultValue);
 				sb.append(' ');
 			}
 			if (fieldType.isCanBeNull()) {
@@ -220,6 +221,17 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	protected void appendEnumIntType(StringBuilder sb, FieldType fieldType) {
 		// delegate to an integer
 		appendIntegerType(sb);
+	}
+
+	/**
+	 * Output the SQL type for a Java boolean default value.
+	 */
+	protected void appendDefaultValue(StringBuilder sb, FieldType fieldType, Object defaultValue) {
+		if (fieldType.escapeDefaultValue()) {
+			appendEscapedWord(sb, defaultValue.toString());
+		} else {
+			sb.append(defaultValue);
+		}
 	}
 
 	/**
@@ -334,5 +346,29 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	 */
 	protected void appendCanBeNull(StringBuilder sb, FieldType fieldType) {
 		// default is a noop
+	}
+
+	/**
+	 * Conversion to/from the Boolean Java field as a number because some databases like the true/false.
+	 */
+	protected static class BooleanNumberFieldConverter implements FieldConverter {
+		public int getJdbcTypeVal() {
+			return Types.BOOLEAN;
+		}
+		public Object parseDefaultString(String defaultStr) throws SQLException {
+			boolean bool = (boolean) Boolean.parseBoolean(defaultStr);
+			return (bool ? new Byte((byte) 1) : new Byte((byte) 0));
+		}
+		public Object javaToArg(Object javaObject) throws SQLException {
+			Boolean bool = (Boolean) javaObject;
+			return (bool ? new Byte((byte) 1) : new Byte((byte) 0));
+		}
+		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
+			byte result = resultSet.getByte(columnPos);
+			return (result == 1 ? (Boolean) true : (Boolean) false);
+		}
+		public boolean isStreamType() {
+			return false;
+		}
 	}
 }

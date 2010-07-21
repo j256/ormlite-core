@@ -282,6 +282,20 @@ public class QueryBuilderTest extends BaseOrmLiteTest {
 	}
 
 	@Test
+	public void testBetweenStrings() throws Exception {
+		Dao<Foo, String> fooDao = createTestData();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
+
+		String low = ID_PREFIX;
+		String high = ID_PREFIX + "99999";
+		qb.where().between(Foo.ID_COLUMN_NAME, low, high);
+		List<Foo> results = fooDao.query(qb.prepareQuery());
+		assertEquals(2, results.size());
+		assertEquals(foo1, results.get(0));
+		assertEquals(foo2, results.get(1));
+	}
+
+	@Test
 	public void testLtGtEtc() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
 		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();

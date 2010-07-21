@@ -1,6 +1,7 @@
 package com.j256.ormlite.table;
 
 import java.lang.reflect.Field;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,7 +77,7 @@ public class DatabaseTableConfig<T> {
 		this.fieldConfigs = fieldConfigs;
 	}
 
-	public FieldType[] extractFieldTypes(DatabaseType databaseType) {
+	public FieldType[] extractFieldTypes(DatabaseType databaseType) throws SQLException {
 		if (fieldTypes == null) {
 			if (fieldConfigs == null) {
 				fieldTypes = extractFieldTypes(databaseType, dataClass, tableName);
@@ -87,7 +88,7 @@ public class DatabaseTableConfig<T> {
 		return fieldTypes;
 	}
 
-	public static <T> DatabaseTableConfig<T> fromClass(DatabaseType databaseType, Class<T> clazz) {
+	public static <T> DatabaseTableConfig<T> fromClass(DatabaseType databaseType, Class<T> clazz) throws SQLException {
 		String tableName = extractTableName(clazz);
 		if (databaseType.isEntityNamesMustBeUpCase()) {
 			tableName = tableName.toUpperCase();
@@ -95,7 +96,8 @@ public class DatabaseTableConfig<T> {
 		return new DatabaseTableConfig<T>(clazz, tableName, extractFieldTypes(databaseType, clazz, tableName));
 	}
 
-	private static <T> FieldType[] extractFieldTypes(DatabaseType databaseType, Class<T> clazz, String tableName) {
+	private static <T> FieldType[] extractFieldTypes(DatabaseType databaseType, Class<T> clazz, String tableName)
+			throws SQLException {
 		List<FieldType> fieldTypes = new ArrayList<FieldType>();
 		for (Field field : clazz.getDeclaredFields()) {
 			FieldType fieldType = FieldType.createFieldType(databaseType, tableName, field);
@@ -129,7 +131,7 @@ public class DatabaseTableConfig<T> {
 	}
 
 	private FieldType[] convertFieldConfigs(DatabaseType databaseType, String tableName,
-			List<DatabaseFieldConfig> fieldConfigs) {
+			List<DatabaseFieldConfig> fieldConfigs) throws SQLException {
 		List<FieldType> fieldTypes = new ArrayList<FieldType>();
 		for (DatabaseFieldConfig fieldConfig : fieldConfigs) {
 			Field field;

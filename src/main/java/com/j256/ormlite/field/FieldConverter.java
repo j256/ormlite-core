@@ -17,7 +17,12 @@ import com.j256.ormlite.db.BaseDatabaseType;
 public interface FieldConverter {
 
 	/**
-	 * Convert a Java object and return the appropriate argument to a SQL statement.
+	 * Convert a default string object and return the appropriate argument to a SQL insert or update statement.
+	 */
+	public Object parseDefaultString(String defaultStr) throws SQLException;
+
+	/**
+	 * Convert a Java object and return the appropriate argument to a SQL insert or update statement.
 	 */
 	public Object javaToArg(Object javaObject) throws SQLException;
 
@@ -34,4 +39,10 @@ public interface FieldConverter {
 	 * constants.
 	 */
 	public int getJdbcTypeVal();
+
+	/**
+	 * Return whether or not this is a SQL "stream" object. Cannot get certain stream objects from the SQL ResultSet
+	 * more than once. If true, the converter has to protect itself against null values.
+	 */
+	public boolean isStreamType();
 }

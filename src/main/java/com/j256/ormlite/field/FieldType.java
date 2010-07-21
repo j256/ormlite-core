@@ -27,7 +27,7 @@ public class FieldType {
 	private final String fieldName;
 	private final String dbColumnName;
 	private final JdbcType jdbcType;
-	private final String defaultValue;
+	private final Object defaultValue;
 	private final int width;
 	private final boolean canBeNull;
 	private final boolean isId;
@@ -45,7 +45,8 @@ public class FieldType {
 	/**
 	 * You should use {@link FieldType#createFieldType} to instantiate one of these field if you have a {@link Field}.
 	 */
-	public FieldType(DatabaseType databaseType, String tableName, Field field, DatabaseFieldConfig fieldConfig) {
+	public FieldType(DatabaseType databaseType, String tableName, Field field, DatabaseFieldConfig fieldConfig)
+			throws SQLException {
 		this.field = field;
 		this.fieldName = field.getName();
 		JdbcType jdbcType;
@@ -133,16 +134,20 @@ public class FieldType {
 			throw new IllegalArgumentException("Generated field " + field.getName()
 					+ " is not an appropriate type in class " + field.getDeclaringClass());
 		}
-		this.defaultValue = fieldConfig.getDefaultValue();
-		if (this.defaultValue != null && this.isGeneratedId) {
-			throw new IllegalArgumentException("Field '" + field.getName()
-					+ "' cannot be a generatedId and have a default value '" + fieldConfig.getDefaultValue() + "'");
-		}
 		FieldConverter converter = databaseType.getFieldConverter(this);
 		if (converter == null) {
 			this.fieldConverter = jdbcType;
 		} else {
 			this.fieldConverter = converter;
+		}
+		String defaultStr = fieldConfig.getDefaultValue();
+		if (defaultStr == null || defaultStr.equals("")) {
+			this.defaultValue = null;
+		} else if (this.isGeneratedId) {
+			throw new SQLException("Field '" + field.getName() + "' cannot be a generatedId and have a default value '"
+					+ defaultStr + "'");
+		} else {
+			this.defaultValue = this.fieldConverter.parseDefaultString(defaultStr);
 		}
 		if (this.isId && foreignTableInfo != null) {
 			throw new IllegalArgumentException("Id field " + field.getName() + " cannot also be a foreign object");
@@ -164,8 +169,8 @@ public class FieldType {
 			this.unknownEnumVal = null;
 		}
 		this.throwIfNull = fieldConfig.isThrowIfNull();
-		if (this.throwIfNull && !field.getType().isPrimitive()) {
-			throw new IllegalArgumentException("Field " + field.getName()
+		if (this.throwIfNull && !jdbcType.isPrimitive()) {
+			throw new SQLException("Field " + field.getName()
 					+ " must be a primitive if set with throwIfNull");
 		}
 	}
@@ -199,9 +204,9 @@ public class FieldType {
 	}
 
 	/**
-	 * Return the default value configured by {@link DatabaseField#defaultValue} or "" if none.
+	 * Return the default value configured by {@link DatabaseField#defaultValue} or null if none.
 	 */
-	public String getDefaultValue() {
+	public Object getDefaultValue() {
 		return defaultValue;
 	}
 
@@ -265,6 +270,13 @@ public class FieldType {
 	 */
 	public TableInfo<?> getForeignTableInfo() {
 		return foreignTableInfo;
+	}
+
+	/**
+	 * Convert the default value string into a valid Java object for this type.
+	 */
+	public Object parseDefaultString(String defaulStr) throws SQLException {
+		return fieldConverter.parseDefaultString(defaulStr);
 	}
 
 	/**
@@ -371,7 +383,8 @@ public class FieldType {
 	}
 
 	/**
-	 * Return the value from the field after it has been converted to something suitable to be stored in the database.
+	 * Return the value from the field in the object after it has been converted to something suitable to be stored in
+	 * the database.
 	 */
 	public <FV> FV getConvertedFieldValue(Object object) throws SQLException {
 		Object val = getFieldValue(object);
@@ -390,10 +403,17 @@ public class FieldType {
 	}
 
 	/**
-	 * Return whether this field is a number so needs to be escaped in SQL differently.
+	 * Return whether this field is a number.
 	 */
 	public boolean isNumber() {
 		return jdbcType.isNumber();
+	}
+
+	/**
+	 * Return whether this field's default value should be escaped in SQL.
+	 */
+	public boolean escapeDefaultValue() {
+		return jdbcType.escapeDefaultValue();
 	}
 
 	/**
@@ -404,6 +424,15 @@ public class FieldType {
 		if (dbColumnPos == null) {
 			dbColumnPos = resultSet.findColumn(dbColumnName);
 			columnPositions.put(dbColumnName, dbColumnPos);
+		}
+		if (jdbcType.isPrimitive()) {
+			if (throwIfNull && resultSet.getObject(dbColumnPos) == null) {
+				throw new SQLException("ResultSet value for primitive field '" + fieldName
+						+ "' was an invalid null value");
+			}
+		} else if (!fieldConverter.isStreamType() && resultSet.getObject(dbColumnPos) == null) {
+			// we can't check if we have a null if this is a stream type
+			return null;
 		}
 		@SuppressWarnings("unchecked")
 		T converted = (T) fieldConverter.resultToJava(this, resultSet, dbColumnPos);
@@ -429,7 +458,8 @@ public class FieldType {
 	/**
 	 * Return An instantiated {@link FieldType} or null if the field does not have a {@link DatabaseField} annotation.
 	 */
-	public static FieldType createFieldType(DatabaseType databaseType, String tableName, Field field) {
+	public static FieldType createFieldType(DatabaseType databaseType, String tableName, Field field)
+			throws SQLException {
 		DatabaseFieldConfig fieldConfig = DatabaseFieldConfig.fromField(databaseType, field);
 		if (fieldConfig == null) {
 			return null;
