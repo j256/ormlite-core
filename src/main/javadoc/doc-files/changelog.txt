@@ -1,0 +1,56 @@
+2.8: 7/20/2010
+	* Found and fixed problems with boolean default values under Derby. (bug #3032387)
+	* Trickle down changes which affected a lot of FieldType nad JdbcType. Also improved the null handling.
+	* Fixed the docs which referenced the BaseDao which was completely wrong.
+
+2.7: 7/19/2010
+	* Revamped the logging classes so we can remove the hard dependency on commons-logging.
+	* Changed MySQL to use DATETIME instead of TIMESTAMP for Date fields.
+	* Added the createDao static method to the BaseJdbcDao so you can create DAOs without a new class.
+
+2.6: 7/7/2010
+	* Fixed bug 3026487 where the limit in QueryBuilder was removed after a prepare.
+	* Added log wrapping so we can remove the commons-logging dependency and replace it with a LocalLog impl.
+	* Isolated the javax.persistence usage into one class for easy removal.
+	* Renamed some database type methods.
+
+2.5: 6/28/2010
+	* Finally figured out all of the tricky conf settings to get ORMLite published to the central maven repo.
+
+2.4: 6/26/2010
+	* Fixed bug with Derby and Hsqldb where raw queries would not match quoted names. Capitalized field names.
+	* Fixed a problem where value quoting for numbers and string arguments weren't handled right.
+	* Fixed problem in MySQL where timestamps were by default not-null and set to the current time.
+	* Fixed problem where default value and null specifier were generated in wrong order in CREATE TABLE.
+	* Removed the restriction that primitive values couldn't have default values. Not sure why that was added.
+	* Added initial code to allow the user to run raw String queries through the DAOs.
+	* Changed the iterator returned by the Dao to a CloseableIterator to hide internal methods.
+	* Added throwIfNull annotation to DatabaseField to throw if a null field is pulled into a primitive.
+
+2.3: 6/23/2010
+	* Fixed a problem with null handling which would come back as 0s.
+
+2.2: 6/18/2010
+	* Added enum support with both integer orderinal and string name support.
+	* Changed the mechanism for detecting foreign fields with the the javax.annotations. Unknown fields are now seen as serializable fields. OneToOne and ManyToOne annotations used with foreign fields.
+
+2.1: 6/14/2010
+	* Added the ability of storing Serializable objects as the new SERIALIZABLE type.
+	* Fixed problem with generated ids under MS SQL.
+	* Trimmed the test dependencies and documented them.
+	* Got rid of unused close and destroy methods on the DAOs and JdbcTemplate.
+	* Fixed bug with username and password settings on the connection.
+	* Added Java 6 methods to the data source. Fixed Java 6 compile error.
+
+2.0: 6/12/2010
+	* Finally took the plunge and removed the Spring dependency.  Down to 2 dependencies.
+
+1.13: 6/11/2010
+	* Fixed Postgres mixed case problem with fields and sequence numbers.
+
+1.12: 6/7/2010
+	* Added database column case conversion because postgres had some problems with sequence name case
+	* Added support for javax.persistence annotations (@Entity, @Column, @Id, @GeneratedValue).
+	* Added a cache of the column positions for mapped queries to make the looking up of column names faster.
+	* Finished up the next texinfo online and print documentation.
+	* Added an initial try at a DB2 database type. Completely untested.
