@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on July, 19 2010 by texi2html 1.70 -->
+<!-- Created on July, 20 2010 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -684,7 +684,7 @@ persisted class.
 </p><a name="IDX70"></a>
 <a name="IDX71"></a>
 <p>Once you have annotated your classes, you will need to create the DAO class(es).  The pattern that we recommend
-is to define a DAO interface which extends the <code>BaseDao</code> interface and will be used in the code.  The interface
+is to define a DAO interface which extends the <code>Dao</code> interface and will be used in the code.  The interface
 isn't required but it is a good pattern so your code is less tied to JDBC for persistence.  Each DAO has two generic
 parameters: the class we are persisting with the DAO, and the class of the ID-column that will be used to
 identify a specific database row.  If you class does not have an ID field, you can put <code>Object</code> or <code>Void</code>
@@ -693,7 +693,7 @@ so the ID class is <code>String</code>.  Example:
 
 </p><a name="IDX72"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">/** Account DAO which has a String id (Account.name) */
-public interface AccountDao extends BaseDao&lt;Account, String&gt; {
+public interface AccountDao extends Dao&lt;Account, String&gt; {
     // empty wrapper, you can add additional DAO methods here
 }
 </pre></td></tr></table>
@@ -713,11 +713,15 @@ public class AccountJdbcDao extends BaseJdbcDao&lt;Account, String&gt;
 implementations if there are specific operations that are needed and not provided by the Dao base classes.
 More on how to use these DAOs later. See section <a href="ormlite_2.html#SEC12">Using the DAOs</a>.
 
-</p><p>You are not <em>required</em> to create a DAO class for every one of your persisted objects.  You can use the
+</p><a name="IDX74"></a>
+<p>You are not <em>required</em> to create a DAO class for every one of your persisted objects.  You can use the
 <code>createDao</code> static method on the <code>BaseJdbcDao</code> class to create a DAO class without having to define
-one.
+one.  For example:
 
-</p><hr size="6">
+</p><table><tr><td>&nbsp;</td><td><pre class="example">Dao&lt;Account, String&gt; accountDao = BaseJdbcDao.createDao(databaseType, dataSource, Account.class);
+Dao&lt;Order, Integer&gt; orderDao = BaseJdbcDao.createDao(databaseType, dataSource, Order.class);
+</pre></td></tr></table>
+<hr size="6">
 <a name="NOD10"></a>
 <a name="SEC9"></a>
 <table cellpadding="1" cellspacing="1" border="0">
@@ -742,21 +746,21 @@ one.
 <code>javax.sql.DataSource</code> class).  The <code>DataSource</code> is a factory for connections to the physical SQL
 database.  Here is a code example that creates a simple data source.
 
-</p><a name="IDX74"></a>
-<a name="IDX75"></a>
+</p><a name="IDX75"></a>
 <a name="IDX76"></a>
+<a name="IDX77"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">// single connection data source example
 DataSource dataSource =
   DatabaseTypeUtils.createSimpleDataSource(&quot;jdbc:h2:mem:account&quot;);
 </pre></td></tr></table>
-<a name="IDX77"></a>
 <a name="IDX78"></a>
+<a name="IDX79"></a>
 <p>There are many other data sources that can be used instead, including pooled connections which will create new
 connections on demand and re-use existing dormant connections. You can instantiate your own without the
 DatabaseTypeUtils and set it on the DAOs directly.
 
-</p><a name="IDX79"></a>
-<a name="IDX80"></a>
+</p><a name="IDX80"></a>
+<a name="IDX81"></a>
 <p>When you are done with your DataSource, you will want to call the close() or destroy() method to close any underlying 
 <code>java.sql.Connection</code> objects.  Something like the following pattern is recommended.
 
@@ -817,8 +821,8 @@ can pass in the database URL or pass in an already created <code>DataSource</cod
 </dd>
 </dl>
 
-<a name="IDX81"></a>
 <a name="IDX82"></a>
+<a name="IDX83"></a>
 <p>After you instantiate your DatabaseType, you will need to call the loadDriver() method to make sure that
 the driver has wired itself into JDBC appropriately.
 
@@ -883,12 +887,12 @@ if (accountDao.create(account) != 1) {
 // destroy the data source which should close underlying connections
 dataSource.destroy();
 </pre></td></tr></table>
-<a name="IDX83"></a>
 <a name="IDX84"></a>
+<a name="IDX85"></a>
 <p><em>NOTE:</em> as you see in the above example, if you are instantiating a DAO class outside of Spring
 then you will need to call <code>initialize()</code> method to properly initialize the class.
 
-</p><a name="IDX85"></a>
+</p><a name="IDX86"></a>
 <p>For more examples, see the <code>com.j256.ormlite.examples</code> package test classes in the Java sources jar down in
 <code>src/test/java</code>.
 
@@ -908,7 +912,7 @@ then you will need to call <code>initialize()</code> method to properly initiali
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>July, 19 2010</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>July, 20 2010</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 

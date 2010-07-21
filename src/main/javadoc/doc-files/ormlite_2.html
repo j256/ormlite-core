@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on July, 19 2010 by texi2html 1.70 -->
+<!-- Created on July, 20 2010 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -91,10 +91,10 @@ ul.toc {list-style: none}
 
 </p><dl compact="compact">
 <dd>
-<a name="IDX86"></a>
 <a name="IDX87"></a>
 <a name="IDX88"></a>
 <a name="IDX89"></a>
+<a name="IDX90"></a>
 </dd>
 <dt> create and persist an object to the database</dt>
 <dd>
@@ -107,7 +107,7 @@ if (accountDao.create(account) != 1) {
   error handling &hellip; 
 }
 </pre></td></tr></table>
-<a name="IDX90"></a>
+<a name="IDX91"></a>
 </dd>
 <dt> query for it's id column </dt>
 <dd>
@@ -118,7 +118,7 @@ if (account == null) {
   account not found handling &hellip; 
 }
 </pre></td></tr></table>
-<a name="IDX91"></a>
+<a name="IDX92"></a>
 </dd>
 <dt> update the database row associated with the object</dt>
 <dd>
@@ -131,7 +131,7 @@ if (accountDao.update(account) != 1) {
   error handling &hellip; 
 }
 </pre></td></tr></table>
-<a name="IDX92"></a>
+<a name="IDX93"></a>
 </dd>
 <dt> refreshing our object if the database has changed</dt>
 <dd>
@@ -143,7 +143,7 @@ if (accountDao.refresh(account) != 1) {
   error handling &hellip; 
 }
 </pre></td></tr></table>
-<a name="IDX93"></a>
+<a name="IDX94"></a>
 </dd>
 <dt> delete the account from the database</dt>
 <dd>
@@ -154,8 +154,8 @@ if (accountDao.delete(account) != 1) {
   error handling &hellip; 
 }
 </pre></td></tr></table>
-<a name="IDX94"></a>
 <a name="IDX95"></a>
+<a name="IDX96"></a>
 </dd>
 <dt> iterate through all of the rows in a table:</dt>
 <dd>
@@ -166,7 +166,7 @@ for (Account account : accountDao) {
     System.out.println(account.getName());
 }
 </pre></td></tr></table>
-<a name="IDX96"></a>
+<a name="IDX97"></a>
 <p><em>NOTE:</em> you must page through <em>all</em> items for the iterator to close the underlying SQL object.   If you don't
 go all of the way, the garbage collector will close the SQL statement some time later which is considered bad form.
 
@@ -199,29 +199,29 @@ This list may be out of date.  See the <code>Dao</code> interface class for the 
 
 </p><dl compact="compact">
 <dd>
-<a name="IDX97"></a>
+<a name="IDX98"></a>
 </dd>
 <dt><code> queryForId</code></dt>
 <dd>
 <p>Looks up the id in the database and retrieves an object associated with it.
 
-</p><a name="IDX98"></a>
+</p><a name="IDX99"></a>
 </dd>
 <dt><code> queryForFirst</code></dt>
 <dd>
 <p>Query for and return the first item in the object table which matches a prepared query. This can be used to return
 the object that matches a single unique column.  You should use queryForId if you want to query for the id column.
 
-</p><a name="IDX99"></a>
+</p><a name="IDX100"></a>
 </dd>
 <dt><code> queryForAll</code></dt>
 <dd>
 <p>Query for all of the items in the object table and return a list of them. For medium sized or large tables,
 this may load a lot of objects into memory so you should consider using the iterator method instead.
 
-</p><a name="IDX100"></a>
-<a name="IDX101"></a>
+</p><a name="IDX101"></a>
 <a name="IDX102"></a>
+<a name="IDX103"></a>
 </dd>
 <dt><code> queryForAllRaw</code></dt>
 <dd>
@@ -229,13 +229,13 @@ this may load a lot of objects into memory so you should consider using the iter
 to do special queries that aren't supported otherwise. For medium sized or large tables, this may load a lot of 
 objects into memory so you should consider using the <code>iteratorRaw</code> method instead.
 
-</p><a name="IDX103"></a>
+</p><a name="IDX104"></a>
 </dd>
 <dt><code> queryBuilder</code></dt>
 <dd>
 <p>Create and return a new QueryBuilder object which allows you to build a custom query.  See section <a href="ormlite_3.html#SEC15">Custom Query Builder</a>.
 
-</p><a name="IDX104"></a>
+</p><a name="IDX105"></a>
 </dd>
 <dt><code> query</code></dt>
 <dd>
@@ -243,13 +243,13 @@ objects into memory so you should consider using the <code>iteratorRaw</code> me
 list of matching objects. For medium sized or large tables, this may load a lot of objects into memory so you
 should consider using the iterator method instead.  
 
-</p><a name="IDX105"></a>
+</p><a name="IDX106"></a>
 </dd>
 <dt><code> create</code></dt>
 <dd>
 <p>Create a new entry in the database from an object.  Should return 1 indicating 1 row was inserted.
 
-</p><a name="IDX106"></a>
+</p><a name="IDX107"></a>
 </dd>
 <dt><code> update</code></dt>
 <dd>
@@ -257,7 +257,7 @@ should consider using the iterator method instead.
 those changes to the database. You cannot use this method to update the id field - see updateId.  This should
 return 1 since 1 row was updated.
 
-</p><a name="IDX107"></a>
+</p><a name="IDX108"></a>
 </dd>
 <dt><code> updateId</code></dt>
 <dd>
@@ -265,7 +265,7 @@ return 1 since 1 row was updated.
 the new-id is passed in as an argument.  After the id has been updated in the database, the id field of the data
 object will also be changed.  This should return 1 since 1 row was updated.
 
-</p><a name="IDX108"></a>
+</p><a name="IDX109"></a>
 </dd>
 <dt><code> refresh</code></dt>
 <dd>
@@ -273,27 +273,27 @@ object will also be changed.  This should return 1 since 1 row was updated.
 parameter. Any local object changes to persisted fields will be overwritten.  If the database has been updated
 this brings your local object up-to-date.  This should return 1 since 1 row was retrieved.
 
-</p><a name="IDX109"></a>
+</p><a name="IDX110"></a>
 </dd>
 <dt><code> delete</code></dt>
 <dd>
 <p>Delete an object from the database.  This should return 1 since 1 row was removed.
 
-</p><a name="IDX110"></a>
+</p><a name="IDX111"></a>
 </dd>
 <dt><code> delete (collection)</code></dt>
 <dd>
 <p>Delete a collection of objects from the database using an IN SQL clause.  This returns the number of rows that
 were deleted.
 
-</p><a name="IDX111"></a>
+</p><a name="IDX112"></a>
 </dd>
 <dt><code> deleteIds</code></dt>
 <dd>
 <p>Delete the objects that match the collection of ids from the database using an IN SQL clause.   This returns the
 number of rows that were deleted.  
 
-</p><a name="IDX112"></a>
+</p><a name="IDX113"></a>
 </dd>
 <dt><code> iterator</code></dt>
 <dd>
@@ -336,7 +336,7 @@ on the returned RawResults object once you are done with it.
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>July, 19 2010</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>July, 20 2010</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 
