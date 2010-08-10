@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,12 +76,42 @@ public class SqliteDatabaseTypeTest extends BaseDatabaseTest {
 		assertFalse(databaseType.isVarcharFieldWidthSupported());
 	}
 
+	@Test
+	public void testCreateTableReturnsZero() throws Exception {
+		assertFalse(databaseType.isCreateTableReturnsZero());
+	}
+
+	@Test
+	public void testSerialField() throws Exception {
+		TableInfo<SerialField> tableInfo = new TableInfo<SerialField>(databaseType, SerialField.class);
+		StringBuilder sb = new StringBuilder();
+		List<String> additionalArgs = new ArrayList<String>();
+		List<String> statementsBefore = new ArrayList<String>();
+		databaseType.appendColumnArg(sb, tableInfo.getFieldTypes()[0], additionalArgs, statementsBefore, null, null);
+		assertTrue(sb.toString().contains("VARBINARY"));
+	}
+
 	protected static class GeneratedIdLong {
 		@DatabaseField(generatedId = true)
 		public long id;
 		@DatabaseField
 		String other;
 		public GeneratedIdLong() {
+		}
+	}
+	
+	protected static class SerialField {
+		@DatabaseField
+		SerializedThing other;
+		public SerialField() {
+		}
+	}
+	
+	protected static class SerializedThing implements Serializable {
+		private static final long serialVersionUID = -7989929665216767119L;
+		@DatabaseField
+		String other;
+		public SerializedThing() {
 		}
 	}
 }

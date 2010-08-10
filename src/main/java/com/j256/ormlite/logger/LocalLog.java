@@ -181,7 +181,8 @@ public class LocalLog implements Log {
 		}
 
 		/**
-		 * Return whether or not a level is enabled for this level. So, for INFO, WARN is enabled but DEBUG is not.
+		 * Return whether or not a level argument is enabled for this level value. So, Level.INFO.isEnabled(Level.WARN)
+		 * returns true but Level.INFO.isEnabled(Level.DEBUG) returns false.
 		 */
 		public boolean isEnabled(Level otherLevel) {
 			return level <= otherLevel.level;

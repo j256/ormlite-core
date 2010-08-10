@@ -1,6 +1,7 @@
 package com.j256.ormlite.db;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -19,5 +20,10 @@ public class BaseDatabaseTypeTest extends BaseOrmLiteTest {
 	@Test
 	public void testLoadDriver() throws Exception {
 		databaseType.loadDriver();
+	}
+	
+	@Test
+	public void testCreateTableReturnsZero() {
+		assertTrue(databaseType.isCreateTableReturnsZero());
 	}
 }

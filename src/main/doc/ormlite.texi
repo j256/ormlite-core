@@ -135,35 +135,15 @@ Gray Watson @uref{http://256.com/gray/}
 @node Dependencies, Class Setup, Getting Started, Getting Started
 @section External Dependencies
 
-@value{package} depends on the following external packages.  You must make sure
-that these are listed in your Maven, Ant, or @dots{} configuration files.
+@value{package} depends only on the @code{javax.persistence} external package.  You must make sure
+that it is listed in your Maven, Ant, or @dots{} configuration files.
 
-@table @code
+To provide compatibility with other persistence packages, @value{package} depends on the JavaX persistence annotations.
+As of this writing, we use version 1.0 of the persistence package.
 
-@item org.apache.commons.logging
-
-For logging, @value{package} has a loose wrapper around apache commons-logging.  You
-can remove this dependency by editing @code{com.j256.ormlite.logger.Logger}.  As of
-this writing, we use version 1.1.1 of commons logging.  Previous or later versions 
-should also work.  With commons logging, you can use @code{log4j} or other logging
-packages to log messages to the terminal or logfiles. 
-
-The commons-logging dependency has been centralized in the @code{ApacheCommonsLog} class.
-If you want to remove the dependency, you can change the constructor in the @code{Logger}
-class to instead use the @code{LocalLog} class as a replacement.
-
-@item javax.persistence
-
-To provide compatibility with other persistence packages, @value{package} depends on
-the JavaX persistence annotations.  As of this writing, we use version 1.0 of the
-persistence package.
-
-Usage of the @code{javax.persistence} classes has been centralized in the
-@code{JavaxPersistence} misc class.  You can remove the dependency by returning null
-from the methods there.
+Usage of the @code{javax.persistence} classes has been centralized in the @code{JavaxPersistence} misc class.  You can
+remove the dependency by returning null from the methods there.
   
-@end table
-
 If you want to get the @value{package} Junit tests to run, there are test dependencies on the following packages:
 
 @table @code
@@ -198,7 +178,7 @@ To setup your classes to be persisted you need to do the following things:
 @enumerate
 @item Add the @@DatabaseTable annotation to the top of each class.  You can also use @@Entity.
 @item Add the @@DatabaseField annotation right before each field to be persisted.  You can also use @@Column and others.
-@item Add a no-argument constructor with at least package permissions to each class.
+@item Add a no-argument constructor with at least package visibility to each class.
 @end enumerate
 
 @menu
@@ -252,6 +232,9 @@ public class Account @{
     private String password;
     @dots{}
 @end example
+
+In this example, each row in the @code{accounts} table has 2 columns, the @code{name} column which is a string and also is the
+database identity (id) of the row and the @code{password} column, also a string which can not be null. 
 
 The @@DatabaseField annotation can have the following fields:
 
@@ -322,9 +305,9 @@ Only one of this, @code{id}, and @code{generatedId} can be specified.
 
 @cindex refreshing foreign objects
 Boolean setting which identifies this field as corresponding to another class that is also stored in the database.
-Default is false.  The field must not be a primitive type.  The other class must have an id field (either @code{id},
+Default is false.  The field can not be a primitive type.  The other class must have an id field (either @code{id},
 @code{generatedId}, or @code{generatedIdSequence}) which will be stored in this table. When an object is returned
-from a query call, any foreign objects will just have the id field set in it.  @xref{Foreign Objects}.
+from a query call, any foreign objects will just have the id field set.  @xref{Foreign Objects}.
 
 @cindex useGetSet
 @cindex get and set method usage
@@ -341,7 +324,7 @@ letter capitalized. The get @emph{must} return a class which matches the field's
 match setXxx(), have a single argument whose class matches the field's exactly, and return void.  For example:
 
 @example
-@@DatabaseField
+@@DatabaseField(useGetSet = true)
 private Integer orderCount;
 
 public Integer getOrderCount() @{
@@ -358,10 +341,10 @@ public void setOrderCount(Integer orderCount) @{
 @item unknownEnumName
 
 If the field is a Java enumerated type then you can specify the name of a enumerated value which will be used if the
-value of a database row is not found in the enumerated type.  If this is not specified and a row @emph{does} contain
-an unknown name or ordinal value then a @code{SQLException} is thrown.  This is useful to handle backwards compatibility
-when handling out-of-date database values as well as forwards compatibility if old software is accessing up-to-date
-data or if you have to roll a release back.
+value of a database row is not found in the enumerated type.  If this is not specified and a database row @emph{does}
+contain an unknown name or ordinal value then a @code{SQLException} is thrown when the row is being read from the database.
+This is useful to handle backwards compatibility when handling out-of-date database values as well as forwards
+compatibility if old software is accessing up-to-date data or if you have to roll a release back.
 
 @cindex throwIfNull
 @cindex primitive null values
@@ -617,7 +600,6 @@ identify a specific database row.  If you class does not have an ID field, you c
 as the 2nd argument.  For example, in the above @code{Account} class, the "name" field is the ID column (id = true)
 so the ID class is @code{String}.  Example:
 
-@cindex dao interface
 @example
 /** Account DAO which has a String id (Account.name) */
 public interface AccountDao extends Dao<Account, String> @{
@@ -756,14 +738,15 @@ your database objects.  The following code ties it all together:
 @example
 // h2 by default but change to match your database
 String databaseUrl = "jdbc:h2:mem:account";
-SingleConnectionDataSource dataSource =
+SimpleDataSource dataSource =
   DatabaseTypeUtils.createSimpleDataSource(databaseUrl);
 DatabaseType databaseType =
   DatabaseTypeUtils.createDatabaseType(dataSource);
 databaseType.loadDriver();
 
 // instantiate the dao
-AccountJdbcDao accountDao = new AccountJdbcDao(databaseType);
+AccountJdbcDao accountDao = new AccountJdbcDao();
+accountDao.setDatabaseType(databaseType);
 accountDao.setDataSource(dataSource);
 // _must_ make this call after the setters
 accountDao.initialize();
@@ -772,15 +755,14 @@ accountDao.initialize();
 TableUtils.createTable(databaseType, dataSource, Account.class);
 
 // create an instance of Account
-Account account = new Account();
-account.name = "Jim Coakley";
+Account account = new Account("Jim Coakley");
 
 // persist the account object to the database
 // it should return 1 for the 1 row inserted
 if (accountDao.create(account) != 1) @{
-  error handling @dots{} 
+  // error handling @dots{} 
 @}
-@dots{}
+// other code @dots{}
 
 // destroy the data source which should close underlying connections
 dataSource.destroy();
@@ -827,7 +809,7 @@ Account account = new Account();
 account.name = "Jim Coakley";
 // only 1 row should have been affected
 if (accountDao.create(account) != 1) @{
-  error handling @dots{} 
+  // error handling @dots{} 
 @}
 @end example
 
@@ -846,14 +828,14 @@ if (account == null) @{
 @cindex updating an object
 @item update the database row associated with the object
 
-If you change fields in an object, you must call update to persist those changes to the database.  This also requires
-an id field. 
+If you change fields in an object in memory, you must call update to persist those changes to the database.  This
+also requires an id field. 
 
 @example
 account.password = "_secret";
 // 1 row should be updated
 if (accountDao.update(account) != 1) @{
-  error handling @dots{} 
+  // error handling @dots{} 
 @}
 @end example
 
@@ -866,19 +848,20 @@ object to get the memory object up-to-date.  This also requires an id field.
 @example
 // 1 row should be found
 if (accountDao.refresh(account) != 1) @{
-  error handling @dots{} 
+  // error handling @dots{} 
 @}
 @end example
 
 @cindex deleting an object
 @item delete the account from the database
 
-Removes the row that corresponds to the object from the database.  This also requires an id field.
+Removes the row that corresponds to the object from the database.  Once the object has been deleted from the database,
+you can continue to use the object in memory but any update or refresh calls will fail.  This also requires an id field.
 
 @example
 // 1 row should be affected
 if (accountDao.delete(account) != 1) @{
-  error handling @dots{} 
+  // error handling @dots{} 
 @}
 @end example
 
@@ -926,7 +909,7 @@ the object that matches a single unique column.  You should use queryForId if yo
 @item queryForAll
 
 Query for all of the items in the object table and return a list of them. For medium sized or large tables,
-this may load a lot of objects into memory so you should consider using the iterator method instead.
+this may load a lot of objects into memory so you should consider using the @code{iterator} method instead.
 
 @cindex query for all raw
 @cindex raw select statements
@@ -947,7 +930,7 @@ Create and return a new QueryBuilder object which allows you to build a custom q
 
 Query for the items in the object table which match a prepared query.  @xref{Query Builder}.  This returns a
 list of matching objects. For medium sized or large tables, this may load a lot of objects into memory so you
-should consider using the iterator method instead.  
+should consider using the @code{iterator} method instead.  
 
 @cindex creating an object
 @item create
@@ -1006,12 +989,12 @@ for (Account account : accountDao) @{ @dots{} @}
 
 @item iterator (prepared query)
 
-Same is the iterator method but with a prepared query parameter. @xref{Query Builder}.
+Same is the @code{iterator} method but with a prepared query parameter. @xref{Query Builder}.
 
 @item iteratorRaw
 
 Same as the prepared query iterator except it takes a raw SQL select statement argument.  This is the iterator version
-of the @code{queryForAllRaw} method.  Although you should use the iterator method for most queries, this method
+of the @code{queryForAllRaw} method.  Although you should use the @code{iterator} method for most queries, this method
 allows you to do special queries that aren't supported otherwise.  Like the above iterator methods, you must call close
 on the returned RawResults object once you are done with it. 
 
@@ -1024,9 +1007,9 @@ on the returned RawResults object once you are done with it.
 @cindex query builder
 @cindex custom query builder
 The DOAs have methods to query for an object that matches an id field (@code{queryForId}) as well as query for all
-objects (@code{queryForAll}) and iterating through all of the objects in a table (@code{iterator}).  For more specified
-queries, there is also a @code{queryBuilder()} method which returns a @code{QueryBuilder} object for the DAO with which
-you can construct custom queries to return a sub-set of the table.
+objects (@code{queryForAll}) and iterating through all of the objects in a table (@code{iterator}).  However, for more
+specified queries, there is the @code{queryBuilder()} method which returns a @code{QueryBuilder} object for the DAO
+with which you can construct custom queries to return a sub-set of the table.
 
 @menu
 * QueryBuilder Basics::         How to start using the Query Builder.
@@ -1068,8 +1051,9 @@ List<Account> accountList = accountDao.query(preparedQuery);
 @end example
 
 @cindex prepared query
-You get a @code{QueryBuilder} object from DAO, call methods on it to build your custom query, call @code{queryBuilder.prepareQuery()}
-which returns a @code{PreparedQuery} object, and then pass the @code{PreparedQuery} to the query or iterator methods.
+You get a @code{QueryBuilder} object from the DAO, call methods on it to build your custom query, call
+@code{queryBuilder.prepareQuery()} which returns a @code{PreparedQuery} object, and then pass the @code{PreparedQuery} to
+the query or iterator methods.
 
 @c ----------------------------------------------------------------
 @node Building Queries, Select Arguments, QueryBuilder Basics, Query Builder
@@ -1227,7 +1211,7 @@ you want to use other fields in the @code{Account}, you can use a refresh call t
 
 @example
 if (accountDao.refresh(order.getAccount()) != 1) @{
-  error handling @dots{} 
+  // error handling @dots{} 
 @}
 @end example
 
@@ -1430,6 +1414,10 @@ Load the driver class associated with this database so it can wire itself into J
 Takes a field type and appends the SQL necessary to create the field.  It may also generate arguments
 for the end of the table create statement or commands that must run before or after the table create.
 
+@item convertColumnName
+
+Convert and return the column name for table and sequence creation. Often this is necessary to fix case issues.
+
 @item dropColumnArg
 
 Takes a field type and adds all of the commands necessary to drop the column from the database.
@@ -1488,6 +1476,15 @@ isIdSequenceNeeded returns true.
 
 Append the SQL necessary to properly finish a CREATE TABLE line.
 
+@item isCreateTableReturnsZero
+
+Returns true if a 'CREATE TABLE' statement should return 0. False if > 0.
+
+@item isEntityNamesMustBeUpCase
+
+Returns true if table and field names should be made uppercase.  This is an unfortunate "feature" of Derby and Hsqldb.
+See the Javadocs for the class for more information.
+
 @end table
 
 @c ----------------------------------------------------------------
@@ -1495,8 +1492,22 @@ Append the SQL necessary to properly finish a CREATE TABLE line.
 @section @value{package} Logging
 
 @cindex logging information
-@value{package} uses a loose wrapper around Apache commons logging that provides simple @{@} argument expansion
-like slf4j.  You can use something like the following as your log4j.properties file to see details about the SQL calls.
+@value{package} uses a log system which can plug into Apache commons logging, Log4j, or use its own internal log
+implementations.  The logger code in @code{com.j256.ormlite.logger} first looks for the
+@code{org.apache.commons.logging.LogFactory} class in the classpath -- if found it will use Apache commons logging.
+If that class is not found it then looks for @code{org.apache.log4j.Logger} and if found will use Log4j.  If neither
+classes are available it will use an internal logger -- see @code{LocalLog}.  The logger code also provides simple @{@}
+argument expansion like slf4j which means that you can save on toString() calls and @code{StringBuilder} operations if
+the log level is not high enough.  This allows me to do something like the following:
+
+@example
+private static Logger logger = LoggerFactory.getLogger(QueryBuilder.class);
+@dots{}
+logger.debug("built statement {}", statement);
+@end example
+
+If you are using log4j (through Apache commons logging or directly), you can use something
+like the following as your log4j.properties file to see details about the SQL calls.
 
 @cindex log4j properties file
 @example
