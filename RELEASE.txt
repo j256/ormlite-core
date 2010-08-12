@@ -20,11 +20,12 @@ To release ORMLite:
 
 5) Login to https://oss.sonatype.org/ (graywatson)
 
-6) Select staging from left nav.
+6) Select Staging Repositories from left nav.
 
-	- Click on com.j256.
-	- Right click on the recent open release, pull down to close.  Description: X.X release
-	- Right click on closed release and select Promote.  Description: X.X release
+	- Make sure our release is there, is labeled as 'open', and is checked off.
+	- Click on 'close'.  Description: X.X release
+	- Check off the now closed release.
+	- Click on 'Release'.  Description: X.X release
 
 	Check Repositories tab -> not-bold Releases -> com -> j256 -> ormlite to see if it is there
 
