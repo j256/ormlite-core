@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on July, 20 2010 by texi2html 1.70 -->
+<!-- Created on August, 11 2010 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -97,37 +97,16 @@ ul.toc {list-style: none}
 </tr></table>
 <h2 class="section"> 1.1 External Dependencies </h2>
 
-<p>ORMLite depends on the following external packages.  You must make sure
-that these are listed in your Maven, Ant, or &hellip; configuration files.
+<p>ORMLite depends only on the <code>javax.persistence</code> external package.  You must make sure
+that it is listed in your Maven, Ant, or &hellip; configuration files.
 
-</p><dl compact="compact">
-<dt><code> org.apache.commons.logging</code></dt>
-<dd>
-<p>For logging, ORMLite has a loose wrapper around apache commons-logging.  You
-can remove this dependency by editing <code>com.j256.ormlite.logger.Logger</code>.  As of
-this writing, we use version 1.1.1 of commons logging.  Previous or later versions 
-should also work.  With commons logging, you can use <code>log4j</code> or other logging
-packages to log messages to the terminal or logfiles. 
+</p><p>To provide compatibility with other persistence packages, ORMLite depends on the JavaX persistence annotations.
+As of this writing, we use version 1.0 of the persistence package.
 
-</p><p>The commons-logging dependency has been centralized in the <code>ApacheCommonsLog</code> class.
-If you want to remove the dependency, you can change the constructor in the <code>Logger</code>
-class to instead use the <code>LocalLog</code> class as a replacement.
-
-</p></dd>
-<dt><code> javax.persistence</code></dt>
-<dd>
-<p>To provide compatibility with other persistence packages, ORMLite depends on
-the JavaX persistence annotations.  As of this writing, we use version 1.0 of the
-persistence package.
-
-</p><p>Usage of the <code>javax.persistence</code> classes has been centralized in the
-<code>JavaxPersistence</code> misc class.  You can remove the dependency by returning null
-from the methods there.
+</p><p>Usage of the <code>javax.persistence</code> classes has been centralized in the <code>JavaxPersistence</code> misc class.  You can
+remove the dependency by returning null from the methods there.
   
-</p></dd>
-</dl>
-
-<p>If you want to get the ORMLite Junit tests to run, there are test dependencies on the following packages:
+</p><p>If you want to get the ORMLite Junit tests to run, there are test dependencies on the following packages:
 
 </p><dl compact="compact">
 <dt><code> org.junit</code></dt>
@@ -181,7 +160,7 @@ dependencies: <code>com.sun.jmx.jmxri</code>, <code>com.sun.jdmk.jmxtools</code>
 </p><ol>
 <li><p> Add the @DatabaseTable annotation to the top of each class.  You can also use @Entity.
 </p></li><li><p> Add the @DatabaseField annotation right before each field to be persisted.  You can also use @Column and others.
-</p></li><li><p> Add a no-argument constructor with at least package permissions to each class.
+</p></li><li><p> Add a no-argument constructor with at least package visibility to each class.
 </p></li></ol>
 
 <table class="menu" border="0" cellspacing="0">
@@ -248,7 +227,10 @@ public class Account {
     private String password;
     &hellip;
 </pre></td></tr></table>
-<p>The @DatabaseField annotation can have the following fields:
+<p>In this example, each row in the <code>accounts</code> table has 2 columns, the <code>name</code> column which is a string and also is the
+database identity (id) of the row and the <code>password</code> column, also a string which can not be null. 
+
+</p><p>The @DatabaseField annotation can have the following fields:
 
 </p><dl compact="compact">
 <dd>
@@ -326,9 +308,9 @@ Only one of this, <code>id</code>, and <code>generatedId</code> can be specified
 <dd>
 <a name="IDX31"></a>
 <p>Boolean setting which identifies this field as corresponding to another class that is also stored in the database.
-Default is false.  The field must not be a primitive type.  The other class must have an id field (either <code>id</code>,
+Default is false.  The field can not be a primitive type.  The other class must have an id field (either <code>id</code>,
 <code>generatedId</code>, or <code>generatedIdSequence</code>) which will be stored in this table. When an object is returned
-from a query call, any foreign objects will just have the id field set in it.  See section <a href="ormlite_4.html#SEC19">Foreign Object Fields</a>.
+from a query call, any foreign objects will just have the id field set.  See section <a href="ormlite_4.html#SEC19">Foreign Object Fields</a>.
 
 </p><a name="IDX32"></a>
 <a name="IDX33"></a>
@@ -345,7 +327,7 @@ protections around it.
 letter capitalized. The get <em>must</em> return a class which matches the field's exactly. The set method <em>must</em>
 match setXxx(), have a single argument whose class matches the field's exactly, and return void.  For example:
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">@DatabaseField
+</p><table><tr><td>&nbsp;</td><td><pre class="example">@DatabaseField(useGetSet = true)
 private Integer orderCount;
 
 public Integer getOrderCount() {
@@ -362,10 +344,10 @@ public void setOrderCount(Integer orderCount) {
 <dt><code> unknownEnumName</code></dt>
 <dd>
 <p>If the field is a Java enumerated type then you can specify the name of a enumerated value which will be used if the
-value of a database row is not found in the enumerated type.  If this is not specified and a row <em>does</em> contain
-an unknown name or ordinal value then a <code>SQLException</code> is thrown.  This is useful to handle backwards compatibility
-when handling out-of-date database values as well as forwards compatibility if old software is accessing up-to-date
-data or if you have to roll a release back.
+value of a database row is not found in the enumerated type.  If this is not specified and a database row <em>does</em>
+contain an unknown name or ordinal value then a <code>SQLException</code> is thrown when the row is being read from the database.
+This is useful to handle backwards compatibility when handling out-of-date database values as well as forwards
+compatibility if old software is accessing up-to-date data or if you have to roll a release back.
 
 </p><a name="IDX38"></a>
 <a name="IDX39"></a>
@@ -691,8 +673,7 @@ identify a specific database row.  If you class does not have an ID field, you c
 as the 2nd argument.  For example, in the above <code>Account</code> class, the &quot;name&quot; field is the ID column (id = true)
 so the ID class is <code>String</code>.  Example:
 
-</p><a name="IDX72"></a>
-<table><tr><td>&nbsp;</td><td><pre class="example">/** Account DAO which has a String id (Account.name) */
+</p><table><tr><td>&nbsp;</td><td><pre class="example">/** Account DAO which has a String id (Account.name) */
 public interface AccountDao extends Dao&lt;Account, String&gt; {
     // empty wrapper, you can add additional DAO methods here
 }
@@ -700,7 +681,7 @@ public interface AccountDao extends Dao&lt;Account, String&gt; {
 <p>The implementation of this interface takes a <code>DatabaseType</code> object in its constructor which identifies the
 per-database flavor class.  See section <a href="#SEC10">Database Type</a>.  Example:
 
-</p><a name="IDX73"></a>
+</p><a name="IDX72"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">/** JDBC implementation of the AccountDao interface. */
 public class AccountJdbcDao extends BaseJdbcDao&lt;Account, String&gt;
   implements AccountDao {
@@ -713,7 +694,7 @@ public class AccountJdbcDao extends BaseJdbcDao&lt;Account, String&gt;
 implementations if there are specific operations that are needed and not provided by the Dao base classes.
 More on how to use these DAOs later. See section <a href="ormlite_2.html#SEC12">Using the DAOs</a>.
 
-</p><a name="IDX74"></a>
+</p><a name="IDX73"></a>
 <p>You are not <em>required</em> to create a DAO class for every one of your persisted objects.  You can use the
 <code>createDao</code> static method on the <code>BaseJdbcDao</code> class to create a DAO class without having to define
 one.  For example:
@@ -746,21 +727,21 @@ Dao&lt;Order, Integer&gt; orderDao = BaseJdbcDao.createDao(databaseType, dataSou
 <code>javax.sql.DataSource</code> class).  The <code>DataSource</code> is a factory for connections to the physical SQL
 database.  Here is a code example that creates a simple data source.
 
-</p><a name="IDX75"></a>
+</p><a name="IDX74"></a>
+<a name="IDX75"></a>
 <a name="IDX76"></a>
-<a name="IDX77"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">// single connection data source example
 DataSource dataSource =
   DatabaseTypeUtils.createSimpleDataSource(&quot;jdbc:h2:mem:account&quot;);
 </pre></td></tr></table>
+<a name="IDX77"></a>
 <a name="IDX78"></a>
-<a name="IDX79"></a>
 <p>There are many other data sources that can be used instead, including pooled connections which will create new
 connections on demand and re-use existing dormant connections. You can instantiate your own without the
-DatabaseTypeUtils and set it on the DAOs directly.
+<code>DatabaseTypeUtils</code> and set it on the DAOs directly.
 
-</p><a name="IDX80"></a>
-<a name="IDX81"></a>
+</p><a name="IDX79"></a>
+<a name="IDX80"></a>
 <p>When you are done with your DataSource, you will want to call the close() or destroy() method to close any underlying 
 <code>java.sql.Connection</code> objects.  Something like the following pattern is recommended.
 
@@ -821,8 +802,8 @@ can pass in the database URL or pass in an already created <code>DataSource</cod
 </dd>
 </dl>
 
+<a name="IDX81"></a>
 <a name="IDX82"></a>
-<a name="IDX83"></a>
 <p>After you instantiate your DatabaseType, you will need to call the loadDriver() method to make sure that
 the driver has wired itself into JDBC appropriately.
 
@@ -858,14 +839,15 @@ your database objects.  The following code ties it all together:
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">// h2 by default but change to match your database
 String databaseUrl = &quot;jdbc:h2:mem:account&quot;;
-SingleConnectionDataSource dataSource =
+SimpleDataSource dataSource =
   DatabaseTypeUtils.createSimpleDataSource(databaseUrl);
 DatabaseType databaseType =
   DatabaseTypeUtils.createDatabaseType(dataSource);
 databaseType.loadDriver();
 
 // instantiate the dao
-AccountJdbcDao accountDao = new AccountJdbcDao(databaseType);
+AccountJdbcDao accountDao = new AccountJdbcDao();
+accountDao.setDatabaseType(databaseType);
 accountDao.setDataSource(dataSource);
 // _must_ make this call after the setters
 accountDao.initialize();
@@ -874,25 +856,24 @@ accountDao.initialize();
 TableUtils.createTable(databaseType, dataSource, Account.class);
 
 // create an instance of Account
-Account account = new Account();
-account.name = &quot;Jim Coakley&quot;;
+Account account = new Account(&quot;Jim Coakley&quot;);
 
 // persist the account object to the database
 // it should return 1 for the 1 row inserted
 if (accountDao.create(account) != 1) {
-  error handling &hellip; 
+  // error handling &hellip; 
 }
-&hellip;
+// other code &hellip;
 
 // destroy the data source which should close underlying connections
 dataSource.destroy();
 </pre></td></tr></table>
+<a name="IDX83"></a>
 <a name="IDX84"></a>
-<a name="IDX85"></a>
 <p><em>NOTE:</em> as you see in the above example, if you are instantiating a DAO class outside of Spring
 then you will need to call <code>initialize()</code> method to properly initialize the class.
 
-</p><a name="IDX86"></a>
+</p><a name="IDX85"></a>
 <p>For more examples, see the <code>com.j256.ormlite.examples</code> package test classes in the Java sources jar down in
 <code>src/test/java</code>.
 
@@ -912,7 +893,7 @@ then you will need to call <code>initialize()</code> method to properly initiali
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>July, 20 2010</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>August, 11 2010</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 
