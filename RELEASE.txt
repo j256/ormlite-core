@@ -10,7 +10,7 @@ To release ORMLite:
 
 	Svn commit doc files
 
-3) Add section to ~/svn/local/ormlite/src/main/javadoc/doc-files/changelog.txt and commit it.
+3) Add section to ~/svn/local/ormlite/src/main/javadoc/doc-files/changelog.txt.  Commit it.
 
 4) Release to Sonatype: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
 

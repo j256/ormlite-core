@@ -1,3 +1,7 @@
+2.9: 8/11/2010
+	* Found and fixed embarrassing problem where the local logger wasn't filtering by level. (bug #3043423)
+	* Improved some docs.
+
 2.8: 7/20/2010
 	* Found and fixed problems with boolean default values under Derby. (bug #3032387)
 	* Trickle down changes which affected a lot of FieldType nad JdbcType. Also improved the null handling.
