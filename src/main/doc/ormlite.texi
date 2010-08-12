@@ -1503,7 +1503,7 @@ the log level is not high enough.  This allows me to do something like the follo
 @example
 private static Logger logger = LoggerFactory.getLogger(QueryBuilder.class);
 @dots{}
-logger.debug("built statement {}", statement);
+logger.debug("built statement @{@}", statement);
 @end example
 
 If you are using log4j (through Apache commons logging or directly), you can use something
