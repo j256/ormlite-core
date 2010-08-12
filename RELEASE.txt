@@ -56,4 +56,6 @@ To release ORMLite:
 
 14) Possibly publish to announcements forum if the release needs more information.
 
-15) Watch to make sure the central repository was updated.
+15) Change the pom.xml version for ormlite in ormlitetest.
+
+16) Watch to make sure the central repository was updated.  http://repo1.maven.org/maven2/com/j256/ormlite/
