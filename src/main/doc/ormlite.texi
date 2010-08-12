@@ -135,14 +135,11 @@ Gray Watson @uref{http://256.com/gray/}
 @node Dependencies, Class Setup, Getting Started, Getting Started
 @section External Dependencies
 
-@value{package} depends only on the @code{javax.persistence} external package.  You must make sure
-that it is listed in your Maven, Ant, or @dots{} configuration files.
-
-To provide compatibility with other persistence packages, @value{package} depends on the JavaX persistence annotations.
-As of this writing, we use version 1.0 of the persistence package.
-
-Usage of the @code{javax.persistence} classes has been centralized in the @code{JavaxPersistence} misc class.  You can
-remove the dependency by returning null from the methods there.
+@value{package} depends only on the @code{javax.persistence} external package which provides compatibility with other
+persistence packages.  You must make sure that it is listed in your Maven, Ant, or @dots{} configuration files.  As of
+this writing, we use version 1.0 of the persistence package.  Usage of the @code{javax.persistence} classes has been
+centralized in the @code{JavaxPersistence} misc class.  You can remove the dependency by returning null from the
+methods there.
   
 If you want to get the @value{package} Junit tests to run, there are test dependencies on the following packages:
 

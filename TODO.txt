@@ -21,24 +21,10 @@
 	- acct = new Account(); ... were.eq("account_id", acct);
 	- maybe it is fine the way it is
 	- maybe see if the argument (SelectArg or direct) is the same as the field type in which case we extract the id automagically
-	- queries don't have field types or anything, this would be a big change
-
-- how about the avg, sum, etc. stuff, how should those work
-	- we can't create a T object because of the avg field -- where would it go?
-	- maybe allow fields in a T object that are used to store avg and other information returned from them
-	- we would need to auto-group any requested fields
-	- what does it break if we have the sum/group, ordering?
-	- maybe specify the object to fill in with a query
-	- have each of the fields annotated with group(x) or avg(y)
-	- AVG(), COUNT(), FIRST(), LAST(), MAX(), MIN(), SUM(), DISTINCT
-	- maybe just handle with the direct SQL query support
-
-- how can the package help with direct SQL queries?
-	- allow them to submit the query themselves
-	- iterate through the results which would be an array of strings?
 
 - should we handle all non-number arguments to queries to be ? and force internal SelectArgs?
 	- would be better for escaping reasons
+	- now have field types in the queries so escaping better
 
 - maybe add rawUpdate and rawExecute?
 	- need to document the raw query, iterator, update, execute in .texi
@@ -53,3 +39,16 @@
 - should we consider defining the DatabaseType internally?
 	- just set the datasource on the dao and then determine the database type from the datasource url
 	- maybe add datasource constructor args for daos
+	- tried this and it got messy in a hurry
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+- how about the avg, sum, etc. stuff, how should those work
+	- ANSWER: for now just handle with the direct SQL query support
+	- we can't create a T object because of the avg field -- where would it go?
+	- maybe allow fields in a T object that are used to store avg and other information returned from them
+	- we would need to auto-group any requested fields
+	- what does it break if we have the sum/group, ordering?
+	- maybe specify the object to fill in with a query
+	- have each of the fields annotated with group(x) or avg(y)
+	- AVG(), COUNT(), FIRST(), LAST(), MAX(), MIN(), SUM(), DISTINCT
