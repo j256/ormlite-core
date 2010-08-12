@@ -6,11 +6,6 @@ import java.util.Arrays;
  * Class which wraps our {@link Log} interface and provides {} argument features like slf4j. It allows us to plug in
  * additional log systems if necessary.
  * 
- * <p>
- * <b>NOTE:</b> By default this uses the apache commons logging classes if they can be found in the classpath. If it
- * doesn't exist then it will try log4j. If neither then it uses the local log implementation.
- * </p>
- * 
  * @author graywatson
  */
 public class Logger {

@@ -1,5 +1,6 @@
 package com.j256.ormlite.logger;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -68,4 +69,25 @@ public class LocalLogTest extends BaseLogTest {
 		}
 	}
 
+	@Test
+	public void testNotEnabled() {
+		String logPath = "target/foo.txt";
+		File logFile = new File(logPath);
+		logFile.delete();
+		System.setProperty(LocalLog.LOCAL_LOG_FILE_PROPERTY, logPath);
+		try {
+			LocalLog log = new LocalLog("foo");
+			if (log.isTraceEnabled()) {
+				return;
+			}
+			String msg = "fpjwefpwejfpwfjwe";
+			log.trace(msg);
+			log.flush();
+			assertTrue(logFile.exists());
+			assertEquals(0, logFile.length());
+		} finally {
+			System.clearProperty(LocalLog.LOCAL_LOG_FILE_PROPERTY);
+			logFile.delete();
+		}
+	}
 }

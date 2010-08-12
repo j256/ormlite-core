@@ -146,6 +146,9 @@ public class LocalLog implements Log {
 	}
 
 	private void printMessage(Level level, String message, Throwable throwable) {
+		if (!this.level.isEnabled(level)) {
+			return;
+		}
 		StringBuilder sb = new StringBuilder();
 		sb.append(dateFormat.format(new Date()));
 		sb.append(" [").append(level.name()).append("] ");
