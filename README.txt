@@ -44,19 +44,21 @@ Main Dependencies:
 
 	javax-persistence -- 1.0
 
-	The javax.persistence classes are centralized in the JavaxPersistence misc class.
+	The javax.persistence classes are centralized in the JavaxPersistence misc class and can easily
+	be removed there.
 	
-Loose Dependencies:
+Optional Dependencies:
 
 	The commons-logging and the log4j packages are referenced in the Logger classes but ORMLite will
 	not use the classes unless they exist in the classpath.
+
+	commons-logging -- 1.1.1
+	log4j -- 1.2.15
 
 Test Dependencies:
 
 	junit -- 4.8.1
 	org.easymock -- 2.3
 	com.h2database -- 1.2.134
-	commons-logging -- 1.1.1
-	log4j -- 1.2.15
 
 -------------------------------------------------------------------------------------------------------
