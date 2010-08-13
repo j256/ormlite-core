@@ -122,9 +122,9 @@ Gray Watson @uref{http://256.com/gray/}
 @chapter Getting Started
 
 @menu
-* Dependencies::                The external dependencies of @value{package}.
+* Dependencies::                External dependencies of @value{package}.
 * Class Setup::                 How to setup your classes to be persisted.
-* Persisted Types::             The data types that are persisted.
+* Persisted Types::             Data types that can be persisted.
 * DAOs::                        How to configure the Database Access Objects.
 * DataSource::                  Setting up your JDBC data source.
 * Database Type::               Defining your database type.
@@ -493,7 +493,7 @@ public class Account @{
 
 @c ----------------------------------------------------------------
 @node Persisted Types, DAOs, No Arg Constructor, Getting Started
-@section Types That can be Persisted
+@section Persisted Data Types
 
 @cindex persisted types
 @cindex types that are persisted
@@ -1537,7 +1537,7 @@ only be used during debugging and should not be the default.
 
 @c ----------------------------------------------------------------
 @node Use With Android, Index of Concepts, Logging, Advanced
-@section Using @value{package} on the Android OS
+@section Using With Android
 
 @cindex use with Android OS
 @cindex Android OS support
