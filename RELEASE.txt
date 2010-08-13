@@ -28,39 +28,39 @@ To release ORMLite:
 	- Check off the now closed release.
 	- Click on 'Release'.  Description: X.X release
 
-	Check to make sure it has been released:
+7) Check to make sure it has been released:
 	
 	- Click on 'Repositories' from left nav
 	- select Releases (not-bold) -> com -> j256 -> ormlite
 	- see if the release is there
 
-7) If there are problems then you will need to drop the release on sonatype.org and re-release:
+8) If there are problems then you will need to drop the release on sonatype.org and re-release:
 
 	mvn -P st release:perform -DconnectionUrl=scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite/tags/ormlite-X.X
 
-8) cd to target/checkout which should be the release checked out by release:perform.
+9) cd to target/checkout which should be the release checked out by release:perform.
 
 	mvn -P sf deploy                       (need to type in GPG secret)
 
-9) Go to SF and set the default download to the newest jar: https://sourceforge.net/project/admin/explorer.php?group_id=297653
+10) Go to SF and set the default download to the newest jar: https://sourceforge.net/project/admin/explorer.php?group_id=297653
 
-10) Create a sf shell.  Explode the javadocs with the newest release:
+11) Create a sf shell.  Explode the javadocs with the newest release:
 
 	create_sf_shell                        (script)
 	cd ormlite_web/htdocs/javadoc
 	rm -rf * ; unzip ~/frs/releases/com/j256/ormlite/X.X/ormlite-X.X-javadoc.jar
 
-11) Possibly trim the older releases in the release directory.  Try to leave last major release and couple minors.
+12) Possibly trim the older releases in the release directory.  Try to leave last major release and couple minors.
 
 	cd ~/frs/releases/com/j256/ormlite
 	rm -rf 1.11 1.12
 
-12) run  shutdown  on the sf shell
+13) run  shutdown  on the sf shell
 
-13) Add a News section to SF with the svn log highlights and subject: released version X.X
+14) Add a News section to SF with the svn log highlights and subject: released version X.X
 
-14) Possibly publish to announcements forum if the release needs more information.
+15) Possibly publish to announcements forum if the release needs more information.
 
-15) Change the pom.xml version for new ormlite version in ormlitetest.
+16) Change the pom.xml version for new ormlite version in ormlitetest.
 
-16) Watch to make sure the central repository was updated.  http://repo1.maven.org/maven2/com/j256/ormlite/
+17) Watch to make sure the central repository was updated.  http://repo1.maven.org/maven2/com/j256/ormlite/
