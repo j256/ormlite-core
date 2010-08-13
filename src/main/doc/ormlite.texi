@@ -21,7 +21,7 @@
 @c ----------------------------------------------------------------
 
 @c ----------------------------------------------------------------
-@set ormlite_version 2.9
+@set ormlite_version 2.10
 @set ormlite_date August 2010
 @set package ORMLite
 @c ----------------------------------------------------------------
@@ -87,7 +87,7 @@ dependencies.
 
 @cindex databases supported
 @cindex supported databases
-ORMLite supports natively MySQL, Postgres, Microsoft SQL Server, H2, Derby, HSQLDB, and Sqlite and can be
+@value{package} supports natively MySQL, Postgres, Microsoft SQL Server, H2, Derby, HSQLDB, and Sqlite and can be
 extended to additional ones relatively easily.  There are also initial implementations for DB2 and Oracle
 although the author needs access to each of these database types to tune the support.  Contact the author if
 your database is not supported.
