@@ -1,13 +1,9 @@
 package com.j256.ormlite.misc;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import java.lang.reflect.Method;
+import java.sql.SQLException;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseFieldConfig;
@@ -28,13 +24,30 @@ public class JavaxPersistence {
 	 * <b> NOTE: </b> To remove the javax.persistence dependency, this method can just return null.
 	 * </p>
 	 */
-	public static DatabaseFieldConfig createFieldConfig(DatabaseType databaseType, Field field) {
-		Column column = field.getAnnotation(Column.class);
-		Id id = field.getAnnotation(Id.class);
-		GeneratedValue generatedValue = field.getAnnotation(GeneratedValue.class);
-		OneToOne oneToOne = field.getAnnotation(OneToOne.class);
-		ManyToOne manyToOne = field.getAnnotation(ManyToOne.class);
-		if (column == null && id == null && oneToOne == null && manyToOne == null) {
+	public static DatabaseFieldConfig createFieldConfig(DatabaseType databaseType, Field field) throws SQLException {
+		Annotation columnAnnotation = null;
+		Annotation idAnnotation = null;
+		Annotation generatedValueAnnotation = null;
+		Annotation oneToOneAnnotation = null;
+		Annotation manyToOneAnnotation = null;
+
+		for (Annotation annotation : field.getAnnotations()) {
+			Class<?> annotationClass = annotation.annotationType();
+			if (annotationClass.getName().equals("javax.persistence.Column")) {
+				columnAnnotation = annotation;
+			} else if (annotationClass.getName().equals("javax.persistence.Id")) {
+				idAnnotation = annotation;
+			} else if (annotationClass.getName().equals("javax.persistence.GeneratedValue")) {
+				generatedValueAnnotation = annotation;
+			} else if (annotationClass.getName().equals("javax.persistence.OneToOne")) {
+				oneToOneAnnotation = annotation;
+			} else if (annotationClass.getName().equals("javax.persistence.ManyToOne")) {
+				manyToOneAnnotation = annotation;
+			}
+		}
+
+		if (columnAnnotation == null && idAnnotation == null && oneToOneAnnotation == null
+				&& manyToOneAnnotation == null) {
 			return null;
 		}
 
@@ -44,23 +57,33 @@ public class JavaxPersistence {
 			fieldName = fieldName.toUpperCase();
 		}
 		config.setFieldName(fieldName);
-		if (column != null) {
-			if (column.name().length() > 0) {
-				config.setColumnName(column.name());
+
+		if (columnAnnotation != null) {
+			try {
+				Method method = columnAnnotation.getClass().getMethod("name");
+				String name = (String) method.invoke(columnAnnotation);
+				if (name != null && name.length() > 0) {
+					config.setColumnName(name);
+				}
+				method = columnAnnotation.getClass().getMethod("length");
+				config.setWidth((Integer) method.invoke(columnAnnotation));
+				method = columnAnnotation.getClass().getMethod("nullable");
+				config.setCanBeNull((Boolean) method.invoke(columnAnnotation));
+			} catch (Exception e) {
+				throw SqlExceptionUtil.create("Problem accessing fields from the Column annotation for field " + field,
+						e);
 			}
-			config.setWidth(column.length());
-			config.setCanBeNull(column.nullable());
 		}
-		if (id != null) {
-			if (generatedValue != null) {
+		if (idAnnotation != null) {
+			if (generatedValueAnnotation == null) {
+				config.setId(true);
+			} else {
 				// generatedValue only works if it is also an id according to {@link GeneratedValue)
 				config.setGeneratedId(true);
-			} else {
-				config.setId(true);
 			}
 		}
 		// foreign values are always ones we can't map as primitives (or Strings)
-		config.setForeign(oneToOne != null || manyToOne != null);
+		config.setForeign(oneToOneAnnotation != null || manyToOneAnnotation != null);
 		config.setJdbcType(JdbcType.lookupClass(field.getType()));
 		config.setUseGetSet(DatabaseFieldConfig.findGetMethod(field, false) != null
 				&& DatabaseFieldConfig.findSetMethod(field, false) != null);
@@ -76,11 +99,27 @@ public class JavaxPersistence {
 	 * </p>
 	 */
 	public static String getEntityName(Class<?> clazz) {
-		Entity entity = clazz.getAnnotation(Entity.class);
-		if (entity != null && entity.name() != null && entity.name().length() > 0) {
-			return entity.name();
-		} else {
+		Annotation entityAnnotation = null;
+		for (Annotation annotation : clazz.getAnnotations()) {
+			Class<?> annotationClass = annotation.annotationType();
+			if (annotationClass.getName().equals("javax.persistence.Entity")) {
+				entityAnnotation = annotation;
+			}
+		}
+
+		if (entityAnnotation == null) {
 			return null;
+		}
+		try {
+			Method method = entityAnnotation.getClass().getMethod("name");
+			String name = (String) method.invoke(entityAnnotation);
+			if (name != null && name.length() > 0) {
+				return name;
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			throw new IllegalStateException("Could not get entity name from class " + clazz, e);
 		}
 	}
 }

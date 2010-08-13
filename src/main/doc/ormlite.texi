@@ -21,7 +21,7 @@
 @c ----------------------------------------------------------------
 
 @c ----------------------------------------------------------------
-@set ormlite_version 2.10
+@set ormlite_version 2.11
 @set ormlite_date August 2010
 @set package ORMLite
 @c ----------------------------------------------------------------
@@ -135,15 +135,16 @@ Gray Watson @uref{http://256.com/gray/}
 @node Dependencies, Class Setup, Getting Started, Getting Started
 @section External Dependencies
 
-@value{package} depends only on the @code{javax.persistence} external package which provides compatibility with other
-persistence packages.  You must make sure that it is listed in your Maven, Ant, or @dots{} configuration files.  As of
-this writing, we use version 1.0 of the persistence package.  Usage of the @code{javax.persistence} classes has been
-centralized in the @code{JavaxPersistence} misc class.  You can remove the dependency by returning null from the
-methods there.
+@value{package} does not have any direct dependencies.  It has logging classes that depend on Apache commons-logging
+and Log4j but these classes will @emph{not} be referenced unless they exist in the classpath.
   
 If you want to get the @value{package} Junit tests to run, there are test dependencies on the following packages:
 
 @table @code
+
+@item javax.persistence
+
+For testing the compatibility annotations @code{@@Column} and the like.
 
 @item org.junit
 
@@ -351,6 +352,11 @@ compatibility if old software is accessing up-to-date data or if you have to rol
 Boolean that tells @value{package} to throw an exception if it sees a null value in a row and is trying to store it in
 a primitive field.  By default it is false.  If it is false and the database field is null, then the value of the
 primitive will be set to 0.  This can only be used on a primitive field.
+
+@item persisted
+
+Set this to be false (default true) to not store this field in the database. This is useful if you want to have
+the annotation on all of your fields but turn off the writing of some of them to the database.
 
 @end table
 
