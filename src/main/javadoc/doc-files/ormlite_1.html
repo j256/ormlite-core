@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on August, 11 2010 by texi2html 1.70 -->
+<!-- Created on August, 13 2010 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -54,7 +54,7 @@ ul.toc {list-style: none}
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC26" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h1 class="chapter"> 1. Getting Started </h1>
@@ -92,19 +92,16 @@ ul.toc {list-style: none}
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC26" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 1.1 External Dependencies </h2>
 
-<p>ORMLite depends only on the <code>javax.persistence</code> external package.  You must make sure
-that it is listed in your Maven, Ant, or &hellip; configuration files.
-
-</p><p>To provide compatibility with other persistence packages, ORMLite depends on the JavaX persistence annotations.
-As of this writing, we use version 1.0 of the persistence package.
-
-</p><p>Usage of the <code>javax.persistence</code> classes has been centralized in the <code>JavaxPersistence</code> misc class.  You can
-remove the dependency by returning null from the methods there.
+<p>ORMLite depends only on the <code>javax.persistence</code> external package which provides compatibility with other
+persistence packages.  You must make sure that it is listed in your Maven, Ant, or &hellip; configuration files.  As of
+this writing, we use version 1.0 of the persistence package.  Usage of the <code>javax.persistence</code> classes has been
+centralized in the <code>JavaxPersistence</code> misc class.  You can remove the dependency by returning null from the
+methods there.
   
 </p><p>If you want to get the ORMLite Junit tests to run, there are test dependencies on the following packages:
 
@@ -150,7 +147,7 @@ dependencies: <code>com.sun.jmx.jmxri</code>, <code>com.sun.jdmk.jmxtools</code>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC26" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 1.2 Setting Up Your Classes </h2>
@@ -188,7 +185,7 @@ dependencies: <code>com.sun.jmx.jmxri</code>, <code>com.sun.jdmk.jmxtools</code>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC26" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h3 class="subsection"> 1.2.1 Adding ORMLite Annotations to Your Classes </h3>
@@ -378,7 +375,7 @@ primitive will be set to 0.  This can only be used on a primitive field.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC26" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h3 class="subsection"> 1.2.2 Using javax.persistence Annotations Instead </h3>
@@ -492,7 +489,7 @@ Serializable field and the object should implement <code>java.io.Serializable</c
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC26" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h3 class="subsection"> 1.2.3 Adding a No Argument Constructor to Your Class </h3>
@@ -541,7 +538,7 @@ public class Account {
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC26" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 1.3 Types That can be Persisted </h2>
@@ -654,7 +651,7 @@ stored in the database.  See section <a href="ormlite_4.html#SEC19">Foreign Obje
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC26" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 1.4 Defining the DAOs </h2>
@@ -699,8 +696,10 @@ More on how to use these DAOs later. See section <a href="ormlite_2.html#SEC12">
 <code>createDao</code> static method on the <code>BaseJdbcDao</code> class to create a DAO class without having to define
 one.  For example:
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">Dao&lt;Account, String&gt; accountDao = BaseJdbcDao.createDao(databaseType, dataSource, Account.class);
-Dao&lt;Order, Integer&gt; orderDao = BaseJdbcDao.createDao(databaseType, dataSource, Order.class);
+</p><table><tr><td>&nbsp;</td><td><pre class="example">Dao&lt;Account, String&gt; accountDao =
+  BaseJdbcDao.createDao(databaseType, dataSource, Account.class);
+Dao&lt;Order, Integer&gt; orderDao =
+  BaseJdbcDao.createDao(databaseType, dataSource, Order.class);
 </pre></td></tr></table>
 <hr size="6">
 <a name="NOD10"></a>
@@ -718,7 +717,7 @@ Dao&lt;Order, Integer&gt; orderDao = BaseJdbcDao.createDao(databaseType, dataSou
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC26" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 1.5 JDBC Data Sources </h2>
@@ -775,7 +774,7 @@ try {
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC26" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 1.6 Database Type </h2>
@@ -828,7 +827,7 @@ databaseType.loadDriver();
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC26" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 1.7 Tying It All Together </h2>
@@ -888,12 +887,12 @@ then you will need to call <code>initialize()</code> method to properly initiali
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC25" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#SEC26" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>August, 11 2010</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>August, 13 2010</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 
