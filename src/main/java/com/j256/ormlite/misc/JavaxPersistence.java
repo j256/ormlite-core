@@ -10,7 +10,8 @@ import com.j256.ormlite.field.DatabaseFieldConfig;
 import com.j256.ormlite.field.JdbcType;
 
 /**
- * Class for isolating the javax.persistence annotations in one class so that dependency can be removed.
+ * Class for isolating the detection of the javax.persistence annotations. This used to be a hard dependency but it has
+ * become optinal/test since we use reflection here.
  * 
  * @author graywatson
  */
@@ -19,10 +20,6 @@ public class JavaxPersistence {
 	/**
 	 * Create a field config from the javax.persistence annotations associated with the field argument. Returns null if
 	 * none.
-	 * 
-	 * <p>
-	 * <b> NOTE: </b> To remove the javax.persistence dependency, this method can just return null.
-	 * </p>
 	 */
 	public static DatabaseFieldConfig createFieldConfig(DatabaseType databaseType, Field field) throws SQLException {
 		Annotation columnAnnotation = null;
@@ -93,10 +90,6 @@ public class JavaxPersistence {
 	/**
 	 * Return the javax.persistence.Entity annotation name for the class argument or null if none or if there was no
 	 * entity name.
-	 * 
-	 * <p>
-	 * <b> NOTE: </b> To remove the javax.persistence dependency, this method can just return null.
-	 * </p>
 	 */
 	public static String getEntityName(Class<?> clazz) {
 		Annotation entityAnnotation = null;
