@@ -33,10 +33,14 @@ public class DatabaseTypeUtils {
 		addDriver(SqlServerDatabaseType.class);
 		addDriver(SqlServerJtdsDatabaseType.class);
 		addDriver(Db2DatabaseType.class);
+		addDriver(SqlDroidDatabaseType.class);
 		/*
-		 * NOTE: we do _not_ have the Derby client/server type here because it has the same url-part as the embedded
-		 * driver.
+		 * duplicates to previous URL parts
 		 */
+		// same as DerbyEmbeddedDatabaseType
+		addDriver(DerbyClientServerDatabaseType.class);
+		// same as SqliteDatabaseType
+		addDriver(SqliteAndroidDatabaseType.class);
 	}
 
 	/**
@@ -65,9 +69,9 @@ public class DatabaseTypeUtils {
 	}
 
 	/**
-	 * Creates and returns a {@link SimpleDataSource} associated with the databaseUrl and optional userName
-	 * and password. Calls {@link #loadDriver} as well. You can, of course, provide your own {@link DataSource} for use
-	 * with the package.
+	 * Creates and returns a {@link SimpleDataSource} associated with the databaseUrl and optional userName and
+	 * password. Calls {@link #loadDriver} as well. You can, of course, provide your own {@link DataSource} for use with
+	 * the package.
 	 * 
 	 * @throws SQLException
 	 *             If there are problems constructing the {@link DataSource}.
@@ -77,8 +81,8 @@ public class DatabaseTypeUtils {
 	}
 
 	/**
-	 * Creates and returns a {@link SimpleDataSource} associated with the databaseUrl and optional userName
-	 * and password. Calls {@link #loadDriver} as well.
+	 * Creates and returns a {@link SimpleDataSource} associated with the databaseUrl and optional userName and
+	 * password. Calls {@link #loadDriver} as well.
 	 * 
 	 * @throws SQLException
 	 *             If there are problems constructing the {@link DataSource}.
@@ -132,9 +136,13 @@ public class DatabaseTypeUtils {
 			throw new IllegalStateException("Could not construct driver class " + dbClass, e);
 		}
 		String urlPart = driverType.getDriverUrlPart();
-		constructorMap.put(urlPart, constructor);
+		if (!constructorMap.containsKey(urlPart)) {
+			constructorMap.put(urlPart, constructor);
+		}
 		String driverName = driverType.getDriverClassName();
-		driverNameMap.put(urlPart, driverName);
+		if (!driverNameMap.containsKey(urlPart)) {
+			driverNameMap.put(urlPart, driverName);
+		}
 	}
 
 	private static String extractDbType(String databaseUrl) {

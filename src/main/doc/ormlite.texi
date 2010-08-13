@@ -628,8 +628,10 @@ You are not @emph{required} to create a DAO class for every one of your persiste
 one.  For example:
 
 @example
-Dao<Account, String> accountDao = BaseJdbcDao.createDao(databaseType, dataSource, Account.class);
-Dao<Order, Integer> orderDao = BaseJdbcDao.createDao(databaseType, dataSource, Order.class);
+Dao<Account, String> accountDao =
+  BaseJdbcDao.createDao(databaseType, dataSource, Account.class);
+Dao<Order, Integer> orderDao =
+  BaseJdbcDao.createDao(databaseType, dataSource, Order.class);
 @end example
 
 @c ----------------------------------------------------------------
@@ -1196,7 +1198,8 @@ When the @code{Order} table was created, something like the following SQL would 
 
 @example
 CREATE TABLE `orders`
-   (`id` INTEGER AUTO_INCREMENT , `account_id` INTEGER, PRIMARY KEY (`id`)); 
+   (`id` INTEGER AUTO_INCREMENT , `account_id` INTEGER,
+    PRIMARY KEY (`id`)); 
 @end example
 
 @cindex refreshing foreign objects
@@ -1223,6 +1226,7 @@ if (accountDao.refresh(order.getAccount()) != 1) @{
 * Class Configuration::        Alternate ways to configure your classes.
 * Database Type Details::      Description of the database specific code.
 * Logging::                    How to log messages with @value{package}.
+* Use With Android::           Using @value{package} on the Android OS.
 @end menu
 
 @c ----------------------------------------------------------------
@@ -1485,7 +1489,7 @@ See the Javadocs for the class for more information.
 @end table
 
 @c ----------------------------------------------------------------
-@node Logging, Index of Concepts, Database Type Details, Advanced
+@node Logging, Use With Android, Database Type Details, Advanced
 @section @value{package} Logging
 
 @cindex logging information
@@ -1498,7 +1502,8 @@ argument expansion like slf4j which means that you can save on toString() calls 
 the log level is not high enough.  This allows me to do something like the following:
 
 @example
-private static Logger logger = LoggerFactory.getLogger(QueryBuilder.class);
+private static Logger logger =
+  LoggerFactory.getLogger(QueryBuilder.class);
 @dots{}
 logger.debug("built statement @{@}", statement);
 @end example
@@ -1531,7 +1536,46 @@ various SQL calls.  This may expose passwords or other sensitive information in 
 only be used during debugging and should not be the default.
 
 @c ----------------------------------------------------------------
-@node Index of Concepts,, Logging, Top
+@node Use With Android, Index of Concepts, Logging, Advanced
+@section Using @value{package} on the Android OS
+
+@cindex use with Android OS
+@cindex Android OS support
+@cindex droid support
+@emph{So I have not found someone to confirm the following.  Please send me mail if this works for you or if there
+is anything that I need to do to have better Android OS support.}
+
+As of summer of 2010, JDBC is not well supported under Android OS.  Google developers are saying that JDBC is not
+proper for a small memory Java application which seems rediculous to me.  There is nothing about the
+@value{package} at least that will take up more memory unless they are talking about the code itself.
+
+The following example shows how to configure @value{package} using the built-in (but not supported) JDBC library.  If
+you'd rather use the SqlDroid 3rd party JDBC package then see below.
+
+@example
+DatabaseType databaseType =
+  new SqliteAndroidDatabaseType();
+databaseType.loadDriver();
+// change this for your path and application name
+String databaseUrl = "jdbc:" + databaseType.getDriverUrlPart()
+  + ":" + getFilesDir() + "/test.db";
+SimpleDataSource dataSource =
+  DatabaseTypeUtils.createSimpleDataSource(databaseUrl);
+
+// configure and use your dao as in previous examples
+@end example
+
+@cindex SqlDroid support
+@cindex use with SqlDroid driver
+If you would rather use the SqlDroid 3rd party driver (see @uref{http://code.google.com/p/sqldroid/}) then
+use the following database type instead:
+
+@example
+DatabaseType databaseType = new SqlDroidDatabaseType();
+@end example
+
+@c ----------------------------------------------------------------
+@node Index of Concepts,, Use With Android, Top
 @unnumbered Index of Concepts
 
 @printindex cp
