@@ -1,3 +1,7 @@
+2.11: 8/13/2010
+	* Removed the final dependency by using reflection to get at the javax.persistance annotations.
+	* Added a persisted boolean to DatabaseField annotation so you can easily disable a field.
+
 2.10: 8/13/2010
 	* Added some better support for Android OS built-in and 3rd party JDBC drivers.
 
