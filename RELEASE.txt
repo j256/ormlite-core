@@ -38,8 +38,9 @@ To release ORMLite:
 
 	mvn -P st release:perform -DconnectionUrl=scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite/tags/ormlite-X.X
 
-9) cd to target/checkout which should be the release checked out by release:perform.
+9) Release to sourceforge in the directory checked out by release:perform.
 
+	cd target/checkout
 	mvn -P sf deploy                       (need to type in GPG secret)
 
 10) Go to SF and set the default download to the newest jar: https://sourceforge.net/project/admin/explorer.php?group_id=297653
