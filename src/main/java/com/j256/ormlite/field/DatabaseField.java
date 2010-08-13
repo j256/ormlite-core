@@ -136,4 +136,10 @@ public @interface DatabaseField {
 	 * field is null, the value of the primitive will be set to 0.
 	 */
 	boolean throwIfNull() default false;
+
+	/**
+	 * Set this to be false (default true) to not store this field in the database. This is useful if you want to have
+	 * the annotation on all of your fields but turn off the writing of some of them to the database.
+	 */
+	boolean persisted() default true;
 }

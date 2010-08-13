@@ -2,6 +2,7 @@ package com.j256.ormlite.field;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.sql.SQLException;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.misc.JavaxPersistence;
@@ -206,11 +207,15 @@ public class DatabaseFieldConfig {
 	 * Create and return a config converted from a {@link Field} that may have either a {@link DatabaseField} annotation
 	 * or the javax.persistence annotations.
 	 */
-	public static DatabaseFieldConfig fromField(DatabaseType databaseType, Field field) {
+	public static DatabaseFieldConfig fromField(DatabaseType databaseType, Field field) throws SQLException {
 		// first we lookup the DatabaseField annotation
 		DatabaseField databaseField = field.getAnnotation(DatabaseField.class);
 		if (databaseField != null) {
-			return fromDatabaseField(databaseType, field, databaseField);
+			if (databaseField.persisted()) {
+				return fromDatabaseField(databaseType, field, databaseField);
+			} else {
+				return null;
+			}
 		}
 
 		/*
