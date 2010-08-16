@@ -1502,10 +1502,11 @@ See the Javadocs for the class for more information.
 @value{package} uses a log system which can plug into Apache commons logging, Log4j, or use its own internal log
 implementations.  The logger code in @code{com.j256.ormlite.logger} first looks for the
 @code{org.apache.commons.logging.LogFactory} class in the classpath -- if found it will use Apache commons logging.
-If that class is not found it then looks for @code{org.apache.log4j.Logger} and if found will use Log4j.  If neither
-classes are available it will use an internal logger -- see @code{LocalLog}.  The logger code also provides simple @{@}
-argument expansion like slf4j which means that you can save on toString() calls and @code{StringBuilder} operations if
-the log level is not high enough.  This allows me to do something like the following:
+If that class is not found it then looks for @code{org.apache.log4j.Logger} and if found will use Log4j.  Next it
+looks for @code{android.util.Log} and if found will use the Android internal logger.  If none of these classes are
+available it will use an internal logger -- see @code{LocalLog}.  The logger code also provides simple @{@}
+argument expansion like slf4j which means that you can save on toString() calls and @code{StringBuilder} operations
+if the log level is not high enough.  This allows me to do something like the following:
 
 @example
 private static Logger logger =
@@ -1513,6 +1514,9 @@ private static Logger logger =
 @dots{}
 logger.debug("built statement @{@}", statement);
 @end example
+
+@emph{Notice} that if you have loaded @value{package} into your development environment and want to get rid of the log
+classes which are red, you can just delete them and remove the references to them in the @code{LoggerFactory} class. 
 
 If you are using log4j (through Apache commons logging or directly), you can use something
 like the following as your log4j.properties file to see details about the SQL calls.
@@ -1579,6 +1583,9 @@ use the following database type instead:
 @example
 DatabaseType databaseType = new SqlDroidDatabaseType();
 @end example
+
+Also, there is an @code{AndroidLog} logger which should detect and delegate log calls to the internal Android log
+classes. 
 
 @c ----------------------------------------------------------------
 @node Index of Concepts,, Use With Android, Top

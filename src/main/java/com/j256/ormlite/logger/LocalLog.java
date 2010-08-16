@@ -32,12 +32,7 @@ public class LocalLog implements Log {
 
 	public LocalLog(String className) {
 		// get the last part of the class name
-		String[] parts = className.split("\\.");
-		if (parts.length == 0) {
-			this.className = className;
-		} else {
-			this.className = parts[parts.length - 1];
-		}
+		this.className = LoggerFactory.getSimpleClassName(className);
 
 		// see if we have a level set
 		String levelName = System.getProperty(LOCAL_LOG_LEVEL_PROPERTY);
