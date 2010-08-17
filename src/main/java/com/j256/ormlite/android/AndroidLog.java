@@ -1,6 +1,9 @@
-package com.j256.ormlite.logger;
+package com.j256.ormlite.android;
 
 import java.lang.reflect.Method;
+
+import com.j256.ormlite.logger.Log;
+import com.j256.ormlite.logger.LoggerFactory;
 
 /**
  * Implementation of our logger which delegates to the internal Android logger via reflection. We use reflection so we

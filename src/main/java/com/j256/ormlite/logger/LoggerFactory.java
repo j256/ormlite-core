@@ -1,5 +1,7 @@
 package com.j256.ormlite.logger;
 
+import com.j256.ormlite.android.AndroidLog;
+
 /**
  * Factory that creates {@link Logger} instances.
  */
