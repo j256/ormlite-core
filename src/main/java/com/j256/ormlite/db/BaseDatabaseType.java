@@ -4,9 +4,13 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.jdbc.JdbcDatabaseAccess;
+import com.j256.ormlite.support.DatabaseAccess;
 import com.j256.ormlite.support.Results;
 
 /**
@@ -25,6 +29,14 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	private static int DEFAULT_VARCHAR_WIDTH = 255;
 
 	protected final static FieldConverter booleanConverter = new BooleanNumberFieldConverter();
+
+	public DatabaseAccess buildDatabaseAccess(DataSource dataSource) {
+		if (dataSource == null) {
+			return null;
+		} else {
+			return new JdbcDatabaseAccess(dataSource);
+		}
+	}
 
 	public void loadDriver() throws ClassNotFoundException {
 		// this instantiates the driver class which wires in the JDBC glue

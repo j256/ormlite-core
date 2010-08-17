@@ -42,7 +42,6 @@ import com.j256.ormlite.table.TableInfo;
  */
 public abstract class BaseJdbcDao<T, ID> extends SimpleDaoSupport implements Dao<T, ID> {
 
-	private DatabaseType databaseType;
 	private final Class<T> dataClass;
 	private DatabaseTableConfig<T> tableConfig;
 	private TableInfo<T> tableInfo;
@@ -99,7 +98,7 @@ public abstract class BaseJdbcDao<T, ID> extends SimpleDaoSupport implements Dao
 	}
 
 	private BaseJdbcDao(DatabaseType databaseType, Class<T> dataClass, DatabaseTableConfig<T> tableConfig) {
-		this.databaseType = databaseType;
+		super(databaseType);
 		this.dataClass = dataClass;
 		this.tableConfig = tableConfig;
 	}
@@ -120,15 +119,15 @@ public abstract class BaseJdbcDao<T, ID> extends SimpleDaoSupport implements Dao
 	}
 
 	public T queryForId(ID id) throws SQLException {
-		return statementExecutor.queryForId(getJdbcTemplate(), id);
+		return statementExecutor.queryForId(databaseAccess, id);
 	}
 
 	public T queryForFirst(PreparedQuery<T> preparedQuery) throws SQLException {
-		return statementExecutor.queryForFirst(getJdbcTemplate(), preparedQuery);
+		return statementExecutor.queryForFirst(databaseAccess, preparedQuery);
 	}
 
 	public List<T> queryForAll() throws SQLException {
-		return statementExecutor.queryForAll(getJdbcTemplate());
+		return statementExecutor.queryForAll(databaseAccess);
 	}
 
 	public QueryBuilder<T, ID> queryBuilder() {
@@ -136,11 +135,11 @@ public abstract class BaseJdbcDao<T, ID> extends SimpleDaoSupport implements Dao
 	}
 
 	public List<T> query(PreparedQuery<T> preparedQuery) throws SQLException {
-		return statementExecutor.query(getJdbcTemplate(), preparedQuery);
+		return statementExecutor.query(databaseAccess, preparedQuery);
 	}
 
 	public RawResults queryForAllRaw(String queryString) throws SQLException {
-		return statementExecutor.queryRaw(getJdbcTemplate(), queryString);
+		return statementExecutor.queryRaw(databaseAccess, queryString);
 	}
 
 	public int create(T data) throws SQLException {
@@ -148,7 +147,7 @@ public abstract class BaseJdbcDao<T, ID> extends SimpleDaoSupport implements Dao
 		if (data == null) {
 			return 0;
 		} else {
-			return statementExecutor.create(getJdbcTemplate(), data);
+			return statementExecutor.create(databaseAccess, data);
 		}
 	}
 
@@ -157,7 +156,7 @@ public abstract class BaseJdbcDao<T, ID> extends SimpleDaoSupport implements Dao
 		if (data == null) {
 			return 0;
 		} else {
-			return statementExecutor.update(getJdbcTemplate(), data);
+			return statementExecutor.update(databaseAccess, data);
 		}
 	}
 
@@ -166,7 +165,7 @@ public abstract class BaseJdbcDao<T, ID> extends SimpleDaoSupport implements Dao
 		if (data == null) {
 			return 0;
 		} else {
-			return statementExecutor.updateId(getJdbcTemplate(), data, newId);
+			return statementExecutor.updateId(databaseAccess, data, newId);
 		}
 	}
 
@@ -175,7 +174,7 @@ public abstract class BaseJdbcDao<T, ID> extends SimpleDaoSupport implements Dao
 		if (data == null) {
 			return 0;
 		} else {
-			return statementExecutor.refresh(getJdbcTemplate(), data);
+			return statementExecutor.refresh(databaseAccess, data);
 		}
 	}
 
@@ -184,7 +183,7 @@ public abstract class BaseJdbcDao<T, ID> extends SimpleDaoSupport implements Dao
 		if (data == null) {
 			return 0;
 		} else {
-			return statementExecutor.delete(getJdbcTemplate(), data);
+			return statementExecutor.delete(databaseAccess, data);
 		}
 	}
 
@@ -193,7 +192,7 @@ public abstract class BaseJdbcDao<T, ID> extends SimpleDaoSupport implements Dao
 		if (datas == null || datas.size() == 0) {
 			return 0;
 		} else {
-			return statementExecutor.deleteObjects(getJdbcTemplate(), datas);
+			return statementExecutor.deleteObjects(databaseAccess, datas);
 		}
 	}
 
@@ -202,13 +201,13 @@ public abstract class BaseJdbcDao<T, ID> extends SimpleDaoSupport implements Dao
 		if (ids == null || ids.size() == 0) {
 			return 0;
 		} else {
-			return statementExecutor.deleteIds(getJdbcTemplate(), ids);
+			return statementExecutor.deleteIds(databaseAccess, ids);
 		}
 	}
 
 	public SelectIterator<T, ID> iterator() {
 		try {
-			return statementExecutor.buildIterator(this, getJdbcTemplate());
+			return statementExecutor.buildIterator(this, databaseAccess);
 		} catch (Exception e) {
 			throw new IllegalStateException("Could not build iterator for " + dataClass, e);
 		}
@@ -216,7 +215,7 @@ public abstract class BaseJdbcDao<T, ID> extends SimpleDaoSupport implements Dao
 
 	public SelectIterator<T, ID> iterator(PreparedQuery<T> preparedQuery) throws SQLException {
 		try {
-			return statementExecutor.buildIterator(this, getJdbcTemplate(), preparedQuery);
+			return statementExecutor.buildIterator(this, databaseAccess, preparedQuery);
 		} catch (SQLException e) {
 			throw SqlExceptionUtil.create("Could not build iterator for " + dataClass, e);
 		}
@@ -224,7 +223,7 @@ public abstract class BaseJdbcDao<T, ID> extends SimpleDaoSupport implements Dao
 
 	public RawResults iteratorRaw(String query) throws SQLException {
 		try {
-			return statementExecutor.buildIterator(getJdbcTemplate(), query);
+			return statementExecutor.buildIterator(databaseAccess, query);
 		} catch (SQLException e) {
 			throw SqlExceptionUtil.create("Could not build iterator for " + query, e);
 		}
@@ -256,14 +255,6 @@ public abstract class BaseJdbcDao<T, ID> extends SimpleDaoSupport implements Dao
 	 */
 	public Class<T> getDataClass() {
 		return dataClass;
-	}
-
-	/**
-	 * Used if you want to wire the Dao with spring. In java you should use the
-	 * {@link #BaseJdbcDao(DatabaseType, Class)} constructor. This must be called <i>before</i> {@link #initialize}.
-	 */
-	public void setDatabaseType(DatabaseType databaseType) {
-		this.databaseType = databaseType;
 	}
 
 	/**

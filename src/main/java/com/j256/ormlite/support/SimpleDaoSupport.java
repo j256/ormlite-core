@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 
 import com.j256.ormlite.dao.BaseJdbcDao;
-import com.j256.ormlite.jdbc.JdbcDatabaseAccess;
+import com.j256.ormlite.db.DatabaseType;
 
 /**
  * Replacement for Spring's SimpleJdbcDaoSupport that provides some DAO methods. This could be rolled into the
@@ -20,7 +20,8 @@ import com.j256.ormlite.jdbc.JdbcDatabaseAccess;
  */
 public abstract class SimpleDaoSupport {
 
-	private DatabaseAccess jdbcTemplate;
+	protected DatabaseType databaseType;
+	protected DatabaseAccess databaseAccess;
 	private DataSource dataSource;
 
 	/**
@@ -30,10 +31,14 @@ public abstract class SimpleDaoSupport {
 		// for Spring wiring
 	}
 
+	protected SimpleDaoSupport(DatabaseType databaseType) {
+		this.databaseType = databaseType;
+	}
+
 	/**
 	 * Constructor if you have the dataSource already.
 	 */
-	protected SimpleDaoSupport(DataSource dataSource) throws SQLException {
+	protected SimpleDaoSupport(DatabaseType databaseType, DataSource dataSource) throws SQLException {
 		this.dataSource = dataSource;
 		initialize();
 	}
@@ -44,17 +49,26 @@ public abstract class SimpleDaoSupport {
 	 * NOTE: this needs to throw because subclasses override it and might throw.
 	 */
 	public void initialize() throws SQLException {
-		if (dataSource == null) {
-			throw new IllegalStateException("dataSource was never set on " + getClass().getSimpleName());
+		if (databaseType == null) {
+			throw new IllegalStateException("databaseType was never set on " + getClass().getSimpleName());
 		}
-		jdbcTemplate = new JdbcDatabaseAccess(dataSource);
+		databaseAccess = databaseType.buildDatabaseAccess(dataSource);
+		if (databaseAccess == null) {
+			if (dataSource == null) {
+				throw new IllegalStateException("dataSource was never set on " + getClass().getSimpleName());
+			} else {
+				throw new IllegalStateException("Unable to build database access object for "
+						+ getClass().getSimpleName());
+			}
+		}
 	}
 
 	/**
-	 * Return the jdbc template associated with this dao.
+	 * Used if you want to wire the Dao with spring. In java you should use the
+	 * {@link #BaseJdbcDao(DatabaseType, Class)} constructor. This must be called <i>before</i> {@link #initialize}.
 	 */
-	protected DatabaseAccess getJdbcTemplate() {
-		return jdbcTemplate;
+	public void setDatabaseType(DatabaseType databaseType) {
+		this.databaseType = databaseType;
 	}
 
 	public void setDataSource(DataSource dataSource) {
