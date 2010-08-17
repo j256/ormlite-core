@@ -37,21 +37,59 @@ public abstract class BaseMappedStatement<T> {
 	}
 
 	/**
-	 * Update the object in the database whether we are inserting, deleting, or altering it.
+	 * Insert the object into the database
 	 */
-	protected int update(DatabaseAccess template, T data, String action) throws SQLException {
+	protected int insert(DatabaseAccess template, T data) throws SQLException {
 		try {
 			Object[] args = getFieldObjects(argFieldTypes, data);
-			int rowC = template.update(statement, args, argFieldTypeVals);
-			logger.debug("{} data with statement '{}' and {} args, changed {} rows", action, statement, args.length,
+			int rowC = template.insert(statement, args, argFieldTypeVals);
+			logger.debug("insert data with statement '{}' and {} args, changed {} rows", statement, args.length,
 					rowC);
 			if (args.length > 0) {
 				// need to do the (Object) cast to force args to be a single object
-				logger.trace("{} arguments: {}", action, (Object) args);
+				logger.trace("insert arguments: {}", (Object) args);
+			}
+			return rowC;
+		} catch (SQLException e) {
+			throw SqlExceptionUtil.create("Unable to run insert stmt on object " + data + ": " + statement, e);
+		}
+	}
+
+	/**
+	 * Update the object in the database.
+	 */
+	public int update(DatabaseAccess template, T data) throws SQLException {
+		try {
+			Object[] args = getFieldObjects(argFieldTypes, data);
+			int rowC = template.update(statement, args, argFieldTypeVals);
+			logger.debug("update data with statement '{}' and {} args, changed {} rows", statement, args.length,
+					rowC);
+			if (args.length > 0) {
+				// need to do the (Object) cast to force args to be a single object
+				logger.trace("update arguments: {}", (Object) args);
 			}
 			return rowC;
 		} catch (SQLException e) {
 			throw SqlExceptionUtil.create("Unable to run update stmt on object " + data + ": " + statement, e);
+		}
+	}
+
+	/**
+	 * Delete the object from the database.
+	 */
+	public int delete(DatabaseAccess template, T data) throws SQLException {
+		try {
+			Object[] args = getFieldObjects(argFieldTypes, data);
+			int rowC = template.delete(statement, args, argFieldTypeVals);
+			logger.debug("delete data with statement '{}' and {} args, changed {} rows", statement, args.length,
+					rowC);
+			if (args.length > 0) {
+				// need to do the (Object) cast to force args to be a single object
+				logger.trace("delete arguments: {}", (Object) args);
+			}
+			return rowC;
+		} catch (SQLException e) {
+			throw SqlExceptionUtil.create("Unable to run delete stmt on object " + data + ": " + statement, e);
 		}
 	}
 

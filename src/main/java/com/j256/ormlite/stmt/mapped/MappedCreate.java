@@ -31,7 +31,8 @@ public class MappedCreate<T> extends BaseMappedStatement<T> {
 	/**
 	 * Create an object in the database.
 	 */
-	public int execute(DatabaseAccess template, T data) throws SQLException {
+	@Override
+	public int insert(DatabaseAccess template, T data) throws SQLException {
 		if (idField != null) {
 			if (idField.isGeneratedIdSequence()) {
 				assignSequenceId(template, data);
@@ -43,8 +44,7 @@ public class MappedCreate<T> extends BaseMappedStatement<T> {
 				// the id should have been set by the caller already
 			}
 		}
-		// create is the same as an update
-		return update(template, data, "create");
+		return super.insert(template, data);
 	}
 
 	public static <T> MappedCreate<T> build(DatabaseType databaseType, TableInfo<T> tableInfo) {
@@ -106,7 +106,7 @@ public class MappedCreate<T> extends BaseMappedStatement<T> {
 		try {
 			KeyHolder keyHolder = new KeyHolder();
 			// do the insert first
-			int retVal = template.update(statement, args, argFieldTypeVals, keyHolder);
+			int retVal = template.insert(statement, args, argFieldTypeVals, keyHolder);
 			logger.debug("create object using '{}' and {} args, changed {} rows", statement, args.length, retVal);
 			if (args.length > 0) {
 				// need to do the (Object) cast to force args to be a single object

@@ -31,7 +31,7 @@ public class MappedCreateTest extends BaseOrmLiteTest {
 		StatementExecutor<GeneratedId, String> se = new StatementExecutor<GeneratedId, String>(databaseType, tableInfo);
 		DatabaseAccess template = createMock(DatabaseAccess.class);
 		expect(template.queryForLong(isA(String.class))).andReturn(1L);
-		expect(template.update(isA(String.class), isA(Object[].class), isA(int[].class))).andReturn(1);
+		expect(template.insert(isA(String.class), isA(Object[].class), isA(int[].class))).andReturn(1);
 
 		replay(template);
 		GeneratedId genIdSeq = new GeneratedId();
@@ -48,7 +48,7 @@ public class MappedCreateTest extends BaseOrmLiteTest {
 						databaseType, GeneratedIdLong.class));
 		DatabaseAccess template = createMock(DatabaseAccess.class);
 		expect(template.queryForLong(isA(String.class))).andReturn(1L);
-		expect(template.update(isA(String.class), isA(Object[].class), isA(int[].class))).andReturn(1);
+		expect(template.insert(isA(String.class), isA(Object[].class), isA(int[].class))).andReturn(1);
 
 		replay(template);
 		GeneratedIdLong genIdSeq = new GeneratedIdLong();
@@ -122,7 +122,7 @@ public class MappedCreateTest extends BaseOrmLiteTest {
 		MappedCreate<GeneratedIdSequence> mappedCreate =
 				MappedCreate.build(databaseType, new TableInfo<GeneratedIdSequence>(databaseType,
 						GeneratedIdSequence.class));
-		mappedCreate.execute(template, new GeneratedIdSequence());
+		mappedCreate.insert(template, new GeneratedIdSequence());
 		verify(template);
 	}
 

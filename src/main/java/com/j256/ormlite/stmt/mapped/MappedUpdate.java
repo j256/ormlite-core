@@ -1,12 +1,10 @@
 package com.j256.ormlite.stmt.mapped;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.support.DatabaseAccess;
 import com.j256.ormlite.table.TableInfo;
 
 /**
@@ -18,13 +16,6 @@ public class MappedUpdate<T> extends BaseMappedStatement<T> {
 
 	private MappedUpdate(TableInfo<T> tableInfo, String statement, List<FieldType> argFieldTypeList) {
 		super(tableInfo, statement, argFieldTypeList);
-	}
-
-	/**
-	 * Update the object in the database.
-	 */
-	public int execute(DatabaseAccess template, T data) throws SQLException {
-		return update(template, data, "update");
 	}
 
 	public static <T> MappedUpdate<T> build(DatabaseType databaseType, TableInfo<T> tableInfo) {

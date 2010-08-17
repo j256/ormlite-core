@@ -50,7 +50,7 @@ public class JdbcTemplateImplTest extends BaseOrmLiteTest {
 		DatabaseAccess template = new JdbcDatabaseAccess(dataSource);
 		createDao(Foo.class, true);
 		GeneratedKeyHolder keyHolder = createMock(GeneratedKeyHolder.class);
-		template.update("insert into foo (id) values (1)", new Object[0], new int[0], keyHolder);
+		template.insert("insert into foo (id) values (1)", new Object[0], new int[0], keyHolder);
 	}
 
 	protected static class Foo {

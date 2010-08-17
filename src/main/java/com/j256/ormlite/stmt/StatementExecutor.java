@@ -186,7 +186,7 @@ public class StatementExecutor<T, ID> {
 	 * Create a new entry in the database from an object.
 	 */
 	public int create(DatabaseAccess template, T data) throws SQLException {
-		return mappedInsert.execute(template, data);
+		return mappedInsert.insert(template, data);
 	}
 
 	/**
@@ -197,7 +197,7 @@ public class StatementExecutor<T, ID> {
 			throw new SQLException("Cannot update " + dataClass
 					+ " because it doesn't have an id field defined or only has id field");
 		} else {
-			return mappedUpdate.execute(template, data);
+			return mappedUpdate.update(template, data);
 		}
 	}
 
@@ -236,7 +236,7 @@ public class StatementExecutor<T, ID> {
 		if (mappedDelete == null) {
 			throw new SQLException("Cannot delete " + dataClass + " because it doesn't have an id field defined");
 		} else {
-			return mappedDelete.execute(template, data);
+			return mappedDelete.delete(template, data);
 		}
 	}
 

@@ -35,13 +35,12 @@ public class JdbcDatabaseAccess implements DatabaseAccess {
 		this.dataSource = dataSource;
 	}
 
-	public int update(String statement, Object[] args, int[] argFieldTypeVals) throws SQLException {
-		PreparedStatement stmt = dataSource.getConnection().prepareStatement(statement);
-		statementSetArgs(stmt, args, argFieldTypeVals);
-		return stmt.executeUpdate();
+	public int insert(String statement, Object[] args, int[] argFieldTypeVals) throws SQLException {
+		// it's a call to executeUpdate
+		return update(statement, args, argFieldTypeVals);
 	}
 
-	public int update(String statement, Object[] args, int[] argFieldTypeVals, GeneratedKeyHolder keyHolder)
+	public int insert(String statement, Object[] args, int[] argFieldTypeVals, GeneratedKeyHolder keyHolder)
 			throws SQLException {
 		PreparedStatement stmt =
 				dataSource.getConnection().prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
@@ -71,6 +70,17 @@ public class JdbcDatabaseAccess implements DatabaseAccess {
 			}
 		}
 		return rowN;
+	}
+
+	public int update(String statement, Object[] args, int[] argFieldTypeVals) throws SQLException {
+		PreparedStatement stmt = dataSource.getConnection().prepareStatement(statement);
+		statementSetArgs(stmt, args, argFieldTypeVals);
+		return stmt.executeUpdate();
+	}
+
+	public int delete(String statement, Object[] args, int[] argFieldTypeVals) throws SQLException {
+		// it's a call to executeUpdate
+		return update(statement, args, argFieldTypeVals);
 	}
 
 	public <T> Object queryForOne(String statement, Object[] args, int[] argFieldTypeVals, GenericRowMapper<T> rowMapper)

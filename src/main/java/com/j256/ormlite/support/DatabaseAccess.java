@@ -15,6 +15,21 @@ public interface DatabaseAccess {
 	public final static Object MORE_THAN_ONE = new Object();
 
 	/**
+	 * Perform a SQL insert with the associated SQL statement, arguments, and types.
+	 * 
+	 * @return The number of rows affected by the update.
+	 */
+	public int insert(String statement, Object[] args, int[] argFieldTypeVals) throws SQLException;
+
+	/**
+	 * Perform a SQL update while returning generated keys with the associated SQL statement, arguments, and types.
+	 * 
+	 * @return The number of rows affected by the update.
+	 */
+	public int insert(String statement, Object[] args, int[] argFieldTypeVals, GeneratedKeyHolder keyHolder)
+			throws SQLException;
+
+	/**
 	 * Perform a SQL update with the associated SQL statement, arguments, and types.
 	 * 
 	 * @return The number of rows affected by the update.
@@ -22,12 +37,11 @@ public interface DatabaseAccess {
 	public int update(String statement, Object[] args, int[] argFieldTypeVals) throws SQLException;
 
 	/**
-	 * Perform a SQL update while returning generated keys with the associated SQL statement, arguments, and types.
+	 * Perform a SQL delete with the associated SQL statement, arguments, and types.
 	 * 
 	 * @return The number of rows affected by the update.
 	 */
-	public int update(String statement, Object[] args, int[] argFieldTypeVals, GeneratedKeyHolder keyHolder)
-			throws SQLException;
+	public int delete(String statement, Object[] args, int[] argFieldTypeVals) throws SQLException;
 
 	/**
 	 * Perform a SQL query with the associated SQL statement, arguments, and types and returns a single result.
