@@ -1,3 +1,7 @@
+3.0: 8/17/2010
+	* Massive internal code reorganization to allow database calls outside of JDBC for better Android support.
+	* Removed direct access to the Connection object.  Now all db calls go through the DatabaseAccess object.
+
 2.12: 8/16/2010
 	* Added a logger which should detect and delegate to the internal Android logger.
 	* Changed the logger classes to use reflection to remove the compilation errors if classes aren't there.

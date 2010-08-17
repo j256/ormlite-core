@@ -37,17 +37,14 @@ home page for more information.
 
 MAVEN DEPENDENCIES:
 
-ORMLite has no direct dependencies.  It has logging classes that depend on commons-logging and log4j
-but these will not be instantiated unless they exist in the classpath.  Package versions can be tuned
-as necessary.
-
-Optional Dependencies:
-
-	commons-logging -- 1.1.1
-	log4j -- 1.2.15
+ORMLite has no direct dependencies.  It has logging classes that use reflection to call out to
+log4j and other logging classes but these will not be called unless they exist in the classpath.
+Package versions can be tuned as necessary.
 
 Test Dependencies:
 
+	commons-logging -- 1.1.1
+	log4j -- 1.2.15
 	junit -- 4.8.1
 	org.easymock -- 2.3
 	com.h2database -- 1.2.134
