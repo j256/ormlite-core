@@ -88,8 +88,8 @@ public class StatementExecutor<T, ID> {
 		try {
 			stmt = preparedQuery.prepareSqlStatement(jdbcTemplate);
 			if (!stmt.execute()) {
-				throw new SQLException("Could not query for one of " + dataClass + " with warnings: "
-						+ stmt.getWarnings());
+				throw new SQLException("Could not query for one of " + dataClass + " with warning: "
+						+ stmt.getWarning());
 			}
 			Results results = stmt.getResults();
 			if (results.next()) {

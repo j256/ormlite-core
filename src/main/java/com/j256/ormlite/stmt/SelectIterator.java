@@ -44,8 +44,8 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 		this.rowMapper = rowMapper;
 		this.stmt = preparedStatement;
 		if (!stmt.execute()) {
-			throw new SQLException("Could not execute select iterator on " + dataClass + " with warnings: "
-					+ stmt.getWarnings());
+			throw new SQLException("Could not execute select iterator on " + dataClass + " with warning: "
+					+ stmt.getWarning());
 		}
 		this.results = stmt.getResults();
 		this.statement = statement;

@@ -52,8 +52,13 @@ public class JdbcPreparedStmt implements PreparedStmt {
 		return new JdbcResults(preparedStatement.getResultSet());
 	}
 
-	public SQLWarning getWarnings() throws SQLException {
-		return preparedStatement.getWarnings();
+	public String getWarning() throws SQLException {
+		SQLWarning warning = preparedStatement.getWarnings();
+		if (warning == null) {
+			return null;
+		} else {
+			return warning.toString();
+		}
 	}
 
 	public void setMaxRows(int max) throws SQLException {
