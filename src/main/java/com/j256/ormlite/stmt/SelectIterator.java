@@ -109,7 +109,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 		if (closed) {
 			return null;
 		}
-		last = rowMapper.mapRow(results, rowC);
+		last = rowMapper.mapRow(results);
 		rowC++;
 		return last;
 	}

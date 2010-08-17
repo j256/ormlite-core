@@ -65,7 +65,7 @@ public abstract class SimpleDaoSupport {
 
 	/**
 	 * Used if you want to wire the Dao with spring. In java you should use the
-	 * {@link #BaseJdbcDao(DatabaseType, Class)} constructor. This must be called <i>before</i> {@link #initialize}.
+	 * {@link #SimpleDaoSupport(DatabaseType, Class)} constructor. This must be called <i>before</i> {@link #initialize}.
 	 */
 	public void setDatabaseType(DatabaseType databaseType) {
 		this.databaseType = databaseType;

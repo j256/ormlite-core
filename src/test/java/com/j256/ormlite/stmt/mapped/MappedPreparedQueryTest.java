@@ -43,7 +43,7 @@ public class MappedPreparedQueryTest extends BaseOrmLiteTest {
 
 		Results results = new JdbcResults(stmt.getResultSet());
 		while (results.next()) {
-			Foo foo2 = rowMapper.mapRow(results, 0);
+			Foo foo2 = rowMapper.mapRow(results);
 			assertEquals(foo1.id, foo2.id);
 		}
 	}
@@ -85,7 +85,7 @@ public class MappedPreparedQueryTest extends BaseOrmLiteTest {
 			Results results = stmt.getResults();
 			int fooC = 0;
 			while (results.next()) {
-				Foo foo2 = preparedQuery.mapRow(results, 0);
+				Foo foo2 = preparedQuery.mapRow(results);
 				assertEquals(foos.get(fooC).id, foo2.id);
 				fooC++;
 			}

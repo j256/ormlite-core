@@ -84,7 +84,7 @@ public class JdbcDatabaseAccess implements DatabaseAccess {
 			// no results at all
 			return null;
 		}
-		T first = rowMapper.mapRow(results, 0);
+		T first = rowMapper.mapRow(results);
 		if (results.next()) {
 			return MORE_THAN_ONE;
 		} else {
@@ -122,7 +122,7 @@ public class JdbcDatabaseAccess implements DatabaseAccess {
 	 * Row mapper that handles a single long result.
 	 */
 	private static class OneLongWrapper implements GenericRowMapper<Long> {
-		public Long mapRow(Results rs, int rowNum) throws SQLException {
+		public Long mapRow(Results rs) throws SQLException {
 			// maps the first column (sql #1)
 			return rs.getLong(1);
 		}

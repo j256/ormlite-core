@@ -17,8 +17,10 @@ public interface GenericRowMapper<T> {
 	 * Used to convert a results row to an object.
 	 * 
 	 * @return The created object with all of the fields set from the results;
+	 * @param results
+	 *            Results object we are mapping.
 	 * @throws SQLException
 	 *             If we could not get the SQL results or instantiate the object.
 	 */
-	public T mapRow(Results rs, int rowNum) throws SQLException;
+	public T mapRow(Results results) throws SQLException;
 }

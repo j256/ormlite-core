@@ -94,7 +94,7 @@ public class StatementExecutor<T, ID> {
 			Results results = stmt.getResults();
 			if (results.next()) {
 				logger.debug("query-for-first of '{}' returned at least 1 result", preparedQuery.getStatement());
-				return preparedQuery.mapRow(results, 0);
+				return preparedQuery.mapRow(results);
 			} else {
 				logger.debug("query-for-first of '{}' returned at 0 results", preparedQuery.getStatement());
 				return null;
@@ -291,7 +291,7 @@ public class StatementExecutor<T, ID> {
 		/**
 		 * Row mapper which handles our String[] raw results.
 		 */
-		public String[] mapRow(Results rs, int rowNum) throws SQLException {
+		public String[] mapRow(Results rs) throws SQLException {
 			String[] result = new String[columnN];
 			for (int colC = 0; colC < columnN; colC++) {
 				result[colC] = rs.getString(colC + 1);

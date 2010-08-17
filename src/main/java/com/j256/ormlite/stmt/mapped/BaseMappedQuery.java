@@ -27,7 +27,7 @@ public abstract class BaseMappedQuery<T> extends BaseMappedStatement<T> implemen
 		this.resultsFieldTypes = resultFieldTypeList.toArray(new FieldType[resultFieldTypeList.size()]);
 	}
 
-	public T mapRow(Results results, int rowNum) throws SQLException {
+	public T mapRow(Results results) throws SQLException {
 		// create our instance
 		T instance = tableInfo.createObject();
 		// populate its fields
