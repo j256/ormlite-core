@@ -1,6 +1,5 @@
 package com.j256.ormlite.dao;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
@@ -205,7 +204,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * </p>
 	 * 
 	 * <p>
-	 * <b>WARNING</b>: The underlying {@link ResultSet} object will only be closed if you page all the way to the end of
+	 * <b>WARNING</b>: The underlying results object will only be closed if you page all the way to the end of
 	 * the iterator using the for() loop or if you call {@link SelectIterator#close()} directly. It is also closed when
 	 * it is garbage collected but this is considered bad form.
 	 * </p>

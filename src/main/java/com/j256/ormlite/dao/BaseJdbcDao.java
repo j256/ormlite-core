@@ -14,13 +14,13 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.SelectIterator;
 import com.j256.ormlite.stmt.StatementExecutor;
-import com.j256.ormlite.support.SimpleJdbcDaoSupport;
+import com.j256.ormlite.support.SimpleDaoSupport;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableInfo;
 
 /**
  * Base class for the Database Access Objects that handle the reading and writing a class from the database. This is the
- * JDBC implementation of the {@link Dao} and extends Spring's {@link SimpleJdbcDaoSupport}. Kudos to Robert A. for the
+ * JDBC implementation of the {@link Dao} and extends Spring's {@link SimpleDaoSupport}. Kudos to Robert A. for the
  * general ideas of this hierarchy.
  * 
  * <p>
@@ -40,7 +40,7 @@ import com.j256.ormlite.table.TableInfo;
  *            needs an ID parameter however so you can use Void or Object to satisfy the compiler.
  * @author graywatson
  */
-public abstract class BaseJdbcDao<T, ID> extends SimpleJdbcDaoSupport implements Dao<T, ID> {
+public abstract class BaseJdbcDao<T, ID> extends SimpleDaoSupport implements Dao<T, ID> {
 
 	private DatabaseType databaseType;
 	private final Class<T> dataClass;
