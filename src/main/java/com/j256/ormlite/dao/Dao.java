@@ -204,9 +204,9 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * </p>
 	 * 
 	 * <p>
-	 * <b>WARNING</b>: The underlying results object will only be closed if you page all the way to the end of
-	 * the iterator using the for() loop or if you call {@link SelectIterator#close()} directly. It is also closed when
-	 * it is garbage collected but this is considered bad form.
+	 * <b>WARNING</b>: The underlying results object will only be closed if you page all the way to the end of the
+	 * iterator using the for() loop or if you call {@link SelectIterator#close()} directly. It is also closed when it
+	 * is garbage collected but this is considered bad form.
 	 * </p>
 	 * 
 	 * @return An iterator of the class that uses SQL to step across the database table.
@@ -251,8 +251,8 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	/**
 	 * Same as {@link #iterator(PreparedQuery)} except it returns a RawResults object associated with the SQL select
 	 * query argument. Although you should use the {@link #iterator()} for most queries, this method allows you to do
-	 * special queries that aren't supported otherwise.  Like the above iterator methods, you must call close on
-	 * the returned RawResults object once you are done with it. 
+	 * special queries that aren't supported otherwise. Like the above iterator methods, you must call close on the
+	 * returned RawResults object once you are done with it.
 	 */
 	public RawResults iteratorRaw(String query) throws SQLException;
 

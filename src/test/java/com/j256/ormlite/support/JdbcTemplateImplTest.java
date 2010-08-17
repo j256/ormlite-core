@@ -10,12 +10,13 @@ import org.junit.Test;
 import com.j256.ormlite.BaseOrmLiteTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.jdbc.JdbcDatabaseAccess;
 
 public class JdbcTemplateImplTest extends BaseOrmLiteTest {
 
 	@Test
 	public void testQueryForLong() throws Exception {
-		JdbcTemplate template = new JdbcTemplateImpl(dataSource);
+		DatabaseAccess template = new JdbcDatabaseAccess(dataSource);
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		long id = 21321321L;
@@ -26,14 +27,14 @@ public class JdbcTemplateImplTest extends BaseOrmLiteTest {
 
 	@Test(expected = SQLException.class)
 	public void testQueryForLongNoResult() throws Exception {
-		JdbcTemplate template = new JdbcTemplateImpl(dataSource);
+		DatabaseAccess template = new JdbcDatabaseAccess(dataSource);
 		createDao(Foo.class, true);
 		template.queryForLong("select id from foo");
 	}
 
 	@Test(expected = SQLException.class)
 	public void testQueryForLongTooManyResults() throws Exception {
-		JdbcTemplate template = new JdbcTemplateImpl(dataSource);
+		DatabaseAccess template = new JdbcDatabaseAccess(dataSource);
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		long id = 21321321L;
@@ -46,7 +47,7 @@ public class JdbcTemplateImplTest extends BaseOrmLiteTest {
 
 	@Test
 	public void testQueryKeyHolderNoKeys() throws Exception {
-		JdbcTemplate template = new JdbcTemplateImpl(dataSource);
+		DatabaseAccess template = new JdbcDatabaseAccess(dataSource);
 		createDao(Foo.class, true);
 		GeneratedKeyHolder keyHolder = createMock(GeneratedKeyHolder.class);
 		template.update("insert into foo (id) values (1)", new Object[0], new int[0], keyHolder);

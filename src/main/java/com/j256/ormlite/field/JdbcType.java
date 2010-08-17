@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
@@ -17,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.j256.ormlite.misc.SqlExceptionUtil;
+import com.j256.ormlite.support.Results;
 
 /**
  * JDBC type enumeration to provide Java class to/from JDBC mapping.
@@ -40,8 +40,8 @@ public enum JdbcType implements FieldConverter {
 	 */
 	STRING(Types.VARCHAR, new int[0], new Class<?>[] { String.class }) {
 		@Override
-		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			return resultSet.getString(columnPos);
+		public Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException {
+			return results.getString(columnPos);
 		}
 		@Override
 		public Object parseDefaultString(String defaultStr) {
@@ -54,8 +54,8 @@ public enum JdbcType implements FieldConverter {
 	 */
 	BOOLEAN(Types.BOOLEAN, new int[0], new Class<?>[] { boolean.class, }) {
 		@Override
-		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			return (Boolean) resultSet.getBoolean(columnPos);
+		public Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException {
+			return (Boolean) results.getBoolean(columnPos);
 		}
 		@Override
 		public Object parseDefaultString(String defaultStr) {
@@ -76,8 +76,8 @@ public enum JdbcType implements FieldConverter {
 	 */
 	BOOLEAN_OBJ(Types.BOOLEAN, new int[0], new Class<?>[] { Boolean.class }) {
 		@Override
-		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			return (Boolean) resultSet.getBoolean(columnPos);
+		public Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException {
+			return (Boolean) results.getBoolean(columnPos);
 		}
 		@Override
 		public Object parseDefaultString(String defaultStr) {
@@ -98,8 +98,8 @@ public enum JdbcType implements FieldConverter {
 	 */
 	JAVA_DATE(Types.TIMESTAMP, new int[0], new Class<?>[] { Date.class }) {
 		@Override
-		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			return new Date(resultSet.getTimestamp(columnPos).getTime());
+		public Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException {
+			return new Date(results.getTimestamp(columnPos).getTime());
 		}
 		@Override
 		public Object parseDefaultString(String defaultStr) throws SQLException {
@@ -121,8 +121,8 @@ public enum JdbcType implements FieldConverter {
 	 */
 	BYTE(Types.TINYINT, new int[0], new Class<?>[] { byte.class }) {
 		@Override
-		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			return (Byte) resultSet.getByte(columnPos);
+		public Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException {
+			return (Byte) results.getByte(columnPos);
 		}
 		@Override
 		public Object parseDefaultString(String defaultStr) {
@@ -143,8 +143,8 @@ public enum JdbcType implements FieldConverter {
 	 */
 	BYTE_OBJ(Types.TINYINT, new int[0], new Class<?>[] { Byte.class }) {
 		@Override
-		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			return (Byte) resultSet.getByte(columnPos);
+		public Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException {
+			return (Byte) results.getByte(columnPos);
 		}
 		@Override
 		public Object parseDefaultString(String defaultStr) {
@@ -161,8 +161,8 @@ public enum JdbcType implements FieldConverter {
 	 */
 	SHORT(Types.SMALLINT, new int[0], new Class<?>[] { short.class }) {
 		@Override
-		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			return (Short) resultSet.getShort(columnPos);
+		public Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException {
+			return (Short) results.getShort(columnPos);
 		}
 		@Override
 		public Object parseDefaultString(String defaultStr) {
@@ -183,8 +183,8 @@ public enum JdbcType implements FieldConverter {
 	 */
 	SHORT_OBJ(Types.SMALLINT, new int[0], new Class<?>[] { Short.class }) {
 		@Override
-		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			return (Short) resultSet.getShort(columnPos);
+		public Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException {
+			return (Short) results.getShort(columnPos);
 		}
 		@Override
 		public Object parseDefaultString(String defaultStr) {
@@ -201,8 +201,8 @@ public enum JdbcType implements FieldConverter {
 	 */
 	INTEGER(Types.INTEGER, new int[0], new Class<?>[] { int.class }) {
 		@Override
-		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			return (Integer) resultSet.getInt(columnPos);
+		public Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException {
+			return (Integer) results.getInt(columnPos);
 		}
 		@Override
 		public Object parseDefaultString(String defaultStr) {
@@ -213,8 +213,8 @@ public enum JdbcType implements FieldConverter {
 			return (Integer) number.intValue();
 		}
 		@Override
-		public Number resultToId(ResultSet resultSet, int columnPos) throws SQLException {
-			return (Integer) resultSet.getInt(columnPos);
+		public Number resultToId(Results results, int columnPos) throws SQLException {
+			return (Integer) results.getInt(columnPos);
 		}
 		@Override
 		public boolean isNumber() {
@@ -231,8 +231,8 @@ public enum JdbcType implements FieldConverter {
 	 */
 	INTEGER_OBJ(Types.INTEGER, new int[0], new Class<?>[] { Integer.class }) {
 		@Override
-		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			return (Integer) resultSet.getInt(columnPos);
+		public Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException {
+			return (Integer) results.getInt(columnPos);
 		}
 		@Override
 		public Object parseDefaultString(String defaultStr) {
@@ -243,8 +243,8 @@ public enum JdbcType implements FieldConverter {
 			return (Integer) number.intValue();
 		}
 		@Override
-		public Number resultToId(ResultSet resultSet, int columnPos) throws SQLException {
-			return (Integer) resultSet.getInt(columnPos);
+		public Number resultToId(Results results, int columnPos) throws SQLException {
+			return (Integer) results.getInt(columnPos);
 		}
 		@Override
 		public boolean isNumber() {
@@ -257,8 +257,8 @@ public enum JdbcType implements FieldConverter {
 	 */
 	LONG(Types.BIGINT, new int[] { Types.DECIMAL, Types.NUMERIC }, new Class<?>[] { long.class }) {
 		@Override
-		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			return (Long) resultSet.getLong(columnPos);
+		public Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException {
+			return (Long) results.getLong(columnPos);
 		}
 		@Override
 		public Object parseDefaultString(String defaultStr) {
@@ -269,8 +269,8 @@ public enum JdbcType implements FieldConverter {
 			return (Long) number.longValue();
 		}
 		@Override
-		public Number resultToId(ResultSet resultSet, int columnPos) throws SQLException {
-			return (Long) resultSet.getLong(columnPos);
+		public Number resultToId(Results results, int columnPos) throws SQLException {
+			return (Long) results.getLong(columnPos);
 		}
 		@Override
 		public boolean isNumber() {
@@ -287,8 +287,8 @@ public enum JdbcType implements FieldConverter {
 	 */
 	LONG_OBJ(Types.BIGINT, new int[] { Types.DECIMAL, Types.NUMERIC }, new Class<?>[] { Long.class }) {
 		@Override
-		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			return (Long) resultSet.getLong(columnPos);
+		public Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException {
+			return (Long) results.getLong(columnPos);
 		}
 		@Override
 		public Object parseDefaultString(String defaultStr) {
@@ -299,8 +299,8 @@ public enum JdbcType implements FieldConverter {
 			return (Long) number.longValue();
 		}
 		@Override
-		public Number resultToId(ResultSet resultSet, int columnPos) throws SQLException {
-			return (Long) resultSet.getLong(columnPos);
+		public Number resultToId(Results results, int columnPos) throws SQLException {
+			return (Long) results.getLong(columnPos);
 		}
 		@Override
 		public boolean isNumber() {
@@ -313,8 +313,8 @@ public enum JdbcType implements FieldConverter {
 	 */
 	FLOAT(Types.FLOAT, new int[0], new Class<?>[] { float.class }) {
 		@Override
-		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			return (Float) resultSet.getFloat(columnPos);
+		public Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException {
+			return (Float) results.getFloat(columnPos);
 		}
 		@Override
 		public Object parseDefaultString(String defaultStr) {
@@ -335,8 +335,8 @@ public enum JdbcType implements FieldConverter {
 	 */
 	FLOAT_OBJ(Types.FLOAT, new int[0], new Class<?>[] { Float.class }) {
 		@Override
-		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			return (Float) resultSet.getFloat(columnPos);
+		public Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException {
+			return (Float) results.getFloat(columnPos);
 		}
 		@Override
 		public Object parseDefaultString(String defaultStr) {
@@ -353,8 +353,8 @@ public enum JdbcType implements FieldConverter {
 	 */
 	DOUBLE(Types.DOUBLE, new int[0], new Class<?>[] { double.class }) {
 		@Override
-		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			return (Double) resultSet.getDouble(columnPos);
+		public Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException {
+			return (Double) results.getDouble(columnPos);
 		}
 		@Override
 		public Object parseDefaultString(String defaultStr) {
@@ -375,8 +375,8 @@ public enum JdbcType implements FieldConverter {
 	 */
 	DOUBLE_OBJ(Types.DOUBLE, new int[0], new Class<?>[] { Double.class }) {
 		@Override
-		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			return (Double) resultSet.getDouble(columnPos);
+		public Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException {
+			return (Double) results.getDouble(columnPos);
 		}
 		@Override
 		public Object parseDefaultString(String defaultStr) {
@@ -408,8 +408,8 @@ public enum JdbcType implements FieldConverter {
 			throw new SQLException("Default values for serializable types are not supported");
 		}
 		@Override
-		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			byte[] bytes = resultSet.getBytes(columnPos);
+		public Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException {
+			byte[] bytes = results.getBytes(columnPos);
 			// need to do this check because we are a stream type
 			if (bytes == null) {
 				return null;
@@ -447,8 +447,8 @@ public enum JdbcType implements FieldConverter {
 			return defaultStr;
 		}
 		@Override
-		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			String val = resultSet.getString(columnPos);
+		public Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException {
+			String val = results.getString(columnPos);
 			return fieldType.enumFromString(val);
 		}
 	},
@@ -468,8 +468,8 @@ public enum JdbcType implements FieldConverter {
 			return Integer.parseInt(defaultStr);
 		}
 		@Override
-		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			return fieldType.enumFromInt(resultSet.getInt(columnPos));
+		public Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException {
+			return fieldType.enumFromInt(results.getInt(columnPos));
 		}
 		@Override
 		public boolean isNumber() {
@@ -490,7 +490,7 @@ public enum JdbcType implements FieldConverter {
 			return null;
 		}
 		@Override
-		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
+		public Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException {
 			return null;
 		}
 	},
@@ -531,7 +531,7 @@ public enum JdbcType implements FieldConverter {
 		this.classes = classes;
 	}
 
-	public abstract Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException;
+	public abstract Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException;
 
 	public abstract Object parseDefaultString(String defaultStr) throws SQLException;
 
@@ -560,10 +560,10 @@ public enum JdbcType implements FieldConverter {
 	}
 
 	/**
-	 * Return the object suitable to be set on an id field that was extracted from the resultSet associated with column
-	 * in position columnPos.
+	 * Return the object suitable to be set on an id field that was extracted from the results associated with column in
+	 * position columnPos.
 	 */
-	public Number resultToId(ResultSet resultSet, int columnPos) throws SQLException {
+	public Number resultToId(Results results, int columnPos) throws SQLException {
 		// by default the type cannot convert an id number
 		return null;
 	}

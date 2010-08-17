@@ -6,7 +6,7 @@ public class SimpleJdbcDaoSupportTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testSpringBadWiring() throws Exception {
-		SimpleJdbcDaoSupport daoSupport = new SimpleJdbcDaoSupport() {
+		SimpleDaoSupport daoSupport = new SimpleDaoSupport() {
 		};
 		daoSupport.initialize();
 	}

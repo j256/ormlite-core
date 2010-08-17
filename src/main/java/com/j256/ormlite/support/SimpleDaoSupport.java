@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 
 import com.j256.ormlite.dao.BaseJdbcDao;
+import com.j256.ormlite.jdbc.JdbcDatabaseAccess;
 
 /**
  * Replacement for Spring's SimpleJdbcDaoSupport that provides some DAO methods. This could be rolled into the
@@ -17,22 +18,22 @@ import com.j256.ormlite.dao.BaseJdbcDao;
  * 
  * @author graywatson
  */
-public abstract class SimpleJdbcDaoSupport {
+public abstract class SimpleDaoSupport {
 
-	private JdbcTemplate jdbcTemplate;
+	private DatabaseAccess jdbcTemplate;
 	private DataSource dataSource;
 
 	/**
 	 * Constructor for Spring type wiring if you are using the set methods.
 	 */
-	protected SimpleJdbcDaoSupport() {
+	protected SimpleDaoSupport() {
 		// for Spring wiring
 	}
 
 	/**
 	 * Constructor if you have the dataSource already.
 	 */
-	protected SimpleJdbcDaoSupport(DataSource dataSource) throws SQLException {
+	protected SimpleDaoSupport(DataSource dataSource) throws SQLException {
 		this.dataSource = dataSource;
 		initialize();
 	}
@@ -46,13 +47,13 @@ public abstract class SimpleJdbcDaoSupport {
 		if (dataSource == null) {
 			throw new IllegalStateException("dataSource was never set on " + getClass().getSimpleName());
 		}
-		jdbcTemplate = new JdbcTemplateImpl(dataSource);
+		jdbcTemplate = new JdbcDatabaseAccess(dataSource);
 	}
 
 	/**
 	 * Return the jdbc template associated with this dao.
 	 */
-	protected JdbcTemplate getJdbcTemplate() {
+	protected DatabaseAccess getJdbcTemplate() {
 		return jdbcTemplate;
 	}
 

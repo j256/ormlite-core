@@ -1,6 +1,5 @@
 package com.j256.ormlite.stmt.mapped;
 
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -8,7 +7,8 @@ import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.SelectArg;
-import com.j256.ormlite.support.JdbcTemplate;
+import com.j256.ormlite.support.DatabaseAccess;
+import com.j256.ormlite.support.PreparedStmt;
 import com.j256.ormlite.table.TableInfo;
 
 /**
@@ -35,8 +35,8 @@ public class MappedPreparedQuery<T> extends BaseMappedQuery<T> implements Prepar
 	/**
 	 * Return the associated SQL prepared statement for the SQL JdbcTemplate.
 	 */
-	public PreparedStatement prepareSqlStatement(JdbcTemplate jdbcTemplate) throws SQLException {
-		PreparedStatement stmt = jdbcTemplate.prepareStatement(statement);
+	public PreparedStmt prepareSqlStatement(DatabaseAccess jdbcTemplate) throws SQLException {
+		PreparedStmt stmt = jdbcTemplate.prepareStatement(statement);
 		if (limit != null) {
 			stmt.setMaxRows(limit);
 		}

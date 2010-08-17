@@ -1,10 +1,10 @@
 package com.j256.ormlite.stmt;
 
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.support.JdbcTemplate;
+import com.j256.ormlite.support.DatabaseAccess;
+import com.j256.ormlite.support.PreparedStmt;
 
 /**
  * Interface returned by the {@link QueryBuilder#prepareQuery()} which supports custom queries. This should be in turn
@@ -22,7 +22,7 @@ public interface PreparedQuery<T> extends GenericRowMapper<T> {
 	/**
 	 * Create and return the associated SQL prepared statement for the SQL JdbcTemplate.
 	 */
-	public PreparedStatement prepareSqlStatement(JdbcTemplate jdbcTemplate) throws SQLException;
+	public PreparedStmt prepareSqlStatement(DatabaseAccess jdbcTemplate) throws SQLException;
 
 	/**
 	 * Return the associated SQL statement string for logging purposes.

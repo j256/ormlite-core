@@ -2,13 +2,13 @@ package com.j256.ormlite.field;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.misc.SqlExceptionUtil;
+import com.j256.ormlite.support.Results;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableInfo;
 
@@ -170,8 +170,7 @@ public class FieldType {
 		}
 		this.throwIfNull = fieldConfig.isThrowIfNull();
 		if (this.throwIfNull && !jdbcType.isPrimitive()) {
-			throw new SQLException("Field " + field.getName()
-					+ " must be a primitive if set with throwIfNull");
+			throw new SQLException("Field " + field.getName() + " must be a primitive if set with throwIfNull");
 		}
 	}
 
@@ -417,25 +416,25 @@ public class FieldType {
 	}
 
 	/**
-	 * Get the result object from the {@link ResultSet}. A call through to {@link FieldConverter#resultToJava}.
+	 * Get the result object from the results. A call through to {@link FieldConverter#resultToJava}.
 	 */
-	public <T> T resultToJava(ResultSet resultSet, Map<String, Integer> columnPositions) throws SQLException {
+	public <T> T resultToJava(Results results, Map<String, Integer> columnPositions) throws SQLException {
 		Integer dbColumnPos = columnPositions.get(dbColumnName);
 		if (dbColumnPos == null) {
-			dbColumnPos = resultSet.findColumn(dbColumnName);
+			dbColumnPos = results.findColumn(dbColumnName);
 			columnPositions.put(dbColumnName, dbColumnPos);
 		}
 		if (jdbcType.isPrimitive()) {
-			if (throwIfNull && resultSet.getObject(dbColumnPos) == null) {
-				throw new SQLException("ResultSet value for primitive field '" + fieldName
+			if (throwIfNull && results.isNull(dbColumnPos)) {
+				throw new SQLException("Results value for primitive field '" + fieldName
 						+ "' was an invalid null value");
 			}
-		} else if (!fieldConverter.isStreamType() && resultSet.getObject(dbColumnPos) == null) {
+		} else if (!fieldConverter.isStreamType() && results.isNull(dbColumnPos)) {
 			// we can't check if we have a null if this is a stream type
 			return null;
 		}
 		@SuppressWarnings("unchecked")
-		T converted = (T) fieldConverter.resultToJava(this, resultSet, dbColumnPos);
+		T converted = (T) fieldConverter.resultToJava(this, results, dbColumnPos);
 		return converted;
 	}
 

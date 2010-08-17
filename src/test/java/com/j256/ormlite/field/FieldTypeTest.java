@@ -14,7 +14,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,6 +23,7 @@ import org.junit.Test;
 import com.j256.ormlite.BaseOrmLiteTest;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.db.PostgresDatabaseType;
+import com.j256.ormlite.support.Results;
 import com.j256.ormlite.table.TableInfo;
 
 public class FieldTypeTest extends BaseOrmLiteTest {
@@ -133,7 +133,7 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 			public Object javaToArg(Object javaObject) {
 				return nameArg;
 			}
-			public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
+			public Object resultToJava(FieldType fieldType, Results resultSet, int columnPos) throws SQLException {
 				return nameResult;
 			}
 			public boolean isStreamType() {
@@ -152,9 +152,9 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 		foo.name = nameArg + " not that";
 		assertEquals(nameArg, fieldType.getConvertedFieldValue(foo));
 
-		ResultSet resultMock = createMock(ResultSet.class);
+		Results resultMock = createMock(Results.class);
 		expect(resultMock.findColumn("name")).andReturn(0);
-		expect(resultMock.getObject(0)).andReturn(nameResult);
+		expect(resultMock.isNull(0)).andReturn(false);
 		replay(resultMock);
 		assertEquals(nameResult, fieldType.resultToJava(resultMock, new HashMap<String, Integer>()));
 		verify(resultMock);

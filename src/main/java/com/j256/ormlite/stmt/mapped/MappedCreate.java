@@ -7,8 +7,8 @@ import java.util.List;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.misc.SqlExceptionUtil;
+import com.j256.ormlite.support.DatabaseAccess;
 import com.j256.ormlite.support.GeneratedKeyHolder;
-import com.j256.ormlite.support.JdbcTemplate;
 import com.j256.ormlite.table.TableInfo;
 
 /**
@@ -31,7 +31,7 @@ public class MappedCreate<T> extends BaseMappedStatement<T> {
 	/**
 	 * Create an object in the database.
 	 */
-	public int execute(JdbcTemplate template, T data) throws SQLException {
+	public int execute(DatabaseAccess template, T data) throws SQLException {
 		if (idField != null) {
 			if (idField.isGeneratedIdSequence()) {
 				assignSequenceId(template, data);
@@ -90,7 +90,7 @@ public class MappedCreate<T> extends BaseMappedStatement<T> {
 		}
 	}
 
-	private void assignSequenceId(JdbcTemplate template, T data) throws SQLException {
+	private void assignSequenceId(DatabaseAccess template, T data) throws SQLException {
 		// call the query-next-sequence stmt to increment the sequence
 		long seqVal = template.queryForLong(queryNextSequenceStmt);
 		logger.debug("queried for sequence {} using stmt: {}", seqVal, queryNextSequenceStmt);
@@ -101,7 +101,7 @@ public class MappedCreate<T> extends BaseMappedStatement<T> {
 		assignIdValue(data, seqVal, "sequence");
 	}
 
-	private int createWithGeneratedId(JdbcTemplate template, T data) throws SQLException {
+	private int createWithGeneratedId(DatabaseAccess template, T data) throws SQLException {
 		Object[] args = getFieldObjects(argFieldTypes, data);
 		try {
 			KeyHolder keyHolder = new KeyHolder();

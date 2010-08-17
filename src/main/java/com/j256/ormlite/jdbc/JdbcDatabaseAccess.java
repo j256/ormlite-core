@@ -1,4 +1,4 @@
-package com.j256.ormlite.support;
+package com.j256.ormlite.jdbc;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,13 +10,17 @@ import javax.sql.DataSource;
 
 import com.j256.ormlite.field.JdbcType;
 import com.j256.ormlite.stmt.GenericRowMapper;
+import com.j256.ormlite.support.DatabaseAccess;
+import com.j256.ormlite.support.GeneratedKeyHolder;
+import com.j256.ormlite.support.PreparedStmt;
+import com.j256.ormlite.support.Results;
 
 /**
- * Implementation of {@link JdbcTemplate} interface to replace Spring's JdbcTemplate.
+ * Implementation of DatabaseAccess interface in JDBC land.
  * 
  * @author graywatson
  */
-public class JdbcTemplateImpl implements JdbcTemplate {
+public class JdbcDatabaseAccess implements DatabaseAccess {
 
 	private static Object[] noArgs = new Object[0];
 	private static int[] noArgTypes = new int[0];
@@ -27,7 +31,7 @@ public class JdbcTemplateImpl implements JdbcTemplate {
 	/**
 	 * Construct a jdbc template with an associated data source.
 	 */
-	public JdbcTemplateImpl(DataSource dataSource) {
+	public JdbcDatabaseAccess(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
 
@@ -43,13 +47,14 @@ public class JdbcTemplateImpl implements JdbcTemplate {
 				dataSource.getConnection().prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
 		statementSetArgs(stmt, args, argFieldTypeVals);
 		int rowN = stmt.executeUpdate();
-		ResultSet results = stmt.getGeneratedKeys();
-		if (results == null) {
+		ResultSet resultSet = stmt.getGeneratedKeys();
+		if (resultSet == null) {
 			// may never happen but let's be careful
 			throw new SQLException("No generated key results returned from update: " + statement);
 		}
-		ResultSetMetaData metaData = results.getMetaData();
+		ResultSetMetaData metaData = resultSet.getMetaData();
 		int colN = metaData.getColumnCount();
+		Results results = new JdbcResults(resultSet);
 		while (results.next()) {
 			for (int colC = 1; colC <= colN; colC++) {
 				String colName = metaData.getColumnName(colC);
@@ -74,7 +79,7 @@ public class JdbcTemplateImpl implements JdbcTemplate {
 				dataSource.getConnection().prepareStatement(statement, ResultSet.TYPE_FORWARD_ONLY,
 						ResultSet.CONCUR_READ_ONLY);
 		statementSetArgs(stmt, args, argFieldTypeVals);
-		ResultSet results = stmt.executeQuery();
+		Results results = new JdbcResults(stmt.executeQuery());
 		if (!results.next()) {
 			// no results at all
 			return null;
@@ -98,8 +103,8 @@ public class JdbcTemplateImpl implements JdbcTemplate {
 		}
 	}
 
-	public PreparedStatement prepareStatement(String sql) throws SQLException {
-		return dataSource.getConnection().prepareStatement(sql);
+	public PreparedStmt prepareStatement(String sql) throws SQLException {
+		return new JdbcPreparedStmt(dataSource.getConnection().prepareStatement(sql));
 	}
 
 	private void statementSetArgs(PreparedStatement stmt, Object[] args, int[] argFieldTypeVals) throws SQLException {
@@ -117,7 +122,7 @@ public class JdbcTemplateImpl implements JdbcTemplate {
 	 * Row mapper that handles a single long result.
 	 */
 	private static class OneLongWrapper implements GenericRowMapper<Long> {
-		public Long mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public Long mapRow(Results rs, int rowNum) throws SQLException {
 			// maps the first column (sql #1)
 			return rs.getLong(1);
 		}

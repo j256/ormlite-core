@@ -3,7 +3,6 @@ package com.j256.ormlite.stmt.mapped;
 import static org.junit.Assert.assertEquals;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +14,10 @@ import com.j256.ormlite.BaseOrmLiteTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.jdbc.JdbcResults;
 import com.j256.ormlite.stmt.SelectArg;
+import com.j256.ormlite.support.PreparedStmt;
+import com.j256.ormlite.support.Results;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.TableInfo;
 
@@ -39,9 +41,9 @@ public class MappedPreparedQueryTest extends BaseOrmLiteTest {
 			return;
 		}
 
-		ResultSet resultSet = stmt.getResultSet();
-		while (resultSet.next()) {
-			Foo foo2 = rowMapper.mapRow(resultSet, 0);
+		Results results = new JdbcResults(stmt.getResultSet());
+		while (results.next()) {
+			Foo foo2 = rowMapper.mapRow(results, 0);
 			assertEquals(foo1.id, foo2.id);
 		}
 	}
@@ -73,17 +75,17 @@ public class MappedPreparedQueryTest extends BaseOrmLiteTest {
 
 	private void checkResults(List<Foo> foos, MappedPreparedQuery<Foo> preparedQuery, int expectedNum)
 			throws SQLException {
-		PreparedStatement stmt = null;
+		PreparedStmt stmt = null;
 		try {
 			stmt = preparedQuery.prepareSqlStatement(jdbcTemplate);
 			if (!stmt.execute()) {
 				return;
 			}
 
-			ResultSet resultSet = stmt.getResultSet();
+			Results results = stmt.getResults();
 			int fooC = 0;
-			while (resultSet.next()) {
-				Foo foo2 = preparedQuery.mapRow(resultSet, 0);
+			while (results.next()) {
+				Foo foo2 = preparedQuery.mapRow(results, 0);
 				assertEquals(foos.get(fooC).id, foo2.id);
 				fooC++;
 			}

@@ -8,12 +8,13 @@ import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.misc.SqlExceptionUtil;
-import com.j256.ormlite.support.JdbcTemplate;
+import com.j256.ormlite.support.DatabaseAccess;
 import com.j256.ormlite.table.TableInfo;
 
 /**
  * Abstract mapped statement which has common statements used by the subclasses. The
- * {@link #update(JdbcTemplate, Object, String)} method is here because it is used by create, delete, and update calls.
+ * {@link #update(DatabaseAccess, Object, String)} method is here because it is used by create, delete, and update
+ * calls.
  * 
  * @author graywatson
  */
@@ -38,7 +39,7 @@ public abstract class BaseMappedStatement<T> {
 	/**
 	 * Update the object in the database whether we are inserting, deleting, or altering it.
 	 */
-	protected int update(JdbcTemplate template, T data, String action) throws SQLException {
+	protected int update(DatabaseAccess template, T data, String action) throws SQLException {
 		try {
 			Object[] args = getFieldObjects(argFieldTypes, data);
 			int rowC = template.update(statement, args, argFieldTypeVals);

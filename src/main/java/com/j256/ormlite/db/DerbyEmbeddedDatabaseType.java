@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.sql.Blob;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
@@ -14,6 +13,7 @@ import javax.sql.rowset.serial.SerialBlob;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.misc.SqlExceptionUtil;
+import com.j256.ormlite.support.Results;
 
 /**
  * Derby database type information used to create the tables, etc.. This is for an embedded Derby databse. For client
@@ -103,8 +103,8 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 		public Object parseDefaultString(String defaultStr) throws SQLException {
 			throw new SQLException("Default values for serializable types are not supported");
 		}
-		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			Blob blob = resultSet.getBlob(columnPos);
+		public Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException {
+			Blob blob = results.getBlob(columnPos);
 			if (blob == null) {
 				return null;
 			}

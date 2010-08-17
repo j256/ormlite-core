@@ -99,14 +99,14 @@ public class SqliteDatabaseTypeTest extends BaseDatabaseTest {
 		public GeneratedIdLong() {
 		}
 	}
-	
+
 	protected static class SerialField {
 		@DatabaseField
 		SerializedThing other;
 		public SerialField() {
 		}
 	}
-	
+
 	protected static class SerializedThing implements Serializable {
 		private static final long serialVersionUID = -7989929665216767119L;
 		@DatabaseField

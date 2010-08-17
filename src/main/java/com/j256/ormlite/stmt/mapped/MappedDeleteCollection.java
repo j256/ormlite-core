@@ -8,7 +8,7 @@ import java.util.List;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.misc.SqlExceptionUtil;
-import com.j256.ormlite.support.JdbcTemplate;
+import com.j256.ormlite.support.DatabaseAccess;
 import com.j256.ormlite.table.TableInfo;
 
 /**
@@ -26,7 +26,7 @@ public class MappedDeleteCollection<T, ID> extends BaseMappedStatement<T> {
 	 * Delete all of the objects in the collection. This builds a {@link MappedDeleteCollection} on the fly because the
 	 * datas could be variable sized.
 	 */
-	public static <T, ID> int deleteObjects(DatabaseType databaseType, TableInfo<T> tableInfo, JdbcTemplate template,
+	public static <T, ID> int deleteObjects(DatabaseType databaseType, TableInfo<T> tableInfo, DatabaseAccess template,
 			Collection<T> datas) throws SQLException {
 		MappedDeleteCollection<T, ID> deleteCollection =
 				MappedDeleteCollection.build(databaseType, tableInfo, datas.size());
@@ -43,7 +43,7 @@ public class MappedDeleteCollection<T, ID> extends BaseMappedStatement<T> {
 	 * Delete all of the objects in the collection. This builds a {@link MappedDeleteCollection} on the fly because the
 	 * ids could be variable sized.
 	 */
-	public static <T, ID> int deleteIds(DatabaseType databaseType, TableInfo<T> tableInfo, JdbcTemplate template,
+	public static <T, ID> int deleteIds(DatabaseType databaseType, TableInfo<T> tableInfo, DatabaseAccess template,
 			Collection<ID> ids) throws SQLException {
 		MappedDeleteCollection<T, ID> deleteCollection =
 				MappedDeleteCollection.build(databaseType, tableInfo, ids.size());
@@ -68,7 +68,7 @@ public class MappedDeleteCollection<T, ID> extends BaseMappedStatement<T> {
 		return new MappedDeleteCollection<T, ID>(tableInfo, sb.toString(), argFieldTypeList);
 	}
 
-	private static <T, ID> int updateRows(JdbcTemplate template, MappedDeleteCollection<T, ID> deleteCollection,
+	private static <T, ID> int updateRows(DatabaseAccess template, MappedDeleteCollection<T, ID> deleteCollection,
 			Object[] args) throws SQLException {
 		try {
 			int rowC = template.update(deleteCollection.statement, args, deleteCollection.argFieldTypeVals);

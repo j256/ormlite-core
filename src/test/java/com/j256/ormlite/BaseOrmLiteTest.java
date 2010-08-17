@@ -26,8 +26,8 @@ import com.j256.ormlite.dao.BaseJdbcDao;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.db.DatabaseTypeUtils;
-import com.j256.ormlite.support.JdbcTemplate;
-import com.j256.ormlite.support.JdbcTemplateImpl;
+import com.j256.ormlite.jdbc.JdbcDatabaseAccess;
+import com.j256.ormlite.support.DatabaseAccess;
 import com.j256.ormlite.support.SimpleDataSource;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableUtils;
@@ -46,7 +46,7 @@ public abstract class BaseOrmLiteTest {
 	protected String password = null;
 
 	protected static DataSource dataSource = null;
-	protected static JdbcTemplate jdbcTemplate = null;
+	protected static DatabaseAccess jdbcTemplate = null;
 	protected DatabaseType databaseType = null;
 	protected boolean isConnectionExpected = false;
 
@@ -77,7 +77,7 @@ public abstract class BaseOrmLiteTest {
 					dataSource = DatabaseTypeUtils.createSimpleDataSource(url, userName, password);
 				}
 			}
-			jdbcTemplate = new JdbcTemplateImpl(dataSource);
+			jdbcTemplate = new JdbcDatabaseAccess(dataSource);
 		}
 	}
 

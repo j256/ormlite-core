@@ -1,12 +1,12 @@
 package com.j256.ormlite.db;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.JdbcType;
+import com.j256.ormlite.support.Results;
 
 /**
  * Microsoft SQL server database type information used to create the tables, etc..
@@ -108,9 +108,9 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 			byte byteVal = (Byte) javaObject;
 			return (short) byteVal;
 		}
-		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int dbColumnPos) throws SQLException {
+		public Object resultToJava(FieldType fieldType, Results results, int dbColumnPos) throws SQLException {
 			// starts as a short and then gets converted to a byte on the way out
-			short shortVal = resultSet.getShort(dbColumnPos);
+			short shortVal = results.getShort(dbColumnPos);
 			// make sure the database value doesn't overflow the byte
 			if (shortVal < Byte.MIN_VALUE) {
 				return Byte.MIN_VALUE;

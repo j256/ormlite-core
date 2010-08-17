@@ -1,6 +1,5 @@
 package com.j256.ormlite.db;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
@@ -8,6 +7,7 @@ import java.util.List;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.support.Results;
 
 /**
  * Base class for all of the {@link DatabaseType} classes that provide the per-database type functionality to create
@@ -363,8 +363,8 @@ public abstract class BaseDatabaseType implements DatabaseType {
 			Boolean bool = (Boolean) javaObject;
 			return (bool ? new Byte((byte) 1) : new Byte((byte) 0));
 		}
-		public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException {
-			byte result = resultSet.getByte(columnPos);
+		public Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException {
+			byte result = results.getByte(columnPos);
 			return (result == 1 ? (Boolean) true : (Boolean) false);
 		}
 		public boolean isStreamType() {

@@ -21,7 +21,7 @@ public class BaseDatabaseTypeTest extends BaseOrmLiteTest {
 	public void testLoadDriver() throws Exception {
 		databaseType.loadDriver();
 	}
-	
+
 	@Test
 	public void testCreateTableReturnsZero() {
 		assertTrue(databaseType.isCreateTableReturnsZero());

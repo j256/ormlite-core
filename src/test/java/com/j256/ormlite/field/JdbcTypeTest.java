@@ -7,13 +7,14 @@ import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.Date;
 
 import org.junit.Test;
 
 import com.j256.ormlite.BaseOrmLiteTest;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.jdbc.JdbcResults;
+import com.j256.ormlite.support.Results;
 import com.j256.ormlite.table.DatabaseTable;
 
 public class JdbcTypeTest extends BaseOrmLiteTest {
@@ -42,9 +43,9 @@ public class JdbcTypeTest extends BaseOrmLiteTest {
 		PreparedStatement stmt = dataSource.getConnection().prepareStatement("select * from " + TABLE_NAME);
 		assertTrue(stmt.execute());
 
-		ResultSet resultSet = stmt.getResultSet();
-		assertTrue(resultSet.next());
-		assertEquals(string, JdbcType.STRING.resultToJava(null, resultSet, resultSet.findColumn(STRING_COLUMN)));
+		Results results = new JdbcResults(stmt.getResultSet());
+		assertTrue(results.next());
+		assertEquals(string, JdbcType.STRING.resultToJava(null, results, results.findColumn(STRING_COLUMN)));
 		assertFalse(JdbcType.STRING.isValidGeneratedType());
 	}
 
@@ -59,11 +60,11 @@ public class JdbcTypeTest extends BaseOrmLiteTest {
 		PreparedStatement stmt = dataSource.getConnection().prepareStatement("select * from " + TABLE_NAME);
 		assertTrue(stmt.execute());
 
-		ResultSet resultSet = stmt.getResultSet();
-		assertTrue(resultSet.next());
+		Results results = new JdbcResults(stmt.getResultSet());
+		assertTrue(results.next());
 		FieldType fieldType =
 				FieldType.createFieldType(databaseType, "table", LocalBoolean.class.getDeclaredField(BOOLEAN_COLUMN));
-		assertEquals(bool, JdbcType.BOOLEAN.resultToJava(fieldType, resultSet, resultSet.findColumn(BOOLEAN_COLUMN)));
+		assertEquals(bool, JdbcType.BOOLEAN.resultToJava(fieldType, results, results.findColumn(BOOLEAN_COLUMN)));
 		assertFalse(JdbcType.BOOLEAN.isValidGeneratedType());
 	}
 
@@ -78,9 +79,9 @@ public class JdbcTypeTest extends BaseOrmLiteTest {
 		PreparedStatement stmt = dataSource.getConnection().prepareStatement("select * from " + TABLE_NAME);
 		assertTrue(stmt.execute());
 
-		ResultSet resultSet = stmt.getResultSet();
-		assertTrue(resultSet.next());
-		assertEquals(date, JdbcType.JAVA_DATE.resultToJava(null, resultSet, resultSet.findColumn(DATE_COLUMN)));
+		Results results = new JdbcResults(stmt.getResultSet());
+		assertTrue(results.next());
+		assertEquals(date, JdbcType.JAVA_DATE.resultToJava(null, results, results.findColumn(DATE_COLUMN)));
 		assertFalse(JdbcType.JAVA_DATE.isValidGeneratedType());
 	}
 
@@ -95,11 +96,11 @@ public class JdbcTypeTest extends BaseOrmLiteTest {
 		PreparedStatement stmt = dataSource.getConnection().prepareStatement("select * from " + TABLE_NAME);
 		assertTrue(stmt.execute());
 
-		ResultSet resultSet = stmt.getResultSet();
-		assertTrue(resultSet.next());
+		Results results = new JdbcResults(stmt.getResultSet());
+		assertTrue(results.next());
 		FieldType fieldType =
 				FieldType.createFieldType(databaseType, "table", LocalByte.class.getDeclaredField(BYTE_COLUMN));
-		assertEquals(byteField, JdbcType.BYTE.resultToJava(fieldType, resultSet, resultSet.findColumn(BYTE_COLUMN)));
+		assertEquals(byteField, JdbcType.BYTE.resultToJava(fieldType, results, results.findColumn(BYTE_COLUMN)));
 		assertFalse(JdbcType.BYTE.isValidGeneratedType());
 	}
 
@@ -114,11 +115,11 @@ public class JdbcTypeTest extends BaseOrmLiteTest {
 		PreparedStatement stmt = dataSource.getConnection().prepareStatement("select * from " + TABLE_NAME);
 		assertTrue(stmt.execute());
 
-		ResultSet resultSet = stmt.getResultSet();
-		assertTrue(resultSet.next());
+		Results results = new JdbcResults(stmt.getResultSet());
+		assertTrue(results.next());
 		FieldType fieldType =
 				FieldType.createFieldType(databaseType, "table", LocalShort.class.getDeclaredField(SHORT_COLUMN));
-		assertEquals(shortField, JdbcType.SHORT.resultToJava(fieldType, resultSet, resultSet.findColumn(SHORT_COLUMN)));
+		assertEquals(shortField, JdbcType.SHORT.resultToJava(fieldType, results, results.findColumn(SHORT_COLUMN)));
 		assertFalse(JdbcType.SHORT.isValidGeneratedType());
 	}
 
@@ -133,11 +134,11 @@ public class JdbcTypeTest extends BaseOrmLiteTest {
 		PreparedStatement stmt = dataSource.getConnection().prepareStatement("select * from " + TABLE_NAME);
 		assertTrue(stmt.execute());
 
-		ResultSet resultSet = stmt.getResultSet();
-		assertTrue(resultSet.next());
+		Results results = new JdbcResults(stmt.getResultSet());
+		assertTrue(results.next());
 		FieldType fieldType =
 				FieldType.createFieldType(databaseType, "table", LocalInt.class.getDeclaredField(INT_COLUMN));
-		assertEquals(integer, JdbcType.INTEGER.resultToJava(fieldType, resultSet, resultSet.findColumn(INT_COLUMN)));
+		assertEquals(integer, JdbcType.INTEGER.resultToJava(fieldType, results, results.findColumn(INT_COLUMN)));
 		assertTrue(JdbcType.INTEGER.isValidGeneratedType());
 	}
 
@@ -152,11 +153,11 @@ public class JdbcTypeTest extends BaseOrmLiteTest {
 		PreparedStatement stmt = dataSource.getConnection().prepareStatement("select * from " + TABLE_NAME);
 		assertTrue(stmt.execute());
 
-		ResultSet resultSet = stmt.getResultSet();
-		assertTrue(resultSet.next());
+		Results results = new JdbcResults(stmt.getResultSet());
+		assertTrue(results.next());
 		FieldType fieldType =
 				FieldType.createFieldType(databaseType, "table", LocalLong.class.getDeclaredField(LONG_COLUMN));
-		assertEquals(longInt, JdbcType.LONG.resultToJava(fieldType, resultSet, resultSet.findColumn(LONG_COLUMN)));
+		assertEquals(longInt, JdbcType.LONG.resultToJava(fieldType, results, results.findColumn(LONG_COLUMN)));
 		assertTrue(JdbcType.LONG.isValidGeneratedType());
 	}
 
@@ -171,11 +172,11 @@ public class JdbcTypeTest extends BaseOrmLiteTest {
 		PreparedStatement stmt = dataSource.getConnection().prepareStatement("select * from " + TABLE_NAME);
 		assertTrue(stmt.execute());
 
-		ResultSet resultSet = stmt.getResultSet();
-		assertTrue(resultSet.next());
+		Results results = new JdbcResults(stmt.getResultSet());
+		assertTrue(results.next());
 		FieldType fieldType =
 				FieldType.createFieldType(databaseType, "table", LocalFloat.class.getDeclaredField(FLOAT_COLUMN));
-		assertEquals(floatField, JdbcType.FLOAT.resultToJava(fieldType, resultSet, resultSet.findColumn(FLOAT_COLUMN)));
+		assertEquals(floatField, JdbcType.FLOAT.resultToJava(fieldType, results, results.findColumn(FLOAT_COLUMN)));
 		assertFalse(JdbcType.FLOAT.isValidGeneratedType());
 	}
 
@@ -190,12 +191,11 @@ public class JdbcTypeTest extends BaseOrmLiteTest {
 		PreparedStatement stmt = dataSource.getConnection().prepareStatement("select * from " + TABLE_NAME);
 		assertTrue(stmt.execute());
 
-		ResultSet resultSet = stmt.getResultSet();
-		assertTrue(resultSet.next());
+		Results results = new JdbcResults(stmt.getResultSet());
+		assertTrue(results.next());
 		FieldType fieldType =
 				FieldType.createFieldType(databaseType, "table", LocalDouble.class.getDeclaredField(DOUBLE_COLUMN));
-		assertEquals(doubleField, JdbcType.DOUBLE.resultToJava(fieldType, resultSet,
-				resultSet.findColumn(DOUBLE_COLUMN)));
+		assertEquals(doubleField, JdbcType.DOUBLE.resultToJava(fieldType, results, results.findColumn(DOUBLE_COLUMN)));
 		assertFalse(JdbcType.DOUBLE.isValidGeneratedType());
 	}
 
@@ -214,10 +214,9 @@ public class JdbcTypeTest extends BaseOrmLiteTest {
 		PreparedStatement stmt = dataSource.getConnection().prepareStatement("select * from " + TABLE_NAME);
 		assertTrue(stmt.execute());
 
-		ResultSet resultSet = stmt.getResultSet();
-		assertTrue(resultSet.next());
-		assertEquals(ourEnum,
-				JdbcType.ENUM_STRING.resultToJava(fieldType, resultSet, resultSet.findColumn(ENUM_COLUMN)));
+		Results results = new JdbcResults(stmt.getResultSet());
+		assertTrue(results.next());
+		assertEquals(ourEnum, JdbcType.ENUM_STRING.resultToJava(fieldType, results, results.findColumn(ENUM_COLUMN)));
 		assertFalse(JdbcType.ENUM_STRING.isValidGeneratedType());
 	}
 
@@ -236,10 +235,9 @@ public class JdbcTypeTest extends BaseOrmLiteTest {
 		PreparedStatement stmt = dataSource.getConnection().prepareStatement("select * from " + TABLE_NAME);
 		assertTrue(stmt.execute());
 
-		ResultSet resultSet = stmt.getResultSet();
-		assertTrue(resultSet.next());
-		assertEquals(ourEnum, JdbcType.ENUM_INTEGER.resultToJava(fieldType, resultSet,
-				resultSet.findColumn(ENUM_COLUMN)));
+		Results results = new JdbcResults(stmt.getResultSet());
+		assertTrue(results.next());
+		assertEquals(ourEnum, JdbcType.ENUM_INTEGER.resultToJava(fieldType, results, results.findColumn(ENUM_COLUMN)));
 		assertFalse(JdbcType.ENUM_INTEGER.isValidGeneratedType());
 	}
 
@@ -252,10 +250,10 @@ public class JdbcTypeTest extends BaseOrmLiteTest {
 		PreparedStatement stmt = dataSource.getConnection().prepareStatement("select * from " + TABLE_NAME);
 		assertTrue(stmt.execute());
 
-		ResultSet resultSet = stmt.getResultSet();
-		assertTrue(resultSet.next());
+		Results results = new JdbcResults(stmt.getResultSet());
+		assertTrue(results.next());
 
-		assertNull(JdbcType.UNKNOWN.resultToJava(null, resultSet, 1));
+		assertNull(JdbcType.UNKNOWN.resultToJava(null, results, 1));
 		assertFalse(JdbcType.UNKNOWN.isValidGeneratedType());
 	}
 

@@ -18,7 +18,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.PostgresDatabaseType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.stmt.StatementExecutor;
-import com.j256.ormlite.support.JdbcTemplate;
+import com.j256.ormlite.support.DatabaseAccess;
 import com.j256.ormlite.table.TableInfo;
 
 public class MappedCreateTest extends BaseOrmLiteTest {
@@ -29,7 +29,7 @@ public class MappedCreateTest extends BaseOrmLiteTest {
 
 		TableInfo<GeneratedId> tableInfo = new TableInfo<GeneratedId>(databaseType, GeneratedId.class);
 		StatementExecutor<GeneratedId, String> se = new StatementExecutor<GeneratedId, String>(databaseType, tableInfo);
-		JdbcTemplate template = createMock(JdbcTemplate.class);
+		DatabaseAccess template = createMock(DatabaseAccess.class);
 		expect(template.queryForLong(isA(String.class))).andReturn(1L);
 		expect(template.update(isA(String.class), isA(Object[].class), isA(int[].class))).andReturn(1);
 
@@ -46,7 +46,7 @@ public class MappedCreateTest extends BaseOrmLiteTest {
 		StatementExecutor<GeneratedIdLong, String> se =
 				new StatementExecutor<GeneratedIdLong, String>(databaseType, new TableInfo<GeneratedIdLong>(
 						databaseType, GeneratedIdLong.class));
-		JdbcTemplate template = createMock(JdbcTemplate.class);
+		DatabaseAccess template = createMock(DatabaseAccess.class);
 		expect(template.queryForLong(isA(String.class))).andReturn(1L);
 		expect(template.update(isA(String.class), isA(Object[].class), isA(int[].class))).andReturn(1);
 
@@ -116,7 +116,7 @@ public class MappedCreateTest extends BaseOrmLiteTest {
 
 	@Test(expected = SQLException.class)
 	public void testSequenceZero() throws Exception {
-		JdbcTemplate template = createMock(JdbcTemplate.class);
+		DatabaseAccess template = createMock(DatabaseAccess.class);
 		expect(template.queryForLong(isA(String.class))).andReturn(0L);
 		replay(template);
 		MappedCreate<GeneratedIdSequence> mappedCreate =

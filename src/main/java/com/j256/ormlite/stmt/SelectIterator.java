@@ -1,7 +1,5 @@
 package com.j256.ormlite.stmt;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.j256.ormlite.dao.BaseJdbcDao;
@@ -9,6 +7,8 @@ import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
+import com.j256.ormlite.support.PreparedStmt;
+import com.j256.ormlite.support.Results;
 
 /**
  * Internal iterator so we can page through the class. This is used by the {@link Dao#iterator} methods.
@@ -26,8 +26,8 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 
 	private final Class<T> dataClass;
 	private BaseJdbcDao<T, ID> classDao;
-	private final PreparedStatement stmt;
-	private final ResultSet resultSet;
+	private final PreparedStmt stmt;
+	private final Results results;
 	private final GenericRowMapper<T> rowMapper;
 	private final String statement;
 	private boolean closed = false;
@@ -38,7 +38,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 	 * If the statement parameter is null then this won't log information
 	 */
 	public SelectIterator(Class<T> dataClass, BaseJdbcDao<T, ID> classDao, GenericRowMapper<T> rowMapper,
-			PreparedStatement preparedStatement, String statement) throws SQLException {
+			PreparedStmt preparedStatement, String statement) throws SQLException {
 		this.dataClass = dataClass;
 		this.classDao = classDao;
 		this.rowMapper = rowMapper;
@@ -47,7 +47,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 			throw new SQLException("Could not execute select iterator on " + dataClass + " with warnings: "
 					+ stmt.getWarnings());
 		}
-		this.resultSet = stmt.getResultSet();
+		this.results = stmt.getResults();
 		this.statement = statement;
 		if (statement != null) {
 			logger.debug("starting iterator @{} for '{}'", hashCode(), statement);
@@ -64,12 +64,12 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 		if (closed) {
 			return false;
 		}
-		if (!resultSet.next()) {
+		if (!results.next()) {
 			if (!stmt.getMoreResults()) {
 				close();
 				return false;
 			}
-			if (!resultSet.next()) {
+			if (!results.next()) {
 				// may never get here but let's be careful out there
 				close();
 				return false;
@@ -109,7 +109,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 		if (closed) {
 			return null;
 		}
-		last = rowMapper.mapRow(resultSet, rowC);
+		last = rowMapper.mapRow(results, rowC);
 		rowC++;
 		return last;
 	}

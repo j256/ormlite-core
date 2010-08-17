@@ -1,8 +1,5 @@
 package com.j256.ormlite.stmt;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,7 +20,9 @@ import com.j256.ormlite.stmt.mapped.MappedQueryForId;
 import com.j256.ormlite.stmt.mapped.MappedRefresh;
 import com.j256.ormlite.stmt.mapped.MappedUpdate;
 import com.j256.ormlite.stmt.mapped.MappedUpdateId;
-import com.j256.ormlite.support.JdbcTemplate;
+import com.j256.ormlite.support.DatabaseAccess;
+import com.j256.ormlite.support.PreparedStmt;
+import com.j256.ormlite.support.Results;
 import com.j256.ormlite.table.TableInfo;
 
 /**
@@ -74,7 +73,7 @@ public class StatementExecutor<T, ID> {
 	 * Return the object associated with the id or null if none. This does a SQL
 	 * <tt>select col1,col2,... from ... where ... = id</tt> type query.
 	 */
-	public T queryForId(JdbcTemplate template, ID id) throws SQLException {
+	public T queryForId(DatabaseAccess template, ID id) throws SQLException {
 		if (mappedQueryForId == null) {
 			throw new SQLException("Cannot query-for-id with " + dataClass + " because it doesn't have an id field");
 		}
@@ -84,18 +83,18 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Return the first object that matches the {@link PreparedQuery} or null if none.
 	 */
-	public T queryForFirst(JdbcTemplate jdbcTemplate, PreparedQuery<T> preparedQuery) throws SQLException {
-		PreparedStatement stmt = null;
+	public T queryForFirst(DatabaseAccess jdbcTemplate, PreparedQuery<T> preparedQuery) throws SQLException {
+		PreparedStmt stmt = null;
 		try {
 			stmt = preparedQuery.prepareSqlStatement(jdbcTemplate);
 			if (!stmt.execute()) {
 				throw new SQLException("Could not query for one of " + dataClass + " with warnings: "
 						+ stmt.getWarnings());
 			}
-			ResultSet resultSet = stmt.getResultSet();
-			if (resultSet.next()) {
+			Results results = stmt.getResults();
+			if (results.next()) {
 				logger.debug("query-for-first of '{}' returned at least 1 result", preparedQuery.getStatement());
-				return preparedQuery.mapRow(resultSet, 0);
+				return preparedQuery.mapRow(results, 0);
 			} else {
 				logger.debug("query-for-first of '{}' returned at 0 results", preparedQuery.getStatement());
 				return null;
@@ -111,7 +110,7 @@ public class StatementExecutor<T, ID> {
 	 * Return a list of all of the data in the table. Should be used carefully if the table is large. Consider using the
 	 * {@link Dao#iterator} if this is the case.
 	 */
-	public List<T> queryForAll(JdbcTemplate jdbcTemplate) throws SQLException {
+	public List<T> queryForAll(DatabaseAccess jdbcTemplate) throws SQLException {
 		return query(jdbcTemplate, preparedQueryForAll);
 	}
 
@@ -119,7 +118,7 @@ public class StatementExecutor<T, ID> {
 	 * Return a list of all of the data in the table that matches the {@link PreparedQuery}. Should be used carefully if
 	 * the table is large. Consider using the {@link Dao#iterator} if this is the case.
 	 */
-	public List<T> query(JdbcTemplate jdbcTemplate, PreparedQuery<T> preparedQuery) throws SQLException {
+	public List<T> query(DatabaseAccess jdbcTemplate, PreparedQuery<T> preparedQuery) throws SQLException {
 		SelectIterator<T, ID> iterator = null;
 		try {
 			iterator = buildIterator(/* no dao specified because no removes */null, jdbcTemplate, preparedQuery);
@@ -140,11 +139,11 @@ public class StatementExecutor<T, ID> {
 	 * Return a list of all of the data in the table that matches the {@link PreparedQuery}. Should be used carefully if
 	 * the table is large. Consider using the {@link Dao#iterator} if this is the case.
 	 */
-	public RawResults queryRaw(JdbcTemplate jdbcTemplate, String query) throws SQLException {
+	public RawResults queryRaw(DatabaseAccess jdbcTemplate, String query) throws SQLException {
 		SelectIterator<String[], Void> iterator = null;
 		try {
-			PreparedStatement preparedStatement = jdbcTemplate.prepareStatement(query);
-			RawResultsList results = new RawResultsList(preparedStatement.getMetaData());
+			PreparedStmt preparedStatement = jdbcTemplate.prepareStatement(query);
+			RawResultsList results = new RawResultsList(preparedStatement);
 			// statement arg is null because we don't want it to double log below
 			iterator = new SelectIterator<String[], Void>(String[].class, null, results, preparedStatement, null);
 			while (iterator.hasNextThrow()) {
@@ -162,7 +161,7 @@ public class StatementExecutor<T, ID> {
 	 * Create and return an {@link SelectIterator} for the class with a jdbcTemplate an the default mapped query for all
 	 * statement.
 	 */
-	public SelectIterator<T, ID> buildIterator(BaseJdbcDao<T, ID> classDao, JdbcTemplate jdbcTemplate)
+	public SelectIterator<T, ID> buildIterator(BaseJdbcDao<T, ID> classDao, DatabaseAccess jdbcTemplate)
 			throws SQLException {
 		return buildIterator(classDao, jdbcTemplate, preparedQueryForAll);
 	}
@@ -170,7 +169,7 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Create and return an {@link SelectIterator} for the class with a jdbcTemplate and mapped statement.
 	 */
-	public SelectIterator<T, ID> buildIterator(BaseJdbcDao<T, ID> classDao, JdbcTemplate jdbcTemplate,
+	public SelectIterator<T, ID> buildIterator(BaseJdbcDao<T, ID> classDao, DatabaseAccess jdbcTemplate,
 			PreparedQuery<T> preparedQuery) throws SQLException {
 		return new SelectIterator<T, ID>(dataClass, classDao, preparedQuery,
 				preparedQuery.prepareSqlStatement(jdbcTemplate), preparedQuery.getStatement());
@@ -179,21 +178,21 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Return a RawResults object associated with an internal iterator that matches the query argument.
 	 */
-	public RawResults buildIterator(JdbcTemplate jdbcTemplate, String query) throws SQLException {
+	public RawResults buildIterator(DatabaseAccess jdbcTemplate, String query) throws SQLException {
 		return new RawResultsIterator(query, jdbcTemplate.prepareStatement(query));
 	}
 
 	/**
 	 * Create a new entry in the database from an object.
 	 */
-	public int create(JdbcTemplate template, T data) throws SQLException {
+	public int create(DatabaseAccess template, T data) throws SQLException {
 		return mappedInsert.execute(template, data);
 	}
 
 	/**
 	 * Update an object in the database.
 	 */
-	public int update(JdbcTemplate template, T data) throws SQLException {
+	public int update(DatabaseAccess template, T data) throws SQLException {
 		if (mappedUpdate == null) {
 			throw new SQLException("Cannot update " + dataClass
 					+ " because it doesn't have an id field defined or only has id field");
@@ -205,7 +204,7 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Update an object in the database to change its id to the newId parameter.
 	 */
-	public int updateId(JdbcTemplate template, T data, ID newId) throws SQLException {
+	public int updateId(DatabaseAccess template, T data, ID newId) throws SQLException {
 		if (mappedUpdateId == null) {
 			throw new SQLException("Cannot update " + dataClass + " because it doesn't have an id field defined");
 		} else {
@@ -217,7 +216,7 @@ public class StatementExecutor<T, ID> {
 	 * Does a query for the object's Id and copies in each of the field values from the database to refresh the data
 	 * parameter.
 	 */
-	public int refresh(JdbcTemplate template, T data) throws SQLException {
+	public int refresh(DatabaseAccess template, T data) throws SQLException {
 		if (mappedQueryForId == null) {
 			throw new SQLException("Cannot refresh " + dataClass + " because it doesn't have an id field defined");
 		} else {
@@ -233,7 +232,7 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Delete an object from the database.
 	 */
-	public int delete(JdbcTemplate template, T data) throws SQLException {
+	public int delete(DatabaseAccess template, T data) throws SQLException {
 		if (mappedDelete == null) {
 			throw new SQLException("Cannot delete " + dataClass + " because it doesn't have an id field defined");
 		} else {
@@ -244,7 +243,7 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Delete a collection of objects from the database.
 	 */
-	public int deleteObjects(JdbcTemplate template, Collection<T> datas) throws SQLException {
+	public int deleteObjects(DatabaseAccess template, Collection<T> datas) throws SQLException {
 		if (idField == null) {
 			throw new SQLException("Cannot delete " + dataClass + " because it doesn't have an id field defined");
 		} else {
@@ -256,7 +255,7 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Delete a collection of objects from the database.
 	 */
-	public int deleteIds(JdbcTemplate template, Collection<ID> ids) throws SQLException {
+	public int deleteIds(DatabaseAccess template, Collection<ID> ids) throws SQLException {
 		if (idField == null) {
 			throw new SQLException("Cannot delete " + dataClass + " because it doesn't have an id field defined");
 		} else {
@@ -273,11 +272,11 @@ public class StatementExecutor<T, ID> {
 		protected final int columnN;
 		protected final String[] columnNames;
 
-		protected BaseRawResults(ResultSetMetaData metaData) throws SQLException {
-			this.columnN = metaData.getColumnCount();
+		protected BaseRawResults(PreparedStmt preparedStmt) throws SQLException {
+			this.columnN = preparedStmt.getColumnCount();
 			this.columnNames = new String[this.columnN];
 			for (int colC = 0; colC < this.columnN; colC++) {
-				this.columnNames[colC] = metaData.getColumnName(colC + 1);
+				this.columnNames[colC] = preparedStmt.getColumnName(colC + 1);
 			}
 		}
 
@@ -292,7 +291,7 @@ public class StatementExecutor<T, ID> {
 		/**
 		 * Row mapper which handles our String[] raw results.
 		 */
-		public String[] mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public String[] mapRow(Results rs, int rowNum) throws SQLException {
 			String[] result = new String[columnN];
 			for (int colC = 0; colC < columnN; colC++) {
 				result[colC] = rs.getString(colC + 1);
@@ -308,8 +307,8 @@ public class StatementExecutor<T, ID> {
 
 		private final List<String[]> results = new ArrayList<String[]>();
 
-		public RawResultsList(ResultSetMetaData metaData) throws SQLException {
-			super(metaData);
+		public RawResultsList(PreparedStmt preparedStmt) throws SQLException {
+			super(preparedStmt);
 		}
 
 		void add(String[] result) throws SQLException {
@@ -354,11 +353,11 @@ public class StatementExecutor<T, ID> {
 	 */
 	private static class RawResultsIterator extends BaseRawResults {
 
-		private final PreparedStatement statement;
+		private final PreparedStmt statement;
 		private final String query;
 
-		public RawResultsIterator(String query, PreparedStatement statement) throws SQLException {
-			super(statement.getMetaData());
+		public RawResultsIterator(String query, PreparedStmt statement) throws SQLException {
+			super(statement);
 			this.query = query;
 			this.statement = statement;
 		}

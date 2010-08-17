@@ -25,25 +25,25 @@ public class LoggerFactory {
 	 */
 	public static Logger getLogger(String className) {
 		Log log = null;
-		
+
 		if (logType == null) {
 			logType = findLogType();
 		}
-		
+
 		switch (logType) {
-			case COMMONS_LOGGING:
+			case COMMONS_LOGGING :
 				// you can comment out this line if you need to remove the CommonsLoggingLog class
 				log = new CommonsLoggingLog(className);
 				break;
-			case LOG4J:
+			case LOG4J :
 				// you can comment out this line if you need to remove the Log4jLog class
 				log = new Log4jLog(className);
 				break;
-			case ANDROID:
+			case ANDROID :
 				// you can comment out this line if you need to remove the AndroidLog class
 				log = new AndroidLog(className);
 				break;
-			case LOCAL:
+			case LOCAL :
 				log = new LocalLog(className);
 				break;
 		}

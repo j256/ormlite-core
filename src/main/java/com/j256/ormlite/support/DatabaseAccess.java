@@ -1,17 +1,15 @@
 package com.j256.ormlite.support;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import com.j256.ormlite.stmt.GenericRowMapper;
 
 /**
- * Replacement for Spring's JdbcTemplate that hides the various calls to a SQL {@link Connection}.
+ * Interface that hides the various calls to a SQL database.
  * 
  * @author graywatson
  */
-public interface JdbcTemplate {
+public interface DatabaseAccess {
 
 	/** returned by {@link #queryForOne} if more than one result was found by the query */
 	public final static Object MORE_THAN_ONE = new Object();
@@ -48,5 +46,5 @@ public interface JdbcTemplate {
 	/**
 	 * Generate a prepared statement from a SQL statement.
 	 */
-	public PreparedStatement prepareStatement(String sql) throws SQLException;
+	public PreparedStmt prepareStatement(String sql) throws SQLException;
 }

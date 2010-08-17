@@ -1,10 +1,10 @@
 package com.j256.ormlite.field;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
 import com.j256.ormlite.db.BaseDatabaseType;
+import com.j256.ormlite.support.Results;
 
 /**
  * Convert a Java object into the appropriate argument to a SQL statement and then back from the result set to the Java
@@ -27,12 +27,12 @@ public interface FieldConverter {
 	public Object javaToArg(Object javaObject) throws SQLException;
 
 	/**
-	 * Return the object extracted from the resultSet associated with column in position columnPos.
+	 * Return the object extracted from the results associated with column in position columnPos.
 	 * 
 	 * @throws SQLException
-	 *             If there is a problem accessing the ResultSet data.
+	 *             If there is a problem accessing the results data.
 	 */
-	public Object resultToJava(FieldType fieldType, ResultSet resultSet, int columnPos) throws SQLException;
+	public Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException;
 
 	/**
 	 * Return the SQL type that is stored in the database for this argument. This should be one of the {@link Types}
@@ -41,8 +41,8 @@ public interface FieldConverter {
 	public int getJdbcTypeVal();
 
 	/**
-	 * Return whether or not this is a SQL "stream" object. Cannot get certain stream objects from the SQL ResultSet
-	 * more than once. If true, the converter has to protect itself against null values.
+	 * Return whether or not this is a SQL "stream" object. Cannot get certain stream objects from the SQL results more
+	 * than once. If true, the converter has to protect itself against null values.
 	 */
 	public boolean isStreamType();
 }

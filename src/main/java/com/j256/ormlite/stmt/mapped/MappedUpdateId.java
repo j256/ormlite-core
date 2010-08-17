@@ -7,7 +7,7 @@ import java.util.List;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.misc.SqlExceptionUtil;
-import com.j256.ormlite.support.JdbcTemplate;
+import com.j256.ormlite.support.DatabaseAccess;
 import com.j256.ormlite.table.TableInfo;
 
 /**
@@ -24,7 +24,7 @@ public class MappedUpdateId<T, ID> extends BaseMappedStatement<T> {
 	/**
 	 * Update the id field of the object in the database.
 	 */
-	public int execute(JdbcTemplate template, T data, ID newId) throws SQLException {
+	public int execute(DatabaseAccess template, T data, ID newId) throws SQLException {
 		Object[] fieldObjects = getFieldObjects(argFieldTypes, data);
 		try {
 			// the arguments are the new-id and old-id

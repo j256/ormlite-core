@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.support.JdbcTemplate;
+import com.j256.ormlite.support.DatabaseAccess;
 import com.j256.ormlite.table.TableInfo;
 
 /**
@@ -23,7 +23,7 @@ public class MappedDelete<T> extends BaseMappedStatement<T> {
 	/**
 	 * Delete an object in the database.
 	 */
-	public int execute(JdbcTemplate template, T data) throws SQLException {
+	public int execute(DatabaseAccess template, T data) throws SQLException {
 		// really a call to update
 		return super.update(template, data, "delete");
 	}
