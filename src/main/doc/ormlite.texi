@@ -1515,9 +1515,6 @@ private static Logger logger =
 logger.debug("built statement @{@}", statement);
 @end example
 
-@emph{Notice} that if you have loaded @value{package} into your development environment and want to get rid of the log
-classes which are red, you can just delete them and remove the references to them in the @code{LoggerFactory} class. 
-
 If you are using log4j (through Apache commons logging or directly), you can use something
 like the following as your log4j.properties file to see details about the SQL calls.
 
