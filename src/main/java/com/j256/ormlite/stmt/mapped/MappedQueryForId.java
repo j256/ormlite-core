@@ -35,16 +35,11 @@ public class MappedQueryForId<T, ID> extends BaseMappedQuery<T> {
 		Object result = template.queryForOne(statement, args, new int[] { idField.getJdbcTypeVal() }, this);
 		if (result == JdbcTemplate.MORE_THAN_ONE) {
 			logger.error("{} using '{}' and {} args, got >1 results", label, statement, args.length);
-		} else {
-			logger.debug("{} using '{}' and {} args, got 1 result", label, statement, args.length);
-		}
-		if (args.length > 0) {
-			// need to do the (Object) cast to force args to be a single object
-			logger.trace("{} arguments: {}", label, (Object) args);
-		}
-		if (result == JdbcTemplate.MORE_THAN_ONE) {
+			logArgs(args);
 			throw new SQLException(label + " got more than 1 result: " + statement);
 		}
+		logger.debug("{} using '{}' and {} args, got 1 result", label, statement, args.length);
+		logArgs(args);
 		@SuppressWarnings("unchecked")
 		T castResult = (T) result;
 		postProcessResult(obj, castResult);
@@ -92,5 +87,12 @@ public class MappedQueryForId<T, ID> extends BaseMappedQuery<T> {
 		qb.where().eq(idField.getDbColumnName(), idSelectArg);
 		List<SelectArg> selectArgList = new ArrayList<SelectArg>();
 		return qb.buildSelectString(argFieldTypeList, resultFieldTypeList, selectArgList);
+	}
+
+	private void logArgs(Object[] args) {
+		if (args.length > 0) {
+			// need to do the (Object) cast to force args to be a single object
+			logger.trace("{} arguments: {}", label, (Object) args);
+		}
 	}
 }
