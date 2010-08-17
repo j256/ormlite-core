@@ -69,9 +69,8 @@ public class DatabaseTypeUtils {
 	}
 
 	/**
-	 * Creates and returns a {@link SimpleDataSource} associated with the databaseUrl and optional userName and
-	 * password. Calls {@link #loadDriver} as well. You can, of course, provide your own {@link DataSource} for use with
-	 * the package.
+	 * Creates and returns a SimpleDataSource associated with the databaseUrl and optional userName and password. Calls
+	 * {@link #loadDriver} as well. You can, of course, provide your own {@link DataSource} for use with the package.
 	 * 
 	 * @throws SQLException
 	 *             If there are problems constructing the {@link DataSource}.
@@ -118,9 +117,8 @@ public class DatabaseTypeUtils {
 	}
 
 	/**
-	 * Creates and returns a {@link DatabaseType} associated with a {@link DataSource}. This has to make a connection
-	 * with the {@link DataSource} so it can get meta-data which has the URL. Use of {@link #createDatabaseType(String)}
-	 * is recommended.
+	 * Creates and returns a DatabaseType associated with a DataSource. This has to make a connection with the
+	 * DataSource so it can get meta-data which has the URL. Use of {@link #createDatabaseType(String)} is recommended.
 	 */
 	public static DatabaseType createDatabaseType(DataSource dataSource) throws SQLException {
 		return createDatabaseType(dataSource.getConnection().getMetaData().getURL());
