@@ -1,3 +1,8 @@
+2.12: 8/16/2010
+	* Added a logger which should detect and delegate to the internal Android logger.
+	* Changed the logger classes to use reflection to remove the compilation errors if classes aren't there.
+	* Added to the documentation on how to remove log classes which are red because of missing classes.
+
 2.11: 8/13/2010
 	* Removed the final dependency by using reflection to get at the javax.persistance annotations.
 	* Added a persisted boolean to DatabaseField annotation so you can easily disable a field.

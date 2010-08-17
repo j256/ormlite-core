@@ -13,7 +13,7 @@ public abstract class BaseLogTest {
 	}
 
 	@Test
-	public void testCommonsLoggingLog() {
+	public void testLevelEnabled() {
 		boolean shouldBeEnabled = false;
 		shouldBeEnabled = checkEnabled(log.isTraceEnabled(), shouldBeEnabled);
 		shouldBeEnabled = checkEnabled(log.isDebugEnabled(), shouldBeEnabled);
@@ -21,13 +21,6 @@ public abstract class BaseLogTest {
 		shouldBeEnabled = checkEnabled(log.isWarnEnabled(), shouldBeEnabled);
 		shouldBeEnabled = checkEnabled(log.isErrorEnabled(), shouldBeEnabled);
 		shouldBeEnabled = checkEnabled(log.isFatalEnabled(), shouldBeEnabled);
-	}
-
-	private boolean checkEnabled(boolean enabled, boolean shouldBeEnabled) {
-		if (shouldBeEnabled) {
-			assertTrue(enabled);
-		}
-		return enabled;
 	}
 
 	@Test
@@ -88,5 +81,12 @@ public abstract class BaseLogTest {
 	@Test
 	public void testFatalStringThrowable() {
 		log.fatal("message", new Throwable("log throwable"));
+	}
+
+	private boolean checkEnabled(boolean enabled, boolean shouldBeEnabled) {
+		if (shouldBeEnabled) {
+			assertTrue(enabled);
+		}
+		return enabled;
 	}
 }
