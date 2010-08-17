@@ -8,7 +8,7 @@ To release ORMLite:
 	make
 	mv ormlite.pdf ormlite/* ../javadoc/doc-files
 	cd ..
-	svn commit -m 'X.XX release'
+	svn commit -m 'X.XX docs'
 
 3) Add section to ~/svn/local/ormlite/src/main/javadoc/doc-files/changelog.txt.  Commit it.
 
