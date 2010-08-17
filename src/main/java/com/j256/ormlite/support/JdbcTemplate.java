@@ -1,6 +1,7 @@
 package com.j256.ormlite.support;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import com.j256.ormlite.stmt.GenericRowMapper;
@@ -43,4 +44,9 @@ public interface JdbcTemplate {
 	 * Perform a query whose result should be a single long-integer value.
 	 */
 	public long queryForLong(String statement) throws SQLException;
+
+	/**
+	 * Generate a prepared statement from a SQL statement.
+	 */
+	public PreparedStatement prepareStatement(String sql) throws SQLException;
 }

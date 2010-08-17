@@ -124,11 +124,11 @@ public abstract class BaseJdbcDao<T, ID> extends SimpleJdbcDaoSupport implements
 	}
 
 	public T queryForFirst(PreparedQuery<T> preparedQuery) throws SQLException {
-		return statementExecutor.queryForFirst(getConnection(), preparedQuery);
+		return statementExecutor.queryForFirst(getJdbcTemplate(), preparedQuery);
 	}
 
 	public List<T> queryForAll() throws SQLException {
-		return statementExecutor.queryForAll(getConnection());
+		return statementExecutor.queryForAll(getJdbcTemplate());
 	}
 
 	public QueryBuilder<T, ID> queryBuilder() {
@@ -136,11 +136,11 @@ public abstract class BaseJdbcDao<T, ID> extends SimpleJdbcDaoSupport implements
 	}
 
 	public List<T> query(PreparedQuery<T> preparedQuery) throws SQLException {
-		return statementExecutor.query(getConnection(), preparedQuery);
+		return statementExecutor.query(getJdbcTemplate(), preparedQuery);
 	}
 
 	public RawResults queryForAllRaw(String queryString) throws SQLException {
-		return statementExecutor.queryRaw(getConnection(), queryString);
+		return statementExecutor.queryRaw(getJdbcTemplate(), queryString);
 	}
 
 	public int create(T data) throws SQLException {
@@ -208,7 +208,7 @@ public abstract class BaseJdbcDao<T, ID> extends SimpleJdbcDaoSupport implements
 
 	public SelectIterator<T, ID> iterator() {
 		try {
-			return statementExecutor.buildIterator(this, getConnection());
+			return statementExecutor.buildIterator(this, getJdbcTemplate());
 		} catch (Exception e) {
 			throw new IllegalStateException("Could not build iterator for " + dataClass, e);
 		}
@@ -216,18 +216,16 @@ public abstract class BaseJdbcDao<T, ID> extends SimpleJdbcDaoSupport implements
 
 	public SelectIterator<T, ID> iterator(PreparedQuery<T> preparedQuery) throws SQLException {
 		try {
-			return statementExecutor.buildIterator(this, getConnection(), preparedQuery);
+			return statementExecutor.buildIterator(this, getJdbcTemplate(), preparedQuery);
 		} catch (SQLException e) {
-			// thrown by getConnection() if the connection cannot be established
 			throw SqlExceptionUtil.create("Could not build iterator for " + dataClass, e);
 		}
 	}
 
 	public RawResults iteratorRaw(String query) throws SQLException {
 		try {
-			return statementExecutor.buildIterator(getConnection(), query);
+			return statementExecutor.buildIterator(getJdbcTemplate(), query);
 		} catch (SQLException e) {
-			// thrown by getConnection() if the connection cannot be established
 			throw SqlExceptionUtil.create("Could not build iterator for " + query, e);
 		}
 	}

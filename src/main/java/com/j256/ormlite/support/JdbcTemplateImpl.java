@@ -98,6 +98,10 @@ public class JdbcTemplateImpl implements JdbcTemplate {
 		}
 	}
 
+	public PreparedStatement prepareStatement(String sql) throws SQLException {
+		return dataSource.getConnection().prepareStatement(sql);
+	}
+
 	private void statementSetArgs(PreparedStatement stmt, Object[] args, int[] argFieldTypeVals) throws SQLException {
 		for (int i = 0; i < args.length; i++) {
 			Object arg = args[i];

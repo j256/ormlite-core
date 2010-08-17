@@ -1,6 +1,5 @@
 package com.j256.ormlite.stmt;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -85,10 +84,10 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Return the first object that matches the {@link PreparedQuery} or null if none.
 	 */
-	public T queryForFirst(Connection connection, PreparedQuery<T> preparedQuery) throws SQLException {
+	public T queryForFirst(JdbcTemplate jdbcTemplate, PreparedQuery<T> preparedQuery) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
-			stmt = preparedQuery.prepareSqlStatement(connection);
+			stmt = preparedQuery.prepareSqlStatement(jdbcTemplate);
 			if (!stmt.execute()) {
 				throw new SQLException("Could not query for one of " + dataClass + " with warnings: "
 						+ stmt.getWarnings());
@@ -112,18 +111,18 @@ public class StatementExecutor<T, ID> {
 	 * Return a list of all of the data in the table. Should be used carefully if the table is large. Consider using the
 	 * {@link Dao#iterator} if this is the case.
 	 */
-	public List<T> queryForAll(Connection connection) throws SQLException {
-		return query(connection, preparedQueryForAll);
+	public List<T> queryForAll(JdbcTemplate jdbcTemplate) throws SQLException {
+		return query(jdbcTemplate, preparedQueryForAll);
 	}
 
 	/**
 	 * Return a list of all of the data in the table that matches the {@link PreparedQuery}. Should be used carefully if
 	 * the table is large. Consider using the {@link Dao#iterator} if this is the case.
 	 */
-	public List<T> query(Connection connection, PreparedQuery<T> preparedQuery) throws SQLException {
+	public List<T> query(JdbcTemplate jdbcTemplate, PreparedQuery<T> preparedQuery) throws SQLException {
 		SelectIterator<T, ID> iterator = null;
 		try {
-			iterator = buildIterator(/* no dao specified because no removes */null, connection, preparedQuery);
+			iterator = buildIterator(/* no dao specified because no removes */null, jdbcTemplate, preparedQuery);
 			List<T> results = new ArrayList<T>();
 			while (iterator.hasNextThrow()) {
 				results.add(iterator.nextThrow());
@@ -141,10 +140,10 @@ public class StatementExecutor<T, ID> {
 	 * Return a list of all of the data in the table that matches the {@link PreparedQuery}. Should be used carefully if
 	 * the table is large. Consider using the {@link Dao#iterator} if this is the case.
 	 */
-	public RawResults queryRaw(Connection connection, String query) throws SQLException {
+	public RawResults queryRaw(JdbcTemplate jdbcTemplate, String query) throws SQLException {
 		SelectIterator<String[], Void> iterator = null;
 		try {
-			PreparedStatement preparedStatement = connection.prepareStatement(query);
+			PreparedStatement preparedStatement = jdbcTemplate.prepareStatement(query);
 			RawResultsList results = new RawResultsList(preparedStatement.getMetaData());
 			// statement arg is null because we don't want it to double log below
 			iterator = new SelectIterator<String[], Void>(String[].class, null, results, preparedStatement, null);
@@ -160,27 +159,28 @@ public class StatementExecutor<T, ID> {
 		}
 	}
 	/**
-	 * Create and return an {@link SelectIterator} for the class with a connection an the default mapped query for all
+	 * Create and return an {@link SelectIterator} for the class with a jdbcTemplate an the default mapped query for all
 	 * statement.
 	 */
-	public SelectIterator<T, ID> buildIterator(BaseJdbcDao<T, ID> classDao, Connection connection) throws SQLException {
-		return buildIterator(classDao, connection, preparedQueryForAll);
+	public SelectIterator<T, ID> buildIterator(BaseJdbcDao<T, ID> classDao, JdbcTemplate jdbcTemplate)
+			throws SQLException {
+		return buildIterator(classDao, jdbcTemplate, preparedQueryForAll);
 	}
 
 	/**
-	 * Create and return an {@link SelectIterator} for the class with a connection and mapped statement.
+	 * Create and return an {@link SelectIterator} for the class with a jdbcTemplate and mapped statement.
 	 */
-	public SelectIterator<T, ID> buildIterator(BaseJdbcDao<T, ID> classDao, Connection connection,
+	public SelectIterator<T, ID> buildIterator(BaseJdbcDao<T, ID> classDao, JdbcTemplate jdbcTemplate,
 			PreparedQuery<T> preparedQuery) throws SQLException {
 		return new SelectIterator<T, ID>(dataClass, classDao, preparedQuery,
-				preparedQuery.prepareSqlStatement(connection), preparedQuery.getStatement());
+				preparedQuery.prepareSqlStatement(jdbcTemplate), preparedQuery.getStatement());
 	}
 
 	/**
 	 * Return a RawResults object associated with an internal iterator that matches the query argument.
 	 */
-	public RawResults buildIterator(Connection connection, String query) throws SQLException {
-		return new RawResultsIterator(query, connection.prepareStatement(query));
+	public RawResults buildIterator(JdbcTemplate jdbcTemplate, String query) throws SQLException {
+		return new RawResultsIterator(query, jdbcTemplate.prepareStatement(query));
 	}
 
 	/**
