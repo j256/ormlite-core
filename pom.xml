@@ -206,17 +206,20 @@
 	</properties>
 	<dependencies>
 		<!-- =================================================================== -->
+		<!-- main dependencies -->
+		<!-- =================================================================== -->
+		<!-- test dependencies -->
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
 			<version>${commons-logging-version}</version>
-			<optional>true</optional>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>${log4j-version}</version>
-			<optional>true</optional>
+			<scope>test</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>com.sun.jmx</groupId>
@@ -240,8 +243,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-      		<!-- =================================================================== -->
-		<!-- test dependencies -->
 		<dependency>
 			<groupId>javax.persistence</groupId>
 			<artifactId>persistence-api</artifactId>
