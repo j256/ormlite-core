@@ -1,6 +1,5 @@
 package com.j256.ormlite.support;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.sql.DataSource;
@@ -48,13 +47,6 @@ public abstract class SimpleJdbcDaoSupport {
 			throw new IllegalStateException("dataSource was never set on " + getClass().getSimpleName());
 		}
 		jdbcTemplate = new JdbcTemplateImpl(dataSource);
-	}
-
-	/**
-	 * Return a connection associated with the data source set on this dao.
-	 */
-	protected Connection getConnection() throws SQLException {
-		return dataSource.getConnection();
 	}
 
 	/**
