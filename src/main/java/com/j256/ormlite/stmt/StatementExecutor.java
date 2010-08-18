@@ -73,11 +73,11 @@ public class StatementExecutor<T, ID> {
 	 * Return the object associated with the id or null if none. This does a SQL
 	 * <tt>select col1,col2,... from ... where ... = id</tt> type query.
 	 */
-	public T queryForId(DatabaseAccess template, ID id) throws SQLException {
+	public T queryForId(DatabaseAccess databaseAccess, ID id) throws SQLException {
 		if (mappedQueryForId == null) {
 			throw new SQLException("Cannot query-for-id with " + dataClass + " because it doesn't have an id field");
 		}
-		return mappedQueryForId.execute(template, id);
+		return mappedQueryForId.execute(databaseAccess, id);
 	}
 
 	/**
@@ -87,11 +87,7 @@ public class StatementExecutor<T, ID> {
 		PreparedStmt stmt = null;
 		try {
 			stmt = preparedQuery.prepareSqlStatement(databaseAccess);
-			if (!stmt.execute()) {
-				throw new SQLException("Could not query for one of " + dataClass + " with warning: "
-						+ stmt.getWarning());
-			}
-			Results results = stmt.getResults();
+			Results results = stmt.executeQuery();
 			if (results.next()) {
 				logger.debug("query-for-first of '{}' returned at least 1 result", preparedQuery.getStatement());
 				return preparedQuery.mapRow(results);
@@ -184,30 +180,30 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Create a new entry in the database from an object.
 	 */
-	public int create(DatabaseAccess template, T data) throws SQLException {
-		return mappedInsert.insert(template, data);
+	public int create(DatabaseAccess databaseAccess, T data) throws SQLException {
+		return mappedInsert.insert(databaseAccess, data);
 	}
 
 	/**
 	 * Update an object in the database.
 	 */
-	public int update(DatabaseAccess template, T data) throws SQLException {
+	public int update(DatabaseAccess databaseAccess, T data) throws SQLException {
 		if (mappedUpdate == null) {
 			throw new SQLException("Cannot update " + dataClass
 					+ " because it doesn't have an id field defined or only has id field");
 		} else {
-			return mappedUpdate.update(template, data);
+			return mappedUpdate.update(databaseAccess, data);
 		}
 	}
 
 	/**
 	 * Update an object in the database to change its id to the newId parameter.
 	 */
-	public int updateId(DatabaseAccess template, T data, ID newId) throws SQLException {
+	public int updateId(DatabaseAccess databaseAccess, T data, ID newId) throws SQLException {
 		if (mappedUpdateId == null) {
 			throw new SQLException("Cannot update " + dataClass + " because it doesn't have an id field defined");
 		} else {
-			return mappedUpdateId.execute(template, data, newId);
+			return mappedUpdateId.execute(databaseAccess, data, newId);
 		}
 	}
 
@@ -215,11 +211,11 @@ public class StatementExecutor<T, ID> {
 	 * Does a query for the object's Id and copies in each of the field values from the database to refresh the data
 	 * parameter.
 	 */
-	public int refresh(DatabaseAccess template, T data) throws SQLException {
+	public int refresh(DatabaseAccess databaseAccess, T data) throws SQLException {
 		if (mappedQueryForId == null) {
 			throw new SQLException("Cannot refresh " + dataClass + " because it doesn't have an id field defined");
 		} else {
-			T result = mappedRefresh.execute(template, data);
+			T result = mappedRefresh.execute(databaseAccess, data);
 			if (result == null) {
 				return 0;
 			} else {
@@ -231,35 +227,35 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Delete an object from the database.
 	 */
-	public int delete(DatabaseAccess template, T data) throws SQLException {
+	public int delete(DatabaseAccess databaseAccess, T data) throws SQLException {
 		if (mappedDelete == null) {
 			throw new SQLException("Cannot delete " + dataClass + " because it doesn't have an id field defined");
 		} else {
-			return mappedDelete.delete(template, data);
+			return mappedDelete.delete(databaseAccess, data);
 		}
 	}
 
 	/**
 	 * Delete a collection of objects from the database.
 	 */
-	public int deleteObjects(DatabaseAccess template, Collection<T> datas) throws SQLException {
+	public int deleteObjects(DatabaseAccess databaseAccess, Collection<T> datas) throws SQLException {
 		if (idField == null) {
 			throw new SQLException("Cannot delete " + dataClass + " because it doesn't have an id field defined");
 		} else {
 			// have to build this on the fly because the collection has variable number of args
-			return MappedDeleteCollection.deleteObjects(databaseType, tableInfo, template, datas);
+			return MappedDeleteCollection.deleteObjects(databaseType, tableInfo, databaseAccess, datas);
 		}
 	}
 
 	/**
 	 * Delete a collection of objects from the database.
 	 */
-	public int deleteIds(DatabaseAccess template, Collection<ID> ids) throws SQLException {
+	public int deleteIds(DatabaseAccess databaseAccess, Collection<ID> ids) throws SQLException {
 		if (idField == null) {
 			throw new SQLException("Cannot delete " + dataClass + " because it doesn't have an id field defined");
 		} else {
 			// have to build this on the fly because the collection has variable number of args
-			return MappedDeleteCollection.deleteIds(databaseType, tableInfo, template, ids);
+			return MappedDeleteCollection.deleteIds(databaseType, tableInfo, databaseAccess, ids);
 		}
 	}
 

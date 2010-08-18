@@ -3,7 +3,6 @@ package com.j256.ormlite.jdbc;
 import java.sql.PreparedStatement;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.SQLWarning;
 
 import com.j256.ormlite.support.PreparedStmt;
 import com.j256.ormlite.support.Results;
@@ -36,10 +35,6 @@ public class JdbcPreparedStmt implements PreparedStmt {
 		return metaData.getColumnName(column);
 	}
 
-	public boolean execute() throws SQLException {
-		return preparedStatement.execute();
-	}
-
 	public int executeUpdate() throws SQLException {
 		return preparedStatement.executeUpdate();
 	}
@@ -48,21 +43,8 @@ public class JdbcPreparedStmt implements PreparedStmt {
 		return new JdbcResults(preparedStatement.executeQuery());
 	}
 
-	public String getWarning() throws SQLException {
-		SQLWarning warning = preparedStatement.getWarnings();
-		if (warning == null) {
-			return null;
-		} else {
-			return warning.toString();
-		}
-	}
-
 	public boolean getMoreResults() throws SQLException {
 		return preparedStatement.getMoreResults();
-	}
-
-	public Results getResults() throws SQLException {
-		return new JdbcResults(preparedStatement.getResultSet());
 	}
 
 	public Results getGeneratedKeys() throws SQLException {

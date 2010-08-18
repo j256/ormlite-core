@@ -76,12 +76,6 @@ public class AndroidPreparedStmt implements PreparedStmt
         return getCursor().getColumnName(AndroidHelper.jdbcToAndroid(column));
     }
 
-    public boolean execute() throws SQLException
-    {
-        getCursor();
-        return true;
-    }
-
     public Results executeQuery() throws SQLException {
         return new AndroidResults(getCursor(), config.dateAdapter);
 	}
@@ -89,19 +83,6 @@ public class AndroidPreparedStmt implements PreparedStmt
 	public int executeUpdate() throws SQLException {
 		throw new RuntimeException("Not implemented yet");
 	}
-
-	/**
-     * Nothing equivalent in Android
-     */
-    public String getWarning()
-    {
-        return "";
-    }
-
-    public Results getResults() throws SQLException
-    {
-        return new AndroidResults(getCursor(), config.dateAdapter);
-    }
 
     /**
      * Nothing equivalent in Android
