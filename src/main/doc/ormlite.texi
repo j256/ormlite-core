@@ -247,9 +247,9 @@ String name of the column in the database that will hold this field. If not set 
 @cindex field type
 @cindex jdbc type
 @cindex SQL type
-@item jdbcType
+@item dataType
 
-The type of the field as the JdbcType class.  Usually the type is taken from Java class of the field and does not need
+The type of the field as the DataType class.  Usually the type is taken from Java class of the field and does not need
 to be specified.  This corresponds to the SQL type.  @xref{Persisted Types}.
 
 @cindex default value
@@ -570,7 +570,7 @@ interface.  Depending on the database type, there will be limits to the size of 
 @item Enum or enum
 
 Persisted by default as the enumerated value's string @emph{name} as a VARCHAR type.  You can also specify the
-@code{jdbcType} field to the @code{@@DatabaseField} annotation as a @code{JdbcType.ENUM_INTEGER} in which case the
+@code{jdbcType} field to the @code{@@DatabaseField} annotation as a @code{DataType.ENUM_INTEGER} in which case the
 @code{ordinal} of the enum value will be stored as an INTEGER.  The name is the default (and recommended) because
 it allows you to add additional enums anywhere in the list without worrying about having to convert data later.
 
@@ -1345,10 +1345,10 @@ you'd do something like the following:
 @example
 List<DatabaseFieldConfig> fieldConfigs =
     new ArrayList<DatabaseFieldConfig>();
-fieldConfigs.add(new DatabaseFieldConfig("name", null, JdbcType.UNKNOWN,
+fieldConfigs.add(new DatabaseFieldConfig("name", null, DataType.UNKNOWN,
     null, 0, false, false, true, null, false, null, false));
 fieldConfigs.add(new DatabaseFieldConfig("password", null,
-    JdbcType.UNKNOWN, null, 0, false, false, false, null, false, null,
+    DataType.UNKNOWN, null, 0, false, false, false, null, false, null,
     false));
 DatabaseTableConfig<Account> accountTableConfig
     = new DatabaseTableConfig<Account>(Account.class, fieldConfigs);

@@ -29,7 +29,7 @@ public interface Results {
 	/**
 	 * Returns the type of column in these results.
 	 */
-	public DataType getColumnType(int column) throws SQLException;
+	public DataType getColumnDataType(int column) throws SQLException;
 
 	/**
 	 * Moves to the next result.

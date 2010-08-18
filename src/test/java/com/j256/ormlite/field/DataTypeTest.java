@@ -16,7 +16,7 @@ import com.j256.ormlite.support.PreparedStmt;
 import com.j256.ormlite.support.Results;
 import com.j256.ormlite.table.DatabaseTable;
 
-public class JdbcTypeTest extends BaseOrmLiteTest {
+public class DataTypeTest extends BaseOrmLiteTest {
 
 	private static final String TABLE_NAME = "foo";
 
@@ -304,13 +304,13 @@ public class JdbcTypeTest extends BaseOrmLiteTest {
 
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalEnumInt {
-		@DatabaseField(columnName = ENUM_COLUMN, jdbcType = DataType.ENUM_INTEGER)
+		@DatabaseField(columnName = ENUM_COLUMN, dataType = DataType.ENUM_INTEGER)
 		OurEnum ourEnum;
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalEnumInt2 {
-		@DatabaseField(columnName = ENUM_COLUMN, jdbcType = DataType.ENUM_INTEGER)
+		@DatabaseField(columnName = ENUM_COLUMN, dataType = DataType.ENUM_INTEGER)
 		OurEnum2 ourEnum;
 	}
 

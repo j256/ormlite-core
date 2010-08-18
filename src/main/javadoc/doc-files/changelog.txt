@@ -20,7 +20,7 @@
 
 2.8: 7/20/2010
 	* Found and fixed problems with boolean default values under Derby. (bug #3032387)
-	* Trickle down changes which affected a lot of FieldType nad JdbcType. Also improved the null handling.
+	* Trickle down changes which affected a lot of FieldType and JdbcType. Also improved the null handling.
 	* Fixed the docs which referenced the BaseDao which was completely wrong.
 
 2.7: 7/19/2010

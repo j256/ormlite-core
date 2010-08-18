@@ -50,10 +50,10 @@ public class FieldType {
 		this.field = field;
 		this.fieldName = field.getName();
 		DataType dataType;
-		if (fieldConfig.getJdbcType() == DataType.UNKNOWN) {
+		if (fieldConfig.getDataType() == DataType.UNKNOWN) {
 			dataType = DataType.lookupClass(field.getType());
 		} else {
-			dataType = fieldConfig.getJdbcType();
+			dataType = fieldConfig.getDataType();
 			if (!dataType.isValidForType(field.getType())) {
 				throw new IllegalArgumentException("Field class " + field.getType() + " for field " + this
 						+ " is not valid for jdbc type " + dataType);
@@ -76,7 +76,7 @@ public class FieldType {
 			}
 			foreignTableInfo = foreignInfo;
 			defaultFieldName = defaultFieldName + FOREIGN_ID_FIELD_SUFFIX;
-			// this field's jdbcType is the foreign id's jdbctype
+			// this field's data type is the foreign id's type
 			dataType = foreignInfo.getIdField().getDataType();
 		} else {
 			if (fieldConfig.isForeign()) {

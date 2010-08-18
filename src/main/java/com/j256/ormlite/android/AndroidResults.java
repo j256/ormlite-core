@@ -40,7 +40,7 @@ public class AndroidResults implements Results
 		return cursor.getColumnName(column);
 	}
 
-	public DataType getColumnType(int column) throws SQLException {
+	public DataType getColumnDataType(int column) throws SQLException {
 		// everything in sqlite-land is a string
 		return DataType.STRING;
 	}

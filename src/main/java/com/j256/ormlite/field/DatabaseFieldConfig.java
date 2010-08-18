@@ -18,7 +18,7 @@ public class DatabaseFieldConfig {
 
 	private String fieldName;
 	private String columnName;
-	private DataType jdbcType = DataType.UNKNOWN;
+	private DataType dataType = DataType.UNKNOWN;
 	private String defaultValue;
 	private int width;
 	private boolean canBeNull;
@@ -35,12 +35,12 @@ public class DatabaseFieldConfig {
 		// for spring
 	}
 
-	public DatabaseFieldConfig(String fieldName, String columnName, DataType jdbcType, String defaultValue, int width,
+	public DatabaseFieldConfig(String fieldName, String columnName, DataType dataType, String defaultValue, int width,
 			boolean canBeNull, boolean id, boolean generatedId, String generatedIdSequence, boolean foreign,
 			DatabaseTableConfig<?> foreignTableConfig, boolean useGetSet, Enum<?> unknownEnumValue, boolean throwIfNull) {
 		this.fieldName = fieldName;
 		this.columnName = columnName;
-		this.jdbcType = jdbcType;
+		this.dataType = dataType;
 		this.defaultValue = defaultValue;
 		this.width = width;
 		this.canBeNull = canBeNull;
@@ -77,14 +77,14 @@ public class DatabaseFieldConfig {
 	}
 
 	/**
-	 * @see DatabaseField#jdbcType()
+	 * @see DatabaseField#dataType()
 	 */
-	public DataType getJdbcType() {
-		return jdbcType;
+	public DataType getDataType() {
+		return dataType;
 	}
 
-	public void setJdbcType(DataType jdbcType) {
-		this.jdbcType = jdbcType;
+	public void setDataType(DataType dataType) {
+		this.dataType = dataType;
 	}
 
 	/**
@@ -297,7 +297,7 @@ public class DatabaseFieldConfig {
 		} else {
 			config.columnName = null;
 		}
-		config.jdbcType = databaseField.jdbcType();
+		config.dataType = databaseField.dataType();
 		if (databaseField.defaultValue().length() > 0) {
 			config.defaultValue = databaseField.defaultValue();
 		} else {

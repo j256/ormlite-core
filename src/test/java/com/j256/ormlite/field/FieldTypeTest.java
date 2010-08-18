@@ -423,7 +423,7 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 		String rank;
 		@DatabaseField(defaultValue = SERIAL_DEFAULT_VALUE)
 		Integer serial;
-		@DatabaseField(jdbcType = DataType.LONG)
+		@DatabaseField(dataType = DataType.LONG)
 		int intLong;
 	}
 

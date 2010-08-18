@@ -42,10 +42,10 @@ public class DatabaseFieldConfigTest {
 		config.setGeneratedIdSequence(str);
 		assertEquals(str, config.getGeneratedIdSequence());
 
-		assertEquals(DataType.UNKNOWN, config.getJdbcType());
+		assertEquals(DataType.UNKNOWN, config.getDataType());
 		DataType jdbcType = DataType.DOUBLE;
-		config.setJdbcType(jdbcType);
-		assertEquals(jdbcType, config.getJdbcType());
+		config.setDataType(jdbcType);
+		assertEquals(jdbcType, config.getDataType());
 
 		assertEquals(0, config.getWidth());
 		int width = 21312312;
@@ -123,19 +123,19 @@ public class DatabaseFieldConfigTest {
 		config = DatabaseFieldConfig.fromField(databaseType, fields[5]);
 		assertNotNull(config);
 		assertTrue(config.isForeign());
-		assertEquals(DataType.UNKNOWN, config.getJdbcType());
+		assertEquals(DataType.UNKNOWN, config.getDataType());
 		assertEquals(fields[5].getName(), config.getFieldName());
 
 		config = DatabaseFieldConfig.fromField(databaseType, fields[6]);
 		assertNotNull(config);
 		assertTrue(config.isForeign());
-		assertEquals(DataType.UNKNOWN, config.getJdbcType());
+		assertEquals(DataType.UNKNOWN, config.getDataType());
 		assertEquals(fields[6].getName(), config.getFieldName());
 
 		config = DatabaseFieldConfig.fromField(databaseType, fields[7]);
 		assertNotNull(config);
 		assertFalse(config.isForeign());
-		assertEquals(DataType.SERIALIZABLE, config.getJdbcType());
+		assertEquals(DataType.SERIALIZABLE, config.getDataType());
 		assertEquals(fields[7].getName(), config.getFieldName());
 	}
 

@@ -49,11 +49,11 @@ public class JdbcDatabaseAccess implements DatabaseAccess {
 		while (results.next()) {
 			for (int colC = 1; colC <= colN; colC++) {
 				String colName = results.getColumnName(colC);
-				DataType jdbcType = results.getColumnType(colC);
-				Number id = jdbcType.resultToId(results, colC);
+				DataType dataType = results.getColumnDataType(colC);
+				Number id = dataType.resultToId(results, colC);
 				if (id == null) {
 					// may never happen but let's be careful
-					throw new SQLException("Generated column " + colName + " is invalid type " + jdbcType);
+					throw new SQLException("Generated column " + colName + " is invalid type " + dataType);
 				} else {
 					keyHolder.addKey(id);
 				}

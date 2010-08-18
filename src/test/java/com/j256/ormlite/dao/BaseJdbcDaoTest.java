@@ -1516,7 +1516,7 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 		SerialField objectField;
 		@DatabaseField(defaultValue = DEFAULT_ENUM_VALUE)
 		OurEnum ourEnum;
-		@DatabaseField(defaultValue = DEFAULT_ENUM_NUMBER_VALUE, jdbcType = DataType.ENUM_INTEGER)
+		@DatabaseField(defaultValue = DEFAULT_ENUM_NUMBER_VALUE, dataType = DataType.ENUM_INTEGER)
 		OurEnum ourEnumNumber;
 		AllTypesDefault() {
 		}
@@ -1675,7 +1675,7 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 		public int id;
 		@DatabaseField
 		public SerialField obj;
-		@DatabaseField(jdbcType = DataType.SERIALIZABLE)
+		@DatabaseField(dataType = DataType.SERIALIZABLE)
 		public String strObj;
 		public ObjectHolder() {
 		}
@@ -1684,7 +1684,7 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 	protected static class NotSerializable {
 		@DatabaseField(generatedId = true)
 		public int id;
-		@DatabaseField(jdbcType = DataType.SERIALIZABLE)
+		@DatabaseField(dataType = DataType.SERIALIZABLE)
 		public ObjectHolder obj;
 		public NotSerializable() {
 		}
@@ -1727,19 +1727,19 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 
 	@DatabaseTable(tableName = ENUM_TABLE_NAME)
 	protected static class LocalEnumInt {
-		@DatabaseField(jdbcType = DataType.ENUM_INTEGER)
+		@DatabaseField(dataType = DataType.ENUM_INTEGER)
 		OurEnum ourEnum;
 	}
 
 	@DatabaseTable(tableName = ENUM_TABLE_NAME)
 	protected static class LocalEnumInt2 {
-		@DatabaseField(jdbcType = DataType.ENUM_INTEGER)
+		@DatabaseField(dataType = DataType.ENUM_INTEGER)
 		OurEnum2 ourEnum;
 	}
 
 	@DatabaseTable(tableName = ENUM_TABLE_NAME)
 	protected static class LocalEnumInt3 {
-		@DatabaseField(jdbcType = DataType.ENUM_INTEGER, unknownEnumName = "FIRST")
+		@DatabaseField(dataType = DataType.ENUM_INTEGER, unknownEnumName = "FIRST")
 		OurEnum2 ourEnum;
 	}
 
