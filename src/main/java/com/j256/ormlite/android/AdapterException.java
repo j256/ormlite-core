@@ -9,7 +9,9 @@ package com.j256.ormlite.android;
  */
 public class AdapterException extends Exception
 {
-    public AdapterException()
+	private static final long serialVersionUID = 6557739848118504299L;
+
+	public AdapterException()
     {
     }
 
