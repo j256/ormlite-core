@@ -32,19 +32,19 @@ public class MappedCreate<T> extends BaseMappedStatement<T> {
 	 * Create an object in the database.
 	 */
 	@Override
-	public int insert(DatabaseAccess template, T data) throws SQLException {
+	public int insert(DatabaseAccess databaseAccess, T data) throws SQLException {
 		if (idField != null) {
 			if (idField.isGeneratedIdSequence()) {
-				assignSequenceId(template, data);
+				assignSequenceId(databaseAccess, data);
 				// fall down to do the update below
 			} else if (idField.isGeneratedId()) {
 				// this has to do the update first then get the generated-id from callback
-				return createWithGeneratedId(template, data);
+				return createWithGeneratedId(databaseAccess, data);
 			} else {
 				// the id should have been set by the caller already
 			}
 		}
-		return super.insert(template, data);
+		return super.insert(databaseAccess, data);
 	}
 
 	public static <T> MappedCreate<T> build(DatabaseType databaseType, TableInfo<T> tableInfo) {
@@ -90,9 +90,9 @@ public class MappedCreate<T> extends BaseMappedStatement<T> {
 		}
 	}
 
-	private void assignSequenceId(DatabaseAccess template, T data) throws SQLException {
+	private void assignSequenceId(DatabaseAccess databaseAccess, T data) throws SQLException {
 		// call the query-next-sequence stmt to increment the sequence
-		long seqVal = template.queryForLong(queryNextSequenceStmt);
+		long seqVal = databaseAccess.queryForLong(queryNextSequenceStmt);
 		logger.debug("queried for sequence {} using stmt: {}", seqVal, queryNextSequenceStmt);
 		if (seqVal == 0) {
 			// sanity check that it is working
@@ -101,12 +101,12 @@ public class MappedCreate<T> extends BaseMappedStatement<T> {
 		assignIdValue(data, seqVal, "sequence");
 	}
 
-	private int createWithGeneratedId(DatabaseAccess template, T data) throws SQLException {
+	private int createWithGeneratedId(DatabaseAccess databaseAccess, T data) throws SQLException {
 		Object[] args = getFieldObjects(argFieldTypes, data);
 		try {
 			KeyHolder keyHolder = new KeyHolder();
 			// do the insert first
-			int retVal = template.insert(statement, args, argFieldTypeVals, keyHolder);
+			int retVal = databaseAccess.insert(statement, args, argFieldTypeVals, keyHolder);
 			logger.debug("create object using '{}' and {} args, changed {} rows", statement, args.length, retVal);
 			if (args.length > 0) {
 				// need to do the (Object) cast to force args to be a single object

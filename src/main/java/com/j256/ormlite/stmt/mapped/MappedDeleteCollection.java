@@ -26,7 +26,7 @@ public class MappedDeleteCollection<T, ID> extends BaseMappedStatement<T> {
 	 * Delete all of the objects in the collection. This builds a {@link MappedDeleteCollection} on the fly because the
 	 * datas could be variable sized.
 	 */
-	public static <T, ID> int deleteObjects(DatabaseType databaseType, TableInfo<T> tableInfo, DatabaseAccess template,
+	public static <T, ID> int deleteObjects(DatabaseType databaseType, TableInfo<T> tableInfo, DatabaseAccess databaseAccess,
 			Collection<T> datas) throws SQLException {
 		MappedDeleteCollection<T, ID> deleteCollection =
 				MappedDeleteCollection.build(databaseType, tableInfo, datas.size());
@@ -36,19 +36,19 @@ public class MappedDeleteCollection<T, ID> extends BaseMappedStatement<T> {
 			fieldObjects[objC] = tableInfo.getIdField().getConvertedFieldValue(data);
 			objC++;
 		}
-		return updateRows(template, deleteCollection, fieldObjects);
+		return updateRows(databaseAccess, deleteCollection, fieldObjects);
 	}
 
 	/**
 	 * Delete all of the objects in the collection. This builds a {@link MappedDeleteCollection} on the fly because the
 	 * ids could be variable sized.
 	 */
-	public static <T, ID> int deleteIds(DatabaseType databaseType, TableInfo<T> tableInfo, DatabaseAccess template,
+	public static <T, ID> int deleteIds(DatabaseType databaseType, TableInfo<T> tableInfo, DatabaseAccess databaseAccess,
 			Collection<ID> ids) throws SQLException {
 		MappedDeleteCollection<T, ID> deleteCollection =
 				MappedDeleteCollection.build(databaseType, tableInfo, ids.size());
 		Object[] idsArray = ids.toArray(new Object[ids.size()]);
-		return updateRows(template, deleteCollection, idsArray);
+		return updateRows(databaseAccess, deleteCollection, idsArray);
 	}
 
 	/**
@@ -68,10 +68,10 @@ public class MappedDeleteCollection<T, ID> extends BaseMappedStatement<T> {
 		return new MappedDeleteCollection<T, ID>(tableInfo, sb.toString(), argFieldTypeList);
 	}
 
-	private static <T, ID> int updateRows(DatabaseAccess template, MappedDeleteCollection<T, ID> deleteCollection,
+	private static <T, ID> int updateRows(DatabaseAccess databaseAccess, MappedDeleteCollection<T, ID> deleteCollection,
 			Object[] args) throws SQLException {
 		try {
-			int rowC = template.update(deleteCollection.statement, args, deleteCollection.argFieldTypeVals);
+			int rowC = databaseAccess.update(deleteCollection.statement, args, deleteCollection.argFieldTypeVals);
 			logger.debug("delete-collection with statement '{}' and {} args, changed {} rows",
 					deleteCollection.statement, args.length, rowC);
 			if (args.length > 0) {

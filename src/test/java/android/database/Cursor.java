@@ -26,6 +26,7 @@ public class Cursor {
 	public int getColumnIndex(String columnName) {
 		return 0;
 	}
+
 	public String getString(int columnIndex) {
 		return null;
 	}

@@ -29,14 +29,14 @@ public class MappedCreateTest extends BaseOrmLiteTest {
 
 		TableInfo<GeneratedId> tableInfo = new TableInfo<GeneratedId>(databaseType, GeneratedId.class);
 		StatementExecutor<GeneratedId, String> se = new StatementExecutor<GeneratedId, String>(databaseType, tableInfo);
-		DatabaseAccess template = createMock(DatabaseAccess.class);
-		expect(template.queryForLong(isA(String.class))).andReturn(1L);
-		expect(template.insert(isA(String.class), isA(Object[].class), isA(int[].class))).andReturn(1);
+		DatabaseAccess databaseAccess = createMock(DatabaseAccess.class);
+		expect(databaseAccess.queryForLong(isA(String.class))).andReturn(1L);
+		expect(databaseAccess.insert(isA(String.class), isA(Object[].class), isA(int[].class))).andReturn(1);
 
-		replay(template);
+		replay(databaseAccess);
 		GeneratedId genIdSeq = new GeneratedId();
-		se.create(template, genIdSeq);
-		verify(template);
+		se.create(databaseAccess, genIdSeq);
+		verify(databaseAccess);
 	}
 
 	@Test
@@ -46,14 +46,14 @@ public class MappedCreateTest extends BaseOrmLiteTest {
 		StatementExecutor<GeneratedIdLong, String> se =
 				new StatementExecutor<GeneratedIdLong, String>(databaseType, new TableInfo<GeneratedIdLong>(
 						databaseType, GeneratedIdLong.class));
-		DatabaseAccess template = createMock(DatabaseAccess.class);
-		expect(template.queryForLong(isA(String.class))).andReturn(1L);
-		expect(template.insert(isA(String.class), isA(Object[].class), isA(int[].class))).andReturn(1);
+		DatabaseAccess databaseAccess = createMock(DatabaseAccess.class);
+		expect(databaseAccess.queryForLong(isA(String.class))).andReturn(1L);
+		expect(databaseAccess.insert(isA(String.class), isA(Object[].class), isA(int[].class))).andReturn(1);
 
-		replay(template);
+		replay(databaseAccess);
 		GeneratedIdLong genIdSeq = new GeneratedIdLong();
-		se.create(template, genIdSeq);
-		verify(template);
+		se.create(databaseAccess, genIdSeq);
+		verify(databaseAccess);
 	}
 
 	@Test
@@ -116,14 +116,14 @@ public class MappedCreateTest extends BaseOrmLiteTest {
 
 	@Test(expected = SQLException.class)
 	public void testSequenceZero() throws Exception {
-		DatabaseAccess template = createMock(DatabaseAccess.class);
-		expect(template.queryForLong(isA(String.class))).andReturn(0L);
-		replay(template);
+		DatabaseAccess databaseAccess = createMock(DatabaseAccess.class);
+		expect(databaseAccess.queryForLong(isA(String.class))).andReturn(0L);
+		replay(databaseAccess);
 		MappedCreate<GeneratedIdSequence> mappedCreate =
 				MappedCreate.build(databaseType, new TableInfo<GeneratedIdSequence>(databaseType,
 						GeneratedIdSequence.class));
-		mappedCreate.insert(template, new GeneratedIdSequence());
-		verify(template);
+		mappedCreate.insert(databaseAccess, new GeneratedIdSequence());
+		verify(databaseAccess);
 	}
 
 	private static class GeneratedId {

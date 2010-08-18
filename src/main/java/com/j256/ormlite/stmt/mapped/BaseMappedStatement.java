@@ -39,10 +39,10 @@ public abstract class BaseMappedStatement<T> {
 	/**
 	 * Insert the object into the database
 	 */
-	protected int insert(DatabaseAccess template, T data) throws SQLException {
+	protected int insert(DatabaseAccess databaseAccess, T data) throws SQLException {
 		try {
 			Object[] args = getFieldObjects(argFieldTypes, data);
-			int rowC = template.insert(statement, args, argFieldTypeVals);
+			int rowC = databaseAccess.insert(statement, args, argFieldTypeVals);
 			logger.debug("insert data with statement '{}' and {} args, changed {} rows", statement, args.length,
 					rowC);
 			if (args.length > 0) {
@@ -58,10 +58,10 @@ public abstract class BaseMappedStatement<T> {
 	/**
 	 * Update the object in the database.
 	 */
-	public int update(DatabaseAccess template, T data) throws SQLException {
+	public int update(DatabaseAccess databaseAccess, T data) throws SQLException {
 		try {
 			Object[] args = getFieldObjects(argFieldTypes, data);
-			int rowC = template.update(statement, args, argFieldTypeVals);
+			int rowC = databaseAccess.update(statement, args, argFieldTypeVals);
 			logger.debug("update data with statement '{}' and {} args, changed {} rows", statement, args.length,
 					rowC);
 			if (args.length > 0) {
@@ -77,10 +77,10 @@ public abstract class BaseMappedStatement<T> {
 	/**
 	 * Delete the object from the database.
 	 */
-	public int delete(DatabaseAccess template, T data) throws SQLException {
+	public int delete(DatabaseAccess databaseAccess, T data) throws SQLException {
 		try {
 			Object[] args = getFieldObjects(argFieldTypes, data);
-			int rowC = template.delete(statement, args, argFieldTypeVals);
+			int rowC = databaseAccess.delete(statement, args, argFieldTypeVals);
 			logger.debug("delete data with statement '{}' and {} args, changed {} rows", statement, args.length,
 					rowC);
 			if (args.length > 0) {

@@ -35,11 +35,8 @@ public class MappedPreparedQueryTest extends BaseOrmLiteTest {
 						Arrays.asList(tableInfo.getFieldTypes()), new ArrayList<SelectArg>(), null);
 
 		PreparedStmt stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
-		if (!stmt.execute()) {
-			return;
-		}
 
-		Results results = stmt.getResults();
+		Results results = stmt.executeQuery();
 		while (results.next()) {
 			Foo foo2 = rowMapper.mapRow(results);
 			assertEquals(foo1.id, foo2.id);
@@ -76,11 +73,7 @@ public class MappedPreparedQueryTest extends BaseOrmLiteTest {
 		PreparedStmt stmt = null;
 		try {
 			stmt = preparedQuery.prepareSqlStatement(databaseAccess);
-			if (!stmt.execute()) {
-				return;
-			}
-
-			Results results = stmt.getResults();
+			Results results = stmt.executeQuery();
 			int fooC = 0;
 			while (results.next()) {
 				Foo foo2 = preparedQuery.mapRow(results);

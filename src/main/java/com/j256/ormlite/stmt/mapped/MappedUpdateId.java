@@ -24,12 +24,12 @@ public class MappedUpdateId<T, ID> extends BaseMappedStatement<T> {
 	/**
 	 * Update the id field of the object in the database.
 	 */
-	public int execute(DatabaseAccess template, T data, ID newId) throws SQLException {
+	public int execute(DatabaseAccess databaseAccess, T data, ID newId) throws SQLException {
 		Object[] fieldObjects = getFieldObjects(argFieldTypes, data);
 		try {
 			// the arguments are the new-id and old-id
 			Object[] args = new Object[] { newId, fieldObjects[0] };
-			int rowC = template.update(statement, args, argFieldTypeVals);
+			int rowC = databaseAccess.update(statement, args, argFieldTypeVals);
 			if (rowC == 1) {
 				// adjust the object to assign the new id
 				idField.assignField(data, newId);

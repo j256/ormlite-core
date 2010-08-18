@@ -40,9 +40,7 @@ public class JdbcTypeTest extends BaseOrmLiteTest {
 		assertEquals(1, fooDao.create(foo));
 
 		PreparedStmt stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
-		assertTrue(stmt.execute());
-
-		Results results = stmt.getResults();
+		Results results = stmt.executeQuery();
 		assertTrue(results.next());
 		assertEquals(string, JdbcType.STRING.resultToJava(null, results, results.findColumn(STRING_COLUMN)));
 		assertFalse(JdbcType.STRING.isValidGeneratedType());
@@ -57,9 +55,7 @@ public class JdbcTypeTest extends BaseOrmLiteTest {
 		assertEquals(1, fooDao.create(foo));
 
 		PreparedStmt stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
-		assertTrue(stmt.execute());
-
-		Results results = stmt.getResults();
+		Results results = stmt.executeQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
 				FieldType.createFieldType(databaseType, "table", LocalBoolean.class.getDeclaredField(BOOLEAN_COLUMN));
@@ -76,9 +72,7 @@ public class JdbcTypeTest extends BaseOrmLiteTest {
 		assertEquals(1, fooDao.create(foo));
 
 		PreparedStmt stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
-		assertTrue(stmt.execute());
-
-		Results results = stmt.getResults();
+		Results results = stmt.executeQuery();
 		assertTrue(results.next());
 		assertEquals(date, JdbcType.JAVA_DATE.resultToJava(null, results, results.findColumn(DATE_COLUMN)));
 		assertFalse(JdbcType.JAVA_DATE.isValidGeneratedType());
@@ -93,9 +87,7 @@ public class JdbcTypeTest extends BaseOrmLiteTest {
 		assertEquals(1, fooDao.create(foo));
 
 		PreparedStmt stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
-		assertTrue(stmt.execute());
-
-		Results results = stmt.getResults();
+		Results results = stmt.executeQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
 				FieldType.createFieldType(databaseType, "table", LocalByte.class.getDeclaredField(BYTE_COLUMN));
@@ -112,9 +104,7 @@ public class JdbcTypeTest extends BaseOrmLiteTest {
 		assertEquals(1, fooDao.create(foo));
 
 		PreparedStmt stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
-		assertTrue(stmt.execute());
-
-		Results results = stmt.getResults();
+		Results results = stmt.executeQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
 				FieldType.createFieldType(databaseType, "table", LocalShort.class.getDeclaredField(SHORT_COLUMN));
@@ -131,9 +121,7 @@ public class JdbcTypeTest extends BaseOrmLiteTest {
 		assertEquals(1, fooDao.create(foo));
 
 		PreparedStmt stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
-		assertTrue(stmt.execute());
-
-		Results results = stmt.getResults();
+		Results results = stmt.executeQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
 				FieldType.createFieldType(databaseType, "table", LocalInt.class.getDeclaredField(INT_COLUMN));
@@ -150,9 +138,7 @@ public class JdbcTypeTest extends BaseOrmLiteTest {
 		assertEquals(1, fooDao.create(foo));
 
 		PreparedStmt stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
-		assertTrue(stmt.execute());
-
-		Results results = stmt.getResults();
+		Results results = stmt.executeQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
 				FieldType.createFieldType(databaseType, "table", LocalLong.class.getDeclaredField(LONG_COLUMN));
@@ -169,9 +155,7 @@ public class JdbcTypeTest extends BaseOrmLiteTest {
 		assertEquals(1, fooDao.create(foo));
 
 		PreparedStmt stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
-		assertTrue(stmt.execute());
-
-		Results results = stmt.getResults();
+		Results results = stmt.executeQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
 				FieldType.createFieldType(databaseType, "table", LocalFloat.class.getDeclaredField(FLOAT_COLUMN));
@@ -188,9 +172,7 @@ public class JdbcTypeTest extends BaseOrmLiteTest {
 		assertEquals(1, fooDao.create(foo));
 
 		PreparedStmt stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
-		assertTrue(stmt.execute());
-
-		Results results = stmt.getResults();
+		Results results = stmt.executeQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
 				FieldType.createFieldType(databaseType, "table", LocalDouble.class.getDeclaredField(DOUBLE_COLUMN));
@@ -211,9 +193,7 @@ public class JdbcTypeTest extends BaseOrmLiteTest {
 		FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME, fields[0]);
 
 		PreparedStmt stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
-		assertTrue(stmt.execute());
-
-		Results results = stmt.getResults();
+		Results results = stmt.executeQuery();
 		assertTrue(results.next());
 		assertEquals(ourEnum, JdbcType.ENUM_STRING.resultToJava(fieldType, results, results.findColumn(ENUM_COLUMN)));
 		assertFalse(JdbcType.ENUM_STRING.isValidGeneratedType());
@@ -232,9 +212,7 @@ public class JdbcTypeTest extends BaseOrmLiteTest {
 		FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME, fields[0]);
 
 		PreparedStmt stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
-		assertTrue(stmt.execute());
-
-		Results results = stmt.getResults();
+		Results results = stmt.executeQuery();
 		assertTrue(results.next());
 		assertEquals(ourEnum, JdbcType.ENUM_INTEGER.resultToJava(fieldType, results, results.findColumn(ENUM_COLUMN)));
 		assertFalse(JdbcType.ENUM_INTEGER.isValidGeneratedType());
@@ -247,9 +225,7 @@ public class JdbcTypeTest extends BaseOrmLiteTest {
 		assertEquals(1, fooDao.create(foo));
 
 		PreparedStmt stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
-		assertTrue(stmt.execute());
-
-		Results results = stmt.getResults();
+		Results results = stmt.executeQuery();
 		assertTrue(results.next());
 
 		assertNull(JdbcType.UNKNOWN.resultToJava(null, results, 1));
