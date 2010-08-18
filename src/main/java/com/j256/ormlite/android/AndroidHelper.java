@@ -1,11 +1,10 @@
 package com.j256.ormlite.android;
 
-import android.database.sqlite.SQLiteStatement;
-
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import android.database.sqlite.SQLiteStatement;
 
 /**
  * Created by IntelliJ IDEA.

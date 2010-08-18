@@ -2,6 +2,8 @@ package com.j256.ormlite.android;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
+import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.PreparedStmt;
 import com.j256.ormlite.support.Results;
 
@@ -57,7 +59,7 @@ public class AndroidPreparedStmt  implements PreparedStmt
             }
             catch (Exception e)
             {
-                throw new SQLException("Problem with Android query", e);
+                throw SqlExceptionUtil.create("Problem with Android query", e);
             }
         }
 

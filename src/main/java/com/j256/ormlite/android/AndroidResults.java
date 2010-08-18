@@ -1,16 +1,17 @@
 package com.j256.ormlite.android;
 
-import android.database.Cursor;
-import com.j256.ormlite.support.Results;
+import static com.j256.ormlite.android.AndroidHelper.androidToJdbc;
+import static com.j256.ormlite.android.AndroidHelper.jdbcToAndroid;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.sql.Blob;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-import static com.j256.ormlite.android.AndroidHelper.androidToJdbc;
-import static com.j256.ormlite.android.AndroidHelper.jdbcToAndroid;
+import android.database.Cursor;
+
+import com.j256.ormlite.misc.SqlExceptionUtil;
+import com.j256.ormlite.support.Results;
 
 /**
  * Created by IntelliJ IDEA.
@@ -96,7 +97,7 @@ public class AndroidResults implements Results
         }
         catch (AdapterException e)
         {
-            throw new SQLException(e);
+            throw SqlExceptionUtil.create("Could not convert from db date", e);
         }
     }
 
