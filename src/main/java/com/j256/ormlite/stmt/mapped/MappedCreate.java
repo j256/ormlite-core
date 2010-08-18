@@ -145,7 +145,7 @@ public class MappedCreate<T> extends BaseMappedStatement<T> {
 			return key;
 		}
 
-		public void addKey(String colName, Number key) throws SQLException {
+		public void addKey(Number key) throws SQLException {
 			if (this.key == null) {
 				this.key = key;
 			} else {

@@ -31,12 +31,6 @@ public class AndroidDatabaseAccess implements DatabaseAccess
 
     /**
      * Android doesn't return the number of rows inserted.
-     *
-     * @param statement
-     * @param args
-     * @param argFieldTypeVals
-     * @return
-     * @throws SQLException
      */
     public int insert(String statement, Object[] args, int[] argFieldTypeVals) throws SQLException
     {
@@ -59,9 +53,7 @@ public class AndroidDatabaseAccess implements DatabaseAccess
         AndroidHelper.bindArgs(stmt, args, argFieldTypeVals, config);
 
         long rowId = stmt.executeInsert();
-
-        //It looks like the only implementation of GeneratedKeyHolder does nothing with the colName argument
-        keyHolder.addKey(null, rowId);
+        keyHolder.addKey(rowId);
 
         db.close();
         return 1;
@@ -70,7 +62,6 @@ public class AndroidDatabaseAccess implements DatabaseAccess
     public int update(String statement, Object[] args, int[] argFieldTypeVals) throws SQLException
     {
         executeUpdate(statement, args, argFieldTypeVals);
-
         return 1;
     }
 
@@ -88,7 +79,6 @@ public class AndroidDatabaseAccess implements DatabaseAccess
     public int delete(String statement, Object[] args, int[] argFieldTypeVals) throws SQLException
     {
         executeUpdate(statement, args, argFieldTypeVals);
-
         return 1;
     }
 

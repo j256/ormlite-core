@@ -12,5 +12,5 @@ public interface GeneratedKeyHolder {
 	/**
 	 * Add the key number on the key holder. May be called multiple times.
 	 */
-	public void addKey(String colName, Number key) throws SQLException;
+	public void addKey(Number key) throws SQLException;
 }

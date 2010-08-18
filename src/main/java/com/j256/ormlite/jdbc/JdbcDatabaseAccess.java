@@ -65,7 +65,7 @@ public class JdbcDatabaseAccess implements DatabaseAccess {
 					throw new SQLException("Generated column " + colName + " is invalid type " + jdbcType + ", value "
 							+ typeVal);
 				} else {
-					keyHolder.addKey(colName, id);
+					keyHolder.addKey(id);
 				}
 			}
 		}
