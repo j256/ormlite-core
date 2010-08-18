@@ -21,7 +21,7 @@
 @c ----------------------------------------------------------------
 
 @c ----------------------------------------------------------------
-@set ormlite_version 3.0
+@set ormlite_version 3.1
 @set ormlite_date August 2010
 @set package ORMLite
 @c ----------------------------------------------------------------
@@ -570,9 +570,11 @@ interface.  Depending on the database type, there will be limits to the size of 
 @item Enum or enum
 
 Persisted by default as the enumerated value's string @emph{name} as a VARCHAR type.  You can also specify the
-@code{jdbcType} field to the @code{@@DatabaseField} annotation as a @code{DataType.ENUM_INTEGER} in which case the
+@code{dataType} field to the @code{@@DatabaseField} annotation as a @code{DataType.ENUM_INTEGER} in which case the
 @code{ordinal} of the enum value will be stored as an INTEGER.  The name is the default (and recommended) because
 it allows you to add additional enums anywhere in the list without worrying about having to convert data later.
+If you insert (or remove) an enum from the list that is being stored as a number, then old data will be un-persisted
+incorrectly.
 
 @cindex unknownEnumName
 You can also also specify an @emph{unknownEnumName} name with the @code{@@DatabaseField} annotation which will be
