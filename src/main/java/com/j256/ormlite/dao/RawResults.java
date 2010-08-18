@@ -5,8 +5,8 @@ package com.j256.ormlite.dao;
  * String[].
  * 
  * <p>
- * <b>NOTE:</b> If you use the iterator then you must call {@link CloseableIterator#close()} method when you are done
- * otherwise the underlying SQL statement and connection may be kept open.
+ * <b>NOTE:</b> You must call {@link CloseableIterator#close()} method when you are done otherwise the underlying SQL
+ * statement and connection may be kept open.
  * </p>
  * 
  * @author graywatson
