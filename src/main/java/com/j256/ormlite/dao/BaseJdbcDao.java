@@ -20,8 +20,8 @@ import com.j256.ormlite.table.TableInfo;
 
 /**
  * Base class for the Database Access Objects that handle the reading and writing a class from the database. This is the
- * JDBC implementation of the {@link Dao} and extends Spring's {@link SimpleDaoSupport}. Kudos to Robert A. for the
- * general ideas of this hierarchy.
+ * implementation of the {@link Dao} and extends Spring's {@link SimpleDaoSupport}. Kudos to Robert A. for the general
+ * ideas of this hierarchy.
  * 
  * <p>
  * This class is also {@link Iterable} which means you can do a {@code for (T obj : dao)} type of loop code to iterate

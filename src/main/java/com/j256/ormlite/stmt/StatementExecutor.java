@@ -83,10 +83,10 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Return the first object that matches the {@link PreparedQuery} or null if none.
 	 */
-	public T queryForFirst(DatabaseAccess jdbcTemplate, PreparedQuery<T> preparedQuery) throws SQLException {
+	public T queryForFirst(DatabaseAccess databaseAccess, PreparedQuery<T> preparedQuery) throws SQLException {
 		PreparedStmt stmt = null;
 		try {
-			stmt = preparedQuery.prepareSqlStatement(jdbcTemplate);
+			stmt = preparedQuery.prepareSqlStatement(databaseAccess);
 			if (!stmt.execute()) {
 				throw new SQLException("Could not query for one of " + dataClass + " with warning: "
 						+ stmt.getWarning());
@@ -110,18 +110,18 @@ public class StatementExecutor<T, ID> {
 	 * Return a list of all of the data in the table. Should be used carefully if the table is large. Consider using the
 	 * {@link Dao#iterator} if this is the case.
 	 */
-	public List<T> queryForAll(DatabaseAccess jdbcTemplate) throws SQLException {
-		return query(jdbcTemplate, preparedQueryForAll);
+	public List<T> queryForAll(DatabaseAccess databaseAccess) throws SQLException {
+		return query(databaseAccess, preparedQueryForAll);
 	}
 
 	/**
 	 * Return a list of all of the data in the table that matches the {@link PreparedQuery}. Should be used carefully if
 	 * the table is large. Consider using the {@link Dao#iterator} if this is the case.
 	 */
-	public List<T> query(DatabaseAccess jdbcTemplate, PreparedQuery<T> preparedQuery) throws SQLException {
+	public List<T> query(DatabaseAccess databaseAccess, PreparedQuery<T> preparedQuery) throws SQLException {
 		SelectIterator<T, ID> iterator = null;
 		try {
-			iterator = buildIterator(/* no dao specified because no removes */null, jdbcTemplate, preparedQuery);
+			iterator = buildIterator(/* no dao specified because no removes */null, databaseAccess, preparedQuery);
 			List<T> results = new ArrayList<T>();
 			while (iterator.hasNextThrow()) {
 				results.add(iterator.nextThrow());
@@ -139,10 +139,10 @@ public class StatementExecutor<T, ID> {
 	 * Return a list of all of the data in the table that matches the {@link PreparedQuery}. Should be used carefully if
 	 * the table is large. Consider using the {@link Dao#iterator} if this is the case.
 	 */
-	public RawResults queryRaw(DatabaseAccess jdbcTemplate, String query) throws SQLException {
+	public RawResults queryRaw(DatabaseAccess databaseAccess, String query) throws SQLException {
 		SelectIterator<String[], Void> iterator = null;
 		try {
-			PreparedStmt preparedStatement = jdbcTemplate.prepareStatement(query);
+			PreparedStmt preparedStatement = databaseAccess.prepareStatement(query);
 			RawResultsList results = new RawResultsList(preparedStatement);
 			// statement arg is null because we don't want it to double log below
 			iterator = new SelectIterator<String[], Void>(String[].class, null, results, preparedStatement, null);
@@ -158,28 +158,27 @@ public class StatementExecutor<T, ID> {
 		}
 	}
 	/**
-	 * Create and return an {@link SelectIterator} for the class with a jdbcTemplate an the default mapped query for all
-	 * statement.
+	 * Create and return a SelectIterator for the class using the default mapped query for all statement.
 	 */
-	public SelectIterator<T, ID> buildIterator(BaseJdbcDao<T, ID> classDao, DatabaseAccess jdbcTemplate)
+	public SelectIterator<T, ID> buildIterator(BaseJdbcDao<T, ID> classDao, DatabaseAccess databaseAccess)
 			throws SQLException {
-		return buildIterator(classDao, jdbcTemplate, preparedQueryForAll);
+		return buildIterator(classDao, databaseAccess, preparedQueryForAll);
 	}
 
 	/**
-	 * Create and return an {@link SelectIterator} for the class with a jdbcTemplate and mapped statement.
+	 * Create and return an {@link SelectIterator} for the class using a prepared query.
 	 */
-	public SelectIterator<T, ID> buildIterator(BaseJdbcDao<T, ID> classDao, DatabaseAccess jdbcTemplate,
+	public SelectIterator<T, ID> buildIterator(BaseJdbcDao<T, ID> classDao, DatabaseAccess databaseAccess,
 			PreparedQuery<T> preparedQuery) throws SQLException {
 		return new SelectIterator<T, ID>(dataClass, classDao, preparedQuery,
-				preparedQuery.prepareSqlStatement(jdbcTemplate), preparedQuery.getStatement());
+				preparedQuery.prepareSqlStatement(databaseAccess), preparedQuery.getStatement());
 	}
 
 	/**
 	 * Return a RawResults object associated with an internal iterator that matches the query argument.
 	 */
-	public RawResults buildIterator(DatabaseAccess jdbcTemplate, String query) throws SQLException {
-		return new RawResultsIterator(query, jdbcTemplate.prepareStatement(query));
+	public RawResults buildIterator(DatabaseAccess databaseAccess, String query) throws SQLException {
+		return new RawResultsIterator(query, databaseAccess.prepareStatement(query));
 	}
 
 	/**

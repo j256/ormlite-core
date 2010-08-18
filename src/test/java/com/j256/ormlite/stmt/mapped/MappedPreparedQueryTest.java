@@ -77,7 +77,7 @@ public class MappedPreparedQueryTest extends BaseOrmLiteTest {
 			throws SQLException {
 		PreparedStmt stmt = null;
 		try {
-			stmt = preparedQuery.prepareSqlStatement(jdbcTemplate);
+			stmt = preparedQuery.prepareSqlStatement(databaseAccess);
 			if (!stmt.execute()) {
 				return;
 			}

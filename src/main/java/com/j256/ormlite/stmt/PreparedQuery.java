@@ -20,9 +20,9 @@ import com.j256.ormlite.support.PreparedStmt;
 public interface PreparedQuery<T> extends GenericRowMapper<T> {
 
 	/**
-	 * Create and return the associated SQL prepared statement for the SQL JdbcTemplate.
+	 * Create and return the associated SQL prepared statement.
 	 */
-	public PreparedStmt prepareSqlStatement(DatabaseAccess jdbcTemplate) throws SQLException;
+	public PreparedStmt prepareSqlStatement(DatabaseAccess databaseAccess) throws SQLException;
 
 	/**
 	 * Return the associated SQL statement string for logging purposes.

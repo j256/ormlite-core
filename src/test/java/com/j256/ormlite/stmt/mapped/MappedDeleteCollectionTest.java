@@ -15,8 +15,8 @@ public class MappedDeleteCollectionTest extends BaseOrmLiteTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testNoIdBuildDelete() throws Exception {
-		DatabaseAccess jdbcTemplate = createMock(DatabaseAccess.class);
-		MappedDeleteCollection.deleteObjects(databaseType, new TableInfo<NoId>(databaseType, NoId.class), jdbcTemplate,
+		DatabaseAccess databaseAccess = createMock(DatabaseAccess.class);
+		MappedDeleteCollection.deleteObjects(databaseType, new TableInfo<NoId>(databaseType, NoId.class), databaseAccess,
 				new ArrayList<NoId>());
 	}
 

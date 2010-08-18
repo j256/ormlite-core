@@ -46,7 +46,7 @@ public abstract class BaseOrmLiteTest {
 	protected String password = null;
 
 	protected static DataSource dataSource = null;
-	protected static DatabaseAccess jdbcTemplate = null;
+	protected static DatabaseAccess databaseAccess = null;
 	protected DatabaseType databaseType = null;
 	protected boolean isConnectionExpected = false;
 
@@ -77,7 +77,7 @@ public abstract class BaseOrmLiteTest {
 					dataSource = DatabaseTypeUtils.createSimpleDataSource(url, userName, password);
 				}
 			}
-			jdbcTemplate = new JdbcDatabaseAccess(dataSource);
+			databaseAccess = new JdbcDatabaseAccess(dataSource);
 		}
 	}
 

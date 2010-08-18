@@ -1,5 +1,5 @@
 3.0: 8/17/2010
-	* Massive internal code reorganization to allow database calls outside of JDBC for better Android support.
+	* Large internal code reorganization to allow database calls outside of JDBC for better Android support.
 	* Removed direct access to the Connection object.  Now all db calls go through the DatabaseAccess object.
 
 2.12: 8/16/2010

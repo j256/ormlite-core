@@ -32,11 +32,8 @@ public class MappedPreparedQuery<T> extends BaseMappedQuery<T> implements Prepar
 		this.limit = limit;
 	}
 
-	/**
-	 * Return the associated SQL prepared statement for the SQL JdbcTemplate.
-	 */
-	public PreparedStmt prepareSqlStatement(DatabaseAccess jdbcTemplate) throws SQLException {
-		PreparedStmt stmt = jdbcTemplate.prepareStatement(statement);
+	public PreparedStmt prepareSqlStatement(DatabaseAccess databaseAccess) throws SQLException {
+		PreparedStmt stmt = databaseAccess.prepareStatement(statement);
 		if (limit != null) {
 			stmt.setMaxRows(limit);
 		}

@@ -19,10 +19,11 @@ To release ORMLite:
 	mvn -P st release:prepare              (need to type in GPG secret)
 	mvn -P st release:perform              (need to type in GPG secret)
 
-5) Login to https://oss.sonatype.org/ (graywatson)
+5) Login to Sontype:    https://oss.sonatype.org/   (graywatson)
 
-6) Click on 'Staging Repositories' from left nav.
+6) Close and release the release:
 
+	- Click on 'Staging Repositories' from left nav
 	- Make sure our release is there, is labeled as 'open'.
 	- Check off the release.
 	- Click on 'close'.  Description: X.X release
@@ -57,7 +58,7 @@ To release ORMLite:
 	cd ~/frs/releases/com/j256/ormlite
 	rm -rf 1.11 1.12
 
-13) run  shutdown  on the sf shell
+13) Run  shutdown  on the sf shell
 
 14) Add a News section to SF with the svn log highlights and subject: released version X.X
 

@@ -1,4 +1,4 @@
-package com.j256.ormlite.support;
+package com.j256.ormlite.jdbc;
 
 import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
@@ -11,8 +11,10 @@ import com.j256.ormlite.BaseOrmLiteTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.jdbc.JdbcDatabaseAccess;
+import com.j256.ormlite.support.DatabaseAccess;
+import com.j256.ormlite.support.GeneratedKeyHolder;
 
-public class JdbcTemplateImplTest extends BaseOrmLiteTest {
+public class JdbcDatabaseAccessImplTest extends BaseOrmLiteTest {
 
 	@Test
 	public void testQueryForLong() throws Exception {

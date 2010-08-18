@@ -7,8 +7,8 @@ There are certainly some much more mature packages which provide this functional
 and iBatis.  However, I wanted a simple wrapper around the JDBC functions from the Spring package and
 Hibernate and iBatis are significantly more complicated.   The package supports natively MySQL,
 Postgres, Microsoft SQL Server, H2, Derby, HSQLDB, and Sqlite.  It also contains initial, untested
-support for DB2 and Oracle and can be extended to additional ones relatively easily.  Contact the author if
-your database type is not supported.
+support for DB2 and Oracle and can be extended to additional ones relatively easily.  Contact the author
+if your database type is not supported.
 
 This code is 97% my own.  Probably 2% is PD stuff that I've cherry picked from the web and
 another 1% that that I've copied from other developers I've worked with -- all with their approval.
