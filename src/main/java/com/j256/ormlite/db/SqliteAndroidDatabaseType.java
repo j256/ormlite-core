@@ -1,5 +1,10 @@
 package com.j256.ormlite.db;
 
+import javax.sql.DataSource;
+
+import com.j256.ormlite.android.AndroidDatabaseAccess;
+import com.j256.ormlite.support.DatabaseAccess;
+
 /**
  * Sqlite database type information for the Android OS. This has a difference driver class name.
  * 
@@ -24,5 +29,10 @@ public class SqliteAndroidDatabaseType extends SqliteDatabaseType implements Dat
 	@Override
 	public String getDriverClassName() {
 		return DRIVER_CLASS_NAME;
+	}
+
+	@Override
+	public DatabaseAccess buildDatabaseAccess(DataSource dataSource) {
+		return new AndroidDatabaseAccess();
 	}
 }
