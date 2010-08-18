@@ -1,5 +1,6 @@
 package com.j256.ormlite.jdbc;
 
+import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,8 +25,13 @@ public class JdbcResults implements Results {
 		return resultSet.findColumn(columnName);
 	}
 
-	public Blob getBlob(int columnIndex) throws SQLException {
-		return resultSet.getBlob(columnIndex);
+	public InputStream getBlobStream(int columnIndex) throws SQLException {
+		Blob blob = resultSet.getBlob(columnIndex);
+		if (blob == null) {
+			return null;
+		} else {
+			return blob.getBinaryStream();
+		}
 	}
 
 	public boolean getBoolean(int columnIndex) throws SQLException {

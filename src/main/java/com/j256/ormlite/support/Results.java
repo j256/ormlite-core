@@ -1,7 +1,8 @@
 package com.j256.ormlite.support;
 
-import java.sql.Blob;
+import java.io.InputStream;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 /**
  * A reduction of the SQL ResultSet so we can implement it outside of JDBC.
@@ -70,12 +71,12 @@ public interface Results {
 	/**
 	 * Returns the SQL timestamp value from the results at the column index.
 	 */
-	public java.sql.Timestamp getTimestamp(int columnIndex) throws SQLException;
+	public Timestamp getTimestamp(int columnIndex) throws SQLException;
 
 	/**
-	 * Returns the blob value from the results at the column index.
+	 * Returns an input stream for a blob value from the results at the column index.
 	 */
-	public Blob getBlob(int columnIndex) throws SQLException;
+	public InputStream getBlobStream(int columnIndex) throws SQLException;
 
 	/**
 	 * Returns true if the object in column index is null.

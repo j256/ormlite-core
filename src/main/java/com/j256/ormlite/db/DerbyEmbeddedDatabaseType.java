@@ -1,9 +1,9 @@
 package com.j256.ormlite.db;
 
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.sql.Blob;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
@@ -104,12 +104,12 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 			throw new SQLException("Default values for serializable types are not supported");
 		}
 		public Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException {
-			Blob blob = results.getBlob(columnPos);
-			if (blob == null) {
+			InputStream stream = results.getBlobStream(columnPos);
+			if (stream == null) {
 				return null;
 			}
 			try {
-				ObjectInputStream objInStream = new ObjectInputStream(blob.getBinaryStream());
+				ObjectInputStream objInStream = new ObjectInputStream(stream);
 				return objInStream.readObject();
 			} catch (Exception e) {
 				throw SqlExceptionUtil.create("Could not read serialized object from result blob", e);
