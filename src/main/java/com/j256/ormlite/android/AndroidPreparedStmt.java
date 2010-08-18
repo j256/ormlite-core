@@ -1,16 +1,15 @@
 package com.j256.ormlite.android;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.PreparedStmt;
 import com.j256.ormlite.support.Results;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -83,7 +82,15 @@ public class AndroidPreparedStmt implements PreparedStmt
         return true;
     }
 
-    /**
+    public Results executeQuery() throws SQLException {
+        return new AndroidResults(getCursor(), config.dateAdapter);
+	}
+
+	public int executeUpdate() throws SQLException {
+		throw new RuntimeException("Not implemented yet");
+	}
+
+	/**
      * Nothing equivalent in Android
      */
     public String getWarning()
@@ -104,7 +111,11 @@ public class AndroidPreparedStmt implements PreparedStmt
         return false;
     }
 
-    public void close() throws SQLException
+    public Results getGeneratedKeys() throws SQLException {
+    	throw new UnsupportedOperationException("Unsupported operation to getGeneratedKeys");
+	}
+
+	public void close() throws SQLException
     {
         cursor.close();
     }

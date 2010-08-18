@@ -1,7 +1,5 @@
 package com.j256.ormlite.misc;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 import java.util.concurrent.Callable;
@@ -11,6 +9,8 @@ import javax.sql.DataSource;
 
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
+import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.support.DatabaseConnection;
 
 /**
  * Provides basic transaction support for a particular {@link DataSource}.
@@ -63,7 +63,7 @@ public class TransactionManager {
 	private static final Logger logger = LoggerFactory.getLogger(TransactionManager.class);
 	private static final String SAVE_POINT_PREFIX = "ORMLITE";
 
-	private DataSource dataSource;
+	private ConnectionSource connectionSource;
 	private Boolean savePointsSupported;
 	private static AtomicInteger savePointCounter = new AtomicInteger();
 
@@ -77,8 +77,8 @@ public class TransactionManager {
 	/**
 	 * Constructor for direct java code wiring.
 	 */
-	public TransactionManager(DataSource dataSource) {
-		this.dataSource = dataSource;
+	public TransactionManager(ConnectionSource connectionSource) {
+		this.connectionSource = connectionSource;
 		initialize();
 	}
 
@@ -86,7 +86,7 @@ public class TransactionManager {
 	 * If you are using the Spring type wiring, this should be called after all of the set methods.
 	 */
 	public void initialize() {
-		if (dataSource == null) {
+		if (connectionSource == null) {
 			throw new IllegalStateException("dataSource was not set on " + getClass().getSimpleName());
 		}
 	}
@@ -109,12 +109,11 @@ public class TransactionManager {
 	 *             callable exception and is thrown by this method.
 	 */
 	public <T> T callInTransaction(final Callable<T> callable) throws SQLException {
-		Connection connection = dataSource.getConnection();
+		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		boolean autoCommitAtStart = false;
 		try {
 			if (savePointsSupported == null) {
-				DatabaseMetaData metaData = connection.getMetaData();
-				savePointsSupported = metaData.supportsSavepoints();
+				savePointsSupported = connection.isSupportsSavepoints();
 				logger.debug("transactions {} supported by connection", (savePointsSupported ? "are" : "are not"));
 			}
 			// change from auto-commit mode
@@ -150,11 +149,11 @@ public class TransactionManager {
 		}
 	}
 
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
+	public void setConnectionSource(ConnectionSource connectionSource) {
+		this.connectionSource = connectionSource;
 	}
 
-	private void releaseSavePoint(Connection connection, Savepoint savePoint) throws SQLException {
+	private void releaseSavePoint(DatabaseConnection connection, Savepoint savePoint) throws SQLException {
 		if (savePoint == null) {
 			connection.commit();
 			logger.debug("committed transaction");
@@ -165,7 +164,7 @@ public class TransactionManager {
 		}
 	}
 
-	private void rollBackSavePoint(Connection connection, Savepoint savePoint) throws SQLException {
+	private void rollBackSavePoint(DatabaseConnection connection, Savepoint savePoint) throws SQLException {
 		if (savePoint == null) {
 			connection.rollback();
 			logger.debug("rolled back transaction");

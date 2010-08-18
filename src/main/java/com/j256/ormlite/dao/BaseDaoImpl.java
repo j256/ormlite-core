@@ -4,8 +4,6 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
@@ -14,7 +12,8 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.SelectIterator;
 import com.j256.ormlite.stmt.StatementExecutor;
-import com.j256.ormlite.support.SimpleDaoSupport;
+import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.support.DatabaseAccess;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableInfo;
 
@@ -40,7 +39,11 @@ import com.j256.ormlite.table.TableInfo;
  *            needs an ID parameter however so you can use Void or Object to satisfy the compiler.
  * @author graywatson
  */
-public abstract class BaseJdbcDao<T, ID> extends SimpleDaoSupport implements Dao<T, ID> {
+public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
+
+	private DatabaseType databaseType;
+	private DatabaseAccess databaseAccess;
+	private ConnectionSource connectionSource;
 
 	private final Class<T> dataClass;
 	private DatabaseTableConfig<T> tableConfig;
@@ -56,7 +59,7 @@ public abstract class BaseJdbcDao<T, ID> extends SimpleDaoSupport implements Dao
 	 * @param dataClass
 	 *            Class associated with this Dao. This must match the T class parameter.
 	 */
-	protected BaseJdbcDao(Class<T> dataClass) {
+	protected BaseDaoImpl(Class<T> dataClass) {
 		this(null, dataClass, null);
 	}
 
@@ -70,7 +73,7 @@ public abstract class BaseJdbcDao<T, ID> extends SimpleDaoSupport implements Dao
 	 * @param dataClass
 	 *            Class associated with this Dao. This must match the T class parameter.
 	 */
-	protected BaseJdbcDao(DatabaseType databaseType, Class<T> dataClass) {
+	protected BaseDaoImpl(DatabaseType databaseType, Class<T> dataClass) {
 		this(databaseType, dataClass, null);
 	}
 
@@ -81,7 +84,7 @@ public abstract class BaseJdbcDao<T, ID> extends SimpleDaoSupport implements Dao
 	 * @param tableConfig
 	 *            Hand or spring wired table configuration information.
 	 */
-	protected BaseJdbcDao(DatabaseTableConfig<T> tableConfig) {
+	protected BaseDaoImpl(DatabaseTableConfig<T> tableConfig) {
 		this(null, tableConfig.getDataClass(), tableConfig);
 	}
 
@@ -93,12 +96,12 @@ public abstract class BaseJdbcDao<T, ID> extends SimpleDaoSupport implements Dao
 	 * @param tableConfig
 	 *            Hand or spring wired table configuration information.
 	 */
-	protected BaseJdbcDao(DatabaseType databaseType, DatabaseTableConfig<T> tableConfig) {
+	protected BaseDaoImpl(DatabaseType databaseType, DatabaseTableConfig<T> tableConfig) {
 		this(databaseType, tableConfig.getDataClass(), tableConfig);
 	}
 
-	private BaseJdbcDao(DatabaseType databaseType, Class<T> dataClass, DatabaseTableConfig<T> tableConfig) {
-		super(databaseType);
+	private BaseDaoImpl(DatabaseType databaseType, Class<T> dataClass, DatabaseTableConfig<T> tableConfig) {
+		this.databaseType = databaseType;
 		this.dataClass = dataClass;
 		this.tableConfig = tableConfig;
 	}
@@ -108,9 +111,20 @@ public abstract class BaseJdbcDao<T, ID> extends SimpleDaoSupport implements Dao
 	 * after the Dao is configured (done by Spring automagically). This method should not be called directly by the
 	 * Ormlite user.
 	 */
-	@Override
 	public void initialize() throws SQLException {
-		super.initialize();
+		if (databaseType == null) {
+			throw new IllegalStateException("databaseType was never set on " + getClass().getSimpleName());
+		}
+		databaseAccess = databaseType.buildDatabaseAccess(connectionSource);
+		if (databaseAccess == null) {
+			if (connectionSource == null) {
+				throw new IllegalStateException("connectionSource was never set on " + getClass().getSimpleName());
+			} else {
+				throw new IllegalStateException("Unable to build database access object for "
+						+ getClass().getSimpleName());
+			}
+		}
+
 		if (tableConfig == null) {
 			tableConfig = DatabaseTableConfig.fromClass(databaseType, dataClass);
 		}
@@ -265,6 +279,18 @@ public abstract class BaseJdbcDao<T, ID> extends SimpleDaoSupport implements Dao
 	}
 
 	/**
+	 * Used if you want to wire the Dao with spring. In java you should use the
+	 * {@link #BaseJdbcDao(DatabaseType, Class)} constructor. This must be called <i>before</i> {@link #initialize}.
+	 */
+	public void setDatabaseType(DatabaseType databaseType) {
+		this.databaseType = databaseType;
+	}
+
+	public void setConnectionSource(ConnectionSource connectionSource) {
+		this.connectionSource = connectionSource;
+	}
+
+	/**
 	 * Used if you want to configure the class for the Dao by hand or with spring instead of using the
 	 * {@link DatabaseField} annotation in the class. This must be called <i>before</i> {@link #initialize}.
 	 */
@@ -276,11 +302,11 @@ public abstract class BaseJdbcDao<T, ID> extends SimpleDaoSupport implements Dao
 	 * Helper method to create a Dao object without having to define a class. Dao classes are supposed to be convenient
 	 * but if you have a lot of classes, they can seem to be a pain.
 	 */
-	public static <T, ID> Dao<T, ID> createDao(DatabaseType databaseType, DataSource dataSource, Class<T> clazz)
-			throws SQLException {
-		BaseJdbcDao<T, ID> dao = new BaseJdbcDao<T, ID>(databaseType, clazz) {
+	public static <T, ID> Dao<T, ID> createDao(DatabaseType databaseType, ConnectionSource connectionSource,
+			Class<T> clazz) throws SQLException {
+		BaseDaoImpl<T, ID> dao = new BaseDaoImpl<T, ID>(databaseType, clazz) {
 		};
-		dao.setDataSource(dataSource);
+		dao.setConnectionSource(connectionSource);
 		dao.initialize();
 		return dao;
 	}

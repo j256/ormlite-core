@@ -1,11 +1,11 @@
 package com.j256.ormlite.db;
 
-import javax.sql.DataSource;
-
 import android.database.sqlite.SQLiteOpenHelper;
+
 import com.j256.ormlite.android.AndroidConfiguration;
 import com.j256.ormlite.android.AndroidDatabaseAccess;
 import com.j256.ormlite.android.DateAdapter;
+import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseAccess;
 
 /**
@@ -52,7 +52,7 @@ public class SqliteAndroidDatabaseType extends SqliteDatabaseType implements Dat
 	}
 
 	@Override
-	public DatabaseAccess buildDatabaseAccess(DataSource dataSource) {
+	public DatabaseAccess buildDatabaseAccess(ConnectionSource connectionSource) {
 		return new AndroidDatabaseAccess(new AndroidConfiguration(dbHelper, dateAdapter));
 	}
 }

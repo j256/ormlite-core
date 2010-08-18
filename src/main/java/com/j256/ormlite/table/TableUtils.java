@@ -1,14 +1,9 @@
 package com.j256.ormlite.table;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import javax.sql.DataSource;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
@@ -16,6 +11,10 @@ import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.misc.SqlExceptionUtil;
+import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.support.DatabaseConnection;
+import com.j256.ormlite.support.PreparedStmt;
+import com.j256.ormlite.support.Results;
 
 /**
  * Couple utility methods for the creating, dropping, and maintenance of tables.
@@ -38,15 +37,15 @@ public class TableUtils {
 	 * 
 	 * @param databaseType
 	 *            Our database type.
-	 * @param dataSource
-	 *            Associated {@link DataSource}.
+	 * @param connectionSource
+	 *            Associated connection source.
 	 * @param dataClass
 	 *            The class for which a table will be created.
 	 * @return The number of statements executed to do so.
 	 */
-	public static <T> int createTable(DatabaseType databaseType, DataSource dataSource, Class<T> dataClass)
+	public static <T> int createTable(DatabaseType databaseType, ConnectionSource connectionSource, Class<T> dataClass)
 			throws SQLException {
-		return createTable(databaseType, dataSource, DatabaseTableConfig.fromClass(databaseType, dataClass));
+		return createTable(databaseType, connectionSource, DatabaseTableConfig.fromClass(databaseType, dataClass));
 	}
 
 	/**
@@ -55,14 +54,14 @@ public class TableUtils {
 	 * 
 	 * @param databaseType
 	 *            Our database type.
-	 * @param dataSource
-	 *            Associated {@link DataSource}.
+	 * @param ConnectionSource
+	 *            connectionSource Associated connection source.
 	 * @param tableConfig
 	 *            Hand or spring wired table configuration. If null then the class must have {@link DatabaseField}
 	 *            annotations.
 	 * @return The number of statements executed to do so.
 	 */
-	public static <T> int createTable(DatabaseType databaseType, DataSource dataSource,
+	public static <T> int createTable(DatabaseType databaseType, ConnectionSource connectionSource,
 			DatabaseTableConfig<T> tableConfig) throws SQLException {
 		TableInfo<T> tableInfo = new TableInfo<T>(databaseType, tableConfig);
 		logger.debug("creating table '{}'", tableInfo.getTableName());
@@ -70,10 +69,10 @@ public class TableUtils {
 		List<String> queriesAfter = new ArrayList<String>();
 		createTableStatements(databaseType, tableInfo, statements, queriesAfter);
 		int stmtC = 0;
-		Connection connection = dataSource.getConnection();
+		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		for (String statement : statements) {
 			int rowC;
-			PreparedStatement prepStmt = null;
+			PreparedStmt prepStmt = null;
 			try {
 				logger.debug("executing create table statement: {}", statement);
 				prepStmt = connection.prepareStatement(statement);
@@ -97,14 +96,14 @@ public class TableUtils {
 		}
 		// now execute any test queries which test the newly created table
 		for (String query : queriesAfter) {
-			PreparedStatement prepStmt = null;
-			ResultSet resultSet = null;
+			PreparedStmt prepStmt = null;
+			Results results = null;
 			try {
 				prepStmt = connection.prepareStatement(query);
-				resultSet = prepStmt.executeQuery();
+				results = prepStmt.executeQuery();
 				int rowC = 0;
 				// count the results
-				while (resultSet.next()) {
+				while (results.next()) {
 					rowC++;
 				}
 				logger.debug("executing create table after-query got {} results: {}", rowC, query);
@@ -166,17 +165,17 @@ public class TableUtils {
 	 * 
 	 * @param databaseType
 	 *            Our database type.
-	 * @param dataSource
-	 *            Associated {@link DataSource}.
+	 * @param connectionSource
+	 *            Associated connection source.
 	 * @param dataClass
 	 *            The class for which a table will be created.
 	 * @param ignoreErrors
 	 *            If set to true then try each statement regardless of {@link SQLException} thrown previously.
 	 * @return The number of statements executed to do so.
 	 */
-	public static <T> int dropTable(DatabaseType databaseType, DataSource dataSource, Class<T> dataClass,
+	public static <T> int dropTable(DatabaseType databaseType, ConnectionSource connectionSource, Class<T> dataClass,
 			boolean ignoreErrors) throws SQLException {
-		return dropTable(databaseType, dataSource, DatabaseTableConfig.fromClass(databaseType, dataClass), ignoreErrors);
+		return dropTable(databaseType, connectionSource, DatabaseTableConfig.fromClass(databaseType, dataClass), ignoreErrors);
 	}
 
 	/**
@@ -189,8 +188,8 @@ public class TableUtils {
 	 * 
 	 * @param databaseType
 	 *            Our database type.
-	 * @param dataSource
-	 *            Associated {@link DataSource}.
+	 * @param connectionSource
+	 *            Associated connection source.
 	 * @param tableConfig
 	 *            Hand or spring wired table configuration. If null then the class must have {@link DatabaseField}
 	 *            annotations.
@@ -198,16 +197,16 @@ public class TableUtils {
 	 *            If set to true then try each statement regardless of {@link SQLException} thrown previously.
 	 * @return The number of statements executed to do so.
 	 */
-	public static <T> int dropTable(DatabaseType databaseType, DataSource dataSource,
+	public static <T> int dropTable(DatabaseType databaseType, ConnectionSource connectionSource,
 			DatabaseTableConfig<T> tableConfig, boolean ignoreErrors) throws SQLException {
 		TableInfo<T> tableInfo = new TableInfo<T>(databaseType, tableConfig);
 		logger.debug("dropping table '{}'", tableInfo.getTableName());
 		Collection<String> statements = dropTableStatements(databaseType, tableInfo);
 		int stmtC = 0;
-		Connection connection = dataSource.getConnection();
+		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		for (String statement : statements) {
 			int rowC = 0;
-			PreparedStatement prepStmt = null;
+			PreparedStmt prepStmt = null;
 			try {
 				logger.debug("executing drop table statement: {}", statement);
 				prepStmt = connection.prepareStatement(statement);

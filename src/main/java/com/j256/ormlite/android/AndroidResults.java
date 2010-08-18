@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 
 import android.database.Cursor;
 
+import com.j256.ormlite.field.JdbcType;
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.Results;
 
@@ -31,7 +32,20 @@ public class AndroidResults implements Results
         this.dateAdapter = dateAdapter;
     }
 
-    public boolean next() throws SQLException
+    public int getColumnCount() throws SQLException {
+		return cursor.getColumnCount();
+	}
+
+	public String getColumnName(int column) throws SQLException {
+		return cursor.getColumnName(column);
+	}
+
+	public JdbcType getColumnType(int column) throws SQLException {
+		// everything in sqlite-land is a string
+		return JdbcType.STRING;
+	}
+
+	public boolean next() throws SQLException
     {
         return cursor.moveToNext();
     }

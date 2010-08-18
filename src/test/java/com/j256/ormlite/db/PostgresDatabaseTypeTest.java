@@ -24,7 +24,7 @@ public class PostgresDatabaseTypeTest extends BaseDatabaseTest {
 	@Override
 	protected void setDatabaseParams() throws SQLException {
 		databaseUrl = "jdbc:postgresql:ormlitepostgres";
-		dataSource = DatabaseTypeUtils.createSimpleDataSource(DEFAULT_DATABASE_URL);
+		connectionSource = DatabaseTypeUtils.createJdbcConnectionSource(DEFAULT_DATABASE_URL);
 	}
 
 	@Override

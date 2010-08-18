@@ -4,12 +4,32 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+import com.j256.ormlite.field.JdbcType;
+
 /**
  * A reduction of the SQL ResultSet so we can implement it outside of JDBC.
  * 
  * @author graywatson
  */
 public interface Results {
+
+	/**
+	 * Returns the number of columns in these results.
+	 */
+	public int getColumnCount() throws SQLException;
+
+	/**
+	 * Get the designated column's name.
+	 * 
+	 * @param column
+	 *            The first column is 1, the second is 2, ...
+	 */
+	public String getColumnName(int column) throws SQLException;
+
+	/**
+	 * Returns the type of column in these results.
+	 */
+	public JdbcType getColumnType(int column) throws SQLException;
 
 	/**
 	 * Moves to the next result.

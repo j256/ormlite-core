@@ -69,12 +69,12 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 	public void before() throws Exception {
 		super.before();
 		fooDao = createDao(Foo.class, true);
-		assertEquals(Foo.class, ((BaseJdbcDao<Foo, Integer>) fooDao).getDataClass());
+		assertEquals(Foo.class, ((BaseDaoImpl<Foo, Integer>) fooDao).getDataClass());
 	}
 
 	@Test
 	public void testCreateDaoStatic() throws Exception {
-		Dao<Foo, Integer> fooDao = BaseJdbcDao.createDao(databaseType, dataSource, Foo.class);
+		Dao<Foo, Integer> fooDao = BaseDaoImpl.createDao(databaseType, connectionSource, Foo.class);
 		String stuff = "stuff";
 		Foo foo = new Foo();
 		foo.stuff = stuff;
@@ -436,7 +436,7 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 
 	@Test
 	public void testSpringConstruction() throws Exception {
-		BaseJdbcDao<Foo, Integer> fooDao = new BaseJdbcDao<Foo, Integer>(Foo.class) {
+		BaseDaoImpl<Foo, Integer> fooDao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		try {
 			fooDao.create(new Foo());
@@ -444,7 +444,7 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 		} catch (NullPointerException e) {
 			// expected
 		}
-		fooDao.setDataSource(dataSource);
+		fooDao.setConnectionSource(connectionSource);
 		fooDao.setDatabaseType(databaseType);
 		fooDao.initialize();
 		Foo foo = new Foo();

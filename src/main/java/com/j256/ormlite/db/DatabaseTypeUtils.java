@@ -7,8 +7,8 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.misc.SqlExceptionUtil;
-import com.j256.ormlite.support.SimpleDataSource;
 
 /**
  * Utility class which helps with managing database specific classes.
@@ -34,13 +34,6 @@ public class DatabaseTypeUtils {
 		addDriver(SqlServerJtdsDatabaseType.class);
 		addDriver(Db2DatabaseType.class);
 		addDriver(SqlDroidDatabaseType.class);
-		/*
-		 * duplicates to previous URL parts
-		 */
-		// same as DerbyEmbeddedDatabaseType
-		addDriver(DerbyClientServerDatabaseType.class);
-		// same as SqliteDatabaseType
-		addDriver(SqliteAndroidDatabaseType.class);
 	}
 
 	/**
@@ -75,22 +68,22 @@ public class DatabaseTypeUtils {
 	 * @throws SQLException
 	 *             If there are problems constructing the {@link DataSource}.
 	 */
-	public static SimpleDataSource createSimpleDataSource(String databaseUrl) throws SQLException {
-		return createSimpleDataSource(databaseUrl, null, null);
+	public static JdbcConnectionSource createJdbcConnectionSource(String databaseUrl) throws SQLException {
+		return createJdbcConnectionSource(databaseUrl, null, null);
 	}
 
 	/**
-	 * Creates and returns a {@link SimpleDataSource} associated with the databaseUrl and optional userName and
+	 * Creates and returns a {@link JdbcConnectionSource} associated with the databaseUrl and optional userName and
 	 * password. Calls {@link #loadDriver} as well.
 	 * 
 	 * @throws SQLException
 	 *             If there are problems constructing the {@link DataSource}.
 	 */
-	public static SimpleDataSource createSimpleDataSource(String databaseUrl, String userName, String password)
+	public static JdbcConnectionSource createJdbcConnectionSource(String databaseUrl, String userName, String password)
 			throws SQLException {
 		try {
 			loadDriver(databaseUrl);
-			return new SimpleDataSource(databaseUrl, userName, password);
+			return new JdbcConnectionSource(databaseUrl, userName, password);
 		} catch (Exception e) {
 			throw SqlExceptionUtil.create("Problems creating simple dataSource from " + databaseUrl, e);
 		}
@@ -114,14 +107,6 @@ public class DatabaseTypeUtils {
 		} catch (Exception e) {
 			throw new IllegalArgumentException("Problems calling constructor " + constructor, e);
 		}
-	}
-
-	/**
-	 * Creates and returns a DatabaseType associated with a DataSource. This has to make a connection with the
-	 * DataSource so it can get meta-data which has the URL. Use of {@link #createDatabaseType(String)} is recommended.
-	 */
-	public static DatabaseType createDatabaseType(DataSource dataSource) throws SQLException {
-		return createDatabaseType(dataSource.getConnection().getMetaData().getURL());
 	}
 
 	private static void addDriver(Class<? extends DatabaseType> dbClass) {

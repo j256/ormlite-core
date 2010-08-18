@@ -10,7 +10,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseOrmLiteTest;
-import com.j256.ormlite.dao.BaseJdbcDao;
+import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 
@@ -28,10 +28,10 @@ public class TableCreatorTest extends BaseOrmLiteTest {
 
 		TableCreator tableCreator = new TableCreator();
 		tableCreator.setDatabaseType(databaseType);
-		tableCreator.setDataSource(dataSource);
+		tableCreator.setConnectionSource(connectionSource);
 
-		List<BaseJdbcDao<?, ?>> daoList = new ArrayList<BaseJdbcDao<?, ?>>();
-		daoList.add((BaseJdbcDao<?, ?>) fooDao);
+		List<BaseDaoImpl<?, ?>> daoList = new ArrayList<BaseDaoImpl<?, ?>>();
+		daoList.add((BaseDaoImpl<?, ?>) fooDao);
 		tableCreator.setConfiguredDaos(daoList);
 		try {
 			System.setProperty(TableCreator.AUTO_CREATE_TABLES, Boolean.TRUE.toString());
@@ -67,7 +67,7 @@ public class TableCreatorTest extends BaseOrmLiteTest {
 	public void testNoConfiguredDaos() throws Exception {
 		TableCreator tableCreator = new TableCreator();
 		tableCreator.setDatabaseType(databaseType);
-		tableCreator.setDataSource(dataSource);
+		tableCreator.setConnectionSource(connectionSource);
 
 		try {
 			System.setProperty(TableCreator.AUTO_CREATE_TABLES, Boolean.TRUE.toString());

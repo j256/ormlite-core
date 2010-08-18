@@ -2,7 +2,6 @@ package com.j256.ormlite.stmt.mapped;
 
 import static org.junit.Assert.assertEquals;
 
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +13,6 @@ import com.j256.ormlite.BaseOrmLiteTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.jdbc.JdbcResults;
 import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.support.PreparedStmt;
 import com.j256.ormlite.support.Results;
@@ -36,12 +34,12 @@ public class MappedPreparedQueryTest extends BaseOrmLiteTest {
 				new MappedPreparedQuery<Foo>(tableInfo, null, new ArrayList<FieldType>(),
 						Arrays.asList(tableInfo.getFieldTypes()), new ArrayList<SelectArg>(), null);
 
-		PreparedStatement stmt = dataSource.getConnection().prepareStatement("select * from " + TABLE_NAME);
+		PreparedStmt stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
 		if (!stmt.execute()) {
 			return;
 		}
 
-		Results results = new JdbcResults(stmt.getResultSet());
+		Results results = stmt.getResults();
 		while (results.next()) {
 			Foo foo2 = rowMapper.mapRow(results);
 			assertEquals(foo1.id, foo2.id);

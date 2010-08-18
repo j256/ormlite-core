@@ -23,7 +23,7 @@ public class TransactionManagerTest extends BaseOrmLiteTest {
 		String stuff = "stuff";
 		foo1.stuff = stuff;
 		assertEquals(1, fooDao.create(foo1));
-		TransactionManager mgr = new TransactionManager(dataSource);
+		TransactionManager mgr = new TransactionManager(connectionSource);
 		final int returnVal = 284234832;
 		int val = mgr.callInTransaction(new Callable<Integer>() {
 			public Integer call() throws Exception {
@@ -42,31 +42,31 @@ public class TransactionManagerTest extends BaseOrmLiteTest {
 
 	@Test
 	public void testRollBack() throws Exception {
-		if (dataSource == null) {
+		if (connectionSource == null) {
 			return;
 		}
-		TransactionManager mgr = new TransactionManager(dataSource);
+		TransactionManager mgr = new TransactionManager(connectionSource);
 		testTransactionManager(mgr, new RuntimeException("What!!  I protest!!"));
 	}
 
 	@Test
 	public void testSpringWiredRollBack() throws Exception {
-		if (dataSource == null) {
+		if (connectionSource == null) {
 			return;
 		}
 		TransactionManager mgr = new TransactionManager();
-		mgr.setDataSource(dataSource);
+		mgr.setConnectionSource(connectionSource);
 		mgr.initialize();
 		testTransactionManager(mgr, new RuntimeException("What!!  I protest!!"));
 	}
 
 	@Test
 	public void testNonRuntimeExceptionWiredRollBack() throws Exception {
-		if (dataSource == null) {
+		if (connectionSource == null) {
 			return;
 		}
 		TransactionManager mgr = new TransactionManager();
-		mgr.setDataSource(dataSource);
+		mgr.setConnectionSource(connectionSource);
 		mgr.initialize();
 		testTransactionManager(mgr, new Exception("What!!  I protest via an Exception!!"));
 	}

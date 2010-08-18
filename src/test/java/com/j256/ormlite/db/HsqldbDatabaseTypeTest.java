@@ -17,7 +17,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.j256.ormlite.TestUtils;
-import com.j256.ormlite.dao.BaseJdbcDao;
+import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -30,7 +30,7 @@ public class HsqldbDatabaseTypeTest extends BaseDatabaseTest {
 	@Override
 	protected void setDatabaseParams() throws SQLException {
 		databaseUrl = "jdbc:hsqldb:ormlite";
-		dataSource = DatabaseTypeUtils.createSimpleDataSource(DEFAULT_DATABASE_URL);
+		connectionSource = DatabaseTypeUtils.createJdbcConnectionSource(DEFAULT_DATABASE_URL);
 	}
 
 	@Override
@@ -134,9 +134,9 @@ public class HsqldbDatabaseTypeTest extends BaseDatabaseTest {
 	@Override
 	@Test
 	public void testLimitFormat() throws Exception {
-		BaseJdbcDao<Foo, String> dao = new BaseJdbcDao<Foo, String>(databaseType, Foo.class) {
+		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(databaseType, Foo.class) {
 		};
-		dao.setDataSource(dataSource);
+		dao.setConnectionSource(connectionSource);
 		dao.initialize();
 		QueryBuilder<Foo, String> qb = dao.queryBuilder();
 		int limit = 1232;

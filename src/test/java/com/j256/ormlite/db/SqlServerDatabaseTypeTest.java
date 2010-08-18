@@ -8,14 +8,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.junit.Test;
 
 import com.j256.ormlite.TestUtils;
-import com.j256.ormlite.dao.BaseJdbcDao;
+import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableInfo;
 
 public class SqlServerDatabaseTypeTest extends BaseDatabaseTest {
@@ -23,7 +22,7 @@ public class SqlServerDatabaseTypeTest extends BaseDatabaseTest {
 	@Override
 	protected void setDatabaseParams() throws SQLException {
 		databaseUrl = "jdbc:sqlserver:db";
-		dataSource = DatabaseTypeUtils.createSimpleDataSource(DEFAULT_DATABASE_URL);
+		connectionSource = DatabaseTypeUtils.createJdbcConnectionSource(DEFAULT_DATABASE_URL);
 	}
 
 	@Override
@@ -52,9 +51,9 @@ public class SqlServerDatabaseTypeTest extends BaseDatabaseTest {
 	@Override
 	@Test
 	public void testLimitFormat() throws Exception {
-		BaseJdbcDao<Foo, String> dao = new BaseJdbcDao<Foo, String>(databaseType, Foo.class) {
+		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(databaseType, Foo.class) {
 		};
-		dao.setDataSource(createMock(DataSource.class));
+		dao.setConnectionSource(createMock(ConnectionSource.class));
 		dao.initialize();
 		QueryBuilder<Foo, String> qb = dao.queryBuilder();
 		int limit = 1232;

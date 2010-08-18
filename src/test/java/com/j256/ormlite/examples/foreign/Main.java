@@ -6,18 +6,17 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.db.DatabaseTypeUtils;
 import com.j256.ormlite.examples.common.Account;
 import com.j256.ormlite.examples.common.AccountDao;
-import com.j256.ormlite.examples.common.AccountJdbcDao;
+import com.j256.ormlite.examples.common.AccountDaoImpl;
 import com.j256.ormlite.examples.common.Order;
 import com.j256.ormlite.examples.common.OrderDao;
-import com.j256.ormlite.examples.common.OrderJdbcDao;
+import com.j256.ormlite.examples.common.OrderDaoImpl;
+import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.support.SimpleDataSource;
+import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
 /**
@@ -37,18 +36,18 @@ public class Main {
 	}
 
 	private void doMain(String[] args) throws Exception {
-		SimpleDataSource dataSource = null;
+		JdbcConnectionSource connectionSource = null;
 		try {
 			// create our data source
-			dataSource = DatabaseTypeUtils.createSimpleDataSource(DATABASE_URL);
+			connectionSource = DatabaseTypeUtils.createJdbcConnectionSource(DATABASE_URL);
 			// setup our database and DAOs
-			setupDatabase(dataSource);
+			setupDatabase(DATABASE_URL, connectionSource);
 			// read and write some data
 			readWriteData();
 		} finally {
 			// destroy the data source which should close underlying connections
-			if (dataSource != null) {
-				dataSource.destroy();
+			if (connectionSource != null) {
+				connectionSource.destroy();
 			}
 		}
 	}
@@ -56,26 +55,26 @@ public class Main {
 	/**
 	 * Setup our database and DAOs
 	 */
-	private void setupDatabase(DataSource dataSource) throws Exception {
+	private void setupDatabase(String databaseUrl, ConnectionSource connectionSource) throws Exception {
 
-		DatabaseType databaseType = DatabaseTypeUtils.createDatabaseType(dataSource);
+		DatabaseType databaseType = DatabaseTypeUtils.createDatabaseType(databaseUrl);
 		databaseType.loadDriver();
 
-		AccountJdbcDao accountJdbcDao = new AccountJdbcDao();
+		AccountDaoImpl accountJdbcDao = new AccountDaoImpl();
 		accountJdbcDao.setDatabaseType(databaseType);
-		accountJdbcDao.setDataSource(dataSource);
+		accountJdbcDao.setConnectionSource(connectionSource);
 		accountJdbcDao.initialize();
 		accountDao = accountJdbcDao;
 
-		OrderJdbcDao orderJdbcDao = new OrderJdbcDao();
+		OrderDaoImpl orderJdbcDao = new OrderDaoImpl();
 		orderJdbcDao.setDatabaseType(databaseType);
-		orderJdbcDao.setDataSource(dataSource);
+		orderJdbcDao.setConnectionSource(connectionSource);
 		orderJdbcDao.initialize();
 		orderDao = orderJdbcDao;
 
 		// if you need to create the table
-		TableUtils.createTable(databaseType, dataSource, Account.class);
-		TableUtils.createTable(databaseType, dataSource, Order.class);
+		TableUtils.createTable(databaseType, connectionSource, Account.class);
+		TableUtils.createTable(databaseType, connectionSource, Order.class);
 	}
 
 	private void readWriteData() throws Exception {

@@ -3,9 +3,11 @@ package com.j256.ormlite.jdbc;
 import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+import com.j256.ormlite.field.JdbcType;
 import com.j256.ormlite.support.Results;
 
 /**
@@ -16,9 +18,32 @@ import com.j256.ormlite.support.Results;
 public class JdbcResults implements Results {
 
 	private ResultSet resultSet;
+	private ResultSetMetaData metaData = null;
 
 	public JdbcResults(ResultSet resultSet) {
 		this.resultSet = resultSet;
+	}
+
+	public int getColumnCount() throws SQLException {
+		if (metaData == null) {
+			metaData = resultSet.getMetaData();
+		}
+		return metaData.getColumnCount();
+	}
+
+	public String getColumnName(int column) throws SQLException {
+		if (metaData == null) {
+			metaData = resultSet.getMetaData();
+		}
+		return metaData.getColumnName(column);
+	}
+
+	public JdbcType getColumnType(int column) throws SQLException {
+		if (metaData == null) {
+			metaData = resultSet.getMetaData();
+		}
+		int typeVal = metaData.getColumnType(column);
+		return JdbcType.lookupIdTypeVal(typeVal);
 	}
 
 	public int findColumn(String columnName) throws SQLException {

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.j256.ormlite.dao.BaseJdbcDao;
+import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.RawResults;
@@ -160,7 +160,7 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Create and return a SelectIterator for the class using the default mapped query for all statement.
 	 */
-	public SelectIterator<T, ID> buildIterator(BaseJdbcDao<T, ID> classDao, DatabaseAccess databaseAccess)
+	public SelectIterator<T, ID> buildIterator(BaseDaoImpl<T, ID> classDao, DatabaseAccess databaseAccess)
 			throws SQLException {
 		return buildIterator(classDao, databaseAccess, preparedQueryForAll);
 	}
@@ -168,7 +168,7 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Create and return an {@link SelectIterator} for the class using a prepared query.
 	 */
-	public SelectIterator<T, ID> buildIterator(BaseJdbcDao<T, ID> classDao, DatabaseAccess databaseAccess,
+	public SelectIterator<T, ID> buildIterator(BaseDaoImpl<T, ID> classDao, DatabaseAccess databaseAccess,
 			PreparedQuery<T> preparedQuery) throws SQLException {
 		return new SelectIterator<T, ID>(dataClass, classDao, preparedQuery,
 				preparedQuery.prepareSqlStatement(databaseAccess), preparedQuery.getStatement());

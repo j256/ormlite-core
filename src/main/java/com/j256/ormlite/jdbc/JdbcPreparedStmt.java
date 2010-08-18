@@ -22,14 +22,6 @@ public class JdbcPreparedStmt implements PreparedStmt {
 		this.preparedStatement = preparedStatement;
 	}
 
-	public void close() throws SQLException {
-		preparedStatement.close();
-	}
-
-	public boolean execute() throws SQLException {
-		return preparedStatement.execute();
-	}
-
 	public int getColumnCount() throws SQLException {
 		if (metaData == null) {
 			metaData = preparedStatement.getMetaData();
@@ -44,12 +36,16 @@ public class JdbcPreparedStmt implements PreparedStmt {
 		return metaData.getColumnName(column);
 	}
 
-	public boolean getMoreResults() throws SQLException {
-		return preparedStatement.getMoreResults();
+	public boolean execute() throws SQLException {
+		return preparedStatement.execute();
 	}
 
-	public Results getResults() throws SQLException {
-		return new JdbcResults(preparedStatement.getResultSet());
+	public int executeUpdate() throws SQLException {
+		return preparedStatement.executeUpdate();
+	}
+
+	public Results executeQuery() throws SQLException {
+		return new JdbcResults(preparedStatement.executeQuery());
 	}
 
 	public String getWarning() throws SQLException {
@@ -61,8 +57,20 @@ public class JdbcPreparedStmt implements PreparedStmt {
 		}
 	}
 
-	public void setMaxRows(int max) throws SQLException {
-		preparedStatement.setMaxRows(max);
+	public boolean getMoreResults() throws SQLException {
+		return preparedStatement.getMoreResults();
+	}
+
+	public Results getResults() throws SQLException {
+		return new JdbcResults(preparedStatement.getResultSet());
+	}
+
+	public Results getGeneratedKeys() throws SQLException {
+		return new JdbcResults(preparedStatement.getGeneratedKeys());
+	}
+
+	public void close() throws SQLException {
+		preparedStatement.close();
 	}
 
 	public void setNull(int parameterIndex, int sqlType) throws SQLException {
@@ -71,5 +79,9 @@ public class JdbcPreparedStmt implements PreparedStmt {
 
 	public void setObject(int parameterIndex, Object x, int targetSqlType) throws SQLException {
 		preparedStatement.setObject(parameterIndex, x, targetSqlType);
+	}
+
+	public void setMaxRows(int max) throws SQLException {
+		preparedStatement.setMaxRows(max);
 	}
 }

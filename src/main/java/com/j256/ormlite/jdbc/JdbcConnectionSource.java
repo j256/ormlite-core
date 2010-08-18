@@ -1,19 +1,17 @@
-package com.j256.ormlite.support;
+package com.j256.ormlite.jdbc;
 
-import java.io.PrintWriter;
-import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import javax.sql.DataSource;
-
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
+import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.support.DatabaseConnection;
 
 /**
- * Implementation of the {@link DataSource} interface that supports what is needed by ORMLite. This is not thread-safe
- * nor synchronized. For multi-threaded, high-performance data sources, see Apache DBCP, CP30, or BoneCP.
+ * Implementation of the ConnectionSource interface that supports what is needed by ORMLite. This is not thread-safe nor
+ * synchronized. For other dataSources, see the {@link DataSourceConnectionSource} class.
  * 
  * <p>
  * <b> NOTE: </b> If you are using the Spring type wiring in Java, {@link #initialize} should be called after all of the
@@ -22,36 +20,33 @@ import com.j256.ormlite.logger.LoggerFactory;
  * 
  * @author graywatson
  */
-public class SimpleDataSource implements DataSource {
+public class JdbcConnectionSource implements ConnectionSource {
 
-	private static Logger logger = LoggerFactory.getLogger(SimpleDataSource.class);
-
-	private PrintWriter printWriter = new PrintWriter(System.out);
-	private int loginTimeoutSecs = 3600;
+	private static Logger logger = LoggerFactory.getLogger(JdbcConnectionSource.class);
 
 	private String url;
 	private String username;
 	private String password;
-	private Connection connection;
+	private JdbcDatabaseConnection connection;
 
 	/**
 	 * Constructor for Spring type wiring if you are using the set methods.
 	 */
-	public SimpleDataSource() {
+	public JdbcConnectionSource() {
 		// for spring wiring
 	}
 
 	/**
 	 * Create a data source for a particular database URL.
 	 */
-	public SimpleDataSource(String url) {
+	public JdbcConnectionSource(String url) {
 		this.url = url;
 	}
 
 	/**
 	 * Create a data source for a particular database URL with username and password permissions.
 	 */
-	public SimpleDataSource(String url, String username, String password) {
+	public JdbcConnectionSource(String url, String username, String password) {
 		this.url = url;
 		this.username = username;
 		this.password = password;
@@ -92,11 +87,19 @@ public class SimpleDataSource implements DataSource {
 		this.url = url;
 	}
 
-	public Connection getConnection() throws SQLException {
-		return getConnection(username, password);
+	public DatabaseConnection getReadOnlyConnection() throws SQLException {
+		return getReadWriteConnection();
 	}
 
-	public Connection getConnection(String username, String password) throws SQLException {
+	public DatabaseConnection getReadOnlyConnection(String username, String password) throws SQLException {
+		return getReadWriteConnection(username, password);
+	}
+
+	public DatabaseConnection getReadWriteConnection() throws SQLException {
+		return getReadWriteConnection(username, password);
+	}
+
+	public DatabaseConnection getReadWriteConnection(String username, String password) throws SQLException {
 		if (connection != null) {
 			if (connection.isClosed()) {
 				throw new SQLException("Connection has already been closed");
@@ -112,7 +115,7 @@ public class SimpleDataSource implements DataSource {
 			properties.setProperty("password", password);
 		}
 		logger.debug("opening connection to {}", url);
-		connection = DriverManager.getConnection(url, properties);
+		connection = new JdbcDatabaseConnection(DriverManager.getConnection(url, properties));
 		if (connection == null) {
 			// may never get here but let's be careful
 			throw new SQLException("Could not establish connection to database URL: " + url);
@@ -121,41 +124,11 @@ public class SimpleDataSource implements DataSource {
 		}
 	}
 
-	public PrintWriter getLogWriter() {
-		return printWriter;
-	}
-
-	public void setLogWriter(PrintWriter printWriter) {
-		this.printWriter = printWriter;
-	}
-
-	public int getLoginTimeout() {
-		return loginTimeoutSecs;
-	}
-
-	public void setLoginTimeout(int loginTimeoutSecs) {
-		this.loginTimeoutSecs = loginTimeoutSecs;
-	}
-
 	public void setUsername(String username) {
 		this.username = username;
 	}
 
 	public void setPassword(String password) {
 		this.password = password;
-	}
-
-	/**
-	 * NOTE: this is part of the Java6 JDK definition for {@link DataSource}.
-	 */
-	public boolean isWrapperFor(Class<?> iface) throws SQLException {
-		return false;
-	}
-
-	/**
-	 * NOTE: this is part of the Java6 JDK definition for {@link DataSource}.
-	 */
-	public <T> T unwrap(Class<T> iface) throws SQLException {
-		return null;
 	}
 }

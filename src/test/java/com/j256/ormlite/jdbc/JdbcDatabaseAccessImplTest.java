@@ -18,7 +18,7 @@ public class JdbcDatabaseAccessImplTest extends BaseOrmLiteTest {
 
 	@Test
 	public void testQueryForLong() throws Exception {
-		DatabaseAccess template = new JdbcDatabaseAccess(dataSource);
+		DatabaseAccess template = new JdbcDatabaseAccess(connectionSource);
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		long id = 21321321L;
@@ -29,14 +29,14 @@ public class JdbcDatabaseAccessImplTest extends BaseOrmLiteTest {
 
 	@Test(expected = SQLException.class)
 	public void testQueryForLongNoResult() throws Exception {
-		DatabaseAccess template = new JdbcDatabaseAccess(dataSource);
+		DatabaseAccess template = new JdbcDatabaseAccess(connectionSource);
 		createDao(Foo.class, true);
 		template.queryForLong("select id from foo");
 	}
 
 	@Test(expected = SQLException.class)
 	public void testQueryForLongTooManyResults() throws Exception {
-		DatabaseAccess template = new JdbcDatabaseAccess(dataSource);
+		DatabaseAccess template = new JdbcDatabaseAccess(connectionSource);
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		long id = 21321321L;
@@ -49,7 +49,7 @@ public class JdbcDatabaseAccessImplTest extends BaseOrmLiteTest {
 
 	@Test
 	public void testQueryKeyHolderNoKeys() throws Exception {
-		DatabaseAccess template = new JdbcDatabaseAccess(dataSource);
+		DatabaseAccess template = new JdbcDatabaseAccess(connectionSource);
 		createDao(Foo.class, true);
 		GeneratedKeyHolder keyHolder = createMock(GeneratedKeyHolder.class);
 		template.insert("insert into foo (id) values (1)", new Object[0], new int[0], keyHolder);

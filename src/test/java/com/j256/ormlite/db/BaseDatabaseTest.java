@@ -69,8 +69,8 @@ public abstract class BaseDatabaseTest extends BaseOrmLiteTest {
 		assertEquals(0, dbDir.list().length);
 		closeConnection();
 		String dbUrl = "jdbc:h2:" + dbDir.getPath() + "/" + DATABASE_NAME;
-		dataSource = DatabaseTypeUtils.createSimpleDataSource(dbUrl);
-		dataSource.getConnection();
+		connectionSource = DatabaseTypeUtils.createJdbcConnectionSource(dbUrl);
+		connectionSource.getReadWriteConnection();
 		databaseType = DatabaseTypeUtils.createDatabaseType(dbUrl);
 		assertTrue(dbDir.list().length != 0);
 	}

@@ -5,9 +5,9 @@ import static org.junit.Assert.assertEquals;
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 
-import javax.sql.DataSource;
-
 import org.junit.Test;
+
+import com.j256.ormlite.support.ConnectionSource;
 
 public class DatabaseTypeUtilsTest {
 
@@ -32,12 +32,12 @@ public class DatabaseTypeUtilsTest {
 
 	@Test
 	public void testSimpleDataSource() throws Exception {
-		DatabaseTypeUtils.createSimpleDataSource("jdbc:h2:mem:ormlitetest").getConnection().close();
+		DatabaseTypeUtils.createJdbcConnectionSource("jdbc:h2:mem:ormlitetest").getReadOnlyConnection().close();
 	}
 
 	@Test(expected = SQLException.class)
 	public void testSimpleDataSourceBadDriverArgs() throws Exception {
-		DatabaseTypeUtils.createSimpleDataSource("jdbc:h2:").getConnection();
+		DatabaseTypeUtils.createJdbcConnectionSource("jdbc:h2:").getReadOnlyConnection();
 	}
 
 	@Test
@@ -62,13 +62,14 @@ public class DatabaseTypeUtilsTest {
 
 	@Test
 	public void testCreateDbTypeDataSource() throws Exception {
-		DataSource dataSource = null;
+		ConnectionSource dataSource = null;
 		try {
-			dataSource = DatabaseTypeUtils.createSimpleDataSource("jdbc:h2:mem:ormlitetest");
-			DatabaseTypeUtils.createDatabaseType(dataSource);
+			String dbUrl = "jdbc:h2:mem:ormlitetest";
+			dataSource = DatabaseTypeUtils.createJdbcConnectionSource(dbUrl);
+			DatabaseTypeUtils.createDatabaseType(dbUrl);
 		} finally {
 			if (dataSource != null) {
-				dataSource.getConnection().close();
+				dataSource.getReadOnlyConnection().close();
 			}
 		}
 	}

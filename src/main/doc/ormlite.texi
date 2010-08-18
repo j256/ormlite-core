@@ -5,7 +5,7 @@
 @setchapternewpage odd
 @headings double
 @c %**end of header
-  
+
 @dircategory Libraries
 @direntry
 * ORMLite: (orm lite).			Lightweight ORM package.
@@ -126,7 +126,7 @@ Gray Watson @uref{http://256.com/gray/}
 * Class Setup::                 How to setup your classes to be persisted.
 * Persisted Types::             Data types that can be persisted.
 * DAOs::                        How to configure the Database Access Objects.
-* DataSource::                  Setting up your JDBC data source.
+* DataSource::                  Setting up connections to databases.
 * Database Type::               Defining your database type.
 * Complete Wiring::             Tying all of the wiring together.
 @end menu
@@ -616,9 +616,9 @@ per-database flavor class.  @xref{Database Type}.  Example:
 @cindex jdbc dao implementation
 @example
 /** JDBC implementation of the AccountDao interface. */
-public class AccountJdbcDao extends BaseJdbcDao<Account, String>
+public class AccountDaoImpl extends BaseDaoImpl<Account, String>
   implements AccountDao @{
-    public AccountJdbcDao(DatabaseType databaseType) @{
+    public AccountDaoImpl(DatabaseType databaseType) @{
         super(databaseType, Account.class);
     @}
 @}
@@ -630,59 +630,74 @@ More on how to use these DAOs later. @xref{DAO Usage}.
 
 @cindex createDao method
 You are not @emph{required} to create a DAO class for every one of your persisted objects.  You can use the
-@code{createDao} static method on the @code{BaseJdbcDao} class to create a DAO class without having to define
+@code{createDao} static method on the @code{BaseDaoImpl} class to create a DAO class without having to define
 one.  For example:
 
 @example
 Dao<Account, String> accountDao =
-  BaseJdbcDao.createDao(databaseType, dataSource, Account.class);
+  BaseDaoImpl.createDao(databaseType, connectionSource, Account.class);
 Dao<Order, Integer> orderDao =
-  BaseJdbcDao.createDao(databaseType, dataSource, Order.class);
+  BaseDaoImpl.createDao(databaseType, connectionSource, Order.class);
 @end example
 
 @c ----------------------------------------------------------------
 @node DataSource, Database Type, DAOs, Getting Started
-@section JDBC Data Sources
+@section Data Sources and Connection Sources
 
 @cindex data source
+@cindex connection source
 @cindex database connection
-@cindex simple data source
+@cindex simple connection source
 To use the database and the DAO objects, you will need to configure what JDBC calls a @code{DataSource} (see the
 @code{javax.sql.DataSource} class).  The @code{DataSource} is a factory for connections to the physical SQL
-database.  Here is a code example that creates a simple data source.
+database.  Since @value{package} also supports non-JDBC connections, we use a subset of the @code{DataSource}
+methods in the @code{ConnectionSource} interface.  Here is a code example that creates a simple connection source.
 
 @cindex DatabaseTypeUtils
-@cindex simple data source
-@cindex data source, simple
+@cindex connection source, simple
 @example
-// single connection data source example
-DataSource dataSource =
-  DatabaseTypeUtils.createSimpleDataSource("jdbc:h2:mem:account");
+// single connection source example
+ConnectionSource connectionSource =
+  DatabaseTypeUtils.createJdbcConnectionSource("jdbc:h2:mem:account");
 @end example
 
 @cindex pooled connections
 @cindex connection pooling
 There are many other data sources that can be used instead, including pooled connections which will create new
 connections on demand and re-use existing dormant connections. You can instantiate your own without the
-@code{DatabaseTypeUtils} and set it on the DAOs directly.
+@code{DatabaseTypeUtils} and wrap it in the @code{DataSourceConnectionSource} which just delegates to it.  Then
+you set that on the DAOs directly.
+
+@cindex BasicDataSource
+@cindex DataSourceConnectionSource
+@example
+// basic Apache data source
+BasicDataSource dataSource = new BasicDataSource();
+dataSource.setUrl("jdbc:h2:mem:account");
+// we wrap it in the DataSourceConnectionSource
+Dao<Account, String> accountDao =
+  BaseDaoImpl.createDao(databaseType,
+     new DataSourceConnectionSource(dataSource), Account.class);
+@end example
 
 @cindex close data source
 @cindex destroy data source
-When you are done with your DataSource, you will want to call the close() or destroy() method to close any underlying 
-@code{java.sql.Connection} objects.  Something like the following pattern is recommended.
+When you are done with your @code{ConnectionSource} or @code{DataSource}, you will want to call a close() or destroy()
+method (if applicable) to close any underlying connections.  Something like the following pattern
+is recommended.
 
 @example
-SimpleDataSource dataSource = null;
+JdbcConnectionSource connectionSource = null;
 try @{
-    dataSource = new SimpleDataSource();
-    dataSource.setURL("jdbc:h2:mem:account");
-    dataSource.setUsername("billy");
-    dataSource.setPassword("_secret");
+    connectionSource = new JdbcConnectionSource();
+    connectionSource.setURL("jdbc:h2:mem:account");
+    connectionSource.setUsername("billy");
+    connectionSource.setPassword("_secret");
     // work with the data-source and DAOs
     @dots{}
 @} finally @{
-    if (dataSource != null) @{
-        dataSource.close();
+    if (connectionSource != null) @{
+        connectionSource.close();
     @}
 @}
 @end example
@@ -695,29 +710,16 @@ try @{
 @cindex DatabaseTypeUtils
 @value{package} works with a @code{DatabaseType} object which defines all of the per-database information necessary to
 support the various features on all of the different database types.  @xref{Database Type}.  To instantiate a
-@code{DatabaseType}, you can either use the @code{DatabaseTypeUtils} class or call your database class directly.  You
-can pass in the database URL or pass in an already created @code{DataSource} object:
+@code{DatabaseType}, you can either use the @code{DatabaseTypeUtils} class or call your database class directly.
 
-@table @asis
-
-@item use the DatabaseTypeUtils class with the database URI
 @example
+// use the DatabaseTypeUtils class with the database URI
 DatabaseType databaseType =
   DatabaseTypeUtils.createDatabaseType("jdbc:h2:mem:account");
-@end example
 
-@item use DatabaseTypeUtils with an already established javax.sql.DataSource
-@example
-DatabaseType databaseType =
-  DatabaseTypeUtils.createDatabaseType(dataSource);
-@end example
-
-@item instantiate a DatabaseType class directly 
-@example
+// _OR_ instantiate a DatabaseType class directly 
 DatabaseType databaseType = new H2DatabaseType();
 @end example
-
-@end table
 
 @cindex load database driver
 @cindex database driver load
@@ -743,21 +745,21 @@ your database objects.  The following code ties it all together:
 @example
 // h2 by default but change to match your database
 String databaseUrl = "jdbc:h2:mem:account";
-SimpleDataSource dataSource =
-  DatabaseTypeUtils.createSimpleDataSource(databaseUrl);
+JdbcConnectionSource connectionSource =
+  DatabaseTypeUtils.createJdbcConnectionSource(databaseUrl);
 DatabaseType databaseType =
-  DatabaseTypeUtils.createDatabaseType(dataSource);
+  DatabaseTypeUtils.createDatabaseType(databaseUrl);
 databaseType.loadDriver();
 
 // instantiate the dao
-AccountJdbcDao accountDao = new AccountJdbcDao();
+AccountDaoImpl accountDao = new AccountDaoImpl();
 accountDao.setDatabaseType(databaseType);
-accountDao.setDataSource(dataSource);
+accountDao.setConnectionSource(connectionSource);
 // _must_ make this call after the setters
 accountDao.initialize();
 
 // if you need to create the 'accounts' table make this call
-TableUtils.createTable(databaseType, dataSource, Account.class);
+TableUtils.createTable(databaseType, connectionSource, Account.class);
 
 // create an instance of Account
 Account account = new Account("Jim Coakley");
@@ -770,7 +772,7 @@ if (accountDao.create(account) != 1) @{
 // other code @dots{}
 
 // destroy the data source which should close underlying connections
-dataSource.destroy();
+connectionSource.destroy();
 @end example
 
 @cindex initialize
@@ -1304,8 +1306,8 @@ Here's an example of a full Spring configuration.
     factory-method="getDriverClassName" />
 
 <!-- datasource used by @value{package} to connect to the database -->
-<bean id="dataSource"
-    class="com.j256.ormlite.support.SimpleDataSource"
+<bean id="connectionSource"
+    class="com.j256.ormlite.jdbc.JdbcConnectionSource"
     init-method="initialize">
     <property name="url" ref="databaseUrl" />
     <!-- probably should use system properties for these too -->
@@ -1315,13 +1317,13 @@ Here's an example of a full Spring configuration.
 
 <!-- abstract dao that is common to all defined daos -->
 <bean id="baseDao" abstract="true" init-method="initialize">
-    <property name="dataSource" ref="dataSource" />
+    <property name="connectionSource" ref="connectionSource" />
     <property name="databaseType" ref="databaseType" />
 </bean>
 
 <!-- our daos -->
 <bean id="accountDao"
-    class="com.j256.ormlite.examples.common.AccountJdbcDao"
+    class="com.j256.ormlite.examples.common.AccountDaoImpl"
     parent="baseDao" />
 @end example
 
@@ -1351,12 +1353,12 @@ fieldConfigs.add(new DatabaseFieldConfig("password", null,
 DatabaseTableConfig<Account> accountTableConfig
     = new DatabaseTableConfig<Account>(Account.class, fieldConfigs);
 
-AccountJdbcDao accountJdbcDao = new AccountJdbcDao();
+AccountDaoImpl accountDao = new AccountDaoImpl();
 // set our table config on the dao
-accountJdbcDao.setTableConfig(accountTableConfig);
-accountJdbcDao.setDatabaseType(databaseType);
-accountJdbcDao.setDataSource(dataSource);
-accountJdbcDao.afterPropertiesSet();
+accountDao.setTableConfig(accountTableConfig);
+accountDao.setDatabaseType(databaseType);
+accountDao.setConnectionSource(connectionSource);
+accountDao.initialize();
 @end example
 
 @cindex spring wire a class

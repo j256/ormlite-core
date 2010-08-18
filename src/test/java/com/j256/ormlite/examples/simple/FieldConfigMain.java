@@ -6,19 +6,18 @@ import static org.junit.Assert.assertNotNull;
 import java.util.ArrayList;
 import java.util.Date;
 
-import javax.sql.DataSource;
-
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.db.DatabaseTypeUtils;
 import com.j256.ormlite.examples.common.Account;
 import com.j256.ormlite.examples.common.AccountDao;
-import com.j256.ormlite.examples.common.AccountJdbcDao;
+import com.j256.ormlite.examples.common.AccountDaoImpl;
 import com.j256.ormlite.examples.common.Delivery;
 import com.j256.ormlite.examples.common.DeliveryDao;
-import com.j256.ormlite.examples.common.DeliveryJdbcDao;
+import com.j256.ormlite.examples.common.DeliveryDaoImpl;
 import com.j256.ormlite.field.DatabaseFieldConfig;
 import com.j256.ormlite.field.JdbcType;
-import com.j256.ormlite.support.SimpleDataSource;
+import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableUtils;
 
@@ -39,18 +38,18 @@ public class FieldConfigMain {
 	}
 
 	private void doMain(String[] args) throws Exception {
-		SimpleDataSource dataSource = null;
+		JdbcConnectionSource connectionSource = null;
 		try {
 			// create our data-source for the database
-			dataSource = DatabaseTypeUtils.createSimpleDataSource(DATABASE_URL);
+			connectionSource = DatabaseTypeUtils.createJdbcConnectionSource(DATABASE_URL);
 			// setup our database and DAOs
-			setupDatabase(dataSource);
+			setupDatabase(DATABASE_URL, connectionSource);
 			// read and write some data
 			readWriteData();
 		} finally {
 			// destroy the data source which should close underlying connections
-			if (dataSource != null) {
-				dataSource.destroy();
+			if (connectionSource != null) {
+				connectionSource.destroy();
 			}
 		}
 	}
@@ -58,22 +57,22 @@ public class FieldConfigMain {
 	/**
 	 * Setup our database and DAOs
 	 */
-	private void setupDatabase(DataSource dataSource) throws Exception {
+	private void setupDatabase(String databaseUrl, ConnectionSource dataSource) throws Exception {
 
-		DatabaseType databaseType = DatabaseTypeUtils.createDatabaseType(dataSource);
+		DatabaseType databaseType = DatabaseTypeUtils.createDatabaseType(databaseUrl);
 		databaseType.loadDriver();
 
-		AccountJdbcDao accountJdbcDao = new AccountJdbcDao();
+		AccountDaoImpl accountJdbcDao = new AccountDaoImpl();
 		accountJdbcDao.setDatabaseType(databaseType);
-		accountJdbcDao.setDataSource(dataSource);
+		accountJdbcDao.setConnectionSource(dataSource);
 		accountJdbcDao.initialize();
 		accountDao = accountJdbcDao;
 
 		DatabaseTableConfig<Delivery> tableConfig = buildTableConfig();
-		DeliveryJdbcDao deliveryJdbcDao = new DeliveryJdbcDao();
+		DeliveryDaoImpl deliveryJdbcDao = new DeliveryDaoImpl();
 		deliveryJdbcDao.setTableConfig(tableConfig);
 		deliveryJdbcDao.setDatabaseType(databaseType);
-		deliveryJdbcDao.setDataSource(dataSource);
+		deliveryJdbcDao.setConnectionSource(dataSource);
 		deliveryJdbcDao.initialize();
 		deliveryDao = deliveryJdbcDao;
 

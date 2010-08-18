@@ -20,7 +20,7 @@ public class DerbyEmbeddedDatabaseTypeTest extends BaseDatabaseTest {
 	protected void setDatabaseParams() throws SQLException {
 		System.setProperty("derby.stream.error.file", "target/derby.log");
 		databaseUrl = "jdbc:derby:target/ormlitederby;create=true";
-		dataSource = DatabaseTypeUtils.createSimpleDataSource(DEFAULT_DATABASE_URL);
+		connectionSource = DatabaseTypeUtils.createJdbcConnectionSource(DEFAULT_DATABASE_URL);
 	}
 
 	@Override

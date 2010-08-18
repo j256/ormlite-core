@@ -54,8 +54,8 @@ public class H2DatabaseTypeTest extends BaseDatabaseTest {
 		// try to disable the retry feature which delays this test failure
 		System.setProperty("h2.socketConnectRetry", "0");
 		String dbUrl = "jdbc:h2:tcp://localhost:" + notTheRightPort + "/" + dbDir.getPath() + "/" + DATABASE_NAME;
-		dataSource = DatabaseTypeUtils.createSimpleDataSource(dbUrl);
-		dataSource.getConnection();
+		connectionSource = DatabaseTypeUtils.createJdbcConnectionSource(dbUrl);
+		connectionSource.getReadOnlyConnection();
 		DatabaseTypeUtils.createDatabaseType(dbUrl);
 	}
 }

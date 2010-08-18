@@ -2,7 +2,7 @@ package com.j256.ormlite.stmt;
 
 import java.sql.SQLException;
 
-import com.j256.ormlite.dao.BaseJdbcDao;
+import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.logger.Logger;
@@ -25,7 +25,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 	private final static Logger logger = LoggerFactory.getLogger(SelectIterator.class);
 
 	private final Class<T> dataClass;
-	private BaseJdbcDao<T, ID> classDao;
+	private BaseDaoImpl<T, ID> classDao;
 	private final PreparedStmt stmt;
 	private final Results results;
 	private final GenericRowMapper<T> rowMapper;
@@ -37,7 +37,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 	/**
 	 * If the statement parameter is null then this won't log information
 	 */
-	public SelectIterator(Class<T> dataClass, BaseJdbcDao<T, ID> classDao, GenericRowMapper<T> rowMapper,
+	public SelectIterator(Class<T> dataClass, BaseDaoImpl<T, ID> classDao, GenericRowMapper<T> rowMapper,
 			PreparedStmt preparedStatement, String statement) throws SQLException {
 		this.dataClass = dataClass;
 		this.classDao = classDao;

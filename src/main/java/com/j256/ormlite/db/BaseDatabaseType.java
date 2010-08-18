@@ -4,12 +4,11 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.jdbc.JdbcDatabaseAccess;
+import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseAccess;
 import com.j256.ormlite.support.Results;
 
@@ -30,11 +29,11 @@ public abstract class BaseDatabaseType implements DatabaseType {
 
 	protected final static FieldConverter booleanConverter = new BooleanNumberFieldConverter();
 
-	public DatabaseAccess buildDatabaseAccess(DataSource dataSource) {
-		if (dataSource == null) {
+	public DatabaseAccess buildDatabaseAccess(ConnectionSource connectionSource) {
+		if (connectionSource == null) {
 			return null;
 		} else {
-			return new JdbcDatabaseAccess(dataSource);
+			return new JdbcDatabaseAccess(connectionSource);
 		}
 	}
 

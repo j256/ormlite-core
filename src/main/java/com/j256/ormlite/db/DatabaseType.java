@@ -3,10 +3,9 @@ package com.j256.ormlite.db;
 import java.sql.PreparedStatement;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseAccess;
 
 /**
@@ -28,10 +27,10 @@ public interface DatabaseType {
 	public String getDriverClassName();
 
 	/**
-	 * Return a newly built database access object which possibly is attached to the provided data source. Returns null
-	 * if the dataSource was not set and it is required.
+	 * Return a newly built database access object which possibly is attached to the provided connection source. Returns
+	 * null if the connection source was not set and is required.
 	 */
-	public DatabaseAccess buildDatabaseAccess(DataSource dataSource);
+	public DatabaseAccess buildDatabaseAccess(ConnectionSource connectionSource);
 
 	/**
 	 * Load the driver class associated with this database so it can wire itself into JDBC.

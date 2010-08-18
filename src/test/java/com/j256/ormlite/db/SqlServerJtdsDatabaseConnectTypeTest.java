@@ -11,7 +11,7 @@ public class SqlServerJtdsDatabaseConnectTypeTest extends SqlServerDatabaseTypeT
 	@Override
 	protected void setDatabaseParams() throws SQLException {
 		databaseUrl = "jdbc:jtds:sqlserver://db/ormlite;ssl=request";
-		dataSource = DatabaseTypeUtils.createSimpleDataSource(DEFAULT_DATABASE_URL);
+		connectionSource = DatabaseTypeUtils.createJdbcConnectionSource(DEFAULT_DATABASE_URL);
 	}
 
 	@Override

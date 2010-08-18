@@ -13,8 +13,6 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.sql.DataSource;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -22,13 +20,14 @@ import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
-import com.j256.ormlite.dao.BaseJdbcDao;
+import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.db.DatabaseTypeUtils;
 import com.j256.ormlite.jdbc.JdbcDatabaseAccess;
+import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseAccess;
-import com.j256.ormlite.support.SimpleDataSource;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableUtils;
 
@@ -45,7 +44,7 @@ public abstract class BaseOrmLiteTest {
 	protected String userName = null;
 	protected String password = null;
 
-	protected static DataSource dataSource = null;
+	protected static ConnectionSource connectionSource = null;
 	protected static DatabaseAccess databaseAccess = null;
 	protected DatabaseType databaseType = null;
 	protected boolean isConnectionExpected = false;
@@ -67,17 +66,17 @@ public abstract class BaseOrmLiteTest {
 			url = databaseUrl;
 		}
 		databaseType = DatabaseTypeUtils.createDatabaseType(url);
-		if (dataSource == null) {
+		if (connectionSource == null) {
 			Class.forName(databaseType.getDriverClassName());
 			isConnectionExpected = isConnectionExpected();
 			if (isConnectionExpected) {
 				if (userName == null && password == null) {
-					dataSource = DatabaseTypeUtils.createSimpleDataSource(url);
+					connectionSource = DatabaseTypeUtils.createJdbcConnectionSource(url);
 				} else {
-					dataSource = DatabaseTypeUtils.createSimpleDataSource(url, userName, password);
+					connectionSource = DatabaseTypeUtils.createJdbcConnectionSource(url, userName, password);
 				}
 			}
-			databaseAccess = new JdbcDatabaseAccess(dataSource);
+			databaseAccess = new JdbcDatabaseAccess(connectionSource);
 		}
 	}
 
@@ -118,18 +117,18 @@ public abstract class BaseOrmLiteTest {
 	}
 
 	protected void closeConnection() throws Exception {
-		if (dataSource != null) {
+		if (connectionSource != null) {
 			for (DatabaseTableConfig<?> tableConfig : dropClassSet) {
 				dropTable(tableConfig, true);
 			}
 			try {
-				if (dataSource instanceof SimpleDataSource) {
-					((SimpleDataSource) dataSource).close();
+				if (connectionSource instanceof JdbcConnectionSource) {
+					((JdbcConnectionSource) connectionSource).close();
 				}
 			} catch (Exception e) {
 				// oh well, we tried
 			}
-			dataSource = null;
+			connectionSource = null;
 		}
 		databaseType = null;
 	}
@@ -139,7 +138,7 @@ public abstract class BaseOrmLiteTest {
 	}
 
 	protected <T, ID> Dao<T, ID> createDao(DatabaseTableConfig<T> tableConfig, boolean createTable) throws Exception {
-		BaseJdbcDao<T, ID> dao = new BaseJdbcDao<T, ID>(databaseType, tableConfig) {
+		BaseDaoImpl<T, ID> dao = new BaseDaoImpl<T, ID>(databaseType, tableConfig) {
 		};
 		return configDao(tableConfig, createTable, dao);
 	}
@@ -155,7 +154,7 @@ public abstract class BaseOrmLiteTest {
 		} catch (SQLException ignored) {
 			// ignore any errors about missing tables
 		}
-		TableUtils.createTable(databaseType, dataSource, tableConfig);
+		TableUtils.createTable(databaseType, connectionSource, tableConfig);
 		if (dropAtEnd) {
 			dropClassSet.add(tableConfig);
 		}
@@ -163,20 +162,20 @@ public abstract class BaseOrmLiteTest {
 
 	protected <T> void dropTable(Class<T> clazz, boolean ignoreErrors) throws Exception {
 		// drop the table and ignore any errors along the way
-		TableUtils.dropTable(databaseType, dataSource, clazz, ignoreErrors);
+		TableUtils.dropTable(databaseType, connectionSource, clazz, ignoreErrors);
 	}
 
 	protected <T> void dropTable(DatabaseTableConfig<T> tableConfig, boolean ignoreErrors) throws Exception {
 		// drop the table and ignore any errors along the way
-		TableUtils.dropTable(databaseType, dataSource, tableConfig, ignoreErrors);
+		TableUtils.dropTable(databaseType, connectionSource, tableConfig, ignoreErrors);
 	}
 
-	private <T, ID> Dao<T, ID> configDao(DatabaseTableConfig<T> tableConfig, boolean createTable, BaseJdbcDao<T, ID> dao)
+	private <T, ID> Dao<T, ID> configDao(DatabaseTableConfig<T> tableConfig, boolean createTable, BaseDaoImpl<T, ID> dao)
 			throws Exception {
-		if (dataSource == null) {
+		if (connectionSource == null) {
 			throw new SQLException(DATASOURCE_ERROR);
 		}
-		dao.setDataSource(dataSource);
+		dao.setConnectionSource(connectionSource);
 		if (createTable) {
 			createTable(tableConfig, true);
 		}
