@@ -1,85 +1,112 @@
 package com.j256.ormlite.android;
 
+import android.database.Cursor;
+import com.j256.ormlite.support.Results;
+
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.sql.Blob;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-import com.j256.ormlite.support.Results;
+import static com.j256.ormlite.android.AndroidHelper.androidToJdbc;
+import static com.j256.ormlite.android.AndroidHelper.jdbcToAndroid;
 
 /**
- * Implementation of the Results interface for Android systems.
- * 
- * @author ...
+ * Created by IntelliJ IDEA.
+ * User: kevin
+ * Date: Aug 17, 2010
+ * Time: 9:27:37 PM
+ * To change this template use File | Settings | File Templates.
  */
-public class AndroidResults implements Results {
+public class AndroidResults implements Results
+{
+    private Cursor cursor;
+    private AndroidConfiguration config;
 
-	public boolean next() throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    public AndroidResults(Cursor cursor, AndroidConfiguration config)
+    {
+        this.cursor = cursor;
+        this.config = config;
+    }
 
-	public int findColumn(String columnName) throws SQLException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    public boolean next() throws SQLException
+    {
+        return cursor.moveToNext();
+    }
 
-	public String getString(int columnIndex) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public int findColumn(String columnName) throws SQLException
+    {
+        return androidToJdbc(cursor.getColumnIndex(columnName));
+    }
 
-	public boolean getBoolean(int columnIndex) throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    public String getString(int columnIndex) throws SQLException
+    {
+        return cursor.getString(jdbcToAndroid(columnIndex));
+    }
 
-	public byte getByte(int columnIndex) throws SQLException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    public boolean getBoolean(int columnIndex) throws SQLException
+    {
+        int col = jdbcToAndroid(columnIndex);
+        if(cursor.isNull(col))
+            return false;
+        return cursor.getShort(col) != 0;
+    }
 
-	public byte[] getBytes(int columnIndex) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public byte getByte(int columnIndex) throws SQLException
+    {
+        return (byte) getShort(columnIndex);
+    }
 
-	public short getShort(int columnIndex) throws SQLException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    public byte[] getBytes(int columnIndex) throws SQLException
+    {
+        return cursor.getBlob(jdbcToAndroid(columnIndex));
+    }
 
-	public int getInt(int columnIndex) throws SQLException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    public short getShort(int columnIndex) throws SQLException
+    {
+        return cursor.getShort(jdbcToAndroid(columnIndex));
+    }
 
-	public long getLong(int columnIndex) throws SQLException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    public int getInt(int columnIndex) throws SQLException
+    {
+        return cursor.getInt(jdbcToAndroid(columnIndex));
+    }
 
-	public float getFloat(int columnIndex) throws SQLException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    public long getLong(int columnIndex) throws SQLException
+    {
+        return cursor.getLong(jdbcToAndroid(columnIndex));
+    }
 
-	public double getDouble(int columnIndex) throws SQLException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    public float getFloat(int columnIndex) throws SQLException
+    {
+        return cursor.getFloat(jdbcToAndroid(columnIndex));
+    }
 
-	public Timestamp getTimestamp(int columnIndex) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public double getDouble(int columnIndex) throws SQLException
+    {
+        return cursor.getDouble(jdbcToAndroid(columnIndex));
+    }
 
-	public InputStream getBlobStream(int columnIndex) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public Timestamp getTimestamp(int columnIndex) throws SQLException
+    {
+        try
+        {
+            return config.dateAdapter.fromDb(cursor, jdbcToAndroid(columnIndex));
+        }
+        catch (AdapterException e)
+        {
+            throw new SQLException(e);
+        }
+    }
 
-	public boolean isNull(int columnIndex) throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    public InputStream getBlobStream(int columnIndex) throws SQLException
+    {
+        return new ByteArrayInputStream(cursor.getBlob(jdbcToAndroid(columnIndex)));
+    }
+
+    public boolean isNull(int columnIndex) throws SQLException
+    {
+        return cursor.isNull(jdbcToAndroid(columnIndex));
+    }
 }
