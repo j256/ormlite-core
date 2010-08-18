@@ -8,7 +8,7 @@ import com.j256.ormlite.support.GeneratedKeyHolder;
 import com.j256.ormlite.support.PreparedStmt;
 
 /**
- * Our Android database access class.
+ * Android database access class.
  * 
  * @author ...
  */
