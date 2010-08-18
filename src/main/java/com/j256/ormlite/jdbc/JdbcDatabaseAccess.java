@@ -2,7 +2,7 @@ package com.j256.ormlite.jdbc;
 
 import java.sql.SQLException;
 
-import com.j256.ormlite.field.JdbcType;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseAccess;
@@ -49,7 +49,7 @@ public class JdbcDatabaseAccess implements DatabaseAccess {
 		while (results.next()) {
 			for (int colC = 1; colC <= colN; colC++) {
 				String colName = results.getColumnName(colC);
-				JdbcType jdbcType = results.getColumnType(colC);
+				DataType jdbcType = results.getColumnType(colC);
 				Number id = jdbcType.resultToId(results, colC);
 				if (id == null) {
 					// may never happen but let's be careful

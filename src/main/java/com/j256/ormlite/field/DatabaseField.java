@@ -43,10 +43,10 @@ public @interface DatabaseField {
 	String columnName() default "";
 
 	/**
-	 * The {@link JdbcType} associated with the field. If not set then the Java class of the field is used to match with
-	 * the appropriate {@link JdbcType}.
+	 * The {@link DataType} associated with the field. If not set then the Java class of the field is used to match with
+	 * the appropriate {@link DataType}.
 	 */
-	JdbcType jdbcType() default JdbcType.UNKNOWN;
+	DataType jdbcType() default DataType.UNKNOWN;
 
 	/**
 	 * The default value of the field for creating the table. Default is none.

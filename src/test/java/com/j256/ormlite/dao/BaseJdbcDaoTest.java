@@ -31,7 +31,7 @@ import org.junit.Test;
 import com.j256.ormlite.BaseOrmLiteTest;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
-import com.j256.ormlite.field.JdbcType;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.DatabaseTableConfig;
@@ -637,9 +637,9 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 	@Test
 	public void testFieldConfig() throws Exception {
 		List<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
-		fieldConfigs.add(new DatabaseFieldConfig("id", "id2", JdbcType.UNKNOWN, null, 0, false, false, true, null,
+		fieldConfigs.add(new DatabaseFieldConfig("id", "id2", DataType.UNKNOWN, null, 0, false, false, true, null,
 				false, null, false, null, false));
-		fieldConfigs.add(new DatabaseFieldConfig("stuff", "stuffy", JdbcType.UNKNOWN, null, 0, false, false, false,
+		fieldConfigs.add(new DatabaseFieldConfig("stuff", "stuffy", DataType.UNKNOWN, null, 0, false, false, false,
 				null, false, null, false, null, false));
 		DatabaseTableConfig<NoAnno> tableConfig = new DatabaseTableConfig<NoAnno>(NoAnno.class, "noanno", fieldConfigs);
 		Dao<NoAnno, Integer> noAnnotaionDao = createDao(tableConfig, true);
@@ -655,9 +655,9 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 	@Test
 	public void testFieldConfigForeign() throws Exception {
 		List<DatabaseFieldConfig> noAnnotationsFieldConfigs = new ArrayList<DatabaseFieldConfig>();
-		noAnnotationsFieldConfigs.add(new DatabaseFieldConfig("id", "idthingie", JdbcType.UNKNOWN, null, 0, false,
+		noAnnotationsFieldConfigs.add(new DatabaseFieldConfig("id", "idthingie", DataType.UNKNOWN, null, 0, false,
 				false, true, null, false, null, false, null, false));
-		noAnnotationsFieldConfigs.add(new DatabaseFieldConfig("stuff", "stuffy", JdbcType.UNKNOWN, null, 0, false,
+		noAnnotationsFieldConfigs.add(new DatabaseFieldConfig("stuff", "stuffy", DataType.UNKNOWN, null, 0, false,
 				false, false, null, false, null, false, null, false));
 		DatabaseTableConfig<NoAnno> noAnnotationsTableConfig =
 				new DatabaseTableConfig<NoAnno>(NoAnno.class, noAnnotationsFieldConfigs);
@@ -669,9 +669,9 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 		assertNotNull(noAnnotaionDao.queryForId(noa.id));
 
 		List<DatabaseFieldConfig> noAnnotationsForiegnFieldConfigs = new ArrayList<DatabaseFieldConfig>();
-		noAnnotationsForiegnFieldConfigs.add(new DatabaseFieldConfig("id", "anotherid", JdbcType.UNKNOWN, null, 0,
+		noAnnotationsForiegnFieldConfigs.add(new DatabaseFieldConfig("id", "anotherid", DataType.UNKNOWN, null, 0,
 				false, false, true, null, false, null, false, null, false));
-		noAnnotationsForiegnFieldConfigs.add(new DatabaseFieldConfig("foreign", "foreignThingie", JdbcType.UNKNOWN,
+		noAnnotationsForiegnFieldConfigs.add(new DatabaseFieldConfig("foreign", "foreignThingie", DataType.UNKNOWN,
 				null, 0, false, false, false, null, true, noAnnotationsTableConfig, false, null, false));
 		DatabaseTableConfig<NoAnnoFor> noAnnotationsForiegnTableConfig =
 				new DatabaseTableConfig<NoAnnoFor>(NoAnnoFor.class, noAnnotationsForiegnFieldConfigs);
@@ -1516,7 +1516,7 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 		SerialField objectField;
 		@DatabaseField(defaultValue = DEFAULT_ENUM_VALUE)
 		OurEnum ourEnum;
-		@DatabaseField(defaultValue = DEFAULT_ENUM_NUMBER_VALUE, jdbcType = JdbcType.ENUM_INTEGER)
+		@DatabaseField(defaultValue = DEFAULT_ENUM_NUMBER_VALUE, jdbcType = DataType.ENUM_INTEGER)
 		OurEnum ourEnumNumber;
 		AllTypesDefault() {
 		}
@@ -1675,7 +1675,7 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 		public int id;
 		@DatabaseField
 		public SerialField obj;
-		@DatabaseField(jdbcType = JdbcType.SERIALIZABLE)
+		@DatabaseField(jdbcType = DataType.SERIALIZABLE)
 		public String strObj;
 		public ObjectHolder() {
 		}
@@ -1684,7 +1684,7 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 	protected static class NotSerializable {
 		@DatabaseField(generatedId = true)
 		public int id;
-		@DatabaseField(jdbcType = JdbcType.SERIALIZABLE)
+		@DatabaseField(jdbcType = DataType.SERIALIZABLE)
 		public ObjectHolder obj;
 		public NotSerializable() {
 		}
@@ -1727,19 +1727,19 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 
 	@DatabaseTable(tableName = ENUM_TABLE_NAME)
 	protected static class LocalEnumInt {
-		@DatabaseField(jdbcType = JdbcType.ENUM_INTEGER)
+		@DatabaseField(jdbcType = DataType.ENUM_INTEGER)
 		OurEnum ourEnum;
 	}
 
 	@DatabaseTable(tableName = ENUM_TABLE_NAME)
 	protected static class LocalEnumInt2 {
-		@DatabaseField(jdbcType = JdbcType.ENUM_INTEGER)
+		@DatabaseField(jdbcType = DataType.ENUM_INTEGER)
 		OurEnum2 ourEnum;
 	}
 
 	@DatabaseTable(tableName = ENUM_TABLE_NAME)
 	protected static class LocalEnumInt3 {
-		@DatabaseField(jdbcType = JdbcType.ENUM_INTEGER, unknownEnumName = "FIRST")
+		@DatabaseField(jdbcType = DataType.ENUM_INTEGER, unknownEnumName = "FIRST")
 		OurEnum2 ourEnum;
 	}
 

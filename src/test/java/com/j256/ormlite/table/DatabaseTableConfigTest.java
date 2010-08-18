@@ -14,7 +14,7 @@ import com.j256.ormlite.BaseOrmLiteTest;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.field.JdbcType;
+import com.j256.ormlite.field.DataType;
 
 public class DatabaseTableConfigTest extends BaseOrmLiteTest {
 
@@ -63,7 +63,7 @@ public class DatabaseTableConfigTest extends BaseOrmLiteTest {
 	@Test
 	public void testFieldConfigConstructor() throws SQLException {
 		List<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
-		fieldConfigs.add(new DatabaseFieldConfig("stuff", null, JdbcType.UNKNOWN, "", 0, true, false, false, null,
+		fieldConfigs.add(new DatabaseFieldConfig("stuff", null, DataType.UNKNOWN, "", 0, true, false, false, null,
 				false, null, false, null, false));
 		DatabaseTableConfig<DatabaseTableAnno> dbTableConf =
 				new DatabaseTableConfig<DatabaseTableAnno>(DatabaseTableAnno.class, fieldConfigs);
@@ -80,7 +80,7 @@ public class DatabaseTableConfigTest extends BaseOrmLiteTest {
 		dbTableConf.setDataClass(DatabaseTableAnno.class);
 		dbTableConf.setTableName(TABLE_NAME);
 		List<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
-		fieldConfigs.add(new DatabaseFieldConfig("stuff", null, JdbcType.UNKNOWN, "", 0, true, false, false, null,
+		fieldConfigs.add(new DatabaseFieldConfig("stuff", null, DataType.UNKNOWN, "", 0, true, false, false, null,
 				false, null, false, null, false));
 		dbTableConf.setFieldConfigs(fieldConfigs);
 		dbTableConf.initialize();
@@ -97,7 +97,7 @@ public class DatabaseTableConfigTest extends BaseOrmLiteTest {
 		dbTableConf.setDataClass(DatabaseTableAnno.class);
 		dbTableConf.setTableName(TABLE_NAME);
 		List<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
-		fieldConfigs.add(new DatabaseFieldConfig("notstuff", null, JdbcType.UNKNOWN, "", 0, true, false, false, null,
+		fieldConfigs.add(new DatabaseFieldConfig("notstuff", null, DataType.UNKNOWN, "", 0, true, false, false, null,
 				false, null, false, null, false));
 		dbTableConf.setFieldConfigs(fieldConfigs);
 		dbTableConf.initialize();

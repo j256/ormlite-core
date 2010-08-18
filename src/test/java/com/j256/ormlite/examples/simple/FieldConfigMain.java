@@ -15,7 +15,7 @@ import com.j256.ormlite.examples.common.Delivery;
 import com.j256.ormlite.examples.common.DeliveryDao;
 import com.j256.ormlite.examples.common.DeliveryDaoImpl;
 import com.j256.ormlite.field.DatabaseFieldConfig;
-import com.j256.ormlite.field.JdbcType;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.DatabaseTableConfig;
@@ -83,13 +83,13 @@ public class FieldConfigMain {
 
 	private DatabaseTableConfig<Delivery> buildTableConfig() {
 		ArrayList<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
-		fieldConfigs.add(new DatabaseFieldConfig("id", null, JdbcType.UNKNOWN, null, 0, false, false, true, null,
+		fieldConfigs.add(new DatabaseFieldConfig("id", null, DataType.UNKNOWN, null, 0, false, false, true, null,
 				false, null, false, null, false));
-		fieldConfigs.add(new DatabaseFieldConfig("when", null, JdbcType.UNKNOWN, null, 0, false, false, false, null,
+		fieldConfigs.add(new DatabaseFieldConfig("when", null, DataType.UNKNOWN, null, 0, false, false, false, null,
 				false, null, false, null, false));
-		fieldConfigs.add(new DatabaseFieldConfig("signedBy", null, JdbcType.UNKNOWN, null, 0, false, false, false,
+		fieldConfigs.add(new DatabaseFieldConfig("signedBy", null, DataType.UNKNOWN, null, 0, false, false, false,
 				null, false, null, false, null, false));
-		fieldConfigs.add(new DatabaseFieldConfig("account", null, JdbcType.UNKNOWN, null, 0, false, false, false, null,
+		fieldConfigs.add(new DatabaseFieldConfig("account", null, DataType.UNKNOWN, null, 0, false, false, false, null,
 				true, null, false, null, false));
 		DatabaseTableConfig<Delivery> tableConfig = new DatabaseTableConfig<Delivery>(Delivery.class, fieldConfigs);
 		return tableConfig;

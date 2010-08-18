@@ -38,7 +38,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 	@Override
 	public FieldConverter getFieldConverter(FieldType fieldType) {
 		// we are only overriding certain types
-		switch (fieldType.getJdbcType()) {
+		switch (fieldType.getDataType()) {
 			case BOOLEAN :
 			case BOOLEAN_OBJ :
 				return booleanConverter;
@@ -86,7 +86,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 	 * Conversion from the Object Java field to the BLOB Jdbc type because the varbinary needs a size otherwise.
 	 */
 	private static class ObjectFieldConverter implements FieldConverter {
-		public int getJdbcTypeVal() {
+		public int getSqlTypeVal() {
 			// store it as a short
 			return Types.BLOB;
 		}

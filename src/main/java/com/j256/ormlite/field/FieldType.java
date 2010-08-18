@@ -26,7 +26,7 @@ public class FieldType {
 	private final Field field;
 	private final String fieldName;
 	private final String dbColumnName;
-	private final JdbcType jdbcType;
+	private final DataType dataType;
 	private final Object defaultValue;
 	private final int width;
 	private final boolean canBeNull;
@@ -49,18 +49,18 @@ public class FieldType {
 			throws SQLException {
 		this.field = field;
 		this.fieldName = field.getName();
-		JdbcType jdbcType;
-		if (fieldConfig.getJdbcType() == JdbcType.UNKNOWN) {
-			jdbcType = JdbcType.lookupClass(field.getType());
+		DataType dataType;
+		if (fieldConfig.getJdbcType() == DataType.UNKNOWN) {
+			dataType = DataType.lookupClass(field.getType());
 		} else {
-			jdbcType = fieldConfig.getJdbcType();
-			if (!jdbcType.isValidForType(field.getType())) {
+			dataType = fieldConfig.getJdbcType();
+			if (!dataType.isValidForType(field.getType())) {
 				throw new IllegalArgumentException("Field class " + field.getType() + " for field " + this
-						+ " is not valid for jdbc type " + jdbcType);
+						+ " is not valid for jdbc type " + dataType);
 			}
 		}
 		String defaultFieldName = field.getName();
-		if (jdbcType == JdbcType.UNKNOWN) {
+		if (dataType == DataType.UNKNOWN) {
 			if (!fieldConfig.isForeign()) {
 				throw new IllegalArgumentException("ORMLite does not know how to store field class " + field.getType()
 						+ " for non-foreign field " + this);
@@ -77,7 +77,7 @@ public class FieldType {
 			foreignTableInfo = foreignInfo;
 			defaultFieldName = defaultFieldName + FOREIGN_ID_FIELD_SUFFIX;
 			// this field's jdbcType is the foreign id's jdbctype
-			jdbcType = foreignInfo.getIdField().getJdbcType();
+			dataType = foreignInfo.getIdField().getDataType();
 		} else {
 			if (fieldConfig.isForeign()) {
 				throw new IllegalArgumentException("Field " + this + " is a primitive class " + field.getType()
@@ -90,7 +90,7 @@ public class FieldType {
 		} else {
 			this.dbColumnName = databaseType.convertColumnName(fieldConfig.getColumnName());
 		}
-		this.jdbcType = jdbcType;
+		this.dataType = dataType;
 		this.width = fieldConfig.getWidth();
 		this.canBeNull = fieldConfig.isCanBeNull();
 		if (fieldConfig.isId()) {
@@ -130,13 +130,13 @@ public class FieldType {
 			this.isGeneratedId = false;
 			this.generatedIdSequence = null;
 		}
-		if (this.isGeneratedId && !this.jdbcType.isValidGeneratedType()) {
+		if (this.isGeneratedId && !this.dataType.isValidGeneratedType()) {
 			throw new IllegalArgumentException("Generated field " + field.getName()
 					+ " is not an appropriate type in class " + field.getDeclaringClass());
 		}
 		FieldConverter converter = databaseType.getFieldConverter(this);
 		if (converter == null) {
-			this.fieldConverter = jdbcType;
+			this.fieldConverter = dataType;
 		} else {
 			this.fieldConverter = converter;
 		}
@@ -159,7 +159,7 @@ public class FieldType {
 			this.fieldGetMethod = null;
 			this.fieldSetMethod = null;
 		}
-		if (jdbcType == JdbcType.ENUM_INTEGER || jdbcType == JdbcType.ENUM_STRING) {
+		if (dataType == DataType.ENUM_INTEGER || dataType == DataType.ENUM_STRING) {
 			for (Enum<?> enumVal : (Enum<?>[]) field.getType().getEnumConstants()) {
 				enumStringMap.put(enumVal.name(), enumVal);
 				enumValueMap.put(enumVal.ordinal(), enumVal);
@@ -169,7 +169,7 @@ public class FieldType {
 			this.unknownEnumVal = null;
 		}
 		this.throwIfNull = fieldConfig.isThrowIfNull();
-		if (this.throwIfNull && !jdbcType.isPrimitive()) {
+		if (this.throwIfNull && !dataType.isPrimitive()) {
 			throw new SQLException("Field " + field.getName() + " must be a primitive if set with throwIfNull");
 		}
 	}
@@ -189,17 +189,17 @@ public class FieldType {
 	}
 
 	/**
-	 * Return the {@link JdbcType} associated with this.
+	 * Return the DataType associated with this.
 	 */
-	public JdbcType getJdbcType() {
-		return jdbcType;
+	public DataType getDataType() {
+		return dataType;
 	}
 
 	/**
-	 * Return the JDBC type value.
+	 * Return the SQL type value.
 	 */
-	public int getJdbcTypeVal() {
-		return fieldConverter.getJdbcTypeVal();
+	public int getSqlTypeVal() {
+		return fieldConverter.getSqlTypeVal();
 	}
 
 	/**
@@ -329,10 +329,10 @@ public class FieldType {
 	 * Assign an ID value to this field.
 	 */
 	public Object assignIdValue(Object data, Number val) throws SQLException {
-		Object idVal = jdbcType.convertIdNumber(val);
+		Object idVal = dataType.convertIdNumber(val);
 		if (idVal == null) {
 			// may never get here because id fields _must_ be convert-able but let's be careful out there
-			throw new SQLException("Invalid class " + jdbcType + " for sequence-id " + this);
+			throw new SQLException("Invalid class " + dataType + " for sequence-id " + this);
 		} else {
 			assignField(data, idVal);
 			return idVal;
@@ -405,14 +405,14 @@ public class FieldType {
 	 * Return whether this field is a number.
 	 */
 	public boolean isNumber() {
-		return jdbcType.isNumber();
+		return dataType.isNumber();
 	}
 
 	/**
 	 * Return whether this field's default value should be escaped in SQL.
 	 */
 	public boolean escapeDefaultValue() {
-		return jdbcType.escapeDefaultValue();
+		return dataType.escapeDefaultValue();
 	}
 
 	/**
@@ -424,7 +424,7 @@ public class FieldType {
 			dbColumnPos = results.findColumn(dbColumnName);
 			columnPositions.put(dbColumnName, dbColumnPos);
 		}
-		if (jdbcType.isPrimitive()) {
+		if (dataType.isPrimitive()) {
 			if (throwIfNull && results.isNull(dbColumnPos)) {
 				throw new SQLException("Results value for primitive field '" + fieldName
 						+ "' was an invalid null value");

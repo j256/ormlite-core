@@ -45,25 +45,25 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 
 		FieldType fieldType = FieldType.createFieldType(databaseType, Foo.class.getSimpleName(), nameField);
 		assertEquals(nameField.getName(), fieldType.getDbColumnName());
-		assertEquals(JdbcType.STRING, fieldType.getJdbcType());
+		assertEquals(DataType.STRING, fieldType.getDataType());
 		assertEquals(0, fieldType.getWidth());
 		assertTrue(fieldType.toString().contains("Foo"));
 		assertTrue(fieldType.toString().contains(nameField.getName()));
 
 		fieldType = FieldType.createFieldType(databaseType, Foo.class.getSimpleName(), rankField);
 		assertEquals(RANK_DB_COLUMN_NAME, fieldType.getDbColumnName());
-		assertEquals(JdbcType.STRING, fieldType.getJdbcType());
+		assertEquals(DataType.STRING, fieldType.getDataType());
 		assertEquals(RANK_WIDTH, fieldType.getWidth());
 
 		fieldType = FieldType.createFieldType(databaseType, Foo.class.getSimpleName(), serialField);
 		assertEquals(serialField.getName(), fieldType.getDbColumnName());
-		assertEquals(JdbcType.INTEGER_OBJ, fieldType.getJdbcType());
+		assertEquals(DataType.INTEGER_OBJ, fieldType.getDataType());
 		assertEquals(Integer.parseInt(SERIAL_DEFAULT_VALUE), fieldType.getDefaultValue());
 
 		fieldType = FieldType.createFieldType(databaseType, Foo.class.getSimpleName(), intLongField);
 		assertEquals(intLongField.getName(), fieldType.getDbColumnName());
 		assertFalse(fieldType.isGeneratedId());
-		assertEquals(JdbcType.LONG, fieldType.getJdbcType());
+		assertEquals(DataType.LONG, fieldType.getDataType());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -124,7 +124,7 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 		final String nameArg = "zippy buzz";
 		final String nameResult = "blabber bling";
 		expect(databaseType.getFieldConverter(isA(FieldType.class))).andReturn(new FieldConverter() {
-			public int getJdbcTypeVal() {
+			public int getSqlTypeVal() {
 				return typeVal;
 			}
 			public Object parseDefaultString(String defaultStr) {
@@ -146,7 +146,7 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 		FieldType fieldType = FieldType.createFieldType(databaseType, Foo.class.getSimpleName(), nameField);
 		verify(databaseType);
 
-		assertEquals(typeVal, fieldType.getJdbcTypeVal());
+		assertEquals(typeVal, fieldType.getSqlTypeVal());
 		Foo foo = new Foo();
 		// it can't be null
 		foo.name = nameArg + " not that";
@@ -170,14 +170,14 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 
 		FieldType fieldType = FieldType.createFieldType(databaseType, ForeignParent.class.getSimpleName(), nameField);
 		assertEquals(nameField.getName(), fieldType.getDbColumnName());
-		assertEquals(JdbcType.STRING, fieldType.getJdbcType());
+		assertEquals(DataType.STRING, fieldType.getDataType());
 		assertNull(fieldType.getForeignTableInfo());
 		assertEquals(0, fieldType.getWidth());
 
 		fieldType = FieldType.createFieldType(databaseType, ForeignParent.class.getSimpleName(), bazField);
 		assertEquals(bazField.getName() + FieldType.FOREIGN_ID_FIELD_SUFFIX, fieldType.getDbColumnName());
 		// this is the type of the foreign object's id
-		assertEquals(JdbcType.INTEGER, fieldType.getJdbcType());
+		assertEquals(DataType.INTEGER, fieldType.getDataType());
 		TableInfo<?> foreignTableInfo = fieldType.getForeignTableInfo();
 		assertNotNull(foreignTableInfo);
 		assertEquals(ForeignForeign.class, foreignTableInfo.getDataClass());
@@ -423,7 +423,7 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 		String rank;
 		@DatabaseField(defaultValue = SERIAL_DEFAULT_VALUE)
 		Integer serial;
-		@DatabaseField(jdbcType = JdbcType.LONG)
+		@DatabaseField(jdbcType = DataType.LONG)
 		int intLong;
 	}
 

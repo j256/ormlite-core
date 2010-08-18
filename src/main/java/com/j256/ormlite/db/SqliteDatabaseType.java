@@ -3,7 +3,7 @@ package com.j256.ormlite.db;
 import java.util.List;
 
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.field.JdbcType;
+import com.j256.ormlite.field.DataType;
 
 /**
  * Sqlite database type information used to create the tables, etc..
@@ -26,7 +26,7 @@ public class SqliteDatabaseType extends BaseDatabaseType implements DatabaseType
 	@Override
 	protected void configureGeneratedId(StringBuilder sb, FieldType fieldType, List<String> statementsBefore,
 			List<String> additionalArgs, List<String> queriesAfter) {
-		if (fieldType.getJdbcType() != JdbcType.INTEGER) {
+		if (fieldType.getDataType() != DataType.INTEGER) {
 			throw new IllegalArgumentException("Sqlite requires that auto-increment generated-id be integer types");
 		}
 		sb.append("PRIMARY KEY AUTOINCREMENT ");

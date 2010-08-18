@@ -7,7 +7,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-import com.j256.ormlite.field.JdbcType;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.support.Results;
 
 /**
@@ -38,12 +38,12 @@ public class JdbcResults implements Results {
 		return metaData.getColumnName(column);
 	}
 
-	public JdbcType getColumnType(int column) throws SQLException {
+	public DataType getColumnType(int column) throws SQLException {
 		if (metaData == null) {
 			metaData = resultSet.getMetaData();
 		}
 		int typeVal = metaData.getColumnType(column);
-		return JdbcType.lookupIdTypeVal(typeVal);
+		return DataType.lookupIdTypeVal(typeVal);
 	}
 
 	public int findColumn(String columnName) throws SQLException {

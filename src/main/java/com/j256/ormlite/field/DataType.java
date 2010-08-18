@@ -19,7 +19,7 @@ import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.Results;
 
 /**
- * JDBC type enumeration to provide Java class to/from JDBC mapping.
+ * Data type enumeration to provide Java class to/from database mapping.
  * 
  * <p>
  * <b>NOTE:</b> If you add types here you will need to add to the various DatabaseType implementors' appendColumnArg()
@@ -33,7 +33,7 @@ import com.j256.ormlite.support.Results;
  * 
  * @author graywatson
  */
-public enum JdbcType implements FieldConverter {
+public enum DataType implements FieldConverter {
 
 	/**
 	 * Links the {@link Types#VARCHAR} SQL type and the {@link String} Java class.
@@ -434,7 +434,7 @@ public enum JdbcType implements FieldConverter {
 
 	/**
 	 * Links the {@link Types#VARCHAR} SQL type and the Enum Java class. You can also specify the {@link #ENUM_INTEGER}
-	 * as the JdbcType.
+	 * as the type.
 	 */
 	ENUM_STRING(Types.VARCHAR, new int[0], new Class<?>[] { Enum.class }) {
 		@Override
@@ -455,7 +455,7 @@ public enum JdbcType implements FieldConverter {
 
 	/**
 	 * Links the {@link Types#INTEGER} SQL type and the Enum Java class. You can also specify the {@link #ENUM_STRING}
-	 * as the JdbcType.
+	 * as the type.
 	 */
 	ENUM_INTEGER(Types.INTEGER, new int[0], new Class<?>[] { Enum.class }) {
 		@Override
@@ -497,20 +497,20 @@ public enum JdbcType implements FieldConverter {
 	// end
 	;
 
-	private static final Map<Class<?>, JdbcType> classMap = new HashMap<Class<?>, JdbcType>();
-	private static final Map<Integer, JdbcType> idTypeMap = new HashMap<Integer, JdbcType>();
+	private static final Map<Class<?>, DataType> classMap = new HashMap<Class<?>, DataType>();
+	private static final Map<Integer, DataType> idTypeMap = new HashMap<Integer, DataType>();
 
 	static {
-		for (JdbcType jdbcType : values()) {
+		for (DataType dataType : values()) {
 			// build a static map from class to associated type
-			for (Class<?> jdbcClass : jdbcType.classes) {
-				classMap.put(jdbcClass, jdbcType);
+			for (Class<?> dataClass : dataType.classes) {
+				classMap.put(dataClass, dataType);
 			}
 			// if it can be a generated-id, add to id type map
-			if (jdbcType.isValidGeneratedType()) {
-				idTypeMap.put(jdbcType.primaryTypeVal, jdbcType);
-				for (int typeVal : jdbcType.convertTypeVals) {
-					idTypeMap.put(typeVal, jdbcType);
+			if (dataType.isValidGeneratedType()) {
+				idTypeMap.put(dataType.primaryTypeVal, dataType);
+				for (int typeVal : dataType.convertTypeVals) {
+					idTypeMap.put(typeVal, dataType);
 				}
 			}
 		}
@@ -523,7 +523,7 @@ public enum JdbcType implements FieldConverter {
 	private final boolean canBeGenerated;
 	private final Class<?>[] classes;
 
-	private JdbcType(int primaryTypeVal, int[] convertTypeVals, Class<?>[] classes) {
+	private DataType(int primaryTypeVal, int[] convertTypeVals, Class<?>[] classes) {
 		this.primaryTypeVal = primaryTypeVal;
 		this.convertTypeVals = convertTypeVals;
 		// only types which have overridden the convertNumber method can be generated
@@ -540,7 +540,7 @@ public enum JdbcType implements FieldConverter {
 		return javaObject;
 	}
 
-	public int getJdbcTypeVal() {
+	public int getSqlTypeVal() {
 		return primaryTypeVal;
 	}
 
@@ -577,13 +577,12 @@ public enum JdbcType implements FieldConverter {
 	}
 
 	/**
-	 * Static method that returns the {@link JdbcType} associated with the class argument or {@link #UNKNOWN} if not
-	 * found.
+	 * Static method that returns the DataType associated with the class argument or {@link #UNKNOWN} if not found.
 	 */
-	public static JdbcType lookupClass(Class<?> dataClass) {
-		JdbcType jdbcType = classMap.get(dataClass);
-		if (jdbcType != null) {
-			return jdbcType;
+	public static DataType lookupClass(Class<?> dataClass) {
+		DataType dataType = classMap.get(dataClass);
+		if (dataType != null) {
+			return dataType;
 		} else if (dataClass.isEnum()) {
 			// special handling of the Enum type
 			return ENUM_STRING;
@@ -596,15 +595,15 @@ public enum JdbcType implements FieldConverter {
 	}
 
 	/**
-	 * Static method that returns the {@link JdbcType} associated with the SQL type value or {@link #UNKNOWN} if
+	 * Static method that returns the DataType associated with the SQL type value or {@link #UNKNOWN} if
 	 * {@link #UNKNOWN} not found.
 	 */
-	public static JdbcType lookupIdTypeVal(int typeVal) {
-		JdbcType jdbcType = idTypeMap.get(typeVal);
-		if (jdbcType == null) {
+	public static DataType lookupIdTypeVal(int typeVal) {
+		DataType dataType = idTypeMap.get(typeVal);
+		if (dataType == null) {
 			return UNKNOWN;
 		} else {
-			return jdbcType;
+			return dataType;
 		}
 	}
 

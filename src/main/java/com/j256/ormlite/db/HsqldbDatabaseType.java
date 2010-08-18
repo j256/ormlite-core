@@ -3,7 +3,7 @@ package com.j256.ormlite.db;
 import java.util.List;
 
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.field.JdbcType;
+import com.j256.ormlite.field.DataType;
 
 /**
  * HyberSQL database type information used to create the tables, etc..
@@ -40,7 +40,7 @@ public class HsqldbDatabaseType extends BaseDatabaseType implements DatabaseType
 		StringBuilder seqSb = new StringBuilder();
 		seqSb.append("CREATE SEQUENCE ");
 		appendEscapedEntityName(seqSb, fieldType.getGeneratedIdSequence());
-		if (fieldType.getJdbcType() == JdbcType.LONG) {
+		if (fieldType.getDataType() == DataType.LONG) {
 			seqSb.append(" AS BIGINT");
 		} else {
 			// integer is the default

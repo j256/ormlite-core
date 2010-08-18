@@ -46,7 +46,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 			List<String> statementsBefore, List<String> statementsAfter, List<String> queriesAfter) {
 		appendEscapedEntityName(sb, fieldType.getDbColumnName());
 		sb.append(' ');
-		switch (fieldType.getJdbcType()) {
+		switch (fieldType.getDataType()) {
 
 			case STRING :
 				int fieldWidth = fieldType.getWidth();
@@ -109,7 +109,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 
 			default :
 				// shouldn't be able to get here unless we have a missing case
-				throw new IllegalArgumentException("Unknown field type " + fieldType.getJdbcType());
+				throw new IllegalArgumentException("Unknown field type " + fieldType.getDataType());
 		}
 		sb.append(' ');
 		/*
@@ -364,7 +364,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	 * Conversion to/from the Boolean Java field as a number because some databases like the true/false.
 	 */
 	protected static class BooleanNumberFieldConverter implements FieldConverter {
-		public int getJdbcTypeVal() {
+		public int getSqlTypeVal() {
 			return Types.BOOLEAN;
 		}
 		public Object parseDefaultString(String defaultStr) throws SQLException {

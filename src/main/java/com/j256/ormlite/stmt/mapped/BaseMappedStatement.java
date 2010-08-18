@@ -135,7 +135,7 @@ public abstract class BaseMappedStatement<T> {
 	private int[] getFieldTypeVals(FieldType[] fieldTypes) {
 		int[] typeVals = new int[fieldTypes.length];
 		for (int i = 0; i < fieldTypes.length; i++) {
-			typeVals[i] = fieldTypes[i].getJdbcTypeVal();
+			typeVals[i] = fieldTypes[i].getSqlTypeVal();
 		}
 		return typeVals;
 	}

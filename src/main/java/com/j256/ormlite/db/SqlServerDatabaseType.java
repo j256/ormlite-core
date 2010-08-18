@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.field.JdbcType;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.support.Results;
 
 /**
@@ -35,7 +35,7 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 	@Override
 	public FieldConverter getFieldConverter(FieldType fieldType) {
 		// we are only overriding certain types
-		switch (fieldType.getJdbcType()) {
+		switch (fieldType.getDataType()) {
 			case BOOLEAN :
 			case BOOLEAN_OBJ :
 				return booleanConverter;
@@ -96,9 +96,9 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 	 * Conversion from the byte Java field to the SMALLINT Jdbc type because TINYINT looks to be 0-255 and unsigned.
 	 */
 	private static class ByteFieldConverter implements FieldConverter {
-		public int getJdbcTypeVal() {
+		public int getSqlTypeVal() {
 			// store it as a short
-			return JdbcType.SHORT.getJdbcTypeVal();
+			return DataType.SHORT.getSqlTypeVal();
 		}
 		public Object parseDefaultString(String defaultStr) {
 			return Short.parseShort(defaultStr);

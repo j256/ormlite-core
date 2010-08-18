@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseFieldConfig;
-import com.j256.ormlite.field.JdbcType;
+import com.j256.ormlite.field.DataType;
 
 /**
  * Class for isolating the detection of the javax.persistence annotations. This used to be a hard dependency but it has
@@ -81,7 +81,7 @@ public class JavaxPersistence {
 		}
 		// foreign values are always ones we can't map as primitives (or Strings)
 		config.setForeign(oneToOneAnnotation != null || manyToOneAnnotation != null);
-		config.setJdbcType(JdbcType.lookupClass(field.getType()));
+		config.setJdbcType(DataType.lookupClass(field.getType()));
 		config.setUseGetSet(DatabaseFieldConfig.findGetMethod(field, false) != null
 				&& DatabaseFieldConfig.findSetMethod(field, false) != null);
 		return config;

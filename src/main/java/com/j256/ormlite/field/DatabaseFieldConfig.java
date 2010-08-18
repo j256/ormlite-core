@@ -18,7 +18,7 @@ public class DatabaseFieldConfig {
 
 	private String fieldName;
 	private String columnName;
-	private JdbcType jdbcType = JdbcType.UNKNOWN;
+	private DataType jdbcType = DataType.UNKNOWN;
 	private String defaultValue;
 	private int width;
 	private boolean canBeNull;
@@ -35,7 +35,7 @@ public class DatabaseFieldConfig {
 		// for spring
 	}
 
-	public DatabaseFieldConfig(String fieldName, String columnName, JdbcType jdbcType, String defaultValue, int width,
+	public DatabaseFieldConfig(String fieldName, String columnName, DataType jdbcType, String defaultValue, int width,
 			boolean canBeNull, boolean id, boolean generatedId, String generatedIdSequence, boolean foreign,
 			DatabaseTableConfig<?> foreignTableConfig, boolean useGetSet, Enum<?> unknownEnumValue, boolean throwIfNull) {
 		this.fieldName = fieldName;
@@ -79,11 +79,11 @@ public class DatabaseFieldConfig {
 	/**
 	 * @see DatabaseField#jdbcType()
 	 */
-	public JdbcType getJdbcType() {
+	public DataType getJdbcType() {
 		return jdbcType;
 	}
 
-	public void setJdbcType(JdbcType jdbcType) {
+	public void setJdbcType(DataType jdbcType) {
 		this.jdbcType = jdbcType;
 	}
 

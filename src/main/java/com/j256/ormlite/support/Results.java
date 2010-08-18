@@ -4,7 +4,7 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-import com.j256.ormlite.field.JdbcType;
+import com.j256.ormlite.field.DataType;
 
 /**
  * A reduction of the SQL ResultSet so we can implement it outside of JDBC.
@@ -29,7 +29,7 @@ public interface Results {
 	/**
 	 * Returns the type of column in these results.
 	 */
-	public JdbcType getColumnType(int column) throws SQLException;
+	public DataType getColumnType(int column) throws SQLException;
 
 	/**
 	 * Moves to the next result.

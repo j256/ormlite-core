@@ -32,7 +32,7 @@ public class MappedQueryForId<T, ID> extends BaseMappedQuery<T> {
 	public T execute(DatabaseAccess databaseAccess, Object obj) throws SQLException {
 		Object[] args = new Object[] { getId(obj) };
 		// @SuppressWarnings("unchecked")
-		Object result = databaseAccess.queryForOne(statement, args, new int[] { idField.getJdbcTypeVal() }, this);
+		Object result = databaseAccess.queryForOne(statement, args, new int[] { idField.getSqlTypeVal() }, this);
 		if (result == DatabaseAccess.MORE_THAN_ONE) {
 			logger.error("{} using '{}' and {} args, got >1 results", label, statement, args.length);
 			logArgs(args);
