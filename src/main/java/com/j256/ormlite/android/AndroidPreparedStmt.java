@@ -2,6 +2,7 @@ package com.j256.ormlite.android;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.PreparedStmt;
@@ -18,7 +19,7 @@ import java.util.List;
  * Time: 8:23:06 PM
  * To change this template use File | Settings | File Templates.
  */
-public class AndroidPreparedStmt  implements PreparedStmt
+public class AndroidPreparedStmt implements PreparedStmt
 {
     private SQLiteDatabase db;
     private Cursor cursor;
@@ -42,9 +43,9 @@ public class AndroidPreparedStmt  implements PreparedStmt
         }
         return db;
     }
+
     /**
      * Not thread safe.  Not sure if we need it, but keep that in mind.
-     * @return
      */
     private Cursor getCursor() throws SQLException
     {
@@ -84,25 +85,21 @@ public class AndroidPreparedStmt  implements PreparedStmt
 
     /**
      * Nothing equivalent in Android
-     * @return
-     * @throws SQLException
      */
-    public String getWarning() throws SQLException
+    public String getWarning()
     {
         return "";
     }
 
     public Results getResults() throws SQLException
     {
-        return new AndroidResults(getCursor(), config);
+        return new AndroidResults(getCursor(), config.dateAdapter);
     }
 
     /**
      * Nothing equivalent in Android
-     * @return
-     * @throws SQLException
      */
-    public boolean getMoreResults() throws SQLException
+    public boolean getMoreResults()
     {
         return false;
     }
@@ -129,8 +126,7 @@ public class AndroidPreparedStmt  implements PreparedStmt
         this.max = max;
     }
 
-    private void isInPrep()
-            throws SQLException
+    private void isInPrep() throws SQLException
     {
         if(cursor != null)
         {

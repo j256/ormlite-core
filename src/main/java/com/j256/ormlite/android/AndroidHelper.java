@@ -45,7 +45,7 @@ public class AndroidHelper
             //        NULL = 0;
     }
 
-    public static void bindArgs(SQLiteStatement stmt, Object[] args, int[] argFieldTypeVals, AndroidConfiguration config)
+    public static void bindArgs(SQLiteStatement stmt, Object[] args, int[] argFieldTypeVals, DateAdapter dateAdapter)
     {
         if (args != null)
         {
@@ -76,7 +76,7 @@ public class AndroidHelper
                             stmt.bindString(bindIndex, (arg instanceof String) ? (String)arg : arg.toString());
                             break;
                         case Date:
-                            config.dateAdapter.bindDate(stmt, bindIndex, arg);
+                            dateAdapter.bindDate(stmt, bindIndex, arg);
                             break;
                     }
                 }
@@ -84,7 +84,7 @@ public class AndroidHelper
         }
     }
 
-    public static String[] toStrings(Object[] args, AndroidConfiguration config)
+    public static String[] toStrings(Object[] args, DateAdapter dateAdapter)
     {
         if(args == null)
             return null;
@@ -95,7 +95,7 @@ public class AndroidHelper
             if(arg == null)
                 strings[i] = null;
             else if(arg instanceof Date)
-                strings[i] = config.dateAdapter.toDbFormat((Date)arg);
+                strings[i] = dateAdapter.toDbFormat((Date)arg);
             else
                 strings[i] = arg.toString();
         }

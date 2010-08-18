@@ -1,14 +1,15 @@
 package com.j256.ormlite.android;
 
+import java.sql.SQLException;
+
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
+
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.support.DatabaseAccess;
 import com.j256.ormlite.support.GeneratedKeyHolder;
 import com.j256.ormlite.support.PreparedStmt;
-
-import java.sql.SQLException;
 
 /**
  * Created by IntelliJ IDEA.
@@ -28,7 +29,6 @@ public class AndroidDatabaseAccess implements DatabaseAccess
 //        this.db = db;
     }
 
-
     /**
      * Android doesn't return the number of rows inserted.
      */
@@ -37,7 +37,7 @@ public class AndroidDatabaseAccess implements DatabaseAccess
         SQLiteDatabase db = config.getWriteableDb();
         SQLiteStatement stmt = db.compileStatement(statement);
         
-        AndroidHelper.bindArgs(stmt, args, argFieldTypeVals, config);
+        AndroidHelper.bindArgs(stmt, args, argFieldTypeVals, config.dateAdapter);
         
         stmt.executeInsert();
 
@@ -50,7 +50,7 @@ public class AndroidDatabaseAccess implements DatabaseAccess
         SQLiteDatabase db = config.getWriteableDb();
         SQLiteStatement stmt = db.compileStatement(statement);
 
-        AndroidHelper.bindArgs(stmt, args, argFieldTypeVals, config);
+        AndroidHelper.bindArgs(stmt, args, argFieldTypeVals, config.dateAdapter);
 
         long rowId = stmt.executeInsert();
         keyHolder.addKey(rowId);
@@ -70,7 +70,7 @@ public class AndroidDatabaseAccess implements DatabaseAccess
         SQLiteDatabase db = config.getWriteableDb();
         SQLiteStatement stmt = db.compileStatement(statement);
 
-        AndroidHelper.bindArgs(stmt, args, argFieldTypeVals, config);
+        AndroidHelper.bindArgs(stmt, args, argFieldTypeVals, config.dateAdapter);
 
         stmt.execute();
         db.close();
@@ -85,9 +85,9 @@ public class AndroidDatabaseAccess implements DatabaseAccess
     public <T> Object queryForOne(String statement, Object[] args, int[] argFieldTypeVals, GenericRowMapper<T> rowMapper)throws SQLException
     {
         SQLiteDatabase db = config.getReadableDb();
-        Cursor cursor = db.rawQuery(statement, AndroidHelper.toStrings(args, config));
+        Cursor cursor = db.rawQuery(statement, AndroidHelper.toStrings(args, config.dateAdapter));
         cursor.moveToFirst();
-        AndroidResults results = new AndroidResults(cursor, config);
+        AndroidResults results = new AndroidResults(cursor, config.dateAdapter);
 
         if(!results.next())
         {

@@ -23,12 +23,12 @@ import com.j256.ormlite.support.Results;
 public class AndroidResults implements Results
 {
     private Cursor cursor;
-    private AndroidConfiguration config;
+    private DateAdapter dateAdapter;
 
-    public AndroidResults(Cursor cursor, AndroidConfiguration config)
+    public AndroidResults(Cursor cursor, DateAdapter dateAdapter)
     {
         this.cursor = cursor;
-        this.config = config;
+        this.dateAdapter = dateAdapter;
     }
 
     public boolean next() throws SQLException
@@ -93,7 +93,7 @@ public class AndroidResults implements Results
     {
         try
         {
-            return config.dateAdapter.fromDb(cursor, jdbcToAndroid(columnIndex));
+            return dateAdapter.fromDb(cursor, jdbcToAndroid(columnIndex));
         }
         catch (AdapterException e)
         {
