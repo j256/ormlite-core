@@ -12,5 +12,5 @@ public interface CloseableIterable<T> extends Iterable<T> {
 	 * 
 	 * @return an CloseableIterator.
 	 */
-	CloseableIterator<T> iterator();
+	public CloseableIterator<T> iterator();
 }
