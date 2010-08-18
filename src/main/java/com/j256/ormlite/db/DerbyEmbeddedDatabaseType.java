@@ -16,7 +16,7 @@ import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.Results;
 
 /**
- * Derby database type information used to create the tables, etc.. This is for an embedded Derby databse. For client
+ * Derby database type information used to create the tables, etc.. This is for an embedded Derby database. For client
  * connections to a remote Derby server, you should use {@link DerbyClientServerDatabaseType}.
  * 
  * @author graywatson
