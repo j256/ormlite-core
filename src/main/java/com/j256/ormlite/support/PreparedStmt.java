@@ -38,11 +38,6 @@ public interface PreparedStmt {
 	public Results getGeneratedKeys() throws SQLException;
 
 	/**
-	 * Put more results in the results object.
-	 */
-	public boolean getMoreResults() throws SQLException;
-
-	/**
 	 * Close the statement.
 	 */
 	public void close() throws SQLException;

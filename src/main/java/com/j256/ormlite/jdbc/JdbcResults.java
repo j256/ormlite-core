@@ -17,10 +17,12 @@ import com.j256.ormlite.support.Results;
  */
 public class JdbcResults implements Results {
 
-	private ResultSet resultSet;
+	private final JdbcPreparedStmt preparedStmt;
+	private final ResultSet resultSet;
 	private ResultSetMetaData metaData = null;
 
-	public JdbcResults(ResultSet resultSet) {
+	public JdbcResults(JdbcPreparedStmt preparedStmt, ResultSet resultSet) {
+		this.preparedStmt = preparedStmt;
 		this.resultSet = resultSet;
 	}
 
@@ -100,7 +102,14 @@ public class JdbcResults implements Results {
 	}
 
 	public boolean next() throws SQLException {
-		return resultSet.next();
+		// NOTE: we should not auto-close here, even if there are no more results
+		if (resultSet.next()) {
+			return true;
+		} else if (!preparedStmt.getMoreResults()) {
+			return false;
+		} else {
+			return resultSet.next();
+		}
 	}
 
 	public boolean isNull(int columnIndex) throws SQLException {

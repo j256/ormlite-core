@@ -59,19 +59,12 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 	public boolean hasNextThrow() throws SQLException {
 		if (closed) {
 			return false;
+		} else if (results.next()) {
+			return true;
+		} else {
+			close();
+			return false;
 		}
-		if (!results.next()) {
-			if (!stmt.getMoreResults()) {
-				close();
-				return false;
-			}
-			if (!results.next()) {
-				// may never get here but let's be careful out there
-				close();
-				return false;
-			}
-		}
-		return true;
 	}
 
 	/**

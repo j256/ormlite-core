@@ -40,15 +40,11 @@ public class JdbcPreparedStmt implements PreparedStmt {
 	}
 
 	public Results executeQuery() throws SQLException {
-		return new JdbcResults(preparedStatement.executeQuery());
-	}
-
-	public boolean getMoreResults() throws SQLException {
-		return preparedStatement.getMoreResults();
+		return new JdbcResults(this, preparedStatement.executeQuery());
 	}
 
 	public Results getGeneratedKeys() throws SQLException {
-		return new JdbcResults(preparedStatement.getGeneratedKeys());
+		return new JdbcResults(this, preparedStatement.getGeneratedKeys());
 	}
 
 	public void close() throws SQLException {
@@ -65,5 +61,12 @@ public class JdbcPreparedStmt implements PreparedStmt {
 
 	public void setMaxRows(int max) throws SQLException {
 		preparedStatement.setMaxRows(max);
+	}
+
+	/**
+	 * Called by {@link JdbcResults} to get more results into the existing ResultSet.
+	 */
+	boolean getMoreResults() throws SQLException {
+		return preparedStatement.getMoreResults();
 	}
 }

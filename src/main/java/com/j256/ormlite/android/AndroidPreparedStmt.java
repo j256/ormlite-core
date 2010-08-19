@@ -84,14 +84,6 @@ public class AndroidPreparedStmt implements PreparedStmt
 		throw new RuntimeException("Not implemented yet");
 	}
 
-    /**
-     * Nothing equivalent in Android
-     */
-    public boolean getMoreResults()
-    {
-        return false;
-    }
-
     public Results getGeneratedKeys() throws SQLException {
     	throw new UnsupportedOperationException("Unsupported operation to getGeneratedKeys");
 	}
