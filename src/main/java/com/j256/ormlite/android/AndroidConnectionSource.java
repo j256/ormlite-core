@@ -7,6 +7,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.j256.ormlite.support.ConnectionSource;
 
+/**
+ * Our source for connections to Android databases.
+ * 
+ * @author kevingalligan, graywatson
+ */
 public class AndroidConnectionSource implements ConnectionSource {
 
 	private DateAdapter dateAdapter;

@@ -14,8 +14,9 @@ import com.j256.ormlite.support.GeneratedKeyHolder;
 import com.j256.ormlite.support.PreparedStmt;
 
 /**
- * Created by IntelliJ IDEA. User: kevin Date: Aug 17, 2010 Time: 8:00:42 PM To change this template use File | Settings
- * | File Templates.
+ * Database connection for Android.
+ * 
+ * @author kevingalligan, graywatson
  */
 public class AndroidDatabaseConnection implements DatabaseConnection {
 
