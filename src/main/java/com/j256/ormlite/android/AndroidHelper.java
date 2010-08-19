@@ -1,10 +1,7 @@
 package com.j256.ormlite.android;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import android.database.sqlite.SQLiteStatement;
 
 /**
  * Created by IntelliJ IDEA.
@@ -19,10 +16,10 @@ public class AndroidHelper
     {
         Short, Integer, Long, Float, Double, Text, Date
     }
-    private static Map<Integer, SqlLiteType> typeMap;
-    static
-    {
-        typeMap = new HashMap<Integer, SqlLiteType>();
+
+	private static final Map<Integer, SqlLiteType> typeMap = new HashMap<Integer, SqlLiteType>();
+
+    static {
         typeMap.put(-7, SqlLiteType.Short);    //        BIT = -7;
         typeMap.put(-6, SqlLiteType.Short);    //        TINYINT = -6;
         typeMap.put(5, SqlLiteType.Short);    //        SMALLINT = 5;
@@ -43,64 +40,6 @@ public class AndroidHelper
             //        VARBINARY = -3;
             //        LONGVARBINARY = -4;
             //        NULL = 0;
-    }
-
-    public static void bindArgs(SQLiteStatement stmt, Object[] args, int[] argFieldTypeVals, DateAdapter dateAdapter)
-    {
-        if (args != null)
-        {
-            for (int i = 0; i < args.length; i++)
-            {
-                Object arg = args[i];
-                int bindIndex = androidToJdbc(i);//Android API's are a bit inconsistent
-                if (arg == null)
-                {
-                    stmt.bindNull(bindIndex);
-                }
-                else
-                {
-                    int fieldType = argFieldTypeVals[i];
-                    AndroidHelper.SqlLiteType sqlLiteType = AndroidHelper.getType(fieldType);
-                    switch (sqlLiteType)
-                    {
-                        case Short:
-                        case Integer:
-                        case Long:
-                            stmt.bindLong(bindIndex, ((Number) arg).longValue());
-                            break;
-                        case Float:
-                        case Double:
-                            stmt.bindDouble(bindIndex, ((Number) arg).doubleValue());
-                            break;
-                        case Text:
-                            stmt.bindString(bindIndex, (arg instanceof String) ? (String)arg : arg.toString());
-                            break;
-                        case Date:
-                            dateAdapter.bindDate(stmt, bindIndex, arg);
-                            break;
-                    }
-                }
-            }
-        }
-    }
-
-    public static String[] toStrings(Object[] args, DateAdapter dateAdapter)
-    {
-        if(args == null)
-            return null;
-        String[] strings = new String[args.length];
-        for (int i=0; i<args.length; i++)
-        {
-            Object arg = args[i];
-            if(arg == null)
-                strings[i] = null;
-            else if(arg instanceof Date)
-                strings[i] = dateAdapter.toDbFormat((Date)arg);
-            else
-                strings[i] = arg.toString();
-        }
-
-        return strings;
     }
 
     public static SqlLiteType getType(int jdbcFieldType)

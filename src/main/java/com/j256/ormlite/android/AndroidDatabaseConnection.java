@@ -2,6 +2,7 @@ package com.j256.ormlite.android;
 
 import java.sql.SQLException;
 import java.sql.Savepoint;
+import java.util.Date;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -20,6 +21,7 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 
 	private final SQLiteDatabase db;
 	private final DateAdapter dateAdapter;
+	private final Savepoint savepoint = new AndroidSavepoint();
 
 	public AndroidDatabaseConnection(SQLiteDatabase db, DateAdapter dateAdapter) {
 		this.db = db;
@@ -33,6 +35,9 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 
 	public void setAutoCommit(boolean autoCommit) throws SQLException {
 		// always in auto-commit mode?
+		if (!autoCommit) {
+			throw new UnsupportedOperationException("autoCommit = false is not suppported by Android");
+		}
 	}
 
 	public boolean isSupportsSavepoints() throws SQLException {
@@ -41,7 +46,7 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 
 	public Savepoint setSavepoint(String name) throws SQLException {
 		db.beginTransaction();
-		return null;
+		return savepoint;
 	}
 
 	public void commit() throws SQLException {
@@ -67,7 +72,7 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 	public int insert(String statement, Object[] args, int[] argFieldTypeVals) throws SQLException {
 		SQLiteStatement stmt = db.compileStatement(statement);
 
-		AndroidHelper.bindArgs(stmt, args, argFieldTypeVals, dateAdapter);
+		bindArgs(stmt, args, argFieldTypeVals);
 
 		stmt.executeInsert();
 
@@ -78,7 +83,7 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 			throws SQLException {
 		SQLiteStatement stmt = db.compileStatement(statement);
 
-		AndroidHelper.bindArgs(stmt, args, argFieldTypeVals, dateAdapter);
+		bindArgs(stmt, args, argFieldTypeVals);
 
 		long rowId = stmt.executeInsert();
 		keyHolder.addKey(rowId);
@@ -94,7 +99,7 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 	private void executeUpdate(String statement, Object[] args, int[] argFieldTypeVals) {
 		SQLiteStatement stmt = db.compileStatement(statement);
 
-		AndroidHelper.bindArgs(stmt, args, argFieldTypeVals, dateAdapter);
+		bindArgs(stmt, args, argFieldTypeVals);
 
 		stmt.execute();
 	}
@@ -106,7 +111,7 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 
 	public <T> Object queryForOne(String statement, Object[] args, int[] argFieldTypeVals, GenericRowMapper<T> rowMapper)
 			throws SQLException {
-		Cursor cursor = db.rawQuery(statement, AndroidHelper.toStrings(args, dateAdapter));
+		Cursor cursor = db.rawQuery(statement, toStrings(args));
 		cursor.moveToFirst();
 		AndroidResults results = new AndroidResults(cursor, dateAdapter);
 
@@ -136,5 +141,67 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 
 	public void close() throws SQLException {
 		db.close();
+	}
+
+	private void bindArgs(SQLiteStatement stmt, Object[] args, int[] argFieldTypeVals) {
+		if (args == null) {
+			return;
+		}
+		for (int i = 0; i < args.length; i++) {
+			Object arg = args[i];
+			int bindIndex = AndroidHelper.androidToJdbc(i);// Android API's are a bit inconsistent
+			if (arg == null) {
+				stmt.bindNull(bindIndex);
+			} else {
+				int fieldType = argFieldTypeVals[i];
+				AndroidHelper.SqlLiteType sqlLiteType = AndroidHelper.getType(fieldType);
+				switch (sqlLiteType) {
+					case Short :
+					case Integer :
+					case Long :
+						stmt.bindLong(bindIndex, ((Number) arg).longValue());
+						break;
+					case Float :
+					case Double :
+						stmt.bindDouble(bindIndex, ((Number) arg).doubleValue());
+						break;
+					case Text :
+						stmt.bindString(bindIndex, (arg instanceof String) ? (String) arg : arg.toString());
+						break;
+					case Date :
+						dateAdapter.bindDate(stmt, bindIndex, arg);
+						break;
+				}
+			}
+		}
+	}
+
+	public String[] toStrings(Object[] args) {
+		if (args == null)
+			return null;
+		String[] strings = new String[args.length];
+		for (int i = 0; i < args.length; i++) {
+			Object arg = args[i];
+			if (arg == null)
+				strings[i] = null;
+			else if (arg instanceof Date)
+				strings[i] = dateAdapter.toDbFormat((Date) arg);
+			else
+				strings[i] = arg.toString();
+		}
+
+		return strings;
+	}
+
+	/**
+	 * Little stub implementation of Savepoint.
+	 */
+	private class AndroidSavepoint implements Savepoint {
+		public int getSavepointId() throws SQLException {
+			return 0;
+		}
+		public String getSavepointName() throws SQLException {
+			return null;
+		}
 	}
 }
