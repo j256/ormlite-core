@@ -144,7 +144,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		if (result == null) {
 			throw new SQLException("No results returned in query-for-long: " + statement);
 		} else if (result == MORE_THAN_ONE) {
-			throw new SQLException("More thank 1 result returned in query-for-long: " + statement);
+			throw new SQLException("More than 1 result returned in query-for-long: " + statement);
 		} else {
 			return (Long) result;
 		}
