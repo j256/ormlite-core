@@ -7,7 +7,7 @@ import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.SelectArg;
-import com.j256.ormlite.support.DatabaseAccess;
+import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.PreparedStmt;
 import com.j256.ormlite.table.TableInfo;
 
@@ -32,8 +32,8 @@ public class MappedPreparedQuery<T> extends BaseMappedQuery<T> implements Prepar
 		this.limit = limit;
 	}
 
-	public PreparedStmt prepareSqlStatement(DatabaseAccess databaseAccess) throws SQLException {
-		PreparedStmt stmt = databaseAccess.prepareStatement(statement);
+	public PreparedStmt prepareSqlStatement(DatabaseConnection databaseConnection) throws SQLException {
+		PreparedStmt stmt = databaseConnection.prepareStatement(statement);
 		if (limit != null) {
 			stmt.setMaxRows(limit);
 		}

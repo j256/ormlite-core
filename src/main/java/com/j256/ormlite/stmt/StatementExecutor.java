@@ -20,7 +20,7 @@ import com.j256.ormlite.stmt.mapped.MappedQueryForId;
 import com.j256.ormlite.stmt.mapped.MappedRefresh;
 import com.j256.ormlite.stmt.mapped.MappedUpdate;
 import com.j256.ormlite.stmt.mapped.MappedUpdateId;
-import com.j256.ormlite.support.DatabaseAccess;
+import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.PreparedStmt;
 import com.j256.ormlite.support.Results;
 import com.j256.ormlite.table.TableInfo;
@@ -73,20 +73,20 @@ public class StatementExecutor<T, ID> {
 	 * Return the object associated with the id or null if none. This does a SQL
 	 * <tt>select col1,col2,... from ... where ... = id</tt> type query.
 	 */
-	public T queryForId(DatabaseAccess databaseAccess, ID id) throws SQLException {
+	public T queryForId(DatabaseConnection databaseConnection, ID id) throws SQLException {
 		if (mappedQueryForId == null) {
 			throw new SQLException("Cannot query-for-id with " + dataClass + " because it doesn't have an id field");
 		}
-		return mappedQueryForId.execute(databaseAccess, id);
+		return mappedQueryForId.execute(databaseConnection, id);
 	}
 
 	/**
 	 * Return the first object that matches the {@link PreparedQuery} or null if none.
 	 */
-	public T queryForFirst(DatabaseAccess databaseAccess, PreparedQuery<T> preparedQuery) throws SQLException {
+	public T queryForFirst(DatabaseConnection databaseConnection, PreparedQuery<T> preparedQuery) throws SQLException {
 		PreparedStmt stmt = null;
 		try {
-			stmt = preparedQuery.prepareSqlStatement(databaseAccess);
+			stmt = preparedQuery.prepareSqlStatement(databaseConnection);
 			Results results = stmt.executeQuery();
 			if (results.next()) {
 				logger.debug("query-for-first of '{}' returned at least 1 result", preparedQuery.getStatement());
@@ -106,18 +106,18 @@ public class StatementExecutor<T, ID> {
 	 * Return a list of all of the data in the table. Should be used carefully if the table is large. Consider using the
 	 * {@link Dao#iterator} if this is the case.
 	 */
-	public List<T> queryForAll(DatabaseAccess databaseAccess) throws SQLException {
-		return query(databaseAccess, preparedQueryForAll);
+	public List<T> queryForAll(DatabaseConnection databaseConnection) throws SQLException {
+		return query(databaseConnection, preparedQueryForAll);
 	}
 
 	/**
 	 * Return a list of all of the data in the table that matches the {@link PreparedQuery}. Should be used carefully if
 	 * the table is large. Consider using the {@link Dao#iterator} if this is the case.
 	 */
-	public List<T> query(DatabaseAccess databaseAccess, PreparedQuery<T> preparedQuery) throws SQLException {
+	public List<T> query(DatabaseConnection databaseConnection, PreparedQuery<T> preparedQuery) throws SQLException {
 		SelectIterator<T, ID> iterator = null;
 		try {
-			iterator = buildIterator(/* no dao specified because no removes */null, databaseAccess, preparedQuery);
+			iterator = buildIterator(/* no dao specified because no removes */null, databaseConnection, preparedQuery);
 			List<T> results = new ArrayList<T>();
 			while (iterator.hasNextThrow()) {
 				results.add(iterator.nextThrow());
@@ -135,10 +135,10 @@ public class StatementExecutor<T, ID> {
 	 * Return a list of all of the data in the table that matches the {@link PreparedQuery}. Should be used carefully if
 	 * the table is large. Consider using the {@link Dao#iterator} if this is the case.
 	 */
-	public RawResults queryRaw(DatabaseAccess databaseAccess, String query) throws SQLException {
+	public RawResults queryRaw(DatabaseConnection databaseConnection, String query) throws SQLException {
 		SelectIterator<String[], Void> iterator = null;
 		try {
-			PreparedStmt preparedStatement = databaseAccess.prepareStatement(query);
+			PreparedStmt preparedStatement = databaseConnection.prepareStatement(query);
 			RawResultsList results = new RawResultsList(preparedStatement);
 			// statement arg is null because we don't want it to double log below
 			iterator = new SelectIterator<String[], Void>(String[].class, null, results, preparedStatement, null);
@@ -156,54 +156,54 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Create and return a SelectIterator for the class using the default mapped query for all statement.
 	 */
-	public SelectIterator<T, ID> buildIterator(BaseDaoImpl<T, ID> classDao, DatabaseAccess databaseAccess)
+	public SelectIterator<T, ID> buildIterator(BaseDaoImpl<T, ID> classDao, DatabaseConnection databaseConnection)
 			throws SQLException {
-		return buildIterator(classDao, databaseAccess, preparedQueryForAll);
+		return buildIterator(classDao, databaseConnection, preparedQueryForAll);
 	}
 
 	/**
 	 * Create and return an {@link SelectIterator} for the class using a prepared query.
 	 */
-	public SelectIterator<T, ID> buildIterator(BaseDaoImpl<T, ID> classDao, DatabaseAccess databaseAccess,
+	public SelectIterator<T, ID> buildIterator(BaseDaoImpl<T, ID> classDao, DatabaseConnection databaseConnection,
 			PreparedQuery<T> preparedQuery) throws SQLException {
 		return new SelectIterator<T, ID>(dataClass, classDao, preparedQuery,
-				preparedQuery.prepareSqlStatement(databaseAccess), preparedQuery.getStatement());
+				preparedQuery.prepareSqlStatement(databaseConnection), preparedQuery.getStatement());
 	}
 
 	/**
 	 * Return a RawResults object associated with an internal iterator that matches the query argument.
 	 */
-	public RawResults buildIterator(DatabaseAccess databaseAccess, String query) throws SQLException {
-		return new RawResultsIterator(query, databaseAccess.prepareStatement(query));
+	public RawResults buildIterator(DatabaseConnection databaseConnection, String query) throws SQLException {
+		return new RawResultsIterator(query, databaseConnection.prepareStatement(query));
 	}
 
 	/**
 	 * Create a new entry in the database from an object.
 	 */
-	public int create(DatabaseAccess databaseAccess, T data) throws SQLException {
-		return mappedInsert.insert(databaseAccess, data);
+	public int create(DatabaseConnection databaseConnection, T data) throws SQLException {
+		return mappedInsert.insert(databaseConnection, data);
 	}
 
 	/**
 	 * Update an object in the database.
 	 */
-	public int update(DatabaseAccess databaseAccess, T data) throws SQLException {
+	public int update(DatabaseConnection databaseConnection, T data) throws SQLException {
 		if (mappedUpdate == null) {
 			throw new SQLException("Cannot update " + dataClass
 					+ " because it doesn't have an id field defined or only has id field");
 		} else {
-			return mappedUpdate.update(databaseAccess, data);
+			return mappedUpdate.update(databaseConnection, data);
 		}
 	}
 
 	/**
 	 * Update an object in the database to change its id to the newId parameter.
 	 */
-	public int updateId(DatabaseAccess databaseAccess, T data, ID newId) throws SQLException {
+	public int updateId(DatabaseConnection databaseConnection, T data, ID newId) throws SQLException {
 		if (mappedUpdateId == null) {
 			throw new SQLException("Cannot update " + dataClass + " because it doesn't have an id field defined");
 		} else {
-			return mappedUpdateId.execute(databaseAccess, data, newId);
+			return mappedUpdateId.execute(databaseConnection, data, newId);
 		}
 	}
 
@@ -211,11 +211,11 @@ public class StatementExecutor<T, ID> {
 	 * Does a query for the object's Id and copies in each of the field values from the database to refresh the data
 	 * parameter.
 	 */
-	public int refresh(DatabaseAccess databaseAccess, T data) throws SQLException {
+	public int refresh(DatabaseConnection databaseConnection, T data) throws SQLException {
 		if (mappedQueryForId == null) {
 			throw new SQLException("Cannot refresh " + dataClass + " because it doesn't have an id field defined");
 		} else {
-			T result = mappedRefresh.execute(databaseAccess, data);
+			T result = mappedRefresh.execute(databaseConnection, data);
 			if (result == null) {
 				return 0;
 			} else {
@@ -227,35 +227,35 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Delete an object from the database.
 	 */
-	public int delete(DatabaseAccess databaseAccess, T data) throws SQLException {
+	public int delete(DatabaseConnection databaseConnection, T data) throws SQLException {
 		if (mappedDelete == null) {
 			throw new SQLException("Cannot delete " + dataClass + " because it doesn't have an id field defined");
 		} else {
-			return mappedDelete.delete(databaseAccess, data);
+			return mappedDelete.delete(databaseConnection, data);
 		}
 	}
 
 	/**
 	 * Delete a collection of objects from the database.
 	 */
-	public int deleteObjects(DatabaseAccess databaseAccess, Collection<T> datas) throws SQLException {
+	public int deleteObjects(DatabaseConnection databaseConnection, Collection<T> datas) throws SQLException {
 		if (idField == null) {
 			throw new SQLException("Cannot delete " + dataClass + " because it doesn't have an id field defined");
 		} else {
 			// have to build this on the fly because the collection has variable number of args
-			return MappedDeleteCollection.deleteObjects(databaseType, tableInfo, databaseAccess, datas);
+			return MappedDeleteCollection.deleteObjects(databaseType, tableInfo, databaseConnection, datas);
 		}
 	}
 
 	/**
 	 * Delete a collection of objects from the database.
 	 */
-	public int deleteIds(DatabaseAccess databaseAccess, Collection<ID> ids) throws SQLException {
+	public int deleteIds(DatabaseConnection databaseConnection, Collection<ID> ids) throws SQLException {
 		if (idField == null) {
 			throw new SQLException("Cannot delete " + dataClass + " because it doesn't have an id field defined");
 		} else {
 			// have to build this on the fly because the collection has variable number of args
-			return MappedDeleteCollection.deleteIds(databaseType, tableInfo, databaseAccess, ids);
+			return MappedDeleteCollection.deleteIds(databaseType, tableInfo, databaseConnection, ids);
 		}
 	}
 

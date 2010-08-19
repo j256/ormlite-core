@@ -1,13 +1,5 @@
 package com.j256.ormlite.db;
 
-import android.database.sqlite.SQLiteOpenHelper;
-
-import com.j256.ormlite.android.AndroidConfiguration;
-import com.j256.ormlite.android.AndroidDatabaseAccess;
-import com.j256.ormlite.android.DateAdapter;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.support.DatabaseAccess;
-
 /**
  * Sqlite database type information for the Android OS. This has a difference driver class name.
  * 
@@ -21,27 +13,12 @@ import com.j256.ormlite.support.DatabaseAccess;
  */
 public class SqliteAndroidDatabaseType extends SqliteDatabaseType implements DatabaseType {
 
-	private SQLiteOpenHelper dbHelper;
-    private DateAdapter dateAdapter;
+	@Override
+	public void loadDriver() throws ClassNotFoundException {
+		// Hang out. Nothing to do.
+	}
 
-    @Override
-    public void loadDriver() throws ClassNotFoundException
-    {
-        //Hang out.  Nothing to do.
-    }
-
-    public SqliteAndroidDatabaseType(SQLiteOpenHelper dbHelper)
-    {
-        this.dbHelper = dbHelper;
-    }
-
-    public SqliteAndroidDatabaseType(SQLiteOpenHelper dbHelper, DateAdapter dateAdapter)
-    {
-        this.dateAdapter = dateAdapter;
-        this.dbHelper = dbHelper;
-    }
-
-    @Override
+	@Override
 	public String getDriverUrlPart() {
 		return null;
 	}
@@ -49,10 +26,5 @@ public class SqliteAndroidDatabaseType extends SqliteDatabaseType implements Dat
 	@Override
 	public String getDriverClassName() {
 		return null;
-	}
-
-	@Override
-	public DatabaseAccess buildDatabaseAccess(ConnectionSource connectionSource) {
-		return new AndroidDatabaseAccess(new AndroidConfiguration(dbHelper, dateAdapter));
 	}
 }

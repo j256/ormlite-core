@@ -8,7 +8,7 @@ import java.util.List;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.misc.SqlExceptionUtil;
-import com.j256.ormlite.support.DatabaseAccess;
+import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableInfo;
 
 /**
@@ -26,8 +26,8 @@ public class MappedDeleteCollection<T, ID> extends BaseMappedStatement<T> {
 	 * Delete all of the objects in the collection. This builds a {@link MappedDeleteCollection} on the fly because the
 	 * datas could be variable sized.
 	 */
-	public static <T, ID> int deleteObjects(DatabaseType databaseType, TableInfo<T> tableInfo, DatabaseAccess databaseAccess,
-			Collection<T> datas) throws SQLException {
+	public static <T, ID> int deleteObjects(DatabaseType databaseType, TableInfo<T> tableInfo,
+			DatabaseConnection databaseConnection, Collection<T> datas) throws SQLException {
 		MappedDeleteCollection<T, ID> deleteCollection =
 				MappedDeleteCollection.build(databaseType, tableInfo, datas.size());
 		Object[] fieldObjects = new Object[datas.size()];
@@ -36,19 +36,19 @@ public class MappedDeleteCollection<T, ID> extends BaseMappedStatement<T> {
 			fieldObjects[objC] = tableInfo.getIdField().getConvertedFieldValue(data);
 			objC++;
 		}
-		return updateRows(databaseAccess, deleteCollection, fieldObjects);
+		return updateRows(databaseConnection, deleteCollection, fieldObjects);
 	}
 
 	/**
 	 * Delete all of the objects in the collection. This builds a {@link MappedDeleteCollection} on the fly because the
 	 * ids could be variable sized.
 	 */
-	public static <T, ID> int deleteIds(DatabaseType databaseType, TableInfo<T> tableInfo, DatabaseAccess databaseAccess,
-			Collection<ID> ids) throws SQLException {
+	public static <T, ID> int deleteIds(DatabaseType databaseType, TableInfo<T> tableInfo,
+			DatabaseConnection databaseConnection, Collection<ID> ids) throws SQLException {
 		MappedDeleteCollection<T, ID> deleteCollection =
 				MappedDeleteCollection.build(databaseType, tableInfo, ids.size());
 		Object[] idsArray = ids.toArray(new Object[ids.size()]);
-		return updateRows(databaseAccess, deleteCollection, idsArray);
+		return updateRows(databaseConnection, deleteCollection, idsArray);
 	}
 
 	/**
@@ -68,10 +68,10 @@ public class MappedDeleteCollection<T, ID> extends BaseMappedStatement<T> {
 		return new MappedDeleteCollection<T, ID>(tableInfo, sb.toString(), argFieldTypeList);
 	}
 
-	private static <T, ID> int updateRows(DatabaseAccess databaseAccess, MappedDeleteCollection<T, ID> deleteCollection,
-			Object[] args) throws SQLException {
+	private static <T, ID> int updateRows(DatabaseConnection databaseConnection,
+			MappedDeleteCollection<T, ID> deleteCollection, Object[] args) throws SQLException {
 		try {
-			int rowC = databaseAccess.update(deleteCollection.statement, args, deleteCollection.argFieldTypeVals);
+			int rowC = databaseConnection.update(deleteCollection.statement, args, deleteCollection.argFieldTypeVals);
 			logger.debug("delete-collection with statement '{}' and {} args, changed {} rows",
 					deleteCollection.statement, args.length, rowC);
 			if (args.length > 0) {

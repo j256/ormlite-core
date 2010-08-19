@@ -8,7 +8,7 @@ import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.QueryBuilder.InternalQueryBuilder;
-import com.j256.ormlite.support.DatabaseAccess;
+import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableInfo;
 
 /**
@@ -29,11 +29,11 @@ public class MappedQueryForId<T, ID> extends BaseMappedQuery<T> {
 	/**
 	 * Query for an object in the database which matches the obj argument.
 	 */
-	public T execute(DatabaseAccess databaseAccess, Object obj) throws SQLException {
+	public T execute(DatabaseConnection databaseConnection, Object obj) throws SQLException {
 		Object[] args = new Object[] { getId(obj) };
 		// @SuppressWarnings("unchecked")
-		Object result = databaseAccess.queryForOne(statement, args, new int[] { idField.getSqlTypeVal() }, this);
-		if (result == DatabaseAccess.MORE_THAN_ONE) {
+		Object result = databaseConnection.queryForOne(statement, args, new int[] { idField.getSqlTypeVal() }, this);
+		if (result == DatabaseConnection.MORE_THAN_ONE) {
 			logger.error("{} using '{}' and {} args, got >1 results", label, statement, args.length);
 			logArgs(args);
 			throw new SQLException(label + " got more than 1 result: " + statement);

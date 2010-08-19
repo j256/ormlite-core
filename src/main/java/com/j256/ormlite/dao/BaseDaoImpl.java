@@ -13,7 +13,6 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.SelectIterator;
 import com.j256.ormlite.stmt.StatementExecutor;
 import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.support.DatabaseAccess;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableInfo;
 
@@ -42,7 +41,6 @@ import com.j256.ormlite.table.TableInfo;
 public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
 	private DatabaseType databaseType;
-	private DatabaseAccess databaseAccess;
 	private ConnectionSource connectionSource;
 
 	private final Class<T> dataClass;
@@ -115,15 +113,6 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		if (databaseType == null) {
 			throw new IllegalStateException("databaseType was never set on " + getClass().getSimpleName());
 		}
-		databaseAccess = databaseType.buildDatabaseAccess(connectionSource);
-		if (databaseAccess == null) {
-			if (connectionSource == null) {
-				throw new IllegalStateException("connectionSource was never set on " + getClass().getSimpleName());
-			} else {
-				throw new IllegalStateException("Unable to build database access object for "
-						+ getClass().getSimpleName());
-			}
-		}
 
 		if (tableConfig == null) {
 			tableConfig = DatabaseTableConfig.fromClass(databaseType, dataClass);
@@ -133,15 +122,15 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	public T queryForId(ID id) throws SQLException {
-		return statementExecutor.queryForId(databaseAccess, id);
+		return statementExecutor.queryForId(connectionSource.getReadOnlyConnection(), id);
 	}
 
 	public T queryForFirst(PreparedQuery<T> preparedQuery) throws SQLException {
-		return statementExecutor.queryForFirst(databaseAccess, preparedQuery);
+		return statementExecutor.queryForFirst(connectionSource.getReadOnlyConnection(), preparedQuery);
 	}
 
 	public List<T> queryForAll() throws SQLException {
-		return statementExecutor.queryForAll(databaseAccess);
+		return statementExecutor.queryForAll(connectionSource.getReadOnlyConnection());
 	}
 
 	public QueryBuilder<T, ID> queryBuilder() {
@@ -149,11 +138,11 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	public List<T> query(PreparedQuery<T> preparedQuery) throws SQLException {
-		return statementExecutor.query(databaseAccess, preparedQuery);
+		return statementExecutor.query(connectionSource.getReadOnlyConnection(), preparedQuery);
 	}
 
 	public RawResults queryForAllRaw(String queryString) throws SQLException {
-		return statementExecutor.queryRaw(databaseAccess, queryString);
+		return statementExecutor.queryRaw(connectionSource.getReadOnlyConnection(), queryString);
 	}
 
 	public int create(T data) throws SQLException {
@@ -161,7 +150,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		if (data == null) {
 			return 0;
 		} else {
-			return statementExecutor.create(databaseAccess, data);
+			return statementExecutor.create(connectionSource.getReadWriteConnection(), data);
 		}
 	}
 
@@ -170,7 +159,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		if (data == null) {
 			return 0;
 		} else {
-			return statementExecutor.update(databaseAccess, data);
+			return statementExecutor.update(connectionSource.getReadWriteConnection(), data);
 		}
 	}
 
@@ -179,7 +168,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		if (data == null) {
 			return 0;
 		} else {
-			return statementExecutor.updateId(databaseAccess, data, newId);
+			return statementExecutor.updateId(connectionSource.getReadWriteConnection(), data, newId);
 		}
 	}
 
@@ -188,7 +177,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		if (data == null) {
 			return 0;
 		} else {
-			return statementExecutor.refresh(databaseAccess, data);
+			return statementExecutor.refresh(connectionSource.getReadOnlyConnection(), data);
 		}
 	}
 
@@ -197,7 +186,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		if (data == null) {
 			return 0;
 		} else {
-			return statementExecutor.delete(databaseAccess, data);
+			return statementExecutor.delete(connectionSource.getReadWriteConnection(), data);
 		}
 	}
 
@@ -206,7 +195,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		if (datas == null || datas.size() == 0) {
 			return 0;
 		} else {
-			return statementExecutor.deleteObjects(databaseAccess, datas);
+			return statementExecutor.deleteObjects(connectionSource.getReadWriteConnection(), datas);
 		}
 	}
 
@@ -215,13 +204,13 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		if (ids == null || ids.size() == 0) {
 			return 0;
 		} else {
-			return statementExecutor.deleteIds(databaseAccess, ids);
+			return statementExecutor.deleteIds(connectionSource.getReadWriteConnection(), ids);
 		}
 	}
 
 	public SelectIterator<T, ID> iterator() {
 		try {
-			return statementExecutor.buildIterator(this, databaseAccess);
+			return statementExecutor.buildIterator(this, connectionSource.getReadOnlyConnection());
 		} catch (Exception e) {
 			throw new IllegalStateException("Could not build iterator for " + dataClass, e);
 		}
@@ -229,7 +218,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
 	public SelectIterator<T, ID> iterator(PreparedQuery<T> preparedQuery) throws SQLException {
 		try {
-			return statementExecutor.buildIterator(this, databaseAccess, preparedQuery);
+			return statementExecutor.buildIterator(this, connectionSource.getReadOnlyConnection(), preparedQuery);
 		} catch (SQLException e) {
 			throw SqlExceptionUtil.create("Could not build iterator for " + dataClass, e);
 		}
@@ -237,7 +226,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
 	public RawResults iteratorRaw(String query) throws SQLException {
 		try {
-			return statementExecutor.buildIterator(databaseAccess, query);
+			return statementExecutor.buildIterator(connectionSource.getReadOnlyConnection(), query);
 		} catch (SQLException e) {
 			throw SqlExceptionUtil.create("Could not build iterator for " + query, e);
 		}

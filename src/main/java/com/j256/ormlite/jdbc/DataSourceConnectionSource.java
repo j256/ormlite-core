@@ -60,4 +60,8 @@ public class DataSourceConnectionSource implements ConnectionSource {
 	public DatabaseConnection getReadWriteConnection(String username, String password) throws SQLException {
 		return new JdbcDatabaseConnection(dataSource.getConnection(username, password));
 	}
+
+	public void close() throws SQLException {
+		// unfortunately, need to close the DataSource directly since there is no close on the interface
+	}
 }

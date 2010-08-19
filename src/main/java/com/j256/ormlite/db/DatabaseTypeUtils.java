@@ -123,7 +123,7 @@ public class DatabaseTypeUtils {
 			constructorMap.put(urlPart, constructor);
 		}
 		String driverName = driverType.getDriverClassName();
-		if (!driverNameMap.containsKey(urlPart)) {
+		if (driverName != null && !driverNameMap.containsKey(urlPart)) {
 			driverNameMap.put(urlPart, driverName);
 		}
 	}

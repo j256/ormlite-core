@@ -49,7 +49,7 @@ public class FieldConfigMain {
 		} finally {
 			// destroy the data source which should close underlying connections
 			if (connectionSource != null) {
-				connectionSource.destroy();
+				connectionSource.close();
 			}
 		}
 	}

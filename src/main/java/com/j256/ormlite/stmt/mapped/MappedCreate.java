@@ -7,7 +7,7 @@ import java.util.List;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.misc.SqlExceptionUtil;
-import com.j256.ormlite.support.DatabaseAccess;
+import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.GeneratedKeyHolder;
 import com.j256.ormlite.table.TableInfo;
 
@@ -32,19 +32,19 @@ public class MappedCreate<T> extends BaseMappedStatement<T> {
 	 * Create an object in the database.
 	 */
 	@Override
-	public int insert(DatabaseAccess databaseAccess, T data) throws SQLException {
+	public int insert(DatabaseConnection databaseConnection, T data) throws SQLException {
 		if (idField != null) {
 			if (idField.isGeneratedIdSequence()) {
-				assignSequenceId(databaseAccess, data);
+				assignSequenceId(databaseConnection, data);
 				// fall down to do the update below
 			} else if (idField.isGeneratedId()) {
 				// this has to do the update first then get the generated-id from callback
-				return createWithGeneratedId(databaseAccess, data);
+				return createWithGeneratedId(databaseConnection, data);
 			} else {
 				// the id should have been set by the caller already
 			}
 		}
-		return super.insert(databaseAccess, data);
+		return super.insert(databaseConnection, data);
 	}
 
 	public static <T> MappedCreate<T> build(DatabaseType databaseType, TableInfo<T> tableInfo) {
@@ -90,9 +90,9 @@ public class MappedCreate<T> extends BaseMappedStatement<T> {
 		}
 	}
 
-	private void assignSequenceId(DatabaseAccess databaseAccess, T data) throws SQLException {
+	private void assignSequenceId(DatabaseConnection databaseConnection, T data) throws SQLException {
 		// call the query-next-sequence stmt to increment the sequence
-		long seqVal = databaseAccess.queryForLong(queryNextSequenceStmt);
+		long seqVal = databaseConnection.queryForLong(queryNextSequenceStmt);
 		logger.debug("queried for sequence {} using stmt: {}", seqVal, queryNextSequenceStmt);
 		if (seqVal == 0) {
 			// sanity check that it is working
@@ -101,12 +101,12 @@ public class MappedCreate<T> extends BaseMappedStatement<T> {
 		assignIdValue(data, seqVal, "sequence");
 	}
 
-	private int createWithGeneratedId(DatabaseAccess databaseAccess, T data) throws SQLException {
+	private int createWithGeneratedId(DatabaseConnection databaseConnection, T data) throws SQLException {
 		Object[] args = getFieldObjects(argFieldTypes, data);
 		try {
 			KeyHolder keyHolder = new KeyHolder();
 			// do the insert first
-			int retVal = databaseAccess.insert(statement, args, argFieldTypeVals, keyHolder);
+			int retVal = databaseConnection.insert(statement, args, argFieldTypeVals, keyHolder);
 			logger.debug("create object using '{}' and {} args, changed {} rows", statement, args.length, retVal);
 			if (args.length > 0) {
 				// need to do the (Object) cast to force args to be a single object

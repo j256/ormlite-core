@@ -18,7 +18,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.PostgresDatabaseType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.stmt.StatementExecutor;
-import com.j256.ormlite.support.DatabaseAccess;
+import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableInfo;
 
 public class MappedCreateTest extends BaseOrmLiteTest {
@@ -29,14 +29,14 @@ public class MappedCreateTest extends BaseOrmLiteTest {
 
 		TableInfo<GeneratedId> tableInfo = new TableInfo<GeneratedId>(databaseType, GeneratedId.class);
 		StatementExecutor<GeneratedId, String> se = new StatementExecutor<GeneratedId, String>(databaseType, tableInfo);
-		DatabaseAccess databaseAccess = createMock(DatabaseAccess.class);
-		expect(databaseAccess.queryForLong(isA(String.class))).andReturn(1L);
-		expect(databaseAccess.insert(isA(String.class), isA(Object[].class), isA(int[].class))).andReturn(1);
+		DatabaseConnection databaseConnection = createMock(DatabaseConnection.class);
+		expect(databaseConnection.queryForLong(isA(String.class))).andReturn(1L);
+		expect(databaseConnection.insert(isA(String.class), isA(Object[].class), isA(int[].class))).andReturn(1);
 
-		replay(databaseAccess);
+		replay(databaseConnection);
 		GeneratedId genIdSeq = new GeneratedId();
-		se.create(databaseAccess, genIdSeq);
-		verify(databaseAccess);
+		se.create(databaseConnection, genIdSeq);
+		verify(databaseConnection);
 	}
 
 	@Test
@@ -46,14 +46,14 @@ public class MappedCreateTest extends BaseOrmLiteTest {
 		StatementExecutor<GeneratedIdLong, String> se =
 				new StatementExecutor<GeneratedIdLong, String>(databaseType, new TableInfo<GeneratedIdLong>(
 						databaseType, GeneratedIdLong.class));
-		DatabaseAccess databaseAccess = createMock(DatabaseAccess.class);
-		expect(databaseAccess.queryForLong(isA(String.class))).andReturn(1L);
-		expect(databaseAccess.insert(isA(String.class), isA(Object[].class), isA(int[].class))).andReturn(1);
+		DatabaseConnection databaseConnection = createMock(DatabaseConnection.class);
+		expect(databaseConnection.queryForLong(isA(String.class))).andReturn(1L);
+		expect(databaseConnection.insert(isA(String.class), isA(Object[].class), isA(int[].class))).andReturn(1);
 
-		replay(databaseAccess);
+		replay(databaseConnection);
 		GeneratedIdLong genIdSeq = new GeneratedIdLong();
-		se.create(databaseAccess, genIdSeq);
-		verify(databaseAccess);
+		se.create(databaseConnection, genIdSeq);
+		verify(databaseConnection);
 	}
 
 	@Test
@@ -116,14 +116,14 @@ public class MappedCreateTest extends BaseOrmLiteTest {
 
 	@Test(expected = SQLException.class)
 	public void testSequenceZero() throws Exception {
-		DatabaseAccess databaseAccess = createMock(DatabaseAccess.class);
-		expect(databaseAccess.queryForLong(isA(String.class))).andReturn(0L);
-		replay(databaseAccess);
+		DatabaseConnection databaseConnection = createMock(DatabaseConnection.class);
+		expect(databaseConnection.queryForLong(isA(String.class))).andReturn(0L);
+		replay(databaseConnection);
 		MappedCreate<GeneratedIdSequence> mappedCreate =
 				MappedCreate.build(databaseType, new TableInfo<GeneratedIdSequence>(databaseType,
 						GeneratedIdSequence.class));
-		mappedCreate.insert(databaseAccess, new GeneratedIdSequence());
-		verify(databaseAccess);
+		mappedCreate.insert(databaseConnection, new GeneratedIdSequence());
+		verify(databaseConnection);
 	}
 
 	private static class GeneratedId {

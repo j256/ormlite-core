@@ -29,4 +29,9 @@ public interface ConnectionSource {
 	 * authentication.
 	 */
 	public DatabaseConnection getReadWriteConnection(String username, String password) throws SQLException;
+
+	/**
+	 * Close any outstanding database connections. 
+	 */
+	public void close() throws SQLException;
 }

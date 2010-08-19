@@ -20,27 +20,19 @@ import com.j256.ormlite.support.Results;
  */
 public class AndroidPreparedStmt implements PreparedStmt
 {
-    private SQLiteDatabase db;
+    private final SQLiteDatabase db;
+    private final DateAdapter dateAdapter;
     private Cursor cursor;
     private String sql;
     private List<String> args;
     private Integer max;
-    private AndroidConfiguration config;
 
-    public AndroidPreparedStmt(String sql, AndroidConfiguration config)
+    public AndroidPreparedStmt(String sql, SQLiteDatabase db, DateAdapter dateAdapter)
     {
         this.sql = sql;
-        args = new ArrayList<String>();
-        this.config = config;
-    }
-
-    private SQLiteDatabase getDb()
-    {
-        if(db == null)
-        {
-            db = config.getWriteableDb();
-        }
-        return db;
+        this.args = new ArrayList<String>();
+        this.db = db;
+        this.dateAdapter = dateAdapter;
     }
 
     /**
@@ -54,7 +46,7 @@ public class AndroidPreparedStmt implements PreparedStmt
             {
                 if(max != null)
                     sql = sql + " " + max;
-                cursor = getDb().rawQuery(sql, args.toArray(new String[args.size()]));
+                cursor = db.rawQuery(sql, args.toArray(new String[args.size()]));
                 cursor.moveToFirst();
             }
             catch (Exception e)
@@ -77,7 +69,7 @@ public class AndroidPreparedStmt implements PreparedStmt
     }
 
     public Results executeQuery() throws SQLException {
-        return new AndroidResults(getCursor(), config.dateAdapter);
+        return new AndroidResults(getCursor(), dateAdapter);
 	}
 
 	public int executeUpdate() throws SQLException {

@@ -61,16 +61,6 @@ public class JdbcConnectionSource implements ConnectionSource {
 		}
 	}
 
-	/**
-	 * Cleanup method to close any open connections and do other cleanups.
-	 */
-	public void destroy() throws SQLException {
-		close();
-	}
-
-	/**
-	 * Close any connections opened by the data source.
-	 */
 	public void close() throws SQLException {
 		if (connection != null) {
 			connection.close();

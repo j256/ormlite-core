@@ -8,13 +8,11 @@ import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.misc.SqlExceptionUtil;
-import com.j256.ormlite.support.DatabaseAccess;
+import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableInfo;
 
 /**
- * Abstract mapped statement which has common statements used by the subclasses. The
- * {@link #update(DatabaseAccess, Object, String)} method is here because it is used by create, delete, and update
- * calls.
+ * Abstract mapped statement which has common statements used by the subclasses.
  * 
  * @author graywatson
  */
@@ -39,12 +37,11 @@ public abstract class BaseMappedStatement<T> {
 	/**
 	 * Insert the object into the database
 	 */
-	protected int insert(DatabaseAccess databaseAccess, T data) throws SQLException {
+	protected int insert(DatabaseConnection databaseConnection, T data) throws SQLException {
 		try {
 			Object[] args = getFieldObjects(argFieldTypes, data);
-			int rowC = databaseAccess.insert(statement, args, argFieldTypeVals);
-			logger.debug("insert data with statement '{}' and {} args, changed {} rows", statement, args.length,
-					rowC);
+			int rowC = databaseConnection.insert(statement, args, argFieldTypeVals);
+			logger.debug("insert data with statement '{}' and {} args, changed {} rows", statement, args.length, rowC);
 			if (args.length > 0) {
 				// need to do the (Object) cast to force args to be a single object
 				logger.trace("insert arguments: {}", (Object) args);
@@ -58,12 +55,11 @@ public abstract class BaseMappedStatement<T> {
 	/**
 	 * Update the object in the database.
 	 */
-	public int update(DatabaseAccess databaseAccess, T data) throws SQLException {
+	public int update(DatabaseConnection databaseConnection, T data) throws SQLException {
 		try {
 			Object[] args = getFieldObjects(argFieldTypes, data);
-			int rowC = databaseAccess.update(statement, args, argFieldTypeVals);
-			logger.debug("update data with statement '{}' and {} args, changed {} rows", statement, args.length,
-					rowC);
+			int rowC = databaseConnection.update(statement, args, argFieldTypeVals);
+			logger.debug("update data with statement '{}' and {} args, changed {} rows", statement, args.length, rowC);
 			if (args.length > 0) {
 				// need to do the (Object) cast to force args to be a single object
 				logger.trace("update arguments: {}", (Object) args);
@@ -77,12 +73,11 @@ public abstract class BaseMappedStatement<T> {
 	/**
 	 * Delete the object from the database.
 	 */
-	public int delete(DatabaseAccess databaseAccess, T data) throws SQLException {
+	public int delete(DatabaseConnection databaseConnection, T data) throws SQLException {
 		try {
 			Object[] args = getFieldObjects(argFieldTypes, data);
-			int rowC = databaseAccess.delete(statement, args, argFieldTypeVals);
-			logger.debug("delete data with statement '{}' and {} args, changed {} rows", statement, args.length,
-					rowC);
+			int rowC = databaseConnection.delete(statement, args, argFieldTypeVals);
+			logger.debug("delete data with statement '{}' and {} args, changed {} rows", statement, args.length, rowC);
 			if (args.length > 0) {
 				// need to do the (Object) cast to force args to be a single object
 				logger.trace("delete arguments: {}", (Object) args);

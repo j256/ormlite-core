@@ -17,4 +17,13 @@ public class SQLiteDatabase {
 	public Cursor rawQuery(String sql, String[] args) {
 		return new Cursor();
 	}
+
+	public void beginTransaction() {
+	}
+
+	public void setTransactionSuccessful() {
+	}
+
+	public void endTransaction() {
+	}
 }

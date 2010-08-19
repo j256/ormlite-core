@@ -7,9 +7,6 @@ import java.util.List;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.jdbc.JdbcDatabaseAccess;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.support.DatabaseAccess;
 import com.j256.ormlite.support.Results;
 
 /**
@@ -29,17 +26,12 @@ public abstract class BaseDatabaseType implements DatabaseType {
 
 	protected final static FieldConverter booleanConverter = new BooleanNumberFieldConverter();
 
-	public DatabaseAccess buildDatabaseAccess(ConnectionSource connectionSource) {
-		if (connectionSource == null) {
-			return null;
-		} else {
-			return new JdbcDatabaseAccess(connectionSource);
-		}
-	}
-
 	public void loadDriver() throws ClassNotFoundException {
-		// this instantiates the driver class which wires in the JDBC glue
-		Class.forName(getDriverClassName());
+		String className = getDriverClassName();
+		if (className != null) {
+			// this instantiates the driver class which wires in the JDBC glue
+			Class.forName(className);
+		}
 	}
 
 	public void appendColumnArg(StringBuilder sb, FieldType fieldType, List<String> additionalArgs,

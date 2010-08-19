@@ -5,8 +5,6 @@ import java.util.List;
 
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.support.DatabaseAccess;
 
 /**
  * Definition of the per-database functionality needed to isolate the differences between the various databases.
@@ -25,12 +23,6 @@ public interface DatabaseType {
 	 * Return the class name of the database driver.
 	 */
 	public String getDriverClassName();
-
-	/**
-	 * Return a newly built database access object which possibly is attached to the provided connection source. Returns
-	 * null if the connection source was not set and is required.
-	 */
-	public DatabaseAccess buildDatabaseAccess(ConnectionSource connectionSource);
 
 	/**
 	 * Load the driver class associated with this database so it can wire itself into JDBC.

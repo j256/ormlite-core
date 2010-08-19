@@ -139,7 +139,7 @@ public class SimpleDataSourceTest {
 	}
 
 	@Test
-	public void testDestroy() throws Exception {
+	public void testClose() throws Exception {
 		String url = "foo:bar:baz";
 		JdbcConnectionSource sds = new JdbcConnectionSource(url);
 		Connection conn = createMock(Connection.class);
@@ -151,7 +151,7 @@ public class SimpleDataSourceTest {
 		DriverManager.registerDriver(driver);
 		try {
 			assertNotNull(sds.getReadOnlyConnection());
-			sds.destroy();
+			sds.close();
 			verify(driver);
 			verify(conn);
 		} finally {

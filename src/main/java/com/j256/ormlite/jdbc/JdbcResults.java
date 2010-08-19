@@ -2,6 +2,7 @@ package com.j256.ormlite.jdbc;
 
 import java.io.InputStream;
 import java.sql.Blob;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -17,11 +18,11 @@ import com.j256.ormlite.support.Results;
  */
 public class JdbcResults implements Results {
 
-	private final JdbcPreparedStmt preparedStmt;
+	private final PreparedStatement preparedStmt;
 	private final ResultSet resultSet;
 	private ResultSetMetaData metaData = null;
 
-	public JdbcResults(JdbcPreparedStmt preparedStmt, ResultSet resultSet) {
+	public JdbcResults(PreparedStatement preparedStmt, ResultSet resultSet) {
 		this.preparedStmt = preparedStmt;
 		this.resultSet = resultSet;
 	}

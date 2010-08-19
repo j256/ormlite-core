@@ -24,10 +24,9 @@ import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.db.DatabaseTypeUtils;
-import com.j256.ormlite.jdbc.JdbcDatabaseAccess;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.support.DatabaseAccess;
+import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableUtils;
 
@@ -45,7 +44,7 @@ public abstract class BaseOrmLiteTest {
 	protected String password = null;
 
 	protected static ConnectionSource connectionSource = null;
-	protected static DatabaseAccess databaseAccess = null;
+	protected static DatabaseConnection databaseConnection = null;
 	protected DatabaseType databaseType = null;
 	protected boolean isConnectionExpected = false;
 
@@ -75,8 +74,8 @@ public abstract class BaseOrmLiteTest {
 				} else {
 					connectionSource = DatabaseTypeUtils.createJdbcConnectionSource(url, userName, password);
 				}
+				databaseConnection = connectionSource.getReadWriteConnection();
 			}
-			databaseAccess = new JdbcDatabaseAccess(connectionSource);
 		}
 	}
 

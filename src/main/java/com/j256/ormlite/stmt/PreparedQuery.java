@@ -3,7 +3,7 @@ package com.j256.ormlite.stmt;
 import java.sql.SQLException;
 
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.support.DatabaseAccess;
+import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.PreparedStmt;
 
 /**
@@ -22,7 +22,7 @@ public interface PreparedQuery<T> extends GenericRowMapper<T> {
 	/**
 	 * Create and return the associated SQL prepared statement.
 	 */
-	public PreparedStmt prepareSqlStatement(DatabaseAccess databaseAccess) throws SQLException;
+	public PreparedStmt prepareSqlStatement(DatabaseConnection databaseConnection) throws SQLException;
 
 	/**
 	 * Return the associated SQL statement string for logging purposes.

@@ -40,11 +40,11 @@ public class JdbcPreparedStmt implements PreparedStmt {
 	}
 
 	public Results executeQuery() throws SQLException {
-		return new JdbcResults(this, preparedStatement.executeQuery());
+		return new JdbcResults(preparedStatement, preparedStatement.executeQuery());
 	}
 
 	public Results getGeneratedKeys() throws SQLException {
-		return new JdbcResults(this, preparedStatement.getGeneratedKeys());
+		return new JdbcResults(preparedStatement, preparedStatement.getGeneratedKeys());
 	}
 
 	public void close() throws SQLException {
