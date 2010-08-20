@@ -97,11 +97,11 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		int colN = results.getColumnCount();
 		while (results.next()) {
 			for (int colC = 1; colC <= colN; colC++) {
-				String colName = results.getColumnName(colC);
 				DataType dataType = results.getColumnDataType(colC);
 				Number id = dataType.resultToId(results, colC);
 				if (id == null) {
 					// may never happen but let's be careful
+					String colName = results.getColumnName(colC);
 					throw new SQLException("Generated column " + colName + " is invalid type " + dataType);
 				} else {
 					keyHolder.addKey(id);
