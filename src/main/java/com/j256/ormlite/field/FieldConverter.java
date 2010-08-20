@@ -1,7 +1,6 @@
 package com.j256.ormlite.field;
 
 import java.sql.SQLException;
-import java.sql.Types;
 
 import com.j256.ormlite.db.BaseDatabaseType;
 import com.j256.ormlite.support.Results;
@@ -35,8 +34,7 @@ public interface FieldConverter {
 	public Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException;
 
 	/**
-	 * Return the SQL type that is stored in the database for this argument. This should be one of the {@link Types}
-	 * constants.
+	 * Return the SQL type that is stored in the database for this argument.
 	 */
 	public SqlType getSqlType();
 
