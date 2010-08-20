@@ -41,7 +41,7 @@ public class JdbcResults implements Results {
 		return metaData.getColumnName(column);
 	}
 
-	public DataType getColumnDataType(int column) throws SQLException {
+	DataType getColumnDataType(int column) throws SQLException {
 		if (metaData == null) {
 			metaData = resultSet.getMetaData();
 		}
