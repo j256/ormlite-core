@@ -9,6 +9,7 @@ import java.sql.Savepoint;
 import java.sql.Statement;
 
 import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.GeneratedKeyHolder;
@@ -18,7 +19,7 @@ import com.j256.ormlite.support.Results;
 public class JdbcDatabaseConnection implements DatabaseConnection {
 
 	private static Object[] noArgs = new Object[0];
-	private static int[] noArgTypes = new int[0];
+	private static SqlType[] noArgTypes = new SqlType[0];
 	private static GenericRowMapper<Long> longWrapper = new OneLongWrapper();
 
 	private Connection connection;
@@ -78,17 +79,17 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		return connection.isClosed();
 	}
 
-	public int insert(String statement, Object[] args, int[] argFieldTypeVals) throws SQLException {
+	public int insert(String statement, Object[] args, SqlType[] argFieldTypes) throws SQLException {
 		// it's a call to executeUpdate
-		return update(statement, args, argFieldTypeVals);
+		return update(statement, args, argFieldTypes);
 	}
 
-	public int insert(String statement, Object[] args, int[] argFieldTypeVals, GeneratedKeyHolder keyHolder)
+	public int insert(String statement, Object[] args, SqlType[] argFieldTypes, GeneratedKeyHolder keyHolder)
 			throws SQLException {
 		PreparedStatement stmt = connection.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
-		statementSetArgs(stmt, args, argFieldTypeVals);
+		statementSetArgs(stmt, args, argFieldTypes);
 		int rowN = stmt.executeUpdate();
-		Results results = new JdbcResults(stmt, stmt.getGeneratedKeys());
+		JdbcResults results = new JdbcResults(stmt, stmt.getGeneratedKeys());
 		if (results == null) {
 			// may never happen but let's be careful
 			throw new SQLException("No generated key results returned from update: " + statement);
@@ -110,22 +111,22 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		return rowN;
 	}
 
-	public int update(String statement, Object[] args, int[] argFieldTypeVals) throws SQLException {
+	public int update(String statement, Object[] args, SqlType[] argFieldTypes) throws SQLException {
 		PreparedStatement stmt = connection.prepareStatement(statement);
-		statementSetArgs(stmt, args, argFieldTypeVals);
+		statementSetArgs(stmt, args, argFieldTypes);
 		return stmt.executeUpdate();
 	}
 
-	public int delete(String statement, Object[] args, int[] argFieldTypeVals) throws SQLException {
+	public int delete(String statement, Object[] args, SqlType[] argFieldTypes) throws SQLException {
 		// it's a call to executeUpdate
-		return update(statement, args, argFieldTypeVals);
+		return update(statement, args, argFieldTypes);
 	}
 
-	public <T> Object queryForOne(String statement, Object[] args, int[] argFieldTypeVals, GenericRowMapper<T> rowMapper)
+	public <T> Object queryForOne(String statement, Object[] args, SqlType[] argFieldTypes, GenericRowMapper<T> rowMapper)
 			throws SQLException {
 		PreparedStatement stmt =
 				connection.prepareStatement(statement, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-		statementSetArgs(stmt, args, argFieldTypeVals);
+		statementSetArgs(stmt, args, argFieldTypes);
 		Results results = new JdbcResults(stmt, stmt.executeQuery());
 		if (!results.next()) {
 			// no results at all
@@ -150,13 +151,13 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		}
 	}
 
-	private void statementSetArgs(PreparedStatement stmt, Object[] args, int[] argFieldTypeVals) throws SQLException {
+	private void statementSetArgs(PreparedStatement stmt, Object[] args, SqlType[] argFieldTypes) throws SQLException {
 		for (int i = 0; i < args.length; i++) {
 			Object arg = args[i];
 			if (arg == null) {
-				stmt.setNull(i + 1, argFieldTypeVals[i]);
+				stmt.setNull(i + 1, argFieldTypes[i].getTypeVal());
 			} else {
-				stmt.setObject(i + 1, arg, argFieldTypeVals[i]);
+				stmt.setObject(i + 1, arg, argFieldTypes[i].getTypeVal());
 			}
 		}
 	}

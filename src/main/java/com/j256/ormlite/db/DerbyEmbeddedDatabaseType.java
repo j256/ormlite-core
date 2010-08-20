@@ -5,13 +5,13 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.List;
 
 import javax.sql.rowset.serial.SerialBlob;
 
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.Results;
 
@@ -86,9 +86,9 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 	 * Conversion from the Object Java field to the BLOB Jdbc type because the varbinary needs a size otherwise.
 	 */
 	private static class ObjectFieldConverter implements FieldConverter {
-		public int getSqlTypeVal() {
+		public SqlType getSqlType() {
 			// store it as a short
-			return Types.BLOB;
+			return SqlType.BLOB;
 		}
 		public Object javaToArg(Object javaObject) throws SQLException {
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();

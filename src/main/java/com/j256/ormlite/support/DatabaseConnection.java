@@ -2,8 +2,8 @@ package com.j256.ormlite.support;
 
 import java.sql.SQLException;
 import java.sql.Savepoint;
-import java.sql.Types;
 
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.stmt.GenericRowMapper;
 
 public interface DatabaseConnection {
@@ -65,11 +65,11 @@ public interface DatabaseConnection {
 	 *            SQL statement to use for inserting.
 	 * @param args
 	 *            Object arguments for the SQL '?'s.
-	 * @param argSqlTypeVals
-	 *            SQL type values from {@link Types}.
+	 * @param argSqlTypes
+	 *            SQL types of the arguments.
 	 * @return The number of rows affected by the update.
 	 */
-	public int insert(String statement, Object[] args, int[] argSqlTypeVals) throws SQLException;
+	public int insert(String statement, Object[] args, SqlType[] argSqlTypes) throws SQLException;
 
 	/**
 	 * Perform a SQL update while returning generated keys with the associated SQL statement, arguments, and types.
@@ -78,13 +78,13 @@ public interface DatabaseConnection {
 	 *            SQL statement to use for inserting.
 	 * @param args
 	 *            Object arguments for the SQL '?'s.
-	 * @param argSqlTypeVals
-	 *            SQL type values from {@link Types}.
+	 * @param argSqlTypes
+	 *            SQL types of the arguments.
 	 * @param keyHolder
 	 *            The holder that gets set with the generated key value.
 	 * @return The number of rows affected by the update.
 	 */
-	public int insert(String statement, Object[] args, int[] argSqlTypeVals, GeneratedKeyHolder keyHolder)
+	public int insert(String statement, Object[] args, SqlType[] argSqlTypes, GeneratedKeyHolder keyHolder)
 			throws SQLException;
 
 	/**
@@ -94,11 +94,11 @@ public interface DatabaseConnection {
 	 *            SQL statement to use for updating.
 	 * @param args
 	 *            Object arguments for the SQL '?'s.
-	 * @param argSqlTypeVals
-	 *            SQL type values from {@link Types}.
+	 * @param argSqlTypes
+	 *            SQL types of the arguments.
 	 * @return The number of rows affected by the update.
 	 */
-	public int update(String statement, Object[] args, int[] argSqlTypeVals) throws SQLException;
+	public int update(String statement, Object[] args, SqlType[] argSqlTypes) throws SQLException;
 
 	/**
 	 * Perform a SQL delete with the associated SQL statement, arguments, and types.
@@ -107,11 +107,11 @@ public interface DatabaseConnection {
 	 *            SQL statement to use for deleting.
 	 * @param args
 	 *            Object arguments for the SQL '?'s.
-	 * @param argSqlTypeVals
-	 *            SQL type values from {@link Types}.
+	 * @param argSqlTypes
+	 *            SQL types of the arguments.
 	 * @return The number of rows affected by the update.
 	 */
-	public int delete(String statement, Object[] args, int[] argSqlTypeVals) throws SQLException;
+	public int delete(String statement, Object[] args, SqlType[] argSqlTypes) throws SQLException;
 
 	/**
 	 * Perform a SQL query with the associated SQL statement, arguments, and types and returns a single result.
@@ -120,14 +120,14 @@ public interface DatabaseConnection {
 	 *            SQL statement to use for deleting.
 	 * @param args
 	 *            Object arguments for the SQL '?'s.
-	 * @param argSqlTypeVals
-	 *            SQL type values from {@link Types}.
+	 * @param argSqlTypes
+	 *            SQL types of the arguments.
 	 * @param rowMapper
 	 *            The mapper to use to convert the row into the returned object.
 	 * @return The first data item returned by the query which can be cast to <T>, null if none, the object
 	 *         {@link #MORE_THAN_ONE} if more than one result was found.
 	 */
-	public <T> Object queryForOne(String statement, Object[] args, int[] argSqlTypeVals, GenericRowMapper<T> rowMapper)
+	public <T> Object queryForOne(String statement, Object[] args, SqlType[] argSqlTypes, GenericRowMapper<T> rowMapper)
 			throws SQLException;
 
 	/**

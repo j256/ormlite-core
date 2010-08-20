@@ -106,7 +106,7 @@ public class MappedCreate<T> extends BaseMappedStatement<T> {
 		try {
 			KeyHolder keyHolder = new KeyHolder();
 			// do the insert first
-			int retVal = databaseConnection.insert(statement, args, argFieldTypeVals, keyHolder);
+			int retVal = databaseConnection.insert(statement, args, argSqlTypes, keyHolder);
 			logger.debug("create object using '{}' and {} args, changed {} rows", statement, args.length, retVal);
 			if (args.length > 0) {
 				// need to do the (Object) cast to force args to be a single object

@@ -198,8 +198,8 @@ public class FieldType {
 	/**
 	 * Return the SQL type value.
 	 */
-	public int getSqlTypeVal() {
-		return fieldConverter.getSqlTypeVal();
+	public SqlType getSqlTypeVal() {
+		return fieldConverter.getSqlType();
 	}
 
 	/**

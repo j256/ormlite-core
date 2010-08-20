@@ -38,7 +38,7 @@ public interface FieldConverter {
 	 * Return the SQL type that is stored in the database for this argument. This should be one of the {@link Types}
 	 * constants.
 	 */
-	public int getSqlTypeVal();
+	public SqlType getSqlType();
 
 	/**
 	 * Return whether or not this is a SQL "stream" object. Cannot get certain stream objects from the SQL results more

@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.misc.SqlExceptionUtil;
@@ -24,14 +25,14 @@ public abstract class BaseMappedStatement<T> {
 	protected final FieldType idField;
 	protected final String statement;
 	protected final FieldType[] argFieldTypes;
-	protected final int[] argFieldTypeVals;
+	protected final SqlType[] argSqlTypes;
 
 	protected BaseMappedStatement(TableInfo<T> tableInfo, String statement, List<FieldType> argFieldTypeList) {
 		this.tableInfo = tableInfo;
 		this.idField = tableInfo.getIdField();
 		this.statement = statement;
 		this.argFieldTypes = argFieldTypeList.toArray(new FieldType[argFieldTypeList.size()]);
-		this.argFieldTypeVals = getFieldTypeVals(argFieldTypes);
+		this.argSqlTypes = getSqlTypes(argFieldTypes);
 	}
 
 	/**
@@ -40,7 +41,7 @@ public abstract class BaseMappedStatement<T> {
 	protected int insert(DatabaseConnection databaseConnection, T data) throws SQLException {
 		try {
 			Object[] args = getFieldObjects(argFieldTypes, data);
-			int rowC = databaseConnection.insert(statement, args, argFieldTypeVals);
+			int rowC = databaseConnection.insert(statement, args, argSqlTypes);
 			logger.debug("insert data with statement '{}' and {} args, changed {} rows", statement, args.length, rowC);
 			if (args.length > 0) {
 				// need to do the (Object) cast to force args to be a single object
@@ -58,7 +59,7 @@ public abstract class BaseMappedStatement<T> {
 	public int update(DatabaseConnection databaseConnection, T data) throws SQLException {
 		try {
 			Object[] args = getFieldObjects(argFieldTypes, data);
-			int rowC = databaseConnection.update(statement, args, argFieldTypeVals);
+			int rowC = databaseConnection.update(statement, args, argSqlTypes);
 			logger.debug("update data with statement '{}' and {} args, changed {} rows", statement, args.length, rowC);
 			if (args.length > 0) {
 				// need to do the (Object) cast to force args to be a single object
@@ -76,7 +77,7 @@ public abstract class BaseMappedStatement<T> {
 	public int delete(DatabaseConnection databaseConnection, T data) throws SQLException {
 		try {
 			Object[] args = getFieldObjects(argFieldTypes, data);
-			int rowC = databaseConnection.delete(statement, args, argFieldTypeVals);
+			int rowC = databaseConnection.delete(statement, args, argSqlTypes);
 			logger.debug("delete data with statement '{}' and {} args, changed {} rows", statement, args.length, rowC);
 			if (args.length > 0) {
 				// need to do the (Object) cast to force args to be a single object
@@ -127,8 +128,8 @@ public abstract class BaseMappedStatement<T> {
 		sb.append(' ');
 	}
 
-	private int[] getFieldTypeVals(FieldType[] fieldTypes) {
-		int[] typeVals = new int[fieldTypes.length];
+	private SqlType[] getSqlTypes(FieldType[] fieldTypes) {
+		SqlType[] typeVals = new SqlType[fieldTypes.length];
 		for (int i = 0; i < fieldTypes.length; i++) {
 			typeVals[i] = fieldTypes[i].getSqlTypeVal();
 		}

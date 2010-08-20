@@ -1,12 +1,12 @@
 package com.j256.ormlite.db;
 
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.List;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.support.Results;
 
 /**
@@ -356,8 +356,8 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	 * Conversion to/from the Boolean Java field as a number because some databases like the true/false.
 	 */
 	protected static class BooleanNumberFieldConverter implements FieldConverter {
-		public int getSqlTypeVal() {
-			return Types.BOOLEAN;
+		public SqlType getSqlType() {
+			return SqlType.BOOLEAN;
 		}
 		public Object parseDefaultString(String defaultStr) throws SQLException {
 			boolean bool = (boolean) Boolean.parseBoolean(defaultStr);

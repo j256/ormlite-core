@@ -2,6 +2,8 @@ package com.j256.ormlite.support;
 
 import java.sql.SQLException;
 
+import com.j256.ormlite.field.SqlType;
+
 /**
  * A reduction of the SQL PreparedStatment so we can implement its functionality outside of JDBC.
  * 
@@ -50,7 +52,7 @@ public interface PreparedStmt {
 	 * @param sqlType
 	 *            SQL type of the parameter.
 	 */
-	public void setNull(int parameterIndex, int sqlType) throws SQLException;
+	public void setNull(int parameterIndex, SqlType sqlType) throws SQLException;
 
 	/**
 	 * Set the parameter specified by the index and type to be an object.
@@ -62,7 +64,7 @@ public interface PreparedStmt {
 	 * @param sqlType
 	 *            SQL type of the parameter.
 	 */
-	public void setObject(int parameterIndex, Object obj, int sqlType) throws SQLException;
+	public void setObject(int parameterIndex, Object obj, SqlType sqlType) throws SQLException;
 
 	/**
 	 * Set the number of rows to return in the results.

@@ -120,12 +120,12 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 		assertTrue(fields.length >= 4);
 		Field nameField = fields[0];
 		DatabaseType databaseType = createMock(DatabaseType.class);
-		final int typeVal = 123231;
+		final SqlType sqlType = SqlType.DATE;
 		final String nameArg = "zippy buzz";
 		final String nameResult = "blabber bling";
 		expect(databaseType.getFieldConverter(isA(FieldType.class))).andReturn(new FieldConverter() {
-			public int getSqlTypeVal() {
-				return typeVal;
+			public SqlType getSqlType() {
+				return sqlType;
 			}
 			public Object parseDefaultString(String defaultStr) {
 				return defaultStr;
@@ -146,7 +146,7 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 		FieldType fieldType = FieldType.createFieldType(databaseType, Foo.class.getSimpleName(), nameField);
 		verify(databaseType);
 
-		assertEquals(typeVal, fieldType.getSqlTypeVal());
+		assertEquals(sqlType, fieldType.getSqlTypeVal());
 		Foo foo = new Foo();
 		// it can't be null
 		foo.name = nameArg + " not that";

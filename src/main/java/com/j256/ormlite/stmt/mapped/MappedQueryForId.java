@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.QueryBuilder.InternalQueryBuilder;
 import com.j256.ormlite.support.DatabaseConnection;
@@ -32,7 +33,8 @@ public class MappedQueryForId<T, ID> extends BaseMappedQuery<T> {
 	public T execute(DatabaseConnection databaseConnection, Object obj) throws SQLException {
 		Object[] args = new Object[] { getId(obj) };
 		// @SuppressWarnings("unchecked")
-		Object result = databaseConnection.queryForOne(statement, args, new int[] { idField.getSqlTypeVal() }, this);
+		Object result =
+				databaseConnection.queryForOne(statement, args, new SqlType[] { idField.getSqlTypeVal() }, this);
 		if (result == DatabaseConnection.MORE_THAN_ONE) {
 			logger.error("{} using '{}' and {} args, got >1 results", label, statement, args.length);
 			logArgs(args);

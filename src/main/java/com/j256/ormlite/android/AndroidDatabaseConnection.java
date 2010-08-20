@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.GeneratedKeyHolder;
@@ -70,21 +71,21 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 	/**
 	 * Android doesn't return the number of rows inserted.
 	 */
-	public int insert(String statement, Object[] args, int[] argFieldTypeVals) throws SQLException {
+	public int insert(String statement, Object[] args, SqlType[] argFieldTypes) throws SQLException {
 		SQLiteStatement stmt = db.compileStatement(statement);
 
-		bindArgs(stmt, args, argFieldTypeVals);
+		bindArgs(stmt, args, argFieldTypes);
 
 		stmt.executeInsert();
 
 		return 1;
 	}
 
-	public int insert(String statement, Object[] args, int[] argFieldTypeVals, GeneratedKeyHolder keyHolder)
+	public int insert(String statement, Object[] args, SqlType[] argFieldTypes, GeneratedKeyHolder keyHolder)
 			throws SQLException {
 		SQLiteStatement stmt = db.compileStatement(statement);
 
-		bindArgs(stmt, args, argFieldTypeVals);
+		bindArgs(stmt, args, argFieldTypes);
 
 		long rowId = stmt.executeInsert();
 		keyHolder.addKey(rowId);
@@ -92,20 +93,20 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 		return 1;
 	}
 
-	public int update(String statement, Object[] args, int[] argFieldTypeVals) throws SQLException {
+	public int update(String statement, Object[] args, SqlType[] argFieldTypes) throws SQLException {
 		SQLiteStatement stmt = db.compileStatement(statement);
-		bindArgs(stmt, args, argFieldTypeVals);
+		bindArgs(stmt, args, argFieldTypes);
 		stmt.execute();
 		return 1;
 	}
 
-	public int delete(String statement, Object[] args, int[] argFieldTypeVals) throws SQLException {
+	public int delete(String statement, Object[] args, SqlType[] argFieldTypes) throws SQLException {
 		// delete is the same as update
-		return update(statement, args, argFieldTypeVals);
+		return update(statement, args, argFieldTypes);
 	}
 
-	public <T> Object queryForOne(String statement, Object[] args, int[] argFieldTypeVals, GenericRowMapper<T> rowMapper)
-			throws SQLException {
+	public <T> Object queryForOne(String statement, Object[] args, SqlType[] argFieldTypes,
+			GenericRowMapper<T> rowMapper) throws SQLException {
 		Cursor cursor = db.rawQuery(statement, toStrings(args));
 		cursor.moveToFirst();
 		AndroidResults results = new AndroidResults(cursor, dateAdapter);
@@ -138,7 +139,7 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 		db.close();
 	}
 
-	private void bindArgs(SQLiteStatement stmt, Object[] args, int[] argFieldTypeVals) {
+	private void bindArgs(SQLiteStatement stmt, Object[] args, SqlType[] argFieldTypes) {
 		if (args == null) {
 			return;
 		}
@@ -148,22 +149,23 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 			if (arg == null) {
 				stmt.bindNull(bindIndex);
 			} else {
-				int fieldType = argFieldTypeVals[i];
-				AndroidHelper.SqlLiteType sqlLiteType = AndroidHelper.getType(fieldType);
-				switch (sqlLiteType) {
-					case Short :
-					case Integer :
-					case Long :
+				switch (argFieldTypes[i]) {
+					case BOOLEAN :
+					case BYTE :
+					case SHORT :
+					case INTEGER :
+					case LONG :
 						stmt.bindLong(bindIndex, ((Number) arg).longValue());
 						break;
-					case Float :
-					case Double :
+					case FLOAT :
+					case DOUBLE :
 						stmt.bindDouble(bindIndex, ((Number) arg).doubleValue());
 						break;
-					case Text :
+					case STRING :
+					case SERIALIZABLE :
 						stmt.bindString(bindIndex, (arg instanceof String) ? (String) arg : arg.toString());
 						break;
-					case Date :
+					case DATE :
 						dateAdapter.bindDate(stmt, bindIndex, arg);
 						break;
 				}

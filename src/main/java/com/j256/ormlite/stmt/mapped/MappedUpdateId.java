@@ -29,7 +29,7 @@ public class MappedUpdateId<T, ID> extends BaseMappedStatement<T> {
 		try {
 			// the arguments are the new-id and old-id
 			Object[] args = new Object[] { newId, fieldObjects[0] };
-			int rowC = databaseConnection.update(statement, args, argFieldTypeVals);
+			int rowC = databaseConnection.update(statement, args, argSqlTypes);
 			if (rowC == 1) {
 				// adjust the object to assign the new id
 				idField.assignField(data, newId);

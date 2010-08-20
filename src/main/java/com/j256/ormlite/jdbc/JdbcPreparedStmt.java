@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.support.PreparedStmt;
 import com.j256.ormlite.support.Results;
 
@@ -51,12 +52,12 @@ public class JdbcPreparedStmt implements PreparedStmt {
 		preparedStatement.close();
 	}
 
-	public void setNull(int parameterIndex, int sqlType) throws SQLException {
-		preparedStatement.setNull(parameterIndex, sqlType);
+	public void setNull(int parameterIndex, SqlType sqlType) throws SQLException {
+		preparedStatement.setNull(parameterIndex, sqlType.getTypeVal());
 	}
 
-	public void setObject(int parameterIndex, Object x, int targetSqlType) throws SQLException {
-		preparedStatement.setObject(parameterIndex, x, targetSqlType);
+	public void setObject(int parameterIndex, Object obj, SqlType sqlType) throws SQLException {
+		preparedStatement.setObject(parameterIndex, obj, sqlType.getTypeVal());
 	}
 
 	public void setMaxRows(int max) throws SQLException {

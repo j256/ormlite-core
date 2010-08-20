@@ -26,7 +26,7 @@ public class MappedPreparedQuery<T> extends BaseMappedQuery<T> implements Prepar
 		super(tableInfo, statement, argFieldTypeList, resultFieldTypeList);
 		this.selectArgs = selectArgList.toArray(new SelectArg[selectArgList.size()]);
 		// select args should match the field-type list
-		if (argFieldTypeVals == null || selectArgs.length != argFieldTypeVals.length) {
+		if (argSqlTypes == null || selectArgs.length != argSqlTypes.length) {
 			throw new IllegalArgumentException("Should be the same number of SelectArg and field-types in the arrays");
 		}
 		this.limit = limit;
@@ -46,9 +46,9 @@ public class MappedPreparedQuery<T> extends BaseMappedQuery<T> implements Prepar
 			Object arg = selectArgs[i].getValue();
 			// sql statement arguments start at 1
 			if (arg == null) {
-				stmt.setNull(i + 1, argFieldTypeVals[i]);
+				stmt.setNull(i + 1, argSqlTypes[i]);
 			} else {
-				stmt.setObject(i + 1, arg, argFieldTypeVals[i]);
+				stmt.setObject(i + 1, arg, argSqlTypes[i]);
 			}
 			if (args != null) {
 				args[i] = arg;

@@ -7,6 +7,7 @@ import java.util.List;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.PreparedStmt;
 import com.j256.ormlite.support.Results;
@@ -64,15 +65,16 @@ public class AndroidPreparedStmt implements PreparedStmt
         }
     }
 
-    public void setNull(int parameterIndex, int sqlType) throws SQLException
-    {
-        setObject(parameterIndex, null, sqlType);
-    }
-
-    public void setObject(int parameterIndex, Object obj, int sqlType) throws SQLException
+    public void setNull(int parameterIndex, SqlType sqlType) throws SQLException
     {
         isInPrep();
-        args.add(AndroidHelper.jdbcToAndroid(parameterIndex), obj == null ? null : obj.toString());
+        args.add(AndroidHelper.jdbcToAndroid(parameterIndex), null);
+    }
+
+    public void setObject(int parameterIndex, Object obj, SqlType sqlType) throws SQLException
+    {
+        isInPrep();
+        args.add(AndroidHelper.jdbcToAndroid(parameterIndex), obj.toString());
     }
 
     public void setMaxRows(int max) throws SQLException
