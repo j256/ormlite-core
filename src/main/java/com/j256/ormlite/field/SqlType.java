@@ -25,18 +25,24 @@ public enum SqlType {
 	// end
 	;
 
-	private final int sqlType;
+	private final int primaryTypeVal;
 	private final int[] conversionTypeVals;
 
-	private SqlType(int sqlType, int... conversionTypeVals) {
-		this.sqlType = sqlType;
+	private SqlType(int primaryTypeVal, int... conversionTypeVals) {
+		this.primaryTypeVal = primaryTypeVal;
 		this.conversionTypeVals = conversionTypeVals;
 	}
 
+	/**
+	 * Return the primary type val for this enum.
+	 */
 	public int getTypeVal() {
-		return sqlType;
+		return primaryTypeVal;
 	}
 
+	/**
+	 * Return any type vals from {@link Types} that can be converted into this type.
+	 */
 	public int[] getConversionTypeVals() {
 		return conversionTypeVals;
 	}

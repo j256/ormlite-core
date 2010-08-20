@@ -3,6 +3,9 @@ package com.j256.ormlite.db;
 /**
  * Sqlite database type information used on the Android OS using the SqlDroid 3rd party database driver.
  * 
+ * <p>
+ * <b> NOTE: </b> Support for Android is now native. See the section on the manual about running with Android.
+ * </p>
  * 
  * <p>
  * <b> NOTE:</b> internal JDBC support in Android is currently marked as <i>unsupported</i> which is why the SqlDroid
