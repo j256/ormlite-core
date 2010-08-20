@@ -6,8 +6,8 @@ import java.lang.reflect.Method;
 import java.sql.SQLException;
 
 import com.j256.ormlite.db.DatabaseType;
-import com.j256.ormlite.field.DatabaseFieldConfig;
 import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DatabaseFieldConfig;
 
 /**
  * Class for isolating the detection of the javax.persistence annotations. This used to be a hard dependency but it has

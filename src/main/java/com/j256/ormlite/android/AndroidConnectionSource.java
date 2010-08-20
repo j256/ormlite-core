@@ -50,6 +50,9 @@ public class AndroidConnectionSource implements ConnectionSource {
 		return getReadWriteConnection();
 	}
 
+	/**
+	 * Close any open connections.  This will cause any future transactions to re-open the databases.
+	 */
 	public void close() throws SQLException {
 		if (readableDb != null) {
 			readableDb.close();

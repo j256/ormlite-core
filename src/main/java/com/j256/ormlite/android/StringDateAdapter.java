@@ -1,13 +1,13 @@
 package com.j256.ormlite.android;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteStatement;
-
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import android.database.Cursor;
+import android.database.sqlite.SQLiteStatement;
 
 /**
  * Created by IntelliJ IDEA.

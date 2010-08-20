@@ -3,9 +3,9 @@ package com.j256.ormlite.db;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.support.Results;
 
 /**

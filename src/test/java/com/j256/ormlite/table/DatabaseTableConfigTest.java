@@ -11,10 +11,10 @@ import javax.persistence.Entity;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseOrmLiteTest;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.field.DataType;
 
 public class DatabaseTableConfigTest extends BaseOrmLiteTest {
 
