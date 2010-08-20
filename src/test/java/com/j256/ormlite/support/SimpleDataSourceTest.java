@@ -77,28 +77,6 @@ public class SimpleDataSourceTest {
 	}
 
 	@Test
-	public void testGetConnectionStringString() throws Exception {
-		String url = "foo:bar:baz";
-		String username = "user";
-		String password = "_secret";
-		JdbcConnectionSource sds = new JdbcConnectionSource(url);
-		Connection conn = createMock(Connection.class);
-		Driver driver = createMock(Driver.class);
-		Properties props = new Properties();
-		props.put("user", username);
-		props.put("password", password);
-		expect(driver.connect(eq(url), eq(props))).andReturn(conn);
-		replay(driver);
-		DriverManager.registerDriver(driver);
-		try {
-			assertNotNull(sds.getReadOnlyConnection(username, password));
-			verify(driver);
-		} finally {
-			DriverManager.deregisterDriver(driver);
-		}
-	}
-
-	@Test
 	public void testGetConnectionUserPassSetters() throws Exception {
 		String url = "foo:bar:baz";
 		String username = "user";

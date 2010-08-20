@@ -81,15 +81,7 @@ public class JdbcConnectionSource implements ConnectionSource {
 		return getReadWriteConnection();
 	}
 
-	public DatabaseConnection getReadOnlyConnection(String username, String password) throws SQLException {
-		return getReadWriteConnection(username, password);
-	}
-
 	public DatabaseConnection getReadWriteConnection() throws SQLException {
-		return getReadWriteConnection(username, password);
-	}
-
-	public DatabaseConnection getReadWriteConnection(String username, String password) throws SQLException {
 		if (connection != null) {
 			if (connection.isClosed()) {
 				throw new SQLException("Connection has already been closed");

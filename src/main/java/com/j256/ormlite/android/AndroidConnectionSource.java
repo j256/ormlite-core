@@ -35,19 +35,11 @@ public class AndroidConnectionSource implements ConnectionSource {
 		return new AndroidDatabaseConnection(readableDb, dateAdapter);
 	}
 
-	public AndroidDatabaseConnection getReadOnlyConnection(String username, String password) throws SQLException {
-		return getReadOnlyConnection();
-	}
-
 	public AndroidDatabaseConnection getReadWriteConnection() throws SQLException {
 		if (readWriteDb == null) {
 			readWriteDb = dbHelper.getWritableDatabase();
 		}
 		return new AndroidDatabaseConnection(readWriteDb, dateAdapter);
-	}
-
-	public AndroidDatabaseConnection getReadWriteConnection(String username, String password) throws SQLException {
-		return getReadWriteConnection();
 	}
 
 	/**
