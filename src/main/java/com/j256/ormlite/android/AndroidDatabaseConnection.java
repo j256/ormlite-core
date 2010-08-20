@@ -93,21 +93,15 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 	}
 
 	public int update(String statement, Object[] args, int[] argFieldTypeVals) throws SQLException {
-		executeUpdate(statement, args, argFieldTypeVals);
-		return 1;
-	}
-
-	private void executeUpdate(String statement, Object[] args, int[] argFieldTypeVals) {
 		SQLiteStatement stmt = db.compileStatement(statement);
-
 		bindArgs(stmt, args, argFieldTypeVals);
-
 		stmt.execute();
+		return 1;
 	}
 
 	public int delete(String statement, Object[] args, int[] argFieldTypeVals) throws SQLException {
-		executeUpdate(statement, args, argFieldTypeVals);
-		return 1;
+		// delete is the same as update
+		return update(statement, args, argFieldTypeVals);
 	}
 
 	public <T> Object queryForOne(String statement, Object[] args, int[] argFieldTypeVals, GenericRowMapper<T> rowMapper)
@@ -177,7 +171,7 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 		}
 	}
 
-	public String[] toStrings(Object[] args) {
+	private String[] toStrings(Object[] args) {
 		if (args == null)
 			return null;
 		String[] strings = new String[args.length];
