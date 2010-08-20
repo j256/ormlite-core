@@ -23,17 +23,10 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 	private static GenericRowMapper<Long> longWrapper = new OneLongWrapper();
 
 	private Connection connection;
-	private DatabaseMetaData metaData = null;
+	private Boolean supportsSavePoints = null;
 
 	public JdbcDatabaseConnection(Connection connection) {
 		this.connection = connection;
-	}
-
-	public boolean isSupportsSavepoints() throws SQLException {
-		if (metaData == null) {
-			metaData = connection.getMetaData();
-		}
-		return metaData.supportsSavepoints();
 	}
 
 	public boolean getAutoCommit() throws SQLException {
@@ -44,28 +37,36 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		connection.setAutoCommit(autoCommit);
 	}
 
-	public Savepoint setSavepoint(String name) throws SQLException {
-		return connection.setSavepoint(name);
+	public Savepoint setSavePoint(String name) throws SQLException {
+		if (supportsSavePoints == null) {
+			DatabaseMetaData metaData = connection.getMetaData();
+			supportsSavePoints = metaData.supportsSavepoints();
+		}
+		if (supportsSavePoints) {
+			return connection.setSavepoint(name);
+		} else {
+			return null;
+		}
 	}
 
-	public void commit() throws SQLException {
-		connection.commit();
-	}
-
-	public void releaseSavepoint(Savepoint savepoint) throws SQLException {
-		connection.releaseSavepoint(savepoint);
-	}
-
-	public void rollback() throws SQLException {
-		connection.rollback();
+	public void commit(Savepoint savepoint) throws SQLException {
+		if (savepoint == null) {
+			connection.commit();
+		} else {
+			connection.releaseSavepoint(savepoint);
+		}
 	}
 
 	public void rollback(Savepoint savepoint) throws SQLException {
-		connection.rollback(savepoint);
+		if (savepoint == null) {
+			connection.rollback();
+		} else {
+			connection.rollback(savepoint);
+		}
 	}
 
-	public PreparedStmt prepareStatement(String sql) throws SQLException {
-		return new JdbcPreparedStmt(connection.prepareStatement(sql));
+	public PreparedStmt prepareStatement(String statement) throws SQLException {
+		return new JdbcPreparedStmt(connection.prepareStatement(statement));
 	}
 
 	public void close() throws SQLException {
@@ -122,8 +123,8 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		return update(statement, args, argFieldTypes);
 	}
 
-	public <T> Object queryForOne(String statement, Object[] args, SqlType[] argFieldTypes, GenericRowMapper<T> rowMapper)
-			throws SQLException {
+	public <T> Object queryForOne(String statement, Object[] args, SqlType[] argFieldTypes,
+			GenericRowMapper<T> rowMapper) throws SQLException {
 		PreparedStatement stmt =
 				connection.prepareStatement(statement, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 		statementSetArgs(stmt, args, argFieldTypes);

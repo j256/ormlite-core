@@ -12,11 +12,6 @@ public interface DatabaseConnection {
 	public final static Object MORE_THAN_ONE = new Object();
 
 	/**
-	 * Return whether this database supports savepoints.
-	 */
-	public boolean isSupportsSavepoints() throws SQLException;
-
-	/**
 	 * Return if auto-commit is currently enabled.
 	 */
 	public boolean getAutoCommit() throws SQLException;
@@ -27,36 +22,36 @@ public interface DatabaseConnection {
 	public void setAutoCommit(boolean autoCommit) throws SQLException;
 
 	/**
-	 * Set a save point with a certain name.
+	 * Start a save point with a certain name. It can be a noop if savepoints are not supported.
 	 * 
-	 * @return A SavePoint object with which we can release or commit in the future.
+	 * @param Name
+	 *            to use for the Savepoint although it can be ignored.
+	 * 
+	 * @return A SavePoint object with which we can release or commit in the future or null if none.
 	 */
-	public Savepoint setSavepoint(String name) throws SQLException;
+	public Savepoint setSavePoint(String name) throws SQLException;
 
 	/**
-	 * Commit all outstanding changes.
+	 * Commit all changes since the savepoint was created. If savePoint is null then commit all outstanding changes.
+	 * 
+	 * @param savePoint
+	 *            That was returned by setSavePoint or null if none.
 	 */
-	public void commit() throws SQLException;
+	public void commit(Savepoint savePoint) throws SQLException;
 
 	/**
-	 * Release a savepoint commiting any changes since the savepoint was created.
+	 * Roll back all changes since the savepoint was created. If savePoint is null then roll back all outstanding
+	 * changes.
+	 * 
+	 * @param savePoint
+	 *            That was returned by setSavePoint previously or null if none.
 	 */
-	public void releaseSavepoint(Savepoint savepoint) throws SQLException;
-
-	/**
-	 * Roll back all outstanding changes.
-	 */
-	public void rollback() throws SQLException;
-
-	/**
-	 * Roll back all changes since the savepoint was created.
-	 */
-	public void rollback(Savepoint savepoint) throws SQLException;
+	public void rollback(Savepoint savePoint) throws SQLException;
 
 	/**
 	 * Prepare a SQL statement.
 	 */
-	public PreparedStmt prepareStatement(String sql) throws SQLException;
+	public PreparedStmt prepareStatement(String statement) throws SQLException;
 
 	/**
 	 * Perform a SQL insert with the associated SQL statement, arguments, and types.

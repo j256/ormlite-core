@@ -64,7 +64,6 @@ public class TransactionManager {
 	private static final String SAVE_POINT_PREFIX = "ORMLITE";
 
 	private ConnectionSource connectionSource;
-	private Boolean savePointsSupported;
 	private static AtomicInteger savePointCounter = new AtomicInteger();
 
 	/**
@@ -112,32 +111,27 @@ public class TransactionManager {
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		boolean autoCommitAtStart = false;
 		try {
-			if (savePointsSupported == null) {
-				savePointsSupported = connection.isSupportsSavepoints();
-				logger.debug("transactions {} supported by connection", (savePointsSupported ? "are" : "are not"));
-			}
 			// change from auto-commit mode
 			autoCommitAtStart = connection.getAutoCommit();
 			if (autoCommitAtStart) {
 				connection.setAutoCommit(false);
 				logger.debug("had to set auto-commit to false");
 			}
-			Savepoint savePoint;
-			if (savePointsSupported) {
-				savePoint = connection.setSavepoint(SAVE_POINT_PREFIX + savePointCounter.incrementAndGet());
-				logger.debug("started savePoint transaction {}", savePoint.getSavepointName());
+			Savepoint savePoint = connection.setSavePoint(SAVE_POINT_PREFIX + savePointCounter.incrementAndGet());
+			if (savePoint == null) {
+				logger.debug("started savePoint transaction");
 			} else {
-				savePoint = null;
+				logger.debug("started savePoint transaction {}", savePoint.getSavepointName());
 			}
 			try {
 				T result = callable.call();
-				releaseSavePoint(connection, savePoint);
+				commit(connection, savePoint);
 				return result;
 			} catch (SQLException e) {
-				rollBackSavePoint(connection, savePoint);
+				rollBack(connection, savePoint);
 				throw e;
 			} catch (Exception e) {
-				rollBackSavePoint(connection, savePoint);
+				rollBack(connection, savePoint);
 				throw SqlExceptionUtil.create("Operation in transaction threw non-SQL exception", e);
 			}
 		} finally {
@@ -153,24 +147,22 @@ public class TransactionManager {
 		this.connectionSource = connectionSource;
 	}
 
-	private void releaseSavePoint(DatabaseConnection connection, Savepoint savePoint) throws SQLException {
+	private void commit(DatabaseConnection connection, Savepoint savePoint) throws SQLException {
+		String name = (savePoint == null ? null : savePoint.getSavepointName());
+		connection.commit(savePoint);
 		if (savePoint == null) {
-			connection.commit();
 			logger.debug("committed transaction");
 		} else {
-			String name = savePoint.getSavepointName();
-			connection.releaseSavepoint(savePoint);
-			logger.debug("released savePoint transaction {}", name);
+			logger.debug("committed savePoint transaction {}", name);
 		}
 	}
 
-	private void rollBackSavePoint(DatabaseConnection connection, Savepoint savePoint) throws SQLException {
+	private void rollBack(DatabaseConnection connection, Savepoint savePoint) throws SQLException {
+		connection.rollback(savePoint);
 		if (savePoint == null) {
-			connection.rollback();
 			logger.debug("rolled back transaction");
 		} else {
 			String name = savePoint.getSavepointName();
-			connection.rollback(savePoint);
 			logger.debug("rolled back savePoint transaction {}", name);
 		}
 	}

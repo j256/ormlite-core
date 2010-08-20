@@ -23,7 +23,6 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 
 	private final SQLiteDatabase db;
 	private final DateAdapter dateAdapter;
-	private final Savepoint savepoint = new AndroidSavepoint();
 
 	public AndroidDatabaseConnection(SQLiteDatabase db, DateAdapter dateAdapter) {
 		this.db = db;
@@ -42,30 +41,24 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 		}
 	}
 
-	public boolean isSupportsSavepoints() throws SQLException {
-		return true;
-	}
-
-	public Savepoint setSavepoint(String name) throws SQLException {
+	public Savepoint setSavePoint(String name) throws SQLException {
 		db.beginTransaction();
-		return savepoint;
+		return null;
 	}
 
-	public void commit() throws SQLException {
-		// always in auto-commit mode?
-	}
-
-	public void releaseSavepoint(Savepoint savepoint) throws SQLException {
+	public void commit(Savepoint savepoint) throws SQLException {
 		db.setTransactionSuccessful();
 		db.endTransaction();
 	}
 
-	public void rollback() throws SQLException {
+	public void rollback(Savepoint savepoint) throws SQLException {
+		// no setTransactionSuccessful() means it is a rollback
 		db.endTransaction();
 	}
 
-	public void rollback(Savepoint savepoint) throws SQLException {
-		db.endTransaction();
+	public PreparedStmt prepareStatement(String statement) throws SQLException {
+		PreparedStmt stmt = new AndroidPreparedStmt(statement, db, dateAdapter);
+		return stmt;
 	}
 
 	/**
@@ -130,11 +123,6 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 		return l;
 	}
 
-	public PreparedStmt prepareStatement(String sql) throws SQLException {
-		PreparedStmt stmt = new AndroidPreparedStmt(sql, db, dateAdapter);
-		return stmt;
-	}
-
 	public void close() throws SQLException {
 		db.close();
 	}
@@ -188,17 +176,5 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 		}
 
 		return strings;
-	}
-
-	/**
-	 * Little stub implementation of Savepoint.
-	 */
-	private class AndroidSavepoint implements Savepoint {
-		public int getSavepointId() throws SQLException {
-			return 0;
-		}
-		public String getSavepointName() throws SQLException {
-			return null;
-		}
 	}
 }
