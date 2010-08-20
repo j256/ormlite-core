@@ -440,11 +440,11 @@ public class FieldType {
 
 	/**
 	 * Get the Enum associated with the integer value.
-	 * 
-	 * NOTE: It is an Integer object for a reason. No changie.
 	 */
-	public Enum<?> enumFromInt(Integer val) throws SQLException {
-		return enumVal(val, enumValueMap.get(val));
+	public Enum<?> enumFromInt(int val) throws SQLException {
+		// just do this once
+		Integer integerVal = new Integer(val);
+		return enumVal(integerVal, enumValueMap.get(integerVal));
 	}
 
 	/**
@@ -473,14 +473,12 @@ public class FieldType {
 	}
 
 	private Enum<?> enumVal(Object val, Enum<?> enumVal) throws SQLException {
-		if (enumVal == null) {
-			if (unknownEnumVal == null) {
-				throw new SQLException("Cannot get enum value of '" + val + "' for field " + field);
-			} else {
-				return unknownEnumVal;
-			}
-		} else {
+		if (enumVal != null) {
 			return enumVal;
+		} else if (unknownEnumVal == null) {
+			throw new SQLException("Cannot get enum value of '" + val + "' for field " + field);
+		} else {
+			return unknownEnumVal;
 		}
 	}
 }
