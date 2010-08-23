@@ -40,9 +40,9 @@ public class StringDateAdapter implements DateAdapter
         return format;
     }
 
-    public Timestamp fromDb(Cursor c, int col) throws AdapterException
+    public Timestamp fromDb(Cursor c, int argIndex) throws AdapterException
     {
-        String s = c.getString(col);
+        String s = c.getString(argIndex);
         if(s == null)
             return null;
 
@@ -57,10 +57,10 @@ public class StringDateAdapter implements DateAdapter
         }
     }
 
-    public void bindDate(SQLiteStatement stmt, int i, Object arg)
+    public void bindDate(SQLiteStatement stmt, int argIndex, Object arg)
     {
         Date date = (Date) arg;
-        stmt.bindString(i, getFormat().format(date));        
+        stmt.bindString(argIndex, getFormat().format(date));        
     }
 
     public String toDbFormat(Date date)

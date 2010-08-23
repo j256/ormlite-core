@@ -133,9 +133,9 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 		}
 		for (int i = 0; i < args.length; i++) {
 			Object arg = args[i];
-			int bindIndex = AndroidHelper.androidToJdbc(i);// Android API's are a bit inconsistent
+			int argIndex = AndroidHelper.androidToJdbc(i);// Android API's are a bit inconsistent
 			if (arg == null) {
-				stmt.bindNull(bindIndex);
+				stmt.bindNull(argIndex);
 			} else {
 				switch (argFieldTypes[i]) {
 					case BOOLEAN :
@@ -143,18 +143,18 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 					case SHORT :
 					case INTEGER :
 					case LONG :
-						stmt.bindLong(bindIndex, ((Number) arg).longValue());
+						stmt.bindLong(argIndex, ((Number) arg).longValue());
 						break;
 					case FLOAT :
 					case DOUBLE :
-						stmt.bindDouble(bindIndex, ((Number) arg).doubleValue());
+						stmt.bindDouble(argIndex, ((Number) arg).doubleValue());
 						break;
 					case STRING :
 					case SERIALIZABLE :
-						stmt.bindString(bindIndex, (arg instanceof String) ? (String) arg : arg.toString());
+						stmt.bindString(argIndex, (arg instanceof String) ? (String) arg : arg.toString());
 						break;
 					case DATE :
-						dateAdapter.bindDate(stmt, bindIndex, arg);
+						dateAdapter.bindDate(stmt, argIndex, arg);
 						break;
 				}
 			}

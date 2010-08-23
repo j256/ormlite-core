@@ -26,10 +26,10 @@ public class NumericDateAdapter implements DateAdapter
         return new Timestamp(timestamp);
     }
 
-    public void bindDate(SQLiteStatement stmt, int i, Object arg)
+    public void bindDate(SQLiteStatement stmt, int argIndex, Object arg)
     {
         Date date = (Date) arg;
-        stmt.bindLong(i, date.getTime());
+        stmt.bindLong(argIndex, date.getTime());
     }
 
     public String toDbFormat(Date date)
