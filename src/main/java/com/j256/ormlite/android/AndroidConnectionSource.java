@@ -3,7 +3,6 @@ package com.j256.ormlite.android;
 import java.sql.SQLException;
 
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 
 import com.j256.ormlite.support.ConnectionSource;
 

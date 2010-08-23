@@ -19,14 +19,13 @@ import com.j256.ormlite.android.DateAdapter;
  */
 public class SqliteAndroidDatabaseType extends SqliteDatabaseType implements DatabaseType {
 
-    private DateAdapter dateAdapter;
+	private DateAdapter dateAdapter;
 
-    public SqliteAndroidDatabaseType(DateAdapter dateAdapter)
-    {
-        this.dateAdapter = dateAdapter;
-    }
+	public SqliteAndroidDatabaseType(DateAdapter dateAdapter) {
+		this.dateAdapter = dateAdapter;
+	}
 
-    @Override
+	@Override
 	public void loadDriver() throws ClassNotFoundException {
 		// Hang out. Nothing to do.
 	}
@@ -40,19 +39,18 @@ public class SqliteAndroidDatabaseType extends SqliteDatabaseType implements Dat
 	public String getDriverClassName() {
 		return null;
 	}
-    
-    @Override
-    protected void appendDateType(StringBuilder sb)
-    {
-        if(dateAdapter.isNumeric())
-            appendLongType(sb);
-        else
-            appendStringType(sb, 50);
-    }
 
-    @Override
-    protected void appendBooleanType(StringBuilder sb)
-    {
-        appendShortType(sb);
-    }
+	@Override
+	protected void appendDateType(StringBuilder sb) {
+		if (dateAdapter.isNumeric()) {
+			appendLongType(sb);
+		} else {
+			appendStringType(sb, 50);
+		}
+	}
+
+	@Override
+	protected void appendBooleanType(StringBuilder sb) {
+		appendShortType(sb);
+	}
 }

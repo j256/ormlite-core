@@ -5,7 +5,8 @@ package android.database;
  */
 public class Cursor {
 
-	public void moveToFirst() {
+	public boolean moveToFirst() {
+		return false;
 	}
 
 	public int getColumnCount() {

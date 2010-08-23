@@ -1,6 +1,8 @@
-3.0: 8/17/2010
+3.1: 8/XX/2010
 	* Large internal code reorganization to allow database calls outside of JDBC for better Android support.
-	* Removed direct access to the Connection object.  Now all db calls go through the DatabaseAccess object.
+	* Abstracted the DataSource and Connection classes to be ConnectionSource and DatabaseConnection interfaces.
+	* Renamed the BaseJdbcDao to be BaseDaoImpl.
+	* You don't set your DataSource on the DAOs anymore.  You set the DataSourceDatabaseConnection wrapper class.
 
 2.12: 8/16/2010
 	* Added a logger which should detect and delegate to the internal Android logger.

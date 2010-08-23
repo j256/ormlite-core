@@ -26,4 +26,7 @@ public class SQLiteDatabase {
 
 	public void endTransaction() {
 	}
+	
+	public void execSQL(String finalSql, String[] args) {
+	}
 }
