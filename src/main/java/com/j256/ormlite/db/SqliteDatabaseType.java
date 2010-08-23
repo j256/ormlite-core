@@ -26,7 +26,7 @@ public class SqliteDatabaseType extends BaseDatabaseType implements DatabaseType
 	@Override
 	protected void configureGeneratedId(StringBuilder sb, FieldType fieldType, List<String> statementsBefore,
 			List<String> additionalArgs, List<String> queriesAfter) {
-		if (fieldType.getDataType() != DataType.INTEGER) {
+		if (fieldType.getDataType() != DataType.INTEGER && fieldType.getDataType() != DataType.INTEGER_OBJ) {
 			throw new IllegalArgumentException("Sqlite requires that auto-increment generated-id be integer types");
 		}
 		sb.append("PRIMARY KEY AUTOINCREMENT ");

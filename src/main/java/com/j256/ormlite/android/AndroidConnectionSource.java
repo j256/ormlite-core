@@ -15,12 +15,16 @@ import com.j256.ormlite.support.ConnectionSource;
 public class AndroidConnectionSource implements ConnectionSource {
 
 	private DateAdapter dateAdapter;
-	private SQLiteOpenHelper dbHelper;
 	private SQLiteDatabase readableDb = null;
 	private SQLiteDatabase readWriteDb = null;
 
-	public AndroidConnectionSource(SQLiteOpenHelper dbHelper, DateAdapter dateAdapter) {
-		this.dbHelper = dbHelper;
+    public AndroidConnectionSource(DateAdapter dateAdapter, SQLiteDatabase readWriteDb) {
+        this(dateAdapter, readWriteDb, readWriteDb);
+    }
+
+	public AndroidConnectionSource(DateAdapter dateAdapter, SQLiteDatabase readableDb, SQLiteDatabase readWriteDb) {
+		this.readableDb = readableDb;
+        this.readWriteDb = readWriteDb;
 		this.dateAdapter = (dateAdapter == null ? new NumericDateAdapter() : dateAdapter);
 	}
 
@@ -29,16 +33,10 @@ public class AndroidConnectionSource implements ConnectionSource {
 	}
 
 	public AndroidDatabaseConnection getReadOnlyConnection() throws SQLException {
-		if (readableDb == null) {
-			readableDb = dbHelper.getReadableDatabase();
-		}
 		return new AndroidDatabaseConnection(readableDb, dateAdapter);
 	}
 
 	public AndroidDatabaseConnection getReadWriteConnection() throws SQLException {
-		if (readWriteDb == null) {
-			readWriteDb = dbHelper.getWritableDatabase();
-		}
 		return new AndroidDatabaseConnection(readWriteDb, dateAdapter);
 	}
 

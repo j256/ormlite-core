@@ -38,4 +38,9 @@ public class NumericDateAdapter implements DateAdapter
             return null;
         return Long.toString(date.getTime());
     }
+
+    public boolean isNumeric()
+    {
+        return true;
+    }
 }

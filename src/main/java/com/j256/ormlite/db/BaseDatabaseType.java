@@ -45,7 +45,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 				if (fieldWidth == 0) {
 					fieldWidth = getDefaultVarcharWidth();
 				}
-				appendStringType(sb, fieldType, fieldWidth);
+				appendStringType(sb, fieldWidth);
 				break;
 
 			case BOOLEAN :
@@ -139,7 +139,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	/**
 	 * Output the SQL type for a Java String.
 	 */
-	protected void appendStringType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
+	protected void appendStringType(StringBuilder sb, int fieldWidth) {
 		if (isVarcharFieldWidthSupported()) {
 			sb.append("VARCHAR(").append(fieldWidth).append(")");
 		} else {
@@ -215,7 +215,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	 */
 	protected void appendEnumStringType(StringBuilder sb, FieldType fieldType) {
 		// delegate to a string
-		appendStringType(sb, fieldType, DEFAULT_VARCHAR_WIDTH);
+		appendStringType(sb, DEFAULT_VARCHAR_WIDTH);
 	}
 
 	/**

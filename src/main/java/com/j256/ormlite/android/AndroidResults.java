@@ -24,11 +24,13 @@ public class AndroidResults implements Results
 {
     private Cursor cursor;
     private DateAdapter dateAdapter;
+    private boolean firstCall;
 
     public AndroidResults(Cursor cursor, DateAdapter dateAdapter)
     {
         this.cursor = cursor;
         this.dateAdapter = dateAdapter;
+        this.firstCall = true;
     }
 
     public int getColumnCount() throws SQLException {
@@ -41,7 +43,17 @@ public class AndroidResults implements Results
 
 	public boolean next() throws SQLException
     {
-        return cursor.moveToNext();
+        boolean returnValue;
+        if(firstCall)
+        {
+            returnValue = cursor.moveToFirst();
+            firstCall = false;
+        }
+        else
+        {
+            returnValue = cursor.moveToNext();
+        }
+        return returnValue;
     }
 
     public int findColumn(String columnName) throws SQLException

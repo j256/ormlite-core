@@ -51,7 +51,20 @@ public class AndroidPreparedStmt implements PreparedStmt
 	}
 
 	public int executeUpdate() throws SQLException {
-		throw new RuntimeException("Not implemented yet");
+        try
+        {
+            String finalSql;
+            if(max == null)
+                finalSql = sql;
+            else
+                finalSql = sql + " " + max;
+            db.execSQL(finalSql, args.toArray(new String[args.size()]));
+        }
+        catch (Exception e)
+        {
+            throw SqlExceptionUtil.create("Problem with Android query", e);
+        }
+		return 1;
 	}
 
     public Results getGeneratedKeys() throws SQLException {

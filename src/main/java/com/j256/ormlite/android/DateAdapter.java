@@ -20,4 +20,6 @@ public interface DateAdapter
     void bindDate(SQLiteStatement stmt, int argIndex, Object arg);
 
     String toDbFormat(Date date);
+
+    public boolean isNumeric();
 }

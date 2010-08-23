@@ -69,4 +69,9 @@ public class StringDateAdapter implements DateAdapter
             return null;
         return getFormat().format(date);
     }
+
+    public boolean isNumeric()
+    {
+        return false;
+    }
 }

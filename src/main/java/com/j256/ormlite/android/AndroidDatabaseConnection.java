@@ -101,7 +101,6 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 	public <T> Object queryForOne(String statement, Object[] args, SqlType[] argFieldTypes,
 			GenericRowMapper<T> rowMapper) throws SQLException {
 		Cursor cursor = db.rawQuery(statement, toStrings(args));
-		cursor.moveToFirst();
 		AndroidResults results = new AndroidResults(cursor, dateAdapter);
 
 		if (!results.next()) {
@@ -139,6 +138,8 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 			} else {
 				switch (argFieldTypes[i]) {
 					case BOOLEAN :
+                        stmt.bindLong(argIndex, ((Boolean) arg) ? 1 : 0);
+                        break;
 					case BYTE :
 					case SHORT :
 					case INTEGER :
