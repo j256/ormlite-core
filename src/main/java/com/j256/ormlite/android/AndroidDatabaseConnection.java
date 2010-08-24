@@ -67,30 +67,55 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 	public int insert(String statement, Object[] args, SqlType[] argFieldTypes) throws SQLException {
 		SQLiteStatement stmt = db.compileStatement(statement);
 
-		bindArgs(stmt, args, argFieldTypes);
+        try
+        {
+            bindArgs(stmt, args, argFieldTypes);
 
-		stmt.executeInsert();
+            stmt.executeInsert();
+        }
+        finally
+        {
+            if(stmt != null)
+                stmt.close();
+        }
 
-		return 1;
+        return 1;
 	}
 
 	public int insert(String statement, Object[] args, SqlType[] argFieldTypes, GeneratedKeyHolder keyHolder)
 			throws SQLException {
 		SQLiteStatement stmt = db.compileStatement(statement);
 
-		bindArgs(stmt, args, argFieldTypes);
+        try
+        {
+            bindArgs(stmt, args, argFieldTypes);
 
-		long rowId = stmt.executeInsert();
-		keyHolder.addKey(rowId);
+            long rowId = stmt.executeInsert();
+            keyHolder.addKey(rowId);
+        }
+        finally
+        {
+            if(stmt != null)
+                stmt.close();
+        }
 
-		return 1;
+        return 1;
 	}
 
 	public int update(String statement, Object[] args, SqlType[] argFieldTypes) throws SQLException {
 		SQLiteStatement stmt = db.compileStatement(statement);
-		bindArgs(stmt, args, argFieldTypes);
-		stmt.execute();
-		return 1;
+        try
+        {
+            bindArgs(stmt, args, argFieldTypes);
+
+            stmt.execute();
+        }
+        finally
+        {
+            if(stmt != null)
+                stmt.close();
+        }
+        return 1;
 	}
 
 	public int delete(String statement, Object[] args, SqlType[] argFieldTypes) throws SQLException {
@@ -103,24 +128,39 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 		Cursor cursor = db.rawQuery(statement, toStrings(args));
 		AndroidResults results = new AndroidResults(cursor, dateAdapter);
 
-		if (!results.next()) {
-			return null;
-		} else {
-			T first = rowMapper.mapRow(results);
+        try
+        {
+            if (!results.next()) {
+                return null;
+            } else {
+                T first = rowMapper.mapRow(results);
 
-			if (results.next()) {
-				return MORE_THAN_ONE;
-			} else {
-				return first;
-			}
-		}
-	}
+                if (results.next()) {
+                    return MORE_THAN_ONE;
+                } else {
+                    return first;
+                }
+            }
+        }
+        finally
+        {
+            if(cursor != null)
+                cursor.close();
+        }
+    }
 
 	public long queryForLong(String statement) throws SQLException {
 		SQLiteStatement stmt = db.compileStatement(statement);
-		long l = stmt.simpleQueryForLong();
-		return l;
-	}
+        try
+        {
+            return stmt.simpleQueryForLong();
+        }
+        finally
+        {
+            if(stmt != null)
+                stmt.close();
+        }
+    }
 
 	public void close() throws SQLException {
 		db.close();
