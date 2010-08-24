@@ -126,10 +126,10 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 	public <T> Object queryForOne(String statement, Object[] args, SqlType[] argFieldTypes,
 			GenericRowMapper<T> rowMapper) throws SQLException {
 		Cursor cursor = db.rawQuery(statement, toStrings(args));
-		AndroidResults results = new AndroidResults(cursor, dateAdapter);
 
         try
         {
+    		AndroidResults results = new AndroidResults(cursor, dateAdapter);
             if (!results.next()) {
                 return null;
             } else {

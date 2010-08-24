@@ -16,6 +16,9 @@ public class SQLiteStatement {
 	public void execute() {
 	}
 
+	public void close() {
+	}
+
 	public void bindNull(int bindIndex) {
 	}
 

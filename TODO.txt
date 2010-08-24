@@ -41,6 +41,9 @@
 	- maybe add datasource constructor args for daos
 	- tried this and it got messy in a hurry
 
+- use the query builder thing, but for updates and deletes (delete everything where someField = 123).
+	- from kevin
+
 -----------------------------------------------------------------------------------------------------------------------------------
 
 - how about the avg, sum, etc. stuff, how should those work
