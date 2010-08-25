@@ -15,7 +15,7 @@ import com.j256.ormlite.BaseOrmLiteTest;
 import com.j256.ormlite.TestUtils;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.StatementBuilder;
 import com.j256.ormlite.table.TableInfo;
 
 /**
@@ -96,7 +96,7 @@ public abstract class BaseDatabaseTest extends BaseOrmLiteTest {
 			return;
 		}
 		TableInfo<Foo> tableInfo = new TableInfo<Foo>(databaseType, Foo.class);
-		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, tableInfo);
+		StatementBuilder<Foo, String> qb = new StatementBuilder<Foo, String>(databaseType, tableInfo);
 		int limit = 1232;
 		qb.limit(limit);
 		String query = qb.prepareQueryString();

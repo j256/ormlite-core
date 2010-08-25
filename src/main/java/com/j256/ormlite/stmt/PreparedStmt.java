@@ -4,11 +4,11 @@ import java.sql.SQLException;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.DatabaseConnection;
-import com.j256.ormlite.support.PreparedStmt;
+import com.j256.ormlite.support.CompiledStatement;
 
 /**
- * Interface returned by the {@link QueryBuilder#prepareQuery()} which supports custom queries. This should be in turn
- * passed to the {@link Dao#query(PreparedQuery)} or {@link Dao#iterator(PreparedQuery)} methods.
+ * Interface returned by the {@link StatementBuilder#prepareStatement()} which supports custom queries. This should be in turn
+ * passed to the {@link Dao#query(PreparedStmt)} or {@link Dao#iterator(PreparedStmt)} methods.
  * 
  * @param T
  *            The class that the code will be operating on.
@@ -17,12 +17,12 @@ import com.j256.ormlite.support.PreparedStmt;
  *            needs an ID parameter however so you can use Void or Object to satisfy the compiler.
  * @author graywatson
  */
-public interface PreparedQuery<T> extends GenericRowMapper<T> {
+public interface PreparedStmt<T> extends GenericRowMapper<T> {
 
 	/**
-	 * Create and return the associated SQL prepared statement.
+	 * Create and return the associated compiled statement.
 	 */
-	public PreparedStmt prepareSqlStatement(DatabaseConnection databaseConnection) throws SQLException;
+	public CompiledStatement compile(DatabaseConnection databaseConnection) throws SQLException;
 
 	/**
 	 * Return the associated SQL statement string for logging purposes.

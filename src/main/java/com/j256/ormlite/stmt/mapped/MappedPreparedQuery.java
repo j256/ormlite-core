@@ -4,19 +4,19 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.PreparedStmt;
+import com.j256.ormlite.stmt.StatementBuilder;
 import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.support.DatabaseConnection;
-import com.j256.ormlite.support.PreparedStmt;
+import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.table.TableInfo;
 
 /**
- * Mapped statement used by the {@link QueryBuilder#prepareQuery()} method.
+ * Mapped statement used by the {@link StatementBuilder#prepareQuery()} method.
  * 
  * @author graywatson
  */
-public class MappedPreparedQuery<T> extends BaseMappedQuery<T> implements PreparedQuery<T> {
+public class MappedPreparedQuery<T> extends BaseMappedQuery<T> implements PreparedStmt<T> {
 
 	private final SelectArg[] selectArgs;
 	private final Integer limit;
@@ -32,8 +32,8 @@ public class MappedPreparedQuery<T> extends BaseMappedQuery<T> implements Prepar
 		this.limit = limit;
 	}
 
-	public PreparedStmt prepareSqlStatement(DatabaseConnection databaseConnection) throws SQLException {
-		PreparedStmt stmt = databaseConnection.prepareStatement(statement);
+	public CompiledStatement compile(DatabaseConnection databaseConnection) throws SQLException {
+		CompiledStatement stmt = databaseConnection.prepareStatement(statement);
 		if (limit != null) {
 			stmt.setMaxRows(limit);
 		}

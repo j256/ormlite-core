@@ -7,7 +7,7 @@ import java.util.Map;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.GenericRowMapper;
-import com.j256.ormlite.support.Results;
+import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.TableInfo;
 
 /**
@@ -27,7 +27,7 @@ public abstract class BaseMappedQuery<T> extends BaseMappedStatement<T> implemen
 		this.resultsFieldTypes = resultFieldTypeList.toArray(new FieldType[resultFieldTypeList.size()]);
 	}
 
-	public T mapRow(Results results) throws SQLException {
+	public T mapRow(DatabaseResults results) throws SQLException {
 		// create our instance
 		T instance = tableInfo.createObject();
 		// populate its fields

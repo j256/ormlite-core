@@ -21,8 +21,8 @@ import com.j256.ormlite.stmt.mapped.MappedRefresh;
 import com.j256.ormlite.stmt.mapped.MappedUpdate;
 import com.j256.ormlite.stmt.mapped.MappedUpdateId;
 import com.j256.ormlite.support.DatabaseConnection;
-import com.j256.ormlite.support.PreparedStmt;
-import com.j256.ormlite.support.Results;
+import com.j256.ormlite.support.CompiledStatement;
+import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.TableInfo;
 
 /**
@@ -45,7 +45,7 @@ public class StatementExecutor<T, ID> {
 	private final Class<T> dataClass;
 	private final FieldType idField;
 	private final MappedQueryForId<T, ID> mappedQueryForId;
-	private final PreparedQuery<T> preparedQueryForAll;
+	private final PreparedStmt<T> preparedQueryForAll;
 	private final MappedCreate<T> mappedInsert;
 	private final MappedUpdate<T> mappedUpdate;
 	private final MappedUpdateId<T, ID> mappedUpdateId;
@@ -61,7 +61,7 @@ public class StatementExecutor<T, ID> {
 		this.dataClass = tableInfo.getDataClass();
 		this.idField = tableInfo.getIdField();
 		this.mappedQueryForId = MappedQueryForId.build(databaseType, tableInfo);
-		this.preparedQueryForAll = new QueryBuilder<T, ID>(databaseType, tableInfo).prepareQuery();
+		this.preparedQueryForAll = new StatementBuilder<T, ID>(databaseType, tableInfo).prepareStatement();
 		this.mappedInsert = MappedCreate.build(databaseType, tableInfo);
 		this.mappedUpdate = MappedUpdate.build(databaseType, tableInfo);
 		this.mappedUpdateId = MappedUpdateId.build(databaseType, tableInfo);
@@ -81,13 +81,13 @@ public class StatementExecutor<T, ID> {
 	}
 
 	/**
-	 * Return the first object that matches the {@link PreparedQuery} or null if none.
+	 * Return the first object that matches the {@link PreparedStmt} or null if none.
 	 */
-	public T queryForFirst(DatabaseConnection databaseConnection, PreparedQuery<T> preparedQuery) throws SQLException {
-		PreparedStmt stmt = null;
+	public T queryForFirst(DatabaseConnection databaseConnection, PreparedStmt<T> preparedQuery) throws SQLException {
+		CompiledStatement stmt = null;
 		try {
-			stmt = preparedQuery.prepareSqlStatement(databaseConnection);
-			Results results = stmt.executeQuery();
+			stmt = preparedQuery.compile(databaseConnection);
+			DatabaseResults results = stmt.executeQuery();
 			if (results.next()) {
 				logger.debug("query-for-first of '{}' returned at least 1 result", preparedQuery.getStatement());
 				return preparedQuery.mapRow(results);
@@ -111,10 +111,10 @@ public class StatementExecutor<T, ID> {
 	}
 
 	/**
-	 * Return a list of all of the data in the table that matches the {@link PreparedQuery}. Should be used carefully if
+	 * Return a list of all of the data in the table that matches the {@link PreparedStmt}. Should be used carefully if
 	 * the table is large. Consider using the {@link Dao#iterator} if this is the case.
 	 */
-	public List<T> query(DatabaseConnection databaseConnection, PreparedQuery<T> preparedQuery) throws SQLException {
+	public List<T> query(DatabaseConnection databaseConnection, PreparedStmt<T> preparedQuery) throws SQLException {
 		SelectIterator<T, ID> iterator = null;
 		try {
 			iterator = buildIterator(/* no dao specified because no removes */null, databaseConnection, preparedQuery);
@@ -132,13 +132,13 @@ public class StatementExecutor<T, ID> {
 	}
 
 	/**
-	 * Return a list of all of the data in the table that matches the {@link PreparedQuery}. Should be used carefully if
+	 * Return a list of all of the data in the table that matches the {@link PreparedStmt}. Should be used carefully if
 	 * the table is large. Consider using the {@link Dao#iterator} if this is the case.
 	 */
 	public RawResults queryRaw(DatabaseConnection databaseConnection, String query) throws SQLException {
 		SelectIterator<String[], Void> iterator = null;
 		try {
-			PreparedStmt preparedStatement = databaseConnection.prepareStatement(query);
+			CompiledStatement preparedStatement = databaseConnection.prepareStatement(query);
 			RawResultsList results = new RawResultsList(preparedStatement);
 			// statement arg is null because we don't want it to double log below
 			iterator = new SelectIterator<String[], Void>(String[].class, null, results, preparedStatement, null);
@@ -165,9 +165,9 @@ public class StatementExecutor<T, ID> {
 	 * Create and return an {@link SelectIterator} for the class using a prepared query.
 	 */
 	public SelectIterator<T, ID> buildIterator(BaseDaoImpl<T, ID> classDao, DatabaseConnection databaseConnection,
-			PreparedQuery<T> preparedQuery) throws SQLException {
+			PreparedStmt<T> preparedQuery) throws SQLException {
 		return new SelectIterator<T, ID>(dataClass, classDao, preparedQuery,
-				preparedQuery.prepareSqlStatement(databaseConnection), preparedQuery.getStatement());
+				preparedQuery.compile(databaseConnection), preparedQuery.getStatement());
 	}
 
 	/**
@@ -267,7 +267,7 @@ public class StatementExecutor<T, ID> {
 		protected final int columnN;
 		protected final String[] columnNames;
 
-		protected BaseRawResults(PreparedStmt preparedStmt) throws SQLException {
+		protected BaseRawResults(CompiledStatement preparedStmt) throws SQLException {
 			this.columnN = preparedStmt.getColumnCount();
 			this.columnNames = new String[this.columnN];
 			for (int colC = 0; colC < this.columnN; colC++) {
@@ -286,7 +286,7 @@ public class StatementExecutor<T, ID> {
 		/**
 		 * Row mapper which handles our String[] raw results.
 		 */
-		public String[] mapRow(Results rs) throws SQLException {
+		public String[] mapRow(DatabaseResults rs) throws SQLException {
 			String[] result = new String[columnN];
 			for (int colC = 0; colC < columnN; colC++) {
 				result[colC] = rs.getString(colC + 1);
@@ -302,7 +302,7 @@ public class StatementExecutor<T, ID> {
 
 		private final List<String[]> results = new ArrayList<String[]>();
 
-		public RawResultsList(PreparedStmt preparedStmt) throws SQLException {
+		public RawResultsList(CompiledStatement preparedStmt) throws SQLException {
 			super(preparedStmt);
 		}
 
@@ -348,10 +348,10 @@ public class StatementExecutor<T, ID> {
 	 */
 	private static class RawResultsIterator extends BaseRawResults {
 
-		private final PreparedStmt statement;
+		private final CompiledStatement statement;
 		private final String query;
 
-		public RawResultsIterator(String query, PreparedStmt statement) throws SQLException {
+		public RawResultsIterator(String query, CompiledStatement statement) throws SQLException {
 			super(statement);
 			this.query = query;
 			this.statement = statement;

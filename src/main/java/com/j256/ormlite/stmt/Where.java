@@ -26,7 +26,7 @@ import com.j256.ormlite.table.TableInfo;
 
 /**
  * Manages the various clauses that make up the WHERE part of a SQL statement. You get one of these when you call
- * {@link QueryBuilder#where} or you can set the where clause by calling {@link QueryBuilder#setWhere}.
+ * {@link StatementBuilder#where} or you can set the where clause by calling {@link StatementBuilder#setWhere}.
  * 
  * <p>
  * Here's a page with a <a href="http://www.w3schools.com/Sql/" >good tutorial of SQL commands</a>.

@@ -8,7 +8,7 @@ import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.stmt.SelectArg;
-import com.j256.ormlite.stmt.QueryBuilder.InternalQueryBuilder;
+import com.j256.ormlite.stmt.StatementBuilder.InternalQueryBuilder;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableInfo;
 

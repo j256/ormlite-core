@@ -1,8 +1,8 @@
 package com.j256.ormlite.dao;
 
 /**
- * Results returned by a call to {@link Dao#queryForAllRaw} or {@link Dao#iteratorRaw} which handles each result as a
- * String[].
+ * Results returned by a call to {@link Dao#queryForAllRaw(String)} or {@link Dao#iteratorRaw(String)} which handles
+ * each result as a String[].
  * 
  * <p>
  * <b>NOTE:</b> You must call {@link CloseableIterator#close()} method when you are done otherwise the underlying SQL

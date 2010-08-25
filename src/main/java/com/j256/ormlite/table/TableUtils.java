@@ -13,8 +13,8 @@ import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
-import com.j256.ormlite.support.PreparedStmt;
-import com.j256.ormlite.support.Results;
+import com.j256.ormlite.support.CompiledStatement;
+import com.j256.ormlite.support.DatabaseResults;
 
 /**
  * Couple utility methods for the creating, dropping, and maintenance of tables.
@@ -72,7 +72,7 @@ public class TableUtils {
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		for (String statement : statements) {
 			int rowC;
-			PreparedStmt prepStmt = null;
+			CompiledStatement prepStmt = null;
 			try {
 				logger.debug("executing create table statement: {}", statement);
 				prepStmt = connection.prepareStatement(statement);
@@ -96,8 +96,8 @@ public class TableUtils {
 		}
 		// now execute any test queries which test the newly created table
 		for (String query : queriesAfter) {
-			PreparedStmt prepStmt = null;
-			Results results = null;
+			CompiledStatement prepStmt = null;
+			DatabaseResults results = null;
 			try {
 				prepStmt = connection.prepareStatement(query);
 				results = prepStmt.executeQuery();
@@ -206,7 +206,7 @@ public class TableUtils {
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		for (String statement : statements) {
 			int rowC = 0;
-			PreparedStmt prepStmt = null;
+			CompiledStatement prepStmt = null;
 			try {
 				logger.debug("executing drop table statement: {}", statement);
 				prepStmt = connection.prepareStatement(statement);

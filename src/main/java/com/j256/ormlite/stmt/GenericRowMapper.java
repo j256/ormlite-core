@@ -2,7 +2,7 @@ package com.j256.ormlite.stmt;
 
 import java.sql.SQLException;
 
-import com.j256.ormlite.support.Results;
+import com.j256.ormlite.support.DatabaseResults;
 
 /**
  * Parameterized version similar to Spring's RowMapper which converts a result row into an object.
@@ -22,5 +22,5 @@ public interface GenericRowMapper<T> {
 	 * @throws SQLException
 	 *             If we could not get the SQL results or instantiate the object.
 	 */
-	public T mapRow(Results results) throws SQLException;
+	public T mapRow(DatabaseResults results) throws SQLException;
 }

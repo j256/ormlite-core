@@ -29,9 +29,9 @@ import com.j256.ormlite.table.TableInfo;
  *            needs an ID parameter however so you can use Void or Object to satisfy the compiler.
  * @author graywatson
  */
-public class QueryBuilder<T, ID> {
+public class StatementBuilder<T, ID> {
 
-	private static Logger logger = LoggerFactory.getLogger(QueryBuilder.class);
+	private static Logger logger = LoggerFactory.getLogger(StatementBuilder.class);
 
 	private TableInfo<T> tableInfo;
 	private DatabaseType databaseType;
@@ -53,7 +53,7 @@ public class QueryBuilder<T, ID> {
 	 * @param tableInfo
 	 *            Information about the table/class that is being handled.
 	 */
-	public QueryBuilder(DatabaseType databaseType, TableInfo<T> tableInfo) {
+	public StatementBuilder(DatabaseType databaseType, TableInfo<T> tableInfo) {
 		this.databaseType = databaseType;
 		this.tableInfo = tableInfo;
 		this.idField = tableInfo.getIdField();
@@ -63,7 +63,7 @@ public class QueryBuilder<T, ID> {
 	 * Add columns to be returned by the query. If no column...() method called then all columns are returned by
 	 * default.
 	 */
-	public QueryBuilder<T, ID> columns(String... columns) {
+	public StatementBuilder<T, ID> columns(String... columns) {
 		if (columnList == null) {
 			columnList = new ArrayList<String>();
 		}
@@ -77,7 +77,7 @@ public class QueryBuilder<T, ID> {
 	 * Add columns to be returned by the query. If no column...() method called then all columns are returned by
 	 * default.
 	 */
-	public QueryBuilder<T, ID> columns(Iterable<String> columns) {
+	public StatementBuilder<T, ID> columns(Iterable<String> columns) {
 		if (columnList == null) {
 			columnList = new ArrayList<String>();
 		}
@@ -93,7 +93,7 @@ public class QueryBuilder<T, ID> {
 	 * NOTE: Use of this means that the resulting objects may not have a valid ID column value so cannot be deleted or
 	 * updated.
 	 */
-	public QueryBuilder<T, ID> groupBy(String columnName) {
+	public StatementBuilder<T, ID> groupBy(String columnName) {
 		verifyColumnName(columnName);
 		groupByList.add(columnName);
 		selectIdColumn = false;
@@ -103,7 +103,7 @@ public class QueryBuilder<T, ID> {
 	/**
 	 * Add "ORDER BY" clauses to the SQL query statement.
 	 */
-	public QueryBuilder<T, ID> orderBy(String columnName, boolean ascending) {
+	public StatementBuilder<T, ID> orderBy(String columnName, boolean ascending) {
 		verifyColumnName(columnName);
 		orderByList.add(new OrderBy(columnName, ascending));
 		return this;
@@ -115,7 +115,7 @@ public class QueryBuilder<T, ID> {
 	 * NOTE: Use of this means that the resulting objects may not have a valid ID column value so cannot be deleted or
 	 * updated.
 	 */
-	public QueryBuilder<T, ID> distinct() {
+	public StatementBuilder<T, ID> distinct() {
 		distinct = true;
 		selectIdColumn = false;
 		return this;
@@ -125,7 +125,7 @@ public class QueryBuilder<T, ID> {
 	 * Limit the output to maxRows maximum number of rows. Set to null for no limit (the default). This is implemented
 	 * at the database level either through a LIMIT SQL query addition or a JDBC setMaxRows method call.
 	 */
-	public QueryBuilder<T, ID> limit(Integer maxRows) {
+	public StatementBuilder<T, ID> limit(Integer maxRows) {
 		limit = maxRows;
 		return this;
 	}
@@ -147,17 +147,25 @@ public class QueryBuilder<T, ID> {
 	}
 
 	/**
-	 * Build and return a {@link PreparedQuery} object which then can be used by {@link Dao#query(PreparedQuery)} and
-	 * {@link Dao#iterator(PreparedQuery)} methods. If you change the where or make other calls you will need to re-call
+	 * Build and return a {@link PreparedStmt} object which then can be used by {@link Dao#query(PreparedStmt)} and
+	 * {@link Dao#iterator(PreparedStmt)} methods. If you change the where or make other calls you will need to re-call
 	 * this method to re-prepare the query for execution.
 	 */
-	public PreparedQuery<T> prepareQuery() {
+	public PreparedStmt<T> prepareStatement() {
 		List<FieldType> argFieldTypeList = new ArrayList<FieldType>();
 		List<FieldType> resultFieldTypeList = new ArrayList<FieldType>();
 		List<SelectArg> selectArgList = new ArrayList<SelectArg>();
 		String statement = buildSelectString(argFieldTypeList, resultFieldTypeList, selectArgList);
 		return new MappedPreparedQuery<T>(tableInfo, statement, argFieldTypeList, resultFieldTypeList, selectArgList,
 				(databaseType.isLimitSqlSupported() ? null : limit));
+	}
+
+	/**
+	 * @deprecated Use {@link #prepareStatement()}
+	 */
+	@Deprecated
+	public PreparedStmt<T> prepareQuery() {
+		return prepareStatement();
 	}
 
 	/**
@@ -323,7 +331,7 @@ public class QueryBuilder<T, ID> {
 	 * That I had to do this probably means that I have a bad type hierarchy or package layout but I don't see a better
 	 * way to do it right now.
 	 */
-	public static class InternalQueryBuilder<T, ID> extends QueryBuilder<T, ID> {
+	public static class InternalQueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 
 		public InternalQueryBuilder(DatabaseType databaseType, TableInfo<T> tableInfo) {
 			super(databaseType, tableInfo);
@@ -331,7 +339,7 @@ public class QueryBuilder<T, ID> {
 
 		/**
 		 * Internal method to build a query while tracking various arguments. Users should use the
-		 * {@link QueryBuilder#prepareQuery()} method instead.
+		 * {@link StatementBuilder#prepareQuery()} method instead.
 		 */
 		public String buildSelectString(List<FieldType> argFieldTypeList, List<FieldType> resultFieldTypeList,
 				List<SelectArg> selectArgList) {

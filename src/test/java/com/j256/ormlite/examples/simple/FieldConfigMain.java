@@ -84,13 +84,13 @@ public class FieldConfigMain {
 	private DatabaseTableConfig<Delivery> buildTableConfig() {
 		ArrayList<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
 		fieldConfigs.add(new DatabaseFieldConfig("id", null, DataType.UNKNOWN, null, 0, false, false, true, null,
-				false, null, false, null, false));
+				false, null, false, null, false, null));
 		fieldConfigs.add(new DatabaseFieldConfig("when", null, DataType.UNKNOWN, null, 0, false, false, false, null,
-				false, null, false, null, false));
+				false, null, false, null, false, null));
 		fieldConfigs.add(new DatabaseFieldConfig("signedBy", null, DataType.UNKNOWN, null, 0, false, false, false,
-				null, false, null, false, null, false));
+				null, false, null, false, null, false, null));
 		fieldConfigs.add(new DatabaseFieldConfig("account", null, DataType.UNKNOWN, null, 0, false, false, false, null,
-				true, null, false, null, false));
+				true, null, false, null, false, null));
 		DatabaseTableConfig<Delivery> tableConfig = new DatabaseTableConfig<Delivery>(Delivery.class, fieldConfigs);
 		return tableConfig;
 	}

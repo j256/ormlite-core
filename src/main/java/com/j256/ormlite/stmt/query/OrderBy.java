@@ -1,9 +1,9 @@
 package com.j256.ormlite.stmt.query;
 
-import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.StatementBuilder;
 
 /**
- * Internal class handling the SQL 'ORDER BY' operation. Used by {@link QueryBuilder#orderBy}.
+ * Internal class handling the SQL 'ORDER BY' operation. Used by {@link StatementBuilder#orderBy}.
  * 
  * @author graywatson
  */

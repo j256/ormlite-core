@@ -5,8 +5,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.PreparedStmt;
+import com.j256.ormlite.stmt.StatementBuilder;
 import com.j256.ormlite.stmt.SelectIterator;
 
 /**
@@ -34,7 +34,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public T queryForId(ID id) throws SQLException;
 
 	/**
-	 * Query for and return the first item in the object table which matches the {@link PreparedQuery}. See
+	 * Query for and return the first item in the object table which matches the {@link PreparedStmt}. See
 	 * {@link #queryBuilder} for more information. This can be used to return the object that matches a single unique
 	 * column. You should use {@link #queryForId} if you want to query for the id column.
 	 * 
@@ -44,7 +44,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * @throws SQLException
 	 *             on any SQL problems.
 	 */
-	public T queryForFirst(PreparedQuery<T> preparedQuery) throws SQLException;
+	public T queryForFirst(PreparedStmt<T> preparedQuery) throws SQLException;
 
 	/**
 	 * Query for all of the items in the object table. For medium sized or large tables, this may load a lot of objects
@@ -58,7 +58,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 
 	/**
 	 * Query for all of the items in the object table that match the SQL select query argument. Although you should use
-	 * the {@link QueryBuilder} for most queries, this method allows you to do special queries that aren't supported
+	 * the {@link StatementBuilder} for most queries, this method allows you to do special queries that aren't supported
 	 * otherwise. For medium sized or large tables, this may load a lot of objects into memory so you should consider
 	 * using the {@link #iteratorRaw(String)} method instead.
 	 * 
@@ -69,20 +69,26 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public RawResults queryForAllRaw(String query) throws SQLException;
 
 	/**
-	 * Create and return a new {@link QueryBuilder} object which allows you to build a custom query. You call methods on
-	 * the {@link QueryBuilder} to construct your custom query and then call {@link QueryBuilder#prepareQuery} once you
-	 * are ready to build your query. This returns a {@link PreparedQuery} object which gets passed to
-	 * {@link #query(PreparedQuery)} or {@link #iterator(PreparedQuery)}.
+	 * Create and return a new {@link StatementBuilder} object which allows you to build a custom statement. You call
+	 * methods on the {@link StatementBuilder} to construct your statement and then call
+	 * {@link StatementBuilder#prepareStatement()} once you are ready to build. This returns a {@link PreparedStmt}
+	 * object which gets passed to {@link #query(PreparedStmt)} or {@link #iterator(PreparedStmt)}.
 	 */
-	public QueryBuilder<T, ID> queryBuilder();
+	public StatementBuilder<T, ID> statementBuilder();
 
 	/**
-	 * Query for the items in the object table which match the {@link PreparedQuery}. See {@link #queryBuilder} for more
+	 * @deprecated Use {@link #statementBuilder()}
+	 */
+	@Deprecated()
+	public StatementBuilder<T, ID> queryBuilder();
+
+	/**
+	 * Query for the items in the object table which match the {@link PreparedStmt}. See {@link #queryBuilder} for more
 	 * information.
 	 * 
 	 * <p>
 	 * <b>NOTE:</b> For medium sized or large tables, this may load a lot of objects into memory so you should consider
-	 * using the {@link #iterator(PreparedQuery)} method instead.
+	 * using the {@link #iterator(PreparedStmt)} method instead.
 	 * </p>
 	 * 
 	 * @param preparedQuery
@@ -91,7 +97,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * @throws SQLException
 	 *             on any SQL problems.
 	 */
-	public List<T> query(PreparedQuery<T> preparedQuery) throws SQLException;
+	public List<T> query(PreparedStmt<T> preparedQuery) throws SQLException;
 
 	/**
 	 * Create a new row in the database from an object.
@@ -217,7 +223,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public CloseableIterator<T> iterator();
 
 	/**
-	 * Same as {@link #iterator()} but with a {@link PreparedQuery} parameter. See {@link #queryBuilder} for more
+	 * Same as {@link #iterator()} but with a {@link PreparedStmt} parameter. See {@link #queryBuilder} for more
 	 * information. You use it like the following:
 	 * 
 	 * <p>
@@ -246,10 +252,10 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * @throws SQLException
 	 *             on any SQL problems.
 	 */
-	public CloseableIterator<T> iterator(PreparedQuery<T> preparedQuery) throws SQLException;
+	public CloseableIterator<T> iterator(PreparedStmt<T> preparedQuery) throws SQLException;
 
 	/**
-	 * Same as {@link #iterator(PreparedQuery)} except it returns a RawResults object associated with the SQL select
+	 * Same as {@link #iterator(PreparedStmt)} except it returns a RawResults object associated with the SQL select
 	 * query argument. Although you should use the {@link #iterator()} for most queries, this method allows you to do
 	 * special queries that aren't supported otherwise. Like the above iterator methods, you must call close on the
 	 * returned RawResults object once you are done with it.

@@ -14,8 +14,8 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.SelectArg;
-import com.j256.ormlite.support.PreparedStmt;
-import com.j256.ormlite.support.Results;
+import com.j256.ormlite.support.CompiledStatement;
+import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.TableInfo;
 
@@ -34,9 +34,9 @@ public class MappedPreparedQueryTest extends BaseOrmLiteTest {
 				new MappedPreparedQuery<Foo>(tableInfo, null, new ArrayList<FieldType>(),
 						Arrays.asList(tableInfo.getFieldTypes()), new ArrayList<SelectArg>(), null);
 
-		PreparedStmt stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
+		CompiledStatement stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
 
-		Results results = stmt.executeQuery();
+		DatabaseResults results = stmt.executeQuery();
 		while (results.next()) {
 			Foo foo2 = rowMapper.mapRow(results);
 			assertEquals(foo1.id, foo2.id);
@@ -70,10 +70,10 @@ public class MappedPreparedQueryTest extends BaseOrmLiteTest {
 
 	private void checkResults(List<Foo> foos, MappedPreparedQuery<Foo> preparedQuery, int expectedNum)
 			throws SQLException {
-		PreparedStmt stmt = null;
+		CompiledStatement stmt = null;
 		try {
-			stmt = preparedQuery.prepareSqlStatement(databaseConnection);
-			Results results = stmt.executeQuery();
+			stmt = preparedQuery.compile(databaseConnection);
+			DatabaseResults results = stmt.executeQuery();
 			int fooC = 0;
 			while (results.next()) {
 				Foo foo2 = preparedQuery.mapRow(results);

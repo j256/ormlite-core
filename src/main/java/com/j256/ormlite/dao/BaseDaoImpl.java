@@ -8,8 +8,8 @@ import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.misc.SqlExceptionUtil;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.PreparedStmt;
+import com.j256.ormlite.stmt.StatementBuilder;
 import com.j256.ormlite.stmt.SelectIterator;
 import com.j256.ormlite.stmt.StatementExecutor;
 import com.j256.ormlite.support.ConnectionSource;
@@ -125,20 +125,28 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		return statementExecutor.queryForId(connectionSource.getReadOnlyConnection(), id);
 	}
 
-	public T queryForFirst(PreparedQuery<T> preparedQuery) throws SQLException {
-		return statementExecutor.queryForFirst(connectionSource.getReadOnlyConnection(), preparedQuery);
+	public T queryForFirst(PreparedStmt<T> preparedStmt) throws SQLException {
+		return statementExecutor.queryForFirst(connectionSource.getReadOnlyConnection(), preparedStmt);
 	}
 
 	public List<T> queryForAll() throws SQLException {
 		return statementExecutor.queryForAll(connectionSource.getReadOnlyConnection());
 	}
 
-	public QueryBuilder<T, ID> queryBuilder() {
-		return new QueryBuilder<T, ID>(databaseType, tableInfo);
+	public StatementBuilder<T, ID> statementBuilder() {
+		return new StatementBuilder<T, ID>(databaseType, tableInfo);
 	}
 
-	public List<T> query(PreparedQuery<T> preparedQuery) throws SQLException {
-		return statementExecutor.query(connectionSource.getReadOnlyConnection(), preparedQuery);
+	/**
+	 * @deprecated See {@link #statementBuilder()}
+	 */
+	@Deprecated
+	public StatementBuilder<T, ID> queryBuilder() {
+		return statementBuilder();
+	}
+
+	public List<T> query(PreparedStmt<T> preparedStmt) throws SQLException {
+		return statementExecutor.query(connectionSource.getReadOnlyConnection(), preparedStmt);
 	}
 
 	public RawResults queryForAllRaw(String queryString) throws SQLException {
@@ -216,7 +224,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
-	public SelectIterator<T, ID> iterator(PreparedQuery<T> preparedQuery) throws SQLException {
+	public SelectIterator<T, ID> iterator(PreparedStmt<T> preparedQuery) throws SQLException {
 		try {
 			return statementExecutor.buildIterator(this, connectionSource.getReadOnlyConnection(), preparedQuery);
 		} catch (SQLException e) {

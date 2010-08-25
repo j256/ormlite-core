@@ -13,7 +13,7 @@ import org.junit.Test;
 import com.j256.ormlite.TestUtils;
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.StatementBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableInfo;
 
@@ -55,7 +55,7 @@ public class SqlServerDatabaseTypeTest extends BaseDatabaseTest {
 		};
 		dao.setConnectionSource(createMock(ConnectionSource.class));
 		dao.initialize();
-		QueryBuilder<Foo, String> qb = dao.queryBuilder();
+		StatementBuilder<Foo, String> qb = dao.statementBuilder();
 		int limit = 1232;
 		qb.limit(limit);
 		String query = qb.prepareQueryString();

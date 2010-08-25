@@ -15,7 +15,7 @@ import com.j256.ormlite.examples.common.Order;
 import com.j256.ormlite.examples.common.OrderDao;
 import com.j256.ormlite.examples.common.OrderDaoImpl;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.StatementBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
@@ -108,10 +108,10 @@ public class Main {
 		}
 
 		// construct a query using the QueryBuilder
-		QueryBuilder<Order, Integer> queryBuilder = orderDao.queryBuilder();
+		StatementBuilder<Order, Integer> statementBuilder = orderDao.statementBuilder();
 		// should find both of the orders that match the account id
-		queryBuilder.where().eq(Order.ACCOUNT_ID_FIELD_NAME, account.getId());
-		List<Order> orders = orderDao.query(queryBuilder.prepareQuery());
+		statementBuilder.where().eq(Order.ACCOUNT_ID_FIELD_NAME, account.getId());
+		List<Order> orders = orderDao.query(statementBuilder.prepareStatement());
 
 		// sanity checks
 		assertEquals("Should have found both of the orders for the account", 2, orders.size());

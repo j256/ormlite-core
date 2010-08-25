@@ -32,7 +32,7 @@ import com.j256.ormlite.BaseOrmLiteTest;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
-import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.StatementBuilder;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.DatabaseTableConfig;
 
@@ -609,17 +609,17 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 
 		String stuff = "ewf4334234u42f";
 
-		QueryBuilder<Foo, Integer> qb = fooDao.queryBuilder();
+		StatementBuilder<Foo, Integer> qb = fooDao.statementBuilder();
 		qb.where().eq(STUFF_FIELD_NAME, stuff);
 
-		assertNull(fooDao.queryForFirst(qb.prepareQuery()));
+		assertNull(fooDao.queryForFirst(qb.prepareStatement()));
 
 		Foo foo1 = new Foo();
 		foo1.stuff = stuff;
 		assertEquals(1, fooDao.create(foo1));
 
 		// should still get foo1
-		Foo foo2 = fooDao.queryForFirst(qb.prepareQuery());
+		Foo foo2 = fooDao.queryForFirst(qb.prepareStatement());
 		assertEquals(foo1.id, foo2.id);
 		assertEquals(stuff, foo2.stuff);
 
@@ -629,7 +629,7 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 		foo3.stuff = stuff2;
 		assertEquals(1, fooDao.create(foo3));
 
-		foo2 = fooDao.queryForFirst(qb.prepareQuery());
+		foo2 = fooDao.queryForFirst(qb.prepareStatement());
 		assertEquals(foo1.id, foo2.id);
 		assertEquals(stuff, foo2.stuff);
 	}
@@ -638,9 +638,9 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 	public void testFieldConfig() throws Exception {
 		List<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
 		fieldConfigs.add(new DatabaseFieldConfig("id", "id2", DataType.UNKNOWN, null, 0, false, false, true, null,
-				false, null, false, null, false));
+				false, null, false, null, false, null));
 		fieldConfigs.add(new DatabaseFieldConfig("stuff", "stuffy", DataType.UNKNOWN, null, 0, false, false, false,
-				null, false, null, false, null, false));
+				null, false, null, false, null, false, null));
 		DatabaseTableConfig<NoAnno> tableConfig = new DatabaseTableConfig<NoAnno>(NoAnno.class, "noanno", fieldConfigs);
 		Dao<NoAnno, Integer> noAnnotaionDao = createDao(tableConfig, true);
 		NoAnno noa = new NoAnno();
@@ -656,9 +656,9 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 	public void testFieldConfigForeign() throws Exception {
 		List<DatabaseFieldConfig> noAnnotationsFieldConfigs = new ArrayList<DatabaseFieldConfig>();
 		noAnnotationsFieldConfigs.add(new DatabaseFieldConfig("id", "idthingie", DataType.UNKNOWN, null, 0, false,
-				false, true, null, false, null, false, null, false));
+				false, true, null, false, null, false, null, false, null));
 		noAnnotationsFieldConfigs.add(new DatabaseFieldConfig("stuff", "stuffy", DataType.UNKNOWN, null, 0, false,
-				false, false, null, false, null, false, null, false));
+				false, false, null, false, null, false, null, false, null));
 		DatabaseTableConfig<NoAnno> noAnnotationsTableConfig =
 				new DatabaseTableConfig<NoAnno>(NoAnno.class, noAnnotationsFieldConfigs);
 		Dao<NoAnno, Integer> noAnnotaionDao = createDao(noAnnotationsTableConfig, true);
@@ -670,9 +670,9 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 
 		List<DatabaseFieldConfig> noAnnotationsForiegnFieldConfigs = new ArrayList<DatabaseFieldConfig>();
 		noAnnotationsForiegnFieldConfigs.add(new DatabaseFieldConfig("id", "anotherid", DataType.UNKNOWN, null, 0,
-				false, false, true, null, false, null, false, null, false));
+				false, false, true, null, false, null, false, null, false, null));
 		noAnnotationsForiegnFieldConfigs.add(new DatabaseFieldConfig("foreign", "foreignThingie", DataType.UNKNOWN,
-				null, 0, false, false, false, null, true, noAnnotationsTableConfig, false, null, false));
+				null, 0, false, false, false, null, true, noAnnotationsTableConfig, false, null, false, null));
 		DatabaseTableConfig<NoAnnoFor> noAnnotationsForiegnTableConfig =
 				new DatabaseTableConfig<NoAnnoFor>(NoAnnoFor.class, noAnnotationsForiegnFieldConfigs);
 

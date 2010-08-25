@@ -7,8 +7,8 @@ import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
-import com.j256.ormlite.support.PreparedStmt;
-import com.j256.ormlite.support.Results;
+import com.j256.ormlite.support.CompiledStatement;
+import com.j256.ormlite.support.DatabaseResults;
 
 /**
  * Internal iterator so we can page through the class. This is used by the {@link Dao#iterator} methods.
@@ -26,8 +26,8 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 
 	private final Class<T> dataClass;
 	private BaseDaoImpl<T, ID> classDao;
-	private final PreparedStmt stmt;
-	private final Results results;
+	private final CompiledStatement stmt;
+	private final DatabaseResults results;
 	private final GenericRowMapper<T> rowMapper;
 	private final String statement;
 	private boolean closed = false;
@@ -38,7 +38,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 	 * If the statement parameter is null then this won't log information
 	 */
 	public SelectIterator(Class<T> dataClass, BaseDaoImpl<T, ID> classDao, GenericRowMapper<T> rowMapper,
-			PreparedStmt preparedStatement, String statement) throws SQLException {
+			CompiledStatement preparedStatement, String statement) throws SQLException {
 		this.dataClass = dataClass;
 		this.classDao = classDao;
 		this.rowMapper = rowMapper;

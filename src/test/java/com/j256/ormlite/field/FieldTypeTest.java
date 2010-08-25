@@ -23,7 +23,7 @@ import org.junit.Test;
 import com.j256.ormlite.BaseOrmLiteTest;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.db.PostgresDatabaseType;
-import com.j256.ormlite.support.Results;
+import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.TableInfo;
 
 public class FieldTypeTest extends BaseOrmLiteTest {
@@ -127,13 +127,13 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 			public SqlType getSqlType() {
 				return sqlType;
 			}
-			public Object parseDefaultString(String defaultStr) {
+			public Object parseDefaultString(String defaultStr, String format) {
 				return defaultStr;
 			}
 			public Object javaToArg(Object javaObject) {
 				return nameArg;
 			}
-			public Object resultToJava(FieldType fieldType, Results resultSet, int columnPos) throws SQLException {
+			public Object resultToJava(FieldType fieldType, DatabaseResults resultSet, int columnPos) throws SQLException {
 				return nameResult;
 			}
 			public boolean isStreamType() {
@@ -152,7 +152,7 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 		foo.name = nameArg + " not that";
 		assertEquals(nameArg, fieldType.getConvertedFieldValue(foo));
 
-		Results resultMock = createMock(Results.class);
+		DatabaseResults resultMock = createMock(DatabaseResults.class);
 		expect(resultMock.findColumn("name")).andReturn(0);
 		expect(resultMock.isNull(0)).andReturn(false);
 		replay(resultMock);

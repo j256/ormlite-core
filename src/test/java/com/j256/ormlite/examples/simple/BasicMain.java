@@ -19,8 +19,8 @@ import com.j256.ormlite.examples.common.AccountDao;
 import com.j256.ormlite.examples.common.AccountDaoImpl;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.misc.TransactionManager;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.PreparedStmt;
+import com.j256.ormlite.stmt.StatementBuilder;
 import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
@@ -118,15 +118,15 @@ public class BasicMain {
 		assertEquals("Should have found 1 account in for loop", 1, accountC);
 
 		// construct a query using the QueryBuilder
-		QueryBuilder<Account, Integer> queryBuilder = accountDao.queryBuilder();
+		StatementBuilder<Account, Integer> statementBuilder = accountDao.statementBuilder();
 		// shouldn't find anything: name LIKE 'hello" does not match our account
-		queryBuilder.where().like(Account.NAME_FIELD_NAME, "hello");
-		accounts = accountDao.query(queryBuilder.prepareQuery());
+		statementBuilder.where().like(Account.NAME_FIELD_NAME, "hello");
+		accounts = accountDao.query(statementBuilder.prepareStatement());
 		assertEquals("Should not have found any accounts matching our query", 0, accounts.size());
 
 		// should find our account: name LIKE 'Jim%' should match our account
-		queryBuilder.where().like(Account.NAME_FIELD_NAME, name.substring(0, 3) + "%");
-		accounts = accountDao.query(queryBuilder.prepareQuery());
+		statementBuilder.where().like(Account.NAME_FIELD_NAME, name.substring(0, 3) + "%");
+		accounts = accountDao.query(statementBuilder.prepareStatement());
 		assertEquals("Should have found 1 account matching our query", 1, accounts.size());
 		verifyAccount(account, accounts.get(0));
 
@@ -185,11 +185,11 @@ public class BasicMain {
 		assertEquals(1, accountDao.create(new Account(name2)));
 		assertEquals(1, accountDao.create(new Account(name3)));
 
-		QueryBuilder<Account, Integer> queryBuilder = accountDao.queryBuilder();
+		StatementBuilder<Account, Integer> statementBuilder = accountDao.statementBuilder();
 		SelectArg selectArg = new SelectArg();
 		// build a query with the WHERE clause set to 'name = ?'
-		queryBuilder.where().like(Account.NAME_FIELD_NAME, selectArg);
-		PreparedQuery<Account> preparedQuery = queryBuilder.prepareQuery();
+		statementBuilder.where().like(Account.NAME_FIELD_NAME, selectArg);
+		PreparedStmt<Account> preparedQuery = statementBuilder.prepareStatement();
 
 		// now we can set the select arg (?) and run the query
 		selectArg.setValue(name1);
