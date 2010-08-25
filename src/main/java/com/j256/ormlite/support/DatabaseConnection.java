@@ -24,7 +24,7 @@ public interface DatabaseConnection {
 	/**
 	 * Start a save point with a certain name. It can be a noop if savepoints are not supported.
 	 * 
-	 * @param Name
+	 * @param name
 	 *            to use for the Savepoint although it can be ignored.
 	 * 
 	 * @return A SavePoint object with which we can release or commit in the future or null if none.
@@ -49,9 +49,9 @@ public interface DatabaseConnection {
 	public void rollback(Savepoint savePoint) throws SQLException;
 
 	/**
-	 * Prepare a SQL statement.
+	 * Compile and prepare the SQL statement for execution.
 	 */
-	public PreparedStmt prepareStatement(String statement) throws SQLException;
+	public CompiledStatement compileStatement(String statement) throws SQLException;
 
 	/**
 	 * Perform a SQL insert with the associated SQL statement, arguments, and types.

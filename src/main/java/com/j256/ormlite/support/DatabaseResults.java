@@ -9,7 +9,7 @@ import java.sql.Timestamp;
  * 
  * @author graywatson
  */
-public interface Results {
+public interface DatabaseResults {
 
 	/**
 	 * Returns the number of columns in these results.

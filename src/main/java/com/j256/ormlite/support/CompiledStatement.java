@@ -5,11 +5,11 @@ import java.sql.SQLException;
 import com.j256.ormlite.field.SqlType;
 
 /**
- * A reduction of the SQL PreparedStatment so we can implement its functionality outside of JDBC.
+ * An internal reduction of the SQL PreparedStatment so we can implement its functionality outside of JDBC.
  * 
  * @author graywatson
  */
-public interface PreparedStmt {
+public interface CompiledStatement {
 
 	/**
 	 * Returns the number of columns in this statement.
@@ -32,12 +32,12 @@ public interface PreparedStmt {
 	/**
 	 * Execute the prepared query statement returning the results.
 	 */
-	public Results executeQuery() throws SQLException;
+	public DatabaseResults executeQuery() throws SQLException;
 
 	/**
 	 * Get the generated key results.
 	 */
-	public Results getGeneratedKeys() throws SQLException;
+	public DatabaseResults getGeneratedKeys() throws SQLException;
 
 	/**
 	 * Close the statement.

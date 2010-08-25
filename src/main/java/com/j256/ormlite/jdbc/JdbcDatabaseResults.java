@@ -9,20 +9,22 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import com.j256.ormlite.field.DataType;
-import com.j256.ormlite.support.Results;
+import com.j256.ormlite.field.SqlType;
+import com.j256.ormlite.support.DatabaseResults;
+import com.j256.ormlite.support.GeneratedKeyHolder;
 
 /**
  * Wrapper around a {@link ResultSet} object which we delegate to.
  * 
  * @author graywatson
  */
-public class JdbcResults implements Results {
+public class JdbcDatabaseResults implements DatabaseResults {
 
 	private final PreparedStatement preparedStmt;
 	private final ResultSet resultSet;
 	private ResultSetMetaData metaData = null;
 
-	public JdbcResults(PreparedStatement preparedStmt, ResultSet resultSet) {
+	public JdbcDatabaseResults(PreparedStatement preparedStmt, ResultSet resultSet) {
 		this.preparedStmt = preparedStmt;
 		this.resultSet = resultSet;
 	}
@@ -41,6 +43,10 @@ public class JdbcResults implements Results {
 		return metaData.getColumnName(column);
 	}
 
+	/**
+	 * Return the data type of the column. This is called from
+	 * {@link JdbcDatabaseConnection#insert(String, Object[], SqlType[], GeneratedKeyHolder)}
+	 */
 	DataType getColumnDataType(int column) throws SQLException {
 		if (metaData == null) {
 			metaData = resultSet.getMetaData();

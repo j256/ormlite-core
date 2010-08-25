@@ -20,7 +20,7 @@ public interface ConnectionSource {
 	public DatabaseConnection getReadWriteConnection() throws SQLException;
 
 	/**
-	 * Close any outstanding database connections. 
+	 * Close any outstanding database connections.
 	 */
 	public void close() throws SQLException;
 }

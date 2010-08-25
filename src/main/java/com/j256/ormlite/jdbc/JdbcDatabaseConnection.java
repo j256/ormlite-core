@@ -11,10 +11,10 @@ import java.sql.Statement;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.stmt.GenericRowMapper;
+import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.DatabaseConnection;
+import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.support.GeneratedKeyHolder;
-import com.j256.ormlite.support.PreparedStmt;
-import com.j256.ormlite.support.Results;
 
 public class JdbcDatabaseConnection implements DatabaseConnection {
 
@@ -65,8 +65,8 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		}
 	}
 
-	public PreparedStmt prepareStatement(String statement) throws SQLException {
-		return new JdbcPreparedStmt(connection.prepareStatement(statement));
+	public CompiledStatement compileStatement(String statement) throws SQLException {
+		return new JdbcCompiledStatement(connection.prepareStatement(statement));
 	}
 
 	public void close() throws SQLException {
@@ -90,7 +90,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		PreparedStatement stmt = connection.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
 		statementSetArgs(stmt, args, argFieldTypes);
 		int rowN = stmt.executeUpdate();
-		JdbcResults results = new JdbcResults(stmt, stmt.getGeneratedKeys());
+		JdbcDatabaseResults results = new JdbcDatabaseResults(stmt, stmt.getGeneratedKeys());
 		if (results == null) {
 			// may never happen but let's be careful
 			throw new SQLException("No generated key results returned from update: " + statement);
@@ -98,6 +98,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		int colN = results.getColumnCount();
 		while (results.next()) {
 			for (int colC = 1; colC <= colN; colC++) {
+				// get the data-type so we can extract the id directly
 				DataType dataType = results.getColumnDataType(colC);
 				Number id = dataType.resultToId(results, colC);
 				if (id == null) {
@@ -128,7 +129,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		PreparedStatement stmt =
 				connection.prepareStatement(statement, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 		statementSetArgs(stmt, args, argFieldTypes);
-		Results results = new JdbcResults(stmt, stmt.executeQuery());
+		DatabaseResults results = new JdbcDatabaseResults(stmt, stmt.executeQuery());
 		if (!results.next()) {
 			// no results at all
 			return null;
@@ -167,7 +168,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 	 * Row mapper that handles a single long result.
 	 */
 	private static class OneLongWrapper implements GenericRowMapper<Long> {
-		public Long mapRow(Results rs) throws SQLException {
+		public Long mapRow(DatabaseResults rs) throws SQLException {
 			// maps the first column (sql #1)
 			return rs.getLong(1);
 		}

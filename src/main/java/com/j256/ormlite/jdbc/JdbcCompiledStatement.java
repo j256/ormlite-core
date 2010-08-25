@@ -5,20 +5,20 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.support.PreparedStmt;
-import com.j256.ormlite.support.Results;
+import com.j256.ormlite.support.CompiledStatement;
+import com.j256.ormlite.support.DatabaseResults;
 
 /**
  * Wrapper around a {@link PreparedStatement} object which we delegate to.
  * 
  * @author graywatson
  */
-public class JdbcPreparedStmt implements PreparedStmt {
+public class JdbcCompiledStatement implements CompiledStatement {
 
 	private final PreparedStatement preparedStatement;
 	private ResultSetMetaData metaData = null;
 
-	public JdbcPreparedStmt(PreparedStatement preparedStatement) {
+	public JdbcCompiledStatement(PreparedStatement preparedStatement) {
 		this.preparedStatement = preparedStatement;
 	}
 
@@ -40,12 +40,12 @@ public class JdbcPreparedStmt implements PreparedStmt {
 		return preparedStatement.executeUpdate();
 	}
 
-	public Results executeQuery() throws SQLException {
-		return new JdbcResults(preparedStatement, preparedStatement.executeQuery());
+	public DatabaseResults executeQuery() throws SQLException {
+		return new JdbcDatabaseResults(preparedStatement, preparedStatement.executeQuery());
 	}
 
-	public Results getGeneratedKeys() throws SQLException {
-		return new JdbcResults(preparedStatement, preparedStatement.getGeneratedKeys());
+	public DatabaseResults getGeneratedKeys() throws SQLException {
+		return new JdbcDatabaseResults(preparedStatement, preparedStatement.getGeneratedKeys());
 	}
 
 	public void close() throws SQLException {
@@ -65,7 +65,7 @@ public class JdbcPreparedStmt implements PreparedStmt {
 	}
 
 	/**
-	 * Called by {@link JdbcResults} to get more results into the existing ResultSet.
+	 * Called by {@link JdbcDatabaseResults#next()} to get more results into the existing ResultSet.
 	 */
 	boolean getMoreResults() throws SQLException {
 		return preparedStatement.getMoreResults();
