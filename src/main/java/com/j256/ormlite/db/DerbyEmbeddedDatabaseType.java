@@ -13,7 +13,7 @@ import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.misc.SqlExceptionUtil;
-import com.j256.ormlite.support.Results;
+import com.j256.ormlite.support.DatabaseResults;
 
 /**
  * Derby database type information used to create the tables, etc.. This is for an embedded Derby database. For client
@@ -100,10 +100,10 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 			}
 			return new SerialBlob(outStream.toByteArray());
 		}
-		public Object parseDefaultString(String defaultStr) throws SQLException {
+		public Object parseDefaultString(String defaultStr, String format) throws SQLException {
 			throw new SQLException("Default values for serializable types are not supported");
 		}
-		public Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException {
+		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			InputStream stream = results.getBlobStream(columnPos);
 			if (stream == null) {
 				return null;

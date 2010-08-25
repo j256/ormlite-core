@@ -6,7 +6,7 @@ import java.util.List;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.support.Results;
+import com.j256.ormlite.support.DatabaseResults;
 
 /**
  * Microsoft SQL server database type information used to create the tables, etc..
@@ -59,7 +59,7 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 	}
 
 	@Override
-	protected void appendDateType(StringBuilder sb) {
+	protected void appendDateType(StringBuilder sb, int fieldWidth) {
 		// TIMESTAMP is some sort of internal database type
 		// http://www.sqlteam.com/article/timestamps-vs-datetime-data-types
 		sb.append("DATETIME");
@@ -100,7 +100,7 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 			// store it as a short
 			return SqlType.BYTE;
 		}
-		public Object parseDefaultString(String defaultStr) {
+		public Object parseDefaultString(String defaultStr, String format) {
 			return Short.parseShort(defaultStr);
 		}
 		public Object javaToArg(Object javaObject) {
@@ -108,7 +108,7 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 			byte byteVal = (Byte) javaObject;
 			return (short) byteVal;
 		}
-		public Object resultToJava(FieldType fieldType, Results results, int dbColumnPos) throws SQLException {
+		public Object resultToJava(FieldType fieldType, DatabaseResults results, int dbColumnPos) throws SQLException {
 			// starts as a short and then gets converted to a byte on the way out
 			short shortVal = results.getShort(dbColumnPos);
 			// make sure the database value doesn't overflow the byte

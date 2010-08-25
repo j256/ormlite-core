@@ -7,7 +7,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.support.Results;
+import com.j256.ormlite.support.DatabaseResults;
 
 /**
  * Base class for all of the {@link DatabaseType} classes that provide the per-database type functionality to create
@@ -23,6 +23,7 @@ import com.j256.ormlite.support.Results;
 public abstract class BaseDatabaseType implements DatabaseType {
 
 	private static int DEFAULT_VARCHAR_WIDTH = 255;
+	protected static int DEFAULT_DATE_STRING_WIDTH = 50;
 
 	protected final static FieldConverter booleanConverter = new BooleanNumberFieldConverter();
 
@@ -54,7 +55,23 @@ public abstract class BaseDatabaseType implements DatabaseType {
 				break;
 
 			case JAVA_DATE :
-				appendDateType(sb);
+				fieldWidth = fieldType.getWidth();
+				if (fieldWidth == 0) {
+					fieldWidth = DEFAULT_DATE_STRING_WIDTH;
+				}
+				appendDateType(sb, fieldWidth);
+				break;
+
+			case JAVA_DATE_LONG :
+				appendDateLongType(sb);
+				break;
+
+			case JAVA_DATE_STRING :
+				fieldWidth = fieldType.getWidth();
+				if (fieldWidth == 0) {
+					fieldWidth = DEFAULT_DATE_STRING_WIDTH;
+				}
+				appendDateStringType(sb, fieldWidth);
 				break;
 
 			case BYTE :
@@ -150,8 +167,22 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	/**
 	 * Output the SQL type for a Java Date.
 	 */
-	protected void appendDateType(StringBuilder sb) {
+	protected void appendDateType(StringBuilder sb, int fieldWidth) {
 		sb.append("TIMESTAMP");
+	}
+
+	/**
+	 * Output the SQL type for a Java Date.
+	 */
+	protected void appendDateLongType(StringBuilder sb) {
+		appendLongType(sb);
+	}
+
+	/**
+	 * Output the SQL type for a Java Date as a string.
+	 */
+	protected void appendDateStringType(StringBuilder sb, int fieldWidth) {
+		appendStringType(sb, fieldWidth);
 	}
 
 	/**
@@ -359,7 +390,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		public SqlType getSqlType() {
 			return SqlType.BOOLEAN;
 		}
-		public Object parseDefaultString(String defaultStr) throws SQLException {
+		public Object parseDefaultString(String defaultStr, String format) throws SQLException {
 			boolean bool = (boolean) Boolean.parseBoolean(defaultStr);
 			return (bool ? new Byte((byte) 1) : new Byte((byte) 0));
 		}
@@ -367,7 +398,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 			Boolean bool = (Boolean) javaObject;
 			return (bool ? new Byte((byte) 1) : new Byte((byte) 0));
 		}
-		public Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException {
+		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			byte result = results.getByte(columnPos);
 			return (result == 1 ? (Boolean) true : (Boolean) false);
 		}

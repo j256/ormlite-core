@@ -1,7 +1,5 @@
 package com.j256.ormlite.db;
 
-import com.j256.ormlite.android.DateAdapter;
-
 /**
  * Sqlite database type information for the Android OS. This has a difference driver class name.
  * 
@@ -19,10 +17,7 @@ import com.j256.ormlite.android.DateAdapter;
  */
 public class SqliteAndroidDatabaseType extends SqliteDatabaseType implements DatabaseType {
 
-	private DateAdapter dateAdapter;
-
-	public SqliteAndroidDatabaseType(DateAdapter dateAdapter) {
-		this.dateAdapter = dateAdapter;
+	public SqliteAndroidDatabaseType() {
 	}
 
 	@Override
@@ -41,12 +36,9 @@ public class SqliteAndroidDatabaseType extends SqliteDatabaseType implements Dat
 	}
 
 	@Override
-	protected void appendDateType(StringBuilder sb) {
-		if (dateAdapter.isNumeric()) {
-			appendLongType(sb);
-		} else {
-			appendStringType(sb, 50);
-		}
+	protected void appendDateType(StringBuilder sb, int fieldWidth) {
+		// default is to store the date as a string
+		appendDateStringType(sb, fieldWidth);
 	}
 
 	@Override

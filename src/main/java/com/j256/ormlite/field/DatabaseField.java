@@ -142,4 +142,10 @@ public @interface DatabaseField {
 	 * the annotation on all of your fields but turn off the writing of some of them to the database.
 	 */
 	boolean persisted() default true;
+
+	/**
+	 * Optional format information that can be used by various field types. For example, if the Date is to be persisted
+	 * as a string, this can set what format string to use for the date.
+	 */
+	String format() default "";
 }

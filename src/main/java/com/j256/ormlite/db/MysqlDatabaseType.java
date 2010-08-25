@@ -44,7 +44,7 @@ public class MysqlDatabaseType extends BaseDatabaseType implements DatabaseType 
 	}
 
 	@Override
-	protected void appendDateType(StringBuilder sb) {
+	protected void appendDateType(StringBuilder sb, int fieldWidth) {
 		/**
 		 * TIMESTAMP in MySQL does some funky stuff with the last-modification time. Values are 'not null' by default
 		 * with an automatic default of CURRENT_TIMESTAMP. Strange design decision.

@@ -8,7 +8,7 @@ import java.util.Map;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.misc.SqlExceptionUtil;
-import com.j256.ormlite.support.Results;
+import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableInfo;
 
@@ -41,6 +41,7 @@ public class FieldType {
 	private final Map<Integer, Enum<?>> enumValueMap = new HashMap<Integer, Enum<?>>();
 	private final Enum<?> unknownEnumVal;
 	private final boolean throwIfNull;
+	private final String format;
 
 	/**
 	 * You should use {@link FieldType#createFieldType} to instantiate one of these field if you have a {@link Field}.
@@ -140,6 +141,7 @@ public class FieldType {
 		} else {
 			this.fieldConverter = converter;
 		}
+		this.format = fieldConfig.getFormat();
 		String defaultStr = fieldConfig.getDefaultValue();
 		if (defaultStr == null || defaultStr.equals("")) {
 			this.defaultValue = null;
@@ -147,7 +149,7 @@ public class FieldType {
 			throw new SQLException("Field '" + field.getName() + "' cannot be a generatedId and have a default value '"
 					+ defaultStr + "'");
 		} else {
-			this.defaultValue = this.fieldConverter.parseDefaultString(defaultStr);
+			this.defaultValue = this.fieldConverter.parseDefaultString(defaultStr, this.format);
 		}
 		if (this.isId && foreignTableInfo != null) {
 			throw new IllegalArgumentException("Id field " + field.getName() + " cannot also be a foreign object");
@@ -274,8 +276,8 @@ public class FieldType {
 	/**
 	 * Convert the default value string into a valid Java object for this type.
 	 */
-	public Object parseDefaultString(String defaulStr) throws SQLException {
-		return fieldConverter.parseDefaultString(defaulStr);
+	public Object parseDefaultString(String defaulStr, String format) throws SQLException {
+		return fieldConverter.parseDefaultString(defaulStr, format);
 	}
 
 	/**
@@ -409,6 +411,13 @@ public class FieldType {
 	}
 
 	/**
+	 * Return the format of the field.
+	 */
+	public String getFormat() {
+		return format;
+	}
+
+	/**
 	 * Return whether this field's default value should be escaped in SQL.
 	 */
 	public boolean escapeDefaultValue() {
@@ -418,7 +427,7 @@ public class FieldType {
 	/**
 	 * Get the result object from the results. A call through to {@link FieldConverter#resultToJava}.
 	 */
-	public <T> T resultToJava(Results results, Map<String, Integer> columnPositions) throws SQLException {
+	public <T> T resultToJava(DatabaseResults results, Map<String, Integer> columnPositions) throws SQLException {
 		Integer dbColumnPos = columnPositions.get(dbColumnName);
 		if (dbColumnPos == null) {
 			dbColumnPos = results.findColumn(dbColumnName);

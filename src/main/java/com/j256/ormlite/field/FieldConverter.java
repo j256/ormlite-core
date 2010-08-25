@@ -3,7 +3,7 @@ package com.j256.ormlite.field;
 import java.sql.SQLException;
 
 import com.j256.ormlite.db.BaseDatabaseType;
-import com.j256.ormlite.support.Results;
+import com.j256.ormlite.support.DatabaseResults;
 
 /**
  * Convert a Java object into the appropriate argument to a SQL statement and then back from the result set to the Java
@@ -18,7 +18,7 @@ public interface FieldConverter {
 	/**
 	 * Convert a default string object and return the appropriate argument to a SQL insert or update statement.
 	 */
-	public Object parseDefaultString(String defaultStr) throws SQLException;
+	public Object parseDefaultString(String defaultStr, String format) throws SQLException;
 
 	/**
 	 * Convert a Java object and return the appropriate argument to a SQL insert or update statement.
@@ -31,7 +31,7 @@ public interface FieldConverter {
 	 * @throws SQLException
 	 *             If there is a problem accessing the results data.
 	 */
-	public Object resultToJava(FieldType fieldType, Results results, int columnPos) throws SQLException;
+	public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException;
 
 	/**
 	 * Return the SQL type that is stored in the database for this argument.

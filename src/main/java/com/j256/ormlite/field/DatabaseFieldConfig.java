@@ -30,6 +30,7 @@ public class DatabaseFieldConfig {
 	private boolean useGetSet;
 	private Enum<?> unknownEnumvalue;
 	private boolean throwIfNull;
+	private String format;
 
 	public DatabaseFieldConfig() {
 		// for spring
@@ -37,7 +38,8 @@ public class DatabaseFieldConfig {
 
 	public DatabaseFieldConfig(String fieldName, String columnName, DataType dataType, String defaultValue, int width,
 			boolean canBeNull, boolean id, boolean generatedId, String generatedIdSequence, boolean foreign,
-			DatabaseTableConfig<?> foreignTableConfig, boolean useGetSet, Enum<?> unknownEnumValue, boolean throwIfNull) {
+			DatabaseTableConfig<?> foreignTableConfig, boolean useGetSet, Enum<?> unknownEnumValue,
+			boolean throwIfNull, String format) {
 		this.fieldName = fieldName;
 		this.columnName = columnName;
 		this.dataType = dataType;
@@ -52,6 +54,19 @@ public class DatabaseFieldConfig {
 		this.useGetSet = useGetSet;
 		this.unknownEnumvalue = unknownEnumValue;
 		this.throwIfNull = throwIfNull;
+		this.format = format;
+	}
+
+	/**
+	 * @deprecated Use
+	 *             {@link #DatabaseFieldConfig(String, String, DataType, String, int, boolean, boolean, boolean, String, boolean, DatabaseTableConfig, boolean, Enum, boolean, String)}
+	 */
+	@Deprecated
+	public DatabaseFieldConfig(String fieldName, String columnName, DataType dataType, String defaultValue, int width,
+			boolean canBeNull, boolean id, boolean generatedId, String generatedIdSequence, boolean foreign,
+			DatabaseTableConfig<?> foreignTableConfig, boolean useGetSet, Enum<?> unknownEnumValue, boolean throwIfNull) {
+		this(fieldName, columnName, dataType, defaultValue, width, canBeNull, id, generatedId, generatedIdSequence,
+				foreign, foreignTableConfig, useGetSet, unknownEnumValue, throwIfNull, null);
 	}
 
 	/**
@@ -203,6 +218,14 @@ public class DatabaseFieldConfig {
 		this.throwIfNull = throwIfNull;
 	}
 
+	public String getFormat() {
+		return format;
+	}
+
+	public void setFormat(String format) {
+		this.format = format;
+	}
+
 	/**
 	 * Create and return a config converted from a {@link Field} that may have either a {@link DatabaseField} annotation
 	 * or the javax.persistence annotations.
@@ -320,6 +343,11 @@ public class DatabaseFieldConfig {
 			config.unknownEnumvalue = null;
 		}
 		config.throwIfNull = databaseField.throwIfNull();
+		if (databaseField.format().length() > 0) {
+			config.format = databaseField.format();
+		} else {
+			config.format = null;
+		}
 		return config;
 	}
 
