@@ -49,6 +49,12 @@ public @interface DatabaseField {
 	DataType dataType() default DataType.UNKNOWN;
 
 	/**
+	 * @deprecated Use {@link #dataType()} 
+	 */
+	@Deprecated
+	DataType jdbcType() default DataType.UNKNOWN;
+
+	/**
 	 * The default value of the field for creating the table. Default is none.
 	 */
 	String defaultValue() default "";
