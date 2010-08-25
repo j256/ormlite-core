@@ -3,12 +3,12 @@ package com.j256.ormlite.stmt;
 import java.sql.SQLException;
 
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.CompiledStatement;
+import com.j256.ormlite.support.DatabaseConnection;
 
 /**
- * Interface returned by the {@link StatementBuilder#prepareStatement()} which supports custom queries. This should be in turn
- * passed to the {@link Dao#query(PreparedStmt)} or {@link Dao#iterator(PreparedStmt)} methods.
+ * Interface returned by the {@link StatementBuilder#prepareStatement()} which supports custom queries. This should be
+ * in turn passed to the {@link Dao#query(PreparedStmt)} or {@link Dao#iterator(PreparedStmt)} methods.
  * 
  * @param T
  *            The class that the code will be operating on.

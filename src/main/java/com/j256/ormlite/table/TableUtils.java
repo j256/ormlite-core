@@ -11,9 +11,9 @@ import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.misc.SqlExceptionUtil;
+import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
-import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
@@ -54,7 +54,7 @@ public class TableUtils {
 	 * 
 	 * @param databaseType
 	 *            Our database type.
-	 * @param ConnectionSource
+	 * @param connectionSource
 	 *            connectionSource Associated connection source.
 	 * @param tableConfig
 	 *            Hand or spring wired table configuration. If null then the class must have {@link DatabaseField}
@@ -75,7 +75,7 @@ public class TableUtils {
 			CompiledStatement prepStmt = null;
 			try {
 				logger.debug("executing create table statement: {}", statement);
-				prepStmt = connection.prepareStatement(statement);
+				prepStmt = connection.compileStatement(statement);
 				rowC = prepStmt.executeUpdate();
 			} catch (SQLException e) {
 				// we do this to make sure that the statement is in the exception
@@ -99,7 +99,7 @@ public class TableUtils {
 			CompiledStatement prepStmt = null;
 			DatabaseResults results = null;
 			try {
-				prepStmt = connection.prepareStatement(query);
+				prepStmt = connection.compileStatement(query);
 				results = prepStmt.executeQuery();
 				int rowC = 0;
 				// count the results
@@ -175,7 +175,8 @@ public class TableUtils {
 	 */
 	public static <T> int dropTable(DatabaseType databaseType, ConnectionSource connectionSource, Class<T> dataClass,
 			boolean ignoreErrors) throws SQLException {
-		return dropTable(databaseType, connectionSource, DatabaseTableConfig.fromClass(databaseType, dataClass), ignoreErrors);
+		return dropTable(databaseType, connectionSource, DatabaseTableConfig.fromClass(databaseType, dataClass),
+				ignoreErrors);
 	}
 
 	/**
@@ -209,7 +210,7 @@ public class TableUtils {
 			CompiledStatement prepStmt = null;
 			try {
 				logger.debug("executing drop table statement: {}", statement);
-				prepStmt = connection.prepareStatement(statement);
+				prepStmt = connection.compileStatement(statement);
 				rowC = prepStmt.executeUpdate();
 			} catch (SQLException e) {
 				if (!ignoreErrors) {

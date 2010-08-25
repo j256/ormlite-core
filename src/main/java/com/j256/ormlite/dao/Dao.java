@@ -6,8 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.j256.ormlite.stmt.PreparedStmt;
-import com.j256.ormlite.stmt.StatementBuilder;
 import com.j256.ormlite.stmt.SelectIterator;
+import com.j256.ormlite.stmt.StatementBuilder;
 
 /**
  * The definition of the Database Access Objects that handle the reading and writing a class from the database. Kudos to

@@ -20,8 +20,8 @@ import com.j256.ormlite.stmt.mapped.MappedQueryForId;
 import com.j256.ormlite.stmt.mapped.MappedRefresh;
 import com.j256.ormlite.stmt.mapped.MappedUpdate;
 import com.j256.ormlite.stmt.mapped.MappedUpdateId;
-import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.CompiledStatement;
+import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.TableInfo;
 
@@ -138,7 +138,7 @@ public class StatementExecutor<T, ID> {
 	public RawResults queryRaw(DatabaseConnection databaseConnection, String query) throws SQLException {
 		SelectIterator<String[], Void> iterator = null;
 		try {
-			CompiledStatement preparedStatement = databaseConnection.prepareStatement(query);
+			CompiledStatement preparedStatement = databaseConnection.compileStatement(query);
 			RawResultsList results = new RawResultsList(preparedStatement);
 			// statement arg is null because we don't want it to double log below
 			iterator = new SelectIterator<String[], Void>(String[].class, null, results, preparedStatement, null);
@@ -166,15 +166,15 @@ public class StatementExecutor<T, ID> {
 	 */
 	public SelectIterator<T, ID> buildIterator(BaseDaoImpl<T, ID> classDao, DatabaseConnection databaseConnection,
 			PreparedStmt<T> preparedQuery) throws SQLException {
-		return new SelectIterator<T, ID>(dataClass, classDao, preparedQuery,
-				preparedQuery.compile(databaseConnection), preparedQuery.getStatement());
+		return new SelectIterator<T, ID>(dataClass, classDao, preparedQuery, preparedQuery.compile(databaseConnection),
+				preparedQuery.getStatement());
 	}
 
 	/**
 	 * Return a RawResults object associated with an internal iterator that matches the query argument.
 	 */
 	public RawResults buildIterator(DatabaseConnection databaseConnection, String query) throws SQLException {
-		return new RawResultsIterator(query, databaseConnection.prepareStatement(query));
+		return new RawResultsIterator(query, databaseConnection.compileStatement(query));
 	}
 
 	/**

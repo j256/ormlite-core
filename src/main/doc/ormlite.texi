@@ -111,9 +111,10 @@ Gray Watson @uref{http://256.com/gray/}
 @menu
 * Getting Started::             How to start to use @value{package}.
 * DAO Usage::                   Using the Database Access Objects.
-* Query Builder::               How to utilize the custom query builder.
+* Statement Builder::           How to utilize the custom statement builder.
 * Foreign Objects::             Fields that represent foreign objects.
 * Advanced::                    More advanced concepts with @value{package}.
+* Contributions::               Contributions from others who helped.
 * Index of Concepts::           Index of concepts in the manual.
 @end menu
 
@@ -894,7 +895,7 @@ go all of the way, the garbage collector will close the SQL statement some time 
 @end table
 
 @c ----------------------------------------------------------------
-@node DAO Methods, Query Builder, Basic DAO Usage, DAO Usage
+@node DAO Methods, Statement Builder, Basic DAO Usage, DAO Usage
 @section DAO Methods
 
 @cindex dao methods
@@ -911,7 +912,7 @@ Looks up the id in the database and retrieves an object associated with it.
 @cindex query for first
 @item queryForFirst
 
-Query for and return the first item in the object table which matches a prepared query. This can be used to return
+Query for and return the first item in the object table which matches a prepared statement. This can be used to return
 the object that matches a single unique column.  You should use queryForId if you want to query for the id column.
 
 @cindex query for all
@@ -930,14 +931,15 @@ to do special queries that aren't supported otherwise. For medium sized or large
 objects into memory so you should consider using the @code{iteratorRaw} method instead.
 
 @cindex query builder
-@item queryBuilder
+@cindex statement builder
+@item statementBuilder
 
-Create and return a new QueryBuilder object which allows you to build a custom query.  @xref{Query Builder}.
+Create and return a new @code{StatementBuilder} object which allows you to build a custom query.  @xref{Statement Builder}.
 
 @cindex query for objects
 @item query
 
-Query for the items in the object table which match a prepared query.  @xref{Query Builder}.  This returns a
+Query for the items in the object table which match a prepared statement.  @xref{Statement Builder}.  This returns a
 list of matching objects. For medium sized or large tables, this may load a lot of objects into memory so you
 should consider using the @code{iterator} method instead.  
 
@@ -996,13 +998,13 @@ for (Account account : accountDao) @{ @dots{} @}
 
 @emph{WARNING:} See the @code{Dao} class for warnings about using this method.
 
-@item iterator (prepared query)
+@item iterator (prepared statement)
 
-Same is the @code{iterator} method but with a prepared query parameter. @xref{Query Builder}.
+Same is the @code{iterator} method but with a prepared statement parameter. @xref{Statement Builder}.
 
 @item iteratorRaw
 
-Same as the prepared query iterator except it takes a raw SQL select statement argument.  This is the iterator version
+Same as the prepared statement iterator except it takes a raw SQL select statement argument.  This is the iterator version
 of the @code{queryForAllRaw} method.  Although you should use the @code{iterator} method for most queries, this method
 allows you to do special queries that aren't supported otherwise.  Like the above iterator methods, you must call close
 on the returned RawResults object once you are done with it. 
@@ -1010,28 +1012,29 @@ on the returned RawResults object once you are done with it.
 @end table
 
 @c ----------------------------------------------------------------
-@node Query Builder, QueryBuilder Basics, DAO Methods, Top
-@chapter Custom Query Builder
+@node Statement Builder, StatementBuilder Basics, DAO Methods, Top
+@chapter Custom Statement Builder
 
 @cindex query builder
 @cindex custom query builder
+@cindex custom statement builder
 The DOAs have methods to query for an object that matches an id field (@code{queryForId}) as well as query for all
 objects (@code{queryForAll}) and iterating through all of the objects in a table (@code{iterator}).  However, for more
-specified queries, there is the @code{queryBuilder()} method which returns a @code{QueryBuilder} object for the DAO
+specified queries, there is the @code{statementBuilder()} method which returns a @code{StatementBuilder} object for the DAO
 with which you can construct custom queries to return a sub-set of the table.
 
 @menu
-* QueryBuilder Basics::         How to start using the Query Builder.
+* StatementBuilder Basics::     How to start using the Statement Builder.
 * Building Queries::            How to build simple and complex queries.
 * Select Arguments::            Using arguments to queries.
 @end menu
 
 @c ----------------------------------------------------------------
-@node QueryBuilder Basics, Building Queries, Query Builder, Query Builder
-@section Query Builder Basics
+@node StatementBuilder Basics, Building Queries, Statement Builder, Statement Builder
+@section Statement Builder Basics
 
-Here's how you use the query builder to construct custom queries.  First, it is a good pattern to set the column
-names of the fields with Java constants so you can use them in queries.  For example:
+Here's how you use the statement builder to construct custom queries and other statements.  First, it is a good pattern to
+set the column names of the fields with Java constants so you can use them in queries.  For example:
 
 @example
 @@DatabaseTable(tableName = "accounts")
@@ -1049,41 +1052,41 @@ our queries.  This should be done @emph{even} if the name of the field and the c
 
 @cindex where
 @example
-// get our QueryBuilder from the DAO
-QueryBuilder<Account, String> queryBuilder = accountDao.queryBuilder();
+// get our StatementBuilder from the DAO
+StatementBuilder<Account, String> statementBuilder = accountDao.statementBuilder();
 // set the WHERE to: the 'password' field must be equal to "qwerty"
-queryBuilder.where().eq(Account.PASSWORD_FIELD_NAME, "qwerty");
-PreparedQuery<Account, String> preparedQuery =
-  queryBuilder.prepareQuery();
+statementBuilder().eq(Account.PASSWORD_FIELD_NAME, "qwerty");
+PreparedStmt<Account, String> preparedStmt =
+  statementBuilder.prepareStatment();
 // query for all accounts that have that password
-List<Account> accountList = accountDao.query(preparedQuery);
+List<Account> accountList = accountDao.query(preparedStmt);
 @end example
 
-@cindex prepared query
-You get a @code{QueryBuilder} object from the DAO, call methods on it to build your custom query, call
-@code{queryBuilder.prepareQuery()} which returns a @code{PreparedQuery} object, and then pass the @code{PreparedQuery} to
+@cindex prepared statement
+You get a @code{StatementBuilder} object from the DAO, call methods on it to build your custom query, call
+@code{statementBuilder.prepareStatment()} which returns a @code{PreparedStmt} object, and then pass the @code{PreparedStmt} to
 the query or iterator methods.
 
 @c ----------------------------------------------------------------
-@node Building Queries, Select Arguments, QueryBuilder Basics, Query Builder
+@node Building Queries, Select Arguments, StatementBuilder Basics, Statement Builder
 @section Building Queries
 
 @cindex building queries
-There are a couple of different ways that you can build queries.  The QueryBuilder has been written for ease of use
+There are a couple of different ways that you can build queries.  The @code{StatementBuilder} has been written for ease of use
 as well for power users.  Simple queries can be done linearly:
 
 @example
-QueryBuilder<Account, String> queryBuilder = accountDao.queryBuilder();
+StatementBuilder<Account, String> statementBuilder = accountDao.statementBuilder();
 // get the WHERE object to build our query
-Where where = queryBuilder.where();
+Where where = statementBuilder();
 // the name field must be equal to "foo"
 where.eq(Account.NAME_FIELD_NAME, "foo");
 // and
 where.and();
 // the password field must be equal to "_secret"
 where.eq(Account.PASSWORD_FIELD_NAME, "_secret");
-PreparedQuery<Account, String> preparedQuery =
-  queryBuilder.prepareQuery();
+PreparedStmt<Account, String> preparedStmt =
+  statementBuilder.prepareStatement();
 @end example
 
 The SQL query that will be generated from the above example will be approximately:
@@ -1097,7 +1100,7 @@ SELECT * FROM account
 If you'd rather chain the methods onto one line (like StringBuilder), this can also be written as:
 
 @example
-queryBuilder.where()
+statementBuilder.where()
   .eq(Account.NAME_FIELD_NAME, "foo")
   .and()
   .eq(Account.PASSWORD_FIELD_NAME, "_secret");
@@ -1106,7 +1109,7 @@ queryBuilder.where()
 If you'd rather use parenthesis to group the comparisons properly then you can call:
 
 @example
-Where where = queryBuilder.where();
+Where where = statementBuilder.where();
 where.and(where.eq(Account.NAME_FIELD_NAME, "foo"),
           where.eq(Account.PASSWORD_FIELD_NAME, "_secret"));
 @end example
@@ -1116,7 +1119,7 @@ All three of the above call formats produce the same SQL.  For complex queries t
 format may be necessary to get the grouping correct.  For example, here's a complex query:
 
 @example
-Where where = queryBuilder.where();
+Where where = statementBuilder.where();
 where.or(
   where.and(
     where.eq(Account.NAME_FIELD_NAME, "foo"),
@@ -1140,12 +1143,12 @@ SELECT * FROM account
 @cindex in
 @cindex is null
 @cindex comparisons
-The @code{QueryBuilder} also allows you to set what specific columns you want returned, specify the 'ORDER BY' and 'GROUP BY'
-fields, and various other SQL features (LIKE, IN, >, >=, <, <=, <>, IS NULL, @dots{}).  See the javadocs on @code{QueryBuilder}
+The @code{StatementBuilder} also allows you to set what specific columns you want returned, specify the 'ORDER BY' and 'GROUP BY'
+fields, and various other SQL features (LIKE, IN, >, >=, <, <=, <>, IS NULL, @dots{}).  See the javadocs on @code{StatementBuilder}
 and @code{Where} classes for more information.  A good SQL reference site can be found at @uref{http://www.w3schools.com/Sql/}.
 
 @c ----------------------------------------------------------------
-@node Select Arguments, Foreign Objects, Building Queries, Query Builder
+@node Select Arguments, Foreign Objects, Building Queries, Statement Builder
 @section Using Select Arguments
 
 @cindex query arguments
@@ -1157,23 +1160,23 @@ The arguments that are used in WHERE operations can be specified directly as val
 For example:
 
 @example
-QueryBuilder<Account, String> queryBuilder =
-  accountDao.queryBuilder();
-Where where = queryBuilder.where();
+StatementBuilder<Account, String> statementBuilder =
+  accountDao.statementBuilder();
+Where where = statementBuilder.where();
 SelectArg selectArg = new SelectArg();
 // define our query as 'name = ?'
 where.eq(Account.NAME_FIELD_NAME, selectArg);
 // prepare it so it is ready for later query or iterator calls
-PreparedQuery<Account, String> preparedQuery =
-  queryBuilder.prepareQuery();
+PreparedStmt<Account, String> preparedStmt =
+  statementBuilder.prepareQuery();
 
 // later we can set the select argument and issue the query
 selectArg.setValue("foo");
-List<Account> accounts = accountDao.query(preparedQuery);
+List<Account> accounts = accountDao.query(preparedStmt);
 // then we can set the select argument to another
 // value and re-run the query
 selectArg.setValue("bar");
-accounts = accountDao.query(preparedQuery);
+accounts = accountDao.query(preparedStmt);
 @end example
 
 @emph{NOTE:} @code{SelectArg} objects have protection against being used in more than one column name.  You must instantiate a
@@ -1514,7 +1517,7 @@ if the log level is not high enough.  This allows me to do something like the fo
 
 @example
 private static Logger logger =
-  LoggerFactory.getLogger(QueryBuilder.class);
+  LoggerFactory.getLogger(StatementBuilder.class);
 @dots{}
 logger.debug("built statement @{@}", statement);
 @end example
@@ -1547,7 +1550,7 @@ various SQL calls.  This may expose passwords or other sensitive information in 
 only be used during debugging and should not be the default.
 
 @c ----------------------------------------------------------------
-@node Use With Android, Index of Concepts, Logging, Advanced
+@node Use With Android, Contributions, Logging, Advanced
 @section Using With Android
 
 @cindex use with Android OS
@@ -1589,7 +1592,32 @@ Also, there is an @code{AndroidLog} logger which should detect and delegate log 
 classes. 
 
 @c ----------------------------------------------------------------
-@node Index of Concepts,, Use With Android, Top
+@node Contributions, Index of Concepts, Use With Android, Top
+@chapter Contributions
+
+There are a couple of people that I'd like to thank who helped with the project.
+
+@table @asis
+
+@item Kevin Galligan
+
+Kevin was the impetus and the author of a good bit of the Android compatible code.  He wrote the Android level support classes
+and did a ton of beta-testing of it.  Thanks much Kevin.  See @uref{http://www.kagii.com/}.
+
+@item Jim Gloor
+
+Jim was my JDBC Java guru at my current company.  Thanks much for his code samples that started this effort.
+
+@item Robert Adamsky
+
+Robert was one of the early developers at my current company who laid out the entire DAO and hibernate class hierarchy.  The
+@code{DAO} interface and the @code{BaseDaoImpl} where in some part modeled after his code.  Thanks dude.  
+
+@end table
+
+Thanks much to them all.
+@c ----------------------------------------------------------------
+@node Index of Concepts,, Contributions, Top
 @unnumbered Index of Concepts
 
 @printindex cp

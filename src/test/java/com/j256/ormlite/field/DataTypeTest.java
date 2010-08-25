@@ -6,6 +6,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.junit.Test;
@@ -39,7 +42,8 @@ public class DataTypeTest extends BaseOrmLiteTest {
 		foo.string = string;
 		assertEquals(1, fooDao.create(foo));
 
-		CompiledStatement stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
+		CompiledStatement stmt =
+				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME);
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		assertEquals(string, DataType.STRING.resultToJava(null, results, results.findColumn(STRING_COLUMN)));
@@ -54,7 +58,8 @@ public class DataTypeTest extends BaseOrmLiteTest {
 		foo.bool = bool;
 		assertEquals(1, fooDao.create(foo));
 
-		CompiledStatement stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
+		CompiledStatement stmt =
+				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME);
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
@@ -71,11 +76,17 @@ public class DataTypeTest extends BaseOrmLiteTest {
 		foo.date = date;
 		assertEquals(1, fooDao.create(foo));
 
-		CompiledStatement stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
+		CompiledStatement stmt =
+				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME);
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		assertEquals(date, DataType.JAVA_DATE.resultToJava(null, results, results.findColumn(DATE_COLUMN)));
+		assertEquals(new Timestamp(date.getTime()), DataType.JAVA_DATE.javaToArg(null, date));
 		assertFalse(DataType.JAVA_DATE.isValidGeneratedType());
+		String format = "yyyy-MM-dd HH:mm:ss.SSSSSS";
+		DateFormat dateFormat = new SimpleDateFormat(format);
+		assertEquals(new Timestamp(date.getTime()), DataType.JAVA_DATE.parseDefaultString(dateFormat.format(date),
+				format));
 	}
 
 	@Test
@@ -86,7 +97,8 @@ public class DataTypeTest extends BaseOrmLiteTest {
 		foo.byteField = byteField;
 		assertEquals(1, fooDao.create(foo));
 
-		CompiledStatement stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
+		CompiledStatement stmt =
+				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME);
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
@@ -103,7 +115,8 @@ public class DataTypeTest extends BaseOrmLiteTest {
 		foo.shortField = shortField;
 		assertEquals(1, fooDao.create(foo));
 
-		CompiledStatement stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
+		CompiledStatement stmt =
+				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME);
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
@@ -120,7 +133,8 @@ public class DataTypeTest extends BaseOrmLiteTest {
 		foo.intField = integer;
 		assertEquals(1, fooDao.create(foo));
 
-		CompiledStatement stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
+		CompiledStatement stmt =
+				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME);
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
@@ -137,7 +151,8 @@ public class DataTypeTest extends BaseOrmLiteTest {
 		foo.longField = longInt;
 		assertEquals(1, fooDao.create(foo));
 
-		CompiledStatement stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
+		CompiledStatement stmt =
+				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME);
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
@@ -154,7 +169,8 @@ public class DataTypeTest extends BaseOrmLiteTest {
 		foo.floatField = floatField;
 		assertEquals(1, fooDao.create(foo));
 
-		CompiledStatement stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
+		CompiledStatement stmt =
+				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME);
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
@@ -171,7 +187,8 @@ public class DataTypeTest extends BaseOrmLiteTest {
 		foo.doubleField = doubleField;
 		assertEquals(1, fooDao.create(foo));
 
-		CompiledStatement stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
+		CompiledStatement stmt =
+				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME);
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
@@ -192,7 +209,8 @@ public class DataTypeTest extends BaseOrmLiteTest {
 		assertTrue(fields.length > 0);
 		FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME, fields[0]);
 
-		CompiledStatement stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
+		CompiledStatement stmt =
+				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME);
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		assertEquals(ourEnum, DataType.ENUM_STRING.resultToJava(fieldType, results, results.findColumn(ENUM_COLUMN)));
@@ -211,7 +229,8 @@ public class DataTypeTest extends BaseOrmLiteTest {
 		assertTrue(fields.length > 0);
 		FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME, fields[0]);
 
-		CompiledStatement stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
+		CompiledStatement stmt =
+				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME);
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		assertEquals(ourEnum, DataType.ENUM_INTEGER.resultToJava(fieldType, results, results.findColumn(ENUM_COLUMN)));
@@ -224,7 +243,8 @@ public class DataTypeTest extends BaseOrmLiteTest {
 		LocalLong foo = new LocalLong();
 		assertEquals(1, fooDao.create(foo));
 
-		CompiledStatement stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
+		CompiledStatement stmt =
+				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME);
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 

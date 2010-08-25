@@ -90,7 +90,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 			// store it as a short
 			return SqlType.BLOB;
 		}
-		public Object javaToArg(Object javaObject) throws SQLException {
+		public Object javaToArg(FieldType fieldType, Object javaObject) throws SQLException {
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 			try {
 				ObjectOutputStream objOutStream = new ObjectOutputStream(outStream);

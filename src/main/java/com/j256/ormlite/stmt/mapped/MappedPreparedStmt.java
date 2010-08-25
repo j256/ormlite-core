@@ -5,10 +5,10 @@ import java.util.List;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.PreparedStmt;
-import com.j256.ormlite.stmt.StatementBuilder;
 import com.j256.ormlite.stmt.SelectArg;
-import com.j256.ormlite.support.DatabaseConnection;
+import com.j256.ormlite.stmt.StatementBuilder;
 import com.j256.ormlite.support.CompiledStatement;
+import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableInfo;
 
 /**
@@ -16,12 +16,12 @@ import com.j256.ormlite.table.TableInfo;
  * 
  * @author graywatson
  */
-public class MappedPreparedQuery<T> extends BaseMappedQuery<T> implements PreparedStmt<T> {
+public class MappedPreparedStmt<T> extends BaseMappedQuery<T> implements PreparedStmt<T> {
 
 	private final SelectArg[] selectArgs;
 	private final Integer limit;
 
-	public MappedPreparedQuery(TableInfo<T> tableInfo, String statement, List<FieldType> argFieldTypeList,
+	public MappedPreparedStmt(TableInfo<T> tableInfo, String statement, List<FieldType> argFieldTypeList,
 			List<FieldType> resultFieldTypeList, List<SelectArg> selectArgList, Integer limit) {
 		super(tableInfo, statement, argFieldTypeList, resultFieldTypeList);
 		this.selectArgs = selectArgList.toArray(new SelectArg[selectArgList.size()]);
@@ -33,7 +33,7 @@ public class MappedPreparedQuery<T> extends BaseMappedQuery<T> implements Prepar
 	}
 
 	public CompiledStatement compile(DatabaseConnection databaseConnection) throws SQLException {
-		CompiledStatement stmt = databaseConnection.prepareStatement(statement);
+		CompiledStatement stmt = databaseConnection.compileStatement(statement);
 		if (limit != null) {
 			stmt.setMaxRows(limit);
 		}

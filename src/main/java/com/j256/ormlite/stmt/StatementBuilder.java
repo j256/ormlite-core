@@ -8,7 +8,7 @@ import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
-import com.j256.ormlite.stmt.mapped.MappedPreparedQuery;
+import com.j256.ormlite.stmt.mapped.MappedPreparedStmt;
 import com.j256.ormlite.stmt.query.OrderBy;
 import com.j256.ormlite.table.TableInfo;
 
@@ -156,7 +156,7 @@ public class StatementBuilder<T, ID> {
 		List<FieldType> resultFieldTypeList = new ArrayList<FieldType>();
 		List<SelectArg> selectArgList = new ArrayList<SelectArg>();
 		String statement = buildSelectString(argFieldTypeList, resultFieldTypeList, selectArgList);
-		return new MappedPreparedQuery<T>(tableInfo, statement, argFieldTypeList, resultFieldTypeList, selectArgList,
+		return new MappedPreparedStmt<T>(tableInfo, statement, argFieldTypeList, resultFieldTypeList, selectArgList,
 				(databaseType.isLimitSqlSupported() ? null : limit));
 	}
 

@@ -30,11 +30,12 @@ public class MappedPreparedQueryTest extends BaseOrmLiteTest {
 		fooDao.create(foo1);
 
 		TableInfo<Foo> tableInfo = new TableInfo<Foo>(databaseType, Foo.class);
-		MappedPreparedQuery<Foo> rowMapper =
-				new MappedPreparedQuery<Foo>(tableInfo, null, new ArrayList<FieldType>(),
+		MappedPreparedStmt<Foo> rowMapper =
+				new MappedPreparedStmt<Foo>(tableInfo, null, new ArrayList<FieldType>(),
 						Arrays.asList(tableInfo.getFieldTypes()), new ArrayList<SelectArg>(), null);
 
-		CompiledStatement stmt = connectionSource.getReadOnlyConnection().prepareStatement("select * from " + TABLE_NAME);
+		CompiledStatement stmt =
+				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME);
 
 		DatabaseResults results = stmt.executeQuery();
 		while (results.next()) {
@@ -57,18 +58,18 @@ public class MappedPreparedQueryTest extends BaseOrmLiteTest {
 		foos.add(foo);
 
 		TableInfo<Foo> tableInfo = new TableInfo<Foo>(databaseType, Foo.class);
-		MappedPreparedQuery<Foo> preparedQuery =
-				new MappedPreparedQuery<Foo>(tableInfo, "select * from " + TABLE_NAME, new ArrayList<FieldType>(),
+		MappedPreparedStmt<Foo> preparedQuery =
+				new MappedPreparedStmt<Foo>(tableInfo, "select * from " + TABLE_NAME, new ArrayList<FieldType>(),
 						Arrays.asList(tableInfo.getFieldTypes()), new ArrayList<SelectArg>(), 1);
 
 		checkResults(foos, preparedQuery, 1);
 		preparedQuery =
-				new MappedPreparedQuery<Foo>(tableInfo, "select * from " + TABLE_NAME, new ArrayList<FieldType>(),
+				new MappedPreparedStmt<Foo>(tableInfo, "select * from " + TABLE_NAME, new ArrayList<FieldType>(),
 						Arrays.asList(tableInfo.getFieldTypes()), new ArrayList<SelectArg>(), null);
 		checkResults(foos, preparedQuery, 2);
 	}
 
-	private void checkResults(List<Foo> foos, MappedPreparedQuery<Foo> preparedQuery, int expectedNum)
+	private void checkResults(List<Foo> foos, MappedPreparedStmt<Foo> preparedQuery, int expectedNum)
 			throws SQLException {
 		CompiledStatement stmt = null;
 		try {
@@ -90,7 +91,7 @@ public class MappedPreparedQueryTest extends BaseOrmLiteTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testObjectNoConstructor() throws SQLException {
-		new MappedPreparedQuery<NoConstructor>(new TableInfo<NoConstructor>(databaseType, NoConstructor.class), null,
+		new MappedPreparedStmt<NoConstructor>(new TableInfo<NoConstructor>(databaseType, NoConstructor.class), null,
 				new ArrayList<FieldType>(), new ArrayList<FieldType>(), new ArrayList<SelectArg>(), null);
 	}
 
@@ -98,7 +99,7 @@ public class MappedPreparedQueryTest extends BaseOrmLiteTest {
 	public void testDifferentArgSizes() throws SQLException {
 		ArrayList<SelectArg> selectArgList = new ArrayList<SelectArg>();
 		selectArgList.add(new SelectArg());
-		new MappedPreparedQuery<Foo>(new TableInfo<Foo>(databaseType, Foo.class), null, new ArrayList<FieldType>(),
+		new MappedPreparedStmt<Foo>(new TableInfo<Foo>(databaseType, Foo.class), null, new ArrayList<FieldType>(),
 				new ArrayList<FieldType>(), selectArgList, null);
 	}
 

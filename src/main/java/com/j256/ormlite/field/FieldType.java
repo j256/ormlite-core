@@ -392,7 +392,7 @@ public class FieldType {
 		if (val == null) {
 			return null;
 		} else {
-			val = fieldConverter.javaToArg(val);
+			val = fieldConverter.javaToArg(this, val);
 			@SuppressWarnings("unchecked")
 			FV converted = (FV) val;
 			return converted;

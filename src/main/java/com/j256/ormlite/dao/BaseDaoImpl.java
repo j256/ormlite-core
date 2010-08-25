@@ -9,17 +9,16 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.stmt.PreparedStmt;
-import com.j256.ormlite.stmt.StatementBuilder;
 import com.j256.ormlite.stmt.SelectIterator;
+import com.j256.ormlite.stmt.StatementBuilder;
 import com.j256.ormlite.stmt.StatementExecutor;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableInfo;
 
 /**
- * Base class for the Database Access Objects that handle the reading and writing a class from the database. This is the
- * implementation of the {@link Dao} and extends Spring's {@link SimpleDaoSupport}. Kudos to Robert A. for the general
- * ideas of this hierarchy.
+ * Base class for the Database Access Objects that handle the reading and writing a class from the database Kudos to
+ * Robert A. for the general ideas of this hierarchy.
  * 
  * <p>
  * This class is also {@link Iterable} which means you can do a {@code for (T obj : dao)} type of loop code to iterate
@@ -277,7 +276,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
 	/**
 	 * Used if you want to wire the Dao with spring. In java you should use the
-	 * {@link #BaseJdbcDao(DatabaseType, Class)} constructor. This must be called <i>before</i> {@link #initialize}.
+	 * {@link #BaseDaoImpl(DatabaseType, Class)} constructor. This must be called <i>before</i> {@link #initialize}.
 	 */
 	public void setDatabaseType(DatabaseType databaseType) {
 		this.databaseType = databaseType;

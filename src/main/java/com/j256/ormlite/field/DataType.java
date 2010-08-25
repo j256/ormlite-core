@@ -103,10 +103,15 @@ public enum DataType implements FieldConverter {
 		}
 		@Override
 		public Object parseDefaultString(String defaultStr, String format) throws SQLException {
-			return JAVA_DATE_STRING.parseDefaultString(defaultStr, format);
+			DateFormat dateFormat = getDateFormat(defaultThreadDateFormat, format);
+			try {
+				return new Timestamp(dateFormat.parse(defaultStr).getTime());
+			} catch (ParseException e) {
+				throw SqlExceptionUtil.create("Problems parsing default date string: " + defaultStr, e);
+			}
 		}
 		@Override
-		public Object javaToArg(Object javaObject) {
+		public Object javaToArg(FieldType fieldType, Object javaObject) {
 			Date date = (Date) javaObject;
 			return new Timestamp(date.getTime());
 		}
@@ -133,14 +138,14 @@ public enum DataType implements FieldConverter {
 			}
 		}
 		@Override
-		public Object javaToArg(Object javaObject) {
-			Date date = (Date) javaObject;
+		public Object javaToArg(FieldType fieldType, Object obj) {
+			Date date = (Date) obj;
 			return (Long) date.getTime();
 		}
 	},
 
 	/**
-	 * Links the {@link Types#STRING} SQL type and the {@link java.util.Date} Java class.
+	 * Links the {@link Types#VARCHAR} SQL type and the {@link java.util.Date} Java class.
 	 * 
 	 * <p>
 	 * NOTE: This is <i>not</i> the same as the {@link java.sql.Date} class.
@@ -148,9 +153,11 @@ public enum DataType implements FieldConverter {
 	 */
 	JAVA_DATE_STRING(SqlType.STRING, new Class<?>[0]) {
 
+		private final ThreadLocal<DateFormat> threadDateFormat = new ThreadLocal<DateFormat>();
+
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-			DateFormat dateFormat = getDateFormat(fieldType.getFormat());
+			DateFormat dateFormat = getDateFormat(threadDateFormat, fieldType.getFormat());
 			String dateString = results.getString(columnPos);
 			try {
 				return dateFormat.parse(dateString);
@@ -160,10 +167,7 @@ public enum DataType implements FieldConverter {
 		}
 		@Override
 		public Object parseDefaultString(String defaultStr, String format) throws SQLException {
-			if (format == null) {
-				format = DEFAULT_DATE_FORMAT_STRING;
-			}
-			DateFormat dateFormat = getDateFormat(format);
+			DateFormat dateFormat = getDateFormat(threadDateFormat, format);
 			try {
 				return dateFormat.parse(defaultStr);
 			} catch (ParseException e) {
@@ -171,9 +175,10 @@ public enum DataType implements FieldConverter {
 			}
 		}
 		@Override
-		public Object javaToArg(Object javaObject) {
-			Date date = (Date) javaObject;
-			return (Long) date.getTime();
+		public Object javaToArg(FieldType fieldType, Object obj) {
+			DateFormat dateFormat = getDateFormat(threadDateFormat, fieldType.getFormat());
+			Date date = (Date) obj;
+			return dateFormat.format(date);
 		}
 	},
 
@@ -454,11 +459,11 @@ public enum DataType implements FieldConverter {
 	 */
 	SERIALIZABLE(SqlType.SERIALIZABLE, new Class<?>[] { Object.class }) {
 		@Override
-		public Object javaToArg(Object javaObject) throws SQLException {
+		public Object javaToArg(FieldType fieldType, Object obj) throws SQLException {
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 			try {
 				ObjectOutputStream objOutStream = new ObjectOutputStream(outStream);
-				objOutStream.writeObject(javaObject);
+				objOutStream.writeObject(obj);
 			} catch (Exception e) {
 				throw SqlExceptionUtil.create("Could not write serialized object to byte array", e);
 			}
@@ -499,7 +504,7 @@ public enum DataType implements FieldConverter {
 	 */
 	ENUM_STRING(SqlType.STRING, new Class<?>[] { Enum.class }) {
 		@Override
-		public Object javaToArg(Object obj) throws SQLException {
+		public Object javaToArg(FieldType fieldType, Object obj) throws SQLException {
 			Enum<?> enumVal = (Enum<?>) obj;
 			return enumVal.name();
 		}
@@ -520,7 +525,7 @@ public enum DataType implements FieldConverter {
 	 */
 	ENUM_INTEGER(SqlType.INTEGER, new Class<?>[] { Enum.class }) {
 		@Override
-		public Object javaToArg(Object obj) throws SQLException {
+		public Object javaToArg(FieldType fieldType, Object obj) throws SQLException {
 			Enum<?> enumVal = (Enum<?>) obj;
 			return (Integer) enumVal.ordinal();
 		}
@@ -543,7 +548,7 @@ public enum DataType implements FieldConverter {
 	 */
 	UNKNOWN(SqlType.UNKNOWN, new Class<?>[0]) {
 		@Override
-		public Object javaToArg(Object obj) throws SQLException {
+		public Object javaToArg(FieldType fieldType, Object obj) throws SQLException {
 			return null;
 		}
 		@Override
@@ -577,9 +582,9 @@ public enum DataType implements FieldConverter {
 		}
 	}
 
-	private static final String DEFAULT_DATE_FORMAT_STRING = "yyyy-MM-dd hh:mm:ss.SSSSSS";
+	public static final String DEFAULT_DATE_FORMAT_STRING = "yyyy-MM-dd HH:mm:ss.SSSSSS";
 	// SimpleDateFormat is non-rentrant unfortunately
-	private static ThreadLocal<DateFormat> threadDateFormat = new ThreadLocal<DateFormat>();
+	private static ThreadLocal<DateFormat> defaultThreadDateFormat = new ThreadLocal<DateFormat>();
 
 	private final SqlType primarySqlType;
 	private final boolean canBeGenerated;
@@ -597,7 +602,7 @@ public enum DataType implements FieldConverter {
 
 	public abstract Object parseDefaultString(String defaultStr, String format) throws SQLException;
 
-	public Object javaToArg(Object javaObject) throws SQLException {
+	public Object javaToArg(FieldType fieldType, Object javaObject) throws SQLException {
 		// noop pass-thru is the default
 		return javaObject;
 	}
@@ -695,9 +700,12 @@ public enum DataType implements FieldConverter {
 		return false;
 	}
 
-	private static DateFormat getDateFormat(String format) {
+	private static DateFormat getDateFormat(ThreadLocal<DateFormat> threadDateFormat, String format) {
 		DateFormat dateFormat = threadDateFormat.get();
 		if (dateFormat == null) {
+			if (format == null) {
+				format = DEFAULT_DATE_FORMAT_STRING;
+			}
 			dateFormat = new SimpleDateFormat(format);
 			threadDateFormat.set(dateFormat);
 		}

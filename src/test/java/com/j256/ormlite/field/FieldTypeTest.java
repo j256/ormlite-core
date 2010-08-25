@@ -130,10 +130,11 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 			public Object parseDefaultString(String defaultStr, String format) {
 				return defaultStr;
 			}
-			public Object javaToArg(Object javaObject) {
+			public Object javaToArg(FieldType fieldType, Object javaObject) {
 				return nameArg;
 			}
-			public Object resultToJava(FieldType fieldType, DatabaseResults resultSet, int columnPos) throws SQLException {
+			public Object resultToJava(FieldType fieldType, DatabaseResults resultSet, int columnPos)
+					throws SQLException {
 				return nameResult;
 			}
 			public boolean isStreamType() {
