@@ -13,34 +13,28 @@ import com.j256.ormlite.support.ConnectionSource;
  */
 public class AndroidConnectionSource implements ConnectionSource {
 
-	private DateAdapter dateAdapter;
 	private SQLiteDatabase readableDb = null;
 	private SQLiteDatabase readWriteDb = null;
 
-    public AndroidConnectionSource(DateAdapter dateAdapter, SQLiteDatabase readWriteDb) {
-        this(dateAdapter, readWriteDb, readWriteDb);
-    }
-
-	public AndroidConnectionSource(DateAdapter dateAdapter, SQLiteDatabase readableDb, SQLiteDatabase readWriteDb) {
-		this.readableDb = readableDb;
-        this.readWriteDb = readWriteDb;
-		this.dateAdapter = (dateAdapter == null ? new NumericDateAdapter() : dateAdapter);
+	public AndroidConnectionSource(SQLiteDatabase readWriteDb) {
+		this(readWriteDb, readWriteDb);
 	}
 
-	public DateAdapter getDateAdapter() {
-		return dateAdapter;
+	public AndroidConnectionSource(SQLiteDatabase readableDb, SQLiteDatabase readWriteDb) {
+		this.readableDb = readableDb;
+		this.readWriteDb = readWriteDb;
 	}
 
 	public AndroidDatabaseConnection getReadOnlyConnection() throws SQLException {
-		return new AndroidDatabaseConnection(readableDb, dateAdapter);
+		return new AndroidDatabaseConnection(readableDb);
 	}
 
 	public AndroidDatabaseConnection getReadWriteConnection() throws SQLException {
-		return new AndroidDatabaseConnection(readWriteDb, dateAdapter);
+		return new AndroidDatabaseConnection(readWriteDb);
 	}
 
 	/**
-	 * Close any open connections.  This will cause any future transactions to re-open the databases.
+	 * Close any open connections. This will cause any future transactions to re-open the databases.
 	 */
 	public void close() throws SQLException {
 		if (readableDb != null) {
