@@ -23,7 +23,7 @@ public class AndroidCompiledStatement implements CompiledStatement {
 	private final SQLiteDatabase db;
 
 	private Cursor cursor;
-	private final List<String> args = new ArrayList<String>();
+	private final List<Object> args = new ArrayList<Object>();
 	private Integer max;
 
 	public AndroidCompiledStatement(String sql, SQLiteDatabase db) {
@@ -51,7 +51,7 @@ public class AndroidCompiledStatement implements CompiledStatement {
 			} else {
 				finalSql = sql + " " + max;
 			}
-			db.execSQL(finalSql, args.toArray(new String[args.size()]));
+			db.execSQL(finalSql, args.toArray(new Object[args.size()]));
 		} catch (Exception e) {
 			throw SqlExceptionUtil.create("Problems executing Android query: " + finalSql, e);
 		}

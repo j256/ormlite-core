@@ -15,7 +15,7 @@ public class SQLiteDatabase {
 	}
 
 	public Cursor rawQuery(String sql, String[] args) {
-		return new Cursor();
+		return null;
 	}
 
 	public void beginTransaction() {
@@ -27,6 +27,6 @@ public class SQLiteDatabase {
 	public void endTransaction() {
 	}
 
-	public void execSQL(String finalSql, String[] args) {
+	public void execSQL(String finalSql, Object[] args) {
 	}
 }

@@ -66,7 +66,8 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 	}
 
 	public CompiledStatement compileStatement(String statement) throws SQLException {
-		return new JdbcCompiledStatement(connection.prepareStatement(statement));
+		return new JdbcCompiledStatement(connection.prepareStatement(statement, ResultSet.TYPE_FORWARD_ONLY,
+				ResultSet.CONCUR_READ_ONLY));
 	}
 
 	public void close() throws SQLException {

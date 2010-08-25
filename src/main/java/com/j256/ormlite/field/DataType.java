@@ -169,7 +169,8 @@ public enum DataType implements FieldConverter {
 		public Object parseDefaultString(String defaultStr, String format) throws SQLException {
 			DateFormat dateFormat = getDateFormat(threadDateFormat, format);
 			try {
-				return dateFormat.parse(defaultStr);
+				// we parse to make sure it works and then format it again
+				return dateFormat.format(dateFormat.parse(defaultStr));
 			} catch (ParseException e) {
 				throw SqlExceptionUtil.create("Problems parsing default date string: " + defaultStr, e);
 			}

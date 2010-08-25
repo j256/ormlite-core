@@ -36,7 +36,7 @@ import com.j256.ormlite.stmt.StatementBuilder;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.DatabaseTableConfig;
 
-public class BaseJdbcDaoTest extends BaseOrmLiteTest {
+public class BaseDaoImplTest extends BaseOrmLiteTest {
 
 	private final static String STUFF_FIELD_NAME = "stuff";
 	private final static String DEFAULT_VALUE_STRING = "1314199";
@@ -51,8 +51,12 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 	private final static String DEFAULT_BOOLEAN_VALUE = "true";
 	private final static String DEFAULT_STRING_VALUE = "foo";
 	// this can't have non-zero milliseconds
+	private static DateFormat defaultDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");
 	private final static String DEFAULT_DATE_VALUE = "2010-07-16 01:31:17.000000";
-	private static DateFormat defaultDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSSSSS");
+	private final static String DEFAULT_DATE_LONG_VALUE = "1282768620000";
+	private final static String DEFAULT_DATE_STRING_FORMAT = "MM/dd/yyyy HH-mm-ss-SSSSSS";
+	private static DateFormat defaultDateStringFormat = new SimpleDateFormat(DEFAULT_DATE_STRING_FORMAT);
+	private final static String DEFAULT_DATE_STRING_VALUE = "07/16/2010 01-31-17-000000";
 	private final static String DEFAULT_BYTE_VALUE = "1";
 	private final static String DEFAULT_SHORT_VALUE = "2";
 	private final static String DEFAULT_INT_VALUE = "3";
@@ -797,7 +801,10 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 		String stringVal = "some string";
 		boolean boolVal = true;
 		// we have to round this because the db may not be storing millis
-		Date dateVal = new Date((System.currentTimeMillis() / 1000) * 1000);
+		long millis = (System.currentTimeMillis() / 1000) * 1000;
+		Date dateVal = new Date(millis);
+		Date dateLongVal = new Date(millis);
+		Date dateStringVal = new Date(millis);
 		byte byteVal = 117;
 		short shortVal = 15217;
 		int intVal = 1023213;
@@ -808,6 +815,8 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 		allTypes.stringField = stringVal;
 		allTypes.booleanField = boolVal;
 		allTypes.dateField = dateVal;
+		allTypes.dateLongField = dateLongVal;
+		allTypes.dateStringField = dateStringVal;
 		allTypes.byteField = byteVal;
 		allTypes.shortField = shortVal;
 		allTypes.intField = intVal;
@@ -1168,6 +1177,8 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 		assertEquals(1, allList.size());
 		all.stringField = DEFAULT_STRING_VALUE;
 		all.dateField = defaultDateFormat.parse(DEFAULT_DATE_VALUE);
+		all.dateLongField = new Date(Long.parseLong(DEFAULT_DATE_LONG_VALUE));
+		all.dateStringField = defaultDateStringFormat.parse(DEFAULT_DATE_STRING_VALUE);
 		all.booleanField = Boolean.parseBoolean(DEFAULT_BOOLEAN_VALUE);
 		all.booleanObj = Boolean.parseBoolean(DEFAULT_BOOLEAN_VALUE);
 		all.byteField = Byte.parseByte(DEFAULT_BYTE_VALUE);
@@ -1459,6 +1470,10 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 		boolean booleanField;
 		@DatabaseField
 		Date dateField;
+		@DatabaseField(dataType = DataType.JAVA_DATE_LONG)
+		Date dateLongField;
+		@DatabaseField(dataType = DataType.JAVA_DATE_STRING, format = DEFAULT_DATE_STRING_FORMAT)
+		Date dateStringField;
 		@DatabaseField
 		byte byteField;
 		@DatabaseField
@@ -1484,6 +1499,10 @@ public class BaseJdbcDaoTest extends BaseOrmLiteTest {
 		String stringField;
 		@DatabaseField(defaultValue = DEFAULT_DATE_VALUE)
 		Date dateField;
+		@DatabaseField(dataType = DataType.JAVA_DATE_LONG, defaultValue = DEFAULT_DATE_LONG_VALUE)
+		Date dateLongField;
+		@DatabaseField(dataType = DataType.JAVA_DATE_STRING, defaultValue = DEFAULT_DATE_STRING_VALUE, format = DEFAULT_DATE_STRING_FORMAT)
+		Date dateStringField;
 		@DatabaseField(defaultValue = DEFAULT_BOOLEAN_VALUE)
 		boolean booleanField;
 		@DatabaseField(defaultValue = DEFAULT_BOOLEAN_VALUE)

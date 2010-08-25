@@ -127,7 +127,7 @@ Gray Watson @uref{http://256.com/gray/}
 * Class Setup::                 How to setup your classes to be persisted.
 * Persisted Types::             Data types that can be persisted.
 * DAOs::                        How to configure the Database Access Objects.
-* DataSource::                  Setting up connections to databases.
+* ConnectionSource::            Setting up connections to databases.
 * Database Type::               Defining your database type.
 * Complete Wiring::             Tying all of the wiring together.
 @end menu
@@ -359,6 +359,13 @@ primitive will be set to 0.  This can only be used on a primitive field.
 Set this to be false (default true) to not store this field in the database. This is useful if you want to have
 the annotation on all of your fields but turn off the writing of some of them to the database.
 
+@cindex parse format
+@cindex format, field
+@item format
+
+This allows you to specify format information of a particular field.  Right now only the Date fields support it when
+a default value is being converted or if you are using the @code{JAVA_DATE_STRING} type.
+
 @end table
 
 @c ----------------------------------------------------------------
@@ -511,56 +518,61 @@ helps to translate between the SQL types and the database specific handling of t
 @table @code
 
 @cindex String
-@item String
+@item String (DataType.STRING)
 
-Persisted as SQL type VARCHAR.
+Persisted as SQL type VARCHAR.  
 
 @cindex boolean
-@item Boolean or boolean
+@item boolean or Boolean (DataType.BOOLEAN or DataType.BOOLEAN_OBJ)
 
 Persisted as SQL type BOOLEAN.
 
 @cindex Date
-@item java.util.Date
+@cindex java date
+@cindex date formats
+@item java.util.Date (DataType.JAVA_DATE, DataType.JAVA_DATE_LONG, or JAVA_DATE_STRING)
 
-Persisted as SQL type TIMESTAMP.  @emph{NOTE:} This is @emph{not} @code{java.sql.Date} which is a different
-class.  @emph{NOTE:} Certain databases only provide seconds resolution so the milliseconds will be 0.  @emph{NOTE:}
-for MySQL users, we are usign the default @code{TIMESTAMP} field type but you may want to create your database with
-@code{DATETIME} instead.  YMMV. 
+Persisted as SQL type TIMESTAMP.  @emph{NOTE:} This is a different class from @code{java.sql.Date}.
+@emph{NOTE:} Certain databases only provide seconds resolution so the milliseconds will be 0.
+
+You can also specify the @code{dataType} field to the @code{@@DatabaseField} annotation as a @code{DataType.JAVA_DATE_LONG}
+in which case the milliseconds value of the @code{Date} will be stored as an LONG.  Or you can use
+@code{DataType.JAVA_DATE_STRING} in which case the date will be stored as a string in @code{yyyy-MM-dd HH:mm:ss.SSSSSS}
+format.  You can use the @code{format} field in @code{DatabaseField} to set the date to another format.
 
 @cindex byte
-@item Byte or byte
+@item byte or Byte (DataType.BYTE or DataType.BYTE_OBJ)
 
 Persisted as SQL type TINYINT.
 
 @cindex short
-@item Short or short
+@item short or Short (DataType.SHORT or DataType.SHORT_OBJ)
 
 Persisted as SQL type SMALLINT.
 
 @cindex int
-@item Integer or int
+@item int or Integer (DataType.INTEGER or DataType.INTEGER_OBJ)
 
 Persisted as SQL type INTEGER.
 
 @cindex long
-@item Long or long
+@item long or Long (DataType.LONG or DataType.LONG_OBJ)
 
 Persisted as SQL type BIGINT.
 
 @cindex float
-@item Float or float
+@item float or Float (DataType.FLOAT or DataType.FLOAT_OBJ)
 
 Persisted as SQL type FLOAT.
 
 @cindex double
-@item Double or double
+@item double or Double (DataType.DOUBLE or DataType.DOUBLE_OBJ)
 
 Persisted as SQL type DOUBLE.
 
 @cindex Serializable
 @cindex persist objects
-@item Serializable
+@item Serializable (DataType.SERIALIZABLE)
 
 Persisted as SQL type VARBINARY.  This is a special type that serializes an object as a sequence of bytes
 and then deserializes it on the way back.  The field must be an object that implements the @code{java.io.Serializable}
@@ -568,7 +580,7 @@ interface.  Depending on the database type, there will be limits to the size of 
 
 @cindex Enum
 @cindex enumerated types
-@item Enum or enum
+@item enum or Enum (DataType.ENUM_STRING or DataType.ENUM_INTEGER)
 
 Persisted by default as the enumerated value's string @emph{name} as a VARCHAR type.  You can also specify the
 @code{dataType} field to the @code{@@DatabaseField} annotation as a @code{DataType.ENUM_INTEGER} in which case the
@@ -587,7 +599,7 @@ used if an unknown value is found in the database. @xref{Local Annotations}.
 stored in the database.  @xref{Foreign Objects}.
 
 @c ----------------------------------------------------------------
-@node DAOs, DataSource, Persisted Types, Getting Started
+@node DAOs, ConnectionSource, Persisted Types, Getting Started
 @section Defining the DAOs
 
 @cindex DAO
@@ -644,8 +656,8 @@ Dao<Order, Integer> orderDao =
 @end example
 
 @c ----------------------------------------------------------------
-@node DataSource, Database Type, DAOs, Getting Started
-@section Data Sources and Connection Sources
+@node ConnectionSource, Database Type, DAOs, Getting Started
+@section Connection Sources
 
 @cindex data source
 @cindex connection source
@@ -706,7 +718,7 @@ try @{
 @end example
 
 @c ----------------------------------------------------------------
-@node Database Type, Complete Wiring, DataSource, Getting Started
+@node Database Type, Complete Wiring, ConnectionSource, Getting Started
 @section Database Type
 
 @cindex database type
@@ -742,8 +754,8 @@ For more information about the database specific code in the DatabaseType.  @xre
 
 @cindex usage example
 So you have annotated the objects to be persisted, added the no-arg constructor, defined your DAO classes,
-created your DataSource, and established your DatabaseType.  You are ready to start persisting and querying
-your database objects.  The following code ties it all together:
+created your @code{DataSource}, and established your @code{DatabaseType}.  You are ready to start persisting and
+querying your database objects.  The following code ties it all together:
 
 @example
 // h2 by default but change to match your database
