@@ -145,6 +145,10 @@ public enum DataType implements FieldConverter {
 			Date date = (Date) obj;
 			return (Long) date.getTime();
 		}
+		@Override
+		public boolean isNumber() {
+			return true;
+		}
 	},
 
 	/**
