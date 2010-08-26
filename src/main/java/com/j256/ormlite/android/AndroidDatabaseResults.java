@@ -12,7 +12,7 @@ import com.j256.ormlite.support.DatabaseResults;
 /**
  * Android implementation of our results object.
  * 
- * @author kevingalligan
+ * @author kevingalligan, graywatson
  */
 public class AndroidDatabaseResults implements DatabaseResults {
 

@@ -15,7 +15,7 @@ import com.j256.ormlite.support.DatabaseResults;
 /**
  * Android implementation of the compiled statement.
  * 
- * @author kevingalligan
+ * @author kevingalligan, graywatson
  */
 public class AndroidCompiledStatement implements CompiledStatement {
 
