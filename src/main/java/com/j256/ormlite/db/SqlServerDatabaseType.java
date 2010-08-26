@@ -100,7 +100,7 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 			// store it as a short
 			return SqlType.BYTE;
 		}
-		public Object parseDefaultString(String defaultStr, String format) {
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Short.parseShort(defaultStr);
 		}
 		public Object javaToArg(FieldType fieldType, Object javaObject) {

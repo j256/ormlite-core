@@ -44,7 +44,7 @@ public enum DataType implements FieldConverter {
 			return results.getString(columnPos);
 		}
 		@Override
-		public Object parseDefaultString(String defaultStr, String format) {
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return defaultStr;
 		}
 	},
@@ -58,7 +58,7 @@ public enum DataType implements FieldConverter {
 			return (Boolean) results.getBoolean(columnPos);
 		}
 		@Override
-		public Object parseDefaultString(String defaultStr, String format) {
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Boolean.parseBoolean(defaultStr);
 		}
 		@Override
@@ -80,7 +80,7 @@ public enum DataType implements FieldConverter {
 			return (Boolean) results.getBoolean(columnPos);
 		}
 		@Override
-		public Object parseDefaultString(String defaultStr, String format) {
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Boolean.parseBoolean(defaultStr);
 		}
 		@Override
@@ -102,12 +102,13 @@ public enum DataType implements FieldConverter {
 			return new Date(results.getTimestamp(columnPos).getTime());
 		}
 		@Override
-		public Object parseDefaultString(String defaultStr, String format) throws SQLException {
-			DateFormat dateFormat = getDateFormat(defaultThreadDateFormat, format);
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+			DateFormat dateFormat = getDateFormat(defaultThreadDateFormat, fieldType.getFormat());
 			try {
 				return new Timestamp(dateFormat.parse(defaultStr).getTime());
 			} catch (ParseException e) {
-				throw SqlExceptionUtil.create("Problems parsing default date string: " + defaultStr, e);
+				throw SqlExceptionUtil.create("Problems parsing default date string '" + defaultStr + "' using '"
+						+ formatOrDefault(fieldType.getFormat()) + '\'', e);
 			}
 		}
 		@Override
@@ -130,11 +131,12 @@ public enum DataType implements FieldConverter {
 			return new Date(results.getLong(columnPos));
 		}
 		@Override
-		public Object parseDefaultString(String defaultStr, String format) throws SQLException {
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 			try {
 				return Long.parseLong(defaultStr);
 			} catch (NumberFormatException e) {
-				throw SqlExceptionUtil.create("Problems parsing default date-long value: " + defaultStr, e);
+				throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing default date-long value: "
+						+ defaultStr, e);
 			}
 		}
 		@Override
@@ -157,22 +159,24 @@ public enum DataType implements FieldConverter {
 
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-			DateFormat dateFormat = getDateFormat(threadDateFormat, fieldType.getFormat());
-			String dateString = results.getString(columnPos);
+			String formatStr = fieldType.getFormat();
+			String dateStr = results.getString(columnPos);
 			try {
-				return dateFormat.parse(dateString);
+				return getDateFormat(threadDateFormat, formatStr).parse(dateStr);
 			} catch (ParseException e) {
-				throw SqlExceptionUtil.create("Problems parsing date string from database: " + dateString, e);
+				throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing date-string '" + dateStr
+						+ "' using '" + formatOrDefault(formatStr) + "'", e);
 			}
 		}
 		@Override
-		public Object parseDefaultString(String defaultStr, String format) throws SQLException {
-			DateFormat dateFormat = getDateFormat(threadDateFormat, format);
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+			// we parse to make sure it works and then format it again
+			DateFormat dateFormat = getDateFormat(threadDateFormat, fieldType.getFormat());
 			try {
-				// we parse to make sure it works and then format it again
 				return dateFormat.format(dateFormat.parse(defaultStr));
 			} catch (ParseException e) {
-				throw SqlExceptionUtil.create("Problems parsing default date string: " + defaultStr, e);
+				throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing default date-string '"
+						+ defaultStr + "' using '" + formatOrDefault(fieldType.getFormat()) + "'", e);
 			}
 		}
 		@Override
@@ -192,7 +196,7 @@ public enum DataType implements FieldConverter {
 			return (Byte) results.getByte(columnPos);
 		}
 		@Override
-		public Object parseDefaultString(String defaultStr, String format) {
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Byte.parseByte(defaultStr);
 		}
 		@Override
@@ -214,7 +218,7 @@ public enum DataType implements FieldConverter {
 			return (Byte) results.getByte(columnPos);
 		}
 		@Override
-		public Object parseDefaultString(String defaultStr, String format) {
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Byte.parseByte(defaultStr);
 		}
 		@Override
@@ -232,7 +236,7 @@ public enum DataType implements FieldConverter {
 			return (Short) results.getShort(columnPos);
 		}
 		@Override
-		public Object parseDefaultString(String defaultStr, String format) {
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Short.parseShort(defaultStr);
 		}
 		@Override
@@ -254,7 +258,7 @@ public enum DataType implements FieldConverter {
 			return (Short) results.getShort(columnPos);
 		}
 		@Override
-		public Object parseDefaultString(String defaultStr, String format) {
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Short.parseShort(defaultStr);
 		}
 		@Override
@@ -272,7 +276,7 @@ public enum DataType implements FieldConverter {
 			return (Integer) results.getInt(columnPos);
 		}
 		@Override
-		public Object parseDefaultString(String defaultStr, String format) {
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Integer.parseInt(defaultStr);
 		}
 		@Override
@@ -302,7 +306,7 @@ public enum DataType implements FieldConverter {
 			return (Integer) results.getInt(columnPos);
 		}
 		@Override
-		public Object parseDefaultString(String defaultStr, String format) {
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Integer.parseInt(defaultStr);
 		}
 		@Override
@@ -328,7 +332,7 @@ public enum DataType implements FieldConverter {
 			return (Long) results.getLong(columnPos);
 		}
 		@Override
-		public Object parseDefaultString(String defaultStr, String format) {
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Long.parseLong(defaultStr);
 		}
 		@Override
@@ -358,7 +362,7 @@ public enum DataType implements FieldConverter {
 			return (Long) results.getLong(columnPos);
 		}
 		@Override
-		public Object parseDefaultString(String defaultStr, String format) {
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Long.parseLong(defaultStr);
 		}
 		@Override
@@ -384,7 +388,7 @@ public enum DataType implements FieldConverter {
 			return (Float) results.getFloat(columnPos);
 		}
 		@Override
-		public Object parseDefaultString(String defaultStr, String format) {
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Float.parseFloat(defaultStr);
 		}
 		@Override
@@ -406,7 +410,7 @@ public enum DataType implements FieldConverter {
 			return (Float) results.getFloat(columnPos);
 		}
 		@Override
-		public Object parseDefaultString(String defaultStr, String format) {
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Float.parseFloat(defaultStr);
 		}
 		@Override
@@ -424,7 +428,7 @@ public enum DataType implements FieldConverter {
 			return (Double) results.getDouble(columnPos);
 		}
 		@Override
-		public Object parseDefaultString(String defaultStr, String format) {
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Double.parseDouble(defaultStr);
 		}
 		@Override
@@ -446,7 +450,7 @@ public enum DataType implements FieldConverter {
 			return (Double) results.getDouble(columnPos);
 		}
 		@Override
-		public Object parseDefaultString(String defaultStr, String format) {
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Double.parseDouble(defaultStr);
 		}
 		@Override
@@ -471,7 +475,7 @@ public enum DataType implements FieldConverter {
 			return outStream.toByteArray();
 		}
 		@Override
-		public Object parseDefaultString(String defaultStr, String format) throws SQLException {
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 			throw new SQLException("Default values for serializable types are not supported");
 		}
 		@Override
@@ -510,7 +514,7 @@ public enum DataType implements FieldConverter {
 			return enumVal.name();
 		}
 		@Override
-		public Object parseDefaultString(String defaultStr, String format) {
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return defaultStr;
 		}
 		@Override
@@ -531,7 +535,7 @@ public enum DataType implements FieldConverter {
 			return (Integer) enumVal.ordinal();
 		}
 		@Override
-		public Object parseDefaultString(String defaultStr, String format) {
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Integer.parseInt(defaultStr);
 		}
 		@Override
@@ -553,7 +557,7 @@ public enum DataType implements FieldConverter {
 			return null;
 		}
 		@Override
-		public Object parseDefaultString(String defaultStr, String format) {
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return null;
 		}
 		@Override
@@ -601,7 +605,7 @@ public enum DataType implements FieldConverter {
 	public abstract Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos)
 			throws SQLException;
 
-	public abstract Object parseDefaultString(String defaultStr, String format) throws SQLException;
+	public abstract Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException;
 
 	public Object javaToArg(FieldType fieldType, Object javaObject) throws SQLException {
 		// noop pass-thru is the default
@@ -704,12 +708,17 @@ public enum DataType implements FieldConverter {
 	private static DateFormat getDateFormat(ThreadLocal<DateFormat> threadDateFormat, String format) {
 		DateFormat dateFormat = threadDateFormat.get();
 		if (dateFormat == null) {
-			if (format == null) {
-				format = DEFAULT_DATE_FORMAT_STRING;
-			}
-			dateFormat = new SimpleDateFormat(format);
+			dateFormat = new SimpleDateFormat(formatOrDefault(format));
 			threadDateFormat.set(dateFormat);
 		}
 		return dateFormat;
+	}
+
+	private static String formatOrDefault(String format) {
+		if (format == null) {
+			return DEFAULT_DATE_FORMAT_STRING;
+		} else {
+			return format;
+		}
 	}
 }

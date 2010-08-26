@@ -1,5 +1,9 @@
 package com.j256.ormlite.db;
 
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.FieldConverter;
+import com.j256.ormlite.field.FieldType;
+
 /**
  * Sqlite database type information for the Android OS. This has a difference driver class name.
  * 
@@ -44,5 +48,16 @@ public class SqliteAndroidDatabaseType extends SqliteDatabaseType implements Dat
 	@Override
 	protected void appendBooleanType(StringBuilder sb) {
 		appendShortType(sb);
+	}
+
+	@Override
+	public FieldConverter getFieldConverter(FieldType fieldType) {
+		// we are only overriding certain types
+		switch (fieldType.getDataType()) {
+			case JAVA_DATE :
+				return DataType.JAVA_DATE_STRING;
+			default :
+				return super.getFieldConverter(fieldType);
+		}
 	}
 }

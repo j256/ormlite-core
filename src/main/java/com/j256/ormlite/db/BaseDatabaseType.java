@@ -390,7 +390,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		public SqlType getSqlType() {
 			return SqlType.BOOLEAN;
 		}
-		public Object parseDefaultString(String defaultStr, String format) throws SQLException {
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 			boolean bool = (boolean) Boolean.parseBoolean(defaultStr);
 			return (bool ? new Byte((byte) 1) : new Byte((byte) 0));
 		}

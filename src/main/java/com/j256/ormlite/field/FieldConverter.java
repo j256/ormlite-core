@@ -18,7 +18,7 @@ public interface FieldConverter {
 	/**
 	 * Convert a default string object and return the appropriate argument to a SQL insert or update statement.
 	 */
-	public Object parseDefaultString(String defaultStr, String format) throws SQLException;
+	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException;
 
 	/**
 	 * Convert a Java object and return the appropriate argument to a SQL insert or update statement.

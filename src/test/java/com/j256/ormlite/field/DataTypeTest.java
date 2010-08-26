@@ -85,8 +85,8 @@ public class DataTypeTest extends BaseOrmLiteTest {
 		assertFalse(DataType.JAVA_DATE.isValidGeneratedType());
 		String format = "yyyy-MM-dd HH:mm:ss.SSSSSS";
 		DateFormat dateFormat = new SimpleDateFormat(format);
-		assertEquals(new Timestamp(date.getTime()), DataType.JAVA_DATE.parseDefaultString(dateFormat.format(date),
-				format));
+		assertEquals(new Timestamp(date.getTime()), DataType.JAVA_DATE.parseDefaultString(null,
+				dateFormat.format(date)));
 	}
 
 	@Test

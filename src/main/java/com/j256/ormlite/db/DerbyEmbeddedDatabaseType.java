@@ -100,7 +100,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 			}
 			return new SerialBlob(outStream.toByteArray());
 		}
-		public Object parseDefaultString(String defaultStr, String format) throws SQLException {
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 			throw new SQLException("Default values for serializable types are not supported");
 		}
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {

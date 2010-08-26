@@ -142,15 +142,6 @@ public class FieldType {
 			this.fieldConverter = converter;
 		}
 		this.format = fieldConfig.getFormat();
-		String defaultStr = fieldConfig.getDefaultValue();
-		if (defaultStr == null || defaultStr.equals("")) {
-			this.defaultValue = null;
-		} else if (this.isGeneratedId) {
-			throw new SQLException("Field '" + field.getName() + "' cannot be a generatedId and have a default value '"
-					+ defaultStr + "'");
-		} else {
-			this.defaultValue = this.fieldConverter.parseDefaultString(defaultStr, this.format);
-		}
 		if (this.isId && foreignTableInfo != null) {
 			throw new IllegalArgumentException("Id field " + field.getName() + " cannot also be a foreign object");
 		}
@@ -173,6 +164,15 @@ public class FieldType {
 		this.throwIfNull = fieldConfig.isThrowIfNull();
 		if (this.throwIfNull && !dataType.isPrimitive()) {
 			throw new SQLException("Field " + field.getName() + " must be a primitive if set with throwIfNull");
+		}
+		String defaultStr = fieldConfig.getDefaultValue();
+		if (defaultStr == null || defaultStr.equals("")) {
+			this.defaultValue = null;
+		} else if (this.isGeneratedId) {
+			throw new SQLException("Field '" + field.getName() + "' cannot be a generatedId and have a default value '"
+					+ defaultStr + "'");
+		} else {
+			this.defaultValue = this.fieldConverter.parseDefaultString(this, defaultStr);
 		}
 	}
 
@@ -271,13 +271,6 @@ public class FieldType {
 	 */
 	public TableInfo<?> getForeignTableInfo() {
 		return foreignTableInfo;
-	}
-
-	/**
-	 * Convert the default value string into a valid Java object for this type.
-	 */
-	public Object parseDefaultString(String defaulStr, String format) throws SQLException {
-		return fieldConverter.parseDefaultString(defaulStr, format);
 	}
 
 	/**
@@ -478,7 +471,8 @@ public class FieldType {
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + ":name=" + field.getName() + ",class=" + field.getDeclaringClass();
+		return getClass().getSimpleName() + ":name=" + field.getName() + ",class="
+				+ field.getDeclaringClass().getSimpleName();
 	}
 
 	private Enum<?> enumVal(Object val, Enum<?> enumVal) throws SQLException {
