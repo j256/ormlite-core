@@ -148,7 +148,7 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 		db.close();
 	}
 
-	private void bindArgs(SQLiteStatement stmt, Object[] args, SqlType[] argFieldTypes) {
+	private void bindArgs(SQLiteStatement stmt, Object[] args, SqlType[] argFieldTypes) throws SQLException {
 		if (args == null) {
 			return;
 		}
@@ -159,6 +159,9 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 				stmt.bindNull(argIndex);
 			} else {
 				switch (argFieldTypes[i]) {
+					case STRING :
+						stmt.bindString(argIndex, arg.toString());
+						break;
 					case BOOLEAN :
 						stmt.bindLong(argIndex, ((Boolean) arg) ? 1 : 0);
 						break;
@@ -172,9 +175,8 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 					case DOUBLE :
 						stmt.bindDouble(argIndex, ((Number) arg).doubleValue());
 						break;
-					case STRING :
 					case SERIALIZABLE :
-						stmt.bindString(argIndex, (arg instanceof String) ? (String) arg : arg.toString());
+						stmt.bindBlob(argIndex, (byte[]) arg);
 						break;
 				}
 			}

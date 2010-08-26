@@ -75,6 +75,9 @@ public class DataTypeTest extends BaseOrmLiteTest {
 		LocalDate foo = new LocalDate();
 		foo.date = date;
 		assertEquals(1, fooDao.create(foo));
+		Field[] fields = LocalDate.class.getDeclaredFields();
+		assertTrue(fields.length > 0);
+		Field dateField = fields[0];
 
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME);
@@ -85,7 +88,8 @@ public class DataTypeTest extends BaseOrmLiteTest {
 		assertFalse(DataType.JAVA_DATE.isValidGeneratedType());
 		String format = "yyyy-MM-dd HH:mm:ss.SSSSSS";
 		DateFormat dateFormat = new SimpleDateFormat(format);
-		assertEquals(new Timestamp(date.getTime()), DataType.JAVA_DATE.parseDefaultString(null,
+		FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME, dateField);
+		assertEquals(new Timestamp(date.getTime()), DataType.JAVA_DATE.parseDefaultString(fieldType,
 				dateFormat.format(date)));
 	}
 

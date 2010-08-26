@@ -30,4 +30,7 @@ public class SQLiteStatement {
 
 	public void bindString(int bindIndex, String value) {
 	}
+
+	public void bindBlob(int bindIndex, byte[] value) {
+	}
 }

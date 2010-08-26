@@ -11,6 +11,7 @@ import java.sql.Types;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -465,14 +466,14 @@ public enum DataType implements FieldConverter {
 	SERIALIZABLE(SqlType.SERIALIZABLE, new Class<?>[] { Object.class }) {
 		@Override
 		public Object javaToArg(FieldType fieldType, Object obj) throws SQLException {
-			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 			try {
+				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 				ObjectOutputStream objOutStream = new ObjectOutputStream(outStream);
 				objOutStream.writeObject(obj);
+				return outStream.toByteArray();
 			} catch (Exception e) {
-				throw SqlExceptionUtil.create("Could not write serialized object to byte array", e);
+				throw SqlExceptionUtil.create("Could not write serialized object to byte array: " + obj, e);
 			}
-			return outStream.toByteArray();
 		}
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
@@ -489,7 +490,8 @@ public enum DataType implements FieldConverter {
 				ObjectInputStream objInStream = new ObjectInputStream(new ByteArrayInputStream(bytes));
 				return objInStream.readObject();
 			} catch (Exception e) {
-				throw SqlExceptionUtil.create("Could not read serialized object from byte array", e);
+				throw SqlExceptionUtil.create("Could not read serialized object from byte array: "
+						+ Arrays.toString(bytes) + "(len " + bytes.length + ")", e);
 			}
 		}
 		@Override
