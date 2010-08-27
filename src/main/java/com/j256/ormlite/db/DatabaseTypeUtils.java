@@ -33,7 +33,6 @@ public class DatabaseTypeUtils {
 		addDriver(SqlServerDatabaseType.class);
 		addDriver(SqlServerJtdsDatabaseType.class);
 		addDriver(Db2DatabaseType.class);
-		addDriver(SqlDroidDatabaseType.class);
 	}
 
 	/**
