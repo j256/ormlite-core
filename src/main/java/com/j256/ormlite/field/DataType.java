@@ -104,9 +104,8 @@ public enum DataType implements FieldConverter {
 		}
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
-			DateFormat dateFormat = getDateFormat(defaultThreadDateFormat, fieldType.getFormat());
 			try {
-				return new Timestamp(dateFormat.parse(defaultStr).getTime());
+				return new Timestamp(parseDateString(fieldType.getFormat(), defaultStr).getTime());
 			} catch (ParseException e) {
 				throw SqlExceptionUtil.create("Problems parsing default date string '" + defaultStr + "' using '"
 						+ formatOrDefault(fieldType.getFormat()) + '\'', e);
@@ -157,17 +156,20 @@ public enum DataType implements FieldConverter {
 	 * <p>
 	 * NOTE: This is <i>not</i> the same as the {@link java.sql.Date} class.
 	 * </p>
+	 * 
+	 * <p>
+	 * <b>WARNING:</b> Because of SimpleDateFormat not being reentrant, this has to do some synchronization with every
+	 * data in/out unfortunately.
+	 * </p>
 	 */
 	JAVA_DATE_STRING(SqlType.STRING, new Class<?>[0]) {
-
-		private final ThreadLocal<DateFormat> threadDateFormat = new ThreadLocal<DateFormat>();
 
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			String formatStr = fieldType.getFormat();
 			String dateStr = results.getString(columnPos);
 			try {
-				return getDateFormat(threadDateFormat, formatStr).parse(dateStr);
+				return parseDateString(formatStr, dateStr);
 			} catch (ParseException e) {
 				throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing date-string '" + dateStr
 						+ "' using '" + formatOrDefault(formatStr) + "'", e);
@@ -175,10 +177,9 @@ public enum DataType implements FieldConverter {
 		}
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
-			// we parse to make sure it works and then format it again
-			DateFormat dateFormat = getDateFormat(threadDateFormat, fieldType.getFormat());
 			try {
-				return dateFormat.format(dateFormat.parse(defaultStr));
+				// we parse to make sure it works and then format it again
+				return normalizeDateString(fieldType.getFormat(), defaultStr);
 			} catch (ParseException e) {
 				throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing default date-string '"
 						+ defaultStr + "' using '" + formatOrDefault(fieldType.getFormat()) + "'", e);
@@ -186,9 +187,8 @@ public enum DataType implements FieldConverter {
 		}
 		@Override
 		public Object javaToArg(FieldType fieldType, Object obj) {
-			DateFormat dateFormat = getDateFormat(threadDateFormat, fieldType.getFormat());
 			Date date = (Date) obj;
-			return dateFormat.format(date);
+			return formatDate(fieldType.getFormat(), date);
 		}
 	},
 
@@ -576,6 +576,7 @@ public enum DataType implements FieldConverter {
 
 	private static final Map<Class<?>, DataType> classMap = new HashMap<Class<?>, DataType>();
 	private static final Map<Integer, DataType> idTypeMap = new HashMap<Integer, DataType>();
+	private static final Map<String, DateFormat> dateFormatMap = new HashMap<String, DateFormat>();
 
 	static {
 		for (DataType dataType : values()) {
@@ -594,8 +595,6 @@ public enum DataType implements FieldConverter {
 	}
 
 	public static final String DEFAULT_DATE_FORMAT_STRING = "yyyy-MM-dd HH:mm:ss.SSSSSS";
-	// SimpleDateFormat is non-rentrant unfortunately
-	private static ThreadLocal<DateFormat> defaultThreadDateFormat = new ThreadLocal<DateFormat>();
 
 	private final SqlType primarySqlType;
 	private final boolean canBeGenerated;
@@ -711,11 +710,39 @@ public enum DataType implements FieldConverter {
 		return false;
 	}
 
-	private static DateFormat getDateFormat(ThreadLocal<DateFormat> threadDateFormat, String format) {
-		DateFormat dateFormat = threadDateFormat.get();
+	private static Date parseDateString(String format, String dateStr) throws ParseException {
+		synchronized (dateFormatMap) {
+			DateFormat dateFormat = getDateFormat(format);
+			return dateFormat.parse(dateStr);
+		}
+	}
+
+	private static String normalizeDateString(String format, String dateStr) throws ParseException {
+		synchronized (dateFormatMap) {
+			DateFormat dateFormat = getDateFormat(format);
+			Date date = dateFormat.parse(dateStr);
+			return dateFormat.format(date);
+		}
+	}
+
+	private static String formatDate(String format, Date date) {
+		synchronized (dateFormatMap) {
+			DateFormat dateFormat = getDateFormat(format);
+			return dateFormat.format(date);
+		}
+	}
+
+	/**
+	 * Return the date format for the format string.
+	 * 
+	 * NOTE: We should already be synchronized on dateFormatMap here.
+	 */
+	private static DateFormat getDateFormat(String formatStr) {
+		formatStr = formatOrDefault(formatStr);
+		DateFormat dateFormat = dateFormatMap.get(formatStr);
 		if (dateFormat == null) {
-			dateFormat = new SimpleDateFormat(formatOrDefault(format));
-			threadDateFormat.set(dateFormat);
+			dateFormat = new SimpleDateFormat(formatStr);
+			dateFormatMap.put(formatStr, dateFormat);
 		}
 		return dateFormat;
 	}
