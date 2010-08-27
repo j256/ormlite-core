@@ -13,37 +13,37 @@ import com.j256.ormlite.support.ConnectionSource;
  */
 public class AndroidConnectionSource implements ConnectionSource {
 
-	private SQLiteDatabase readableDb = null;
-	private SQLiteDatabase readWriteDb = null;
+	private AndroidDatabaseConnection readableConnection = null;
+	private AndroidDatabaseConnection readWriteConnection = null;
 
 	public AndroidConnectionSource(SQLiteDatabase readWriteDb) {
 		this(readWriteDb, readWriteDb);
 	}
 
 	public AndroidConnectionSource(SQLiteDatabase readableDb, SQLiteDatabase readWriteDb) {
-		this.readableDb = readableDb;
-		this.readWriteDb = readWriteDb;
+		this.readableConnection = new AndroidDatabaseConnection(readableDb);
+		this.readWriteConnection = new AndroidDatabaseConnection(readWriteDb);
 	}
 
 	public AndroidDatabaseConnection getReadOnlyConnection() throws SQLException {
-		return new AndroidDatabaseConnection(readableDb);
+		return readableConnection;
 	}
 
 	public AndroidDatabaseConnection getReadWriteConnection() throws SQLException {
-		return new AndroidDatabaseConnection(readWriteDb);
+		return readWriteConnection;
 	}
 
 	/**
 	 * Close any open connections. This will cause any future transactions to re-open the databases.
 	 */
 	public void close() throws SQLException {
-		if (readableDb != null) {
-			readableDb.close();
-			readableDb = null;
+		if (readableConnection != null) {
+			readableConnection.close();
+			readableConnection = null;
 		}
-		if (readWriteDb != null) {
-			readWriteDb.close();
-			readWriteDb = null;
+		if (readWriteConnection != null) {
+			readWriteConnection.close();
+			readWriteConnection = null;
 		}
 	}
 }
