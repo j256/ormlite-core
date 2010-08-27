@@ -267,11 +267,11 @@ public class StatementExecutor<T, ID> {
 		protected final int columnN;
 		protected final String[] columnNames;
 
-		protected BaseRawResults(CompiledStatement preparedStmt) throws SQLException {
-			this.columnN = preparedStmt.getColumnCount();
+		protected BaseRawResults(CompiledStatement compiledStmt) throws SQLException {
+			this.columnN = compiledStmt.getColumnCount();
 			this.columnNames = new String[this.columnN];
 			for (int colC = 0; colC < this.columnN; colC++) {
-				this.columnNames[colC] = preparedStmt.getColumnName(colC + 1);
+				this.columnNames[colC] = compiledStmt.getColumnName(colC + 1);
 			}
 		}
 

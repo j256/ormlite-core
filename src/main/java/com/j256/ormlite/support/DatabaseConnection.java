@@ -62,7 +62,7 @@ public interface DatabaseConnection {
 	 *            Object arguments for the SQL '?'s.
 	 * @param argSqlTypes
 	 *            SQL types of the arguments.
-	 * @return The number of rows affected by the update.
+	 * @return The number of rows affected by the update. With some database types, this value may be invalid.
 	 */
 	public int insert(String statement, Object[] args, SqlType[] argSqlTypes) throws SQLException;
 
@@ -77,7 +77,7 @@ public interface DatabaseConnection {
 	 *            SQL types of the arguments.
 	 * @param keyHolder
 	 *            The holder that gets set with the generated key value.
-	 * @return The number of rows affected by the update.
+	 * @return The number of rows affected by the update. With some database types, this value may be invalid.
 	 */
 	public int insert(String statement, Object[] args, SqlType[] argSqlTypes, GeneratedKeyHolder keyHolder)
 			throws SQLException;
@@ -91,7 +91,7 @@ public interface DatabaseConnection {
 	 *            Object arguments for the SQL '?'s.
 	 * @param argSqlTypes
 	 *            SQL types of the arguments.
-	 * @return The number of rows affected by the update.
+	 * @return The number of rows affected by the update. With some database types, this value may be invalid.
 	 */
 	public int update(String statement, Object[] args, SqlType[] argSqlTypes) throws SQLException;
 
@@ -104,7 +104,7 @@ public interface DatabaseConnection {
 	 *            Object arguments for the SQL '?'s.
 	 * @param argSqlTypes
 	 *            SQL types of the arguments.
-	 * @return The number of rows affected by the update.
+	 * @return The number of rows affected by the update. With some database types, this value may be invalid.
 	 */
 	public int delete(String statement, Object[] args, SqlType[] argSqlTypes) throws SQLException;
 
