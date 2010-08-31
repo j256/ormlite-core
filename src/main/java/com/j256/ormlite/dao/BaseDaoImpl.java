@@ -13,6 +13,7 @@ import com.j256.ormlite.stmt.SelectIterator;
 import com.j256.ormlite.stmt.StatementBuilder;
 import com.j256.ormlite.stmt.StatementExecutor;
 import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableInfo;
 
@@ -121,15 +122,25 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	public T queryForId(ID id) throws SQLException {
-		return statementExecutor.queryForId(connectionSource.getReadOnlyConnection(), id);
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		try {
+			return statementExecutor.queryForId(connection, id);
+		} finally {
+			connectionSource.releaseConnection(connection);
+		}
 	}
 
 	public T queryForFirst(PreparedStmt<T> preparedStmt) throws SQLException {
-		return statementExecutor.queryForFirst(connectionSource.getReadOnlyConnection(), preparedStmt);
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		try {
+			return statementExecutor.queryForFirst(connection, preparedStmt);
+		} finally {
+			connectionSource.releaseConnection(connection);
+		}
 	}
 
 	public List<T> queryForAll() throws SQLException {
-		return statementExecutor.queryForAll(connectionSource.getReadOnlyConnection());
+		return statementExecutor.queryForAll(connectionSource);
 	}
 
 	public StatementBuilder<T, ID> statementBuilder() {
@@ -145,11 +156,11 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	public List<T> query(PreparedStmt<T> preparedStmt) throws SQLException {
-		return statementExecutor.query(connectionSource.getReadOnlyConnection(), preparedStmt);
+		return statementExecutor.query(connectionSource, preparedStmt);
 	}
 
 	public RawResults queryForAllRaw(String queryString) throws SQLException {
-		return statementExecutor.queryRaw(connectionSource.getReadOnlyConnection(), queryString);
+		return statementExecutor.queryRaw(connectionSource, queryString);
 	}
 
 	public int create(T data) throws SQLException {
@@ -157,7 +168,12 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		if (data == null) {
 			return 0;
 		} else {
-			return statementExecutor.create(connectionSource.getReadWriteConnection(), data);
+			DatabaseConnection connection = connectionSource.getReadWriteConnection();
+			try {
+				return statementExecutor.create(connection, data);
+			} finally {
+				connectionSource.releaseConnection(connection);
+			}
 		}
 	}
 
@@ -166,7 +182,12 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		if (data == null) {
 			return 0;
 		} else {
-			return statementExecutor.update(connectionSource.getReadWriteConnection(), data);
+			DatabaseConnection connection = connectionSource.getReadWriteConnection();
+			try {
+				return statementExecutor.update(connection, data);
+			} finally {
+				connectionSource.releaseConnection(connection);
+			}
 		}
 	}
 
@@ -175,7 +196,12 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		if (data == null) {
 			return 0;
 		} else {
-			return statementExecutor.updateId(connectionSource.getReadWriteConnection(), data, newId);
+			DatabaseConnection connection = connectionSource.getReadWriteConnection();
+			try {
+				return statementExecutor.updateId(connection, data, newId);
+			} finally {
+				connectionSource.releaseConnection(connection);
+			}
 		}
 	}
 
@@ -184,7 +210,12 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		if (data == null) {
 			return 0;
 		} else {
-			return statementExecutor.refresh(connectionSource.getReadOnlyConnection(), data);
+			DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+			try {
+				return statementExecutor.refresh(connection, data);
+			} finally {
+				connectionSource.releaseConnection(connection);
+			}
 		}
 	}
 
@@ -193,16 +224,25 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		if (data == null) {
 			return 0;
 		} else {
-			return statementExecutor.delete(connectionSource.getReadWriteConnection(), data);
+			DatabaseConnection connection = connectionSource.getReadWriteConnection();
+			try {
+				return statementExecutor.delete(connection, data);
+			} finally {
+				connectionSource.releaseConnection(connection);
+			}
 		}
 	}
-
 	public int delete(Collection<T> datas) throws SQLException {
 		// ignore deleting a null object
 		if (datas == null || datas.size() == 0) {
 			return 0;
 		} else {
-			return statementExecutor.deleteObjects(connectionSource.getReadWriteConnection(), datas);
+			DatabaseConnection connection = connectionSource.getReadWriteConnection();
+			try {
+				return statementExecutor.deleteObjects(connection, datas);
+			} finally {
+				connectionSource.releaseConnection(connection);
+			}
 		}
 	}
 
@@ -211,13 +251,18 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		if (ids == null || ids.size() == 0) {
 			return 0;
 		} else {
-			return statementExecutor.deleteIds(connectionSource.getReadWriteConnection(), ids);
+			DatabaseConnection connection = connectionSource.getReadWriteConnection();
+			try {
+				return statementExecutor.deleteIds(connection, ids);
+			} finally {
+				connectionSource.releaseConnection(connection);
+			}
 		}
 	}
 
 	public SelectIterator<T, ID> iterator() {
 		try {
-			return statementExecutor.buildIterator(this, connectionSource.getReadOnlyConnection());
+			return statementExecutor.buildIterator(this, connectionSource);
 		} catch (Exception e) {
 			throw new IllegalStateException("Could not build iterator for " + dataClass, e);
 		}
@@ -225,7 +270,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
 	public SelectIterator<T, ID> iterator(PreparedStmt<T> preparedQuery) throws SQLException {
 		try {
-			return statementExecutor.buildIterator(this, connectionSource.getReadOnlyConnection(), preparedQuery);
+			return statementExecutor.buildIterator(this, connectionSource, preparedQuery);
 		} catch (SQLException e) {
 			throw SqlExceptionUtil.create("Could not build iterator for " + dataClass, e);
 		}
@@ -233,7 +278,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
 	public RawResults iteratorRaw(String query) throws SQLException {
 		try {
-			return statementExecutor.buildIterator(connectionSource.getReadOnlyConnection(), query);
+			return statementExecutor.buildIterator(connectionSource, query);
 		} catch (SQLException e) {
 			throw SqlExceptionUtil.create("Could not build iterator for " + query, e);
 		}

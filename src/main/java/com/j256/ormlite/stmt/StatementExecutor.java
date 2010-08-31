@@ -21,6 +21,7 @@ import com.j256.ormlite.stmt.mapped.MappedRefresh;
 import com.j256.ormlite.stmt.mapped.MappedUpdate;
 import com.j256.ormlite.stmt.mapped.MappedUpdateId;
 import com.j256.ormlite.support.CompiledStatement;
+import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.TableInfo;
@@ -83,16 +84,16 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Return the first object that matches the {@link PreparedStmt} or null if none.
 	 */
-	public T queryForFirst(DatabaseConnection databaseConnection, PreparedStmt<T> preparedQuery) throws SQLException {
+	public T queryForFirst(DatabaseConnection databaseConnection, PreparedStmt<T> preparedStmt) throws SQLException {
 		CompiledStatement stmt = null;
 		try {
-			stmt = preparedQuery.compile(databaseConnection);
+			stmt = preparedStmt.compile(databaseConnection);
 			DatabaseResults results = stmt.executeQuery();
 			if (results.next()) {
-				logger.debug("query-for-first of '{}' returned at least 1 result", preparedQuery.getStatement());
-				return preparedQuery.mapRow(results);
+				logger.debug("query-for-first of '{}' returned at least 1 result", preparedStmt.getStatement());
+				return preparedStmt.mapRow(results);
 			} else {
-				logger.debug("query-for-first of '{}' returned at 0 results", preparedQuery.getStatement());
+				logger.debug("query-for-first of '{}' returned at 0 results", preparedStmt.getStatement());
 				return null;
 			}
 		} finally {
@@ -106,23 +107,23 @@ public class StatementExecutor<T, ID> {
 	 * Return a list of all of the data in the table. Should be used carefully if the table is large. Consider using the
 	 * {@link Dao#iterator} if this is the case.
 	 */
-	public List<T> queryForAll(DatabaseConnection databaseConnection) throws SQLException {
-		return query(databaseConnection, preparedQueryForAll);
+	public List<T> queryForAll(ConnectionSource connectionSource) throws SQLException {
+		return query(connectionSource, preparedQueryForAll);
 	}
 
 	/**
 	 * Return a list of all of the data in the table that matches the {@link PreparedStmt}. Should be used carefully if
 	 * the table is large. Consider using the {@link Dao#iterator} if this is the case.
 	 */
-	public List<T> query(DatabaseConnection databaseConnection, PreparedStmt<T> preparedQuery) throws SQLException {
+	public List<T> query(ConnectionSource connectionSource, PreparedStmt<T> preparedStmt) throws SQLException {
 		SelectIterator<T, ID> iterator = null;
 		try {
-			iterator = buildIterator(/* no dao specified because no removes */null, databaseConnection, preparedQuery);
+			iterator = buildIterator(/* no dao specified because no removes */null, connectionSource, preparedStmt);
 			List<T> results = new ArrayList<T>();
 			while (iterator.hasNextThrow()) {
 				results.add(iterator.nextThrow());
 			}
-			logger.debug("query of '{}' returned {} results", preparedQuery.getStatement(), results.size());
+			logger.debug("query of '{}' returned {} results", preparedStmt.getStatement(), results.size());
 			return results;
 		} finally {
 			if (iterator != null) {
@@ -135,13 +136,16 @@ public class StatementExecutor<T, ID> {
 	 * Return a list of all of the data in the table that matches the {@link PreparedStmt}. Should be used carefully if
 	 * the table is large. Consider using the {@link Dao#iterator} if this is the case.
 	 */
-	public RawResults queryRaw(DatabaseConnection databaseConnection, String query) throws SQLException {
+	public RawResults queryRaw(ConnectionSource connectionSource, String query) throws SQLException {
 		SelectIterator<String[], Void> iterator = null;
 		try {
-			CompiledStatement preparedStatement = databaseConnection.compileStatement(query);
-			RawResultsList results = new RawResultsList(preparedStatement);
+			DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+			CompiledStatement compiledStatement = connection.compileStatement(query);
+			RawResultsList results = new RawResultsList(compiledStatement);
 			// statement arg is null because we don't want it to double log below
-			iterator = new SelectIterator<String[], Void>(String[].class, null, results, preparedStatement, null);
+			iterator =
+					new SelectIterator<String[], Void>(String[].class, null, results, connectionSource, connection,
+							compiledStatement, null);
 			while (iterator.hasNextThrow()) {
 				results.add(iterator.nextThrow());
 			}
@@ -156,25 +160,27 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Create and return a SelectIterator for the class using the default mapped query for all statement.
 	 */
-	public SelectIterator<T, ID> buildIterator(BaseDaoImpl<T, ID> classDao, DatabaseConnection databaseConnection)
+	public SelectIterator<T, ID> buildIterator(BaseDaoImpl<T, ID> classDao, ConnectionSource connectionSource)
 			throws SQLException {
-		return buildIterator(classDao, databaseConnection, preparedQueryForAll);
+		return buildIterator(classDao, connectionSource, preparedQueryForAll);
 	}
 
 	/**
-	 * Create and return an {@link SelectIterator} for the class using a prepared query.
+	 * Create and return an {@link SelectIterator} for the class using a prepared statement.
 	 */
-	public SelectIterator<T, ID> buildIterator(BaseDaoImpl<T, ID> classDao, DatabaseConnection databaseConnection,
-			PreparedStmt<T> preparedQuery) throws SQLException {
-		return new SelectIterator<T, ID>(dataClass, classDao, preparedQuery, preparedQuery.compile(databaseConnection),
-				preparedQuery.getStatement());
+	public SelectIterator<T, ID> buildIterator(BaseDaoImpl<T, ID> classDao, ConnectionSource connectionSource,
+			PreparedStmt<T> preparedStmt) throws SQLException {
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		return new SelectIterator<T, ID>(dataClass, classDao, preparedStmt, connectionSource, connection,
+				preparedStmt.compile(connection), preparedStmt.getStatement());
 	}
 
 	/**
 	 * Return a RawResults object associated with an internal iterator that matches the query argument.
 	 */
-	public RawResults buildIterator(DatabaseConnection databaseConnection, String query) throws SQLException {
-		return new RawResultsIterator(query, databaseConnection.compileStatement(query));
+	public RawResults buildIterator(ConnectionSource connectionSource, String query) throws SQLException {
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		return new RawResultsIterator(query, connectionSource, connection, connection.compileStatement(query));
 	}
 
 	/**
@@ -350,17 +356,23 @@ public class StatementExecutor<T, ID> {
 
 		private final CompiledStatement statement;
 		private final String query;
+		private final ConnectionSource connectionSource;
+		private final DatabaseConnection connection;
 
-		public RawResultsIterator(String query, CompiledStatement statement) throws SQLException {
+		public RawResultsIterator(String query, ConnectionSource connectionSource, DatabaseConnection connection,
+				CompiledStatement statement) throws SQLException {
 			super(statement);
 			this.query = query;
 			this.statement = statement;
+			this.connectionSource = connectionSource;
+			this.connection = connection;
 		}
 
 		public CloseableIterator<String[]> iterator() {
 			try {
 				// we do this so we can iterate through the results multiple times
-				return new SelectIterator<String[], Void>(String[].class, null, this, statement, query);
+				return new SelectIterator<String[], Void>(String[].class, null, this, connectionSource, connection,
+						statement, query);
 			} catch (SQLException e) {
 				// we have to do this because iterator can't throw Exceptions
 				throw new RuntimeException(e);
