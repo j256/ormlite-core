@@ -81,6 +81,10 @@ public class JdbcConnectionSource implements ConnectionSource {
 		return getReadWriteConnection();
 	}
 
+	public void releaseReadOnlyConnection(DatabaseConnection connection) throws SQLException {
+		// noop right now
+	}
+
 	public DatabaseConnection getReadWriteConnection() throws SQLException {
 		if (connection != null) {
 			if (connection.isClosed()) {
@@ -104,6 +108,10 @@ public class JdbcConnectionSource implements ConnectionSource {
 		} else {
 			return connection;
 		}
+	}
+
+	public void releaseReadWriteConnection(DatabaseConnection connection) throws SQLException {
+		// noop right now
 	}
 
 	public void setUsername(String username) {

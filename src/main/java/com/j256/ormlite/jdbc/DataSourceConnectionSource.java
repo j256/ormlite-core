@@ -53,8 +53,16 @@ public class DataSourceConnectionSource implements ConnectionSource {
 		return getReadWriteConnection(username, password);
 	}
 
+	public void releaseReadOnlyConnection(DatabaseConnection connection) throws SQLException {
+		// noop right now
+	}
+
 	public DatabaseConnection getReadWriteConnection() throws SQLException {
 		return new JdbcDatabaseConnection(dataSource.getConnection());
+	}
+
+	public void releaseReadWriteConnection(DatabaseConnection connection) throws SQLException {
+		// noop right now
 	}
 
 	public DatabaseConnection getReadWriteConnection(String username, String password) throws SQLException {
