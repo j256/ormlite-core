@@ -28,37 +28,33 @@ public class AndroidConnectionSource implements ConnectionSource {
 	}
 
 	public AndroidConnectionSource(SQLiteDatabase readableDb, SQLiteDatabase readWriteDb) {
-		this.readableConnection = new AndroidDatabaseConnection(readableDb);
-		this.readWriteConnection = new AndroidDatabaseConnection(readWriteDb);
+		this.readableConnection = new AndroidDatabaseConnection(readableDb, false);
+		this.readWriteConnection = new AndroidDatabaseConnection(readWriteDb, true);
 	}
 
 	public DatabaseConnection getReadOnlyConnection() throws SQLException {
 		if (readableConnection == null) {
 			synchronized (databaseHelper) {
 				if (readableConnection == null) {
-					readableConnection = new AndroidDatabaseConnection(databaseHelper.getReadableDatabase());
+					readableConnection = new AndroidDatabaseConnection(databaseHelper.getReadableDatabase(), false);
 				}
 			}
 		}
 		return readableConnection;
 	}
 
-	public void releaseReadOnlyConnection(DatabaseConnection connection) throws SQLException {
-		// noop right now
-	}
-
 	public DatabaseConnection getReadWriteConnection() throws SQLException {
 		if (readableConnection == null) {
 			synchronized (databaseHelper) {
 				if (readWriteConnection == null) {
-					readWriteConnection = new AndroidDatabaseConnection(databaseHelper.getWritableDatabase());
+					readWriteConnection = new AndroidDatabaseConnection(databaseHelper.getWritableDatabase(), true);
 				}
 			}
 		}
 		return readWriteConnection;
 	}
 
-	public void releaseReadWriteConnection(DatabaseConnection connection) throws SQLException {
+	public void releaseConnection(DatabaseConnection connection) throws SQLException {
 		// noop right now
 	}
 

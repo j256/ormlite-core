@@ -16,20 +16,16 @@ public interface ConnectionSource {
 	public DatabaseConnection getReadOnlyConnection() throws SQLException;
 
 	/**
-	 * Release a database connection previously returned by {@link #getReadOnlyConnection()}.
-	 */
-	public void releaseReadOnlyConnection(DatabaseConnection connection) throws SQLException;
-
-	/**
 	 * Return a database connection suitable for read or write operations. After you are done, you should call
 	 * {@link #releaseReadWriteConnection(DatabaseConnection)}.
 	 */
 	public DatabaseConnection getReadWriteConnection() throws SQLException;
 
 	/**
-	 * Release a database connection previously returned by {@link #getReadWriteConnection()}.
+	 * Release a database connection previously returned by {@link #getReadOnlyConnection()} or
+	 * {@link #getReadWriteConnection()}.
 	 */
-	public void releaseReadWriteConnection(DatabaseConnection connection) throws SQLException;
+	public void releaseConnection(DatabaseConnection connection) throws SQLException;
 
 	/**
 	 * Close any outstanding database connections.
