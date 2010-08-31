@@ -21,9 +21,11 @@ import com.j256.ormlite.support.GeneratedKeyHolder;
 public class AndroidDatabaseConnection implements DatabaseConnection {
 
 	private final SQLiteDatabase db;
+	private final boolean readWrite;
 
-	public AndroidDatabaseConnection(SQLiteDatabase db) {
+	public AndroidDatabaseConnection(SQLiteDatabase db, boolean readWrite) {
 		this.db = db;
+		this.readWrite = readWrite;
 	}
 
 	public boolean getAutoCommit() throws SQLException {
@@ -41,6 +43,10 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 	public Savepoint setSavePoint(String name) throws SQLException {
 		db.beginTransaction();
 		return null;
+	}
+
+	public boolean isReadWrite() {
+		return readWrite;
 	}
 
 	public void commit(Savepoint savepoint) throws SQLException {
