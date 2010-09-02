@@ -87,8 +87,8 @@ public class AndroidCompiledStatement implements CompiledStatement {
 	 * Not thread safe. Not sure if we need it, but keep that in mind.
 	 */
 	private Cursor getCursor() throws SQLException {
-		String finalSql = null;
 		if (cursor == null) {
+			String finalSql = null;
 			try {
 				if (max == null) {
 					finalSql = sql;
