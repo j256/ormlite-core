@@ -540,6 +540,9 @@ in which case the milliseconds value of the @code{Date} will be stored as an LON
 @code{DataType.JAVA_DATE_STRING} in which case the date will be stored as a string in @code{yyyy-MM-dd HH:mm:ss.SSSSSS}
 format.  You can use the @code{format} field in @code{DatabaseField} to set the date to another format.
 
+@emph{NOTE:} Because of reentrant issues with @code{SimpleDateFormat}, synchronization is done
+every time a JAVA_DATE_STRING date is converted to/from the database.
+
 @cindex byte
 @item byte or Byte (DataType.BYTE or DataType.BYTE_OBJ)
 
@@ -1568,40 +1571,36 @@ only be used during debugging and should not be the default.
 @cindex use with Android OS
 @cindex Android OS support
 @cindex droid support
-@emph{So I have not found someone to confirm the following.  Please send me mail if this works for you or if there
-is anything that I need to do to have better Android OS support.}
 
-As of summer of 2010, JDBC is not well supported under Android OS.  Google developers are saying that JDBC is not
-proper for a small memory Java application which seems rediculous to me.  There is nothing about the
-@value{package} at least that will take up more memory unless they are talking about the code itself.
-
-The following example shows how to configure @value{package} using the built-in (but not supported) JDBC library.  If
-you'd rather use the SqlDroid 3rd party JDBC package then see below.
+Because of the lack of support for JDBC in Android OS, @value{package} makes direct calls to the Android API if the
+@code{SqliteAndroidDatabaseType} is used.  The part of the code is the newest an although tested and used in some
+projects, the proper patterns on @emph{how} to use it have not been completely fleshed out.  The hardest part of
+writing this documentation is what to say about @emph{how} to use @value{package} on Android OS.  I am not an
+Android developer and it seems that we have yet to find the optimal way to use the package in terms of when to
+open the database, how to (or if we should) cache conncections, cacheing the DAO objects (which can be expensive to
+construct and destroy), etc..  Feedback on this section would be most welcome.
 
 @example
 DatabaseType databaseType =
   new SqliteAndroidDatabaseType();
-databaseType.loadDriver();
-// change this for your path and application name
-String databaseUrl = "jdbc:" + databaseType.getDriverUrlPart()
-  + ":" + getFilesDir() + "/test.db";
-SimpleDataSource dataSource =
-  DatabaseTypeUtils.createSimpleDataSource(databaseUrl);
+SQLiteOpenHelper openHelper =
+  new OrmliteOpenHelper();
+ConnectionSource connectionSource =
+  new AndroidConnectionSource(openHelper);
 
-// configure and use your dao as in previous examples
-@end example
+// instantiate the dao
+AccountDaoImpl accountDao = new AccountDaoImpl();
+accountDao.setDatabaseType(databaseType);
+accountDao.setConnectionSource(connectionSource);
+// _must_ make this call after the setters
+accountDao.initialize();
 
-@cindex SqlDroid support
-@cindex use with SqlDroid driver
-If you would rather use the SqlDroid 3rd party driver (see @uref{http://code.google.com/p/sqldroid/}) then
-use the following database type instead:
-
-@example
-DatabaseType databaseType = new SqlDroidDatabaseType();
+// ...
+connectionSource.close();
 @end example
 
 Also, there is an @code{AndroidLog} logger which should detect and delegate log calls to the internal Android log
-classes. 
+classes.  It should be detected and automatically used to log messages on Android OS.
 
 @c ----------------------------------------------------------------
 @node Contributions, Index of Concepts, Use With Android, Top
