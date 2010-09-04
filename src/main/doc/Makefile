@@ -4,6 +4,7 @@ TEXI = $(PKG).texi
 REMOTE ?= outside.256.com
 
 all : $(DOCS)
+	cp $(PKG)/* $(PKG).pdf ../javadoc/doc-files
 
 clean :
 	rm -rf $(DOCS)

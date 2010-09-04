@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on August, 17 2010 by texi2html 1.70 -->
+<!-- Created on September, 4 2010 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -54,7 +54,7 @@ ul.toc {list-style: none}
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC26" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_7.html#SEC27" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h1 class="chapter"> 1. Getting Started </h1>
@@ -68,7 +68,7 @@ ul.toc {list-style: none}
 </td></tr>
 <tr><td align="left" valign="top"><a href="#SEC8">1.4 Defining the DAOs</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                        How to configure the Database Access Objects.
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC9">1.5 JDBC Data Sources</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                  Setting up your JDBC data source.
+<tr><td align="left" valign="top"><a href="#SEC9">1.5 Connection Sources</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">            Setting up connections to databases.
 </td></tr>
 <tr><td align="left" valign="top"><a href="#SEC10">1.6 Database Type</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">               Defining your database type.
 </td></tr>
@@ -92,7 +92,7 @@ ul.toc {list-style: none}
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC26" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_7.html#SEC27" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 1.1 External Dependencies </h2>
@@ -149,7 +149,7 @@ dependencies: <code>com.sun.jmx.jmxri</code>, <code>com.sun.jdmk.jmxtools</code>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC26" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_7.html#SEC27" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 1.2 Setting Up Your Classes </h2>
@@ -187,7 +187,7 @@ dependencies: <code>com.sun.jmx.jmxri</code>, <code>com.sun.jdmk.jmxtools</code>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC26" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_7.html#SEC27" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h3 class="subsection"> 1.2.1 Adding ORMLite Annotations to Your Classes </h3>
@@ -244,9 +244,9 @@ database identity (id) of the row and the <code>password</code> column, also a s
 <a name="IDX15"></a>
 <a name="IDX16"></a>
 </dd>
-<dt><code> jdbcType</code></dt>
+<dt><code> dataType</code></dt>
 <dd>
-<p>The type of the field as the JdbcType class.  Usually the type is taken from Java class of the field and does not need
+<p>The type of the field as the DataType class.  Usually the type is taken from Java class of the field and does not need
 to be specified.  This corresponds to the SQL type.  See section <a href="#SEC7">Persisted Data Types</a>.
 
 </p><a name="IDX17"></a>
@@ -364,6 +364,14 @@ primitive will be set to 0.  This can only be used on a primitive field.
 <p>Set this to be false (default true) to not store this field in the database. This is useful if you want to have
 the annotation on all of your fields but turn off the writing of some of them to the database.
 
+</p><a name="IDX41"></a>
+<a name="IDX42"></a>
+</dd>
+<dt><code> format</code></dt>
+<dd>
+<p>This allows you to specify format information of a particular field.  Right now only the Date fields support it when
+a default value is being converted or if you are using the <code>JAVA_DATE_STRING</code> type.
+
 </p></dd>
 </dl>
 
@@ -383,7 +391,7 @@ the annotation on all of your fields but turn off the writing of some of them to
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC26" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_7.html#SEC27" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h3 class="subsection"> 1.2.2 Using javax.persistence Annotations Instead </h3>
@@ -399,9 +407,7 @@ public class Account {
 <p>The <code>@Entity</code> annotations can have an optional <code>name</code> argument which specifies the table name.   If not
 specified, the class name all lowercase is used by default.
 
-</p><a name="IDX41"></a>
-<a name="IDX42"></a>
-<a name="IDX43"></a>
+</p><a name="IDX43"></a>
 <a name="IDX44"></a>
 <a name="IDX45"></a>
 <a name="IDX46"></a>
@@ -409,6 +415,8 @@ specified, the class name all lowercase is used by default.
 <a name="IDX48"></a>
 <a name="IDX49"></a>
 <a name="IDX50"></a>
+<a name="IDX51"></a>
+<a name="IDX52"></a>
 <p>Instead of using the <code>@DatabaseField</code> annotation on each of the fields, you can use the <code>javax.persistence</code>
 annotations: <code>@Column</code>, <code>@Id</code>, <code>@GeneratedValue</code>, <code>@OneToOne</code>, and <code>@ManyToOne</code>. For example:
 
@@ -435,9 +443,9 @@ following annotation fields are supported, the rest are ignored.
 <dd>
 <p>Used to specify the name of the associated database column.  If not provided then the field name is taken.
 
-</p><a name="IDX51"></a>
-<a name="IDX52"></a>
-<a name="IDX53"></a>
+</p><a name="IDX53"></a>
+<a name="IDX54"></a>
+<a name="IDX55"></a>
 </dd>
 <dt><code> length</code></dt>
 <dd>
@@ -445,8 +453,8 @@ following annotation fields are supported, the rest are ignored.
 certain database types.  Default for those that do is 255.   Same as the <code>width</code> field in the
 <code>@DatabaseField</code> annotation.
 
-</p><a name="IDX54"></a>
-<a name="IDX55"></a>
+</p><a name="IDX56"></a>
+<a name="IDX57"></a>
 </dd>
 <dt><code> nullable</code></dt>
 <dd>
@@ -497,7 +505,7 @@ Serializable field and the object should implement <code>java.io.Serializable</c
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC26" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_7.html#SEC27" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h3 class="subsection"> 1.2.3 Adding a No Argument Constructor to Your Class </h3>
@@ -546,7 +554,7 @@ public class Account {
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC26" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_7.html#SEC27" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 1.3 Persisted Data Types </h2>
@@ -557,83 +565,93 @@ See section <a href="#SEC10">Database Type</a>.
 
 </p><dl compact="compact">
 <dd>
-<a name="IDX56"></a>
+<a name="IDX58"></a>
 </dd>
-<dt><code> String</code></dt>
+<dt><code> String (DataType.STRING)</code></dt>
 <dd>
-<p>Persisted as SQL type VARCHAR.
-
-</p><a name="IDX57"></a>
-</dd>
-<dt><code> Boolean or boolean</code></dt>
-<dd>
-<p>Persisted as SQL type BOOLEAN.
-
-</p><a name="IDX58"></a>
-</dd>
-<dt><code> java.util.Date</code></dt>
-<dd>
-<p>Persisted as SQL type TIMESTAMP.  <em>NOTE:</em> This is <em>not</em> <code>java.sql.Date</code> which is a different
-class.  <em>NOTE:</em> Certain databases only provide seconds resolution so the milliseconds will be 0.  <em>NOTE:</em>
-for MySQL users, we are usign the default <code>TIMESTAMP</code> field type but you may want to create your database with
-<code>DATETIME</code> instead.  YMMV. 
+<p>Persisted as SQL type VARCHAR.  
 
 </p><a name="IDX59"></a>
 </dd>
-<dt><code> Byte or byte</code></dt>
+<dt><code> boolean or Boolean (DataType.BOOLEAN or DataType.BOOLEAN_OBJ)</code></dt>
 <dd>
-<p>Persisted as SQL type TINYINT.
+<p>Persisted as SQL type BOOLEAN.
 
 </p><a name="IDX60"></a>
+<a name="IDX61"></a>
+<a name="IDX62"></a>
 </dd>
-<dt><code> Short or short</code></dt>
+<dt><code> java.util.Date (DataType.JAVA_DATE, DataType.JAVA_DATE_LONG, or JAVA_DATE_STRING)</code></dt>
 <dd>
-<p>Persisted as SQL type SMALLINT.
+<p>Persisted as SQL type TIMESTAMP.  <em>NOTE:</em> This is a different class from <code>java.sql.Date</code>.
+<em>NOTE:</em> Certain databases only provide seconds resolution so the milliseconds will be 0.
 
-</p><a name="IDX61"></a>
-</dd>
-<dt><code> Integer or int</code></dt>
-<dd>
-<p>Persisted as SQL type INTEGER.
+</p><p>You can also specify the <code>dataType</code> field to the <code>@DatabaseField</code> annotation as a <code>DataType.JAVA_DATE_LONG</code>
+in which case the milliseconds value of the <code>Date</code> will be stored as an LONG.  Or you can use
+<code>DataType.JAVA_DATE_STRING</code> in which case the date will be stored as a string in <code>yyyy-MM-dd HH:mm:ss.SSSSSS</code>
+format.  You can use the <code>format</code> field in <code>DatabaseField</code> to set the date to another format.
 
-</p><a name="IDX62"></a>
-</dd>
-<dt><code> Long or long</code></dt>
-<dd>
-<p>Persisted as SQL type BIGINT.
+</p><p><em>NOTE:</em> Because of reentrant issues with <code>SimpleDateFormat</code>, synchronization is done
+every time a JAVA_DATE_STRING date is converted to/from the database.
 
 </p><a name="IDX63"></a>
 </dd>
-<dt><code> Float or float</code></dt>
+<dt><code> byte or Byte (DataType.BYTE or DataType.BYTE_OBJ)</code></dt>
 <dd>
-<p>Persisted as SQL type FLOAT.
+<p>Persisted as SQL type TINYINT.
 
 </p><a name="IDX64"></a>
 </dd>
-<dt><code> Double or double</code></dt>
+<dt><code> short or Short (DataType.SHORT or DataType.SHORT_OBJ)</code></dt>
+<dd>
+<p>Persisted as SQL type SMALLINT.
+
+</p><a name="IDX65"></a>
+</dd>
+<dt><code> int or Integer (DataType.INTEGER or DataType.INTEGER_OBJ)</code></dt>
+<dd>
+<p>Persisted as SQL type INTEGER.
+
+</p><a name="IDX66"></a>
+</dd>
+<dt><code> long or Long (DataType.LONG or DataType.LONG_OBJ)</code></dt>
+<dd>
+<p>Persisted as SQL type BIGINT.
+
+</p><a name="IDX67"></a>
+</dd>
+<dt><code> float or Float (DataType.FLOAT or DataType.FLOAT_OBJ)</code></dt>
+<dd>
+<p>Persisted as SQL type FLOAT.
+
+</p><a name="IDX68"></a>
+</dd>
+<dt><code> double or Double (DataType.DOUBLE or DataType.DOUBLE_OBJ)</code></dt>
 <dd>
 <p>Persisted as SQL type DOUBLE.
 
-</p><a name="IDX65"></a>
-<a name="IDX66"></a>
+</p><a name="IDX69"></a>
+<a name="IDX70"></a>
 </dd>
-<dt><code> Serializable</code></dt>
+<dt><code> Serializable (DataType.SERIALIZABLE)</code></dt>
 <dd>
 <p>Persisted as SQL type VARBINARY.  This is a special type that serializes an object as a sequence of bytes
 and then deserializes it on the way back.  The field must be an object that implements the <code>java.io.Serializable</code>
 interface.  Depending on the database type, there will be limits to the size of the object that can be stored.  YMMV.
 
-</p><a name="IDX67"></a>
-<a name="IDX68"></a>
+</p><a name="IDX71"></a>
+<a name="IDX72"></a>
 </dd>
-<dt><code> Enum or enum</code></dt>
+<dt><code> enum or Enum (DataType.ENUM_STRING or DataType.ENUM_INTEGER)</code></dt>
 <dd>
 <p>Persisted by default as the enumerated value's string <em>name</em> as a VARCHAR type.  You can also specify the
-<code>jdbcType</code> field to the <code>@DatabaseField</code> annotation as a <code>JdbcType.ENUM_INTEGER</code> in which case the
+<code>dataType</code> field to the <code>@DatabaseField</code> annotation as a <code>DataType.ENUM_INTEGER</code> in which case the
 <code>ordinal</code> of the enum value will be stored as an INTEGER.  The name is the default (and recommended) because
 it allows you to add additional enums anywhere in the list without worrying about having to convert data later.
+If you insert (or remove) an enum from the list that is being stored as a number, then old data will be un-persisted
+incorrectly.
 
-</p><a name="IDX69"></a>
+</p><a name="IDX73"></a>
 <p>You can also also specify an <em>unknownEnumName</em> name with the <code>@DatabaseField</code> annotation which will be
 used if an unknown value is found in the database. See section <a href="#SEC4">Adding ORMLite Annotations to Your Classes</a>. 
 
@@ -659,7 +677,7 @@ stored in the database.  See section <a href="ormlite_4.html#SEC19">Foreign Obje
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC26" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_7.html#SEC27" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 1.4 Defining the DAOs </h2>
@@ -668,8 +686,8 @@ stored in the database.  See section <a href="ormlite_4.html#SEC19">Foreign Obje
 provides create, delete, update, etc. type of functionality and usually specialize in the handling a particular
 persisted class.
 
-</p><a name="IDX70"></a>
-<a name="IDX71"></a>
+</p><a name="IDX74"></a>
+<a name="IDX75"></a>
 <p>Once you have annotated your classes, you will need to create the DAO class(es).  The pattern that we recommend
 is to define a DAO interface which extends the <code>Dao</code> interface and will be used in the code.  The interface
 isn't required but it is a good pattern so your code is less tied to JDBC for persistence.  Each DAO has two generic
@@ -686,11 +704,11 @@ public interface AccountDao extends Dao&lt;Account, String&gt; {
 <p>The implementation of this interface takes a <code>DatabaseType</code> object in its constructor which identifies the
 per-database flavor class.  See section <a href="#SEC10">Database Type</a>.  Example:
 
-</p><a name="IDX72"></a>
+</p><a name="IDX76"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">/** JDBC implementation of the AccountDao interface. */
-public class AccountJdbcDao extends BaseJdbcDao&lt;Account, String&gt;
+public class AccountDaoImpl extends BaseDaoImpl&lt;Account, String&gt;
   implements AccountDao {
-    public AccountJdbcDao(DatabaseType databaseType) {
+    public AccountDaoImpl(DatabaseType databaseType) {
         super(databaseType, Account.class);
     }
 }
@@ -699,15 +717,15 @@ public class AccountJdbcDao extends BaseJdbcDao&lt;Account, String&gt;
 implementations if there are specific operations that are needed and not provided by the Dao base classes.
 More on how to use these DAOs later. See section <a href="ormlite_2.html#SEC12">Using the DAOs</a>.
 
-</p><a name="IDX73"></a>
+</p><a name="IDX77"></a>
 <p>You are not <em>required</em> to create a DAO class for every one of your persisted objects.  You can use the
-<code>createDao</code> static method on the <code>BaseJdbcDao</code> class to create a DAO class without having to define
+<code>createDao</code> static method on the <code>BaseDaoImpl</code> class to create a DAO class without having to define
 one.  For example:
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">Dao&lt;Account, String&gt; accountDao =
-  BaseJdbcDao.createDao(databaseType, dataSource, Account.class);
+  BaseDaoImpl.createDao(databaseType, connectionSource, Account.class);
 Dao&lt;Order, Integer&gt; orderDao =
-  BaseJdbcDao.createDao(databaseType, dataSource, Order.class);
+  BaseDaoImpl.createDao(databaseType, connectionSource, Order.class);
 </pre></td></tr></table>
 <hr size="6">
 <a name="NOD10"></a>
@@ -725,44 +743,56 @@ Dao&lt;Order, Integer&gt; orderDao =
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC26" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_7.html#SEC27" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 1.5 JDBC Data Sources </h2>
+<h2 class="section"> 1.5 Connection Sources </h2>
 
 <p>To use the database and the DAO objects, you will need to configure what JDBC calls a <code>DataSource</code> (see the
 <code>javax.sql.DataSource</code> class).  The <code>DataSource</code> is a factory for connections to the physical SQL
-database.  Here is a code example that creates a simple data source.
+database.  Since ORMLite also supports non-JDBC connections, we use a subset of the <code>DataSource</code>
+methods in the <code>ConnectionSource</code> interface.  Here is a code example that creates a simple connection source.
 
-</p><a name="IDX74"></a>
-<a name="IDX75"></a>
-<a name="IDX76"></a>
-<table><tr><td>&nbsp;</td><td><pre class="example">// single connection data source example
-DataSource dataSource =
-  DatabaseTypeUtils.createSimpleDataSource(&quot;jdbc:h2:mem:account&quot;);
+</p><a name="IDX78"></a>
+<a name="IDX79"></a>
+<table><tr><td>&nbsp;</td><td><pre class="example">// single connection source example
+ConnectionSource connectionSource =
+  DatabaseTypeUtils.createJdbcConnectionSource(&quot;jdbc:h2:mem:account&quot;);
 </pre></td></tr></table>
-<a name="IDX77"></a>
-<a name="IDX78"></a>
+<a name="IDX80"></a>
+<a name="IDX81"></a>
 <p>There are many other data sources that can be used instead, including pooled connections which will create new
 connections on demand and re-use existing dormant connections. You can instantiate your own without the
-<code>DatabaseTypeUtils</code> and set it on the DAOs directly.
+<code>DatabaseTypeUtils</code> and wrap it in the <code>DataSourceConnectionSource</code> which just delegates to it.  Then
+you set that on the DAOs directly.
 
-</p><a name="IDX79"></a>
-<a name="IDX80"></a>
-<p>When you are done with your DataSource, you will want to call the close() or destroy() method to close any underlying 
-<code>java.sql.Connection</code> objects.  Something like the following pattern is recommended.
+</p><a name="IDX82"></a>
+<a name="IDX83"></a>
+<table><tr><td>&nbsp;</td><td><pre class="example">// basic Apache data source
+BasicDataSource dataSource = new BasicDataSource();
+dataSource.setUrl(&quot;jdbc:h2:mem:account&quot;);
+// we wrap it in the DataSourceConnectionSource
+Dao&lt;Account, String&gt; accountDao =
+  BaseDaoImpl.createDao(databaseType,
+     new DataSourceConnectionSource(dataSource), Account.class);
+</pre></td></tr></table>
+<a name="IDX84"></a>
+<a name="IDX85"></a>
+<p>When you are done with your <code>ConnectionSource</code> or <code>DataSource</code>, you will want to call a close() or destroy()
+method (if applicable) to close any underlying connections.  Something like the following pattern
+is recommended.
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">SimpleDataSource dataSource = null;
+</p><table><tr><td>&nbsp;</td><td><pre class="example">JdbcConnectionSource connectionSource = null;
 try {
-    dataSource = new SimpleDataSource();
-    dataSource.setURL(&quot;jdbc:h2:mem:account&quot;);
-    dataSource.setUsername(&quot;billy&quot;);
-    dataSource.setPassword(&quot;_secret&quot;);
+    connectionSource = new JdbcConnectionSource();
+    connectionSource.setURL(&quot;jdbc:h2:mem:account&quot;);
+    connectionSource.setUsername(&quot;billy&quot;);
+    connectionSource.setPassword(&quot;_secret&quot;);
     // work with the data-source and DAOs
     &hellip;
 } finally {
-    if (dataSource != null) {
-        dataSource.close();
+    if (connectionSource != null) {
+        connectionSource.close();
     }
 }
 </pre></td></tr></table>
@@ -782,35 +812,24 @@ try {
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC26" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_7.html#SEC27" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 1.6 Database Type </h2>
 
 <p>ORMLite works with a <code>DatabaseType</code> object which defines all of the per-database information necessary to
 support the various features on all of the different database types.  See section <a href="#SEC10">Database Type</a>.  To instantiate a
-<code>DatabaseType</code>, you can either use the <code>DatabaseTypeUtils</code> class or call your database class directly.  You
-can pass in the database URL or pass in an already created <code>DataSource</code> object:
+<code>DatabaseType</code>, you can either use the <code>DatabaseTypeUtils</code> class or call your database class directly.
 
-</p><dl compact="compact">
-<dt> use the DatabaseTypeUtils class with the database URI</dt>
-<dd><table><tr><td>&nbsp;</td><td><pre class="example">DatabaseType databaseType =
+</p><table><tr><td>&nbsp;</td><td><pre class="example">// use the DatabaseTypeUtils class with the database URI
+DatabaseType databaseType =
   DatabaseTypeUtils.createDatabaseType(&quot;jdbc:h2:mem:account&quot;);
-</pre></td></tr></table>
-</dd>
-<dt> use DatabaseTypeUtils with an already established javax.sql.DataSource</dt>
-<dd><table><tr><td>&nbsp;</td><td><pre class="example">DatabaseType databaseType =
-  DatabaseTypeUtils.createDatabaseType(dataSource);
-</pre></td></tr></table>
-</dd>
-<dt> instantiate a DatabaseType class directly </dt>
-<dd><table><tr><td>&nbsp;</td><td><pre class="example">DatabaseType databaseType = new H2DatabaseType();
-</pre></td></tr></table>
-</dd>
-</dl>
 
-<a name="IDX81"></a>
-<a name="IDX82"></a>
+// _OR_ instantiate a DatabaseType class directly 
+DatabaseType databaseType = new H2DatabaseType();
+</pre></td></tr></table>
+<a name="IDX86"></a>
+<a name="IDX87"></a>
 <p>After you instantiate your DatabaseType, you will need to call the loadDriver() method to make sure that
 the driver has wired itself into JDBC appropriately.
 
@@ -835,32 +854,32 @@ databaseType.loadDriver();
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC26" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_7.html#SEC27" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 1.7 Tying It All Together </h2>
 
 <p>So you have annotated the objects to be persisted, added the no-arg constructor, defined your DAO classes,
-created your DataSource, and established your DatabaseType.  You are ready to start persisting and querying
-your database objects.  The following code ties it all together:
+created your <code>DataSource</code>, and established your <code>DatabaseType</code>.  You are ready to start persisting and
+querying your database objects.  The following code ties it all together:
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">// h2 by default but change to match your database
 String databaseUrl = &quot;jdbc:h2:mem:account&quot;;
-SimpleDataSource dataSource =
-  DatabaseTypeUtils.createSimpleDataSource(databaseUrl);
+JdbcConnectionSource connectionSource =
+  DatabaseTypeUtils.createJdbcConnectionSource(databaseUrl);
 DatabaseType databaseType =
-  DatabaseTypeUtils.createDatabaseType(dataSource);
+  DatabaseTypeUtils.createDatabaseType(databaseUrl);
 databaseType.loadDriver();
 
 // instantiate the dao
-AccountJdbcDao accountDao = new AccountJdbcDao();
+AccountDaoImpl accountDao = new AccountDaoImpl();
 accountDao.setDatabaseType(databaseType);
-accountDao.setDataSource(dataSource);
+accountDao.setConnectionSource(connectionSource);
 // _must_ make this call after the setters
 accountDao.initialize();
 
 // if you need to create the 'accounts' table make this call
-TableUtils.createTable(databaseType, dataSource, Account.class);
+TableUtils.createTable(databaseType, connectionSource, Account.class);
 
 // create an instance of Account
 Account account = new Account(&quot;Jim Coakley&quot;);
@@ -873,14 +892,14 @@ if (accountDao.create(account) != 1) {
 // other code &hellip;
 
 // destroy the data source which should close underlying connections
-dataSource.destroy();
+connectionSource.destroy();
 </pre></td></tr></table>
-<a name="IDX83"></a>
-<a name="IDX84"></a>
+<a name="IDX88"></a>
+<a name="IDX89"></a>
 <p><em>NOTE:</em> as you see in the above example, if you are instantiating a DAO class outside of Spring
 then you will need to call <code>initialize()</code> method to properly initialize the class.
 
-</p><a name="IDX85"></a>
+</p><a name="IDX90"></a>
 <p>For more examples, see the <code>com.j256.ormlite.examples</code> package test classes in the Java sources jar down in
 <code>src/test/java</code>.
 
@@ -895,12 +914,12 @@ then you will need to call <code>initialize()</code> method to properly initiali
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC26" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_7.html#SEC27" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>August, 17 2010</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>September, 4 2010</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 
