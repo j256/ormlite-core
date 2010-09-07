@@ -29,4 +29,12 @@ public class SQLiteDatabase {
 
 	public void execSQL(String finalSql, Object[] args) {
 	}
+
+	public boolean inTransaction() {
+		return false;
+	}
+	
+	public interface CursorFactory {
+		public Cursor newCursor(SQLiteDatabase db, SQLiteCursorDriver masterQuery, String editTable, SQLiteQuery query);
+	}
 }
