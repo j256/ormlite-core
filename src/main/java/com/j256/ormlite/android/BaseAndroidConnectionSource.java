@@ -7,30 +7,26 @@ import com.j256.ormlite.support.DatabaseConnection;
 import java.sql.SQLException;
 
 /**
- * Abstract connection source.  Supports concrete implementations.
- *
- * @author kevingalligan, graywatson
+ * Abstract connection source. Supports concrete implementations.
+ * 
+ * @author kevingalligan
  */
-public abstract class BaseAndroidConnectionSource implements ConnectionSource
-{
-    abstract SQLiteDatabase getReadOnlyDatabase();
-    abstract SQLiteDatabase getReadWriteDatabase();
+public abstract class BaseAndroidConnectionSource implements ConnectionSource {
 
-    public DatabaseConnection getReadOnlyConnection() throws SQLException
-    {
-        return new AndroidDatabaseConnection(getReadOnlyDatabase(), false);
-    }
+	abstract SQLiteDatabase getReadOnlyDatabase();
+	abstract SQLiteDatabase getReadWriteDatabase();
 
-    public DatabaseConnection getReadWriteConnection() throws SQLException
-    {
-        return new AndroidDatabaseConnection(getReadWriteDatabase(), true);
-    }
+	public DatabaseConnection getReadOnlyConnection() throws SQLException {
+		return new AndroidDatabaseConnection(getReadOnlyDatabase(), false);
+	}
 
-    public void releaseConnection(DatabaseConnection connection) throws SQLException
-    {
-    }
+	public DatabaseConnection getReadWriteConnection() throws SQLException {
+		return new AndroidDatabaseConnection(getReadWriteDatabase(), true);
+	}
 
-    public void close() throws SQLException
-    {
-    }
+	public void releaseConnection(DatabaseConnection connection) throws SQLException {
+	}
+
+	public void close() throws SQLException {
+	}
 }

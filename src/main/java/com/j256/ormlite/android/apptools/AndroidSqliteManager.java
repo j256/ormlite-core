@@ -1,79 +1,90 @@
 package com.j256.ormlite.android.apptools;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import android.content.Context;
 
 /**
- * There are several schemes to manage the database connections in an Android app, but as an app gets more complicated, there are
- * many potential places where database locks can occur.  This class helps organize database creation and access in a manner that
- *  will allow database connection sharing between multiple processes in a single app.
- *
- * To use this class, you must either call init with an instance of SQLiteOpenHelperFactory, or (more commonly) provide the name of your helper class in
- * @string under 'open_helper_classname'..  The factory simply creates your SQLiteOpenHelper instance.  This will only be called once per app
- * vm instance and kept in a static field.
- *
+ * There are several schemes to manage the database connections in an Android app, but as an app gets more complicated,
+ * there are many potential places where database locks can occur. This class helps organize database creation and
+ * access in a manner that will allow database connection sharing between multiple processes in a single app.
+ * 
+ * To use this class, you must either call init with an instance of SQLiteOpenHelperFactory, or (more commonly) provide
+ * the name of your helper class in the Android resource "@string" under "open_helper_classname". The factory simply
+ * creates your SQLiteOpenHelper instance. This will only be called once per app VM instance and kept in a static field.
+ * 
  * The SQLiteOpenHelper and database classes maintain one connection under the hood, and prevent locks in the java code.
- * Creating mutliple connections can potentially be a source of trouble.  This class shares the same conneciton instance
- * between multiple clients, which will allow multiple activites and services to run at the same time.
- *
- * @author kevingalligan, graywatson
+ * Creating multiple connections can potentially be a source of trouble. This class shares the same connection instance
+ * between multiple clients, which will allow multiple activities and services to run at the same time.
+ * 
+ * @author kevingalligan
  */
-public class AndroidSQLiteManager
-{
-    private static SQLiteOpenHelperFactory factory;
-    private static volatile OrmLiteSQLiteOpenHelper instance;
-    private static int instanceCount = 0;
+public class AndroidSqliteManager {
 
-    public static void init(SQLiteOpenHelperFactory factory)
-    {
-        AndroidSQLiteManager.factory = factory;
-    }
+	private static SqliteOpenHelperFactory factory;
+	private static volatile OrmLiteSqliteOpenHelper instance;
+	private static AtomicInteger instanceCount = new AtomicInteger(0);
 
-    public static OrmLiteSQLiteOpenHelper getInstance(Context context)
-    {
-        if(factory == null)
-        {
-            ClassNameProvidedOpenHelperFactory fact = new ClassNameProvidedOpenHelperFactory();
-            init(fact);
-        }
+	/**
+	 * Initialize the manager with your own helper factory. Default is to use the
+	 * {@link ClassNameProvidedOpenHelperFactory}.
+	 */
+	public static void init(SqliteOpenHelperFactory factory) {
+		AndroidSqliteManager.factory = factory;
+	}
 
-        if(instance == null)
-        {
-            synchronized (AndroidSQLiteManager.class)
-            {
-                //Double-check locking OK due to 'volatile'.  Just saying...
-                //http://en.wikipedia.org/wiki/Double-checked_locking#Usage_in_Java
-                if(instance == null)
-                    instance = factory.createHelper(context);
-            }
-        }
+	/**
+	 * Get the static instance of our open helper. This has a usage counter on it so make sure all calls to this method
+	 * have an associated call to {@link #close()}.
+	 */
+	public static OrmLiteSqliteOpenHelper getHelper(Context context) {
+		if (factory == null) {
+			ClassNameProvidedOpenHelperFactory fact = new ClassNameProvidedOpenHelperFactory();
+			init(fact);
+		}
 
-        instanceCount++;
-        return instance;
-    }
+		if (instance == null) {
+			synchronized (AndroidSqliteManager.class) {
+				/*
+				 * Double-check locking OK due to 'volatile'. Just saying...
+				 * http://en.wikipedia.org/wiki/Double-checked_locking#Usage_in_Java
+				 */
+				if (instance == null) {
+					instance = factory.getHelper(context);
+				}
+			}
+		}
 
-    public static void close()
-    {
+		instanceCount.incrementAndGet();
+		return instance;
+	}
 
-        instanceCount--;
-        if(instanceCount == 0)
-        {
-            synchronized (AndroidSQLiteManager.class)
-            {
-                if(instance != null)
-                {
-                    instance.close();
-                    instance = null;
-                }
-            }
-        }
-        if(instanceCount < 0)
-        {
-            throw new IllegalStateException("Too many calls to close");
-        }
-    }
+	/**
+	 * Release the helper that was previous returned by a call to {@link #getHelper(Context)}. This will decrement the
+	 * usage counter and close the helper if the counter is 0.
+	 */
+	public static void release() {
+		int val = instanceCount.decrementAndGet();
+		if (val == 0) {
+			synchronized (AndroidSqliteManager.class) {
+				if (instance != null) {
+					instance.close();
+					instance = null;
+				}
+			}
+		} else if (val < 0) {
+			throw new IllegalStateException("Too many calls to close");
+		}
+	}
 
-    public interface SQLiteOpenHelperFactory<H extends OrmLiteSQLiteOpenHelper>
-    {
-        public H createHelper(Context c);
-    }
+	/**
+	 * Factory for providing open helpers.
+	 */
+	public interface SqliteOpenHelperFactory {
+
+		/**
+		 * Create and return an open helper associated with the context.
+		 */
+		public OrmLiteSqliteOpenHelper getHelper(Context c);
+	}
 }

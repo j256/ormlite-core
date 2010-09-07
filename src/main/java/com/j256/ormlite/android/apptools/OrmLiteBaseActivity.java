@@ -6,45 +6,41 @@ import com.j256.ormlite.support.ConnectionSource;
 
 /**
  * Base class to use for activities in Android.
- *
- * If you are using the default helper factory, you can simply call 'getHelper' to get your helper class, or 'getConnectionSource' to get an ormlite
- * ConnectionSource instance.
- *
- * The method createInstance assumes you are using the default helper factory.  If not, you'll need to provide your own helper instances.  This should
- * return a new instance, or you'll need to implement
- * a reference counting scheme.  This method will only be called if you use the database, and only called once for this activity's
- * lifecycle.  'close' will also be called once for each call to createInstance.
- *
- * @author kevingalligan, graywatson
+ * 
+ * If you are using the default helper factory, you can simply call {@link #getHelper()} to get your helper class, or
+ * {@link #getConnectionSource()} to get a {@link ConnectionSource}.
+ * 
+ * The method {@link #getHelper()} assumes you are using the default helper factory -- see {@link AndroidSqliteManager}.
+ * If not, you'll need to provide your own helper instances which will need to implement a reference counting scheme.
+ * This method will only be called if you use the database, and only called once for this activity's life-cycle. 'close'
+ * will also be called once for each call to createInstance.
+ * 
+ * @author kevingalligan
  */
-public abstract class OrmLiteBaseActivity extends Activity
-{
-    private OrmLiteSQLiteOpenHelper helper;
+public abstract class OrmLiteBaseActivity extends Activity {
 
-    public OrmLiteSQLiteOpenHelper createInstance(Context context)
-    {
-        return AndroidSQLiteManager.getInstance(context);
-    }
+	private OrmLiteSqliteOpenHelper helper;
 
-    public synchronized OrmLiteSQLiteOpenHelper getHelper()
-    {
-        if(helper == null)
-        {
-            helper = createInstance(this);
-        }
-        return helper;
-    }
+	public OrmLiteSqliteOpenHelper getHelper(Context context) {
+		return AndroidSqliteManager.getHelper(context);
+	}
 
-    public ConnectionSource getConnectionSource()
-    {
-        return getHelper().getConnectionSource();
-    }
+	public synchronized OrmLiteSqliteOpenHelper getHelper() {
+		if (helper == null) {
+			helper = getHelper(this);
+		}
+		return helper;
+	}
 
-    @Override
-    protected void onDestroy()
-    {
-        super.onDestroy();
-        if(helper != null)
-            helper.close();
-    }
+	public ConnectionSource getConnectionSource() {
+		return getHelper().getConnectionSource();
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if (helper != null) {
+			helper.close();
+		}
+	}
 }

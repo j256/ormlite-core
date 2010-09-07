@@ -49,7 +49,7 @@ public @interface DatabaseField {
 	DataType dataType() default DataType.UNKNOWN;
 
 	/**
-	 * @deprecated Use {@link #dataType()} 
+	 * @deprecated Use {@link #dataType()}
 	 */
 	@Deprecated
 	DataType jdbcType() default DataType.UNKNOWN;

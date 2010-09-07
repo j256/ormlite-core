@@ -2,49 +2,41 @@ package com.j256.ormlite.android.apptools;
 
 import android.app.TabActivity;
 import android.content.Context;
+
 import com.j256.ormlite.support.ConnectionSource;
 
 /**
  * Base class to use for Tab activities in Android.
- *
- * If you are using the default helper factory, you can simply call 'getHelper' to get your helper class, or 'getConnectionSource' to get an ormlite
- * ConnectionSource instance.
- *
- * The method createInstance assumes you are using the default helper factory.  If not, you'll need to provide your own helper instances.  This should
- * return a new instance, or you'll need to implement
- * a reference counting scheme.  This method will only be called if you use the database, and only called once for this activity's
- * lifecycle.  'close' will also be called once for each call to createInstance.
- *
- * @author kevingalligan, graywatson
+ * 
+ * For more information, see {@link OrmLiteBaseActivity}.
+ * 
+ * @author kevingalligan
  */
-public abstract class OrmLiteBaseTabActivity extends TabActivity
-{
-    private OrmLiteSQLiteOpenHelper helper;
+public abstract class OrmLiteBaseTabActivity extends TabActivity {
 
-    public OrmLiteSQLiteOpenHelper createInstance(Context context)
-    {
-        return AndroidSQLiteManager.getInstance(context);
-    }
+	private OrmLiteSqliteOpenHelper helper;
 
-    public synchronized OrmLiteSQLiteOpenHelper getHelper()
-    {
-        if(helper == null)
-        {
-            helper = createInstance(this);
-        }
-        return helper;
-    }
+	public OrmLiteSqliteOpenHelper getHelper(Context context) {
+		return AndroidSqliteManager.getHelper(context);
+	}
 
-    public ConnectionSource getConnectionSource()
-    {
-        return getHelper().getConnectionSource();
-    }
+	public synchronized OrmLiteSqliteOpenHelper getHelper() {
+		if (helper == null) {
+			helper = getHelper(this);
+		}
+		return helper;
+	}
 
-    @Override
-    protected void onDestroy()
-    {
-        super.onDestroy();
-        if(helper != null)
-            helper.close();
-    }
+	public ConnectionSource getConnectionSource() {
+		return getHelper().getConnectionSource();
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if (helper != null) {
+			helper.close();
+			helper = null;
+		}
+	}
 }
