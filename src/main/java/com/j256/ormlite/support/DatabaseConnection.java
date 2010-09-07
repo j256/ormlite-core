@@ -12,6 +12,11 @@ public interface DatabaseConnection {
 	public final static Object MORE_THAN_ONE = new Object();
 
 	/**
+	 * Return if auto-commit is supported.
+	 */
+	public boolean isAutoCommitSupported() throws SQLException;
+
+	/**
 	 * Return if auto-commit is currently enabled.
 	 */
 	public boolean getAutoCommit() throws SQLException;

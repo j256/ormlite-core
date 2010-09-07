@@ -29,6 +29,10 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		this.connection = connection;
 	}
 
+	public boolean isAutoCommitSupported() throws SQLException {
+		return true;
+	}
+
 	public boolean getAutoCommit() throws SQLException {
 		return connection.getAutoCommit();
 	}

@@ -111,11 +111,13 @@ public class TransactionManager {
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		boolean autoCommitAtStart = false;
 		try {
-			// change from auto-commit mode
-			autoCommitAtStart = connection.getAutoCommit();
-			if (autoCommitAtStart) {
-				connection.setAutoCommit(false);
-				logger.debug("had to set auto-commit to false");
+			if (connection.isAutoCommitSupported()) {
+				autoCommitAtStart = connection.getAutoCommit();
+				if (autoCommitAtStart) {
+					// disable auto-commit mode if supported and enabled at start
+					connection.setAutoCommit(false);
+					logger.debug("had to set auto-commit to false");
+				}
 			}
 			Savepoint savePoint = connection.setSavePoint(SAVE_POINT_PREFIX + savePointCounter.incrementAndGet());
 			if (savePoint == null) {

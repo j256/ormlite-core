@@ -28,8 +28,12 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 		this.readWrite = readWrite;
 	}
 
+	public boolean isAutoCommitSupported() throws SQLException {
+		return false;
+	}
+
 	public boolean getAutoCommit() throws SQLException {
-		// You have to explicitly committ your transactions, so this is sort of correct
+		// You have to explicitly commit your transactions, so this is sort of correct
 		return !db.inTransaction();
 	}
 
@@ -47,14 +51,14 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 	}
 
 	public void commit(Savepoint savepoint) throws SQLException {
-        db.setTransactionSuccessful();
-        db.endTransaction();
-    }
+		db.setTransactionSuccessful();
+		db.endTransaction();
+	}
 
 	public void rollback(Savepoint savepoint) throws SQLException {
 		// no setTransactionSuccessful() means it is a rollback
-        db.endTransaction();
-    }
+		db.endTransaction();
+	}
 
 	public CompiledStatement compileStatement(String statement) throws SQLException {
 		CompiledStatement stmt = new AndroidCompiledStatement(statement, db);
