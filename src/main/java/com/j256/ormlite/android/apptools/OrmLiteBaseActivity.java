@@ -41,6 +41,7 @@ public abstract class OrmLiteBaseActivity extends Activity {
 		super.onDestroy();
 		if (helper != null) {
 			helper.close();
+			helper = null;
 		}
 	}
 }
