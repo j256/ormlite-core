@@ -5,14 +5,15 @@ import android.content.Context;
 import com.j256.ormlite.support.ConnectionSource;
 
 /**
- * Base class to use for Services in Android.
+ * Base class to use for services in Android.
  *
- * The method createInstance should create a helper instance.  This should be a new instance, or you'll need to implement
- * a reference counting scheme.  This method will only be called if you use the database, and only called once for this service's 
+ * If you are using the default helper factory, you can simply call 'getHelper' to get your helper class, or 'getConnectionSource' to get an ormlite
+ * ConnectionSource instance.
+ *
+ * The method createInstance assumes you are using the default helper factory.  If not, you'll need to provide your own helper instances.  This should
+ * return a new instance, or you'll need to implement
+ * a reference counting scheme.  This method will only be called if you use the database, and only called once for this activity's
  * lifecycle.  'close' will also be called once for each call to createInstance.
- *
- * If you are using @see com.j256.ormlite.android.apptools.AndroidSQLiteManager AndroidSQLiteManager,
- * simply return an instance from that.
  *
  * @author kevingalligan, graywatson
  */
@@ -20,7 +21,10 @@ public abstract class OrmLiteBaseService extends Service
 {
     private OrmLiteSQLiteOpenHelper helper;
 
-    public abstract OrmLiteSQLiteOpenHelper createInstance(Context context);
+    public OrmLiteSQLiteOpenHelper createInstance(Context context)
+    {
+        return AndroidSQLiteManager.getInstance(context);
+    }
 
     public synchronized OrmLiteSQLiteOpenHelper getHelper()
     {

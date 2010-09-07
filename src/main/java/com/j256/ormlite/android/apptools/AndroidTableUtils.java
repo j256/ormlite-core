@@ -1,6 +1,5 @@
 package com.j256.ormlite.android.apptools;
 
-import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.db.SqliteAndroidDatabaseType;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.DatabaseTableConfig;

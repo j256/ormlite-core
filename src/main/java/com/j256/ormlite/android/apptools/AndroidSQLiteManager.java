@@ -1,15 +1,15 @@
 package com.j256.ormlite.android.apptools;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteOpenHelper;
 
 /**
  * There are several schemes to manage the database connections in an Android app, but as an app gets more complicated, there are
  * many potential places where database locks can occur.  This class helps organize database creation and access in a manner that
  *  will allow database connection sharing between multiple processes in a single app.
  *
- * To use this class, you must first call init with an instance of SQLiteOpenHelperFactory.  The factory simply creates
- * your SQLiteOpenHelper instance.  This will only be called once per app vm instance and kept in a static field.
+ * To use this class, you must either call init with an instance of SQLiteOpenHelperFactory, or (more commonly) provide the name of your helper class in
+ * @string under 'open_helper_classname'..  The factory simply creates your SQLiteOpenHelper instance.  This will only be called once per app
+ * vm instance and kept in a static field.
  *
  * The SQLiteOpenHelper and database classes maintain one connection under the hood, and prevent locks in the java code.
  * Creating mutliple connections can potentially be a source of trouble.  This class shares the same conneciton instance
@@ -20,7 +20,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class AndroidSQLiteManager
 {
     private static SQLiteOpenHelperFactory factory;
-    private static volatile SQLiteOpenHelper instance;
+    private static volatile OrmLiteSQLiteOpenHelper instance;
     private static int instanceCount = 0;
 
     public static void init(SQLiteOpenHelperFactory factory)
@@ -28,10 +28,13 @@ public class AndroidSQLiteManager
         AndroidSQLiteManager.factory = factory;
     }
 
-    public static SQLiteOpenHelper getInstance(Context context)
+    public static OrmLiteSQLiteOpenHelper getInstance(Context context)
     {
         if(factory == null)
-            throw new IllegalStateException("Factory required for Helper instances.  Call init method first.");
+        {
+            ClassNameProvidedOpenHelperFactory fact = new ClassNameProvidedOpenHelperFactory();
+            init(fact);
+        }
 
         if(instance == null)
         {
@@ -69,7 +72,7 @@ public class AndroidSQLiteManager
         }
     }
 
-    public interface SQLiteOpenHelperFactory<H extends SQLiteOpenHelper>
+    public interface SQLiteOpenHelperFactory<H extends OrmLiteSQLiteOpenHelper>
     {
         public H createHelper(Context c);
     }
