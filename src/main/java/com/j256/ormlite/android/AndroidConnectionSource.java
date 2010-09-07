@@ -1,32 +1,74 @@
 package com.j256.ormlite.android;
 
+import java.sql.SQLException;
+
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.support.DatabaseConnection;
+
 /**
- * Main connection source.  Uses the standrd android SQLiteOpenHelper.  For best results, use our helper, 
- * @see com.j256.ormlite.android.apptools.OrmLiteSQLiteOpenHelper OrmLiteSLiteOpenHelper
- *
+ * Our source for connections to Android databases.
+ * 
  * @author kevingalligan, graywatson
  */
-public class AndroidConnectionSource extends BaseAndroidConnectionSource
-{
-    private SQLiteOpenHelper helper;
+public class AndroidConnectionSource implements ConnectionSource {
 
-    public AndroidConnectionSource(SQLiteOpenHelper helper)
-    {
-        this.helper = helper;
-    }
+	private AndroidDatabaseConnection readableConnection = null;
+	private AndroidDatabaseConnection readWriteConnection = null;
+	private SQLiteOpenHelper databaseHelper = null;
 
-    @Override
-    SQLiteDatabase getReadOnlyDatabase()
-    {
-        return helper.getReadableDatabase();
-    }
+	public AndroidConnectionSource(SQLiteOpenHelper databaseHelper) {
+		this.databaseHelper = databaseHelper;
+	}
 
-    @Override
-    SQLiteDatabase getReadWriteDatabase()
-    {
-        return helper.getWritableDatabase();
-    }
+	public AndroidConnectionSource(SQLiteDatabase readWriteDb) {
+		this(readWriteDb, readWriteDb);
+	}
+
+	public AndroidConnectionSource(SQLiteDatabase readableDb, SQLiteDatabase readWriteDb) {
+		this.readableConnection = new AndroidDatabaseConnection(readableDb, false);
+		this.readWriteConnection = new AndroidDatabaseConnection(readWriteDb, true);
+	}
+
+	public DatabaseConnection getReadOnlyConnection() throws SQLException {
+		if (readableConnection == null) {
+			synchronized (databaseHelper) {
+				if (readableConnection == null) {
+					readableConnection = new AndroidDatabaseConnection(databaseHelper.getReadableDatabase(), false);
+				}
+			}
+		}
+		return readableConnection;
+	}
+
+	public DatabaseConnection getReadWriteConnection() throws SQLException {
+		if (readableConnection == null) {
+			synchronized (databaseHelper) {
+				if (readWriteConnection == null) {
+					readWriteConnection = new AndroidDatabaseConnection(databaseHelper.getWritableDatabase(), true);
+				}
+			}
+		}
+		return readWriteConnection;
+	}
+
+	public void releaseConnection(DatabaseConnection connection) throws SQLException {
+		// noop right now
+	}
+
+	/**
+	 * Close any open connections. This will cause any future transactions to re-open the databases.
+	 */
+	public void close() throws SQLException {
+		if (readableConnection != null) {
+			readableConnection.close();
+			readableConnection = null;
+		}
+		if (readWriteConnection != null) {
+			readWriteConnection.close();
+			readWriteConnection = null;
+		}
+	}
 }
