@@ -35,7 +35,7 @@ public class AndroidSqliteManager {
 
 	/**
 	 * Get the static instance of our open helper. This has a usage counter on it so make sure all calls to this method
-	 * have an associated call to {@link #close()}.
+	 * have an associated call to {@link #release()}.
 	 */
 	public static OrmLiteSqliteOpenHelper getHelper(Context context) {
 		if (factory == null) {
