@@ -14,7 +14,7 @@ import java.sql.SQLException;
  */
 public class AndroidTableUtils {
 
-	static SqliteAndroidDatabaseType dbType = new SqliteAndroidDatabaseType();
+	private static SqliteAndroidDatabaseType dbType = new SqliteAndroidDatabaseType();
 
 	/**
 	 * Create the table for the dataClass through the connectionSource.

@@ -18,7 +18,7 @@ import com.j256.ormlite.support.ConnectionSource;
  */
 public abstract class OrmLiteSqliteOpenHelper extends SQLiteOpenHelper {
 
-	AndroidConnectionSource connectionSource;
+	private AndroidConnectionSource connectionSource;
 
 	public OrmLiteSqliteOpenHelper(Context context, String name, CursorFactory factory, int version) {
 		super(context, name, factory, version);

@@ -13,6 +13,9 @@ import java.sql.SQLException;
  */
 public abstract class BaseAndroidConnectionSource implements ConnectionSource {
 
+	private DatabaseConnection readOnlyConnection = null;
+	private DatabaseConnection readWriteConnection = null;
+
 	/**
 	 * Get a read-only version of our database.
 	 */
@@ -24,11 +27,17 @@ public abstract class BaseAndroidConnectionSource implements ConnectionSource {
 	protected abstract SQLiteDatabase getReadWriteDatabase();
 
 	public DatabaseConnection getReadOnlyConnection() throws SQLException {
-		return new AndroidDatabaseConnection(getReadOnlyDatabase(), false);
+		if (readOnlyConnection == null) {
+			readOnlyConnection = new AndroidDatabaseConnection(getReadOnlyDatabase(), false);
+		}
+		return readOnlyConnection;
 	}
 
 	public DatabaseConnection getReadWriteConnection() throws SQLException {
-		return new AndroidDatabaseConnection(getReadWriteDatabase(), true);
+		if (readWriteConnection == null) {
+			readWriteConnection = new AndroidDatabaseConnection(getReadWriteDatabase(), true);
+		}
+		return readWriteConnection;
 	}
 
 	public void releaseConnection(DatabaseConnection connection) throws SQLException {
