@@ -46,6 +46,9 @@ public class AndroidDatabaseConnection implements DatabaseConnection {
 		return null;
 	}
 
+	/**
+	 * Return whether this connection is read-write or not (real-only).
+	 */
 	public boolean isReadWrite() {
 		return readWrite;
 	}

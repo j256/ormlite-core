@@ -26,13 +26,6 @@ public abstract class OrmLiteSqliteOpenHelper extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * Get the connection source associated with the helper. 
-	 */
-	public ConnectionSource getConnectionSource() {
-		return connectionSource;
-	}
-
-	/**
 	 * What to do when your database needs to be created. Usually this entails creating the tables and loading any
 	 * initial data.
 	 */
@@ -44,6 +37,13 @@ public abstract class OrmLiteSqliteOpenHelper extends SQLiteOpenHelper {
 	 */
 	public abstract void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion,
 			int newVersion);
+
+	/**
+	 * Get the connection source associated with the helper.
+	 */
+	public ConnectionSource getConnectionSource() {
+		return connectionSource;
+	}
 
 	@Override
 	public final void onCreate(SQLiteDatabase db) {
@@ -60,13 +60,15 @@ public abstract class OrmLiteSqliteOpenHelper extends SQLiteOpenHelper {
 		super.close();
 		try {
 			connectionSource.close();
+			connectionSource = null;
 		} catch (SQLException e) {
 			// ignore the exception since the helper doesn't throw it
 		}
 	}
 
 	/**
-	 * Internal connection source used to avoid recursion when initializing the databases.
+	 * Internal connection source used to avoid recursion when initializing the databases. If we use the
+	 * {@link AndroidConnectionSource} which uses the helper, it ends up calling itself.
 	 */
 	private class InitConnectionSource extends BaseAndroidConnectionSource {
 

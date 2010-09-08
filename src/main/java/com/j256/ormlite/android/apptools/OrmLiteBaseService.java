@@ -16,7 +16,7 @@ public abstract class OrmLiteBaseService extends Service {
 	private OrmLiteSqliteOpenHelper helper;
 
 	/**
-	 * Get a helper using a context.  Can be overridden by subclasses as necessary.
+	 * Get a helper using a context. Can be overridden by subclasses as necessary.
 	 */
 	public OrmLiteSqliteOpenHelper getHelper(Context context) {
 		return AndroidSqliteManager.getHelper(context);

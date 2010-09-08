@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * 
  * @see OrmLiteSqliteOpenHelper
  * 
- * @author kevingalligan
+ * @author kevingalligan, graywatson
  */
 public class AndroidConnectionSource extends BaseAndroidConnectionSource {
 

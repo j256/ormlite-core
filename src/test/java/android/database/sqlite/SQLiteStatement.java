@@ -1,5 +1,7 @@
 package android.database.sqlite;
 
+import java.sql.SQLException;
+
 /**
  * Stub implementation of the Android Sqlite statement object to stop compilation errors.
  */
@@ -9,11 +11,11 @@ public class SQLiteStatement {
 		return 0L;
 	}
 
-	public long executeInsert() {
-		return 0L;
+	public void execute() throws SQLException {
 	}
 
-	public void execute() {
+	public long executeInsert() throws SQLException {
+		return 0L;
 	}
 
 	public void close() {

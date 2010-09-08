@@ -33,7 +33,7 @@ public class SQLiteDatabase {
 	public boolean inTransaction() {
 		return false;
 	}
-	
+
 	public interface CursorFactory {
 		public Cursor newCursor(SQLiteDatabase db, SQLiteCursorDriver masterQuery, String editTable, SQLiteQuery query);
 	}

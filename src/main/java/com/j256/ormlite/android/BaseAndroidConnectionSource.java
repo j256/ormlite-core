@@ -9,7 +9,7 @@ import java.sql.SQLException;
 /**
  * Abstract connection source. Supports concrete implementations.
  * 
- * @author kevingalligan
+ * @author kevingalligan, graywatson
  */
 public abstract class BaseAndroidConnectionSource implements ConnectionSource {
 
