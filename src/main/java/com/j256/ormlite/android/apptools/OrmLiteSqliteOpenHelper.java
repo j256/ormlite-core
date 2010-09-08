@@ -25,6 +25,9 @@ public abstract class OrmLiteSqliteOpenHelper extends SQLiteOpenHelper {
 		connectionSource = new AndroidConnectionSource(this);
 	}
 
+	/**
+	 * Get the connection source associated with the helper. 
+	 */
 	public ConnectionSource getConnectionSource() {
 		return connectionSource;
 	}
