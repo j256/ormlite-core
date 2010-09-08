@@ -16,10 +16,16 @@ public abstract class OrmLiteBaseTabActivity extends TabActivity {
 
 	private OrmLiteSqliteOpenHelper helper;
 
+	/**
+	 * Get a helper using a context.
+	 */
 	public OrmLiteSqliteOpenHelper getHelper(Context context) {
 		return AndroidSqliteManager.getHelper(context);
 	}
 
+	/**
+	 * Get a helper for this action.
+	 */
 	public synchronized OrmLiteSqliteOpenHelper getHelper() {
 		if (helper == null) {
 			helper = getHelper(this);
@@ -27,6 +33,9 @@ public abstract class OrmLiteBaseTabActivity extends TabActivity {
 		return helper;
 	}
 
+	/**
+	 * Get a connection source for this action.
+	 */
 	public ConnectionSource getConnectionSource() {
 		return getHelper().getConnectionSource();
 	}

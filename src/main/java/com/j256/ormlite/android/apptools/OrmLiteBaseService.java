@@ -7,13 +7,7 @@ import com.j256.ormlite.support.ConnectionSource;
 /**
  * Base class to use for services in Android.
  * 
- * If you are using the default helper factory, you can simply call 'getHelper' to get your helper class, or
- * 'getConnectionSource' to get an ormlite ConnectionSource instance.
- * 
- * The method createInstance assumes you are using the default helper factory. If not, you'll need to provide your own
- * helper instances. This should return a new instance, or you'll need to implement a reference counting scheme. This
- * method will only be called if you use the database, and only called once for this activity's lifecycle. 'close' will
- * also be called once for each call to createInstance.
+ * For more information, see {@link OrmLiteBaseActivity}.
  * 
  * @author kevingalligan
  */
@@ -21,10 +15,16 @@ public abstract class OrmLiteBaseService extends Service {
 
 	private OrmLiteSqliteOpenHelper helper;
 
+	/**
+	 * Get a helper using a context.
+	 */
 	public OrmLiteSqliteOpenHelper getHelper(Context context) {
 		return AndroidSqliteManager.getHelper(context);
 	}
 
+	/**
+	 * Get a helper for this action.
+	 */
 	public synchronized OrmLiteSqliteOpenHelper getHelper() {
 		if (helper == null) {
 			helper = getHelper(this);
@@ -32,12 +32,15 @@ public abstract class OrmLiteBaseService extends Service {
 		return helper;
 	}
 
+	/**
+	 * Get a connection source for this action.
+	 */
 	public ConnectionSource getConnectionSource() {
 		return getHelper().getConnectionSource();
 	}
 
 	@Override
-	protected void onDestroy() {
+	public void onDestroy() {
 		super.onDestroy();
 		if (helper != null) {
 			helper.close();

@@ -21,10 +21,16 @@ public abstract class OrmLiteBaseActivity extends Activity {
 
 	private OrmLiteSqliteOpenHelper helper;
 
+	/**
+	 * Get a helper using a context.
+	 */
 	public OrmLiteSqliteOpenHelper getHelper(Context context) {
 		return AndroidSqliteManager.getHelper(context);
 	}
 
+	/**
+	 * Get a helper from this action.
+	 */
 	public synchronized OrmLiteSqliteOpenHelper getHelper() {
 		if (helper == null) {
 			helper = getHelper(this);
@@ -32,6 +38,9 @@ public abstract class OrmLiteBaseActivity extends Activity {
 		return helper;
 	}
 
+	/**
+	 * Get a connection source for this action.
+	 */
 	public ConnectionSource getConnectionSource() {
 		return getHelper().getConnectionSource();
 	}
