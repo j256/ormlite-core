@@ -37,7 +37,7 @@ public abstract class OrmLiteSqliteOpenHelper extends SQLiteOpenHelper {
 	 * What to do when your database needs to be updated. This could mean careful migration of old data to new data.
 	 * Maybe adding or deleting database columns, etc..
 	 */
-	public abstract void onUpdate(SQLiteDatabase sqLiteDatabase, ConnectionSource connectionSource, int oldVersion,
+	public abstract void onUpgrade(SQLiteDatabase sqLiteDatabase, ConnectionSource connectionSource, int oldVersion,
 			int newVersion);
 
 	@Override
@@ -47,6 +47,6 @@ public abstract class OrmLiteSqliteOpenHelper extends SQLiteOpenHelper {
 
 	@Override
 	public final void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		onUpdate(db, new InitConnectionSource(db), oldVersion, newVersion);
+		onUpgrade(db, new InitConnectionSource(db), oldVersion, newVersion);
 	}
 }
