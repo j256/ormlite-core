@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 
 import com.j256.ormlite.android.AndroidConnectionSource;
-import com.j256.ormlite.android.InitConnectionSource;
+import com.j256.ormlite.android.BaseAndroidConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 
 /**
@@ -31,13 +31,13 @@ public abstract class OrmLiteSqliteOpenHelper extends SQLiteOpenHelper {
 	 * What to do when your database needs to be created. Usually this entails creating the tables and loading any
 	 * initial data.
 	 */
-	public abstract void onCreate(SQLiteDatabase sqLiteDatabase, ConnectionSource connectionSource);
+	public abstract void onCreate(SQLiteDatabase database, ConnectionSource connectionSource);
 
 	/**
 	 * What to do when your database needs to be updated. This could mean careful migration of old data to new data.
 	 * Maybe adding or deleting database columns, etc..
 	 */
-	public abstract void onUpgrade(SQLiteDatabase sqLiteDatabase, ConnectionSource connectionSource, int oldVersion,
+	public abstract void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion,
 			int newVersion);
 
 	@Override
@@ -48,5 +48,27 @@ public abstract class OrmLiteSqliteOpenHelper extends SQLiteOpenHelper {
 	@Override
 	public final void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		onUpgrade(db, new InitConnectionSource(db), oldVersion, newVersion);
+	}
+
+	/**
+	 * Internal connection source used to avoid recursion when initializing the databases.
+	 */
+	private class InitConnectionSource extends BaseAndroidConnectionSource {
+
+		private SQLiteDatabase db;
+
+		public InitConnectionSource(SQLiteDatabase db) {
+			this.db = db;
+		}
+
+		@Override
+		protected SQLiteDatabase getReadOnlyDatabase() {
+			return db;
+		}
+
+		@Override
+		protected SQLiteDatabase getReadWriteDatabase() {
+			return db;
+		}
 	}
 }

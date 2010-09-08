@@ -21,12 +21,12 @@ public class AndroidConnectionSource extends BaseAndroidConnectionSource {
 	}
 
 	@Override
-	SQLiteDatabase getReadOnlyDatabase() {
+	protected SQLiteDatabase getReadOnlyDatabase() {
 		return helper.getReadableDatabase();
 	}
 
 	@Override
-	SQLiteDatabase getReadWriteDatabase() {
+	protected SQLiteDatabase getReadWriteDatabase() {
 		return helper.getWritableDatabase();
 	}
 }

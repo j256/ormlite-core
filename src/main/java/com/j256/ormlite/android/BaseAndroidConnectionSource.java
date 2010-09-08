@@ -13,8 +13,15 @@ import java.sql.SQLException;
  */
 public abstract class BaseAndroidConnectionSource implements ConnectionSource {
 
-	abstract SQLiteDatabase getReadOnlyDatabase();
-	abstract SQLiteDatabase getReadWriteDatabase();
+	/**
+	 * Get a read-only version of our database.
+	 */
+	protected abstract SQLiteDatabase getReadOnlyDatabase();
+
+	/**
+	 * Get a read-write version of our database.
+	 */
+	protected abstract SQLiteDatabase getReadWriteDatabase();
 
 	public DatabaseConnection getReadOnlyConnection() throws SQLException {
 		return new AndroidDatabaseConnection(getReadOnlyDatabase(), false);
