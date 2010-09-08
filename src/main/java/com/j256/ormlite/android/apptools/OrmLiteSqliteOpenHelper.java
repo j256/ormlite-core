@@ -1,5 +1,7 @@
 package com.j256.ormlite.android.apptools;
 
+import java.sql.SQLException;
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -48,6 +50,16 @@ public abstract class OrmLiteSqliteOpenHelper extends SQLiteOpenHelper {
 	@Override
 	public final void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		onUpgrade(db, new InitConnectionSource(db), oldVersion, newVersion);
+	}
+
+	@Override
+	public void close() {
+		super.close();
+		try {
+			connectionSource.close();
+		} catch (SQLException e) {
+			// ignore the exception since the helper doesn't throw it
+		}
 	}
 
 	/**
