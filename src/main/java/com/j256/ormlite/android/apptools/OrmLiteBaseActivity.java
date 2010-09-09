@@ -49,7 +49,7 @@ public abstract class OrmLiteBaseActivity extends Activity {
 	protected void onDestroy() {
 		super.onDestroy();
 		if (helper != null) {
-			helper.close();
+			AndroidSqliteManager.release();
 			helper = null;
 		}
 	}

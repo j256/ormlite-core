@@ -44,7 +44,7 @@ public abstract class OrmLiteBaseTabActivity extends TabActivity {
 	protected void onDestroy() {
 		super.onDestroy();
 		if (helper != null) {
-			helper.close();
+			AndroidSqliteManager.release();
 			helper = null;
 		}
 	}

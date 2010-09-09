@@ -3,6 +3,7 @@ package com.j256.ormlite.android.apptools;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import android.content.Context;
+import android.util.Log;
 
 /**
  * There are several schemes to manage the database connections in an Android app, but as an app gets more complicated,
@@ -37,41 +38,35 @@ public class AndroidSqliteManager {
 	 * Get the static instance of our open helper. This has a usage counter on it so make sure all calls to this method
 	 * have an associated call to {@link #release()}.
 	 */
-	public static OrmLiteSqliteOpenHelper getHelper(Context context) {
+	public static synchronized OrmLiteSqliteOpenHelper getHelper(Context context) {
 		if (factory == null) {
 			ClassNameProvidedOpenHelperFactory fact = new ClassNameProvidedOpenHelperFactory();
 			init(fact);
 		}
 
 		if (instance == null) {
-			synchronized (AndroidSqliteManager.class) {
-				/*
-				 * Double-check locking OK due to 'volatile'. Just saying...
-				 * http://en.wikipedia.org/wiki/Double-checked_locking#Usage_in_Java
-				 */
-				if (instance == null) {
-					instance = factory.getHelper(context);
-				}
-			}
+            Log.d(AndroidSqliteManager.class.getName(), "Zero instances.  Creating");
+            instance = factory.getHelper(context);
 		}
 
-		instanceCount.incrementAndGet();
-		return instance;
+        int icount = instanceCount.incrementAndGet();
+        Log.d(AndroidSqliteManager.class.getName(), "DB instance count: "+ icount);
+        return instance;
 	}
 
 	/**
 	 * Release the helper that was previous returned by a call to {@link #getHelper(Context)}. This will decrement the
 	 * usage counter and close the helper if the counter is 0.
 	 */
-	public static void release() {
+	public static synchronized void release() {
 		int val = instanceCount.decrementAndGet();
+        Log.d(AndroidSqliteManager.class.getName(), "DB instance count: "+ val);
 		if (val == 0) {
-			synchronized (AndroidSqliteManager.class) {
 				if (instance != null) {
+                    Log.d(AndroidSqliteManager.class.getName(), "Zero instances.  Closing");
 					instance.close();
 					instance = null;
 				}
-			}
 		} else if (val < 0) {
 			throw new IllegalStateException("Too many calls to close");
 		}

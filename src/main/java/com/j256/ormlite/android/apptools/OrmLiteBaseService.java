@@ -43,7 +43,7 @@ public abstract class OrmLiteBaseService extends Service {
 	public void onDestroy() {
 		super.onDestroy();
 		if (helper != null) {
-			helper.close();
+			AndroidSqliteManager.release();
 			helper = null;
 		}
 	}
