@@ -1332,6 +1332,13 @@ public class BaseDaoImplTest extends BaseOrmLiteTest {
 		assertNull(allDates.get(0).date);
 	}
 
+	@Test(expected = IllegalStateException.class)
+	public void testSpringBadWiring() throws Exception {
+		BaseDaoImpl<String, String> daoSupport = new BaseDaoImpl<String, String>(String.class) {
+		};
+		daoSupport.initialize();
+	}
+
 	/* ==================================================================================== */
 
 	@DatabaseTable(tableName = FOO_TABLE_NAME)
