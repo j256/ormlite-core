@@ -17,14 +17,12 @@ public abstract class OrmLiteBaseTabActivity extends TabActivity {
 	private OrmLiteSqliteOpenHelper helper;
 
 	/**
-     * This is called internally by the activity class to populate the helper object instance.  This should not be called directly by client code.
-     * Use {@link #getHelper()} to get a helper instance.
-     *
-     * If you are managing your own helper creation, override this method to supply this activity with a helper instance.
-     *  
-     * @param context
-     * @return
-     */
+	 * This is called internally by the activity class to populate the helper object instance. This should not be called
+	 * directly by client code. Use {@link #getHelper()} to get a helper instance.
+	 * 
+	 * If you are managing your own helper creation, override this method to supply this activity with a helper
+	 * instance.
+	 */
 	protected OrmLiteSqliteOpenHelper getHelperInternal(Context context) {
 		return AndroidSqliteManager.getHelper(context);
 	}
