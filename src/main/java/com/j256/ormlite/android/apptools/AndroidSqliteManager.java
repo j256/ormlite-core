@@ -7,7 +7,7 @@ import android.content.Context;
 /**
  * There are several schemes to manage the database connections in an Android app, but as an app gets more complicated,
  * there are many potential places where database locks can occur. This class helps organize database creation and
- * access in a manner that will allow database connection sharing between multiple processes in a single app.
+ * access in a manner that will allow database connection sharing between multiple threads in a single app.
  * 
  * To use this class, you must either call init with an instance of SQLiteOpenHelperFactory, or (more commonly) provide
  * the name of your helper class in the Android resource "@string" under "open_helper_classname". The factory simply
