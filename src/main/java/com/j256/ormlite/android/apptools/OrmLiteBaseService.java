@@ -27,7 +27,7 @@ public abstract class OrmLiteBaseService extends Service {
 	}
 
 	/**
-	 * Get a helper for this action.
+	 * Get a helper for this service.
 	 */
 	public synchronized OrmLiteSqliteOpenHelper getHelper() {
 		if (helper == null) {
@@ -37,7 +37,7 @@ public abstract class OrmLiteBaseService extends Service {
 	}
 
 	/**
-	 * Get a connection source for this action.
+	 * Get a connection source for this service.
 	 */
 	public ConnectionSource getConnectionSource() {
 		return getHelper().getConnectionSource();

@@ -34,7 +34,7 @@ public abstract class OrmLiteBaseActivity extends Activity {
 	}
 
 	/**
-	 * Get a helper from this action.
+	 * Get a helper for this action.
 	 */
 	public synchronized OrmLiteSqliteOpenHelper getHelper() {
 		if (helper == null) {
