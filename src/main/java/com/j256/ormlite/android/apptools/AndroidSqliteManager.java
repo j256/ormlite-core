@@ -23,8 +23,9 @@ import android.util.Log;
 public class AndroidSqliteManager {
 
 	private static SqliteOpenHelperFactory factory;
-	private static volatile OrmLiteSqliteOpenHelper instance;
-	private static AtomicInteger instanceCount = new AtomicInteger(0);
+	private static volatile OrmLiteSqliteOpenHelper instance = null;
+	private static AtomicInteger instanceCount = new AtomicInteger();
+	private static String LOG_NAME = AndroidSqliteManager.class.getName();
 
 	/**
 	 * Initialize the manager with your own helper factory. Default is to use the
@@ -45,13 +46,15 @@ public class AndroidSqliteManager {
 		}
 
 		if (instance == null) {
-            Log.d(AndroidSqliteManager.class.getName(), "Zero instances.  Creating");
-            instance = factory.getHelper(context);
+			Log.d(LOG_NAME, "Zero instances.  Creating helper.");
+			instance = factory.getHelper(context);
+			// let's be careful out there
+			instanceCount.set(0);
 		}
 
-        int icount = instanceCount.incrementAndGet();
-        Log.d(AndroidSqliteManager.class.getName(), "DB instance count: "+ icount);
-        return instance;
+		int instC = instanceCount.incrementAndGet();
+		Log.d(LOG_NAME, "helper instance count: " + instC);
+		return instance;
 	}
 
 	/**
@@ -59,16 +62,16 @@ public class AndroidSqliteManager {
 	 * usage counter and close the helper if the counter is 0.
 	 */
 	public static synchronized void release() {
-		int val = instanceCount.decrementAndGet();
-        Log.d(AndroidSqliteManager.class.getName(), "DB instance count: "+ val);
-		if (val == 0) {
-				if (instance != null) {
-                    Log.d(AndroidSqliteManager.class.getName(), "Zero instances.  Closing");
-					instance.close();
-					instance = null;
-				}
-		} else if (val < 0) {
-			throw new IllegalStateException("Too many calls to close");
+		int instC = instanceCount.decrementAndGet();
+		Log.d(LOG_NAME, "helper instance count: " + instC);
+		if (instC == 0) {
+			if (instance != null) {
+				Log.d(LOG_NAME, "Zero instances.  Closing helper.");
+				instance.close();
+				instance = null;
+			}
+		} else if (instC < 0) {
+			throw new IllegalStateException("Too many calls to release helper.");
 		}
 	}
 

@@ -207,12 +207,6 @@
 	<dependencies>
 		<!-- =================================================================== -->
 		<!-- main dependencies -->
-		<dependency>
-			<groupId>com.google.android</groupId>
-			<artifactId>android</artifactId>
-			<version>2.1.2</version>
-			<optional>true</optional>
-		</dependency>
 		<!-- =================================================================== -->
 		<!-- test dependencies -->
 		<dependency>
