@@ -20,7 +20,7 @@ import org.junit.Test;
 
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 
-public class SimpleDataSourceTest {
+public class JdbcConnectionSourceTest {
 
 	@Test
 	public void testSimpleDataSource() {
