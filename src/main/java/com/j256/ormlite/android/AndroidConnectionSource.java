@@ -1,9 +1,9 @@
 package com.j256.ormlite.android;
 
-import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
-
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 
 /**
  * Main connection source. Uses the standrd android SQLiteOpenHelper. For best results, use our helper,

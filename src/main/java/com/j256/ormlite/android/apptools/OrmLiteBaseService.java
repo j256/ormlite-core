@@ -2,6 +2,7 @@ package com.j256.ormlite.android.apptools;
 
 import android.app.Service;
 import android.content.Context;
+
 import com.j256.ormlite.support.ConnectionSource;
 
 /**

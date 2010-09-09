@@ -1,11 +1,11 @@
 package com.j256.ormlite.android.apptools;
 
+import java.sql.SQLException;
+
 import com.j256.ormlite.db.SqliteAndroidDatabaseType;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableUtils;
-
-import java.sql.SQLException;
 
 /**
  * Wraps the TableUtils object and hard codes the {@link SqliteAndroidDatabaseType} as a helper class.

@@ -1,10 +1,11 @@
 package com.j256.ormlite.android;
 
+import java.sql.SQLException;
+
 import android.database.sqlite.SQLiteDatabase;
+
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
-
-import java.sql.SQLException;
 
 /**
  * Abstract connection source. Supports concrete implementations.
