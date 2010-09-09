@@ -23,8 +23,7 @@ import org.junit.runners.model.Statement;
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
-import com.j256.ormlite.db.DatabaseTypeUtils;
-import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.db.H2DatabaseType;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.DatabaseTableConfig;
@@ -64,7 +63,8 @@ public abstract class BaseOrmLiteTest {
 		} else {
 			url = databaseUrl;
 		}
-		databaseType = DatabaseTypeUtils.createDatabaseType(url);
+//		databaseType = DatabaseTypeUtils.createDatabaseType(url);
+		databaseType = new H2DatabaseType();
 		if (connectionSource == null) {
 			Class.forName(databaseType.getDriverClassName());
 			isConnectionExpected = isConnectionExpected();
@@ -120,13 +120,7 @@ public abstract class BaseOrmLiteTest {
 			for (DatabaseTableConfig<?> tableConfig : dropClassSet) {
 				dropTable(tableConfig, true);
 			}
-			try {
-				if (connectionSource instanceof JdbcConnectionSource) {
-					((JdbcConnectionSource) connectionSource).close();
-				}
-			} catch (Exception e) {
-				// oh well, we tried
-			}
+			connectionSource.close();
 			connectionSource = null;
 		}
 		databaseType = null;

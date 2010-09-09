@@ -13,20 +13,22 @@ import java.util.Iterator;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteTest;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.db.PostgresDatabaseType;
+import com.j256.ormlite.db.BaseDatabaseType;
+import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.stmt.StatementExecutor;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableInfo;
 
-public class MappedCreateTest extends BaseOrmLiteTest {
+public class MappedCreateTest {
+	
+	private final DatabaseType databaseType = new StubDatabaseType();
 
 	@Test
 	public void testGeneratedIdSequence() throws Exception {
-		databaseType = new PostgresDatabaseType();
+		DatabaseType databaseType = new NeedsSequenceDatabaseType();
 
 		TableInfo<GeneratedId> tableInfo = new TableInfo<GeneratedId>(databaseType, GeneratedId.class);
 		StatementExecutor<GeneratedId, String> se = new StatementExecutor<GeneratedId, String>(databaseType, tableInfo);
@@ -42,7 +44,7 @@ public class MappedCreateTest extends BaseOrmLiteTest {
 
 	@Test
 	public void testGeneratedIdSequenceLong() throws Exception {
-		databaseType = new PostgresDatabaseType();
+		DatabaseType databaseType = new NeedsSequenceDatabaseType();
 
 		StatementExecutor<GeneratedIdLong, String> se =
 				new StatementExecutor<GeneratedIdLong, String>(databaseType, new TableInfo<GeneratedIdLong>(
@@ -176,5 +178,27 @@ public class MappedCreateTest extends BaseOrmLiteTest {
 	protected static class JustId {
 		@DatabaseField(generatedId = true)
 		int id;
+	}
+
+	private class StubDatabaseType extends BaseDatabaseType {
+		public String getDriverClassName() {
+			return "foo.bar.baz";
+		}
+		public String getDriverUrlPart() {
+			return "foo";
+		}
+	}
+
+	private class NeedsSequenceDatabaseType extends BaseDatabaseType {
+		public String getDriverClassName() {
+			return "foo.bar.baz";
+		}
+		public String getDriverUrlPart() {
+			return "foo";
+		}
+		@Override
+		public boolean isIdSequenceNeeded() {
+			return true;
+		}
 	}
 }

@@ -20,18 +20,19 @@ import java.util.HashMap;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteTest;
+import com.j256.ormlite.db.BaseDatabaseType;
 import com.j256.ormlite.db.DatabaseType;
-import com.j256.ormlite.db.PostgresDatabaseType;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.TableInfo;
 
-public class FieldTypeTest extends BaseOrmLiteTest {
+public class FieldTypeTest {
 
 	private static final String RANK_DB_COLUMN_NAME = "rank_column";
 	private static final int RANK_WIDTH = 100;
 	private static final String SERIAL_DEFAULT_VALUE = "7";
 	private static final String SEQ_NAME = "sequence";
+
+	private final DatabaseType databaseType = new StubDatabaseType();
 
 	@Test
 	public void testFieldType() throws Exception {
@@ -89,21 +90,21 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 
 	@Test
 	public void testGeneratedIdAndSequenceWorks() throws Exception {
-		databaseType = new PostgresDatabaseType();
+		DatabaseType needsSeqDatabaseType = new NeedsSequenceDatabaseType();
 		Field[] fields = GeneratedIdSequence.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
 		FieldType fieldType =
-				FieldType.createFieldType(databaseType, GeneratedIdSequence.class.getSimpleName(), fields[0]);
+				FieldType.createFieldType(needsSeqDatabaseType, GeneratedIdSequence.class.getSimpleName(), fields[0]);
 		assertTrue(fieldType.isGeneratedIdSequence());
 		assertEquals(SEQ_NAME, fieldType.getGeneratedIdSequence());
 	}
 
 	@Test
 	public void testGeneratedIdGetsASequence() throws Exception {
-		databaseType = new PostgresDatabaseType();
+		DatabaseType needsSeqDatabaseType = new NeedsSequenceDatabaseType();
 		Field[] fields = GeneratedId.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
-		FieldType fieldType = FieldType.createFieldType(databaseType, GeneratedId.class.getSimpleName(), fields[0]);
+		FieldType fieldType = FieldType.createFieldType(needsSeqDatabaseType, GeneratedId.class.getSimpleName(), fields[0]);
 		assertTrue(fieldType.isGeneratedIdSequence());
 	}
 
@@ -184,8 +185,7 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 		assertEquals(ForeignForeign.class, foreignTableInfo.getDataClass());
 	}
 
-	@Test
-	@ExpectedBehavior(expected = IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testPrimitiveForeign() throws Exception {
 		Field[] fields = ForeignPrimitive.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
@@ -193,8 +193,7 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 		FieldType.createFieldType(databaseType, ForeignPrimitive.class.getSimpleName(), idField);
 	}
 
-	@Test
-	@ExpectedBehavior(expected = IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testForeignNoId() throws Exception {
 		Field[] fields = ForeignNoId.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
@@ -202,8 +201,7 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 		FieldType.createFieldType(databaseType, ForeignNoId.class.getSimpleName(), fooField);
 	}
 
-	@Test
-	@ExpectedBehavior(expected = IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testForeignAlsoId() throws Exception {
 		Field[] fields = ForeignAlsoId.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
@@ -211,8 +209,7 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 		FieldType.createFieldType(databaseType, ForeignAlsoId.class.getSimpleName(), fooField);
 	}
 
-	@Test
-	@ExpectedBehavior(expected = IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testObjectFieldNotForeign() throws Exception {
 		Field[] fields = ObjectFieldNotForeign.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
@@ -220,8 +217,7 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 		FieldType.createFieldType(databaseType, ObjectFieldNotForeign.class.getSimpleName(), fooField);
 	}
 
-	@Test
-	@ExpectedBehavior(expected = IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testGetSetNoGet() throws Exception {
 		Field[] fields = GetSetNoGet.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
@@ -229,8 +225,7 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 		FieldType.createFieldType(databaseType, GetSetNoGet.class.getSimpleName(), idField);
 	}
 
-	@Test
-	@ExpectedBehavior(expected = IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testGetSetGetWrongType() throws Exception {
 		Field[] fields = GetSetGetWrongType.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
@@ -238,8 +233,7 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 		FieldType.createFieldType(databaseType, GetSetGetWrongType.class.getSimpleName(), idField);
 	}
 
-	@Test
-	@ExpectedBehavior(expected = IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testGetSetNoSet() throws Exception {
 		Field[] fields = GetSetNoSet.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
@@ -247,8 +241,7 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 		FieldType.createFieldType(databaseType, GetSetNoSet.class.getSimpleName(), idField);
 	}
 
-	@Test
-	@ExpectedBehavior(expected = IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testGetSetSetWrongType() throws Exception {
 		Field[] fields = GetSetSetWrongType.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
@@ -256,8 +249,7 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 		FieldType.createFieldType(databaseType, GetSetSetWrongType.class.getSimpleName(), idField);
 	}
 
-	@Test
-	@ExpectedBehavior(expected = IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testGetSetSetReturnNotVoid() throws Exception {
 		Field[] fields = GetSetReturnNotVoid.class.getDeclaredFields();
 		assertNotNull(fields);
@@ -289,8 +281,7 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 		assertEquals(id2, fieldType.getConvertedFieldValue(getSet));
 	}
 
-	@Test
-	@ExpectedBehavior(expected = SQLException.class)
+	@Test(expected = SQLException.class)
 	public void testGetWrongObject() throws Exception {
 		Field[] fields = GetSet.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
@@ -299,8 +290,7 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 		fieldType.getConvertedFieldValue(new Object());
 	}
 
-	@Test
-	@ExpectedBehavior(expected = SQLException.class)
+	@Test(expected = SQLException.class)
 	public void testSetWrongObject() throws Exception {
 		Field[] fields = GetSet.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
@@ -341,8 +331,7 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 		assertEquals(id, foo.id);
 	}
 
-	@Test
-	@ExpectedBehavior(expected = SQLException.class)
+	@Test(expected = SQLException.class)
 	public void testSetIdFieldString() throws Exception {
 		Field[] fields = Foo.class.getDeclaredFields();
 		assertTrue(fields.length >= 4);
@@ -390,8 +379,7 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 		assertEquals(newId, parent.foreign.id);
 	}
 
-	@Test
-	@ExpectedBehavior(expected = SQLException.class)
+	@Test(expected = SQLException.class)
 	public void testGeneratedIdDefaultValue() throws Exception {
 		Field[] fields = GeneratedIdDefault.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
@@ -399,8 +387,7 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 		FieldType.createFieldType(databaseType, GeneratedIdDefault.class.getSimpleName(), idField);
 	}
 
-	@Test
-	@ExpectedBehavior(expected = SQLException.class)
+	@Test(expected = SQLException.class)
 	public void testThrowIfNullNotPrimitive() throws Exception {
 		Field[] fields = ThrowIfNullNonPrimitive.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
@@ -408,8 +395,7 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 		FieldType.createFieldType(databaseType, ThrowIfNullNonPrimitive.class.getSimpleName(), field);
 	}
 
-	@Test
-	@ExpectedBehavior(expected = SQLException.class)
+	@Test(expected = SQLException.class)
 	public void testBadDateDefaultValue() throws Exception {
 		Field[] fields = DateDefaultBad.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
@@ -585,5 +571,27 @@ public class FieldTypeTest extends BaseOrmLiteTest {
 	protected static class ThrowIfNullNonPrimitive {
 		@DatabaseField(throwIfNull = true)
 		Integer notPrimitive;
+	}
+
+	private class NeedsSequenceDatabaseType extends BaseDatabaseType {
+		public String getDriverClassName() {
+			return "foo.bar.baz";
+		}
+		public String getDriverUrlPart() {
+			return "foo";
+		}
+		@Override
+		public boolean isIdSequenceNeeded() {
+			return true;
+		}
+	}
+
+	private class StubDatabaseType extends BaseDatabaseType {
+		public String getDriverClassName() {
+			return "foo.bar.baz";
+		}
+		public String getDriverUrlPart() {
+			return "foo";
+		}
 	}
 }

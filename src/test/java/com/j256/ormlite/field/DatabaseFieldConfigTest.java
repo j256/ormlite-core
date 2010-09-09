@@ -17,8 +17,8 @@ import javax.persistence.OneToOne;
 
 import org.junit.Test;
 
+import com.j256.ormlite.db.BaseDatabaseType;
 import com.j256.ormlite.db.DatabaseType;
-import com.j256.ormlite.db.H2DatabaseType;
 
 public class DatabaseFieldConfigTest {
 
@@ -76,7 +76,7 @@ public class DatabaseFieldConfigTest {
 	@Test
 	public void testFromDbField() throws Exception {
 		Field[] fields = Foo.class.getDeclaredFields();
-		DatabaseType databaseType = new H2DatabaseType();
+		DatabaseType databaseType = new StubDatabaseType();
 		assertTrue(fields.length >= 1);
 		DatabaseFieldConfig config = DatabaseFieldConfig.fromField(databaseType, fields[0]);
 		assertNotNull(config);
@@ -89,7 +89,7 @@ public class DatabaseFieldConfigTest {
 
 	@Test
 	public void testJavaxAnnotations() throws Exception {
-		DatabaseType databaseType = new H2DatabaseType();
+		DatabaseType databaseType = new StubDatabaseType();
 		Field[] fields = JavaxAnno.class.getDeclaredFields();
 		assertTrue(fields.length >= 8);
 
@@ -141,7 +141,7 @@ public class DatabaseFieldConfigTest {
 
 	@Test
 	public void testJavaxJustId() throws Exception {
-		DatabaseType databaseType = new H2DatabaseType();
+		DatabaseType databaseType = new StubDatabaseType();
 		Field[] fields = JavaxAnnoJustId.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
 
@@ -155,7 +155,7 @@ public class DatabaseFieldConfigTest {
 
 	@Test
 	public void testJavaxGetSet() throws Exception {
-		DatabaseType databaseType = new H2DatabaseType();
+		DatabaseType databaseType = new StubDatabaseType();
 		Field[] fields = JavaxGetSet.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
 
@@ -167,7 +167,7 @@ public class DatabaseFieldConfigTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testUnknownEnumVal() throws Exception {
-		DatabaseType databaseType = new H2DatabaseType();
+		DatabaseType databaseType = new StubDatabaseType();
 		Field[] fields = BadUnknownVal.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
 		DatabaseFieldConfig.fromField(databaseType, fields[0]);
@@ -232,5 +232,14 @@ public class DatabaseFieldConfigTest {
 	private enum OurEnum {
 		FIRST,
 		SECOND, ;
+	}
+	
+	private class StubDatabaseType extends BaseDatabaseType {
+		public String getDriverClassName() {
+			return "foo.bar.baz";
+		}
+		public String getDriverUrlPart() {
+			return "foo";
+		}
 	}
 }

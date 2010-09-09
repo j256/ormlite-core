@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 
-import com.j256.ormlite.db.H2DatabaseType;
+import com.j256.ormlite.db.BaseDatabaseType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.stmt.query.Eq;
 import com.j256.ormlite.table.TableInfo;
@@ -33,13 +33,22 @@ public class WhereTest {
 	}
 
 	private TableInfo<?> createTableInfo() throws SQLException {
-		return new TableInfo<Foo>(new H2DatabaseType(), Foo.class);
+		return new TableInfo<Foo>(new StubDatabaseType(), Foo.class);
 	}
 
 	protected static class Foo {
 		@DatabaseField(columnName = COLUMN_NAME)
 		int val;
 		Foo() {
+		}
+	}
+
+	private class StubDatabaseType extends BaseDatabaseType {
+		public String getDriverClassName() {
+			return "foo.bar.baz";
+		}
+		public String getDriverUrlPart() {
+			return "foo";
 		}
 	}
 }
