@@ -575,8 +575,8 @@ public enum DataType implements FieldConverter {
 	;
 
 	private static final Map<Class<?>, DataType> classMap = new HashMap<Class<?>, DataType>();
-	private static final Map<Integer, DataType> idTypeMap = new HashMap<Integer, DataType>();
 	private static final Map<String, DateFormat> dateFormatMap = new HashMap<String, DateFormat>();
+	private static final Map<SqlType, DataType> sqlTypeMap = new HashMap<SqlType, DataType>();
 
 	static {
 		for (DataType dataType : values()) {
@@ -584,24 +584,18 @@ public enum DataType implements FieldConverter {
 			for (Class<?> dataClass : dataType.classes) {
 				classMap.put(dataClass, dataType);
 			}
-			// if it can be a generated-id, add to id type map
-			if (dataType.isValidGeneratedType()) {
-				idTypeMap.put(dataType.primarySqlType.getTypeVal(), dataType);
-				for (int typeVal : dataType.primarySqlType.getConversionTypeVals()) {
-					idTypeMap.put(typeVal, dataType);
-				}
-			}
+			sqlTypeMap.put(dataType.sqlType, dataType);
 		}
 	}
 
 	public static final String DEFAULT_DATE_FORMAT_STRING = "yyyy-MM-dd HH:mm:ss.SSSSSS";
 
-	private final SqlType primarySqlType;
+	private final SqlType sqlType;
 	private final boolean canBeGenerated;
 	private final Class<?>[] classes;
 
 	private DataType(SqlType primarySqlType, Class<?>[] classes) {
-		this.primarySqlType = primarySqlType;
+		this.sqlType = primarySqlType;
 		// only types which have overridden the convertNumber method can be generated
 		this.canBeGenerated = (convertIdNumber(10) != null);
 		this.classes = classes;
@@ -618,7 +612,7 @@ public enum DataType implements FieldConverter {
 	}
 
 	public SqlType getSqlType() {
-		return primarySqlType;
+		return sqlType;
 	}
 
 	/**
@@ -672,15 +666,10 @@ public enum DataType implements FieldConverter {
 	}
 
 	/**
-	 * Static method that returns the DataType associated with the SQL type value or {@link #UNKNOWN} if not found.
+	 * Return the DataType associated with the SqlType argument. 
 	 */
-	public static DataType lookupIdTypeVal(int typeVal) {
-		DataType dataType = idTypeMap.get(typeVal);
-		if (dataType == null) {
-			return UNKNOWN;
-		} else {
-			return dataType;
-		}
+	public static DataType dataTypeFromSqlType(SqlType sqlType) {
+		return sqlTypeMap.get(sqlType);
 	}
 
 	/**
