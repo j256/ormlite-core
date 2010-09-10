@@ -20,19 +20,17 @@ import java.util.HashMap;
 
 import org.junit.Test;
 
-import com.j256.ormlite.db.BaseDatabaseType;
+import com.j256.ormlite.BaseOrmLiteCoreTest;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.TableInfo;
 
-public class FieldTypeTest {
+public class FieldTypeTest extends BaseOrmLiteCoreTest {
 
 	private static final String RANK_DB_COLUMN_NAME = "rank_column";
 	private static final int RANK_WIDTH = 100;
 	private static final String SERIAL_DEFAULT_VALUE = "7";
 	private static final String SEQ_NAME = "sequence";
-
-	private final DatabaseType databaseType = new StubDatabaseType();
 
 	@Test
 	public void testFieldType() throws Exception {
@@ -571,27 +569,5 @@ public class FieldTypeTest {
 	protected static class ThrowIfNullNonPrimitive {
 		@DatabaseField(throwIfNull = true)
 		Integer notPrimitive;
-	}
-
-	private class NeedsSequenceDatabaseType extends BaseDatabaseType {
-		public String getDriverClassName() {
-			return "foo.bar.baz";
-		}
-		public String getDriverUrlPart() {
-			return "foo";
-		}
-		@Override
-		public boolean isIdSequenceNeeded() {
-			return true;
-		}
-	}
-
-	private class StubDatabaseType extends BaseDatabaseType {
-		public String getDriverClassName() {
-			return "foo.bar.baz";
-		}
-		public String getDriverUrlPart() {
-			return "foo";
-		}
 	}
 }
