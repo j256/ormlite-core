@@ -6,12 +6,15 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteTest;
+import com.j256.ormlite.db.BaseDatabaseType;
+import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.stmt.StatementExecutor;
 import com.j256.ormlite.table.TableInfo;
 
-public class MappedDeleteTest extends BaseOrmLiteTest {
+public class MappedDeleteTest {
+
+	private final DatabaseType databaseType = new StubDatabaseType();
 
 	@Test(expected = SQLException.class)
 	public void testDeleteNoId() throws Exception {
@@ -30,5 +33,14 @@ public class MappedDeleteTest extends BaseOrmLiteTest {
 	protected static class NoId {
 		@DatabaseField
 		String stuff;
+	}
+
+	private class StubDatabaseType extends BaseDatabaseType {
+		public String getDriverClassName() {
+			return "foo.bar.baz";
+		}
+		public String getDriverUrlPart() {
+			return "foo";
+		}
 	}
 }

@@ -4,11 +4,14 @@ import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteTest;
+import com.j256.ormlite.db.BaseDatabaseType;
+import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.TableInfo;
 
-public class MappedUpdateIdTest extends BaseOrmLiteTest {
+public class MappedUpdateIdTest {
+
+	private final DatabaseType databaseType = new StubDatabaseType();
 
 	@Test
 	public void testUpdateIdNoId() throws Exception {
@@ -18,5 +21,14 @@ public class MappedUpdateIdTest extends BaseOrmLiteTest {
 	protected static class NoId {
 		@DatabaseField
 		String id;
+	}
+
+	private class StubDatabaseType extends BaseDatabaseType {
+		public String getDriverClassName() {
+			return "foo.bar.baz";
+		}
+		public String getDriverUrlPart() {
+			return "foo";
+		}
 	}
 }

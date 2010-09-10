@@ -195,9 +195,8 @@
 		-->
 		<surefire.argLine />
 
-		<!-- external package versions -->
-		<persistence-api-version>1.0</persistence-api-version>
 		<!-- external test package versions -->		
+		<persistence-api-version>1.0</persistence-api-version>
 		<easymock-version>2.3</easymock-version>
 		<h2-version>1.2.128</h2-version>
 		<commons-logging-version>1.1.1</commons-logging-version>

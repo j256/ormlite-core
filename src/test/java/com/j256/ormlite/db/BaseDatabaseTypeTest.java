@@ -5,10 +5,11 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteTest;
 import com.j256.ormlite.TestUtils;
 
-public class BaseDatabaseTypeTest extends BaseOrmLiteTest {
+public class BaseDatabaseTypeTest {
+
+	private final DatabaseType databaseType = new StubDatabaseType();
 
 	@Test
 	public void testBaseDatabaseType() throws Exception {
@@ -25,5 +26,14 @@ public class BaseDatabaseTypeTest extends BaseOrmLiteTest {
 	@Test
 	public void testCreateTableReturnsZero() {
 		assertTrue(databaseType.isCreateTableReturnsZero());
+	}
+
+	private class StubDatabaseType extends BaseDatabaseType {
+		public String getDriverClassName() {
+			return "java.lang.String";
+		}
+		public String getDriverUrlPart() {
+			return "foo";
+		}
 	}
 }

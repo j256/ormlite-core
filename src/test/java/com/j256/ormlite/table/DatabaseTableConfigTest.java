@@ -10,15 +10,17 @@ import javax.persistence.Entity;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteTest;
+import com.j256.ormlite.db.BaseDatabaseType;
+import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
 import com.j256.ormlite.field.FieldType;
 
-public class DatabaseTableConfigTest extends BaseOrmLiteTest {
+public class DatabaseTableConfigTest {
 
 	private static final String TABLE_NAME = "sometable";
+	private final DatabaseType databaseType = new StubDatabaseType();
 
 	@Test
 	public void testDatabaseTableConfig() throws SQLException {
@@ -145,5 +147,14 @@ public class DatabaseTableConfigTest extends BaseOrmLiteTest {
 	@Entity
 	protected static class NoFields {
 		public String stuff;
+	}
+
+	private class StubDatabaseType extends BaseDatabaseType {
+		public String getDriverClassName() {
+			return "foo.bar.baz";
+		}
+		public String getDriverUrlPart() {
+			return "foo";
+		}
 	}
 }
