@@ -4,6 +4,8 @@ TEXI = $(PKG).texi
 REMOTE ?= outside.256.com
 
 all : $(DOCS)
+
+install : $(DOCS)
 	cp $(PKG)/* $(PKG).pdf ../javadoc/doc-files
 
 clean :
