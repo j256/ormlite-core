@@ -22,8 +22,9 @@ import com.j256.ormlite.support.DatabaseResults;
  */
 public abstract class BaseDatabaseType implements DatabaseType {
 
-	private static int DEFAULT_VARCHAR_WIDTH = 255;
+	protected static int DEFAULT_VARCHAR_WIDTH = 255;
 	protected static int DEFAULT_DATE_STRING_WIDTH = 50;
+	protected static String DEFAULT_SEQUENCE_SUFFIX = "_id_seq";
 
 	protected final static FieldConverter booleanConverter = new BooleanNumberFieldConverter();
 
@@ -276,8 +277,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	 */
 	protected void configureGeneratedIdSequence(StringBuilder sb, FieldType fieldType, List<String> statementsBefore,
 			List<String> additionalArgs, List<String> queriesAfter) {
-		throw new IllegalArgumentException("GeneratedIdSequence is not supported by this database type for "
-				+ fieldType);
+		throw new IllegalStateException("GeneratedIdSequence is not supported by this database type for " + fieldType);
 	}
 
 	/**
@@ -319,7 +319,12 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	}
 
 	public String generateIdSequenceName(String tableName, FieldType idFieldType) {
-		return tableName + "_id_seq";
+		String name = tableName + DEFAULT_SEQUENCE_SUFFIX;
+		if (isEntityNamesMustBeUpCase()) {
+			return name.toUpperCase();
+		} else {
+			return name;
+		}
 	}
 
 	public String getCommentLinePrefix() {
