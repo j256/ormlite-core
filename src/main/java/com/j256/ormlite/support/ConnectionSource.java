@@ -11,13 +11,13 @@ public interface ConnectionSource {
 
 	/**
 	 * Return a database connection suitable for read-only operations. After you are done, you should call
-	 * {@link #releaseReadOnlyConnection(DatabaseConnection)}.
+	 * {@link #releaseConnection(DatabaseConnection)}.
 	 */
 	public DatabaseConnection getReadOnlyConnection() throws SQLException;
 
 	/**
 	 * Return a database connection suitable for read or write operations. After you are done, you should call
-	 * {@link #releaseReadWriteConnection(DatabaseConnection)}.
+	 * {@link #releaseConnection(DatabaseConnection)}.
 	 */
 	public DatabaseConnection getReadWriteConnection() throws SQLException;
 
