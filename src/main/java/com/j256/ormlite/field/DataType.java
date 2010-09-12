@@ -63,7 +63,7 @@ public enum DataType implements FieldConverter {
 			return Boolean.parseBoolean(defaultStr);
 		}
 		@Override
-		public boolean escapeDefaultValue() {
+		public boolean isEscapeDefaultValue() {
 			return false;
 		}
 		@Override
@@ -85,7 +85,7 @@ public enum DataType implements FieldConverter {
 			return Boolean.parseBoolean(defaultStr);
 		}
 		@Override
-		public boolean escapeDefaultValue() {
+		public boolean isEscapeDefaultValue() {
 			return false;
 		}
 	},
@@ -683,7 +683,7 @@ public enum DataType implements FieldConverter {
 	/**
 	 * Return whether this field's default value should be escaped in SQL.
 	 */
-	public boolean escapeDefaultValue() {
+	public boolean isEscapeDefaultValue() {
 		// default is to not escape the type if it is a number
 		return !isNumber();
 	}

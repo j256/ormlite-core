@@ -206,7 +206,7 @@ public class StatementBuilder<T, ID> {
 			where.appendSql(databaseType, sb, selectArgList);
 		}
 		for (SelectArg selectArg : selectArgList) {
-			FieldType fieldType = tableInfo.nameToFieldType(selectArg.getColumnName());
+			FieldType fieldType = tableInfo.getFieldTypeByName(selectArg.getColumnName());
 			argFieldTypeList.add(fieldType);
 		}
 		// 'group by' comes before 'order by'
@@ -226,7 +226,7 @@ public class StatementBuilder<T, ID> {
 	}
 
 	private void verifyColumnName(String columnName) {
-		if (tableInfo.nameToFieldType(columnName) == null) {
+		if (tableInfo.getFieldTypeByName(columnName) == null) {
 			throw new IllegalArgumentException("Unknown column-name " + columnName);
 		}
 	}
@@ -250,7 +250,7 @@ public class StatementBuilder<T, ID> {
 			} else {
 				sb.append(',');
 			}
-			FieldType fieldType = tableInfo.nameToFieldType(columnName);
+			FieldType fieldType = tableInfo.getFieldTypeByName(columnName);
 			appendFieldColumnName(sb, fieldType, fieldTypeList);
 			if (fieldType == idField) {
 				hasId = true;

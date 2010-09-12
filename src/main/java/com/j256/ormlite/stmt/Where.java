@@ -333,7 +333,7 @@ public class Where {
 	}
 
 	private boolean checkIfColumnIsNumber(String columnName) throws SQLException {
-		FieldType fieldType = tableInfo.nameToFieldType(columnName);
+		FieldType fieldType = tableInfo.getFieldTypeByName(columnName);
 		if (fieldType == null) {
 			throw new SQLException("Unknown column name '" + columnName + "' in table " + tableInfo.getTableName());
 		} else {

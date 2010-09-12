@@ -262,7 +262,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	 * Output the SQL type for a Java boolean default value.
 	 */
 	protected void appendDefaultValue(StringBuilder sb, FieldType fieldType, Object defaultValue) {
-		if (fieldType.escapeDefaultValue()) {
+		if (fieldType.isEscapeDefaultValue()) {
 			appendEscapedWord(sb, defaultValue.toString());
 		} else {
 			sb.append(defaultValue);

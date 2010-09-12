@@ -388,10 +388,6 @@ public class FieldType {
 		}
 	}
 
-	public boolean isThrowIfNull() {
-		return throwIfNull;
-	}
-
 	/**
 	 * Return whether this field is a number.
 	 */
@@ -409,8 +405,8 @@ public class FieldType {
 	/**
 	 * Return whether this field's default value should be escaped in SQL.
 	 */
-	public boolean escapeDefaultValue() {
-		return dataType.escapeDefaultValue();
+	public boolean isEscapeDefaultValue() {
+		return dataType.isEscapeDefaultValue();
 	}
 
 	/**

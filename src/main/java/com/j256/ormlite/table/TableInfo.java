@@ -95,7 +95,7 @@ public class TableInfo<T> {
 	/**
 	 * Return the {@link FieldType} associated with the columnName.
 	 */
-	public FieldType nameToFieldType(String columnName) {
+	public FieldType getFieldTypeByName(String columnName) {
 		return fieldNameMap.get(columnName);
 	}
 
