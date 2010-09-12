@@ -176,7 +176,7 @@ public class StatementBuilder<T, ID> {
 	 * This is mostly used for debugging or logging cases. The dao classes us the {@link #prepareQuery} method.
 	 * </p>
 	 */
-	public String prepareQueryString() {
+	public String prepareStatementString() {
 		List<FieldType> argFieldTypeList = new ArrayList<FieldType>();
 		List<FieldType> resultFieldTypeList = new ArrayList<FieldType>();
 		List<SelectArg> selectArgList = new ArrayList<SelectArg>();

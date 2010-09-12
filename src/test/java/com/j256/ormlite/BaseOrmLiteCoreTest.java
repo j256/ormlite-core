@@ -3,7 +3,7 @@ package com.j256.ormlite;
 import com.j256.ormlite.db.BaseDatabaseType;
 import com.j256.ormlite.db.DatabaseType;
 
-public class BaseOrmLiteCoreTest {
+public abstract class BaseOrmLiteCoreTest {
 
 	protected final DatabaseType databaseType = new StubDatabaseType();
 

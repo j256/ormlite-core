@@ -2,15 +2,18 @@ To release ORMLite:
 
 1) Run all tests -- home and work if possible.
 
+	- ormlite-core
+	- ormlite-jdbc
+	- ormlite-android
+
 2) Update the release number and date in ormlite.texi.
 
-	cd ~/svn/local/ormlite/src/main/doc/
-	make
-	mv ormlite.pdf ormlite/* ../javadoc/doc-files
+	cd ~/svn/local/ormlite-core/src/main/doc/
+	make install
 	cd ..
 	svn commit -m 'X.XX docs'
 
-3) Add section to ~/svn/local/ormlite/src/main/javadoc/doc-files/changelog.txt.  Commit it.
+3) Add section to ~/svn/local/ormlite-core/src/main/javadoc/doc-files/changelog.txt.  Commit it.
 
 4) Release to Sonatype: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
 
