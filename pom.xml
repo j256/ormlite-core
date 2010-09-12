@@ -73,7 +73,7 @@
 		</profile>
 	</profiles>
 	<build>
-		<finalName>ormlite</finalName>
+		<finalName>ormlite-core</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
