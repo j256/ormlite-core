@@ -17,10 +17,14 @@ To release ORMLite:
 
 4) Release to Sonatype: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
 
-	cd ~/svn/local/ormlite
+	cd ~/svn/local/ormlite-core
 	mvn -P st release:clean
 	mvn -P st release:prepare              (need to type in GPG secret)
 	mvn -P st release:perform              (need to type in GPG secret)
+	
+	same for -jdbc and -android
+	cd ~/svn/local/ormlite-jdbc
+	cd ~/svn/local/ormlite-android
 
 5) Login to Sontype:    https://oss.sonatype.org/   (graywatson)
 
