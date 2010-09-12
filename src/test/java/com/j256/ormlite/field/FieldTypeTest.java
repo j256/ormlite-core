@@ -43,6 +43,7 @@ public class FieldTypeTest extends BaseOrmLiteCoreTest {
 		Field intLongField = fields[3];
 
 		FieldType fieldType = FieldType.createFieldType(databaseType, Foo.class.getSimpleName(), nameField);
+		assertEquals(nameField.getName(), fieldType.getFieldName());
 		assertEquals(nameField.getName(), fieldType.getDbColumnName());
 		assertEquals(DataType.STRING, fieldType.getDataType());
 		assertEquals(0, fieldType.getWidth());
@@ -88,13 +89,24 @@ public class FieldTypeTest extends BaseOrmLiteCoreTest {
 
 	@Test
 	public void testGeneratedIdAndSequenceWorks() throws Exception {
-		DatabaseType needsSeqDatabaseType = new NeedsSequenceDatabaseType();
 		Field[] fields = GeneratedIdSequence.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
 		FieldType fieldType =
-				FieldType.createFieldType(needsSeqDatabaseType, GeneratedIdSequence.class.getSimpleName(), fields[0]);
+				FieldType.createFieldType(new NeedsSequenceDatabaseType(), GeneratedIdSequence.class.getSimpleName(),
+						fields[0]);
 		assertTrue(fieldType.isGeneratedIdSequence());
 		assertEquals(SEQ_NAME, fieldType.getGeneratedIdSequence());
+	}
+
+	@Test
+	public void testGeneratedIdAndSequenceUppercase() throws Exception {
+		Field[] fields = GeneratedIdSequence.class.getDeclaredFields();
+		assertTrue(fields.length >= 1);
+		FieldType fieldType =
+				FieldType.createFieldType(new NeedsUppercaseSequenceDatabaseType(),
+						GeneratedIdSequence.class.getSimpleName(), fields[0]);
+		assertTrue(fieldType.isGeneratedIdSequence());
+		assertEquals(SEQ_NAME.toUpperCase(), fieldType.getGeneratedIdSequence());
 	}
 
 	@Test
@@ -102,7 +114,8 @@ public class FieldTypeTest extends BaseOrmLiteCoreTest {
 		DatabaseType needsSeqDatabaseType = new NeedsSequenceDatabaseType();
 		Field[] fields = GeneratedId.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
-		FieldType fieldType = FieldType.createFieldType(needsSeqDatabaseType, GeneratedId.class.getSimpleName(), fields[0]);
+		FieldType fieldType =
+				FieldType.createFieldType(needsSeqDatabaseType, GeneratedId.class.getSimpleName(), fields[0]);
 		assertTrue(fieldType.isGeneratedIdSequence());
 	}
 
@@ -401,6 +414,101 @@ public class FieldTypeTest extends BaseOrmLiteCoreTest {
 		FieldType.createFieldType(databaseType, DateDefaultBad.class.getSimpleName(), field);
 	}
 
+	@Test(expected = SQLException.class)
+	public void testUnknownEnumValue() throws Exception {
+		Field[] fields = EnumVal.class.getDeclaredFields();
+		assertTrue(fields.length >= 1);
+		Field field = fields[0];
+		FieldType fieldType = FieldType.createFieldType(databaseType, EnumVal.class.getSimpleName(), field);
+		fieldType.enumFromInt(100);
+	}
+
+	@Test
+	public void testKnownEnumValue() throws Exception {
+		Field[] fields = EnumVal.class.getDeclaredFields();
+		assertTrue(fields.length >= 1);
+		Field field = fields[0];
+		FieldType fieldType = FieldType.createFieldType(databaseType, EnumVal.class.getSimpleName(), field);
+		assertEquals(OurEnum.ONE, fieldType.enumFromInt(OurEnum.ONE.ordinal()));
+	}
+
+	@Test
+	public void testKnownEnumValueString() throws Exception {
+		Field[] fields = EnumVal.class.getDeclaredFields();
+		assertTrue(fields.length >= 1);
+		Field field = fields[0];
+		FieldType fieldType = FieldType.createFieldType(databaseType, EnumVal.class.getSimpleName(), field);
+		assertEquals(OurEnum.ONE, fieldType.enumFromString(OurEnum.ONE.toString()));
+	}
+
+	@Test
+	public void testUnknownValueAnnotation() throws Exception {
+		Field[] fields = UnknownEnumVal.class.getDeclaredFields();
+		assertTrue(fields.length >= 1);
+		Field field = fields[0];
+		FieldType fieldType = FieldType.createFieldType(databaseType, UnknownEnumVal.class.getSimpleName(), field);
+		assertEquals(AnotherEnum.A, fieldType.enumFromInt(100));
+	}
+
+	@Test(expected = SQLException.class)
+	public void testNullPrimitiveThrow() throws Exception {
+		Field field = ThrowIfNullNonPrimitive.class.getDeclaredField("primitive");
+		FieldType fieldType =
+				FieldType.createFieldType(databaseType, ThrowIfNullNonPrimitive.class.getSimpleName(), field);
+		DatabaseResults results = createMock(DatabaseResults.class);
+		int fieldNum = 1;
+		expect(results.findColumn(field.getName())).andReturn(fieldNum);
+		expect(results.isNull(fieldNum)).andReturn(true);
+		replay(results);
+		fieldType.resultToJava(results, new HashMap<String, Integer>());
+		verify(results);
+	}
+
+	@Test
+	public void testSerializableNull() throws Exception {
+		Field[] fields = Serializable.class.getDeclaredFields();
+		assertTrue(fields.length >= 1);
+		Field field = fields[0];
+		FieldType fieldType = FieldType.createFieldType(databaseType, Serializable.class.getSimpleName(), field);
+		DatabaseResults results = createMock(DatabaseResults.class);
+		int fieldNum = 1;
+		expect(results.findColumn(field.getName())).andReturn(fieldNum);
+		expect(results.isNull(fieldNum)).andReturn(true);
+		replay(results);
+		assertNull(fieldType.resultToJava(results, new HashMap<String, Integer>()));
+		verify(results);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testInvalidFieldType() throws Exception {
+		Field[] fields = InvalidType.class.getDeclaredFields();
+		assertTrue(fields.length >= 1);
+		Field field = fields[0];
+		FieldType fieldType = FieldType.createFieldType(databaseType, InvalidType.class.getSimpleName(), field);
+		DatabaseResults results = createMock(DatabaseResults.class);
+		int fieldNum = 1;
+		expect(results.findColumn(field.getName())).andReturn(fieldNum);
+		expect(results.isNull(fieldNum)).andReturn(true);
+		replay(results);
+		assertNull(fieldType.resultToJava(results, new HashMap<String, Integer>()));
+		verify(results);
+	}
+
+	@Test
+	public void testEscapeDefault() throws Exception {
+		Field field = Foo.class.getDeclaredField("name");
+		FieldType fieldType = FieldType.createFieldType(databaseType, Foo.class.getSimpleName(), field);
+		assertFalse(fieldType.isNumber());
+		assertTrue(fieldType.isEscapeDefaultValue());
+
+		field = Foo.class.getDeclaredField("intLong");
+		fieldType = FieldType.createFieldType(databaseType, Foo.class.getSimpleName(), field);
+		assertTrue(fieldType.isNumber());
+		assertFalse(fieldType.isEscapeDefaultValue());
+	}
+
+	/* ========================================================================================================= */
+
 	protected static class Foo {
 		@DatabaseField
 		String name;
@@ -419,6 +527,11 @@ public class FieldTypeTest extends BaseOrmLiteCoreTest {
 
 	protected static class SerializableDefault {
 		@DatabaseField(defaultValue = "bad value")
+		Date date;
+	}
+
+	protected static class Serializable {
+		@DatabaseField
 		Date date;
 	}
 
@@ -569,5 +682,46 @@ public class FieldTypeTest extends BaseOrmLiteCoreTest {
 	protected static class ThrowIfNullNonPrimitive {
 		@DatabaseField(throwIfNull = true)
 		Integer notPrimitive;
+		@DatabaseField(throwIfNull = true)
+		int primitive;
+	}
+
+	protected static class EnumVal {
+		@DatabaseField
+		OurEnum enumField;
+	}
+
+	protected enum OurEnum {
+		ONE,
+		TWO,
+		// end
+		;
+	}
+
+	protected static class UnknownEnumVal {
+		@DatabaseField(unknownEnumName = "A")
+		AnotherEnum enumField;
+	}
+
+	protected enum AnotherEnum {
+		A,
+		B,
+		// end
+		;
+	}
+
+	protected static class InvalidType {
+		// we self reference here because we are looking for a class which isn't serializable
+		@DatabaseField(dataType = DataType.SERIALIZABLE)
+		InvalidType intField;
+	}
+
+	protected class NeedsUppercaseSequenceDatabaseType extends NeedsSequenceDatabaseType {
+		public NeedsUppercaseSequenceDatabaseType() {
+		}
+		@Override
+		public boolean isEntityNamesMustBeUpCase() {
+			return true;
+		}
 	}
 }
