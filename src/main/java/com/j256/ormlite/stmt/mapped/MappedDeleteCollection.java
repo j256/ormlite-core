@@ -71,7 +71,7 @@ public class MappedDeleteCollection<T, ID> extends BaseMappedStatement<T> {
 	private static <T, ID> int updateRows(DatabaseConnection databaseConnection,
 			MappedDeleteCollection<T, ID> deleteCollection, Object[] args) throws SQLException {
 		try {
-			int rowC = databaseConnection.update(deleteCollection.statement, args, deleteCollection.argSqlTypes);
+			int rowC = databaseConnection.delete(deleteCollection.statement, args, deleteCollection.argSqlTypes);
 			logger.debug("delete-collection with statement '{}' and {} args, changed {} rows",
 					deleteCollection.statement, args.length, rowC);
 			if (args.length > 0) {
