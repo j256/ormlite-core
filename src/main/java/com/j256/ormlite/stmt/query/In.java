@@ -29,7 +29,7 @@ public class In extends BaseComparison {
 
 	@Override
 	public StringBuilder appendOperation(StringBuilder sb) {
-		sb.append("in ");
+		sb.append("IN ");
 		return sb;
 	}
 
