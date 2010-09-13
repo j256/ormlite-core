@@ -54,15 +54,16 @@ public abstract class BaseOrmLiteCoreTest {
 		public static final String VAL_COLUMN_NAME = "val";
 		public static final String EQUAL_COLUMN_NAME = "equal";
 		public static final String NULL_COLUMN_NAME = "null";
-
 		@DatabaseField(id = true, columnName = ID_COLUMN_NAME)
-		String id;
+		public String id;
 		@DatabaseField(columnName = VAL_COLUMN_NAME)
-		int val;
+		public int val;
 		@DatabaseField(columnName = EQUAL_COLUMN_NAME)
-		int equal;
+		public int equal;
 		@DatabaseField(columnName = NULL_COLUMN_NAME)
-		String nullField;
+		public String nullField;
+		public BaseFoo() {
+		}
 		@Override
 		public String toString() {
 			return "Foo:" + id;
