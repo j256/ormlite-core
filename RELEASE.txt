@@ -45,7 +45,9 @@ To release ORMLite:
 
 8) If there are problems then you will need to drop the release on sonatype.org and re-release:
 
-	mvn -P st release:perform -DconnectionUrl=scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite/tags/ormlite-X.X
+	Core:     mvn -P st release:perform -DconnectionUrl=scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite/tags/ormlite-core-X.X
+	JDBC:     mvn -P st release:perform -DconnectionUrl=scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite/tags/ormlite-jdbc-X.X
+	Android:  mvn -P st release:perform -DconnectionUrl=scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite/tags/ormlite-android-X.X
 
 9) Release to sourceforge in the directory checked out by release:perform.
 
