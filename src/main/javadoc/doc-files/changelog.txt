@@ -1,4 +1,4 @@
-3.1: 9/10/2010
+3.2: 9/13/2010
 	* Large internal code reorganization to allow database calls outside of JDBC for better Android support.
 	* Split ormlite into 3 packages: -core, -jdbc, and -android
 	* Abstracted the DataSource, Connection, and ResultSet classes to be ConnectionSource, DatabaseConnection, and DatabaseResults interfaces.
