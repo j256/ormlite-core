@@ -61,10 +61,10 @@ public class FieldType {
 			}
 		}
 		String defaultFieldName = field.getName();
-		if (dataType == DataType.UNKNOWN) {
-			if (!fieldConfig.isForeign()) {
-				throw new IllegalArgumentException("ORMLite does not know how to store field class " + field.getType()
-						+ " for non-foreign field " + this);
+		if (fieldConfig.isForeign()) {
+			if (dataType.isPrimitive()) {
+				throw new IllegalArgumentException("Field " + this + " is a primitive class " + field.getType()
+						+ " but marked as foreign");
 			}
 			DatabaseTableConfig<?> tableConfig = fieldConfig.getForeignTableConfig();
 			if (tableConfig == null) {
@@ -79,11 +79,10 @@ public class FieldType {
 			defaultFieldName = defaultFieldName + FOREIGN_ID_FIELD_SUFFIX;
 			// this field's data type is the foreign id's type
 			dataType = foreignInfo.getIdField().getDataType();
+		} else if (dataType == DataType.UNKNOWN) {
+			throw new IllegalArgumentException("ORMLite does not know how to store field class " + field.getType()
+					+ " for field " + this);
 		} else {
-			if (fieldConfig.isForeign()) {
-				throw new IllegalArgumentException("Field " + this + " is a primitive class " + field.getType()
-						+ " but marked as foreign");
-			}
 			foreignTableInfo = null;
 		}
 		if (fieldConfig.getColumnName() == null) {

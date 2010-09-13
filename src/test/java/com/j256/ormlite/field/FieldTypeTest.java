@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.Date;
@@ -466,10 +467,10 @@ public class FieldTypeTest extends BaseOrmLiteCoreTest {
 
 	@Test
 	public void testSerializableNull() throws Exception {
-		Field[] fields = Serializable.class.getDeclaredFields();
+		Field[] fields = SerializableField.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
 		Field field = fields[0];
-		FieldType fieldType = FieldType.createFieldType(databaseType, Serializable.class.getSimpleName(), field);
+		FieldType fieldType = FieldType.createFieldType(databaseType, SerializableField.class.getSimpleName(), field);
 		DatabaseResults results = createMock(DatabaseResults.class);
 		int fieldNum = 1;
 		expect(results.findColumn(field.getName())).andReturn(fieldNum);
@@ -507,6 +508,14 @@ public class FieldTypeTest extends BaseOrmLiteCoreTest {
 		assertFalse(fieldType.isEscapeDefaultValue());
 	}
 
+	@Test
+	public void testForeignIsSerializable() throws Exception {
+		Field field = ForeignAlsoSerializable.class.getDeclaredField("foo");
+		FieldType fieldType =
+				FieldType.createFieldType(databaseType, ForeignAlsoSerializable.class.getSimpleName(), field);
+		assertTrue(fieldType.isForeign());
+	}
+
 	/* ========================================================================================================= */
 
 	protected static class Foo {
@@ -530,7 +539,7 @@ public class FieldTypeTest extends BaseOrmLiteCoreTest {
 		Date date;
 	}
 
-	protected static class Serializable {
+	protected static class SerializableField {
 		@DatabaseField
 		Date date;
 	}
@@ -600,6 +609,17 @@ public class FieldTypeTest extends BaseOrmLiteCoreTest {
 	protected static class ForeignAlsoId {
 		@DatabaseField(foreign = true, id = true)
 		ForeignForeign foo;
+	}
+
+	protected static class ForeignSerializable implements Serializable {
+		private static final long serialVersionUID = -8548265783542973824L;
+		@DatabaseField(id = true)
+		int id;
+	}
+
+	protected static class ForeignAlsoSerializable {
+		@DatabaseField(foreign = true)
+		ForeignSerializable foo;
 	}
 
 	protected static class ObjectFieldNotForeign {
