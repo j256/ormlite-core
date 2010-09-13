@@ -191,6 +191,9 @@ public class Where {
 	 * Add a IN clause so the column must be equal-to one of the objects passed in.
 	 */
 	public Where in(String columnName, Object... objects) throws SQLException {
+		if (objects.length == 1 && objects[0].getClass().isArray()) {
+			throw new IllegalArgumentException("in(Object... objects) seems to be an array within an array");
+		}
 		addClause(new In(columnName, checkIfColumnIsNumber(columnName), objects));
 		return this;
 	}
@@ -335,7 +338,8 @@ public class Where {
 	private boolean checkIfColumnIsNumber(String columnName) throws SQLException {
 		FieldType fieldType = tableInfo.getFieldTypeByName(columnName);
 		if (fieldType == null) {
-			throw new SQLException("Unknown column name '" + columnName + "' in table " + tableInfo.getTableName());
+			throw new IllegalArgumentException("Unknown column name '" + columnName + "' in table "
+					+ tableInfo.getTableName());
 		} else {
 			return fieldType.isNumber();
 		}
