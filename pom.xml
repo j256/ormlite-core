@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.j256.ormlite</groupId>
 	<artifactId>ormlite-core</artifactId>
-	<version>3.3-SNAPSHOT</version>
+	<version>3.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>ORMLite Core</name>
 	<url>http://ormlite.sourceforge.net/</url>
@@ -198,7 +198,6 @@
 		<!-- external test package versions -->		
 		<persistence-api-version>1.0</persistence-api-version>
 		<easymock-version>2.3</easymock-version>
-		<h2-version>1.2.128</h2-version>
 		<commons-logging-version>1.1.1</commons-logging-version>
 		<junit-version>4.8.1</junit-version>
 		<log4j-version>1.2.15</log4j-version>
@@ -252,12 +251,6 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>${junit-version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<version>${h2-version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

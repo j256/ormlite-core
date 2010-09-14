@@ -3,21 +3,18 @@
 BACKGROUND:
 
 This package provides a lightweight Object Relational Mapping between Java classes and SQL databases.
-There are certainly some much more mature packages which provide this functionality including Hibernate
-and iBatis.  However, I wanted a simple wrapper around the JDBC functions from the Spring package and
-Hibernate and iBatis are significantly more complicated.   The package supports natively MySQL,
-Postgres, Microsoft SQL Server, H2, Derby, HSQLDB, and Sqlite.  It also contains initial, untested
-support for DB2 and Oracle and can be extended to additional ones relatively easily.  Contact the author
-if your database type is not supported.
+There is a JDBC implementation which talks to JDBC databases as well as one that makes calls to the
+Android OS database API.
 
-This code is 97% my own.  Probably 2% is PD stuff that I've cherry picked from the web and
-another 1% that that I've copied from other developers I've worked with -- all with their approval.
-
-Hope it helps.
-
-Gray Watson
+For more information, see the online documentation on the home page:
 
 http://ormlite.sourceforge.net/
+
+This package is provided for those who are interested in providing additional backends for the
+package.  Contact the author for more information.
+
+Enjoy,
+Gray Watson
 http://256.com/gray/
 
 -------------------------------------------------------------------------------------------------------
@@ -30,8 +27,9 @@ REQUIREMENTS:
 
 GETTING STARTED:
 
-The src/main/javadoc/doc-files/details.html file has the getting started information.  See the
-home page for more information.
+See the Getting Started section from the online documentation:
+
+http://ormlite.sourceforge.net/
 
 -------------------------------------------------------------------------------------------------------
 
@@ -47,7 +45,6 @@ Test Dependencies:
 	log4j -- 1.2.15
 	junit -- 4.8.1
 	org.easymock -- 2.3
-	com.h2database -- 1.2.134
 	javax-persistence -- 1.0
 
 -------------------------------------------------------------------------------------------------------

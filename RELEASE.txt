@@ -15,7 +15,11 @@ To release ORMLite:
 	cd ..
 	svn commit -m 'X.XX docs'
 
-4) Release to Sonatype: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
+4) Update the ormlite-version variable in -android and -jdbc
+
+	Check-in
+
+5) Release to Sonatype: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
 
 	cd ~/svn/local/ormlite-core
 	mvn -P st release:clean
@@ -25,10 +29,12 @@ To release ORMLite:
 	same for -jdbc and -android
 	cd ~/svn/local/ormlite-jdbc
 	cd ~/svn/local/ormlite-android
+	
+	NOTE: if you need to, mvn -P st release:rollback will go back to the starting pom.xml 
 
-5) Login to Sontype:    https://oss.sonatype.org/   (graywatson)
+6) Login to Sontype:    https://oss.sonatype.org/   (graywatson)
 
-6) Close and release the release:
+7) Close and release the release:
 
 	- Click on 'Staging Repositories' from left nav
 	- Make sure our release is there, is labeled as 'open'.
@@ -37,42 +43,42 @@ To release ORMLite:
 	- Check off the now closed release.
 	- Click on 'Release'.  Description: X.X release
 
-7) Check to make sure it has been released:
+8) Check to make sure it has been released:
 	
 	- Click on 'Repositories' from left nav
 	- select Releases (not-bold) -> com -> j256 -> ormlite
 	- see if the release is there
 
-8) If there are problems then you will need to drop the release on sonatype.org and re-release:
+9) If there are problems then you will need to drop the release on sonatype.org and re-release:
 
-	Core:     mvn -P st release:perform -DconnectionUrl=scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite/tags/ormlite-core-X.X
-	JDBC:     mvn -P st release:perform -DconnectionUrl=scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite/tags/ormlite-jdbc-X.X
-	Android:  mvn -P st release:perform -DconnectionUrl=scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite/tags/ormlite-android-X.X
+	Core:     mvn -P st release:perform -DconnectionUrl=scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-core/tags/ormlite-core-X.X
+	JDBC:     mvn -P st release:perform -DconnectionUrl=scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-jdbc/tags/ormlite-jdbc-X.X
+	Android:  mvn -P st release:perform -DconnectionUrl=scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-android/tags/ormlite-android-X.X
 
-9) Release to sourceforge in the directory checked out by release:perform.
+10) Release to sourceforge in the directory checked out by release:perform.
 
 	cd target/checkout
 	mvn -P sf deploy                       (need to type in GPG secret)
 
-10) Go to SF and set the default download to the newest jar: https://sourceforge.net/project/admin/explorer.php?group_id=297653
+11) Go to SF and set the default download to the newest jar: https://sourceforge.net/project/admin/explorer.php?group_id=297653
 
-11) Create a sf shell.  Explode the javadocs with the newest release:
+12) Create a sf shell.  Explode the javadocs with the newest release:
 
 	create_sf_shell                        (script)
 	cd ormlite_web/htdocs/javadoc
 	rm -rf * ; unzip ~/frs/releases/com/j256/ormlite/X.X/ormlite-X.X-javadoc.jar
 
-12) Possibly trim the older releases in the release directory.  Try to leave last major release and couple minors.
+13) Possibly trim the older releases in the release directory.  Try to leave last major release and couple minors.
 
 	cd ~/frs/releases/com/j256/ormlite
 	rm -rf 1.11 1.12
 
-13) Run  shutdown  on the sf shell
+14) Run  shutdown  on the sf shell
 
-14) Add a News section to SF with the svn log highlights and subject: released version X.X
+15) Add a News section to SF with the svn log highlights and subject: released version X.X
 
-15) Possibly publish to announcements forum if the release needs more information.
+16) Possibly publish to announcements forum if the release needs more information.
 
-16) Change the pom.xml version for new ormlite version in ormlitetest.
+17) Change the pom.xml version for new ormlite version in ormlitetest.
 
-17) Watch to make sure the central repository was updated.  http://repo1.maven.org/maven2/com/j256/ormlite/
+18) Watch to make sure the central repository was updated.  http://repo1.maven.org/maven2/com/j256/ormlite/
