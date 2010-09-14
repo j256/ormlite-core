@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on September, 13 2010 by texi2html 1.70 -->
+<!-- Created on September, 14 2010 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -286,7 +286,7 @@ URI is in the form jdbc:XXX:&hellip; where XXX is the driver url part.
 </p></dd>
 <dt><code> getDriverClassName</code></dt>
 <dd>
-<p>Returns the class name of the driver that may or may not be in the ClassPath depending on what database is
+<p>Returns the class name of the driver that may or may not be in the classpath depending on what database is
 being used.
 
 </p></dd>
@@ -325,7 +325,7 @@ data values being reserved words.
 </p></dd>
 <dt><code> generateIdSequenceName</code></dt>
 <dd>
-<p>Return the name of an ID sequence based on the tableName and the fieldType of the id.  This is required
+<p>Return the name of an ID sequence based on the table-name and the field-type of the id.  This is required
 by some database types when we have generated ids.
 
 </p></dd>
@@ -417,7 +417,7 @@ implementations.  The logger code in <code>com.j256.ormlite.logger</code> first 
 If that class is not found it then looks for <code>org.apache.log4j.Logger</code> and if found will use Log4j.  Next it
 looks for <code>android.util.Log</code> and if found will use the Android internal logger.  If none of these classes are
 available it will use an internal logger - see <code>LocalLog</code>.  The logger code also provides simple {}
-argument expansion like slf4j which means that you can save on toString() calls and <code>StringBuilder</code> operations
+argument expansion like <code>slf4j</code> which means that you can save on <code>toString()</code> calls and <code>StringBuilder</code> operations
 if the log level is not high enough.  This allows me to do something like the following:
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">private static Logger logger =
@@ -472,33 +472,51 @@ only be used during debugging and should not be the default.
 <h2 class="section"> 5.5 Using With Android </h2>
 
 
-<p>Because of the lack of support for JDBC in Android OS, ORMLite makes direct calls to the Android API if the
-<code>SqliteAndroidDatabaseType</code> is used.  The part of the code is the newest an although tested and used in some
-projects, the proper patterns on <em>how</em> to use it have not been completely fleshed out.  The hardest part of
-writing this documentation is what to say about <em>how</em> to use ORMLite on Android OS.  I am not an
-Android developer and it seems that we have yet to find the optimal way to use the package in terms of when to
-open the database, how to (or if we should) cache conncections, cacheing the DAO objects (which can be expensive to
-construct and destroy), etc..  Feedback on this section would be most welcome.
+<p>Because of the lack of support for JDBC in Android OS, ORMLite makes direct calls to the Android API.
+You should make sure that you have downloaded and are depending on the <code>ormlite-android.jar</code> file and
+<em>not</em> the <code>ormlite-jdbc.jar</code> version.  This part of the code is the newest and although tested and used
+in some projects, the proper patterns on <em>how</em> to use it have not solidified.  Feedback on this would be
+most welcome.
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">DatabaseType databaseType =
-  new SqliteAndroidDatabaseType();
-SQLiteOpenHelper openHelper =
-  new OrmliteOpenHelper();
-ConnectionSource connectionSource =
-  new AndroidConnectionSource(openHelper);
+</p><p>After you have read the getting started above ((see section <a href="ormlite_1.html#SEC1">Getting Started</a>), the following instructions should be
+followed to help with getting ORMLite working under Android OS.
 
-// instantiate the dao
-AccountDaoImpl accountDao = new AccountDaoImpl();
-accountDao.setDatabaseType(databaseType);
-accountDao.setConnectionSource(connectionSource);
-// _must_ make this call after the setters
-accountDao.initialize();
+</p><ol>
+<li><p> You will need to define a database helper class which should probably extend the <code>OrmLiteSqliteOpenHelper</code>  
+class.  This class creates and upgrades the database when your app is installed and usually creates the DAO classes to
+be used by the rest of the app.  Your helper class must implement the methods
+<code>onCreate(SQLiteDatabase sqliteDatabase, ConnectionSource connectionSource)</code> and
+<code>onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion)</code>.
+<code>onCreate</code> creates the database when your app is first installed while <code>onUpgrade</code> handles the upgrading
+of the database tables when you upgrade your app to a new version.  There is a sample class in the
+<code>com.j256.ormlite.android.examples</code> section of the tests in the <code>ormlite-android-sources.jar</code> source jar file
+and they can also be found here: <a href="http://ormlite.sourceforge.net/android/examples/">http://ormlite.sourceforge.net/android/examples/</a>. 
 
-// ...
-connectionSource.close();
-</pre></td></tr></table>
-<p>Also, there is an <code>AndroidLog</code> logger which should detect and delegate log calls to the internal Android log
-classes.  It should be detected and automatically used to log messages on Android OS.
+</p></li><li><p> The helper can be kept open across all activities in your app with the same Sqlite database connection reused by
+all threads.  If you open multiple connections to the same database, stale data and unexpected results will occur.
+We recommend using the <code>OpenHelperManager</code> to monitor the usage of the helper - it will create it on the first
+access, track each time a part of your code is using it, and then it will close once the last section of the code has
+released it.
+
+</p></li><li><p> The <code>OpenHelperManager</code> will by default look for the full class name of your own database helper class
+in the <code>open_helper_classname</code> value defined in <code>res/values/strings.xml</code>.  You can instead set a
+<code>SqliteOpenHelperFactory</code> on the manager directly in a <code>static {}</code> block in your code.   
+
+</p></li><li><p>  Once you have defined your database helper and are managing it correctly, you will need to use it in your Activity
+classes.  An easy way to use the <code>OpenHelperManager</code> is to extend <code>OrmLiteBaseActivity</code> for each of your
+activity classes - there is also <code>OrmLiteBaseService</code> and <code>OrmLiteBaseTabActivity</code>.  These classes provide a
+<code>getHelper()</code> method to access the database helper whenever it is needed and will automatically release the helper
+in the <code>onDestroy()</code> method.
+
+</p></li><li><p> If you do not want to extend the base classes then you will need to duplicate their basic functionality of calling
+<code>OpenHelperManager.getHelper(Context context)</code> at the start of your code, save the helper and use it as much as 
+you want, and then calling <code>OpenHelperManager.release()</code> when you are done with it.
+
+</p></li></ol>
+
+<p>Please see the example code posted to the website for more information: <a href="http://ormlite.sourceforge.net/android/examples/">http://ormlite.sourceforge.net/android/examples/</a>.
+Again, feedback on this is welcome.  Also, there is an <code>AndroidLog</code> logger which should detect and delegate log calls
+to the internal Android log classes.  It should be detected and automatically used to log messages on Android OS.
 
 </p><hr size="6">
 <table cellpadding="1" cellspacing="1" border="0">
@@ -516,7 +534,7 @@ classes.  It should be detected and automatically used to log messages on Androi
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>September, 13 2010</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>September, 14 2010</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 
