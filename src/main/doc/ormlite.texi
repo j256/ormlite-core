@@ -741,7 +741,7 @@ DatabaseType databaseType = new H2DatabaseType();
 
 @cindex load database driver
 @cindex database driver load
-After you instantiate your DatabaseType, you will need to call the loadDriver() method to make sure that
+After you instantiate your DatabaseType, you will need to call the @code{loadDriver()} method to make sure that
 the driver has wired itself into JDBC appropriately.
 
 @example
@@ -1216,7 +1216,7 @@ public class Order @{
     @@DatabaseField(generatedId = true)
     private int id;
     
-    @@DatabaseField(canNull = false, foreign = true)
+    @@DatabaseField(canBeNull = false, foreign = true)
     private Account account;
     @dots{}
 @}
@@ -1431,7 +1431,7 @@ URI is in the form jdbc:XXX:@dots{} where XXX is the driver url part.
 
 @item getDriverClassName
 
-Returns the class name of the driver that may or may not be in the ClassPath depending on what database is
+Returns the class name of the driver that may or may not be in the classpath depending on what database is
 being used.
 
 @item loadDriver
@@ -1463,7 +1463,7 @@ data values being reserved words.
 
 @item generateIdSequenceName
 
-Return the name of an ID sequence based on the tableName and the fieldType of the id.  This is required
+Return the name of an ID sequence based on the table-name and the field-type of the id.  This is required
 by some database types when we have generated ids.
 
 @item getCommentLinePrefix
@@ -1527,7 +1527,7 @@ implementations.  The logger code in @code{com.j256.ormlite.logger} first looks 
 If that class is not found it then looks for @code{org.apache.log4j.Logger} and if found will use Log4j.  Next it
 looks for @code{android.util.Log} and if found will use the Android internal logger.  If none of these classes are
 available it will use an internal logger -- see @code{LocalLog}.  The logger code also provides simple @{@}
-argument expansion like slf4j which means that you can save on toString() calls and @code{StringBuilder} operations
+argument expansion like @code{slf4j} which means that you can save on @code{toString()} calls and @code{StringBuilder} operations
 if the log level is not high enough.  This allows me to do something like the following:
 
 @example
@@ -1572,35 +1572,52 @@ only be used during debugging and should not be the default.
 @cindex Android OS support
 @cindex droid support
 
-Because of the lack of support for JDBC in Android OS, @value{package} makes direct calls to the Android API if the
-@code{SqliteAndroidDatabaseType} is used.  The part of the code is the newest an although tested and used in some
-projects, the proper patterns on @emph{how} to use it have not been completely fleshed out.  The hardest part of
-writing this documentation is what to say about @emph{how} to use @value{package} on Android OS.  I am not an
-Android developer and it seems that we have yet to find the optimal way to use the package in terms of when to
-open the database, how to (or if we should) cache conncections, cacheing the DAO objects (which can be expensive to
-construct and destroy), etc..  Feedback on this section would be most welcome.
+Because of the lack of support for JDBC in Android OS, @value{package} makes direct calls to the Android API.
+You should make sure that you have downloaded and are depending on the @code{ormlite-android.jar} file and
+@emph{not} the @code{ormlite-jdbc.jar} version.  This part of the code is the newest and although tested and used
+in some projects, the proper patterns on @emph{how} to use it have not solidified.  Feedback on this would be
+most welcome.
 
-@example
-DatabaseType databaseType =
-  new SqliteAndroidDatabaseType();
-SQLiteOpenHelper openHelper =
-  new OrmliteOpenHelper();
-ConnectionSource connectionSource =
-  new AndroidConnectionSource(openHelper);
+After you have read the getting started above ((@pxref{Getting Started}), the following instructions should be
+followed to help with getting @value{package} working under Android OS.
 
-// instantiate the dao
-AccountDaoImpl accountDao = new AccountDaoImpl();
-accountDao.setDatabaseType(databaseType);
-accountDao.setConnectionSource(connectionSource);
-// _must_ make this call after the setters
-accountDao.initialize();
+@enumerate
 
-// ...
-connectionSource.close();
-@end example
+@item You will need to define a database helper class which should probably extend the @code{OrmLiteSqliteOpenHelper}  
+class.  This class creates and upgrades the database when your app is installed and usually creates the DAO classes to
+be used by the rest of the app.  Your helper class must implement the methods
+@code{onCreate(SQLiteDatabase sqliteDatabase, ConnectionSource connectionSource)} and
+@code{onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion)}.
+@code{onCreate} creates the database when your app is first installed while @code{onUpgrade} handles the upgrading
+of the database tables when you upgrade your app to a new version.  There is a sample class in the
+@code{com.j256.ormlite.android.examples} section of the tests in the @code{ormlite-android-sources.jar} source jar file
+and they can also be found here: @uref{http://ormlite.sourceforge.net/android/examples/}. 
 
-Also, there is an @code{AndroidLog} logger which should detect and delegate log calls to the internal Android log
-classes.  It should be detected and automatically used to log messages on Android OS.
+@item The helper can be kept open across all activities in your app with the same Sqlite database connection reused by
+all threads.  If you open multiple connections to the same database, stale data and unexpected results will occur.
+We recommend using the @code{OpenHelperManager} to monitor the usage of the helper -- it will create it on the first
+access, track each time a part of your code is using it, and then it will close once the last section of the code has
+released it.
+
+@item The @code{OpenHelperManager} will by default look for the full class name of your own database helper class
+in the @code{open_helper_classname} value defined in @code{res/values/strings.xml}.  You can instead set a
+@code{SqliteOpenHelperFactory} on the manager directly in a @code{static @{@}} block in your code.   
+
+@item  Once you have defined your database helper and are managing it correctly, you will need to use it in your Activity
+classes.  An easy way to use the @code{OpenHelperManager} is to extend @code{OrmLiteBaseActivity} for each of your
+activity classes -- there is also @code{OrmLiteBaseService} and @code{OrmLiteBaseTabActivity}.  These classes provide a
+@code{getHelper()} method to access the database helper whenever it is needed and will automatically release the helper
+in the @code{onDestroy()} method.
+
+@item If you do not want to extend the base classes then you will need to duplicate their basic functionality of calling
+@code{OpenHelperManager.getHelper(Context context)} at the start of your code, save the helper and use it as much as 
+you want, and then calling @code{OpenHelperManager.release()} when you are done with it.
+
+@end enumerate
+
+Please see the example code posted to the website for more information: @uref{http://ormlite.sourceforge.net/android/examples/}.
+Again, feedback on this is welcome.  Also, there is an @code{AndroidLog} logger which should detect and delegate log calls
+to the internal Android log classes.  It should be detected and automatically used to log messages on Android OS.
 
 @c ----------------------------------------------------------------
 @node Contributions, Index of Concepts, Use With Android, Top
