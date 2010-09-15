@@ -4,27 +4,19 @@
 	- uses queryForFirst to return object
 	- creates account_field-name instead of account_id field in local table 
 
-- think about proxy objects for foreign objects that can throw if they do anything but getId()
-	- expensive indirection?
-	- cglib dependency?
-	- this starts down the road towards caching the DataSource in some proxy object
-		- maybe just heavily document it and say to use the refresh directly if want to
-		- reinventing the hibernate wheel?
-	- or maybe they just auto-refresh when someone accesses a field
-	- maybe it has a null object initially and replaces it with a real object to invoke on 
-	- just extend BaseJdbcDao so it can query the class by itself
-		- maybe ask the class loader if it has a Dao for that class?
-
-- how can we use the query builder with foreign fields
+- how can we use the query builder with foreign fields?
 	- right now we have to know that we are storing the id and we have to pass in the right id type argument
 	- could it look to see if the field was the type of the argument and then call get id on the argument?
 	- acct = new Account(); ... were.eq("account_id", acct);
 	- maybe it is fine the way it is
 	- maybe see if the argument (SelectArg or direct) is the same as the field type in which case we extract the id automagically
+		- if arg.getClass() == field.getClass() then ...
 
 - should we handle all non-number arguments to queries to be ? and force internal SelectArgs?
 	- would be better for escaping reasons
 	- now have field types in the queries so escaping better
+	- increased object overhead?
+	- they can use SelectArgs if they want, right?
 
 - maybe add rawUpdate and rawExecute?
 	- need to document the raw query, iterator, update, execute in .texi
@@ -33,6 +25,7 @@
 
 - for objects that a user does not have control over, how about the ability of defining a Method to construct a particular class
 	- when you create the dao, you have to somehow inject a Method which returns a new object of a certain type
+	- can't do it as part of the annotation, has to be setup with a DatabaseTableConfig I guess
 	- this will allow you to call a constructor with (for example) some null fields to get an instance that can be overridden
 	- should we do the same for setters and getters?  use this method to set the field, use this to get it?
 
@@ -44,7 +37,23 @@
 - use the query builder thing, but for updates and deletes (delete everything where someField = 123).
 	- from kevin
 
+- support for embedded objects
+	- look to see if the unknown class has a DatabaseTable(embedded = true or javax annotation
+	- take all of the fields as if they were fields in this class
+
 -----------------------------------------------------------------------------------------------------------------------------------
+
+- think about proxy objects for foreign objects that can throw if they do anything but getId()
+	- ANSWER: for now we leave it as it is since it works and is simple, ORMLite != ORMMediumOrHeavy
+	- expensive indirection?
+	- cglib dependency?
+	- this starts down the road towards caching the DataSource in some proxy object
+		- maybe just heavily document it and say to use the refresh directly if want to
+		- reinventing the hibernate wheel?
+	- or maybe they just auto-refresh when someone accesses a field
+	- maybe it has a null object initially and replaces it with a real object to invoke on 
+	- just extend BaseJdbcDao so it can query the class by itself
+		- maybe ask the class loader if it has a Dao for that class?
 
 - how about the avg, sum, etc. stuff, how should those work
 	- ANSWER: for now just handle with the direct SQL query support

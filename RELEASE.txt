@@ -5,6 +5,8 @@ To release ORMLite:
 	- ormlite-core
 	- ormlite-jdbc
 	- ormlite-android
+	Run androidTests on the simulator
+	Run the HelloAndroid and ClickCounter
 
 2) Add section to ~/svn/local/ormlite-core/src/main/javadoc/doc-files/changelog.txt.  Commit it.
 
@@ -65,8 +67,12 @@ To release ORMLite:
 12) Create a sf shell.  Explode the javadocs with the newest release:
 
 	create_sf_shell                        (script)
-	cd ormlite_web/htdocs/javadoc
-	rm -rf * ; unzip ~/frs/releases/com/j256/ormlite/X.X/ormlite-X.X-javadoc.jar
+	cd ormlite_web/htdocs/javadoc/ormlite-core
+	rm -rf * ; unzip ~/frs/releases/com/j256/ormlite/ormlite-core/X.X/ormlite-core-X.X-javadoc.jar
+	cd ../ormlite-jdbc
+	rm -rf * ; unzip ~/frs/releases/com/j256/ormlite/ormlite-jdbc/X.X/ormlite-jdbc-X.X-javadoc.jar
+	cd ../ormlite-android
+	rm -rf * ; unzip ~/frs/releases/com/j256/ormlite/ormlite-jdbc/X.X/ormlite-jdbc-X.X-javadoc.jar
 
 13) Possibly trim the older releases in the release directory.  Try to leave last major release and couple minors.
 
