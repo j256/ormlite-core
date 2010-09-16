@@ -130,12 +130,7 @@ public class FieldType {
 			throw new IllegalArgumentException("Generated field " + field.getName()
 					+ " is not an appropriate type in class " + field.getDeclaringClass());
 		}
-		FieldConverter converter = databaseType.getFieldConverter(this);
-		if (converter == null) {
-			this.fieldConverter = dataType;
-		} else {
-			this.fieldConverter = converter;
-		}
+		this.fieldConverter = databaseType.getFieldConverter(dataType);
 		this.format = fieldConfig.getFormat();
 		if (this.isId && foreignTableInfo != null) {
 			throw new IllegalArgumentException("Id field " + field.getName() + " cannot also be a foreign object");

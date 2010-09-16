@@ -8,7 +8,7 @@ import com.j256.ormlite.support.DatabaseResults;
 /**
  * Convert a Java object into the appropriate argument to a SQL statement and then back from the result set to the Java
  * object. This allows databases to configure per-type conversion. This is used by the
- * {@link BaseDatabaseType#getFieldConverter(FieldType)} method to find the converter for a particular database type.
+ * {@link BaseDatabaseType#getFieldConverter(DataType)} method to find the converter for a particular database type.
  * Databases can then override the default data conversion mechanisms as necessary.
  * 
  * @author graywatson

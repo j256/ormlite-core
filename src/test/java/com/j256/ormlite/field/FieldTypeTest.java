@@ -136,24 +136,25 @@ public class FieldTypeTest extends BaseOrmLiteCoreTest {
 		final SqlType sqlType = SqlType.DATE;
 		final String nameArg = "zippy buzz";
 		final String nameResult = "blabber bling";
-		expect(databaseType.getFieldConverter(isA(FieldType.class))).andReturn(new FieldConverter() {
-			public SqlType getSqlType() {
-				return sqlType;
-			}
-			public Object parseDefaultString(FieldType fieldType, String defaultStr) {
-				return defaultStr;
-			}
-			public Object javaToArg(FieldType fieldType, Object javaObject) {
-				return nameArg;
-			}
-			public Object resultToJava(FieldType fieldType, DatabaseResults resultSet, int columnPos)
-					throws SQLException {
-				return nameResult;
-			}
-			public boolean isStreamType() {
-				return false;
-			}
-		});
+		expect(databaseType.getFieldConverter(DataType.lookupClass(nameField.getType()))).andReturn(
+				new FieldConverter() {
+					public SqlType getSqlType() {
+						return sqlType;
+					}
+					public Object parseDefaultString(FieldType fieldType, String defaultStr) {
+						return defaultStr;
+					}
+					public Object javaToArg(FieldType fieldType, Object javaObject) {
+						return nameArg;
+					}
+					public Object resultToJava(FieldType fieldType, DatabaseResults resultSet, int columnPos)
+							throws SQLException {
+						return nameResult;
+					}
+					public boolean isStreamType() {
+						return false;
+					}
+				});
 		expect(databaseType.isEntityNamesMustBeUpCase()).andReturn(false);
 		expect(databaseType.convertColumnName(isA(String.class))).andReturn("name");
 		replay(databaseType);

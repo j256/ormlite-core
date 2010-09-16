@@ -3,6 +3,7 @@ package com.j256.ormlite.db;
 import java.sql.PreparedStatement;
 import java.util.List;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 
@@ -84,10 +85,10 @@ public interface DatabaseType {
 	public boolean isIdSequenceNeeded();
 
 	/**
-	 * Return the {@link FieldConverter} to associate with the {@link FieldType}. This allows the database instance to
-	 * convert a field as necessary before it goes to the database.
+	 * Return the FieldConverter to associate with the DataType. This allows the database instance to convert a field as
+	 * necessary before it goes to the database.
 	 */
-	public FieldConverter getFieldConverter(FieldType fieldType);
+	public FieldConverter getFieldConverter(DataType dataType);
 
 	/**
 	 * Return true if the database supports the width parameter on VARCHAR fields.

@@ -3,6 +3,7 @@ package com.j256.ormlite.db;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
@@ -331,9 +332,9 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		return "-- ";
 	}
 
-	public FieldConverter getFieldConverter(FieldType fieldType) {
-		// default is none
-		return null;
+	public FieldConverter getFieldConverter(DataType dataType) {
+		// default is to use the dataType itself
+		return dataType;
 	}
 
 	public boolean isIdSequenceNeeded() {
