@@ -1172,9 +1172,10 @@ core functionality, JDBC database handlers, and the new Android handler.  With s
 of the databse calls into 3 interfaces: @code{ConnectionSource} (like a @code{DataSource}), @code{DatabaseConnection} (like a
 @code{Connection}) and @code{DatabaseResults} (like a @code{ResultSet}).  Once we had the interfaces in place, we wrote
 delegation classes for JDBC and Android handlers.  This means that as of 3.X we release 3 packages: ormlite-core (for developers),
-ormlite-jdbc (for people connection to JDBC databases), and ormlite-android (for Android users). 
+ormlite-jdbc (for people connection to JDBC databases), and ormlite-android (for Android users).  Both the JDBC and Android
+packages include all of the core code as well.
 
-Along the way a number of specific changes were made to the code:
+Along the way a number of specific changes were made to the methods and classes:
 
 @itemize @bullet
 
