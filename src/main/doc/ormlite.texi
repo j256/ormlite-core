@@ -87,10 +87,10 @@ dependencies.
 
 @cindex databases supported
 @cindex supported databases
-@value{package} supports natively MySQL, Postgres, Microsoft SQL Server, H2, Derby, HSQLDB, and Sqlite and can be
-extended to additional ones relatively easily.  There are also initial implementations for DB2 and Oracle
-although the author needs access to each of these database types to tune the support.  Contact the author if
-your database is not supported.
+@value{package} supports JDBC connections to MySQL, Postgres, Microsoft SQL Server, H2, Derby, HSQLDB, and
+Sqlite and can be extended to additional ones relatively easily.  @value{package} also supports native database
+calls on Android OS.  There are also initial implementations for DB2 and Oracle although the author needs
+access to each of these database types to tune the support.  Contact the author if your database is not supported.
 
 @cindex code examples
 @cindex examples of code
@@ -109,67 +109,36 @@ There is also a HTML version of this documentation -- see
 Gray Watson @uref{http://256.com/gray/}
 
 @menu
-* Getting Started::             How to start to use @value{package}.
-* DAO Usage::                   Using the Database Access Objects.
-* Statement Builder::           How to utilize the custom statement builder.
+* Getting Started::             Getting started with @value{package}.
+* Using::                       More details on how to use the system.
+* Statement Builder::           How to use the custom statement builder.
 * Foreign Objects::             Fields that represent foreign objects.
-* Advanced::                    More advanced concepts with @value{package}.
+* Use With Android::            Using with the Android OS.
+* Advanced::                    Advanced concepts with @value{package}.
 * Contributions::               Contributions from others who helped.
 * Index of Concepts::           Index of concepts in the manual.
 @end menu
 
 @c ----------------------------------------------------------------
-@node Getting Started, Dependencies, Top, Top
+@node Getting Started, Using, Top, Top
 @chapter Getting Started
 
+@c ----------------------------------------------------------------
+@node Using, Class Setup, Getting Started, Top
+@chapter How to Use @value{package}
+
 @menu
-* Dependencies::                External dependencies of @value{package}.
 * Class Setup::                 How to setup your classes to be persisted.
 * Persisted Types::             Data types that can be persisted.
-* DAOs::                        How to configure the Database Access Objects.
-* ConnectionSource::            Setting up connections to databases.
+* DAO Setup::                   How to configure the Database Access Objects.
+* Connection Source::           Setting up connections to databases.
 * Database Type::               Defining your database type.
 * Complete Wiring::             Tying all of the wiring together.
+* DAO Usage::                   Using the Database Access Objects.
 @end menu
 
 @c ----------------------------------------------------------------
-@node Dependencies, Class Setup, Getting Started, Getting Started
-@section External Dependencies
-
-@value{package} does not have any direct dependencies.  It has logging classes that depend on Apache commons-logging
-and Log4j but these classes will @emph{not} be referenced unless they exist in the classpath.
-  
-If you want to get the @value{package} Junit tests to run, there are test dependencies on the following packages:
-
-@table @code
-
-@item javax.persistence
-
-For testing the compatibility annotations @code{@@Column} and the like.
-
-@item org.junit
-
-We use Junit for our unit tasks.
-
-@item org.easymock.easymock
-
-We use, and are in love with, EasyMock.  @uref{http://easymock.org/}.  It allows us to mock out dependencies so we can
-concentrate on testing a particular class instead of the whole package. 
-
-@item com.h2database
-
-As a test database implementation, H2 is very fast and simple to use.  Not as recommended as a production level database.
-
-@item org.apache.log4j
-
-For logging to files using the @code{log4j.properties} config.  In the log4j package, you can exclude the following
-dependencies: @code{com.sun.jmx.jmxri}, @code{com.sun.jdmk.jmxtools}, @code{javax.activation.activation},
-@code{javax.jms.jms}, @code{javax.mail.mail}.
-
-@end table
-
-@c ----------------------------------------------------------------
-@node Class Setup, Local Annotations, Dependencies, Getting Started
+@node Class Setup, Local Annotations, Using, Using
 @section Setting Up Your Classes
 
 To setup your classes to be persisted you need to do the following things:
@@ -183,12 +152,12 @@ To setup your classes to be persisted you need to do the following things:
 @menu
 * Local Annotations::                Adding the annotations to your classes.
 * Javax Persistence Annotations::    Using javax.persistence annotations instead.
-* No Arg Constructor::               No argument constructor is also required.
+* No Arg Constructor::               A no-argument-constructor is also required.
 @end menu
 
 @c ----------------------------------------------------------------
 @node Local Annotations, Javax Persistence Annotations, Class Setup, Class Setup
-@subsection Adding @value{package} Annotations to Your Classes
+@subsection Adding @value{package} Annotations
 
 @cindex annotations
 @cindex java annotations
@@ -370,7 +339,7 @@ a default value is being converted or if you are using the @code{JAVA_DATE_STRIN
 
 @c ----------------------------------------------------------------
 @node Javax Persistence Annotations, No Arg Constructor, Local Annotations, Class Setup
-@subsection Using javax.persistence Annotations Instead
+@subsection Using javax.persistence Annotations
 
 @cindex javax.persistence
 @cindex @@Entity
@@ -469,7 +438,7 @@ Serializable field and the object should implement @code{java.io.Serializable}. 
 
 @c ----------------------------------------------------------------
 @node No Arg Constructor, Persisted Types, Javax Persistence Annotations, Class Setup
-@subsection Adding a No Argument Constructor to Your Class
+@subsection Adding a No-Argument-Constructor
 
 @cindex no argument constructor
 @cindex constructor with no args
@@ -506,7 +475,7 @@ public class Account @{
 @end example
 
 @c ----------------------------------------------------------------
-@node Persisted Types, DAOs, No Arg Constructor, Getting Started
+@node Persisted Types, DAO Setup, No Arg Constructor, Using
 @section Persisted Data Types
 
 @cindex persisted types
@@ -602,8 +571,8 @@ used if an unknown value is found in the database. @xref{Local Annotations}.
 stored in the database.  @xref{Foreign Objects}.
 
 @c ----------------------------------------------------------------
-@node DAOs, ConnectionSource, Persisted Types, Getting Started
-@section Defining the DAOs
+@node DAO Setup, Connection Source, Persisted Types, Using
+@section Setting Up the DAOs
 
 @cindex DAO
 @cindex database access object
@@ -659,8 +628,10 @@ Dao<Order, Integer> orderDao =
 @end example
 
 @c ----------------------------------------------------------------
-@node ConnectionSource, Database Type, DAOs, Getting Started
-@section Connection Sources
+@node Connection Source, Database Type, DAO Setup, Using
+@section JDBC Connection Sources
+
+@emph{NOTE:} Android users should see the Android specific documentation later in the manual (@pxref{Use With Android}).
 
 @cindex data source
 @cindex connection source
@@ -669,7 +640,8 @@ Dao<Order, Integer> orderDao =
 To use the database and the DAO objects, you will need to configure what JDBC calls a @code{DataSource} (see the
 @code{javax.sql.DataSource} class).  The @code{DataSource} is a factory for connections to the physical SQL
 database.  Since @value{package} also supports non-JDBC connections, we use a subset of the @code{DataSource}
-methods in the @code{ConnectionSource} interface.  Here is a code example that creates a simple connection source.
+methods in the @code{ConnectionSource} interface so we can support non-JDBC database handlers.  Here is a code example
+that creates a simple connection source.
 
 @cindex DatabaseTypeUtils
 @cindex connection source, simple
@@ -693,16 +665,16 @@ you set that on the DAOs directly.
 BasicDataSource dataSource = new BasicDataSource();
 dataSource.setUrl("jdbc:h2:mem:account");
 // we wrap it in the DataSourceConnectionSource
+ConnectionSource connectionSource = 
+  new DataSourceConnectionSource(dataSource);
 Dao<Account, String> accountDao =
-  BaseDaoImpl.createDao(databaseType,
-     new DataSourceConnectionSource(dataSource), Account.class);
+  BaseDaoImpl.createDao(databaseType, connectionSource, Account.class);
 @end example
 
 @cindex close data source
 @cindex destroy data source
-When you are done with your @code{ConnectionSource} or @code{DataSource}, you will want to call a close() or destroy()
-method (if applicable) to close any underlying connections.  Something like the following pattern
-is recommended.
+When you are done with your @code{ConnectionSource}, you will want to call a @code{close()} method to close any
+underlying connections.  Something like the following pattern is recommended.
 
 @example
 JdbcConnectionSource connectionSource = null;
@@ -721,14 +693,17 @@ try @{
 @end example
 
 @c ----------------------------------------------------------------
-@node Database Type, Complete Wiring, ConnectionSource, Getting Started
+@node Database Type, Complete Wiring, Connection Source, Using
 @section Database Type
 
 @cindex database type
 @cindex DatabaseTypeUtils
-@value{package} works with a @code{DatabaseType} object which defines all of the per-database information necessary to
+@value{package} uses a @code{DatabaseType} object which defines all of the per-database information necessary to
 support the various features on all of the different database types.  @xref{Database Type}.  To instantiate a
 @code{DatabaseType}, you can either use the @code{DatabaseTypeUtils} class or call your database class directly.
+
+@emph{NOTE:} Android users should use the @code{SqliteAndroidDatabaseType} only as examples in the Android
+specific docs later in the manual (@pxref{Use With Android}).
 
 @example
 // use the DatabaseTypeUtils class with the database URI
@@ -752,7 +727,7 @@ databaseType.loadDriver();
 For more information about the database specific code in the DatabaseType.  @xref{Database Type Details}.
 
 @c ----------------------------------------------------------------
-@node Complete Wiring, DAO Usage, Database Type, Getting Started
+@node Complete Wiring, DAO Usage, Database Type, Using
 @section Tying It All Together
 
 @cindex usage example
@@ -803,19 +778,11 @@ For more examples, see the @code{com.j256.ormlite.examples} package test classes
 @code{src/test/java}.
 
 @c ----------------------------------------------------------------
-@node DAO Usage, Basic DAO Usage, Complete Wiring, Top
-@chapter Using the DAOs
+@node DAO Usage, Statement Builder, Complete Wiring, Using
+@section DAO Usage
 
 @cindex DAO usage
 @cindex using the DAOs
-@menu
-* Basic DAO Usage::             Basic commands provided by the DAOs.
-* DAO Methods::                 What functionality is provided by the DAO.
-@end menu
-
-@c ----------------------------------------------------------------
-@node Basic DAO Usage, DAO Methods, DAO Usage, DAO Usage
-@section Basic DAO Usage
 
 The following database operations are easily accomplished by using the DAO classes:
 
@@ -910,124 +877,7 @@ go all of the way, the garbage collector will close the SQL statement some time 
 @end table
 
 @c ----------------------------------------------------------------
-@node DAO Methods, Statement Builder, Basic DAO Usage, DAO Usage
-@section DAO Methods
-
-@cindex dao methods
-The DAO classes provide the following methods that you can use to store your objects to your database.
-This list may be out of date.  See the @code{Dao} interface class for the latest methods.
-
-@table @code
-
-@cindex query for id
-@item queryForId
-
-Looks up the id in the database and retrieves an object associated with it.
-
-@cindex query for first
-@item queryForFirst
-
-Query for and return the first item in the object table which matches a prepared statement. This can be used to return
-the object that matches a single unique column.  You should use queryForId if you want to query for the id column.
-
-@cindex query for all
-@item queryForAll
-
-Query for all of the items in the object table and return a list of them. For medium sized or large tables,
-this may load a lot of objects into memory so you should consider using the @code{iterator} method instead.
-
-@cindex query for all raw
-@cindex raw select statements
-@cindex executing raw select statements
-@item queryForAllRaw
-
-Query for all of the items in the object table that match the SQL select query argument. This method allows you
-to do special queries that aren't supported otherwise. For medium sized or large tables, this may load a lot of 
-objects into memory so you should consider using the @code{iteratorRaw} method instead.
-
-@cindex query builder
-@cindex statement builder
-@item statementBuilder
-
-Create and return a new @code{StatementBuilder} object which allows you to build a custom query.  @xref{Statement Builder}.
-
-@cindex query for objects
-@item query
-
-Query for the items in the object table which match a prepared statement.  @xref{Statement Builder}.  This returns a
-list of matching objects. For medium sized or large tables, this may load a lot of objects into memory so you
-should consider using the @code{iterator} method instead.  
-
-@cindex creating an object
-@item create
-
-Create a new entry in the database from an object.  Should return 1 indicating 1 row was inserted.
-
-@cindex updating an object
-@item update
-
-Save the fields from an object to the database. If you have made changes to an object, this is how you persist
-those changes to the database. You cannot use this method to update the id field -- see updateId.  This should
-return 1 since 1 row was updated.
-
-@cindex update an object id
-@item updateId
-
-Update an object in the database to change its id to a new id. The data @emph{must} have its current id set and
-the new-id is passed in as an argument.  After the id has been updated in the database, the id field of the data
-object will also be changed.  This should return 1 since 1 row was updated.
-
-@cindex refreshing an object
-@item refresh
-
-Does a query for the object's id and copies in each of the field values from the database to refresh the data
-parameter. Any local object changes to persisted fields will be overwritten.  If the database has been updated
-this brings your local object up-to-date.  This should return 1 since 1 row was retrieved.
-
-@cindex deleting an object
-@item delete
-
-Delete an object from the database.  This should return 1 since 1 row was removed.
-
-@cindex delete multiple objects
-@item delete (collection)
-
-Delete a collection of objects from the database using an IN SQL clause.  This returns the number of rows that
-were deleted.
-
-@cindex delete objects by id
-@item deleteIds
-
-Delete the objects that match the collection of ids from the database using an IN SQL clause.   This returns the
-number of rows that were deleted.  
-
-@cindex iterator
-@item iterator
-
-This method satisfies the @code{Iterable} Java interface for the class and allows you to iterate through the objects
-in the table using SQL.  This method allows you to do something like:
-
-@example
-for (Account account : accountDao) @{ @dots{} @}
-@end example
-
-@emph{WARNING:} See the @code{Dao} class for warnings about using this method.
-
-@item iterator (prepared statement)
-
-Same is the @code{iterator} method but with a prepared statement parameter. @xref{Statement Builder}.
-
-@item iteratorRaw
-
-Same as the prepared statement iterator except it takes a raw SQL select statement argument.  This is the iterator version
-of the @code{queryForAllRaw} method.  Although you should use the @code{iterator} method for most queries, this method
-allows you to do special queries that aren't supported otherwise.  Like the above iterator methods, you must call close
-on the returned RawResults object once you are done with it. 
-
-@end table
-
-@c ----------------------------------------------------------------
-@node Statement Builder, StatementBuilder Basics, DAO Methods, Top
+@node Statement Builder, StatementBuilder Basics, DAO Usage, Top
 @chapter Custom Statement Builder
 
 @cindex query builder
@@ -1068,9 +918,10 @@ our queries.  This should be done @emph{even} if the name of the field and the c
 @cindex where
 @example
 // get our StatementBuilder from the DAO
-StatementBuilder<Account, String> statementBuilder = accountDao.statementBuilder();
+StatementBuilder<Account, String> statementBuilder =
+  accountDao.statementBuilder();
 // set the WHERE to: the 'password' field must be equal to "qwerty"
-statementBuilder().eq(Account.PASSWORD_FIELD_NAME, "qwerty");
+statementBuilder.where().eq(Account.PASSWORD_FIELD_NAME, "qwerty");
 PreparedStmt<Account, String> preparedStmt =
   statementBuilder.prepareStatment();
 // query for all accounts that have that password
@@ -1091,9 +942,10 @@ There are a couple of different ways that you can build queries.  The @code{Stat
 as well for power users.  Simple queries can be done linearly:
 
 @example
-StatementBuilder<Account, String> statementBuilder = accountDao.statementBuilder();
+StatementBuilder<Account, String> statementBuilder =
+  accountDao.statementBuilder();
 // get the WHERE object to build our query
-Where where = statementBuilder();
+Where where = statementBuilder.where();
 // the name field must be equal to "foo"
 where.eq(Account.NAME_FIELD_NAME, "foo");
 // and
@@ -1198,7 +1050,7 @@ accounts = accountDao.query(preparedStmt);
 new object if you want to use a @code{SelectArg} with another column.
 
 @c ----------------------------------------------------------------
-@node Foreign Objects, Advanced, Select Arguments, Top
+@node Foreign Objects, Use With Android, Select Arguments, Top
 @chapter Foreign Object Fields
 
 @cindex foreign objects
@@ -1246,15 +1098,72 @@ if (accountDao.refresh(order.getAccount()) != 1) @{
 @emph{NOTE:} Because we use refresh, foreign objects are therefor @emph{required} to have an id field.
 
 @c ----------------------------------------------------------------
-@node Advanced, Spring Configuration, Foreign Objects, Top
+@node Use With Android, Advanced, Foreign Objects, Top
+@chapter Using With Android
+
+@cindex use with Android OS
+@cindex Android OS support
+@cindex droid support
+
+Because of the lack of support for JDBC in Android OS, @value{package} makes direct calls to the Android database APIs
+to access SQLite databases.  You should make sure that you have downloaded and are depending on the
+@code{ormlite-android.jar} file and @emph{not} the @code{ormlite-jdbc.jar} version.  This part of the code is the
+newest and although tested and used in some projects, the proper patterns on @emph{how} to use it have not solidified.
+Feedback on this would be most welcome.
+
+After you have read the getting started section (@pxref{Getting Started}), the following instructions should be
+followed to help you get @value{package} working under Android OS.
+
+@enumerate
+
+@item You will need to create your own database helper class which should probably extend the @code{OrmLiteSqliteOpenHelper}  
+class.  This class creates and upgrades the database when your app is installed and can also provide the DAO classes
+used by your other classes.  Your helper class must implement the methods
+@code{onCreate(SQLiteDatabase sqliteDatabase, ConnectionSource connectionSource)} and
+@code{onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion)}.
+@code{onCreate} creates the database when your app is first installed while @code{onUpgrade} handles the upgrading
+of the database tables when you upgrade your app to a new version.  There is a sample @code{DatabaseHelper} class in the
+@code{com.j256.ormlite.android.examples} section of the tests in the @code{ormlite-android-sources.jar} source jar file
+and they can also be found here: @uref{http://ormlite.sourceforge.net/android/examples/}. 
+
+@item The helper can be kept open across all activities in your app with the same Sqlite database connection reused by
+all threads.  If you open multiple connections to the same database, stale data and unexpected results may occur.
+We recommend using the @code{OpenHelperManager} to monitor the usage of the helper -- it will create it on the first
+access, track each time a part of your code is using it, and then it will close the last time the helper is released.
+
+@item The @code{OpenHelperManager} will by default look for the full class name of your own database helper class
+in the @code{open_helper_classname} value defined in @code{res/values/strings.xml}.  You can instead set a
+@code{SqliteOpenHelperFactory} on the manager directly in a @code{static @{@}} block in your code.   
+
+@item  Once you have defined your database helper and are managing it correctly, you will need to use it in your @code{Activity}
+classes.  An easy way to use the @code{OpenHelperManager} is to extend @code{OrmLiteBaseActivity} for each of your
+activity classes -- there is also @code{OrmLiteBaseService} and @code{OrmLiteBaseTabActivity}.  These classes provide a
+@code{getHelper()} method to access the database helper whenever it is needed and will automatically release the helper
+in the @code{onDestroy()} method.  There is a sample @code{HelloAndroid} activity class in the the sample section of the tests 
+and on the web site along with a @code{SampleData} example class.
+
+@item If you do not want to extend the base classes then you will need to duplicate their basic functionality of calling
+@code{OpenHelperManager.getHelper(Context context)} at the start of your code, save the helper and use it as much as 
+you want, and then calling @code{OpenHelperManager.release()} when you are done with it.
+
+@item The Android native SQLite database type is @code{SqliteAndroidDatabaseType} and is used by the base classes internally.
+
+@end enumerate
+
+Please see the example code posted to the website for more information: @uref{http://ormlite.sourceforge.net/android/examples/}.
+Again, feedback on this is welcome.
+
+@c ----------------------------------------------------------------
+@node Advanced, Spring Configuration, Use With Android, Top
 @chapter Advanced Concepts
 
 @menu
 * Spring Configuration::       How to wire @value{package} in Spring.
 * Class Configuration::        Alternate ways to configure your classes.
 * Database Type Details::      Description of the database specific code.
+* DAO Methods::                What functionality is provided by the DAO.
 * Logging::                    How to log messages with @value{package}.
-* Use With Android::           Using @value{package} on the Android OS.
+* Dependencies::               External dependencies of @value{package}.
 @end menu
 
 @c ----------------------------------------------------------------
@@ -1408,7 +1317,7 @@ configuring a class using Spring wiring.  Here is the above example in Spring:
 @end example
 
 @c ----------------------------------------------------------------
-@node Database Type Details, Logging, Class Configuration, Advanced
+@node Database Type Details, DAO Methods, Class Configuration, Advanced
 @section Database Specific Code
 
 @cindex database type
@@ -1517,7 +1426,124 @@ See the Javadocs for the class for more information.
 @end table
 
 @c ----------------------------------------------------------------
-@node Logging, Use With Android, Database Type Details, Advanced
+@node DAO Methods, Logging, Database Type Details, Advanced
+@section DAO Methods
+
+@cindex dao methods
+The DAO classes provide the following methods that you can use to store your objects to your database.
+This list may be out of date.  See the @code{Dao} interface class for the latest methods.
+
+@table @code
+
+@cindex query for id
+@item queryForId
+
+Looks up the id in the database and retrieves an object associated with it.
+
+@cindex query for first
+@item queryForFirst
+
+Query for and return the first item in the object table which matches a prepared statement. This can be used to return
+the object that matches a single unique column.  You should use queryForId if you want to query for the id column.
+
+@cindex query for all
+@item queryForAll
+
+Query for all of the items in the object table and return a list of them. For medium sized or large tables,
+this may load a lot of objects into memory so you should consider using the @code{iterator} method instead.
+
+@cindex query for all raw
+@cindex raw select statements
+@cindex executing raw select statements
+@item queryForAllRaw
+
+Query for all of the items in the object table that match the SQL select query argument. This method allows you
+to do special queries that aren't supported otherwise. For medium sized or large tables, this may load a lot of 
+objects into memory so you should consider using the @code{iteratorRaw} method instead.
+
+@cindex query builder
+@cindex statement builder
+@item statementBuilder
+
+Create and return a new @code{StatementBuilder} object which allows you to build a custom query.  @xref{Statement Builder}.
+
+@cindex query for objects
+@item query
+
+Query for the items in the object table which match a prepared statement.  @xref{Statement Builder}.  This returns a
+list of matching objects. For medium sized or large tables, this may load a lot of objects into memory so you
+should consider using the @code{iterator} method instead.  
+
+@cindex creating an object
+@item create
+
+Create a new entry in the database from an object.  Should return 1 indicating 1 row was inserted.
+
+@cindex updating an object
+@item update
+
+Save the fields from an object to the database. If you have made changes to an object, this is how you persist
+those changes to the database. You cannot use this method to update the id field -- see updateId.  This should
+return 1 since 1 row was updated.
+
+@cindex update an object id
+@item updateId
+
+Update an object in the database to change its id to a new id. The data @emph{must} have its current id set and
+the new-id is passed in as an argument.  After the id has been updated in the database, the id field of the data
+object will also be changed.  This should return 1 since 1 row was updated.
+
+@cindex refreshing an object
+@item refresh
+
+Does a query for the object's id and copies in each of the field values from the database to refresh the data
+parameter. Any local object changes to persisted fields will be overwritten.  If the database has been updated
+this brings your local object up-to-date.  This should return 1 since 1 row was retrieved.
+
+@cindex deleting an object
+@item delete
+
+Delete an object from the database.  This should return 1 since 1 row was removed.
+
+@cindex delete multiple objects
+@item delete (collection)
+
+Delete a collection of objects from the database using an IN SQL clause.  This returns the number of rows that
+were deleted.
+
+@cindex delete objects by id
+@item deleteIds
+
+Delete the objects that match the collection of ids from the database using an IN SQL clause.   This returns the
+number of rows that were deleted.  
+
+@cindex iterator
+@item iterator
+
+This method satisfies the @code{Iterable} Java interface for the class and allows you to iterate through the objects
+in the table using SQL.  This method allows you to do something like:
+
+@example
+for (Account account : accountDao) @{ @dots{} @}
+@end example
+
+@emph{WARNING:} See the @code{Dao} class for warnings about using this method.
+
+@item iterator (prepared statement)
+
+Same is the @code{iterator} method but with a prepared statement parameter. @xref{Statement Builder}.
+
+@item iteratorRaw
+
+Same as the prepared statement iterator except it takes a raw SQL select statement argument.  This is the iterator version
+of the @code{queryForAllRaw} method.  Although you should use the @code{iterator} method for most queries, this method
+allows you to do special queries that aren't supported otherwise.  Like the above iterator methods, you must call close
+on the returned RawResults object once you are done with it. 
+
+@end table
+
+@c ----------------------------------------------------------------
+@node Logging, Dependencies, DAO Methods, Advanced
 @section @value{package} Logging
 
 @cindex logging information
@@ -1565,62 +1591,43 @@ various SQL calls.  This may expose passwords or other sensitive information in 
 only be used during debugging and should not be the default.
 
 @c ----------------------------------------------------------------
-@node Use With Android, Contributions, Logging, Advanced
-@section Using With Android
+@node Dependencies, Contributions, Logging, Advanced
+@section External Dependencies
 
-@cindex use with Android OS
-@cindex Android OS support
-@cindex droid support
+@value{package} does not have any direct dependencies.  It has logging classes that depend on Apache commons-logging
+and Log4j but these classes will @emph{not} be referenced unless they exist in the classpath.
+  
+If you want to get the @value{package} Junit tests to run, there are test dependencies on the following packages:
 
-Because of the lack of support for JDBC in Android OS, @value{package} makes direct calls to the Android API.
-You should make sure that you have downloaded and are depending on the @code{ormlite-android.jar} file and
-@emph{not} the @code{ormlite-jdbc.jar} version.  This part of the code is the newest and although tested and used
-in some projects, the proper patterns on @emph{how} to use it have not solidified.  Feedback on this would be
-most welcome.
+@table @code
 
-After you have read the getting started above ((@pxref{Getting Started}), the following instructions should be
-followed to help with getting @value{package} working under Android OS.
+@item javax.persistence
 
-@enumerate
+For testing the compatibility annotations @code{@@Column} and the like.
 
-@item You will need to define a database helper class which should probably extend the @code{OrmLiteSqliteOpenHelper}  
-class.  This class creates and upgrades the database when your app is installed and usually creates the DAO classes to
-be used by the rest of the app.  Your helper class must implement the methods
-@code{onCreate(SQLiteDatabase sqliteDatabase, ConnectionSource connectionSource)} and
-@code{onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion)}.
-@code{onCreate} creates the database when your app is first installed while @code{onUpgrade} handles the upgrading
-of the database tables when you upgrade your app to a new version.  There is a sample class in the
-@code{com.j256.ormlite.android.examples} section of the tests in the @code{ormlite-android-sources.jar} source jar file
-and they can also be found here: @uref{http://ormlite.sourceforge.net/android/examples/}. 
+@item org.junit
 
-@item The helper can be kept open across all activities in your app with the same Sqlite database connection reused by
-all threads.  If you open multiple connections to the same database, stale data and unexpected results will occur.
-We recommend using the @code{OpenHelperManager} to monitor the usage of the helper -- it will create it on the first
-access, track each time a part of your code is using it, and then it will close once the last section of the code has
-released it.
+We use Junit for our unit tasks.
 
-@item The @code{OpenHelperManager} will by default look for the full class name of your own database helper class
-in the @code{open_helper_classname} value defined in @code{res/values/strings.xml}.  You can instead set a
-@code{SqliteOpenHelperFactory} on the manager directly in a @code{static @{@}} block in your code.   
+@item org.easymock.easymock
 
-@item  Once you have defined your database helper and are managing it correctly, you will need to use it in your Activity
-classes.  An easy way to use the @code{OpenHelperManager} is to extend @code{OrmLiteBaseActivity} for each of your
-activity classes -- there is also @code{OrmLiteBaseService} and @code{OrmLiteBaseTabActivity}.  These classes provide a
-@code{getHelper()} method to access the database helper whenever it is needed and will automatically release the helper
-in the @code{onDestroy()} method.
+We use, and are in love with, EasyMock.  @uref{http://easymock.org/}.  It allows us to mock out dependencies so we can
+concentrate on testing a particular class instead of the whole package. 
 
-@item If you do not want to extend the base classes then you will need to duplicate their basic functionality of calling
-@code{OpenHelperManager.getHelper(Context context)} at the start of your code, save the helper and use it as much as 
-you want, and then calling @code{OpenHelperManager.release()} when you are done with it.
+@item com.h2database
 
-@end enumerate
+As a test database implementation, H2 is very fast and simple to use.  Not as recommended as a production level database.
 
-Please see the example code posted to the website for more information: @uref{http://ormlite.sourceforge.net/android/examples/}.
-Again, feedback on this is welcome.  Also, there is an @code{AndroidLog} logger which should detect and delegate log calls
-to the internal Android log classes.  It should be detected and automatically used to log messages on Android OS.
+@item org.apache.log4j
+
+For logging to files using the @code{log4j.properties} config.  In the log4j package, you can exclude the following
+dependencies: @code{com.sun.jmx.jmxri}, @code{com.sun.jdmk.jmxtools}, @code{javax.activation.activation},
+@code{javax.jms.jms}, @code{javax.mail.mail}.
+
+@end table
 
 @c ----------------------------------------------------------------
-@node Contributions, Index of Concepts, Use With Android, Top
+@node Contributions, Index of Concepts, Dependencies, Top
 @chapter Contributions
 
 There are a couple of people that I'd like to thank who helped with the project.
