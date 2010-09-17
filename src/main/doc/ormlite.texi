@@ -114,6 +114,7 @@ Gray Watson @uref{http://256.com/gray/}
 * Statement Builder::           How to use the custom statement builder.
 * Foreign Objects::             Fields that represent foreign objects.
 * Use With Android::            Using with the Android OS.
+* How to Upgrade::              Upgrading from a previous version.
 * Advanced::                    Advanced concepts with @value{package}.
 * Contributions::               Contributions from others who helped.
 * Index of Concepts::           Index of concepts in the manual.
@@ -1098,7 +1099,7 @@ if (accountDao.refresh(order.getAccount()) != 1) @{
 @emph{NOTE:} Because we use refresh, foreign objects are therefor @emph{required} to have an id field.
 
 @c ----------------------------------------------------------------
-@node Use With Android, Advanced, Foreign Objects, Top
+@node Use With Android, How to Upgrade, Foreign Objects, Top
 @chapter Using With Android
 
 @cindex use with Android OS
@@ -1154,7 +1155,61 @@ Please see the example code posted to the website for more information: @uref{ht
 Again, feedback on this is welcome.
 
 @c ----------------------------------------------------------------
-@node Advanced, Spring Configuration, Use With Android, Top
+@node How to Upgrade, 2.X to 3.2, Use With Android, Top
+@chapter Upgrading from Old Versions
+
+@menu
+* 2.X to 3.2::                 Upgrading from version 2.X to 3.2
+* 2.3 to 2.4::                 Upgrading from version 2.3 to 2.4
+@end menu
+
+@c ----------------------------------------------------------------
+@node 2.X to 3.2, 2.3 to 2.4, How to Upgrade, How to Upgrade
+@section Upgrading from Version 2.X to 3.2
+
+The 3.2 release involved a @emph{very} large code reorganization and migration.  The project was basically split into 3 pieces:
+core functionality, JDBC database handlers, and the new Android handler.  With significant help from Kevin G, we abstracted all
+of the databse calls into 3 interfaces: @code{ConnectionSource} (like a @code{DataSource}), @code{DatabaseConnection} (like a
+@code{Connection}) and @code{DatabaseResults} (like a @code{ResultSet}).  Once we had the interfaces in place, we wrote
+delegation classes for JDBC and Android handlers.  This means that as of 3.X we release 3 packages: ormlite-core (for developers),
+ormlite-jdbc (for people connection to JDBC databases), and ormlite-android (for Android users). 
+
+Along the way a number of specific changes were made to the code:
+
+@itemize @bullet
+
+@item Since we split off the JDBC, we renamed the @code{BaseJdbcDao} to be @code{BaseDaoImpl} in the core package. You will
+need to adjust any DAOs that you have.
+
+@item We are in the process of allowing custom delete and update methods so we took the major upgrade opportunity to
+rename the @code{QueryBuilder} object to be @code{StatementBuilder}.
+
+@item Because of the above, we also renamed @code{Dao.queryBuilder()} method to be @code{statementBuilder()}.
+
+@item Also renamed the @code{PreparedQuery} object to be @code{PreparedStmt}.
+
+@item One of the big changes for those of you using an external JDBC @code{DataSource} is that you no longer set it on the
+DAO directly.  You need to wrap your @code{DataSource} in a @code{DataSourceDatabaseConnection} wrapper class which gets
+set on the DAO instead.
+
+@end itemize
+
+There were no on-disk changes unless you somehow managed to get ORMLite working previously on Android.  Since we were using
+JDBC before to do the data marshalling and now are doing it by hand, some of the data representations may have changed.  Sorry for
+the lack of detail here.
+
+@c ----------------------------------------------------------------
+@node 2.3 to 2.4, Advanced, 2.X to 3.2, How to Upgrade
+@section Upgrading from Version 2.3 to 2.4
+
+A bug was discovered with how we were handling Derby and Hsqldb.  Both of these databses seem to be capitalizing table and field
+names in certain situations meaning that customized queries of @value{package} generated tables were difficult.  In version 2.4,
+all tables and field names are capitalized in the SQL generated for Derby and Hsqldb databases. This means that if you have data
+in these databases from a pre 2.4 version, the 2.4 version will not be able to find the tables and fields without renaming to be
+uppercase.
+
+@c ----------------------------------------------------------------
+@node Advanced, Spring Configuration, 2.3 to 2.4, Top
 @chapter Advanced Concepts
 
 @menu
