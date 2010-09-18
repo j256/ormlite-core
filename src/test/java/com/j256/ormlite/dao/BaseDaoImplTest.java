@@ -10,7 +10,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +46,15 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		finishDao();
 	}
 
+	@Test(expected = SQLException.class)
+	public void testCreateThrow() throws Exception {
+		startDao(true);
+		expect(databaseConnection.insert(isA(String.class), isA(Object[].class), isA(SqlType[].class))).andThrow(
+				new SQLException("expected"));
+		replay(databaseConnection);
+		baseFooDao.create(new BaseFoo());
+	}
+
 	@Test
 	public void testCreateNull() throws Exception {
 		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
@@ -60,6 +71,15 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		replay(databaseConnection);
 		assertEquals(linesAffected, baseFooDao.update(new BaseFoo()));
 		finishDao();
+	}
+
+	@Test(expected = SQLException.class)
+	public void testUpdateThrow() throws Exception {
+		startDao(true);
+		expect(databaseConnection.update(isA(String.class), isA(Object[].class), isA(SqlType[].class))).andThrow(
+				new SQLException("expected"));
+		replay(databaseConnection);
+		baseFooDao.update(new BaseFoo());
 	}
 
 	@Test
@@ -87,6 +107,15 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		assertEquals(0, dao.updateId(null, null));
 	}
 
+	@Test(expected = SQLException.class)
+	public void testUpdateIdThrow() throws Exception {
+		startDao(true);
+		expect(databaseConnection.update(isA(String.class), isA(Object[].class), isA(SqlType[].class))).andThrow(
+				new SQLException("expected"));
+		replay(databaseConnection);
+		baseFooDao.updateId(new BaseFoo(), "new");
+	}
+
 	@Test
 	public void testDelete() throws Exception {
 		startDao(true);
@@ -96,6 +125,15 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		replay(databaseConnection);
 		assertEquals(linesAffected, baseFooDao.delete(new BaseFoo()));
 		finishDao();
+	}
+
+	@Test(expected = SQLException.class)
+	public void testDeleteThrow() throws Exception {
+		startDao(true);
+		expect(databaseConnection.delete(isA(String.class), isA(Object[].class), isA(SqlType[].class))).andThrow(
+				new SQLException("expected"));
+		replay(databaseConnection);
+		baseFooDao.delete(new BaseFoo());
 	}
 
 	@Test
@@ -127,6 +165,52 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		assertEquals(0, dao.delete(fooList));
 	}
 
+	@Test(expected = SQLException.class)
+	public void testDeleteCollectionThrow() throws Exception {
+		startDao(true);
+		expect(databaseConnection.delete(isA(String.class), isA(Object[].class), isA(SqlType[].class))).andThrow(
+				new SQLException("expected"));
+		replay(databaseConnection);
+		List<BaseFoo> fooList = new ArrayList<BaseFoo>();
+		BaseFoo foo = new BaseFoo();
+		fooList.add(foo);
+		baseFooDao.delete(fooList);
+	}
+
+	@Test
+	public void testDeleteIds() throws Exception {
+		startDao(true);
+		int linesAffected = 1;
+		expect(databaseConnection.delete(isA(String.class), isA(Object[].class), isA(SqlType[].class))).andReturn(
+				linesAffected);
+		replay(databaseConnection);
+		List<String> idList = new ArrayList<String>();
+		BaseFoo foo = new BaseFoo();
+		idList.add(foo.id);
+		assertEquals(linesAffected, baseFooDao.deleteIds(idList));
+		finishDao();
+	}
+
+	@Test(expected = SQLException.class)
+	public void testDeleteIdsThrow() throws Exception {
+		startDao(true);
+		expect(databaseConnection.delete(isA(String.class), isA(Object[].class), isA(SqlType[].class))).andThrow(
+				new SQLException("expected"));
+		replay(databaseConnection);
+		List<String> idList = new ArrayList<String>();
+		BaseFoo foo = new BaseFoo();
+		idList.add(foo.id);
+		baseFooDao.deleteIds(idList);
+	}
+
+	@Test
+	public void testDeleteIdsEmpty() throws Exception {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		};
+		List<String> fooList = new ArrayList<String>();
+		assertEquals(0, dao.deleteIds(fooList));
+	}
+
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testRefresh() throws Exception {
@@ -139,6 +223,17 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		replay(databaseConnection);
 		assertEquals(linesAffected, baseFooDao.refresh(foo));
 		finishDao();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test(expected = SQLException.class)
+	public void testRefreshThrow() throws Exception {
+		startDao(false);
+		expect(
+				databaseConnection.queryForOne(isA(String.class), isA(Object[].class), isA(SqlType[].class),
+						isA(GenericRowMapper.class))).andThrow(new SQLException("expected"));
+		replay(databaseConnection);
+		baseFooDao.refresh(new BaseFoo());
 	}
 
 	@Test
@@ -161,13 +256,6 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		};
 	}
 
-	@Test
-	public void testAnotherConstructor3() throws Exception {
-		DatabaseTableConfig<BaseFoo> tableConfig = DatabaseTableConfig.fromClass(databaseType, BaseFoo.class);
-		new BaseDaoImpl<BaseFoo, String>(databaseType, tableConfig) {
-		};
-	}
-
 	@Test(expected = IllegalStateException.class)
 	public void testNoDatabaseType() throws Exception {
 		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
@@ -186,6 +274,17 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		replay(databaseConnection);
 		assertSame(foo, baseFooDao.queryForId("foo"));
 		finishDao();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test(expected = SQLException.class)
+	public void testQueryForIdThrow() throws Exception {
+		startDao(false);
+		expect(
+				databaseConnection.queryForOne(isA(String.class), isA(Object[].class), isA(SqlType[].class),
+						isA(GenericRowMapper.class))).andThrow(new SQLException("expectd"));
+		replay(databaseConnection);
+		baseFooDao.queryForId("foo");
 	}
 
 	@Test
@@ -234,6 +333,31 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		finishDao();
 		verify(stmt);
 		verify(results);
+	}
+
+	@Test(expected = SQLException.class)
+	public void testQueryForFirstThrow() throws Exception {
+		startDao(false);
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT * FROM ");
+		databaseType.appendEscapedEntityName(sb, "basefoo");
+		sb.append(' ');
+		CompiledStatement stmt = createMock(CompiledStatement.class);
+		expect(databaseConnection.compileStatement(sb.toString())).andReturn(stmt);
+		expect(stmt.executeQuery()).andThrow(new SQLException("expected"));
+		stmt.close();
+		replay(databaseConnection);
+		replay(stmt);
+		StatementBuilder<BaseFoo, String> builder = baseFooDao.statementBuilder();
+		PreparedStmt<BaseFoo> preparedStmt = builder.prepareStatement();
+		baseFooDao.queryForFirst(preparedStmt);
+	}
+
+	@SuppressWarnings("deprecation")
+	@Test
+	public void testQueryBuilder() throws Exception {
+		startDao(false);
+		assertNotNull(baseFooDao.queryBuilder());
 	}
 
 	@Test
@@ -294,9 +418,145 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		verify(results);
 	}
 
+	@Test
+	public void testObjectToString() throws Exception {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		};
+		dao.initialize();
+		BaseFoo foo = new BaseFoo();
+		String idStr = "qdqd";
+		foo.id = idStr;
+		String objStr = dao.objectToString(foo);
+		assertTrue(objStr.contains("id=" + idStr));
+	}
+
+	@Test
+	public void testObjectEquals() throws Exception {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		};
+		dao.initialize();
+		BaseFoo foo = new BaseFoo();
+		foo.id = "qdqd";
+		foo.val = 123123;
+		BaseFoo bar = new BaseFoo();
+		assertTrue(dao.objectsEqual(foo, foo));
+		assertFalse(dao.objectsEqual(foo, bar));
+		assertFalse(dao.objectsEqual(bar, foo));
+		assertTrue(dao.objectsEqual(bar, bar));
+		bar.id = "wqdpq";
+		bar.val = foo.val;
+		assertFalse(dao.objectsEqual(bar, foo));
+	}
+
+	@Test
+	public void testIterator() throws Exception {
+		startDao(false);
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT * FROM ");
+		databaseType.appendEscapedEntityName(sb, "basefoo");
+		sb.append(' ');
+		CompiledStatement stmt = createMock(CompiledStatement.class);
+		DatabaseResults results = createMock(DatabaseResults.class);
+		expect(results.next()).andReturn(false);
+		expect(stmt.executeQuery()).andReturn(results);
+		stmt.close();
+		expect(databaseConnection.compileStatement(sb.toString())).andReturn(stmt);
+		replay(databaseConnection);
+		replay(stmt);
+		CloseableIterator<BaseFoo> iterator = baseFooDao.iterator();
+		assertFalse(iterator.hasNext());
+		finishDao();
+		verify(stmt);
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void testIteratorThrow() throws Exception {
+		startDao(false);
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT * FROM ");
+		databaseType.appendEscapedEntityName(sb, "basefoo");
+		sb.append(' ');
+		CompiledStatement stmt = createMock(CompiledStatement.class);
+		expect(stmt.executeQuery()).andThrow(new SQLException("expected"));
+		stmt.close();
+		expect(databaseConnection.compileStatement(sb.toString())).andReturn(stmt);
+		replay(databaseConnection);
+		replay(stmt);
+		baseFooDao.iterator();
+	}
+
+	@Test
+	public void testIteratorPrepared() throws Exception {
+		startDao(false);
+		@SuppressWarnings("unchecked")
+		PreparedStmt<BaseFoo> stmt = createMock(PreparedStmt.class);
+		CompiledStatement compiled = createMock(CompiledStatement.class);
+		expect(stmt.compile(databaseConnection)).andReturn(compiled);
+		expect(stmt.getStatement()).andReturn("select * from foo");
+		DatabaseResults results = createMock(DatabaseResults.class);
+		expect(results.next()).andReturn(false);
+		expect(compiled.executeQuery()).andReturn(results);
+		compiled.close();
+		replay(databaseConnection);
+		replay(stmt);
+		replay(compiled);
+		replay(results);
+		CloseableIterator<BaseFoo> iterator = baseFooDao.iterator(stmt);
+		assertFalse(iterator.hasNext());
+		finishDao();
+		verify(stmt);
+		verify(compiled);
+		verify(results);
+	}
+
+	@Test(expected = SQLException.class)
+	public void testIteratorPreparedThrow() throws Exception {
+		startDao(false);
+		@SuppressWarnings("unchecked")
+		PreparedStmt<BaseFoo> stmt = createMock(PreparedStmt.class);
+		expect(stmt.compile(databaseConnection)).andThrow(new SQLException("expected"));
+		expect(stmt.getStatement()).andReturn("select * from foo");
+		replay(databaseConnection);
+		replay(stmt);
+		baseFooDao.iterator(stmt);
+	}
+
+	@Test
+	public void testTableConfig() throws Exception {
+		DatabaseTableConfig<BaseFoo> config = DatabaseTableConfig.fromClass(databaseType, BaseFoo.class);
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, config) {
+		};
+		assertSame(config, dao.getTableConfig());
+	}
+
+	@Test
+	public void testSetters() throws Exception {
+		DatabaseTableConfig<BaseFoo> config = DatabaseTableConfig.fromClass(databaseType, BaseFoo.class);
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
+		};
+		dao.setTableConfig(config);
+		dao.setDatabaseType(databaseType);
+		assertSame(config, dao.getTableConfig());
+	}
+
+	@Test
+	public void testCreateDao() throws Exception {
+		ConnectionSource connectionSource = createMock(ConnectionSource.class);
+		Dao<BaseFoo, String> dao = BaseDaoImpl.createDao(databaseType, connectionSource, BaseFoo.class);
+		DatabaseConnection databaseConnection = createMock(DatabaseConnection.class);
+		expect(connectionSource.getReadWriteConnection()).andReturn(databaseConnection);
+		connectionSource.releaseConnection(databaseConnection);
+		expect(databaseConnection.insert(isA(String.class), isA(Object[].class), isA(SqlType[].class))).andReturn(1);
+		replay(connectionSource);
+		replay(databaseConnection);
+		assertEquals(1, dao.create(new BaseFoo()));
+		verify(connectionSource);
+	}
+
 	private void startDao(boolean readWrite) throws Exception {
 		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
 		};
+		assertEquals(BaseFoo.class, dao.getDataClass());
 
 		connectionSource = createMock(ConnectionSource.class);
 		databaseConnection = createMock(DatabaseConnection.class);
