@@ -30,6 +30,9 @@ To release ORMLite:
 	mvn -P st release:prepare              (need to type in GPG secret)
 	mvn -P st release:perform              (need to type in GPG secret)
 	
+	cd target/checkout   (for -core only)
+	mvn install
+	
 	same for -jdbc and -android
 	cd ~/svn/local/ormlite-jdbc
 	cd ~/svn/local/ormlite-android
