@@ -165,6 +165,18 @@ public class DatabaseFieldConfigTest {
 		assertEquals(fields[0].getName(), config.getFieldName());
 	}
 
+	@Test
+	public void testJavaxUnique() throws Exception {
+		DatabaseType databaseType = new StubDatabaseType();
+		Field[] fields = JavaxUnique.class.getDeclaredFields();
+		assertTrue(fields.length >= 1);
+
+		DatabaseFieldConfig config = DatabaseFieldConfig.fromField(databaseType, fields[0]);
+		assertNotNull(config);
+		assertTrue(config.isUnique());
+		assertEquals(fields[0].getName(), config.getFieldName());
+	}
+
 	@Test(expected = IllegalArgumentException.class)
 	public void testUnknownEnumVal() throws Exception {
 		DatabaseType databaseType = new StubDatabaseType();
@@ -221,6 +233,11 @@ public class DatabaseFieldConfigTest {
 		public void setId(String id) {
 			this.id = id;
 		}
+	}
+
+	protected class JavaxUnique {
+		@Column(unique = true)
+		String id;
 	}
 
 	protected class BadUnknownVal {

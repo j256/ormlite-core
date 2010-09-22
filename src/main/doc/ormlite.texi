@@ -489,6 +489,8 @@ the annotation on all of your fields but turn off the writing of some of them to
 This allows you to specify format information of a particular field.  Right now only the Date fields support it when
 a default value is being converted or if you are using the @code{JAVA_DATE_STRING} type.
 
+@cindex unique constraint
+@cindex constraint, unique
 @item unique
 
 Adds a constraint to the field that it has to be unique across all rows in the table.  This allows you to have a
@@ -572,6 +574,13 @@ certain database types.  Default for those that do is 255.   Same as the @code{w
 
 Set to true to have a field not be able to be inserted into the database with a null value.  Same as the
 @code{canBeNull} field in the @code{@@DatabaseField} annotation.
+
+@cindex unique constraint
+@cindex constraint, unique
+@item unique
+
+Adds a constraint to the field that it has to be unique across all rows in the table.  Same as the
+@code{unique} field in the @code{@@DatabaseField} annotation.
 
 @end table
 

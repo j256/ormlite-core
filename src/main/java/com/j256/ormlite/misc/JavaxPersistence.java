@@ -66,6 +66,8 @@ public class JavaxPersistence {
 				config.setWidth((Integer) method.invoke(columnAnnotation));
 				method = columnAnnotation.getClass().getMethod("nullable");
 				config.setCanBeNull((Boolean) method.invoke(columnAnnotation));
+				method = columnAnnotation.getClass().getMethod("unique");
+				config.setUnique((Boolean) method.invoke(columnAnnotation));
 			} catch (Exception e) {
 				throw SqlExceptionUtil.create("Problem accessing fields from the Column annotation for field " + field,
 						e);
