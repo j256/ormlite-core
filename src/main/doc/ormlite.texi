@@ -208,6 +208,17 @@ public class AccountDaoImpl extends BaseDaoImpl<Account,String>
 @}
 @end example
 
+You are not @emph{required} to create a DAO class for every one of your persisted objects.  You can use the
+@code{createDao} static method on the @code{BaseDaoImpl} class to create a DAO class without having to define
+one.  For example:
+
+@example
+Dao<Account, String> accountDao =
+  BaseDaoImpl.createDao(databaseType, connectionSource, Account.class);
+Dao<Order, Integer> orderDao =
+  BaseDaoImpl.createDao(databaseType, connectionSource, Order.class);
+@end example
+
 The client code in the next section demonstrates how to create a DatabaseType to pass into the constructor for the implementation class. More information
 about setting up the DOAs is available later in the manual. @xref{DAO Setup}.
 
@@ -781,16 +792,9 @@ implementations if there are specific operations that are needed and not provide
 More on how to use these DAOs later. @xref{DAO Usage}.
 
 @cindex createDao method
-You are not @emph{required} to create a DAO class for every one of your persisted objects.  You can use the
-@code{createDao} static method on the @code{BaseDaoImpl} class to create a DAO class without having to define
-one.  For example:
-
-@example
-Dao<Account, String> accountDao =
-  BaseDaoImpl.createDao(databaseType, connectionSource, Account.class);
-Dao<Order, Integer> orderDao =
-  BaseDaoImpl.createDao(databaseType, connectionSource, Order.class);
-@end example
+As mentioned above (@pxref{Starting DAO}), you are not @emph{required} to create a DAO class for every one of your persisted
+objects. You can use the @code{createDao} static method on the @code{BaseDaoImpl} class to create a DAO class without having
+to define one.
 
 @c ----------------------------------------------------------------
 @node Connection Source, Database Type, DAO Setup, Using
