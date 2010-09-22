@@ -233,7 +233,7 @@ public class DatabaseFieldConfigTest {
 		FIRST,
 		SECOND, ;
 	}
-	
+
 	private class StubDatabaseType extends BaseDatabaseType {
 		public String getDriverClassName() {
 			return "foo.bar.baz";

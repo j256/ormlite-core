@@ -13,7 +13,7 @@ public abstract class BaseOrmLiteCoreTest {
 
 	protected final DatabaseType databaseType = new StubDatabaseType();
 	protected TableInfo<BaseFoo> baseFooTableInfo;
-	
+
 	{
 		try {
 			baseFooTableInfo = new TableInfo<BaseFoo>(databaseType, BaseFoo.class);

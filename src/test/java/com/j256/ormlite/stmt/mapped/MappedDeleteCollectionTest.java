@@ -15,7 +15,7 @@ import com.j256.ormlite.table.TableInfo;
 public class MappedDeleteCollectionTest {
 
 	private final DatabaseType databaseType = new StubDatabaseType();
-	
+
 	@Test(expected = IllegalArgumentException.class)
 	public void testNoIdBuildDelete() throws Exception {
 		DatabaseConnection databaseConnection = createMock(DatabaseConnection.class);
@@ -27,7 +27,7 @@ public class MappedDeleteCollectionTest {
 		@DatabaseField
 		String stuff;
 	}
-	
+
 	private class StubDatabaseType extends BaseDatabaseType {
 		public String getDriverClassName() {
 			return "foo.bar.baz";
