@@ -47,6 +47,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	private DatabaseTableConfig<T> tableConfig;
 	private TableInfo<T> tableInfo;
 	private StatementExecutor<T, ID> statementExecutor;
+	private boolean initialized = false;
 
 	/**
 	 * Construct our base Jdbc class. The {@link DatabaseType} must be set with the {@link #setDatabaseType} method
@@ -110,8 +111,15 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	 * Ormlite user.
 	 */
 	public void initialize() throws SQLException {
+		if (initialized) {
+			// just skip it if already initialized
+			return;
+		}
 		if (databaseType == null) {
 			throw new IllegalStateException("databaseType was never set on " + getClass().getSimpleName());
+		}
+		if (connectionSource == null) {
+			throw new IllegalStateException("connectionSource was never set on " + getClass().getSimpleName());
 		}
 
 		if (tableConfig == null) {
@@ -119,9 +127,11 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 		this.tableInfo = new TableInfo<T>(databaseType, tableConfig);
 		this.statementExecutor = new StatementExecutor<T, ID>(databaseType, tableInfo);
+		this.initialized = true;
 	}
 
 	public T queryForId(ID id) throws SQLException {
+		checkForInitialized();
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		try {
 			return statementExecutor.queryForId(connection, id);
@@ -131,6 +141,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	public T queryForFirst(PreparedStmt<T> preparedStmt) throws SQLException {
+		checkForInitialized();
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		try {
 			return statementExecutor.queryForFirst(connection, preparedStmt);
@@ -140,10 +151,12 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	public List<T> queryForAll() throws SQLException {
+		checkForInitialized();
 		return statementExecutor.queryForAll(connectionSource);
 	}
 
 	public StatementBuilder<T, ID> statementBuilder() {
+		checkForInitialized();
 		return new StatementBuilder<T, ID>(databaseType, tableInfo);
 	}
 
@@ -152,18 +165,22 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	 */
 	@Deprecated
 	public StatementBuilder<T, ID> queryBuilder() {
+		checkForInitialized();
 		return statementBuilder();
 	}
 
 	public List<T> query(PreparedStmt<T> preparedStmt) throws SQLException {
+		checkForInitialized();
 		return statementExecutor.query(connectionSource, preparedStmt);
 	}
 
 	public RawResults queryForAllRaw(String queryString) throws SQLException {
+		checkForInitialized();
 		return statementExecutor.queryRaw(connectionSource, queryString);
 	}
 
 	public int create(T data) throws SQLException {
+		checkForInitialized();
 		// ignore creating a null object
 		if (data == null) {
 			return 0;
@@ -178,6 +195,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	public int update(T data) throws SQLException {
+		checkForInitialized();
 		// ignore updating a null object
 		if (data == null) {
 			return 0;
@@ -192,6 +210,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	public int updateId(T data, ID newId) throws SQLException {
+		checkForInitialized();
 		// ignore updating a null object
 		if (data == null) {
 			return 0;
@@ -206,6 +225,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	public int refresh(T data) throws SQLException {
+		checkForInitialized();
 		// ignore refreshing a null object
 		if (data == null) {
 			return 0;
@@ -220,6 +240,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	public int delete(T data) throws SQLException {
+		checkForInitialized();
 		// ignore deleting a null object
 		if (data == null) {
 			return 0;
@@ -233,6 +254,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 	public int delete(Collection<T> datas) throws SQLException {
+		checkForInitialized();
 		// ignore deleting a null object
 		if (datas == null || datas.size() == 0) {
 			return 0;
@@ -247,6 +269,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	public int deleteIds(Collection<ID> ids) throws SQLException {
+		checkForInitialized();
 		// ignore deleting a null object
 		if (ids == null || ids.size() == 0) {
 			return 0;
@@ -261,6 +284,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	public SelectIterator<T, ID> iterator() {
+		checkForInitialized();
 		try {
 			return statementExecutor.buildIterator(this, connectionSource);
 		} catch (Exception e) {
@@ -269,6 +293,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	public SelectIterator<T, ID> iterator(PreparedStmt<T> preparedQuery) throws SQLException {
+		checkForInitialized();
 		try {
 			return statementExecutor.buildIterator(this, connectionSource, preparedQuery);
 		} catch (SQLException e) {
@@ -277,6 +302,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	public RawResults iteratorRaw(String query) throws SQLException {
+		checkForInitialized();
 		try {
 			return statementExecutor.buildIterator(connectionSource, query);
 		} catch (SQLException e) {
@@ -285,10 +311,12 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	public String objectToString(T data) {
+		checkForInitialized();
 		return tableInfo.objectToString(data);
 	}
 
 	public boolean objectsEqual(T data1, T data2) throws SQLException {
+		checkForInitialized();
 		for (FieldType fieldType : tableInfo.getFieldTypes()) {
 			Object fieldObj1 = fieldType.getFieldValue(data1);
 			Object fieldObj2 = fieldType.getFieldValue(data2);
@@ -350,5 +378,11 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		dao.setConnectionSource(connectionSource);
 		dao.initialize();
 		return dao;
+	}
+
+	private void checkForInitialized() {
+		if (!initialized) {
+			throw new IllegalStateException("you must call initialize() before you can use the dao");
+		}
 	}
 }

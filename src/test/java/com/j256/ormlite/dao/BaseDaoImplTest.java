@@ -36,6 +36,23 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 	private Dao<BaseFoo, String> baseFooDao;
 
 	@Test
+	public void testDoubleInitialize() throws Exception {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		};
+		dao.setConnectionSource(createMock(ConnectionSource.class));
+		dao.initialize();
+		// this shouldn't barf
+		dao.initialize();
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void testInitNoConnectionSource() throws Exception {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		};
+		dao.initialize();
+	}
+
+	@Test
 	public void testCreate() throws Exception {
 		startDao(true);
 		int linesAffected = 1;
@@ -57,6 +74,15 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 
 	@Test
 	public void testCreateNull() throws Exception {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		};
+		dao.setConnectionSource(createMock(ConnectionSource.class));
+		dao.initialize();
+		assertEquals(0, dao.create(null));
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void testCreateNoInit() throws Exception {
 		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
 		};
 		assertEquals(0, dao.create(null));
@@ -86,6 +112,15 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 	public void testUpdateNull() throws Exception {
 		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
 		};
+		dao.setConnectionSource(createMock(ConnectionSource.class));
+		dao.initialize();
+		assertEquals(0, dao.update(null));
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void testUpdateNoInit() throws Exception {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		};
 		assertEquals(0, dao.update(null));
 	}
 
@@ -102,6 +137,15 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 
 	@Test
 	public void testUpdateIdNull() throws Exception {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		};
+		dao.setConnectionSource(createMock(ConnectionSource.class));
+		dao.initialize();
+		assertEquals(0, dao.updateId(null, null));
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void testUpdateIdNoInit() throws Exception {
 		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
 		};
 		assertEquals(0, dao.updateId(null, null));
@@ -140,6 +184,15 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 	public void testDeleteNull() throws Exception {
 		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
 		};
+		dao.setConnectionSource(createMock(ConnectionSource.class));
+		dao.initialize();
+		assertEquals(0, dao.delete((BaseFoo) null));
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void testDeleteNoInit() throws Exception {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		};
 		assertEquals(0, dao.delete((BaseFoo) null));
 	}
 
@@ -161,6 +214,8 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 	public void testDeleteEmptyCollection() throws Exception {
 		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
 		};
+		dao.setConnectionSource(createMock(ConnectionSource.class));
+		dao.initialize();
 		List<BaseFoo> fooList = new ArrayList<BaseFoo>();
 		assertEquals(0, dao.delete(fooList));
 	}
@@ -175,6 +230,13 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		BaseFoo foo = new BaseFoo();
 		fooList.add(foo);
 		baseFooDao.delete(fooList);
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void testDeleteCollectionNoInit() throws Exception {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		};
+		assertEquals(0, dao.delete((List<BaseFoo>) null));
 	}
 
 	@Test
@@ -207,8 +269,17 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 	public void testDeleteIdsEmpty() throws Exception {
 		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
 		};
+		dao.setConnectionSource(createMock(ConnectionSource.class));
+		dao.initialize();
 		List<String> fooList = new ArrayList<String>();
 		assertEquals(0, dao.deleteIds(fooList));
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void testDeleteIdsNoInit() throws Exception {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		};
+		assertEquals(0, dao.deleteIds((List<String>) null));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -238,6 +309,15 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 
 	@Test
 	public void testRefreshNull() throws Exception {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		};
+		dao.setConnectionSource(createMock(ConnectionSource.class));
+		dao.initialize();
+		assertEquals(0, dao.refresh(null));
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void testRefreshNoInit() throws Exception {
 		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
 		};
 		assertEquals(0, dao.refresh(null));
@@ -287,6 +367,13 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		baseFooDao.queryForId("foo");
 	}
 
+	@Test(expected = IllegalStateException.class)
+	public void testQueryForIdNoInit() throws Exception {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
+		};
+		dao.queryForId("foo");
+	}
+
 	@Test
 	public void testQueryForAll() throws Exception {
 		startDao(false);
@@ -309,6 +396,13 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		finishDao();
 		verify(stmt);
 		verify(results);
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void testQueryForAllNoInit() throws Exception {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
+		};
+		dao.queryForAll();
 	}
 
 	@Test
@@ -335,6 +429,13 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		verify(results);
 	}
 
+	@Test(expected = IllegalStateException.class)
+	public void testStatementBuilderNoInit() throws Exception {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
+		};
+		dao.statementBuilder();
+	}
+
 	@Test(expected = SQLException.class)
 	public void testQueryForFirstThrow() throws Exception {
 		startDao(false);
@@ -353,11 +454,26 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		baseFooDao.queryForFirst(preparedStmt);
 	}
 
+	@Test(expected = IllegalStateException.class)
+	public void testQueryForFirstNoInit() throws Exception {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
+		};
+		dao.queryForFirst(null);
+	}
+
 	@SuppressWarnings("deprecation")
 	@Test
 	public void testQueryBuilder() throws Exception {
 		startDao(false);
 		assertNotNull(baseFooDao.queryBuilder());
+	}
+
+	@SuppressWarnings("deprecation")
+	@Test(expected = IllegalStateException.class)
+	public void testQueryBuilderNoInit() throws Exception {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
+		};
+		dao.queryBuilder();
 	}
 
 	@Test
@@ -386,8 +502,15 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		verify(results);
 	}
 
+	@Test(expected = IllegalStateException.class)
+	public void testQueryForPreparedNoInit() throws Exception {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
+		};
+		dao.query((PreparedStmt<BaseFoo>) null);
+	}
+
 	@Test
-	public void testQueryForRaw() throws Exception {
+	public void testQueryForAllRaw() throws Exception {
 		startDao(false);
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT * FROM ");
@@ -418,10 +541,18 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		verify(results);
 	}
 
+	@Test(expected = IllegalStateException.class)
+	public void testQueryForRawNoInit() throws Exception {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
+		};
+		dao.queryForAllRaw("select * from foo");
+	}
+
 	@Test
 	public void testObjectToString() throws Exception {
 		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
 		};
+		dao.setConnectionSource(createMock(ConnectionSource.class));
 		dao.initialize();
 		BaseFoo foo = new BaseFoo();
 		String idStr = "qdqd";
@@ -430,10 +561,18 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		assertTrue(objStr.contains("id=" + idStr));
 	}
 
-	@Test
-	public void testObjectEquals() throws Exception {
+	@Test(expected = IllegalStateException.class)
+	public void testObjectToStringNoInit() throws Exception {
 		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
 		};
+		dao.objectToString(new BaseFoo());
+	}
+
+	@Test
+	public void testObjectsEqual() throws Exception {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		};
+		dao.setConnectionSource(createMock(ConnectionSource.class));
 		dao.initialize();
 		BaseFoo foo = new BaseFoo();
 		foo.id = "qdqd";
@@ -446,6 +585,13 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		bar.id = "wqdpq";
 		bar.val = foo.val;
 		assertFalse(dao.objectsEqual(bar, foo));
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void testObjectsEqualNoInit() throws Exception {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		};
+		dao.objectsEqual(new BaseFoo(), new BaseFoo());
 	}
 
 	@Test
@@ -485,6 +631,13 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		baseFooDao.iterator();
 	}
 
+	@Test(expected = IllegalStateException.class)
+	public void testIteratorNoInit() throws Exception {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
+		};
+		dao.iterator();
+	}
+
 	@Test
 	public void testIteratorPrepared() throws Exception {
 		startDao(false);
@@ -519,6 +672,73 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		replay(databaseConnection);
 		replay(stmt);
 		baseFooDao.iterator(stmt);
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void testIteratorPreparedNoInit() throws Exception {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
+		};
+		dao.iterator((PreparedStmt<BaseFoo>) null);
+	}
+
+	@Test
+	public void testIteratorRaw() throws Exception {
+		startDao(false);
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT * FROM ");
+		databaseType.appendEscapedEntityName(sb, "basefoo");
+		sb.append(' ');
+		CompiledStatement stmt = createMock(CompiledStatement.class);
+		expect(databaseConnection.compileStatement(sb.toString())).andReturn(stmt);
+		DatabaseResults results = createMock(DatabaseResults.class);
+		expect(results.next()).andReturn(false);
+		expect(stmt.executeQuery()).andReturn(results);
+		int numColumns = 1;
+		expect(stmt.getColumnCount()).andReturn(numColumns);
+		String columnName = "foo";
+		expect(stmt.getColumnName(1)).andReturn(columnName);
+		stmt.close();
+		replay(databaseConnection);
+		replay(stmt);
+		replay(results);
+		RawResults list = baseFooDao.iteratorRaw(sb.toString());
+		assertNotNull(list);
+		String[] names = list.getColumnNames();
+		assertNotNull(names);
+		assertEquals(1, names.length);
+		assertEquals(columnName, names[0]);
+		assertFalse(list.iterator().hasNext());
+		finishDao();
+		verify(stmt);
+		verify(results);
+	}
+
+	@Test(expected = SQLException.class)
+	public void testIteratorRawThrow() throws Exception {
+		startDao(false);
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT * FROM ");
+		databaseType.appendEscapedEntityName(sb, "basefoo");
+		sb.append(' ');
+		CompiledStatement stmt = createMock(CompiledStatement.class);
+		expect(databaseConnection.compileStatement(sb.toString())).andThrow(new SQLException("expected"));
+		int numColumns = 1;
+		expect(stmt.getColumnCount()).andReturn(numColumns);
+		String columnName = "foo";
+		expect(stmt.getColumnName(1)).andReturn(columnName);
+		stmt.close();
+		replay(databaseConnection);
+		replay(stmt);
+		baseFooDao.iteratorRaw(sb.toString());
+		finishDao();
+		verify(stmt);
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void testIteratorRawNoInit() throws Exception {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
+		};
+		dao.iteratorRaw("select * from foo");
 	}
 
 	@Test
