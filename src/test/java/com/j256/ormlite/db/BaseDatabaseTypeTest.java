@@ -163,6 +163,11 @@ public class BaseDatabaseTypeTest extends BaseOrmLiteCoreTest {
 	}
 
 	@Test
+	public void testAppendColumnUnique() throws Exception {
+		testFooColumn(databaseType, "unique", "BIGINT UNIQUE");
+	}
+
+	@Test
 	public void testIsLimitSqlSupported() {
 		assertTrue(databaseType.isLimitSqlSupported());
 	}
@@ -360,6 +365,8 @@ public class BaseDatabaseTypeTest extends BaseOrmLiteCoreTest {
 		String defaultValueString;
 		@DatabaseField(canBeNull = false)
 		long canBeNull;
+		@DatabaseField(unique = true)
+		long unique;
 	}
 
 	private class SerialClass implements Serializable {

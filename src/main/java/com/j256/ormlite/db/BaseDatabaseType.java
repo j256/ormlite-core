@@ -147,6 +147,9 @@ public abstract class BaseDatabaseType implements DatabaseType {
 			} else {
 				sb.append("NOT NULL ");
 			}
+			if (fieldType.isUnique()) {
+				appendUnique(sb, fieldType, statementsAfter);
+			}
 		}
 	}
 
@@ -387,6 +390,13 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	 */
 	protected void appendCanBeNull(StringBuilder sb, FieldType fieldType) {
 		// default is a noop
+	}
+
+	/**
+	 * If the fieldType is unique then added per-field unique qualifier.
+	 */
+	protected void appendUnique(StringBuilder sb, FieldType fieldType, List<String> statementsAfter) {
+		sb.append("UNIQUE ");
 	}
 
 	/**

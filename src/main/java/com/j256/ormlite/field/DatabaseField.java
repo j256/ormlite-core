@@ -154,4 +154,10 @@ public @interface DatabaseField {
 	 * as a string, this can set what format string to use for the date.
 	 */
 	String format() default "";
+
+	/**
+	 * Set this to be true (default false) to have the database insure that the column is unique to all rows in the
+	 * table. Use this when you wan a field to be unique even if it is not the identify field.
+	 */
+	boolean unique() default false;
 }

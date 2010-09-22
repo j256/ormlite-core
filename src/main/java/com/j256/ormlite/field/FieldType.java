@@ -23,6 +23,7 @@ public class FieldType {
 	/** default suffix added to fields that are id fields of foreign objects */
 	public static final String FOREIGN_ID_FIELD_SUFFIX = "_id";
 
+	private final String tableName;
 	private final Field field;
 	private final String fieldName;
 	private final String dbColumnName;
@@ -42,12 +43,14 @@ public class FieldType {
 	private final Enum<?> unknownEnumVal;
 	private final boolean throwIfNull;
 	private final String format;
+	private final boolean unique;
 
 	/**
 	 * You should use {@link FieldType#createFieldType} to instantiate one of these field if you have a {@link Field}.
 	 */
 	public FieldType(DatabaseType databaseType, String tableName, Field field, DatabaseFieldConfig fieldConfig)
 			throws SQLException {
+		this.tableName = tableName;
 		this.field = field;
 		this.fieldName = field.getName();
 		DataType dataType;
@@ -164,53 +167,37 @@ public class FieldType {
 		} else {
 			this.defaultValue = this.fieldConverter.parseDefaultString(this, defaultStr);
 		}
+		this.unique = fieldConfig.isUnique();
 	}
 
-	/**
-	 * Return the column name either specified my {@link DatabaseField#columnName} or from {@link Field#getName}.
-	 */
+	public String getTableName() {
+		return tableName;
+	}
+
 	public String getFieldName() {
 		return fieldName;
 	}
 
-	/**
-	 * Return the column name either specified my {@link DatabaseField#columnName} or from {@link Field#getName}.
-	 */
 	public String getDbColumnName() {
 		return dbColumnName;
 	}
 
-	/**
-	 * Return the DataType associated with this.
-	 */
 	public DataType getDataType() {
 		return dataType;
 	}
 
-	/**
-	 * Return the SQL type value.
-	 */
 	public SqlType getSqlTypeVal() {
 		return fieldConverter.getSqlType();
 	}
 
-	/**
-	 * Return the default value configured by {@link DatabaseField#defaultValue} or null if none.
-	 */
 	public Object getDefaultValue() {
 		return defaultValue;
 	}
 
-	/**
-	 * Return the width of the field as configured by {@link DatabaseField#width}.
-	 */
 	public int getWidth() {
 		return width;
 	}
 
-	/**
-	 * Return whether the field can be assigned to null as configured by {@link DatabaseField#canBeNull}.
-	 */
 	public boolean isCanBeNull() {
 		return canBeNull;
 	}
@@ -248,9 +235,6 @@ public class FieldType {
 		return generatedIdSequence;
 	}
 
-	/**
-	 * Return whether or not the field is a foreign object field.
-	 */
 	public boolean isForeign() {
 		return foreignTableInfo != null;
 	}
@@ -394,6 +378,10 @@ public class FieldType {
 	 */
 	public String getFormat() {
 		return format;
+	}
+
+	public boolean isUnique() {
+		return unique;
 	}
 
 	/**

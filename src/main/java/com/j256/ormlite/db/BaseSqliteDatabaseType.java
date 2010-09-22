@@ -8,7 +8,8 @@ import com.j256.ormlite.field.FieldType;
 /**
  * Sqlite database type information used to create the tables, etc..
  * 
- * <p> NOTE: We need this here because the Android version subclasses it.
+ * <p>
+ * NOTE: We need this here because the Android version subclasses it.
  * 
  * @author graywatson
  */

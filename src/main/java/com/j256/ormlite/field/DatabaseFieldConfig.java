@@ -31,6 +31,7 @@ public class DatabaseFieldConfig {
 	private Enum<?> unknownEnumvalue;
 	private boolean throwIfNull;
 	private String format;
+	private boolean unique;
 
 	public DatabaseFieldConfig() {
 		// for spring
@@ -39,7 +40,7 @@ public class DatabaseFieldConfig {
 	public DatabaseFieldConfig(String fieldName, String columnName, DataType dataType, String defaultValue, int width,
 			boolean canBeNull, boolean id, boolean generatedId, String generatedIdSequence, boolean foreign,
 			DatabaseTableConfig<?> foreignTableConfig, boolean useGetSet, Enum<?> unknownEnumValue,
-			boolean throwIfNull, String format) {
+			boolean throwIfNull, String format, boolean unique) {
 		this.fieldName = fieldName;
 		this.columnName = columnName;
 		this.dataType = dataType;
@@ -55,6 +56,7 @@ public class DatabaseFieldConfig {
 		this.unknownEnumvalue = unknownEnumValue;
 		this.throwIfNull = throwIfNull;
 		this.format = format;
+		this.unique = unique;
 	}
 
 	/**
@@ -66,7 +68,7 @@ public class DatabaseFieldConfig {
 			boolean canBeNull, boolean id, boolean generatedId, String generatedIdSequence, boolean foreign,
 			DatabaseTableConfig<?> foreignTableConfig, boolean useGetSet, Enum<?> unknownEnumValue, boolean throwIfNull) {
 		this(fieldName, columnName, dataType, defaultValue, width, canBeNull, id, generatedId, generatedIdSequence,
-				foreign, foreignTableConfig, useGetSet, unknownEnumValue, throwIfNull, null);
+				foreign, foreignTableConfig, useGetSet, unknownEnumValue, throwIfNull, null, false);
 	}
 
 	/**
@@ -226,6 +228,14 @@ public class DatabaseFieldConfig {
 		this.format = format;
 	}
 
+	public boolean isUnique() {
+		return unique;
+	}
+
+	public void setUnique(boolean unique) {
+		this.unique = unique;
+	}
+
 	/**
 	 * Create and return a config converted from a {@link Field} that may have either a {@link DatabaseField} annotation
 	 * or the javax.persistence annotations.
@@ -348,6 +358,7 @@ public class DatabaseFieldConfig {
 		} else {
 			config.format = null;
 		}
+		config.unique = databaseField.unique();
 		return config;
 	}
 
