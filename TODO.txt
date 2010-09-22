@@ -41,6 +41,10 @@
 	- look to see if the unknown class has a DatabaseTable(embedded = true or javax annotation
 	- take all of the fields as if they were fields in this class
 
+- more support for constraints:
+	- maybe a check="> 10" type of addition to DatabaseField so we can add a check constraint
+	- foreign key constraint can be in addition to (or required for) the foreign=true
+
 -----------------------------------------------------------------------------------------------------------------------------------
 
 - think about proxy objects for foreign objects that can throw if they do anything but getId()

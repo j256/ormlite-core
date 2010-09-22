@@ -19,11 +19,7 @@ To release ORMLite:
 	cd ..
 	svn commit -m 'X.XX docs'
 
-5) Update the ormlite-version variable in ormlite-android and ormlite-jdbc pom.xml files
-
-	Check-in
-
-6) Release to Sonatype: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
+5) Release to Sonatype: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
 
 	cd ~/svn/local/ormlite-core
 	mvn -P st release:clean
@@ -34,14 +30,12 @@ To release ORMLite:
 	mvn install
 	
 	same for -jdbc and -android
-	cd ~/svn/local/ormlite-jdbc
-	cd ~/svn/local/ormlite-android
 	
 	NOTE: if you need to, mvn -P st release:rollback will go back to the starting pom.xml 
 
-7) Login to Sontype:    https://oss.sonatype.org/   (graywatson)
+6) Login to Sontype:    https://oss.sonatype.org/   (graywatson)
 
-8) Close and release the release:
+7) Close and release the release:
 
 	- Click on 'Staging Repositories' from left nav
 	- Make sure our release is there, is labeled as 'open'.
@@ -50,50 +44,49 @@ To release ORMLite:
 	- Check off the now closed release.
 	- Click on 'Release'.  Description: X.X release
 
-9) Check to make sure it has been released:
+8) Check to make sure it has been released:
 	
 	- Click on 'Repositories' from left nav
 	- select Releases (not-bold) -> com -> j256 -> ormlite
 	- see if the release is there
 
-10) If there are problems then you will need to drop the release on sonatype.org and re-release:
+9) If there are problems then you will need to drop the release on sonatype.org and re-release:
 
 	Core:     mvn -P st release:perform -DconnectionUrl=scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-core/tags/ormlite-core-X.X
 	JDBC:     mvn -P st release:perform -DconnectionUrl=scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-jdbc/tags/ormlite-jdbc-X.X
 	Android:  mvn -P st release:perform -DconnectionUrl=scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-android/tags/ormlite-android-X.X
 
-11) Release to sourceforge in the directory checked out by release:perform.
+10) Release to sourceforge in the directory checked out by release:perform.
 
-	cd target/checkout
+	cd ormlite-core/target/checkout
 	mvn -P sf deploy                       (need to type in GPG secret)
+	
+	same for ormlite-jdbc, ormlite-android
 
-12) Go to SF and set the default download to the newest jar: https://sourceforge.net/project/admin/explorer.php?group_id=297653
+11) Go to SF and set the default download to the newest jar: https://sourceforge.net/project/admin/explorer.php?group_id=297653
 
-13) Create a sf shell.  Explode the javadocs with the newest release:
+12) Create a sf shell.  Explode the javadocs with the newest release:
 
-	create_sf_shell                        (script)
-	cd ormlite_web/htdocs/javadoc/ormlite-core
-	rm -rf * ; unzip ~/frs/releases/com/j256/ormlite/ormlite-core/X.X/ormlite-core-X.X-javadoc.jar
-	cd ../ormlite-jdbc
-	rm -rf * ; unzip ~/frs/releases/com/j256/ormlite/ormlite-jdbc/X.X/ormlite-jdbc-X.X-javadoc.jar
-	cd ../ormlite-android
-	rm -rf * ; unzip ~/frs/releases/com/j256/ormlite/ormlite-jdbc/X.X/ormlite-jdbc-X.X-javadoc.jar
+	create_sf_shell							(script)
+	sh explode_javadocs.sh					(enter version numbers)
 
-14) Possibly trim the older releases in the release directory.  Try to leave last major release and couple minors.
+13) Possibly trim the older releases in the release directory.  Try to leave last major release and couple minors.
 
 	cd ~/frs/releases/com/j256/ormlite
 	rm -rf 1.11 1.12
 
-15) Run  shutdown  on the sf shell
+14) Run  shutdown  on the sf shell
 
-16) Add a News section to SF with the svn log highlights and subject: released version X.X
+15) Add a News section to SF with the svn log highlights and subject: released version X.X
 
-17) Possibly publish to announcements forum if the release needs more information.
+16) Possibly publish to announcements forum if the release needs more information.
 
-18) Change the pom.xml version for new ormlite to X.X-SNAPSHOT:
+17) Send mail to users and developers mailing lists about the release:
 
-	- ormlite-jdbc
-	- ormlite-android
-	- ormlitetest
+	- released version X.X
+	- show changelog
+	- tell them where they can get it
+
+18) Change the pom.xml ormlite-version for new ormlite to X.X-SNAPSHOT in ormlitetest
 
 19) Watch to make sure the central repository was updated.  http://repo1.maven.org/maven2/com/j256/ormlite/
