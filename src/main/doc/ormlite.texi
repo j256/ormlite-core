@@ -21,7 +21,7 @@
 @c ----------------------------------------------------------------
 
 @c ----------------------------------------------------------------
-@set ormlite_version 3.2
+@set ormlite_version 3.3
 @set ormlite_date September 2010
 @set package ORMLite
 @c ----------------------------------------------------------------
@@ -126,32 +126,34 @@ Gray Watson @uref{http://256.com/gray/}
 
 @menu
 * Downloading ::                Downloading the @value{package} jar.
-* Config Class::                Configuring a class to persist.
-* Config DAO::                  Configuring a Data Access Object.
-* Client Code::                 Client code example on how its works.
+* Starting Class::              Configuring a class to persist.
+* Starting DAO::                Configuring a Data Access Object.
+* Starting Client::             Client code example on how its works.
 @end menu
 
 @c ----------------------------------------------------------------
-@node Downloading, Config Class, Getting Started, Getting Started
+@node Downloading, Starting Class, Getting Started, Getting Started
 @section Downloading @value{package} Jar
 
 To get started with @value{package}, you will need to download the jar file.  It is available on the central maven repository
 (@uref{http://repo1.maven.org/maven2/com/j256/ormlite/}) or from Sourceforge (@uref{http://sourceforge.net/projects/ormlite/files/}). 
 
 Users that are connecting to SQL databases via JDBC connections will need to download the ormlite-jdbc-X.X.jar file. For use with Android
-applications, you should download the ormlite-android-X.X.jar instead. @value{package}e does not have any required direct dependencies. See the section
-on external dependencies for information about other packages that you may want to use (@pxref{Dependencies}).  @value{package} works
-with Java 5 or later.
+applications, you should download the ormlite-android-X.X.jar instead. @value{package}e does not have any required direct dependencies.
+See the section on external dependencies for information about other packages that you may want to use.  @xref{Dependencies}.  The code
+works with Java 5 or later.
 
 @c ----------------------------------------------------------------
-@node Config Class, Config DAO, Downloading, Getting Started
+@node Starting Class, Starting DAO, Downloading, Getting Started
 @section Configuring a Class
 
 The following is an example class that is configured to be persisted to a database using @value{package} annotations.  The @code{@@DatabaseTable}
-annotation configures the Account class to be persisted to the account database table. The @code{@@DatabaseField} annotations map the fields
-on the Account to the database columns with the same names. The name field is configured as the primary key for the database table by using the
-@code{id = true} annotation field.  Also, notice that a no-argument constructor is needed so the object can be returned by a query.  For more
-information see the class setup information later in the manual (@pxref{Class Setup}).
+annotation configures the Account class to be persisted to the database table named @code{accounts}. The @code{@@DatabaseField} annotations map
+the fields on the Account to the database columns with the same names.
+
+The name field is configured as the primary key for the database table by using the @code{id = true} annotation field.  Also, notice that a
+no-argument constructor is needed so the object can be returned by a query. For more information see the class setup information later in the
+manual.  @xref{Class Setup}.
 
 @example
 @@DatabaseTable(tableName = "accounts")
@@ -165,29 +167,27 @@ public class Account @{
     public Account() @{
         // @value{package} needs a no-arg constructor 
     @}
+    public Account(String name, String password) @{
+        this.name = name;
+        this.password = password;
+    @}
     public String getName() @{
         return name;
     @}
-    public void setName(String name) @{
-        this.name = name;
-    @}
     public String getPassword() @{
         return password;
-    @}
-    public void setPassword(String password) @{
-        this.password = password;
     @}
 @}
 @end example
 
 @c ----------------------------------------------------------------
-@node Config DAO, Client Code, Config Class, Getting Started
+@node Starting DAO, Starting Client, Starting Class, Getting Started
 @section Configuring a DAO
 
-A typical Java pattern is to isolate the database operations in Database Access Objects or DAO classes. Each DAO provides create, delete, update, etc. type
-of functionality and usually specialize in the handling a particular persisted class.  To set up a DAO, you will need a DAO interface and an implementation
-class.  @value{package} provides a base DAO interface and a base implementation class. The following is an example DAO interface corresponding to the Account class
-from the previous section:
+A typical Java pattern is to isolate the database operations in Database Access Objects or DAO classes. Each DAO provides create, delete,
+update, etc. type of functionality and specializes in the handling a particular persisted class.  To set up a DAO, you will need a DAO
+interface and an implementation class.  @value{package} provides a base DAO interface and a base implementation class. The following is
+an example DAO interface corresponding to the Account class from the previous section of the manual:
 
 @example
 /** Account DAO which has a String id (Account.name) */
@@ -209,19 +209,22 @@ public class AccountDaoImpl extends BaseDaoImpl<Account,String>
 @end example
 
 The client code in the next section demonstrates how to create a DatabaseType to pass into the constructor for the implementation class. More information
-about setting up the DOAs is available later in the manual (@pxref{DAO Setup}).
+about setting up the DOAs is available later in the manual. @xref{DAO Setup}.
 
 @c ----------------------------------------------------------------
-@node Client Code, Using, Config DAO, Getting Started
+@node Starting Client, Using, Starting DAO, Getting Started
 @section Client Code Example
 
-The client code in this section demonstrates how to use @value{package} with the classes presented in the previous two sections. The code uses H2 as a test database
-instance. You will need to add the H2 jar file to your classpath if you want to run the example as-is.  The client performs the following steps.
+The client code in this section demonstrates how to use the classes presented in the previous two sections. The code uses H2 as a test database
+instance. You will need to add the H2 jar file to your classpath if you want to run the example as-is.  @emph{NOTE:} Android users should see the
+Android specific documentation later in the manual. @xref{Use With Android}.
+
+The client performs the following steps.
 
 @itemize @bullet
-@item A DatabaseType and connection source are created to configure the connection information associated with the database.
+@item It creates a DatabaseType and connection source to configure the connection to the database.
 @item An AccountDaoImpl is instantiated with the DatabaseType.
-@item An account database table is created. This step is not needed if the table already exists.
+@item The @code{accounts} database table is created. This step is not needed if the table already exists.
 @end itemize
 
 @example
@@ -229,9 +232,10 @@ public class AccountApp @{
 
     public static void main(String[] args) throws Exception @{
 
-        // h2 by default but change to match your database
+        // this uses h2 by default but change to match your database
         String databaseUrl = "jdbc:h2:mem:account";
-        JdbcConnectionSource connectionSource =
+        // create a connection source to our database
+        ConnectionSource connectionSource =
             DatabaseTypeUtils.createJdbcConnectionSource(databaseUrl);
         DatabaseType databaseType =
             DatabaseTypeUtils.createDatabaseType(databaseUrl);
@@ -247,7 +251,7 @@ public class AccountApp @{
         TableUtils.createTable(databaseType, connectionSource, Account.class);
 @end example
 
-One we have configured our database objects, we can use them to create an Account and query for it from the database:
+Once we have configured our database objects, we can use them to create an Account and query for it from the database:
 
 @example
         // create an instance of Account
@@ -257,7 +261,7 @@ One we have configured our database objects, we can use them to create an Accoun
         // persist the account object to the database
         // it should return 1 for the 1 row inserted
         if (accountDao.create(account) != 1) @{
-            System.out.println("Failure adding account");
+            throw new Exception("Failure adding account");
         @}
 		
         //retrieve the account
@@ -271,10 +275,10 @@ One we have configured our database objects, we can use them to create an Accoun
 @end example
 
 After following the example, you should be up and running. To understand more of the functionality available with @value{package},
-continue on with the next section.
+continue on with the next section.  @xref{Using}.
 
 @c ----------------------------------------------------------------
-@node Using, Class Setup, Client Code, Top
+@node Using, Class Setup, Starting Client, Top
 @chapter How to Use @value{package}
 
 @menu
@@ -484,6 +488,12 @@ the annotation on all of your fields but turn off the writing of some of them to
 
 This allows you to specify format information of a particular field.  Right now only the Date fields support it when
 a default value is being converted or if you are using the @code{JAVA_DATE_STRING} type.
+
+@item unique
+
+Adds a constraint to the field that it has to be unique across all rows in the table.  This allows you to have a
+unique field in the table even though it is not the id field.  For example, you might have an Account class which
+has a generated account-id but you also want the email address to be unique across all Accounts.
 
 @end table
 
@@ -726,10 +736,6 @@ stored in the database.  @xref{Foreign Objects}.
 
 @cindex DAO
 @cindex database access object
-A typical Java pattern is to isolate the database operations in Database Access Objects or DAO classes.  Each DAO
-provides create, delete, update, etc. type of functionality and usually specialize in the handling a particular
-persisted class.
-
 @cindex id column
 @cindex Dao interface
 Once you have annotated your classes, you will need to create the DAO class(es).  The pattern that we recommend
@@ -781,7 +787,7 @@ Dao<Order, Integer> orderDao =
 @node Connection Source, Database Type, DAO Setup, Using
 @section JDBC Connection Sources
 
-@emph{NOTE:} Android users should see the Android specific documentation later in the manual (@pxref{Use With Android}).
+@emph{NOTE:} Android users should see the Android specific documentation later in the manual. @xref{Use With Android}.
 
 @cindex data source
 @cindex connection source
@@ -853,7 +859,7 @@ support the various features on all of the different database types.  @xref{Data
 @code{DatabaseType}, you can either use the @code{DatabaseTypeUtils} class or call your database class directly.
 
 @emph{NOTE:} Android users should use the @code{SqliteAndroidDatabaseType} only as examples in the Android
-specific docs later in the manual (@pxref{Use With Android}).
+specific docs later in the manual.  @xref{Use With Android}.
 
 @example
 // use the DatabaseTypeUtils class with the database URI

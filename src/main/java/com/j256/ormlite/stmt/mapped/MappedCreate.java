@@ -128,6 +128,11 @@ public class MappedCreate<T> extends BaseMappedStatement<T> {
 			}
 			return retVal;
 		} catch (SQLException e) {
+			logger.debug("create object using '{}' and {} args, threw exception: {}", statement, args.length, e);
+			if (args.length > 0) {
+				// need to do the (Object) cast to force args to be a single object
+				logger.trace("create arguments: {}", (Object) args);
+			}
 			throw SqlExceptionUtil.create("Unable to run stmt on object " + data + ": " + statement, e);
 		}
 	}

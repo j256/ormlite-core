@@ -1,9 +1,15 @@
+3.3: 9/22/2010
+	* CORE: Added UNIQUE constraint handling for ensuring fields are unique in all rows of the table.
+	* CORE: Added a missing deprecated BaseJdbcDao that should have been in 3.2.
+	* CORE: Added a better 'Getting Started' section to the manual.  Thanks much Nelson!
+	* JDBC: Added a missing setDataSource to the DataSourceConnectionSource (fixes bug #3066894).
+
 3.2: 9/14/2010
 	* Large internal code reorganization to allow database calls outside of JDBC for better Android support.
 	* Split ormlite into 3 packages: -core, -jdbc, and -android
-	* Abstracted the DataSource, Connection, and ResultSet classes to be ConnectionSource, DatabaseConnection, and DatabaseResults interfaces.
+	* Abstracted DataSource/Connection/ResultSet classes to be ConnectionSource/DatabaseConnection/DatabaseResults interfaces.
 	* Renamed the BaseJdbcDao to be BaseDaoImpl since it is no longer just JDBC
-	* Renamed Dao.queryBuilder() -> Dao.statementBuilder() to accomodate custom delete, etc. statements
+	* Renamed Dao.queryBuilder() -> Dao.statementBuilder() to accommodate custom delete, etc. statements
 	* Renamed the QueryBuilder object to be StatementBuilder
 	* Renamed the PreparedQuery object to be PreparedStmt
 	* You don't set your DataSource on the DAOs anymore.  You use the DataSourceDatabaseConnection wrapper class.

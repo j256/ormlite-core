@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on September, 14 2010 by texi2html 1.70 -->
+<!-- Created on September, 22 2010 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -11,10 +11,10 @@ Send bugs and suggestions to <users@texi2html.cvshome.org>
 
 -->
 <head>
-<title>ORM Lite Package: 6. Contributions</title>
+<title>ORM Lite Package: 6. Upgrading from Old Versions</title>
 
-<meta name="description" content="ORM Lite Package: 6. Contributions">
-<meta name="keywords" content="ORM Lite Package: 6. Contributions">
+<meta name="description" content="ORM Lite Package: 6. Upgrading from Old Versions">
+<meta name="keywords" content="ORM Lite Package: 6. Upgrading from Old Versions">
 <meta name="resource-type" content="document">
 <meta name="distribution" content="global">
 <meta name="Generator" content="texi2html 1.70">
@@ -39,53 +39,116 @@ ul.toc {list-style: none}
 
 <body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
 
-<a name="NOD27"></a>
-<a name="SEC26"></a>
+<a name="NOD24"></a>
+<a name="SEC23"></a>
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="ormlite_5.html#SEC25" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_7.html#SEC27" title="Next section in reading order"> &gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="ormlite_5.html#SEC22" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC24" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="ormlite_5.html#SEC20" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_5.html#SEC22" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_7.html#SEC27" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_7.html#SEC26" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_7.html#SEC27" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_9.html#SEC34" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h1 class="chapter"> 6. Contributions </h1>
+<h1 class="chapter"> 6. Upgrading from Old Versions </h1>
 
-<p>There are a couple of people that I'd like to thank who helped with the project.
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top"><a href="#SEC24">6.1 Upgrading from Version 2.X to 3.2</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Upgrading from version 2.X to 3.2
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC25">6.2 Upgrading from Version 2.3 to 2.4</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Upgrading from version 2.3 to 2.4
+</td></tr>
+</table>
 
-</p><dl compact="compact">
-<dt> Kevin Galligan</dt>
-<dd>
-<p>Kevin was the impetus and the author of a good bit of the Android compatible code.  He wrote the Android level support classes
-and did a ton of beta-testing of it.  Thanks much Kevin.  See <a href="http://www.kagii.com/">http://www.kagii.com/</a>.
+<hr size="6">
+<a name="NOD25"></a>
+<a name="SEC24"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC23" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC25" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC23" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC23" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_7.html#SEC26" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_9.html#SEC34" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 6.1 Upgrading from Version 2.X to 3.2 </h2>
 
-</p></dd>
-<dt> Jim Gloor</dt>
-<dd>
-<p>Jim was my JDBC Java guru at my current company.  Thanks much for his code samples that started this effort.
+<p>The 3.2 release involved a <em>very</em> large code reorganization and migration.  The project was basically split into 3 pieces:
+core functionality, JDBC database handlers, and the new Android handler.  With significant help from Kevin G, we abstracted all
+of the databse calls into 3 interfaces: <code>ConnectionSource</code> (like a <code>DataSource</code>), <code>DatabaseConnection</code> (like a
+<code>Connection</code>) and <code>DatabaseResults</code> (like a <code>ResultSet</code>).  Once we had the interfaces in place, we wrote
+delegation classes for JDBC and Android handlers.  This means that as of 3.X we release 3 packages: ormlite-core (for developers),
+ormlite-jdbc (for people connection to JDBC databases), and ormlite-android (for Android users).  Both the JDBC and Android
+packages include all of the core code as well.
 
-</p></dd>
-<dt> Robert Adamsky</dt>
-<dd>
-<p>Robert was one of the early developers at my current company who laid out the entire DAO and hibernate class hierarchy.  The
-<code>DAO</code> interface and the <code>BaseDaoImpl</code> where in some part modeled after his code.  Thanks dude.  
+</p><p>Along the way a number of specific changes were made to the methods and classes:
 
-</p></dd>
-</dl>
+</p><ul>
+<li><p> Since we split off the JDBC, we renamed the <code>BaseJdbcDao</code> to be <code>BaseDaoImpl</code> in the core package. You will
+need to adjust any DAOs that you have.
 
-<p>Thanks much to them all.
+</p></li><li><p> We are in the process of allowing custom delete and update methods so we took the major upgrade opportunity to
+rename the <code>QueryBuilder</code> object to be <code>StatementBuilder</code>.
+
+</p></li><li><p> Because of the above, we also renamed <code>Dao.queryBuilder()</code> method to be <code>statementBuilder()</code>.
+
+</p></li><li><p> Also renamed the <code>PreparedQuery</code> object to be <code>PreparedStmt</code>.
+
+</p></li><li><p> One of the big changes for those of you using an external JDBC <code>DataSource</code> is that you no longer set it on the
+DAO directly.  You need to wrap your <code>DataSource</code> in a <code>DataSourceDatabaseConnection</code> wrapper class which gets
+set on the DAO instead.
+
+</p></li></ul>
+
+<p>There were no on-disk changes unless you somehow managed to get ORMLite working previously on Android.  Since we were using
+JDBC before to do the data marshalling and now are doing it by hand, some of the data representations may have changed.  Sorry for
+the lack of detail here.
+
+</p><hr size="6">
+<a name="NOD26"></a>
+<a name="SEC25"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC24" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_7.html#SEC26" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC23" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC23" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_7.html#SEC26" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_9.html#SEC34" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 6.2 Upgrading from Version 2.3 to 2.4 </h2>
+
+<p>A bug was discovered with how we were handling Derby and Hsqldb.  Both of these databses seem to be capitalizing table and field
+names in certain situations meaning that customized queries of ORMLite generated tables were difficult.  In version 2.4,
+all tables and field names are capitalized in the SQL generated for Derby and Hsqldb databases. This means that if you have data
+in these databases from a pre 2.4 version, the 2.4 version will not be able to find the tables and fields without renaming to be
+uppercase.
+
 </p><hr size="6">
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="ormlite_5.html#SEC20" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_7.html#SEC27" title="Next chapter"> &gt;&gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="#SEC23" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_7.html#SEC26" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
@@ -93,12 +156,12 @@ and did a ton of beta-testing of it.  Thanks much Kevin.  See <a href="http://ww
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_7.html#SEC27" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_9.html#SEC34" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>September, 14 2010</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>September, 22 2010</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 
