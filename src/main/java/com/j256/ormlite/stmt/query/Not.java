@@ -34,8 +34,7 @@ public class Not implements Clause, NeedsFutureClause {
 	public void setMissingClause(Clause clause) {
 		if (this.comparison != null) {
 			throw new IllegalArgumentException("NOT operation already has a comparison set");
-		}
-		if (clause instanceof Comparison) {
+		} else if (clause instanceof Comparison) {
 			this.comparison = (Comparison) clause;
 		} else {
 			throw new IllegalArgumentException("NOT operation can only work with comparison SQL clauses, not " + clause);
@@ -44,7 +43,7 @@ public class Not implements Clause, NeedsFutureClause {
 
 	public StringBuilder appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList) {
 		if (this.comparison == null) {
-			throw new IllegalArgumentException("Comparison has not been set in NOT operation");
+			throw new IllegalStateException("Comparison has not been set in NOT operation");
 		}
 		// this generates: (NOT 'x' = 123 )
 		sb.append("(NOT ");
