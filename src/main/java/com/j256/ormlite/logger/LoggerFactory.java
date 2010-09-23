@@ -1,6 +1,6 @@
 package com.j256.ormlite.logger;
 
-import com.j256.ormlite.android.AndroidLog;
+import java.lang.reflect.Constructor;
 
 /**
  * Factory that creates {@link Logger} instances.
@@ -26,30 +26,10 @@ public class LoggerFactory {
 	 * Return a logger associated with a particular class name.
 	 */
 	public static Logger getLogger(String className) {
-		Log log = null;
-
 		if (logType == null) {
 			logType = findLogType();
 		}
-
-		switch (logType) {
-			case COMMONS_LOGGING :
-				// you can comment out this line if you need to remove the CommonsLoggingLog class
-				log = new CommonsLoggingLog(className);
-				break;
-			case LOG4J :
-				// you can comment out this line if you need to remove the Log4jLog class
-				log = new Log4jLog(className);
-				break;
-			case ANDROID :
-				// you can comment out this line if you need to remove the AndroidLog class
-				log = new AndroidLog(className);
-				break;
-			case LOCAL :
-				log = new LocalLog(className);
-				break;
-		}
-		return new Logger(log);
+		return new Logger(logType.createLog(className));
 	}
 
 	public static String getSimpleClassName(String className) {
@@ -62,33 +42,82 @@ public class LoggerFactory {
 		}
 	}
 
+	/**
+	 * Return the most appropriate log type. This should _never_ return null.
+	 */
 	private static LogType findLogType() {
-		if (checkClass("org.apache.commons.logging.LogFactory")) {
-			return LogType.COMMONS_LOGGING;
-		} else if (checkClass("org.apache.log4j.Logger")) {
-			return LogType.LOG4J;
-		} else if (checkClass("android.util.Log")) {
-			return LogType.ANDROID;
-		} else {
-			return LogType.LOCAL;
+		for (LogType logType : LogType.values()) {
+			if (logType.isAvailable()) {
+				return logType;
+			}
 		}
-	}
-
-	private static boolean checkClass(String classPath) {
-		try {
-			Class.forName(classPath);
-			return true;
-		} catch (ClassNotFoundException e) {
-			return false;
-		}
+		// fall back is always LOCAL
+		return LogType.LOCAL;
 	}
 
 	private enum LogType {
-		COMMONS_LOGGING,
-		LOG4J,
-		ANDROID,
-		LOCAL,
+		COMMONS_LOGGING("org.apache.commons.logging.LogFactory") {
+			@Override
+			public Log createLog(String classLabel) {
+				return new CommonsLoggingLog(classLabel);
+			}
+
+		},
+		LOG4J("org.apache.log4j.Logger") {
+			@Override
+			public Log createLog(String classLabel) {
+				return new Log4jLog(classLabel);
+			}
+		},
+		ANDROID("android.util.Log") {
+			@Override
+			public Log createLog(String classLabel) {
+				try {
+					Class<?> clazz = Class.forName("com.j256.ormlite.android.AndroidLog");
+					@SuppressWarnings("unchecked")
+					Constructor<Log> constructor = (Constructor<Log>) clazz.getConstructor(String.class);
+					return constructor.newInstance(classLabel);
+				} catch (Exception e) {
+					// oh well, fallback to the local log
+					return LOCAL.createLog(classLabel);
+				}
+			}
+		},
+		LOCAL("com.j256.ormlite.logger.LocalLog") {
+			@Override
+			public Log createLog(String classLabel) {
+				return new LocalLog(classLabel);
+			}
+			@Override
+			public boolean isAvailable() {
+				// it's always available
+				return true;
+			}
+		},
 		// end
 		;
+
+		private String detectClassName;
+
+		private LogType(String detectClassName) {
+			this.detectClassName = detectClassName;
+		}
+
+		/**
+		 * Create and return a Log class for this type.
+		 */
+		public abstract Log createLog(String classLabel);
+
+		/**
+		 * Return true if the log class is available.
+		 */
+		public boolean isAvailable() {
+			try {
+				Class.forName(detectClassName);
+				return true;
+			} catch (Exception e) {
+				return false;
+			}
+		}
 	}
 }
