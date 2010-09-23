@@ -33,6 +33,9 @@ public interface DatabaseResults {
 
 	/**
 	 * Return the column index associated with the column name.
+	 * 
+	 * @throws SQLException
+	 *             if the column was not found in the results.
 	 */
 	public int findColumn(String columnName) throws SQLException;
 
