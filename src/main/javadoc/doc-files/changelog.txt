@@ -1,3 +1,9 @@
+3.4: 9/24/2010
+	* CORE: Revamped the log factory to use the internal LogType enum better and to construct the logs using reflection.
+	* CORE: Added javax unique=true handling which should have been in 3.3.
+	* ANDROID: Moved the AndroidLog implementation over to the Android package and reworked it to make direct calls to the android.util.Log.
+	* ANDROID: Fixed problem with Android cursor were the field-name escape characters were in the column map.  Fixes bug #3074249.
+
 3.3: 9/22/2010
 	* CORE: Added UNIQUE constraint handling for ensuring fields are unique in all rows of the table.
 	* CORE: Added a missing deprecated BaseJdbcDao that should have been in 3.2.
@@ -65,7 +71,7 @@
 
 2.2: 6/18/2010
 	* Added enum support with both integer orderinal and string name support.
-	* Changed the mechanism for detecting foreign fields with the the javax.annotations. Unknown fields are now seen as serializable fields. OneToOne and ManyToOne annotations used with foreign fields.
+	* Changed the mechanism for detecting foreign fields with the the javax.annotations.
 
 2.1: 6/14/2010
 	* Added the ability of storing Serializable objects as the new SERIALIZABLE type.
