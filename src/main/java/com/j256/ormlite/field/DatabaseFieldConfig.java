@@ -61,7 +61,7 @@ public class DatabaseFieldConfig {
 
 	/**
 	 * @deprecated Use
-	 *             {@link #DatabaseFieldConfig(String, String, DataType, String, int, boolean, boolean, boolean, String, boolean, DatabaseTableConfig, boolean, Enum, boolean, String)}
+	 *             {@link #DatabaseFieldConfig(String, String, DataType, String, int, boolean, boolean, boolean, String, boolean, DatabaseTableConfig, boolean, Enum, boolean, String, boolean)}
 	 */
 	@Deprecated
 	public DatabaseFieldConfig(String fieldName, String columnName, DataType dataType, String defaultValue, int width,
