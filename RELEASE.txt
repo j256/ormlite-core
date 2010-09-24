@@ -10,7 +10,7 @@ To release ORMLite:
 
 2) Add section to ~/svn/local/ormlite-core/src/main/javadoc/doc-files/changelog.txt.  Commit it.
 
-3) Add any upgrade notes to ormlite.texi about how to go from version X.X to Y.Y
+3) Add any upgrade notes to ormlite.texi about how to go from version X.X to Y.Y, if necessary
 
 4) Update the release number and date in ormlite.texi.
 
