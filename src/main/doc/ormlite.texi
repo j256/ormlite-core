@@ -99,11 +99,11 @@ package test classes in the Java sources jar down in @code{src/test/java}.  They
 examples with working code.
 @ifhtml
 There is also a PDF version of this documentation -- see
-@uref{http://ormlite.sourceforge.net/javadoc/doc-files/ormlite.pdf}.
+@uref{http://ormlite.sourceforge.net/javadoc/ormlite-core/doc-files/ormlite.pdf}.
 @end ifhtml
 @iftex
 There is also a HTML version of this documentation -- see
-@uref{http://ormlite.sourceforge.net/javadoc/doc-files/ormlite.html}.
+@uref{http://ormlite.sourceforge.net/javadoc/ormlite-core/doc-files/ormlite.html}.
 @end iftex
 
 Gray Watson @uref{http://256.com/gray/}
@@ -139,7 +139,7 @@ To get started with @value{package}, you will need to download the jar file.  It
 (@uref{http://repo1.maven.org/maven2/com/j256/ormlite/}) or from Sourceforge (@uref{http://sourceforge.net/projects/ormlite/files/}). 
 
 Users that are connecting to SQL databases via JDBC connections will need to download the ormlite-jdbc-X.X.jar file. For use with Android
-applications, you should download the ormlite-android-X.X.jar instead. @value{package}e does not have any required direct dependencies.
+applications, you should download the ormlite-android-X.X.jar instead. @value{package} does not have any required direct dependencies.
 See the section on external dependencies for information about other packages that you may want to use.  @xref{Dependencies}.  The code
 works with Java 5 or later.
 
@@ -219,8 +219,7 @@ Dao<Order, Integer> orderDao =
   BaseDaoImpl.createDao(databaseType, connectionSource, Order.class);
 @end example
 
-The client code in the next section demonstrates how to create a DatabaseType to pass into the constructor for the implementation class. More information
-about setting up the DOAs is available later in the manual. @xref{DAO Setup}.
+More information about setting up the DOAs is available later in the manual. @xref{DAO Setup}.
 
 @c ----------------------------------------------------------------
 @node Starting Client, Using, Starting DAO, Getting Started
@@ -248,6 +247,7 @@ public class AccountApp @{
         // create a connection source to our database
         ConnectionSource connectionSource =
             DatabaseTypeUtils.createJdbcConnectionSource(databaseUrl);
+        // create the per-database type class from the url (H2DatabaseType)
         DatabaseType databaseType =
             DatabaseTypeUtils.createDatabaseType(databaseUrl);
         databaseType.loadDriver();
@@ -259,10 +259,12 @@ public class AccountApp @{
         accountDao.initialize();
 
         // if you need to create the 'accounts' table make this call
-        TableUtils.createTable(databaseType, connectionSource, Account.class);
+        TableUtils.createTable(databaseType, connectionSource,
+            Account.class);
 @end example
 
-Once we have configured our database objects, we can use them to create an Account and query for it from the database:
+Once we have configured our database objects, we can use them to create an Account, persist it to the database, and query for it from
+the database by its ID:
 
 @example
         // create an instance of Account
@@ -275,7 +277,7 @@ Once we have configured our database objects, we can use them to create an Accou
             throw new Exception("Failure adding account");
         @}
 		
-        //retrieve the account
+        // retrieve the account
         Account account2 = accountDao.queryForId("Jim Coakley");
         System.out.println("Account: " + account2.getName());
 
@@ -285,7 +287,7 @@ Once we have configured our database objects, we can use them to create an Accou
 @}
 @end example
 
-After following the example, you should be up and running. To understand more of the functionality available with @value{package},
+You should be able to get started using @value{package} by this point. To understand more of the functionality available with @value{package},
 continue on with the next section.  @xref{Using}.
 
 @c ----------------------------------------------------------------
@@ -311,7 +313,7 @@ To setup your classes to be persisted you need to do the following things:
 @enumerate
 @item Add the @@DatabaseTable annotation to the top of each class.  You can also use @@Entity.
 @item Add the @@DatabaseField annotation right before each field to be persisted.  You can also use @@Column and others.
-@item Add a no-argument constructor with at least package visibility to each class.
+@item Add a no-argument constructor to each class with at least package visibility.
 @end enumerate
 
 @menu
@@ -346,8 +348,9 @@ public class Account @{
 @end example
 
 The @code{@@DatabaseTable} annotations can have an optional @code{tableName} argument which specifies the name of the table
-that corresponds to the class.   If not specified, the class name all lowercase is used by default.  With the above example
-each @code{Account} object will be persisted as a row in the @code{accounts} table in the database.
+that corresponds to the class.   If not specified, the class name, all lowercase, is used by default.  With the above example
+each @code{Account} object will be persisted as a row in the @code{accounts} table in the database.  If the @code{tableName}
+was not specified, the @code{account} table would be used instead.
 
 @cindex @@DatabaseField
 @cindex DatabaseField annotation
@@ -366,8 +369,12 @@ public class Account @{
     @dots{}
 @end example
 
-In this example, each row in the @code{accounts} table has 2 columns, the @code{name} column which is a string and also is the
-database identity (id) of the row and the @code{password} column, also a string which can not be null. 
+In the above example, each row in the @code{accounts} table has 2 columns:
+
+@enumerate @bullet
+@item the @code{name} column which is a string and also is the database identity (id) of the row
+@item the @code{password} column, also a string which can not be null
+@end enumerate 
 
 The @@DatabaseField annotation can have the following fields:
 
@@ -377,7 +384,7 @@ The @@DatabaseField annotation can have the following fields:
 @cindex name of database column
 @item columName
 
-String name of the column in the database that will hold this field. If not set then the field name all lowercase is used instead.
+String name of the column in the database that will hold this field. If not set then the field name, all lowercase, is used instead.
 
 @cindex field type
 @cindex jdbc type
@@ -404,7 +411,8 @@ those that do is 255.
 @cindex null value allowed
 @item canBeNull
 
-Boolean whether the field can be assigned to null or have no value. Default is true.
+Boolean whether the field can be assigned to null value. Default is true.  If set to false then you must provide a value
+for this field on every object inserted into the database.
 
 @cindex id field
 @item id
@@ -440,7 +448,7 @@ Only one of this, @code{id}, and @code{generatedId} can be specified.
 Boolean setting which identifies this field as corresponding to another class that is also stored in the database.
 Default is false.  The field can not be a primitive type.  The other class must have an id field (either @code{id},
 @code{generatedId}, or @code{generatedIdSequence}) which will be stored in this table. When an object is returned
-from a query call, any foreign objects will just have the id field set.  @xref{Foreign Objects}.
+from a query call, any foreign objects will @emph{just} have the id field set.  @xref{Foreign Objects}.
 
 @cindex useGetSet
 @cindex get and set method usage
@@ -484,9 +492,9 @@ compatibility if old software is accessing up-to-date data or if you have to rol
 @cindex null values and primitives
 @item throwIfNull
 
-Boolean that tells @value{package} to throw an exception if it sees a null value in a row and is trying to store it in
-a primitive field.  By default it is false.  If it is false and the database field is null, then the value of the
-primitive will be set to 0.  This can only be used on a primitive field.
+Boolean that tells @value{package} to throw an exception if it sees a null value in a database row and is trying to store
+it in a primitive field.  By default it is false.  If it is false and the database field is null, then the value of the
+primitive will be set to 0 (false, null, etc.).  This can only be used on a primitive field.
 
 @item persisted
 
@@ -759,7 +767,7 @@ stored in the database.  @xref{Foreign Objects}.
 @cindex id column
 @cindex Dao interface
 Once you have annotated your classes, you will need to create the DAO class(es).  The pattern that we recommend
-is to define a DAO interface which extends the @code{Dao} interface and will be used in the code.  The interface
+is to define an interface which extends the @code{Dao} interface and will be used in the code.  The interface
 isn't required but it is a good pattern so your code is less tied to JDBC for persistence.  Each DAO has two generic
 parameters: the class we are persisting with the DAO, and the class of the ID-column that will be used to
 identify a specific database row.  If you class does not have an ID field, you can put @code{Object} or @code{Void}
@@ -800,7 +808,8 @@ to define one.
 @node Connection Source, Database Type, DAO Setup, Using
 @section JDBC Connection Sources
 
-@emph{NOTE:} Android users should see the Android specific documentation later in the manual. @xref{Use With Android}.
+@emph{NOTE:} With regards to connection sources, Android users should see the Android specific documentation later in the manual.
+@xref{Use With Android}.
 
 @cindex data source
 @cindex connection source
@@ -823,9 +832,8 @@ ConnectionSource connectionSource =
 @cindex pooled connections
 @cindex connection pooling
 There are many other data sources that can be used instead, including pooled connections which will create new
-connections on demand and re-use existing dormant connections. You can instantiate your own without the
-@code{DatabaseTypeUtils} and wrap it in the @code{DataSourceConnectionSource} which just delegates to it.  Then
-you set that on the DAOs directly.
+connections on demand and re-use existing dormant connections. You can instantiate your own directly and wrap it in
+the @code{DataSourceConnectionSource} class which delegates to it.  Then you set that on the DAOs directly.
 
 @cindex BasicDataSource
 @cindex DataSourceConnectionSource
@@ -868,8 +876,8 @@ try @{
 @cindex database type
 @cindex DatabaseTypeUtils
 @value{package} uses a @code{DatabaseType} object which defines all of the per-database information necessary to
-support the various features on all of the different database types.  @xref{Database Type}.  To instantiate a
-@code{DatabaseType}, you can either use the @code{DatabaseTypeUtils} class or call your database class directly.
+support the various features on all of the different database types.  To instantiate a @code{DatabaseType}, you
+can either use the @code{DatabaseTypeUtils} class or call your database class directly.
 
 @emph{NOTE:} Android users should use the @code{SqliteAndroidDatabaseType} only as examples in the Android
 specific docs later in the manual.  @xref{Use With Android}.
@@ -1091,6 +1099,7 @@ StatementBuilder<Account, String> statementBuilder =
   accountDao.statementBuilder();
 // set the WHERE to: the 'password' field must be equal to "qwerty"
 statementBuilder.where().eq(Account.PASSWORD_FIELD_NAME, "qwerty");
+// prepare our sql statement
 PreparedStmt<Account, String> preparedStmt =
   statementBuilder.prepareStatment();
 // query for all accounts that have that password
@@ -1180,8 +1189,9 @@ SELECT * FROM account
 @cindex is null
 @cindex comparisons
 The @code{StatementBuilder} also allows you to set what specific columns you want returned, specify the 'ORDER BY' and 'GROUP BY'
-fields, and various other SQL features (LIKE, IN, >, >=, <, <=, <>, IS NULL, @dots{}).  See the javadocs on @code{StatementBuilder}
-and @code{Where} classes for more information.  A good SQL reference site can be found at @uref{http://www.w3schools.com/Sql/}.
+fields, and various other SQL features (LIKE, IN, >, >=, <, <=, <>, IS NULL, DISTINCT, @dots{}).  See the javadocs on
+@code{StatementBuilder} and @code{Where} classes for more information.  A good SQL reference site can be found at
+@uref{http://www.w3schools.com/Sql/}.
 
 @c ----------------------------------------------------------------
 @node Select Arguments, Foreign Objects, Building Queries, Statement Builder
@@ -1224,7 +1234,7 @@ new object if you want to use a @code{SelectArg} with another column.
 
 @cindex foreign objects
 @value{package} supports the concept of "foreign" objects where one or more of the fields correspond to an object
-persisted in another table in the same database.  For example, if you had an @code{Order} objects in your database
+are persisted in another table in the same database.  For example, if you had an @code{Order} objects in your database
 and each @code{Order} had a corresponding @code{Account} object, then the @code{Order} object would have foreign
 @code{Account} field.  With foreign objects, @emph{just} the id field from the @code{Account} is persisted
 to the @code{Order} table as the column "@code{account_id}".  For example, the @code{Order} class might look
@@ -1255,8 +1265,8 @@ CREATE TABLE `orders`
 @cindex foreign object refreshing
 When you query for an order, you will get an @code{Order} object with an account field object that @emph{only} has its id
 field set -- all of the fields in the foreign @code{Account} object will have default values (null, 0, false, etc.).  If
-you want to use other fields in the @code{Account}, you can use a refresh call to set all of the fields in the
-@code{Account} object.  For example:
+you want to use other fields in the @code{Account}, you must call @code{refresh} on the @code{accountDao} class to get the
+@code{Account} object filled in.  For example:
 
 @example
 if (accountDao.refresh(order.getAccount()) != 1) @{
@@ -1337,10 +1347,10 @@ Again, feedback on this is welcome.
 
 The 3.2 release involved a @emph{very} large code reorganization and migration.  The project was basically split into 3 pieces:
 core functionality, JDBC database handlers, and the new Android handler.  With significant help from Kevin G, we abstracted all
-of the databse calls into 3 interfaces: @code{ConnectionSource} (like a @code{DataSource}), @code{DatabaseConnection} (like a
+of the database calls into 3 interfaces: @code{ConnectionSource} (like a @code{DataSource}), @code{DatabaseConnection} (like a
 @code{Connection}) and @code{DatabaseResults} (like a @code{ResultSet}).  Once we had the interfaces in place, we wrote
 delegation classes for JDBC and Android handlers.  This means that as of 3.X we release 3 packages: ormlite-core (for developers),
-ormlite-jdbc (for people connection to JDBC databases), and ormlite-android (for Android users).  Both the JDBC and Android
+ormlite-jdbc (for people connecting to JDBC databases), and ormlite-android (for Android users).  Both the JDBC and Android
 packages include all of the core code as well.
 
 Along the way a number of specific changes were made to the methods and classes:
@@ -1371,8 +1381,8 @@ the lack of detail here.
 @node 2.3 to 2.4, Advanced, 2.X to 3.2, How to Upgrade
 @section Upgrading from Version 2.3 to 2.4
 
-A bug was discovered with how we were handling Derby and Hsqldb.  Both of these databses seem to be capitalizing table and field
-names in certain situations meaning that customized queries of @value{package} generated tables were difficult.  In version 2.4,
+A bug was fixed in 2.4 with how we were handling Derby and Hsqldb.  Both of these databases seem to be capitalizing table and field
+names in certain situations which meant that customized queries of @value{package} generated tables were affected.  In version 2.4,
 all tables and field names are capitalized in the SQL generated for Derby and Hsqldb databases. This means that if you have data
 in these databases from a pre 2.4 version, the 2.4 version will not be able to find the tables and fields without renaming to be
 uppercase.
@@ -1771,8 +1781,8 @@ on the returned RawResults object once you are done with it.
 @section @value{package} Logging
 
 @cindex logging information
-@value{package} uses a log system which can plug into Apache commons logging, Log4j, or use its own internal log
-implementations.  The logger code in @code{com.j256.ormlite.logger} first looks for the
+@value{package} uses a log system which can plug into Apache commons logging, Log4j, Android Log, or its own internal
+log implementations.  The logger code in @code{com.j256.ormlite.logger} first looks for the
 @code{org.apache.commons.logging.LogFactory} class in the classpath -- if found it will use Apache commons logging.
 If that class is not found it then looks for @code{org.apache.log4j.Logger} and if found will use Log4j.  Next it
 looks for @code{android.util.Log} and if found will use the Android internal logger.  If none of these classes are
@@ -1861,16 +1871,21 @@ There are a couple of people that I'd like to thank who helped with the project.
 @item Kevin Galligan
 
 Kevin was the impetus and the author of a good bit of the Android compatible code.  He wrote the Android level support classes
-and did a ton of beta-testing of it.  Thanks much Kevin.  See @uref{http://www.kagii.com/}.
+and did a ton of beta-testing of it.  He's also provided all of the Android examples.  Thanks much Kevin.  See @uref{http://www.kagii.com/}.
 
 @item Jim Gloor
 
-Jim was my JDBC Java guru at my current company.  Thanks much for his code samples that started this effort.
+Jim was one of the Java gurus at a previous company.  Thanks much for his JDBC code samples that started this effort.
+
+@item Nelson Erb
+
+Nelson is our self-appointed documentation and testing "intern".  He did a great job summarizing sections of this document
+so we could create a better 'Getting Started' section.  He will also be working on tests. 
 
 @item Robert Adamsky
 
-Robert was one of the early developers at my current company who laid out the entire DAO and hibernate class hierarchy.  The
-@code{DAO} interface and the @code{BaseDaoImpl} where in some part modeled after his code.  Thanks dude.  
+I worked with Robert at a company where he laid out our entire DAO and hibernate class hierarchy.  The @code{DAO} interface and the
+@code{BaseDaoImpl} where in some part modeled after his code.  Thanks dude.  
 
 @end table
 
