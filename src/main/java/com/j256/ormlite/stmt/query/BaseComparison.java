@@ -1,8 +1,10 @@
 package com.j256.ormlite.stmt.query;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import com.j256.ormlite.db.DatabaseType;
+import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.SelectArg;
 
 /**
@@ -13,18 +15,19 @@ import com.j256.ormlite.stmt.SelectArg;
 abstract class BaseComparison implements Comparison {
 
 	protected final String columnName;
-	protected final boolean isNumber;
+	protected final FieldType fieldType;
 	private final Object value;
 
-	protected BaseComparison(String columnName, boolean isNumber, Object value) {
+	protected BaseComparison(String columnName, FieldType fieldType, Object value) {
 		this.columnName = columnName;
-		this.isNumber = isNumber;
+		this.fieldType = fieldType;
 		this.value = value;
 	}
 
 	public abstract StringBuilder appendOperation(StringBuilder sb);
 
-	public StringBuilder appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList) {
+	public StringBuilder appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
+			throws SQLException {
 		databaseType.appendEscapedEntityName(sb, columnName);
 		sb.append(' ');
 		appendOperation(sb);
@@ -37,30 +40,42 @@ abstract class BaseComparison implements Comparison {
 		return columnName;
 	}
 
-	public StringBuilder appendValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList) {
-		appendArgOrValue(databaseType, sb, selectArgList, value);
+	public StringBuilder appendValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
+			throws SQLException {
+		appendArgOrValue(databaseType, fieldType, sb, selectArgList, value);
 		return sb;
 	}
 
 	/**
 	 * Append to the string builder either a {@link SelectArg} argument or a value object.
+	 * 
+	 * @throws SQLException
 	 */
-	protected void appendArgOrValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList,
-			Object argOrValue) {
+	protected void appendArgOrValue(DatabaseType databaseType, FieldType fieldType, StringBuilder sb, List<SelectArg> selectArgList,
+			Object argOrValue) throws SQLException {
+		boolean appendSpace = true;
 		if (argOrValue == null) {
-			throw new IllegalArgumentException("argument to comparison of '" + columnName + "' is null");
+			throw new IllegalArgumentException("argument to comparison of '" + fieldType.getFieldName() + "' is null");
 		} else if (argOrValue instanceof SelectArg) {
 			sb.append('?');
 			SelectArg selectArg = (SelectArg) argOrValue;
-			selectArg.setColumnName(columnName);
+			selectArg.setMetaInfo(columnName, fieldType);
 			selectArgList.add(selectArg);
-		} else if (isNumber) {
+		} else if (fieldType.isForeign() && fieldType.getFieldType() == argOrValue.getClass()) {
+			// if we have a foreign field and our argument is the type of the foreign object (i.e. not its id) then we need to extra the id
+			FieldType idFieldType = fieldType.getForeignIdField();
+			appendArgOrValue(databaseType, idFieldType, sb, selectArgList, idFieldType.getFieldValue(argOrValue));
+			// no need for the space since it was done in the recursion
+			appendSpace = false;
+		} else if (fieldType.isNumber()) {
 			// numbers can't have quotes around them in derby
 			sb.append(argOrValue.toString());
 		} else {
 			databaseType.appendEscapedWord(sb, argOrValue.toString());
 		}
-		sb.append(' ');
+		if (appendSpace) {
+			sb.append(' ');
+		}
 	}
 
 	@Override

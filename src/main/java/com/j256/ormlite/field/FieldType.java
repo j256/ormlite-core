@@ -178,6 +178,10 @@ public class FieldType {
 		return fieldName;
 	}
 
+	public Class<?> getFieldType() {
+		return field.getType();
+	}
+
 	public String getDbColumnName() {
 		return dbColumnName;
 	}
@@ -363,6 +367,17 @@ public class FieldType {
 			@SuppressWarnings("unchecked")
 			FV converted = (FV) val;
 			return converted;
+		}
+	}
+
+	/**
+	 * Return the id field associated with the foreign object or null if none.
+	 */
+	public FieldType getForeignIdField() throws SQLException {
+		if (foreignTableInfo == null) {
+			return null;
+		} else {
+			return foreignTableInfo.getIdField();
 		}
 	}
 

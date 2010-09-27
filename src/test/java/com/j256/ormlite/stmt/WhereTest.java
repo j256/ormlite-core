@@ -25,7 +25,7 @@ public class WhereTest extends BaseOrmLiteCoreTest {
 		Where where = new Where(createTableInfo());
 		assertTrue(where.toString().contains("empty where clause"));
 		String value = "bar";
-		Eq eq = new Eq(COLUMN_NAME, true, value);
+		Eq eq = new Eq(COLUMN_NAME, numberFieldType, value);
 		where.eq(COLUMN_NAME, value);
 		assertTrue(where.toString().contains(eq.toString()));
 	}
@@ -365,7 +365,7 @@ public class WhereTest extends BaseOrmLiteCoreTest {
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
-	private void testOperation(Where where, String columnName, String operation, Object value) {
+	private void testOperation(Where where, String columnName, String operation, Object value) throws Exception {
 		StringBuilder whereSb = new StringBuilder();
 		where.appendSql(databaseType, whereSb, new ArrayList<SelectArg>());
 		StringBuilder sb = new StringBuilder();

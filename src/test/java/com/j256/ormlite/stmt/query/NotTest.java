@@ -6,13 +6,14 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.j256.ormlite.BaseOrmLiteCoreTest;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.stmt.SelectArg;
 
 /**
  * Oh yes it _is_ a test, just of the NOT operation.
  */
-public class NotTest {
+public class NotTest extends BaseOrmLiteCoreTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void test() {
@@ -39,7 +40,7 @@ public class NotTest {
 	public void testToString() {
 		String name = "foo";
 		String value = "bar";
-		Eq eq = new Eq(name, true, value);
+		Eq eq = new Eq(name, numberFieldType, value);
 		Not not = new Not();
 		assertTrue(not.toString().contains("NOT without comparison"));
 		not.setMissingClause(eq);

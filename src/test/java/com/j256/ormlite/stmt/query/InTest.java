@@ -8,27 +8,28 @@ import java.util.Random;
 
 import org.junit.Test;
 
+import com.j256.ormlite.BaseOrmLiteCoreTest;
 import com.j256.ormlite.stmt.SelectArg;
 
-public class InTest {
+public class InTest extends BaseOrmLiteCoreTest {
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testAppendValueNull() {
+	public void testAppendValueNull() throws Exception {
 		List<Object> objList = new ArrayList<Object>();
 		objList.add(null);
-		In in = new In("foo", true, objList);
+		In in = new In("foo", numberFieldType, objList);
 		in.appendValue(null, new StringBuilder(), null);
 	}
 
 	@Test
-	public void testAppendValue() {
+	public void testAppendValue() throws Exception {
 		List<Object> objList = new ArrayList<Object>();
 		Random random = new Random();
 		int numArgs = 100;
 		for (int i = 0; i < numArgs; i++) {
 			objList.add((Integer) random.nextInt());
 		}
-		In in = new In("foo", true, objList);
+		In in = new In("foo", numberFieldType, objList);
 		StringBuilder sb = new StringBuilder();
 		assertEquals(sb, in.appendValue(null, sb, new ArrayList<SelectArg>()));
 		String[] args = sb.toString().split(",");

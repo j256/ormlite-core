@@ -1,18 +1,40 @@
 package com.j256.ormlite;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.lang.reflect.Field;
 import java.sql.SQLException;
 
 import com.j256.ormlite.db.BaseDatabaseType;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.table.TableInfo;
 
 public abstract class BaseOrmLiteCoreTest {
 
 	protected final DatabaseType databaseType = new StubDatabaseType();
 	protected TableInfo<BaseFoo> baseFooTableInfo;
+	protected final FieldType numberFieldType;
+	protected final FieldType stringFieldType;
+	protected final FieldType foreignFieldType;
+
+	{
+		try {
+			Field field = BaseFoo.class.getDeclaredField("id");
+			assertEquals(String.class, field.getType());
+			stringFieldType = FieldType.createFieldType(databaseType, "BaseFoo", field);
+			field = BaseFoo.class.getDeclaredField("val");
+			assertEquals(int.class, field.getType());
+			numberFieldType = FieldType.createFieldType(databaseType, "BaseFoo", field);
+			field = Foreign.class.getDeclaredField("baseFoo");
+			assertEquals(BaseFoo.class, field.getType());
+			foreignFieldType = FieldType.createFieldType(databaseType, "BaseFoo", field);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	{
 		try {
@@ -73,6 +95,13 @@ public abstract class BaseOrmLiteCoreTest {
 			if (other == null || other.getClass() != getClass())
 				return false;
 			return id.equals(((BaseFoo) other).id);
+		}
+	}
+
+	protected class Foreign {
+		@DatabaseField(foreign = true)
+		public BaseFoo baseFoo;
+		public Foreign() {
 		}
 	}
 }

@@ -7,17 +7,18 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
+import com.j256.ormlite.BaseOrmLiteCoreTest;
 import com.j256.ormlite.stmt.SelectArg;
 
-public class BetweenTest {
+public class BetweenTest extends BaseOrmLiteCoreTest {
 
 	private final static String COLUMN_NAME = "foo";
 
 	@Test
-	public void testAppendOperation() {
+	public void testAppendOperation() throws Exception {
 		int low = 10;
 		int high = 20;
-		Between btw = new Between(COLUMN_NAME, true, low, high);
+		Between btw = new Between(COLUMN_NAME, numberFieldType, low, high);
 		StringBuilder sb = new StringBuilder();
 		btw.appendOperation(sb);
 		assertTrue(sb.toString().contains("BETWEEN"));
@@ -27,12 +28,14 @@ public class BetweenTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testAppendValueLowNull() {
-		new Between(COLUMN_NAME, true, null, 20L).appendValue(null, new StringBuilder(), new ArrayList<SelectArg>());
+	public void testAppendValueLowNull() throws Exception {
+		new Between(COLUMN_NAME, numberFieldType, null, 20L).appendValue(null, new StringBuilder(),
+				new ArrayList<SelectArg>());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testAppendValueHighNull() {
-		new Between(COLUMN_NAME, true, 10L, null).appendValue(null, new StringBuilder(), new ArrayList<SelectArg>());
+	public void testAppendValueHighNull() throws Exception {
+		new Between(COLUMN_NAME, numberFieldType, 10L, null).appendValue(null, new StringBuilder(),
+				new ArrayList<SelectArg>());
 	}
 }

@@ -1,5 +1,6 @@
 package com.j256.ormlite.stmt.query;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import com.j256.ormlite.db.DatabaseType;
@@ -29,7 +30,8 @@ abstract class BaseBinaryClause implements NeedsFutureClause {
 	 */
 	public abstract StringBuilder appendOperation(StringBuilder sb);
 
-	public StringBuilder appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> columnArgList) {
+	public StringBuilder appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> columnArgList)
+			throws SQLException {
 		sb.append("(");
 		left.appendSql(databaseType, sb, columnArgList);
 		appendOperation(sb);

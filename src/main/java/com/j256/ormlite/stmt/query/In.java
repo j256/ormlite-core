@@ -1,9 +1,11 @@
 package com.j256.ormlite.stmt.query;
 
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
 import com.j256.ormlite.db.DatabaseType;
+import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.Where;
 
@@ -16,13 +18,13 @@ public class In extends BaseComparison {
 
 	private Iterable<?> objects;
 
-	public In(String columnName, boolean isNumber, Iterable<?> objects) {
-		super(columnName, isNumber, null);
+	public In(String columnName, FieldType fieldType, Iterable<?> objects) {
+		super(columnName, fieldType, null);
 		this.objects = objects;
 	}
 
-	public In(String columnName, boolean isNumber, Object[] objects) {
-		super(columnName, isNumber, null);
+	public In(String columnName, FieldType fieldType, Object[] objects) {
+		super(columnName, fieldType, null);
 		// grrrr, Object[] should be Iterable
 		this.objects = Arrays.asList(objects);
 	}
@@ -34,7 +36,8 @@ public class In extends BaseComparison {
 	}
 
 	@Override
-	public StringBuilder appendValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> columnArgList) {
+	public StringBuilder appendValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> columnArgList)
+			throws SQLException {
 		sb.append('(');
 		boolean first = true;
 		for (Object value : objects) {
@@ -47,7 +50,7 @@ public class In extends BaseComparison {
 				sb.append(',');
 			}
 			// for each of our arguments, add it to the output
-			super.appendArgOrValue(databaseType, sb, columnArgList, value);
+			super.appendArgOrValue(databaseType, fieldType, sb, columnArgList, value);
 		}
 		sb.append(") ");
 		return sb;

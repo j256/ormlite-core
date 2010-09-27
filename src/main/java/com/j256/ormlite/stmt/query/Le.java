@@ -1,5 +1,6 @@
 package com.j256.ormlite.stmt.query;
 
+import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.Where;
 
 /**
@@ -9,8 +10,8 @@ import com.j256.ormlite.stmt.Where;
  */
 public class Le extends BaseComparison {
 
-	public Le(String columnName, boolean isNumber, Object value) {
-		super(columnName, isNumber, value);
+	public Le(String columnName, FieldType fieldType, Object value) {
+		super(columnName, fieldType, value);
 	}
 
 	@Override

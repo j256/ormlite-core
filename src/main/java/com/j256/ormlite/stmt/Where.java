@@ -151,7 +151,7 @@ public class Where {
 	 * Add a BETWEEN clause so the column must be between the low and high parameters.
 	 */
 	public Where between(String columnName, Object low, Object high) throws SQLException {
-		addClause(new Between(columnName, checkIfColumnIsNumber(columnName), low, high));
+		addClause(new Between(columnName, findColumnFieldType(columnName), low, high));
 		return this;
 	}
 
@@ -159,7 +159,7 @@ public class Where {
 	 * Add a '=' clause so the column must be equal to the value.
 	 */
 	public Where eq(String columnName, Object value) throws SQLException {
-		addClause(new Eq(columnName, checkIfColumnIsNumber(columnName), value));
+		addClause(new Eq(columnName, findColumnFieldType(columnName), value));
 		return this;
 	}
 
@@ -167,7 +167,7 @@ public class Where {
 	 * Add a '&gt;=' clause so the column must be greater-than or equals-to the value.
 	 */
 	public Where ge(String columnName, Object value) throws SQLException {
-		addClause(new Ge(columnName, checkIfColumnIsNumber(columnName), value));
+		addClause(new Ge(columnName, findColumnFieldType(columnName), value));
 		return this;
 	}
 
@@ -175,7 +175,7 @@ public class Where {
 	 * Add a '&gt;' clause so the column must be greater-than the value.
 	 */
 	public Where gt(String columnName, Object value) throws SQLException {
-		addClause(new Gt(columnName, checkIfColumnIsNumber(columnName), value));
+		addClause(new Gt(columnName, findColumnFieldType(columnName), value));
 		return this;
 	}
 
@@ -183,7 +183,7 @@ public class Where {
 	 * Add a IN clause so the column must be equal-to one of the objects from the list passed in.
 	 */
 	public Where in(String columnName, Iterable<?> objects) throws SQLException {
-		addClause(new In(columnName, checkIfColumnIsNumber(columnName), objects));
+		addClause(new In(columnName, findColumnFieldType(columnName), objects));
 		return this;
 	}
 
@@ -194,7 +194,7 @@ public class Where {
 		if (objects.length == 1 && objects[0].getClass().isArray()) {
 			throw new IllegalArgumentException("in(Object... objects) seems to be an array within an array");
 		}
-		addClause(new In(columnName, checkIfColumnIsNumber(columnName), objects));
+		addClause(new In(columnName, findColumnFieldType(columnName), objects));
 		return this;
 	}
 
@@ -202,7 +202,7 @@ public class Where {
 	 * Add a 'IS NULL' clause so the column must be null. '=' NULL does not work.
 	 */
 	public Where isNull(String columnName) throws SQLException {
-		addClause(new IsNull(columnName, checkIfColumnIsNumber(columnName)));
+		addClause(new IsNull(columnName, findColumnFieldType(columnName)));
 		return this;
 	}
 
@@ -210,7 +210,7 @@ public class Where {
 	 * Add a 'IS NOT NULL' clause so the column must not be null. '<>' NULL does not work.
 	 */
 	public Where isNotNull(String columnName) throws SQLException {
-		addClause(new IsNotNull(columnName, checkIfColumnIsNumber(columnName)));
+		addClause(new IsNotNull(columnName, findColumnFieldType(columnName)));
 		return this;
 	}
 
@@ -218,7 +218,7 @@ public class Where {
 	 * Add a '&lt;=' clause so the column must be less-than or equals-to the value.
 	 */
 	public Where le(String columnName, Object value) throws SQLException {
-		addClause(new Le(columnName, checkIfColumnIsNumber(columnName), value));
+		addClause(new Le(columnName, findColumnFieldType(columnName), value));
 		return this;
 	}
 
@@ -226,7 +226,7 @@ public class Where {
 	 * Add a '&lt;' clause so the column must be less-than the value.
 	 */
 	public Where lt(String columnName, Object value) throws SQLException {
-		addClause(new Lt(columnName, checkIfColumnIsNumber(columnName), value));
+		addClause(new Lt(columnName, findColumnFieldType(columnName), value));
 		return this;
 	}
 
@@ -234,7 +234,7 @@ public class Where {
 	 * Add a LIKE clause so the column must be like the value (where you can specify '%' patterns.
 	 */
 	public Where like(String columnName, Object value) throws SQLException {
-		addClause(new Like(columnName, checkIfColumnIsNumber(columnName), value));
+		addClause(new Like(columnName, findColumnFieldType(columnName), value));
 		return this;
 	}
 
@@ -242,7 +242,7 @@ public class Where {
 	 * Add a '&lt;&gt;' clause so the column must be not-equal-to the value.
 	 */
 	public Where ne(String columnName, Object value) throws SQLException {
-		addClause(new Ne(columnName, checkIfColumnIsNumber(columnName), value));
+		addClause(new Ne(columnName, findColumnFieldType(columnName), value));
 		return this;
 	}
 
@@ -283,7 +283,7 @@ public class Where {
 	/**
 	 * Used by the internal classes to add the where SQL to the {@link StringBuilder}.
 	 */
-	void appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> columnArgList) {
+	void appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> columnArgList) throws SQLException {
 		if (clauseList.isEmpty()) {
 			throw new IllegalStateException("No where clauses defined.  Did you miss a where operation?");
 		}
@@ -335,13 +335,13 @@ public class Where {
 		}
 	}
 
-	private boolean checkIfColumnIsNumber(String columnName) throws SQLException {
+	private FieldType findColumnFieldType(String columnName) throws SQLException {
 		FieldType fieldType = tableInfo.getFieldTypeByName(columnName);
 		if (fieldType == null) {
 			throw new IllegalArgumentException("Unknown column name '" + columnName + "' in table "
 					+ tableInfo.getTableName());
 		} else {
-			return fieldType.isNumber();
+			return fieldType;
 		}
 	}
 

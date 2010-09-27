@@ -2,6 +2,8 @@ package com.j256.ormlite.stmt;
 
 import java.sql.SQLException;
 
+import com.j256.ormlite.field.FieldType;
+
 /**
  * An argument to a select SQL statement. After the query is constructed, the caller can set the value on this argument
  * and run the query. Then the argument can be set again and the query re-executed. This is equivalent in JDBC to a ?
@@ -44,6 +46,7 @@ public class SelectArg {
 
 	private boolean hasBeenSet = false;
 	private String columnName = null;
+	private FieldType fieldType = null;
 	private Object value = null;
 
 	/**
@@ -60,7 +63,7 @@ public class SelectArg {
 	/**
 	 * Used internally by the package to set the column-name associated with this argument.
 	 */
-	public void setColumnName(String columnName) {
+	public void setMetaInfo(String columnName, FieldType fieldType) {
 		if (this.columnName == null) {
 			// not set yet
 		} else if (this.columnName.equals(columnName)) {
@@ -69,17 +72,30 @@ public class SelectArg {
 			throw new IllegalArgumentException("Column name cannot be set twice from " + this.columnName + " to "
 					+ columnName);
 		}
+		if (this.fieldType == null) {
+			// not set yet
+		} else if (this.fieldType == fieldType) {
+			// set to the same value as before
+		} else {
+			throw new IllegalArgumentException("FieldType name cannot be set twice from " + this.fieldType + " to "
+					+ fieldType);
+		}
 		this.columnName = columnName;
+		this.fieldType = fieldType;
 	}
 
 	/**
 	 * Return the value associated with this argument. The value should be set by the user before it is consumed.
 	 */
 	public Object getValue() throws SQLException {
-		if (hasBeenSet) {
-			return value;
-		} else {
+		if (!hasBeenSet) {
 			throw new SQLException("Column value has not been set for " + columnName);
+		}
+		if (fieldType != null && fieldType.isForeign() && fieldType.getFieldType() == value.getClass()) {
+			FieldType idFieldType = fieldType.getForeignIdField();
+			return idFieldType.getFieldValue(value);
+		} else {
+			return value;
 		}
 	}
 
@@ -95,9 +111,26 @@ public class SelectArg {
 	@Override
 	public String toString() {
 		if (hasBeenSet) {
-			return "set arg(" + value + ")";
+			return "set arg(" + getValueString() + ")";
 		} else {
 			return "unset arg()";
+		}
+	}
+
+	private String getValueString() {
+		if (value == null) {
+			return "[null]";
+		}
+		Object val;
+		try {
+			val = getValue();
+			if (val == null) {
+				return "[null]";
+			} else {
+				return val.toString();
+			}
+		} catch (SQLException e) {
+			return "[could not get value: " + e.getMessage() + "]";
 		}
 	}
 }

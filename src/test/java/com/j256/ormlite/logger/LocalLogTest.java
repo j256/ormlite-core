@@ -38,8 +38,8 @@ public class LocalLogTest extends BaseLogTest {
 		}
 	}
 
-	@Test
-	public void testFileProperty() {
+	@Test(timeout = 10000)
+	public void testFileProperty() throws Exception{
 		String logPath = "target/foo.txt";
 		File logFile = new File(logPath);
 		logFile.delete();
@@ -51,7 +51,9 @@ public class LocalLogTest extends BaseLogTest {
 			log.fatal(msg);
 			log.flush();
 			assertTrue(logFile.exists());
-			assertTrue(logFile.length() > msg.length());
+			while (logFile.length() < msg.length()) {
+				Thread.sleep(100);
+			}
 		} finally {
 			System.clearProperty(LocalLog.LOCAL_LOG_FILE_PROPERTY);
 			logFile.delete();

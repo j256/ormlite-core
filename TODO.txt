@@ -4,14 +4,6 @@
 	- uses queryForFirst to return object
 	- creates account_field-name instead of account_id field in local table 
 
-- how can we use the query builder with foreign fields?
-	- right now we have to know that we are storing the id and we have to pass in the right id type argument
-	- could it look to see if the field was the type of the argument and then call get id on the argument?
-	- acct = new Account(); ... were.eq("account_id", acct);
-	- maybe it is fine the way it is
-	- maybe see if the argument (SelectArg or direct) is the same as the field type in which case we extract the id automagically
-		- if arg.getClass() == field.getClass() then ...
-
 - should we handle all non-number arguments to queries to be ? and force internal SelectArgs?
 	- would be better for escaping reasons
 	- now have field types in the queries so escaping better
@@ -27,7 +19,7 @@
 	- when you create the dao, you have to somehow inject a Method which returns a new object of a certain type
 	- can't do it as part of the annotation, has to be setup with a DatabaseTableConfig I guess
 	- this will allow you to call a constructor with (for example) some null fields to get an instance that can be overridden
-	- should we do the same for setters and getters?  use this method to set the field, use this to get it?
+	- should we do the same for setters and getters?  use this method to set the field, use this to get it? (doesn't sound worth it)
 
 - should we consider defining the DatabaseType internally?
 	- just set the datasource on the dao and then determine the database type from the datasource url
@@ -41,7 +33,7 @@
 	- look to see if the unknown class has a DatabaseTable(embedded = true or javax annotation
 	- take all of the fields as if they were fields in this class
 
-- more support for constraints:
+- more support for more constraints (other than primary and unique):
 	- maybe a check="> 10" type of addition to DatabaseField so we can add a check constraint
 	- foreign key constraint can be in addition to (or required for) the foreign=true
 

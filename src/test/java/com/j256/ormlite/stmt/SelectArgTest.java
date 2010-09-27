@@ -8,7 +8,9 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 
-public class SelectArgTest {
+import com.j256.ormlite.BaseOrmLiteCoreTest;
+
+public class SelectArgTest extends BaseOrmLiteCoreTest {
 
 	@Test(expected = SQLException.class)
 	public void testGetBeforeSetValue() throws Exception {
@@ -34,15 +36,15 @@ public class SelectArgTest {
 	public void testGetColumnNameOk() {
 		SelectArg selectArg = new SelectArg();
 		String name = "fwewfwef";
-		selectArg.setColumnName(name);
+		selectArg.setMetaInfo(name, stringFieldType);
 		assertSame(name, selectArg.getColumnName());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testGetColumnNamTwice() {
+	public void testGetColumnNameTwice() {
 		SelectArg selectArg = new SelectArg();
-		selectArg.setColumnName("1");
-		selectArg.setColumnName("2");
+		selectArg.setMetaInfo("1", numberFieldType);
+		selectArg.setMetaInfo("2", numberFieldType);
 	}
 
 	@Test
@@ -50,6 +52,19 @@ public class SelectArgTest {
 		SelectArg selectArg = new SelectArg();
 		selectArg.setValue(null);
 		assertNull(selectArg.getValue());
+	}
+
+	@Test
+	public void testForeignValue() throws Exception {
+		SelectArg selectArg = new SelectArg();
+		assertTrue(selectArg.toString().contains("unset arg"));
+		BaseFoo value = new BaseFoo();
+		String id = "dewpofjweee";
+		value.id = id;
+		selectArg.setValue(value);
+		selectArg.setMetaInfo("id", foreignFieldType);
+		assertTrue(selectArg.toString().contains("set arg"));
+		assertTrue(selectArg + " wrong value", selectArg.toString().contains(id));
 	}
 
 	@Test
