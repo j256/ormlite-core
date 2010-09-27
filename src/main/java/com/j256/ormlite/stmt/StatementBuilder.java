@@ -1,5 +1,6 @@
 package com.j256.ormlite.stmt;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -151,7 +152,7 @@ public class StatementBuilder<T, ID> {
 	 * {@link Dao#iterator(PreparedStmt)} methods. If you change the where or make other calls you will need to re-call
 	 * this method to re-prepare the query for execution.
 	 */
-	public PreparedStmt<T> prepareStatement() {
+	public PreparedStmt<T> prepareStatement() throws SQLException {
 		List<FieldType> argFieldTypeList = new ArrayList<FieldType>();
 		List<FieldType> resultFieldTypeList = new ArrayList<FieldType>();
 		List<SelectArg> selectArgList = new ArrayList<SelectArg>();
@@ -164,7 +165,7 @@ public class StatementBuilder<T, ID> {
 	 * @deprecated Use {@link #prepareStatement()}
 	 */
 	@Deprecated
-	public PreparedStmt<T> prepareQuery() {
+	public PreparedStmt<T> prepareQuery() throws SQLException {
 		return prepareStatement();
 	}
 
@@ -176,7 +177,7 @@ public class StatementBuilder<T, ID> {
 	 * This is mostly used for debugging or logging cases. The dao classes us the {@link #prepareQuery} method.
 	 * </p>
 	 */
-	public String prepareStatementString() {
+	public String prepareStatementString() throws SQLException {
 		List<FieldType> argFieldTypeList = new ArrayList<FieldType>();
 		List<FieldType> resultFieldTypeList = new ArrayList<FieldType>();
 		List<SelectArg> selectArgList = new ArrayList<SelectArg>();
@@ -188,7 +189,7 @@ public class StatementBuilder<T, ID> {
 	 * method instead.
 	 */
 	private String buildSelectString(List<FieldType> argFieldTypeList, List<FieldType> resultFieldTypeList,
-			List<SelectArg> selectArgList) {
+			List<SelectArg> selectArgList) throws SQLException {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT ");
 		if (databaseType.isLimitAfterSelect()) {
@@ -342,7 +343,7 @@ public class StatementBuilder<T, ID> {
 		 * {@link StatementBuilder#prepareQuery()} method instead.
 		 */
 		public String buildSelectString(List<FieldType> argFieldTypeList, List<FieldType> resultFieldTypeList,
-				List<SelectArg> selectArgList) {
+				List<SelectArg> selectArgList) throws SQLException {
 			return super.buildSelectString(argFieldTypeList, resultFieldTypeList, selectArgList);
 		}
 	}
