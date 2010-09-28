@@ -38,8 +38,8 @@ public class FieldType {
 	private final TableInfo<?> foreignTableInfo;
 	private final Method fieldGetMethod;
 	private final Method fieldSetMethod;
-	private Map<String, Enum<?>> enumStringMap = null;
-	private Map<Integer, Enum<?>> enumValueMap = null;
+	private final Map<String, Enum<?>> enumStringMap;
+	private final Map<Integer, Enum<?>> enumValueMap;
 	private final Enum<?> unknownEnumVal;
 	private final boolean throwIfNull;
 	private final String format;
@@ -146,14 +146,16 @@ public class FieldType {
 			this.fieldSetMethod = null;
 		}
 		if (dataType == DataType.ENUM_INTEGER || dataType == DataType.ENUM_STRING) {
-			enumStringMap = new HashMap<String, Enum<?>>();
-			enumValueMap = new HashMap<Integer, Enum<?>>();
+			this.enumStringMap = new HashMap<String, Enum<?>>();
+			this.enumValueMap = new HashMap<Integer, Enum<?>>();
 			for (Enum<?> enumVal : (Enum<?>[]) field.getType().getEnumConstants()) {
-				enumStringMap.put(enumVal.name(), enumVal);
-				enumValueMap.put(enumVal.ordinal(), enumVal);
+				this.enumStringMap.put(enumVal.name(), enumVal);
+				this.enumValueMap.put(enumVal.ordinal(), enumVal);
 			}
 			this.unknownEnumVal = fieldConfig.getUnknownEnumvalue();
 		} else {
+			this.enumStringMap = null;
+			this.enumValueMap = null;
 			this.unknownEnumVal = null;
 		}
 		this.throwIfNull = fieldConfig.isThrowIfNull();

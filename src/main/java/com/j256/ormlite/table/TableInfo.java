@@ -21,9 +21,9 @@ public class TableInfo<T> {
 	private final Class<T> dataClass;
 	private final String tableName;
 	private final FieldType[] fieldTypes;
-	private final Map<String, FieldType> fieldNameMap = new HashMap<String, FieldType>();
 	private final FieldType idField;
 	private final Constructor<T> constructor;
+	private Map<String, FieldType> fieldNameMap;
 
 	/**
 	 * Creates a holder of information about a table/class.
@@ -54,17 +54,15 @@ public class TableInfo<T> {
 		for (FieldType fieldType : fieldTypes) {
 			if (fieldType.isId()) {
 				if (findIdFieldType != null) {
-					throw new IllegalArgumentException("More than 1 idField configured for class " + dataClass + " ("
+					throw new SQLException("More than 1 idField configured for class " + dataClass + " ("
 							+ findIdFieldType + "," + fieldType + ")");
 				}
 				findIdFieldType = fieldType;
 			}
-			fieldNameMap.put(fieldType.getDbColumnName(), fieldType);
 		}
 		// if we just have 1 field and it is a generated-id then inserts will be blank which is not allowed.
 		if (fieldTypes.length == 1 && findIdFieldType != null && findIdFieldType.isGeneratedId()) {
-			throw new IllegalArgumentException("Must have more than a single field which is a generated-id for class "
-					+ dataClass);
+			throw new SQLException("Must have more than a single field which is a generated-id for class " + dataClass);
 		}
 		// can be null if there is no id field
 		this.idField = findIdFieldType;
@@ -96,6 +94,12 @@ public class TableInfo<T> {
 	 * Return the {@link FieldType} associated with the columnName.
 	 */
 	public FieldType getFieldTypeByName(String columnName) {
+		if (fieldNameMap == null) {
+			fieldNameMap = new HashMap<String, FieldType>();
+			for (FieldType fieldType : fieldTypes) {
+				fieldNameMap.put(fieldType.getDbColumnName(), fieldType);
+			}
+		}
 		return fieldNameMap.get(columnName);
 	}
 

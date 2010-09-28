@@ -19,7 +19,7 @@ public abstract class BaseMappedQuery<T> extends BaseMappedStatement<T> implemen
 
 	protected final FieldType[] resultsFieldTypes;
 	// cache of column names to results position
-	private final Map<String, Integer> columnPositions = new HashMap<String, Integer>();
+	private Map<String, Integer> columnPositions = null;
 
 	protected BaseMappedQuery(TableInfo<T> tableInfo, String statement, List<FieldType> argFieldTypeList,
 			List<FieldType> resultFieldTypeList) {
@@ -28,6 +28,9 @@ public abstract class BaseMappedQuery<T> extends BaseMappedStatement<T> implemen
 	}
 
 	public T mapRow(DatabaseResults results) throws SQLException {
+		if (columnPositions == null) {
+			columnPositions = new HashMap<String, Integer>();
+		}
 		// create our instance
 		T instance = tableInfo.createObject();
 		// populate its fields
