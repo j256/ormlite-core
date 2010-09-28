@@ -14,7 +14,7 @@ cd $CORE_DIR
 if [ "`svn stat`" != "" ]; then
     echo "Files not checked-in inside -core"
     svn stat
-#    exit 1
+    exit 1
 fi
 cd $JDBC_DIR
 if [ "`svn stat`" != "" ]; then
