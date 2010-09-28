@@ -204,10 +204,8 @@ public class BaseDatabaseTypeTest extends BaseOrmLiteCoreTest {
 	@Test
 	public void testBooleanConverterParseDefaultString() throws Exception {
 		FieldType fieldType = FieldType.createFieldType(ourDatabaseType, "foo", Foo.class.getDeclaredField("bool"));
-		assertEquals(new Byte((byte) 1), booleanFieldConverter.parseDefaultString(fieldType,
-				Boolean.TRUE.toString()));
-		assertEquals(new Byte((byte) 0), booleanFieldConverter.parseDefaultString(fieldType,
-				Boolean.FALSE.toString()));
+		assertEquals(new Byte((byte) 1), booleanFieldConverter.parseDefaultString(fieldType, Boolean.TRUE.toString()));
+		assertEquals(new Byte((byte) 0), booleanFieldConverter.parseDefaultString(fieldType, Boolean.FALSE.toString()));
 	}
 
 	@Test

@@ -51,8 +51,8 @@ abstract class BaseComparison implements Comparison {
 	 * 
 	 * @throws SQLException
 	 */
-	protected void appendArgOrValue(DatabaseType databaseType, FieldType fieldType, StringBuilder sb, List<SelectArg> selectArgList,
-			Object argOrValue) throws SQLException {
+	protected void appendArgOrValue(DatabaseType databaseType, FieldType fieldType, StringBuilder sb,
+			List<SelectArg> selectArgList, Object argOrValue) throws SQLException {
 		boolean appendSpace = true;
 		if (argOrValue == null) {
 			throw new IllegalArgumentException("argument to comparison of '" + fieldType.getFieldName() + "' is null");
@@ -62,7 +62,10 @@ abstract class BaseComparison implements Comparison {
 			selectArg.setMetaInfo(columnName, fieldType);
 			selectArgList.add(selectArg);
 		} else if (fieldType.isForeign() && fieldType.getFieldType() == argOrValue.getClass()) {
-			// if we have a foreign field and our argument is the type of the foreign object (i.e. not its id) then we need to extra the id
+			/*
+			 * If we have a foreign field and our argument is the type of the foreign object (i.e. not its id), then we
+			 * need to extract the id.
+			 */
 			FieldType idFieldType = fieldType.getForeignIdField();
 			appendArgOrValue(databaseType, idFieldType, sb, selectArgList, idFieldType.getFieldValue(argOrValue));
 			// no need for the space since it was done in the recursion

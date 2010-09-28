@@ -89,7 +89,7 @@ public class StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * Add "GROUP BY" clauses to the SQL query statement.
+	 * Add "GROUP BY" clause to the SQL query statement.
 	 * 
 	 * NOTE: Use of this means that the resulting objects may not have a valid ID column value so cannot be deleted or
 	 * updated.
@@ -105,7 +105,7 @@ public class StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * Add "ORDER BY" clauses to the SQL query statement.
+	 * Add "ORDER BY" clause to the SQL query statement.
 	 */
 	public StatementBuilder<T, ID> orderBy(String columnName, boolean ascending) {
 		verifyColumnName(columnName);

@@ -39,7 +39,7 @@ public class LocalLogTest extends BaseLogTest {
 	}
 
 	@Test(timeout = 10000)
-	public void testFileProperty() throws Exception{
+	public void testFileProperty() throws Exception {
 		String logPath = "target/foo.txt";
 		File logFile = new File(logPath);
 		logFile.delete();

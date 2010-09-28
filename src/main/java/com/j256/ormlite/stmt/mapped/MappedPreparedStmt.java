@@ -29,6 +29,7 @@ public class MappedPreparedStmt<T> extends BaseMappedQuery<T> implements Prepare
 		if (argSqlTypes == null || selectArgs.length != argSqlTypes.length) {
 			throw new IllegalArgumentException("Should be the same number of SelectArg and field-types in the arrays");
 		}
+		// this is an Integer because it may be null
 		this.limit = limit;
 	}
 

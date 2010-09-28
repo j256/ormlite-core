@@ -26,5 +26,6 @@ interface Comparison extends Clause {
 	/**
 	 * Add the value of the comparison to the string builder.
 	 */
-	public StringBuilder appendValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList) throws SQLException;
+	public StringBuilder appendValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
+			throws SQLException;
 }
