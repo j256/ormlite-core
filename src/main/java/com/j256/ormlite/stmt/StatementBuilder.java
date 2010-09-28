@@ -41,8 +41,8 @@ public class StatementBuilder<T, ID> {
 	private boolean distinct = false;
 	private boolean selectIdColumn = true;
 	private List<String> columnList = null;
-	private final List<OrderBy> orderByList = new ArrayList<OrderBy>();
-	private final List<String> groupByList = new ArrayList<String>();
+	private List<OrderBy> orderByList = null;
+	private List<String> groupByList = null;
 	private Where where = null;
 	private Integer limit = null;
 
@@ -96,6 +96,9 @@ public class StatementBuilder<T, ID> {
 	 */
 	public StatementBuilder<T, ID> groupBy(String columnName) {
 		verifyColumnName(columnName);
+		if (groupByList == null) {
+			groupByList = new ArrayList<String>();
+		}
 		groupByList.add(columnName);
 		selectIdColumn = false;
 		return this;
@@ -106,6 +109,9 @@ public class StatementBuilder<T, ID> {
 	 */
 	public StatementBuilder<T, ID> orderBy(String columnName, boolean ascending) {
 		verifyColumnName(columnName);
+		if (orderByList == null) {
+			orderByList = new ArrayList<OrderBy>();
+		}
 		orderByList.add(new OrderBy(columnName, ascending));
 		return this;
 	}
@@ -276,7 +282,7 @@ public class StatementBuilder<T, ID> {
 	}
 
 	private void appendGroupBys(StringBuilder sb) {
-		if (groupByList.size() == 0) {
+		if (groupByList == null || groupByList.size() == 0) {
 			return;
 		}
 
@@ -294,7 +300,7 @@ public class StatementBuilder<T, ID> {
 	}
 
 	private void appendOrderBys(StringBuilder sb) {
-		if (orderByList.size() == 0) {
+		if (orderByList == null || orderByList.size() == 0) {
 			return;
 		}
 

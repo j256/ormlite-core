@@ -18,8 +18,10 @@ import org.junit.Test;
 
 import com.j256.ormlite.BaseOrmLiteCoreTest;
 import com.j256.ormlite.TestUtils;
+import com.j256.ormlite.db.BaseDatabaseType.BooleanNumberFieldConverter;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.support.DatabaseResults;
@@ -27,6 +29,7 @@ import com.j256.ormlite.support.DatabaseResults;
 public class BaseDatabaseTypeTest extends BaseOrmLiteCoreTest {
 
 	private OurDbType ourDatabaseType = new OurDbType();
+	private FieldConverter booleanFieldConverter = new BooleanNumberFieldConverter();
 
 	@Test
 	public void testBaseDatabaseType() throws Exception {
@@ -180,8 +183,8 @@ public class BaseDatabaseTypeTest extends BaseOrmLiteCoreTest {
 	@Test
 	public void testBooleanConverterJavaToArg() throws Exception {
 		FieldType fieldType = FieldType.createFieldType(ourDatabaseType, "foo", Foo.class.getDeclaredField("bool"));
-		assertEquals(new Byte((byte) 1), BaseDatabaseType.booleanConverter.javaToArg(fieldType, Boolean.TRUE));
-		assertEquals(new Byte((byte) 0), BaseDatabaseType.booleanConverter.javaToArg(fieldType, Boolean.FALSE));
+		assertEquals(new Byte((byte) 1), booleanFieldConverter.javaToArg(fieldType, Boolean.TRUE));
+		assertEquals(new Byte((byte) 0), booleanFieldConverter.javaToArg(fieldType, Boolean.FALSE));
 	}
 
 	@Test
@@ -193,28 +196,28 @@ public class BaseDatabaseTypeTest extends BaseOrmLiteCoreTest {
 		expect(results.getByte(2)).andReturn((byte) 0);
 		replay(results);
 		FieldType fieldType = FieldType.createFieldType(ourDatabaseType, "foo", Foo.class.getDeclaredField("bool"));
-		assertEquals(first, BaseDatabaseType.booleanConverter.resultToJava(fieldType, results, 1));
-		assertEquals(second, BaseDatabaseType.booleanConverter.resultToJava(fieldType, results, 2));
+		assertEquals(first, booleanFieldConverter.resultToJava(fieldType, results, 1));
+		assertEquals(second, booleanFieldConverter.resultToJava(fieldType, results, 2));
 		verify(results);
 	}
 
 	@Test
 	public void testBooleanConverterParseDefaultString() throws Exception {
 		FieldType fieldType = FieldType.createFieldType(ourDatabaseType, "foo", Foo.class.getDeclaredField("bool"));
-		assertEquals(new Byte((byte) 1), BaseDatabaseType.booleanConverter.parseDefaultString(fieldType,
+		assertEquals(new Byte((byte) 1), booleanFieldConverter.parseDefaultString(fieldType,
 				Boolean.TRUE.toString()));
-		assertEquals(new Byte((byte) 0), BaseDatabaseType.booleanConverter.parseDefaultString(fieldType,
+		assertEquals(new Byte((byte) 0), booleanFieldConverter.parseDefaultString(fieldType,
 				Boolean.FALSE.toString()));
 	}
 
 	@Test
 	public void testBooleanConverterIsStreamType() throws Exception {
-		assertFalse(BaseDatabaseType.booleanConverter.isStreamType());
+		assertFalse(booleanFieldConverter.isStreamType());
 	}
 
 	@Test
 	public void testBooleanConverterGetSqlType() throws Exception {
-		assertEquals(SqlType.BOOLEAN, BaseDatabaseType.booleanConverter.getSqlType());
+		assertEquals(SqlType.BOOLEAN, booleanFieldConverter.getSqlType());
 	}
 
 	@Test

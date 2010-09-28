@@ -27,8 +27,6 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	protected static int DEFAULT_DATE_STRING_WIDTH = 50;
 	protected static String DEFAULT_SEQUENCE_SUFFIX = "_id_seq";
 
-	protected final static FieldConverter booleanConverter = new BooleanNumberFieldConverter();
-
 	public void loadDriver() throws ClassNotFoundException {
 		String className = getDriverClassName();
 		if (className != null) {

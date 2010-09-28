@@ -45,13 +45,13 @@ public class StatementExecutor<T, ID> {
 	private final TableInfo<T> tableInfo;
 	private final Class<T> dataClass;
 	private final FieldType idField;
-	private final MappedQueryForId<T, ID> mappedQueryForId;
-	private final PreparedStmt<T> preparedQueryForAll;
-	private final MappedCreate<T> mappedInsert;
-	private final MappedUpdate<T> mappedUpdate;
-	private final MappedUpdateId<T, ID> mappedUpdateId;
-	private final MappedDelete<T> mappedDelete;
-	private final MappedRefresh<T, ID> mappedRefresh;
+	private MappedQueryForId<T, ID> mappedQueryForId;
+	private PreparedStmt<T> preparedQueryForAll;
+	private MappedCreate<T> mappedInsert;
+	private MappedUpdate<T> mappedUpdate;
+	private MappedUpdateId<T, ID> mappedUpdateId;
+	private MappedDelete<T> mappedDelete;
+	private MappedRefresh<T, ID> mappedRefresh;
 
 	/**
 	 * Provides statements for various SQL operations.
@@ -61,13 +61,6 @@ public class StatementExecutor<T, ID> {
 		this.tableInfo = tableInfo;
 		this.dataClass = tableInfo.getDataClass();
 		this.idField = tableInfo.getIdField();
-		this.mappedQueryForId = MappedQueryForId.build(databaseType, tableInfo);
-		this.preparedQueryForAll = new StatementBuilder<T, ID>(databaseType, tableInfo).prepareStatement();
-		this.mappedInsert = MappedCreate.build(databaseType, tableInfo);
-		this.mappedUpdate = MappedUpdate.build(databaseType, tableInfo);
-		this.mappedUpdateId = MappedUpdateId.build(databaseType, tableInfo);
-		this.mappedDelete = MappedDelete.build(databaseType, tableInfo);
-		this.mappedRefresh = MappedRefresh.build(databaseType, tableInfo);
 	}
 
 	/**
@@ -76,7 +69,10 @@ public class StatementExecutor<T, ID> {
 	 */
 	public T queryForId(DatabaseConnection databaseConnection, ID id) throws SQLException {
 		if (mappedQueryForId == null) {
-			throw new SQLException("Cannot query-for-id with " + dataClass + " because it doesn't have an id field");
+			mappedQueryForId = MappedQueryForId.build(databaseType, tableInfo);
+			if (mappedQueryForId == null) {
+				throw new SQLException("Cannot query-for-id with " + dataClass + " because it doesn't have an id field");
+			}
 		}
 		return mappedQueryForId.execute(databaseConnection, id);
 	}
@@ -108,6 +104,7 @@ public class StatementExecutor<T, ID> {
 	 * {@link Dao#iterator} if this is the case.
 	 */
 	public List<T> queryForAll(ConnectionSource connectionSource) throws SQLException {
+		prepareQueryForAll();
 		return query(connectionSource, preparedQueryForAll);
 	}
 
@@ -162,6 +159,7 @@ public class StatementExecutor<T, ID> {
 	 */
 	public SelectIterator<T, ID> buildIterator(BaseDaoImpl<T, ID> classDao, ConnectionSource connectionSource)
 			throws SQLException {
+		prepareQueryForAll();
 		return buildIterator(classDao, connectionSource, preparedQueryForAll);
 	}
 
@@ -187,6 +185,9 @@ public class StatementExecutor<T, ID> {
 	 * Create a new entry in the database from an object.
 	 */
 	public int create(DatabaseConnection databaseConnection, T data) throws SQLException {
+		if (mappedInsert == null) {
+			mappedInsert = MappedCreate.build(databaseType, tableInfo);
+		}
 		return mappedInsert.insert(databaseConnection, data);
 	}
 
@@ -195,11 +196,13 @@ public class StatementExecutor<T, ID> {
 	 */
 	public int update(DatabaseConnection databaseConnection, T data) throws SQLException {
 		if (mappedUpdate == null) {
-			throw new SQLException("Cannot update " + dataClass
-					+ " because it doesn't have an id field defined or only has id field");
-		} else {
-			return mappedUpdate.update(databaseConnection, data);
+			mappedUpdate = MappedUpdate.build(databaseType, tableInfo);
+			if (mappedUpdate == null) {
+				throw new SQLException("Cannot update " + dataClass
+						+ " because it doesn't have an id field defined or only has id field");
+			}
 		}
+		return mappedUpdate.update(databaseConnection, data);
 	}
 
 	/**
@@ -207,10 +210,12 @@ public class StatementExecutor<T, ID> {
 	 */
 	public int updateId(DatabaseConnection databaseConnection, T data, ID newId) throws SQLException {
 		if (mappedUpdateId == null) {
-			throw new SQLException("Cannot update " + dataClass + " because it doesn't have an id field defined");
-		} else {
-			return mappedUpdateId.execute(databaseConnection, data, newId);
+			mappedUpdateId = MappedUpdateId.build(databaseType, tableInfo);
+			if (mappedUpdateId == null) {
+				throw new SQLException("Cannot update " + dataClass + " because it doesn't have an id field defined");
+			}
 		}
+		return mappedUpdateId.execute(databaseConnection, data, newId);
 	}
 
 	/**
@@ -218,15 +223,17 @@ public class StatementExecutor<T, ID> {
 	 * parameter.
 	 */
 	public int refresh(DatabaseConnection databaseConnection, T data) throws SQLException {
-		if (mappedQueryForId == null) {
-			throw new SQLException("Cannot refresh " + dataClass + " because it doesn't have an id field defined");
-		} else {
-			T result = mappedRefresh.execute(databaseConnection, data);
-			if (result == null) {
-				return 0;
-			} else {
-				return 1;
+		if (mappedRefresh == null) {
+			mappedRefresh = MappedRefresh.build(databaseType, tableInfo);
+			if (mappedRefresh == null) {
+				throw new SQLException("Cannot refresh " + dataClass + " because it doesn't have an id field defined");
 			}
+		}
+		T result = mappedRefresh.execute(databaseConnection, data);
+		if (result == null) {
+			return 0;
+		} else {
+			return 1;
 		}
 	}
 
@@ -235,10 +242,13 @@ public class StatementExecutor<T, ID> {
 	 */
 	public int delete(DatabaseConnection databaseConnection, T data) throws SQLException {
 		if (mappedDelete == null) {
-			throw new SQLException("Cannot delete " + dataClass + " because it doesn't have an id field defined");
-		} else {
-			return mappedDelete.delete(databaseConnection, data);
+			mappedDelete = MappedDelete.build(databaseType, tableInfo);
+			if (mappedDelete == null) {
+				throw new SQLException("Cannot delete " + dataClass + " because it doesn't have an id field defined");
+			}
 		}
+		return mappedDelete.delete(databaseConnection, data);
+
 	}
 
 	/**
@@ -262,6 +272,12 @@ public class StatementExecutor<T, ID> {
 		} else {
 			// have to build this on the fly because the collection has variable number of args
 			return MappedDeleteCollection.deleteIds(databaseType, tableInfo, databaseConnection, ids);
+		}
+	}
+
+	private void prepareQueryForAll() throws SQLException {
+		if (preparedQueryForAll == null) {
+			preparedQueryForAll = new StatementBuilder<T, ID>(databaseType, tableInfo).prepareStatement();
 		}
 	}
 

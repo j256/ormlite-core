@@ -38,8 +38,8 @@ public class FieldType {
 	private final TableInfo<?> foreignTableInfo;
 	private final Method fieldGetMethod;
 	private final Method fieldSetMethod;
-	private final Map<String, Enum<?>> enumStringMap = new HashMap<String, Enum<?>>();
-	private final Map<Integer, Enum<?>> enumValueMap = new HashMap<Integer, Enum<?>>();
+	private Map<String, Enum<?>> enumStringMap = null;
+	private Map<Integer, Enum<?>> enumValueMap = null;
 	private final Enum<?> unknownEnumVal;
 	private final boolean throwIfNull;
 	private final String format;
@@ -146,6 +146,8 @@ public class FieldType {
 			this.fieldSetMethod = null;
 		}
 		if (dataType == DataType.ENUM_INTEGER || dataType == DataType.ENUM_STRING) {
+			enumStringMap = new HashMap<String, Enum<?>>();
+			enumValueMap = new HashMap<Integer, Enum<?>>();
 			for (Enum<?> enumVal : (Enum<?>[]) field.getType().getEnumConstants()) {
 				enumStringMap.put(enumVal.name(), enumVal);
 				enumValueMap.put(enumVal.ordinal(), enumVal);
@@ -435,14 +437,22 @@ public class FieldType {
 	public Enum<?> enumFromInt(int val) throws SQLException {
 		// just do this once
 		Integer integerVal = new Integer(val);
-		return enumVal(integerVal, enumValueMap.get(integerVal));
+		if (enumValueMap == null) {
+			return enumVal(integerVal, null);
+		} else {
+			return enumVal(integerVal, enumValueMap.get(integerVal));
+		}
 	}
 
 	/**
 	 * Get the Enum associated with the String value.
 	 */
 	public Enum<?> enumFromString(String val) throws SQLException {
-		return enumVal(val, enumStringMap.get(val));
+		if (enumStringMap == null) {
+			return enumVal(val, null);
+		} else {
+			return enumVal(val, enumStringMap.get(val));
+		}
 	}
 
 	/**

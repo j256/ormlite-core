@@ -574,28 +574,9 @@ public enum DataType implements FieldConverter {
 	// end
 	;
 
-	private static final Map<Class<?>, DataType> classMap = new HashMap<Class<?>, DataType>();
-	private static final Map<String, DateFormat> dateFormatMap = new HashMap<String, DateFormat>();
-	private static final Map<SqlType, DataType> convertForSqlTypeMap = new HashMap<SqlType, DataType>();
-
-	static {
-		for (DataType dataType : values()) {
-			// build a static map from class to associated type
-			for (Class<?> dataClass : dataType.classes) {
-				classMap.put(dataClass, dataType);
-			}
-			if (dataType.convertForSqlType != null) {
-				if (convertForSqlTypeMap.containsKey(dataType.convertForSqlType)) {
-					throw new IllegalStateException("Already have mapped this SqlType to DataType: "
-							+ dataType.convertForSqlType);
-				}
-				convertForSqlTypeMap.put(dataType.convertForSqlType, dataType);
-			}
-		}
-	}
-
 	public static final String DEFAULT_DATE_FORMAT_STRING = "yyyy-MM-dd HH:mm:ss.SSSSSS";
 
+	private static Map<String, DateFormat> dateFormatMap;
 	private final SqlType sqlType;
 	private final SqlType convertForSqlType;
 	private final boolean canBeGenerated;
@@ -659,10 +640,15 @@ public enum DataType implements FieldConverter {
 	 * Static method that returns the DataType associated with the class argument or {@link #UNKNOWN} if not found.
 	 */
 	public static DataType lookupClass(Class<?> dataClass) {
-		DataType dataType = classMap.get(dataClass);
-		if (dataType != null) {
-			return dataType;
-		} else if (dataClass.isEnum()) {
+		for (DataType dataType : values()) {
+			// build a static map from class to associated type
+			for (Class<?> dataTypeClass : dataType.classes) {
+				if (dataTypeClass == dataClass) {
+					return dataType;
+				}
+			}
+		}
+		if (dataClass.isEnum()) {
 			// special handling of the Enum type
 			return ENUM_STRING;
 		} else if (Serializable.class.isAssignableFrom(dataClass)) {
@@ -677,7 +663,12 @@ public enum DataType implements FieldConverter {
 	 * Return the DataType associated with the SqlType argument.
 	 */
 	public static DataType dataTypeFromSqlType(SqlType sqlType) {
-		return convertForSqlTypeMap.get(sqlType);
+		for (DataType dataType : values()) {
+			if (dataType.convertForSqlType == sqlType) {
+				return dataType;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -707,34 +698,31 @@ public enum DataType implements FieldConverter {
 		return false;
 	}
 
-	private static Date parseDateString(String format, String dateStr) throws ParseException {
-		synchronized (dateFormatMap) {
-			DateFormat dateFormat = getDateFormat(format);
-			return dateFormat.parse(dateStr);
-		}
+	private static synchronized Date parseDateString(String format, String dateStr) throws ParseException {
+		DateFormat dateFormat = getDateFormat(format);
+		return dateFormat.parse(dateStr);
 	}
 
-	private static String normalizeDateString(String format, String dateStr) throws ParseException {
-		synchronized (dateFormatMap) {
-			DateFormat dateFormat = getDateFormat(format);
-			Date date = dateFormat.parse(dateStr);
-			return dateFormat.format(date);
-		}
+	private static synchronized String normalizeDateString(String format, String dateStr) throws ParseException {
+		DateFormat dateFormat = getDateFormat(format);
+		Date date = dateFormat.parse(dateStr);
+		return dateFormat.format(date);
 	}
 
-	private static String formatDate(String format, Date date) {
-		synchronized (dateFormatMap) {
-			DateFormat dateFormat = getDateFormat(format);
-			return dateFormat.format(date);
-		}
+	private static synchronized String formatDate(String format, Date date) {
+		DateFormat dateFormat = getDateFormat(format);
+		return dateFormat.format(date);
 	}
 
 	/**
 	 * Return the date format for the format string.
 	 * 
-	 * NOTE: We should already be synchronized on dateFormatMap here.
+	 * NOTE: We should already be synchronized here.
 	 */
 	private static DateFormat getDateFormat(String formatStr) {
+		if (dateFormatMap == null) {
+			dateFormatMap = new HashMap<String, DateFormat>();
+		}
 		formatStr = formatOrDefault(formatStr);
 		DateFormat dateFormat = dateFormatMap.get(formatStr);
 		if (dateFormat == null) {
