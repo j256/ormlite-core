@@ -34,7 +34,7 @@ public class TableInfoTest extends BaseOrmLiteCoreTest {
 		new TableInfo<NoFields>(databaseType, NoFields.class);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = SQLException.class)
 	public void testObjectDoubleId() throws SQLException {
 		new TableInfo<DoubleId>(databaseType, DoubleId.class);
 	}
@@ -73,7 +73,7 @@ public class TableInfoTest extends BaseOrmLiteCoreTest {
 				NoTableNameAnnotation.class, new ArrayList<DatabaseFieldConfig>()));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = SQLException.class)
 	public void testJustGeneratedId() throws Exception {
 		new TableInfo<JustGeneratedId>(databaseType, JustGeneratedId.class);
 	}
