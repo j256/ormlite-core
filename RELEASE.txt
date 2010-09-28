@@ -19,14 +19,15 @@ To release ORMLite:
 
 5) Update the release number and date in ormlite.texi.
 
+	export RELEASE="3.5"
 	cd ~/svn/local/ormlite-core/src/main/doc/
 	make install
 	cd ..
-	svn commit -m 'X.XX docs'
+	svn commit -m "X.XX docs"
 
 6) Release -core to Sonatype: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
 
-	svn -m cp delete https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-core/tags/ormlite-core-X.X
+	svn -m cp delete https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-core/tags/ormlite-core-$RELEASE
 	cd ~/svn/local/ormlite-core
 	mvn -P st release:clean
 	mvn -P st release:prepare				(need to type in GPG secret)
