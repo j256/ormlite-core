@@ -47,10 +47,6 @@ public class MappedRefresh<T, ID> extends MappedQueryForId<T, ID> {
 		List<FieldType> argFieldTypeList = new ArrayList<FieldType>();
 		List<FieldType> resultFieldTypeList = new ArrayList<FieldType>();
 		String statement = buildStatement(databaseType, tableInfo, argFieldTypeList, resultFieldTypeList);
-		if (statement == null) {
-			return null;
-		} else {
-			return new MappedRefresh<T, ID>(tableInfo, statement, argFieldTypeList, resultFieldTypeList);
-		}
+		return new MappedRefresh<T, ID>(tableInfo, statement, argFieldTypeList, resultFieldTypeList);
 	}
 }

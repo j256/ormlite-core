@@ -69,19 +69,15 @@ public class MappedQueryForId<T, ID> extends BaseMappedQuery<T> {
 		List<FieldType> argFieldTypeList = new ArrayList<FieldType>();
 		List<FieldType> resultFieldTypeList = new ArrayList<FieldType>();
 		String statement = buildStatement(databaseType, tableInfo, argFieldTypeList, resultFieldTypeList);
-		if (statement == null) {
-			return null;
-		} else {
-			return new MappedQueryForId<T, ID>(tableInfo, statement, argFieldTypeList, resultFieldTypeList,
-					"query-for-id");
-		}
+		return new MappedQueryForId<T, ID>(tableInfo, statement, argFieldTypeList, resultFieldTypeList, "query-for-id");
 	}
 
 	protected static <ID, T> String buildStatement(DatabaseType databaseType, TableInfo<T> tableInfo,
 			List<FieldType> argFieldTypeList, List<FieldType> resultFieldTypeList) throws SQLException {
 		FieldType idField = tableInfo.getIdField();
 		if (idField == null) {
-			return null;
+			throw new SQLException("Cannot query-for-id with " + tableInfo.getDataClass()
+					+ " because it doesn't have an id field");
 		}
 		InternalQueryBuilder<T, ID> qb = new InternalQueryBuilder<T, ID>(databaseType, tableInfo);
 		// this selectArg is ignored here because we pass in the id as a fixed argument

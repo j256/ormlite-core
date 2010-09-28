@@ -1,5 +1,6 @@
 package com.j256.ormlite.stmt.mapped;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,10 +19,11 @@ public class MappedDelete<T> extends BaseMappedStatement<T> {
 		super(tableInfo, statement, argFieldTypeList);
 	}
 
-	public static <T> MappedDelete<T> build(DatabaseType databaseType, TableInfo<T> tableInfo) {
+	public static <T> MappedDelete<T> build(DatabaseType databaseType, TableInfo<T> tableInfo) throws SQLException {
 		FieldType idField = tableInfo.getIdField();
 		if (idField == null) {
-			return null;
+			throw new SQLException("Cannot delete from " + tableInfo.getDataClass()
+					+ " because it doesn't have an id field");
 		}
 		StringBuilder sb = new StringBuilder();
 		List<FieldType> argFieldTypeList = new ArrayList<FieldType>();

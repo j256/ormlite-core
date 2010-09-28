@@ -45,10 +45,12 @@ public class MappedUpdateId<T, ID> extends BaseMappedStatement<T> {
 		}
 	}
 
-	public static <T, ID> MappedUpdateId<T, ID> build(DatabaseType databaseType, TableInfo<T> tableInfo) {
+	public static <T, ID> MappedUpdateId<T, ID> build(DatabaseType databaseType, TableInfo<T> tableInfo)
+			throws SQLException {
 		FieldType idField = tableInfo.getIdField();
 		if (idField == null) {
-			return null;
+			throw new SQLException("Cannot update-id in " + tableInfo.getDataClass()
+					+ " because it doesn't have an id field");
 		}
 		StringBuilder sb = new StringBuilder();
 		List<FieldType> argFieldTypeList = new ArrayList<FieldType>();

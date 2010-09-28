@@ -55,10 +55,10 @@ public class MappedDeleteCollection<T, ID> extends BaseMappedStatement<T> {
 	 * This is private because the execute is the only method that should be called here.
 	 */
 	private static <T, ID> MappedDeleteCollection<T, ID> build(DatabaseType databaseType, TableInfo<T> tableInfo,
-			int dataSize) {
+			int dataSize) throws SQLException {
 		FieldType idField = tableInfo.getIdField();
 		if (idField == null) {
-			throw new IllegalArgumentException("Cannot delete " + tableInfo.getDataClass()
+			throw new SQLException("Cannot delete " + tableInfo.getDataClass()
 					+ " because it doesn't have an id field defined");
 		}
 		StringBuilder sb = new StringBuilder();
