@@ -2,6 +2,7 @@ package com.j256.ormlite.stmt.mapped;
 
 import static org.easymock.EasyMock.createMock;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import org.junit.Test;
@@ -16,7 +17,7 @@ public class MappedDeleteCollectionTest {
 
 	private final DatabaseType databaseType = new StubDatabaseType();
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = SQLException.class)
 	public void testNoIdBuildDelete() throws Exception {
 		DatabaseConnection databaseConnection = createMock(DatabaseConnection.class);
 		MappedDeleteCollection.deleteObjects(databaseType, new TableInfo<NoId>(databaseType, NoId.class),

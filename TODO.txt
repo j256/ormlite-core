@@ -1,8 +1,11 @@
-- allow any field as the remote id column (not just the id field)
+- allow any field as the foreign id column (not just the id field)
 	- specify the field in the remote object (must match the name directly)
 	- creates a prepared query 'WHERE field = value'
 	- uses queryForFirst to return object
 	- creates account_field-name instead of account_id field in local table 
+
+- look into reducing object load for android short-use of dao methods
+	- maybe get rid of the compiled methods and just do everything on the fly?
 
 - should we handle all non-number arguments to queries to be ? and force internal SelectArgs?
 	- would be better for escaping reasons
@@ -13,7 +16,7 @@
 - maybe add rawUpdate and rawExecute?
 	- need to document the raw query, iterator, update, execute in .texi
 	- need to add a section about how to use the raw queries and the RawResults class
-	- need to take about closing of the RawResults
+	- need to talk about closing of the RawResults
 
 - for objects that a user does not have control over, how about the ability of defining a Method to construct a particular class
 	- when you create the dao, you have to somehow inject a Method which returns a new object of a certain type

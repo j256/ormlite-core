@@ -21,7 +21,7 @@
 @c ----------------------------------------------------------------
 
 @c ----------------------------------------------------------------
-@set ormlite_version 3.4
+@set ormlite_version 3.5
 @set ormlite_date September 2010
 @set package ORMLite
 @c ----------------------------------------------------------------
@@ -33,15 +33,6 @@ Copyright 2010 by Gray Watson.
 
 Permission is granted to make and distribute verbatim copies of this manual provided the copyright notice
 and this permission notice are preserved on all copies.
-
-Permission is granted to copy and distribute modified versions of this manual under the conditions for
-verbatim copying, provided also that the chapter entitled ``Copying'' are included exactly as in the
-original, and provided that the entire resulting derived work is distributed under the terms of a permission
-notice identical to this one.
-
-Permission is granted to copy and distribute translations of this manual into another language, under the
-above conditions for modified versions, except that the chapter entitled ``Copying'' may be included in a
-translation approved by the author instead of in the original English.
 @end ifinfo
 
 @titlepage
@@ -57,15 +48,6 @@ Published by Gray Watson
 
 Permission is granted to make and distribute verbatim copies of this manual provided the copyright notice
 and this permission notice are preserved on all copies.
-
-Permission is granted to copy and distribute modified versions of this manual under the conditions for
-verbatim copying, provided also that the chapter entitled ``Copying'' are included exactly as in the
-original, and provided that the entire resulting derived work is distributed under the terms of a
-permission notice identical to this one.
-
-Permission is granted to copy and distribute translations of this manual into another language, under the
-above conditions for modified versions, except that the chapter entitled ``Copying'' may be included in a
-translation approved by the author instead of in the original English.
 @end titlepage
 
 @c ----------------------------------------------------------------
@@ -371,10 +353,10 @@ public class Account @{
 
 In the above example, each row in the @code{accounts} table has 2 columns:
 
-@enumerate @bullet
+@itemize @bullet
 @item the @code{name} column which is a string and also is the database identity (id) of the row
 @item the @code{password} column, also a string which can not be null
-@end enumerate 
+@end itemize 
 
 The @@DatabaseField annotation can have the following fields:
 
@@ -415,6 +397,8 @@ Boolean whether the field can be assigned to null value. Default is true.  If se
 for this field on every object inserted into the database.
 
 @cindex id field
+@cindex key field
+@cindex primary key field
 @item id
 
 Boolean whether the field is the id field or not. Default is false. Only one field can have this set in a class. Id fields
@@ -603,6 +587,9 @@ Adds a constraint to the field that it has to be unique across all rows in the t
 
 @end table
 
+@cindex id field
+@cindex key field
+@cindex primary key field
 @item @@Id
 
 Used to specify a field to be persisted to the database as a primary row-id.  If you want to have the id be

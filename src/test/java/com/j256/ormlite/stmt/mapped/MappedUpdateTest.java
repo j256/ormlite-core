@@ -1,7 +1,5 @@
 package com.j256.ormlite.stmt.mapped;
 
-import static org.junit.Assert.assertNull;
-
 import java.sql.SQLException;
 
 import org.junit.Test;
@@ -25,14 +23,14 @@ public class MappedUpdateTest {
 		se.update(null, noId);
 	}
 
-	@Test
+	@Test(expected = SQLException.class)
 	public void testNoIdBuildUpdater() throws Exception {
-		assertNull(MappedUpdate.build(databaseType, new TableInfo<NoId>(databaseType, NoId.class)));
+		MappedUpdate.build(databaseType, new TableInfo<NoId>(databaseType, NoId.class));
 	}
 
-	@Test
+	@Test(expected = SQLException.class)
 	public void testJustIdBuildUpdater() throws Exception {
-		assertNull(MappedUpdate.build(databaseType, new TableInfo<NoId>(databaseType, NoId.class)));
+		MappedUpdate.build(databaseType, new TableInfo<NoId>(databaseType, NoId.class));
 	}
 
 	protected static class NoId {

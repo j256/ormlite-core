@@ -1,3 +1,9 @@
+3.5: 9/28/2010
+	* CORE: Revamped the StatementBuilder to allow foreign fields to be queried from the object as opposed to just its id.
+	* CORE: Because of the internal changes, the prepareStatment() call now can throw SQLException.
+	* CORE: Significantly reduced the number of objects created by the DAO and other classes to lower GC overhead.
+	* ANDROID: Core refactoring should improve speeds due to reduced memory overhead
+
 3.4: 9/24/2010
 	* CORE: Revamped the log factory to use the internal LogType enum better and to construct the logs using reflection.
 	* CORE: Added javax unique=true handling which should have been in 3.3.

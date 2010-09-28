@@ -1,6 +1,6 @@
 package com.j256.ormlite.stmt.mapped;
 
-import static org.junit.Assert.assertNull;
+import java.sql.SQLException;
 
 import org.junit.Test;
 
@@ -13,9 +13,9 @@ public class MappedUpdateIdTest {
 
 	private final DatabaseType databaseType = new StubDatabaseType();
 
-	@Test
+	@Test(expected = SQLException.class)
 	public void testUpdateIdNoId() throws Exception {
-		assertNull(MappedUpdateId.build(databaseType, new TableInfo<NoId>(databaseType, NoId.class)));
+		MappedUpdateId.build(databaseType, new TableInfo<NoId>(databaseType, NoId.class));
 	}
 
 	protected static class NoId {

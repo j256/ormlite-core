@@ -1,7 +1,5 @@
 package com.j256.ormlite.stmt.mapped;
 
-import static org.junit.Assert.assertNull;
-
 import java.sql.SQLException;
 
 import org.junit.Test;
@@ -25,9 +23,9 @@ public class MappedDeleteTest {
 		se.delete(null, noId);
 	}
 
-	@Test
+	@Test(expected = SQLException.class)
 	public void testNoIdBuildDelete() throws Exception {
-		assertNull(MappedDelete.build(databaseType, new TableInfo<NoId>(databaseType, NoId.class)));
+		MappedDelete.build(databaseType, new TableInfo<NoId>(databaseType, NoId.class));
 	}
 
 	protected static class NoId {
