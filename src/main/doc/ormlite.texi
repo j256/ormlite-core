@@ -1288,9 +1288,8 @@ used by your other classes.  Your helper class must implement the methods
 @code{onCreate(SQLiteDatabase sqliteDatabase, ConnectionSource connectionSource)} and
 @code{onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion)}.
 @code{onCreate} creates the database when your app is first installed while @code{onUpgrade} handles the upgrading
-of the database tables when you upgrade your app to a new version.  There is a sample @code{DatabaseHelper} class in the
-@code{com.j256.ormlite.android.examples} section of the tests in the @code{ormlite-android-sources.jar} source jar file
-and they can also be found here: @uref{http://ormlite.sourceforge.net/android/examples/}. 
+of the database tables when you upgrade your app to a new version.  There is a sample @code{DatabaseHelper} class as well as
+examples projects online: @uref{http://ormlite.sourceforge.net/android/examples/}. 
 
 @item The helper can be kept open across all activities in your app with the same Sqlite database connection reused by
 all threads.  If you open multiple connections to the same database, stale data and unexpected results may occur.
