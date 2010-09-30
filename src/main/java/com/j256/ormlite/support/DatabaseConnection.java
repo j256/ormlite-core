@@ -5,6 +5,7 @@ import java.sql.Savepoint;
 
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.stmt.GenericRowMapper;
+import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 
 public interface DatabaseConnection {
 
@@ -56,7 +57,7 @@ public interface DatabaseConnection {
 	/**
 	 * Compile and prepare the SQL statement for execution.
 	 */
-	public CompiledStatement compileStatement(String statement) throws SQLException;
+	public CompiledStatement compileStatement(String statement, StatementType type) throws SQLException;
 
 	/**
 	 * Perform a SQL insert with the associated SQL statement, arguments, and types.

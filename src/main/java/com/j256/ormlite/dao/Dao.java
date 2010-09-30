@@ -69,18 +69,32 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public RawResults queryForAllRaw(String query) throws SQLException;
 
 	/**
-	 * Create and return a new {@link StatementBuilder} object which allows you to build a custom statement. You call
-	 * methods on the {@link StatementBuilder} to construct your statement and then call
-	 * {@link StatementBuilder#prepareStatement()} once you are ready to build. This returns a {@link PreparedStmt}
-	 * object which gets passed to {@link #query(PreparedStmt)} or {@link #iterator(PreparedStmt)}.
+	 * @deprecated Use {@link #queryBuilder()}
 	 */
+	@Deprecated
 	public StatementBuilder<T, ID> statementBuilder();
 
 	/**
-	 * @deprecated Use {@link #statementBuilder()}
+	 * Create and return a new {@link StatementBuilder} object which allows you to build a custom SELECT statement. You
+	 * call methods on the {@link StatementBuilder} to construct your statement and then call
+	 * {@link StatementBuilder#prepareStatement()} once you are ready to build. This returns a {@link PreparedStmt}
+	 * object which gets passed to {@link #query(PreparedStmt)} or {@link #iterator(PreparedStmt)}.
 	 */
-	@Deprecated()
 	public StatementBuilder<T, ID> queryBuilder();
+
+	/**
+	 * Like {@link #queryBuilder()} but allows you to build an UPDATE statement. You can then call call
+	 * {@link StatementBuilder#prepareStatement()} and pass the returned {@link PreparedStmt} to
+	 * {@link #update(PreparedStmt)}.
+	 */
+	public StatementBuilder<T, ID> updateBuilder();
+
+	/**
+	 * Like {@link #queryBuilder()} but allows you to build an DELETE statement. You can then call call
+	 * {@link StatementBuilder#prepareStatement()} and pass the returned {@link PreparedStmt} to
+	 * {@link #delete(PreparedStmt)}.
+	 */
+	public StatementBuilder<T, ID> deleteBuilder();
 
 	/**
 	 * Query for the items in the object table which match the {@link PreparedStmt}. See {@link #queryBuilder} for more
@@ -142,6 +156,22 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public int updateId(T data, ID newId) throws SQLException;
 
 	/**
+	 * Update all rows in the table according to the prepared statement argument. To use this, the
+	 * {@link StatementBuilder} must have set-columns applied to it using the
+	 * {@link StatementBuilder#updateColumnValue(String, Object)} or
+	 * {@link StatementBuilder#updateColumnExpression(String, String)} methods.
+	 * 
+	 * @param preparedStmt
+	 *            A prepared statement to match database rows to be deleted and define the columns to update.
+	 * @return The number of rows updated in the database.
+	 * @throws SQLException
+	 *             on any SQL problems.
+	 * @throws IllegalArgumentException
+	 *             If there is only an ID field in the object. See the {@link #updateId} method.
+	 */
+	public int update(PreparedStmt<T> preparedStmt) throws SQLException;
+
+	/**
 	 * Does a query for the object's id and copies in each of the field values from the database to refresh the data
 	 * parameter. Any local object changes to persisted fields will be overwritten. If the database has been updated
 	 * this brings your local object up to date.
@@ -187,6 +217,17 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 *             on any SQL problems.
 	 */
 	public int deleteIds(Collection<ID> ids) throws SQLException;
+
+	/**
+	 * Delete the objects that match the prepared statement argument.
+	 * 
+	 * @param preparedStmt
+	 *            A prepared statement to match database rows to be deleted.
+	 * @return The number of rows updated in the database.
+	 * @throws SQLException
+	 *             on any SQL problems.
+	 */
+	public int delete(PreparedStmt<T> preparedStmt) throws SQLException;
 
 	/**
 	 * This satisfies the {@link Iterable} interface for the class and allows you to iterate through the objects in the

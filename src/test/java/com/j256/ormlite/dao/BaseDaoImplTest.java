@@ -23,6 +23,7 @@ import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.stmt.PreparedStmt;
 import com.j256.ormlite.stmt.StatementBuilder;
+import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
@@ -114,14 +115,14 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		};
 		dao.setConnectionSource(createMock(ConnectionSource.class));
 		dao.initialize();
-		assertEquals(0, dao.update(null));
+		assertEquals(0, dao.update((BaseFoo) null));
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testUpdateNoInit() throws Exception {
 		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
 		};
-		assertEquals(0, dao.update(null));
+		assertEquals(0, dao.update((BaseFoo) null));
 	}
 
 	@Test
@@ -282,6 +283,25 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		assertEquals(0, dao.deleteIds((List<String>) null));
 	}
 
+	@Test
+	public void testDeletePreparedStatement() throws Exception {
+		startDao(true);
+		@SuppressWarnings("unchecked")
+		PreparedStmt<BaseFoo> stmt = createMock(PreparedStmt.class);
+		CompiledStatement compiledStmt = createMock(CompiledStatement.class);
+		int deleteN = 1002;
+		expect(compiledStmt.executeUpdate()).andReturn(deleteN);
+		expect(stmt.getType()).andReturn(StatementType.DELETE);
+		expect(stmt.compile(databaseConnection)).andReturn(compiledStmt);
+		expect(stmt.getStatement()).andReturn("select * from foo");
+		replay(databaseConnection);
+		replay(compiledStmt);
+		replay(stmt);
+		assertEquals(deleteN, baseFooDao.delete(stmt));
+		verify(compiledStmt);
+		finishDao();
+	}
+
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testRefresh() throws Exception {
@@ -382,7 +402,7 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		databaseType.appendEscapedEntityName(sb, "basefoo");
 		sb.append(' ');
 		CompiledStatement stmt = createMock(CompiledStatement.class);
-		expect(databaseConnection.compileStatement(sb.toString())).andReturn(stmt);
+		expect(databaseConnection.compileStatement(sb.toString(), StatementType.SELECT)).andReturn(stmt);
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(results.next()).andReturn(false);
 		expect(stmt.executeQuery()).andReturn(results);
@@ -413,7 +433,7 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		databaseType.appendEscapedEntityName(sb, "basefoo");
 		sb.append(' ');
 		CompiledStatement stmt = createMock(CompiledStatement.class);
-		expect(databaseConnection.compileStatement(sb.toString())).andReturn(stmt);
+		expect(databaseConnection.compileStatement(sb.toString(), StatementType.SELECT)).andReturn(stmt);
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(results.next()).andReturn(false);
 		expect(stmt.executeQuery()).andReturn(results);
@@ -421,7 +441,7 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		replay(databaseConnection);
 		replay(stmt);
 		replay(results);
-		StatementBuilder<BaseFoo, String> builder = baseFooDao.statementBuilder();
+		StatementBuilder<BaseFoo, String> builder = baseFooDao.queryBuilder();
 		PreparedStmt<BaseFoo> preparedStmt = builder.prepareStatement();
 		assertNull(baseFooDao.queryForFirst(preparedStmt));
 		finishDao();
@@ -433,7 +453,7 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 	public void testStatementBuilderNoInit() throws Exception {
 		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
 		};
-		dao.statementBuilder();
+		dao.queryBuilder();
 	}
 
 	@Test(expected = SQLException.class)
@@ -444,12 +464,12 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		databaseType.appendEscapedEntityName(sb, "basefoo");
 		sb.append(' ');
 		CompiledStatement stmt = createMock(CompiledStatement.class);
-		expect(databaseConnection.compileStatement(sb.toString())).andReturn(stmt);
+		expect(databaseConnection.compileStatement(sb.toString(), StatementType.SELECT)).andReturn(stmt);
 		expect(stmt.executeQuery()).andThrow(new SQLException("expected"));
 		stmt.close();
 		replay(databaseConnection);
 		replay(stmt);
-		StatementBuilder<BaseFoo, String> builder = baseFooDao.statementBuilder();
+		StatementBuilder<BaseFoo, String> builder = baseFooDao.queryBuilder();
 		PreparedStmt<BaseFoo> preparedStmt = builder.prepareStatement();
 		baseFooDao.queryForFirst(preparedStmt);
 	}
@@ -463,17 +483,9 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 
 	@SuppressWarnings("deprecation")
 	@Test
-	public void testQueryBuilder() throws Exception {
+	public void testStatementBuilder() throws Exception {
 		startDao(false);
-		assertNotNull(baseFooDao.queryBuilder());
-	}
-
-	@SuppressWarnings("deprecation")
-	@Test(expected = IllegalStateException.class)
-	public void testQueryBuilderNoInit() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
-		};
-		dao.queryBuilder();
+		assertNotNull(baseFooDao.statementBuilder());
 	}
 
 	@Test
@@ -484,7 +496,7 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		databaseType.appendEscapedEntityName(sb, "basefoo");
 		sb.append(' ');
 		CompiledStatement stmt = createMock(CompiledStatement.class);
-		expect(databaseConnection.compileStatement(sb.toString())).andReturn(stmt);
+		expect(databaseConnection.compileStatement(sb.toString(), StatementType.SELECT)).andReturn(stmt);
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(results.next()).andReturn(false);
 		expect(stmt.executeQuery()).andReturn(results);
@@ -492,7 +504,7 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		replay(databaseConnection);
 		replay(stmt);
 		replay(results);
-		StatementBuilder<BaseFoo, String> builder = baseFooDao.statementBuilder();
+		StatementBuilder<BaseFoo, String> builder = baseFooDao.queryBuilder();
 		PreparedStmt<BaseFoo> preparedStmt = builder.prepareStatement();
 		List<BaseFoo> list = baseFooDao.query(preparedStmt);
 		assertNotNull(list);
@@ -517,7 +529,7 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		databaseType.appendEscapedEntityName(sb, "basefoo");
 		sb.append(' ');
 		CompiledStatement stmt = createMock(CompiledStatement.class);
-		expect(databaseConnection.compileStatement(sb.toString())).andReturn(stmt);
+		expect(databaseConnection.compileStatement(sb.toString(), StatementType.SELECT)).andReturn(stmt);
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(results.next()).andReturn(false);
 		expect(stmt.executeQuery()).andReturn(results);
@@ -606,7 +618,7 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		expect(results.next()).andReturn(false);
 		expect(stmt.executeQuery()).andReturn(results);
 		stmt.close();
-		expect(databaseConnection.compileStatement(sb.toString())).andReturn(stmt);
+		expect(databaseConnection.compileStatement(sb.toString(), StatementType.SELECT)).andReturn(stmt);
 		replay(databaseConnection);
 		replay(stmt);
 		CloseableIterator<BaseFoo> iterator = baseFooDao.iterator();
@@ -625,7 +637,7 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		CompiledStatement stmt = createMock(CompiledStatement.class);
 		expect(stmt.executeQuery()).andThrow(new SQLException("expected"));
 		stmt.close();
-		expect(databaseConnection.compileStatement(sb.toString())).andReturn(stmt);
+		expect(databaseConnection.compileStatement(sb.toString(), StatementType.SELECT)).andReturn(stmt);
 		replay(databaseConnection);
 		replay(stmt);
 		baseFooDao.iterator();
@@ -644,6 +656,7 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		@SuppressWarnings("unchecked")
 		PreparedStmt<BaseFoo> stmt = createMock(PreparedStmt.class);
 		CompiledStatement compiled = createMock(CompiledStatement.class);
+		expect(stmt.getType()).andReturn(StatementType.SELECT);
 		expect(stmt.compile(databaseConnection)).andReturn(compiled);
 		expect(stmt.getStatement()).andReturn("select * from foo");
 		DatabaseResults results = createMock(DatabaseResults.class);
@@ -667,6 +680,7 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		startDao(false);
 		@SuppressWarnings("unchecked")
 		PreparedStmt<BaseFoo> stmt = createMock(PreparedStmt.class);
+		expect(stmt.getType()).andReturn(StatementType.SELECT);
 		expect(stmt.compile(databaseConnection)).andThrow(new SQLException("expected"));
 		expect(stmt.getStatement()).andReturn("select * from foo");
 		replay(databaseConnection);
@@ -689,7 +703,7 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		databaseType.appendEscapedEntityName(sb, "basefoo");
 		sb.append(' ');
 		CompiledStatement stmt = createMock(CompiledStatement.class);
-		expect(databaseConnection.compileStatement(sb.toString())).andReturn(stmt);
+		expect(databaseConnection.compileStatement(sb.toString(), StatementType.SELECT)).andReturn(stmt);
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(results.next()).andReturn(false);
 		expect(stmt.executeQuery()).andReturn(results);
@@ -721,7 +735,7 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		databaseType.appendEscapedEntityName(sb, "basefoo");
 		sb.append(' ');
 		CompiledStatement stmt = createMock(CompiledStatement.class);
-		expect(databaseConnection.compileStatement(sb.toString())).andThrow(new SQLException("expected"));
+		expect(databaseConnection.compileStatement(sb.toString(), StatementType.SELECT)).andThrow(new SQLException("expected"));
 		int numColumns = 1;
 		expect(stmt.getColumnCount()).andReturn(numColumns);
 		String columnName = "foo";

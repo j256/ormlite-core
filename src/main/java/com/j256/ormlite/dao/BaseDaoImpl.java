@@ -12,6 +12,7 @@ import com.j256.ormlite.stmt.PreparedStmt;
 import com.j256.ormlite.stmt.SelectIterator;
 import com.j256.ormlite.stmt.StatementBuilder;
 import com.j256.ormlite.stmt.StatementExecutor;
+import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.DatabaseTableConfig;
@@ -142,6 +143,10 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
 	public T queryForFirst(PreparedStmt<T> preparedStmt) throws SQLException {
 		checkForInitialized();
+		if (preparedStmt.getType() != StatementType.SELECT) {
+			throw new IllegalArgumentException("Cannot use a " + preparedStmt.getType()
+					+ " statement in a query method");
+		}
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		try {
 			return statementExecutor.queryForFirst(connection, preparedStmt);
@@ -155,22 +160,32 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		return statementExecutor.queryForAll(connectionSource);
 	}
 
-	public StatementBuilder<T, ID> statementBuilder() {
-		checkForInitialized();
-		return new StatementBuilder<T, ID>(databaseType, tableInfo);
-	}
-
 	/**
-	 * @deprecated See {@link #statementBuilder()}
+	 * @deprecated See {@link #queryBuilder()}
 	 */
 	@Deprecated
+	public StatementBuilder<T, ID> statementBuilder() {
+		return queryBuilder();
+	}
+
 	public StatementBuilder<T, ID> queryBuilder() {
-		checkForInitialized();
-		return statementBuilder();
+		return statementBuilder(StatementType.SELECT);
+	}
+
+	public StatementBuilder<T, ID> updateBuilder() {
+		return statementBuilder(StatementType.UPDATE);
+	}
+
+	public StatementBuilder<T, ID> deleteBuilder() {
+		return statementBuilder(StatementType.DELETE);
 	}
 
 	public List<T> query(PreparedStmt<T> preparedStmt) throws SQLException {
 		checkForInitialized();
+		if (preparedStmt.getType() != StatementType.SELECT) {
+			throw new IllegalArgumentException("Cannot use a " + preparedStmt.getType()
+					+ " statement in a query method");
+		}
 		return statementExecutor.query(connectionSource, preparedStmt);
 	}
 
@@ -221,6 +236,20 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			} finally {
 				connectionSource.releaseConnection(connection);
 			}
+		}
+	}
+
+	public int update(PreparedStmt<T> preparedStmt) throws SQLException {
+		checkForInitialized();
+		if (preparedStmt.getType() != StatementType.UPDATE) {
+			throw new IllegalArgumentException("Cannot use a " + preparedStmt.getType()
+					+ " statement in an update method");
+		}
+		DatabaseConnection connection = connectionSource.getReadWriteConnection();
+		try {
+			return statementExecutor.update(connection, preparedStmt);
+		} finally {
+			connectionSource.releaseConnection(connection);
 		}
 	}
 
@@ -283,6 +312,20 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	public int delete(PreparedStmt<T> preparedStmt) throws SQLException {
+		checkForInitialized();
+		if (preparedStmt.getType() != StatementType.DELETE) {
+			throw new IllegalArgumentException("Cannot use a " + preparedStmt.getType()
+					+ " statement in a delete method");
+		}
+		DatabaseConnection connection = connectionSource.getReadWriteConnection();
+		try {
+			return statementExecutor.delete(connection, preparedStmt);
+		} finally {
+			connectionSource.releaseConnection(connection);
+		}
+	}
+
 	public SelectIterator<T, ID> iterator() {
 		checkForInitialized();
 		try {
@@ -292,10 +335,14 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
-	public SelectIterator<T, ID> iterator(PreparedStmt<T> preparedQuery) throws SQLException {
+	public SelectIterator<T, ID> iterator(PreparedStmt<T> preparedStmt) throws SQLException {
 		checkForInitialized();
+		if (preparedStmt.getType() != StatementType.SELECT) {
+			throw new IllegalArgumentException("Cannot use a " + preparedStmt.getType()
+					+ " statement in a query method");
+		}
 		try {
-			return statementExecutor.buildIterator(this, connectionSource, preparedQuery);
+			return statementExecutor.buildIterator(this, connectionSource, preparedStmt);
 		} catch (SQLException e) {
 			throw SqlExceptionUtil.create("Could not build iterator for " + dataClass, e);
 		}
@@ -378,6 +425,11 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		dao.setConnectionSource(connectionSource);
 		dao.initialize();
 		return dao;
+	}
+
+	private StatementBuilder<T, ID> statementBuilder(StatementType type) {
+		checkForInitialized();
+		return new StatementBuilder<T, ID>(databaseType, tableInfo, type);
 	}
 
 	private void checkForInitialized() {

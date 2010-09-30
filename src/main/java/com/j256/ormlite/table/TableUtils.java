@@ -11,6 +11,7 @@ import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.misc.SqlExceptionUtil;
+import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
@@ -75,7 +76,7 @@ public class TableUtils {
 			CompiledStatement prepStmt = null;
 			try {
 				logger.debug("executing create table statement: {}", statement);
-				prepStmt = connection.compileStatement(statement);
+				prepStmt = connection.compileStatement(statement, StatementType.EXECUTE);
 				rowC = prepStmt.executeUpdate();
 			} catch (SQLException e) {
 				// we do this to make sure that the statement is in the exception
@@ -99,7 +100,7 @@ public class TableUtils {
 			CompiledStatement prepStmt = null;
 			DatabaseResults results = null;
 			try {
-				prepStmt = connection.compileStatement(query);
+				prepStmt = connection.compileStatement(query, StatementType.EXECUTE);
 				results = prepStmt.executeQuery();
 				int rowC = 0;
 				// count the results
@@ -210,7 +211,7 @@ public class TableUtils {
 			CompiledStatement prepStmt = null;
 			try {
 				logger.debug("executing drop table statement: {}", statement);
-				prepStmt = connection.compileStatement(statement);
+				prepStmt = connection.compileStatement(statement, StatementType.EXECUTE);
 				rowC = prepStmt.executeUpdate();
 			} catch (SQLException e) {
 				if (!ignoreErrors) {

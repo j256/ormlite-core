@@ -8,6 +8,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseOrmLiteCoreTest;
+import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 
 public class StatementBuilderTest extends BaseOrmLiteCoreTest {
 
@@ -26,8 +27,8 @@ public class StatementBuilderTest extends BaseOrmLiteCoreTest {
 		StatementBuilder<BaseFoo, String> stmtb = new StatementBuilder<BaseFoo, String>(databaseType, baseFooTableInfo);
 		String[] columns1 = new String[] { BaseFoo.ID_COLUMN_NAME, BaseFoo.VAL_COLUMN_NAME };
 		String column2 = "equal";
-		stmtb.columns(columns1);
-		stmtb.columns(column2);
+		stmtb.selectColumns(columns1);
+		stmtb.selectColumns(column2);
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT ");
 		for (String column : columns1) {
@@ -44,7 +45,7 @@ public class StatementBuilderTest extends BaseOrmLiteCoreTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testAddBadColumn() throws Exception {
 		StatementBuilder<BaseFoo, String> stmtb = new StatementBuilder<BaseFoo, String>(databaseType, baseFooTableInfo);
-		stmtb.columns("unknown-column");
+		stmtb.selectColumns("unknown-column");
 	}
 
 	@Test
@@ -52,7 +53,7 @@ public class StatementBuilderTest extends BaseOrmLiteCoreTest {
 		StatementBuilder<BaseFoo, String> stmtb = new StatementBuilder<BaseFoo, String>(databaseType, baseFooTableInfo);
 		String column = BaseFoo.VAL_COLUMN_NAME;
 		String idColumn = BaseFoo.ID_COLUMN_NAME;
-		stmtb.columns(column);
+		stmtb.selectColumns(column);
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT ");
 		databaseType.appendEscapedEntityName(sb, column);
@@ -63,6 +64,7 @@ public class StatementBuilderTest extends BaseOrmLiteCoreTest {
 		sb.append(' ');
 		assertEquals(sb.toString(), stmtb.prepareStatementString());
 	}
+
 	@Test
 	public void testAddColumnsIterable() throws Exception {
 		StatementBuilder<BaseFoo, String> stmtb = new StatementBuilder<BaseFoo, String>(databaseType, baseFooTableInfo);
@@ -70,8 +72,8 @@ public class StatementBuilderTest extends BaseOrmLiteCoreTest {
 		columns1.add(BaseFoo.ID_COLUMN_NAME);
 		columns1.add(BaseFoo.VAL_COLUMN_NAME);
 		String column2 = "equal";
-		stmtb.columns(columns1);
-		stmtb.columns(column2);
+		stmtb.selectColumns(columns1);
+		stmtb.selectColumns(column2);
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT ");
 		for (String column : columns1) {
@@ -218,6 +220,80 @@ public class StatementBuilderTest extends BaseOrmLiteCoreTest {
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
 		sb.append(' ');
 		assertEquals(sb.toString(), stmtb.prepareStatementString());
+	}
+
+	@Test
+	public void testPrepareStatementUpdateValueString() throws Exception {
+		StatementBuilder<BaseFoo, String> stmtb =
+				new StatementBuilder<BaseFoo, String>(databaseType, baseFooTableInfo, StatementType.UPDATE);
+		String idVal = "blah";
+		stmtb.updateColumnValue(BaseFoo.ID_COLUMN_NAME, idVal);
+		PreparedStmt<BaseFoo> stmt = stmtb.prepareStatement();
+		stmt.getStatement();
+		StringBuilder sb = new StringBuilder();
+		sb.append("UPDATE ");
+		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
+		sb.append(" SET ");
+		databaseType.appendEscapedEntityName(sb, BaseFoo.ID_COLUMN_NAME);
+		sb.append(" = ");
+		databaseType.appendEscapedWord(sb, idVal);
+		sb.append(' ');
+		assertEquals(sb.toString(), stmtb.prepareStatementString());
+	}
+
+	@Test
+	public void testPrepareStatementUpdateValueNumber() throws Exception {
+		StatementBuilder<BaseFoo, String> stmtb =
+				new StatementBuilder<BaseFoo, String>(databaseType, baseFooTableInfo, StatementType.UPDATE);
+		int idVal = 13123;
+		stmtb.updateColumnValue(BaseFoo.VAL_COLUMN_NAME, idVal);
+		PreparedStmt<BaseFoo> stmt = stmtb.prepareStatement();
+		stmt.getStatement();
+		StringBuilder sb = new StringBuilder();
+		sb.append("UPDATE ");
+		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
+		sb.append(" SET ");
+		databaseType.appendEscapedEntityName(sb, BaseFoo.VAL_COLUMN_NAME);
+		sb.append(" = ").append(idVal).append(' ');
+		assertEquals(sb.toString(), stmtb.prepareStatementString());
+	}
+
+	@Test
+	public void testPrepareStatementUpdateValueExpression() throws Exception {
+		StatementBuilder<BaseFoo, String> stmtb =
+				new StatementBuilder<BaseFoo, String>(databaseType, baseFooTableInfo, StatementType.UPDATE);
+		String idVal = "blah";
+		stmtb.updateColumnValue(BaseFoo.ID_COLUMN_NAME, idVal);
+		String expression = "blah + 1";
+		stmtb.updateColumnExpression(BaseFoo.VAL_COLUMN_NAME, expression);
+		stmtb.where().eq(BaseFoo.ID_COLUMN_NAME, idVal);
+
+		PreparedStmt<BaseFoo> stmt = stmtb.prepareStatement();
+		stmt.getStatement();
+		StringBuilder sb = new StringBuilder();
+		sb.append("UPDATE ");
+		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
+		sb.append(" SET ");
+		databaseType.appendEscapedEntityName(sb, BaseFoo.ID_COLUMN_NAME);
+		sb.append(" = ");
+		databaseType.appendEscapedWord(sb, idVal);
+		sb.append(" ,");
+		databaseType.appendEscapedEntityName(sb, BaseFoo.VAL_COLUMN_NAME);
+		sb.append(" = ");
+		sb.append(expression);
+		sb.append(" WHERE ");
+		databaseType.appendEscapedEntityName(sb, BaseFoo.ID_COLUMN_NAME);
+		sb.append(" = ");
+		databaseType.appendEscapedWord(sb, idVal);
+		sb.append(' ');
+		assertEquals(sb.toString(), stmtb.prepareStatementString());
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testPrepareStatementUpdateNotSets() throws Exception {
+		StatementBuilder<BaseFoo, String> stmtb =
+				new StatementBuilder<BaseFoo, String>(databaseType, baseFooTableInfo, StatementType.UPDATE);
+		stmtb.prepareStatement();
 	}
 
 	@SuppressWarnings("deprecation")

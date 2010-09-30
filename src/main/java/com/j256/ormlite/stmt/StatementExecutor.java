@@ -12,6 +12,7 @@ import com.j256.ormlite.dao.RawResults;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
+import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.stmt.mapped.MappedCreate;
 import com.j256.ormlite.stmt.mapped.MappedDelete;
 import com.j256.ormlite.stmt.mapped.MappedDeleteCollection;
@@ -129,7 +130,7 @@ public class StatementExecutor<T, ID> {
 		SelectIterator<String[], Void> iterator = null;
 		try {
 			DatabaseConnection connection = connectionSource.getReadOnlyConnection();
-			CompiledStatement compiledStatement = connection.compileStatement(query);
+			CompiledStatement compiledStatement = connection.compileStatement(query, StatementType.SELECT);
 			RawResultsList results = new RawResultsList(compiledStatement);
 			// statement arg is null because we don't want it to double log below
 			iterator =
@@ -170,7 +171,8 @@ public class StatementExecutor<T, ID> {
 	 */
 	public RawResults buildIterator(ConnectionSource connectionSource, String query) throws SQLException {
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
-		return new RawResultsIterator(query, connectionSource, connection, connection.compileStatement(query));
+		return new RawResultsIterator(query, connectionSource, connection, connection.compileStatement(query,
+				StatementType.SELECT));
 	}
 
 	/**
@@ -201,6 +203,14 @@ public class StatementExecutor<T, ID> {
 			mappedUpdateId = MappedUpdateId.build(databaseType, tableInfo);
 		}
 		return mappedUpdateId.execute(databaseConnection, data, newId);
+	}
+
+	/**
+	 * Update rows in the database.
+	 */
+	public int update(DatabaseConnection databaseConnection, PreparedStmt<T> preparedStmt) throws SQLException {
+		CompiledStatement stmt = preparedStmt.compile(databaseConnection);
+		return stmt.executeUpdate();
 	}
 
 	/**
@@ -244,6 +254,14 @@ public class StatementExecutor<T, ID> {
 	public int deleteIds(DatabaseConnection databaseConnection, Collection<ID> ids) throws SQLException {
 		// have to build this on the fly because the collection has variable number of args
 		return MappedDeleteCollection.deleteIds(databaseType, tableInfo, databaseConnection, ids);
+	}
+
+	/**
+	 * Delete rows that match the prepared statement.
+	 */
+	public int delete(DatabaseConnection databaseConnection, PreparedStmt<T> preparedStmt) throws SQLException {
+		CompiledStatement stmt = preparedStmt.compile(databaseConnection);
+		return stmt.executeUpdate();
 	}
 
 	private void prepareQueryForAll() throws SQLException {

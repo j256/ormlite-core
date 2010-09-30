@@ -1049,12 +1049,13 @@ go all of the way, the garbage collector will close the SQL statement some time 
 @cindex custom statement builder
 The DOAs have methods to query for an object that matches an id field (@code{queryForId}) as well as query for all
 objects (@code{queryForAll}) and iterating through all of the objects in a table (@code{iterator}).  However, for more
-specified queries, there is the @code{statementBuilder()} method which returns a @code{StatementBuilder} object for the DAO
+specified queries, there is the @code{queryBuilder()} method which returns a @code{StatementBuilder} object for the DAO
 with which you can construct custom queries to return a sub-set of the table.
 
 @menu
 * StatementBuilder Basics::     How to start using the Statement Builder.
 * Building Queries::            How to build simple and complex queries.
+* Building Statements::         How to build update and delete statements.
 * Select Arguments::            Using arguments to queries.
 @end menu
 
@@ -1083,7 +1084,7 @@ our queries.  This should be done @emph{even} if the name of the field and the c
 @example
 // get our StatementBuilder from the DAO
 StatementBuilder<Account, String> statementBuilder =
-  accountDao.statementBuilder();
+  accountDao.queryBuilder();
 // set the WHERE to: the 'password' field must be equal to "qwerty"
 statementBuilder.where().eq(Account.PASSWORD_FIELD_NAME, "qwerty");
 // prepare our sql statement
@@ -1099,7 +1100,7 @@ You get a @code{StatementBuilder} object from the DAO, call methods on it to bui
 the query or iterator methods.
 
 @c ----------------------------------------------------------------
-@node Building Queries, Select Arguments, StatementBuilder Basics, Statement Builder
+@node Building Queries, Building Statements, StatementBuilder Basics, Statement Builder
 @section Building Queries
 
 @cindex building queries
@@ -1108,7 +1109,7 @@ as well for power users.  Simple queries can be done linearly:
 
 @example
 StatementBuilder<Account, String> statementBuilder =
-  accountDao.statementBuilder();
+  accountDao.queryBuilder();
 // get the WHERE object to build our query
 Where where = statementBuilder.where();
 // the name field must be equal to "foo"
@@ -1175,13 +1176,48 @@ SELECT * FROM account
 @cindex in
 @cindex is null
 @cindex comparisons
-The @code{StatementBuilder} also allows you to set what specific columns you want returned, specify the 'ORDER BY' and 'GROUP BY'
-fields, and various other SQL features (LIKE, IN, >, >=, <, <=, <>, IS NULL, DISTINCT, @dots{}).  See the javadocs on
-@code{StatementBuilder} and @code{Where} classes for more information.  A good SQL reference site can be found at
-@uref{http://www.w3schools.com/Sql/}.
+The @code{StatementBuilder} also allows you to set what specific select columns you want returned, specify the 'ORDER BY'
+and 'GROUP BY' fields, and various other SQL features (LIKE, IN, >, >=, <, <=, <>, IS NULL, DISTINCT, @dots{}).  See the
+javadocs on@code{StatementBuilder} and @code{Where} classes for more information.  A good SQL reference site can be found
+at @uref{http://www.w3schools.com/Sql/}.
 
 @c ----------------------------------------------------------------
-@node Select Arguments, Foreign Objects, Building Queries, Statement Builder
+@node Building Statements, Select Arguments, Building Queries, Statement Builder
+@section Building Statements
+
+The @code{StatementBuilder} is also used to construct @code{DELETE} and @code{UPDATE} statements.  Delete statements can
+be used to delete a certain portion of the table -- or all rows if no @code{where()} is specified.  Update statements can
+be used to change certain fields in certain rows in the table.
+
+For example, if you want to update (i.e. change) the passwords for all of the Accounts in your table that are currently
+null to the string "none", then you might do something like the following:
+
+@example
+StatementBuilder<Account, String> updateBuilder =
+  accountDao.updateBuilder();
+// update the password to be "none"
+updateBuilder.updateColumnValue(
+  Account.PASSWORD_FIELD_NAME, "none");
+// only update the rows where password is null
+updateBuilder.where().isNull(Account.PASSWORD_FIELD_NAME);
+PreparedStmt<Account, String> preparedStmt =
+  updateBuilder.prepareStatement();
+@end example
+
+If, instead, you wanted to delete the rows in the Accounts table whose password is currently null, then you might do
+something like the following:
+
+@example
+StatementBuilder<Account, String> deleteBuilder =
+  accountDao.updateBuilder();
+// only delete the rows where password is null
+deleteBuilder.where().isNull(Account.PASSWORD_FIELD_NAME);
+PreparedStmt<Account, String> preparedStmt =
+  deleteBuilder.prepareStatement();
+@end example
+
+@c ----------------------------------------------------------------
+@node Select Arguments, Foreign Objects, Building Statements, Statement Builder
 @section Using Select Arguments
 
 @cindex query arguments
@@ -1194,7 +1230,7 @@ For example:
 
 @example
 StatementBuilder<Account, String> statementBuilder =
-  accountDao.statementBuilder();
+  accountDao.queryBuilder();
 Where where = statementBuilder.where();
 SelectArg selectArg = new SelectArg();
 // define our query as 'name = ?'
@@ -1349,7 +1385,7 @@ need to adjust any DAOs that you have.
 @item We are in the process of allowing custom delete and update methods so we took the major upgrade opportunity to
 rename the @code{QueryBuilder} object to be @code{StatementBuilder}.
 
-@item Because of the above, we also renamed @code{Dao.queryBuilder()} method to be @code{statementBuilder()}.
+@item Because of the above, we also renamed @code{Dao.queryBuilder()} method to be @code{queryBuilder()}.
 
 @item Also renamed the @code{PreparedQuery} object to be @code{PreparedStmt}.
 

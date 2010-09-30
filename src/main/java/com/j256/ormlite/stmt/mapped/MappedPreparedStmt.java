@@ -7,6 +7,7 @@ import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.PreparedStmt;
 import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.StatementBuilder;
+import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableInfo;
@@ -20,9 +21,10 @@ public class MappedPreparedStmt<T> extends BaseMappedQuery<T> implements Prepare
 
 	private final SelectArg[] selectArgs;
 	private final Integer limit;
+	private final StatementType type;
 
 	public MappedPreparedStmt(TableInfo<T> tableInfo, String statement, List<FieldType> argFieldTypeList,
-			List<FieldType> resultFieldTypeList, List<SelectArg> selectArgList, Integer limit) {
+			List<FieldType> resultFieldTypeList, List<SelectArg> selectArgList, Integer limit, StatementType type) {
 		super(tableInfo, statement, argFieldTypeList, resultFieldTypeList);
 		this.selectArgs = selectArgList.toArray(new SelectArg[selectArgList.size()]);
 		// select args should match the field-type list
@@ -31,10 +33,11 @@ public class MappedPreparedStmt<T> extends BaseMappedQuery<T> implements Prepare
 		}
 		// this is an Integer because it may be null
 		this.limit = limit;
+		this.type = type;
 	}
 
 	public CompiledStatement compile(DatabaseConnection databaseConnection) throws SQLException {
-		CompiledStatement stmt = databaseConnection.compileStatement(statement);
+		CompiledStatement stmt = databaseConnection.compileStatement(statement, type);
 		if (limit != null) {
 			stmt.setMaxRows(limit);
 		}
@@ -65,5 +68,9 @@ public class MappedPreparedStmt<T> extends BaseMappedQuery<T> implements Prepare
 
 	public String getStatement() {
 		return statement;
+	}
+
+	public StatementType getType() {
+		return type;
 	}
 }
