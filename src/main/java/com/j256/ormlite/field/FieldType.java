@@ -130,8 +130,17 @@ public class FieldType {
 			this.generatedIdSequence = null;
 		}
 		if (this.isGeneratedId && !this.dataType.isValidGeneratedType()) {
-			throw new IllegalArgumentException("Generated field " + field.getName()
-					+ " is not an appropriate type in class " + field.getDeclaringClass());
+			StringBuilder sb = new StringBuilder();
+			sb.append("Generated-id field '").append(field.getName());
+			sb.append("' in ").append(field.getDeclaringClass().getSimpleName());
+			sb.append(" can't be type ").append(this.dataType);
+			sb.append(".  Must be one of: ");
+			for (DataType type : DataType.values()) {
+				if (type.isValidGeneratedType()) {
+					sb.append(type).append(' ');
+				}
+			}
+			throw new IllegalArgumentException(sb.toString());
 		}
 		this.fieldConverter = databaseType.getFieldConverter(dataType);
 		this.format = fieldConfig.getFormat();
