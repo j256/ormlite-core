@@ -8,11 +8,15 @@ import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.misc.SqlExceptionUtil;
+import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.PreparedDelete;
+import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.PreparedStmt;
+import com.j256.ormlite.stmt.PreparedUpdate;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.SelectIterator;
-import com.j256.ormlite.stmt.StatementBuilder;
 import com.j256.ormlite.stmt.StatementExecutor;
-import com.j256.ormlite.stmt.StatementBuilder.StatementType;
+import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.DatabaseTableConfig;
@@ -39,6 +43,7 @@ import com.j256.ormlite.table.TableInfo;
  *            needs an ID parameter however so you can use Void or Object to satisfy the compiler.
  * @author graywatson
  */
+@SuppressWarnings("deprecation")
 public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
 	private DatabaseType databaseType;
@@ -141,12 +146,16 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	public T queryForFirst(PreparedQuery<T> preparedQuery) throws SQLException {
+		return queryForFirst((PreparedStmt<T>) preparedQuery);
+	}
+
+	/**
+	 * @deprecated Use {@link #queryForFirst(PreparedQuery)}
+	 */
+	@Deprecated
 	public T queryForFirst(PreparedStmt<T> preparedStmt) throws SQLException {
 		checkForInitialized();
-		if (preparedStmt.getType() != StatementType.SELECT) {
-			throw new IllegalArgumentException("Cannot use a " + preparedStmt.getType()
-					+ " statement in a query method");
-		}
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		try {
 			return statementExecutor.queryForFirst(connection, preparedStmt);
@@ -164,28 +173,36 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	 * @deprecated See {@link #queryBuilder()}
 	 */
 	@Deprecated
-	public StatementBuilder<T, ID> statementBuilder() {
+	public QueryBuilder<T, ID> statementBuilder() {
 		return queryBuilder();
 	}
 
-	public StatementBuilder<T, ID> queryBuilder() {
-		return statementBuilder(StatementType.SELECT);
+	public QueryBuilder<T, ID> queryBuilder() {
+		checkForInitialized();
+		return new QueryBuilder<T, ID>(databaseType, tableInfo);
 	}
 
-	public StatementBuilder<T, ID> updateBuilder() {
-		return statementBuilder(StatementType.UPDATE);
+	public UpdateBuilder<T, ID> updateBuilder() {
+		checkForInitialized();
+		return new UpdateBuilder<T, ID>(databaseType, tableInfo);
 	}
 
-	public StatementBuilder<T, ID> deleteBuilder() {
-		return statementBuilder(StatementType.DELETE);
+	public DeleteBuilder<T, ID> deleteBuilder() {
+		checkForInitialized();
+		return new DeleteBuilder<T, ID>(databaseType, tableInfo);
 	}
 
+	public List<T> query(PreparedQuery<T> preparedQuery) throws SQLException {
+		checkForInitialized();
+		return statementExecutor.query(connectionSource, preparedQuery);
+	}
+
+	/**
+	 * @deprecated Use {@link #query(PreparedQuery)}
+	 */
+	@Deprecated
 	public List<T> query(PreparedStmt<T> preparedStmt) throws SQLException {
 		checkForInitialized();
-		if (preparedStmt.getType() != StatementType.SELECT) {
-			throw new IllegalArgumentException("Cannot use a " + preparedStmt.getType()
-					+ " statement in a query method");
-		}
 		return statementExecutor.query(connectionSource, preparedStmt);
 	}
 
@@ -239,15 +256,11 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
-	public int update(PreparedStmt<T> preparedStmt) throws SQLException {
+	public int update(PreparedUpdate<T> preparedUpdate) throws SQLException {
 		checkForInitialized();
-		if (preparedStmt.getType() != StatementType.UPDATE) {
-			throw new IllegalArgumentException("Cannot use a " + preparedStmt.getType()
-					+ " statement in an update method");
-		}
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		try {
-			return statementExecutor.update(connection, preparedStmt);
+			return statementExecutor.update(connection, preparedUpdate);
 		} finally {
 			connectionSource.releaseConnection(connection);
 		}
@@ -312,15 +325,11 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
-	public int delete(PreparedStmt<T> preparedStmt) throws SQLException {
+	public int delete(PreparedDelete<T> preparedDelete) throws SQLException {
 		checkForInitialized();
-		if (preparedStmt.getType() != StatementType.DELETE) {
-			throw new IllegalArgumentException("Cannot use a " + preparedStmt.getType()
-					+ " statement in a delete method");
-		}
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		try {
-			return statementExecutor.delete(connection, preparedStmt);
+			return statementExecutor.delete(connection, preparedDelete);
 		} finally {
 			connectionSource.releaseConnection(connection);
 		}
@@ -335,12 +344,16 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	public SelectIterator<T, ID> iterator(PreparedQuery<T> preparedQuery) throws SQLException {
+		return iterator((PreparedStmt<T>) preparedQuery);
+	}
+
+	/**
+	 * @deprecated See {@link #iterator(PreparedQuery)}
+	 */
+	@Deprecated
 	public SelectIterator<T, ID> iterator(PreparedStmt<T> preparedStmt) throws SQLException {
 		checkForInitialized();
-		if (preparedStmt.getType() != StatementType.SELECT) {
-			throw new IllegalArgumentException("Cannot use a " + preparedStmt.getType()
-					+ " statement in a query method");
-		}
 		try {
 			return statementExecutor.buildIterator(this, connectionSource, preparedStmt);
 		} catch (SQLException e) {
@@ -425,11 +438,6 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		dao.setConnectionSource(connectionSource);
 		dao.initialize();
 		return dao;
-	}
-
-	private StatementBuilder<T, ID> statementBuilder(StatementType type) {
-		checkForInitialized();
-		return new StatementBuilder<T, ID>(databaseType, tableInfo, type);
 	}
 
 	private void checkForInitialized() {

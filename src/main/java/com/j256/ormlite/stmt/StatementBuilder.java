@@ -4,12 +4,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.stmt.mapped.MappedPreparedStmt;
+import com.j256.ormlite.stmt.mapped.MappedQueryForId;
 import com.j256.ormlite.stmt.query.Clause;
 import com.j256.ormlite.stmt.query.OrderBy;
 import com.j256.ormlite.stmt.query.SetExpression;
@@ -17,10 +17,8 @@ import com.j256.ormlite.stmt.query.SetValue;
 import com.j256.ormlite.table.TableInfo;
 
 /**
- * Assists in building SQL query (select) statements for a particular table in a particular database. Uses the
- * {@link DatabaseType} to get per-database SQL statements. By default the resulting queries will return objects with
- * all columns -- doing the equivalent of 'select * from table'. See {@link #columns(Iterable)} or
- * {@link #columns(String...)} to return partial column lists.
+ * Assists in building of SQL statements for a particular table in a particular database. This can be either select
+ * queries or delete or update statements.
  * 
  * <p>
  * Here is a <a href="http://www.w3schools.com/Sql/" >good tutorial of SQL commands</a>.
@@ -33,7 +31,7 @@ import com.j256.ormlite.table.TableInfo;
  *            needs an ID parameter however so you can use Void or Object to satisfy the compiler.
  * @author graywatson
  */
-public class StatementBuilder<T, ID> {
+public abstract class StatementBuilder<T, ID> {
 
 	private static Logger logger = LoggerFactory.getLogger(StatementBuilder.class);
 
@@ -50,18 +48,6 @@ public class StatementBuilder<T, ID> {
 	private List<Clause> updateClauseList = null;
 	private Where where = null;
 	private Integer limit = null;
-
-	/**
-	 * Provides statements for various SQL operations.
-	 * 
-	 * @param databaseType
-	 *            Database type.
-	 * @param tableInfo
-	 *            Information about the table/class that is being handled.
-	 */
-	public StatementBuilder(DatabaseType databaseType, TableInfo<T> tableInfo) {
-		this(databaseType, tableInfo, StatementType.SELECT);
-	}
 
 	/**
 	 * Provides statements for various SQL operations.
@@ -276,11 +262,10 @@ public class StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * Build and return a {@link PreparedStmt} object which then can be used by {@link Dao#query(PreparedStmt)} and
-	 * {@link Dao#iterator(PreparedStmt)} methods. If you change the where or make other calls you will need to re-call
-	 * this method to re-prepare the query for execution.
+	 * @deprecated Use {@link QueryBuilder#prepare()}
 	 */
-	public PreparedStmt<T> prepareStatement() throws SQLException {
+	@Deprecated
+	public MappedPreparedStmt<T> prepareStatement() throws SQLException {
 		List<FieldType> argFieldTypeList = new ArrayList<FieldType>();
 		List<FieldType> resultFieldTypeList = new ArrayList<FieldType>();
 		List<SelectArg> selectArgList = new ArrayList<SelectArg>();
@@ -290,19 +275,11 @@ public class StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * @deprecated Use {@link #prepareStatement()}
-	 */
-	@Deprecated
-	public PreparedStmt<T> prepareQuery() throws SQLException {
-		return prepareStatement();
-	}
-
-	/**
 	 * Build and return a string version of the query. If you change the where or make other calls you will need to
 	 * re-call this method to re-prepare the query for execution.
 	 * 
 	 * <p>
-	 * This is mostly used for debugging or logging cases. The dao classes us the {@link #prepareQuery} method.
+	 * This is mostly used for debugging or logging cases. The dao classes us the {@link #prepareStatement} method.
 	 * </p>
 	 */
 	public String prepareStatementString() throws SQLException {
@@ -492,10 +469,10 @@ public class StatementBuilder<T, ID> {
 		}
 	}
 
-	/*
-	 * Inner class used to hide from the user the {@link QueryBuilder#buildSelectString} method. The buildQuery method
-	 * is needed for mapped mapped statements such as {@link MappedQueryForId} but I didn't want the dao user to access
-	 * it directly.
+	/**
+	 * Inner class used to hide from the user the {@link QueryBuilder#buildStatementString()} method. This internal
+	 * method is needed for mapped mapped statements such as {@link MappedQueryForId} but I didn't want the dao user to
+	 * access it directly.
 	 * 
 	 * That I had to do this probably means that I have a bad type hierarchy or package layout but I don't see a better
 	 * way to do it right now.
@@ -503,12 +480,12 @@ public class StatementBuilder<T, ID> {
 	public static class InternalQueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 
 		public InternalQueryBuilder(DatabaseType databaseType, TableInfo<T> tableInfo) {
-			super(databaseType, tableInfo);
+			super(databaseType, tableInfo, StatementType.SELECT);
 		}
 
 		/**
 		 * Internal method to build a query while tracking various arguments. Users should use the
-		 * {@link StatementBuilder#prepareQuery()} method instead.
+		 * {@link QueryBuilder#prepare()} method instead.
 		 */
 		public String buildSelectString(List<FieldType> argFieldTypeList, List<FieldType> resultFieldTypeList,
 				List<SelectArg> selectArgList) throws SQLException {

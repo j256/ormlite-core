@@ -4,7 +4,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.stmt.PreparedStmt;
+import com.j256.ormlite.stmt.PreparedDelete;
+import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.PreparedUpdate;
 import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.StatementBuilder;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
@@ -17,7 +19,8 @@ import com.j256.ormlite.table.TableInfo;
  * 
  * @author graywatson
  */
-public class MappedPreparedStmt<T> extends BaseMappedQuery<T> implements PreparedStmt<T> {
+public class MappedPreparedStmt<T> extends BaseMappedQuery<T> implements PreparedQuery<T>, PreparedDelete<T>,
+		PreparedUpdate<T> {
 
 	private final SelectArg[] selectArgs;
 	private final Integer limit;

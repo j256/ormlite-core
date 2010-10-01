@@ -7,7 +7,9 @@ import com.j256.ormlite.stmt.StatementBuilder;
  * Internal class handling the SQL SET part used by UPDATE statements. Used by
  * {@link StatementBuilder#updateColumnValue(String, Object)}.
  * 
- * <p> It's not a comparison per se but does have a columnName = value form so it works. </p>
+ * <p>
+ * It's not a comparison per se but does have a columnName = value form so it works.
+ * </p>
  * 
  * @author graywatson
  */

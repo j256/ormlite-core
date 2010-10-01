@@ -44,7 +44,7 @@ public class StatementExecutor<T, ID> {
 	private final DatabaseType databaseType;
 	private final TableInfo<T> tableInfo;
 	private MappedQueryForId<T, ID> mappedQueryForId;
-	private PreparedStmt<T> preparedQueryForAll;
+	private PreparedQuery<T> preparedQueryForAll;
 	private MappedCreate<T> mappedInsert;
 	private MappedUpdate<T> mappedUpdate;
 	private MappedUpdateId<T, ID> mappedUpdateId;
@@ -73,16 +73,17 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Return the first object that matches the {@link PreparedStmt} or null if none.
 	 */
-	public T queryForFirst(DatabaseConnection databaseConnection, PreparedStmt<T> preparedStmt) throws SQLException {
+	@SuppressWarnings("deprecation")
+	public T queryForFirst(DatabaseConnection databaseConnection, PreparedStmt<T> preparedQuery) throws SQLException {
 		CompiledStatement stmt = null;
 		try {
-			stmt = preparedStmt.compile(databaseConnection);
+			stmt = preparedQuery.compile(databaseConnection);
 			DatabaseResults results = stmt.executeQuery();
 			if (results.next()) {
-				logger.debug("query-for-first of '{}' returned at least 1 result", preparedStmt.getStatement());
-				return preparedStmt.mapRow(results);
+				logger.debug("query-for-first of '{}' returned at least 1 result", preparedQuery.getStatement());
+				return preparedQuery.mapRow(results);
 			} else {
-				logger.debug("query-for-first of '{}' returned at 0 results", preparedStmt.getStatement());
+				logger.debug("query-for-first of '{}' returned at 0 results", preparedQuery.getStatement());
 				return null;
 			}
 		} finally {
@@ -105,15 +106,16 @@ public class StatementExecutor<T, ID> {
 	 * Return a list of all of the data in the table that matches the {@link PreparedStmt}. Should be used carefully if
 	 * the table is large. Consider using the {@link Dao#iterator} if this is the case.
 	 */
-	public List<T> query(ConnectionSource connectionSource, PreparedStmt<T> preparedStmt) throws SQLException {
+	@SuppressWarnings("deprecation")
+	public List<T> query(ConnectionSource connectionSource, PreparedStmt<T> preparedQuery) throws SQLException {
 		SelectIterator<T, ID> iterator = null;
 		try {
-			iterator = buildIterator(/* no dao specified because no removes */null, connectionSource, preparedStmt);
+			iterator = buildIterator(/* no dao specified because no removes */null, connectionSource, preparedQuery);
 			List<T> results = new ArrayList<T>();
 			while (iterator.hasNextThrow()) {
 				results.add(iterator.nextThrow());
 			}
-			logger.debug("query of '{}' returned {} results", preparedStmt.getStatement(), results.size());
+			logger.debug("query of '{}' returned {} results", preparedQuery.getStatement(), results.size());
 			return results;
 		} finally {
 			if (iterator != null) {
@@ -159,11 +161,12 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Create and return an {@link SelectIterator} for the class using a prepared statement.
 	 */
+	@SuppressWarnings("deprecation")
 	public SelectIterator<T, ID> buildIterator(BaseDaoImpl<T, ID> classDao, ConnectionSource connectionSource,
-			PreparedStmt<T> preparedStmt) throws SQLException {
+			PreparedStmt<T> preparedQuery) throws SQLException {
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
-		return new SelectIterator<T, ID>(tableInfo.getDataClass(), classDao, preparedStmt, connectionSource,
-				connection, preparedStmt.compile(connection), preparedStmt.getStatement());
+		return new SelectIterator<T, ID>(tableInfo.getDataClass(), classDao, preparedQuery, connectionSource,
+				connection, preparedQuery.compile(connection), preparedQuery.getStatement());
 	}
 
 	/**
@@ -208,8 +211,9 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Update rows in the database.
 	 */
-	public int update(DatabaseConnection databaseConnection, PreparedStmt<T> preparedStmt) throws SQLException {
-		CompiledStatement stmt = preparedStmt.compile(databaseConnection);
+	@SuppressWarnings("deprecation")
+	public int update(DatabaseConnection databaseConnection, PreparedUpdate<T> preparedUpdate) throws SQLException {
+		CompiledStatement stmt = preparedUpdate.compile(databaseConnection);
 		return stmt.executeUpdate();
 	}
 
@@ -259,14 +263,15 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Delete rows that match the prepared statement.
 	 */
-	public int delete(DatabaseConnection databaseConnection, PreparedStmt<T> preparedStmt) throws SQLException {
-		CompiledStatement stmt = preparedStmt.compile(databaseConnection);
+	@SuppressWarnings("deprecation")
+	public int delete(DatabaseConnection databaseConnection, PreparedDelete<T> preparedDelete) throws SQLException {
+		CompiledStatement stmt = preparedDelete.compile(databaseConnection);
 		return stmt.executeUpdate();
 	}
 
 	private void prepareQueryForAll() throws SQLException {
 		if (preparedQueryForAll == null) {
-			preparedQueryForAll = new StatementBuilder<T, ID>(databaseType, tableInfo).prepareStatement();
+			preparedQueryForAll = new QueryBuilder<T, ID>(databaseType, tableInfo).prepare();
 		}
 	}
 

@@ -5,9 +5,15 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.PreparedDelete;
+import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.PreparedStmt;
+import com.j256.ormlite.stmt.PreparedUpdate;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.SelectIterator;
 import com.j256.ormlite.stmt.StatementBuilder;
+import com.j256.ormlite.stmt.UpdateBuilder;
 
 /**
  * The definition of the Database Access Objects that handle the reading and writing a class from the database. Kudos to
@@ -20,6 +26,7 @@ import com.j256.ormlite.stmt.StatementBuilder;
  *            needs an ID parameter however so you can use Void or Object to satisfy the compiler.
  * @author graywatson
  */
+@SuppressWarnings("deprecation")
 public interface Dao<T, ID> extends CloseableIterable<T> {
 
 	/**
@@ -34,7 +41,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public T queryForId(ID id) throws SQLException;
 
 	/**
-	 * Query for and return the first item in the object table which matches the {@link PreparedStmt}. See
+	 * Query for and return the first item in the object table which matches the PreparedQuery. See
 	 * {@link #queryBuilder} for more information. This can be used to return the object that matches a single unique
 	 * column. You should use {@link #queryForId} if you want to query for the id column.
 	 * 
@@ -44,6 +51,12 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * @throws SQLException
 	 *             on any SQL problems.
 	 */
+	public T queryForFirst(PreparedQuery<T> preparedQuery) throws SQLException;
+
+	/**
+	 * @deprecated Use {@link #queryForFirst(PreparedQuery)}
+	 */
+	@Deprecated
 	public T queryForFirst(PreparedStmt<T> preparedQuery) throws SQLException;
 
 	/**
@@ -72,37 +85,35 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * @deprecated Use {@link #queryBuilder()}
 	 */
 	@Deprecated
-	public StatementBuilder<T, ID> statementBuilder();
+	public QueryBuilder<T, ID> statementBuilder();
 
 	/**
-	 * Create and return a new {@link StatementBuilder} object which allows you to build a custom SELECT statement. You
-	 * call methods on the {@link StatementBuilder} to construct your statement and then call
-	 * {@link StatementBuilder#prepareStatement()} once you are ready to build. This returns a {@link PreparedStmt}
-	 * object which gets passed to {@link #query(PreparedStmt)} or {@link #iterator(PreparedStmt)}.
+	 * Create and return a new query builder object which allows you to build a custom SELECT statement. You call
+	 * methods on the builder to construct your statement and then call {@link QueryBuilder#prepare()} once you are
+	 * ready to build. This returns a {@link PreparedQuery} object which gets passed to {@link #query(PreparedQuery)} or
+	 * {@link #iterator(PreparedQuery)}.
 	 */
-	public StatementBuilder<T, ID> queryBuilder();
+	public QueryBuilder<T, ID> queryBuilder();
 
 	/**
 	 * Like {@link #queryBuilder()} but allows you to build an UPDATE statement. You can then call call
-	 * {@link StatementBuilder#prepareStatement()} and pass the returned {@link PreparedStmt} to
-	 * {@link #update(PreparedStmt)}.
+	 * {@link UpdateBuilder#prepare()} and pass the returned {@link PreparedUpdate} to {@link #update(PreparedUpdate)}.
 	 */
-	public StatementBuilder<T, ID> updateBuilder();
+	public UpdateBuilder<T, ID> updateBuilder();
 
 	/**
 	 * Like {@link #queryBuilder()} but allows you to build an DELETE statement. You can then call call
-	 * {@link StatementBuilder#prepareStatement()} and pass the returned {@link PreparedStmt} to
-	 * {@link #delete(PreparedStmt)}.
+	 * {@link DeleteBuilder#prepare()} and pass the returned {@link PreparedDelete} to {@link #delete(PreparedDelete)}.
 	 */
-	public StatementBuilder<T, ID> deleteBuilder();
+	public DeleteBuilder<T, ID> deleteBuilder();
 
 	/**
-	 * Query for the items in the object table which match the {@link PreparedStmt}. See {@link #queryBuilder} for more
+	 * Query for the items in the object table which match the prepared query. See {@link #queryBuilder} for more
 	 * information.
 	 * 
 	 * <p>
 	 * <b>NOTE:</b> For medium sized or large tables, this may load a lot of objects into memory so you should consider
-	 * using the {@link #iterator(PreparedStmt)} method instead.
+	 * using the {@link #iterator(PreparedQuery)} method instead.
 	 * </p>
 	 * 
 	 * @param preparedQuery
@@ -111,7 +122,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * @throws SQLException
 	 *             on any SQL problems.
 	 */
-	public List<T> query(PreparedStmt<T> preparedQuery) throws SQLException;
+	public List<T> query(PreparedQuery<T> preparedQuery) throws SQLException;
 
 	/**
 	 * Create a new row in the database from an object.
@@ -161,7 +172,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * {@link StatementBuilder#updateColumnValue(String, Object)} or
 	 * {@link StatementBuilder#updateColumnExpression(String, String)} methods.
 	 * 
-	 * @param preparedStmt
+	 * @param preparedUpdate
 	 *            A prepared statement to match database rows to be deleted and define the columns to update.
 	 * @return The number of rows updated in the database.
 	 * @throws SQLException
@@ -169,7 +180,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * @throws IllegalArgumentException
 	 *             If there is only an ID field in the object. See the {@link #updateId} method.
 	 */
-	public int update(PreparedStmt<T> preparedStmt) throws SQLException;
+	public int update(PreparedUpdate<T> preparedUpdate) throws SQLException;
 
 	/**
 	 * Does a query for the object's id and copies in each of the field values from the database to refresh the data
@@ -221,13 +232,13 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	/**
 	 * Delete the objects that match the prepared statement argument.
 	 * 
-	 * @param preparedStmt
+	 * @param preparedDelete
 	 *            A prepared statement to match database rows to be deleted.
 	 * @return The number of rows updated in the database.
 	 * @throws SQLException
 	 *             on any SQL problems.
 	 */
-	public int delete(PreparedStmt<T> preparedStmt) throws SQLException;
+	public int delete(PreparedDelete<T> preparedDelete) throws SQLException;
 
 	/**
 	 * This satisfies the {@link Iterable} interface for the class and allows you to iterate through the objects in the
@@ -264,8 +275,8 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public CloseableIterator<T> iterator();
 
 	/**
-	 * Same as {@link #iterator()} but with a {@link PreparedStmt} parameter. See {@link #queryBuilder} for more
-	 * information. You use it like the following:
+	 * Same as {@link #iterator()} but with a prepared query parameter. See {@link #queryBuilder} for more information.
+	 * You use it like the following:
 	 * 
 	 * <p>
 	 * <blockquote>
@@ -273,7 +284,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * <pre>
 	 * QueryBuilder&lt;Account, String&gt; qb = accountDao.queryBuilder();
 	 * ... custom query builder methods
-	 * SelectIterator&lt;Account&gt; iterator = partialDao.iterator(qb.prepareQuery());
+	 * SelectIterator&lt;Account&gt; iterator = partialDao.iterator(qb.prepare());
 	 * try {
 	 *     while (iterator.hasNext()) {
 	 *         Account account = iterator.next();
@@ -293,10 +304,10 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * @throws SQLException
 	 *             on any SQL problems.
 	 */
-	public CloseableIterator<T> iterator(PreparedStmt<T> preparedQuery) throws SQLException;
+	public CloseableIterator<T> iterator(PreparedQuery<T> preparedQuery) throws SQLException;
 
 	/**
-	 * Same as {@link #iterator(PreparedStmt)} except it returns a RawResults object associated with the SQL select
+	 * Same as {@link #iterator(PreparedQuery)} except it returns a RawResults object associated with the SQL select
 	 * query argument. Although you should use the {@link #iterator()} for most queries, this method allows you to do
 	 * special queries that aren't supported otherwise. Like the above iterator methods, you must call close on the
 	 * returned RawResults object once you are done with it.
