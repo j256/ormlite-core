@@ -69,7 +69,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * Add columns to be returned by the SELECT query. If no column...() method called then all columns are returned by
 	 * default.
 	 */
-	public StatementBuilder<T, ID> selectColumns(String... columns) {
+	public QueryBuilder<T, ID> selectColumns(String... columns) {
 		if (selectColumnList == null) {
 			selectColumnList = new ArrayList<String>();
 		}
@@ -83,7 +83,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * Add columns to be returned by the SELECT query. If no column...() method called then all columns are returned by
 	 * default.
 	 */
-	public StatementBuilder<T, ID> selectColumns(Iterable<String> columns) {
+	public QueryBuilder<T, ID> selectColumns(Iterable<String> columns) {
 		if (selectColumnList == null) {
 			selectColumnList = new ArrayList<String>();
 		}
@@ -99,7 +99,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * NOTE: Use of this means that the resulting objects may not have a valid ID column value so cannot be deleted or
 	 * updated.
 	 */
-	public StatementBuilder<T, ID> groupBy(String columnName) {
+	public QueryBuilder<T, ID> groupBy(String columnName) {
 		verifyColumnName(columnName);
 		if (groupByList == null) {
 			groupByList = new ArrayList<String>();
@@ -112,7 +112,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	/**
 	 * Add "ORDER BY" clause to the SQL query statement.
 	 */
-	public StatementBuilder<T, ID> orderBy(String columnName, boolean ascending) {
+	public QueryBuilder<T, ID> orderBy(String columnName, boolean ascending) {
 		verifyColumnName(columnName);
 		if (orderByList == null) {
 			orderByList = new ArrayList<OrderBy>();
@@ -127,7 +127,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * NOTE: Use of this means that the resulting objects may not have a valid ID column value so cannot be deleted or
 	 * updated.
 	 */
-	public StatementBuilder<T, ID> distinct() {
+	public QueryBuilder<T, ID> distinct() {
 		distinct = true;
 		selectIdColumn = false;
 		return this;
@@ -137,7 +137,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * Limit the output to maxRows maximum number of rows. Set to null for no limit (the default). This is implemented
 	 * at the database level either through a LIMIT SQL query addition or a JDBC setMaxRows method call.
 	 */
-	public StatementBuilder<T, ID> limit(Integer maxRows) {
+	public QueryBuilder<T, ID> limit(Integer maxRows) {
 		limit = maxRows;
 		return this;
 	}

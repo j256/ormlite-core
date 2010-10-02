@@ -72,8 +72,4 @@ public class MappedPreparedStmt<T> extends BaseMappedQuery<T> implements Prepare
 	public String getStatement() {
 		return statement;
 	}
-
-	public StatementType getType() {
-		return type;
-	}
 }
