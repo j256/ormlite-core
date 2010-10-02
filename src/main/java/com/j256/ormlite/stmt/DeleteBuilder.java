@@ -1,9 +1,11 @@
 package com.j256.ormlite.stmt;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
+import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.table.TableInfo;
 
 /**
@@ -30,5 +32,18 @@ public class DeleteBuilder<T, ID> extends StatementBuilder<T, ID> {
 	@SuppressWarnings("deprecation")
 	public PreparedDelete<T> prepare() throws SQLException {
 		return super.prepareStatement();
+	}
+
+	@Override
+	protected void appendStatementStart(StringBuilder sb, List<FieldType> resultFieldTypeList) {
+		sb.append("DELETE ");
+		sb.append("FROM ");
+		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
+		sb.append(' ');
+	}
+	
+	@Override
+	protected void appendStatementEnd(StringBuilder sb) {
+		// noop
 	}
 }

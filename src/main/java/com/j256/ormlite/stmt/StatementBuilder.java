@@ -8,12 +8,8 @@ import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
+import com.j256.ormlite.stmt.QueryBuilder.InternalQueryBuilder;
 import com.j256.ormlite.stmt.mapped.MappedPreparedStmt;
-import com.j256.ormlite.stmt.mapped.MappedQueryForId;
-import com.j256.ormlite.stmt.query.Clause;
-import com.j256.ormlite.stmt.query.OrderBy;
-import com.j256.ormlite.stmt.query.SetExpression;
-import com.j256.ormlite.stmt.query.SetValue;
 import com.j256.ormlite.table.TableInfo;
 
 /**
@@ -35,19 +31,12 @@ public abstract class StatementBuilder<T, ID> {
 
 	private static Logger logger = LoggerFactory.getLogger(StatementBuilder.class);
 
-	private final TableInfo<T> tableInfo;
-	private final DatabaseType databaseType;
-	private final FieldType idField;
+	protected final TableInfo<T> tableInfo;
+	protected final DatabaseType databaseType;
 	private final StatementType type;
 
-	private boolean distinct = false;
-	private boolean selectIdColumn = true;
-	private List<String> selectColumnList = null;
-	private List<OrderBy> orderByList = null;
-	private List<String> groupByList = null;
-	private List<Clause> updateClauseList = null;
 	private Where where = null;
-	private Integer limit = null;
+	protected Integer limit = null;
 
 	/**
 	 * Provides statements for various SQL operations.
@@ -60,189 +49,10 @@ public abstract class StatementBuilder<T, ID> {
 	public StatementBuilder(DatabaseType databaseType, TableInfo<T> tableInfo, StatementType type) {
 		this.databaseType = databaseType;
 		this.tableInfo = tableInfo;
-		this.idField = tableInfo.getIdField();
 		this.type = type;
 		if (type != StatementType.SELECT && type != StatementType.UPDATE && type != StatementType.DELETE) {
 			throw new IllegalStateException("Building a statement from a " + type + " statement is not allowed");
 		}
-	}
-
-	/**
-	 * @deprecated Use {@link #selectColumns(String...)}
-	 */
-	@Deprecated
-	public StatementBuilder<T, ID> columns(String... columns) {
-		return selectColumns(columns);
-	}
-
-	/**
-	 * @deprecated Use {@link #selectColumns(Iterable)}
-	 */
-	@Deprecated
-	public StatementBuilder<T, ID> columns(Iterable<String> columns) {
-		return selectColumns(columns);
-	}
-
-	/**
-	 * Add columns to be returned by the SELECT query. If no column...() method called then all columns are returned by
-	 * default.
-	 */
-	public StatementBuilder<T, ID> selectColumns(String... columns) {
-		if (type != StatementType.SELECT) {
-			throw new IllegalArgumentException("columns are only valid for SELECT queries, not " + type);
-		}
-		if (selectColumnList == null) {
-			selectColumnList = new ArrayList<String>();
-		}
-		for (String column : columns) {
-			addSelectColumnToList(column);
-		}
-		return this;
-	}
-
-	/**
-	 * Add columns to be returned by the SELECT query. If no column...() method called then all columns are returned by
-	 * default.
-	 */
-	public StatementBuilder<T, ID> selectColumns(Iterable<String> columns) {
-		if (type != StatementType.SELECT) {
-			throw new IllegalArgumentException("columns are only valid for SELECT queries, not " + type);
-		}
-		if (selectColumnList == null) {
-			selectColumnList = new ArrayList<String>();
-		}
-		for (String column : columns) {
-			addSelectColumnToList(column);
-		}
-		return this;
-	}
-
-	/**
-	 * Add a column to be set to a value for UPDATE statements. This will generate something like columnName = 'value'
-	 * with the value escaped if necessary.
-	 */
-	public StatementBuilder<T, ID> updateColumnValue(String columnName, Object value) {
-		FieldType fieldType = tableInfo.getFieldTypeByName(columnName);
-		if (fieldType == null) {
-			throw new IllegalArgumentException("Unknown column name: " + columnName);
-		}
-		addUpdateColumnToList(columnName, new SetValue(columnName, fieldType, value));
-		return this;
-	}
-
-	/**
-	 * Add a column to be set to a value for UPDATE statements. This will generate something like 'columnName =
-	 * expression' where the expression is built by the caller.
-	 * 
-	 * <p>
-	 * The expression should have any strings escaped using the {@link #escapeValue(String)} or
-	 * {@link #escapeValue(StringBuilder, String)} methods and should have any column names escaped using the
-	 * {@link #escapeColumnName(String)} or {@link #escapeColumnName(StringBuilder, String)} methods.
-	 * </p>
-	 */
-	public StatementBuilder<T, ID> updateColumnExpression(String columnName, String expression) {
-		addUpdateColumnToList(columnName, new SetExpression(columnName, expression));
-		return this;
-	}
-
-	/**
-	 * When you are building the expression for {@link #updateColumnExpression(String, String)}, you may need to escape
-	 * column names since they may be reserved words to the database. This will help you by adding escape characters
-	 * around the word.
-	 */
-	public void escapeColumnName(StringBuilder sb, String columnName) {
-		databaseType.appendEscapedEntityName(sb, columnName);
-	}
-
-	/**
-	 * Same as {@link #escapeColumnName(StringBuilder, String)} but it will return the escaped string. The StringBuilder
-	 * method is more efficient since this method creates a {@link StatementBuilder} internally.
-	 */
-	public String escapeColumnName(String columnName) {
-		StringBuilder sb = new StringBuilder();
-		databaseType.appendEscapedEntityName(sb, columnName);
-		return sb.toString();
-	}
-
-	/**
-	 * When you are building the expression for {@link #updateColumnExpression(String, String)}, you may need to escape
-	 * values since they may be reserved words to the database. Numbers should not be escaped. This will help you by
-	 * adding escape characters around the word.
-	 */
-	public void escapeValue(StringBuilder sb, String value) {
-		databaseType.appendEscapedWord(sb, value);
-	}
-
-	/**
-	 * Same as {@link #escapeValue(StringBuilder, String)} but it will return the escaped string. Numbers should not be
-	 * escaped. The StringBuilder method is more efficient since this method creates a {@link StatementBuilder}
-	 * internally.
-	 */
-	public String escapeValue(String value) {
-		StringBuilder sb = new StringBuilder();
-		databaseType.appendEscapedWord(sb, value);
-		return sb.toString();
-	}
-
-	/**
-	 * Add "GROUP BY" clause to the SQL query statement.
-	 * 
-	 * NOTE: Use of this means that the resulting objects may not have a valid ID column value so cannot be deleted or
-	 * updated.
-	 */
-	public StatementBuilder<T, ID> groupBy(String columnName) {
-		if (type != StatementType.SELECT) {
-			throw new IllegalArgumentException("GROUPBY is only valid for SELECT queries, not " + type);
-		}
-		verifyColumnName(columnName);
-		if (groupByList == null) {
-			groupByList = new ArrayList<String>();
-		}
-		groupByList.add(columnName);
-		selectIdColumn = false;
-		return this;
-	}
-
-	/**
-	 * Add "ORDER BY" clause to the SQL query statement.
-	 */
-	public StatementBuilder<T, ID> orderBy(String columnName, boolean ascending) {
-		if (type != StatementType.SELECT) {
-			throw new IllegalArgumentException("ORDERBY is only valid for SELECT queries, not " + type);
-		}
-		verifyColumnName(columnName);
-		if (orderByList == null) {
-			orderByList = new ArrayList<OrderBy>();
-		}
-		orderByList.add(new OrderBy(columnName, ascending));
-		return this;
-	}
-
-	/**
-	 * Add "DISTINCT" clause to the SQL query statement.
-	 * 
-	 * NOTE: Use of this means that the resulting objects may not have a valid ID column value so cannot be deleted or
-	 * updated.
-	 */
-	public StatementBuilder<T, ID> distinct() {
-		if (type != StatementType.SELECT) {
-			throw new IllegalArgumentException("DISTINCT is only valid for SELECT queries, not " + type);
-		}
-		distinct = true;
-		selectIdColumn = false;
-		return this;
-	}
-
-	/**
-	 * Limit the output to maxRows maximum number of rows. Set to null for no limit (the default). This is implemented
-	 * at the database level either through a LIMIT SQL query addition or a JDBC setMaxRows method call.
-	 */
-	public StatementBuilder<T, ID> limit(Integer maxRows) {
-		if (type != StatementType.SELECT) {
-			throw new IllegalArgumentException("LIMIT is only valid for SELECT queries, not " + type);
-		}
-		limit = maxRows;
-		return this;
 	}
 
 	/**
@@ -279,7 +89,7 @@ public abstract class StatementBuilder<T, ID> {
 	 * re-call this method to re-prepare the query for execution.
 	 * 
 	 * <p>
-	 * This is mostly used for debugging or logging cases. The dao classes us the {@link #prepareStatement} method.
+	 * This is mostly used for debugging or logging cases.
 	 * </p>
 	 */
 	public String prepareStatementString() throws SQLException {
@@ -290,52 +100,17 @@ public abstract class StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * Internal method to build a query while tracking various arguments. Users should use the {@link #prepareQuery()}
-	 * method instead.
+	 * Internal method to build a query while tracking various arguments. Users should use the
+	 * {@link #prepareStatementString()} method instead.
+	 * 
+	 * <p>
+	 * This needs to be protected because of {@link InternalQueryBuilder}.
+	 * </p>
 	 */
-	private String buildStatementString(List<FieldType> argFieldTypeList, List<FieldType> resultFieldTypeList,
+	protected String buildStatementString(List<FieldType> argFieldTypeList, List<FieldType> resultFieldTypeList,
 			List<SelectArg> selectArgList) throws SQLException {
 		StringBuilder sb = new StringBuilder();
-		switch (type) {
-			case SELECT :
-				sb.append("SELECT ");
-				if (databaseType.isLimitAfterSelect()) {
-					appendLimit(sb);
-				}
-				if (distinct) {
-					sb.append("DISTINCT ");
-				}
-				appendColumns(sb, resultFieldTypeList);
-				sb.append("FROM ");
-				break;
-			case DELETE :
-				sb.append("DELETE ");
-				sb.append("FROM ");
-				break;
-			case UPDATE :
-				if (updateClauseList == null || updateClauseList.size() == 0) {
-					throw new IllegalArgumentException("UPDATE statements must have at least one SET column");
-				}
-				sb.append("UPDATE ");
-				break;
-			default :
-				throw new IllegalStateException("Building a statement from a " + type + " statement is not allowed");
-		}
-		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
-		sb.append(' ');
-		if (updateClauseList != null) {
-			// for UPDATE
-			sb.append("SET ");
-			boolean first = true;
-			for (Clause clause : updateClauseList) {
-				if (first) {
-					first = false;
-				} else {
-					sb.append(',');
-				}
-				clause.appendSql(databaseType, sb, null);
-			}
-		}
+		appendStatementStart(sb, resultFieldTypeList);
 		if (where != null) {
 			sb.append("WHERE ");
 			where.appendSql(databaseType, sb, selectArgList);
@@ -344,152 +119,35 @@ public abstract class StatementBuilder<T, ID> {
 			FieldType fieldType = tableInfo.getFieldTypeByName(selectArg.getColumnName());
 			argFieldTypeList.add(fieldType);
 		}
-		// 'group by' comes before 'order by'
-		appendGroupBys(sb);
-		appendOrderBys(sb);
-		if (!databaseType.isLimitAfterSelect()) {
-			appendLimit(sb);
-		}
+		appendStatementEnd(sb);
 		String statement = sb.toString();
 		logger.debug("built statement {}", statement);
 		return statement;
 	}
 
-	private void addSelectColumnToList(String column) {
-		verifyColumnName(column);
-		selectColumnList.add(column);
-	}
-
-	private void addUpdateColumnToList(String columnName, Clause clause) {
-		if (type != StatementType.UPDATE) {
-			throw new IllegalArgumentException("columns are only valid for UPDATE queries, not " + type);
-		}
-		verifyColumnName(columnName);
-		if (updateClauseList == null) {
-			updateClauseList = new ArrayList<Clause>();
-		}
-		updateClauseList.add(clause);
-	}
-
-	private void verifyColumnName(String columnName) {
-		if (tableInfo.getFieldTypeByName(columnName) == null) {
-			throw new IllegalArgumentException("Unknown column-name " + columnName);
-		}
-	}
-
-	private void appendColumns(StringBuilder sb, List<FieldType> fieldTypeList) {
-		// if no columns were specified then * is the default
-		if (selectColumnList == null) {
-			sb.append("* ");
-			// add all of the field types
-			for (FieldType fieldType : tableInfo.getFieldTypes()) {
-				fieldTypeList.add(fieldType);
-			}
-			return;
-		}
-
-		boolean first = true;
-		boolean hasId = false;
-		for (String columnName : selectColumnList) {
-			if (first) {
-				first = false;
-			} else {
-				sb.append(',');
-			}
-			FieldType fieldType = tableInfo.getFieldTypeByName(columnName);
-			appendFieldColumnName(sb, fieldType, fieldTypeList);
-			if (fieldType == idField) {
-				hasId = true;
-			}
-		}
-
-		// we have to add the idField even if it isn't in the columnNameSet
-		if (!hasId && selectIdColumn) {
-			if (!first) {
-				sb.append(',');
-			}
-			appendFieldColumnName(sb, idField, fieldTypeList);
-		}
-		sb.append(' ');
-	}
-
-	private void appendFieldColumnName(StringBuilder sb, FieldType fieldType, List<FieldType> fieldTypeList) {
-		databaseType.appendEscapedEntityName(sb, fieldType.getDbColumnName());
-		if (fieldTypeList != null) {
-			fieldTypeList.add(fieldType);
-		}
-	}
-
-	private void appendGroupBys(StringBuilder sb) {
-		if (groupByList == null || groupByList.size() == 0) {
-			return;
-		}
-
-		sb.append("GROUP BY ");
-		boolean first = true;
-		for (String columnName : groupByList) {
-			if (first) {
-				first = false;
-			} else {
-				sb.append(',');
-			}
-			databaseType.appendEscapedEntityName(sb, columnName);
-		}
-		sb.append(' ');
-	}
-
-	private void appendOrderBys(StringBuilder sb) {
-		if (orderByList == null || orderByList.size() == 0) {
-			return;
-		}
-
-		sb.append("ORDER BY ");
-		boolean first = true;
-		for (OrderBy orderBy : orderByList) {
-			if (first) {
-				first = false;
-			} else {
-				sb.append(',');
-			}
-			String columnName = orderBy.getColumnName();
-			verifyColumnName(columnName);
-			databaseType.appendEscapedEntityName(sb, columnName);
-			if (orderBy.isAscending()) {
-				// sb.append(" ASC");
-			} else {
-				sb.append(" DESC");
-			}
-		}
-		sb.append(' ');
-	}
-
-	private void appendLimit(StringBuilder sb) {
-		if (limit != null && databaseType.isLimitSqlSupported()) {
-			databaseType.appendLimitValue(sb, limit);
-		}
-	}
+	/**
+	 * Append the start of our statement string to the StringBuilder.
+	 */
+	protected abstract void appendStatementStart(StringBuilder sb, List<FieldType> resultFieldTypeList)
+			throws SQLException;
 
 	/**
-	 * Inner class used to hide from the user the {@link QueryBuilder#buildStatementString()} method. This internal
-	 * method is needed for mapped mapped statements such as {@link MappedQueryForId} but I didn't want the dao user to
-	 * access it directly.
-	 * 
-	 * That I had to do this probably means that I have a bad type hierarchy or package layout but I don't see a better
-	 * way to do it right now.
+	 * Append the end of our statement string to the StringBuilder.
 	 */
-	public static class InternalQueryBuilder<T, ID> extends StatementBuilder<T, ID> {
+	protected abstract void appendStatementEnd(StringBuilder sb);
 
-		public InternalQueryBuilder(DatabaseType databaseType, TableInfo<T> tableInfo) {
-			super(databaseType, tableInfo, StatementType.SELECT);
-		}
-
-		/**
-		 * Internal method to build a query while tracking various arguments. Users should use the
-		 * {@link QueryBuilder#prepare()} method instead.
-		 */
-		public String buildSelectString(List<FieldType> argFieldTypeList, List<FieldType> resultFieldTypeList,
-				List<SelectArg> selectArgList) throws SQLException {
-			return super.buildStatementString(argFieldTypeList, resultFieldTypeList, selectArgList);
+	/**
+	 * Verify the columnName is valid and return its FieldType.
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the column name is not valid.
+	 */
+	protected FieldType verifyColumnName(String columnName) {
+		FieldType fieldType = tableInfo.getFieldTypeByName(columnName);
+		if (fieldType == null) {
+			throw new IllegalArgumentException("Unknown column-name '" + columnName + "'");
+		} else {
+			return fieldType;
 		}
 	}
 

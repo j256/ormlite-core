@@ -8,7 +8,7 @@ import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.stmt.SelectArg;
-import com.j256.ormlite.stmt.StatementBuilder.InternalQueryBuilder;
+import com.j256.ormlite.stmt.QueryBuilder.InternalQueryBuilder;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableInfo;
 
@@ -84,7 +84,7 @@ public class MappedQueryForId<T, ID> extends BaseMappedQuery<T> {
 		SelectArg idSelectArg = new SelectArg();
 		qb.where().eq(idField.getDbColumnName(), idSelectArg);
 		List<SelectArg> selectArgList = new ArrayList<SelectArg>();
-		return qb.buildSelectString(argFieldTypeList, resultFieldTypeList, selectArgList);
+		return qb.buildStatementString(argFieldTypeList, resultFieldTypeList, selectArgList);
 	}
 
 	private void logArgs(Object[] args) {
