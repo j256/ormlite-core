@@ -9,7 +9,6 @@ import com.j256.ormlite.BaseOrmLiteCoreTest;
 public class UpdateBuilderTest extends BaseOrmLiteCoreTest {
 
 	@Test
-	@SuppressWarnings("deprecation")
 	public void testPrepareStatementUpdateValueString() throws Exception {
 		UpdateBuilder<BaseFoo, String> stmtb = new UpdateBuilder<BaseFoo, String>(databaseType, baseFooTableInfo);
 		String idVal = "blah";
@@ -28,7 +27,6 @@ public class UpdateBuilderTest extends BaseOrmLiteCoreTest {
 	}
 
 	@Test
-	@SuppressWarnings("deprecation")
 	public void testPrepareStatementUpdateValueNumber() throws Exception {
 		UpdateBuilder<BaseFoo, String> stmtb = new UpdateBuilder<BaseFoo, String>(databaseType, baseFooTableInfo);
 		int idVal = 13123;
@@ -45,7 +43,6 @@ public class UpdateBuilderTest extends BaseOrmLiteCoreTest {
 	}
 
 	@Test
-	@SuppressWarnings("deprecation")
 	public void testPrepareStatementUpdateValueExpression() throws Exception {
 		UpdateBuilder<BaseFoo, String> stmtb = new UpdateBuilder<BaseFoo, String>(databaseType, baseFooTableInfo);
 		String idVal = "blah";

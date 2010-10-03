@@ -21,8 +21,8 @@
 @c ----------------------------------------------------------------
 
 @c ----------------------------------------------------------------
-@set ormlite_version 3.5
-@set ormlite_date September 2010
+@set ormlite_version 3.6
+@set ormlite_date October 2010
 @set package ORMLite
 @c ----------------------------------------------------------------
 
@@ -184,8 +184,8 @@ The following is the example implementation class:
 /** JDBC implementation of the AccountDao interface. */
 public class AccountDaoImpl extends BaseDaoImpl<Account,String>
  implements AccountDao @{
-    public AccountDaoImpl(DatabaseType databaseType) @{
-        super(databaseType, Account.class);
+    public AccountDaoImpl() @{
+        super(Account.class);
     @}
 @}
 @end example
@@ -196,9 +196,9 @@ one.  For example:
 
 @example
 Dao<Account, String> accountDao =
-  BaseDaoImpl.createDao(databaseType, connectionSource, Account.class);
+  BaseDaoImpl.createDao(connectionSource, Account.class);
 Dao<Order, Integer> orderDao =
-  BaseDaoImpl.createDao(databaseType, connectionSource, Order.class);
+  BaseDaoImpl.createDao(connectionSource, Order.class);
 @end example
 
 More information about setting up the DOAs is available later in the manual. @xref{DAO Setup}.
@@ -214,8 +214,8 @@ Android specific documentation later in the manual. @xref{Use With Android}.
 The client performs the following steps.
 
 @itemize @bullet
-@item It creates a DatabaseType and connection source to configure the connection to the database.
-@item An AccountDaoImpl is instantiated with the DatabaseType.
+@item It creates a connection source which handles connections to the database.
+@item An AccountDaoImpl is instantiated.
 @item The @code{accounts} database table is created. This step is not needed if the table already exists.
 @end itemize
 
@@ -229,20 +229,15 @@ public class AccountApp @{
         // create a connection source to our database
         ConnectionSource connectionSource =
             DatabaseTypeUtils.createJdbcConnectionSource(databaseUrl);
-        // create the per-database type class from the url (H2DatabaseType)
-        DatabaseType databaseType =
-            DatabaseTypeUtils.createDatabaseType(databaseUrl);
-        databaseType.loadDriver();
 
         // instantiate the dao
-        AccountDaoImpl accountDao = new AccountDaoImpl(databaseType);
+        AccountDaoImpl accountDao = new AccountDaoImpl();
         accountDao.setConnectionSource(connectionSource);
         // _must_ make this call after the setters
         accountDao.initialize();
 
         // if you need to create the 'accounts' table make this call
-        TableUtils.createTable(databaseType, connectionSource,
-            Account.class);
+        TableUtils.createTable(connectionSource, Account.class);
 @end example
 
 Once we have configured our database objects, we can use them to create an Account, persist it to the database, and query for it from
@@ -768,16 +763,15 @@ public interface AccountDao extends Dao<Account, String> @{
 @}
 @end example
 
-The implementation of this interface takes a @code{DatabaseType} object in its constructor which identifies the
-per-database flavor class.  @xref{Database Type}.  Example:
+Here's the example implementation of this interface.
 
 @cindex jdbc dao implementation
 @example
 /** JDBC implementation of the AccountDao interface. */
 public class AccountDaoImpl extends BaseDaoImpl<Account, String>
   implements AccountDao @{
-    public AccountDaoImpl(DatabaseType databaseType) @{
-        super(databaseType, Account.class);
+    public AccountDaoImpl() @{
+        super(Account.class);
     @}
 @}
 @end example
@@ -832,7 +826,7 @@ dataSource.setUrl("jdbc:h2:mem:account");
 ConnectionSource connectionSource = 
   new DataSourceConnectionSource(dataSource);
 Dao<Account, String> accountDao =
-  BaseDaoImpl.createDao(databaseType, connectionSource, Account.class);
+  BaseDaoImpl.createDao(connectionSource, Account.class);
 @end example
 
 @cindex close data source
@@ -862,20 +856,21 @@ try @{
 
 @cindex database type
 @cindex DatabaseTypeUtils
-@value{package} uses a @code{DatabaseType} object which defines all of the per-database information necessary to
-support the various features on all of the different database types.  To instantiate a @code{DatabaseType}, you
-can either use the @code{DatabaseTypeUtils} class or call your database class directly.
+@value{package} uses an internal @code{DatabaseType} object which defines all of the per-database information necessary
+to support the various features on all of the different database types.  The @code{JdbcConnectionSource} uses the database
+URL to pick the correct @code{DatabaseType}.  If it picks an incorrect one then you may need to set the @code{DatabaseType}
+on the connection source directly.
 
-@emph{NOTE:} Android users should use the @code{SqliteAndroidDatabaseType} only as examples in the Android
-specific docs later in the manual.  @xref{Use With Android}.
+@emph{NOTE:} Android users do not need to worry about this because the @code{AndroidConnectionSource} always uses the
+@code{SqliteAndroidDatabaseType}.  @xref{Use With Android}.
 
 @example
-// use the DatabaseTypeUtils class with the database URI
-DatabaseType databaseType =
-  DatabaseTypeUtils.createDatabaseType("jdbc:h2:mem:account");
-
-// _OR_ instantiate a DatabaseType class directly 
-DatabaseType databaseType = new H2DatabaseType();
+String databaseUrl = "jdbc:derby://dbserver1:1527/";
+DatabaseType databaseType = new DerbyClientServerDatabaseType();
+databaseType.loadDriver();
+ConnectionSource connectionSource =
+   new JdbcConnectionSource(databaseUrl);
+connectionSource.setDatabaseType(databaseType);
 @end example
 
 @cindex load database driver
@@ -1041,7 +1036,7 @@ go all of the way, the garbage collector will close the SQL statement some time 
 @end table
 
 @c ----------------------------------------------------------------
-@node Statement Builder, StatementBuilder Basics, DAO Usage, Top
+@node Statement Builder, QueryBuilder Basics, DAO Usage, Top
 @chapter Custom Statement Builder
 
 @cindex query builder
@@ -1049,21 +1044,21 @@ go all of the way, the garbage collector will close the SQL statement some time 
 @cindex custom statement builder
 The DOAs have methods to query for an object that matches an id field (@code{queryForId}) as well as query for all
 objects (@code{queryForAll}) and iterating through all of the objects in a table (@code{iterator}).  However, for more
-specified queries, there is the @code{queryBuilder()} method which returns a @code{StatementBuilder} object for the DAO
+specified queries, there is the @code{queryBuilder()} method which returns a @code{QueryBuilder} object for the DAO
 with which you can construct custom queries to return a sub-set of the table.
 
 @menu
-* StatementBuilder Basics::     How to start using the Statement Builder.
+* QueryBuilder Basics::         How to start using the query builder.
 * Building Queries::            How to build simple and complex queries.
 * Building Statements::         How to build update and delete statements.
 * Select Arguments::            Using arguments to queries.
 @end menu
 
 @c ----------------------------------------------------------------
-@node StatementBuilder Basics, Building Queries, Statement Builder, Statement Builder
-@section Statement Builder Basics
+@node QueryBuilder Basics, Building Queries, Statement Builder, Statement Builder
+@section Query Builder Basics
 
-Here's how you use the statement builder to construct custom queries and other statements.  First, it is a good pattern to
+Here's how you use the query builder to construct custom queries.  First, it is a good pattern to
 set the column names of the fields with Java constants so you can use them in queries.  For example:
 
 @example
@@ -1082,44 +1077,44 @@ our queries.  This should be done @emph{even} if the name of the field and the c
 
 @cindex where
 @example
-// get our StatementBuilder from the DAO
-StatementBuilder<Account, String> statementBuilder =
+// get our query builder from the DAO
+QueryBuilder<Account, String> queryBuilder =
   accountDao.queryBuilder();
-// set the WHERE to: the 'password' field must be equal to "qwerty"
-statementBuilder.where().eq(Account.PASSWORD_FIELD_NAME, "qwerty");
+// the 'password' field must be equal to "qwerty"
+queryBuilder.where().eq(Account.PASSWORD_FIELD_NAME, "qwerty");
 // prepare our sql statement
-PreparedStmt<Account, String> preparedStmt =
-  statementBuilder.prepareStatment();
+PreparedQuery<Account, String> preparedQuery =
+  queryBuilder.prepareStatment();
 // query for all accounts that have that password
-List<Account> accountList = accountDao.query(preparedStmt);
+List<Account> accountList = accountDao.query(preparedQuery);
 @end example
 
 @cindex prepared statement
-You get a @code{StatementBuilder} object from the DAO, call methods on it to build your custom query, call
-@code{statementBuilder.prepareStatment()} which returns a @code{PreparedStmt} object, and then pass the @code{PreparedStmt} to
-the query or iterator methods.
+You get a @code{QueryBuilder} object from the @code{Dao.queryBuilder} method, call methods on it to build your custom
+query, call @code{queryBuilder.prepare()} which returns a @code{PreparedQuery} object, and then pass the @code{PreparedQuery}
+to the DAO's @code{query} or @code{iterator} methods.
 
 @c ----------------------------------------------------------------
-@node Building Queries, Building Statements, StatementBuilder Basics, Statement Builder
+@node Building Queries, Building Statements, QueryBuilder Basics, Statement Builder
 @section Building Queries
 
 @cindex building queries
-There are a couple of different ways that you can build queries.  The @code{StatementBuilder} has been written for ease of use
+There are a couple of different ways that you can build queries.  The @code{QueryBuilder} has been written for ease of use
 as well for power users.  Simple queries can be done linearly:
 
 @example
-StatementBuilder<Account, String> statementBuilder =
+QueryBuilder<Account, String> queryBuilder =
   accountDao.queryBuilder();
 // get the WHERE object to build our query
-Where where = statementBuilder.where();
+Where where = queryBuilder.where();
 // the name field must be equal to "foo"
 where.eq(Account.NAME_FIELD_NAME, "foo");
 // and
 where.and();
 // the password field must be equal to "_secret"
 where.eq(Account.PASSWORD_FIELD_NAME, "_secret");
-PreparedStmt<Account, String> preparedStmt =
-  statementBuilder.prepareStatement();
+PreparedQuery<Account, String> preparedQuery =
+  queryBuilder.prepareStatement();
 @end example
 
 The SQL query that will be generated from the above example will be approximately:
@@ -1133,7 +1128,7 @@ SELECT * FROM account
 If you'd rather chain the methods onto one line (like StringBuilder), this can also be written as:
 
 @example
-statementBuilder.where()
+queryBuilder.where()
   .eq(Account.NAME_FIELD_NAME, "foo")
   .and()
   .eq(Account.PASSWORD_FIELD_NAME, "_secret");
@@ -1142,7 +1137,7 @@ statementBuilder.where()
 If you'd rather use parenthesis to group the comparisons properly then you can call:
 
 @example
-Where where = statementBuilder.where();
+Where where = queryBuilder.where();
 where.and(where.eq(Account.NAME_FIELD_NAME, "foo"),
           where.eq(Account.PASSWORD_FIELD_NAME, "_secret"));
 @end example
@@ -1152,7 +1147,7 @@ All three of the above call formats produce the same SQL.  For complex queries t
 format may be necessary to get the grouping correct.  For example, here's a complex query:
 
 @example
-Where where = statementBuilder.where();
+Where where = queryBuilder.where();
 where.or(
   where.and(
     where.eq(Account.NAME_FIELD_NAME, "foo"),
@@ -1176,44 +1171,53 @@ SELECT * FROM account
 @cindex in
 @cindex is null
 @cindex comparisons
-The @code{StatementBuilder} also allows you to set what specific select columns you want returned, specify the 'ORDER BY'
+The @code{QueryBuilder} also allows you to set what specific select columns you want returned, specify the 'ORDER BY'
 and 'GROUP BY' fields, and various other SQL features (LIKE, IN, >, >=, <, <=, <>, IS NULL, DISTINCT, @dots{}).  See the
-javadocs on@code{StatementBuilder} and @code{Where} classes for more information.  A good SQL reference site can be found
+javadocs on@code{QueryBuilder} and @code{Where} classes for more information.  A good SQL reference site can be found
 at @uref{http://www.w3schools.com/Sql/}.
 
 @c ----------------------------------------------------------------
 @node Building Statements, Select Arguments, Building Queries, Statement Builder
 @section Building Statements
 
-The @code{StatementBuilder} is also used to construct @code{DELETE} and @code{UPDATE} statements.  Delete statements can
-be used to delete a certain portion of the table -- or all rows if no @code{where()} is specified.  Update statements can
-be used to change certain fields in certain rows in the table.
+The DAO can also be used to construct custom @code{UPDATE} and @code{DELETE} statements.  Update statements
+are used to change certain fields in rows from the table that match the @code{WHERE} pattern -- or update @emph{all}
+rows if no @code{where()}. Delete statements are used to delete rows from the table that match the @code{WHERE}
+pattern -- or delete @emph{all} rows if no @code{where()}.  
 
-For example, if you want to update (i.e. change) the passwords for all of the Accounts in your table that are currently
-null to the string "none", then you might do something like the following:
+For example, if you want to update the passwords for all of the Accounts in your table that are currently null to
+the string "none", then you might do something like the following:
 
 @example
-StatementBuilder<Account, String> updateBuilder =
+UpdateBuilder<Account, String> updateBuilder =
   accountDao.updateBuilder();
 // update the password to be "none"
-updateBuilder.updateColumnValue(
-  Account.PASSWORD_FIELD_NAME, "none");
+updateBuilder.updateColumnValue("password", "none");
 // only update the rows where password is null
 updateBuilder.where().isNull(Account.PASSWORD_FIELD_NAME);
-PreparedStmt<Account, String> preparedStmt =
-  updateBuilder.prepareStatement();
+accountDao.update(updateBuilder.prepare());
 @end example
+
+With update, you can also specify the update value to be an expression:
+
+@example
+// update hasDogs boolean to true if dogC > 0
+updateBuilder.updateColumnExpression(
+  "hasDogs", "dogC > 0");
+@end example
+
+To help you construct your expressions, you can use the UpdateBuilder's escape methods @code{escapeColumnName} and
+@code{escapeValue} can take a string or a @code{StringBuilder}.  This will protect you if columns or values are reserved words. 
 
 If, instead, you wanted to delete the rows in the Accounts table whose password is currently null, then you might do
 something like the following:
 
 @example
-StatementBuilder<Account, String> deleteBuilder =
-  accountDao.updateBuilder();
+DeleteBuilder<Account, String> deleteBuilder =
+  accountDao.deleteBuilder();
 // only delete the rows where password is null
 deleteBuilder.where().isNull(Account.PASSWORD_FIELD_NAME);
-PreparedStmt<Account, String> preparedStmt =
-  deleteBuilder.prepareStatement();
+accountDao.delete(deleteBuilder.prepare());
 @end example
 
 @c ----------------------------------------------------------------
@@ -1229,23 +1233,23 @@ The arguments that are used in WHERE operations can be specified directly as val
 For example:
 
 @example
-StatementBuilder<Account, String> statementBuilder =
+QueryBuilder<Account, String> queryBuilder =
   accountDao.queryBuilder();
-Where where = statementBuilder.where();
+Where where = queryBuilder.where();
 SelectArg selectArg = new SelectArg();
 // define our query as 'name = ?'
 where.eq(Account.NAME_FIELD_NAME, selectArg);
 // prepare it so it is ready for later query or iterator calls
-PreparedStmt<Account, String> preparedStmt =
-  statementBuilder.prepareQuery();
+PreparedQuery<Account, String> preparedQuery =
+  queryBuilder.prepare();
 
 // later we can set the select argument and issue the query
 selectArg.setValue("foo");
-List<Account> accounts = accountDao.query(preparedStmt);
+List<Account> accounts = accountDao.query(preparedQuery);
 // then we can set the select argument to another
 // value and re-run the query
 selectArg.setValue("bar");
-accounts = accountDao.query(preparedStmt);
+accounts = accountDao.query(preparedQuery);
 @end example
 
 @emph{NOTE:} @code{SelectArg} objects have protection against being used in more than one column name.  You must instantiate a
@@ -1355,17 +1359,56 @@ Please see the example code posted to the website for more information: @uref{ht
 Again, feedback on this is welcome.
 
 @c ----------------------------------------------------------------
-@node How to Upgrade, 2.X to 3.2, Use With Android, Top
-@chapter Upgrading from Old Versions
+@node How to Upgrade, 3.5 to 3.6, Use With Android, Top
+@chapter Upgrading Old Versions
 
 @menu
-* 2.X to 3.2::                 Upgrading from version 2.X to 3.2
-* 2.3 to 2.4::                 Upgrading from version 2.3 to 2.4
+* 3.X to 4.0::                 Upgrade from version 3.X to 4.0
+* 2.X to 3.2::                 Upgrade from version 2.X to 3.2
+* 2.3 to 2.4::                 Upgrade from version 2.3 to 2.4
 @end menu
 
 @c ----------------------------------------------------------------
-@node 2.X to 3.2, 2.3 to 2.4, How to Upgrade, How to Upgrade
-@section Upgrading from Version 2.X to 3.2
+@node 3.X to 4.0, 2.X to 3.2, How to Upgrade, How to Upgrade
+@section Upgrade from Version 3.5 to 3.6
+
+Added features to be able to prepare update and delete statements.  To provide type safety, we've moved back to using
+@code{QueryBuilder} so we can have @code{UpdateBuilder} and @code{DeleteBuilder}.  And instead of a @code{PreparedStmt} 
+there is @code{PreparedQuery}, @code{PreparedUpdate}, and @code{PreparedDelete}.
+
+@itemize @bullet
+
+@item We have removed most of the cases where the user has to deal with the @code{DatabaseType}.
+All you need to set on the DAOs is the @code{ConnectionSource} which provides the type of the
+database internally.  To create and drop the tables, also, you only need the @code{ConnectionSource}.
+@xref{Database Type}.
+
+@item @code{Dao.statementBuilder()} method changed (back) to @code{Dao.queryBuilder()}.
+
+@item @code{Dao.queryBuilder()} returns a @code{QueryBuilder} instead of a @code{StatementBuilder}.
+
+@item You now call @code{distinct()} and @code{limit()} on the @code{QueryBuilder}.  Unfortunately,
+there are no deprecated methods for them on the @code{StatementBuilder}.
+
+@item You now call @code{selectColumns()} on the @code{QueryBuilder} instead of @code{columns()}
+since now we have columns also in the @code{UpdateBuilder).  Unfortunately, there are no deprecated
+methods for them on the @code{StatementBuilder}.
+
+@item You call @code{QueryBuilder.prepare()} instead of @code{StatementBuilder.prepareStatement()}.
+It returns a @code{PreparedQuery} instead of a @code{PreparedStmt}.  You pass a @code{PreparedQuery}
+into the @code{Dao.query()} and @code{Dao.iterator()} methods instead of a @code{PreparedStmt}.
+
+@item Constructing a @code{JdbcConnectionSource} or @code{DataSourceConnectionSource} now throws a
+@code{SQLException} since they now create an internal database type and loads the driver class for it.  
+
+@item We removed the @code{DatabaseTypeFactory} class since it was no longer needed for Spring
+configurations.
+
+@end itemize
+
+@c ----------------------------------------------------------------
+@node 2.X to 3.2, 2.3 to 2.4, 3.X to 4.0, How to Upgrade
+@section Upgrade from Version 2.X to 3.2
 
 The 3.2 release involved a @emph{very} large code reorganization and migration.  The project was basically split into 3 pieces:
 core functionality, JDBC database handlers, and the new Android handler.  With significant help from Kevin G, we abstracted all
@@ -1401,7 +1444,7 @@ the lack of detail here.
 
 @c ----------------------------------------------------------------
 @node 2.3 to 2.4, Advanced, 2.X to 3.2, How to Upgrade
-@section Upgrading from Version 2.3 to 2.4
+@section Upgrade from Version 2.3 to 2.4
 
 A bug was fixed in 2.4 with how we were handling Derby and Hsqldb.  Both of these databases seem to be capitalizing table and field
 names in certain situations which meant that customized queries of @value{package} generated tables were affected.  In version 2.4,
@@ -1433,27 +1476,6 @@ the Spring framework.  For more information about the Spring Framework, see @ure
 
 @table @code
 
-@item DatabaseTypeFactory
-
-@cindex DatabaseTypeFactory
-This factory class is used for Spring injections of the database types to the DAOs and other classes.  Often, the
-@code{databaseUrl} parameter is provided by a system property.
-
-@example
-<!-- database type factory-bean which is a databaseType -->
-<bean id="databaseTypeFactory"
-    class="com.j256.ormlite.db.DatabaseTypeFactory"
-    init-method="initialize">
-    <property name="databaseUrl" value="jdbc:h2:mem:account" />
-</bean>
-<bean id="databaseType" class="com.j256.ormlite.db.DatabaseType"
-    factory-bean="databaseTypeFactory"
-    factory-method="getDatabaseType" />
-<bean id="driverClassName" class="java.lang.String"
-    factory-bean="databaseTypeFactory"
-    factory-method="getDriverClassName" />
-@end example
-
 @item TableCreator
 
 @cindex auto create tables
@@ -1475,20 +1497,6 @@ Here's an example of a full Spring configuration.
     <!-- we are using the in-memory H2 database in this example -->
     <constructor-arg index="0" value="jdbc:h2:mem:account" />
 </bean>
-<!-- database type factory -->
-<bean id="databaseTypeFactory"
-    class="com.j256.ormlite.db.DatabaseTypeFactory"
-    init-method="initialize">
-    <property name="databaseUrl" value="jdbc:h2:mem:account" />
-</bean>
-<!-- used to get database-type out of database-type factory -->
-<bean id="databaseType" class="com.j256.ormlite.db.DatabaseType"
-    factory-bean="databaseTypeFactory"
-    factory-method="getDatabaseType" />
-<!-- used to get driver-class name out of database-type factory -->
-<bean id="driverClassName" class="java.lang.String"
-    factory-bean="databaseTypeFactory"
-    factory-method="getDriverClassName" />
 
 <!-- datasource used by @value{package} to connect to the database -->
 <bean id="connectionSource"
@@ -1503,7 +1511,6 @@ Here's an example of a full Spring configuration.
 <!-- abstract dao that is common to all defined daos -->
 <bean id="baseDao" abstract="true" init-method="initialize">
     <property name="connectionSource" ref="connectionSource" />
-    <property name="databaseType" ref="databaseType" />
 </bean>
 
 <!-- our daos -->
@@ -1719,9 +1726,9 @@ objects into memory so you should consider using the @code{iteratorRaw} method i
 
 @cindex query builder
 @cindex statement builder
-@item statementBuilder
+@item queryBuilder
 
-Create and return a new @code{StatementBuilder} object which allows you to build a custom query.  @xref{Statement Builder}.
+Create and return a new @code{QueryBuilder} object which allows you to build a custom query.  @xref{Statement Builder}.
 
 @cindex query for objects
 @item query
@@ -1814,7 +1821,7 @@ if the log level is not high enough.  This allows me to do something like the fo
 
 @example
 private static Logger logger =
-  LoggerFactory.getLogger(StatementBuilder.class);
+  LoggerFactory.getLogger(QueryBuilder.class);
 @dots{}
 logger.debug("built statement @{@}", statement);
 @end example

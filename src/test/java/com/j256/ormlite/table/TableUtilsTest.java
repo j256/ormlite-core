@@ -23,6 +23,14 @@ public class TableUtilsTest extends BaseOrmLiteCoreTest {
 
 	@Test
 	public void testCreateStatements() throws Exception {
+		List<String> stmts = TableUtils.getCreateTableStatements(connectionSource, Foo.class);
+		assertEquals(1, stmts.size());
+		assertEquals("CREATE TABLE `foo` (`name` VARCHAR(255) ) ", stmts.get(0));
+	}
+
+	@SuppressWarnings("deprecation")
+	@Test
+	public void testCreateStatementsDatabaseType() throws Exception {
 		List<String> stmts = TableUtils.getCreateTableStatements(databaseType, Foo.class);
 		assertEquals(1, stmts.size());
 		assertEquals("CREATE TABLE `foo` (`name` VARCHAR(255) ) ", stmts.get(0));

@@ -210,7 +210,6 @@ public class StatementBuilderTest extends BaseOrmLiteCoreTest {
 	}
 
 	@Test
-	@SuppressWarnings("deprecation")
 	public void testPrepareStatement() throws Exception {
 		QueryBuilder<BaseFoo, String> stmtb = new QueryBuilder<BaseFoo, String>(databaseType, baseFooTableInfo);
 		PreparedQuery<BaseFoo> stmt = stmtb.prepare();

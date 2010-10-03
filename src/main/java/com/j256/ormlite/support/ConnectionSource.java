@@ -2,6 +2,8 @@ package com.j256.ormlite.support;
 
 import java.sql.SQLException;
 
+import com.j256.ormlite.db.DatabaseType;
+
 /**
  * A reduction of the SQL DataSource so we can implement its functionality outside of JDBC.
  * 
@@ -31,4 +33,9 @@ public interface ConnectionSource {
 	 * Close any outstanding database connections.
 	 */
 	public void close() throws SQLException;
+
+	/**
+	 * Return the DatabaseTypre associated with this connection. 
+	 */
+	public DatabaseType getDatabaseType();
 }

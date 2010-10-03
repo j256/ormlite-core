@@ -56,8 +56,8 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	private boolean initialized = false;
 
 	/**
-	 * Construct our base Jdbc class. The {@link DatabaseType} must be set with the {@link #setDatabaseType} method
-	 * before {@link #initialize()} method is called. The dataClass provided must have its fields marked with
+	 * Construct our base Jdbc class. The {@link ConnectionSource} must be set with the {@link #setConnectionSource}
+	 * method before {@link #initialize()} method is called. The dataClass provided must have its fields marked with
 	 * {@link DatabaseField} annotations or the {@link #setTableConfig} method must be called before the
 	 * {@link #initialize()} method is called.
 	 * 
@@ -69,27 +69,43 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	/**
+	 * @deprecated Use {@link #BaseDaoImpl(Class)}
+	 */
+	@Deprecated
+	protected BaseDaoImpl(DatabaseType databaseType, Class<T> dataClass) {
+		this(null, dataClass, null);
+	}
+
+	/**
 	 * Construct our base Jdbc class. The dataClass provided must have its fields marked with {@link DatabaseField}
 	 * annotations or the {@link #setTableConfig} method must be called before the {@link #initialize()} method is
 	 * called.
 	 * 
-	 * @param databaseType
-	 *            Type of database.
+	 * @param connectionSource
+	 *            Source of our database connections.
 	 * @param dataClass
 	 *            Class associated with this Dao. This must match the T class parameter.
 	 */
-	protected BaseDaoImpl(DatabaseType databaseType, Class<T> dataClass) {
-		this(databaseType, dataClass, null);
+	protected BaseDaoImpl(ConnectionSource connectionSource, Class<T> dataClass) {
+		this(connectionSource, dataClass, null);
 	}
 
 	/**
-	 * Construct our base Jdbc class. The {@link DatabaseType} must be set with the {@link #setDatabaseType} method
-	 * before {@link #initialize()} method is called.
+	 * Construct our base Jdbc class. The {@link ConnectionSource} must be set with the {@link #setConnectionSource}
+	 * method before {@link #initialize()} method is called.
 	 * 
 	 * @param tableConfig
 	 *            Hand or spring wired table configuration information.
 	 */
 	protected BaseDaoImpl(DatabaseTableConfig<T> tableConfig) {
+		this(null, tableConfig.getDataClass(), tableConfig);
+	}
+
+	/**
+	 * @deprecated Use {@link #BaseDaoImpl(DatabaseTableConfig)}
+	 */
+	@Deprecated
+	protected BaseDaoImpl(DatabaseType databaseType, DatabaseTableConfig<T> tableConfig) {
 		this(null, tableConfig.getDataClass(), tableConfig);
 	}
 
@@ -101,33 +117,33 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	 * @param tableConfig
 	 *            Hand or spring wired table configuration information.
 	 */
-	protected BaseDaoImpl(DatabaseType databaseType, DatabaseTableConfig<T> tableConfig) {
-		this(databaseType, tableConfig.getDataClass(), tableConfig);
+	protected BaseDaoImpl(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig) {
+		this(connectionSource, tableConfig.getDataClass(), tableConfig);
 	}
 
-	private BaseDaoImpl(DatabaseType databaseType, Class<T> dataClass, DatabaseTableConfig<T> tableConfig) {
-		this.databaseType = databaseType;
+	private BaseDaoImpl(ConnectionSource connectionSource, Class<T> dataClass, DatabaseTableConfig<T> tableConfig) {
+		this.connectionSource = connectionSource;
 		this.dataClass = dataClass;
 		this.tableConfig = tableConfig;
 	}
 
 	/**
-	 * Initialize the various DAO configurations. This method is called from {@link #initialize()} which must be called
-	 * after the Dao is configured (done by Spring automagically). This method should not be called directly by the
-	 * Ormlite user.
+	 * Initialize the various DAO configurations after the various setters have been called.
 	 */
 	public void initialize() throws SQLException {
 		if (initialized) {
 			// just skip it if already initialized
 			return;
 		}
-		if (databaseType == null) {
-			throw new IllegalStateException("databaseType was never set on " + getClass().getSimpleName());
-		}
 		if (connectionSource == null) {
 			throw new IllegalStateException("connectionSource was never set on " + getClass().getSimpleName());
 		}
 
+		this.databaseType = connectionSource.getDatabaseType();
+		if (this.databaseType == null) {
+			throw new IllegalStateException("connectionSource is getting a null DatabaseType in "
+					+ getClass().getSimpleName());
+		}
 		if (tableConfig == null) {
 			tableConfig = DatabaseTableConfig.fromClass(databaseType, dataClass);
 		}
@@ -408,11 +424,11 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	/**
-	 * Used if you want to wire the Dao with spring. In java you should use the
-	 * {@link #BaseDaoImpl(DatabaseType, Class)} constructor. This must be called <i>before</i> {@link #initialize}.
+	 * @deprecated Use {@link #setConnectionSource(ConnectionSource)}
 	 */
+	@Deprecated
 	public void setDatabaseType(DatabaseType databaseType) {
-		this.databaseType = databaseType;
+		// noop
 	}
 
 	public void setConnectionSource(ConnectionSource connectionSource) {
@@ -428,12 +444,20 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	/**
+	 * @deprecated Use {@link #createDao(ConnectionSource, Class)}
+	 */
+	@Deprecated
+	public static <T, ID> Dao<T, ID> createDao(DatabaseType databaseType, ConnectionSource connectionSource,
+			Class<T> clazz) throws SQLException {
+		return createDao(connectionSource, clazz);
+	}
+
+	/**
 	 * Helper method to create a Dao object without having to define a class. Dao classes are supposed to be convenient
 	 * but if you have a lot of classes, they can seem to be a pain.
 	 */
-	public static <T, ID> Dao<T, ID> createDao(DatabaseType databaseType, ConnectionSource connectionSource,
-			Class<T> clazz) throws SQLException {
-		BaseDaoImpl<T, ID> dao = new BaseDaoImpl<T, ID>(databaseType, clazz) {
+	public static <T, ID> Dao<T, ID> createDao(ConnectionSource connectionSource, Class<T> clazz) throws SQLException {
+		BaseDaoImpl<T, ID> dao = new BaseDaoImpl<T, ID>(clazz) {
 		};
 		dao.setConnectionSource(connectionSource);
 		dao.initialize();

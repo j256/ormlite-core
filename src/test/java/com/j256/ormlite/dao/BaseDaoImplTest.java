@@ -26,22 +26,19 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.CompiledStatement;
-import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTableConfig;
 
 public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 
-	private ConnectionSource connectionSource;
 	private DatabaseConnection databaseConnection;
 	private Dao<BaseFoo, String> baseFooDao;
 
 	@Test
 	public void testDoubleInitialize() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
 		};
-		dao.setConnectionSource(createMock(ConnectionSource.class));
 		dao.initialize();
 		// this shouldn't barf
 		dao.initialize();
@@ -49,7 +46,7 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testInitNoConnectionSource() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
 		};
 		dao.initialize();
 	}
@@ -76,16 +73,15 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 
 	@Test
 	public void testCreateNull() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
 		};
-		dao.setConnectionSource(createMock(ConnectionSource.class));
 		dao.initialize();
 		assertEquals(0, dao.create(null));
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testCreateNoInit() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
 		};
 		assertEquals(0, dao.create(null));
 	}
@@ -112,16 +108,15 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 
 	@Test
 	public void testUpdateNull() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
 		};
-		dao.setConnectionSource(createMock(ConnectionSource.class));
 		dao.initialize();
 		assertEquals(0, dao.update((BaseFoo) null));
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testUpdateNoInit() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
 		};
 		assertEquals(0, dao.update((BaseFoo) null));
 	}
@@ -139,16 +134,15 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 
 	@Test
 	public void testUpdateIdNull() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
 		};
-		dao.setConnectionSource(createMock(ConnectionSource.class));
 		dao.initialize();
 		assertEquals(0, dao.updateId(null, null));
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testUpdateIdNoInit() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
 		};
 		assertEquals(0, dao.updateId(null, null));
 	}
@@ -184,16 +178,15 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 
 	@Test
 	public void testDeleteNull() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
 		};
-		dao.setConnectionSource(createMock(ConnectionSource.class));
 		dao.initialize();
 		assertEquals(0, dao.delete((BaseFoo) null));
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testDeleteNoInit() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
 		};
 		assertEquals(0, dao.delete((BaseFoo) null));
 	}
@@ -214,9 +207,8 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 
 	@Test
 	public void testDeleteEmptyCollection() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
 		};
-		dao.setConnectionSource(createMock(ConnectionSource.class));
 		dao.initialize();
 		List<BaseFoo> fooList = new ArrayList<BaseFoo>();
 		assertEquals(0, dao.delete(fooList));
@@ -236,7 +228,7 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testDeleteCollectionNoInit() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
 		};
 		assertEquals(0, dao.delete((List<BaseFoo>) null));
 	}
@@ -269,9 +261,8 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 
 	@Test
 	public void testDeleteIdsEmpty() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
 		};
-		dao.setConnectionSource(createMock(ConnectionSource.class));
 		dao.initialize();
 		List<String> fooList = new ArrayList<String>();
 		assertEquals(0, dao.deleteIds(fooList));
@@ -279,13 +270,12 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testDeleteIdsNoInit() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
 		};
 		assertEquals(0, dao.deleteIds((List<String>) null));
 	}
 
 	@Test
-	@SuppressWarnings("deprecation")
 	public void testDeletePreparedStatement() throws Exception {
 		startDao(true);
 		@SuppressWarnings("unchecked")
@@ -330,16 +320,15 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 
 	@Test
 	public void testRefreshNull() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
 		};
-		dao.setConnectionSource(createMock(ConnectionSource.class));
 		dao.initialize();
 		assertEquals(0, dao.refresh(null));
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testRefreshNoInit() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
 		};
 		assertEquals(0, dao.refresh(null));
 	}
@@ -352,7 +341,8 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 
 	@Test
 	public void testAnotherConstructor2() throws Exception {
-		DatabaseTableConfig<BaseFoo> tableConfig = DatabaseTableConfig.fromClass(databaseType, BaseFoo.class);
+		DatabaseTableConfig<BaseFoo> tableConfig =
+				DatabaseTableConfig.fromClass(connectionSource.getDatabaseType(), BaseFoo.class);
 		new BaseDaoImpl<BaseFoo, String>(tableConfig) {
 		};
 	}
@@ -563,9 +553,8 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 
 	@Test
 	public void testObjectToString() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
 		};
-		dao.setConnectionSource(createMock(ConnectionSource.class));
 		dao.initialize();
 		BaseFoo foo = new BaseFoo();
 		String idStr = "qdqd";
@@ -576,16 +565,15 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testObjectToStringNoInit() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
 		};
 		dao.objectToString(new BaseFoo());
 	}
 
 	@Test
 	public void testObjectsEqual() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
 		};
-		dao.setConnectionSource(createMock(ConnectionSource.class));
 		dao.initialize();
 		BaseFoo foo = new BaseFoo();
 		foo.id = "qdqd";
@@ -602,7 +590,7 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testObjectsEqualNoInit() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
 		};
 		dao.objectsEqual(new BaseFoo(), new BaseFoo());
 	}
@@ -652,7 +640,6 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 	}
 
 	@Test
-	@SuppressWarnings("deprecation")
 	public void testIteratorPrepared() throws Exception {
 		startDao(false);
 		@SuppressWarnings("unchecked")
@@ -677,7 +664,6 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 	}
 
 	@Test(expected = SQLException.class)
-	@SuppressWarnings("deprecation")
 	public void testIteratorPreparedThrow() throws Exception {
 		startDao(false);
 		@SuppressWarnings("unchecked")
@@ -760,7 +746,7 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 	@Test
 	public void testTableConfig() throws Exception {
 		DatabaseTableConfig<BaseFoo> config = DatabaseTableConfig.fromClass(databaseType, BaseFoo.class);
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, config) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, config) {
 		};
 		assertSame(config, dao.getTableConfig());
 	}
@@ -771,45 +757,32 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
 		};
 		dao.setTableConfig(config);
-		dao.setDatabaseType(databaseType);
+		dao.setConnectionSource(connectionSource);
 		assertSame(config, dao.getTableConfig());
 	}
 
 	@Test
 	public void testCreateDao() throws Exception {
-		ConnectionSource connectionSource = createMock(ConnectionSource.class);
-		Dao<BaseFoo, String> dao = BaseDaoImpl.createDao(databaseType, connectionSource, BaseFoo.class);
+		Dao<BaseFoo, String> dao = BaseDaoImpl.createDao(connectionSource, BaseFoo.class);
 		DatabaseConnection databaseConnection = createMock(DatabaseConnection.class);
-		expect(connectionSource.getReadWriteConnection()).andReturn(databaseConnection);
-		connectionSource.releaseConnection(databaseConnection);
+		connectionSource.setDatabaseConnection(databaseConnection);
 		expect(databaseConnection.insert(isA(String.class), isA(Object[].class), isA(SqlType[].class))).andReturn(1);
-		replay(connectionSource);
 		replay(databaseConnection);
 		assertEquals(1, dao.create(new BaseFoo()));
-		verify(connectionSource);
 	}
 
 	private void startDao(boolean readWrite) throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(databaseType, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
 		};
 		assertEquals(BaseFoo.class, dao.getDataClass());
 
-		connectionSource = createMock(ConnectionSource.class);
 		databaseConnection = createMock(DatabaseConnection.class);
-		dao.setConnectionSource(connectionSource);
+		connectionSource.setDatabaseConnection(databaseConnection);
 		dao.initialize();
-		if (readWrite) {
-			expect(connectionSource.getReadWriteConnection()).andReturn(databaseConnection);
-		} else {
-			expect(connectionSource.getReadOnlyConnection()).andReturn(databaseConnection);
-		}
-		connectionSource.releaseConnection(databaseConnection);
 		baseFooDao = dao;
-		replay(connectionSource);
 	}
 
 	private void finishDao() {
-		verify(connectionSource);
 		verify(databaseConnection);
 	}
 }

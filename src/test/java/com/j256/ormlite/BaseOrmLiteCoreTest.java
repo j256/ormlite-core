@@ -10,11 +10,14 @@ import com.j256.ormlite.db.BaseDatabaseType;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableInfo;
 
 public abstract class BaseOrmLiteCoreTest {
 
 	protected final DatabaseType databaseType = new StubDatabaseType();
+	protected final StubConnectionSource connectionSource = new StubConnectionSource();
 	protected TableInfo<BaseFoo> baseFooTableInfo;
 	protected final FieldType numberFieldType;
 	protected final FieldType stringFieldType;
@@ -50,6 +53,27 @@ public abstract class BaseOrmLiteCoreTest {
 		}
 		public String getDriverUrlPart() {
 			return "foo";
+		}
+	}
+
+	protected class StubConnectionSource implements ConnectionSource {
+		private DatabaseType databaseType = new StubDatabaseType();
+		private DatabaseConnection databaseConnection;
+		public DatabaseConnection getReadOnlyConnection() throws SQLException {
+			return databaseConnection;
+		}
+		public DatabaseConnection getReadWriteConnection() throws SQLException {
+			return databaseConnection;
+		}
+		public void releaseConnection(DatabaseConnection connection) throws SQLException {
+		}
+		public void close() throws SQLException {
+		}
+		public DatabaseType getDatabaseType() {
+			return databaseType;
+		}
+		public void setDatabaseConnection(DatabaseConnection databaseConnection) {
+			this.databaseConnection = databaseConnection;
 		}
 	}
 

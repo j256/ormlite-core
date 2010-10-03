@@ -26,7 +26,6 @@ import com.j256.ormlite.stmt.UpdateBuilder;
  *            needs an ID parameter however so you can use Void or Object to satisfy the compiler.
  * @author graywatson
  */
-@SuppressWarnings("deprecation")
 public interface Dao<T, ID> extends CloseableIterable<T> {
 
 	/**
