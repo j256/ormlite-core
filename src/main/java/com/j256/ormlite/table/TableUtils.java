@@ -69,8 +69,6 @@ public class TableUtils {
 	 * Issue the database statements to create the table associated with a class. Most likely this will be done
 	 * <i>only</i> when a database is configured or in unit tests.
 	 * 
-	 * @param databaseType
-	 *            Our database type.
 	 * @param connectionSource
 	 *            connectionSource Associated connection source.
 	 * @param tableConfig
@@ -185,8 +183,6 @@ public class TableUtils {
 	 * <b>WARNING:</b> This is [obviously] very destructive and unrecoverable.
 	 * </p>
 	 * 
-	 * @param databaseType
-	 *            Our database type.
 	 * @param connectionSource
 	 *            Associated connection source.
 	 * @param tableConfig

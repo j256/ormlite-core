@@ -166,10 +166,9 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public int updateId(T data, ID newId) throws SQLException;
 
 	/**
-	 * Update all rows in the table according to the prepared statement argument. To use this, the
-	 * {@link StatementBuilder} must have set-columns applied to it using the
-	 * {@link StatementBuilder#updateColumnValue(String, Object)} or
-	 * {@link StatementBuilder#updateColumnExpression(String, String)} methods.
+	 * Update all rows in the table according to the prepared statement argument. To use this, the {@link UpdateBuilder}
+	 * must have set-columns applied to it using the {@link UpdateBuilder#updateColumnValue(String, Object)} or
+	 * {@link UpdateBuilder#updateColumnExpression(String, String)} methods.
 	 * 
 	 * @param preparedUpdate
 	 *            A prepared statement to match database rows to be deleted and define the columns to update.

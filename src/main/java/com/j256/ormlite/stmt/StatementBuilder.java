@@ -8,7 +8,6 @@ import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
-import com.j256.ormlite.stmt.QueryBuilder.InternalQueryBuilder;
 import com.j256.ormlite.stmt.mapped.MappedPreparedStmt;
 import com.j256.ormlite.table.TableInfo;
 
@@ -101,7 +100,8 @@ public abstract class StatementBuilder<T, ID> {
 	 * {@link #prepareStatementString()} method instead.
 	 * 
 	 * <p>
-	 * This needs to be protected because of {@link InternalQueryBuilder}.
+	 * This needs to be protected because of (WARNING: DO NOT MAKE A JAVADOC LINK) InternalQueryBuilder (WARNING: DO NOT
+	 * MAKE A JAVADOC LINK).
 	 * </p>
 	 */
 	protected String buildStatementString(List<FieldType> argFieldTypeList, List<FieldType> resultFieldTypeList,
