@@ -2,12 +2,15 @@ package com.j256.ormlite.stmt.mapped;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
 import java.sql.SQLException;
 
+import org.easymock.IAnswer;
+import org.easymock.internal.LastControl;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseOrmLiteCoreTest;
@@ -17,9 +20,30 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.stmt.StatementExecutor;
 import com.j256.ormlite.support.DatabaseConnection;
+import com.j256.ormlite.support.GeneratedKeyHolder;
 import com.j256.ormlite.table.TableInfo;
 
 public class MappedCreateTest extends BaseOrmLiteCoreTest {
+
+	@Test
+	public void testGeneratedId() throws Exception {
+		TableInfo<GeneratedId> tableInfo = new TableInfo<GeneratedId>(databaseType, GeneratedId.class);
+		StatementExecutor<GeneratedId, String> se = new StatementExecutor<GeneratedId, String>(databaseType, tableInfo);
+		DatabaseConnection databaseConnection = createMock(DatabaseConnection.class);
+		databaseConnection.insert(isA(String.class), isA(Object[].class), isA(SqlType[].class),
+				isA(GeneratedKeyHolder.class));
+		expectLastCall().andAnswer(new IAnswer<Object>() {
+			public Integer answer() throws Throwable {
+				GeneratedKeyHolder keyHolder = (GeneratedKeyHolder) (LastControl.getCurrentArguments())[3];
+				keyHolder.addKey(2);
+				return 1;
+			}
+		});
+		replay(databaseConnection);
+		GeneratedId genIdSeq = new GeneratedId();
+		se.create(databaseConnection, genIdSeq);
+		verify(databaseConnection);
+	}
 
 	@Test
 	public void testGeneratedIdSequence() throws Exception {

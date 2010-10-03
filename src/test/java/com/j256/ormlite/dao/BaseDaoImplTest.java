@@ -81,8 +81,9 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testCreateNoInit() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
 		};
+		dao.setConnectionSource(connectionSource);
 		assertEquals(0, dao.create(null));
 	}
 
@@ -116,8 +117,9 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testUpdateNoInit() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
 		};
+		dao.setConnectionSource(connectionSource);
 		assertEquals(0, dao.update((BaseFoo) null));
 	}
 
@@ -142,8 +144,9 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testUpdateIdNoInit() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
 		};
+		dao.setConnectionSource(connectionSource);
 		assertEquals(0, dao.updateId(null, null));
 	}
 
@@ -186,8 +189,9 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testDeleteNoInit() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
 		};
+		dao.setConnectionSource(connectionSource);
 		assertEquals(0, dao.delete((BaseFoo) null));
 	}
 
@@ -228,8 +232,9 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testDeleteCollectionNoInit() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
 		};
+		dao.setConnectionSource(connectionSource);
 		assertEquals(0, dao.delete((List<BaseFoo>) null));
 	}
 
@@ -270,8 +275,9 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testDeleteIdsNoInit() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
 		};
+		dao.setConnectionSource(connectionSource);
 		assertEquals(0, dao.deleteIds((List<String>) null));
 	}
 
@@ -328,8 +334,9 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testRefreshNoInit() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
 		};
+		dao.setConnectionSource(connectionSource);
 		assertEquals(0, dao.refresh(null));
 	}
 
@@ -565,8 +572,9 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testObjectToStringNoInit() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
 		};
+		dao.setConnectionSource(connectionSource);
 		dao.objectToString(new BaseFoo());
 	}
 
@@ -590,8 +598,9 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testObjectsEqualNoInit() throws Exception {
-		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, BaseFoo.class) {
+		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
 		};
+		dao.setConnectionSource(connectionSource);
 		dao.objectsEqual(new BaseFoo(), new BaseFoo());
 	}
 
