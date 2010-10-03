@@ -4,15 +4,6 @@
 	- uses queryForFirst to return object
 	- creates account_field-name instead of account_id field in local table 
 
-- look into reducing object load for android short-use of dao methods
-	- maybe get rid of the compiled methods and just do everything on the fly?
-
-- should we handle all non-number arguments to queries to be ? and force internal SelectArgs?
-	- would be better for escaping reasons
-	- now have field types in the queries so escaping better
-	- increased object overhead?
-	- they can use SelectArgs if they want, right?
-
 - maybe add rawUpdate and rawExecute?
 	- need to document the raw query, iterator, update, execute in .texi
 	- need to add a section about how to use the raw queries and the RawResults class
@@ -23,14 +14,6 @@
 	- can't do it as part of the annotation, has to be setup with a DatabaseTableConfig I guess
 	- this will allow you to call a constructor with (for example) some null fields to get an instance that can be overridden
 	- should we do the same for setters and getters?  use this method to set the field, use this to get it? (doesn't sound worth it)
-
-- should we consider defining the DatabaseType internally?
-	- just set the datasource on the dao and then determine the database type from the datasource url
-	- maybe add datasource constructor args for daos
-	- tried this and it got messy in a hurry
-
-- use the query builder thing, but for updates and deletes (delete everything where someField = 123).
-	- from kevin
 
 - support for embedded objects
 	- look to see if the unknown class has a DatabaseTable(embedded = true or javax annotation
@@ -63,3 +46,9 @@
 	- maybe specify the object to fill in with a query
 	- have each of the fields annotated with group(x) or avg(y)
 	- AVG(), COUNT(), FIRST(), LAST(), MAX(), MIN(), SUM(), DISTINCT
+
+- should we handle all non-number arguments to queries to be ? and force internal SelectArgs?
+	- ANSWER: they can use SelectArgs if they want, expensive otherwise
+	- would be better for escaping reasons
+	- now have field types in the queries so escaping better
+	- increased object overhead?

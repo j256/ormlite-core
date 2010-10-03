@@ -1,32 +1,33 @@
 #!/bin/sh
+#
+# Release script for ORMLite
+#
 
 LOCAL_DIR="$HOME/svn/local"
 CORE_DIR=$LOCAL_DIR/ormlite-core
 JDBC_DIR=$LOCAL_DIR/ormlite-jdbc
 ANDROID_DIR=$LOCAL_DIR/ormlite-android
 
-release=`grep version pom.xml | grep SNAPSHOT | head -1 | cut -f2 -d\> | cut -f1 -d\-`
-
 #############################################################
 # check for not commited files:
 
 cd $CORE_DIR
 if [ "`svn stat`" != "" ]; then
-    echo "Files not checked-in inside -core"
-    svn stat
-#    exit 1
+	echo "Files not checked-in inside -core"
+	svn stat
+	exit 1
 fi
 cd $JDBC_DIR
 if [ "`svn stat`" != "" ]; then
-    echo "Files not checked-in inside -jdbc"
-    svn stat
-    exit 1
+	echo "Files not checked-in inside -jdbc"
+	svn stat
+	exit 1
 fi
 cd $ANDROID_DIR
 if [ "`svn stat`" != "" ]; then
-    echo "Files not checked-in inside -android"
-    svn stat
-    exit 1
+	echo "Files not checked-in inside -android"
+	svn stat
+	exit 1
 fi
 
 #############################################################
@@ -42,6 +43,8 @@ mvn test || exit 1
 
 #############################################################
 
+release=`grep version pom.xml | grep SNAPSHOT | head -1 | cut -f2 -d\> | cut -f1 -d\-`
+
 echo ""
 echo ""
 echo ""
@@ -49,12 +52,14 @@ echo "------------------------------------------------------- "
 echo -n "Enter release number [$release]: "
 read rel
 if [ "$rel" != "" ]; then
-    release=$rel
+	release=$rel
 fi
 
 echo ""
 echo -n "Enter the GPG pass-phrase: "
 read gpgpass
+
+GPG_ARGS="-Dgpg.passphrase=$gpgpass"
 
 tmp="/tmp/$0.$$.t"
 touch $tmp 
@@ -74,16 +79,16 @@ sleep 3
 cd $CORE_DIR
 ver=`head -1 src/main/javadoc/doc-files/changelog.txt | cut -f1 -d:`
 if [ "$release" != "$ver" ]; then
-    echo "Change log top line version seems wrong:"
-    head -1 src/main/javadoc/doc-files/changelog.txt
-    exit 1
+	echo "Change log top line version seems wrong:"
+	head -1 src/main/javadoc/doc-files/changelog.txt
+	exit 1
 fi
 
 ver=`grep '^@set ormlite_version' src/main/doc/ormlite.texi | cut -f3 -d' '`
 if [ "$release" != "$ver" ]; then
-    echo "ormlite.texi version seems wrong:"
-    grep '^@set ormlite_version' src/main/doc/ormlite.texi
-    exit 1
+	echo "ormlite.texi version seems wrong:"
+	grep '^@set ormlite_version' src/main/doc/ormlite.texi
+	exit 1
 fi
 
 #############################################################
@@ -104,15 +109,15 @@ read cont
 cd $CORE_DIR
 svn -m cp delete https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-core/tags/ormlite-core-$release
 mvn -P st release:clean || exit 1
-mvn -Dgpg.passphrase=$gpgpass -P st release:prepare || exit 1
-mvn -Dgpg.passphrase=$gpgpass -P st release:perform || exit 1
+mvn $GPG_ARGS -P st release:prepare || exit 1
+mvn $GPG_ARGS -P st release:perform || exit 1
 
 echo ""
 echo ""
 echo -n "Installing -core locally: "
 read cont
 cd target/checkout
-mvn -Dgpg.passphrase=$gpgpass install || exit 1
+mvn $GPG_ARGS install || exit 1
 
 #############################################################
 # releasing jdbc to sonatype
@@ -123,8 +128,8 @@ echo -n "Releasing -jdbc to sonatype: "
 cd $JDBC_DIR
 svn -m cp delete https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-jdbc/tags/ormlite-jdbc-$release
 mvn -P st release:clean || exit 1
-mvn -Dgpg.passphrase=$gpgpass -Dormlite-version=$release -P st release:prepare || exit 1
-mvn -Dgpg.passphrase=$gpgpass -P st release:perform || exit 1
+mvn $GPG_ARGS -Dormlite-version=$release -P st release:prepare || exit 1
+mvn $GPG_ARGS -P st release:perform || exit 1
 
 #############################################################
 # releasing android to sonatype
@@ -135,8 +140,8 @@ echo -n "Releasing -android to sonatype: "
 cd $ANDROID_DIR
 svn -m cp delete https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-jdbc/tags/ormlite-android-$release
 mvn -P st release:clean || exit 1
-mvn -Dgpg.passphrase=$gpgpass -Dormlite-version=$release -P st release:prepare || exit 1
-mvn -Dgpg.passphrase=$gpgpass -P st release:perform || exit 1
+mvn $GPG_ARGS -Dormlite-version=$release -P st release:prepare || exit 1
+mvn $GPG_ARGS -P st release:perform || exit 1
 
 #############################################################
 # releasing all to sourceforge
@@ -145,19 +150,19 @@ echo ""
 echo ""
 echo -n "Releasing -core to sourceforge: "
 cd $CORE_DIR/target/checkout
-mvn -Dgpg.passphrase=$gpgpass -P sf deploy
+mvn $GPG_ARGS -P sf deploy
 
 echo ""
 echo ""
 echo -n "Releasing -jdbc to sourceforge: "
 cd $JDBC_DIR/target/checkout
-mvn -Dgpg.passphrase=$gpgpass -P sf deploy
+mvn $GPG_ARGS -P sf deploy
 
 echo ""
 echo ""
 echo -n "Releasing -android to sourceforge: "
 cd $ANDROID_DIR/target/checkout
-mvn -Dgpg.passphrase=$gpgpass -P sf deploy
+mvn $GPG_ARGS -P sf deploy
 
 #############################################################
 # run mvn eclipse/eclipse in local
