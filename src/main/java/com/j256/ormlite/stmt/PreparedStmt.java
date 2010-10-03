@@ -6,9 +6,8 @@ import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.DatabaseConnection;
 
 /**
- * @deprecated Use {@link PreparedQuery}.
+ * Parent interface for the {@link PreparedQuery}, {@link PreparedUpdate}, and {@link PreparedDelete} interfaces.
  */
-@Deprecated
 public interface PreparedStmt<T> extends GenericRowMapper<T> {
 
 	/**

@@ -10,6 +10,5 @@ import com.j256.ormlite.dao.Dao;
  *            The class that the code will be operating on.
  * @author graywatson
  */
-@SuppressWarnings("deprecation")
 public interface PreparedDelete<T> extends PreparedStmt<T> {
 }

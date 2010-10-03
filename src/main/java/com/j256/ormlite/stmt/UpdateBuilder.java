@@ -111,9 +111,7 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 		}
 		sb.append("UPDATE ");
 		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
-		sb.append(' ');
-		// for UPDATE
-		sb.append("SET ");
+		sb.append(" SET ");
 		boolean first = true;
 		for (Clause clause : updateClauseList) {
 			if (first) {

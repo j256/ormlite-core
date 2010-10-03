@@ -73,7 +73,6 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Return the first object that matches the {@link PreparedStmt} or null if none.
 	 */
-	@SuppressWarnings("deprecation")
 	public T queryForFirst(DatabaseConnection databaseConnection, PreparedStmt<T> preparedQuery) throws SQLException {
 		CompiledStatement stmt = null;
 		try {
@@ -106,7 +105,6 @@ public class StatementExecutor<T, ID> {
 	 * Return a list of all of the data in the table that matches the {@link PreparedStmt}. Should be used carefully if
 	 * the table is large. Consider using the {@link Dao#iterator} if this is the case.
 	 */
-	@SuppressWarnings("deprecation")
 	public List<T> query(ConnectionSource connectionSource, PreparedStmt<T> preparedQuery) throws SQLException {
 		SelectIterator<T, ID> iterator = null;
 		try {
@@ -161,7 +159,6 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Create and return an {@link SelectIterator} for the class using a prepared statement.
 	 */
-	@SuppressWarnings("deprecation")
 	public SelectIterator<T, ID> buildIterator(BaseDaoImpl<T, ID> classDao, ConnectionSource connectionSource,
 			PreparedStmt<T> preparedQuery) throws SQLException {
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
@@ -211,7 +208,6 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Update rows in the database.
 	 */
-	@SuppressWarnings("deprecation")
 	public int update(DatabaseConnection databaseConnection, PreparedUpdate<T> preparedUpdate) throws SQLException {
 		CompiledStatement stmt = preparedUpdate.compile(databaseConnection);
 		return stmt.executeUpdate();
@@ -263,7 +259,6 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Delete rows that match the prepared statement.
 	 */
-	@SuppressWarnings("deprecation")
 	public int delete(DatabaseConnection databaseConnection, PreparedDelete<T> preparedDelete) throws SQLException {
 		CompiledStatement stmt = preparedDelete.compile(databaseConnection);
 		return stmt.executeUpdate();
