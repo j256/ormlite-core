@@ -1,6 +1,7 @@
 package com.j256.ormlite.db;
 
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 import com.j256.ormlite.field.DataType;
@@ -28,10 +29,10 @@ public interface DatabaseType {
 	/**
 	 * Load the driver class associated with this database so it can wire itself into JDBC.
 	 * 
-	 * @throws ClassNotFoundException
+	 * @throws SQLException
 	 *             If the driver class is not available in the classpath.
 	 */
-	public void loadDriver() throws ClassNotFoundException;
+	public void loadDriver() throws SQLException;
 
 	/**
 	 * Takes a {@link FieldType} and appends the SQL necessary to create the field to the string builder. The field may

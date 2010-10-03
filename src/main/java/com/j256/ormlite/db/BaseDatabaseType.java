@@ -8,6 +8,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
+import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
@@ -27,11 +28,15 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	protected static int DEFAULT_DATE_STRING_WIDTH = 50;
 	protected static String DEFAULT_SEQUENCE_SUFFIX = "_id_seq";
 
-	public void loadDriver() throws ClassNotFoundException {
+	public void loadDriver() throws SQLException {
 		String className = getDriverClassName();
 		if (className != null) {
 			// this instantiates the driver class which wires in the JDBC glue
-			Class.forName(className);
+			try {
+				Class.forName(className);
+			} catch (ClassNotFoundException e) {
+				throw SqlExceptionUtil.create("DatabaseType driver class was not found: " + className, e);
+			}
 		}
 	}
 
