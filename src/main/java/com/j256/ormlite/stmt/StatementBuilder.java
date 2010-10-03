@@ -13,12 +13,7 @@ import com.j256.ormlite.stmt.mapped.MappedPreparedStmt;
 import com.j256.ormlite.table.TableInfo;
 
 /**
- * Assists in building of SQL statements for a particular table in a particular database. This can be either select
- * queries or delete or update statements.
- * 
- * <p>
- * Here is a <a href="http://www.w3schools.com/Sql/" >good tutorial of SQL commands</a>.
- * </p>
+ * Assists in building of SQL statements for a particular table in a particular database.
  * 
  * @param T
  *            The class that the code will be operating on.
@@ -45,6 +40,8 @@ public abstract class StatementBuilder<T, ID> {
 	 *            Database type.
 	 * @param tableInfo
 	 *            Information about the table/class that is being handled.
+	 * @param type
+	 *            Type of statement we are building.
 	 */
 	public StatementBuilder(DatabaseType databaseType, TableInfo<T> tableInfo, StatementType type) {
 		this.databaseType = databaseType;

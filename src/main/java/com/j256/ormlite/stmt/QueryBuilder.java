@@ -11,8 +11,7 @@ import com.j256.ormlite.stmt.query.OrderBy;
 import com.j256.ormlite.table.TableInfo;
 
 /**
- * Assists in building sql query (SELECT) statements for a particular table in a particular database. Uses the
- * {@link DatabaseType} to get per-database SQL statements.
+ * Assists in building sql query (SELECT) statements for a particular table in a particular database.
  * 
  * <p>
  * Here is a <a href="http://www.w3schools.com/Sql/" >good tutorial of SQL commands</a>.
@@ -96,8 +95,10 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	/**
 	 * Add "GROUP BY" clause to the SQL query statement.
 	 * 
+	 * <p>
 	 * NOTE: Use of this means that the resulting objects may not have a valid ID column value so cannot be deleted or
 	 * updated.
+	 * </p>
 	 */
 	public QueryBuilder<T, ID> groupBy(String columnName) {
 		verifyColumnName(columnName);
@@ -124,8 +125,10 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	/**
 	 * Add "DISTINCT" clause to the SQL query statement.
 	 * 
+	 * <p>
 	 * NOTE: Use of this means that the resulting objects may not have a valid ID column value so cannot be deleted or
 	 * updated.
+	 * </p>
 	 */
 	public QueryBuilder<T, ID> distinct() {
 		distinct = true;
@@ -264,7 +267,9 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		sb.append(' ');
 	}
 
-	/**
+	/*
+	 * SHOULD NOT BE JAVADOC
+	 * 
 	 * Inner class used to hide from the user the {@link QueryBuilder#buildStatementString()} method. This internal
 	 * method is needed for mapped mapped statements such as {@link MappedQueryForId} but I didn't want the dao user to
 	 * access it directly.
