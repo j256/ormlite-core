@@ -57,14 +57,18 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
 	/**
 	 * Construct our base Jdbc class. The {@link ConnectionSource} must be set with the {@link #setConnectionSource}
-	 * method before {@link #initialize()} method is called. The dataClass provided must have its fields marked with
-	 * {@link DatabaseField} annotations or the {@link #setTableConfig} method must be called before the
+	 * method and then the {@link #initialize()} method must be called. The dataClass provided must have its fields
+	 * marked with {@link DatabaseField} annotations or the {@link #setTableConfig} method must be called before the
 	 * {@link #initialize()} method is called.
+	 * 
+	 * <p>
+	 * If you are using Spring then your should use: init-method="initialize"
+	 * </p>
 	 * 
 	 * @param dataClass
 	 *            Class associated with this Dao. This must match the T class parameter.
 	 */
-	protected BaseDaoImpl(Class<T> dataClass) {
+	protected BaseDaoImpl(Class<T> dataClass) throws SQLException {
 		this(null, dataClass, null);
 	}
 
@@ -72,7 +76,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	 * @deprecated Use {@link #BaseDaoImpl(Class)}
 	 */
 	@Deprecated
-	protected BaseDaoImpl(DatabaseType databaseType, Class<T> dataClass) {
+	protected BaseDaoImpl(DatabaseType databaseType, Class<T> dataClass) throws SQLException {
 		this(null, dataClass, null);
 	}
 
@@ -86,18 +90,18 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	 * @param dataClass
 	 *            Class associated with this Dao. This must match the T class parameter.
 	 */
-	protected BaseDaoImpl(ConnectionSource connectionSource, Class<T> dataClass) {
+	protected BaseDaoImpl(ConnectionSource connectionSource, Class<T> dataClass) throws SQLException {
 		this(connectionSource, dataClass, null);
 	}
 
 	/**
 	 * Construct our base Jdbc class. The {@link ConnectionSource} must be set with the {@link #setConnectionSource}
-	 * method before {@link #initialize()} method is called.
+	 * method and then the {@link #initialize()} method must be called.
 	 * 
 	 * @param tableConfig
 	 *            Hand or spring wired table configuration information.
 	 */
-	protected BaseDaoImpl(DatabaseTableConfig<T> tableConfig) {
+	protected BaseDaoImpl(DatabaseTableConfig<T> tableConfig) throws SQLException {
 		this(null, tableConfig.getDataClass(), tableConfig);
 	}
 
@@ -105,26 +109,30 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	 * @deprecated Use {@link #BaseDaoImpl(DatabaseTableConfig)}
 	 */
 	@Deprecated
-	protected BaseDaoImpl(DatabaseType databaseType, DatabaseTableConfig<T> tableConfig) {
+	protected BaseDaoImpl(DatabaseType databaseType, DatabaseTableConfig<T> tableConfig) throws SQLException {
 		this(null, tableConfig.getDataClass(), tableConfig);
 	}
 
 	/**
 	 * Construct our base Jdbc class.
 	 * 
-	 * @param databaseType
-	 *            Type of database.
+	 * @param connectionSource
+	 *            Source of our database connections.
 	 * @param tableConfig
 	 *            Hand or spring wired table configuration information.
 	 */
-	protected BaseDaoImpl(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig) {
+	protected BaseDaoImpl(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig) throws SQLException {
 		this(connectionSource, tableConfig.getDataClass(), tableConfig);
 	}
 
-	private BaseDaoImpl(ConnectionSource connectionSource, Class<T> dataClass, DatabaseTableConfig<T> tableConfig) {
-		this.connectionSource = connectionSource;
+	private BaseDaoImpl(ConnectionSource connectionSource, Class<T> dataClass, DatabaseTableConfig<T> tableConfig)
+			throws SQLException {
 		this.dataClass = dataClass;
 		this.tableConfig = tableConfig;
+		if (connectionSource != null) {
+			this.connectionSource = connectionSource;
+			initialize();
+		}
 	}
 
 	/**
