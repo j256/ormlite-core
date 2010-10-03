@@ -184,8 +184,8 @@ The following is the example implementation class:
 /** JDBC implementation of the AccountDao interface. */
 public class AccountDaoImpl extends BaseDaoImpl<Account,String>
  implements AccountDao @{
-    public AccountDaoImpl() @{
-        super(Account.class);
+    public AccountDaoImpl(ConnectionSource connectionSource) @{
+        super(connectionSource, Account.class);
     @}
 @}
 @end example
@@ -215,7 +215,7 @@ The client performs the following steps.
 
 @itemize @bullet
 @item It creates a connection source which handles connections to the database.
-@item An AccountDaoImpl is instantiated.
+@item It instantiates a AccountDaoImpl.
 @item The @code{accounts} database table is created. This step is not needed if the table already exists.
 @end itemize
 
@@ -228,13 +228,10 @@ public class AccountApp @{
         String databaseUrl = "jdbc:h2:mem:account";
         // create a connection source to our database
         ConnectionSource connectionSource =
-            DatabaseTypeUtils.createJdbcConnectionSource(databaseUrl);
+            new JdbcConnectionSource(databaseUrl);
 
         // instantiate the dao
-        AccountDaoImpl accountDao = new AccountDaoImpl();
-        accountDao.setConnectionSource(connectionSource);
-        // _must_ make this call after the setters
-        accountDao.initialize();
+        AccountDaoImpl accountDao = new AccountDaoImpl(connectionSource);
 
         // if you need to create the 'accounts' table make this call
         TableUtils.createTable(connectionSource, Account.class);
@@ -269,7 +266,7 @@ continue on with the next section.  @xref{Using}.
 
 @c ----------------------------------------------------------------
 @node Using, Class Setup, Starting Client, Top
-@chapter How to Use @value{package}
+@chapter How to Use
 
 @menu
 * Class Setup::                 How to setup your classes to be persisted.
@@ -770,8 +767,8 @@ Here's the example implementation of this interface.
 /** JDBC implementation of the AccountDao interface. */
 public class AccountDaoImpl extends BaseDaoImpl<Account, String>
   implements AccountDao @{
-    public AccountDaoImpl() @{
-        super(Account.class);
+    public AccountDaoImpl(ConnectionSource connectionSource) @{
+        super(connectionSource, Account.class);
     @}
 @}
 @end example
@@ -802,12 +799,12 @@ database.  Since @value{package} also supports non-JDBC connections, we use a su
 methods in the @code{ConnectionSource} interface so we can support non-JDBC database handlers.  Here is a code example
 that creates a simple connection source.
 
-@cindex DatabaseTypeUtils
+@cindex JdbcConnectionSource
 @cindex connection source, simple
 @example
 // single connection source example
 ConnectionSource connectionSource =
-  DatabaseTypeUtils.createJdbcConnectionSource("jdbc:h2:mem:account");
+  new JdbcConnectionSource("jdbc:h2:mem:account");
 @end example
 
 @cindex pooled connections
@@ -850,40 +847,30 @@ try @{
 @}
 @end example
 
+Unfortunately, the @code{DataSource} interface does not have a close method so you will have to close the @code{DataSource}
+by hand -- the @code{close()} method on the @code{DataSourceConnectionSource} does nothing.
+
 @c ----------------------------------------------------------------
 @node Database Type, Complete Wiring, Connection Source, Using
 @section Database Type
 
 @cindex database type
-@cindex DatabaseTypeUtils
 @value{package} uses an internal @code{DatabaseType} object which defines all of the per-database information necessary
 to support the various features on all of the different database types.  The @code{JdbcConnectionSource} uses the database
 URL to pick the correct @code{DatabaseType}.  If it picks an incorrect one then you may need to set the @code{DatabaseType}
-on the connection source directly.
-
-@emph{NOTE:} Android users do not need to worry about this because the @code{AndroidConnectionSource} always uses the
-@code{SqliteAndroidDatabaseType}.  @xref{Use With Android}.
+on the connection source @emph{directly}.  For example:
 
 @example
 String databaseUrl = "jdbc:derby://dbserver1:1527/";
 DatabaseType databaseType = new DerbyClientServerDatabaseType();
-databaseType.loadDriver();
 ConnectionSource connectionSource =
-   new JdbcConnectionSource(databaseUrl);
-connectionSource.setDatabaseType(databaseType);
+   new JdbcConnectionSource(databaseUrl, databaseType);
 @end example
 
-@cindex load database driver
-@cindex database driver load
-After you instantiate your DatabaseType, you will need to call the @code{loadDriver()} method to make sure that
-the driver has wired itself into JDBC appropriately.
+Android users do not need to worry about this because the @code{AndroidConnectionSource} always uses the
+@code{SqliteAndroidDatabaseType}.  @xref{Use With Android}.
 
-@example
-DatabaseType databaseType = new H2DatabaseType();
-databaseType.loadDriver();
-@end example
-
-For more information about the database specific code in the DatabaseType.  @xref{Database Type Details}.
+For more information about the database specific code in the DatabaseType see later in the manual.  @xref{Database Type Details}.
 
 @c ----------------------------------------------------------------
 @node Complete Wiring, DAO Usage, Database Type, Using
@@ -898,17 +885,10 @@ querying your database objects.  The following code ties it all together:
 // h2 by default but change to match your database
 String databaseUrl = "jdbc:h2:mem:account";
 JdbcConnectionSource connectionSource =
-  DatabaseTypeUtils.createJdbcConnectionSource(databaseUrl);
-DatabaseType databaseType =
-  DatabaseTypeUtils.createDatabaseType(databaseUrl);
-databaseType.loadDriver();
+  new JdbcConnectionSource(databaseUrl);
 
 // instantiate the dao
-AccountDaoImpl accountDao = new AccountDaoImpl();
-accountDao.setDatabaseType(databaseType);
-accountDao.setConnectionSource(connectionSource);
-// _must_ make this call after the setters
-accountDao.initialize();
+AccountDaoImpl accountDao = new AccountDaoImpl(connectionSource);
 
 // if you need to create the 'accounts' table make this call
 TableUtils.createTable(databaseType, connectionSource, Account.class);
@@ -927,14 +907,8 @@ if (accountDao.create(account) != 1) @{
 connectionSource.destroy();
 @end example
 
-@cindex initialize
-@cindex spring
-@emph{NOTE:} as you see in the above example, if you are instantiating a DAO class outside of Spring
-then you will need to call @code{initialize()} method to properly initialize the class.
-
 @cindex code examples
-For more examples, see the @code{com.j256.ormlite.examples} package test classes in the Java sources jar down in
-@code{src/test/java}.
+For more examples, see the @code{com.j256.ormlite.examples} package test classes in the Java -jdbc sources jar.
 
 @c ----------------------------------------------------------------
 @node DAO Usage, Statement Builder, Complete Wiring, Using
@@ -1359,7 +1333,7 @@ Please see the example code posted to the website for more information: @uref{ht
 Again, feedback on this is welcome.
 
 @c ----------------------------------------------------------------
-@node How to Upgrade, 3.5 to 3.6, Use With Android, Top
+@node How to Upgrade, 3.X to 4.0, Use With Android, Top
 @chapter Upgrading Old Versions
 
 @menu
@@ -1370,18 +1344,30 @@ Again, feedback on this is welcome.
 
 @c ----------------------------------------------------------------
 @node 3.X to 4.0, 2.X to 3.2, How to Upgrade, How to Upgrade
-@section Upgrade from Version 3.5 to 3.6
+@section Upgrade from Version 3.X to 4.0
 
-Added features to be able to prepare update and delete statements.  To provide type safety, we've moved back to using
-@code{QueryBuilder} so we can have @code{UpdateBuilder} and @code{DeleteBuilder}.  And instead of a @code{PreparedStmt} 
-there is @code{PreparedQuery}, @code{PreparedUpdate}, and @code{PreparedDelete}.
+Removed any outside usage of the @code{DatabaseType} since the @code{ConnectionSource} now provides it.  Also added
+features to be able to prepare update and delete statements.  To provide type safety, we've moved back to using
+@code{QueryBuilder} so we can have @code{UpdateBuilder} and @code{DeleteBuilder}.  And instead of a @code{PreparedStmt}
+there is @code{PreparedQuery}, @code{PreparedUpdate}, and @code{PreparedDelete}.  Here are the details:
 
 @itemize @bullet
 
 @item We have removed most of the cases where the user has to deal with the @code{DatabaseType}.
-All you need to set on the DAOs is the @code{ConnectionSource} which provides the type of the
-database internally.  To create and drop the tables, also, you only need the @code{ConnectionSource}.
-@xref{Database Type}.
+All you need to set on the DAOs is the @code{ConnectionSource} which provides the database type 
+internally.  To create and drop the tables, also, you only need the @code{ConnectionSource}.
+
+@item Constructing a @code{BaseDaoImpl} now self-intializes if it is constructed with a
+@code{ConnectionSource}.  This validates the class configurations meaning that it now throws a
+@code{SQLException}.
+
+@item Constructing a @code{JdbcConnectionSource} or @code{DataSourceConnectionSource} also now
+throw a @code{SQLException} since they also now self-initialize if they are constructed with the URL.
+This creates the internal database type and loads the driver class for it.  
+
+@item Deprecated the @code{createJdbcConnectionSource} method in the @code{DatabaseTypeUtils} and
+turned the @code{loadDriver} method into a no-op.  You now just instantiate the @code{JdbcConnectionSource}
+directly and there is no need for referencing the @code{DatabaseTypeUtils} anymore.
 
 @item @code{Dao.statementBuilder()} method changed (back) to @code{Dao.queryBuilder()}.
 
@@ -1391,18 +1377,17 @@ database internally.  To create and drop the tables, also, you only need the @co
 there are no deprecated methods for them on the @code{StatementBuilder}.
 
 @item You now call @code{selectColumns()} on the @code{QueryBuilder} instead of @code{columns()}
-since now we have columns also in the @code{UpdateBuilder).  Unfortunately, there are no deprecated
+since now we have columns also in the @code{UpdateBuilder}.  Unfortunately, there are no deprecated
 methods for them on the @code{StatementBuilder}.
 
 @item You call @code{QueryBuilder.prepare()} instead of @code{StatementBuilder.prepareStatement()}.
 It returns a @code{PreparedQuery} instead of a @code{PreparedStmt}.  You pass a @code{PreparedQuery}
 into the @code{Dao.query()} and @code{Dao.iterator()} methods instead of a @code{PreparedStmt}.
 
-@item Constructing a @code{JdbcConnectionSource} or @code{DataSourceConnectionSource} now throws a
-@code{SQLException} since they now create an internal database type and loads the driver class for it.  
-
 @item We removed the @code{DatabaseTypeFactory} class since it was no longer needed for Spring
 configurations.
+
+@item Removed @code{BaseJdbcDao} since it had been deprecated in 3.X.
 
 @end itemize
 
@@ -1545,12 +1530,8 @@ fieldConfigs.add(new DatabaseFieldConfig("password", null,
 DatabaseTableConfig<Account> accountTableConfig
     = new DatabaseTableConfig<Account>(Account.class, fieldConfigs);
 
-AccountDaoImpl accountDao = new AccountDaoImpl();
-// set our table config on the dao
-accountDao.setTableConfig(accountTableConfig);
-accountDao.setDatabaseType(databaseType);
-accountDao.setConnectionSource(connectionSource);
-accountDao.initialize();
+AccountDaoImpl accountDao =
+    new AccountDaoImpl(connectionSource, accountTableConfig);
 @end example
 
 @cindex spring wire a class

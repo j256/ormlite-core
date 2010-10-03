@@ -465,11 +465,8 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	 * but if you have a lot of classes, they can seem to be a pain.
 	 */
 	public static <T, ID> Dao<T, ID> createDao(ConnectionSource connectionSource, Class<T> clazz) throws SQLException {
-		BaseDaoImpl<T, ID> dao = new BaseDaoImpl<T, ID>(clazz) {
+		return new BaseDaoImpl<T, ID>(connectionSource, clazz) {
 		};
-		dao.setConnectionSource(connectionSource);
-		dao.initialize();
-		return dao;
 	}
 
 	private void checkForInitialized() {
