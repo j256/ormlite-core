@@ -1,3 +1,15 @@
+4.0: 10/3/2010
+	* CORE: BaseDaoImpl now knows how to self-initialize if constructed with the ConnectionSource.
+	* CORE: Removed most external usage of the DatabaseType since the ConnectionSource now provides it.
+	* CORE: Dao.queryBuilder() now returns a QueryBuilder.  You call QueryBuilder.prepare() to get a PreparedQuery.
+	* CORE: Added Dao.updateBuilder() and deleteBuilder() for constructing custom UPDATE and DELETE statements.
+	* CORE: Tightened up some more classes to remove unnecessary allocations.
+	* JDBC: Deprecated the DatabaseTypeUtils calls since we should just construct a JdbcConnectionSource directly.
+	* JDBC: Removed the DatabaseTypeFactory and simplified the Spring code since we removed the external DatabaseType.
+	* JDBC: JdbcConnectionSource now knows how to self-initialize if constructed with the URL.
+	* JDBC: DataSourceConnectionSource now needs the database URL as well as the DataSource.
+	* ANDROID: Made changes to OrmLiteSqliteOpenHelper to remove the DatabaseType references.
+
 3.5: 9/28/2010
 	* CORE: Revamped the StatementBuilder to allow foreign fields to be queried from the object as opposed to just its id.
 	* CORE: Because of the internal changes, the prepareStatment() call now can throw SQLException.
