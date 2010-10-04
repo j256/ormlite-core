@@ -267,11 +267,11 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		sb.append(' ');
 	}
 
-	/*
-	 * SHOULD NOT BE JAVADOC
+	/**
+	 * Internal class used to expose the {@link QueryBuilder#buildStatementString()} method to internal classes. Users
+	 * should use the {@link #prepareStatementString()} method instead.
 	 * 
-	 * Inner class used to hide from the user the {@link QueryBuilder#buildStatementString()} method. This internal
-	 * method is needed for mapped mapped statements such as {@link MappedQueryForId} but I didn't want the dao user to
+	 * This is needed for mapped mapped statements such as {@link MappedQueryForId} but I didn't want the dao user to
 	 * access it directly.
 	 * 
 	 * That I had to do this probably means that I have a bad type hierarchy or package layout but I don't see a better

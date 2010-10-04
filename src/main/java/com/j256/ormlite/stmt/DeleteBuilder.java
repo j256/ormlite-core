@@ -9,8 +9,7 @@ import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.table.TableInfo;
 
 /**
- * Assists in building sql DELETE statements for a particular table in a particular database. Uses the
- * {@link DatabaseType} to get per-database SQL statements.
+ * Assists in building sql DELETE statements for a particular table in a particular database.
  * 
  * @param T
  *            The class that the code will be operating on.
@@ -40,7 +39,7 @@ public class DeleteBuilder<T, ID> extends StatementBuilder<T, ID> {
 		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
 		sb.append(' ');
 	}
-	
+
 	@Override
 	protected void appendStatementEnd(StringBuilder sb) {
 		// noop

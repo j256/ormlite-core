@@ -7,6 +7,11 @@ import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 
+/**
+ * A reduction of the SQL Connection so we can implement its functionality outside of JDBC.
+ * 
+ * @author graywatson
+ */
 public interface DatabaseConnection {
 
 	/** returned by {@link #queryForOne} if more than one result was found by the query */

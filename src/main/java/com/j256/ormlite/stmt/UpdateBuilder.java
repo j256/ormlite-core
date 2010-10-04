@@ -13,8 +13,7 @@ import com.j256.ormlite.stmt.query.SetValue;
 import com.j256.ormlite.table.TableInfo;
 
 /**
- * Assists in building sql UPDATE statements for a particular table in a particular database. Uses the
- * {@link DatabaseType} to get per-database SQL statements.
+ * Assists in building sql UPDATE statements for a particular table in a particular database.
  * 
  * @param T
  *            The class that the code will be operating on.

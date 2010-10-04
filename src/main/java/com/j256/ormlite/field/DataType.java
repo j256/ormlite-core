@@ -7,7 +7,6 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.sql.Types;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -37,7 +36,7 @@ import com.j256.ormlite.support.DatabaseResults;
 public enum DataType implements FieldConverter {
 
 	/**
-	 * Links the {@link Types#VARCHAR} SQL type and the {@link String} Java class.
+	 * Persists the {@link String} Java class.
 	 */
 	STRING(SqlType.STRING, null, new Class<?>[] { String.class }) {
 		@Override
@@ -51,7 +50,7 @@ public enum DataType implements FieldConverter {
 	},
 
 	/**
-	 * Links the {@link Types#BOOLEAN} SQL type and the boolean primitive.
+	 * Persists the boolean Java primitive.
 	 */
 	BOOLEAN(SqlType.BOOLEAN, null, new Class<?>[] { boolean.class }) {
 		@Override
@@ -73,7 +72,7 @@ public enum DataType implements FieldConverter {
 	},
 
 	/**
-	 * Links the {@link Types#BOOLEAN} SQL type and the {@link Boolean} Java class.
+	 * Persists the {@link Boolean} Java class.
 	 */
 	BOOLEAN_OBJ(SqlType.BOOLEAN, null, new Class<?>[] { Boolean.class }) {
 		@Override
@@ -91,7 +90,7 @@ public enum DataType implements FieldConverter {
 	},
 
 	/**
-	 * Links the {@link Types#TIMESTAMP} SQL type and the {@link java.util.Date} Java class.
+	 * Persists the {@link java.util.Date} Java class.
 	 * 
 	 * <p>
 	 * NOTE: This is <i>not</i> the same as the {@link java.sql.Date} class.
@@ -119,7 +118,7 @@ public enum DataType implements FieldConverter {
 	},
 
 	/**
-	 * Links the {@link Types#BIGINT} SQL type and the {@link java.util.Date} Java class.
+	 * Persists the {@link java.util.Date} Java class as long milliseconds since epoch.
 	 * 
 	 * <p>
 	 * NOTE: This is <i>not</i> the same as the {@link java.sql.Date} class.
@@ -151,7 +150,7 @@ public enum DataType implements FieldConverter {
 	},
 
 	/**
-	 * Links the {@link Types#VARCHAR} SQL type and the {@link java.util.Date} Java class.
+	 * Persists the {@link java.util.Date} Java class as a string of a format.
 	 * 
 	 * <p>
 	 * NOTE: This is <i>not</i> the same as the {@link java.sql.Date} class.
@@ -193,7 +192,7 @@ public enum DataType implements FieldConverter {
 	},
 
 	/**
-	 * Links the {@link Types#TINYINT} SQL type and the byte primitive.
+	 * Persists the byte primitive.
 	 */
 	BYTE(SqlType.BYTE, null, new Class<?>[] { byte.class }) {
 		@Override
@@ -215,7 +214,7 @@ public enum DataType implements FieldConverter {
 	},
 
 	/**
-	 * Links the {@link Types#TINYINT} SQL type and the {@link Byte} Java class.
+	 * Persists the {@link Byte} Java class.
 	 */
 	BYTE_OBJ(SqlType.BYTE, null, new Class<?>[] { Byte.class }) {
 		@Override
@@ -233,7 +232,7 @@ public enum DataType implements FieldConverter {
 	},
 
 	/**
-	 * Links the {@link Types#SMALLINT} SQL type and the short primitive.
+	 * Persists the short primitive.
 	 */
 	SHORT(SqlType.SHORT, null, new Class<?>[] { short.class }) {
 		@Override
@@ -255,7 +254,7 @@ public enum DataType implements FieldConverter {
 	},
 
 	/**
-	 * Links the {@link Types#SMALLINT} SQL type and the {@link Short} Java class.
+	 * Persists the {@link Short} Java class.
 	 */
 	SHORT_OBJ(SqlType.SHORT, null, new Class<?>[] { Short.class }) {
 		@Override
@@ -273,7 +272,7 @@ public enum DataType implements FieldConverter {
 	},
 
 	/**
-	 * Links the {@link Types#INTEGER} SQL type and the int primitive.
+	 * Persists the int primitive.
 	 */
 	INTEGER(SqlType.INTEGER, SqlType.INTEGER, new Class<?>[] { int.class }) {
 		@Override
@@ -303,7 +302,7 @@ public enum DataType implements FieldConverter {
 	},
 
 	/**
-	 * Links the {@link Types#INTEGER} SQL type and the {@link Integer} Java class.
+	 * Persists the {@link Integer} Java class.
 	 */
 	INTEGER_OBJ(SqlType.INTEGER, null, new Class<?>[] { Integer.class }) {
 		@Override
@@ -329,7 +328,7 @@ public enum DataType implements FieldConverter {
 	},
 
 	/**
-	 * Links the {@link Types#BIGINT} SQL type and the long primitive.
+	 * Persists the long primitive.
 	 */
 	LONG(SqlType.LONG, SqlType.LONG, new Class<?>[] { long.class }) {
 		@Override
@@ -359,7 +358,7 @@ public enum DataType implements FieldConverter {
 	},
 
 	/**
-	 * Links the {@link Types#BIGINT} SQL type and the {@link Long} Java class.
+	 * Persists the {@link Long} Java class.
 	 */
 	LONG_OBJ(SqlType.LONG, null, new Class<?>[] { Long.class }) {
 		@Override
@@ -385,7 +384,7 @@ public enum DataType implements FieldConverter {
 	},
 
 	/**
-	 * Links the {@link Types#FLOAT} SQL type and the float primitive.
+	 * Persists the float primitive.
 	 */
 	FLOAT(SqlType.FLOAT, null, new Class<?>[] { float.class }) {
 		@Override
@@ -407,7 +406,7 @@ public enum DataType implements FieldConverter {
 	},
 
 	/**
-	 * Links the {@link Types#FLOAT} SQL type and the {@link Float} Java class.
+	 * Persists the {@link Float} Java class.
 	 */
 	FLOAT_OBJ(SqlType.FLOAT, null, new Class<?>[] { Float.class }) {
 		@Override
@@ -425,7 +424,7 @@ public enum DataType implements FieldConverter {
 	},
 
 	/**
-	 * Links the {@link Types#DOUBLE} SQL type and the double primitive.
+	 * Persists the double primitive.
 	 */
 	DOUBLE(SqlType.DOUBLE, null, new Class<?>[] { double.class }) {
 		@Override
@@ -447,7 +446,7 @@ public enum DataType implements FieldConverter {
 	},
 
 	/**
-	 * Links the {@link Types#DOUBLE} SQL type and the {@link Double} Java class.
+	 * Persists the {@link Double} Java class.
 	 */
 	DOUBLE_OBJ(SqlType.DOUBLE, null, new Class<?>[] { Double.class }) {
 		@Override
@@ -465,7 +464,7 @@ public enum DataType implements FieldConverter {
 	},
 
 	/**
-	 * Links the {@link Types#VARBINARY} SQL type and an unknown Java Object that is serializable.
+	 * Persists an unknown Java Object that is serializable.
 	 */
 	SERIALIZABLE(SqlType.SERIALIZABLE, null, new Class<?>[] { Object.class }) {
 		@Override
@@ -510,8 +509,7 @@ public enum DataType implements FieldConverter {
 	},
 
 	/**
-	 * Links the {@link Types#VARCHAR} SQL type and the Enum Java class. You can also specify the {@link #ENUM_INTEGER}
-	 * as the type.
+	 * Persists an Enum Java class as its string value. You can also specify the {@link #ENUM_INTEGER} as the type.
 	 */
 	ENUM_STRING(SqlType.STRING, null, new Class<?>[] { Enum.class }) {
 		@Override
@@ -531,8 +529,8 @@ public enum DataType implements FieldConverter {
 	},
 
 	/**
-	 * Links the {@link Types#INTEGER} SQL type and the Enum Java class. You can also specify the {@link #ENUM_STRING}
-	 * as the type.
+	 * Persists an Enum Java class as its ordinal interger value. You can also specify the {@link #ENUM_STRING} as the
+	 * type.
 	 */
 	ENUM_INTEGER(SqlType.INTEGER, null, new Class<?>[] { Enum.class }) {
 		@Override
