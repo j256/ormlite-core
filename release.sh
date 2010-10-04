@@ -59,7 +59,7 @@ echo ""
 echo -n "Enter the GPG pass-phrase: "
 read gpgpass
 
-GPG_ARGS="-Dgpg.passphrase=$gpgpass"
+GPG_ARGS="-Darguments=-Dgpg.passphrase=$gpgpass"
 
 tmp="/tmp/$0.$$.t"
 touch $tmp 
@@ -104,7 +104,7 @@ svn commit -m "checking in $release docs"
 
 echo ""
 echo ""
-echo -n "Releasing -core to sonatype: "
+echo -n "Releasing -core to sonatype [return to continue]: "
 read cont
 cd $CORE_DIR
 svn -m cp delete https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-core/tags/ormlite-core-$release
@@ -114,7 +114,7 @@ mvn $GPG_ARGS -P st release:perform || exit 1
 
 echo ""
 echo ""
-echo -n "Installing -core locally: "
+echo -n "Installing -core locally [return to continue]: "
 read cont
 cd target/checkout
 mvn $GPG_ARGS install || exit 1
@@ -124,7 +124,8 @@ mvn $GPG_ARGS install || exit 1
 
 echo ""
 echo ""
-echo -n "Releasing -jdbc to sonatype: "
+echo -n "Releasing -jdbc to sonatype [return to continue]: "
+read cont
 cd $JDBC_DIR
 svn -m cp delete https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-jdbc/tags/ormlite-jdbc-$release
 mvn -P st release:clean || exit 1
@@ -136,7 +137,8 @@ mvn $GPG_ARGS -P st release:perform || exit 1
 
 echo ""
 echo ""
-echo -n "Releasing -android to sonatype: "
+echo -n "Releasing -android to sonatype [return to continue]: "
+read cont
 cd $ANDROID_DIR
 svn -m cp delete https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-jdbc/tags/ormlite-android-$release
 mvn -P st release:clean || exit 1
@@ -148,19 +150,22 @@ mvn $GPG_ARGS -P st release:perform || exit 1
 
 echo ""
 echo ""
-echo -n "Releasing -core to sourceforge: "
+echo -n "Releasing -core to sourceforge [return to continue]: "
+read cont
 cd $CORE_DIR/target/checkout
 mvn $GPG_ARGS -P sf deploy
 
 echo ""
 echo ""
-echo -n "Releasing -jdbc to sourceforge: "
+echo -n "Releasing -jdbc to sourceforge [return to continue]: "
+read cont
 cd $JDBC_DIR/target/checkout
 mvn $GPG_ARGS -P sf deploy
 
 echo ""
 echo ""
-echo -n "Releasing -android to sourceforge: "
+echo -n "Releasing -android to sourceforge [return to continue]: "
+read cont
 cd $ANDROID_DIR/target/checkout
 mvn $GPG_ARGS -P sf deploy
 
