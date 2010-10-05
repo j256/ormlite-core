@@ -114,7 +114,7 @@ public class MappedCreate<T> extends BaseMappedStatement<T> {
 			}
 			// if we created 1 row, assign the id field
 			if (retVal == 1) {
-				// assign the key returned by JDBC to the object's id field after it was inserted
+				// assign the key returned by the database to the object's id field after it was inserted
 				Number key = keyHolder.getKey();
 				if (key == null) {
 					// may never happen but let's be careful out there

@@ -6,7 +6,7 @@ import com.j256.ormlite.field.FieldType;
 
 /**
  * An argument to a select SQL statement. After the query is constructed, the caller can set the value on this argument
- * and run the query. Then the argument can be set again and the query re-executed. This is equivalent in JDBC to a ?
+ * and run the query. Then the argument can be set again and the query re-executed. This is equivalent in SQL to a ?
  * type argument.
  * 
  * <p>

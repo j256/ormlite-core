@@ -60,7 +60,7 @@ public class FieldType {
 			dataType = fieldConfig.getDataType();
 			if (!dataType.isValidForType(field.getType())) {
 				throw new IllegalArgumentException("Field class " + field.getType() + " for field " + this
-						+ " is not valid for jdbc type " + dataType);
+						+ " is not valid for data type " + dataType);
 			}
 		}
 		String defaultFieldName = field.getName();
