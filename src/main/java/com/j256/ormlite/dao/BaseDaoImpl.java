@@ -73,7 +73,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	/**
-	 * @deprecated Use {@link #BaseDaoImpl(Class)}
+	 * @deprecated Use {@link #BaseDaoImpl(ConnectionSource, Class)}
 	 */
 	@Deprecated
 	protected BaseDaoImpl(DatabaseType databaseType, Class<T> dataClass) throws SQLException {

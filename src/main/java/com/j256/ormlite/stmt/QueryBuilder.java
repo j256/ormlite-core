@@ -7,6 +7,7 @@ import java.util.List;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.stmt.mapped.MappedQueryForId;
 import com.j256.ormlite.stmt.query.OrderBy;
 import com.j256.ormlite.table.TableInfo;
 
@@ -268,8 +269,8 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * Internal class used to expose the {@link QueryBuilder#buildStatementString()} method to internal classes. Users
-	 * should use the {@link #prepareStatementString()} method instead.
+	 * Internal class used to expose the {@link QueryBuilder#buildStatementString(List, List, List)} method to internal
+	 * classes. Users should use the {@link #prepareStatementString()} method instead.
 	 * 
 	 * This is needed for mapped mapped statements such as {@link MappedQueryForId} but I didn't want the dao user to
 	 * access it directly.
