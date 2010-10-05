@@ -23,8 +23,7 @@ import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableInfo;
 
 /**
- * Base class for the Database Access Objects that handle the reading and writing a class from the database Kudos to
- * Robert A. for the general ideas of this hierarchy.
+ * Base class for the Database Access Objects that handle the reading and writing a class from the database.
  * 
  * <p>
  * This class is also {@link Iterable} which means you can do a {@code for (T obj : dao)} type of loop code to iterate
@@ -32,8 +31,8 @@ import com.j256.ormlite.table.TableInfo;
  * </p>
  * 
  * <p>
- * <b> NOTE: </b> If you are using the Spring type wiring in Java, {@link #initialize} should be called after all of the
- * set methods. In Spring XML, init-method="initialize" should be used.
+ * <b> NOTE: </b> If you are using the Spring type wiring, {@link #initialize} should be called after all of the set
+ * methods. In Spring XML, init-method="initialize" should be used.
  * </p>
  * 
  * @param T
@@ -56,10 +55,10 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	private boolean initialized = false;
 
 	/**
-	 * Construct our base Jdbc class. The {@link ConnectionSource} must be set with the {@link #setConnectionSource}
-	 * method and then the {@link #initialize()} method must be called. The dataClass provided must have its fields
-	 * marked with {@link DatabaseField} annotations or the {@link #setTableConfig} method must be called before the
-	 * {@link #initialize()} method is called.
+	 * Construct our base DAO using Spring type wiring. The {@link ConnectionSource} must be set with the
+	 * {@link #setConnectionSource} method afterwards and then the {@link #initialize()} method must be called. The
+	 * dataClass provided must have its fields marked with {@link DatabaseField} annotations or the
+	 * {@link #setTableConfig} method must be called before the {@link #initialize()} method is called.
 	 * 
 	 * <p>
 	 * If you are using Spring then your should use: init-method="initialize"
@@ -81,9 +80,8 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	/**
-	 * Construct our base Jdbc class. The dataClass provided must have its fields marked with {@link DatabaseField}
-	 * annotations or the {@link #setTableConfig} method must be called before the {@link #initialize()} method is
-	 * called.
+	 * Construct our base DAO class. The dataClass provided must have its fields marked with {@link DatabaseField} or
+	 * javax.persistance annotations.
 	 * 
 	 * @param connectionSource
 	 *            Source of our database connections.
@@ -95,8 +93,8 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	/**
-	 * Construct our base Jdbc class. The {@link ConnectionSource} must be set with the {@link #setConnectionSource}
-	 * method and then the {@link #initialize()} method must be called.
+	 * Construct our base DAO class for Spring type wiring. The {@link ConnectionSource} must be set with the
+	 * {@link #setConnectionSource} method and then the {@link #initialize()} method must be called.
 	 * 
 	 * @param tableConfig
 	 *            Hand or spring wired table configuration information.
@@ -114,12 +112,12 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	/**
-	 * Construct our base Jdbc class.
+	 * Construct our base DAO class.
 	 * 
 	 * @param connectionSource
 	 *            Source of our database connections.
 	 * @param tableConfig
-	 *            Hand or spring wired table configuration information.
+	 *            Hand or Spring wired table configuration information.
 	 */
 	protected BaseDaoImpl(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig) throws SQLException {
 		this(connectionSource, tableConfig.getDataClass(), tableConfig);
