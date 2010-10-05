@@ -60,18 +60,6 @@ public class DatabaseFieldConfig {
 	}
 
 	/**
-	 * @deprecated Use
-	 *             {@link #DatabaseFieldConfig(String, String, DataType, String, int, boolean, boolean, boolean, String, boolean, DatabaseTableConfig, boolean, Enum, boolean, String, boolean)}
-	 */
-	@Deprecated
-	public DatabaseFieldConfig(String fieldName, String columnName, DataType dataType, String defaultValue, int width,
-			boolean canBeNull, boolean id, boolean generatedId, String generatedIdSequence, boolean foreign,
-			DatabaseTableConfig<?> foreignTableConfig, boolean useGetSet, Enum<?> unknownEnumValue, boolean throwIfNull) {
-		this(fieldName, columnName, dataType, defaultValue, width, canBeNull, id, generatedId, generatedIdSequence,
-				foreign, foreignTableConfig, useGetSet, unknownEnumValue, throwIfNull, null, false);
-	}
-
-	/**
 	 * Return the name of the field in the class.
 	 */
 	public String getFieldName() {
