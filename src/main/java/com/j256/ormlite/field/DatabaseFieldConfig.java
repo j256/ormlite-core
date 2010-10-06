@@ -9,8 +9,8 @@ import com.j256.ormlite.misc.JavaxPersistence;
 import com.j256.ormlite.table.DatabaseTableConfig;
 
 /**
- * Database field configuration information either supplied by Spring or direct Java wiring or from a
- * {@link DatabaseField} annotation.
+ * Database field configuration information either supplied by a {@link DatabaseField} annotation or by direct Java or
+ * Spring wiring.
  * 
  * @author graywatson
  */

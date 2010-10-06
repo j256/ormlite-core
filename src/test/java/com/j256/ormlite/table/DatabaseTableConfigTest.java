@@ -93,7 +93,7 @@ public class DatabaseTableConfigTest {
 		assertEquals("stuff", fieldTypes[0].getDbColumnName());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = SQLException.class)
 	public void testSetFieldConfigsNoMatchingField() throws SQLException {
 		DatabaseTableConfig<DatabaseTableAnno> dbTableConf = new DatabaseTableConfig<DatabaseTableAnno>();
 		dbTableConf.setDataClass(DatabaseTableAnno.class);
@@ -108,7 +108,7 @@ public class DatabaseTableConfigTest {
 		dbTableConf.extractFieldTypes(databaseType);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = SQLException.class)
 	public void testSetNoFields() throws SQLException {
 		DatabaseTableConfig<DatabaseTableAnno> dbTableConf = new DatabaseTableConfig<DatabaseTableAnno>();
 		dbTableConf.setDataClass(DatabaseTableAnno.class);

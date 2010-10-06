@@ -67,7 +67,7 @@ public class TableInfoTest extends BaseOrmLiteCoreTest {
 		assertEquals(NoTableNameAnnotation.class.getSimpleName().toLowerCase(), tableInfo.getTableName());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = SQLException.class)
 	public void testZeroFieldConfigsSpecified() throws Exception {
 		new TableInfo<NoTableNameAnnotation>(databaseType, new DatabaseTableConfig<NoTableNameAnnotation>(
 				NoTableNameAnnotation.class, new ArrayList<DatabaseFieldConfig>()));

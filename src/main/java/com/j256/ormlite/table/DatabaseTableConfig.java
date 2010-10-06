@@ -10,6 +10,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.misc.JavaxPersistence;
+import com.j256.ormlite.misc.SqlExceptionUtil;
 
 /**
  * Database table configuration information either supplied by Spring or direct Java wiring or from a
@@ -28,10 +29,17 @@ public class DatabaseTableConfig<T> {
 		// for spring
 	}
 
+	/**
+	 * Setup a table config associated with the dataClass and field configurations. The table-name will be extracted
+	 * from the dataClass.
+	 */
 	public DatabaseTableConfig(Class<T> dataClass, List<DatabaseFieldConfig> fieldConfigs) {
 		this(dataClass, extractTableName(dataClass), fieldConfigs);
 	}
 
+	/**
+	 * Setup a table config associated with the dataClass, table-name, and field configurations.
+	 */
 	public DatabaseTableConfig(Class<T> dataClass, String tableName, List<DatabaseFieldConfig> fieldConfigs) {
 		this.dataClass = dataClass;
 		this.tableName = tableName;
@@ -44,6 +52,9 @@ public class DatabaseTableConfig<T> {
 		this.fieldTypes = fieldTypes;
 	}
 
+	/**
+	 * Initialize the class if this is being called with Spring.
+	 */
 	public void initialize() {
 		if (dataClass == null) {
 			throw new IllegalStateException("dataClass was never set on " + getClass().getSimpleName());
@@ -77,6 +88,9 @@ public class DatabaseTableConfig<T> {
 		this.fieldConfigs = fieldConfigs;
 	}
 
+	/**
+	 * Return the field types associated with this configuration.
+	 */
 	public FieldType[] extractFieldTypes(DatabaseType databaseType) throws SQLException {
 		if (fieldTypes == null) {
 			if (fieldConfigs == null) {
@@ -88,6 +102,10 @@ public class DatabaseTableConfig<T> {
 		return fieldTypes;
 	}
 
+	/**
+	 * Extract the DatabaseTableConfig for a particular class by looking for class and field annotations. This is used
+	 * by internal classes to configure a class.
+	 */
 	public static <T> DatabaseTableConfig<T> fromClass(DatabaseType databaseType, Class<T> clazz) throws SQLException {
 		String tableName = extractTableName(clazz);
 		if (databaseType.isEntityNamesMustBeUpCase()) {
@@ -138,15 +156,14 @@ public class DatabaseTableConfig<T> {
 			try {
 				field = dataClass.getDeclaredField(fieldConfig.getFieldName());
 			} catch (Exception e) {
-				throw new IllegalArgumentException("Could not configure field with name '" + fieldConfig.getFieldName()
+				throw SqlExceptionUtil.create("Could not configure field with name '" + fieldConfig.getFieldName()
 						+ "' for " + dataClass, e);
 			}
 			FieldType fieldType = new FieldType(databaseType, tableName, field, fieldConfig);
 			fieldTypes.add(fieldType);
 		}
 		if (fieldTypes.size() == 0) {
-			throw new IllegalArgumentException("No fields have a " + DatabaseField.class + " annotation in "
-					+ dataClass);
+			throw new SQLException("No fields were configured for class " + dataClass);
 		}
 		return fieldTypes.toArray(new FieldType[fieldTypes.size()]);
 	}
