@@ -184,7 +184,7 @@ The following is the example implementation class:
 /** JDBC implementation of the AccountDao interface. */
 public class AccountDaoImpl extends BaseDaoImpl<Account,String>
  implements AccountDao @{
-    public AccountDaoImpl(ConnectionSource connectionSource) @{
+    public AccountDaoImpl(ConnectionSource connectionSource) throws SQLException @{
         super(connectionSource, Account.class);
     @}
 @}
@@ -767,7 +767,7 @@ Here's the example implementation of this interface.
 /** JDBC implementation of the AccountDao interface. */
 public class AccountDaoImpl extends BaseDaoImpl<Account, String>
   implements AccountDao @{
-    public AccountDaoImpl(ConnectionSource connectionSource) @{
+    public AccountDaoImpl(ConnectionSource connectionSource) throws SQLException @{
         super(connectionSource, Account.class);
     @}
 @}
@@ -1889,7 +1889,7 @@ Jim was one of the Java gurus at a previous company.  Thanks much for his JDBC c
 
 @item Nelson Erb
 
-Nelson is our self-appointed documentation and testing "intern".  He did a great job summarizing sections of this document
+Nelson is our self-appointed documentation and testing volunteer.  He did a great job summarizing sections of this document
 so we could create a better 'Getting Started' section.  He will also be working on tests. 
 
 @item Robert Adamsky
