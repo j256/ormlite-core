@@ -160,7 +160,7 @@ public abstract class StatementBuilder<T, ID> {
 		UPDATE,
 		/** SQL statement in the form of DELETE FROM table ... */
 		DELETE,
-		/** SQL statement in the form of CREATE TABLE or something */
+		/** SQL statement in the form of CREATE TABLE, ALTER TABLE, or something returning the number of rows affected */
 		EXECUTE,
 		// end
 		;
