@@ -23,6 +23,21 @@
 	- maybe a check="> 10" type of addition to DatabaseField so we can add a check constraint
 	- foreign key constraint can be in addition to (or required for) the foreign=true
 
+- from nelson: how to better handle the foreign key relationships.  How can we build the JOIN query.
+	- i was hoping to avoid the join complexity/dance that hibernate does.
+	- we could configure the DAO on the foreign field itself.  Maybe something like:
+		accountDao.setForeignDao(orderDao);
+	- one Dao would call the other when it needs to refresh a foreign field
+	- still making two queries but doing it automagically
+
+- from nelson: can ORMLite help out with mapping many-to-many relationships?
+	- could it help with building the join table?
+	- Accounts are associated with many Customers, Customers may have more than one Account
+	- three table: account, customer, account_customer
+	- account_customer has a column for account_id and customer_id to handle this relationship
+	- how can ORMLite assist in the loading of a Java list of Customers on an Account object
+	- at least a List of customer ids?
+
 -----------------------------------------------------------------------------------------------------------------------------------
 
 - think about proxy objects for foreign objects that can throw if they do anything but getId()
