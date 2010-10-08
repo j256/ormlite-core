@@ -1,3 +1,7 @@
+4.1: 10/8/2010
+	* CORE: removed some old deprecated methods.
+	* JDBC: fixed problem where connections were not being closed in the DataSource wrapper.  Fixes bug #3083799.
+
 4.0: 10/3/2010
 	* CORE: BaseDaoImpl now knows how to self-initialize if constructed with the ConnectionSource.
 	* CORE: Removed most external usage of the DatabaseType since the ConnectionSource now provides it.
