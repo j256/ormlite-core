@@ -3,7 +3,7 @@
 # Release script for ORMLite
 #
 
-LOCAL_DIR="$HOME/svn/local"
+LOCAL_DIR="$HOME/svn/local/ormlite"
 CORE_DIR=$LOCAL_DIR/ormlite-core
 JDBC_DIR=$LOCAL_DIR/ormlite-jdbc
 ANDROID_DIR=$LOCAL_DIR/ormlite-android
