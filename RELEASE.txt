@@ -16,18 +16,25 @@ To release ORMLite:
 
 3) Add section to ~/svn/local/ormlite-core/src/main/javadoc/doc-files/changelog.txt.  Commit it.
 
-4) Add any upgrade notes to ormlite.texi about how to go from version X.X to Y.Y, if necessary
+4) Add any upgrade notes to ormlite.texi about how to go from version X.X to Y.Y, if necessary.
 
-5) Run the release.sh script in -core
+5) Update the version in the ormlite.texi, build/install the docs, commit them.
 
-	cd $HOME/svn/local/ormlite-core
+	cd $HOME/svn/local/ormlite/ormlite-core/src/main/doc
+	make install
+	cd ..
+	svn commit -m 'X.X docs' 
+
+6) Run the release.sh script in -core
+
+	cd $HOME/svn/local/ormlite/ormlite-core
 	sh release.sh
 
 	NOTE: if you need to, mvn -P st release:rollback will go back to the starting pom.xml 
 
-6) Login to Sontype:    https://oss.sonatype.org/   (graywatson)
+7) Login to Sontype:    https://oss.sonatype.org/   (graywatson)
 
-7) Close and release the release:
+8) Close and release the release:
 
 	- Click on 'Staging Repositories' from left nav
 	- Make sure our release is there, is labeled as 'open'.
@@ -36,7 +43,7 @@ To release ORMLite:
 	- Check off the now closed release.
 	- Click on 'Release'.  Description: X.X release
 
-8) Check to make sure it has been released:
+9) Check to make sure it has been released:
 	
 	- Click on 'Repositories' from left nav
 	- select Releases (not-bold) -> com -> j256 -> ormlite
@@ -46,34 +53,34 @@ To release ORMLite:
 	JDBC:     mvn -P st release:perform -DconnectionUrl=scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-jdbc/tags/ormlite-jdbc-X.X
 	Android:  mvn -P st release:perform -DconnectionUrl=scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-android/tags/ormlite-android-X.X
 
-9) Go to SF and set the default download to the newest jar:
+10) Go to SF and set the default download to the newest jar:
 
 	https://sourceforge.net/project/admin/explorer.php?group_id=297653
 
-10) Create a sf shell.  Explode the javadocs with the newest release:
+11) Create a sf shell.  Explode the javadocs with the newest release:
 
 	create_sf_shell							(script)
 	sh explode_javadocs.sh					(enter version numbers)
 
-11) Possibly trim the older releases in the release directory.  Try to leave last major release and couple minors.
+12) Possibly trim the older releases in the release directory.  Try to leave last major release and couple minors.
 
 	cd ~/frs/releases/com/j256/ormlite
 	rm -rf 1.11 1.12
 
-12) Run  shutdown  on the sf shell
+13) Run  shutdown  on the sf shell
 
-13) Add a News section to SF with the svn log highlights and subject: released version X.X
+14) Add a News section to SF with the svn log highlights and subject: released version X.X
 
-14) Possibly publish to announcements forum if the release needs more information.
+15) Possibly publish to announcements forum if the release needs more information.
 
-15) Send mail to users and developers mailing lists about the release:
+16) Send mail to users and developers mailing lists about the release:
 
 	- released version X.X
 	- show changelog
 	- tell them where they can get it
 
-16) Change the pom.xml ormlite-version to X.X-SNAPSHOT in ormlitetest
+17) Change the pom.xml ormlite-version to X.X-SNAPSHOT in ormlitetest
 
-17) Check in new jars into the Android example projects
+18) Check in new jars into the Android example projects
 
-18) Watch to make sure the central repository was updated.  http://repo1.maven.org/maven2/com/j256/ormlite/
+19) Watch to make sure the central repository was updated.  http://repo1.maven.org/maven2/com/j256/ormlite/
