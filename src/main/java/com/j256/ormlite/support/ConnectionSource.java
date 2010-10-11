@@ -30,12 +30,25 @@ public interface ConnectionSource {
 	public void releaseConnection(DatabaseConnection connection) throws SQLException;
 
 	/**
+	 * Save this connection as part of a transaction. Between this call and the
+	 * {@link #clearTransactionConnection(DatabaseConnection)}, all connections returned by
+	 * {@link #getReadOnlyConnection()} and {@link #getReadWriteConnection()} should return this connection since all
+	 * operations within a transaction must operate on the same connection.
+	 */
+	public void saveTransactionConnection(DatabaseConnection connection) throws SQLException;
+
+	/**
+	 * Clear the saved transaction connection. New transactions will be returned and released.
+	 */
+	public void clearTransactionConnection(DatabaseConnection connection) throws SQLException;
+
+	/**
 	 * Close any outstanding database connections.
 	 */
 	public void close() throws SQLException;
 
 	/**
-	 * Return the DatabaseTypre associated with this connection. 
+	 * Return the DatabaseTypre associated with this connection.
 	 */
 	public DatabaseType getDatabaseType();
 }

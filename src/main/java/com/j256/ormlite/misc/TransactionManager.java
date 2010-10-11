@@ -5,15 +5,13 @@ import java.sql.Savepoint;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.sql.DataSource;
-
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 
 /**
- * Provides basic transaction support for a particular {@link DataSource}.
+ * Provides basic transaction support for a {@link ConnectionSource}.
  * 
  * <p>
  * <b>NOTE:</b> For transactions to work, the database being used must support the functionality.
@@ -111,6 +109,7 @@ public class TransactionManager {
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		boolean autoCommitAtStart = false;
 		try {
+			connectionSource.saveTransactionConnection(connection);
 			if (connection.isAutoCommitSupported()) {
 				autoCommitAtStart = connection.getAutoCommit();
 				if (autoCommitAtStart) {
@@ -142,6 +141,7 @@ public class TransactionManager {
 				connection.setAutoCommit(true);
 				logger.debug("restored auto-commit to true");
 			}
+			connectionSource.clearTransactionConnection(connection);
 		}
 	}
 

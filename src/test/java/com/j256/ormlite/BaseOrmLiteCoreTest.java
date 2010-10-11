@@ -75,6 +75,10 @@ public abstract class BaseOrmLiteCoreTest {
 		public void setDatabaseConnection(DatabaseConnection databaseConnection) {
 			this.databaseConnection = databaseConnection;
 		}
+		public void saveTransactionConnection(DatabaseConnection connection) throws SQLException {
+		}
+		public void clearTransactionConnection(DatabaseConnection connection) throws SQLException {
+		}
 	}
 
 	protected class LimitAfterSelectDatabaseType extends StubDatabaseType {
