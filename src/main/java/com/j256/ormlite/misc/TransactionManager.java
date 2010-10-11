@@ -142,6 +142,7 @@ public class TransactionManager {
 				logger.debug("restored auto-commit to true");
 			}
 			connectionSource.clearTransactionConnection(connection);
+			connectionSource.releaseConnection(connection);
 		}
 	}
 

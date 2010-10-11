@@ -13,11 +13,11 @@ import java.util.concurrent.Callable;
 
 import org.junit.Test;
 
-import com.j256.ormlite.stmt.query.BaseComparisonTest;
+import com.j256.ormlite.BaseOrmLiteCoreTest;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 
-public class TransactionManagerTest extends BaseComparisonTest {
+public class TransactionManagerTest extends BaseOrmLiteCoreTest {
 
 	@Test
 	public void testTransactionManager() throws Exception {
@@ -29,6 +29,9 @@ public class TransactionManagerTest extends BaseComparisonTest {
 		expect(conn.setSavePoint(isA(String.class))).andReturn(savePoint);
 		conn.commit(savePoint);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
+		connectionSource.saveTransactionConnection(conn);
+		connectionSource.clearTransactionConnection(conn);
+		connectionSource.releaseConnection(conn);
 		TransactionManager tm = new TransactionManager(connectionSource);
 		replay(connectionSource, conn, savePoint);
 		tm.callInTransaction(new Callable<Void>() {
@@ -47,6 +50,9 @@ public class TransactionManagerTest extends BaseComparisonTest {
 		expect(conn.setSavePoint(isA(String.class))).andReturn(null);
 		conn.commit(null);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
+		connectionSource.saveTransactionConnection(conn);
+		connectionSource.clearTransactionConnection(conn);
+		connectionSource.releaseConnection(conn);
 		TransactionManager tm = new TransactionManager(connectionSource);
 		replay(connectionSource, conn);
 		tm.callInTransaction(new Callable<Void>() {
@@ -67,6 +73,9 @@ public class TransactionManagerTest extends BaseComparisonTest {
 		expect(conn.setSavePoint(isA(String.class))).andReturn(savePoint);
 		conn.rollback(savePoint);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
+		connectionSource.saveTransactionConnection(conn);
+		connectionSource.clearTransactionConnection(conn);
+		connectionSource.releaseConnection(conn);
 		TransactionManager tm = new TransactionManager(connectionSource);
 		replay(connectionSource, conn, savePoint);
 		try {
@@ -90,6 +99,9 @@ public class TransactionManagerTest extends BaseComparisonTest {
 		expect(conn.setSavePoint(isA(String.class))).andReturn(null);
 		conn.rollback(null);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
+		connectionSource.saveTransactionConnection(conn);
+		connectionSource.clearTransactionConnection(conn);
+		connectionSource.releaseConnection(conn);
 		TransactionManager tm = new TransactionManager(connectionSource);
 		replay(connectionSource, conn);
 		try {
@@ -115,6 +127,9 @@ public class TransactionManagerTest extends BaseComparisonTest {
 		expect(conn.setSavePoint(isA(String.class))).andReturn(savePoint);
 		conn.rollback(savePoint);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
+		connectionSource.saveTransactionConnection(conn);
+		connectionSource.clearTransactionConnection(conn);
+		connectionSource.releaseConnection(conn);
 		TransactionManager tm = new TransactionManager(connectionSource);
 		replay(connectionSource, conn, savePoint);
 		try {
@@ -141,6 +156,9 @@ public class TransactionManagerTest extends BaseComparisonTest {
 		expect(conn.setSavePoint(isA(String.class))).andReturn(savePoint);
 		conn.commit(savePoint);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
+		connectionSource.saveTransactionConnection(conn);
+		connectionSource.clearTransactionConnection(conn);
+		connectionSource.releaseConnection(conn);
 		TransactionManager tm = new TransactionManager(connectionSource);
 		replay(connectionSource, conn, savePoint);
 		tm.callInTransaction(new Callable<Void>() {
@@ -164,6 +182,9 @@ public class TransactionManagerTest extends BaseComparisonTest {
 		conn.commit(savePoint);
 		conn.setAutoCommit(true);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
+		connectionSource.saveTransactionConnection(conn);
+		connectionSource.clearTransactionConnection(conn);
+		connectionSource.releaseConnection(conn);
 		TransactionManager tm = new TransactionManager(connectionSource);
 		replay(connectionSource, conn, savePoint);
 		tm.callInTransaction(new Callable<Void>() {
