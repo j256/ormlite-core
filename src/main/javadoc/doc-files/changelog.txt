@@ -1,10 +1,19 @@
+4.2: 10/13/2010
+	* CORE: Improved messaging around unknown columns.
+	* CORE: Added a save and clearTransactionConnection to the TransactionManager.  Fixes bug #3085345.
+	* CORE: Added a missing releaseConnection call to the transactionManager.  Fixes bug #3085344.
+	* JDBC: Added new reentrant, pooled connection manager JdbcPooledConnectionSource.  Needs to be reviewed!!
+	* JDBC: Added support for transactions to DataSourceConnectionSource and pooled connection sources.
+	* ANDROID: none
+
 4.1: 10/8/2010
 	* CORE: removed some old deprecated methods.
 	* JDBC: fixed problem where connections were not being closed in the DataSource wrapper.  Fixes bug #3083799.
+	* ANDROID: none
 
 4.0: 10/3/2010
-	* CORE: BaseDaoImpl now knows how to self-initialize if constructed with the ConnectionSource.
 	* CORE: Removed most external usage of the DatabaseType since the ConnectionSource now provides it.
+	* CORE: BaseDaoImpl now knows how to self-initialize if constructed with the ConnectionSource.
 	* CORE: Dao.queryBuilder() now returns a QueryBuilder.  You call QueryBuilder.prepare() to get a PreparedQuery.
 	* CORE: Added Dao.updateBuilder() and deleteBuilder() for constructing custom UPDATE and DELETE statements.
 	* CORE: Tightened up some more classes to remove unnecessary allocations.
