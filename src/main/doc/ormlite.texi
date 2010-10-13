@@ -21,7 +21,7 @@
 @c ----------------------------------------------------------------
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.1
+@set ormlite_version 4.2
 @set ormlite_date October 2010
 @set package ORMLite
 @c ----------------------------------------------------------------
@@ -797,7 +797,7 @@ To use the database and the DAO objects, you will need to configure what JDBC ca
 @code{javax.sql.DataSource} class).  The @code{DataSource} is a factory for connections to the physical SQL
 database.  Since @value{package} also supports non-JDBC connections, we use a subset of the @code{DataSource}
 methods in the @code{ConnectionSource} interface so we can support non-JDBC database handlers.  Here is a code example
-that creates a simple connection source.
+that creates a simple, single-connection source.
 
 @cindex JdbcConnectionSource
 @cindex connection source, simple
@@ -807,9 +807,27 @@ ConnectionSource connectionSource =
   new JdbcConnectionSource("jdbc:h2:mem:account");
 @end example
 
-@cindex pooled connections
+@cindex pooled connection source
 @cindex connection pooling
-There are many other data sources that can be used instead, including pooled connections which will create new
+One of the more recent additions (10/2010) to the package is the @code{JdbcPooledConnectionSource}.  It is a relatively
+simple implementation of a pooled connection source.  As database connections are released, instead of being closed they
+are added to an internal list so they can be reallocated at a later time.  @code{JdbcPooledConnectionSource} is also
+synchronized and can be used my multiple threads.  It has settings for the maximum number of free connections before
+they are closed as well as a maximum age before a connection is closed.
+
+@example
+// single connection source example
+JdbcPooledConnectionSource connectionSource =
+  new JdbcPooledConnectionSource("jdbc:h2:mem:account");
+// only keep the connections open for 5 minutes
+connectionSource.setMaxConnectionAgeMillis(5 * 60 * 1000);
+@end example
+
+@cindex other data sources
+@cindex external data sources
+@cindex use with external data source
+@cindex DataSourceConnectionSource
+There are many other, external data sources that can be used instead, including pooled connections which will create new
 connections on demand and re-use existing dormant connections. You can instantiate your own directly and wrap it in
 the @code{DataSourceConnectionSource} class which delegates to it.  Then you set that on the DAOs directly.
 
@@ -1261,6 +1279,10 @@ CREATE TABLE `orders`
    (`id` INTEGER AUTO_INCREMENT , `account_id` INTEGER,
     PRIMARY KEY (`id`)); 
 @end example
+
+@emph{Notice} that the name of the field is @emph{not} @code{account} but is instead @code{account_id}.  You will need to
+use this field name if you are querying for it.  You can set the column name using the @code{columnName} field in the
+@code{DatabaseField} annotation. @xref{Local Annotations}.
 
 @cindex refreshing foreign objects
 @cindex foreign object refreshing

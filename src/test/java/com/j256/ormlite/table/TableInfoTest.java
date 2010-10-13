@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -85,6 +86,17 @@ public class TableInfoTest extends BaseOrmLiteCoreTest {
 		assertNotNull(foo);
 	}
 
+	@Test
+	public void testUnknownForeignField() throws Exception {
+		TableInfo<Foreign> tableInfo = new TableInfo<Foreign>(databaseType, Foreign.class);
+		try {
+			tableInfo.getFieldTypeByColumnName("foo");
+			fail("expected exception");
+		} catch (IllegalArgumentException e) {
+			assertTrue(e.getMessage().contains("'" + Foreign.FOREIGN_FIELD_NAME + "'"));
+			assertTrue(e.getMessage().contains("'foo'"));
+		}
+	}
 	/* ================================================================================================================ */
 
 	protected static class NoFieldAnnotations {
@@ -123,6 +135,15 @@ public class TableInfoTest extends BaseOrmLiteCoreTest {
 		@DatabaseField(generatedId = true)
 		public int id;
 		public JustGeneratedId() {
+		}
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class Foreign {
+		public static final String FOREIGN_FIELD_NAME = "fooblah";
+		@DatabaseField(foreign = true, columnName = FOREIGN_FIELD_NAME)
+		public Foo foo;
+		public Foreign() {
 		}
 	}
 }
