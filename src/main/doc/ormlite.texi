@@ -811,9 +811,10 @@ ConnectionSource connectionSource =
 @cindex connection pooling
 One of the more recent additions (10/2010) to the package is the @code{JdbcPooledConnectionSource}.  It is a relatively
 simple implementation of a pooled connection source.  As database connections are released, instead of being closed they
-are added to an internal list so they can be reallocated at a later time.  @code{JdbcPooledConnectionSource} is also
-synchronized and can be used my multiple threads.  It has settings for the maximum number of free connections before
-they are closed as well as a maximum age before a connection is closed.
+are added to an internal list so they can be reallocated at a later time.  New connections are created on demand only if
+there are no dormant connections that can be reused.  @code{JdbcPooledConnectionSource} is also synchronized and can be
+used my multiple threads.  It has settings for the maximum number of free connections before they are closed as well as
+a maximum age before a connection is closed.
 
 @example
 // single connection source example
@@ -827,9 +828,9 @@ connectionSource.setMaxConnectionAgeMillis(5 * 60 * 1000);
 @cindex external data sources
 @cindex use with external data source
 @cindex DataSourceConnectionSource
-There are many other, external data sources that can be used instead, including pooled connections which will create new
-connections on demand and re-use existing dormant connections. You can instantiate your own directly and wrap it in
-the @code{DataSourceConnectionSource} class which delegates to it.  Then you set that on the DAOs directly.
+There are many other, external data sources that can be used instead, including more robust and probably higher-performance
+pooled connection managers. You can instantiate your own directly and wrap it in the @code{DataSourceConnectionSource} class
+which delegates to it.  Then you set that on the DAOs directly.
 
 @cindex BasicDataSource
 @cindex DataSourceConnectionSource
@@ -840,8 +841,6 @@ dataSource.setUrl("jdbc:h2:mem:account");
 // we wrap it in the DataSourceConnectionSource
 ConnectionSource connectionSource = 
   new DataSourceConnectionSource(dataSource);
-Dao<Account, String> accountDao =
-  BaseDaoImpl.createDao(connectionSource, Account.class);
 @end example
 
 @cindex close data source
@@ -850,23 +849,18 @@ When you are done with your @code{ConnectionSource}, you will want to call a @co
 underlying connections.  Something like the following pattern is recommended.
 
 @example
-JdbcConnectionSource connectionSource = null;
+JdbcConnectionSource connectionSource =
+    new JdbcPooledConnectionSource("jdbc:h2:mem:account");
 try @{
-    connectionSource = new JdbcConnectionSource();
-    connectionSource.setURL("jdbc:h2:mem:account");
-    connectionSource.setUsername("billy");
-    connectionSource.setPassword("_secret");
     // work with the data-source and DAOs
     @dots{}
 @} finally @{
-    if (connectionSource != null) @{
-        connectionSource.close();
-    @}
+    connectionSource.close();
 @}
 @end example
 
 Unfortunately, the @code{DataSource} interface does not have a close method so you will have to close the @code{DataSource}
-by hand -- the @code{close()} method on the @code{DataSourceConnectionSource} does nothing.
+by hand -- the @code{close()} method on the @code{DataSourceConnectionSource} does @emph{nothing}.
 
 @c ----------------------------------------------------------------
 @node Database Type, Complete Wiring, Connection Source, Using
