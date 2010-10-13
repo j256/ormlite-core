@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on October, 8 2010 by texi2html 1.70 -->
+<!-- Created on October, 13 2010 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -719,7 +719,7 @@ See section <a href="ormlite_5.html#SEC23">Using With Android</a>.
 <code>javax.sql.DataSource</code> class).  The <code>DataSource</code> is a factory for connections to the physical SQL
 database.  Since ORMLite also supports non-JDBC connections, we use a subset of the <code>DataSource</code>
 methods in the <code>ConnectionSource</code> interface so we can support non-JDBC database handlers.  Here is a code example
-that creates a simple connection source.
+that creates a simple, single-connection source.
 
 </p><a name="IDX89"></a>
 <a name="IDX90"></a>
@@ -729,42 +729,52 @@ ConnectionSource connectionSource =
 </pre></td></tr></table>
 <a name="IDX91"></a>
 <a name="IDX92"></a>
-<p>There are many other data sources that can be used instead, including pooled connections which will create new
-connections on demand and re-use existing dormant connections. You can instantiate your own directly and wrap it in
-the <code>DataSourceConnectionSource</code> class which delegates to it.  Then you set that on the DAOs directly.
+<p>One of the more recent additions (10/2010) to the package is the <code>JdbcPooledConnectionSource</code>.  It is a relatively
+simple implementation of a pooled connection source.  As database connections are released, instead of being closed they
+are added to an internal list so they can be reallocated at a later time.  New connections are created on demand only if
+there are no dormant connections that can be reused.  <code>JdbcPooledConnectionSource</code> is also synchronized and can be
+used my multiple threads.  It has settings for the maximum number of free connections before they are closed as well as
+a maximum age before a connection is closed.
 
-</p><a name="IDX93"></a>
+</p><table><tr><td>&nbsp;</td><td><pre class="example">// single connection source example
+JdbcPooledConnectionSource connectionSource =
+  new JdbcPooledConnectionSource(&quot;jdbc:h2:mem:account&quot;);
+// only keep the connections open for 5 minutes
+connectionSource.setMaxConnectionAgeMillis(5 * 60 * 1000);
+</pre></td></tr></table>
+<a name="IDX93"></a>
 <a name="IDX94"></a>
+<a name="IDX95"></a>
+<a name="IDX96"></a>
+<p>There are many other, external data sources that can be used instead, including more robust and probably higher-performance
+pooled connection managers. You can instantiate your own directly and wrap it in the <code>DataSourceConnectionSource</code> class
+which delegates to it.  Then you set that on the DAOs directly.
+
+</p><a name="IDX97"></a>
+<a name="IDX98"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">// basic Apache data source
 BasicDataSource dataSource = new BasicDataSource();
 dataSource.setUrl(&quot;jdbc:h2:mem:account&quot;);
 // we wrap it in the DataSourceConnectionSource
 ConnectionSource connectionSource = 
   new DataSourceConnectionSource(dataSource);
-Dao&lt;Account, String&gt; accountDao =
-  BaseDaoImpl.createDao(connectionSource, Account.class);
 </pre></td></tr></table>
-<a name="IDX95"></a>
-<a name="IDX96"></a>
+<a name="IDX99"></a>
+<a name="IDX100"></a>
 <p>When you are done with your <code>ConnectionSource</code>, you will want to call a <code>close()</code> method to close any
 underlying connections.  Something like the following pattern is recommended.
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">JdbcConnectionSource connectionSource = null;
+</p><table><tr><td>&nbsp;</td><td><pre class="example">JdbcConnectionSource connectionSource =
+    new JdbcPooledConnectionSource(&quot;jdbc:h2:mem:account&quot;);
 try {
-    connectionSource = new JdbcConnectionSource();
-    connectionSource.setURL(&quot;jdbc:h2:mem:account&quot;);
-    connectionSource.setUsername(&quot;billy&quot;);
-    connectionSource.setPassword(&quot;_secret&quot;);
     // work with the data-source and DAOs
     &hellip;
 } finally {
-    if (connectionSource != null) {
-        connectionSource.close();
-    }
+    connectionSource.close();
 }
 </pre></td></tr></table>
 <p>Unfortunately, the <code>DataSource</code> interface does not have a close method so you will have to close the <code>DataSource</code>
-by hand - the <code>close()</code> method on the <code>DataSourceConnectionSource</code> does nothing.
+by hand - the <code>close()</code> method on the <code>DataSourceConnectionSource</code> does <em>nothing</em>.
 
 </p><hr size="6">
 <a name="NOD15"></a>
@@ -851,7 +861,7 @@ if (accountDao.create(account) != 1) {
 // destroy the data source which should close underlying connections
 connectionSource.destroy();
 </pre></td></tr></table>
-<a name="IDX97"></a>
+<a name="IDX101"></a>
 <p>For more examples, see the <code>com.j256.ormlite.examples</code> package test classes in the Java -jdbc sources jar.
 
 </p><hr size="6">
@@ -880,10 +890,10 @@ connectionSource.destroy();
 
 </p><dl compact="compact">
 <dd>
-<a name="IDX98"></a>
-<a name="IDX99"></a>
-<a name="IDX100"></a>
-<a name="IDX101"></a>
+<a name="IDX102"></a>
+<a name="IDX103"></a>
+<a name="IDX104"></a>
+<a name="IDX105"></a>
 </dd>
 <dt> create and persist an object to the database</dt>
 <dd>
@@ -896,7 +906,7 @@ if (accountDao.create(account) != 1) {
   // error handling &hellip; 
 }
 </pre></td></tr></table>
-<a name="IDX102"></a>
+<a name="IDX106"></a>
 </dd>
 <dt> query for it's id column </dt>
 <dd>
@@ -907,7 +917,7 @@ if (account == null) {
   account not found handling &hellip; 
 }
 </pre></td></tr></table>
-<a name="IDX103"></a>
+<a name="IDX107"></a>
 </dd>
 <dt> update the database row associated with the object</dt>
 <dd>
@@ -920,7 +930,7 @@ if (accountDao.update(account) != 1) {
   // error handling &hellip; 
 }
 </pre></td></tr></table>
-<a name="IDX104"></a>
+<a name="IDX108"></a>
 </dd>
 <dt> refreshing our object if the database has changed</dt>
 <dd>
@@ -932,7 +942,7 @@ if (accountDao.refresh(account) != 1) {
   // error handling &hellip; 
 }
 </pre></td></tr></table>
-<a name="IDX105"></a>
+<a name="IDX109"></a>
 </dd>
 <dt> delete the account from the database</dt>
 <dd>
@@ -944,8 +954,8 @@ if (accountDao.delete(account) != 1) {
   // error handling &hellip; 
 }
 </pre></td></tr></table>
-<a name="IDX106"></a>
-<a name="IDX107"></a>
+<a name="IDX110"></a>
+<a name="IDX111"></a>
 </dd>
 <dt> iterate through all of the rows in a table:</dt>
 <dd>
@@ -956,7 +966,7 @@ for (Account account : accountDao) {
     System.out.println(account.getName());
 }
 </pre></td></tr></table>
-<a name="IDX108"></a>
+<a name="IDX112"></a>
 <p><em>NOTE:</em> you must page through <em>all</em> items for the iterator to close the underlying SQL object.   If you don't
 go all of the way, the garbage collector will close the SQL statement some time later which is considered bad form.
 
@@ -979,7 +989,7 @@ go all of the way, the garbage collector will close the SQL statement some time 
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>October, 8 2010</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>October, 13 2010</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 
