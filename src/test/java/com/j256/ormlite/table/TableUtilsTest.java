@@ -289,6 +289,7 @@ public class TableUtilsTest extends BaseOrmLiteCoreTest {
 		}
 		expect(connectionSource.getDatabaseType()).andReturn(databaseType);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
+		connectionSource.releaseConnection(conn);
 		replay(connectionSource, conn, stmt);
 		// we have to store the value since we count the number of rows in the rowC while call() is happening
 		assertEquals((Integer) rowC.get(), callable.call());
