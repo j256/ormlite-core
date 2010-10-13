@@ -59,7 +59,7 @@ echo ""
 echo -n "Enter the GPG pass-phrase: "
 read gpgpass
 
-GPG_ARGS="-Darguments=-Dgpg.passphrase=$gpgpass"
+GPG_ARGS="-Darguments=-Dgpg.passphrase=$gpgpass -Dgpg.passphrase=$gpgpass"
 
 tmp="/tmp/$0.$$.t"
 touch $tmp 
