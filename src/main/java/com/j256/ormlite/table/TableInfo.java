@@ -93,14 +93,27 @@ public class TableInfo<T> {
 	/**
 	 * Return the {@link FieldType} associated with the columnName.
 	 */
-	public FieldType getFieldTypeByName(String columnName) {
+	public FieldType getFieldTypeByColumnName(String columnName) {
 		if (fieldNameMap == null) {
+			// build our alias map if we need it
 			fieldNameMap = new HashMap<String, FieldType>();
 			for (FieldType fieldType : fieldTypes) {
 				fieldNameMap.put(fieldType.getDbColumnName(), fieldType);
 			}
 		}
-		return fieldNameMap.get(columnName);
+		FieldType fieldType = fieldNameMap.get(columnName);
+		// if column name is not found
+		if (fieldType == null) {
+			// look to see if someone is using the field-name instead of column-name
+			for (FieldType fieldType2 : fieldTypes) {
+				if (fieldType2.getFieldName().equals(columnName)) {
+					throw new IllegalArgumentException("You should use columnName '" + fieldType2.getDbColumnName()
+							+ "' for table " + tableName + " instead of fieldName " + columnName);
+				}
+			}
+			throw new IllegalArgumentException("Unknown column name '" + columnName + "' in table " + tableName);
+		}
+		return fieldType;
 	}
 
 	/**

@@ -336,13 +336,7 @@ public class Where {
 	}
 
 	private FieldType findColumnFieldType(String columnName) throws SQLException {
-		FieldType fieldType = tableInfo.getFieldTypeByName(columnName);
-		if (fieldType == null) {
-			throw new IllegalArgumentException("Unknown column name '" + columnName + "' in table "
-					+ tableInfo.getTableName());
-		} else {
-			return fieldType;
-		}
+		return tableInfo.getFieldTypeByColumnName(columnName);
 	}
 
 	/**

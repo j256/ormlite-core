@@ -165,7 +165,7 @@ public class LocalLog implements Log {
 	public enum Level {
 		/** for tracing messages that are very verbose */
 		TRACE(1),
-		/** messages suitable for debugging purposes */ 
+		/** messages suitable for debugging purposes */
 		DEBUG(2),
 		/** information messages */
 		INFO(3),

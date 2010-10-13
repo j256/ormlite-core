@@ -195,7 +195,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			} else {
 				sb.append(',');
 			}
-			FieldType fieldType = tableInfo.getFieldTypeByName(columnName);
+			FieldType fieldType = tableInfo.getFieldTypeByColumnName(columnName);
 			appendFieldColumnName(sb, fieldType, fieldTypeList);
 			if (fieldType == idField) {
 				hasId = true;

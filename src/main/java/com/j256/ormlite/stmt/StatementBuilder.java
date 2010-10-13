@@ -113,7 +113,7 @@ public abstract class StatementBuilder<T, ID> {
 			where.appendSql(databaseType, sb, selectArgList);
 		}
 		for (SelectArg selectArg : selectArgList) {
-			FieldType fieldType = tableInfo.getFieldTypeByName(selectArg.getColumnName());
+			FieldType fieldType = tableInfo.getFieldTypeByColumnName(selectArg.getColumnName());
 			argFieldTypeList.add(fieldType);
 		}
 		appendStatementEnd(sb);
@@ -140,12 +140,7 @@ public abstract class StatementBuilder<T, ID> {
 	 *             if the column name is not valid.
 	 */
 	protected FieldType verifyColumnName(String columnName) {
-		FieldType fieldType = tableInfo.getFieldTypeByName(columnName);
-		if (fieldType == null) {
-			throw new IllegalArgumentException("Unknown column-name '" + columnName + "'");
-		} else {
-			return fieldType;
-		}
+		return tableInfo.getFieldTypeByColumnName(columnName);
 	}
 
 	/**

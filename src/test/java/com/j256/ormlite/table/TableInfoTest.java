@@ -47,7 +47,7 @@ public class TableInfoTest extends BaseOrmLiteCoreTest {
 		assertEquals(COLUMN_NAME, tableInfo.getIdField().getDbColumnName());
 		assertEquals(1, tableInfo.getFieldTypes().length);
 		assertSame(tableInfo.getIdField(), tableInfo.getFieldTypes()[0]);
-		assertEquals(COLUMN_NAME, tableInfo.getFieldTypeByName(COLUMN_NAME).getDbColumnName());
+		assertEquals(COLUMN_NAME, tableInfo.getFieldTypeByColumnName(COLUMN_NAME).getDbColumnName());
 	}
 
 	@Test
