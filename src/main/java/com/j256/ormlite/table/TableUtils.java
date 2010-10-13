@@ -203,8 +203,17 @@ public class TableUtils {
 		TableInfo<T> tableInfo = new TableInfo<T>(databaseType, tableConfig);
 		logger.debug("dropping table '{}'", tableInfo.getTableName());
 		Collection<String> statements = dropTableStatements(databaseType, tableInfo);
-		int stmtC = 0;
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
+		try {
+			return doDropStatements(connection, statements, ignoreErrors);
+		} finally {
+			connectionSource.releaseConnection(connection);
+		}
+	}
+
+	private static int doDropStatements(DatabaseConnection connection, Collection<String> statements,
+			boolean ignoreErrors) throws SQLException {
+		int stmtC = 0;
 		for (String statement : statements) {
 			int rowC = 0;
 			CompiledStatement prepStmt = null;
@@ -292,8 +301,17 @@ public class TableUtils {
 		List<String> statements = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();
 		createTableStatements(databaseType, tableInfo, statements, queriesAfter);
-		int stmtC = 0;
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
+		try {
+			return doCreateStatements(connection, databaseType, statements, queriesAfter);
+		} finally {
+			connectionSource.releaseConnection(connection);
+		}
+	}
+
+	private static int doCreateStatements(DatabaseConnection connection, DatabaseType databaseType,
+			List<String> statements, List<String> queriesAfter) throws SQLException {
+		int stmtC = 0;
 		for (String statement : statements) {
 			int rowC;
 			CompiledStatement prepStmt = null;
