@@ -108,7 +108,7 @@ public class TableInfo<T> {
 			for (FieldType fieldType2 : fieldTypes) {
 				if (fieldType2.getFieldName().equals(columnName)) {
 					throw new IllegalArgumentException("You should use columnName '" + fieldType2.getDbColumnName()
-							+ "' for table " + tableName + " instead of fieldName " + columnName);
+							+ "' for table " + tableName + " instead of fieldName '" + columnName + "'");
 				}
 			}
 			throw new IllegalArgumentException("Unknown column name '" + columnName + "' in table " + tableName);

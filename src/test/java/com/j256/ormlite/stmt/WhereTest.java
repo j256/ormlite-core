@@ -1,6 +1,7 @@
 package com.j256.ormlite.stmt;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.SQLException;
@@ -18,7 +19,7 @@ import com.j256.ormlite.table.TableInfo;
 public class WhereTest extends BaseOrmLiteCoreTest {
 
 	private final static String COLUMN_NAME = "foo";
-	private final static String STRING_COLUMN_NAME = "string";
+	private final static String STRING_COLUMN_NAME = "stringie";
 
 	@Test
 	public void testToString() throws Exception {
@@ -67,6 +68,14 @@ public class WhereTest extends BaseOrmLiteCoreTest {
 		Where where = new Where(createTableInfo());
 		int val = 1;
 		where.eq("unknown-field", val);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testComparisonFieldNameNotColumnName() throws Exception {
+		Where where = new Where(createTableInfo());
+		assertNotNull(Foo.class.getDeclaredField("string"));
+		int val = 1;
+		where.eq("string", val);
 	}
 
 	@Test
