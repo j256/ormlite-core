@@ -21,7 +21,7 @@
 @c ----------------------------------------------------------------
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.2
+@set ormlite_version 4.3
 @set ormlite_date October 2010
 @set package ORMLite
 @c ----------------------------------------------------------------
@@ -140,7 +140,7 @@ manual.  @xref{Class Setup}.
 @example
 @@DatabaseTable(tableName = "accounts")
 public class Account @{
-
+    
     @@DatabaseField(id = true)
     private String name;
     @@DatabaseField
@@ -235,7 +235,7 @@ public class AccountApp @{
 
         // if you need to create the 'accounts' table make this call
         TableUtils.createTable(connectionSource, Account.class);
-@end example
+ @end example
 
 Once we have configured our database objects, we can use them to create an Account, persist it to the database, and query for it from
 the database by its ID:
@@ -276,6 +276,7 @@ continue on with the next section.  @xref{Using}.
 * Database Type::               Defining your database type.
 * Complete Wiring::             Tying all of the wiring together.
 * DAO Usage::                   Using the Database Access Objects.
+* Identity Columns::            How identity fields and columns work.
 @end menu
 
 @c ----------------------------------------------------------------
@@ -356,7 +357,8 @@ The @@DatabaseField annotation can have the following fields:
 
 @cindex column name
 @cindex name of database column
-@item columName
+@anchor{columnName}
+@item columnName
 
 String name of the column in the database that will hold this field. If not set then the field name, all lowercase, is used instead.
 
@@ -395,16 +397,18 @@ for this field on every object inserted into the database.
 
 Boolean whether the field is the id field or not. Default is false. Only one field can have this set in a class. Id fields
 uniquely identity a row.  If you don't have it set then you won't be able to use the query, update, refresh, and delete by
-ID methods. Only one of this, @code{generatedId}, and @code{generatedIdSequence} can be specified.
+ID methods. Only one of this, @code{generatedId}, and @code{generatedIdSequence} can be specified.  @xref{Id Column}.
 
 @cindex generated id
 @cindex auto-generated id
 @item generatedId
 
 Boolean whether the field is an auto-generated id field. Default is false.  Only one field can have this set in a class.
-This tells the database to auto-generate a corresponding id for every row inserted.  Some databases require sequences for
-generated ids in which case the sequence name will be auto-generated. To specify the name of the sequence use
-@code{generatedIdSequence}. Only one of this, @code{id}, and @code{generatedIdSequence} can be specified.
+This tells the database to auto-generate a corresponding id for every row inserted.  When an object with a generated-id
+is created using the @code{Dao.create()} method, the database will generate an id for the row which will be returned and
+set in the object by the create method.  Some databases require sequences for generated ids in which case the sequence
+name will be auto-generated. To specify the name of the sequence use @code{generatedIdSequence}. Only one of this,
+@code{id}, and @code{generatedIdSequence} can be specified.  @xref{GeneratedId Column}.
 
 @cindex generated id sequence
 @cindex database sequences
@@ -414,7 +418,7 @@ generated ids in which case the sequence name will be auto-generated. To specify
 String name of the sequence number to be used to generate this value.  Same as @code{generatedId} but you can specify the
 sequence name to use.  Default is none. Only one field can have this set in a class. This is only necessary for databases
 which require sequences for generated ids.  If you use generatedId instead then the code will auto-generate a sequence name.
-Only one of this, @code{id}, and @code{generatedId} can be specified.
+Only one of this, @code{id}, and @code{generatedId} can be specified.  @xref{GeneratedIdSequence Column}.
 
 @cindex foreign objects
 @cindex remote objects
@@ -455,6 +459,7 @@ public void setOrderCount(Integer orderCount) @{
 
 @cindex unknownEnumName
 @cindex enumerated name unknown
+@anchor{unknownEnumName}
 @item unknownEnumName
 
 If the field is a Java enumerated type then you can specify the name of a enumerated value which will be used if the
@@ -601,7 +606,7 @@ existence of either of these annotations to indicate that it is a foreign object
 @end table
 
 If the @code{@@Column} annotation is used on a field that has a unknown type then it is assumed to be a
-Serializable field and the object should implement @code{java.io.Serializable}.  @xref{Persisted Types}.
+Serializable field and the object should implement @code{java.io.Serializable}.  @xref{serializable}.
 
 @c ----------------------------------------------------------------
 @node No Arg Constructor, Persisted Types, Javax Persistence Annotations, Class Setup
@@ -711,6 +716,7 @@ Persisted as SQL type DOUBLE.
 
 @cindex Serializable
 @cindex persist objects
+@anchor{serializable}
 @item Serializable (DataType.SERIALIZABLE)
 
 Persisted as SQL type VARBINARY.  This is a special type that serializes an object as a sequence of bytes
@@ -730,7 +736,7 @@ incorrectly.
 
 @cindex unknownEnumName
 You can also also specify an @emph{unknownEnumName} name with the @code{@@DatabaseField} annotation which will be
-used if an unknown value is found in the database. @xref{Local Annotations}. 
+used if an unknown value is found in the database. @xref{unknownEnumName}. 
 
 @end table
 
@@ -903,7 +909,7 @@ JdbcConnectionSource connectionSource =
 AccountDaoImpl accountDao = new AccountDaoImpl(connectionSource);
 
 // if you need to create the 'accounts' table make this call
-TableUtils.createTable(databaseType, connectionSource, Account.class);
+TableUtils.createTable(connectionSource, Account.class);
 
 // create an instance of Account
 Account account = new Account("Jim Coakley");
@@ -923,7 +929,7 @@ connectionSource.destroy();
 For more examples, see the @code{com.j256.ormlite.examples} package test classes in the Java -jdbc sources jar.
 
 @c ----------------------------------------------------------------
-@node DAO Usage, Statement Builder, Complete Wiring, Using
+@node DAO Usage, Identity Columns, Complete Wiring, Using
 @section DAO Usage
 
 @cindex DAO usage
@@ -1022,7 +1028,127 @@ go all of the way, the garbage collector will close the SQL statement some time 
 @end table
 
 @c ----------------------------------------------------------------
-@node Statement Builder, QueryBuilder Basics, DAO Usage, Top
+@node Identity Columns, Id Column, DAO Usage, Using
+@section Identity Columns
+
+Database rows are identified by a particular column which is defined as the @emph{identity} column.  This can either be
+supplied by the user or auto-generated by the database.  Identity columns have unique values for every row in the table
+and they are required if you want to delete, refresh, or update a particular row using the DAO.  To configure a field as
+an identity field, you should use one (and only one) of the following three settings from @code{@@DatabaseField}:
+@code{id}, @code{generatedId}, or @code{generatedIdSequence}.
+
+@menu
+* Id Column::                        Using fields with id = true.
+* GeneratedId Column::               Using fields with generatedId = true.
+* GeneratedIdSequence Column::       Using fields with generatedIdSequence = ...
+@end menu
+
+@c ----------------------------------------------------------------
+@node Id Column, GeneratedId Column, Identity Columns, Identity Columns
+@subsection Fields With id
+
+@cindex identity field
+@cindex id column
+With our @code{Account} example class, the string @code{name} field has been marked with @code{id = true}.  This means
+that the @code{name} is the identity column for the object.  Each account stored in the database must have a unique
+value for the @code{name} field -- you cannot have two rows with the name "John Smith".
+
+@example
+public class Account @{
+    @@DatabaseField(id = true)
+    private String name;
+    @dots{}
+@}
+@end example
+
+When you use the DAO to lookup an account with a particular name, you will use the identity field to locate the
+@code{Account} object in the database:
+
+@example
+Account account = accountDao.queryForId("John Smith");
+if (account == null) @{
+    // the name "John Smith" does not match any rows
+@}
+@end example
+
+@cindex updateId
+@cindex change id value
+@cindex update identity of object
+If you need to change the value of an object's id field, you must use the @code{Dao.updateId()} method which takes the
+current object still with its @emph{old} id value and the new value.  @value{package} has to first locate the object
+by its old id and then update it with the new id.  @xref{updateId}.
+
+@c ----------------------------------------------------------------
+@node GeneratedId Column, GeneratedIdSequence Column, Id Column, Identity Columns
+@subsection Fields With generatedId
+
+@cindex generated identity field
+@cindex generatedId column
+You can configure a long or integer field to be a @emph{generated} identity column.  The id number column for each row
+will then be automatically generated by the database.  
+
+@example
+public class Order @{
+    @@DatabaseField(generatedId = true)
+    private int id;
+    @dots{}
+@}
+@end example
+
+When an @code{Order} object is passed to @code{create} and stored to the database, the generated identity value is returned
+by the database and set on the object by @value{package}.  In the majority of database types, the generated value starts at
+1 and increases by 1 every time a new row is inserted into the table.
+
+@example
+// build our order object without and id
+Order order = new Order("Jim Sanders", 12.34);
+@dots{}
+if (orderDao.create(order) != 1) @{
+   // error handling unless 1 row was inserted
+@}
+System.out.println("Order id " + order.getId() + " was persisted to the database");
+// query for the order with an id of 1372
+order = orderDao.queryForId(1372);
+if (order == null) @{
+    // none of the order rows have an id of 1372
+@}
+@end example
+
+In the above code example, an order is constructed with name and amount (for example).  When it is passed to the DAO's
+@code{create} method, the id field has not been set.  After it has been saved to the database, the generated-id will
+be set on the id field by @value{package} and will be available when @code{getId()} is called on the order after the
+@code{create} method returns.
+
+@emph{NOTE:} Depending on the database type, you may not be able to change the value of an auto-generated id field.
+
+@c ----------------------------------------------------------------
+@node GeneratedIdSequence Column, Statement Builder, GeneratedId Column, Identity Columns
+@subsection Fields With generatedIdSequence
+
+@cindex generated identity sequence name
+@cindex generatedIdSequence column
+
+Some databases use what's called a sequence number generator to provide the generated id value.  If you use
+@code{generatedId = true} with those databases, a sequence name will be auto-generated by @value{package}.
+If, however, you need to set the name of the sequence to match existing schema, you can used the
+@code{generatedIdSequence} value which takes a string name for the sequence.
+
+@example
+public class Order @{
+    @@DatabaseField(generatedIdSequence = "order_id_seq")
+    private int id;
+    @dots{}
+@}
+@end example
+
+In the above example, the @code{id} value is again automatically generated but using a sequence with the name
+@code{order_id_seq}.  This will throw an exception if you are working with a database which does not support
+sequences.
+
+@emph{NOTE:} Depending on the database type, you may not be able to change the value of an auto-generated id field.
+
+@c ----------------------------------------------------------------
+@node Statement Builder, QueryBuilder Basics, GeneratedIdSequence Column, Top
 @chapter Custom Statement Builder
 
 @cindex query builder
@@ -1070,7 +1196,7 @@ QueryBuilder<Account, String> queryBuilder =
 queryBuilder.where().eq(Account.PASSWORD_FIELD_NAME, "qwerty");
 // prepare our sql statement
 PreparedQuery<Account, String> preparedQuery =
-  queryBuilder.prepareStatment();
+  queryBuilder.prepare();
 // query for all accounts that have that password
 List<Account> accountList = accountDao.query(preparedQuery);
 @end example
@@ -1100,7 +1226,7 @@ where.and();
 // the password field must be equal to "_secret"
 where.eq(Account.PASSWORD_FIELD_NAME, "_secret");
 PreparedQuery<Account, String> preparedQuery =
-  queryBuilder.prepareStatement();
+  queryBuilder.prepare();
 @end example
 
 The SQL query that will be generated from the above example will be approximately:
@@ -1166,6 +1292,12 @@ at @uref{http://www.w3schools.com/Sql/}.
 @node Building Statements, Select Arguments, Building Queries, Statement Builder
 @section Building Statements
 
+@cindex deleteBuilder
+@cindex updateBuilder
+@cindex custom update statements
+@cindex custom delete statements
+@anchor{deleteBuilder}
+@anchor{updateBuilder}
 The DAO can also be used to construct custom @code{UPDATE} and @code{DELETE} statements.  Update statements
 are used to change certain fields in rows from the table that match the @code{WHERE} pattern -- or update @emph{all}
 rows if no @code{where()}. Delete statements are used to delete rows from the table that match the @code{WHERE}
@@ -1276,7 +1408,7 @@ CREATE TABLE `orders`
 
 @emph{Notice} that the name of the field is @emph{not} @code{account} but is instead @code{account_id}.  You will need to
 use this field name if you are querying for it.  You can set the column name using the @code{columnName} field in the
-@code{DatabaseField} annotation. @xref{Local Annotations}.
+@code{DatabaseField} annotation. @xref{columnName}.
 
 @cindex refreshing foreign objects
 @cindex foreign object refreshing
@@ -1373,7 +1505,7 @@ there is @code{PreparedQuery}, @code{PreparedUpdate}, and @code{PreparedDelete}.
 All you need to set on the DAOs is the @code{ConnectionSource} which provides the database type 
 internally.  To create and drop the tables, also, you only need the @code{ConnectionSource}.
 
-@item Constructing a @code{BaseDaoImpl} now self-intializes if it is constructed with a
+@item Constructing a @code{BaseDaoImpl} now self-initializes if it is constructed with a
 @code{ConnectionSource}.  This validates the class configurations meaning that it now throws a
 @code{SQLException}.
 
@@ -1696,18 +1828,18 @@ This list may be out of date.  See the @code{Dao} interface class for the latest
 @table @code
 
 @cindex query for id
-@item queryForId
+@item queryForId(ID id)
 
 Looks up the id in the database and retrieves an object associated with it.
 
 @cindex query for first
-@item queryForFirst
+@item queryForFirst(PreparedQuery<T> preparedQuery)
 
 Query for and return the first item in the object table which matches a prepared statement. This can be used to return
 the object that matches a single unique column.  You should use queryForId if you want to query for the id column.
 
 @cindex query for all
-@item queryForAll
+@item queryForAll()
 
 Query for all of the items in the object table and return a list of them. For medium sized or large tables,
 this may load a lot of objects into memory so you should consider using the @code{iterator} method instead.
@@ -1715,7 +1847,7 @@ this may load a lot of objects into memory so you should consider using the @cod
 @cindex query for all raw
 @cindex raw select statements
 @cindex executing raw select statements
-@item queryForAllRaw
+@item queryForAllRaw(String query)
 
 Query for all of the items in the object table that match the SQL select query argument. This method allows you
 to do special queries that aren't supported otherwise. For medium sized or large tables, this may load a lot of 
@@ -1723,59 +1855,82 @@ objects into memory so you should consider using the @code{iteratorRaw} method i
 
 @cindex query builder
 @cindex statement builder
-@item queryBuilder
+@item queryBuilder()
 
-Create and return a new @code{QueryBuilder} object which allows you to build a custom query.  @xref{Statement Builder}.
+Create and return a new @code{QueryBuilder} object which allows you to build a custom query.  @xref{QueryBuilder Basics}.
+
+@cindex update builder
+@item updateBuilder()
+
+Create and return a new @code{UpdateBuilder} object which allows you to build a custom update statement.  @xref{updateBuilder}.
+
+@cindex delete builder
+@item deleteBuilder()
+
+Create and return a new @code{DeleteBuilder} object which allows you to build a custom delete statement.  @xref{deleteBuilder}.
 
 @cindex query for objects
-@item query
+@item query(PreparedQuery<T> preparedQuery)
 
 Query for the items in the object table which match a prepared statement.  @xref{Statement Builder}.  This returns a
 list of matching objects. For medium sized or large tables, this may load a lot of objects into memory so you
 should consider using the @code{iterator} method instead.  
 
 @cindex creating an object
-@item create
+@item create(T data)
 
 Create a new entry in the database from an object.  Should return 1 indicating 1 row was inserted.
 
 @cindex updating an object
-@item update
+@item update(T data)
 
 Save the fields from an object to the database. If you have made changes to an object, this is how you persist
 those changes to the database. You cannot use this method to update the id field -- see updateId.  This should
 return 1 since 1 row was updated.
 
 @cindex update an object id
-@item updateId
+@anchor{updateId}
+@item updateId(T data)
 
 Update an object in the database to change its id to a new id. The data @emph{must} have its current id set and
 the new-id is passed in as an argument.  After the id has been updated in the database, the id field of the data
 object will also be changed.  This should return 1 since 1 row was updated.
 
+@cindex update custom statement
+@cindex custom update statement
+@item update(PreparedUpdate<T> preparedUpdate)
+
+Update objects that match a custom update statement.
+
 @cindex refreshing an object
-@item refresh
+@item refresh(T data, ID newId)
 
 Does a query for the object's id and copies in each of the field values from the database to refresh the data
 parameter. Any local object changes to persisted fields will be overwritten.  If the database has been updated
 this brings your local object up-to-date.  This should return 1 since 1 row was retrieved.
 
 @cindex deleting an object
-@item delete
+@item delete(T data)
 
 Delete an object from the database.  This should return 1 since 1 row was removed.
 
 @cindex delete multiple objects
-@item delete (collection)
+@item delete (Collection<T> datas)
 
 Delete a collection of objects from the database using an IN SQL clause.  This returns the number of rows that
 were deleted.
 
 @cindex delete objects by id
-@item deleteIds
+@item deleteIds(Collection<ID> ids)
 
 Delete the objects that match the collection of ids from the database using an IN SQL clause.   This returns the
 number of rows that were deleted.  
+
+@cindex delete custom statement
+@cindex custom delete statement
+@item delete(PreparedDelete<T> preparedDelete)
+
+Delete objects that match a custom delete statement.
 
 @cindex iterator
 @item iterator
@@ -1789,16 +1944,16 @@ for (Account account : accountDao) @{ @dots{} @}
 
 @emph{WARNING:} See the @code{Dao} class for warnings about using this method.
 
-@item iterator (prepared statement)
+@item iterator(PreparedQuery<T> preparedQuery)
 
 Same is the @code{iterator} method but with a prepared statement parameter. @xref{Statement Builder}.
 
-@item iteratorRaw
+@item iteratorRaw(String query)
 
 Same as the prepared statement iterator except it takes a raw SQL select statement argument.  This is the iterator version
 of the @code{queryForAllRaw} method.  Although you should use the @code{iterator} method for most queries, this method
 allows you to do special queries that aren't supported otherwise.  Like the above iterator methods, you must call close
-on the returned RawResults object once you are done with it. 
+on the returned @code{RawResults} object once you are done with it. 
 
 @end table
 
