@@ -41,6 +41,17 @@
 	- how can ORMLite assist in the loading of a Java list of Customers on an Account object
 	- at least a List of customer ids?
 
+- need to support nested transactions
+	- transactions within transactions
+	- need to have a usage() count and only clear the connection when it goes to 0
+
+- need to be able to detect the right derby JDBC driver by looking at for a host/port
+	- pass in the full URL
+	- are there other databases that need to be detected better
+
+- there are multiple implementations of the SQLite driver, can we detect that and have different database types per
+	- maybe using reflection look for certain classes?
+
 -----------------------------------------------------------------------------------------------------------------------------------
 
 - think about proxy objects for foreign objects that can throw if they do anything but getId()
