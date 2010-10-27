@@ -274,6 +274,7 @@ continue on with the next section.  @xref{Using}.
 * DAO Setup::                   How to configure the Database Access Objects.
 * Connection Source::           Setting up connections to databases.
 * Database Type::               Defining your database type.
+* Database Notes::              Support databases and associated notes.
 * Complete Wiring::             Tying all of the wiring together.
 * DAO Usage::                   Using the Database Access Objects.
 * Identity Columns::            How identity fields and columns work.
@@ -869,7 +870,7 @@ Unfortunately, the @code{DataSource} interface does not have a close method so y
 by hand -- the @code{close()} method on the @code{DataSourceConnectionSource} does @emph{nothing}.
 
 @c ----------------------------------------------------------------
-@node Database Type, Complete Wiring, Connection Source, Using
+@node Database Type, Database Notes, Connection Source, Using
 @section Database Type
 
 @cindex database type
@@ -891,7 +892,70 @@ Android users do not need to worry about this because the @code{AndroidConnectio
 For more information about the database specific code in the DatabaseType see later in the manual.  @xref{Database Type Details}.
 
 @c ----------------------------------------------------------------
-@node Complete Wiring, DAO Usage, Database Type, Using
+@node Database Notes, Complete Wiring, Database Type, Using
+@section Supported Databases
+
+@value{package} supports the following database flavors.  Some of them have some specific documentation that needs to be obeyed.
+
+@table @asis
+
+@cindex MySQL
+@item MySQL
+
+Tables are created in MySQL with the InnoDB engine by default using @code{CREATE TABLE ... ENGINE=InnoDB}.  If you want to use
+another engine, you can instantiate the @code{MysqlDatabaseType} directly and use the @code{setCreateTableSuffix()} method to use
+the default or another engine.  Also, MySQL does some funky stuff with the last-modification time if a @code{Date} is defined as a
+@code{TIMESTAMP} so @code{DATETIME} was used instead.
+
+@cindex Postgres
+@item Postgres
+
+@cindex Microsoft SQL Server
+@cindex SQL Server
+@item Microsoft SQL Server
+
+@cindex H2
+@item H2
+
+@cindex Derby
+@item Derby
+
+There are two drivers for Derby: one embedded and one client/server.  Right now we will only detect and use the embedded driver.
+You will have to set the @code{DerbyClientServerDatabaseType} on your ConnectionSource directly.  @xref{Database Type}.
+
+@cindex HSQLDB
+@item HSQLDB
+
+@cindex SQLite
+@item SQLite
+
+There are multiple SQLite drivers out there.  Make sure you use the Xerial one (@uref{http://www.xerial.org/trac/Xerial/wiki/SQLiteJDBC})
+and not the Zentus one (@uref{http://www.zentus.com/sqlitejdbc/}) which does not support generated ids.
+
+@cindex Android SQLite
+@item Android SQLite
+
+Android's SQLite database is accessed through direct calls to the Android database API methods.
+
+@cindex DB2
+@item DB2
+
+I do not have access to an DB2 database so I cannot run any tests to make sure that my support for it works well.  Please contact me if you have
+an Oracle database that I can develop against.
+
+@cindex Oracle
+@item Oracle
+
+I do not have access to an Oracle database so I cannot run any tests to make sure that my support for it works well.  Please contact me if you have
+an Oracle database that I can develop against.
+
+@end table
+
+@cindex database not supported
+Please contact the author if your database is not supported.
+
+@c ----------------------------------------------------------------
+@node Complete Wiring, DAO Usage, Database Notes, Using
 @section Tying It All Together
 
 @cindex usage example
