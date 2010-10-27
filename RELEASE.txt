@@ -12,6 +12,7 @@ To release ORMLite:
 
 	- Change HelloAndroid, ClickCounter, and NotifyService to use the projects instead of jars
 	- run them each on the simulator
+	- upgrade their database versions and try again
 	- revert their .classpath files
 
 3) Add section to ~/svn/local/ormlite-core/src/main/javadoc/doc-files/changelog.txt.  Commit it.
