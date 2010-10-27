@@ -29,8 +29,8 @@ public class TransactionManagerTest extends BaseOrmLiteCoreTest {
 		expect(conn.setSavePoint(isA(String.class))).andReturn(savePoint);
 		conn.commit(savePoint);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
-		connectionSource.saveTransactionConnection(conn);
-		connectionSource.clearTransactionConnection(conn);
+		connectionSource.saveSpecialConnection(conn);
+		connectionSource.clearSpecialConnection(conn);
 		connectionSource.releaseConnection(conn);
 		TransactionManager tm = new TransactionManager(connectionSource);
 		replay(connectionSource, conn, savePoint);
@@ -50,8 +50,8 @@ public class TransactionManagerTest extends BaseOrmLiteCoreTest {
 		expect(conn.setSavePoint(isA(String.class))).andReturn(null);
 		conn.commit(null);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
-		connectionSource.saveTransactionConnection(conn);
-		connectionSource.clearTransactionConnection(conn);
+		connectionSource.saveSpecialConnection(conn);
+		connectionSource.clearSpecialConnection(conn);
 		connectionSource.releaseConnection(conn);
 		TransactionManager tm = new TransactionManager(connectionSource);
 		replay(connectionSource, conn);
@@ -73,8 +73,8 @@ public class TransactionManagerTest extends BaseOrmLiteCoreTest {
 		expect(conn.setSavePoint(isA(String.class))).andReturn(savePoint);
 		conn.rollback(savePoint);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
-		connectionSource.saveTransactionConnection(conn);
-		connectionSource.clearTransactionConnection(conn);
+		connectionSource.saveSpecialConnection(conn);
+		connectionSource.clearSpecialConnection(conn);
 		connectionSource.releaseConnection(conn);
 		TransactionManager tm = new TransactionManager(connectionSource);
 		replay(connectionSource, conn, savePoint);
@@ -99,8 +99,8 @@ public class TransactionManagerTest extends BaseOrmLiteCoreTest {
 		expect(conn.setSavePoint(isA(String.class))).andReturn(null);
 		conn.rollback(null);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
-		connectionSource.saveTransactionConnection(conn);
-		connectionSource.clearTransactionConnection(conn);
+		connectionSource.saveSpecialConnection(conn);
+		connectionSource.clearSpecialConnection(conn);
 		connectionSource.releaseConnection(conn);
 		TransactionManager tm = new TransactionManager(connectionSource);
 		replay(connectionSource, conn);
@@ -127,8 +127,8 @@ public class TransactionManagerTest extends BaseOrmLiteCoreTest {
 		expect(conn.setSavePoint(isA(String.class))).andReturn(savePoint);
 		conn.rollback(savePoint);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
-		connectionSource.saveTransactionConnection(conn);
-		connectionSource.clearTransactionConnection(conn);
+		connectionSource.saveSpecialConnection(conn);
+		connectionSource.clearSpecialConnection(conn);
 		connectionSource.releaseConnection(conn);
 		TransactionManager tm = new TransactionManager(connectionSource);
 		replay(connectionSource, conn, savePoint);
@@ -156,8 +156,8 @@ public class TransactionManagerTest extends BaseOrmLiteCoreTest {
 		expect(conn.setSavePoint(isA(String.class))).andReturn(savePoint);
 		conn.commit(savePoint);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
-		connectionSource.saveTransactionConnection(conn);
-		connectionSource.clearTransactionConnection(conn);
+		connectionSource.saveSpecialConnection(conn);
+		connectionSource.clearSpecialConnection(conn);
 		connectionSource.releaseConnection(conn);
 		TransactionManager tm = new TransactionManager(connectionSource);
 		replay(connectionSource, conn, savePoint);
@@ -182,8 +182,8 @@ public class TransactionManagerTest extends BaseOrmLiteCoreTest {
 		conn.commit(savePoint);
 		conn.setAutoCommit(true);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
-		connectionSource.saveTransactionConnection(conn);
-		connectionSource.clearTransactionConnection(conn);
+		connectionSource.saveSpecialConnection(conn);
+		connectionSource.clearSpecialConnection(conn);
 		connectionSource.releaseConnection(conn);
 		TransactionManager tm = new TransactionManager(connectionSource);
 		replay(connectionSource, conn, savePoint);

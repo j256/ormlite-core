@@ -30,17 +30,21 @@ public interface ConnectionSource {
 	public void releaseConnection(DatabaseConnection connection) throws SQLException;
 
 	/**
-	 * Save this connection as part of a transaction. Between this call and the
-	 * {@link #clearTransactionConnection(DatabaseConnection)}, all connections returned by
-	 * {@link #getReadOnlyConnection()} and {@link #getReadWriteConnection()} should return this connection since all
-	 * operations within a transaction must operate on the same connection.
+	 * Save this connection and return it for all calls to {@link #getReadOnlyConnection()} and
+	 * {@link #getReadWriteConnection()} unless the {@link #clearSpecialConnection(DatabaseConnection)} method is
+	 * called, all This is used by the transaction mechanism since since all operations within a transaction must
+	 * operate on the same connection. It is also used by the Android code during initialization.
+	 * 
+	 * <p>
+	 * <b> NOTE: </b> This should be a read-write connection since transactions and Android need it to be so.
+	 * </p>
 	 */
-	public void saveTransactionConnection(DatabaseConnection connection) throws SQLException;
+	public void saveSpecialConnection(DatabaseConnection connection);
 
 	/**
 	 * Clear the saved transaction connection. New transactions will be returned and released.
 	 */
-	public void clearTransactionConnection(DatabaseConnection connection) throws SQLException;
+	public void clearSpecialConnection(DatabaseConnection connection);
 
 	/**
 	 * Close any outstanding database connections.

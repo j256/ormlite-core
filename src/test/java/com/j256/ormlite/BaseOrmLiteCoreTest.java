@@ -59,13 +59,13 @@ public abstract class BaseOrmLiteCoreTest {
 	protected class StubConnectionSource implements ConnectionSource {
 		private DatabaseType databaseType = new StubDatabaseType();
 		private DatabaseConnection databaseConnection;
-		public DatabaseConnection getReadOnlyConnection() throws SQLException {
+		public DatabaseConnection getReadOnlyConnection() {
 			return databaseConnection;
 		}
-		public DatabaseConnection getReadWriteConnection() throws SQLException {
+		public DatabaseConnection getReadWriteConnection() {
 			return databaseConnection;
 		}
-		public void releaseConnection(DatabaseConnection connection) throws SQLException {
+		public void releaseConnection(DatabaseConnection connection) {
 		}
 		public void close() throws SQLException {
 		}
@@ -75,9 +75,9 @@ public abstract class BaseOrmLiteCoreTest {
 		public void setDatabaseConnection(DatabaseConnection databaseConnection) {
 			this.databaseConnection = databaseConnection;
 		}
-		public void saveTransactionConnection(DatabaseConnection connection) throws SQLException {
+		public void saveSpecialConnection(DatabaseConnection connection) {
 		}
-		public void clearTransactionConnection(DatabaseConnection connection) throws SQLException {
+		public void clearSpecialConnection(DatabaseConnection connection) {
 		}
 	}
 

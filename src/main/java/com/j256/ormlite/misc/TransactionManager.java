@@ -109,7 +109,7 @@ public class TransactionManager {
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		boolean autoCommitAtStart = false;
 		try {
-			connectionSource.saveTransactionConnection(connection);
+			connectionSource.saveSpecialConnection(connection);
 			if (connection.isAutoCommitSupported()) {
 				autoCommitAtStart = connection.getAutoCommit();
 				if (autoCommitAtStart) {
@@ -141,7 +141,7 @@ public class TransactionManager {
 				connection.setAutoCommit(true);
 				logger.debug("restored auto-commit to true");
 			}
-			connectionSource.clearTransactionConnection(connection);
+			connectionSource.clearSpecialConnection(connection);
 			connectionSource.releaseConnection(connection);
 		}
 	}
