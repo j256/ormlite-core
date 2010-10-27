@@ -1,3 +1,8 @@
+4.3: 10/27/2010
+	* CORE: Renamed the ConnectionSource#saveTransactionConnection and clear to be saveSpecialConnection and clear.
+	* CORE: Added to the manual a section on identity columns and databas flavor notes.
+	* ANDROID: Solve the problem of recursion in onCreate and onUpdate differently.  Fixes bug #3096875.
+
 4.2: 10/13/2010
 	* CORE: Improved messaging around unknown columns.
 	* CORE: Added a save and clearTransactionConnection to the TransactionManager.  Fixes bug #3085345.
