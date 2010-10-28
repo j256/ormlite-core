@@ -46,11 +46,15 @@
 	- need to have a usage() count and only clear the connection when it goes to 0
 
 - need to be able to detect the right derby JDBC driver by looking at for a host/port
-	- pass in the full URL
-	- are there other databases that need to be detected better
+	- pass in the full URL to the DatabaseTypeUtil
+	- are there other databases that need to be detected better?
 
 - there are multiple implementations of the SQLite driver, can we detect that and have different database types per
 	- maybe using reflection look for certain classes?
+	- maybe pass the URL to each of the database types in turn until one says "IT'S ME!!"
+
+- implement a "keep-alive" query ("select 1") to keep a connection warm
+	- for the pooled connection source
 
 -----------------------------------------------------------------------------------------------------------------------------------
 
