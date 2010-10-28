@@ -136,12 +136,13 @@ public class TransactionManager {
 				throw SqlExceptionUtil.create("Operation in transaction threw non-SQL exception", e);
 			}
 		} finally {
+			// we should clear aggressively
+			connectionSource.clearSpecialConnection(connection);
 			if (autoCommitAtStart) {
 				// try to restore if we are in auto-commit mode
 				connection.setAutoCommit(true);
 				logger.debug("restored auto-commit to true");
 			}
-			connectionSource.clearSpecialConnection(connection);
 			connectionSource.releaseConnection(connection);
 		}
 	}
