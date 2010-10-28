@@ -38,6 +38,11 @@ public interface ConnectionSource {
 	 * <p>
 	 * <b> NOTE: </b> This should be a read-write connection since transactions and Android need it to be so.
 	 * </p>
+	 * 
+	 * <p>
+	 * <b> NOTE: </b> Saving a connection is usually accomplished using ThreadLocals so multiple threads should not be
+	 * using connections in this scenario.
+	 * </p>
 	 */
 	public void saveSpecialConnection(DatabaseConnection connection);
 
