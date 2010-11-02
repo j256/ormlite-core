@@ -41,10 +41,6 @@
 	- how can ORMLite assist in the loading of a Java list of Customers on an Account object
 	- at least a List of customer ids?
 
-- need to support nested transactions
-	- transactions within transactions
-	- need to have a usage() count and only clear the connection when it goes to 0
-
 - need to be able to detect the right derby JDBC driver by looking at for a host/port
 	- pass in the full URL to the DatabaseTypeUtil
 	- are there other databases that need to be detected better?
@@ -55,6 +51,11 @@
 
 - implement a "keep-alive" query ("select 1") to keep a connection warm
 	- for the pooled connection source
+
+- delete method which deletes all of the rows that match a particular field.
+	- to support the foreign key stuff.
+	- deleteFieldEquals(String fieldName, Object value);
+	- List<Object> selectFieldEquals(String fieldName, Object value);
 
 -----------------------------------------------------------------------------------------------------------------------------------
 

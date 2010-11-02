@@ -12,16 +12,20 @@ import com.j256.ormlite.logger.Logger;
 public abstract class BaseConnectionSource {
 
 	protected boolean usedSpecialConnection = false;
-	private ThreadLocal<DatabaseConnection> specialConnection = new ThreadLocal<DatabaseConnection>();
+	private ThreadLocal<NestedConnection> specialConnection = new ThreadLocal<NestedConnection>();
 
 	/**
 	 * Returns the connection that has been saved or null if none.
 	 */
 	protected DatabaseConnection getSavedConnection() throws SQLException {
-		if (usedSpecialConnection) {
-			return specialConnection.get();
-		} else {
+		if (!usedSpecialConnection) {
 			return null;
+		}
+		NestedConnection nested = specialConnection.get();
+		if (nested == null) {
+			return null;
+		} else {
+			return nested.connection;
 		}
 	}
 
@@ -29,8 +33,12 @@ public abstract class BaseConnectionSource {
 	 * Return true if the connection being released is the one that has been saved.
 	 */
 	protected boolean isSavedConnection(DatabaseConnection connection) throws SQLException {
-		if (usedSpecialConnection && specialConnection.get() == connection) {
-			// ignore the release when we are in a transaction
+		if (!usedSpecialConnection) {
+			return false;
+		}
+		NestedConnection currentSaved = specialConnection.get();
+		if (currentSaved.connection == connection) {
+			// ignore the release when we have a saved connection
 			return true;
 		} else {
 			return false;
@@ -42,36 +50,59 @@ public abstract class BaseConnectionSource {
 	 */
 	protected void saveSpecial(DatabaseConnection connection) {
 		// check for a connection already saved
-		DatabaseConnection currentSavedConn = specialConnection.get();
-		if (currentSavedConn != null) {
-			if (currentSavedConn == connection) {
-				throw new IllegalStateException("nested transactions are not current supported");
-			} else {
+		NestedConnection currentSaved = specialConnection.get();
+		if (currentSaved == null) {
+			/*
+			 * This is fine to not be synchronized since it is only this thread we care about. Other threads will set
+			 * this or have it synchronized in over time.
+			 */
+			usedSpecialConnection = true;
+			specialConnection.set(new NestedConnection(connection));
+		} else {
+			if (currentSaved.connection != connection) {
 				throw new IllegalStateException("trying to save connection " + connection
-						+ " but already have saved connection " + currentSavedConn);
+						+ " but already have saved connection " + currentSaved.connection);
 			}
+			// we must have a save call within another save
+			currentSaved.increment();
 		}
-		/*
-		 * This is fine to not be synchronized since it is only this thread we care about. Other threads will set this
-		 * or have it synchronized in over time.
-		 */
-		usedSpecialConnection = true;
-		specialConnection.set(connection);
 	}
 
 	/**
 	 * Clear the connection that was previoused saved.
 	 */
 	protected void clearSpecial(DatabaseConnection connection, Logger logger) {
-		DatabaseConnection currentSavedConn = specialConnection.get();
-		if (currentSavedConn == null) {
-			logger.error("no transaction has been saved when clear() called");
+		NestedConnection currentSaved = specialConnection.get();
+		if (currentSaved == null) {
+			logger.error("no connection has been saved when clear() called");
 		} else {
-			if (currentSavedConn != connection) {
-				logger.error("transaction saved {} is not the one being cleared {}", currentSavedConn, connection);
+			if (currentSaved.connection != connection) {
+				logger.error("connection saved {} is not the one being cleared {}", currentSaved.connection,
+						connection);
+			} else if (currentSaved.decrementAndGet() == 0) {
+				// we only clear the connection if nested counter is 0
+				specialConnection.set(null);
 			}
-			specialConnection.set(null);
 		}
 		// release should then be called after clear
+	}
+
+	private class NestedConnection {
+		public final DatabaseConnection connection;
+		private int nestedC;
+
+		public NestedConnection(DatabaseConnection connection) {
+			this.connection = connection;
+			this.nestedC = 1;
+		}
+
+		public void increment() {
+			nestedC++;
+		}
+
+		public int decrementAndGet() {
+			nestedC--;
+			return nestedC;
+		}
 	}
 }
