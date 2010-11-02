@@ -37,7 +37,9 @@ public abstract class BaseConnectionSource {
 			return false;
 		}
 		NestedConnection currentSaved = specialConnection.get();
-		if (currentSaved.connection == connection) {
+		if (currentSaved == null) {
+			return false;
+		} else if (currentSaved.connection == connection) {
 			// ignore the release when we have a saved connection
 			return true;
 		} else {
