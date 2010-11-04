@@ -33,6 +33,12 @@
 	- one Dao would call the other when it needs to refresh a foreign field
 	- still making two queries but doing it automagically
 
+- how to help with remote IN queries (similar to above?):
+	- select * from puzzles where id in (select puzzle_id from solutions group by puzzle_id)
+	- is there a generic case here?
+	- define a query for a foreign-id in another table
+	- somehow able to do a Where.in(id-query) -- maybe that's the generic solution
+
 - from nelson: can ORMLite help out with mapping many-to-many relationships?
 	- could it help with building the join table?
 	- Accounts are associated with many Customers, Customers may have more than one Account
@@ -44,8 +50,7 @@
 - need to be able to detect the right derby JDBC driver by looking at for a host/port
 	- pass in the full URL to the DatabaseTypeUtil
 	- are there other databases that need to be detected better?
-
-- there are multiple implementations of the SQLite driver, can we detect that and have different database types per
+	- there are multiple implementations of the SQLite driver, can we detect that and have different database types per
 	- maybe using reflection look for certain classes?
 	- maybe pass the URL to each of the database types in turn until one says "IT'S ME!!"
 
@@ -56,6 +61,15 @@
 	- to support the foreign key stuff.
 	- deleteFieldEquals(String fieldName, Object value);
 	- List<Object> selectFieldEquals(String fieldName, Object value);
+
+- can we use the jdbc connection meta data to detect whether or not generated-ids are supported
+ 	- DatabaseMetaData metaData = connection.getMetaData();
+	- metaData.supportsGetGeneratedKeys()
+	- supportsMultipleTransactions()
+
+- have a doa call that turns off saves the connection, auto-commit, calls a callable, unwinds
+	- for batch operations
+	- maybe have a start/end batch with WARNINGS!!!!
 
 -----------------------------------------------------------------------------------------------------------------------------------
 
