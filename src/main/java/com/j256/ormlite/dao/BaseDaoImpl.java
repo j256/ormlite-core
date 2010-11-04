@@ -11,7 +11,6 @@ import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.PreparedDelete;
 import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.PreparedStmt;
 import com.j256.ormlite.stmt.PreparedUpdate;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.SelectIterator;
@@ -42,7 +41,6 @@ import com.j256.ormlite.table.TableInfo;
  *            needs an ID parameter however so you can use Void or Object to satisfy the compiler.
  * @author graywatson
  */
-@SuppressWarnings("deprecation")
 public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
 	private DatabaseType databaseType;
@@ -169,18 +167,10 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	public T queryForFirst(PreparedQuery<T> preparedQuery) throws SQLException {
-		return queryForFirst((PreparedStmt<T>) preparedQuery);
-	}
-
-	/**
-	 * @deprecated Use {@link #queryForFirst(PreparedQuery)}
-	 */
-	@Deprecated
-	public T queryForFirst(PreparedStmt<T> preparedStmt) throws SQLException {
 		checkForInitialized();
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		try {
-			return statementExecutor.queryForFirst(connection, preparedStmt);
+			return statementExecutor.queryForFirst(connection, preparedQuery);
 		} finally {
 			connectionSource.releaseConnection(connection);
 		}
@@ -189,14 +179,6 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	public List<T> queryForAll() throws SQLException {
 		checkForInitialized();
 		return statementExecutor.queryForAll(connectionSource);
-	}
-
-	/**
-	 * @deprecated See {@link #queryBuilder()}
-	 */
-	@Deprecated
-	public QueryBuilder<T, ID> statementBuilder() {
-		return queryBuilder();
 	}
 
 	public QueryBuilder<T, ID> queryBuilder() {
@@ -217,15 +199,6 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	public List<T> query(PreparedQuery<T> preparedQuery) throws SQLException {
 		checkForInitialized();
 		return statementExecutor.query(connectionSource, preparedQuery);
-	}
-
-	/**
-	 * @deprecated Use {@link #query(PreparedQuery)}
-	 */
-	@Deprecated
-	public List<T> query(PreparedStmt<T> preparedStmt) throws SQLException {
-		checkForInitialized();
-		return statementExecutor.query(connectionSource, preparedStmt);
 	}
 
 	public RawResults queryForAllRaw(String queryString) throws SQLException {
@@ -367,17 +340,9 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	public SelectIterator<T, ID> iterator(PreparedQuery<T> preparedQuery) throws SQLException {
-		return iterator((PreparedStmt<T>) preparedQuery);
-	}
-
-	/**
-	 * @deprecated See {@link #iterator(PreparedQuery)}
-	 */
-	@Deprecated
-	public SelectIterator<T, ID> iterator(PreparedStmt<T> preparedStmt) throws SQLException {
 		checkForInitialized();
 		try {
-			return statementExecutor.buildIterator(this, connectionSource, preparedStmt);
+			return statementExecutor.buildIterator(this, connectionSource, preparedQuery);
 		} catch (SQLException e) {
 			throw SqlExceptionUtil.create("Could not build iterator for " + dataClass, e);
 		}
@@ -427,14 +392,6 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	 */
 	public DatabaseTableConfig<T> getTableConfig() {
 		return tableConfig;
-	}
-
-	/**
-	 * @deprecated Use {@link #setConnectionSource(ConnectionSource)}
-	 */
-	@Deprecated
-	public void setDatabaseType(DatabaseType databaseType) {
-		// noop
 	}
 
 	public void setConnectionSource(ConnectionSource connectionSource) {

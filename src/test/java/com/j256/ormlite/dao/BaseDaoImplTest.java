@@ -479,13 +479,6 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		dao.queryForFirst(null);
 	}
 
-	@SuppressWarnings("deprecation")
-	@Test
-	public void testStatementBuilder() throws Exception {
-		startDao(false);
-		assertNotNull(baseFooDao.statementBuilder());
-	}
-
 	@Test
 	public void testQueryForPrepared() throws Exception {
 		startDao(false);

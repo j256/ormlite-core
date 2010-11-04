@@ -8,7 +8,6 @@ import java.util.List;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.PreparedDelete;
 import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.PreparedStmt;
 import com.j256.ormlite.stmt.PreparedUpdate;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.SelectIterator;
@@ -53,12 +52,6 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public T queryForFirst(PreparedQuery<T> preparedQuery) throws SQLException;
 
 	/**
-	 * @deprecated Use {@link #queryForFirst(PreparedQuery)}
-	 */
-	@Deprecated
-	public T queryForFirst(PreparedStmt<T> preparedQuery) throws SQLException;
-
-	/**
 	 * Query for all of the items in the object table. For medium sized or large tables, this may load a lot of objects
 	 * into memory so you should consider using the {@link #iterator} method instead.
 	 * 
@@ -79,12 +72,6 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 *             on any SQL problems.
 	 */
 	public RawResults queryForAllRaw(String query) throws SQLException;
-
-	/**
-	 * @deprecated Use {@link #queryBuilder()}
-	 */
-	@Deprecated
-	public QueryBuilder<T, ID> statementBuilder();
 
 	/**
 	 * Create and return a new query builder object which allows you to build a custom SELECT statement. You call
