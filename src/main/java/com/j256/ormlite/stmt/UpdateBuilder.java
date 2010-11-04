@@ -34,7 +34,6 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * Build and return a prepared update that can be used by {@link Dao#update(PreparedUpdate)} method. If you change
 	 * the where or make other calls you will need to re-call this method to re-prepare the statement for execution.
 	 */
-	@SuppressWarnings("deprecation")
 	public PreparedUpdate<T> prepare() throws SQLException {
 		return super.prepareStatement();
 	}

@@ -28,7 +28,6 @@ public class DeleteBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * Build and return a prepared delete that can be used by {@link Dao#delete(PreparedDelete)} method. If you change
 	 * the where or make other calls you will need to re-call this method to re-prepare the statement for execution.
 	 */
-	@SuppressWarnings("deprecation")
 	public PreparedDelete<T> prepare() throws SQLException {
 		return super.prepareStatement();
 	}

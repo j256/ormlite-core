@@ -68,10 +68,9 @@ public abstract class StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * @deprecated Use {@link QueryBuilder#prepare()}
+	 * Prepare our statement for the subclasses.
 	 */
-	@Deprecated
-	public MappedPreparedStmt<T> prepareStatement() throws SQLException {
+	protected MappedPreparedStmt<T> prepareStatement() throws SQLException {
 		List<FieldType> argFieldTypeList = new ArrayList<FieldType>();
 		List<FieldType> resultFieldTypeList = new ArrayList<FieldType>();
 		List<SelectArg> selectArgList = new ArrayList<SelectArg>();
