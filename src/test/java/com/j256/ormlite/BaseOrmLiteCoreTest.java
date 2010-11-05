@@ -75,7 +75,8 @@ public abstract class BaseOrmLiteCoreTest {
 		public void setDatabaseConnection(DatabaseConnection databaseConnection) {
 			this.databaseConnection = databaseConnection;
 		}
-		public void saveSpecialConnection(DatabaseConnection connection) {
+		public boolean saveSpecialConnection(DatabaseConnection connection) {
+			return true;
 		}
 		public void clearSpecialConnection(DatabaseConnection connection) {
 		}

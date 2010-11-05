@@ -544,6 +544,45 @@ public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
 		verify(results);
 	}
 
+	@Test
+	public void testQueryForAllRawList() throws Exception {
+		startDao(false);
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT * FROM ");
+		databaseType.appendEscapedEntityName(sb, "basefoo");
+		sb.append(' ');
+		CompiledStatement stmt = createMock(CompiledStatement.class);
+		expect(databaseConnection.compileStatement(sb.toString(), StatementType.SELECT)).andReturn(stmt);
+		DatabaseResults results = createMock(DatabaseResults.class);
+		expect(results.next()).andReturn(true);
+		String value = "stuff";
+		expect(results.getString(1)).andReturn(value);
+		expect(results.next()).andReturn(false);
+		expect(stmt.executeQuery()).andReturn(results);
+		int numColumns = 1;
+		expect(stmt.getColumnCount()).andReturn(numColumns);
+		String columnName = "foo";
+		expect(stmt.getColumnName(1)).andReturn(columnName);
+		stmt.close();
+		replay(databaseConnection);
+		replay(stmt);
+		replay(results);
+		RawResults rawResults = baseFooDao.queryForAllRaw(sb.toString());
+		assertNotNull(rawResults);
+		String[] names = rawResults.getColumnNames();
+		assertNotNull(names);
+		assertEquals(1, names.length);
+		assertEquals(columnName, names[0]);
+		List<String[]> resultList = rawResults.getResults();
+		assertEquals(1, resultList.size());
+		String[] result = resultList.get(0);
+		assertEquals(1, result.length);
+		assertEquals(value, result[0]);
+		finishDao();
+		verify(stmt);
+		verify(results);
+	}
+
 	@Test(expected = IllegalStateException.class)
 	public void testQueryForRawNoInit() throws Exception {
 		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {

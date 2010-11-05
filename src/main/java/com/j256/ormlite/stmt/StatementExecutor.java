@@ -9,6 +9,7 @@ import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.RawResults;
+import com.j256.ormlite.dao.RawRowMapper;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
@@ -304,6 +305,36 @@ public class StatementExecutor<T, ID> {
 			}
 			return result;
 		}
+
+		public List<String[]> getResults() throws SQLException {
+			List<String[]> results = new ArrayList<String[]>();
+			CloseableIterator<String[]> iterator = iterator();
+			try {
+				while (iterator.hasNext()) {
+					results.add(iterator.next());
+				}
+				return results;
+			} finally {
+				iterator.close();
+			}
+		}
+
+		public <T> List<T> getMappedResults(RawRowMapper<T> mapper) throws SQLException {
+			List<T> results = new ArrayList<T>();
+			RawRowMapperIterator<T> iterator = new RawRowMapperIterator<T>(columnNames, iterator(), mapper);
+			try {
+				while (iterator.hasNext()) {
+					results.add(iterator.next());
+				}
+				return results;
+			} finally {
+				iterator.close();
+			}
+		}
+
+		public <T> CloseableIterator<T> iterator(RawRowMapper<T> mapper) {
+			return new RawRowMapperIterator<T>(columnNames, iterator(), mapper);
+		}
 	}
 
 	/**
@@ -382,6 +413,40 @@ public class StatementExecutor<T, ID> {
 				// we have to do this because iterator can't throw Exceptions
 				throw new RuntimeException(e);
 			}
+		}
+	}
+
+	/**
+	 * Internal iterator to work on our list.
+	 */
+	private static class RawRowMapperIterator<T> implements CloseableIterator<T> {
+
+		private String[] columnNames;
+		private CloseableIterator<String[]> stringIterator;
+		private RawRowMapper<T> rowMapper;
+
+		public RawRowMapperIterator(String[] columnNames, CloseableIterator<String[]> stringIterator,
+				RawRowMapper<T> rowMapper) {
+			this.columnNames = columnNames;
+			this.stringIterator = stringIterator;
+			this.rowMapper = rowMapper;
+		}
+
+		public boolean hasNext() {
+			return stringIterator.hasNext();
+		}
+
+		public T next() {
+			String[] stringResult = stringIterator.next();
+			return rowMapper.mapRow(columnNames, stringResult);
+		}
+
+		public void remove() {
+			stringIterator.remove();
+		}
+
+		public void close() throws SQLException {
+			stringIterator.close();
 		}
 	}
 }
