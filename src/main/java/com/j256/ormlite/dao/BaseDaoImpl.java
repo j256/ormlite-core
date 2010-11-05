@@ -70,14 +70,6 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	/**
-	 * @deprecated Use {@link #BaseDaoImpl(ConnectionSource, Class)}
-	 */
-	@Deprecated
-	protected BaseDaoImpl(DatabaseType databaseType, Class<T> dataClass) throws SQLException {
-		this(null, dataClass, null);
-	}
-
-	/**
 	 * Construct our base DAO class. The dataClass provided must have its fields marked with {@link DatabaseField} or
 	 * javax.persistance annotations.
 	 * 
@@ -98,14 +90,6 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	 *            Hand or spring wired table configuration information.
 	 */
 	protected BaseDaoImpl(DatabaseTableConfig<T> tableConfig) throws SQLException {
-		this(null, tableConfig.getDataClass(), tableConfig);
-	}
-
-	/**
-	 * @deprecated Use {@link #BaseDaoImpl(DatabaseTableConfig)}
-	 */
-	@Deprecated
-	protected BaseDaoImpl(DatabaseType databaseType, DatabaseTableConfig<T> tableConfig) throws SQLException {
 		this(null, tableConfig.getDataClass(), tableConfig);
 	}
 
@@ -404,15 +388,6 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	 */
 	public void setTableConfig(DatabaseTableConfig<T> tableConfig) {
 		this.tableConfig = tableConfig;
-	}
-
-	/**
-	 * @deprecated Use {@link #createDao(ConnectionSource, Class)}
-	 */
-	@Deprecated
-	public static <T, ID> Dao<T, ID> createDao(DatabaseType databaseType, ConnectionSource connectionSource,
-			Class<T> clazz) throws SQLException {
-		return createDao(connectionSource, clazz);
 	}
 
 	/**
