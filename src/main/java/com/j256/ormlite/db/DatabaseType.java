@@ -140,4 +140,10 @@ public interface DatabaseType {
 	 * </p>
 	 */
 	public boolean isEntityNamesMustBeUpCase();
+
+	/**
+	 * Returns true if nested savePoints are supported, otherwise false.
+	 */
+	public boolean isNestedSavePointsSupported();
+
 }

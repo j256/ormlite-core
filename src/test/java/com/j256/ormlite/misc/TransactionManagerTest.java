@@ -28,12 +28,13 @@ public class TransactionManagerTest extends BaseOrmLiteCoreTest {
 		expect(savePoint.getSavepointName()).andReturn("name").anyTimes();
 		expect(conn.setSavePoint(isA(String.class))).andReturn(savePoint);
 		conn.commit(savePoint);
+		expect(connectionSource.getDatabaseType()).andReturn(databaseType);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
-		connectionSource.saveSpecialConnection(conn);
+		expect(connectionSource.saveSpecialConnection(conn)).andReturn(true);
 		connectionSource.clearSpecialConnection(conn);
 		connectionSource.releaseConnection(conn);
-		TransactionManager tm = new TransactionManager(connectionSource);
 		replay(connectionSource, conn, savePoint);
+		TransactionManager tm = new TransactionManager(connectionSource);
 		tm.callInTransaction(new Callable<Void>() {
 			public Void call() throws Exception {
 				return null;
@@ -49,12 +50,13 @@ public class TransactionManagerTest extends BaseOrmLiteCoreTest {
 		expect(conn.isAutoCommitSupported()).andReturn(false);
 		expect(conn.setSavePoint(isA(String.class))).andReturn(null);
 		conn.commit(null);
+		expect(connectionSource.getDatabaseType()).andReturn(databaseType);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
-		connectionSource.saveSpecialConnection(conn);
+		expect(connectionSource.saveSpecialConnection(conn)).andReturn(true);
 		connectionSource.clearSpecialConnection(conn);
 		connectionSource.releaseConnection(conn);
-		TransactionManager tm = new TransactionManager(connectionSource);
 		replay(connectionSource, conn);
+		TransactionManager tm = new TransactionManager(connectionSource);
 		tm.callInTransaction(new Callable<Void>() {
 			public Void call() throws Exception {
 				return null;
@@ -72,12 +74,13 @@ public class TransactionManagerTest extends BaseOrmLiteCoreTest {
 		expect(savePoint.getSavepointName()).andReturn("name").anyTimes();
 		expect(conn.setSavePoint(isA(String.class))).andReturn(savePoint);
 		conn.rollback(savePoint);
+		expect(connectionSource.getDatabaseType()).andReturn(databaseType);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
-		connectionSource.saveSpecialConnection(conn);
+		expect(connectionSource.saveSpecialConnection(conn)).andReturn(true);
 		connectionSource.clearSpecialConnection(conn);
 		connectionSource.releaseConnection(conn);
-		TransactionManager tm = new TransactionManager(connectionSource);
 		replay(connectionSource, conn, savePoint);
+		TransactionManager tm = new TransactionManager(connectionSource);
 		try {
 			tm.callInTransaction(new Callable<Void>() {
 				public Void call() throws Exception {
@@ -98,12 +101,13 @@ public class TransactionManagerTest extends BaseOrmLiteCoreTest {
 		expect(conn.isAutoCommitSupported()).andReturn(false);
 		expect(conn.setSavePoint(isA(String.class))).andReturn(null);
 		conn.rollback(null);
+		expect(connectionSource.getDatabaseType()).andReturn(databaseType);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
-		connectionSource.saveSpecialConnection(conn);
+		expect(connectionSource.saveSpecialConnection(conn)).andReturn(true);
 		connectionSource.clearSpecialConnection(conn);
 		connectionSource.releaseConnection(conn);
-		TransactionManager tm = new TransactionManager(connectionSource);
 		replay(connectionSource, conn);
+		TransactionManager tm = new TransactionManager(connectionSource);
 		try {
 			tm.callInTransaction(new Callable<Void>() {
 				public Void call() throws Exception {
@@ -126,12 +130,13 @@ public class TransactionManagerTest extends BaseOrmLiteCoreTest {
 		expect(savePoint.getSavepointName()).andReturn("name").anyTimes();
 		expect(conn.setSavePoint(isA(String.class))).andReturn(savePoint);
 		conn.rollback(savePoint);
+		expect(connectionSource.getDatabaseType()).andReturn(databaseType);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
-		connectionSource.saveSpecialConnection(conn);
+		expect(connectionSource.saveSpecialConnection(conn)).andReturn(true);
 		connectionSource.clearSpecialConnection(conn);
 		connectionSource.releaseConnection(conn);
-		TransactionManager tm = new TransactionManager(connectionSource);
 		replay(connectionSource, conn, savePoint);
+		TransactionManager tm = new TransactionManager(connectionSource);
 		try {
 			tm.callInTransaction(new Callable<Void>() {
 				public Void call() throws Exception {
@@ -155,12 +160,13 @@ public class TransactionManagerTest extends BaseOrmLiteCoreTest {
 		expect(savePoint.getSavepointName()).andReturn("name").anyTimes();
 		expect(conn.setSavePoint(isA(String.class))).andReturn(savePoint);
 		conn.commit(savePoint);
+		expect(connectionSource.getDatabaseType()).andReturn(databaseType);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
-		connectionSource.saveSpecialConnection(conn);
+		expect(connectionSource.saveSpecialConnection(conn)).andReturn(true);
 		connectionSource.clearSpecialConnection(conn);
 		connectionSource.releaseConnection(conn);
-		TransactionManager tm = new TransactionManager(connectionSource);
 		replay(connectionSource, conn, savePoint);
+		TransactionManager tm = new TransactionManager(connectionSource);
 		tm.callInTransaction(new Callable<Void>() {
 			public Void call() throws Exception {
 				return null;
@@ -181,12 +187,13 @@ public class TransactionManagerTest extends BaseOrmLiteCoreTest {
 		expect(conn.setSavePoint(isA(String.class))).andReturn(savePoint);
 		conn.commit(savePoint);
 		conn.setAutoCommit(true);
+		expect(connectionSource.getDatabaseType()).andReturn(databaseType);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
-		connectionSource.saveSpecialConnection(conn);
+		expect(connectionSource.saveSpecialConnection(conn)).andReturn(true);
 		connectionSource.clearSpecialConnection(conn);
 		connectionSource.releaseConnection(conn);
-		TransactionManager tm = new TransactionManager(connectionSource);
 		replay(connectionSource, conn, savePoint);
+		TransactionManager tm = new TransactionManager(connectionSource);
 		tm.callInTransaction(new Callable<Void>() {
 			public Void call() throws Exception {
 				return null;

@@ -49,8 +49,10 @@ public abstract class BaseConnectionSource {
 
 	/**
 	 * Save this connection as our special connection to be returned by the {@link #getSavedConnection()} method.
+	 * 
+	 * @return True if the connection was saved or false if it was already saved.
 	 */
-	protected void saveSpecial(DatabaseConnection connection) {
+	protected boolean saveSpecial(DatabaseConnection connection) {
 		// check for a connection already saved
 		NestedConnection currentSaved = specialConnection.get();
 		if (currentSaved == null) {
@@ -60,6 +62,7 @@ public abstract class BaseConnectionSource {
 			 */
 			usedSpecialConnection = true;
 			specialConnection.set(new NestedConnection(connection));
+			return true;
 		} else {
 			if (currentSaved.connection != connection) {
 				throw new IllegalStateException("trying to save connection " + connection
@@ -67,6 +70,7 @@ public abstract class BaseConnectionSource {
 			}
 			// we must have a save call within another save
 			currentSaved.increment();
+			return false;
 		}
 	}
 
@@ -79,8 +83,7 @@ public abstract class BaseConnectionSource {
 			logger.error("no connection has been saved when clear() called");
 		} else {
 			if (currentSaved.connection != connection) {
-				logger.error("connection saved {} is not the one being cleared {}", currentSaved.connection,
-						connection);
+				logger.error("connection saved {} is not the one being cleared {}", currentSaved.connection, connection);
 			} else if (currentSaved.decrementAndGet() == 0) {
 				// we only clear the connection if nested counter is 0
 				specialConnection.set(null);

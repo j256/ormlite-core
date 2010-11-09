@@ -5,6 +5,7 @@ import java.sql.Savepoint;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.support.ConnectionSource;
@@ -62,6 +63,7 @@ public class TransactionManager {
 	private static final String SAVE_POINT_PREFIX = "ORMLITE";
 
 	private ConnectionSource connectionSource;
+	private DatabaseType databaseType;
 	private static AtomicInteger savePointCounter = new AtomicInteger();
 
 	/**
@@ -86,6 +88,7 @@ public class TransactionManager {
 		if (connectionSource == null) {
 			throw new IllegalStateException("dataSource was not set on " + getClass().getSimpleName());
 		}
+		databaseType = connectionSource.getDatabaseType();
 	}
 
 	/**
@@ -109,30 +112,41 @@ public class TransactionManager {
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		boolean autoCommitAtStart = false;
 		try {
-			connectionSource.saveSpecialConnection(connection);
-			if (connection.isAutoCommitSupported()) {
-				autoCommitAtStart = connection.getAutoCommit();
-				if (autoCommitAtStart) {
-					// disable auto-commit mode if supported and enabled at start
-					connection.setAutoCommit(false);
-					logger.debug("had to set auto-commit to false");
+			boolean hasSavePoint = false;
+			Savepoint savePoint = null;
+			boolean saved = connectionSource.saveSpecialConnection(connection);
+			if (saved || databaseType.isNestedSavePointsSupported()) {
+				if (connection.isAutoCommitSupported()) {
+					autoCommitAtStart = connection.getAutoCommit();
+					if (autoCommitAtStart) {
+						// disable auto-commit mode if supported and enabled at start
+						connection.setAutoCommit(false);
+						logger.debug("had to set auto-commit to false");
+					}
 				}
-			}
-			Savepoint savePoint = connection.setSavePoint(SAVE_POINT_PREFIX + savePointCounter.incrementAndGet());
-			if (savePoint == null) {
-				logger.debug("started savePoint transaction");
-			} else {
-				logger.debug("started savePoint transaction {}", savePoint.getSavepointName());
+				savePoint = connection.setSavePoint(SAVE_POINT_PREFIX + savePointCounter.incrementAndGet());
+				if (savePoint == null) {
+					logger.debug("started savePoint transaction");
+				} else {
+					logger.debug("started savePoint transaction {}", savePoint.getSavepointName());
+				}
+				hasSavePoint = true;
 			}
 			try {
 				T result = callable.call();
-				commit(connection, savePoint);
+				if (hasSavePoint) {
+					commit(connection, savePoint);
+				}
 				return result;
 			} catch (SQLException e) {
-				rollBack(connection, savePoint);
+				if (hasSavePoint) {
+					rollBack(connection, savePoint);
+				}
 				throw e;
 			} catch (Exception e) {
-				rollBack(connection, savePoint);
+				if (hasSavePoint) {
+					rollBack(connection, savePoint);
+				}
 				throw SqlExceptionUtil.create("Operation in transaction threw non-SQL exception", e);
 			}
 		} finally {
@@ -154,19 +168,19 @@ public class TransactionManager {
 	private void commit(DatabaseConnection connection, Savepoint savePoint) throws SQLException {
 		String name = (savePoint == null ? null : savePoint.getSavepointName());
 		connection.commit(savePoint);
-		if (savePoint == null) {
-			logger.debug("committed transaction");
+		if (name == null) {
+			logger.debug("committed savePoint transaction");
 		} else {
 			logger.debug("committed savePoint transaction {}", name);
 		}
 	}
 
 	private void rollBack(DatabaseConnection connection, Savepoint savePoint) throws SQLException {
+		String name = (savePoint == null ? null : savePoint.getSavepointName());
 		connection.rollback(savePoint);
-		if (savePoint == null) {
-			logger.debug("rolled back transaction");
+		if (name == null) {
+			logger.debug("rolled back savePoint transaction");
 		} else {
-			String name = savePoint.getSavepointName();
 			logger.debug("rolled back savePoint transaction {}", name);
 		}
 	}

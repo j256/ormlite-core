@@ -43,8 +43,10 @@ public interface ConnectionSource {
 	 * <b> NOTE: </b> Saving a connection is usually accomplished using ThreadLocals so multiple threads should not be
 	 * using connections in this scenario.
 	 * </p>
+	 * 
+	 * @return True if the connection was saved or false if we were already inside of a saved connection.
 	 */
-	public void saveSpecialConnection(DatabaseConnection connection);
+	public boolean saveSpecialConnection(DatabaseConnection connection);
 
 	/**
 	 * Clear the saved transaction connection. New transactions will be returned and released.
