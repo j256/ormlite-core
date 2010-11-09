@@ -1,6 +1,8 @@
 package com.j256.ormlite.table;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -132,6 +134,31 @@ public class DatabaseTableConfigTest {
 		dbTableConf.initialize();
 	}
 
+	@Test
+	public void testBaseClassHandling() throws Exception {
+		DatabaseTableConfig<Sub> dbTableConf = new DatabaseTableConfig<Sub>();
+		dbTableConf.setDataClass(Sub.class);
+		dbTableConf.initialize();
+		FieldType[] fieldTypes = dbTableConf.extractFieldTypes(databaseType);
+		assertEquals(2, fieldTypes.length);
+		boolean seeId = false;
+		boolean seeStuff = false;
+		for (FieldType fieldType : fieldTypes) {
+			String fieldName = fieldType.getFieldName();
+			if (fieldName.equals("id")) {
+				seeId = true;
+			} else if (fieldType.getFieldName().equals("stuff")) {
+				seeStuff = true;
+			} else {
+				fail("Unknown field type " + fieldType);
+			}
+		}
+		assertTrue(seeId);
+		assertTrue(seeStuff);
+	}
+
+	/* ======================================================================================= */
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class DatabaseTableAnno {
 		@DatabaseField
@@ -155,6 +182,22 @@ public class DatabaseTableConfigTest {
 		}
 		public String getDriverUrlPart() {
 			return "foo";
+		}
+	}
+
+	protected static class Base {
+		@DatabaseField(id = true)
+		int id;
+		public Base() {
+			// for ormlite
+		}
+	}
+
+	protected static class Sub extends Base {
+		@DatabaseField
+		String stuff;
+		public Sub() {
+			// for ormlite
 		}
 	}
 }

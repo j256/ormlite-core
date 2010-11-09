@@ -117,10 +117,12 @@ public class DatabaseTableConfig<T> {
 	private static <T> FieldType[] extractFieldTypes(DatabaseType databaseType, Class<T> clazz, String tableName)
 			throws SQLException {
 		List<FieldType> fieldTypes = new ArrayList<FieldType>();
-		for (Field field : clazz.getDeclaredFields()) {
-			FieldType fieldType = FieldType.createFieldType(databaseType, tableName, field);
-			if (fieldType != null) {
-				fieldTypes.add(fieldType);
+		for (Class<?> classWalk = clazz; classWalk != null; classWalk = classWalk.getSuperclass()) {  
+			for (Field field : classWalk.getDeclaredFields()) {
+				FieldType fieldType = FieldType.createFieldType(databaseType, tableName, field);
+				if (fieldType != null) {
+					fieldTypes.add(fieldType);
+				}
 			}
 		}
 		if (fieldTypes.size() == 0) {
