@@ -23,7 +23,7 @@ public interface FieldConverter {
 	/**
 	 * Convert a Java object and return the appropriate argument to a SQL insert or update statement.
 	 */
-	public Object javaToArg(FieldType fieldType, Object obj) throws SQLException;
+	public Object javaToSqlArg(FieldType fieldType, Object obj) throws SQLException;
 
 	/**
 	 * Return the object extracted from the results associated with column in position columnPos.

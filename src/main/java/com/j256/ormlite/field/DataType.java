@@ -111,7 +111,7 @@ public enum DataType implements FieldConverter {
 			}
 		}
 		@Override
-		public Object javaToArg(FieldType fieldType, Object javaObject) {
+		public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
 			Date date = (Date) javaObject;
 			return new Timestamp(date.getTime());
 		}
@@ -139,7 +139,7 @@ public enum DataType implements FieldConverter {
 			}
 		}
 		@Override
-		public Object javaToArg(FieldType fieldType, Object obj) {
+		public Object javaToSqlArg(FieldType fieldType, Object obj) {
 			Date date = (Date) obj;
 			return (Long) date.getTime();
 		}
@@ -185,7 +185,7 @@ public enum DataType implements FieldConverter {
 			}
 		}
 		@Override
-		public Object javaToArg(FieldType fieldType, Object obj) {
+		public Object javaToSqlArg(FieldType fieldType, Object obj) {
 			Date date = (Date) obj;
 			return formatDate(fieldType.getFormat(), date);
 		}
@@ -468,7 +468,7 @@ public enum DataType implements FieldConverter {
 	 */
 	SERIALIZABLE(SqlType.SERIALIZABLE, null, new Class<?>[] { Object.class }) {
 		@Override
-		public Object javaToArg(FieldType fieldType, Object obj) throws SQLException {
+		public Object javaToSqlArg(FieldType fieldType, Object obj) throws SQLException {
 			try {
 				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 				ObjectOutputStream objOutStream = new ObjectOutputStream(outStream);
@@ -513,7 +513,7 @@ public enum DataType implements FieldConverter {
 	 */
 	ENUM_STRING(SqlType.STRING, null, new Class<?>[] { Enum.class }) {
 		@Override
-		public Object javaToArg(FieldType fieldType, Object obj) throws SQLException {
+		public Object javaToSqlArg(FieldType fieldType, Object obj) throws SQLException {
 			Enum<?> enumVal = (Enum<?>) obj;
 			return enumVal.name();
 		}
@@ -534,7 +534,7 @@ public enum DataType implements FieldConverter {
 	 */
 	ENUM_INTEGER(SqlType.INTEGER, null, new Class<?>[] { Enum.class }) {
 		@Override
-		public Object javaToArg(FieldType fieldType, Object obj) throws SQLException {
+		public Object javaToSqlArg(FieldType fieldType, Object obj) throws SQLException {
 			Enum<?> enumVal = (Enum<?>) obj;
 			return (Integer) enumVal.ordinal();
 		}
@@ -557,7 +557,7 @@ public enum DataType implements FieldConverter {
 	 */
 	UNKNOWN(SqlType.UNKNOWN, null, new Class<?>[0]) {
 		@Override
-		public Object javaToArg(FieldType fieldType, Object obj) throws SQLException {
+		public Object javaToSqlArg(FieldType fieldType, Object obj) throws SQLException {
 			return null;
 		}
 		@Override
@@ -593,7 +593,7 @@ public enum DataType implements FieldConverter {
 
 	public abstract Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException;
 
-	public Object javaToArg(FieldType fieldType, Object javaObject) throws SQLException {
+	public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {
 		// noop pass-thru is the default
 		return javaObject;
 	}

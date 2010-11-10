@@ -144,7 +144,7 @@ public class FieldTypeTest extends BaseOrmLiteCoreTest {
 					public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 						return defaultStr;
 					}
-					public Object javaToArg(FieldType fieldType, Object javaObject) {
+					public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
 						return nameArg;
 					}
 					public Object resultToJava(FieldType fieldType, DatabaseResults resultSet, int columnPos)

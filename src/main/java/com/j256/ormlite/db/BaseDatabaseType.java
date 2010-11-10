@@ -417,7 +417,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 			boolean bool = (boolean) Boolean.parseBoolean(defaultStr);
 			return (bool ? new Byte((byte) 1) : new Byte((byte) 0));
 		}
-		public Object javaToArg(FieldType fieldType, Object obj) throws SQLException {
+		public Object javaToSqlArg(FieldType fieldType, Object obj) throws SQLException {
 			Boolean bool = (Boolean) obj;
 			return (bool ? new Byte((byte) 1) : new Byte((byte) 0));
 		}

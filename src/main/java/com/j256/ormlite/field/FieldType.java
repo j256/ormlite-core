@@ -378,7 +378,7 @@ public class FieldType {
 		if (val == null) {
 			return null;
 		} else {
-			val = fieldConverter.javaToArg(this, val);
+			val = fieldConverter.javaToSqlArg(this, val);
 			@SuppressWarnings("unchecked")
 			FV converted = (FV) val;
 			return converted;

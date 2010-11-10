@@ -117,7 +117,7 @@ public class DataTypeTest extends BaseOrmLiteCoreTest {
 		Timestamp timestamp = new Timestamp(DATE_FORMATTER.parse(DATE_STRING).getTime());
 		assertEquals(timestamp, type.parseDefaultString(getFieldType("date"), DATE_STRING));
 
-		timestamp = (Timestamp) type.javaToArg(null, DATE);
+		timestamp = (Timestamp) type.javaToSqlArg(null, DATE);
 		assertEquals(TIMESTAMP, timestamp);
 	}
 
@@ -133,7 +133,7 @@ public class DataTypeTest extends BaseOrmLiteCoreTest {
 		assertEquals(date, type.resultToJava(null, results, COLUMN));
 		verify(results);
 
-		Long expectedLong = (Long) type.javaToArg(null, date);
+		Long expectedLong = (Long) type.javaToSqlArg(null, date);
 		assertEquals(millis, expectedLong.longValue());
 		assertTrue(type.isNumber());
 		String longString = "255";
@@ -149,7 +149,7 @@ public class DataTypeTest extends BaseOrmLiteCoreTest {
 	public void testJavaDateString() throws Exception {
 		DataType type = DataType.JAVA_DATE_STRING;
 		FieldType fieldType = getFieldType("date");
-		assertEquals(DATE_STRING, type.javaToArg(fieldType, DATE));
+		assertEquals(DATE_STRING, type.javaToSqlArg(fieldType, DATE));
 		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
 		expect(results.getString(COLUMN)).andReturn(DATE_STRING);
 		replay(results);
@@ -382,7 +382,7 @@ public class DataTypeTest extends BaseOrmLiteCoreTest {
 	public void testSerializable() throws Exception {
 		DataType type = DataType.SERIALIZABLE;
 		Integer serializable = new Integer(0);
-		byte[] bytes = (byte[]) type.javaToArg(null, serializable);
+		byte[] bytes = (byte[]) type.javaToSqlArg(null, serializable);
 		ObjectInputStream stream = new ObjectInputStream(new ByteArrayInputStream(bytes));
 		Object val = stream.readObject();
 		assertEquals(serializable, val);
@@ -410,7 +410,7 @@ public class DataTypeTest extends BaseOrmLiteCoreTest {
 	@Test(expected = SQLException.class)
 	public void testSerializableBadObject() throws Exception {
 		DataType type = DataType.SERIALIZABLE;
-		type.javaToArg(null, new LocalString());
+		type.javaToSqlArg(null, new LocalString());
 	}
 
 	@Test
@@ -424,7 +424,7 @@ public class DataTypeTest extends BaseOrmLiteCoreTest {
 	public void testEnumString() throws Exception {
 		DataType type = DataType.ENUM_STRING;
 		AnotherEnum anotherEnum = AnotherEnum.A;
-		assertEquals(anotherEnum.name(), type.javaToArg(null, anotherEnum));
+		assertEquals(anotherEnum.name(), type.javaToSqlArg(null, anotherEnum));
 		String defaultString = "default";
 		assertEquals(defaultString, type.parseDefaultString(null, defaultString));
 
@@ -440,7 +440,7 @@ public class DataTypeTest extends BaseOrmLiteCoreTest {
 	public void testEnumInteger() throws Exception {
 		DataType type = DataType.ENUM_INTEGER;
 		AnotherEnum anotherEnum = AnotherEnum.A;
-		assertEquals(anotherEnum.ordinal(), type.javaToArg(null, anotherEnum));
+		assertEquals(anotherEnum.ordinal(), type.javaToSqlArg(null, anotherEnum));
 		String integerString = "5";
 		Integer defaultInteger = new Integer(integerString);
 		assertEquals(defaultInteger, type.parseDefaultString(null, integerString));
@@ -458,7 +458,7 @@ public class DataTypeTest extends BaseOrmLiteCoreTest {
 	public void testUnknown() throws Exception {
 		DataType type = DataType.UNKNOWN;
 		String defaultString = "5";
-		assertNull(type.javaToArg(null, defaultString));
+		assertNull(type.javaToSqlArg(null, defaultString));
 		assertNull(type.parseDefaultString(null, defaultString));
 		assertNull(type.resultToJava(null, null, 0));
 	}

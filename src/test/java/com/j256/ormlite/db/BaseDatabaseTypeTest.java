@@ -183,8 +183,8 @@ public class BaseDatabaseTypeTest extends BaseOrmLiteCoreTest {
 	@Test
 	public void testBooleanConverterJavaToArg() throws Exception {
 		FieldType fieldType = FieldType.createFieldType(ourDatabaseType, "foo", Foo.class.getDeclaredField("bool"));
-		assertEquals(new Byte((byte) 1), booleanFieldConverter.javaToArg(fieldType, Boolean.TRUE));
-		assertEquals(new Byte((byte) 0), booleanFieldConverter.javaToArg(fieldType, Boolean.FALSE));
+		assertEquals(new Byte((byte) 1), booleanFieldConverter.javaToSqlArg(fieldType, Boolean.TRUE));
+		assertEquals(new Byte((byte) 0), booleanFieldConverter.javaToSqlArg(fieldType, Boolean.FALSE));
 	}
 
 	@Test
