@@ -293,6 +293,8 @@ public class FieldType {
 			}
 			try {
 				field.set(data, val);
+			} catch (IllegalArgumentException e) {
+				throw SqlExceptionUtil.create("Could not assign object '" + val + "' to field " + this, e);
 			} catch (IllegalAccessException e) {
 				throw SqlExceptionUtil.create("Could not assign object '" + val + "' to field " + this, e);
 			} finally {
