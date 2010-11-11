@@ -33,7 +33,7 @@ public class MappedDeleteCollection<T, ID> extends BaseMappedStatement<T> {
 		Object[] fieldObjects = new Object[datas.size()];
 		int objC = 0;
 		for (T data : datas) {
-			fieldObjects[objC] = tableInfo.getIdField().convertJavaToSqlArgValue(data);
+			fieldObjects[objC] = tableInfo.getIdField().extractJavaFieldToSqlArgValue(data);
 			objC++;
 		}
 		return updateRows(databaseConnection, deleteCollection, fieldObjects);

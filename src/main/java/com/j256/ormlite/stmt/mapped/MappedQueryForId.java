@@ -17,7 +17,7 @@ import com.j256.ormlite.table.TableInfo;
  * 
  * @author graywatson
  */
-public class MappedQueryForId<T, ID> extends BaseMappedQuery<T> {
+public class MappedQueryForId<T> extends BaseMappedQuery<T> {
 
 	private final String label;
 
@@ -31,7 +31,7 @@ public class MappedQueryForId<T, ID> extends BaseMappedQuery<T> {
 	 * Query for an object in the database which matches the obj argument.
 	 */
 	public T execute(DatabaseConnection databaseConnection, Object obj) throws SQLException {
-		Object[] args = new Object[] { getId(obj) };
+		Object[] args = new Object[] { getJavaIdFromObject(obj) };
 		// @SuppressWarnings("unchecked")
 		Object result =
 				databaseConnection.queryForOne(statement, args, new SqlType[] { idField.getSqlTypeVal() }, this);
@@ -48,13 +48,9 @@ public class MappedQueryForId<T, ID> extends BaseMappedQuery<T> {
 		return castResult;
 	}
 
-	/**
-	 * Return the ID from the object passed to execute.
-	 */
-	protected ID getId(Object obj) throws SQLException {
-		@SuppressWarnings("unchecked")
-		ID id = (ID) obj;
-		return id;
+	protected Object getJavaIdFromObject(Object obj) throws SQLException {
+		// the default is a noop since the obj is the id itself
+		return obj;
 	}
 
 	/**
@@ -64,12 +60,11 @@ public class MappedQueryForId<T, ID> extends BaseMappedQuery<T> {
 		// noop
 	}
 
-	public static <T, ID> MappedQueryForId<T, ID> build(DatabaseType databaseType, TableInfo<T> tableInfo)
-			throws SQLException {
+	public static <T> MappedQueryForId<T> build(DatabaseType databaseType, TableInfo<T> tableInfo) throws SQLException {
 		List<FieldType> argFieldTypeList = new ArrayList<FieldType>();
 		List<FieldType> resultFieldTypeList = new ArrayList<FieldType>();
 		String statement = buildStatement(databaseType, tableInfo, argFieldTypeList, resultFieldTypeList);
-		return new MappedQueryForId<T, ID>(tableInfo, statement, argFieldTypeList, resultFieldTypeList, "query-for-id");
+		return new MappedQueryForId<T>(tableInfo, statement, argFieldTypeList, resultFieldTypeList, "query-for-id");
 	}
 
 	protected static <ID, T> String buildStatement(DatabaseType databaseType, TableInfo<T> tableInfo,

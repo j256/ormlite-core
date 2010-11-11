@@ -96,7 +96,7 @@ public abstract class BaseMappedStatement<T> {
 		Object[] objects = new Object[fieldTypes.length];
 		for (int i = 0; i < fieldTypes.length; i++) {
 			FieldType fieldType = fieldTypes[i];
-			objects[i] = fieldType.convertJavaToSqlArgValue(data);
+			objects[i] = fieldType.extractJavaFieldToSqlArgValue(data);
 			if (objects[i] == null && fieldType.getDefaultValue() != null) {
 				objects[i] = fieldType.getDefaultValue();
 			}

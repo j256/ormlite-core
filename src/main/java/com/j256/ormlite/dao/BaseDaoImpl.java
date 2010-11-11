@@ -349,9 +349,8 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	public boolean objectsEqual(T data1, T data2) throws SQLException {
 		checkForInitialized();
 		for (FieldType fieldType : tableInfo.getFieldTypes()) {
-			// XXX: WRONG
-			Object fieldObj1 = fieldType.getSqlArgValue(data1);
-			Object fieldObj2 = fieldType.getSqlArgValue(data2);
+			Object fieldObj1 = fieldType.extractJavaFieldValue(data1);
+			Object fieldObj2 = fieldType.extractJavaFieldValue(data2);
 			if (fieldObj1 == null) {
 				if (fieldObj2 != null) {
 					return false;

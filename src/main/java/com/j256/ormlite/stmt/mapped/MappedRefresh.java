@@ -13,7 +13,7 @@ import com.j256.ormlite.table.TableInfo;
  * 
  * @author graywatson
  */
-public class MappedRefresh<T, ID> extends MappedQueryForId<T, ID> {
+public class MappedRefresh<T> extends MappedQueryForId<T> {
 
 	private MappedRefresh(TableInfo<T> tableInfo, String statement, List<FieldType> argFieldTypeList,
 			List<FieldType> resultFieldTypeList) {
@@ -21,14 +21,11 @@ public class MappedRefresh<T, ID> extends MappedQueryForId<T, ID> {
 	}
 
 	@Override
-	protected ID getId(Object obj) throws SQLException {
+	protected Object getJavaIdFromObject(Object obj) throws SQLException {
+		// in MappedRefresh, the obj is the existing T so we need to get the id field
 		@SuppressWarnings("unchecked")
 		T data = (T) obj;
-		// this is necessary because of a 1.6 compilation error
-		@SuppressWarnings("unchecked")
-		// XXX: wrong
-		ID id = (ID) idField.convertJavaToSqlArgValue(data);
-		return id;
+		return idField.extractJavaFieldValue(data);
 	}
 
 	@Override
@@ -38,17 +35,15 @@ public class MappedRefresh<T, ID> extends MappedQueryForId<T, ID> {
 		// copy each field into the passed in object
 		for (FieldType fieldType : resultsFieldTypes) {
 			if (fieldType != idField) {
-				// XXX: wrong
-				fieldType.assignField(data, fieldType.convertJavaToSqlArgValue(result));
+				fieldType.assignField(data, fieldType.extractJavaFieldValue(result));
 			}
 		}
 	}
 
-	public static <T, ID> MappedRefresh<T, ID> build(DatabaseType databaseType, TableInfo<T> tableInfo)
-			throws SQLException {
+	public static <T> MappedRefresh<T> build(DatabaseType databaseType, TableInfo<T> tableInfo) throws SQLException {
 		List<FieldType> argFieldTypeList = new ArrayList<FieldType>();
 		List<FieldType> resultFieldTypeList = new ArrayList<FieldType>();
 		String statement = buildStatement(databaseType, tableInfo, argFieldTypeList, resultFieldTypeList);
-		return new MappedRefresh<T, ID>(tableInfo, statement, argFieldTypeList, resultFieldTypeList);
+		return new MappedRefresh<T>(tableInfo, statement, argFieldTypeList, resultFieldTypeList);
 	}
 }

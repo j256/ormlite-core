@@ -65,8 +65,8 @@ abstract class BaseComparison implements Comparison {
 			 * need to extract the id.
 			 */
 			FieldType idFieldType = fieldType.getForeignIdField();
-			// XXX: wrong?  this maybe right
-			appendArgOrValue(databaseType, idFieldType, sb, selectArgList, idFieldType.getSqlArgValue(argOrValue));
+			appendArgOrValue(databaseType, idFieldType, sb, selectArgList,
+					idFieldType.extractJavaFieldValue(argOrValue));
 			// no need for the space since it was done in the recursion
 			appendSpace = false;
 		} else if (fieldType.isNumber()) {

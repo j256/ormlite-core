@@ -93,8 +93,7 @@ public class SelectArg {
 		}
 		if (fieldType != null && fieldType.isForeign() && fieldType.getFieldType() == value.getClass()) {
 			FieldType idFieldType = fieldType.getForeignIdField();
-			// XXX: wrong
-			return idFieldType.getSqlArgValue(value);
+			return idFieldType.extractJavaFieldValue(value);
 		} else {
 			return value;
 		}
