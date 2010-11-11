@@ -44,13 +44,13 @@ public class StatementExecutor<T, ID> {
 
 	private final DatabaseType databaseType;
 	private final TableInfo<T> tableInfo;
-	private MappedQueryForId<T> mappedQueryForId;
+	private MappedQueryForId<T,ID> mappedQueryForId;
 	private PreparedQuery<T> preparedQueryForAll;
 	private MappedCreate<T> mappedInsert;
 	private MappedUpdate<T> mappedUpdate;
 	private MappedUpdateId<T, ID> mappedUpdateId;
 	private MappedDelete<T> mappedDelete;
-	private MappedRefresh<T> mappedRefresh;
+	private MappedRefresh<T,ID> mappedRefresh;
 
 	/**
 	 * Provides statements for various SQL operations.
@@ -222,12 +222,7 @@ public class StatementExecutor<T, ID> {
 		if (mappedRefresh == null) {
 			mappedRefresh = MappedRefresh.build(databaseType, tableInfo);
 		}
-		T result = mappedRefresh.execute(databaseConnection, data);
-		if (result == null) {
-			return 0;
-		} else {
-			return 1;
-		}
+		return mappedRefresh.execute(databaseConnection, data);
 	}
 
 	/**

@@ -17,7 +17,7 @@ import com.j256.ormlite.table.TableInfo;
  * 
  * @author graywatson
  */
-public class MappedQueryForId<T> extends BaseMappedQuery<T> {
+public class MappedQueryForId<T, ID> extends BaseMappedQuery<T> {
 
 	private final String label;
 
@@ -30,8 +30,8 @@ public class MappedQueryForId<T> extends BaseMappedQuery<T> {
 	/**
 	 * Query for an object in the database which matches the obj argument.
 	 */
-	public T execute(DatabaseConnection databaseConnection, Object obj) throws SQLException {
-		Object[] args = new Object[] { getJavaIdFromObject(obj) };
+	public T execute(DatabaseConnection databaseConnection, ID id) throws SQLException {
+		Object[] args = new Object[] { id };
 		// @SuppressWarnings("unchecked")
 		Object result =
 				databaseConnection.queryForOne(statement, args, new SqlType[] { idField.getSqlTypeVal() }, this);
@@ -44,27 +44,15 @@ public class MappedQueryForId<T> extends BaseMappedQuery<T> {
 		logArgs(args);
 		@SuppressWarnings("unchecked")
 		T castResult = (T) result;
-		postProcessResult(obj, castResult);
 		return castResult;
 	}
 
-	protected Object getJavaIdFromObject(Object obj) throws SQLException {
-		// the default is a noop since the obj is the id itself
-		return obj;
-	}
-
-	/**
-	 * Post process the result returned by the execute method.
-	 */
-	protected void postProcessResult(Object obj, T result) throws SQLException {
-		// noop
-	}
-
-	public static <T> MappedQueryForId<T> build(DatabaseType databaseType, TableInfo<T> tableInfo) throws SQLException {
+	public static <T, ID> MappedQueryForId<T, ID> build(DatabaseType databaseType, TableInfo<T> tableInfo)
+			throws SQLException {
 		List<FieldType> argFieldTypeList = new ArrayList<FieldType>();
 		List<FieldType> resultFieldTypeList = new ArrayList<FieldType>();
 		String statement = buildStatement(databaseType, tableInfo, argFieldTypeList, resultFieldTypeList);
-		return new MappedQueryForId<T>(tableInfo, statement, argFieldTypeList, resultFieldTypeList, "query-for-id");
+		return new MappedQueryForId<T, ID>(tableInfo, statement, argFieldTypeList, resultFieldTypeList, "query-for-id");
 	}
 
 	protected static <ID, T> String buildStatement(DatabaseType databaseType, TableInfo<T> tableInfo,
