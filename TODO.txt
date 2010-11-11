@@ -4,9 +4,6 @@
 	- uses queryForFirst to return object
 	- creates account_field-name instead of account_id field in local table 
 
-- do we need to catch exceptions on pooled connections and maybe preventively closing them instead of caching?
-	- maybe a boolean to release to say if it was clean or not
-
 - maybe add rawUpdate and rawExecute?
 	- need to document the raw query, iterator, update, execute in .texi
 	- need to add a section about how to use the raw queries and the RawResults class
@@ -56,6 +53,8 @@
 
 - implement a "keep-alive" query ("select 1") to keep a connection warm
 	- for the pooled connection source
+	- needs another thread to run select 1 every minute or so
+	- should do a select 1 when the connection is handed to us and not closed
 
 - delete method which deletes all of the rows that match a particular field.
 	- to support the foreign key stuff.
@@ -67,9 +66,9 @@
 	- metaData.supportsGetGeneratedKeys()
 	- supportsMultipleTransactions()
 
-- have a DAO call that turns off saves the connection, auto-commit, calls a callable, unwinds
+- have a DAO call that saves the connection, turns off auto-commit, calls a callable, unwinds
 	- for batch operations
-	- maybe have a start/end batch with WARNINGS!!!!
+	- maybe have a start/end batch method calls with WARNINGS about no finally pattern!!!!
 
 - from Larry: an example-based query, where you supply an object with fields set as criteria
 	- no setting --> no criteria for that field

@@ -5,10 +5,10 @@
 	* CORE: Added nested transaction support.  Had to add per-database checks.  Fixes bug #3106108.
 	* CORE: Added walking up the super classes to find database fields.  Fixes bug #3106109.
 	* CORE: Added an isClosed() method to DatabaseConnection so the connection source can detect problems.
+	* CORE: Removed some deprecated methods from the DAO and around the prepared statement code.
+	* CORE: Added to the manual a section on identity columns.  Another section on database flavor notes.
 	* JDBC: Added protection against inner connection saves.
 	* ANDROID: Solve the problem of recursion in onCreate and onUpdate differently.  Fixes bug #3096875.
-	* CORE: Removed some deprecated methods from the DAO and around the prepared statement code.
-	* CORE: Added to the manual a section on identity columns.  Aother section on database flavor notes.
 
 4.2: 10/13/2010
 	* CORE: Improved messaging around unknown columns.
