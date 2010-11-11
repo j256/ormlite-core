@@ -132,7 +132,8 @@ public class TableInfo<T> {
 		for (FieldType fieldType : fieldTypes) {
 			sb.append(' ').append(fieldType.getDbColumnName()).append("=");
 			try {
-				sb.append(fieldType.getConvertedFieldValue(object));
+				// XXX: wrong?
+				sb.append(fieldType.convertJavaToSqlArgValue(object));
 			} catch (Exception e) {
 				throw new IllegalStateException("Could not generate toString of field " + fieldType, e);
 			}

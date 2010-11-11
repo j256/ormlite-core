@@ -48,8 +48,6 @@ abstract class BaseComparison implements Comparison {
 
 	/**
 	 * Append to the string builder either a {@link SelectArg} argument or a value object.
-	 * 
-	 * @throws SQLException
 	 */
 	protected void appendArgOrValue(DatabaseType databaseType, FieldType fieldType, StringBuilder sb,
 			List<SelectArg> selectArgList, Object argOrValue) throws SQLException {
@@ -67,7 +65,8 @@ abstract class BaseComparison implements Comparison {
 			 * need to extract the id.
 			 */
 			FieldType idFieldType = fieldType.getForeignIdField();
-			appendArgOrValue(databaseType, idFieldType, sb, selectArgList, idFieldType.getFieldValue(argOrValue));
+			// XXX: wrong?  this maybe right
+			appendArgOrValue(databaseType, idFieldType, sb, selectArgList, idFieldType.getSqlArgValue(argOrValue));
 			// no need for the space since it was done in the recursion
 			appendSpace = false;
 		} else if (fieldType.isNumber()) {

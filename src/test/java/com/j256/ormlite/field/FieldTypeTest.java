@@ -165,7 +165,7 @@ public class FieldTypeTest extends BaseOrmLiteCoreTest {
 		Foo foo = new Foo();
 		// it can't be null
 		foo.name = nameArg + " not that";
-		assertEquals(nameArg, fieldType.getConvertedFieldValue(foo));
+		assertEquals(nameArg, fieldType.convertJavaToSqlArgValue(foo));
 
 		DatabaseResults resultMock = createMock(DatabaseResults.class);
 		expect(resultMock.findColumn("name")).andReturn(0);
@@ -288,10 +288,10 @@ public class FieldTypeTest extends BaseOrmLiteCoreTest {
 		GetSet getSet = new GetSet();
 		int id = 121312321;
 		getSet.id = id;
-		assertEquals(id, fieldType.getConvertedFieldValue(getSet));
+		assertEquals(id, fieldType.convertJavaToSqlArgValue(getSet));
 		int id2 = 869544;
 		fieldType.assignField(getSet, id2);
-		assertEquals(id2, fieldType.getConvertedFieldValue(getSet));
+		assertEquals(id2, fieldType.convertJavaToSqlArgValue(getSet));
 	}
 
 	@Test(expected = SQLException.class)
@@ -300,7 +300,7 @@ public class FieldTypeTest extends BaseOrmLiteCoreTest {
 		assertTrue(fields.length >= 1);
 		Field idField = fields[0];
 		FieldType fieldType = FieldType.createFieldType(databaseType, GetSet.class.getSimpleName(), idField);
-		fieldType.getConvertedFieldValue(new Object());
+		fieldType.convertJavaToSqlArgValue(new Object());
 	}
 
 	@Test(expected = SQLException.class)

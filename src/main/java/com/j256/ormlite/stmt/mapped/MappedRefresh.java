@@ -26,7 +26,8 @@ public class MappedRefresh<T, ID> extends MappedQueryForId<T, ID> {
 		T data = (T) obj;
 		// this is necessary because of a 1.6 compilation error
 		@SuppressWarnings("unchecked")
-		ID id = (ID) idField.getConvertedFieldValue(data);
+		// XXX: wrong
+		ID id = (ID) idField.convertJavaToSqlArgValue(data);
 		return id;
 	}
 
@@ -37,7 +38,8 @@ public class MappedRefresh<T, ID> extends MappedQueryForId<T, ID> {
 		// copy each field into the passed in object
 		for (FieldType fieldType : resultsFieldTypes) {
 			if (fieldType != idField) {
-				fieldType.assignField(data, fieldType.getConvertedFieldValue(result));
+				// XXX: wrong
+				fieldType.assignField(data, fieldType.convertJavaToSqlArgValue(result));
 			}
 		}
 	}

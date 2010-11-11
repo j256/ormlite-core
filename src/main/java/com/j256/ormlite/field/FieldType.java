@@ -270,7 +270,8 @@ public class FieldType {
 	public void assignField(Object data, Object val) throws SQLException {
 		// if this is a foreign object then val is the foreign object's id val
 		if (foreignTableInfo != null) {
-			Object foreignId = getConvertedFieldValue(data);
+			// XXX: WRONG
+			Object foreignId = convertJavaToSqlArgValue(data);
 			/*
 			 * See if we don't need to create a new foreign object. If we are refreshing and the id field has not
 			 * changed then there is no need to create a new foreign object and maybe lose previously refreshed field
@@ -330,7 +331,7 @@ public class FieldType {
 	/**
 	 * Return the value from the field in the object that is defined by this FieldType.
 	 */
-	public <FV> FV getFieldValue(Object object) throws SQLException {
+	public <FV> FV getSqlArgValue(Object object) throws SQLException {
 		Object val;
 		if (fieldGetMethod == null) {
 			boolean accessible = field.isAccessible();
@@ -361,7 +362,8 @@ public class FieldType {
 
 		// if this is a foreign object then we want its id field
 		if (foreignTableInfo != null) {
-			val = foreignTableInfo.getIdField().getConvertedFieldValue(val);
+			// XXX: WRONG?  If so then the method name should change
+			val = foreignTableInfo.getIdField().convertJavaToSqlArgValue(val);
 		}
 
 		@SuppressWarnings("unchecked")
@@ -373,8 +375,8 @@ public class FieldType {
 	 * Return the value from the field in the object after it has been converted to something suitable to be stored in
 	 * the database.
 	 */
-	public <FV> FV getConvertedFieldValue(Object object) throws SQLException {
-		Object val = getFieldValue(object);
+	public <FV> FV convertJavaToSqlArgValue(Object object) throws SQLException {
+		Object val = getSqlArgValue(object);
 		if (val == null) {
 			return null;
 		} else {
