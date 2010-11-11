@@ -1,3 +1,6 @@
+4.4: 11/10/2010
+	* CORE: Fixed a major problem with refreshing some field types.  Fixes bug #3106962.
+
 4.3: 11/9/2010
 	* CORE: Renamed the ConnectionSource#saveTransactionConnection and clear to be saveSpecialConnection and clear.
 	* CORE: Added functionality to RawResults to get all results as a List<String[]>.

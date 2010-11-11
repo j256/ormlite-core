@@ -61,8 +61,8 @@ abstract class BaseComparison implements Comparison {
 			selectArgList.add(selectArg);
 		} else if (fieldType.isForeign() && fieldType.getFieldType() == argOrValue.getClass()) {
 			/*
-			 * If we have a foreign field and our argument is the type of the foreign object (i.e. not its id), then we
-			 * need to extract the id.
+			 * If we have a foreign field and our argument is an instance of the foreign object (i.e. not its id), then
+			 * we need to extract the id.
 			 */
 			FieldType idFieldType = fieldType.getForeignIdField();
 			appendArgOrValue(databaseType, idFieldType, sb, selectArgList,
