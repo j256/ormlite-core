@@ -47,8 +47,13 @@ public class MappedDeleteCollection<T, ID> extends BaseMappedStatement<T> {
 			DatabaseConnection databaseConnection, Collection<ID> ids) throws SQLException {
 		MappedDeleteCollection<T, ID> deleteCollection =
 				MappedDeleteCollection.build(databaseType, tableInfo, ids.size());
-		Object[] idsArray = ids.toArray(new Object[ids.size()]);
-		return updateRows(databaseConnection, deleteCollection, idsArray);
+		Object[] fieldObjects = new Object[ids.size()];
+		int objC = 0;
+		for (ID id : ids) {
+			fieldObjects[objC] = tableInfo.getIdField().convertJavaFieldToSqlArgValue(id);
+			objC++;
+		}
+		return updateRows(databaseConnection, deleteCollection, fieldObjects);
 	}
 
 	/**

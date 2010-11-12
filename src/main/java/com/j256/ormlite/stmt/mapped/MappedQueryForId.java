@@ -28,19 +28,22 @@ public class MappedQueryForId<T, ID> extends BaseMappedQuery<T> {
 	}
 
 	/**
-	 * Query for an object in the database which matches the obj argument.
+	 * Query for an object in the database which matches the id argument.
 	 */
 	public T execute(DatabaseConnection databaseConnection, ID id) throws SQLException {
-		Object[] args = new Object[] { id };
+		Object[] args = new Object[] { convertIdToFieldObject(id) };
 		// @SuppressWarnings("unchecked")
 		Object result =
 				databaseConnection.queryForOne(statement, args, new SqlType[] { idField.getSqlTypeVal() }, this);
-		if (result == DatabaseConnection.MORE_THAN_ONE) {
+		if (result == null) {
+			logger.debug("{} using '{}' and {} args, got no results", label, statement, args.length);
+		} else if (result == DatabaseConnection.MORE_THAN_ONE) {
 			logger.error("{} using '{}' and {} args, got >1 results", label, statement, args.length);
 			logArgs(args);
 			throw new SQLException(label + " got more than 1 result: " + statement);
+		} else {
+			logger.debug("{} using '{}' and {} args, got 1 result", label, statement, args.length);
 		}
-		logger.debug("{} using '{}' and {} args, got 1 result", label, statement, args.length);
 		logArgs(args);
 		@SuppressWarnings("unchecked")
 		T castResult = (T) result;

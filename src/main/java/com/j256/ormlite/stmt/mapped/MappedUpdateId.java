@@ -25,10 +25,9 @@ public class MappedUpdateId<T, ID> extends BaseMappedStatement<T> {
 	 * Update the id field of the object in the database.
 	 */
 	public int execute(DatabaseConnection databaseConnection, T data, ID newId) throws SQLException {
-		Object[] fieldObjects = getFieldObjects(argFieldTypes, data);
 		try {
 			// the arguments are the new-id and old-id
-			Object[] args = new Object[] { newId, fieldObjects[0] };
+			Object[] args = new Object[] { convertIdToFieldObject(newId), extractIdToFieldObject(data) };
 			int rowC = databaseConnection.update(statement, args, argSqlTypes);
 			if (rowC == 1) {
 				// adjust the object to assign the new id

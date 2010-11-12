@@ -102,7 +102,7 @@ public class MappedCreate<T> extends BaseMappedStatement<T> {
 	}
 
 	private int createWithGeneratedId(DatabaseConnection databaseConnection, T data) throws SQLException {
-		Object[] args = getFieldObjects(argFieldTypes, data);
+		Object[] args = getFieldObjects(data);
 		try {
 			KeyHolder keyHolder = new KeyHolder();
 			// do the insert first

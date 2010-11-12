@@ -40,7 +40,7 @@ public abstract class BaseMappedStatement<T> {
 	 */
 	protected int insert(DatabaseConnection databaseConnection, T data) throws SQLException {
 		try {
-			Object[] args = getFieldObjects(argFieldTypes, data);
+			Object[] args = getFieldObjects(data);
 			int rowC = databaseConnection.insert(statement, args, argSqlTypes);
 			logger.debug("insert data with statement '{}' and {} args, changed {} rows", statement, args.length, rowC);
 			if (args.length > 0) {
@@ -58,7 +58,7 @@ public abstract class BaseMappedStatement<T> {
 	 */
 	public int update(DatabaseConnection databaseConnection, T data) throws SQLException {
 		try {
-			Object[] args = getFieldObjects(argFieldTypes, data);
+			Object[] args = getFieldObjects(data);
 			int rowC = databaseConnection.update(statement, args, argSqlTypes);
 			logger.debug("update data with statement '{}' and {} args, changed {} rows", statement, args.length, rowC);
 			if (args.length > 0) {
@@ -76,7 +76,7 @@ public abstract class BaseMappedStatement<T> {
 	 */
 	public int delete(DatabaseConnection databaseConnection, T data) throws SQLException {
 		try {
-			Object[] args = getFieldObjects(argFieldTypes, data);
+			Object[] args = getFieldObjects(data);
 			int rowC = databaseConnection.delete(statement, args, argSqlTypes);
 			logger.debug("delete data with statement '{}' and {} args, changed {} rows", statement, args.length, rowC);
 			if (args.length > 0) {
@@ -92,16 +92,35 @@ public abstract class BaseMappedStatement<T> {
 	/**
 	 * Return the array of field objects pulled from the data object.
 	 */
-	protected Object[] getFieldObjects(FieldType[] fieldTypes, Object data) throws SQLException {
-		Object[] objects = new Object[fieldTypes.length];
-		for (int i = 0; i < fieldTypes.length; i++) {
-			FieldType fieldType = fieldTypes[i];
+	protected Object[] getFieldObjects(Object data) throws SQLException {
+		Object[] objects = new Object[argFieldTypes.length];
+		for (int i = 0; i < argFieldTypes.length; i++) {
+			FieldType fieldType = argFieldTypes[i];
 			objects[i] = fieldType.extractJavaFieldToSqlArgValue(data);
 			if (objects[i] == null && fieldType.getDefaultValue() != null) {
 				objects[i] = fieldType.getDefaultValue();
 			}
 		}
 		return objects;
+	}
+
+	/**
+	 * Return a field object converted from an id.
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> this probably should be an ID but that would have added another generic param to the world and
+	 * external classes like PreparedQuery.
+	 * </p>
+	 */
+	protected Object convertIdToFieldObject(Object id) throws SQLException {
+		return idField.convertJavaFieldToSqlArgValue(id);
+	}
+
+	/**
+	 * Return a field-object for the id extracted from the data.
+	 */
+	protected Object extractIdToFieldObject(T data) throws SQLException {
+		return idField.extractJavaFieldToSqlArgValue(data);
 	}
 
 	static void appendWhereId(DatabaseType databaseType, FieldType idField, StringBuilder sb,
