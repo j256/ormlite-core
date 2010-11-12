@@ -14,7 +14,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableInfo;
 
-public abstract class BaseOrmLiteCoreTest {
+public abstract class BaseCoreTest {
 
 	protected final DatabaseType databaseType = new StubDatabaseType();
 	protected final StubConnectionSource connectionSource = new StubConnectionSource();

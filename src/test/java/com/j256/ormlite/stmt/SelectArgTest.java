@@ -8,9 +8,9 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteCoreTest;
+import com.j256.ormlite.BaseCoreTest;
 
-public class SelectArgTest extends BaseOrmLiteCoreTest {
+public class SelectArgTest extends BaseCoreTest {
 
 	@Test(expected = SQLException.class)
 	public void testGetBeforeSetValue() throws Exception {

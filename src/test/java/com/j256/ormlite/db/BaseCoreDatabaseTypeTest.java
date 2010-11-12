@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteCoreTest;
+import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.TestUtils;
 import com.j256.ormlite.db.BaseDatabaseType.BooleanNumberFieldConverter;
 import com.j256.ormlite.field.DataType;
@@ -26,7 +26,7 @@ import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.support.DatabaseResults;
 
-public class BaseDatabaseTypeTest extends BaseOrmLiteCoreTest {
+public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 
 	private OurDbType ourDatabaseType = new OurDbType();
 	private FieldConverter booleanFieldConverter = new BooleanNumberFieldConverter();

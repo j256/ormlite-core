@@ -10,13 +10,13 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteCoreTest;
+import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.db.BaseDatabaseType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.stmt.query.Eq;
 import com.j256.ormlite.table.TableInfo;
 
-public class WhereTest extends BaseOrmLiteCoreTest {
+public class WhereTest extends BaseCoreTest {
 
 	private final static String COLUMN_NAME = "foo";
 	private final static String STRING_COLUMN_NAME = "stringie";

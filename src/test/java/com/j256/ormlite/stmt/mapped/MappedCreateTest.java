@@ -13,7 +13,7 @@ import org.easymock.IAnswer;
 import org.easymock.internal.LastControl;
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteCoreTest;
+import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.db.BaseDatabaseType;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
@@ -23,7 +23,7 @@ import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.GeneratedKeyHolder;
 import com.j256.ormlite.table.TableInfo;
 
-public class MappedCreateTest extends BaseOrmLiteCoreTest {
+public class MappedCreateTest extends BaseCoreTest {
 
 	@Test
 	public void testGeneratedId() throws Exception {

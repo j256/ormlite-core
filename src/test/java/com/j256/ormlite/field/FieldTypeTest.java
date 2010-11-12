@@ -21,12 +21,12 @@ import java.util.HashMap;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteCoreTest;
+import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.TableInfo;
 
-public class FieldTypeTest extends BaseOrmLiteCoreTest {
+public class FieldTypeTest extends BaseCoreTest {
 
 	private static final String RANK_DB_COLUMN_NAME = "rank_column";
 	private static final int RANK_WIDTH = 100;

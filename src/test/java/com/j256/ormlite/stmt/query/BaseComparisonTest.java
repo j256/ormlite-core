@@ -11,11 +11,11 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteCoreTest;
+import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.stmt.SelectArg;
 
-public class BaseComparisonTest extends BaseOrmLiteCoreTest {
+public class BaseComparisonTest extends BaseCoreTest {
 
 	private static final String INT_COLUMN_NAME = "column1";
 	private static final String STRING_COLUMN_NAME = "column2";

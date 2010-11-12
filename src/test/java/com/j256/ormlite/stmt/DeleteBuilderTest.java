@@ -4,9 +4,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteCoreTest;
+import com.j256.ormlite.BaseCoreTest;
 
-public class DeleteBuilderTest extends BaseOrmLiteCoreTest {
+public class DeleteBuilderTest extends BaseCoreTest {
 
 	@Test
 	public void testDeleteAll() throws Exception {

@@ -4,9 +4,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteCoreTest;
+import com.j256.ormlite.BaseCoreTest;
 
-public class UpdateBuilderTest extends BaseOrmLiteCoreTest {
+public class UpdateBuilderTest extends BaseCoreTest {
 
 	@Test
 	public void testPrepareStatementUpdateValueString() throws Exception {

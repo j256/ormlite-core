@@ -6,14 +6,14 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteCoreTest;
+import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.stmt.SelectArg;
 
 /**
  * Oh yes it _is_ a test, just of the NOT operation.
  */
-public class NotTest extends BaseOrmLiteCoreTest {
+public class NotTest extends BaseCoreTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void test() {

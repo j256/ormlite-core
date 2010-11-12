@@ -8,10 +8,10 @@ import java.util.Random;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteCoreTest;
+import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.stmt.SelectArg;
 
-public class InTest extends BaseOrmLiteCoreTest {
+public class InTest extends BaseCoreTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testAppendValueNull() throws Exception {

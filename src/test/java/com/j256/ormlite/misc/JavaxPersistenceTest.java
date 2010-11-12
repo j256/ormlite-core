@@ -17,12 +17,12 @@ import javax.persistence.OneToOne;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteCoreTest;
+import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
 
-public class JavaxPersistenceTest extends BaseOrmLiteCoreTest {
+public class JavaxPersistenceTest extends BaseCoreTest {
 
 	private static final String STUFF_FIELD_NAME = "notstuff";
 	private static final String JAVAX_ENTITY_NAME = "notjavax";

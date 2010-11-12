@@ -13,11 +13,11 @@ import java.util.concurrent.Callable;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteCoreTest;
+import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 
-public class TransactionManagerTest extends BaseOrmLiteCoreTest {
+public class TransactionManagerTest extends BaseCoreTest {
 
 	@Test
 	public void testTransactionManager() throws Exception {

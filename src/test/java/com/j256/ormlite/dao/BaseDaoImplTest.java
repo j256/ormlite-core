@@ -18,7 +18,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteCoreTest;
+import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.stmt.PreparedDelete;
@@ -30,7 +30,7 @@ import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTableConfig;
 
-public class BaseDaoImplTest extends BaseOrmLiteCoreTest {
+public class BaseDaoImplTest extends BaseCoreTest {
 
 	private DatabaseConnection databaseConnection;
 	private Dao<BaseFoo, String> baseFooDao;

@@ -7,10 +7,10 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteCoreTest;
+import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.stmt.SelectArg;
 
-public class BetweenTest extends BaseOrmLiteCoreTest {
+public class BetweenTest extends BaseCoreTest {
 
 	private final static String COLUMN_NAME = "foo";
 

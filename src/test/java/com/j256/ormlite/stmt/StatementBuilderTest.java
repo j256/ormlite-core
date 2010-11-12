@@ -7,9 +7,9 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteCoreTest;
+import com.j256.ormlite.BaseCoreTest;
 
-public class StatementBuilderTest extends BaseOrmLiteCoreTest {
+public class StatementBuilderTest extends BaseCoreTest {
 
 	@Test
 	public void testSelectAll() throws Exception {

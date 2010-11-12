@@ -20,11 +20,11 @@ import java.util.Date;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteCoreTest;
+import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTable;
 
-public class DataTypeTest extends BaseOrmLiteCoreTest {
+public class DataTypeTest extends BaseCoreTest {
 
 	private static final String TABLE_NAME = "foo";
 

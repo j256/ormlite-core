@@ -13,11 +13,11 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteCoreTest;
+import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.support.DatabaseResults;
 
-public class BaseMappedQueryTest extends BaseOrmLiteCoreTest {
+public class BaseMappedQueryTest extends BaseCoreTest {
 
 	@Test
 	public void testMappedQuery() throws Exception {
