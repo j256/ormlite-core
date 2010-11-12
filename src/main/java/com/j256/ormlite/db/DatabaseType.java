@@ -146,4 +146,8 @@ public interface DatabaseType {
 	 */
 	public boolean isNestedSavePointsSupported();
 
+	/**
+	 * Returns true if the datatype {@link DataType#SERIALIZABLE} is allowed as an id.  Mostly for testing purposes.
+	 */
+	public boolean isSerializableIdAllowed();
 }
