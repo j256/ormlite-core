@@ -517,6 +517,12 @@ public class FieldTypeTest extends BaseOrmLiteCoreTest {
 		assertTrue(fieldType.isForeign());
 	}
 
+	@Test(expected = SQLException.class)
+	public void testInvalidEnumField() throws Exception {
+		Field field = InvalidEnumType.class.getDeclaredField("stuff");
+		FieldType.createFieldType(databaseType, InvalidEnumType.class.getSimpleName(), field);
+	}
+
 	/* ========================================================================================================= */
 
 	protected static class Foo {
@@ -735,6 +741,11 @@ public class FieldTypeTest extends BaseOrmLiteCoreTest {
 		// we self reference here because we are looking for a class which isn't serializable
 		@DatabaseField(dataType = DataType.SERIALIZABLE)
 		InvalidType intField;
+	}
+
+	protected static class InvalidEnumType {
+		@DatabaseField(dataType = DataType.ENUM_STRING)
+		String stuff;
 	}
 
 	protected class NeedsUppercaseSequenceDatabaseType extends NeedsSequenceDatabaseType {
