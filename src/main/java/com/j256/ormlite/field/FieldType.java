@@ -371,9 +371,9 @@ public class FieldType {
 	}
 
 	/**
-	 * Extract a field from an object and convert to something suitable to be stored in the database.
+	 * Extract a field from an object and convert to something suitable to be passed to SQL as an argument.
 	 */
-	public <FV> FV extractJavaFieldToSqlArgValue(Object object) throws SQLException {
+	public Object extractJavaFieldToSqlArgValue(Object object) throws SQLException {
 		return convertJavaFieldToSqlArgValue(extractJavaFieldValue(object));
 	}
 
