@@ -88,7 +88,7 @@ public class MappedCreateTest extends BaseOrmLiteCoreTest {
 		DatabaseConnection databaseConnection = createMock(DatabaseConnection.class);
 		expect(databaseConnection.queryForLong(isA(String.class))).andReturn(0L);
 		replay(databaseConnection);
-		MappedCreate<GeneratedIdSequence> mappedCreate =
+		MappedCreate<GeneratedIdSequence, Integer> mappedCreate =
 				MappedCreate.build(databaseType, new TableInfo<GeneratedIdSequence>(databaseType,
 						GeneratedIdSequence.class));
 		mappedCreate.insert(databaseConnection, new GeneratedIdSequence());

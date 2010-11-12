@@ -15,7 +15,7 @@ import com.j256.ormlite.table.TableInfo;
  * 
  * @author graywatson
  */
-public class MappedUpdateId<T, ID> extends BaseMappedStatement<T> {
+public class MappedUpdateId<T, ID> extends BaseMappedStatement<T, ID> {
 
 	private MappedUpdateId(TableInfo<T> tableInfo, String statement, List<FieldType> argFieldTypeList) {
 		super(tableInfo, statement, argFieldTypeList);

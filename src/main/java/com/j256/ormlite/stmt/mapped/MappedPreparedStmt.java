@@ -19,7 +19,7 @@ import com.j256.ormlite.table.TableInfo;
  * 
  * @author graywatson
  */
-public class MappedPreparedStmt<T> extends BaseMappedQuery<T> implements PreparedQuery<T>, PreparedDelete<T>,
+public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements PreparedQuery<T>, PreparedDelete<T>,
 		PreparedUpdate<T> {
 
 	private final SelectArg[] selectArgs;

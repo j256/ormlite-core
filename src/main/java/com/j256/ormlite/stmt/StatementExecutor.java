@@ -44,13 +44,13 @@ public class StatementExecutor<T, ID> {
 
 	private final DatabaseType databaseType;
 	private final TableInfo<T> tableInfo;
-	private MappedQueryForId<T,ID> mappedQueryForId;
+	private MappedQueryForId<T, ID> mappedQueryForId;
 	private PreparedQuery<T> preparedQueryForAll;
-	private MappedCreate<T> mappedInsert;
-	private MappedUpdate<T> mappedUpdate;
+	private MappedCreate<T, ID> mappedInsert;
+	private MappedUpdate<T, ID> mappedUpdate;
 	private MappedUpdateId<T, ID> mappedUpdateId;
-	private MappedDelete<T> mappedDelete;
-	private MappedRefresh<T,ID> mappedRefresh;
+	private MappedDelete<T, ID> mappedDelete;
+	private MappedRefresh<T, ID> mappedRefresh;
 
 	/**
 	 * Provides statements for various SQL operations.

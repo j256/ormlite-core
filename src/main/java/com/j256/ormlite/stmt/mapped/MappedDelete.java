@@ -13,13 +13,14 @@ import com.j256.ormlite.table.TableInfo;
  * 
  * @author graywatson
  */
-public class MappedDelete<T> extends BaseMappedStatement<T> {
+public class MappedDelete<T, ID> extends BaseMappedStatement<T, ID> {
 
 	private MappedDelete(TableInfo<T> tableInfo, String statement, List<FieldType> argFieldTypeList) {
 		super(tableInfo, statement, argFieldTypeList);
 	}
 
-	public static <T> MappedDelete<T> build(DatabaseType databaseType, TableInfo<T> tableInfo) throws SQLException {
+	public static <T, ID> MappedDelete<T, ID> build(DatabaseType databaseType, TableInfo<T> tableInfo)
+			throws SQLException {
 		FieldType idField = tableInfo.getIdField();
 		if (idField == null) {
 			throw new SQLException("Cannot delete from " + tableInfo.getDataClass()
@@ -29,6 +30,6 @@ public class MappedDelete<T> extends BaseMappedStatement<T> {
 		List<FieldType> argFieldTypeList = new ArrayList<FieldType>();
 		appendTableName(databaseType, sb, "DELETE FROM ", tableInfo.getTableName());
 		appendWhereId(databaseType, idField, sb, argFieldTypeList);
-		return new MappedDelete<T>(tableInfo, sb.toString(), argFieldTypeList);
+		return new MappedDelete<T, ID>(tableInfo, sb.toString(), argFieldTypeList);
 	}
 }

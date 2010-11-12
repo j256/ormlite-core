@@ -26,8 +26,8 @@ public class BaseMappedQueryTest extends BaseOrmLiteCoreTest {
 		Field field = BaseFoo.class.getDeclaredField(BaseFoo.ID_COLUMN_NAME);
 		String tableName = "basefoo";
 		resultFieldTypeList.add(FieldType.createFieldType(databaseType, tableName, field));
-		BaseMappedQuery<BaseFoo> baseMappedQuery =
-				new BaseMappedQuery<BaseFoo>(baseFooTableInfo, "select * from " + tableName, argFieldTypeList,
+		BaseMappedQuery<BaseFoo, String> baseMappedQuery =
+				new BaseMappedQuery<BaseFoo, String>(baseFooTableInfo, "select * from " + tableName, argFieldTypeList,
 						resultFieldTypeList) {
 				};
 		DatabaseResults results = createMock(DatabaseResults.class);

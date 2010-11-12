@@ -70,12 +70,12 @@ public abstract class StatementBuilder<T, ID> {
 	/**
 	 * Prepare our statement for the subclasses.
 	 */
-	protected MappedPreparedStmt<T> prepareStatement() throws SQLException {
+	protected MappedPreparedStmt<T, ID> prepareStatement() throws SQLException {
 		List<FieldType> argFieldTypeList = new ArrayList<FieldType>();
 		List<FieldType> resultFieldTypeList = new ArrayList<FieldType>();
 		List<SelectArg> selectArgList = new ArrayList<SelectArg>();
 		String statement = buildStatementString(argFieldTypeList, resultFieldTypeList, selectArgList);
-		return new MappedPreparedStmt<T>(tableInfo, statement, argFieldTypeList, resultFieldTypeList, selectArgList,
+		return new MappedPreparedStmt<T, ID>(tableInfo, statement, argFieldTypeList, resultFieldTypeList, selectArgList,
 				(databaseType.isLimitSqlSupported() ? null : limit), type);
 	}
 

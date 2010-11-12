@@ -15,7 +15,7 @@ import com.j256.ormlite.table.TableInfo;
  * 
  * @author graywatson
  */
-public abstract class BaseMappedQuery<T> extends BaseMappedStatement<T> implements GenericRowMapper<T> {
+public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> implements GenericRowMapper<T> {
 
 	protected final FieldType[] resultsFieldTypes;
 	// cache of column names to results position

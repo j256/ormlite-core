@@ -13,13 +13,14 @@ import com.j256.ormlite.table.TableInfo;
  * 
  * @author graywatson
  */
-public class MappedUpdate<T> extends BaseMappedStatement<T> {
+public class MappedUpdate<T, ID> extends BaseMappedStatement<T, ID> {
 
 	private MappedUpdate(TableInfo<T> tableInfo, String statement, List<FieldType> argFieldTypeList) {
 		super(tableInfo, statement, argFieldTypeList);
 	}
 
-	public static <T> MappedUpdate<T> build(DatabaseType databaseType, TableInfo<T> tableInfo) throws SQLException {
+	public static <T, ID> MappedUpdate<T, ID> build(DatabaseType databaseType, TableInfo<T> tableInfo)
+			throws SQLException {
 		FieldType idField = tableInfo.getIdField();
 		if (idField == null) {
 			throw new SQLException("Cannot update " + tableInfo.getDataClass() + " because it doesn't have an id field");
@@ -48,6 +49,6 @@ public class MappedUpdate<T> extends BaseMappedStatement<T> {
 		}
 		sb.append(' ');
 		appendWhereId(databaseType, idField, sb, argFieldTypeList);
-		return new MappedUpdate<T>(tableInfo, sb.toString(), argFieldTypeList);
+		return new MappedUpdate<T, ID>(tableInfo, sb.toString(), argFieldTypeList);
 	}
 }

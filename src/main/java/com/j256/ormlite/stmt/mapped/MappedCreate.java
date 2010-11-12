@@ -16,7 +16,7 @@ import com.j256.ormlite.table.TableInfo;
  * 
  * @author graywatson
  */
-public class MappedCreate<T> extends BaseMappedStatement<T> {
+public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 
 	private final String queryNextSequenceStmt;
 	private String dataClassName;
@@ -47,7 +47,7 @@ public class MappedCreate<T> extends BaseMappedStatement<T> {
 		return super.insert(databaseConnection, data);
 	}
 
-	public static <T> MappedCreate<T> build(DatabaseType databaseType, TableInfo<T> tableInfo) {
+	public static <T, ID> MappedCreate<T, ID> build(DatabaseType databaseType, TableInfo<T> tableInfo) {
 		StringBuilder sb = new StringBuilder();
 		StringBuilder questionSb = new StringBuilder();
 		List<FieldType> argFieldTypeList = new ArrayList<FieldType>();
@@ -73,7 +73,7 @@ public class MappedCreate<T> extends BaseMappedStatement<T> {
 		sb.append(") VALUES (").append(questionSb).append(")");
 		FieldType idField = tableInfo.getIdField();
 		String queryNext = buildQueryNextSequence(databaseType, idField);
-		return new MappedCreate<T>(tableInfo, sb.toString(), argFieldTypeList, queryNext);
+		return new MappedCreate<T, ID>(tableInfo, sb.toString(), argFieldTypeList, queryNext);
 	}
 
 	private static String buildQueryNextSequence(DatabaseType databaseType, FieldType idField) {

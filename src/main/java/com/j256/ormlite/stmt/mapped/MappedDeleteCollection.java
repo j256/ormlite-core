@@ -16,7 +16,7 @@ import com.j256.ormlite.table.TableInfo;
  * 
  * @author graywatson
  */
-public class MappedDeleteCollection<T, ID> extends BaseMappedStatement<T> {
+public class MappedDeleteCollection<T, ID> extends BaseMappedStatement<T, ID> {
 
 	private MappedDeleteCollection(TableInfo<T> tableInfo, String statement, List<FieldType> argFieldTypeList) {
 		super(tableInfo, statement, argFieldTypeList);

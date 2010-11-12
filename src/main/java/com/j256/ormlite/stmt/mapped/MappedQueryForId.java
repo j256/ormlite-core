@@ -17,7 +17,7 @@ import com.j256.ormlite.table.TableInfo;
  * 
  * @author graywatson
  */
-public class MappedQueryForId<T, ID> extends BaseMappedQuery<T> {
+public class MappedQueryForId<T, ID> extends BaseMappedQuery<T, ID> {
 
 	private final String label;
 

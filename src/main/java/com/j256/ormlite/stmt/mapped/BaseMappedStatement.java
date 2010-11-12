@@ -17,7 +17,7 @@ import com.j256.ormlite.table.TableInfo;
  * 
  * @author graywatson
  */
-public abstract class BaseMappedStatement<T> {
+public abstract class BaseMappedStatement<T, ID> {
 
 	protected static Logger logger = LoggerFactory.getLogger(BaseMappedStatement.class);
 
@@ -106,13 +106,8 @@ public abstract class BaseMappedStatement<T> {
 
 	/**
 	 * Return a field object converted from an id.
-	 * 
-	 * <p>
-	 * <b>NOTE:</b> this probably should be an ID but that would have added another generic param to the world and
-	 * external classes like PreparedQuery.
-	 * </p>
 	 */
-	protected Object convertIdToFieldObject(Object id) throws SQLException {
+	protected Object convertIdToFieldObject(ID id) throws SQLException {
 		return idField.convertJavaFieldToSqlArgValue(id);
 	}
 
