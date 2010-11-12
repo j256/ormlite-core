@@ -157,7 +157,11 @@ public class FieldType {
 		if (dataType == DataType.ENUM_INTEGER || dataType == DataType.ENUM_STRING) {
 			this.enumStringMap = new HashMap<String, Enum<?>>();
 			this.enumValueMap = new HashMap<Integer, Enum<?>>();
-			for (Enum<?> enumVal : (Enum<?>[]) field.getType().getEnumConstants()) {
+			Enum<?>[] constants = (Enum<?>[])field.getType().getEnumConstants();
+			if (constants == null) {
+				throw new SQLException("Field " + field.getName() + " improperly configured as type " + dataType);
+			}
+			for (Enum<?> enumVal : constants) {
 				this.enumStringMap.put(enumVal.name(), enumVal);
 				this.enumValueMap.put(enumVal.ordinal(), enumVal);
 			}
