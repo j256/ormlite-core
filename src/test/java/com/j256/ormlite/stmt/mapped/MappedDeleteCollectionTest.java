@@ -33,8 +33,8 @@ public class MappedDeleteCollectionTest {
 		public String getDriverClassName() {
 			return "foo.bar.baz";
 		}
-		public String getDriverUrlPart() {
-			return "foo";
+		public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
+			return false;
 		}
 	}
 }

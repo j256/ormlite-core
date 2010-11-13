@@ -16,10 +16,10 @@ import com.j256.ormlite.field.FieldType;
 public interface DatabaseType {
 
 	/**
-	 * Return the part in the database URI which identifies the particular database. Usually the URI is in the form
-	 * jdbc:ddd:... where ddd is the driver url part.
+	 * Return true if the database URL corresponds to this database type. Usually the URI is in the form jdbc:ddd:...
+	 * where ddd is the driver url part.
 	 */
-	public String getDriverUrlPart();
+	public boolean isDatabaseUrlThisType(String url, String dbTypePart);
 
 	/**
 	 * Return the class name of the database driver.
@@ -147,7 +147,7 @@ public interface DatabaseType {
 	public boolean isNestedSavePointsSupported();
 
 	/**
-	 * Returns true if the datatype {@link DataType#SERIALIZABLE} is allowed as an id.  Mostly for testing purposes.
+	 * Returns true if the datatype {@link DataType#SERIALIZABLE} is allowed as an id. Mostly for testing purposes.
 	 */
 	public boolean isSerializableIdAllowed();
 }

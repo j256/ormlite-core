@@ -290,8 +290,8 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 		public String getDriverClassName() {
 			return "driver.class";
 		}
-		public String getDriverUrlPart() {
-			return "driver";
+		public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
+			return false;
 		}
 	}
 
