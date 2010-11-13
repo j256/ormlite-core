@@ -3,6 +3,7 @@ package com.j256.ormlite.dao;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
@@ -338,6 +339,16 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			return statementExecutor.buildIterator(connectionSource, query);
 		} catch (SQLException e) {
 			throw SqlExceptionUtil.create("Could not build iterator for " + query, e);
+		}
+	}
+
+	public <CT> CT callBatchTasks(Callable<CT> callable) throws Exception {
+		checkForInitialized();
+		DatabaseConnection connection = connectionSource.getReadWriteConnection();
+		try {
+			return statementExecutor.callBatchTasks(connection, callable);
+		} finally {
+			connectionSource.releaseConnection(connection);
 		}
 	}
 

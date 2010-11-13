@@ -4,7 +4,9 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Callable;
 
+import com.j256.ormlite.misc.TransactionManager;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.PreparedDelete;
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -298,6 +300,19 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * returned RawResults object once you are done with it.
 	 */
 	public RawResults iteratorRaw(String query) throws SQLException;
+
+	/**
+	 * Call the call-able that will perform a number of batch tasks. This is for performance when you want to run a
+	 * number of database operations at once -- maybe loading data from a file. This will turn off what databases call
+	 * "auto-commit" mode, run the call-able and then re-enable "auto-commit".
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> This is only supported by databases that support auto-commit. Android, for example, does not support
+	 * auto-commit although using the {@link TransactionManager} and performing actions within a transaction seems to
+	 * have the same batch performance implications.
+	 * </p>
+	 */
+	public <CT> CT callBatchTasks(Callable<CT> callable) throws Exception;
 
 	/**
 	 * Return the string version of the object with each of the known field values shown. Useful for testing and

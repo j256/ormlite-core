@@ -2019,6 +2019,16 @@ of the @code{queryForAllRaw} method.  Although you should use the @code{iterator
 allows you to do special queries that aren't supported otherwise.  Like the above iterator methods, you must call close
 on the returned @code{RawResults} object once you are done with it. 
 
+@item callBatchTasks(Callable callable)
+
+Call the call-able that will perform a number of batch tasks. This is for performance when you want to run a
+number of database operations at once -- maybe loading data from a file. This will turn off what databases call
+"auto-commit" mode, run the call-able and then re-enable "auto-commit".
+
+@emph{NOTE:} This is only supported by databases that support auto-commit. Android, for example, does not
+support auto-commit although using the {@link TransactionManager} and performing actions within a transaction
+seems to have the same batch performance implications.
+
 @end table
 
 @c ----------------------------------------------------------------

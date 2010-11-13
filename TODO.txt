@@ -55,6 +55,7 @@
 	- for the pooled connection source
 	- needs another thread to run select 1 every minute or so
 	- should do a select 1 when the connection is handed to us and not closed
+	- database type should define the keep-alive query
 
 - delete method which deletes all of the rows that match a particular field.
 	- to support the foreign key stuff.
@@ -63,12 +64,9 @@
 
 - can we use the jdbc connection meta data to detect whether or not generated-ids are supported
  	- DatabaseMetaData metaData = connection.getMetaData();
-	- metaData.supportsGetGeneratedKeys()
-	- supportsMultipleTransactions()
-
-- have a DAO call that saves the connection, turns off auto-commit, calls a callable, unwinds
-	- for batch operations
-	- maybe have a start/end batch method calls with WARNINGS about no finally pattern!!!!
+	- metaData.supportsGetGeneratedKeys() -- not exactly what we need
+	- supportsMultipleTransactions() -- in different connections so not relevant
+	- ANSWER? - maybe not
 
 - from Larry: an example-based query, where you supply an object with fields set as criteria
 	- no setting --> no criteria for that field
@@ -77,6 +75,9 @@
 
 - need better documentation about the iterator
 	- example about how to use it outside of a for loop
+
+- JDO annotations?
+	- support as well as the JPA
 
 -----------------------------------------------------------------------------------------------------------------------------------
 

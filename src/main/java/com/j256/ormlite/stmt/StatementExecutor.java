@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.CloseableIterator;
@@ -258,6 +259,27 @@ public class StatementExecutor<T, ID> {
 	public int delete(DatabaseConnection databaseConnection, PreparedDelete<T> preparedDelete) throws SQLException {
 		CompiledStatement stmt = preparedDelete.compile(databaseConnection);
 		return stmt.executeUpdate();
+	}
+
+	public <CT> CT callBatchTasks(DatabaseConnection connection, Callable<CT> callable) throws Exception {
+		boolean autoCommitAtStart = false;
+		try {
+			if (connection.isAutoCommitSupported()) {
+				autoCommitAtStart = connection.getAutoCommit();
+				if (autoCommitAtStart) {
+					// disable auto-commit mode if supported and enabled at start
+					connection.setAutoCommit(false);
+					logger.debug("disabled auto-commit on table {} before batch tasks", tableInfo.getTableName());
+				}
+			}
+			return callable.call();
+		} finally {
+			if (autoCommitAtStart) {
+				// try to restore if we are in auto-commit mode
+				connection.setAutoCommit(true);
+				logger.debug("re-enabled auto-commit on table {} after batch tasks", tableInfo.getTableName());
+			}
+		}
 	}
 
 	private void prepareQueryForAll() throws SQLException {
