@@ -1,3 +1,8 @@
+4.5: 11/16/2010
+	* CORE: Fixes some problems with Dates and Enums being id types.
+	* JDBC: Added better detection of JDBC database URLs.
+	* JDBC: Added callBatchTasks() method to the Dao for running batch tasks.
+
 4.4: 11/10/2010
 	* CORE: Fixed a major problem with refreshing some field types.  Fixes bug #3106962.
 

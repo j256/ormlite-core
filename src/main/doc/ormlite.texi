@@ -21,7 +21,7 @@
 @c ----------------------------------------------------------------
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.4
+@set ormlite_version 4.5
 @set ormlite_date November 2010
 @set package ORMLite
 @c ----------------------------------------------------------------
@@ -134,8 +134,8 @@ annotation configures the Account class to be persisted to the database table na
 the fields on the Account to the database columns with the same names.
 
 The name field is configured as the primary key for the database table by using the @code{id = true} annotation field.  Also, notice that a
-no-argument constructor is needed so the object can be returned by a query. For more information see the class setup information later in the
-manual.  @xref{Class Setup}.
+no-argument constructor is needed so the object can be returned by a query. For more information (JPA annotations and other ways to configure
+classes) see the class setup information later in the manual.  @xref{Class Setup}.
 
 @example
 @@DatabaseTable(tableName = "accounts")
@@ -504,11 +504,12 @@ has a generated account-id but you also want the email address to be unique acro
 @node Javax Persistence Annotations, No Arg Constructor, Local Annotations, Class Setup
 @subsection Using javax.persistence Annotations
 
+@cindex JPA
 @cindex javax.persistence
 @cindex @@Entity
 @cindex Entity annotation
 Instead of using the @value{package} annotations (@pxref{Local Annotations}), you can use the more standard
-annotations from the @code{javax.persistence} package.  In place of the @code{@@DatabaseTable} annotation, you can
+JPA annotations from the @code{javax.persistence} package.  In place of the @code{@@DatabaseTable} annotation, you can
 use the @code{javax.persistence} @code{@@Entity} annotation.  For example:
 
 @example
@@ -920,8 +921,8 @@ the default or another engine.  Also, MySQL does some funky stuff with the last-
 @cindex Derby
 @item Derby
 
-There are two drivers for Derby: one embedded and one client/server.  Right now we will only detect and use the embedded driver.
-You will have to set the @code{DerbyClientServerDatabaseType} on your ConnectionSource directly.  @xref{Database Type}.
+There are two drivers for Derby: one embedded and one client/server.  @value{package} makes an attempt to detect the right driver but you
+may have to set the right database type on your ConnectionSource directly if it doesn't.  @xref{Database Type}.
 
 @cindex HSQLDB
 @item HSQLDB
@@ -1789,15 +1790,10 @@ See the javadocs for the @code{DatabaseType} class for more information.
 
 @table @code
 
-@item getDriverUrlPart
+@item isDatabaseUrlThisType
 
-Return the part in the database URI which identifies the particular database.  Usually the
-URI is in the form jdbc:XXX:@dots{} where XXX is the driver url part.
-
-@item getDriverClassName
-
-Returns the class name of the driver that may or may not be in the classpath depending on what database is
-being used.
+Return true if the database URL corresponds to this database type. Usually the URL is in the form @code{jdbc:ddd:@dots{}}
+where ddd is the driver url part.
 
 @item loadDriver
 
@@ -2090,6 +2086,7 @@ If you want to get the @value{package} Junit tests to run, there are test depend
 
 @table @code
 
+@cindex JPA
 @item javax.persistence
 
 For testing the compatibility annotations @code{@@Column} and the like.

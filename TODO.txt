@@ -6,7 +6,7 @@
 
 - maybe add rawUpdate and rawExecute?
 	- need to document the raw query, iterator, update, execute in .texi
-	- need to add a section about how to use the raw queries and the RawResults class
+	- need to add a section to the manual about how to use the raw queries and the RawResults class
 	- need to talk about closing of the RawResults
 
 - for objects that a user does not have control over, how about the ability of defining a Method to construct a particular class
@@ -55,12 +55,6 @@
 	- deleteFieldEquals(String fieldName, Object value);
 	- List<Object> selectFieldEquals(String fieldName, Object value);
 
-- can we use the jdbc connection meta data to detect whether or not generated-ids are supported
- 	- DatabaseMetaData metaData = connection.getMetaData();
-	- metaData.supportsGetGeneratedKeys() -- not exactly what we need
-	- supportsMultipleTransactions() -- in different connections so not relevant
-	- ANSWER? - maybe not
-
 - from Larry: an example-based query, where you supply an object with fields set as criteria
 	- no setting --> no criteria for that field
 	- primitive types a problem for the 'no criteria' case
@@ -101,3 +95,9 @@
 	- would be better for escaping reasons
 	- now have field types in the queries so escaping better
 	- increased object overhead?
+
+- can we use the jdbc connection meta data to detect whether or not generated-ids are supported
+	- ANSWER? - maybe not.  The methods don't match our code right.
+ 	- DatabaseMetaData metaData = connection.getMetaData();
+	- metaData.supportsGetGeneratedKeys() -- not exactly what we need
+	- supportsMultipleTransactions() -- in different connections so not relevant
