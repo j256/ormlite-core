@@ -1875,6 +1875,14 @@ Returns true if a 'CREATE TABLE' statement should return 0. False if > 0.
 Returns true if table and field names should be made uppercase.  This is an unfortunate "feature" of Derby and Hsqldb.
 See the Javadocs for the class for more information.
 
+@item isNestedSavePointsSupported
+
+Returns true if the database supports nested savepoints (transactions).
+
+@item isSerializableIdAllowed
+
+Returns true if the datatype Seriliable is allowed as an identity column. Mostly for testing purposes.
+
 @end table
 
 @c ----------------------------------------------------------------
