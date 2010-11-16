@@ -140,6 +140,7 @@ public class MappedCreateTest extends BaseCoreTest {
 	}
 
 	private class NeedsSequenceDatabaseType extends BaseDatabaseType {
+		@Override
 		public String getDriverClassName() {
 			return "foo.bar.baz";
 		}

@@ -22,11 +22,6 @@ public interface DatabaseType {
 	public boolean isDatabaseUrlThisType(String url, String dbTypePart);
 
 	/**
-	 * Return the class name of the database driver.
-	 */
-	public String getDriverClassName();
-
-	/**
 	 * Load the driver class associated with this database so it can wire itself into JDBC.
 	 * 
 	 * @throws SQLException

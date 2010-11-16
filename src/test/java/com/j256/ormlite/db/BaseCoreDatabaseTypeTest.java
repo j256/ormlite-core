@@ -287,6 +287,7 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 	}
 
 	private class OurDbType extends BaseDatabaseType {
+		@Override
 		public String getDriverClassName() {
 			return "driver.class";
 		}

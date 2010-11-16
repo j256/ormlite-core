@@ -48,6 +48,7 @@ public abstract class BaseCoreTest {
 	}
 
 	protected class StubDatabaseType extends BaseDatabaseType {
+		@Override
 		public String getDriverClassName() {
 			return "java.lang.String";
 		}

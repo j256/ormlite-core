@@ -28,6 +28,11 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	protected static int DEFAULT_DATE_STRING_WIDTH = 50;
 	protected static String DEFAULT_SEQUENCE_SUFFIX = "_id_seq";
 
+	/**
+	 * Return the name of the driver class associated with this database type.
+	 */
+	protected abstract String getDriverClassName();
+
 	public void loadDriver() throws SQLException {
 		String className = getDriverClassName();
 		if (className != null) {
