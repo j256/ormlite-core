@@ -18,12 +18,12 @@ public class In extends BaseComparison {
 
 	private Iterable<?> objects;
 
-	public In(String columnName, FieldType fieldType, Iterable<?> objects) {
+	public In(String columnName, FieldType fieldType, Iterable<?> objects) throws SQLException {
 		super(columnName, fieldType, null);
 		this.objects = objects;
 	}
 
-	public In(String columnName, FieldType fieldType, Object[] objects) {
+	public In(String columnName, FieldType fieldType, Object[] objects) throws SQLException {
 		super(columnName, fieldType, null);
 		// grrrr, Object[] should be Iterable
 		this.objects = Arrays.asList(objects);

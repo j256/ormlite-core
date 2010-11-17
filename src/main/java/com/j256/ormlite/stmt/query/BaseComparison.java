@@ -18,7 +18,11 @@ abstract class BaseComparison implements Comparison {
 	protected final FieldType fieldType;
 	private final Object value;
 
-	protected BaseComparison(String columnName, FieldType fieldType, Object value) {
+	protected BaseComparison(String columnName, FieldType fieldType, Object value) throws SQLException {
+		if (fieldType != null && !fieldType.isComparable()) {
+			throw new SQLException("Field '" + columnName + "' is of data type " + fieldType.getDataType()
+					+ " which can be compared");
+		}
 		this.columnName = columnName;
 		this.fieldType = fieldType;
 		this.value = value;
@@ -69,11 +73,11 @@ abstract class BaseComparison implements Comparison {
 					idFieldType.extractJavaFieldValue(argOrValue));
 			// no need for the space since it was done in the recursion
 			appendSpace = false;
-		} else if (fieldType.isNumber()) {
-			// numbers can't have quotes around them in derby
-			sb.append(argOrValue.toString());
+		} else if (fieldType.isEscapedValue()) {
+			databaseType.appendEscapedWord(sb, fieldType.convertJavaFieldToSqlArgValue(argOrValue).toString());
 		} else {
-			databaseType.appendEscapedWord(sb, argOrValue.toString());
+			// numbers can't have quotes around them in derby
+			sb.append(fieldType.convertJavaFieldToSqlArgValue(argOrValue));
 		}
 		if (appendSpace) {
 			sb.append(' ');

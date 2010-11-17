@@ -1,5 +1,6 @@
 package com.j256.ormlite.stmt.query;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import com.j256.ormlite.db.DatabaseType;
@@ -19,7 +20,7 @@ import com.j256.ormlite.stmt.StatementBuilder;
  */
 public class SetExpression extends BaseComparison {
 
-	public SetExpression(String columnName, String string) {
+	public SetExpression(String columnName, String string) throws SQLException {
 		super(columnName, null, string);
 	}
 

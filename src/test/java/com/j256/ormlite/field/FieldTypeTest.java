@@ -500,12 +500,12 @@ public class FieldTypeTest extends BaseCoreTest {
 	public void testEscapeDefault() throws Exception {
 		Field field = Foo.class.getDeclaredField("name");
 		FieldType fieldType = FieldType.createFieldType(databaseType, Foo.class.getSimpleName(), field);
-		assertFalse(fieldType.isNumber());
+		assertTrue(fieldType.isEscapedValue());
 		assertTrue(fieldType.isEscapeDefaultValue());
 
 		field = Foo.class.getDeclaredField("intLong");
 		fieldType = FieldType.createFieldType(databaseType, Foo.class.getSimpleName(), field);
-		assertTrue(fieldType.isNumber());
+		assertFalse(fieldType.isEscapedValue());
 		assertFalse(fieldType.isEscapeDefaultValue());
 	}
 

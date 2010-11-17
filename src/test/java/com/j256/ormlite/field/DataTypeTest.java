@@ -135,7 +135,7 @@ public class DataTypeTest extends BaseCoreTest {
 
 		Long expectedLong = (Long) type.javaToSqlArg(null, date);
 		assertEquals(millis, expectedLong.longValue());
-		assertTrue(type.isNumber());
+		assertFalse(type.isEscapedValue());
 		String longString = "255";
 		assertEquals(new Long(longString), type.parseDefaultString(null, longString));
 	}
@@ -194,7 +194,7 @@ public class DataTypeTest extends BaseCoreTest {
 		assertEquals(testByte, type.resultToJava(getFieldType("count"), results, COLUMN));
 		verify(results);
 
-		assertTrue(type.isNumber());
+		assertFalse(type.isEscapedValue());
 		assertTrue(type.isPrimitive());
 	}
 
@@ -209,7 +209,7 @@ public class DataTypeTest extends BaseCoreTest {
 		replay(results);
 		assertEquals(testByte, type.resultToJava(getFieldType("count"), results, COLUMN));
 		verify(results);
-		assertTrue(type.isNumber());
+		assertFalse(type.isEscapedValue());
 		assertFalse(type.isPrimitive());
 	}
 
@@ -224,7 +224,7 @@ public class DataTypeTest extends BaseCoreTest {
 		replay(results);
 		assertEquals(testShort, type.resultToJava(getFieldType("count"), results, COLUMN));
 		verify(results);
-		assertTrue(type.isNumber());
+		assertFalse(type.isEscapedValue());
 		assertTrue(type.isPrimitive());
 	}
 
@@ -239,7 +239,7 @@ public class DataTypeTest extends BaseCoreTest {
 		replay(results);
 		assertEquals(testShort, type.resultToJava(getFieldType("count"), results, COLUMN));
 		verify(results);
-		assertTrue(type.isNumber());
+		assertFalse(type.isEscapedValue());
 		assertFalse(type.isPrimitive());
 	}
 
@@ -256,7 +256,7 @@ public class DataTypeTest extends BaseCoreTest {
 		assertEquals(testInt, type.resultToJava(getFieldType("count"), results, COLUMN));
 		assertEquals(testInt, type.resultToId(results, COLUMN));
 		verify(results);
-		assertTrue(type.isNumber());
+		assertFalse(type.isEscapedValue());
 		assertTrue(type.isPrimitive());
 	}
 
@@ -273,7 +273,7 @@ public class DataTypeTest extends BaseCoreTest {
 		assertEquals(testInt, type.resultToJava(getFieldType("count"), results, COLUMN));
 		assertEquals(testInt, type.resultToId(results, COLUMN));
 		verify(results);
-		assertTrue(type.isNumber());
+		assertFalse(type.isEscapedValue());
 		assertFalse(type.isPrimitive());
 	}
 
@@ -290,7 +290,7 @@ public class DataTypeTest extends BaseCoreTest {
 		assertEquals(testLong, type.resultToJava(getFieldType("count"), results, COLUMN));
 		assertEquals(testLong, type.resultToId(results, COLUMN));
 		verify(results);
-		assertTrue(type.isNumber());
+		assertFalse(type.isEscapedValue());
 		assertTrue(type.isPrimitive());
 	}
 
@@ -307,7 +307,7 @@ public class DataTypeTest extends BaseCoreTest {
 		assertEquals(testLong, type.resultToJava(getFieldType("count"), results, COLUMN));
 		assertEquals(testLong, type.resultToId(results, COLUMN));
 		verify(results);
-		assertTrue(type.isNumber());
+		assertFalse(type.isEscapedValue());
 		assertFalse(type.isPrimitive());
 	}
 
@@ -322,7 +322,7 @@ public class DataTypeTest extends BaseCoreTest {
 		replay(results);
 		assertEquals(testFloat, type.resultToJava(getFieldType("count"), results, COLUMN));
 		verify(results);
-		assertTrue(type.isNumber());
+		assertFalse(type.isEscapedValue());
 		assertTrue(type.isPrimitive());
 	}
 
@@ -337,7 +337,7 @@ public class DataTypeTest extends BaseCoreTest {
 		replay(results);
 		assertEquals(testFloat, type.resultToJava(getFieldType("count"), results, COLUMN));
 		verify(results);
-		assertTrue(type.isNumber());
+		assertFalse(type.isEscapedValue());
 		assertFalse(type.isPrimitive());
 	}
 
@@ -352,7 +352,7 @@ public class DataTypeTest extends BaseCoreTest {
 		replay(results);
 		assertEquals(testDouble, type.resultToJava(getFieldType("count"), results, COLUMN));
 		verify(results);
-		assertTrue(type.isNumber());
+		assertFalse(type.isEscapedValue());
 		assertTrue(type.isPrimitive());
 	}
 
@@ -367,7 +367,7 @@ public class DataTypeTest extends BaseCoreTest {
 		replay(results);
 		assertEquals(testDouble, type.resultToJava(getFieldType("count"), results, COLUMN));
 		verify(results);
-		assertTrue(type.isNumber());
+		assertFalse(type.isEscapedValue());
 		assertFalse(type.isPrimitive());
 	}
 
@@ -394,7 +394,7 @@ public class DataTypeTest extends BaseCoreTest {
 		assertEquals(serializable, type.resultToJava(getFieldType("serializable"), results, COLUMN));
 		assertNull(type.resultToJava(getFieldType("serializable"), results, COLUMN));
 		verify(results);
-		assertFalse(type.isNumber());
+		assertTrue(type.isEscapedValue());
 		assertFalse(type.isPrimitive());
 	}
 
@@ -433,7 +433,7 @@ public class DataTypeTest extends BaseCoreTest {
 		replay(results);
 		assertEquals(AnotherEnum.A, type.resultToJava(getFieldType("grade"), results, COLUMN));
 		verify(results);
-		assertFalse(type.isNumber());
+		assertTrue(type.isEscapedValue());
 	}
 
 	@Test
@@ -451,7 +451,7 @@ public class DataTypeTest extends BaseCoreTest {
 		assertEquals(AnotherEnum.A, type.resultToJava(getFieldType("grade"), results, COLUMN));
 		verify(results);
 
-		assertTrue(type.isNumber());
+		assertFalse(type.isEscapedValue());
 	}
 
 	@Test

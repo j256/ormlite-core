@@ -1,5 +1,7 @@
 package com.j256.ormlite.stmt.query;
 
+import java.sql.SQLException;
+
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.Where;
 
@@ -10,7 +12,7 @@ import com.j256.ormlite.stmt.Where;
  */
 public class Ge extends BaseComparison {
 
-	public Ge(String columnName, FieldType fieldType, Object value) {
+	public Ge(String columnName, FieldType fieldType, Object value) throws SQLException {
 		super(columnName, fieldType, value);
 	}
 

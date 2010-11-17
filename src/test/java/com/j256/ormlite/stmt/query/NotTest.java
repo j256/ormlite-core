@@ -37,7 +37,7 @@ public class NotTest extends BaseCoreTest {
 	}
 
 	@Test
-	public void testToString() {
+	public void testToString() throws Exception {
 		String name = "foo";
 		String value = "bar";
 		Eq eq = new Eq(name, numberFieldType, value);

@@ -20,29 +20,37 @@ public class BaseComparisonTest extends BaseCoreTest {
 	private static final String INT_COLUMN_NAME = "column1";
 	private static final String STRING_COLUMN_NAME = "column2";
 
-	private BaseComparison cmpInt = new BaseComparison(INT_COLUMN_NAME, numberFieldType, 10L) {
-		@Override
-		public StringBuilder appendOperation(StringBuilder sb) {
-			sb.append("op");
-			return sb;
-		}
-	};
+	private BaseComparison cmpInt;
+	private BaseComparison cmpString;
+	private BaseComparison cmpForeign;
 
-	private BaseComparison cmpString = new BaseComparison(STRING_COLUMN_NAME, stringFieldType, 10L) {
-		@Override
-		public StringBuilder appendOperation(StringBuilder sb) {
-			sb.append("op");
-			return sb;
+	{
+		try {
+			cmpInt = new BaseComparison(INT_COLUMN_NAME, numberFieldType, 10L) {
+				@Override
+				public StringBuilder appendOperation(StringBuilder sb) {
+					sb.append("op");
+					return sb;
+				}
+			};
+			cmpString = new BaseComparison(STRING_COLUMN_NAME, stringFieldType, 10L) {
+				@Override
+				public StringBuilder appendOperation(StringBuilder sb) {
+					sb.append("op");
+					return sb;
+				}
+			};
+			cmpForeign = new BaseComparison(INT_COLUMN_NAME, foreignFieldType, 10L) {
+				@Override
+				public StringBuilder appendOperation(StringBuilder sb) {
+					sb.append("op");
+					return sb;
+				}
+			};
+		} catch (SQLException e) {
+			fail("Could not creat our test comparisons");
 		}
-	};
-
-	private BaseComparison cmpForeign = new BaseComparison(INT_COLUMN_NAME, foreignFieldType, 10L) {
-		@Override
-		public StringBuilder appendOperation(StringBuilder sb) {
-			sb.append("op");
-			return sb;
-		}
-	};
+	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testAppendArgOrValueNull() throws Exception {

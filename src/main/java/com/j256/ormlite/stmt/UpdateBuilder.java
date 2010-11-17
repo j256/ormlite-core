@@ -42,7 +42,7 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * Add a column to be set to a value for UPDATE statements. This will generate something like columnName = 'value'
 	 * with the value escaped if necessary.
 	 */
-	public StatementBuilder<T, ID> updateColumnValue(String columnName, Object value) {
+	public StatementBuilder<T, ID> updateColumnValue(String columnName, Object value) throws SQLException {
 		FieldType fieldType = verifyColumnName(columnName);
 		addUpdateColumnToList(columnName, new SetValue(columnName, fieldType, value));
 		return this;
@@ -58,7 +58,7 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * {@link #escapeColumnName(String)} or {@link #escapeColumnName(StringBuilder, String)} methods.
 	 * </p>
 	 */
-	public StatementBuilder<T, ID> updateColumnExpression(String columnName, String expression) {
+	public StatementBuilder<T, ID> updateColumnExpression(String columnName, String expression) throws SQLException {
 		addUpdateColumnToList(columnName, new SetExpression(columnName, expression));
 		return this;
 	}
