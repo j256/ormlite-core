@@ -725,6 +725,10 @@ Persisted as SQL type VARBINARY.  This is a special type that serializes an obje
 and then deserializes it on the way back.  The field must be an object that implements the @code{java.io.Serializable}
 interface.  Depending on the database type, there will be limits to the size of the object that can be stored.  YMMV.
 
+Some databases place restrictions on this field type that it cannot be the id column in a class.  Other databases do
+not allow you to query on this type of field at all.  If your database does support it, you may also have to use a
+Select Argument to query for this type.  @xref{Select Arguments}.  
+
 @cindex Enum
 @cindex enumerated types
 @item enum or Enum (DataType.ENUM_STRING or DataType.ENUM_INTEGER)
@@ -1546,17 +1550,27 @@ Please see the example code posted to the website for more information: @uref{ht
 Again, feedback on this is welcome.
 
 @c ----------------------------------------------------------------
-@node How to Upgrade, 3.X to 4.0, Use With Android, Top
+@node How to Upgrade, 4.4 to 4.5, Use With Android, Top
 @chapter Upgrading Old Versions
 
 @menu
+* 4.4 to 4.5::                 Upgrade from version 4.4 to 4.5
 * 3.X to 4.0::                 Upgrade from version 3.X to 4.0
 * 2.X to 3.2::                 Upgrade from version 2.X to 3.2
 * 2.3 to 2.4::                 Upgrade from version 2.3 to 2.4
 @end menu
 
 @c ----------------------------------------------------------------
-@node 3.X to 4.0, 2.X to 3.2, How to Upgrade, How to Upgrade
+@node 4.4 to 4.5, 3.X to 4.0, How to Upgrade, How to Upgrade
+@section Upgrade from Version 4.4 to 4.5
+
+A bug was discovered in version 4.4 dealing with how SQLite interprets boolean values.  In fixing the bug we were forced
+to move from a true/false string data to 1/0 numerical data.  This affected the on-disk representation of JDBC SQLite package --
+Android data was not affected.  To upgrade to 4.5 you will have to update your SQLite data to change columns with the value
+@code{true} to the value @code{1} -- @code{false} should be changed to @code{0}.
+
+@c ----------------------------------------------------------------
+@node 3.X to 4.0, 2.X to 3.2, 4.4 to 4.5, How to Upgrade
 @section Upgrade from Version 3.X to 4.0
 
 Removed any outside usage of the @code{DatabaseType} since the @code{ConnectionSource} now provides it.  Also added
@@ -2030,7 +2044,7 @@ number of database operations at once -- maybe loading data from a file. This wi
 "auto-commit" mode, run the call-able and then re-enable "auto-commit".
 
 @emph{NOTE:} This is only supported by databases that support auto-commit. Android, for example, does not
-support auto-commit although using the {@link TransactionManager} and performing actions within a transaction
+support auto-commit although using the @code{TransactionManager} and performing actions within a transaction
 seems to have the same batch performance implications.
 
 @end table
