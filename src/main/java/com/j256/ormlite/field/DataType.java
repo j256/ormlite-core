@@ -62,7 +62,7 @@ public enum DataType implements FieldConverter {
 			return Boolean.parseBoolean(defaultStr);
 		}
 		@Override
-		public boolean isEscapeDefaultValue() {
+		public boolean isEscapedValue() {
 			return false;
 		}
 		@Override
@@ -84,7 +84,7 @@ public enum DataType implements FieldConverter {
 			return Boolean.parseBoolean(defaultStr);
 		}
 		@Override
-		public boolean isEscapeDefaultValue() {
+		public boolean isEscapedValue() {
 			return false;
 		}
 	},
@@ -144,8 +144,8 @@ public enum DataType implements FieldConverter {
 			return (Long) date.getTime();
 		}
 		@Override
-		public boolean isNumber() {
-			return true;
+		public boolean isEscapedValue() {
+			return false;
 		}
 	},
 
@@ -204,8 +204,8 @@ public enum DataType implements FieldConverter {
 			return Byte.parseByte(defaultStr);
 		}
 		@Override
-		public boolean isNumber() {
-			return true;
+		public boolean isEscapedValue() {
+			return false;
 		}
 		@Override
 		public boolean isPrimitive() {
@@ -226,8 +226,8 @@ public enum DataType implements FieldConverter {
 			return Byte.parseByte(defaultStr);
 		}
 		@Override
-		public boolean isNumber() {
-			return true;
+		public boolean isEscapedValue() {
+			return false;
 		}
 	},
 
@@ -244,8 +244,8 @@ public enum DataType implements FieldConverter {
 			return Short.parseShort(defaultStr);
 		}
 		@Override
-		public boolean isNumber() {
-			return true;
+		public boolean isEscapedValue() {
+			return false;
 		}
 		@Override
 		public boolean isPrimitive() {
@@ -266,8 +266,8 @@ public enum DataType implements FieldConverter {
 			return Short.parseShort(defaultStr);
 		}
 		@Override
-		public boolean isNumber() {
-			return true;
+		public boolean isEscapedValue() {
+			return false;
 		}
 	},
 
@@ -292,8 +292,8 @@ public enum DataType implements FieldConverter {
 			return (Integer) results.getInt(columnPos);
 		}
 		@Override
-		public boolean isNumber() {
-			return true;
+		public boolean isEscapedValue() {
+			return false;
 		}
 		@Override
 		public boolean isPrimitive() {
@@ -322,8 +322,8 @@ public enum DataType implements FieldConverter {
 			return (Integer) results.getInt(columnPos);
 		}
 		@Override
-		public boolean isNumber() {
-			return true;
+		public boolean isEscapedValue() {
+			return false;
 		}
 	},
 
@@ -348,8 +348,8 @@ public enum DataType implements FieldConverter {
 			return (Long) results.getLong(columnPos);
 		}
 		@Override
-		public boolean isNumber() {
-			return true;
+		public boolean isEscapedValue() {
+			return false;
 		}
 		@Override
 		public boolean isPrimitive() {
@@ -378,8 +378,8 @@ public enum DataType implements FieldConverter {
 			return (Long) results.getLong(columnPos);
 		}
 		@Override
-		public boolean isNumber() {
-			return true;
+		public boolean isEscapedValue() {
+			return false;
 		}
 	},
 
@@ -396,8 +396,8 @@ public enum DataType implements FieldConverter {
 			return Float.parseFloat(defaultStr);
 		}
 		@Override
-		public boolean isNumber() {
-			return true;
+		public boolean isEscapedValue() {
+			return false;
 		}
 		@Override
 		public boolean isPrimitive() {
@@ -418,8 +418,8 @@ public enum DataType implements FieldConverter {
 			return Float.parseFloat(defaultStr);
 		}
 		@Override
-		public boolean isNumber() {
-			return true;
+		public boolean isEscapedValue() {
+			return false;
 		}
 	},
 
@@ -436,8 +436,8 @@ public enum DataType implements FieldConverter {
 			return Double.parseDouble(defaultStr);
 		}
 		@Override
-		public boolean isNumber() {
-			return true;
+		public boolean isEscapedValue() {
+			return false;
 		}
 		@Override
 		public boolean isPrimitive() {
@@ -458,8 +458,8 @@ public enum DataType implements FieldConverter {
 			return Double.parseDouble(defaultStr);
 		}
 		@Override
-		public boolean isNumber() {
-			return true;
+		public boolean isEscapedValue() {
+			return false;
 		}
 	},
 
@@ -506,6 +506,14 @@ public enum DataType implements FieldConverter {
 			// can't do a getObject call beforehand so we have to check for nulls
 			return true;
 		}
+		@Override
+		public boolean isComparable() {
+			return false;
+		}
+		@Override
+		public boolean isAppropriateId() {
+			return false;
+		}
 	},
 
 	/**
@@ -547,8 +555,8 @@ public enum DataType implements FieldConverter {
 			return fieldType.enumFromInt(results.getInt(columnPos));
 		}
 		@Override
-		public boolean isNumber() {
-			return true;
+		public boolean isEscapedValue() {
+			return false;
 		}
 	},
 
@@ -674,15 +682,14 @@ public enum DataType implements FieldConverter {
 	 */
 	public boolean isEscapeDefaultValue() {
 		// default is to not escape the type if it is a number
-		return !isNumber();
+		return isEscapedValue();
 	}
 
 	/**
 	 * Return whether this field is a number.
 	 */
-	public boolean isNumber() {
-		// can't determine this from the classes because primitives can't do assignable from
-		return false;
+	public boolean isEscapedValue() {
+		return true;
 	}
 
 	/**
@@ -694,6 +701,20 @@ public enum DataType implements FieldConverter {
 
 	public boolean isStreamType() {
 		return false;
+	}
+
+	/**
+	 * Return true if this data type be compared in SQL statements.
+	 */
+	public boolean isComparable() {
+		return true;
+	}
+
+	/**
+	 * Return true if this data type be an id column in a class.
+	 */
+	public boolean isAppropriateId() {
+		return true;
 	}
 
 	private static synchronized Date parseDateString(String format, String dateStr) throws ParseException {

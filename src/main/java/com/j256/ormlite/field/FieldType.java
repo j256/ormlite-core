@@ -157,7 +157,7 @@ public class FieldType {
 		if (dataType == DataType.ENUM_INTEGER || dataType == DataType.ENUM_STRING) {
 			this.enumStringMap = new HashMap<String, Enum<?>>();
 			this.enumValueMap = new HashMap<Integer, Enum<?>>();
-			Enum<?>[] constants = (Enum<?>[])field.getType().getEnumConstants();
+			Enum<?>[] constants = (Enum<?>[]) field.getType().getEnumConstants();
 			if (constants == null) {
 				throw new SQLException("Field " + field.getName() + " improperly configured as type " + dataType);
 			}
@@ -185,6 +185,10 @@ public class FieldType {
 			this.defaultValue = this.fieldConverter.parseDefaultString(this, defaultStr);
 		}
 		this.unique = fieldConfig.isUnique();
+		if (this.isId && !dataType.isAppropriateId()) {
+			throw new SQLException("Field '" + field.getName() + "' is of data type " + dataType
+					+ " which cannot be the ID field");
+		}
 	}
 
 	public String getTableName() {
@@ -409,8 +413,8 @@ public class FieldType {
 	/**
 	 * Return whether this field is a number.
 	 */
-	public boolean isNumber() {
-		return dataType.isNumber();
+	public boolean isEscapedValue() {
+		return dataType.isEscapedValue();
 	}
 
 	/**
@@ -429,6 +433,13 @@ public class FieldType {
 	 */
 	public boolean isEscapeDefaultValue() {
 		return dataType.isEscapeDefaultValue();
+	}
+
+	/**
+	 * Return if this data type be compared in SQL statements.
+	 */
+	public boolean isComparable() {
+		return dataType.isComparable();
 	}
 
 	/**
