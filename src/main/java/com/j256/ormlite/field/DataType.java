@@ -115,6 +115,10 @@ public enum DataType implements FieldConverter {
 			Date date = (Date) javaObject;
 			return new Timestamp(date.getTime());
 		}
+		@Override
+		public boolean isSelectArgRequired() {
+			return true;
+		}
 	},
 
 	/**
@@ -514,6 +518,10 @@ public enum DataType implements FieldConverter {
 		public boolean isAppropriateId() {
 			return false;
 		}
+		@Override
+		public boolean isSelectArgRequired() {
+			return true;
+		}
 	},
 
 	/**
@@ -715,6 +723,13 @@ public enum DataType implements FieldConverter {
 	 */
 	public boolean isAppropriateId() {
 		return true;
+	}
+
+	/**
+	 * Must use SelectArg when querying for values of this type.
+	 */
+	public boolean isSelectArgRequired() {
+		return false;
 	}
 
 	private static synchronized Date parseDateString(String format, String dateStr) throws ParseException {

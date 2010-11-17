@@ -63,6 +63,13 @@ abstract class BaseComparison implements Comparison {
 			SelectArg selectArg = (SelectArg) argOrValue;
 			selectArg.setMetaInfo(columnName, fieldType);
 			selectArgList.add(selectArg);
+		} else if (fieldType.isSelectArgRequired()) {
+			sb.append('?');
+			SelectArg selectArg = new SelectArg();
+			selectArg.setMetaInfo(columnName, fieldType);
+			// conversion is done when the getValue() is called
+			selectArg.setValue(argOrValue);
+			selectArgList.add(selectArg);
 		} else if (fieldType.isForeign() && fieldType.getFieldType() == argOrValue.getClass()) {
 			/*
 			 * If we have a foreign field and our argument is an instance of the foreign object (i.e. not its id), then

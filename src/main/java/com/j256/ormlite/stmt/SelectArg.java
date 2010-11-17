@@ -87,15 +87,17 @@ public class SelectArg {
 	/**
 	 * Return the value associated with this argument. The value should be set by the user before it is consumed.
 	 */
-	public Object getValue() throws SQLException {
+	public Object getSqlArgValue() throws SQLException {
 		if (!hasBeenSet) {
 			throw new SQLException("Column value has not been set for " + columnName);
 		}
-		if (fieldType != null && fieldType.isForeign() && fieldType.getFieldType() == value.getClass()) {
+		if (fieldType == null) {
+			return value;
+		} else if (fieldType.isForeign() && fieldType.getFieldType() == value.getClass()) {
 			FieldType idFieldType = fieldType.getForeignIdField();
 			return idFieldType.extractJavaFieldValue(value);
 		} else {
-			return value;
+			return fieldType.convertJavaFieldToSqlArgValue(value);
 		}
 	}
 
@@ -123,7 +125,7 @@ public class SelectArg {
 		}
 		Object val;
 		try {
-			val = getValue();
+			val = getSqlArgValue();
 			if (val == null) {
 				return "[null]";
 			} else {

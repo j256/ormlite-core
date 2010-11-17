@@ -15,7 +15,7 @@ public class SelectArgTest extends BaseCoreTest {
 	@Test(expected = SQLException.class)
 	public void testGetBeforeSetValue() throws Exception {
 		SelectArg selectArg = new SelectArg();
-		selectArg.getValue();
+		selectArg.getSqlArgValue();
 	}
 
 	@Test
@@ -23,7 +23,7 @@ public class SelectArgTest extends BaseCoreTest {
 		SelectArg selectArg = new SelectArg();
 		Object foo = new Object();
 		selectArg.setValue(foo);
-		assertSame(foo, selectArg.getValue());
+		assertSame(foo, selectArg.getSqlArgValue());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -51,7 +51,7 @@ public class SelectArgTest extends BaseCoreTest {
 	public void testSetNullValue() throws Exception {
 		SelectArg selectArg = new SelectArg();
 		selectArg.setValue(null);
-		assertNull(selectArg.getValue());
+		assertNull(selectArg.getSqlArgValue());
 	}
 
 	@Test

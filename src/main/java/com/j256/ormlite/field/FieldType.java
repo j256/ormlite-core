@@ -73,7 +73,7 @@ public class FieldType {
 			if (tableConfig == null) {
 				tableConfig = DatabaseTableConfig.fromClass(databaseType, field.getType());
 			}
-			@SuppressWarnings("unchecked")
+			@SuppressWarnings({ "unchecked", "rawtypes" })
 			TableInfo<?> foreignInfo = new TableInfo(databaseType, tableConfig);
 			if (foreignInfo.getIdField() == null) {
 				throw new IllegalArgumentException("Foreign field " + field.getType() + " does not have id field");
@@ -440,6 +440,13 @@ public class FieldType {
 	 */
 	public boolean isComparable() {
 		return dataType.isComparable();
+	}
+
+	/**
+	 * Return if this data type must use a SelectArg when doing query comparisons.
+	 */
+	public boolean isSelectArgRequired() {
+		return dataType.isSelectArgRequired();
 	}
 
 	/**

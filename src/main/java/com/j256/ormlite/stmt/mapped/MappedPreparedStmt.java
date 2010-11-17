@@ -50,7 +50,7 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 			args = new Object[selectArgs.length];
 		}
 		for (int i = 0; i < selectArgs.length; i++) {
-			Object arg = selectArgs[i].getValue();
+			Object arg = selectArgs[i].getSqlArgValue();
 			// sql statement arguments start at 1
 			if (arg == null) {
 				stmt.setNull(i + 1, argSqlTypes[i]);
