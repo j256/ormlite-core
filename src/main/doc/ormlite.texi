@@ -675,13 +675,17 @@ Persisted as SQL type BOOLEAN.
 @cindex date formats
 @item java.util.Date (DataType.JAVA_DATE, DataType.JAVA_DATE_LONG, or JAVA_DATE_STRING)
 
-Persisted as SQL type TIMESTAMP.  @emph{NOTE:} This is a different class from @code{java.sql.Date}.
-@emph{NOTE:} Certain databases only provide seconds resolution so the milliseconds will be 0.
+Persisted as SQL type TIMESTAMP.  This type automatically uses an internal @code{?} argument because the string format of it
+is unreliable to match the database format.  @xref{Select Arguments}.  
 
 You can also specify the @code{dataType} field to the @code{@@DatabaseField} annotation as a @code{DataType.JAVA_DATE_LONG}
 in which case the milliseconds value of the @code{Date} will be stored as an LONG.  Or you can use
 @code{DataType.JAVA_DATE_STRING} in which case the date will be stored as a string in @code{yyyy-MM-dd HH:mm:ss.SSSSSS}
 format.  You can use the @code{format} field in @code{DatabaseField} to set the date to another format.
+
+@emph{NOTE:} This is a different class from @code{java.sql.Date}.
+
+@emph{NOTE:} Certain databases only provide seconds resolution so the milliseconds will be 0.
 
 @emph{NOTE:} Because of reentrant issues with @code{SimpleDateFormat}, synchronization is done
 every time a JAVA_DATE_STRING date is converted to/from the database.
@@ -1415,8 +1419,10 @@ accountDao.delete(deleteBuilder.prepare());
 @cindex select arguments
 @cindex arguments to queries
 @cindex sql ?
-The arguments that are used in WHERE operations can be specified directly as value arguments (as in the above examples) or as a
-@code{SelectArg} object.  SelectArgs are used to set the value of an argument at a later time -- they generate a SQL '@code{?}'.
+Select Arguments are arguments that are used in WHERE operations can be specified directly as value arguments (as in the
+above examples) or as a @code{SelectArg} object.  SelectArgs are used to set the value of an argument at a later time --
+they generate a SQL '@code{?}'.
+
 For example:
 
 @example
@@ -1438,6 +1444,9 @@ List<Account> accounts = accountDao.query(preparedQuery);
 selectArg.setValue("bar");
 accounts = accountDao.query(preparedQuery);
 @end example
+
+Certain data types use an internal @code{SelectArg} object because the string value of the object does not reliably match the
+database form of the object.  @code{java.util.Date} is one example of such a type.
 
 @emph{NOTE:} @code{SelectArg} objects have protection against being used in more than one column name.  You must instantiate a
 new object if you want to use a @code{SelectArg} with another column.
@@ -1550,27 +1559,17 @@ Please see the example code posted to the website for more information: @uref{ht
 Again, feedback on this is welcome.
 
 @c ----------------------------------------------------------------
-@node How to Upgrade, 4.4 to 4.5, Use With Android, Top
+@node How to Upgrade, 3.X to 4.0, Use With Android, Top
 @chapter Upgrading Old Versions
 
 @menu
-* 4.4 to 4.5::                 Upgrade from version 4.4 to 4.5
 * 3.X to 4.0::                 Upgrade from version 3.X to 4.0
 * 2.X to 3.2::                 Upgrade from version 2.X to 3.2
 * 2.3 to 2.4::                 Upgrade from version 2.3 to 2.4
 @end menu
 
 @c ----------------------------------------------------------------
-@node 4.4 to 4.5, 3.X to 4.0, How to Upgrade, How to Upgrade
-@section Upgrade from Version 4.4 to 4.5
-
-A bug was discovered in version 4.4 dealing with how SQLite interprets boolean values.  In fixing the bug we were forced
-to move from a true/false string data to 1/0 numerical data.  This affected the on-disk representation of JDBC SQLite package --
-Android data was not affected.  To upgrade to 4.5 you will have to update your SQLite data to change columns with the value
-@code{true} to the value @code{1} -- @code{false} should be changed to @code{0}.
-
-@c ----------------------------------------------------------------
-@node 3.X to 4.0, 2.X to 3.2, 4.4 to 4.5, How to Upgrade
+@node 3.X to 4.0, 2.X to 3.2, How to Upgrade, How to Upgrade
 @section Upgrade from Version 3.X to 4.0
 
 Removed any outside usage of the @code{DatabaseType} since the @code{ConnectionSource} now provides it.  Also added
