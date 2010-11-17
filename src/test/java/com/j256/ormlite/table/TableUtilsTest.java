@@ -28,7 +28,7 @@ public class TableUtilsTest extends BaseCoreTest {
 
 	@Test
 	public void testConstructor() throws Exception {
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings("rawtypes")
 		Constructor[] constructors = TableUtils.class.getDeclaredConstructors();
 		assertEquals(1, constructors.length);
 		constructors[0].setAccessible(true);
