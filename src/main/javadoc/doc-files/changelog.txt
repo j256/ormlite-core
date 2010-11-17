@@ -1,7 +1,11 @@
-4.5: 11/16/2010
+4.5: 11/17/2010
 	* CORE: Fixes some problems with Dates and Enums being id types.
-	* JDBC: Added better detection of JDBC database URLs.
-	* JDBC: Added callBatchTasks() method to the Dao for running batch tasks.
+	* CORE: Fixed a big problem with boolean value escaping.  Fixed bug #3110466. 
+	* CORE: Added code to throw exceptions when Serializable fields are ids or part of SQL comparison.  Fixed bug #3110468.
+	* JDBC: Added better detection of database types from the URL.
+	* JDBC: Changed SQLite boolean representation to be 1/0 instead of true/false.  Fixed bug #3110467.
+	* JDBC: Added callBatchTasks() method to the Dao for running batch tasks.  Not applicable to Android.
+	* JDBC: Removed some deprecated methods from DatabaseTypeUtils.
 
 4.4: 11/10/2010
 	* CORE: Fixed a major problem with refreshing some field types.  Fixes bug #3106962.
