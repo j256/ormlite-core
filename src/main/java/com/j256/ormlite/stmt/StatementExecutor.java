@@ -223,7 +223,7 @@ public class StatementExecutor<T, ID> {
 		if (mappedRefresh == null) {
 			mappedRefresh = MappedRefresh.build(databaseType, tableInfo);
 		}
-		return mappedRefresh.execute(databaseConnection, data);
+		return mappedRefresh.executeRefresh(databaseConnection, data);
 	}
 
 	/**
