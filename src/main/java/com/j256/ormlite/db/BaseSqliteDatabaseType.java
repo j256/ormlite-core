@@ -3,6 +3,7 @@ package com.j256.ormlite.db;
 import java.util.List;
 
 import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 
 /**
@@ -14,6 +15,8 @@ import com.j256.ormlite.field.FieldType;
  * @author graywatson
  */
 public abstract class BaseSqliteDatabaseType extends BaseDatabaseType implements DatabaseType {
+
+	private final static FieldConverter booleanConverter = new BooleanNumberFieldConverter();
 
 	@Override
 	protected void configureGeneratedId(StringBuilder sb, FieldType fieldType, List<String> statementsBefore,
@@ -34,5 +37,17 @@ public abstract class BaseSqliteDatabaseType extends BaseDatabaseType implements
 	public boolean isCreateTableReturnsZero() {
 		// 'CREATE TABLE' statements seem to return 1 for some reason
 		return false;
+	}
+
+	@Override
+	public FieldConverter getFieldConverter(DataType dataType) {
+		// we are only overriding certain types
+		switch (dataType) {
+			case BOOLEAN :
+			case BOOLEAN_OBJ :
+				return booleanConverter;
+			default :
+				return super.getFieldConverter(dataType);
+		}
 	}
 }
