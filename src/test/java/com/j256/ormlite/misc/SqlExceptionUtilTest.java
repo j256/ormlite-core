@@ -20,7 +20,7 @@ public class SqlExceptionUtilTest {
 
 	@Test
 	public void testConstructor() throws Exception {
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings({ "rawtypes" })
 		Constructor[] constructors = SqlExceptionUtil.class.getDeclaredConstructors();
 		assertEquals(1, constructors.length);
 		constructors[0].setAccessible(true);

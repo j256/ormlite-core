@@ -21,7 +21,7 @@ public class LoggerFactoryTest {
 
 	@Test
 	public void testConstructor() throws Exception {
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings("rawtypes")
 		Constructor[] constructors = LoggerFactory.class.getDeclaredConstructors();
 		assertEquals(1, constructors.length);
 		constructors[0].setAccessible(true);
