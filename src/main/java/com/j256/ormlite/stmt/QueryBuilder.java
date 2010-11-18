@@ -49,22 +49,6 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * @deprecated Use {@link #selectColumns(String...)}
-	 */
-	@Deprecated
-	public StatementBuilder<T, ID> columns(String... columns) {
-		return selectColumns(columns);
-	}
-
-	/**
-	 * @deprecated Use {@link #selectColumns(Iterable)}
-	 */
-	@Deprecated
-	public StatementBuilder<T, ID> columns(Iterable<String> columns) {
-		return selectColumns(columns);
-	}
-
-	/**
 	 * Add columns to be returned by the SELECT query. If no column...() method called then all columns are returned by
 	 * default.
 	 */

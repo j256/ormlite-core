@@ -33,15 +33,6 @@ public class TableUtils {
 	}
 
 	/**
-	 * @deprecated Use {@link #createTable(ConnectionSource, Class)}
-	 */
-	@Deprecated
-	public static <T> int createTable(DatabaseType databaseType, ConnectionSource connectionSource, Class<T> dataClass)
-			throws SQLException {
-		return createTable(connectionSource, dataClass);
-	}
-
-	/**
 	 * Issue the database statements to create the table associated with a class. Most likely this will be done
 	 * <i>only</i> when a database is configured or in unit tests.
 	 * 
@@ -54,15 +45,6 @@ public class TableUtils {
 	public static <T> int createTable(ConnectionSource connectionSource, Class<T> dataClass) throws SQLException {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		return doCreateTable(databaseType, connectionSource, DatabaseTableConfig.fromClass(databaseType, dataClass));
-	}
-
-	/**
-	 * @deprecated Use {@link #createTable(DatabaseType, ConnectionSource, DatabaseTableConfig)}.
-	 */
-	@Deprecated
-	public static <T> int createTable(DatabaseType databaseType, ConnectionSource connectionSource,
-			DatabaseTableConfig<T> tableConfig) throws SQLException {
-		return createTable(connectionSource, tableConfig);
 	}
 
 	/**
@@ -82,15 +64,6 @@ public class TableUtils {
 	}
 
 	/**
-	 * @deprecated Use {@link #getCreateTableStatements(ConnectionSource, Class)}
-	 */
-	@Deprecated
-	public static <T> List<String> getCreateTableStatements(DatabaseType databaseType, Class<T> dataClass)
-			throws SQLException {
-		return doCreateTableStatements(databaseType, DatabaseTableConfig.fromClass(databaseType, dataClass));
-	}
-
-	/**
 	 * Return an ordered collection of SQL statements that need to be run to create a table. To do the work of creating,
 	 * you should call {@link #createTable}.
 	 * 
@@ -104,15 +77,6 @@ public class TableUtils {
 			throws SQLException {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		return doCreateTableStatements(databaseType, DatabaseTableConfig.fromClass(databaseType, dataClass));
-	}
-
-	/**
-	 * @deprecated Use {@link #getCreateTableStatements(ConnectionSource, DatabaseTableConfig)}
-	 */
-	@Deprecated
-	public static <T> List<String> getCreateTableStatements(DatabaseType databaseType,
-			DatabaseTableConfig<T> tableConfig) throws SQLException {
-		return doCreateTableStatements(databaseType, tableConfig);
 	}
 
 	/**
@@ -130,17 +94,6 @@ public class TableUtils {
 			DatabaseTableConfig<T> tableConfig) throws SQLException {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		return doCreateTableStatements(databaseType, tableConfig);
-	}
-
-	/**
-	 * @deprecated Use {@link #getCreateTableStatements(ConnectionSource, DatabaseTableConfig)}
-	 */
-	@Deprecated
-	public static <T> int dropTable(DatabaseType databaseType, ConnectionSource connectionSource, Class<T> dataClass,
-			boolean ignoreErrors) throws SQLException {
-		databaseType = connectionSource.getDatabaseType();
-		return doDropTable(databaseType, connectionSource, DatabaseTableConfig.fromClass(databaseType, dataClass),
-				ignoreErrors);
 	}
 
 	/**
@@ -164,16 +117,6 @@ public class TableUtils {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		return doDropTable(databaseType, connectionSource, DatabaseTableConfig.fromClass(databaseType, dataClass),
 				ignoreErrors);
-	}
-
-	/**
-	 * @deprecated Use {@link #dropTable(ConnectionSource, DatabaseTableConfig, boolean)}
-	 */
-	@Deprecated
-	public static <T> int dropTable(DatabaseType databaseType, ConnectionSource connectionSource,
-			DatabaseTableConfig<T> tableConfig, boolean ignoreErrors) throws SQLException {
-		databaseType = connectionSource.getDatabaseType();
-		return doDropTable(databaseType, connectionSource, tableConfig, ignoreErrors);
 	}
 
 	/**

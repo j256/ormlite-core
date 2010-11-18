@@ -45,25 +45,7 @@ public class TableUtilsTest extends BaseCoreTest {
 	@Test
 	public void testCreateStatementsTableConfig() throws Exception {
 		List<String> stmts =
-				TableUtils.getCreateTableStatements(connectionSource, DatabaseTableConfig.fromClass(databaseType,
-						Foo.class));
-		assertEquals(1, stmts.size());
-		assertEquals(expectedCreateStatement(), stmts.get(0));
-	}
-
-	@SuppressWarnings("deprecation")
-	@Test
-	public void testCreateStatementsDatabaseType() throws Exception {
-		List<String> stmts = TableUtils.getCreateTableStatements(databaseType, Foo.class);
-		assertEquals(1, stmts.size());
-		assertEquals(expectedCreateStatement(), stmts.get(0));
-	}
-
-	@SuppressWarnings("deprecation")
-	@Test
-	public void testCreateStatementsTableConfigDatabaseType() throws Exception {
-		List<String> stmts =
-				TableUtils.getCreateTableStatements(databaseType,
+				TableUtils.getCreateTableStatements(connectionSource,
 						DatabaseTableConfig.fromClass(databaseType, Foo.class));
 		assertEquals(1, stmts.size());
 		assertEquals(expectedCreateStatement(), stmts.get(0));
@@ -131,34 +113,11 @@ public class TableUtilsTest extends BaseCoreTest {
 	}
 
 	@Test
-	public void testCreateTableDeprecated() throws Exception {
-		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
-		testCreate(connectionSource, databaseType, 0, false, null, new Callable<Integer>() {
-			@SuppressWarnings("deprecation")
-			public Integer call() throws Exception {
-				return TableUtils.createTable(databaseType, connectionSource, Foo.class);
-			}
-		});
-	}
-
-	@Test
 	public void testCreateTableTableConfig() throws Exception {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		testCreate(connectionSource, databaseType, 0, false, null, new Callable<Integer>() {
 			public Integer call() throws Exception {
 				return TableUtils.createTable(connectionSource, DatabaseTableConfig.fromClass(databaseType, Foo.class));
-			}
-		});
-	}
-
-	@Test
-	public void testCreateTableTableConfigDeprecated() throws Exception {
-		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
-		testCreate(connectionSource, databaseType, 0, false, null, new Callable<Integer>() {
-			@SuppressWarnings("deprecation")
-			public Integer call() throws Exception {
-				return TableUtils.createTable(databaseType, connectionSource, DatabaseTableConfig.fromClass(
-						databaseType, Foo.class));
 			}
 		});
 	}
@@ -210,29 +169,6 @@ public class TableUtilsTest extends BaseCoreTest {
 			public Integer call() throws Exception {
 				return TableUtils.dropTable(connectionSource, DatabaseTableConfig.fromClass(databaseType, Foo.class),
 						false);
-			}
-		});
-	}
-
-	@Test
-	public void testDropTableDeprecated() throws Exception {
-		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
-		testDrop(connectionSource, 0, false, new Callable<Integer>() {
-			@SuppressWarnings("deprecation")
-			public Integer call() throws Exception {
-				return TableUtils.dropTable(databaseType, connectionSource, Foo.class, false);
-			}
-		});
-	}
-
-	@Test
-	public void testDropTableTableConfigDeprecated() throws Exception {
-		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
-		testDrop(connectionSource, 0, false, new Callable<Integer>() {
-			@SuppressWarnings("deprecation")
-			public Integer call() throws Exception {
-				return TableUtils.dropTable(databaseType, connectionSource, DatabaseTableConfig.fromClass(databaseType,
-						Foo.class), false);
 			}
 		});
 	}
