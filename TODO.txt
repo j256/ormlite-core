@@ -66,6 +66,23 @@
 - JDO annotations?
 	- support as well as the JPA
 
+- anyway to simplify the query builder call structure:
+	- take a look at http://www.javalobby.org/articles/activeobjects/
+	- Person[] people = manager.find(Person.class, Query.select().where("age > 18").limit(10));
+	- dao.queryBuilder().where().gt("age", 18).limit(10);
+	- maybe have a .prepare() method on Where?
+	- maybe have a query(), delete(), update(), ... methods on Where?
+
+- have <T,ID> on that Where() so we can say:
+	- eqId() or some such
+	- it would also allow the Where to prepare the query with type safety
+	- see above
+
+- flesh out the SimpleDB version of the library:
+	- get all tests passing
+	- think about batch operations
+	- maybe add a insert(Collection)?
+
 -----------------------------------------------------------------------------------------------------------------------------------
 
 - think about proxy objects for foreign objects that can throw if they do anything but getId()
