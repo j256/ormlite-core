@@ -9,7 +9,7 @@ import com.j256.ormlite.logger.Logger;
  * 
  * @author graywatson
  */
-public abstract class BaseConnectionSource {
+public abstract class BaseConnectionSource implements ConnectionSource {
 
 	protected boolean usedSpecialConnection = false;
 	private ThreadLocal<NestedConnection> specialConnection = new ThreadLocal<NestedConnection>();
