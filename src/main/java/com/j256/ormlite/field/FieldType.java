@@ -211,7 +211,7 @@ public class FieldType {
 		return dataType;
 	}
 
-	public SqlType getSqlTypeVal() {
+	public SqlType getSqlType() {
 		return fieldConverter.getSqlType();
 	}
 
@@ -507,6 +507,20 @@ public class FieldType {
 		} else {
 			return new FieldType(databaseType, tableName, field, fieldConfig);
 		}
+	}
+
+	@Override
+	public boolean equals(Object arg) {
+		if (arg == null || arg.getClass() != this.getClass()) {
+			return false;
+		}
+		FieldType other = (FieldType) arg;
+		return field.equals(other.field);
+	}
+
+	@Override
+	public int hashCode() {
+		return field.hashCode();
 	}
 
 	@Override

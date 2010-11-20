@@ -75,8 +75,8 @@ public abstract class StatementBuilder<T, ID> {
 		List<FieldType> resultFieldTypeList = new ArrayList<FieldType>();
 		List<SelectArg> selectArgList = new ArrayList<SelectArg>();
 		String statement = buildStatementString(argFieldTypeList, resultFieldTypeList, selectArgList);
-		return new MappedPreparedStmt<T, ID>(tableInfo, statement, argFieldTypeList, resultFieldTypeList, selectArgList,
-				(databaseType.isLimitSqlSupported() ? null : limit), type);
+		return new MappedPreparedStmt<T, ID>(tableInfo, statement, argFieldTypeList, resultFieldTypeList,
+				selectArgList, (databaseType.isLimitSqlSupported() ? null : limit), type);
 	}
 
 	/**

@@ -497,8 +497,9 @@ public enum DataType implements FieldConverter {
 				ObjectInputStream objInStream = new ObjectInputStream(new ByteArrayInputStream(bytes));
 				return objInStream.readObject();
 			} catch (Exception e) {
-				throw SqlExceptionUtil.create("Could not read serialized object from byte array: "
-						+ Arrays.toString(bytes) + "(len " + bytes.length + ")", e);
+				throw SqlExceptionUtil.create(
+						"Could not read serialized object from byte array: " + Arrays.toString(bytes) + "(len "
+								+ bytes.length + ")", e);
 			}
 		}
 		@Override

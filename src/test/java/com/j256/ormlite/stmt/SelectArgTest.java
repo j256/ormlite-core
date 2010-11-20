@@ -57,23 +57,21 @@ public class SelectArgTest extends BaseCoreTest {
 	@Test
 	public void testForeignValue() throws Exception {
 		SelectArg selectArg = new SelectArg();
-		assertTrue(selectArg.toString().contains("unset arg"));
+		assertTrue(selectArg.toString().contains("[unset]"));
 		BaseFoo value = new BaseFoo();
 		String id = "dewpofjweee";
 		value.id = id;
 		selectArg.setValue(value);
 		selectArg.setMetaInfo("id", foreignFieldType);
-		assertTrue(selectArg.toString().contains("set arg"));
 		assertTrue(selectArg + " wrong value", selectArg.toString().contains(id));
 	}
 
 	@Test
 	public void testToString() throws Exception {
 		SelectArg selectArg = new SelectArg();
-		assertTrue(selectArg.toString().contains("unset arg"));
+		assertTrue(selectArg.toString().contains("[unset]"));
 		String value = "fwefefewf";
 		selectArg.setValue(value);
-		assertTrue(selectArg.toString().contains("set arg"));
 		assertTrue(selectArg.toString().contains(value));
 	}
 }

@@ -30,10 +30,10 @@ import com.j256.ormlite.field.FieldType;
  * PreparedQuery&lt;Account&gt; preparedQuery = qb.prepareQuery();
  * // ...
  * 
- * // some time later we set the value and run the query 
+ * // some time later we set the value and run the query
  * passwordSelectArg.setValue(&quot;_secret&quot;);
  * List&lt;Account&gt; results = accountDao.query(preparedQuery);
- * // we can then re-set the value and re-run the query 
+ * // we can then re-set the value and re-run the query
  * passwordSelectArg.setValue(&quot;qwerty&quot;);
  * List&lt;Account&gt; results = accountDao.query(preparedQuery);
  * </pre>
@@ -112,14 +112,9 @@ public class SelectArg {
 
 	@Override
 	public String toString() {
-		if (hasBeenSet) {
-			return "set arg(" + getValueString() + ")";
-		} else {
-			return "unset arg()";
+		if (!hasBeenSet) {
+			return "[unset]";
 		}
-	}
-
-	private String getValueString() {
 		if (value == null) {
 			return "[null]";
 		}

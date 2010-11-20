@@ -161,7 +161,7 @@ public class FieldTypeTest extends BaseCoreTest {
 		FieldType fieldType = FieldType.createFieldType(databaseType, Foo.class.getSimpleName(), nameField);
 		verify(databaseType);
 
-		assertEquals(sqlType, fieldType.getSqlTypeVal());
+		assertEquals(sqlType, fieldType.getSqlType());
 		Foo foo = new Foo();
 		// it can't be null
 		foo.name = nameArg + " not that";
