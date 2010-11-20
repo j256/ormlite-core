@@ -2,6 +2,7 @@ package com.j256.ormlite.table;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
@@ -207,14 +208,19 @@ public class TableUtilsTest extends BaseCoreTest {
 		DatabaseResults results = null;
 		final AtomicInteger rowC = new AtomicInteger(1);
 		if (throwExecute) {
-			expect(conn.compileStatement(statement, StatementType.EXECUTE)).andThrow(
-					new SQLException("you asked us to!!"));
+			expect(
+					conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class),
+							isA(FieldType[].class))).andThrow(new SQLException("you asked us to!!"));
 		} else {
-			expect(conn.compileStatement(statement, StatementType.EXECUTE)).andReturn(stmt);
+			expect(
+					conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class),
+							isA(FieldType[].class))).andReturn(stmt);
 			expect(stmt.executeUpdate()).andReturn(rowN);
 			stmt.close();
 			if (queryAfter != null) {
-				expect(conn.compileStatement(queryAfter, StatementType.EXECUTE)).andReturn(stmt);
+				expect(
+						conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class),
+								isA(FieldType[].class))).andReturn(stmt);
 				results = createMock(DatabaseResults.class);
 				expect(results.next()).andReturn(false);
 				expect(stmt.executeQuery()).andReturn(results);

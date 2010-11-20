@@ -19,7 +19,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
-import com.j256.ormlite.field.SqlType;
+import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.stmt.PreparedDelete;
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -55,7 +55,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	public void testCreate() throws Exception {
 		startDao(true);
 		int linesAffected = 1;
-		expect(databaseConnection.insert(isA(String.class), isA(Object[].class), isA(SqlType[].class))).andReturn(
+		expect(databaseConnection.insert(isA(String.class), isA(Object[].class), isA(FieldType[].class))).andReturn(
 				linesAffected);
 		replay(databaseConnection);
 		assertEquals(linesAffected, baseFooDao.create(new BaseFoo()));
@@ -65,7 +65,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	@Test(expected = SQLException.class)
 	public void testCreateThrow() throws Exception {
 		startDao(true);
-		expect(databaseConnection.insert(isA(String.class), isA(Object[].class), isA(SqlType[].class))).andThrow(
+		expect(databaseConnection.insert(isA(String.class), isA(Object[].class), isA(FieldType[].class))).andThrow(
 				new SQLException("expected"));
 		replay(databaseConnection);
 		baseFooDao.create(new BaseFoo());
@@ -91,7 +91,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	public void testUpdate() throws Exception {
 		startDao(true);
 		int linesAffected = 1;
-		expect(databaseConnection.update(isA(String.class), isA(Object[].class), isA(SqlType[].class))).andReturn(
+		expect(databaseConnection.update(isA(String.class), isA(Object[].class), isA(FieldType[].class))).andReturn(
 				linesAffected);
 		replay(databaseConnection);
 		assertEquals(linesAffected, baseFooDao.update(new BaseFoo()));
@@ -101,7 +101,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	@Test(expected = SQLException.class)
 	public void testUpdateThrow() throws Exception {
 		startDao(true);
-		expect(databaseConnection.update(isA(String.class), isA(Object[].class), isA(SqlType[].class))).andThrow(
+		expect(databaseConnection.update(isA(String.class), isA(Object[].class), isA(FieldType[].class))).andThrow(
 				new SQLException("expected"));
 		replay(databaseConnection);
 		baseFooDao.update(new BaseFoo());
@@ -127,7 +127,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	public void testUpdateId() throws Exception {
 		startDao(true);
 		int linesAffected = 1;
-		expect(databaseConnection.update(isA(String.class), isA(Object[].class), isA(SqlType[].class))).andReturn(
+		expect(databaseConnection.update(isA(String.class), isA(Object[].class), isA(FieldType[].class))).andReturn(
 				linesAffected);
 		replay(databaseConnection);
 		assertEquals(linesAffected, baseFooDao.updateId(new BaseFoo(), "new"));
@@ -153,7 +153,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	@Test(expected = SQLException.class)
 	public void testUpdateIdThrow() throws Exception {
 		startDao(true);
-		expect(databaseConnection.update(isA(String.class), isA(Object[].class), isA(SqlType[].class))).andThrow(
+		expect(databaseConnection.update(isA(String.class), isA(Object[].class), isA(FieldType[].class))).andThrow(
 				new SQLException("expected"));
 		replay(databaseConnection);
 		baseFooDao.updateId(new BaseFoo(), "new");
@@ -163,7 +163,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	public void testDelete() throws Exception {
 		startDao(true);
 		int linesAffected = 1;
-		expect(databaseConnection.delete(isA(String.class), isA(Object[].class), isA(SqlType[].class))).andReturn(
+		expect(databaseConnection.delete(isA(String.class), isA(Object[].class), isA(FieldType[].class))).andReturn(
 				linesAffected);
 		replay(databaseConnection);
 		assertEquals(linesAffected, baseFooDao.delete(new BaseFoo()));
@@ -173,7 +173,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	@Test(expected = SQLException.class)
 	public void testDeleteThrow() throws Exception {
 		startDao(true);
-		expect(databaseConnection.delete(isA(String.class), isA(Object[].class), isA(SqlType[].class))).andThrow(
+		expect(databaseConnection.delete(isA(String.class), isA(Object[].class), isA(FieldType[].class))).andThrow(
 				new SQLException("expected"));
 		replay(databaseConnection);
 		baseFooDao.delete(new BaseFoo());
@@ -199,7 +199,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	public void testDeleteCollection() throws Exception {
 		startDao(true);
 		int linesAffected = 1;
-		expect(databaseConnection.delete(isA(String.class), isA(Object[].class), isA(SqlType[].class))).andReturn(
+		expect(databaseConnection.delete(isA(String.class), isA(Object[].class), isA(FieldType[].class))).andReturn(
 				linesAffected);
 		replay(databaseConnection);
 		List<BaseFoo> fooList = new ArrayList<BaseFoo>();
@@ -221,7 +221,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	@Test(expected = SQLException.class)
 	public void testDeleteCollectionThrow() throws Exception {
 		startDao(true);
-		expect(databaseConnection.delete(isA(String.class), isA(Object[].class), isA(SqlType[].class))).andThrow(
+		expect(databaseConnection.delete(isA(String.class), isA(Object[].class), isA(FieldType[].class))).andThrow(
 				new SQLException("expected"));
 		replay(databaseConnection);
 		List<BaseFoo> fooList = new ArrayList<BaseFoo>();
@@ -242,7 +242,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	public void testDeleteIds() throws Exception {
 		startDao(true);
 		int linesAffected = 1;
-		expect(databaseConnection.delete(isA(String.class), isA(Object[].class), isA(SqlType[].class))).andReturn(
+		expect(databaseConnection.delete(isA(String.class), isA(Object[].class), isA(FieldType[].class))).andReturn(
 				linesAffected);
 		replay(databaseConnection);
 		List<String> idList = new ArrayList<String>();
@@ -255,7 +255,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	@Test(expected = SQLException.class)
 	public void testDeleteIdsThrow() throws Exception {
 		startDao(true);
-		expect(databaseConnection.delete(isA(String.class), isA(Object[].class), isA(SqlType[].class))).andThrow(
+		expect(databaseConnection.delete(isA(String.class), isA(Object[].class), isA(FieldType[].class))).andThrow(
 				new SQLException("expected"));
 		replay(databaseConnection);
 		List<String> idList = new ArrayList<String>();
@@ -306,7 +306,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		int linesAffected = 1;
 		BaseFoo foo = new BaseFoo();
 		expect(
-				databaseConnection.queryForOne(isA(String.class), isA(Object[].class), isA(SqlType[].class),
+				databaseConnection.queryForOne(isA(String.class), isA(Object[].class), isA(FieldType[].class),
 						isA(GenericRowMapper.class))).andReturn(foo);
 		replay(databaseConnection);
 		assertEquals(linesAffected, baseFooDao.refresh(foo));
@@ -318,7 +318,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	public void testRefreshThrow() throws Exception {
 		startDao(false);
 		expect(
-				databaseConnection.queryForOne(isA(String.class), isA(Object[].class), isA(SqlType[].class),
+				databaseConnection.queryForOne(isA(String.class), isA(Object[].class), isA(FieldType[].class),
 						isA(GenericRowMapper.class))).andThrow(new SQLException("expected"));
 		replay(databaseConnection);
 		baseFooDao.refresh(new BaseFoo());
@@ -367,7 +367,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		startDao(false);
 		BaseFoo foo = new BaseFoo();
 		expect(
-				databaseConnection.queryForOne(isA(String.class), isA(Object[].class), isA(SqlType[].class),
+				databaseConnection.queryForOne(isA(String.class), isA(Object[].class), isA(FieldType[].class),
 						isA(GenericRowMapper.class))).andReturn(foo);
 		replay(databaseConnection);
 		assertSame(foo, baseFooDao.queryForId("foo"));
@@ -379,7 +379,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	public void testQueryForIdThrow() throws Exception {
 		startDao(false);
 		expect(
-				databaseConnection.queryForOne(isA(String.class), isA(Object[].class), isA(SqlType[].class),
+				databaseConnection.queryForOne(isA(String.class), isA(Object[].class), isA(FieldType[].class),
 						isA(GenericRowMapper.class))).andThrow(new SQLException("expectd"));
 		replay(databaseConnection);
 		baseFooDao.queryForId("foo");
@@ -400,7 +400,9 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		databaseType.appendEscapedEntityName(sb, "basefoo");
 		sb.append(' ');
 		CompiledStatement stmt = createMock(CompiledStatement.class);
-		expect(databaseConnection.compileStatement(sb.toString(), StatementType.SELECT)).andReturn(stmt);
+		expect(
+				databaseConnection.compileStatement(isA(String.class), isA(StatementType.class),
+						isA(FieldType[].class), isA(FieldType[].class))).andReturn(stmt);
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(results.next()).andReturn(false);
 		expect(stmt.executeQuery()).andReturn(results);
@@ -431,7 +433,9 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		databaseType.appendEscapedEntityName(sb, "basefoo");
 		sb.append(' ');
 		CompiledStatement stmt = createMock(CompiledStatement.class);
-		expect(databaseConnection.compileStatement(sb.toString(), StatementType.SELECT)).andReturn(stmt);
+		expect(
+				databaseConnection.compileStatement(isA(String.class), isA(StatementType.class),
+						isA(FieldType[].class), isA(FieldType[].class))).andReturn(stmt);
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(results.next()).andReturn(false);
 		expect(stmt.executeQuery()).andReturn(results);
@@ -446,7 +450,6 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		verify(stmt);
 		verify(results);
 	}
-
 	@Test(expected = IllegalStateException.class)
 	public void testStatementBuilderNoInit() throws Exception {
 		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
@@ -462,7 +465,9 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		databaseType.appendEscapedEntityName(sb, "basefoo");
 		sb.append(' ');
 		CompiledStatement stmt = createMock(CompiledStatement.class);
-		expect(databaseConnection.compileStatement(sb.toString(), StatementType.SELECT)).andReturn(stmt);
+		expect(
+				databaseConnection.compileStatement(isA(String.class), isA(StatementType.class),
+						isA(FieldType[].class), isA(FieldType[].class))).andReturn(stmt);
 		expect(stmt.executeQuery()).andThrow(new SQLException("expected"));
 		stmt.close();
 		replay(databaseConnection);
@@ -471,7 +476,6 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		PreparedQuery<BaseFoo> preparedStmt = builder.prepare();
 		baseFooDao.queryForFirst(preparedStmt);
 	}
-
 	@Test(expected = IllegalStateException.class)
 	public void testQueryForFirstNoInit() throws Exception {
 		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
@@ -487,7 +491,9 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		databaseType.appendEscapedEntityName(sb, "basefoo");
 		sb.append(' ');
 		CompiledStatement stmt = createMock(CompiledStatement.class);
-		expect(databaseConnection.compileStatement(sb.toString(), StatementType.SELECT)).andReturn(stmt);
+		expect(
+				databaseConnection.compileStatement(isA(String.class), isA(StatementType.class),
+						isA(FieldType[].class), isA(FieldType[].class))).andReturn(stmt);
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(results.next()).andReturn(false);
 		expect(stmt.executeQuery()).andReturn(results);
@@ -504,7 +510,6 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		verify(stmt);
 		verify(results);
 	}
-
 	@Test(expected = IllegalStateException.class)
 	public void testQueryForPreparedNoInit() throws Exception {
 		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
@@ -520,7 +525,9 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		databaseType.appendEscapedEntityName(sb, "basefoo");
 		sb.append(' ');
 		CompiledStatement stmt = createMock(CompiledStatement.class);
-		expect(databaseConnection.compileStatement(sb.toString(), StatementType.SELECT)).andReturn(stmt);
+		expect(
+				databaseConnection.compileStatement(isA(String.class), isA(StatementType.class),
+						isA(FieldType[].class), isA(FieldType[].class))).andReturn(stmt);
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(results.next()).andReturn(false);
 		expect(stmt.executeQuery()).andReturn(results);
@@ -543,7 +550,6 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		verify(stmt);
 		verify(results);
 	}
-
 	@Test
 	public void testQueryForAllRawList() throws Exception {
 		startDao(false);
@@ -552,7 +558,9 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		databaseType.appendEscapedEntityName(sb, "basefoo");
 		sb.append(' ');
 		CompiledStatement stmt = createMock(CompiledStatement.class);
-		expect(databaseConnection.compileStatement(sb.toString(), StatementType.SELECT)).andReturn(stmt);
+		expect(
+				databaseConnection.compileStatement(isA(String.class), isA(StatementType.class),
+						isA(FieldType[].class), isA(FieldType[].class))).andReturn(stmt);
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(results.next()).andReturn(true);
 		String value = "stuff";
@@ -582,7 +590,6 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		verify(stmt);
 		verify(results);
 	}
-
 	@Test(expected = IllegalStateException.class)
 	public void testQueryForRawNoInit() throws Exception {
 		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
@@ -648,7 +655,9 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		expect(results.next()).andReturn(false);
 		expect(stmt.executeQuery()).andReturn(results);
 		stmt.close();
-		expect(databaseConnection.compileStatement(sb.toString(), StatementType.SELECT)).andReturn(stmt);
+		expect(
+				databaseConnection.compileStatement(isA(String.class), isA(StatementType.class),
+						isA(FieldType[].class), isA(FieldType[].class))).andReturn(stmt);
 		replay(databaseConnection);
 		replay(stmt);
 		CloseableIterator<BaseFoo> iterator = baseFooDao.iterator();
@@ -656,7 +665,6 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		finishDao();
 		verify(stmt);
 	}
-
 	@Test(expected = IllegalStateException.class)
 	public void testIteratorThrow() throws Exception {
 		startDao(false);
@@ -667,12 +675,13 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		CompiledStatement stmt = createMock(CompiledStatement.class);
 		expect(stmt.executeQuery()).andThrow(new SQLException("expected"));
 		stmt.close();
-		expect(databaseConnection.compileStatement(sb.toString(), StatementType.SELECT)).andReturn(stmt);
+		expect(
+				databaseConnection.compileStatement(isA(String.class), isA(StatementType.class),
+						isA(FieldType[].class), isA(FieldType[].class))).andReturn(stmt);
 		replay(databaseConnection);
 		replay(stmt);
 		baseFooDao.iterator();
 	}
-
 	@Test(expected = IllegalStateException.class)
 	public void testIteratorNoInit() throws Exception {
 		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
@@ -731,7 +740,9 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		databaseType.appendEscapedEntityName(sb, "basefoo");
 		sb.append(' ');
 		CompiledStatement stmt = createMock(CompiledStatement.class);
-		expect(databaseConnection.compileStatement(sb.toString(), StatementType.SELECT)).andReturn(stmt);
+		expect(
+				databaseConnection.compileStatement(isA(String.class), isA(StatementType.class),
+						isA(FieldType[].class), isA(FieldType[].class))).andReturn(stmt);
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(results.next()).andReturn(false);
 		expect(stmt.executeQuery()).andReturn(results);
@@ -763,8 +774,9 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		databaseType.appendEscapedEntityName(sb, "basefoo");
 		sb.append(' ');
 		CompiledStatement stmt = createMock(CompiledStatement.class);
-		expect(databaseConnection.compileStatement(sb.toString(), StatementType.SELECT)).andThrow(
-				new SQLException("expected"));
+		expect(
+				databaseConnection.compileStatement(isA(String.class), isA(StatementType.class),
+						isA(FieldType[].class), isA(FieldType[].class))).andThrow(new SQLException("expected"));
 		int numColumns = 1;
 		expect(stmt.getColumnCount()).andReturn(numColumns);
 		String columnName = "foo";
@@ -807,7 +819,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Dao<BaseFoo, String> dao = BaseDaoImpl.createDao(connectionSource, BaseFoo.class);
 		DatabaseConnection databaseConnection = createMock(DatabaseConnection.class);
 		connectionSource.setDatabaseConnection(databaseConnection);
-		expect(databaseConnection.insert(isA(String.class), isA(Object[].class), isA(SqlType[].class))).andReturn(1);
+		expect(databaseConnection.insert(isA(String.class), isA(Object[].class), isA(FieldType[].class))).andReturn(1);
 		replay(databaseConnection);
 		assertEquals(1, dao.create(new BaseFoo()));
 	}

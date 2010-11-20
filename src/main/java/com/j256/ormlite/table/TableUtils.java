@@ -25,6 +25,7 @@ import com.j256.ormlite.support.DatabaseResults;
 public class TableUtils {
 
 	private static Logger logger = LoggerFactory.getLogger(TableUtils.class);
+	private static final FieldType[] noFieldTypes = new FieldType[0];
 
 	/**
 	 * For static methods only.
@@ -162,7 +163,7 @@ public class TableUtils {
 			CompiledStatement prepStmt = null;
 			try {
 				logger.debug("executing drop table statement: {}", statement);
-				prepStmt = connection.compileStatement(statement, StatementType.EXECUTE);
+				prepStmt = connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes, noFieldTypes);
 				rowC = prepStmt.executeUpdate();
 			} catch (SQLException e) {
 				if (!ignoreErrors) {
@@ -260,7 +261,7 @@ public class TableUtils {
 			CompiledStatement prepStmt = null;
 			try {
 				logger.debug("executing create table statement: {}", statement);
-				prepStmt = connection.compileStatement(statement, StatementType.EXECUTE);
+				prepStmt = connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes, noFieldTypes);
 				rowC = prepStmt.executeUpdate();
 			} catch (SQLException e) {
 				// we do this to make sure that the statement is in the exception
@@ -284,7 +285,7 @@ public class TableUtils {
 			CompiledStatement prepStmt = null;
 			DatabaseResults results = null;
 			try {
-				prepStmt = connection.compileStatement(query, StatementType.EXECUTE);
+				prepStmt = connection.compileStatement(query, StatementType.EXECUTE, noFieldTypes, noFieldTypes);
 				results = prepStmt.executeQuery();
 				int rowC = 0;
 				// count the results

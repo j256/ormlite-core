@@ -12,6 +12,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.RawResults;
 import com.j256.ormlite.dao.RawRowMapper;
 import com.j256.ormlite.db.DatabaseType;
+import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
@@ -52,6 +53,7 @@ public class StatementExecutor<T, ID> {
 	private MappedUpdateId<T, ID> mappedUpdateId;
 	private MappedDelete<T, ID> mappedDelete;
 	private MappedRefresh<T, ID> mappedRefresh;
+	private final FieldType[] noFieldTypes = new FieldType[0];
 
 	/**
 	 * Provides statements for various SQL operations.
@@ -132,7 +134,8 @@ public class StatementExecutor<T, ID> {
 		SelectIterator<String[], Void> iterator = null;
 		try {
 			DatabaseConnection connection = connectionSource.getReadOnlyConnection();
-			CompiledStatement compiledStatement = connection.compileStatement(query, StatementType.SELECT);
+			CompiledStatement compiledStatement =
+					connection.compileStatement(query, StatementType.SELECT, noFieldTypes, tableInfo.getFieldTypes());
 			RawResultsList results = new RawResultsList(compiledStatement);
 			// statement arg is null because we don't want it to double log below
 			iterator =
@@ -174,7 +177,7 @@ public class StatementExecutor<T, ID> {
 	public RawResults buildIterator(ConnectionSource connectionSource, String query) throws SQLException {
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		return new RawResultsIterator(query, connectionSource, connection, connection.compileStatement(query,
-				StatementType.SELECT));
+				StatementType.SELECT, noFieldTypes, tableInfo.getFieldTypes()));
 	}
 
 	/**

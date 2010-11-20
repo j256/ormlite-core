@@ -31,7 +31,7 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 		super(tableInfo, statement, argFieldTypeList, resultFieldTypeList);
 		this.selectArgs = selectArgList.toArray(new SelectArg[selectArgList.size()]);
 		// select args should match the field-type list
-		if (argSqlTypes == null || selectArgs.length != argSqlTypes.length) {
+		if (argFieldTypes == null || selectArgs.length != argFieldTypes.length) {
 			throw new IllegalArgumentException("Should be the same number of SelectArg and field-types in the arrays");
 		}
 		// this is an Integer because it may be null
@@ -40,7 +40,7 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 	}
 
 	public CompiledStatement compile(DatabaseConnection databaseConnection) throws SQLException {
-		CompiledStatement stmt = databaseConnection.compileStatement(statement, type);
+		CompiledStatement stmt = databaseConnection.compileStatement(statement, type, argFieldTypes, resultsFieldTypes);
 		if (limit != null) {
 			stmt.setMaxRows(limit);
 		}
@@ -53,9 +53,9 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 			Object arg = selectArgs[i].getSqlArgValue();
 			// sql statement arguments start at 1
 			if (arg == null) {
-				stmt.setNull(i + 1, argSqlTypes[i]);
+				stmt.setNull(i + 1, argFieldTypes[i].getSqlType());
 			} else {
-				stmt.setObject(i + 1, arg, argSqlTypes[i]);
+				stmt.setObject(i + 1, arg, argFieldTypes[i].getSqlType());
 			}
 			if (args != null) {
 				args[i] = arg;

@@ -17,7 +17,7 @@ import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.db.BaseDatabaseType;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.SqlType;
+import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.StatementExecutor;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.GeneratedKeyHolder;
@@ -30,7 +30,7 @@ public class MappedCreateTest extends BaseCoreTest {
 		TableInfo<GeneratedId> tableInfo = new TableInfo<GeneratedId>(databaseType, GeneratedId.class);
 		StatementExecutor<GeneratedId, String> se = new StatementExecutor<GeneratedId, String>(databaseType, tableInfo);
 		DatabaseConnection databaseConnection = createMock(DatabaseConnection.class);
-		databaseConnection.insert(isA(String.class), isA(Object[].class), isA(SqlType[].class),
+		databaseConnection.insert(isA(String.class), isA(Object[].class), isA(FieldType[].class),
 				isA(GeneratedKeyHolder.class));
 		expectLastCall().andAnswer(new IAnswer<Object>() {
 			public Integer answer() throws Throwable {
@@ -53,7 +53,7 @@ public class MappedCreateTest extends BaseCoreTest {
 		StatementExecutor<GeneratedId, String> se = new StatementExecutor<GeneratedId, String>(databaseType, tableInfo);
 		DatabaseConnection databaseConnection = createMock(DatabaseConnection.class);
 		expect(databaseConnection.queryForLong(isA(String.class))).andReturn(1L);
-		expect(databaseConnection.insert(isA(String.class), isA(Object[].class), isA(SqlType[].class))).andReturn(1);
+		expect(databaseConnection.insert(isA(String.class), isA(Object[].class), isA(FieldType[].class))).andReturn(1);
 
 		replay(databaseConnection);
 		GeneratedId genIdSeq = new GeneratedId();
@@ -70,7 +70,7 @@ public class MappedCreateTest extends BaseCoreTest {
 						databaseType, GeneratedIdLong.class));
 		DatabaseConnection databaseConnection = createMock(DatabaseConnection.class);
 		expect(databaseConnection.queryForLong(isA(String.class))).andReturn(1L);
-		expect(databaseConnection.insert(isA(String.class), isA(Object[].class), isA(SqlType[].class))).andReturn(1);
+		expect(databaseConnection.insert(isA(String.class), isA(Object[].class), isA(FieldType[].class))).andReturn(1);
 
 		replay(databaseConnection);
 		GeneratedIdLong genIdSeq = new GeneratedIdLong();
