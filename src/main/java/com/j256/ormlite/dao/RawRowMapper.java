@@ -17,7 +17,7 @@ public interface RawRowMapper<T> {
 	 * @param columnNames
 	 *            Array of names of columns.
 	 * @param resultColumns
-	 *            Array of result columns. 
+	 *            Array of result columns.
 	 */
 	public T mapRow(String[] columnNames, String[] resultColumns);
 }
