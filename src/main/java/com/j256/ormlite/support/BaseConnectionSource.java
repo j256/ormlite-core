@@ -14,6 +14,10 @@ public abstract class BaseConnectionSource implements ConnectionSource {
 	protected boolean usedSpecialConnection = false;
 	private ThreadLocal<NestedConnection> specialConnection = new ThreadLocal<NestedConnection>();
 
+	public DatabaseConnection getSpecialConnection() {
+		return getSpecial();
+	}
+
 	/**
 	 * Returns the connection that has been saved or null if none.
 	 */
@@ -75,7 +79,7 @@ public abstract class BaseConnectionSource implements ConnectionSource {
 	}
 
 	/**
-	 * Clear the connection that was previoused saved.
+	 * Clear the connection that was previously saved.
 	 */
 	protected void clearSpecial(DatabaseConnection connection, Logger logger) {
 		NestedConnection currentSaved = specialConnection.get();
@@ -90,6 +94,18 @@ public abstract class BaseConnectionSource implements ConnectionSource {
 			}
 		}
 		// release should then be called after clear
+	}
+
+	/**
+	 * Get the currently saved.
+	 */
+	protected DatabaseConnection getSpecial() {
+		NestedConnection currentSaved = specialConnection.get();
+		if (currentSaved == null) {
+			return null;
+		} else {
+			return currentSaved.connection;
+		}
 	}
 
 	private class NestedConnection {

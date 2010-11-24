@@ -49,9 +49,14 @@ public interface ConnectionSource {
 	public boolean saveSpecialConnection(DatabaseConnection connection);
 
 	/**
-	 * Clear the saved transaction connection. New transactions will be returned and released.
+	 * Clear the saved connection.
 	 */
 	public void clearSpecialConnection(DatabaseConnection connection);
+
+	/**
+	 * Return the currently saved connection or null if none.
+	 */
+	public DatabaseConnection getSpecialConnection();
 
 	/**
 	 * Close any outstanding database connections.

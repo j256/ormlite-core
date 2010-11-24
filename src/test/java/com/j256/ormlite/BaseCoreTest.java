@@ -81,6 +81,9 @@ public abstract class BaseCoreTest {
 		}
 		public void clearSpecialConnection(DatabaseConnection connection) {
 		}
+		public DatabaseConnection getSpecialConnection() {
+			return null;
+		}
 	}
 
 	protected class LimitAfterSelectDatabaseType extends StubDatabaseType {
