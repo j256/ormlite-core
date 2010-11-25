@@ -166,7 +166,7 @@ public class Account @{
 @node Starting DAO, Starting Client, Starting Class, Getting Started
 @section Configuring a DAO
 
-A typical Java pattern is to isolate the database operations in Database Access Objects or DAO classes. Each DAO provides create, delete,
+A typical Java pattern is to isolate the database operations in Data Access Objects (DAO) classes. Each DAO provides create, delete,
 update, etc. type of functionality and specializes in the handling a particular persisted class.  To set up a DAO, you will need a DAO
 interface and an implementation class.  @value{package} provides a base DAO interface and a base implementation class. The following is
 an example DAO interface corresponding to the Account class from the previous section of the manual:
@@ -271,12 +271,12 @@ continue on with the next section.  @xref{Using}.
 @menu
 * Class Setup::                 How to setup your classes to be persisted.
 * Persisted Types::             Data types that can be persisted.
-* DAO Setup::                   How to configure the Database Access Objects.
+* DAO Setup::                   How to configure the Data Access Objects.
 * Connection Source::           Setting up connections to databases.
 * Database Type::               Defining your database type.
 * Database Notes::              Support databases and associated notes.
 * Complete Wiring::             Tying all of the wiring together.
-* DAO Usage::                   Using the Database Access Objects.
+* DAO Usage::                   Using the Data Access Objects.
 * Identity Columns::            How identity fields and columns work.
 @end menu
 
@@ -758,11 +758,11 @@ stored in the database.  @xref{Foreign Objects}.
 @section Setting Up the DAOs
 
 @cindex DAO
-@cindex database access object
+@cindex data access object
 @cindex id column
 @cindex Dao interface
-Once you have annotated your classes, you will need to create the DAO class(es).  The pattern that we recommend
-is to define an interface which extends the @code{Dao} interface and will be used in the code.  The interface
+Once you have annotated your classes, you will need to create the Data Access Object (DAO) class(es).  The pattern that
+we recommend is to define an interface which extends the @code{Dao} interface and will be used in the code.  The interface
 isn't required but it is a good pattern so your code is less tied to JDBC for persistence.  Each DAO has two generic
 parameters: the class we are persisting with the DAO, and the class of the ID-column that will be used to
 identify a specific database row.  If you class does not have an ID field, you can put @code{Object} or @code{Void}
@@ -796,7 +796,14 @@ More on how to use these DAOs later. @xref{DAO Usage}.
 @cindex createDao method
 As mentioned above (@pxref{Starting DAO}), you are not @emph{required} to create a DAO class for every one of your persisted
 objects. You can use the @code{createDao} static method on the @code{BaseDaoImpl} class to create a DAO class without having
-to define one.
+to define one.  For example:
+
+@example
+Dao<Account, String> accountDao =
+  BaseDaoImpl.createDao(connectionSource, Account.class);
+Dao<Order, Integer> orderDao =
+  BaseDaoImpl.createDao(connectionSource, Order.class);
+@end example
 
 @c ----------------------------------------------------------------
 @node Connection Source, Database Type, DAO Setup, Using
