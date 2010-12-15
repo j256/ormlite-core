@@ -1,3 +1,9 @@
+4.6: 12/15/2010
+	* CORE: Fixed issues with infinite recursion if their is a foreign object loop.  Fixes bug #3137579.
+	* CORE: Revamped a lot of the call structure internally to make way for the SimpleDB backend.  Exposed the FieldType array more.
+	* CORE: Removed some old deprecated methods from QueryBuilder and TableUtils.
+	* ANDROID: Added protection in case the subclass onCreate is called so another connection is not saved.  Fixes bug #3117883.
+
 4.5: 11/17/2010
 	* CORE: Fixes some problems with Dates and Enums being id types.
 	* CORE: Fixed a big problem with boolean value escaping for some database types.  Fixed bug #3110466. 

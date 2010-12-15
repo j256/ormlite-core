@@ -5,7 +5,7 @@
 	- creates account_field-name instead of account_id field in local table 
 
 - maybe add rawUpdate and rawExecute?
-	- need to document the raw query, iterator, update, execute in .texi
+	- add documentation for update, execute in .texi
 	- need to add a section to the manual about how to use the raw queries and the RawResults class
 	- need to talk about closing of the RawResults
 
@@ -82,6 +82,8 @@
 	- get all tests passing
 	- think about batch operations
 	- maybe add a insert(Collection)?
+
+- backend for HBase (Hadoop's bigtable) 
 
 -----------------------------------------------------------------------------------------------------------------------------------
 
