@@ -22,6 +22,7 @@ public class FieldType {
 
 	/** default suffix added to fields that are id fields of foreign objects */
 	public static final String FOREIGN_ID_FIELD_SUFFIX = "_id";
+	public static final int MAX_FOREIGN_RECURSE_LEVEL = 10;
 
 	private final String tableName;
 	private final Field field;
@@ -47,9 +48,12 @@ public class FieldType {
 
 	/**
 	 * You should use {@link FieldType#createFieldType} to instantiate one of these field if you have a {@link Field}.
+	 * 
+	 * @param recurseLevel
+	 *            is used to make sure we done get in an infinite recursive loop if a foreign object refers to itself.
 	 */
-	public FieldType(DatabaseType databaseType, String tableName, Field field, DatabaseFieldConfig fieldConfig)
-			throws SQLException {
+	public FieldType(DatabaseType databaseType, String tableName, Field field, DatabaseFieldConfig fieldConfig,
+			int recurseLevel) throws SQLException {
 		this.tableName = tableName;
 		this.field = field;
 		this.fieldName = field.getName();
@@ -65,23 +69,28 @@ public class FieldType {
 		}
 		String defaultFieldName = field.getName();
 		if (fieldConfig.isForeign()) {
-			if (dataType.isPrimitive()) {
-				throw new IllegalArgumentException("Field " + this + " is a primitive class " + field.getType()
-						+ " but marked as foreign");
+			if (recurseLevel < MAX_FOREIGN_RECURSE_LEVEL) {
+				if (dataType.isPrimitive()) {
+					throw new IllegalArgumentException("Field " + this + " is a primitive class " + field.getType()
+							+ " but marked as foreign");
+				}
+				DatabaseTableConfig<?> tableConfig = fieldConfig.getForeignTableConfig();
+				if (tableConfig == null) {
+					tableConfig = DatabaseTableConfig.fromClass(databaseType, field.getType(), recurseLevel + 1);
+				}
+				@SuppressWarnings({ "unchecked", "rawtypes" })
+				TableInfo<?> foreignInfo = new TableInfo(databaseType, tableConfig);
+				if (foreignInfo.getIdField() == null) {
+					throw new IllegalArgumentException("Foreign field " + field.getType() + " does not have id field");
+				}
+				foreignTableInfo = foreignInfo;
+				defaultFieldName = defaultFieldName + FOREIGN_ID_FIELD_SUFFIX;
+				// this field's data type is the foreign id's type
+				dataType = foreignInfo.getIdField().getDataType();
+			} else {
+				// act like it's not foreign
+				foreignTableInfo = null;
 			}
-			DatabaseTableConfig<?> tableConfig = fieldConfig.getForeignTableConfig();
-			if (tableConfig == null) {
-				tableConfig = DatabaseTableConfig.fromClass(databaseType, field.getType());
-			}
-			@SuppressWarnings({ "unchecked", "rawtypes" })
-			TableInfo<?> foreignInfo = new TableInfo(databaseType, tableConfig);
-			if (foreignInfo.getIdField() == null) {
-				throw new IllegalArgumentException("Foreign field " + field.getType() + " does not have id field");
-			}
-			foreignTableInfo = foreignInfo;
-			defaultFieldName = defaultFieldName + FOREIGN_ID_FIELD_SUFFIX;
-			// this field's data type is the foreign id's type
-			dataType = foreignInfo.getIdField().getDataType();
 		} else if (dataType == DataType.UNKNOWN) {
 			throw new IllegalArgumentException("ORMLite does not know how to store field class " + field.getType()
 					+ " for field " + this);
@@ -498,14 +507,17 @@ public class FieldType {
 
 	/**
 	 * Return An instantiated {@link FieldType} or null if the field does not have a {@link DatabaseField} annotation.
+	 * 
+	 * @param recurseLevel
+	 *            is used to make sure we done get in an infinite recursive loop if a foreign object refers to itself. =
 	 */
-	public static FieldType createFieldType(DatabaseType databaseType, String tableName, Field field)
+	public static FieldType createFieldType(DatabaseType databaseType, String tableName, Field field, int recurseLevel)
 			throws SQLException {
 		DatabaseFieldConfig fieldConfig = DatabaseFieldConfig.fromField(databaseType, field);
 		if (fieldConfig == null) {
 			return null;
 		} else {
-			return new FieldType(databaseType, tableName, field, fieldConfig);
+			return new FieldType(databaseType, tableName, field, fieldConfig, recurseLevel);
 		}
 	}
 

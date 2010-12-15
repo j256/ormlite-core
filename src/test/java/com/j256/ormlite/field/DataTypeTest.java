@@ -558,7 +558,7 @@ public class DataTypeTest extends BaseCoreTest {
 	}
 
 	private FieldType getFieldType(String fieldName) throws Exception {
-		return FieldType.createFieldType(databaseType, "Foo", Foo.class.getDeclaredField(fieldName));
+		return FieldType.createFieldType(databaseType, "Foo", Foo.class.getDeclaredField(fieldName), 0);
 	}
 
 	protected static class Foo {

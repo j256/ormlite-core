@@ -25,7 +25,7 @@ public class BaseMappedQueryTest extends BaseCoreTest {
 		List<FieldType> resultFieldTypeList = new ArrayList<FieldType>();
 		Field field = BaseFoo.class.getDeclaredField(BaseFoo.ID_COLUMN_NAME);
 		String tableName = "basefoo";
-		resultFieldTypeList.add(FieldType.createFieldType(databaseType, tableName, field));
+		resultFieldTypeList.add(FieldType.createFieldType(databaseType, tableName, field, 0));
 		BaseMappedQuery<BaseFoo, String> baseMappedQuery =
 				new BaseMappedQuery<BaseFoo, String>(baseFooTableInfo, "select * from " + tableName, argFieldTypeList,
 						resultFieldTypeList) {

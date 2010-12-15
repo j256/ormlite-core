@@ -27,13 +27,13 @@ public abstract class BaseCoreTest {
 		try {
 			Field field = BaseFoo.class.getDeclaredField("id");
 			assertEquals(String.class, field.getType());
-			stringFieldType = FieldType.createFieldType(databaseType, "BaseFoo", field);
+			stringFieldType = FieldType.createFieldType(databaseType, "BaseFoo", field, 0);
 			field = BaseFoo.class.getDeclaredField("val");
 			assertEquals(int.class, field.getType());
-			numberFieldType = FieldType.createFieldType(databaseType, "BaseFoo", field);
+			numberFieldType = FieldType.createFieldType(databaseType, "BaseFoo", field, 0);
 			field = Foreign.class.getDeclaredField("baseFoo");
 			assertEquals(BaseFoo.class, field.getType());
-			foreignFieldType = FieldType.createFieldType(databaseType, "BaseFoo", field);
+			foreignFieldType = FieldType.createFieldType(databaseType, "BaseFoo", field, 0);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

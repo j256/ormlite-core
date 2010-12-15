@@ -94,7 +94,7 @@ public class DatabaseTableConfig<T> {
 	public FieldType[] extractFieldTypes(DatabaseType databaseType) throws SQLException {
 		if (fieldTypes == null) {
 			if (fieldConfigs == null) {
-				fieldTypes = extractFieldTypes(databaseType, dataClass, tableName);
+				fieldTypes = extractFieldTypes(databaseType, dataClass, tableName, 0);
 			} else {
 				fieldTypes = convertFieldConfigs(databaseType, tableName, fieldConfigs);
 			}
@@ -107,19 +107,33 @@ public class DatabaseTableConfig<T> {
 	 * by internal classes to configure a class.
 	 */
 	public static <T> DatabaseTableConfig<T> fromClass(DatabaseType databaseType, Class<T> clazz) throws SQLException {
+		return fromClass(databaseType, clazz, 0);
+	}
+
+	/**
+	 * @param recurseLevel
+	 *            is used to make sure we done get in an infinite recursive loop if a foreign object refers to itself.
+	 */
+	public static <T> DatabaseTableConfig<T> fromClass(DatabaseType databaseType, Class<T> clazz, int recurseLevel)
+			throws SQLException {
 		String tableName = extractTableName(clazz);
 		if (databaseType.isEntityNamesMustBeUpCase()) {
 			tableName = tableName.toUpperCase();
 		}
-		return new DatabaseTableConfig<T>(clazz, tableName, extractFieldTypes(databaseType, clazz, tableName));
+		return new DatabaseTableConfig<T>(clazz, tableName, extractFieldTypes(databaseType, clazz, tableName,
+				recurseLevel));
 	}
 
-	private static <T> FieldType[] extractFieldTypes(DatabaseType databaseType, Class<T> clazz, String tableName)
-			throws SQLException {
+	/**
+	 * @param recurseLevel
+	 *            is used to make sure we done get in an infinite recursive loop if a foreign object refers to itself.
+	 */
+	private static <T> FieldType[] extractFieldTypes(DatabaseType databaseType, Class<T> clazz, String tableName,
+			int recurseLevel) throws SQLException {
 		List<FieldType> fieldTypes = new ArrayList<FieldType>();
 		for (Class<?> classWalk = clazz; classWalk != null; classWalk = classWalk.getSuperclass()) {
 			for (Field field : classWalk.getDeclaredFields()) {
-				FieldType fieldType = FieldType.createFieldType(databaseType, tableName, field);
+				FieldType fieldType = FieldType.createFieldType(databaseType, tableName, field, recurseLevel);
 				if (fieldType != null) {
 					fieldTypes.add(fieldType);
 				}
@@ -161,7 +175,7 @@ public class DatabaseTableConfig<T> {
 				throw SqlExceptionUtil.create("Could not configure field with name '" + fieldConfig.getFieldName()
 						+ "' for " + dataClass, e);
 			}
-			FieldType fieldType = new FieldType(databaseType, tableName, field, fieldConfig);
+			FieldType fieldType = new FieldType(databaseType, tableName, field, fieldConfig, 0);
 			fieldTypes.add(fieldType);
 		}
 		if (fieldTypes.size() == 0) {
