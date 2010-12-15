@@ -98,9 +98,9 @@ public class FieldType {
 			foreignTableInfo = null;
 		}
 		if (fieldConfig.getColumnName() == null) {
-			this.dbColumnName = databaseType.convertColumnName(defaultFieldName);
+			this.dbColumnName = defaultFieldName;
 		} else {
-			this.dbColumnName = databaseType.convertColumnName(fieldConfig.getColumnName());
+			this.dbColumnName = fieldConfig.getColumnName();
 		}
 		this.dataType = dataType;
 		this.width = fieldConfig.getWidth();

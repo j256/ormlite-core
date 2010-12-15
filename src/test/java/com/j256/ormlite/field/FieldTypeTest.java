@@ -2,7 +2,6 @@ package com.j256.ormlite.field;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
@@ -157,7 +156,6 @@ public class FieldTypeTest extends BaseCoreTest {
 					}
 				});
 		expect(databaseType.isEntityNamesMustBeUpCase()).andReturn(false);
-		expect(databaseType.convertColumnName(isA(String.class))).andReturn("name");
 		replay(databaseType);
 		FieldType fieldType = FieldType.createFieldType(databaseType, Foo.class.getSimpleName(), nameField, 0);
 		verify(databaseType);

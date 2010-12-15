@@ -6,7 +6,6 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
@@ -46,12 +45,6 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 	@Test
 	public void testCreateTableReturnsZero() {
 		assertTrue(databaseType.isCreateTableReturnsZero());
-	}
-
-	@Test
-	public void testConvertColumnName() {
-		String name = "foobarbaz";
-		assertSame(name, ourDatabaseType.convertColumnName(name));
 	}
 
 	@Test

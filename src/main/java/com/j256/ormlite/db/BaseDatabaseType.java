@@ -161,11 +161,6 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		}
 	}
 
-	public String convertColumnName(String columnName) {
-		// default is a no-op
-		return columnName;
-	}
-
 	/**
 	 * Output the SQL type for a Java String.
 	 */

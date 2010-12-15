@@ -39,11 +39,6 @@ public interface DatabaseType {
 			List<String> statementsBefore, List<String> statementsAfter, List<String> queriesAfter);
 
 	/**
-	 * Convert and return the column name for table and sequence creation. Often this is necessary to fix case issues.
-	 */
-	public String convertColumnName(String columnName);
-
-	/**
 	 * Takes a {@link FieldType} and adds the necessary statements to the before and after lists necessary so that the
 	 * dropping of the table will succeed and will clear other associated sequences or other database artifacts
 	 */
