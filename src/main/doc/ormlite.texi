@@ -21,8 +21,8 @@
 @c ----------------------------------------------------------------
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.5
-@set ormlite_date November 2010
+@set ormlite_version 4.6
+@set ormlite_date December 2010
 @set package ORMLite
 @c ----------------------------------------------------------------
 
@@ -278,6 +278,7 @@ continue on with the next section.  @xref{Using}.
 * Complete Wiring::             Tying all of the wiring together.
 * DAO Usage::                   Using the Data Access Objects.
 * Identity Columns::            How identity fields and columns work.
+* RawResults::                  Issuing raw database queries using RawResults. 
 @end menu
 
 @c ----------------------------------------------------------------
@@ -1202,7 +1203,7 @@ be set on the id field by @value{package} and will be available when @code{getId
 @emph{NOTE:} Depending on the database type, you may not be able to change the value of an auto-generated id field.
 
 @c ----------------------------------------------------------------
-@node GeneratedIdSequence Column, Statement Builder, GeneratedId Column, Identity Columns
+@node GeneratedIdSequence Column, RawResults, GeneratedId Column, Identity Columns
 @subsection Fields With generatedIdSequence
 
 @cindex generated identity sequence name
@@ -1228,7 +1229,61 @@ sequences.
 @emph{NOTE:} Depending on the database type, you may not be able to change the value of an auto-generated id field.
 
 @c ----------------------------------------------------------------
-@node Statement Builder, QueryBuilder Basics, GeneratedIdSequence Column, Top
+@node RawResults, Statement Builder, GeneratedIdSequence Column, Using
+@section Issuing Raw Database Queries
+
+@cindex aggregation queries
+
+@cindex sum, using
+@cindex count, using
+@cindex avg, using
+@cindex queryForAllRaw
+@cindex iteratorRaw
+@cindex RawResults
+The built-in methods available in the @code{Dao} interface and the @code{QueryBuilder} classes don't provide
+the ability to handle all types of queries.  For example, aggregation queries (sum, count, avg, etc.) cannot be handled
+as an object since every query has a different result list.  To handle these queries, you can issue raw database queries
+using the @code{queryForAllRaw} or @code{iteratorRaw} methods on DAO.  These methods return a @code{RawResults} object
+which represents a result as an array of strings.  See the documentation on the @code{RawResults} object for more details
+on how to use it, or take a look at the following examples.
+
+@example
+// find out how many orders account-id #10 has
+RawResults rawResults =
+  orderDao.queryForAllRaw(
+    "select count(*) from orders where account_id = 10");
+// there should be 1 result
+List<String[]> results = rawResults.getResults();
+// the results array should have 1 value
+String[] resultArray = results.get(0);
+// this should print the number of orders that have this account-id
+System.out.println("Account-id 10 has " + resultArray[0] + " orders");
+@end example
+
+For large numbers of results, you should consider using the @code{iteratorRaw} Dao method which uses database paging.
+For example:
+
+@example
+// return the orders with the sum of their amounts per account
+RawResults rawResults =
+  orderDao.iteratorRaw(
+    "select account_id,sum(amount) from orders group by account_id");
+// page through the results
+for (String[] resultArray : rawResults) @{
+  System.out.println("Account-id " + resultArray[0] has "
+    + resultArray[1] + " total orders");
+@}
+@end example
+
+@emph{NOTE:} The query and the resulting strings can be @emph{very} database-type specific.  For example:
+@enumerate
+@item Certain databases need any column names specified in uppercase -- others need lowercase.
+@item You may have to quote your column or table names if they are reserved words.
+@item The resulting column names also could be uppercase or lowercase.
+@end enumerate
+
+@c ----------------------------------------------------------------
+@node Statement Builder, QueryBuilder Basics, RawResults, Top
 @chapter Custom Statement Builder
 
 @cindex query builder
@@ -2041,7 +2096,7 @@ Same is the @code{iterator} method but with a prepared statement parameter. @xre
 Same as the prepared statement iterator except it takes a raw SQL select statement argument.  This is the iterator version
 of the @code{queryForAllRaw} method.  Although you should use the @code{iterator} method for most queries, this method
 allows you to do special queries that aren't supported otherwise.  Like the above iterator methods, you must call close
-on the returned @code{RawResults} object once you are done with it. 
+on the @code{CloseableIterator} object returned by the @code{RawResults.iterator()} method once you are done with it. 
 
 @item callBatchTasks(Callable callable)
 
