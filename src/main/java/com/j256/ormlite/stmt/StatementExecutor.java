@@ -422,6 +422,7 @@ public class StatementExecutor<T, ID> {
 			this.statement = statement;
 			this.connectionSource = connectionSource;
 			this.connection = connection;
+			logger.debug("executing raw results iterator for: {}", query);
 		}
 
 		public CloseableIterator<String[]> iterator() {
