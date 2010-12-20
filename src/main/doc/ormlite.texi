@@ -1233,7 +1233,6 @@ sequences.
 @section Issuing Raw Database Queries
 
 @cindex aggregation queries
-
 @cindex sum, using
 @cindex count, using
 @cindex avg, using
@@ -1273,14 +1272,19 @@ for (String[] resultArray : rawResults) @{
   System.out.println("Account-id " + resultArray[0] has "
     + resultArray[1] + " total orders");
 @}
+rawResults.close();
 @end example
 
-@emph{NOTE:} The query and the resulting strings can be @emph{very} database-type specific.  For example:
+@emph{NOTE}: The query and the resulting strings can be @emph{very} database-type specific.  For example:
 @enumerate
 @item Certain databases need any column names specified in uppercase -- others need lowercase.
 @item You may have to quote your column or table names if they are reserved words.
 @item The resulting column names also could be uppercase or lowercase.
 @end enumerate
+
+@emph{NOTE}: Like other @value{package} iterators, you will need to make sure you iterate through all of the results
+to have the statement closed automatically.  You can also call the @code{RawResults.close()} method to make sure the
+iterator, and any associated database connections, is closed.
 
 @c ----------------------------------------------------------------
 @node Statement Builder, QueryBuilder Basics, RawResults, Top

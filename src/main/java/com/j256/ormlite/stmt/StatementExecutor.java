@@ -380,6 +380,10 @@ public class StatementExecutor<T, ID> {
 			return new RawResultsListIterator();
 		}
 
+		public void close() throws SQLException {
+			// this is a noop in list mode
+		}
+
 		/**
 		 * Internal iterator to work on our list.
 		 */
@@ -414,6 +418,7 @@ public class StatementExecutor<T, ID> {
 		private final String query;
 		private final ConnectionSource connectionSource;
 		private final DatabaseConnection connection;
+		private SelectIterator<String[], Void> iterator;
 
 		public RawResultsIterator(String query, ConnectionSource connectionSource, DatabaseConnection connection,
 				CompiledStatement statement) throws SQLException {
@@ -428,12 +433,18 @@ public class StatementExecutor<T, ID> {
 		public CloseableIterator<String[]> iterator() {
 			try {
 				// we do this so we can iterate through the results multiple times
-				return new SelectIterator<String[], Void>(String[].class, null, this, connectionSource, connection,
-						statement, query);
+				iterator =
+						new SelectIterator<String[], Void>(String[].class, null, this, connectionSource, connection,
+								statement, query);
+				return iterator;
 			} catch (SQLException e) {
 				// we have to do this because iterator can't throw Exceptions
 				throw new RuntimeException(e);
 			}
+		}
+
+		public void close() throws SQLException {
+			iterator.close();
 		}
 	}
 

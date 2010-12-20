@@ -40,4 +40,10 @@ public interface RawResults extends CloseableIterable<String[]> {
 	 * Get an iterator which will return a T which is mapped from the String[] array raw results my the mapper argument.
 	 */
 	public <T> CloseableIterator<T> iterator(RawRowMapper<T> mapper);
+
+	/**
+	 * Close any open database connections associated with the RawResults. This is only applicable if the
+	 * {@link Dao#iteratorRaw(String)} or another iterator method was called.
+	 */
+	public void close() throws SQLException;
 }
