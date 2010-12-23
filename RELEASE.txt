@@ -56,7 +56,7 @@ To release ORMLite:
 
 10) Go to SF and set the default download to the newest jar:
 
-	https://sourceforge.net/project/admin/explorer.php?group_id=297653
+	https://sourceforge.net/projects/ormlite/files/releases/com/j256/ormlite/ormlite-jdbc/
 
 11) Create a sf shell.  Explode the javadocs with the newest release:
 
