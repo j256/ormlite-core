@@ -6,8 +6,6 @@
 
 - maybe add rawUpdate and rawExecute?
 	- add documentation for update, execute in .texi
-	- need to add a section to the manual about how to use the raw queries and the RawResults class
-	- need to talk about closing of the RawResults
 
 - for objects that a user does not have control over, how about the ability of defining a Method to construct a particular class
 	- when you create the dao, you have to somehow inject a Method which returns a new object of a certain type
@@ -100,7 +98,7 @@
 		- maybe ask the class loader if it has a Dao for that class?
 
 - how about the avg, sum, etc. stuff, how should those work
-	- ANSWER: for now just handle with the direct SQL query support
+	- ANSWER: for now just handle with the RawResults SQL query support
 	- we can't create a T object because of the avg field -- where would it go?
 	- maybe allow fields in a T object that are used to store avg and other information returned from them
 	- we would need to auto-group any requested fields
