@@ -444,7 +444,10 @@ public class StatementExecutor<T, ID> {
 		}
 
 		public void close() throws SQLException {
-			iterator.close();
+			if (iterator != null) {
+				iterator.close();
+				iterator = null;
+			}
 		}
 	}
 
