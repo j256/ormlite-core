@@ -71,17 +71,21 @@
 	- maybe have a .prepare() method on Where?
 	- maybe have a query(), delete(), update(), ... methods on Where?
 
-- have <T,ID> on that Where() so we can say:
-	- eqId() or some such
-	- it would also allow the Where to prepare the query with type safety
-	- see above
-
 - flesh out the SimpleDB version of the library:
 	- get all tests passing
 	- think about batch operations
 	- maybe add a insert(Collection)?
 
 - backend for HBase (Hadoop's bigtable) 
+
+- general documentation on schema creation:
+	- how to do it by hand with TableUtils
+	- how to use TableCreator
+
+- consider allowing auto foreign object creation and updating with internal doa's
+	- use the base dao for updating
+	- need to be careful of recursion
+	- how would create work?  Maybe you could see if the id was set or something
 
 -----------------------------------------------------------------------------------------------------------------------------------
 

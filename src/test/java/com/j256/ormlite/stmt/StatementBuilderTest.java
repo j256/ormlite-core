@@ -176,7 +176,7 @@ public class StatementBuilderTest extends BaseCoreTest {
 	@Test
 	public void testWhere() throws Exception {
 		QueryBuilder<BaseFoo, String> stmtb = new QueryBuilder<BaseFoo, String>(databaseType, baseFooTableInfo);
-		Where where = stmtb.where();
+		Where<BaseFoo, String> where = stmtb.where();
 		String val = "1";
 		where.eq(BaseFoo.ID_COLUMN_NAME, val);
 		StringBuilder sb = new StringBuilder();
@@ -193,7 +193,7 @@ public class StatementBuilderTest extends BaseCoreTest {
 	@Test
 	public void testWhereSelectArg() throws Exception {
 		QueryBuilder<BaseFoo, String> stmtb = new QueryBuilder<BaseFoo, String>(databaseType, baseFooTableInfo);
-		Where where = stmtb.where();
+		Where<BaseFoo, String> where = stmtb.where();
 		SelectArg val = new SelectArg();
 		where.eq(BaseFoo.ID_COLUMN_NAME, val);
 		StringBuilder sb = new StringBuilder();

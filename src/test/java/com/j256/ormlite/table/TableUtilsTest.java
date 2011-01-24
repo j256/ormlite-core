@@ -2,10 +2,13 @@ package com.j256.ormlite.table;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;
@@ -13,6 +16,8 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.easymock.EasyMock;
+import org.easymock.IAnswer;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
@@ -174,6 +179,85 @@ public class TableUtilsTest extends BaseCoreTest {
 		});
 	}
 
+	@Test
+	public void testIndex() throws Exception {
+		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
+		expect(connectionSource.getDatabaseType()).andReturn(databaseType);
+		DatabaseConnection conn = createMock(DatabaseConnection.class);
+		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
+		final CompiledStatement stmt = createMock(CompiledStatement.class);
+		expect(
+				conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class),
+						isA(FieldType[].class))).andAnswer(new IAnswer<CompiledStatement>() {
+			private int stmtC = 0;
+			public CompiledStatement answer() throws Throwable {
+				Object[] args = EasyMock.getCurrentArguments();
+				assertNotNull(args);
+				assertEquals(4, args.length);
+				if (stmtC == 0) {
+					assertEquals("CREATE TABLE `index` (`stuff` VARCHAR(255) ) ", args[0]);
+				} else if (stmtC == 1) {
+					assertEquals("CREATE INDEX `stuff_idx` ON `index` ( `stuff` )", args[0]);
+				} else {
+					fail("Should only be called twice");
+				}
+				stmtC++;
+				assertEquals(StatementType.EXECUTE, args[1]);
+				assertEquals(0, ((FieldType[]) args[2]).length);
+				assertEquals(0, ((FieldType[]) args[3]).length);
+				return stmt;
+			}
+		}).anyTimes();
+		expect(stmt.executeUpdate()).andReturn(0).anyTimes();
+		connectionSource.releaseConnection(conn);
+		expectLastCall().anyTimes();
+		stmt.close();
+		expectLastCall().anyTimes();
+		replay(connectionSource, conn, stmt);
+		TableUtils.createTable(connectionSource, Index.class);
+		verify(connectionSource, conn, stmt);
+	}
+
+	@Test
+	public void testComboIndex() throws Exception {
+		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
+		expect(connectionSource.getDatabaseType()).andReturn(databaseType);
+		DatabaseConnection conn = createMock(DatabaseConnection.class);
+		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
+		final CompiledStatement stmt = createMock(CompiledStatement.class);
+		expect(
+				conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class),
+						isA(FieldType[].class))).andAnswer(new IAnswer<CompiledStatement>() {
+			private int stmtC = 0;
+			public CompiledStatement answer() throws Throwable {
+				Object[] args = EasyMock.getCurrentArguments();
+				assertNotNull(args);
+				assertEquals(4, args.length);
+				if (stmtC == 0) {
+					assertEquals("CREATE TABLE `comboindex` (`stuff` VARCHAR(255) , `junk` BIGINT ) ", args[0]);
+				} else if (stmtC == 1) {
+					assertEquals("CREATE INDEX `" + ComboIndex.INDEX_NAME + "` ON `comboindex` ( `stuff`, `junk` )",
+							args[0]);
+				} else {
+					fail("Should only be called twice");
+				}
+				stmtC++;
+				assertEquals(StatementType.EXECUTE, args[1]);
+				assertEquals(0, ((FieldType[]) args[2]).length);
+				assertEquals(0, ((FieldType[]) args[3]).length);
+				return stmt;
+			}
+		}).anyTimes();
+		expect(stmt.executeUpdate()).andReturn(0).anyTimes();
+		connectionSource.releaseConnection(conn);
+		expectLastCall().anyTimes();
+		stmt.close();
+		expectLastCall().anyTimes();
+		replay(connectionSource, conn, stmt);
+		TableUtils.createTable(connectionSource, ComboIndex.class);
+		verify(connectionSource, conn, stmt);
+	}
+	/* ================================================================ */
 	private void testCreate(ConnectionSource connectionSource, DatabaseType databaseType, int rowN,
 			boolean throwExecute, String queryAfter, Callable<Integer> callable) throws Exception {
 		testStatement(connectionSource, databaseType, expectedCreateStatement(), queryAfter, rowN, throwExecute,
@@ -248,5 +332,22 @@ public class TableUtilsTest extends BaseCoreTest {
 		int id;
 		@DatabaseField(columnName = NAME_FIELD_NAME)
 		String name;
+	}
+
+	protected static class Index {
+		@DatabaseField(index = true)
+		String stuff;
+		public Index() {
+		}
+	}
+
+	protected static class ComboIndex {
+		@DatabaseField(indexName = INDEX_NAME)
+		String stuff;
+		@DatabaseField(indexName = INDEX_NAME)
+		long junk;
+		public ComboIndex() {
+		}
+		public static final String INDEX_NAME = "stuffjunk";
 	}
 }

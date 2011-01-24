@@ -185,6 +185,26 @@ public class DatabaseFieldConfigTest {
 		DatabaseFieldConfig.fromField(databaseType, fields[0]);
 	}
 
+	@Test
+	public void testIndex() throws Exception {
+		DatabaseType databaseType = new StubDatabaseType();
+		Field[] fields = Index.class.getDeclaredFields();
+		assertTrue(fields.length >= 1);
+		DatabaseFieldConfig fieldConfig = DatabaseFieldConfig.fromField(databaseType, fields[0]);
+		assertEquals(fields[0].getName() + "_idx", fieldConfig.getIndexName());
+	}
+
+	@Test
+	public void testComboIndex() throws Exception {
+		DatabaseType databaseType = new StubDatabaseType();
+		Field[] fields = ComboIndex.class.getDeclaredFields();
+		assertTrue(fields.length >= 2);
+		DatabaseFieldConfig fieldConfig = DatabaseFieldConfig.fromField(databaseType, fields[0]);
+		assertEquals(ComboIndex.INDEX_NAME, fieldConfig.getIndexName());
+		fieldConfig = DatabaseFieldConfig.fromField(databaseType, fields[1]);
+		assertEquals(ComboIndex.INDEX_NAME, fieldConfig.getIndexName());
+	}
+
 	protected class Foo {
 		@DatabaseField(canBeNull = true)
 		String field;
@@ -259,5 +279,22 @@ public class DatabaseFieldConfigTest {
 		public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 			return false;
 		}
+	}
+
+	protected static class Index {
+		@DatabaseField(index = true)
+		String stuff;
+		public Index() {
+		}
+	}
+
+	protected static class ComboIndex {
+		@DatabaseField(indexName = INDEX_NAME)
+		String stuff;
+		@DatabaseField(indexName = INDEX_NAME)
+		long junk;
+		public ComboIndex() {
+		}
+		public static final String INDEX_NAME = "stuffjunk";
 	}
 }
