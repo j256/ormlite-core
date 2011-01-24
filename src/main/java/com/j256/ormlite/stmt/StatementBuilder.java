@@ -29,7 +29,7 @@ public abstract class StatementBuilder<T, ID> {
 	protected final DatabaseType databaseType;
 	private final StatementType type;
 
-	private Where where = null;
+	private Where<T, ID> where = null;
 	protected Integer limit = null;
 
 	/**
@@ -55,15 +55,15 @@ public abstract class StatementBuilder<T, ID> {
 	 * Returns a {@link Where} object that should be used to add SQL where clauses to the statement. This will also
 	 * reset the where object so you can use the same query builder with a different where statement.
 	 */
-	public Where where() {
-		where = new Where(tableInfo);
+	public Where<T, ID> where() {
+		where = new Where<T, ID>(tableInfo, this);
 		return where;
 	}
 
 	/**
 	 * Set the {@link Where} object on the query. This allows someone to use the same Where object on multiple queries.
 	 */
-	public void setWhere(Where where) {
+	public void setWhere(Where<T, ID> where) {
 		this.where = where;
 	}
 

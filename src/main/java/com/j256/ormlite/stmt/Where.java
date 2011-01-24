@@ -118,21 +118,24 @@ import com.j256.ormlite.table.TableInfo;
  * 
  * @author graywatson
  */
-public class Where {
+public class Where<T, ID> {
+
+	private final TableInfo<T> tableInfo;
+	private final StatementBuilder<T, ID> statementBuilder;
 
 	private SimpleStack<Clause> clauseList = new SimpleStack<Clause>();
 	private NeedsFutureClause needsFuture = null;
-	private final TableInfo<?> tableInfo;
 
-	Where(TableInfo<?> tableInfo) {
+	Where(TableInfo<T> tableInfo, StatementBuilder<T, ID> statementBuilder) {
 		// limit the constructor scope
 		this.tableInfo = tableInfo;
+		this.statementBuilder = statementBuilder;
 	}
 
 	/**
 	 * AND operation which takes the previous clause and the next clause and AND's them together.
 	 */
-	public Where and() {
+	public Where<T, ID> and() {
 		addNeedsFuture(new And(removeLastClause("AND")));
 		return this;
 	}
@@ -140,7 +143,7 @@ public class Where {
 	/**
 	 * AND operation which takes 2 arguments and AND's them together.
 	 */
-	public Where and(Where left, Where right) {
+	public Where<T, ID> and(Where<T, ID> left, Where<T, ID> right) {
 		Clause rightClause = removeLastClause("AND");
 		Clause leftClause = removeLastClause("AND");
 		addClause(new And(leftClause, rightClause));
@@ -150,7 +153,7 @@ public class Where {
 	/**
 	 * Add a BETWEEN clause so the column must be between the low and high parameters.
 	 */
-	public Where between(String columnName, Object low, Object high) throws SQLException {
+	public Where<T, ID> between(String columnName, Object low, Object high) throws SQLException {
 		addClause(new Between(columnName, findColumnFieldType(columnName), low, high));
 		return this;
 	}
@@ -158,7 +161,7 @@ public class Where {
 	/**
 	 * Add a '=' clause so the column must be equal to the value.
 	 */
-	public Where eq(String columnName, Object value) throws SQLException {
+	public Where<T, ID> eq(String columnName, Object value) throws SQLException {
 		addClause(new Eq(columnName, findColumnFieldType(columnName), value));
 		return this;
 	}
@@ -166,7 +169,7 @@ public class Where {
 	/**
 	 * Add a '&gt;=' clause so the column must be greater-than or equals-to the value.
 	 */
-	public Where ge(String columnName, Object value) throws SQLException {
+	public Where<T, ID> ge(String columnName, Object value) throws SQLException {
 		addClause(new Ge(columnName, findColumnFieldType(columnName), value));
 		return this;
 	}
@@ -174,7 +177,7 @@ public class Where {
 	/**
 	 * Add a '&gt;' clause so the column must be greater-than the value.
 	 */
-	public Where gt(String columnName, Object value) throws SQLException {
+	public Where<T, ID> gt(String columnName, Object value) throws SQLException {
 		addClause(new Gt(columnName, findColumnFieldType(columnName), value));
 		return this;
 	}
@@ -182,7 +185,7 @@ public class Where {
 	/**
 	 * Add a IN clause so the column must be equal-to one of the objects from the list passed in.
 	 */
-	public Where in(String columnName, Iterable<?> objects) throws SQLException {
+	public Where<T, ID> in(String columnName, Iterable<?> objects) throws SQLException {
 		addClause(new In(columnName, findColumnFieldType(columnName), objects));
 		return this;
 	}
@@ -190,7 +193,7 @@ public class Where {
 	/**
 	 * Add a IN clause so the column must be equal-to one of the objects passed in.
 	 */
-	public Where in(String columnName, Object... objects) throws SQLException {
+	public Where<T, ID> in(String columnName, Object... objects) throws SQLException {
 		if (objects.length == 1 && objects[0].getClass().isArray()) {
 			throw new IllegalArgumentException("in(Object... objects) seems to be an array within an array");
 		}
@@ -201,7 +204,7 @@ public class Where {
 	/**
 	 * Add a 'IS NULL' clause so the column must be null. '=' NULL does not work.
 	 */
-	public Where isNull(String columnName) throws SQLException {
+	public Where<T, ID> isNull(String columnName) throws SQLException {
 		addClause(new IsNull(columnName, findColumnFieldType(columnName)));
 		return this;
 	}
@@ -209,7 +212,7 @@ public class Where {
 	/**
 	 * Add a 'IS NOT NULL' clause so the column must not be null. '<>' NULL does not work.
 	 */
-	public Where isNotNull(String columnName) throws SQLException {
+	public Where<T, ID> isNotNull(String columnName) throws SQLException {
 		addClause(new IsNotNull(columnName, findColumnFieldType(columnName)));
 		return this;
 	}
@@ -217,7 +220,7 @@ public class Where {
 	/**
 	 * Add a '&lt;=' clause so the column must be less-than or equals-to the value.
 	 */
-	public Where le(String columnName, Object value) throws SQLException {
+	public Where<T, ID> le(String columnName, Object value) throws SQLException {
 		addClause(new Le(columnName, findColumnFieldType(columnName), value));
 		return this;
 	}
@@ -225,7 +228,7 @@ public class Where {
 	/**
 	 * Add a '&lt;' clause so the column must be less-than the value.
 	 */
-	public Where lt(String columnName, Object value) throws SQLException {
+	public Where<T, ID> lt(String columnName, Object value) throws SQLException {
 		addClause(new Lt(columnName, findColumnFieldType(columnName), value));
 		return this;
 	}
@@ -233,7 +236,7 @@ public class Where {
 	/**
 	 * Add a LIKE clause so the column must be like the value (where you can specify '%' patterns.
 	 */
-	public Where like(String columnName, Object value) throws SQLException {
+	public Where<T, ID> like(String columnName, Object value) throws SQLException {
 		addClause(new Like(columnName, findColumnFieldType(columnName), value));
 		return this;
 	}
@@ -241,7 +244,7 @@ public class Where {
 	/**
 	 * Add a '&lt;&gt;' clause so the column must be not-equal-to the value.
 	 */
-	public Where ne(String columnName, Object value) throws SQLException {
+	public Where<T, ID> ne(String columnName, Object value) throws SQLException {
 		addClause(new Ne(columnName, findColumnFieldType(columnName), value));
 		return this;
 	}
@@ -249,7 +252,7 @@ public class Where {
 	/**
 	 * Used to NOT the next clause specified.
 	 */
-	public Where not() {
+	public Where<T, ID> not() {
 		addNeedsFuture(new Not());
 		return this;
 	}
@@ -257,7 +260,7 @@ public class Where {
 	/**
 	 * Used to NOT the argument clause specified.
 	 */
-	public Where not(Where comparison) {
+	public Where<T, ID> not(Where<T, ID> comparison) {
 		addClause(new Not(removeLastClause("NOT")));
 		return this;
 	}
@@ -265,7 +268,7 @@ public class Where {
 	/**
 	 * OR operation which takes the previous clause and the next clause and OR's them together.
 	 */
-	public Where or() {
+	public Where<T, ID> or() {
 		addNeedsFuture(new Or(removeLastClause("OR")));
 		return this;
 	}
@@ -273,11 +276,18 @@ public class Where {
 	/**
 	 * OR operation which takes 2 arguments and OR's them together.
 	 */
-	public Where or(Where left, Where right) {
+	public Where<T, ID> or(Where<T, ID> left, Where<T, ID> right) {
 		Clause rightClause = removeLastClause("OR");
 		Clause leftClause = removeLastClause("OR");
 		addClause(new Or(leftClause, rightClause));
 		return this;
+	}
+
+	/**
+	 * A short-cut for calling prepare() on the original {@link QueryBuilder#prepare()}.
+	 */
+	public PreparedQuery<T> prepare() throws SQLException {
+		return statementBuilder.prepareStatement();
 	}
 
 	/**
@@ -342,18 +352,18 @@ public class Where {
 	/**
 	 * Little inner class to provide stack features. The java.util.Stack extends Vector which is synchronized.
 	 */
-	private class SimpleStack<T> extends ArrayList<T> {
+	private class SimpleStack<E> extends ArrayList<E> {
 		private static final long serialVersionUID = -8116427380277806666L;
 
-		public void push(T obj) {
+		public void push(E obj) {
 			add(obj);
 		}
 
-		public T pop() {
+		public E pop() {
 			return remove(size() - 1);
 		}
 
-		public T peek() {
+		public E peek() {
 			return get(size() - 1);
 		}
 	}
