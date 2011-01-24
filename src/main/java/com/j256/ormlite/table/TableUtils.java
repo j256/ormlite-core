@@ -3,7 +3,11 @@ package com.j256.ormlite.table;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
@@ -145,13 +149,36 @@ public class TableUtils {
 	private static <T> int doDropTable(DatabaseType databaseType, ConnectionSource connectionSource,
 			DatabaseTableConfig<T> tableConfig, boolean ignoreErrors) throws SQLException {
 		TableInfo<T> tableInfo = new TableInfo<T>(databaseType, tableConfig);
-		logger.debug("dropping table '{}'", tableInfo.getTableName());
-		Collection<String> statements = dropTableStatements(databaseType, tableInfo);
+		logger.info("dropping table '{}'", tableInfo.getTableName());
+		List<String> statements = new ArrayList<String>();
+		addDropIndexStatements(databaseType, tableInfo, statements);
+		dropTableStatements(databaseType, tableInfo, statements);
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		try {
 			return doDropStatements(connection, statements, ignoreErrors);
 		} finally {
 			connectionSource.releaseConnection(connection);
+		}
+	}
+
+	private static <T> void addDropIndexStatements(DatabaseType databaseType, TableInfo<T> tableInfo,
+			List<String> statements) {
+		// run through and look for index annotations
+		Set<String> indexSet = new HashSet<String>();
+		for (FieldType fieldType : tableInfo.getFieldTypes()) {
+			String indexName = fieldType.getIndexName();
+			if (indexName != null) {
+				indexSet.add(indexName);
+			}
+		}
+
+		StringBuilder sb = new StringBuilder();
+		for (String indexName : indexSet) {
+			logger.info("dropping index '{}' for table '{}", indexName, tableInfo.getTableName());
+			sb.append("DROP INDEX ");
+			databaseType.appendEscapedEntityName(sb, indexName);
+			statements.add(sb.toString());
+			sb.setLength(0);
 		}
 	}
 
@@ -162,11 +189,13 @@ public class TableUtils {
 			int rowC = 0;
 			CompiledStatement prepStmt = null;
 			try {
-				logger.debug("executing drop table statement: {}", statement);
 				prepStmt = connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes, noFieldTypes);
 				rowC = prepStmt.executeUpdate();
+				logger.info("executed drop table statement changed {} rows: {}", rowC, statement);
 			} catch (SQLException e) {
-				if (!ignoreErrors) {
+				if (ignoreErrors) {
+					logger.info("ignoring drop error '" + e.getMessage() + "' for statement: " + statement);
+				} else {
 					throw e;
 				}
 			} finally {
@@ -216,12 +245,55 @@ public class TableUtils {
 		statements.addAll(statementsBefore);
 		statements.add(sb.toString());
 		statements.addAll(statementsAfter);
+		addCreateIndexStatements(databaseType, tableInfo, statements);
+	}
+
+	private static <T> void addCreateIndexStatements(DatabaseType databaseType, TableInfo<T> tableInfo,
+			List<String> statements) {
+		// run through and look for index annotations
+		Map<String, List<String>> indexMap = new HashMap<String, List<String>>();
+		for (FieldType fieldType : tableInfo.getFieldTypes()) {
+			String indexName = fieldType.getIndexName();
+			if (indexName == null) {
+				continue;
+			}
+
+			List<String> columnList = indexMap.get(indexName);
+			if (columnList == null) {
+				columnList = new ArrayList<String>();
+				indexMap.put(indexName, columnList);
+			}
+			columnList.add(fieldType.getDbColumnName());
+		}
+
+		StringBuilder sb = new StringBuilder();
+		for (Map.Entry<String, List<String>> indexEntry : indexMap.entrySet()) {
+			logger.info("creating index '{}' for table '{}", indexEntry.getKey(), tableInfo.getTableName());
+			sb.append("CREATE INDEX ");
+			databaseType.appendEscapedEntityName(sb, indexEntry.getKey());
+			sb.append(" ON ");
+			databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
+			sb.append(" ( ");
+			boolean first = true;
+			for (String columnName : indexEntry.getValue()) {
+				if (first) {
+					first = false;
+				} else {
+					sb.append(", ");
+				}
+				databaseType.appendEscapedEntityName(sb, columnName);
+			}
+			sb.append(" )");
+			statements.add(sb.toString());
+			sb.setLength(0);
+		}
 	}
 
 	/**
 	 * Generate and return the list of statements to drop a database table.
 	 */
-	private static <T> Collection<String> dropTableStatements(DatabaseType databaseType, TableInfo<T> tableInfo) {
+	private static <T> Collection<String> dropTableStatements(DatabaseType databaseType, TableInfo<T> tableInfo,
+			List<String> statements) {
 		List<String> statementsBefore = new ArrayList<String>();
 		List<String> statementsAfter = new ArrayList<String>();
 		for (FieldType fieldType : tableInfo.getFieldTypes()) {
@@ -231,7 +303,6 @@ public class TableUtils {
 		sb.append("DROP TABLE ");
 		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
 		sb.append(' ');
-		List<String> statements = new ArrayList<String>();
 		statements.addAll(statementsBefore);
 		statements.add(sb.toString());
 		statements.addAll(statementsAfter);
@@ -241,7 +312,7 @@ public class TableUtils {
 	private static <T> int doCreateTable(DatabaseType databaseType, ConnectionSource connectionSource,
 			DatabaseTableConfig<T> tableConfig) throws SQLException {
 		TableInfo<T> tableInfo = new TableInfo<T>(databaseType, tableConfig);
-		logger.debug("creating table '{}'", tableInfo.getTableName());
+		logger.info("creating table '{}'", tableInfo.getTableName());
 		List<String> statements = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();
 		createTableStatements(databaseType, tableInfo, statements, queriesAfter);
@@ -260,9 +331,9 @@ public class TableUtils {
 			int rowC;
 			CompiledStatement prepStmt = null;
 			try {
-				logger.debug("executing create table statement: {}", statement);
 				prepStmt = connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes, noFieldTypes);
 				rowC = prepStmt.executeUpdate();
+				logger.info("executed create table statement changed {} rows: {}", rowC, statement);
 			} catch (SQLException e) {
 				// we do this to make sure that the statement is in the exception
 				throw SqlExceptionUtil.create("SQL statement failed: " + statement, e);
@@ -292,7 +363,7 @@ public class TableUtils {
 				while (results.next()) {
 					rowC++;
 				}
-				logger.debug("executing create table after-query got {} results: {}", rowC, query);
+				logger.info("executing create table after-query got {} results: {}", rowC, query);
 			} catch (SQLException e) {
 				// we do this to make sure that the statement is in the exception
 				throw SqlExceptionUtil.create("executing create table after-query failed: " + query, e);

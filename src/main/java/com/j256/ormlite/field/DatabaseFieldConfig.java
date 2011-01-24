@@ -32,6 +32,7 @@ public class DatabaseFieldConfig {
 	private boolean throwIfNull;
 	private String format;
 	private boolean unique;
+	private String indexName;
 
 	public DatabaseFieldConfig() {
 		// for spring
@@ -40,7 +41,7 @@ public class DatabaseFieldConfig {
 	public DatabaseFieldConfig(String fieldName, String columnName, DataType dataType, String defaultValue, int width,
 			boolean canBeNull, boolean id, boolean generatedId, String generatedIdSequence, boolean foreign,
 			DatabaseTableConfig<?> foreignTableConfig, boolean useGetSet, Enum<?> unknownEnumValue,
-			boolean throwIfNull, String format, boolean unique) {
+			boolean throwIfNull, String format, boolean unique, String indexName) {
 		this.fieldName = fieldName;
 		this.columnName = columnName;
 		this.dataType = dataType;
@@ -57,6 +58,7 @@ public class DatabaseFieldConfig {
 		this.throwIfNull = throwIfNull;
 		this.format = format;
 		this.unique = unique;
+		this.indexName = indexName;
 	}
 
 	/**
@@ -224,6 +226,14 @@ public class DatabaseFieldConfig {
 		this.unique = unique;
 	}
 
+	public String getIndexName() {
+		return indexName;
+	}
+
+	public void setIndexName(String indexName) {
+		this.indexName = indexName;
+	}
+
 	/**
 	 * Create and return a config converted from a {@link Field} that may have either a {@link DatabaseField} annotation
 	 * or the javax.persistence annotations.
@@ -347,6 +357,18 @@ public class DatabaseFieldConfig {
 			config.format = null;
 		}
 		config.unique = databaseField.unique();
+
+		// add in the index information
+		if (databaseField.indexName().length() > 0) {
+			config.indexName = databaseField.indexName();
+		} else if (databaseField.index()) {
+			if (config.columnName == null) {
+				config.indexName = config.fieldName + "_idx";
+			} else {
+				config.indexName = config.columnName;
+			}
+		}
+
 		return config;
 	}
 

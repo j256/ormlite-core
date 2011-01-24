@@ -154,4 +154,18 @@ public @interface DatabaseField {
 	 * table. Use this when you wan a field to be unique even if it is not the identify field.
 	 */
 	boolean unique() default false;
+
+	/**
+	 * Set this to be true (default false) to have the database add an index for this field. This will create an index
+	 * with the name columnName + "_idx". To specify a specific name of the index or to index multiple fields, use
+	 * {@link #indexName()}.
+	 */
+	boolean index() default false;
+
+	/**
+	 * Set this to be a string (default none) to have the database add an index for this field named this String. You do
+	 * not need to specify the {@link #index()} boolean as well. To index multiple fields, each of the fields should
+	 * have the same indexName value.
+	 */
+	String indexName() default "";
 }
