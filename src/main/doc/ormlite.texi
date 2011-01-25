@@ -1249,14 +1249,13 @@ sequences.
 @section Indexing Fields
 
 @value{package} provides some limited support for indexing of various fields in your data classes.  First off, it
-is important to point out that any field marked with one of the @code{id} annotations or fields is already indexed
-by all database types.  Fields that are id fields do not need to have additional indexes built and to do so may
-cause errors with certain database types.
+is important to point out that any field marked as an @code{id} field is already indexed.  Fields that are id fields
+do not need to have additional indexes built and if they are specified, errors may result with certain database.
 
 To add an index on a non-id field, all you need to do is add the @code{index = true} boolean field to the
-@code{@@DatabaseField} annotation.  @xref{index}.  This will create a standard index after a table is created 
-and will drop the index before the table is dropped.  Indexes help optimize queries and can significantly improve
-query times on medium to large sized tables.
+@code{@@DatabaseField} annotation.  @xref{index}.  This will create a standard index after the table is created 
+for the field and will drop the index if the table is then dropped.  Indexes help optimize queries and can
+significantly improve times on queries to medium to large sized tables.
 
 @example
 public class Account @{
@@ -1270,11 +1269,10 @@ public class Account @{
 @end example 
 
 This example creates the index @code{city_idx} on the Account table.  If you want to use a different name, you
-can use the @code{indexName = "othername"} field instead which turns on indexing on that field and also allows
-you to specify the name of the index.
+can use the @code{indexName = "othername"} field instead which allows you to specify the name of the index.
 
-Also, if you query on (for example) city @emph{and} state fields together often, you might want to create an index
-on both fields.  @value{package} supports created indexes on multiple fields by specifying the same @code{indexName}
+If you often query on (for example) city @emph{and} state fields together, you might want to create an index
+on both fields.  @value{package} supports creating indexes on multiple fields by specifying the same @code{indexName}
 value for each of the fields you want to be included in the index.
 
 @example
@@ -1282,10 +1280,10 @@ value for each of the fields you want to be included in the index.
 private String city;
 @@DatabaseField(indexName = "citystate_idx")
 private String state;
-@end example
+@end
 
 This example will create one index for both the city and state fields.  Note that queries on the city by itself will
-not be optimized -- only queries on @emph{both} city and state will be.
+@emph{not} be optimized -- only queries on @emph{both} city and state will be.
 
 @c ----------------------------------------------------------------
 @node RawResults, Statement Builder, Creating Indexes, Using
