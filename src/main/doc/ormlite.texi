@@ -21,15 +21,16 @@
 @c ----------------------------------------------------------------
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.7
-@set ormlite_date January 201
+@set ormlite_version 4.8
+@set ormlite_year 2011
+@set ormlite_date January @value{ormlite_year}
 @set package ORMLite
 @c ----------------------------------------------------------------
 
 @ifinfo
 This file is an introduction to the ORM Lite package which is a simple Object Relationship Mapping package.
 
-Copyright 2010 by Gray Watson.
+Copyright @value{ormlite_year} by Gray Watson.
 
 Permission is granted to make and distribute verbatim copies of this manual provided the copyright notice
 and this permission notice are preserved on all copies.
@@ -42,7 +43,7 @@ and this permission notice are preserved on all copies.
 @author Gray Watson
 
 @page
-Copyright 2010 by Gray Watson.
+Copyright @value{ormlite_year} by Gray Watson.
 
 Published by Gray Watson
 
@@ -595,11 +596,23 @@ Adds a constraint to the field that it has to be unique across all rows in the t
 Boolean value (default false) to have the database add an index for this field. This will create an index with the name columnName with
 a "_idx" suffix. To specify a specific name of the index or to index multiple fields, use the indexName field.
 
+@cindex unique index creation
+@item uniqueIndex
+
+Boolean value (default false) to have the database add a unique index for this field. Same as index but this will ensure that all of
+the values in the index are unique.
+
 @cindex naming an index
 @item indexName
 
 String value (default none) to have the database add an index for this field with this name. You do not need to specify the index boolean
 as well. To index multiple fields together in one index, each of the fields should have the same indexName value.
+
+@item uniqueIndexName
+
+String value (default none) to have the database add a unique index for this field with this name. Same as index but this will ensure that all of
+the values in the index are unique.  For example, this means that you can insert @code{("pittsburgh", "pa")} and @code{("harrisburg", "pa")} and
+@code{("pittsburgh", "tx")} but not another @code{("pittsburgh", "pa")}.
 
 @end table
 
@@ -849,12 +862,12 @@ ConnectionSource connectionSource =
 
 @cindex pooled connection source
 @cindex connection pooling
-One of the more recent additions (10/2010) to the package is the @code{JdbcPooledConnectionSource}.  It is a relatively
-simple implementation of a pooled connection source.  As database connections are released, instead of being closed they
-are added to an internal list so they can be reallocated at a later time.  New connections are created on demand only if
-there are no dormant connections that can be reused.  @code{JdbcPooledConnectionSource} is also synchronized and can be
-used my multiple threads.  It has settings for the maximum number of free connections before they are closed as well as
-a maximum age before a connection is closed.
+The package also includes the class @code{JdbcPooledConnectionSource}.  It is a relatively simple implementation of a
+pooled connection source.  As database connections are released, instead of being closed they are added to an internal
+list so they can be reallocated at a later time.  New connections are created on demand only if there are no dormant
+connections that can be reused.  @code{JdbcPooledConnectionSource} is also synchronized and can be used my multiple
+threads.  It has settings for the maximum number of free connections before they are closed as well as a maximum age
+before a connection is closed.
 
 @example
 // single connection source example
@@ -1253,7 +1266,7 @@ is important to point out that any field marked as an @code{id} field is already
 do not need to have additional indexes built and if they are specified, errors may result with certain database.
 
 To add an index on a non-id field, all you need to do is add the @code{index = true} boolean field to the
-@code{@@DatabaseField} annotation.  @xref{index}.  This will create a standard index after the table is created 
+@code{@@DatabaseField} annotation.  @xref{index}.  This will create a non-unique index after the table is created 
 for the field and will drop the index if the table is then dropped.  Indexes help optimize queries and can
 significantly improve times on queries to medium to large sized tables.
 
@@ -1276,14 +1289,21 @@ on both fields.  @value{package} supports creating indexes on multiple fields by
 value for each of the fields you want to be included in the index.
 
 @example
-@@DatabaseField(index = "citystate_idx")
+@@DatabaseField(indexName = "citystate_idx")
 private String city;
 @@DatabaseField(indexName = "citystate_idx")
 private String state;
-@end
+@end example
 
 This example will create one index for both the city and state fields.  Note that queries on the city by itself will
-@emph{not} be optimized -- only queries on @emph{both} city and state will be.
+@emph{not} be optimized -- only queries on @emph{both} city and state will be.  With some databases, it may be better to
+create a single field index on each field and let the database use both indexes if you are querying on city and state.
+For other databases, creating an index on multiple fields is recommended. You may need to experiment and use the SQL
+@code{EXPLAIN} command to pinpoint how your database is utilizing your indicies.
+
+To create @emph{unique} indexes, there is a @code{uniqueIndex = true} and @code{uniqueIndexName = "othername"} fields
+also available on the @code{@@DatabaseField} annotation.  These work the same as the above settings but will instead
+create unique indexes that ensure that no two row has the same value(s) for the indexed field(s).
 
 @c ----------------------------------------------------------------
 @node RawResults, Statement Builder, Creating Indexes, Using

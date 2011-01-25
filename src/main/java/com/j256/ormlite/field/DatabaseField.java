@@ -163,9 +163,22 @@ public @interface DatabaseField {
 	boolean index() default false;
 
 	/**
+	 * Set this to be true (default false) to have the database add a unique index for this field. This is the same as
+	 * the {@link #index()} field but this ensures that all of the values in the index are unique..
+	 */
+	boolean uniqueIndex() default false;
+
+	/**
 	 * Set this to be a string (default none) to have the database add an index for this field with this name. You do
 	 * not need to specify the {@link #index()} boolean as well. To index multiple fields together in one index, each of
 	 * the fields should have the same indexName value.
 	 */
 	String indexName() default "";
+
+	/**
+	 * Set this to be a string (default none) to have the database add a unique index for this field with this name.
+	 * This is the same as the {@link #indexName()} field but this ensures that all of the values in the index are
+	 * unique.
+	 */
+	String uniqueIndexName() default "";
 }

@@ -1,3 +1,8 @@
+4.8: 1/25/2011
+	* CORE: Added uniqueIndex = true and uniqueIndexName = "..." to the DatabaseField annotation to create unique indexes.
+	* ANDROID: Fixed the resulting jar so that it doesn't include the -core java files as well.
+	* JDBC: Fixed the resulting jar so that it doesn't include the -core java files as well.
+
 4.7: 1/24/2011
 	* CORE: Added index = true and indexName = "..." to the DatabaseField annotation to create indexes.  Thanks to Larry.
 	* CORE: Added a <T,ID> generic arguments to the Where() to support a convenience prepare() method.

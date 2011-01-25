@@ -170,6 +170,10 @@ public class TableUtils {
 			if (indexName != null) {
 				indexSet.add(indexName);
 			}
+			String uniqueIndexName = fieldType.getUniqueIndexName();
+			if (uniqueIndexName != null) {
+				indexSet.add(uniqueIndexName);
+			}
 		}
 
 		StringBuilder sb = new StringBuilder();
@@ -245,15 +249,21 @@ public class TableUtils {
 		statements.addAll(statementsBefore);
 		statements.add(sb.toString());
 		statements.addAll(statementsAfter);
-		addCreateIndexStatements(databaseType, tableInfo, statements);
+		addCreateIndexStatements(databaseType, tableInfo, statements, false);
+		addCreateIndexStatements(databaseType, tableInfo, statements, true);
 	}
 
 	private static <T> void addCreateIndexStatements(DatabaseType databaseType, TableInfo<T> tableInfo,
-			List<String> statements) {
+			List<String> statements, boolean unique) {
 		// run through and look for index annotations
 		Map<String, List<String>> indexMap = new HashMap<String, List<String>>();
 		for (FieldType fieldType : tableInfo.getFieldTypes()) {
-			String indexName = fieldType.getIndexName();
+			String indexName;
+			if (unique) {
+				indexName = fieldType.getUniqueIndexName();
+			} else {
+				indexName = fieldType.getIndexName();
+			}
 			if (indexName == null) {
 				continue;
 			}
@@ -269,7 +279,11 @@ public class TableUtils {
 		StringBuilder sb = new StringBuilder();
 		for (Map.Entry<String, List<String>> indexEntry : indexMap.entrySet()) {
 			logger.info("creating index '{}' for table '{}", indexEntry.getKey(), tableInfo.getTableName());
-			sb.append("CREATE INDEX ");
+			sb.append("CREATE ");
+			if (unique) {
+				sb.append("UNIQUE ");
+			}
+			sb.append("INDEX ");
 			databaseType.appendEscapedEntityName(sb, indexEntry.getKey());
 			sb.append(" ON ");
 			databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());

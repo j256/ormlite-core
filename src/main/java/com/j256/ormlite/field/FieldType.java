@@ -46,6 +46,7 @@ public class FieldType {
 	private final String format;
 	private final boolean unique;
 	private String indexName;
+	private String uniqueIndexName;
 
 	/**
 	 * You should use {@link FieldType#createFieldType} to instantiate one of these field if you have a {@link Field}.
@@ -196,6 +197,7 @@ public class FieldType {
 		}
 		this.unique = fieldConfig.isUnique();
 		this.indexName = fieldConfig.getIndexName();
+		this.uniqueIndexName = fieldConfig.getUniqueIndexName();
 		if (this.isId && !dataType.isAppropriateId()) {
 			throw new SQLException("Field '" + field.getName() + "' is of data type " + dataType
 					+ " which cannot be the ID field");
@@ -441,6 +443,10 @@ public class FieldType {
 
 	public String getIndexName() {
 		return indexName;
+	}
+
+	public String getUniqueIndexName() {
+		return uniqueIndexName;
 	}
 
 	/**

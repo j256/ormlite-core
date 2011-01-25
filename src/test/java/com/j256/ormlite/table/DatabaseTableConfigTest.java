@@ -68,7 +68,7 @@ public class DatabaseTableConfigTest {
 	public void testFieldConfigConstructor() throws SQLException {
 		List<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
 		fieldConfigs.add(new DatabaseFieldConfig("stuff", null, DataType.UNKNOWN, "", 0, true, false, false, null,
-				false, null, false, null, false, null, false, null));
+				false, null, false, null, false, null, false, null, null));
 		DatabaseTableConfig<DatabaseTableAnno> dbTableConf =
 				new DatabaseTableConfig<DatabaseTableAnno>(DatabaseTableAnno.class, fieldConfigs);
 		assertEquals(DatabaseTableAnno.class, dbTableConf.getDataClass());
@@ -85,7 +85,7 @@ public class DatabaseTableConfigTest {
 		dbTableConf.setTableName(TABLE_NAME);
 		List<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
 		fieldConfigs.add(new DatabaseFieldConfig("stuff", null, DataType.UNKNOWN, "", 0, true, false, false, null,
-				false, null, false, null, false, null, false, null));
+				false, null, false, null, false, null, false, null, null));
 		dbTableConf.setFieldConfigs(fieldConfigs);
 		dbTableConf.initialize();
 		assertEquals(DatabaseTableAnno.class, dbTableConf.getDataClass());
@@ -102,7 +102,7 @@ public class DatabaseTableConfigTest {
 		dbTableConf.setTableName(TABLE_NAME);
 		List<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
 		fieldConfigs.add(new DatabaseFieldConfig("notstuff", null, DataType.UNKNOWN, "", 0, true, false, false, null,
-				false, null, false, null, false, null, false, null));
+				false, null, false, null, false, null, false, null, null));
 		dbTableConf.setFieldConfigs(fieldConfigs);
 		dbTableConf.initialize();
 		assertEquals(DatabaseTableAnno.class, dbTableConf.getDataClass());

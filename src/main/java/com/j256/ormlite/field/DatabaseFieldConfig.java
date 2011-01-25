@@ -33,6 +33,7 @@ public class DatabaseFieldConfig {
 	private String format;
 	private boolean unique;
 	private String indexName;
+	private String uniqueIndexName;
 
 	public DatabaseFieldConfig() {
 		// for spring
@@ -41,7 +42,7 @@ public class DatabaseFieldConfig {
 	public DatabaseFieldConfig(String fieldName, String columnName, DataType dataType, String defaultValue, int width,
 			boolean canBeNull, boolean id, boolean generatedId, String generatedIdSequence, boolean foreign,
 			DatabaseTableConfig<?> foreignTableConfig, boolean useGetSet, Enum<?> unknownEnumValue,
-			boolean throwIfNull, String format, boolean unique, String indexName) {
+			boolean throwIfNull, String format, boolean unique, String indexName, String uniqueIndexName) {
 		this.fieldName = fieldName;
 		this.columnName = columnName;
 		this.dataType = dataType;
@@ -59,6 +60,7 @@ public class DatabaseFieldConfig {
 		this.format = format;
 		this.unique = unique;
 		this.indexName = indexName;
+		this.uniqueIndexName = uniqueIndexName;
 	}
 
 	/**
@@ -234,6 +236,14 @@ public class DatabaseFieldConfig {
 		this.indexName = indexName;
 	}
 
+	public String getUniqueIndexName() {
+		return uniqueIndexName;
+	}
+
+	public void setUniqueIndexName(String uniqueIndexName) {
+		this.uniqueIndexName = uniqueIndexName;
+	}
+
 	/**
 	 * Create and return a config converted from a {@link Field} that may have either a {@link DatabaseField} annotation
 	 * or the javax.persistence annotations.
@@ -359,17 +369,24 @@ public class DatabaseFieldConfig {
 		config.unique = databaseField.unique();
 
 		// add in the index information
-		if (databaseField.indexName().length() > 0) {
-			config.indexName = databaseField.indexName();
-		} else if (databaseField.index()) {
-			if (config.columnName == null) {
-				config.indexName = config.fieldName + "_idx";
-			} else {
-				config.indexName = config.columnName;
-			}
-		}
+		config.indexName = findIndexName(databaseField.indexName(), databaseField.index(), config);
+		config.uniqueIndexName = findIndexName(databaseField.uniqueIndexName(), databaseField.uniqueIndex(), config);
 
 		return config;
+	}
+
+	private static String findIndexName(String indexName, boolean index, DatabaseFieldConfig config) {
+		if (indexName.length() > 0) {
+			return indexName;
+		} else if (index) {
+			if (config.columnName == null) {
+				return config.fieldName + "_idx";
+			} else {
+				return config.columnName;
+			}
+		} else {
+			return null;
+		}
 	}
 
 	private static String methodFromField(Field field, String prefix) {
