@@ -163,9 +163,9 @@ public @interface DatabaseField {
 	boolean index() default false;
 
 	/**
-	 * Set this to be a string (default none) to have the database add an index for this field named this String. You do
-	 * not need to specify the {@link #index()} boolean as well. To index multiple fields, each of the fields should
-	 * have the same indexName value.
+	 * Set this to be a string (default none) to have the database add an index for this field with this name. You do
+	 * not need to specify the {@link #index()} boolean as well. To index multiple fields together in one index, each of
+	 * the fields should have the same indexName value.
 	 */
 	String indexName() default "";
 }

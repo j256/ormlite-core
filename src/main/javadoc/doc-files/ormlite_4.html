@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on December, 15 2010 by texi2html 1.70 -->
+<!-- Created on January, 24 2011 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -39,22 +39,22 @@ ul.toc {list-style: none}
 
 <body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
 
-<a name="NOD29"></a>
-<a name="SEC28"></a>
+<a name="NOD30"></a>
+<a name="SEC29"></a>
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="ormlite_3.html#SEC27" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_5.html#SEC29" title="Next section in reading order"> &gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="ormlite_3.html#SEC28" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_5.html#SEC30" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC23" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC24" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_5.html#SEC29" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_5.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_9.html#SEC42" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_9.html#SEC43" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h1 class="chapter"> 4. Foreign Object Fields </h1>
@@ -87,23 +87,50 @@ public class Order {
 use this field name if you are querying for it.  You can set the column name using the <code>columnName</code> field in the
 <code>DatabaseField</code> annotation. See <a href="ormlite_2.html#ANC1">columnName</a>.
 
-</p><a name="IDX138"></a>
-<a name="IDX139"></a>
+</p><a name="IDX142"></a>
+<a name="IDX143"></a>
+<p>When you are creating a field with a foreign object, please note that the foreign object will <em>not</em> automatically be
+created for you.  If your foreign object has a generated-id which is provided by the database then you need to create it
+<em>before</em> you create any objects that reference it.  For example:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">Account account = new Account(&quot;Jim Coakley&quot;);
+if (accountDao.create(account) != 1) {
+  // error handling &hellip; 
+}
+// this will create the account object and set any generated ids
+
+// now we can set the account on the order and create it
+Order order = new Order(&quot;Jim Sanders&quot;, 12.34);
+order.setAccount(account);
+&hellip;
+if (orderDao.create(order) != 1) {
+   // error handling unless 1 row was inserted
+}
+</pre></td></tr></table>
+<a name="IDX144"></a>
+<a name="IDX145"></a>
 <p>When you query for an order, you will get an <code>Order</code> object with an account field object that <em>only</em> has its id
 field set - all of the fields in the foreign <code>Account</code> object will have default values (null, 0, false, etc.).  If
 you want to use other fields in the <code>Account</code>, you must call <code>refresh</code> on the <code>accountDao</code> class to get the
 <code>Account</code> object filled in.  For example:
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">if (accountDao.refresh(order.getAccount()) != 1) {
+</p><table><tr><td>&nbsp;</td><td><pre class="example">Order order = orderDao.queryForId(orderId);
+System.out.println(&quot;Account-id on the order should be set: &quot; + order.account.id);
+// this should print null for order.account.name
+System.out.println(&quot;But other fields on the account should not be set: &quot; + order.account.name);
+
+// so we refresh the account using the AccountDao
+if (accountDao.refresh(order.getAccount()) != 1) {
   // error handling &hellip; 
 }
+System.out.println(&quot;Now the account fields will be set: &quot; + order.account.name);
 </pre></td></tr></table>
 <p><em>NOTE:</em> Because we use refresh, foreign objects are therefor <em>required</em> to have an id field.
 
 </p><hr size="6">
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="ormlite_3.html#SEC23" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_5.html#SEC29" title="Next chapter"> &gt;&gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="ormlite_3.html#SEC24" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_5.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
@@ -111,12 +138,12 @@ you want to use other fields in the <code>Account</code>, you must call <code>re
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_9.html#SEC42" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_9.html#SEC43" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>December, 15 2010</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>January, 24 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 

@@ -21,8 +21,8 @@
 @c ----------------------------------------------------------------
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.6
-@set ormlite_date December 2010
+@set ormlite_version 4.7
+@set ormlite_date January 201
 @set package ORMLite
 @c ----------------------------------------------------------------
 
@@ -278,6 +278,7 @@ continue on with the next section.  @xref{Using}.
 * Complete Wiring::             Tying all of the wiring together.
 * DAO Usage::                   Using the Data Access Objects.
 * Identity Columns::            How identity fields and columns work.
+* Creating Indexes::            How to create indexes on fields.
 * RawResults::                  Issuing raw database queries using RawResults. 
 @end menu
 
@@ -584,6 +585,21 @@ Set to true to have a field not be able to be inserted into the database with a 
 
 Adds a constraint to the field that it has to be unique across all rows in the table.  Same as the
 @code{unique} field in the @code{@@DatabaseField} annotation.
+
+@cindex index creation
+@cindex creating an index
+@cindex field indexes
+@anchor{index}
+@item index
+
+Boolean value (default false) to have the database add an index for this field. This will create an index with the name columnName with
+a "_idx" suffix. To specify a specific name of the index or to index multiple fields, use the indexName field.
+
+@cindex naming an index
+@item indexName
+
+String value (default none) to have the database add an index for this field with this name. You do not need to specify the index boolean
+as well. To index multiple fields together in one index, each of the fields should have the same indexName value.
 
 @end table
 
@@ -1203,7 +1219,7 @@ be set on the id field by @value{package} and will be available when @code{getId
 @emph{NOTE:} Depending on the database type, you may not be able to change the value of an auto-generated id field.
 
 @c ----------------------------------------------------------------
-@node GeneratedIdSequence Column, RawResults, GeneratedId Column, Identity Columns
+@node GeneratedIdSequence Column, Creating Indexes, GeneratedId Column, Identity Columns
 @subsection Fields With generatedIdSequence
 
 @cindex generated identity sequence name
@@ -1229,7 +1245,50 @@ sequences.
 @emph{NOTE:} Depending on the database type, you may not be able to change the value of an auto-generated id field.
 
 @c ----------------------------------------------------------------
-@node RawResults, Statement Builder, GeneratedIdSequence Column, Using
+@node Creating Indexes, RawResults, GeneratedIdSequence Column, Using
+@section Indexing Fields
+
+@value{package} provides some limited support for indexing of various fields in your data classes.  First off, it
+is important to point out that any field marked with one of the @code{id} annotations or fields is already indexed
+by all database types.  Fields that are id fields do not need to have additional indexes built and to do so may
+cause errors with certain database types.
+
+To add an index on a non-id field, all you need to do is add the @code{index = true} boolean field to the
+@code{@@DatabaseField} annotation.  @xref{index}.  This will create a standard index after a table is created 
+and will drop the index before the table is dropped.  Indexes help optimize queries and can significantly improve
+query times on medium to large sized tables.
+
+@example
+public class Account @{
+    @@DatabaseField(id = true)
+    private String name;
+    // this indexes the city field so queries on city will go faster for large tables
+    @@DatabaseField(index = true)
+    private String city;
+    @dots{}
+@}
+@end example 
+
+This example creates the index @code{city_idx} on the Account table.  If you want to use a different name, you
+can use the @code{indexName = "othername"} field instead which turns on indexing on that field and also allows
+you to specify the name of the index.
+
+Also, if you query on (for example) city @emph{and} state fields together often, you might want to create an index
+on both fields.  @value{package} supports created indexes on multiple fields by specifying the same @code{indexName}
+value for each of the fields you want to be included in the index.
+
+@example
+@@DatabaseField(index = "citystate_idx")
+private String city;
+@@DatabaseField(indexName = "citystate_idx")
+private String state;
+@end example
+
+This example will create one index for both the city and state fields.  Note that queries on the city by itself will
+not be optimized -- only queries on @emph{both} city and state will be.
+
+@c ----------------------------------------------------------------
+@node RawResults, Statement Builder, Creating Indexes, Using
 @section Issuing Raw Database Queries
 
 @cindex aggregation queries
@@ -1345,6 +1404,18 @@ You get a @code{QueryBuilder} object from the @code{Dao.queryBuilder} method, ca
 query, call @code{queryBuilder.prepare()} which returns a @code{PreparedQuery} object, and then pass the @code{PreparedQuery}
 to the DAO's @code{query} or @code{iterator} methods.
 
+As a short cut, you can also call the @code{prepare()} method on the @code{Where} object to do something like the
+following: 
+
+@example
+// query for all accounts that have that password
+List<Account> accountList =
+   accountDao.query(
+      accountDao.queryBuilder().where()
+         .eq(Account.PASSWORD_FIELD_NAME, "qwerty")
+         .prepare());
+@end example
+
 @c ----------------------------------------------------------------
 @node Building Queries, Building Statements, QueryBuilder Basics, Statement Builder
 @section Building Queries
@@ -1357,7 +1428,7 @@ as well for power users.  Simple queries can be done linearly:
 QueryBuilder<Account, String> queryBuilder =
   accountDao.queryBuilder();
 // get the WHERE object to build our query
-Where where = queryBuilder.where();
+Where<Account, String> where = queryBuilder.where();
 // the name field must be equal to "foo"
 where.eq(Account.NAME_FIELD_NAME, "foo");
 // and
@@ -1388,7 +1459,7 @@ queryBuilder.where()
 If you'd rather use parenthesis to group the comparisons properly then you can call:
 
 @example
-Where where = queryBuilder.where();
+Where<Account, String> where = queryBuilder.where();
 where.and(where.eq(Account.NAME_FIELD_NAME, "foo"),
           where.eq(Account.PASSWORD_FIELD_NAME, "_secret"));
 @end example
@@ -1398,7 +1469,7 @@ All three of the above call formats produce the same SQL.  For complex queries t
 format may be necessary to get the grouping correct.  For example, here's a complex query:
 
 @example
-Where where = queryBuilder.where();
+Where<Account, String> where = queryBuilder.where();
 where.or(
   where.and(
     where.eq(Account.NAME_FIELD_NAME, "foo"),
@@ -1494,7 +1565,7 @@ For example:
 @example
 QueryBuilder<Account, String> queryBuilder =
   accountDao.queryBuilder();
-Where where = queryBuilder.where();
+Where<Account, String> where = queryBuilder.where();
 SelectArg selectArg = new SelectArg();
 // define our query as 'name = ?'
 where.eq(Account.NAME_FIELD_NAME, selectArg);

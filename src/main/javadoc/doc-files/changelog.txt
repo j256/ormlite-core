@@ -1,7 +1,7 @@
-4.7: 1/21/2011
-	* CORE: Added a close() method to RawResults which will close the iterator if returned from iteratorRaw().
+4.7: 1/24/2011
 	* CORE: Added index = true and indexName = "..." to the DatabaseField annotation to create indexes.
 	* CORE: Added a <T,ID> generic arguments to the Where() to support a convenience prepare() method. 
+	* CORE: Added a close() method to RawResults which will close the iterator if returned from iteratorRaw().
 	* ANDROID: Fixed the javadocs so they get merged in from CORE.  Still struggling with the source jar.
 	* JDBC: Fixed the javadocs so they get merged in from CORE.  Still struggling with the source jar.
 
