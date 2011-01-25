@@ -68,7 +68,6 @@
 	- take a look at http://www.javalobby.org/articles/activeobjects/
 	- Person[] people = manager.find(Person.class, Query.select().where("age > 18").limit(10));
 	- dao.queryBuilder().where().gt("age", 18).limit(10);
-	- maybe have a .prepare() method on Where?
 	- maybe have a query(), delete(), update(), ... methods on Where?
 
 - flesh out the SimpleDB version of the library:
