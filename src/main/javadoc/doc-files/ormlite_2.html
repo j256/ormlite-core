@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on January, 25 2011 by texi2html 1.70 -->
+<!-- Created on January, 26 2011 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -343,7 +343,39 @@ a default value is being converted or if you are using the <code>JAVA_DATE_STRIN
 <dd>
 <p>Adds a constraint to the field that it has to be unique across all rows in the table.  This allows you to have a
 unique field in the table even though it is not the id field.  For example, you might have an Account class which
-has a generated account-id but you also want the email address to be unique across all Accounts.
+has a generated account-id but you also want the email address to be unique across all Accounts.  You can also
+use the uniqueIndexName to create an index for this field.
+
+</p><a name="IDX47"></a>
+<a name="IDX48"></a>
+<a name="IDX49"></a>
+<p><a name="ANC3"></a>
+</p></dd>
+<dt><code> index</code></dt>
+<dd>
+<p>Boolean value (default false) to have the database add an index for this field. This will create an index with the name columnName with
+a &quot;_idx&quot; suffix. To specify a specific name of the index or to index multiple fields, use the indexName field.
+
+</p><a name="IDX50"></a>
+</dd>
+<dt><code> uniqueIndex</code></dt>
+<dd>
+<p>Boolean value (default false) to have the database add a unique index for this field. Same as index but this will ensure that all of
+the values in the index are unique.  If you just want to make sure of unique-ness then you can use the <code>unique</code> field instead.
+
+</p><a name="IDX51"></a>
+</dd>
+<dt><code> indexName</code></dt>
+<dd>
+<p>String value (default none) to have the database add an index for this field with this name. You do not need to specify the index boolean
+as well. To index multiple fields together in one index, each of the fields should have the same indexName value.
+
+</p></dd>
+<dt><code> uniqueIndexName</code></dt>
+<dd>
+<p>String value (default none) to have the database add a unique index for this field with this name. Same as index but this will ensure that all of
+the values in the index are unique.  For example, this means that you can insert <code>(&quot;pittsburgh&quot;, &quot;pa&quot;)</code> and <code>(&quot;harrisburg&quot;, &quot;pa&quot;)</code> and
+<code>(&quot;pittsburgh&quot;, &quot;tx&quot;)</code> but not another <code>(&quot;pittsburgh&quot;, &quot;pa&quot;)</code>.
 
 </p></dd>
 </dl>
@@ -380,16 +412,16 @@ public class Account {
 <p>The <code>@Entity</code> annotations can have an optional <code>name</code> argument which specifies the table name.   If not
 specified, the class name all lowercase is used by default.
 
-</p><a name="IDX47"></a>
-<a name="IDX48"></a>
-<a name="IDX49"></a>
-<a name="IDX50"></a>
-<a name="IDX51"></a>
-<a name="IDX52"></a>
+</p><a name="IDX52"></a>
 <a name="IDX53"></a>
 <a name="IDX54"></a>
 <a name="IDX55"></a>
 <a name="IDX56"></a>
+<a name="IDX57"></a>
+<a name="IDX58"></a>
+<a name="IDX59"></a>
+<a name="IDX60"></a>
+<a name="IDX61"></a>
 <p>Instead of using the <code>@DatabaseField</code> annotation on each of the fields, you can use the <code>javax.persistence</code>
 annotations: <code>@Column</code>, <code>@Id</code>, <code>@GeneratedValue</code>, <code>@OneToOne</code>, and <code>@ManyToOne</code>. For example:
 
@@ -416,9 +448,9 @@ following annotation fields are supported, the rest are ignored.
 <dd>
 <p>Used to specify the name of the associated database column.  If not provided then the field name is taken.
 
-</p><a name="IDX57"></a>
-<a name="IDX58"></a>
-<a name="IDX59"></a>
+</p><a name="IDX62"></a>
+<a name="IDX63"></a>
+<a name="IDX64"></a>
 </dd>
 <dt><code> length</code></dt>
 <dd>
@@ -426,52 +458,21 @@ following annotation fields are supported, the rest are ignored.
 certain database types.  Default for those that do is 255.   Same as the <code>width</code> field in the
 <code>@DatabaseField</code> annotation.
 
-</p><a name="IDX60"></a>
-<a name="IDX61"></a>
+</p><a name="IDX65"></a>
+<a name="IDX66"></a>
 </dd>
 <dt><code> nullable</code></dt>
 <dd>
 <p>Set to true to have a field not be able to be inserted into the database with a null value.  Same as the
 <code>canBeNull</code> field in the <code>@DatabaseField</code> annotation.
 
-</p><a name="IDX62"></a>
-<a name="IDX63"></a>
+</p><a name="IDX67"></a>
+<a name="IDX68"></a>
 </dd>
 <dt><code> unique</code></dt>
 <dd>
 <p>Adds a constraint to the field that it has to be unique across all rows in the table.  Same as the
 <code>unique</code> field in the <code>@DatabaseField</code> annotation.
-
-</p><a name="IDX64"></a>
-<a name="IDX65"></a>
-<a name="IDX66"></a>
-<p><a name="ANC3"></a>
-</p></dd>
-<dt><code> index</code></dt>
-<dd>
-<p>Boolean value (default false) to have the database add an index for this field. This will create an index with the name columnName with
-a &quot;_idx&quot; suffix. To specify a specific name of the index or to index multiple fields, use the indexName field.
-
-</p><a name="IDX67"></a>
-</dd>
-<dt><code> uniqueIndex</code></dt>
-<dd>
-<p>Boolean value (default false) to have the database add a unique index for this field. Same as index but this will ensure that all of
-the values in the index are unique.
-
-</p><a name="IDX68"></a>
-</dd>
-<dt><code> indexName</code></dt>
-<dd>
-<p>String value (default none) to have the database add an index for this field with this name. You do not need to specify the index boolean
-as well. To index multiple fields together in one index, each of the fields should have the same indexName value.
-
-</p></dd>
-<dt><code> uniqueIndexName</code></dt>
-<dd>
-<p>String value (default none) to have the database add a unique index for this field with this name. Same as index but this will ensure that all of
-the values in the index are unique.  For example, this means that you can insert <code>(&quot;pittsburgh&quot;, &quot;pa&quot;)</code> and <code>(&quot;harrisburg&quot;, &quot;pa&quot;)</code> and
-<code>(&quot;pittsburgh&quot;, &quot;tx&quot;)</code> but not another <code>(&quot;pittsburgh&quot;, &quot;pa&quot;)</code>.
 
 </p></dd>
 </dl>
@@ -1438,7 +1439,7 @@ iterator, and any associated database connections, is closed.
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>January, 25 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>January, 26 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 

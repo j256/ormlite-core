@@ -1,3 +1,6 @@
+4.9: 1/26/2011
+	* CORE: Changed the generated index names to have a table-name prefix and always have a "_idx" suffix.
+
 4.8: 1/25/2011
 	* CORE: Added uniqueIndex = true and uniqueIndexName = "..." to the DatabaseField annotation to create unique indexes.
 	* ANDROID: Fixed the resulting jar so that it doesn't include the -core java files as well.

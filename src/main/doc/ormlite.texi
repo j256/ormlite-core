@@ -21,7 +21,7 @@
 @c ----------------------------------------------------------------
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.8
+@set ormlite_version 4.9
 @set ormlite_year 2011
 @set ormlite_date January @value{ormlite_year}
 @set package ORMLite
@@ -499,7 +499,35 @@ a default value is being converted or if you are using the @code{JAVA_DATE_STRIN
 
 Adds a constraint to the field that it has to be unique across all rows in the table.  This allows you to have a
 unique field in the table even though it is not the id field.  For example, you might have an Account class which
-has a generated account-id but you also want the email address to be unique across all Accounts.
+has a generated account-id but you also want the email address to be unique across all Accounts.  You can also
+use the uniqueIndexName to create an index for this field.
+
+@cindex index creation
+@cindex creating an index
+@cindex field indexes
+@anchor{index}
+@item index
+
+Boolean value (default false) to have the database add an index for this field. This will create an index with the name columnName with
+a "_idx" suffix. To specify a specific name of the index or to index multiple fields, use the indexName field.
+
+@cindex unique index creation
+@item uniqueIndex
+
+Boolean value (default false) to have the database add a unique index for this field. Same as index but this will ensure that all of
+the values in the index are unique.  If you just want to make sure of unique-ness then you can use the @code{unique} field instead.
+
+@cindex naming an index
+@item indexName
+
+String value (default none) to have the database add an index for this field with this name. You do not need to specify the index boolean
+as well. To index multiple fields together in one index, each of the fields should have the same indexName value.
+
+@item uniqueIndexName
+
+String value (default none) to have the database add a unique index for this field with this name. Same as index but this will ensure that all of
+the values in the index are unique.  For example, this means that you can insert @code{("pittsburgh", "pa")} and @code{("harrisburg", "pa")} and
+@code{("pittsburgh", "tx")} but not another @code{("pittsburgh", "pa")}.
 
 @end table
 
@@ -586,33 +614,6 @@ Set to true to have a field not be able to be inserted into the database with a 
 
 Adds a constraint to the field that it has to be unique across all rows in the table.  Same as the
 @code{unique} field in the @code{@@DatabaseField} annotation.
-
-@cindex index creation
-@cindex creating an index
-@cindex field indexes
-@anchor{index}
-@item index
-
-Boolean value (default false) to have the database add an index for this field. This will create an index with the name columnName with
-a "_idx" suffix. To specify a specific name of the index or to index multiple fields, use the indexName field.
-
-@cindex unique index creation
-@item uniqueIndex
-
-Boolean value (default false) to have the database add a unique index for this field. Same as index but this will ensure that all of
-the values in the index are unique.
-
-@cindex naming an index
-@item indexName
-
-String value (default none) to have the database add an index for this field with this name. You do not need to specify the index boolean
-as well. To index multiple fields together in one index, each of the fields should have the same indexName value.
-
-@item uniqueIndexName
-
-String value (default none) to have the database add a unique index for this field with this name. Same as index but this will ensure that all of
-the values in the index are unique.  For example, this means that you can insert @code{("pittsburgh", "pa")} and @code{("harrisburg", "pa")} and
-@code{("pittsburgh", "tx")} but not another @code{("pittsburgh", "pa")}.
 
 @end table
 
