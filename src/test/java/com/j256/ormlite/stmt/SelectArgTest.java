@@ -26,6 +26,15 @@ public class SelectArgTest extends BaseCoreTest {
 		assertSame(foo, selectArg.getSqlArgValue());
 	}
 
+	@Test
+	public void testSetNumber() throws Exception {
+		SelectArg selectArg = new SelectArg();
+		int val = 10;
+		selectArg.setMetaInfo("val", numberFieldType);
+		selectArg.setValue(val);
+		assertSame(val, selectArg.getSqlArgValue());
+	}
+
 	@Test(expected = IllegalArgumentException.class)
 	public void testGetColumnName() {
 		SelectArg selectArg = new SelectArg();
@@ -70,8 +79,17 @@ public class SelectArgTest extends BaseCoreTest {
 	public void testToString() throws Exception {
 		SelectArg selectArg = new SelectArg();
 		assertTrue(selectArg.toString().contains("[unset]"));
+		selectArg.setValue(null);
+		assertTrue(selectArg.toString().contains("[null]"));
 		String value = "fwefefewf";
 		selectArg.setValue(value);
 		assertTrue(selectArg.toString().contains(value));
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testDoubleSet() throws Exception {
+		SelectArg selectArg = new SelectArg();
+		selectArg.setMetaInfo("id", numberFieldType);
+		selectArg.setMetaInfo("id", stringFieldType);
 	}
 }

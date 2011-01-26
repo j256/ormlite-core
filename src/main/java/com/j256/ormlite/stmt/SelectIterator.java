@@ -2,7 +2,6 @@ package com.j256.ormlite.stmt;
 
 import java.sql.SQLException;
 
-import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.logger.Logger;
@@ -27,10 +26,10 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 	private final static Logger logger = LoggerFactory.getLogger(SelectIterator.class);
 
 	private final Class<T> dataClass;
-	private BaseDaoImpl<T, ID> classDao;
+	private final Dao<T, ID> classDao;
 	private final ConnectionSource connectionSource;
 	private final DatabaseConnection connection;
-	private final CompiledStatement stmt;
+	private final CompiledStatement compiledStmt;
 	private final DatabaseResults results;
 	private final GenericRowMapper<T> rowMapper;
 	private final String statement;
@@ -41,16 +40,16 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 	/**
 	 * If the statement parameter is null then this won't log information
 	 */
-	public SelectIterator(Class<T> dataClass, BaseDaoImpl<T, ID> classDao, GenericRowMapper<T> rowMapper,
-			ConnectionSource connectionSource, DatabaseConnection connection, CompiledStatement compiledStatement,
+	public SelectIterator(Class<T> dataClass, Dao<T, ID> classDao, GenericRowMapper<T> rowMapper,
+			ConnectionSource connectionSource, DatabaseConnection connection, CompiledStatement compiledStmt,
 			String statement) throws SQLException {
 		this.dataClass = dataClass;
 		this.classDao = classDao;
 		this.rowMapper = rowMapper;
 		this.connectionSource = connectionSource;
 		this.connection = connection;
-		this.stmt = compiledStatement;
-		this.results = stmt.executeQuery();
+		this.compiledStmt = compiledStmt;
+		this.results = compiledStmt.executeQuery();
 		this.statement = statement;
 		if (statement != null) {
 			logger.debug("starting iterator @{} for '{}'", hashCode(), statement);
@@ -181,7 +180,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 	 */
 	public void close() throws SQLException {
 		if (!closed) {
-			stmt.close();
+			compiledStmt.close();
 			closed = true;
 			last = null;
 			if (statement != null) {

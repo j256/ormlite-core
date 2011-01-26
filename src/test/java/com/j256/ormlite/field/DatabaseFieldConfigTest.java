@@ -78,7 +78,7 @@ public class DatabaseFieldConfigTest {
 		Field[] fields = Foo.class.getDeclaredFields();
 		DatabaseType databaseType = new StubDatabaseType();
 		assertTrue(fields.length >= 1);
-		DatabaseFieldConfig config = DatabaseFieldConfig.fromField(databaseType, fields[0]);
+		DatabaseFieldConfig config = DatabaseFieldConfig.fromField(databaseType, "foo", fields[0]);
 		assertNotNull(config);
 		assertTrue(config.isCanBeNull());
 		assertEquals(fields[0].getName(), config.getFieldName());
@@ -94,45 +94,45 @@ public class DatabaseFieldConfigTest {
 		assertTrue(fields.length >= 8);
 
 		// not a column
-		assertNull(DatabaseFieldConfig.fromField(databaseType, fields[0]));
+		assertNull(DatabaseFieldConfig.fromField(databaseType, "foo", fields[0]));
 
-		DatabaseFieldConfig config = DatabaseFieldConfig.fromField(databaseType, fields[1]);
+		DatabaseFieldConfig config = DatabaseFieldConfig.fromField(databaseType, "foo", fields[1]);
 		assertNotNull(config);
 		assertFalse(config.isId());
 		assertTrue(config.isGeneratedId());
 		assertFalse(config.isUseGetSet());
 		assertEquals(fields[1].getName(), config.getFieldName());
 
-		config = DatabaseFieldConfig.fromField(databaseType, fields[2]);
+		config = DatabaseFieldConfig.fromField(databaseType, "foo", fields[2]);
 		assertNotNull(config);
 		assertFalse(config.isUseGetSet());
 		assertEquals(STUFF_FIELD_NAME, config.getColumnName());
 
-		config = DatabaseFieldConfig.fromField(databaseType, fields[3]);
+		config = DatabaseFieldConfig.fromField(databaseType, "foo", fields[3]);
 		assertNotNull(config);
 		assertEquals(LENGTH_LENGTH, config.getWidth());
 		assertFalse(config.isUseGetSet());
 		assertEquals(fields[3].getName(), config.getFieldName());
 
-		config = DatabaseFieldConfig.fromField(databaseType, fields[4]);
+		config = DatabaseFieldConfig.fromField(databaseType, "foo", fields[4]);
 		assertNotNull(config);
 		assertFalse(config.isCanBeNull());
 		assertFalse(config.isUseGetSet());
 		assertEquals(fields[4].getName(), config.getFieldName());
 
-		config = DatabaseFieldConfig.fromField(databaseType, fields[5]);
+		config = DatabaseFieldConfig.fromField(databaseType, "foo", fields[5]);
 		assertNotNull(config);
 		assertTrue(config.isForeign());
 		assertEquals(DataType.UNKNOWN, config.getDataType());
 		assertEquals(fields[5].getName(), config.getFieldName());
 
-		config = DatabaseFieldConfig.fromField(databaseType, fields[6]);
+		config = DatabaseFieldConfig.fromField(databaseType, "foo", fields[6]);
 		assertNotNull(config);
 		assertTrue(config.isForeign());
 		assertEquals(DataType.UNKNOWN, config.getDataType());
 		assertEquals(fields[6].getName(), config.getFieldName());
 
-		config = DatabaseFieldConfig.fromField(databaseType, fields[7]);
+		config = DatabaseFieldConfig.fromField(databaseType, "foo", fields[7]);
 		assertNotNull(config);
 		assertFalse(config.isForeign());
 		assertEquals(DataType.SERIALIZABLE, config.getDataType());
@@ -145,7 +145,7 @@ public class DatabaseFieldConfigTest {
 		Field[] fields = JavaxAnnoJustId.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
 
-		DatabaseFieldConfig config = DatabaseFieldConfig.fromField(databaseType, fields[0]);
+		DatabaseFieldConfig config = DatabaseFieldConfig.fromField(databaseType, "foo", fields[0]);
 		assertNotNull(config);
 		assertTrue(config.isId());
 		assertFalse(config.isGeneratedId());
@@ -159,7 +159,7 @@ public class DatabaseFieldConfigTest {
 		Field[] fields = JavaxGetSet.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
 
-		DatabaseFieldConfig config = DatabaseFieldConfig.fromField(databaseType, fields[0]);
+		DatabaseFieldConfig config = DatabaseFieldConfig.fromField(databaseType, "foo", fields[0]);
 		assertNotNull(config);
 		assertTrue(config.isUseGetSet());
 		assertEquals(fields[0].getName(), config.getFieldName());
@@ -171,7 +171,7 @@ public class DatabaseFieldConfigTest {
 		Field[] fields = JavaxUnique.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
 
-		DatabaseFieldConfig config = DatabaseFieldConfig.fromField(databaseType, fields[0]);
+		DatabaseFieldConfig config = DatabaseFieldConfig.fromField(databaseType, "foo", fields[0]);
 		assertNotNull(config);
 		assertTrue(config.isUnique());
 		assertEquals(fields[0].getName(), config.getFieldName());
@@ -182,7 +182,7 @@ public class DatabaseFieldConfigTest {
 		DatabaseType databaseType = new StubDatabaseType();
 		Field[] fields = BadUnknownVal.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
-		DatabaseFieldConfig.fromField(databaseType, fields[0]);
+		DatabaseFieldConfig.fromField(databaseType, "foo", fields[0]);
 	}
 
 	@Test
@@ -190,8 +190,9 @@ public class DatabaseFieldConfigTest {
 		DatabaseType databaseType = new StubDatabaseType();
 		Field[] fields = Index.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
-		DatabaseFieldConfig fieldConfig = DatabaseFieldConfig.fromField(databaseType, fields[0]);
-		assertEquals(fields[0].getName() + "_idx", fieldConfig.getIndexName());
+		String tableName = "foo";
+		DatabaseFieldConfig fieldConfig = DatabaseFieldConfig.fromField(databaseType, tableName, fields[0]);
+		assertEquals(tableName + "_" + fields[0].getName() + "_idx", fieldConfig.getIndexName());
 	}
 
 	@Test
@@ -199,9 +200,9 @@ public class DatabaseFieldConfigTest {
 		DatabaseType databaseType = new StubDatabaseType();
 		Field[] fields = ComboIndex.class.getDeclaredFields();
 		assertTrue(fields.length >= 2);
-		DatabaseFieldConfig fieldConfig = DatabaseFieldConfig.fromField(databaseType, fields[0]);
+		DatabaseFieldConfig fieldConfig = DatabaseFieldConfig.fromField(databaseType, "foo", fields[0]);
 		assertEquals(ComboIndex.INDEX_NAME, fieldConfig.getIndexName());
-		fieldConfig = DatabaseFieldConfig.fromField(databaseType, fields[1]);
+		fieldConfig = DatabaseFieldConfig.fromField(databaseType, "foo", fields[1]);
 		assertEquals(ComboIndex.INDEX_NAME, fieldConfig.getIndexName());
 	}
 

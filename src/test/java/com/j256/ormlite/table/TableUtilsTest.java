@@ -197,7 +197,7 @@ public class TableUtilsTest extends BaseCoreTest {
 				if (stmtC == 0) {
 					assertEquals("CREATE TABLE `index` (`stuff` VARCHAR(255) ) ", args[0]);
 				} else if (stmtC == 1) {
-					assertEquals("CREATE INDEX `stuff_idx` ON `index` ( `stuff` )", args[0]);
+					assertEquals("CREATE INDEX `index_stuff_idx` ON `index` ( `stuff` )", args[0]);
 				} else {
 					fail("Should only be called twice");
 				}
