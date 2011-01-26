@@ -248,12 +248,13 @@ public class DatabaseFieldConfig {
 	 * Create and return a config converted from a {@link Field} that may have either a {@link DatabaseField} annotation
 	 * or the javax.persistence annotations.
 	 */
-	public static DatabaseFieldConfig fromField(DatabaseType databaseType, Field field) throws SQLException {
+	public static DatabaseFieldConfig fromField(DatabaseType databaseType, String tableName, Field field)
+			throws SQLException {
 		// first we lookup the DatabaseField annotation
 		DatabaseField databaseField = field.getAnnotation(DatabaseField.class);
 		if (databaseField != null) {
 			if (databaseField.persisted()) {
-				return fromDatabaseField(databaseType, field, databaseField);
+				return fromDatabaseField(databaseType, tableName, field, databaseField);
 			} else {
 				return null;
 			}
@@ -326,7 +327,7 @@ public class DatabaseFieldConfig {
 		return fieldSetMethod;
 	}
 
-	private static DatabaseFieldConfig fromDatabaseField(DatabaseType databaseType, Field field,
+	private static DatabaseFieldConfig fromDatabaseField(DatabaseType databaseType, String tableName, Field field,
 			DatabaseField databaseField) {
 		DatabaseFieldConfig config = new DatabaseFieldConfig();
 		config.fieldName = field.getName();
@@ -369,20 +370,21 @@ public class DatabaseFieldConfig {
 		config.unique = databaseField.unique();
 
 		// add in the index information
-		config.indexName = findIndexName(databaseField.indexName(), databaseField.index(), config);
-		config.uniqueIndexName = findIndexName(databaseField.uniqueIndexName(), databaseField.uniqueIndex(), config);
+		config.indexName = findIndexName(tableName, databaseField.indexName(), databaseField.index(), config);
+		config.uniqueIndexName =
+				findIndexName(tableName, databaseField.uniqueIndexName(), databaseField.uniqueIndex(), config);
 
 		return config;
 	}
 
-	private static String findIndexName(String indexName, boolean index, DatabaseFieldConfig config) {
+	private static String findIndexName(String tableName, String indexName, boolean index, DatabaseFieldConfig config) {
 		if (indexName.length() > 0) {
 			return indexName;
 		} else if (index) {
 			if (config.columnName == null) {
-				return config.fieldName + "_idx";
+				return tableName + "_" + config.fieldName + "_idx";
 			} else {
-				return config.columnName;
+				return tableName + "_" + config.columnName + "_idx";
 			}
 		} else {
 			return null;

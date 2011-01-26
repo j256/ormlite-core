@@ -525,7 +525,7 @@ public class FieldType {
 	 */
 	public static FieldType createFieldType(DatabaseType databaseType, String tableName, Field field, int recurseLevel)
 			throws SQLException {
-		DatabaseFieldConfig fieldConfig = DatabaseFieldConfig.fromField(databaseType, field);
+		DatabaseFieldConfig fieldConfig = DatabaseFieldConfig.fromField(databaseType, tableName, field);
 		if (fieldConfig == null) {
 			return null;
 		} else {
