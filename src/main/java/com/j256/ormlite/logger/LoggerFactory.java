@@ -56,19 +56,10 @@ public class LoggerFactory {
 	}
 
 	private enum LogType {
-		COMMONS_LOGGING("org.apache.commons.logging.LogFactory") {
-			@Override
-			public Log createLog(String classLabel) {
-				return new CommonsLoggingLog(classLabel);
-			}
-
-		},
-		LOG4J("org.apache.log4j.Logger") {
-			@Override
-			public Log createLog(String classLabel) {
-				return new Log4jLog(classLabel);
-			}
-		},
+		/**
+		 * WARNING: This should be _before_ commons logging since Android provides commons logging but logging messages
+		 * are ignored that are sent there. Grrrrr.
+		 */
 		ANDROID("android.util.Log") {
 			@Override
 			public Log createLog(String classLabel) {
@@ -81,6 +72,19 @@ public class LoggerFactory {
 					// oh well, fallback to the local log
 					return LOCAL.createLog(classLabel);
 				}
+			}
+		},
+		COMMONS_LOGGING("org.apache.commons.logging.LogFactory") {
+			@Override
+			public Log createLog(String classLabel) {
+				return new CommonsLoggingLog(classLabel);
+			}
+
+		},
+		LOG4J("org.apache.log4j.Logger") {
+			@Override
+			public Log createLog(String classLabel) {
+				return new Log4jLog(classLabel);
 			}
 		},
 		LOCAL("com.j256.ormlite.logger.LocalLog") {
