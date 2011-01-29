@@ -10,90 +10,49 @@ public interface Log {
 	/**
 	 * Returns true if the log mode is in trace or higher.
 	 */
-	public boolean isTraceEnabled();
-
-	/**
-	 * Returns true if the log mode is in debug or higher.
-	 */
-	public boolean isDebugEnabled();
-
-	/**
-	 * Returns true if the log mode is in info or higher.
-	 */
-	public boolean isInfoEnabled();
-
-	/**
-	 * Returns true if the log mode is in warn or higher.
-	 */
-	public boolean isWarnEnabled();
-
-	/**
-	 * Returns true if the log mode is in error or higher.
-	 */
-	public boolean isErrorEnabled();
-
-	/**
-	 * Returns true if the log mode is in fatal or higher.
-	 */
-	public boolean isFatalEnabled();
+	public boolean isLevelEnabled(Level level);
 
 	/**
 	 * Log a trace message.
 	 */
-	public void trace(String message);
+	public void log(Level level, String message);
 
 	/**
 	 * Log a trace message with a throwable.
 	 */
-	public void trace(String message, Throwable t);
+	public void log(Level level, String message, Throwable t);
 
 	/**
-	 * Log a debug message.
+	 * Level of log messages being sent.
 	 */
-	public void debug(String message);
+	public enum Level {
+		/** for tracing messages that are very verbose */
+		TRACE(1),
+		/** messages suitable for debugging purposes */
+		DEBUG(2),
+		/** information messages */
+		INFO(3),
+		/** warning messages */
+		WARNING(4),
+		/** error messages */
+		ERROR(5),
+		/** severe fatal messages */
+		FATAL(6),
+		// end
+		;
 
-	/**
-	 * Log a debug message with a throwable.
-	 */
-	public void debug(String message, Throwable t);
+		private int level;
 
-	/**
-	 * Log a info message.
-	 */
-	public void info(String message);
+		private Level(int level) {
+			this.level = level;
+		}
 
-	/**
-	 * Log a info message with a throwable.
-	 */
-	public void info(String message, Throwable t);
-
-	/**
-	 * Log a warn message.
-	 */
-	public void warn(String message);
-
-	/**
-	 * Log a warn message with a throwable.
-	 */
-	public void warn(String message, Throwable t);
-
-	/**
-	 * Log a error message.
-	 */
-	public void error(String message);
-
-	/**
-	 * Log a error message with a throwable.
-	 */
-	public void error(String message, Throwable t);
-
-	/**
-	 * Log a fatal message.
-	 */
-	public void fatal(String message);
-
-	/**
-	 * Log a fatal message with a throwable.
-	 */
-	public void fatal(String message, Throwable t);
+		/**
+		 * Return whether or not a level argument is enabled for this level value. So, Level.INFO.isEnabled(Level.WARN)
+		 * returns true but Level.INFO.isEnabled(Level.DEBUG) returns false.
+		 */
+		public boolean isEnabled(Level otherLevel) {
+			return level <= otherLevel.level;
+		}
+	}
 }

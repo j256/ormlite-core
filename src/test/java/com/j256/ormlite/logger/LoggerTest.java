@@ -10,6 +10,8 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.j256.ormlite.logger.Log.Level;
+
 public class LoggerTest {
 
 	private Logger logger;
@@ -26,8 +28,8 @@ public class LoggerTest {
 	public void testArgAtStart() {
 		String arg = "x";
 		String end = " yyy";
-		expect(mockLog.isTraceEnabled()).andReturn(true);
-		mockLog.trace(arg + end, null);
+		expect(mockLog.isLevelEnabled(Level.TRACE)).andReturn(true);
+		mockLog.log(Level.TRACE, arg + end);
 		replay(mockLog);
 		logger.trace("{}" + end, arg);
 		verify(mockLog);
@@ -37,8 +39,8 @@ public class LoggerTest {
 	public void testArgAtEnd() {
 		String start = "yyy ";
 		String arg = "x";
-		expect(mockLog.isTraceEnabled()).andReturn(true);
-		mockLog.trace(start + arg, null);
+		expect(mockLog.isLevelEnabled(Level.TRACE)).andReturn(true);
+		mockLog.log(Level.TRACE, start + arg);
 		replay(mockLog);
 		logger.trace(start + "{}", arg);
 		verify(mockLog);
@@ -48,8 +50,8 @@ public class LoggerTest {
 	public void testArgsNextToEachOther() {
 		String arg1 = "x";
 		String arg2 = "y";
-		expect(mockLog.isTraceEnabled()).andReturn(true);
-		mockLog.trace(arg1 + arg2, null);
+		expect(mockLog.isLevelEnabled(Level.TRACE)).andReturn(true);
+		mockLog.log(Level.TRACE, arg1 + arg2);
 		replay(mockLog);
 		logger.trace("{}{}", arg1, arg2);
 		verify(mockLog);
@@ -60,8 +62,8 @@ public class LoggerTest {
 		String arg1 = "x";
 		String middle = " middle ";
 		String arg2 = "y";
-		expect(mockLog.isTraceEnabled()).andReturn(true);
-		mockLog.trace(arg1 + middle + arg2, null);
+		expect(mockLog.isLevelEnabled(Level.TRACE)).andReturn(true);
+		mockLog.log(Level.TRACE, arg1 + middle + arg2);
 		replay(mockLog);
 		logger.trace("{}" + middle + "{}", arg1, arg2);
 		verify(mockLog);
@@ -71,8 +73,8 @@ public class LoggerTest {
 	public void testToManyArgs() {
 		String start = "yyy ";
 		String arg = "x";
-		expect(mockLog.isTraceEnabled()).andReturn(true);
-		mockLog.trace(start + arg, null);
+		expect(mockLog.isLevelEnabled(Level.TRACE)).andReturn(true);
+		mockLog.log(Level.TRACE, start + arg);
 		replay(mockLog);
 		logger.trace(start + "{}", arg);
 		verify(mockLog);
@@ -81,8 +83,8 @@ public class LoggerTest {
 	@Test
 	public void testNotEnoughArgs() {
 		String start = "yyy ";
-		expect(mockLog.isTraceEnabled()).andReturn(true);
-		mockLog.trace(start, null);
+		expect(mockLog.isLevelEnabled(Level.TRACE)).andReturn(true);
+		mockLog.log(Level.TRACE, start);
 		replay(mockLog);
 		logger.trace(start + "{}");
 		verify(mockLog);
@@ -91,8 +93,8 @@ public class LoggerTest {
 	@Test
 	public void testObjectToString() {
 		Foo arg = new Foo();
-		expect(mockLog.isTraceEnabled()).andReturn(true);
-		mockLog.trace(Foo.TO_STRING, null);
+		expect(mockLog.isLevelEnabled(Level.TRACE)).andReturn(true);
+		mockLog.log(Level.TRACE, Foo.TO_STRING);
 		replay(mockLog);
 		logger.trace("{}", arg);
 		verify(mockLog);
@@ -101,8 +103,8 @@ public class LoggerTest {
 	@Test
 	public void testTraceThrowable() {
 		String msg = "ooooooh";
-		expect(mockLog.isTraceEnabled()).andReturn(true);
-		mockLog.trace(msg, throwable);
+		expect(mockLog.isLevelEnabled(Level.TRACE)).andReturn(true);
+		mockLog.log(Level.TRACE, msg, throwable);
 		replay(mockLog);
 		logger.trace(throwable, msg);
 		verify(mockLog);
@@ -111,8 +113,8 @@ public class LoggerTest {
 	@Test
 	public void testDebug() {
 		String msg = "ooooooh";
-		expect(mockLog.isDebugEnabled()).andReturn(true);
-		mockLog.debug(msg, null);
+		expect(mockLog.isLevelEnabled(Level.DEBUG)).andReturn(true);
+		mockLog.log(Level.DEBUG, msg);
 		replay(mockLog);
 		logger.debug(msg);
 		verify(mockLog);
@@ -121,8 +123,8 @@ public class LoggerTest {
 	@Test
 	public void testDebugThrowable() {
 		String msg = "ooooooh";
-		expect(mockLog.isDebugEnabled()).andReturn(true);
-		mockLog.debug(msg, throwable);
+		expect(mockLog.isLevelEnabled(Level.DEBUG)).andReturn(true);
+		mockLog.log(Level.DEBUG, msg, throwable);
 		replay(mockLog);
 		logger.debug(throwable, msg);
 		verify(mockLog);
@@ -131,8 +133,8 @@ public class LoggerTest {
 	@Test
 	public void testInfo() {
 		String msg = "ooooooh";
-		expect(mockLog.isInfoEnabled()).andReturn(true);
-		mockLog.info(msg, null);
+		expect(mockLog.isLevelEnabled(Level.INFO)).andReturn(true);
+		mockLog.log(Level.INFO, msg);
 		replay(mockLog);
 		logger.info(msg);
 		verify(mockLog);
@@ -141,8 +143,8 @@ public class LoggerTest {
 	@Test
 	public void testInfoThrowable() {
 		String msg = "ooooooh";
-		expect(mockLog.isInfoEnabled()).andReturn(true);
-		mockLog.info(msg, throwable);
+		expect(mockLog.isLevelEnabled(Level.INFO)).andReturn(true);
+		mockLog.log(Level.INFO, msg, throwable);
 		replay(mockLog);
 		logger.info(throwable, msg);
 		verify(mockLog);
@@ -151,8 +153,8 @@ public class LoggerTest {
 	@Test
 	public void testWarn() {
 		String msg = "ooooooh";
-		expect(mockLog.isWarnEnabled()).andReturn(true);
-		mockLog.warn(msg, null);
+		expect(mockLog.isLevelEnabled(Level.WARNING)).andReturn(true);
+		mockLog.log(Level.WARNING, msg);
 		replay(mockLog);
 		logger.warn(msg);
 		verify(mockLog);
@@ -161,8 +163,8 @@ public class LoggerTest {
 	@Test
 	public void testWarnThrowable() {
 		String msg = "ooooooh";
-		expect(mockLog.isWarnEnabled()).andReturn(true);
-		mockLog.warn(msg, throwable);
+		expect(mockLog.isLevelEnabled(Level.WARNING)).andReturn(true);
+		mockLog.log(Level.WARNING, msg, throwable);
 		replay(mockLog);
 		logger.warn(throwable, msg);
 		verify(mockLog);
@@ -171,8 +173,8 @@ public class LoggerTest {
 	@Test
 	public void testError() {
 		String msg = "ooooooh";
-		expect(mockLog.isErrorEnabled()).andReturn(true);
-		mockLog.error(msg, null);
+		expect(mockLog.isLevelEnabled(Level.ERROR)).andReturn(true);
+		mockLog.log(Level.ERROR, msg);
 		replay(mockLog);
 		logger.error(msg);
 		verify(mockLog);
@@ -181,8 +183,8 @@ public class LoggerTest {
 	@Test
 	public void testErrorThrowable() {
 		String msg = "ooooooh";
-		expect(mockLog.isErrorEnabled()).andReturn(true);
-		mockLog.error(msg, throwable);
+		expect(mockLog.isLevelEnabled(Level.ERROR)).andReturn(true);
+		mockLog.log(Level.ERROR, msg, throwable);
 		replay(mockLog);
 		logger.error(throwable, msg);
 		verify(mockLog);
@@ -191,8 +193,8 @@ public class LoggerTest {
 	@Test
 	public void testFatal() {
 		String msg = "ooooooh";
-		expect(mockLog.isFatalEnabled()).andReturn(true);
-		mockLog.fatal(msg, null);
+		expect(mockLog.isLevelEnabled(Level.FATAL)).andReturn(true);
+		mockLog.log(Level.FATAL, msg);
 		replay(mockLog);
 		logger.fatal(msg);
 		verify(mockLog);
@@ -201,8 +203,8 @@ public class LoggerTest {
 	@Test
 	public void testFatalThrowable() {
 		String msg = "ooooooh";
-		expect(mockLog.isFatalEnabled()).andReturn(true);
-		mockLog.fatal(msg, throwable);
+		expect(mockLog.isLevelEnabled(Level.FATAL)).andReturn(true);
+		mockLog.log(Level.FATAL, msg, throwable);
 		replay(mockLog);
 		logger.fatal(throwable, msg);
 		verify(mockLog);
@@ -210,8 +212,8 @@ public class LoggerTest {
 
 	@Test
 	public void testIsTraceEnabled() {
-		expect(mockLog.isTraceEnabled()).andReturn(true);
-		expect(mockLog.isTraceEnabled()).andReturn(false);
+		expect(mockLog.isLevelEnabled(Level.TRACE)).andReturn(true);
+		expect(mockLog.isLevelEnabled(Level.TRACE)).andReturn(false);
 		replay(mockLog);
 		assertTrue(logger.isTraceEnabled());
 		assertFalse(logger.isTraceEnabled());
@@ -220,8 +222,8 @@ public class LoggerTest {
 
 	@Test
 	public void testIsDebugEnabled() {
-		expect(mockLog.isDebugEnabled()).andReturn(true);
-		expect(mockLog.isDebugEnabled()).andReturn(false);
+		expect(mockLog.isLevelEnabled(Level.DEBUG)).andReturn(true);
+		expect(mockLog.isLevelEnabled(Level.DEBUG)).andReturn(false);
 		replay(mockLog);
 		assertTrue(logger.isDebugEnabled());
 		assertFalse(logger.isDebugEnabled());
@@ -230,8 +232,8 @@ public class LoggerTest {
 
 	@Test
 	public void testIsInfoEnabled() {
-		expect(mockLog.isInfoEnabled()).andReturn(true);
-		expect(mockLog.isInfoEnabled()).andReturn(false);
+		expect(mockLog.isLevelEnabled(Level.INFO)).andReturn(true);
+		expect(mockLog.isLevelEnabled(Level.INFO)).andReturn(false);
 		replay(mockLog);
 		assertTrue(logger.isInfoEnabled());
 		assertFalse(logger.isInfoEnabled());
@@ -240,8 +242,8 @@ public class LoggerTest {
 
 	@Test
 	public void testIsWarnEnabled() {
-		expect(mockLog.isWarnEnabled()).andReturn(true);
-		expect(mockLog.isWarnEnabled()).andReturn(false);
+		expect(mockLog.isLevelEnabled(Level.WARNING)).andReturn(true);
+		expect(mockLog.isLevelEnabled(Level.WARNING)).andReturn(false);
 		replay(mockLog);
 		assertTrue(logger.isWarnEnabled());
 		assertFalse(logger.isWarnEnabled());
@@ -250,8 +252,8 @@ public class LoggerTest {
 
 	@Test
 	public void testIsErrorEnabled() {
-		expect(mockLog.isErrorEnabled()).andReturn(true);
-		expect(mockLog.isErrorEnabled()).andReturn(false);
+		expect(mockLog.isLevelEnabled(Level.ERROR)).andReturn(true);
+		expect(mockLog.isLevelEnabled(Level.ERROR)).andReturn(false);
 		replay(mockLog);
 		assertTrue(logger.isErrorEnabled());
 		assertFalse(logger.isErrorEnabled());
@@ -260,8 +262,8 @@ public class LoggerTest {
 
 	@Test
 	public void testIsFatalEnabled() {
-		expect(mockLog.isFatalEnabled()).andReturn(true);
-		expect(mockLog.isFatalEnabled()).andReturn(false);
+		expect(mockLog.isLevelEnabled(Level.FATAL)).andReturn(true);
+		expect(mockLog.isLevelEnabled(Level.FATAL)).andReturn(false);
 		replay(mockLog);
 		assertTrue(logger.isFatalEnabled());
 		assertFalse(logger.isFatalEnabled());

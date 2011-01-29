@@ -27,8 +27,8 @@ public class CommonsLoggingLog implements Log {
 	private static Method debugThrowableMethod;
 	private static Method infoMethod;
 	private static Method infoThrowableMethod;
-	private static Method warnMethod;
-	private static Method warnThrowableMethod;
+	private static Method warningMethod;
+	private static Method warningThrowableMethod;
 	private static Method errorMethod;
 	private static Method errorThrowableMethod;
 	private static Method fatalMethod;
@@ -48,76 +48,61 @@ public class CommonsLoggingLog implements Log {
 		}
 	}
 
-	public boolean isTraceEnabled() {
-		return isLevelEnabled(isTraceEnabledMethod);
+	public boolean isLevelEnabled(Level level) {
+		switch (level) {
+			case TRACE :
+				return isLevelEnabled(isTraceEnabledMethod);
+			case DEBUG :
+				return isLevelEnabled(isDebugEnabledMethod);
+			case INFO :
+				return isLevelEnabled(isInfoEnabledMethod);
+			case WARNING :
+				return isLevelEnabled(isWarnEnabledMethod);
+			case ERROR :
+				return isLevelEnabled(isErrorEnabledMethod);
+			case FATAL :
+				return isLevelEnabled(isFatalEnabledMethod);
+			default :
+				return isLevelEnabled(isInfoEnabledMethod);
+		}
 	}
 
-	public boolean isDebugEnabled() {
-		return isLevelEnabled(isDebugEnabledMethod);
+	public void log(Level level, String msg) {
+		switch (level) {
+			case TRACE :
+				logMessage(traceMethod, msg);
+			case DEBUG :
+				logMessage(debugMethod, msg);
+			case INFO :
+				logMessage(infoMethod, msg);
+			case WARNING :
+				logMessage(warningMethod, msg);
+			case ERROR :
+				logMessage(errorMethod, msg);
+			case FATAL :
+				logMessage(fatalMethod, msg);
+			default :
+				logMessage(infoMethod, msg);
+		}
 	}
 
-	public boolean isInfoEnabled() {
-		return isLevelEnabled(isInfoEnabledMethod);
-	}
-
-	public boolean isWarnEnabled() {
-		return isLevelEnabled(isWarnEnabledMethod);
-	}
-
-	public boolean isErrorEnabled() {
-		return isLevelEnabled(isErrorEnabledMethod);
-	}
-
-	public boolean isFatalEnabled() {
-		return isLevelEnabled(isFatalEnabledMethod);
-	}
-
-	public void trace(String msg) {
-		logMessage(traceMethod, msg);
-	}
-
-	public void trace(String msg, Throwable t) {
-		logMessage(traceThrowableMethod, msg, t);
-	}
-
-	public void debug(String msg) {
-		logMessage(debugMethod, msg);
-	}
-
-	public void debug(String msg, Throwable t) {
-		logMessage(debugThrowableMethod, msg, t);
-	}
-
-	public void info(String msg) {
-		logMessage(infoMethod, msg);
-	}
-
-	public void info(String msg, Throwable t) {
-		logMessage(infoThrowableMethod, msg, t);
-	}
-
-	public void warn(String msg) {
-		logMessage(warnMethod, msg);
-	}
-
-	public void warn(String msg, Throwable t) {
-		logMessage(warnThrowableMethod, msg, t);
-	}
-
-	public void error(String msg) {
-		logMessage(errorMethod, msg);
-	}
-
-	public void error(String msg, Throwable t) {
-		logMessage(errorThrowableMethod, msg, t);
-	}
-
-	public void fatal(String msg) {
-		logMessage(fatalMethod, msg);
-	}
-
-	public void fatal(String msg, Throwable t) {
-		logMessage(fatalThrowableMethod, msg, t);
+	public void log(Level level, String msg, Throwable t) {
+		switch (level) {
+			case TRACE :
+				logMessage(traceThrowableMethod, msg, t);
+			case DEBUG :
+				logMessage(debugThrowableMethod, msg, t);
+			case INFO :
+				logMessage(infoThrowableMethod, msg, t);
+			case WARNING :
+				logMessage(warningThrowableMethod, msg, t);
+			case ERROR :
+				logMessage(errorThrowableMethod, msg, t);
+			case FATAL :
+				logMessage(fatalThrowableMethod, msg, t);
+			default :
+				logMessage(infoMethod, msg, t);
+		}
 	}
 
 	private static void findMethods() {
@@ -149,8 +134,8 @@ public class CommonsLoggingLog implements Log {
 		debugThrowableMethod = getMethod(clazz, "debug", Object.class, Throwable.class);
 		infoMethod = getMethod(clazz, "info", Object.class);
 		infoThrowableMethod = getMethod(clazz, "info", Object.class, Throwable.class);
-		warnMethod = getMethod(clazz, "warn", Object.class);
-		warnThrowableMethod = getMethod(clazz, "warn", Object.class, Throwable.class);
+		warningMethod = getMethod(clazz, "warn", Object.class);
+		warningThrowableMethod = getMethod(clazz, "warn", Object.class, Throwable.class);
 		errorMethod = getMethod(clazz, "error", Object.class);
 		errorThrowableMethod = getMethod(clazz, "error", Object.class, Throwable.class);
 		fatalMethod = getMethod(clazz, "fatal", Object.class);

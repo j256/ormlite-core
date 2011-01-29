@@ -61,76 +61,16 @@ public class LocalLog implements Log {
 		}
 	}
 
-	public boolean isTraceEnabled() {
-		return isEnabled(Level.TRACE);
+	public boolean isLevelEnabled(Level level) {
+		return this.level.isEnabled(level);
 	}
 
-	public boolean isDebugEnabled() {
-		return isEnabled(Level.DEBUG);
+	public void log(Level level, String msg) {
+		printMessage(level, msg, null);
 	}
 
-	public boolean isInfoEnabled() {
-		return isEnabled(Level.INFO);
-	}
-
-	public boolean isWarnEnabled() {
-		return isEnabled(Level.WARN);
-	}
-
-	public boolean isErrorEnabled() {
-		return isEnabled(Level.ERROR);
-	}
-
-	public boolean isFatalEnabled() {
-		return isEnabled(Level.FATAL);
-	}
-
-	public void trace(String msg) {
-		printMessage(Level.TRACE, msg, null);
-	}
-
-	public void trace(String msg, Throwable throwable) {
-		printMessage(Level.TRACE, msg, throwable);
-	}
-
-	public void debug(String msg) {
-		printMessage(Level.DEBUG, msg, null);
-	}
-
-	public void debug(String msg, Throwable throwable) {
-		printMessage(Level.DEBUG, msg, throwable);
-	}
-
-	public void info(String msg) {
-		printMessage(Level.INFO, msg, null);
-	}
-
-	public void info(String msg, Throwable throwable) {
-		printMessage(Level.INFO, msg, throwable);
-	}
-
-	public void warn(String msg) {
-		printMessage(Level.WARN, msg, null);
-	}
-
-	public void warn(String msg, Throwable throwable) {
-		printMessage(Level.WARN, msg, throwable);
-	}
-
-	public void error(String msg) {
-		printMessage(Level.ERROR, msg, null);
-	}
-
-	public void error(String msg, Throwable throwable) {
-		printMessage(Level.ERROR, msg, throwable);
-	}
-
-	public void fatal(String msg) {
-		printMessage(Level.FATAL, msg, null);
-	}
-
-	public void fatal(String msg, Throwable throwable) {
-		printMessage(Level.FATAL, msg, throwable);
+	public void log(Level level, String msg, Throwable throwable) {
+		printMessage(level, msg, throwable);
 	}
 
 	/**
@@ -141,7 +81,7 @@ public class LocalLog implements Log {
 	}
 
 	private void printMessage(Level level, String message, Throwable throwable) {
-		if (!this.level.isEnabled(level)) {
+		if (!isLevelEnabled(level)) {
 			return;
 		}
 		StringBuilder sb = new StringBuilder();
@@ -152,44 +92,6 @@ public class LocalLog implements Log {
 		printStream.println(sb.toString());
 		if (throwable != null) {
 			throwable.printStackTrace(printStream);
-		}
-	}
-
-	private boolean isEnabled(Level level) {
-		return this.level.isEnabled(level);
-	}
-
-	/**
-	 * Our log levels.
-	 */
-	public enum Level {
-		/** for tracing messages that are very verbose */
-		TRACE(1),
-		/** messages suitable for debugging purposes */
-		DEBUG(2),
-		/** information messages */
-		INFO(3),
-		/** warning messages */
-		WARN(4),
-		/** error messages */
-		ERROR(5),
-		/** severe fatal messages */
-		FATAL(6),
-		// end
-		;
-
-		private int level;
-
-		private Level(int level) {
-			this.level = level;
-		}
-
-		/**
-		 * Return whether or not a level argument is enabled for this level value. So, Level.INFO.isEnabled(Level.WARN)
-		 * returns true but Level.INFO.isEnabled(Level.DEBUG) returns false.
-		 */
-		public boolean isEnabled(Level otherLevel) {
-			return level <= otherLevel.level;
 		}
 	}
 }

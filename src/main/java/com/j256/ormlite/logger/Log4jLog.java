@@ -17,22 +17,12 @@ public class Log4jLog implements Log {
 	private static Object traceLevel;
 	private static Object debugLevel;
 	private static Object infoLevel;
-	private static Object warnLevel;
+	private static Object warningLevel;
 	private static Object errorLevel;
 	private static Object fatalLevel;
 
-	private static Method traceMethod;
-	private static Method traceThrowableMethod;
-	private static Method debugMethod;
-	private static Method debugThrowableMethod;
-	private static Method infoMethod;
-	private static Method infoThrowableMethod;
-	private static Method warnMethod;
-	private static Method warnThrowableMethod;
-	private static Method errorMethod;
-	private static Method errorThrowableMethod;
-	private static Method fatalMethod;
-	private static Method fatalThrowableMethod;
+	private static Method logMethod;
+	private static Method logThrowableMethod;
 
 	public Log4jLog(String className) {
 		if (getLoggerMethod == null) {
@@ -48,76 +38,16 @@ public class Log4jLog implements Log {
 		}
 	}
 
-	public boolean isTraceEnabled() {
-		return isEnabledFor(traceLevel);
+	public boolean isLevelEnabled(Level level) {
+		return isEnabledFor(levelToJavaLevel(level));
 	}
 
-	public boolean isDebugEnabled() {
-		return isEnabledFor(debugLevel);
+	public void log(Level level, String msg) {
+		logMessage(levelToJavaLevel(level), msg);
 	}
 
-	public boolean isInfoEnabled() {
-		return isEnabledFor(infoLevel);
-	}
-
-	public boolean isWarnEnabled() {
-		return isEnabledFor(warnLevel);
-	}
-
-	public boolean isErrorEnabled() {
-		return isEnabledFor(errorLevel);
-	}
-
-	public boolean isFatalEnabled() {
-		return isEnabledFor(fatalLevel);
-	}
-
-	public void trace(String msg) {
-		logMessage(traceMethod, msg);
-	}
-
-	public void trace(String msg, Throwable t) {
-		logMessage(traceThrowableMethod, msg, t);
-	}
-
-	public void debug(String msg) {
-		logMessage(debugMethod, msg);
-	}
-
-	public void debug(String msg, Throwable t) {
-		logMessage(debugThrowableMethod, msg, t);
-	}
-
-	public void info(String msg) {
-		logMessage(infoMethod, msg);
-	}
-
-	public void info(String msg, Throwable t) {
-		logMessage(infoThrowableMethod, msg, t);
-	}
-
-	public void warn(String msg) {
-		logMessage(warnMethod, msg);
-	}
-
-	public void warn(String msg, Throwable t) {
-		logMessage(warnThrowableMethod, msg, t);
-	}
-
-	public void error(String msg) {
-		logMessage(errorMethod, msg);
-	}
-
-	public void error(String msg, Throwable t) {
-		logMessage(errorThrowableMethod, msg, t);
-	}
-
-	public void fatal(String msg) {
-		logMessage(fatalMethod, msg);
-	}
-
-	public void fatal(String msg, Throwable t) {
-		logMessage(fatalThrowableMethod, msg, t);
+	public void log(Level level, String msg, Throwable t) {
+		logMessage(levelToJavaLevel(level), msg, t);
 	}
 
 	private static void findMethods() {
@@ -148,22 +78,12 @@ public class Log4jLog implements Log {
 		traceLevel = getLevelField(levelClazz, "TRACE");
 		debugLevel = getLevelField(levelClazz, "DEBUG");
 		infoLevel = getLevelField(levelClazz, "INFO");
-		warnLevel = getLevelField(levelClazz, "WARN");
+		warningLevel = getLevelField(levelClazz, "WARN");
 		errorLevel = getLevelField(levelClazz, "ERROR");
 		fatalLevel = getLevelField(levelClazz, "FATAL");
 
-		traceMethod = getMethod(clazz, "trace", Object.class);
-		traceThrowableMethod = getMethod(clazz, "trace", Object.class, Throwable.class);
-		debugMethod = getMethod(clazz, "debug", Object.class);
-		debugThrowableMethod = getMethod(clazz, "debug", Object.class, Throwable.class);
-		infoMethod = getMethod(clazz, "info", Object.class);
-		infoThrowableMethod = getMethod(clazz, "info", Object.class, Throwable.class);
-		warnMethod = getMethod(clazz, "warn", Object.class);
-		warnThrowableMethod = getMethod(clazz, "warn", Object.class, Throwable.class);
-		errorMethod = getMethod(clazz, "error", Object.class);
-		errorThrowableMethod = getMethod(clazz, "error", Object.class, Throwable.class);
-		fatalMethod = getMethod(clazz, "fatal", Object.class);
-		fatalThrowableMethod = getMethod(clazz, "fatal", Object.class, Throwable.class);
+		logMethod = getMethod(clazz, "log", priorityClazz, Object.class);
+		logThrowableMethod = getMethod(clazz, "log", priorityClazz, Object.class, Throwable.class);
 	}
 
 	private boolean isEnabledFor(Object level) {
@@ -177,20 +97,20 @@ public class Log4jLog implements Log {
 		return false;
 	}
 
-	private void logMessage(Method method, String message) {
-		if (logger != null) {
+	private void logMessage(Object level, String message) {
+		if (logger != null && logMethod != null) {
 			try {
-				method.invoke(logger, message);
+				logMethod.invoke(logger, level, message);
 			} catch (Exception e) {
 				// oh well, just skip it
 			}
 		}
 	}
 
-	private void logMessage(Method method, String message, Throwable t) {
-		if (logger != null) {
+	private void logMessage(Object level, String message, Throwable t) {
+		if (logger != null && logThrowableMethod != null) {
 			try {
-				method.invoke(logger, message, (Throwable) t);
+				logThrowableMethod.invoke(logger, level, message, (Throwable) t);
 			} catch (Exception e) {
 				// oh well, just skip it
 			}
@@ -210,6 +130,25 @@ public class Log4jLog implements Log {
 			return clazz.getField(fieldName).get(null);
 		} catch (Exception e) {
 			return null;
+		}
+	}
+
+	private Object levelToJavaLevel(com.j256.ormlite.logger.Log.Level level) {
+		switch (level) {
+			case TRACE :
+				return traceLevel;
+			case DEBUG :
+				return debugLevel;
+			case INFO :
+				return infoLevel;
+			case WARNING :
+				return warningLevel;
+			case ERROR :
+				return errorLevel;
+			case FATAL :
+				return fatalLevel;
+			default :
+				return infoLevel;
 		}
 	}
 }

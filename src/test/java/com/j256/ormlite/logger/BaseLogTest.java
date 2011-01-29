@@ -4,6 +4,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import com.j256.ormlite.logger.Log.Level;
+
 public abstract class BaseLogTest {
 
 	private final Log log;
@@ -15,72 +17,72 @@ public abstract class BaseLogTest {
 	@Test
 	public void testLevelEnabled() {
 		boolean shouldBeEnabled = false;
-		shouldBeEnabled = checkEnabled(log.isTraceEnabled(), shouldBeEnabled);
-		shouldBeEnabled = checkEnabled(log.isDebugEnabled(), shouldBeEnabled);
-		shouldBeEnabled = checkEnabled(log.isInfoEnabled(), shouldBeEnabled);
-		shouldBeEnabled = checkEnabled(log.isWarnEnabled(), shouldBeEnabled);
-		shouldBeEnabled = checkEnabled(log.isErrorEnabled(), shouldBeEnabled);
-		shouldBeEnabled = checkEnabled(log.isFatalEnabled(), shouldBeEnabled);
+		shouldBeEnabled = checkEnabled(log.isLevelEnabled(Level.TRACE), shouldBeEnabled);
+		shouldBeEnabled = checkEnabled(log.isLevelEnabled(Level.DEBUG), shouldBeEnabled);
+		shouldBeEnabled = checkEnabled(log.isLevelEnabled(Level.INFO), shouldBeEnabled);
+		shouldBeEnabled = checkEnabled(log.isLevelEnabled(Level.WARNING), shouldBeEnabled);
+		shouldBeEnabled = checkEnabled(log.isLevelEnabled(Level.ERROR), shouldBeEnabled);
+		shouldBeEnabled = checkEnabled(log.isLevelEnabled(Level.FATAL), shouldBeEnabled);
 	}
 
 	@Test
 	public void testTraceString() {
-		log.trace("message");
+		log.log(Level.TRACE, "message");
 	}
 
 	@Test
 	public void testTraceStringThrowable() {
-		log.trace("message", new Throwable("log throwable"));
+		log.log(Level.TRACE, "message", new Throwable("log throwable"));
 	}
 
 	@Test
 	public void testDebugString() {
-		log.debug("message");
+		log.log(Level.DEBUG, "message");
 	}
 
 	@Test
 	public void testDebugStringThrowable() {
-		log.debug("message", new Throwable("log throwable"));
+		log.log(Level.DEBUG, "message", new Throwable("log throwable"));
 	}
 
 	@Test
 	public void testInfoString() {
-		log.info("message");
+		log.log(Level.INFO, "message");
 	}
 
 	@Test
 	public void testInfoStringThrowable() {
-		log.info("message", new Throwable("log throwable"));
+		log.log(Level.INFO, "message", new Throwable("log throwable"));
 	}
 
 	@Test
 	public void testWarnString() {
-		log.warn("message");
+		log.log(Level.WARNING, "message");
 	}
 
 	@Test
 	public void testWarnStringThrowable() {
-		log.warn("message", new Throwable("log throwable"));
+		log.log(Level.WARNING, "message", new Throwable("log throwable"));
 	}
 
 	@Test
 	public void testErrorString() {
-		log.error("message");
+		log.log(Level.ERROR, "message");
 	}
 
 	@Test
 	public void testErrorStringThrowable() {
-		log.error("message", new Throwable("log throwable"));
+		log.log(Level.ERROR, "message", new Throwable("log throwable"));
 	}
 
 	@Test
 	public void testFatalString() {
-		log.fatal("message");
+		log.log(Level.FATAL, "message");
 	}
 
 	@Test
 	public void testFatalStringThrowable() {
-		log.fatal("message", new Throwable("log throwable"));
+		log.log(Level.FATAL, "message", new Throwable("log throwable"));
 	}
 
 	private boolean checkEnabled(boolean enabled, boolean shouldBeEnabled) {

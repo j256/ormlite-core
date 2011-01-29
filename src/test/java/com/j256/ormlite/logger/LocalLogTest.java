@@ -7,6 +7,8 @@ import java.io.File;
 
 import org.junit.Test;
 
+import com.j256.ormlite.logger.Log.Level;
+
 public class LocalLogTest extends BaseLogTest {
 
 	public LocalLogTest() {
@@ -16,13 +18,13 @@ public class LocalLogTest extends BaseLogTest {
 	@Test
 	public void testLevelProperty() {
 		Log log = new LocalLog("foo");
-		if (log.isTraceEnabled()) {
+		if (log.isLevelEnabled(Level.TRACE)) {
 			return;
 		}
 		System.setProperty(LocalLog.LOCAL_LOG_LEVEL_PROPERTY, "TRACE");
 		try {
 			log = new LocalLog("foo");
-			assertTrue(log.isTraceEnabled());
+			assertTrue(log.isLevelEnabled(Level.TRACE));
 		} finally {
 			System.clearProperty(LocalLog.LOCAL_LOG_LEVEL_PROPERTY);
 		}
@@ -46,9 +48,9 @@ public class LocalLogTest extends BaseLogTest {
 		System.setProperty(LocalLog.LOCAL_LOG_FILE_PROPERTY, logPath);
 		try {
 			LocalLog log = new LocalLog("foo");
-			assertTrue(log.isFatalEnabled());
+			assertTrue(log.isLevelEnabled(Level.FATAL));
 			String msg = "fpjwefpwejfpwfjwe";
-			log.fatal(msg);
+			log.log(Level.FATAL, msg);
 			log.flush();
 			assertTrue(logFile.exists());
 			while (logFile.length() < msg.length()) {
@@ -79,11 +81,11 @@ public class LocalLogTest extends BaseLogTest {
 		System.setProperty(LocalLog.LOCAL_LOG_FILE_PROPERTY, logPath);
 		try {
 			LocalLog log = new LocalLog("foo");
-			if (log.isTraceEnabled()) {
+			if (log.isLevelEnabled(Level.TRACE)) {
 				return;
 			}
 			String msg = "fpjwefpwejfpwfjwe";
-			log.trace(msg);
+			log.log(Level.TRACE, msg);
 			log.flush();
 			assertTrue(logFile.exists());
 			assertEquals(0, logFile.length());
