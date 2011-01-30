@@ -215,8 +215,8 @@ public class LoggerTest {
 		expect(mockLog.isLevelEnabled(Level.TRACE)).andReturn(true);
 		expect(mockLog.isLevelEnabled(Level.TRACE)).andReturn(false);
 		replay(mockLog);
-		assertTrue(logger.isTraceEnabled());
-		assertFalse(logger.isTraceEnabled());
+		assertTrue(logger.isLevelEnabled(Level.TRACE));
+		assertFalse(logger.isLevelEnabled(Level.TRACE));
 		verify(mockLog);
 	}
 
@@ -225,8 +225,8 @@ public class LoggerTest {
 		expect(mockLog.isLevelEnabled(Level.DEBUG)).andReturn(true);
 		expect(mockLog.isLevelEnabled(Level.DEBUG)).andReturn(false);
 		replay(mockLog);
-		assertTrue(logger.isDebugEnabled());
-		assertFalse(logger.isDebugEnabled());
+		assertTrue(logger.isLevelEnabled(Level.DEBUG));
+		assertFalse(logger.isLevelEnabled(Level.DEBUG));
 		verify(mockLog);
 	}
 
@@ -235,8 +235,8 @@ public class LoggerTest {
 		expect(mockLog.isLevelEnabled(Level.INFO)).andReturn(true);
 		expect(mockLog.isLevelEnabled(Level.INFO)).andReturn(false);
 		replay(mockLog);
-		assertTrue(logger.isInfoEnabled());
-		assertFalse(logger.isInfoEnabled());
+		assertTrue(logger.isLevelEnabled(Level.INFO));
+		assertFalse(logger.isLevelEnabled(Level.INFO));
 		verify(mockLog);
 	}
 
@@ -245,8 +245,8 @@ public class LoggerTest {
 		expect(mockLog.isLevelEnabled(Level.WARNING)).andReturn(true);
 		expect(mockLog.isLevelEnabled(Level.WARNING)).andReturn(false);
 		replay(mockLog);
-		assertTrue(logger.isWarnEnabled());
-		assertFalse(logger.isWarnEnabled());
+		assertTrue(logger.isLevelEnabled(Level.WARNING));
+		assertFalse(logger.isLevelEnabled(Level.WARNING));
 		verify(mockLog);
 	}
 
@@ -255,8 +255,8 @@ public class LoggerTest {
 		expect(mockLog.isLevelEnabled(Level.ERROR)).andReturn(true);
 		expect(mockLog.isLevelEnabled(Level.ERROR)).andReturn(false);
 		replay(mockLog);
-		assertTrue(logger.isErrorEnabled());
-		assertFalse(logger.isErrorEnabled());
+		assertTrue(logger.isLevelEnabled(Level.ERROR));
+		assertFalse(logger.isLevelEnabled(Level.ERROR));
 		verify(mockLog);
 	}
 
@@ -265,8 +265,8 @@ public class LoggerTest {
 		expect(mockLog.isLevelEnabled(Level.FATAL)).andReturn(true);
 		expect(mockLog.isLevelEnabled(Level.FATAL)).andReturn(false);
 		replay(mockLog);
-		assertTrue(logger.isFatalEnabled());
-		assertFalse(logger.isFatalEnabled());
+		assertTrue(logger.isLevelEnabled(Level.FATAL));
+		assertFalse(logger.isLevelEnabled(Level.FATAL));
 		verify(mockLog);
 	}
 

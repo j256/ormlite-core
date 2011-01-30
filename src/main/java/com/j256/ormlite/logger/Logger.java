@@ -21,45 +21,10 @@ public class Logger {
 	}
 
 	/**
-	 * Return if trace logging is enabled.
+	 * Return if logging level is enabled.
 	 */
-	public boolean isTraceEnabled() {
-		return log.isLevelEnabled(Level.TRACE);
-	}
-
-	/**
-	 * Return if debug logging is enabled.
-	 */
-	public boolean isDebugEnabled() {
-		return log.isLevelEnabled(Level.DEBUG);
-	}
-
-	/**
-	 * Return if info logging is enabled.
-	 */
-	public boolean isInfoEnabled() {
-		return log.isLevelEnabled(Level.INFO);
-	}
-
-	/**
-	 * Return if warn logging is enabled.
-	 */
-	public boolean isWarnEnabled() {
-		return log.isLevelEnabled(Level.WARNING);
-	}
-
-	/**
-	 * Return if error logging is enabled.
-	 */
-	public boolean isErrorEnabled() {
-		return log.isLevelEnabled(Level.ERROR);
-	}
-
-	/**
-	 * Return if fatal logging is enabled.
-	 */
-	public boolean isFatalEnabled() {
-		return log.isLevelEnabled(Level.FATAL);
+	public boolean isLevelEnabled(Level level) {
+		return log.isLevelEnabled(level);
 	}
 
 	/**

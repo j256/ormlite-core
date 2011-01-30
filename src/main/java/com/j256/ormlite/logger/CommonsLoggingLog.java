@@ -71,18 +71,25 @@ public class CommonsLoggingLog implements Log {
 		switch (level) {
 			case TRACE :
 				logMessage(traceMethod, msg);
+				break;
 			case DEBUG :
 				logMessage(debugMethod, msg);
+				break;
 			case INFO :
 				logMessage(infoMethod, msg);
+				break;
 			case WARNING :
 				logMessage(warningMethod, msg);
+				break;
 			case ERROR :
 				logMessage(errorMethod, msg);
+				break;
 			case FATAL :
 				logMessage(fatalMethod, msg);
+				break;
 			default :
 				logMessage(infoMethod, msg);
+				break;
 		}
 	}
 
@@ -90,18 +97,25 @@ public class CommonsLoggingLog implements Log {
 		switch (level) {
 			case TRACE :
 				logMessage(traceThrowableMethod, msg, t);
+				break;
 			case DEBUG :
 				logMessage(debugThrowableMethod, msg, t);
+				break;
 			case INFO :
 				logMessage(infoThrowableMethod, msg, t);
+				break;
 			case WARNING :
 				logMessage(warningThrowableMethod, msg, t);
+				break;
 			case ERROR :
 				logMessage(errorThrowableMethod, msg, t);
+				break;
 			case FATAL :
 				logMessage(fatalThrowableMethod, msg, t);
+				break;
 			default :
 				logMessage(infoMethod, msg, t);
+				break;
 		}
 	}
 
