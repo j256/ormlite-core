@@ -12,7 +12,9 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.RawResults;
 import com.j256.ormlite.dao.RawRowMapper;
 import com.j256.ormlite.db.DatabaseType;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
@@ -298,6 +300,7 @@ public class StatementExecutor<T, ID> {
 
 		protected final int columnN;
 		protected final String[] columnNames;
+		protected DataType[] columnTypes;
 
 		protected BaseRawResults(CompiledStatement compiledStmt) throws SQLException {
 			this.columnN = compiledStmt.getColumnCount();
@@ -321,7 +324,11 @@ public class StatementExecutor<T, ID> {
 		public String[] mapRow(DatabaseResults rs) throws SQLException {
 			String[] result = new String[columnN];
 			for (int colC = 0; colC < columnN; colC++) {
-				result[colC] = rs.getString(colC + 1);
+				if (columnTypes == null || colC >= columnTypes.length) {
+					result[colC] = rs.getString(colC + 1);
+				} else {
+					result[colC] = columnTypes[colC].resultToJavaString(rs, colC);
+				}
 			}
 			return result;
 		}
@@ -354,6 +361,11 @@ public class StatementExecutor<T, ID> {
 
 		public <T> CloseableIterator<T> iterator(RawRowMapper<T> mapper) {
 			return new RawRowMapperIterator<T>(columnNames, iterator(), mapper);
+		}
+
+		public void setColumnTypes(SqlType[] columnTypes) {
+			throw new UnsupportedOperationException(
+					"You cannot call setColumnTypes() on queryForAllResults().  You must use the IteratorRaw().");
 		}
 	}
 
@@ -448,6 +460,15 @@ public class StatementExecutor<T, ID> {
 				iterator.close();
 				iterator = null;
 			}
+		}
+
+		@Override
+		public void setColumnTypes(SqlType[] columnTypes) {
+			DataType[] dataTypes = new DataType[columnTypes.length];
+			for (int i = 0; i < columnTypes.length; i++) {
+				dataTypes[i] = DataType.dataTypeFromSqlType(columnTypes[i]);
+			}
+			this.columnTypes = dataTypes;
 		}
 	}
 

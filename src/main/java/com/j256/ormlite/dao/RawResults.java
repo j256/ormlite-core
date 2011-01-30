@@ -3,6 +3,8 @@ package com.j256.ormlite.dao;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.j256.ormlite.field.SqlType;
+
 /**
  * Results returned by a call to {@link Dao#queryForAllRaw(String)} or {@link Dao#iteratorRaw(String)} which handles
  * each result as a String[].
@@ -46,4 +48,10 @@ public interface RawResults extends CloseableIterable<String[]> {
 	 * {@link Dao#iteratorRaw(String)} or another iterator method was called.
 	 */
 	public void close() throws SQLException;
+
+	/**
+	 * In advanced situations, you may not be able to convert all of your fields into strings which is the default --
+	 * serialized fields is one example. This method allows you to set the types of the various resulting columns
+	 */
+	public void setColumnTypes(SqlType[] columnTypes);
 }
