@@ -80,20 +80,25 @@ public abstract class BaseConnectionSource implements ConnectionSource {
 
 	/**
 	 * Clear the connection that was previously saved.
+	 * 
+	 * @return True if the connection argument had been saved.
 	 */
-	protected void clearSpecial(DatabaseConnection connection, Logger logger) {
+	protected boolean clearSpecial(DatabaseConnection connection, Logger logger) {
 		NestedConnection currentSaved = specialConnection.get();
+		boolean cleared = false;
 		if (currentSaved == null) {
 			logger.error("no connection has been saved when clear() called");
-		} else {
-			if (currentSaved.connection != connection) {
-				logger.error("connection saved {} is not the one being cleared {}", currentSaved.connection, connection);
-			} else if (currentSaved.decrementAndGet() == 0) {
+		} else if (currentSaved.connection == connection) {
+			if (currentSaved.decrementAndGet() == 0) {
 				// we only clear the connection if nested counter is 0
 				specialConnection.set(null);
 			}
+			cleared = true;
+		} else {
+			logger.error("connection saved {} is not the one being cleared {}", currentSaved.connection, connection);
 		}
 		// release should then be called after clear
+		return cleared;
 	}
 
 	/**
