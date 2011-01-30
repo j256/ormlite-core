@@ -85,7 +85,7 @@ public class SelectArgTest extends BaseCoreTest {
 		selectArg.setValue(value);
 		assertTrue(selectArg.toString().contains(value));
 	}
-	
+
 	@Test(expected = IllegalArgumentException.class)
 	public void testDoubleSet() throws Exception {
 		SelectArg selectArg = new SelectArg();
