@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.logger.Log.Level;
 import com.j256.ormlite.stmt.PreparedDelete;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.PreparedUpdate;
@@ -46,7 +47,7 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 		}
 		// set any arguments if there are any selectArgs
 		Object[] args = null;
-		if (logger.isTraceEnabled() && selectArgs.length > 0) {
+		if (logger.isLevelEnabled(Level.TRACE) && selectArgs.length > 0) {
 			args = new Object[selectArgs.length];
 		}
 		for (int i = 0; i < selectArgs.length; i++) {
