@@ -1,6 +1,8 @@
 package com.j256.ormlite.stmt.mapped;
 
 import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -10,6 +12,7 @@ import org.junit.Test;
 import com.j256.ormlite.db.BaseDatabaseType;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableInfo;
 
@@ -20,7 +23,10 @@ public class MappedDeleteCollectionTest {
 	@Test(expected = SQLException.class)
 	public void testNoIdBuildDelete() throws Exception {
 		DatabaseConnection databaseConnection = createMock(DatabaseConnection.class);
-		MappedDeleteCollection.deleteObjects(databaseType, new TableInfo<NoId>(databaseType, NoId.class),
+		ConnectionSource connectionSource = createMock(ConnectionSource.class);
+		expect(connectionSource.getDatabaseType()).andReturn(databaseType).anyTimes();
+		replay(connectionSource);
+		MappedDeleteCollection.deleteObjects(databaseType, new TableInfo<NoId>(connectionSource, NoId.class),
 				databaseConnection, new ArrayList<NoId>());
 	}
 

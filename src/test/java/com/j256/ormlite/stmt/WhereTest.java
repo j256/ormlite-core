@@ -11,7 +11,6 @@ import java.util.List;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
-import com.j256.ormlite.db.BaseDatabaseType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.stmt.query.Eq;
 import com.j256.ormlite.table.TableInfo;
@@ -386,7 +385,7 @@ public class WhereTest extends BaseCoreTest {
 	}
 
 	private TableInfo<Foo> createTableInfo() throws SQLException {
-		return new TableInfo<Foo>(new StubDatabaseType(), Foo.class);
+		return new TableInfo<Foo>(connectionSource, Foo.class);
 	}
 
 	protected static class Foo {
@@ -395,16 +394,6 @@ public class WhereTest extends BaseCoreTest {
 		@DatabaseField(columnName = STRING_COLUMN_NAME)
 		String string;
 		Foo() {
-		}
-	}
-
-	private class StubDatabaseType extends BaseDatabaseType {
-		@Override
-		public String getDriverClassName() {
-			return "foo.bar.baz";
-		}
-		public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
-			return false;
 		}
 	}
 }

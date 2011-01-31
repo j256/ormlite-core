@@ -8,6 +8,7 @@ import java.util.Map;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.misc.SqlExceptionUtil;
+import com.j256.ormlite.support.ConnectionSource;
 
 /**
  * Information about a database table including the associated tableName, class, constructor, and the included fields.
@@ -28,13 +29,17 @@ public class TableInfo<T> {
 	/**
 	 * Creates a holder of information about a table/class.
 	 * 
-	 * @param databaseType
-	 *            Database type we are storing the class in.
+	 * @param connectionSource
+	 *            Source of our database connections.
 	 * @param dataClass
 	 *            Class that we are holding information about.
 	 */
-	public TableInfo(DatabaseType databaseType, Class<T> dataClass) throws SQLException {
-		this(databaseType, DatabaseTableConfig.fromClass(databaseType, dataClass));
+	public TableInfo(ConnectionSource connectionSource, Class<T> dataClass) throws SQLException {
+		this(connectionSource.getDatabaseType(), DatabaseTableConfig.fromClass(connectionSource, dataClass));
+	}
+
+	public TableInfo(ConnectionSource connectionSource, DatabaseType databaseType, Class<T> dataClass) throws SQLException {
+		this(databaseType, DatabaseTableConfig.fromClass(connectionSource, dataClass));
 	}
 
 	/**
@@ -48,7 +53,7 @@ public class TableInfo<T> {
 	public TableInfo(DatabaseType databaseType, DatabaseTableConfig<T> tableConfig) throws SQLException {
 		this.dataClass = tableConfig.getDataClass();
 		this.tableName = tableConfig.getTableName();
-		this.fieldTypes = tableConfig.extractFieldTypes(databaseType);
+		this.fieldTypes = tableConfig.getFieldTypes(databaseType);
 		// find the id field
 		FieldType findIdFieldType = null;
 		for (FieldType fieldType : fieldTypes) {

@@ -27,7 +27,6 @@ import com.j256.ormlite.support.DatabaseResults;
 
 public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 
-	private OurDbType ourDatabaseType = new OurDbType();
 	private FieldConverter booleanFieldConverter = new BooleanNumberFieldConverter();
 
 	@Test
@@ -175,7 +174,7 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 
 	@Test
 	public void testBooleanConverterJavaToArg() throws Exception {
-		FieldType fieldType = FieldType.createFieldType(ourDatabaseType, "foo", Foo.class.getDeclaredField("bool"), 0);
+		FieldType fieldType = FieldType.createFieldType(connectionSource, "foo", Foo.class.getDeclaredField("bool"), 0);
 		assertEquals(new Byte((byte) 1), booleanFieldConverter.javaToSqlArg(fieldType, Boolean.TRUE));
 		assertEquals(new Byte((byte) 0), booleanFieldConverter.javaToSqlArg(fieldType, Boolean.FALSE));
 	}
@@ -188,7 +187,7 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 		expect(results.getByte(1)).andReturn((byte) 1);
 		expect(results.getByte(2)).andReturn((byte) 0);
 		replay(results);
-		FieldType fieldType = FieldType.createFieldType(ourDatabaseType, "foo", Foo.class.getDeclaredField("bool"), 0);
+		FieldType fieldType = FieldType.createFieldType(connectionSource, "foo", Foo.class.getDeclaredField("bool"), 0);
 		assertEquals(first, booleanFieldConverter.resultToJava(fieldType, results, 1));
 		assertEquals(second, booleanFieldConverter.resultToJava(fieldType, results, 2));
 		verify(results);
@@ -196,7 +195,7 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 
 	@Test
 	public void testBooleanConverterParseDefaultString() throws Exception {
-		FieldType fieldType = FieldType.createFieldType(ourDatabaseType, "foo", Foo.class.getDeclaredField("bool"), 0);
+		FieldType fieldType = FieldType.createFieldType(connectionSource, "foo", Foo.class.getDeclaredField("bool"), 0);
 		assertEquals(new Byte((byte) 1), booleanFieldConverter.parseDefaultString(fieldType, Boolean.TRUE.toString()));
 		assertEquals(new Byte((byte) 0), booleanFieldConverter.parseDefaultString(fieldType, Boolean.FALSE.toString()));
 	}
@@ -271,7 +270,8 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 		List<String> stmtsBefore = new ArrayList<String>();
 		List<String> stmtsAfter = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();
-		FieldType fieldType = FieldType.createFieldType(databaseType, "foo", Foo.class.getDeclaredField(fieldName), 0);
+		FieldType fieldType =
+				FieldType.createFieldType(connectionSource, "foo", Foo.class.getDeclaredField(fieldName), 0);
 		databaseType.appendColumnArg(sb, fieldType, additionalArgs, stmtsBefore, stmtsAfter, queriesAfter);
 		StringBuilder expectedSb = new StringBuilder();
 		databaseType.appendEscapedEntityName(expectedSb, fieldName);

@@ -344,8 +344,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testAnotherConstructor2() throws Exception {
-		DatabaseTableConfig<BaseFoo> tableConfig =
-				DatabaseTableConfig.fromClass(connectionSource.getDatabaseType(), BaseFoo.class);
+		DatabaseTableConfig<BaseFoo> tableConfig = DatabaseTableConfig.fromClass(connectionSource, BaseFoo.class);
 		new BaseDaoImpl<BaseFoo, String>(tableConfig) {
 		};
 	}
@@ -719,7 +718,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testTableConfig() throws Exception {
-		DatabaseTableConfig<BaseFoo> config = DatabaseTableConfig.fromClass(databaseType, BaseFoo.class);
+		DatabaseTableConfig<BaseFoo> config = DatabaseTableConfig.fromClass(connectionSource, BaseFoo.class);
 		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(connectionSource, config) {
 		};
 		assertSame(config, dao.getTableConfig());
@@ -727,7 +726,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testSetters() throws Exception {
-		DatabaseTableConfig<BaseFoo> config = DatabaseTableConfig.fromClass(databaseType, BaseFoo.class);
+		DatabaseTableConfig<BaseFoo> config = DatabaseTableConfig.fromClass(connectionSource, BaseFoo.class);
 		BaseDaoImpl<BaseFoo, String> dao = new BaseDaoImpl<BaseFoo, String>(BaseFoo.class) {
 		};
 		dao.setTableConfig(config);

@@ -27,13 +27,13 @@ public abstract class BaseCoreTest {
 		try {
 			Field field = BaseFoo.class.getDeclaredField("id");
 			assertEquals(String.class, field.getType());
-			stringFieldType = FieldType.createFieldType(databaseType, "BaseFoo", field, 0);
+			stringFieldType = FieldType.createFieldType(connectionSource, "BaseFoo", field, 0);
 			field = BaseFoo.class.getDeclaredField("val");
 			assertEquals(int.class, field.getType());
-			numberFieldType = FieldType.createFieldType(databaseType, "BaseFoo", field, 0);
+			numberFieldType = FieldType.createFieldType(connectionSource, "BaseFoo", field, 0);
 			field = Foreign.class.getDeclaredField("baseFoo");
 			assertEquals(BaseFoo.class, field.getType());
-			foreignFieldType = FieldType.createFieldType(databaseType, "BaseFoo", field, 0);
+			foreignFieldType = FieldType.createFieldType(connectionSource, "BaseFoo", field, 0);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -41,7 +41,7 @@ public abstract class BaseCoreTest {
 
 	{
 		try {
-			baseFooTableInfo = new TableInfo<BaseFoo>(databaseType, BaseFoo.class);
+			baseFooTableInfo = new TableInfo<BaseFoo>(connectionSource, BaseFoo.class);
 		} catch (SQLException e) {
 			fail("Constructing our base table info threw an exception");
 		}
@@ -58,7 +58,8 @@ public abstract class BaseCoreTest {
 	}
 
 	protected class StubConnectionSource implements ConnectionSource {
-		private DatabaseType databaseType = new StubDatabaseType();
+		private DatabaseType stubDatabaseType = new StubDatabaseType();
+		private DatabaseType databaseType = stubDatabaseType;
 		private DatabaseConnection databaseConnection;
 		public DatabaseConnection getReadOnlyConnection() {
 			return databaseConnection;
@@ -83,6 +84,12 @@ public abstract class BaseCoreTest {
 		}
 		public DatabaseConnection getSpecialConnection() {
 			return null;
+		}
+		public void setDatabaseType(DatabaseType databaseType) {
+			this.databaseType = databaseType;
+		}
+		public void resetDatabaseType() {
+			this.databaseType = stubDatabaseType;
 		}
 	}
 

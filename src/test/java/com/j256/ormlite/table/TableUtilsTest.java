@@ -52,7 +52,7 @@ public class TableUtilsTest extends BaseCoreTest {
 	public void testCreateStatementsTableConfig() throws Exception {
 		List<String> stmts =
 				TableUtils.getCreateTableStatements(connectionSource,
-						DatabaseTableConfig.fromClass(databaseType, Foo.class));
+						DatabaseTableConfig.fromClass(connectionSource, Foo.class));
 		assertEquals(1, stmts.size());
 		assertEquals(expectedCreateStatement(), stmts.get(0));
 	}
@@ -123,7 +123,8 @@ public class TableUtilsTest extends BaseCoreTest {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		testCreate(connectionSource, databaseType, 0, false, null, new Callable<Integer>() {
 			public Integer call() throws Exception {
-				return TableUtils.createTable(connectionSource, DatabaseTableConfig.fromClass(databaseType, Foo.class));
+				return TableUtils.createTable(connectionSource,
+						DatabaseTableConfig.fromClass(connectionSource, Foo.class));
 			}
 		});
 	}
@@ -173,8 +174,8 @@ public class TableUtilsTest extends BaseCoreTest {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		testDrop(connectionSource, 0, false, new Callable<Integer>() {
 			public Integer call() throws Exception {
-				return TableUtils.dropTable(connectionSource, DatabaseTableConfig.fromClass(databaseType, Foo.class),
-						false);
+				return TableUtils.dropTable(connectionSource,
+						DatabaseTableConfig.fromClass(connectionSource, Foo.class), false);
 			}
 		});
 	}
@@ -182,7 +183,7 @@ public class TableUtilsTest extends BaseCoreTest {
 	@Test
 	public void testIndex() throws Exception {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
-		expect(connectionSource.getDatabaseType()).andReturn(databaseType);
+		expect(connectionSource.getDatabaseType()).andReturn(databaseType).anyTimes();
 		DatabaseConnection conn = createMock(DatabaseConnection.class);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
 		final CompiledStatement stmt = createMock(CompiledStatement.class);
@@ -221,7 +222,7 @@ public class TableUtilsTest extends BaseCoreTest {
 	@Test
 	public void testComboIndex() throws Exception {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
-		expect(connectionSource.getDatabaseType()).andReturn(databaseType);
+		expect(connectionSource.getDatabaseType()).andReturn(databaseType).anyTimes();
 		DatabaseConnection conn = createMock(DatabaseConnection.class);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
 		final CompiledStatement stmt = createMock(CompiledStatement.class);
@@ -313,7 +314,7 @@ public class TableUtilsTest extends BaseCoreTest {
 				rowC.incrementAndGet();
 			}
 		}
-		expect(connectionSource.getDatabaseType()).andReturn(databaseType);
+		expect(connectionSource.getDatabaseType()).andReturn(databaseType).anyTimes();
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
 		connectionSource.releaseConnection(conn);
 		replay(connectionSource, conn, stmt);

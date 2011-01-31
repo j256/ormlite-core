@@ -11,6 +11,7 @@ import com.j256.ormlite.field.DatabaseFieldConfig;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.misc.JavaxPersistence;
 import com.j256.ormlite.misc.SqlExceptionUtil;
+import com.j256.ormlite.support.ConnectionSource;
 
 /**
  * Database table configuration information either supplied by Spring or direct Java wiring or from a
@@ -89,15 +90,24 @@ public class DatabaseTableConfig<T> {
 	}
 
 	/**
-	 * Return the field types associated with this configuration.
+	 * Extract the field types from the fieldConfigs if they have not already been configured.
 	 */
-	public FieldType[] extractFieldTypes(DatabaseType databaseType) throws SQLException {
+	public void extractFieldTypes(ConnectionSource connectionSource) throws SQLException {
 		if (fieldTypes == null) {
 			if (fieldConfigs == null) {
-				fieldTypes = extractFieldTypes(databaseType, dataClass, tableName, 0);
+				fieldTypes = extractFieldTypes(connectionSource, dataClass, tableName, 0);
 			} else {
-				fieldTypes = convertFieldConfigs(databaseType, tableName, fieldConfigs);
+				fieldTypes = convertFieldConfigs(connectionSource, tableName, fieldConfigs);
 			}
+		}
+	}
+
+	/**
+	 * Return the field types associated with this configuration.
+	 */
+	public FieldType[] getFieldTypes(DatabaseType databaseType) throws SQLException {
+		if (fieldTypes == null) {
+			throw new SQLException("");
 		}
 		return fieldTypes;
 	}
@@ -106,21 +116,25 @@ public class DatabaseTableConfig<T> {
 	 * Extract the DatabaseTableConfig for a particular class by looking for class and field annotations. This is used
 	 * by internal classes to configure a class.
 	 */
-	public static <T> DatabaseTableConfig<T> fromClass(DatabaseType databaseType, Class<T> clazz) throws SQLException {
-		return fromClass(databaseType, clazz, 0);
+	public static <T> DatabaseTableConfig<T> fromClass(ConnectionSource connectionSource, Class<T> clazz)
+			throws SQLException {
+		return fromClass(connectionSource, clazz, 0);
 	}
 
 	/**
+	 * This is used by internal methods to configure the database in case we recurse. It should not be called by users
+	 * directly. Instead use {@link #fromClass(ConnectionSource, Class)}.
+	 * 
 	 * @param recurseLevel
 	 *            is used to make sure we done get in an infinite recursive loop if a foreign object refers to itself.
 	 */
-	public static <T> DatabaseTableConfig<T> fromClass(DatabaseType databaseType, Class<T> clazz, int recurseLevel)
-			throws SQLException {
+	public static <T> DatabaseTableConfig<T> fromClass(ConnectionSource connectionSource, Class<T> clazz,
+			int recurseLevel) throws SQLException {
 		String tableName = extractTableName(clazz);
-		if (databaseType.isEntityNamesMustBeUpCase()) {
+		if (connectionSource.getDatabaseType().isEntityNamesMustBeUpCase()) {
 			tableName = tableName.toUpperCase();
 		}
-		return new DatabaseTableConfig<T>(clazz, tableName, extractFieldTypes(databaseType, clazz, tableName,
+		return new DatabaseTableConfig<T>(clazz, tableName, extractFieldTypes(connectionSource, clazz, tableName,
 				recurseLevel));
 	}
 
@@ -128,12 +142,12 @@ public class DatabaseTableConfig<T> {
 	 * @param recurseLevel
 	 *            is used to make sure we done get in an infinite recursive loop if a foreign object refers to itself.
 	 */
-	private static <T> FieldType[] extractFieldTypes(DatabaseType databaseType, Class<T> clazz, String tableName,
-			int recurseLevel) throws SQLException {
+	private static <T> FieldType[] extractFieldTypes(ConnectionSource connectionSource, Class<T> clazz,
+			String tableName, int recurseLevel) throws SQLException {
 		List<FieldType> fieldTypes = new ArrayList<FieldType>();
 		for (Class<?> classWalk = clazz; classWalk != null; classWalk = classWalk.getSuperclass()) {
 			for (Field field : classWalk.getDeclaredFields()) {
-				FieldType fieldType = FieldType.createFieldType(databaseType, tableName, field, recurseLevel);
+				FieldType fieldType = FieldType.createFieldType(connectionSource, tableName, field, recurseLevel);
 				if (fieldType != null) {
 					fieldTypes.add(fieldType);
 				}
@@ -164,7 +178,7 @@ public class DatabaseTableConfig<T> {
 		return name;
 	}
 
-	private FieldType[] convertFieldConfigs(DatabaseType databaseType, String tableName,
+	private FieldType[] convertFieldConfigs(ConnectionSource connectionSource, String tableName,
 			List<DatabaseFieldConfig> fieldConfigs) throws SQLException {
 		List<FieldType> fieldTypes = new ArrayList<FieldType>();
 		for (DatabaseFieldConfig fieldConfig : fieldConfigs) {
@@ -175,7 +189,7 @@ public class DatabaseTableConfig<T> {
 				throw SqlExceptionUtil.create("Could not configure field with name '" + fieldConfig.getFieldName()
 						+ "' for " + dataClass, e);
 			}
-			FieldType fieldType = new FieldType(databaseType, tableName, field, fieldConfig, 0);
+			FieldType fieldType = new FieldType(connectionSource, tableName, field, fieldConfig, 0);
 			fieldTypes.add(fieldType);
 		}
 		if (fieldTypes.size() == 0) {

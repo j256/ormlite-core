@@ -48,8 +48,7 @@ public class TableUtils {
 	 * @return The number of statements executed to do so.
 	 */
 	public static <T> int createTable(ConnectionSource connectionSource, Class<T> dataClass) throws SQLException {
-		DatabaseType databaseType = connectionSource.getDatabaseType();
-		return doCreateTable(databaseType, connectionSource, DatabaseTableConfig.fromClass(databaseType, dataClass));
+		return doCreateTable(connectionSource, DatabaseTableConfig.fromClass(connectionSource, dataClass));
 	}
 
 	/**
@@ -65,7 +64,8 @@ public class TableUtils {
 	 */
 	public static <T> int createTable(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig)
 			throws SQLException {
-		return doCreateTable(connectionSource.getDatabaseType(), connectionSource, tableConfig);
+		tableConfig.extractFieldTypes(connectionSource);
+		return doCreateTable(connectionSource, tableConfig);
 	}
 
 	/**
@@ -80,8 +80,7 @@ public class TableUtils {
 	 */
 	public static <T> List<String> getCreateTableStatements(ConnectionSource connectionSource, Class<T> dataClass)
 			throws SQLException {
-		DatabaseType databaseType = connectionSource.getDatabaseType();
-		return doCreateTableStatements(databaseType, DatabaseTableConfig.fromClass(databaseType, dataClass));
+		return doCreateTableStatements(connectionSource, DatabaseTableConfig.fromClass(connectionSource, dataClass));
 	}
 
 	/**
@@ -97,8 +96,8 @@ public class TableUtils {
 	 */
 	public static <T> List<String> getCreateTableStatements(ConnectionSource connectionSource,
 			DatabaseTableConfig<T> tableConfig) throws SQLException {
-		DatabaseType databaseType = connectionSource.getDatabaseType();
-		return doCreateTableStatements(databaseType, tableConfig);
+		tableConfig.extractFieldTypes(connectionSource);
+		return doCreateTableStatements(connectionSource, tableConfig);
 	}
 
 	/**
@@ -120,13 +119,11 @@ public class TableUtils {
 	public static <T> int dropTable(ConnectionSource connectionSource, Class<T> dataClass, boolean ignoreErrors)
 			throws SQLException {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
-		return doDropTable(databaseType, connectionSource, DatabaseTableConfig.fromClass(databaseType, dataClass),
+		return doDropTable(databaseType, connectionSource, DatabaseTableConfig.fromClass(connectionSource, dataClass),
 				ignoreErrors);
 	}
 
 	/**
-	 * Use {@link #getCreateTableStatements(ConnectionSource, DatabaseTableConfig)} <i>only</i> in unit tests.
-	 * 
 	 * <p>
 	 * <b>WARNING:</b> This is [obviously] very destructive and unrecoverable.
 	 * </p>
@@ -143,6 +140,7 @@ public class TableUtils {
 	public static <T> int dropTable(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig,
 			boolean ignoreErrors) throws SQLException {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
+		tableConfig.extractFieldTypes(connectionSource);
 		return doDropTable(databaseType, connectionSource, tableConfig, ignoreErrors);
 	}
 
@@ -323,8 +321,9 @@ public class TableUtils {
 		return statements;
 	}
 
-	private static <T> int doCreateTable(DatabaseType databaseType, ConnectionSource connectionSource,
-			DatabaseTableConfig<T> tableConfig) throws SQLException {
+	private static <T> int doCreateTable(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig)
+			throws SQLException {
+		DatabaseType databaseType = connectionSource.getDatabaseType();
 		TableInfo<T> tableInfo = new TableInfo<T>(databaseType, tableConfig);
 		logger.info("creating table '{}'", tableInfo.getTableName());
 		List<String> statements = new ArrayList<String>();
@@ -392,8 +391,9 @@ public class TableUtils {
 		return stmtC;
 	}
 
-	private static <T> List<String> doCreateTableStatements(DatabaseType databaseType,
+	private static <T> List<String> doCreateTableStatements(ConnectionSource connectionSource,
 			DatabaseTableConfig<T> tableConfig) throws SQLException {
+		DatabaseType databaseType = connectionSource.getDatabaseType();
 		TableInfo<T> tableInfo = new TableInfo<T>(databaseType, tableConfig);
 		List<String> statements = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();

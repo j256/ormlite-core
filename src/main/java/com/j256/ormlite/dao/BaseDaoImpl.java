@@ -128,17 +128,19 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			throw new IllegalStateException("connectionSource was never set on " + getClass().getSimpleName());
 		}
 
-		this.databaseType = connectionSource.getDatabaseType();
-		if (this.databaseType == null) {
+		databaseType = connectionSource.getDatabaseType();
+		if (databaseType == null) {
 			throw new IllegalStateException("connectionSource is getting a null DatabaseType in "
 					+ getClass().getSimpleName());
 		}
 		if (tableConfig == null) {
-			tableConfig = DatabaseTableConfig.fromClass(databaseType, dataClass);
+			tableInfo = new TableInfo<T>(connectionSource, dataClass);
+		} else {
+			tableConfig.extractFieldTypes(connectionSource);
+			tableInfo = new TableInfo<T>(databaseType, tableConfig);
 		}
-		this.tableInfo = new TableInfo<T>(databaseType, tableConfig);
-		this.statementExecutor = new StatementExecutor<T, ID>(databaseType, tableInfo);
-		this.initialized = true;
+		statementExecutor = new StatementExecutor<T, ID>(databaseType, tableInfo);
+		initialized = true;
 	}
 
 	public T queryForId(ID id) throws SQLException {
