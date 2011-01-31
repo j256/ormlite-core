@@ -6,8 +6,11 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.misc.SqlExceptionUtil;
+import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableInfo;
@@ -37,6 +40,7 @@ public class FieldType {
 	private final String generatedIdSequence;
 	private final FieldConverter fieldConverter;
 	private final TableInfo<?> foreignTableInfo;
+	private final Dao<Object, Object> foreignDao;
 	private final Method fieldGetMethod;
 	private final Method fieldSetMethod;
 	private final Map<String, Enum<?>> enumStringMap;
@@ -54,8 +58,9 @@ public class FieldType {
 	 * @param recurseLevel
 	 *            is used to make sure we done get in an infinite recursive loop if a foreign object refers to itself.
 	 */
-	public FieldType(DatabaseType databaseType, String tableName, Field field, DatabaseFieldConfig fieldConfig,
+	public FieldType(ConnectionSource connectionSource, String tableName, Field field, DatabaseFieldConfig fieldConfig,
 			int recurseLevel) throws SQLException {
+		DatabaseType databaseType = connectionSource.getDatabaseType();
 		this.tableName = tableName;
 		this.field = field;
 		this.fieldName = field.getName();
@@ -70,7 +75,7 @@ public class FieldType {
 			}
 		}
 		String defaultFieldName = field.getName();
-		if (fieldConfig.isForeign()) {
+		if (fieldConfig.isForeign() || fieldConfig.isForeignAutoRefresh()) {
 			if (recurseLevel < MAX_FOREIGN_RECURSE_LEVEL) {
 				if (dataType.isPrimitive()) {
 					throw new IllegalArgumentException("Field " + this + " is a primitive class " + field.getType()
@@ -78,26 +83,38 @@ public class FieldType {
 				}
 				DatabaseTableConfig<?> tableConfig = fieldConfig.getForeignTableConfig();
 				if (tableConfig == null) {
-					tableConfig = DatabaseTableConfig.fromClass(databaseType, field.getType(), recurseLevel + 1);
+					tableConfig = DatabaseTableConfig.fromClass(connectionSource, field.getType(), recurseLevel + 1);
+				} else {
+					tableConfig.extractFieldTypes(connectionSource);
 				}
 				@SuppressWarnings({ "unchecked", "rawtypes" })
 				TableInfo<?> foreignInfo = new TableInfo(databaseType, tableConfig);
 				if (foreignInfo.getIdField() == null) {
 					throw new IllegalArgumentException("Foreign field " + field.getType() + " does not have id field");
 				}
-				foreignTableInfo = foreignInfo;
+				this.foreignTableInfo = foreignInfo;
 				defaultFieldName = defaultFieldName + FOREIGN_ID_FIELD_SUFFIX;
 				// this field's data type is the foreign id's type
 				dataType = foreignInfo.getIdField().getDataType();
+				if (fieldConfig.isForeignAutoRefresh()) {
+					@SuppressWarnings("unchecked")
+					Dao<Object, Object> dao =
+							(Dao<Object, Object>) BaseDaoImpl.createDao(connectionSource, field.getType());
+					this.foreignDao = dao;
+				} else {
+					this.foreignDao = null;
+				}
 			} else {
 				// act like it's not foreign
-				foreignTableInfo = null;
+				this.foreignTableInfo = null;
+				this.foreignDao = null;
 			}
 		} else if (dataType == DataType.UNKNOWN) {
 			throw new IllegalArgumentException("ORMLite does not know how to store field class " + field.getType()
 					+ " for field " + this);
 		} else {
-			foreignTableInfo = null;
+			this.foreignTableInfo = null;
+			this.foreignDao = null;
 		}
 		if (fieldConfig.getColumnName() == null) {
 			this.dbColumnName = defaultFieldName;
@@ -304,6 +321,9 @@ public class FieldType {
 			Object foreignObject = foreignTableInfo.createObject();
 			// assign the val to its id field
 			foreignTableInfo.getIdField().assignField(foreignObject, val);
+			if (foreignDao != null) {
+				foreignDao.refresh(foreignObject);
+			}
 			// the value we are to assign to our field is now the foreign object itself
 			val = foreignObject;
 		}
@@ -523,13 +543,14 @@ public class FieldType {
 	 * @param recurseLevel
 	 *            is used to make sure we done get in an infinite recursive loop if a foreign object refers to itself. =
 	 */
-	public static FieldType createFieldType(DatabaseType databaseType, String tableName, Field field, int recurseLevel)
-			throws SQLException {
+	public static FieldType createFieldType(ConnectionSource connectionSource, String tableName, Field field,
+			int recurseLevel) throws SQLException {
+		DatabaseType databaseType = connectionSource.getDatabaseType();
 		DatabaseFieldConfig fieldConfig = DatabaseFieldConfig.fromField(databaseType, tableName, field);
 		if (fieldConfig == null) {
 			return null;
 		} else {
-			return new FieldType(databaseType, tableName, field, fieldConfig, recurseLevel);
+			return new FieldType(connectionSource, tableName, field, fieldConfig, recurseLevel);
 		}
 	}
 

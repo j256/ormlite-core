@@ -34,6 +34,7 @@ public class DatabaseFieldConfig {
 	private boolean unique;
 	private String indexName;
 	private String uniqueIndexName;
+	private boolean foreignAutoRefresh;
 
 	public DatabaseFieldConfig() {
 		// for spring
@@ -42,7 +43,8 @@ public class DatabaseFieldConfig {
 	public DatabaseFieldConfig(String fieldName, String columnName, DataType dataType, String defaultValue, int width,
 			boolean canBeNull, boolean id, boolean generatedId, String generatedIdSequence, boolean foreign,
 			DatabaseTableConfig<?> foreignTableConfig, boolean useGetSet, Enum<?> unknownEnumValue,
-			boolean throwIfNull, String format, boolean unique, String indexName, String uniqueIndexName) {
+			boolean throwIfNull, String format, boolean unique, String indexName, String uniqueIndexName,
+			boolean autoRefresh) {
 		this.fieldName = fieldName;
 		this.columnName = columnName;
 		this.dataType = dataType;
@@ -61,6 +63,7 @@ public class DatabaseFieldConfig {
 		this.unique = unique;
 		this.indexName = indexName;
 		this.uniqueIndexName = uniqueIndexName;
+		this.foreignAutoRefresh = autoRefresh;
 	}
 
 	/**
@@ -244,6 +247,14 @@ public class DatabaseFieldConfig {
 		this.uniqueIndexName = uniqueIndexName;
 	}
 
+	public void setForeignAutoRefresh(boolean foreignAutoRefresh) {
+		this.foreignAutoRefresh = foreignAutoRefresh;
+	}
+
+	public boolean isForeignAutoRefresh() {
+		return foreignAutoRefresh;
+	}
+
 	/**
 	 * Create and return a config converted from a {@link Field} that may have either a {@link DatabaseField} annotation
 	 * or the javax.persistence annotations.
@@ -372,7 +383,8 @@ public class DatabaseFieldConfig {
 		// add in the index information
 		config.indexName = findIndexName(tableName, databaseField.indexName(), databaseField.index(), config);
 		config.uniqueIndexName =
-				findIndexName(tableName, databaseField.uniqueIndexName(), databaseField.uniqueIndex(), config);
+			findIndexName(tableName, databaseField.uniqueIndexName(), databaseField.uniqueIndex(), config);
+		config.foreignAutoRefresh = databaseField.foreignAutoRefresh();
 
 		return config;
 	}

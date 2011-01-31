@@ -181,4 +181,12 @@ public @interface DatabaseField {
 	 * unique.
 	 */
 	String uniqueIndexName() default "";
+
+	/**
+	 * Set this to be true (default false) to have a foreign field automagically refreshed when an object is queried.
+	 * This will _not_ automagically create the foreign object but when the object is queried, a separate database call
+	 * will be made to load of the fields of the foreign object via an internal DAO. The default is to just have the ID
+	 * field in the object retrieved.
+	 */
+	boolean foreignAutoRefresh() default false;
 }
