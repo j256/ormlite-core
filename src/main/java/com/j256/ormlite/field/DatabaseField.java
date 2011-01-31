@@ -186,7 +186,11 @@ public @interface DatabaseField {
 	 * Set this to be true (default false) to have a foreign field automagically refreshed when an object is queried.
 	 * This will _not_ automagically create the foreign object but when the object is queried, a separate database call
 	 * will be made to load of the fields of the foreign object via an internal DAO. The default is to just have the ID
-	 * field in the object retrieved.
+	 * field in the object retrieved and for the caller to call refresh on the correct DAO.
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> This will create another DAO object so that low memory devices may want to call refresh by hand.
+	 * </p>
 	 */
 	boolean foreignAutoRefresh() default false;
 }
