@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<!-- ormlite configuration file for Maven (http://maven.apache.org/) -->
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.j256.ormlite</groupId>
@@ -24,7 +25,8 @@
 	<scm>
 		<url>http://ormlite.svn.sourceforge.net/viewvc/ormlite/ormlite-core/trunk/</url>
 		<connection>scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-core/trunk</connection>
-		<developerConnection>scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-core/trunk</developerConnection>
+		<developerConnection>scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-core/trunk
+		</developerConnection>
 	</scm>
 	<developers>
 		<developer>
@@ -130,7 +132,10 @@
 				<configuration>
 					<showPackage>false</showPackage>
 					<additionalparam>-tag inheritDoc:X</additionalparam>
-					<excludePackageNames>com.j256.ormlite.stmt.query,com.j256.ormlite.stmt.mapped
+					<excludePackageNames>
+						com.j256.ormlite.stmt.query,
+						com.j256.ormlite.stmt.mapped,
+						com.j256.ormlite.stmt.raw
 					</excludePackageNames>
 				</configuration>
 			</plugin>
@@ -189,13 +194,11 @@
 		</plugins>
 	</build>
 	<properties>
-		<!--
-			default empty string that can be overridden on command line. due to surefire's parser bug, if we don't have this here
-			and have any other characters where this is used, it'll get replaced with string "null"
-		-->
+		<!-- default empty string that can be overridden on command line. due to surefire's parser bug, if we don't have this here 
+			and have any other characters where this is used, it'll get replaced with string "null" -->
 		<surefire.argLine />
 
-		<!-- external test package versions -->		
+		<!-- external test package versions -->
 		<persistence-api-version>1.0</persistence-api-version>
 		<easymock-version>2.3</easymock-version>
 		<commons-logging-version>1.1.1</commons-logging-version>
