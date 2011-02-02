@@ -314,7 +314,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 
 	/**
 	 * Similar to the {@link #queryRaw(String)} but instead of an array of String results being returned by the
-	 * iterator, this uses the column-types parameter to return instead an array of Objects.
+	 * iterator, this uses the column-types parameter to return an array of Objects instead.
 	 */
 	public GenericRawResults<Object[]> queryRaw(String query, DataType[] columnTypes) throws SQLException;
 

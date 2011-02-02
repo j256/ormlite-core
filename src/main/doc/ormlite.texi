@@ -21,9 +21,9 @@
 @c ----------------------------------------------------------------
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.9
+@set ormlite_version 4.10
 @set ormlite_year 2011
-@set ormlite_date January @value{ormlite_year}
+@set ormlite_date February @value{ormlite_year}
 @set package ORMLite
 @c ----------------------------------------------------------------
 
@@ -43,12 +43,13 @@ and this permission notice are preserved on all copies.
 @author Gray Watson
 
 @page
-Copyright @value{ormlite_year} by Gray Watson.
+Copyright 2010 to @value{ormlite_year} by Gray Watson.
 
 Published by Gray Watson
 
 Permission is granted to make and distribute verbatim copies of this manual provided the copyright notice
 and this permission notice are preserved on all copies.
+
 @end titlepage
 
 @c ----------------------------------------------------------------
@@ -100,6 +101,7 @@ Gray Watson @uref{http://256.com/gray/}
 * How to Upgrade::              Upgrading from a previous version.
 * Advanced::                    Advanced concepts with @value{package}.
 * Contributions::               Contributions from others who helped.
+* License::                     License for the project.
 * Index of Concepts::           Index of concepts in the manual.
 @end menu
 
@@ -118,13 +120,14 @@ Gray Watson @uref{http://256.com/gray/}
 @node Downloading, Starting Class, Getting Started, Getting Started
 @section Downloading @value{package} Jar
 
-To get started with @value{package}, you will need to download the jar file.  It is available on the central maven repository
+To get started with @value{package}, you will need to download the jar files.  They are available on the central maven repository
 (@uref{http://repo1.maven.org/maven2/com/j256/ormlite/}) or from Sourceforge (@uref{http://sourceforge.net/projects/ormlite/files/}). 
 
-Users that are connecting to SQL databases via JDBC connections will need to download the ormlite-jdbc-X.X.jar file. For use with Android
-applications, you should download the ormlite-android-X.X.jar instead. @value{package} does not have any required direct dependencies.
-See the section on external dependencies for information about other packages that you may want to use.  @xref{Dependencies}.  The code
-works with Java 5 or later.
+Users that are connecting to SQL databases via JDBC connections will need to download the ormlite-jdbc-X.X.jar and ormlite-core-X.X.jar
+files.  For use with Android applications, you should download the ormlite-android-X.X.jar and ormlite-core-X.X.jar files instead.  For
+either JDBC or Android you will also need the ormlite-core release which has the @value{package} backend implementations.  @value{package}
+does not have any required external dependencies although there are some other packages that you may want to use.  @xref{Dependencies}.
+The code works with Java 5 or later.
 
 @c ----------------------------------------------------------------
 @node Starting Class, Starting DAO, Downloading, Getting Started
@@ -280,7 +283,7 @@ continue on with the next section.  @xref{Using}.
 * DAO Usage::                   Using the Data Access Objects.
 * Identity Columns::            How identity fields and columns work.
 * Creating Indexes::            How to create indexes on fields.
-* RawResults::                  Issuing raw database queries using RawResults. 
+* RawResults::                  Issuing raw database queries using GenericRawResults. 
 @end menu
 
 @c ----------------------------------------------------------------
@@ -528,6 +531,15 @@ as well. To index multiple fields together in one index, each of the fields shou
 String value (default none) to have the database add a unique index for this field with this name. Same as index but this will ensure that all of
 the values in the index are unique.  For example, this means that you can insert @code{("pittsburgh", "pa")} and @code{("harrisburg", "pa")} and
 @code{("pittsburgh", "tx")} but not another @code{("pittsburgh", "pa")}.
+
+@cindex foreign object, auto refresh
+@item foreignAutoRefresh
+
+Set this to be true (default false) to have a foreign field automagically refreshed when an object is queried.	This will @emph{not} automagically
+create the foreign object but when the object is queried, a separate database call will be made to load of the fields of the foreign object via an
+internal DAO. The default is to just have the ID field in the object retrieved and for the caller to call refresh on the correct DAO.
+
+@emph{NOTE:} This will create another DAO object so that low memory devices may want to call refresh by hand.
 
 @end table
 
@@ -1317,17 +1329,18 @@ create unique indexes that ensure that no two row has the same value(s) for the 
 @cindex queryForAllRaw
 @cindex iteratorRaw
 @cindex RawResults
+@cindex GenericRawResults
 The built-in methods available in the @code{Dao} interface and the @code{QueryBuilder} classes don't provide
 the ability to handle all types of queries.  For example, aggregation queries (sum, count, avg, etc.) cannot be handled
 as an object since every query has a different result list.  To handle these queries, you can issue raw database queries
-using the @code{queryForAllRaw} or @code{iteratorRaw} methods on DAO.  These methods return a @code{RawResults} object
-which represents a result as an array of strings.  See the documentation on the @code{RawResults} object for more details
-on how to use it, or take a look at the following examples.
+using the @code{queryRaw} methods on DAO.  These methods return a @code{GenericRawResults} object which represents a
+result as an array of strings, array of objects, or user objects.  See the documentation on the @code{GenericRawResults}
+object for more details on how to use it, or take a look at the following examples.
 
 @example
 // find out how many orders account-id #10 has
-RawResults rawResults =
-  orderDao.queryForAllRaw(
+GenericRawResults<String[]> rawResults =
+  orderDao.queryRaw(
     "select count(*) from orders where account_id = 10");
 // there should be 1 result
 List<String[]> results = rawResults.getResults();
@@ -1337,18 +1350,57 @@ String[] resultArray = results.get(0);
 System.out.println("Account-id 10 has " + resultArray[0] + " orders");
 @end example
 
-For large numbers of results, you should consider using the @code{iteratorRaw} Dao method which uses database paging.
-For example:
+For large numbers of results, you should consider using the @code{iterator()} method on the @code{GenericRawResults} object
+which uses database paging.  For example:
 
 @example
 // return the orders with the sum of their amounts per account
-RawResults rawResults =
-  orderDao.iteratorRaw(
+GenericRawResults<String[]> rawResults =
+  orderDao.queryRaw(
     "select account_id,sum(amount) from orders group by account_id");
 // page through the results
 for (String[] resultArray : rawResults) @{
-  System.out.println("Account-id " + resultArray[0] has "
+  System.out.println("Account-id " + resultArray[0] + " has "
     + resultArray[1] + " total orders");
+@}
+rawResults.close();
+@end example
+
+If some of your fields cannot be appropriately mapped to strings, you can also return the fields as an @code{Object[]} if you
+pass in the types of the resulting columns.  For example:
+
+@example
+// return the orders with the sum of their amounts per account
+GenericRawResults<Object[]> rawResults =
+  orderDao.queryRaw(
+    "select account_id,sum(amount) from orders group by account_id",
+    new DataType[] @{ DataType.LONG, DataType.INTEGER @});
+// page through the results
+for (Object[] resultArray : rawResults) @{
+  System.out.println("Account-id " + resultArray[0] + " has "
+    + resultArray[1] + " total orders");
+@}
+rawResults.close();
+@end example
+
+You can also map the results into your own object by passing in a @code{RawRowMapper} object.  This will call the mapping object
+with an array of strings and allow it to convert the strings into an object.  For example:
+
+@example
+// return the orders with the sum of their amounts per account
+GenericRawResults<Foo> rawResults =
+  orderDao.queryRaw(
+    "select account_id,sum(amount) from orders group by account_id",
+    new RawRowMapper<Foo>() @{
+    		public Foo mapRow(String[] columnNames, String[] resultColumns) @{
+    			return new Foo(Long.parseLong(resultColumns[0]),
+    			    Integer.parseInt(resultColumns[1]));
+    		@}
+    @});
+// page through the results
+for (Foo foo : rawResults) @{
+  System.out.println("Account-id " + foo.accountId + " has "
+    + foo.totalOrders + " total orders");
 @}
 rawResults.close();
 @end example
@@ -1698,9 +1750,9 @@ System.out.println("Now the account fields will be set: " + order.account.name);
 
 Because of the lack of support for JDBC in Android OS, @value{package} makes direct calls to the Android database APIs
 to access SQLite databases.  You should make sure that you have downloaded and are depending on the
-@code{ormlite-android.jar} file and @emph{not} the @code{ormlite-jdbc.jar} version.  This part of the code is the
-newest and although tested and used in some projects, the proper patterns on @emph{how} to use it have not solidified.
-Feedback on this would be most welcome.
+@code{ormlite-android.jar} file and @emph{not} the @code{ormlite-jdbc.jar} version.  Although a number of developers
+are using the package in their projects, we continue to improve how @value{package} integrates with the Android classes.
+Feedback on this would be welcome.
 
 After you have read the getting started section (@pxref{Getting Started}), the following instructions should be
 followed to help you get @value{package} working under Android OS.
@@ -2324,7 +2376,7 @@ dependencies: @code{com.sun.jmx.jmxri}, @code{com.sun.jdmk.jmxtools}, @code{java
 @end table
 
 @c ----------------------------------------------------------------
-@node Contributions, Index of Concepts, Dependencies, Top
+@node Contributions, License, Dependencies, Top
 @chapter Contributions
 
 There are a couple of people that I'd like to thank who helped with the project.
@@ -2353,8 +2405,26 @@ I worked with Robert at a company where he laid out our entire DAO and hibernate
 @end table
 
 Thanks much to them all.
+
 @c ----------------------------------------------------------------
-@node Index of Concepts,, Contributions, Top
+@node License, Index of Concepts, Contributions, Top
+@chapter Project License
+
+This document is part of the ORMLite package.
+
+Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby
+granted, provided that the above copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING
+ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL,
+DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE
+USE OR PERFORMANCE OF THIS SOFTWARE.
+
+The author may be contacted via @uref{http://ormlite.sourceforge.net/}
+
+@c ----------------------------------------------------------------
+@node Index of Concepts,, License, Top
 @unnumbered Index of Concepts
 
 @printindex cp

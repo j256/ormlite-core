@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on January, 26 2011 by texi2html 1.70 -->
+<!-- Created on February, 2 2011 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -54,7 +54,7 @@ ul.toc {list-style: none}
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_9.html#SEC43" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC44" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h1 class="chapter"> 3. Custom Statement Builder </h1>
@@ -91,7 +91,7 @@ with which you can construct custom queries to return a sub-set of the table.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_9.html#SEC43" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC44" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.1 Query Builder Basics </h2>
@@ -111,7 +111,7 @@ public class Account {
 <p>This allows us to construct queries using the password field name without having the renaming of a field in the future break
 our queries.  This should be done <em>even</em> if the name of the field and the column name are the same.
 
-</p><a name="IDX133"></a>
+</p><a name="IDX134"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">// get our query builder from the DAO
 QueryBuilder&lt;Account, String&gt; queryBuilder =
   accountDao.queryBuilder();
@@ -123,7 +123,7 @@ PreparedQuery&lt;Account, String&gt; preparedQuery =
 // query for all accounts that have that password
 List&lt;Account&gt; accountList = accountDao.query(preparedQuery);
 </pre></td></tr></table>
-<a name="IDX134"></a>
+<a name="IDX135"></a>
 <p>You get a <code>QueryBuilder</code> object from the <code>Dao.queryBuilder</code> method, call methods on it to build your custom
 query, call <code>queryBuilder.prepare()</code> which returns a <code>PreparedQuery</code> object, and then pass the <code>PreparedQuery</code>
 to the DAO's <code>query</code> or <code>iterator</code> methods.
@@ -154,7 +154,7 @@ List&lt;Account&gt; accountList =
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_9.html#SEC43" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC44" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.2 Building Queries </h2>
@@ -180,7 +180,7 @@ PreparedQuery&lt;Account, String&gt; preparedQuery =
 </p><table><tr><td>&nbsp;</td><td><pre class="example">SELECT * FROM account
   WHERE (name = 'foo' AND password = '_secret')
 </pre></td></tr></table>
-<a name="IDX135"></a>
+<a name="IDX136"></a>
 <p>If you'd rather chain the methods onto one line (like StringBuilder), this can also be written as:
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">queryBuilder.where()
@@ -194,7 +194,7 @@ PreparedQuery&lt;Account, String&gt; preparedQuery =
 where.and(where.eq(Account.NAME_FIELD_NAME, &quot;foo&quot;),
           where.eq(Account.PASSWORD_FIELD_NAME, &quot;_secret&quot;));
 </pre></td></tr></table>
-<a name="IDX136"></a>
+<a name="IDX137"></a>
 <p>All three of the above call formats produce the same SQL.  For complex queries that mix ANDs and ORs, the last
 format may be necessary to get the grouping correct.  For example, here's a complex query:
 
@@ -213,12 +213,12 @@ where.or(
   WHERE ((name = 'foo' AND password = '_secret')
          OR (name = 'bar' AND password = 'qwerty'))
 </pre></td></tr></table>
-<a name="IDX137"></a>
 <a name="IDX138"></a>
 <a name="IDX139"></a>
 <a name="IDX140"></a>
 <a name="IDX141"></a>
 <a name="IDX142"></a>
+<a name="IDX143"></a>
 <p>The <code>QueryBuilder</code> also allows you to set what specific select columns you want returned, specify the 'ORDER BY'
 and 'GROUP BY' fields, and various other SQL features (LIKE, IN, &gt;, &gt;=, &lt;, &lt;=, &lt;&gt;, IS NULL, DISTINCT, &hellip;).  See the
 javadocs on<code>QueryBuilder</code> and <code>Where</code> classes for more information.  A good SQL reference site can be found
@@ -240,7 +240,7 @@ at <a href="http://www.w3schools.com/Sql/">http://www.w3schools.com/Sql/</a>.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_9.html#SEC43" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC44" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.3 Building Statements </h2>
@@ -297,7 +297,7 @@ accountDao.delete(deleteBuilder.prepare());
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_9.html#SEC43" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC44" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.4 Using Select Arguments </h2>
@@ -343,12 +343,12 @@ new object if you want to use a <code>SelectArg</code> with another column.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_9.html#SEC43" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC44" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>January, 26 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>February, 2 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 

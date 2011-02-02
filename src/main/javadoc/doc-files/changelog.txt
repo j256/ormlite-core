@@ -1,3 +1,18 @@
+4.10: 2/2/2011
+	* CORE: Revamped the logging classes to use Levels.  Also added a JavaUtilLog implementation.
+	* CORE: Added support for the foreignAutoRefresh boolean in DatabaseField which automagically refreshes foreign fields.
+	* CORE: Significantly refactored the RawResults class (now deprecated) and created GenericRawResults.
+	* CORE: Dao.queryForAllRaw() and Dao.iteratorRaw() now deprecated.  Replaced with Dao.queryRaw() methods. 
+	* CORE: Added the ability to get results as an array of Objects when you pass in the column-types.
+	* CORE: Found some unclosed statements in the update(PreparedUpdate) and delete(PreparedDelete) methods.  Fixes bug #3170021.
+	* ANDROID: Added missing OrmLiteBaseListActivity base class.
+	* ANDROID: Reordered the log class detection to put Android Log before commons logging.  Fixes bug #3167100.
+	* ANDROID: Split out the -core from this package.  You now need to install BOTH the core and android (or jdbc) packages.
+	* ANDROID: Removed the deprecated AndroidTableUtils class.
+	* ANDROID: Better wrapping of android.database.SQLException with java.sql.SQLException.
+	* JDBC: Split out the -core from this package.  You now need to install BOTH the core and jdbc (or android) packages.
+	* ALL: Added LICENSE.txt file to all releases and documentation.  It is basically the ISC public domain license. 
+
 4.9: 1/26/2011
 	* CORE: Changed the generated index names to have a table-name prefix and always have a "_idx" suffix.
 
