@@ -25,7 +25,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 
 	private final static Logger logger = LoggerFactory.getLogger(SelectIterator.class);
 
-	private final Class<T> dataClass;
+	private final Class<?> dataClass;
 	private final Dao<T, ID> classDao;
 	private final ConnectionSource connectionSource;
 	private final DatabaseConnection connection;
@@ -40,7 +40,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 	/**
 	 * If the statement parameter is null then this won't log information
 	 */
-	public SelectIterator(Class<T> dataClass, Dao<T, ID> classDao, GenericRowMapper<T> rowMapper,
+	public SelectIterator(Class<?> dataClass, Dao<T, ID> classDao, GenericRowMapper<T> rowMapper,
 			ConnectionSource connectionSource, DatabaseConnection connection, CompiledStatement compiledStmt,
 			String statement) throws SQLException {
 		this.dataClass = dataClass;

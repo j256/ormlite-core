@@ -189,12 +189,17 @@ public enum DataType implements FieldConverter {
 
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-			String formatStr = fieldType.getFormat();
+			String formatStr;
+			if (fieldType == null) {
+				formatStr = DEFAULT_DATE_FORMAT_STRING;
+			} else {
+				formatStr = fieldType.getFormat();
+			}
 			String dateStr = results.getString(columnPos);
 			try {
 				return parseDateString(formatStr, dateStr);
 			} catch (ParseException e) {
-				throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing date-string '" + dateStr
+				throw SqlExceptionUtil.create("Problems with column " + columnPos + " parsing date-string '" + dateStr
 						+ "' using '" + formatOrDefault(formatStr) + "'", e);
 			}
 		}
@@ -622,7 +627,11 @@ public enum DataType implements FieldConverter {
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			String val = results.getString(columnPos);
-			return fieldType.enumFromString(val);
+			if (fieldType == null) {
+				return val;
+			} else {
+				return fieldType.enumFromString(val);
+			}
 		}
 		@Override
 		public String resultToJavaString(DatabaseResults results, int columnPos) throws SQLException {
@@ -646,7 +655,12 @@ public enum DataType implements FieldConverter {
 		}
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-			return fieldType.enumFromInt(results.getInt(columnPos));
+			int val = results.getInt(columnPos);
+			if (fieldType == null) {
+				return val;
+			} else {
+				return fieldType.enumFromInt(val);
+			}
 		}
 		@Override
 		public String resultToJavaString(DatabaseResults results, int columnPos) throws SQLException {

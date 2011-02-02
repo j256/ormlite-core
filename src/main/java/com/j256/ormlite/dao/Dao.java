@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.misc.TransactionManager;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.PreparedDelete;
@@ -13,7 +14,6 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.PreparedUpdate;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.SelectIterator;
-import com.j256.ormlite.stmt.StatementBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
 
 /**
@@ -64,15 +64,11 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public List<T> queryForAll() throws SQLException;
 
 	/**
-	 * Query for all of the items in the object table that match the SQL select query argument. Although you should use
-	 * the {@link StatementBuilder} for most queries, this method allows you to do special queries that aren't supported
-	 * otherwise. For medium sized or large tables, this may load a lot of objects into memory so you should consider
-	 * using the {@link #iteratorRaw(String)} method instead.
+	 * You should be using {@link #queryRaw(String)}.
 	 * 
-	 * @return A raw results object from which you can get the results.
-	 * @throws SQLException
-	 *             on any SQL problems.
+	 * @deprecated
 	 */
+	@Deprecated
 	public RawResults queryForAllRaw(String query) throws SQLException;
 
 	/**
@@ -294,12 +290,33 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public CloseableIterator<T> iterator(PreparedQuery<T> preparedQuery) throws SQLException;
 
 	/**
-	 * Same as {@link #iterator(PreparedQuery)} except it returns a RawResults object associated with the SQL select
-	 * query argument. Although you should use the {@link #iterator()} for most queries, this method allows you to do
-	 * special queries that aren't supported otherwise. Like the above iterator methods, you must call close on the
-	 * returned RawResults object once you are done with it.
+	 * You should be using {@link #queryRaw(String)};
+	 * 
+	 * @deprecated
 	 */
+	@Deprecated
 	public RawResults iteratorRaw(String query) throws SQLException;
+
+	/**
+	 * Similar to the {@link #iterator(PreparedQuery)} except it returns a RawResults object associated with the SQL
+	 * select query argument. Although you should use the {@link #iterator()} for most queries, this method allows you
+	 * to do special queries that aren't supported otherwise. Like the above iterator methods, you must call close on
+	 * the returned RawResults object once you are done with it.
+	 */
+	public GenericRawResults<String[]> queryRaw(String query) throws SQLException;
+
+	/**
+	 * Similar to the {@link #queryRaw(String)} but this iterator returns rows that you can map yourself. For every
+	 * result that is returned by the database, the {@link RawRowMapper#mapRow(String[], String[])} method is called so
+	 * you can convert the result columns into an object to be returned by the iterator.
+	 */
+	public <UO> GenericRawResults<UO> queryRaw(String query, RawRowMapper<UO> mapper) throws SQLException;
+
+	/**
+	 * Similar to the {@link #queryRaw(String)} but instead of an array of String results being returned by the
+	 * iterator, this uses the column-types parameter to return instead an array of Objects.
+	 */
+	public GenericRawResults<Object[]> queryRaw(String query, DataType[] columnTypes) throws SQLException;
 
 	/**
 	 * Call the call-able that will perform a number of batch tasks. This is for performance when you want to run a

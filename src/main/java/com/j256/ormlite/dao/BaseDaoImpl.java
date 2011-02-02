@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import com.j256.ormlite.db.DatabaseType;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.misc.SqlExceptionUtil;
@@ -188,9 +189,10 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		return statementExecutor.query(connectionSource, preparedQuery);
 	}
 
+	@SuppressWarnings("deprecation")
 	public RawResults queryForAllRaw(String queryString) throws SQLException {
 		checkForInitialized();
-		return statementExecutor.queryRaw(connectionSource, queryString);
+		return statementExecutor.queryForAllRawOld(connectionSource, queryString);
 	}
 
 	public int create(T data) throws SQLException {
@@ -335,10 +337,41 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	/*
+	 * When this gets removed, I should rename the GenericRawResults one to this name and deprecate it.
+	 */
+	@SuppressWarnings("deprecation")
 	public RawResults iteratorRaw(String query) throws SQLException {
 		checkForInitialized();
 		try {
-			return statementExecutor.buildIterator(connectionSource, query);
+			return statementExecutor.buildOldIterator(connectionSource, query);
+		} catch (SQLException e) {
+			throw SqlExceptionUtil.create("Could not build iterator for " + query, e);
+		}
+	}
+
+	public GenericRawResults<String[]> queryRaw(String query) throws SQLException {
+		checkForInitialized();
+		try {
+			return statementExecutor.queryRaw(connectionSource, query);
+		} catch (SQLException e) {
+			throw SqlExceptionUtil.create("Could not build iterator for " + query, e);
+		}
+	}
+
+	public <GR> GenericRawResults<GR> queryRaw(String query, RawRowMapper<GR> mapper) throws SQLException {
+		checkForInitialized();
+		try {
+			return statementExecutor.queryRaw(connectionSource, query, mapper);
+		} catch (SQLException e) {
+			throw SqlExceptionUtil.create("Could not build iterator for " + query, e);
+		}
+	}
+
+	public GenericRawResults<Object[]> queryRaw(String query, DataType[] columnTypes) throws SQLException {
+		checkForInitialized();
+		try {
+			return statementExecutor.queryRaw(connectionSource, query, columnTypes);
 		} catch (SQLException e) {
 			throw SqlExceptionUtil.create("Could not build iterator for " + query, e);
 		}

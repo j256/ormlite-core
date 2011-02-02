@@ -30,6 +30,8 @@ public interface FieldConverter {
 	 * 
 	 * @throws SQLException
 	 *             If there is a problem accessing the results data.
+	 * @param fieldType
+	 *            Associated FieldType which may be null.
 	 */
 	public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException;
 

@@ -9,12 +9,12 @@ import java.util.concurrent.Callable;
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.dao.RawResults;
 import com.j256.ormlite.dao.RawRowMapper;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
@@ -42,6 +42,7 @@ import com.j256.ormlite.table.TableInfo;
  *            needs an ID parameter however so you can use Void or Object to satisfy the compiler.
  * @author graywatson
  */
+@SuppressWarnings("deprecation")
 public class StatementExecutor<T, ID> {
 
 	private static Logger logger = LoggerFactory.getLogger(StatementExecutor.class);
@@ -56,6 +57,7 @@ public class StatementExecutor<T, ID> {
 	private MappedDelete<T, ID> mappedDelete;
 	private MappedRefresh<T, ID> mappedRefresh;
 	private final FieldType[] noFieldTypes = new FieldType[0];
+	private static final StringArrayRowMapper stringArrayRowMapper = new StringArrayRowMapper();
 
 	/**
 	 * Provides statements for various SQL operations.
@@ -80,9 +82,8 @@ public class StatementExecutor<T, ID> {
 	 * Return the first object that matches the {@link PreparedStmt} or null if none.
 	 */
 	public T queryForFirst(DatabaseConnection databaseConnection, PreparedStmt<T> preparedQuery) throws SQLException {
-		CompiledStatement stmt = null;
+		CompiledStatement stmt = preparedQuery.compile(databaseConnection);
 		try {
-			stmt = preparedQuery.compile(databaseConnection);
 			DatabaseResults results = stmt.executeQuery();
 			if (results.next()) {
 				logger.debug("query-for-first of '{}' returned at least 1 result", preparedQuery.getStatement());
@@ -132,28 +133,23 @@ public class StatementExecutor<T, ID> {
 	 * Return a list of all of the data in the table that matches the {@link PreparedStmt}. Should be used carefully if
 	 * the table is large. Consider using the {@link Dao#iterator} if this is the case.
 	 */
-	public RawResults queryRaw(ConnectionSource connectionSource, String query) throws SQLException {
-		SelectIterator<String[], Void> iterator = null;
+	public RawResults queryForAllRawOld(ConnectionSource connectionSource, String query) throws SQLException {
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		CompiledStatement compiledStatement =
+				connection.compileStatement(query, StatementType.SELECT, noFieldTypes, tableInfo.getFieldTypes());
 		try {
-			DatabaseConnection connection = connectionSource.getReadOnlyConnection();
-			CompiledStatement compiledStatement =
-					connection.compileStatement(query, StatementType.SELECT, noFieldTypes, tableInfo.getFieldTypes());
-			RawResultsList results = new RawResultsList(compiledStatement);
-			// statement arg is null because we don't want it to double log below
-			iterator =
-					new SelectIterator<String[], Void>(String[].class, null, results, connectionSource, connection,
-							compiledStatement, null);
-			while (iterator.hasNextThrow()) {
-				results.add(iterator.nextThrow());
-			}
-			logger.debug("query of '{}' returned {} results", query, results.size());
-			return results;
+			String[] columnNames = extractColumnNames(compiledStatement);
+			RawResultsWrapper rawResults =
+					new RawResultsWrapper(connectionSource, connection, query, compiledStatement, columnNames);
+			compiledStatement = null;
+			return rawResults;
 		} finally {
-			if (iterator != null) {
-				iterator.close();
+			if (compiledStatement != null) {
+				compiledStatement.close();
 			}
 		}
 	}
+
 	/**
 	 * Create and return a SelectIterator for the class using the default mapped query for all statement.
 	 */
@@ -174,12 +170,84 @@ public class StatementExecutor<T, ID> {
 	}
 
 	/**
-	 * Return a RawResults object associated with an internal iterator that matches the query argument.
+	 * Return on old RawResults object associated with an internal iterator that matches the query argument.
 	 */
-	public RawResults buildIterator(ConnectionSource connectionSource, String query) throws SQLException {
+	public RawResults buildOldIterator(ConnectionSource connectionSource, String query) throws SQLException {
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
-		return new RawResultsIterator(query, connectionSource, connection, connection.compileStatement(query,
-				StatementType.SELECT, noFieldTypes, tableInfo.getFieldTypes()));
+		logger.debug("executing raw results iterator for: {}", query);
+		CompiledStatement compiledStatement =
+				connection.compileStatement(query, StatementType.SELECT, noFieldTypes, tableInfo.getFieldTypes());
+		try {
+			String[] columnNames = extractColumnNames(compiledStatement);
+			RawResultsWrapper rawResults =
+					new RawResultsWrapper(connectionSource, connection, query, compiledStatement, columnNames);
+			compiledStatement = null;
+			return rawResults;
+		} finally {
+			if (compiledStatement != null) {
+				compiledStatement.close();
+			}
+		}
+	}
+
+	/**
+	 * Return a results object associated with an internal iterator that returns String[] results.
+	 */
+	public GenericRawResults<String[]> queryRaw(ConnectionSource connectionSource, String query)
+			throws SQLException {
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		logger.debug("executing raw results iterator for: {}", query);
+		CompiledStatement compiledStatement =
+				connection.compileStatement(query, StatementType.SELECT, noFieldTypes, tableInfo.getFieldTypes());
+		String[] columnNames = extractColumnNames(compiledStatement);
+		return new RawResultsImpl<String[]>(connectionSource, connection, query, String[].class, compiledStatement,
+				columnNames, new StringArrayRowMapper());
+	}
+
+	/**
+	 * Return a results object associated with an internal iterator is mapped by the user's rowMapper.
+	 */
+	public <UO> GenericRawResults<UO> queryRaw(ConnectionSource connectionSource, String query,
+			RawRowMapper<UO> rowMapper) throws SQLException {
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		logger.debug("executing raw results iterator for: {}", query);
+		CompiledStatement compiledStatement =
+				connection.compileStatement(query, StatementType.SELECT, noFieldTypes, tableInfo.getFieldTypes());
+		try {
+			String[] columnNames = extractColumnNames(compiledStatement);
+			RawResultsImpl<UO> rawResults =
+					new RawResultsImpl<UO>(connectionSource, connection, query, String[].class, compiledStatement,
+							columnNames, new UserObjectRowMapper<UO>(rowMapper, columnNames));
+			compiledStatement = null;
+			return rawResults;
+		} finally {
+			if (compiledStatement != null) {
+				compiledStatement.close();
+			}
+		}
+	}
+
+	/**
+	 * Return a results object associated with an internal iterator that returns Object[] results.
+	 */
+	public GenericRawResults<Object[]> queryRaw(ConnectionSource connectionSource, String query,
+			DataType[] columnTypes) throws SQLException {
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		logger.debug("executing raw results iterator for: {}", query);
+		CompiledStatement compiledStatement =
+				connection.compileStatement(query, StatementType.SELECT, noFieldTypes, tableInfo.getFieldTypes());
+		try {
+			String[] columnNames = extractColumnNames(compiledStatement);
+			RawResultsImpl<Object[]> rawResults =
+					new RawResultsImpl<Object[]>(connectionSource, connection, query, Object[].class,
+							compiledStatement, columnNames, new ObjectArrayRowMapper(columnTypes));
+			compiledStatement = null;
+			return rawResults;
+		} finally {
+			if (compiledStatement != null) {
+				compiledStatement.close();
+			}
+		}
 	}
 
 	/**
@@ -217,7 +285,13 @@ public class StatementExecutor<T, ID> {
 	 */
 	public int update(DatabaseConnection databaseConnection, PreparedUpdate<T> preparedUpdate) throws SQLException {
 		CompiledStatement stmt = preparedUpdate.compile(databaseConnection);
-		return stmt.executeUpdate();
+		try {
+			return stmt.executeUpdate();
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
 	}
 
 	/**
@@ -263,7 +337,13 @@ public class StatementExecutor<T, ID> {
 	 */
 	public int delete(DatabaseConnection databaseConnection, PreparedDelete<T> preparedDelete) throws SQLException {
 		CompiledStatement stmt = preparedDelete.compile(databaseConnection);
-		return stmt.executeUpdate();
+		try {
+			return stmt.executeUpdate();
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
 	}
 
 	public <CT> CT callBatchTasks(DatabaseConnection connection, Callable<CT> callable) throws Exception {
@@ -287,6 +367,15 @@ public class StatementExecutor<T, ID> {
 		}
 	}
 
+	private String[] extractColumnNames(CompiledStatement compiledStatement) throws SQLException {
+		int colN = compiledStatement.getColumnCount();
+		String[] columnNames = new String[colN];
+		for (int colC = 0; colC < colN; colC++) {
+			columnNames[colC] = compiledStatement.getColumnName(colC + 1);
+		}
+		return columnNames;
+	}
+
 	private void prepareQueryForAll() throws SQLException {
 		if (preparedQueryForAll == null) {
 			preparedQueryForAll = new QueryBuilder<T, ID>(databaseType, tableInfo).prepare();
@@ -294,215 +383,120 @@ public class StatementExecutor<T, ID> {
 	}
 
 	/**
-	 * Base class for raw results objects. It is also a row mapper to save on another object.
+	 * Map raw results to return String[].
 	 */
-	private abstract static class BaseRawResults implements RawResults, GenericRowMapper<String[]> {
+	private static class StringArrayRowMapper implements GenericRowMapper<String[]> {
 
-		protected final int columnN;
-		protected final String[] columnNames;
-		protected DataType[] columnTypes;
-
-		protected BaseRawResults(CompiledStatement compiledStmt) throws SQLException {
-			this.columnN = compiledStmt.getColumnCount();
-			this.columnNames = new String[this.columnN];
-			for (int colC = 0; colC < this.columnN; colC++) {
-				this.columnNames[colC] = compiledStmt.getColumnName(colC + 1);
-			}
-		}
-
-		public int getNumberColumns() {
-			return columnN;
-		}
-
-		public String[] getColumnNames() {
-			return columnNames;
-		}
-
-		/**
-		 * Row mapper which handles our String[] raw results.
-		 */
-		public String[] mapRow(DatabaseResults rs) throws SQLException {
+		public String[] mapRow(DatabaseResults results) throws SQLException {
+			int columnN = results.getColumnCount();
 			String[] result = new String[columnN];
 			for (int colC = 0; colC < columnN; colC++) {
-				if (columnTypes == null || colC >= columnTypes.length) {
-					result[colC] = rs.getString(colC + 1);
+				result[colC] = results.getString(colC + 1);
+			}
+			return result;
+		}
+	}
+
+	/**
+	 * Map raw results to return a user object;
+	 */
+	private static class UserObjectRowMapper<UO> implements GenericRowMapper<UO> {
+
+		private final RawRowMapper<UO> mapper;
+		private final String[] columnNames;
+
+		public UserObjectRowMapper(RawRowMapper<UO> mapper, String[] columnNames) {
+			this.mapper = mapper;
+			this.columnNames = columnNames;
+		}
+
+		public UO mapRow(DatabaseResults results) throws SQLException {
+			String[] stringResults = stringArrayRowMapper.mapRow(results);
+			return mapper.mapRow(columnNames, stringResults);
+		}
+	}
+
+	/**
+	 * Map raw results to return Object[].
+	 */
+	private static class ObjectArrayRowMapper implements GenericRowMapper<Object[]> {
+
+		private final DataType[] columnTypes;
+
+		public ObjectArrayRowMapper(DataType[] columnTypes) {
+			this.columnTypes = columnTypes;
+		}
+
+		public Object[] mapRow(DatabaseResults results) throws SQLException {
+			int columnN = results.getColumnCount();
+			Object[] result = new Object[columnN];
+			for (int colC = 0; colC < columnN; colC++) {
+				if (colC >= columnTypes.length) {
+					result[colC] = DataType.STRING.resultToJava(null, results, colC + 1);
 				} else {
-					result[colC] = columnTypes[colC].resultToJavaString(rs, colC);
+					result[colC] = columnTypes[colC].resultToJava(null, results, colC + 1);
 				}
 			}
 			return result;
 		}
-
-		public List<String[]> getResults() throws SQLException {
-			List<String[]> results = new ArrayList<String[]>();
-			CloseableIterator<String[]> iterator = iterator();
-			try {
-				while (iterator.hasNext()) {
-					results.add(iterator.next());
-				}
-				return results;
-			} finally {
-				iterator.close();
-			}
-		}
-
-		public <T> List<T> getMappedResults(RawRowMapper<T> mapper) throws SQLException {
-			List<T> results = new ArrayList<T>();
-			RawRowMapperIterator<T> iterator = new RawRowMapperIterator<T>(columnNames, iterator(), mapper);
-			try {
-				while (iterator.hasNext()) {
-					results.add(iterator.next());
-				}
-				return results;
-			} finally {
-				iterator.close();
-			}
-		}
-
-		public <T> CloseableIterator<T> iterator(RawRowMapper<T> mapper) {
-			return new RawRowMapperIterator<T>(columnNames, iterator(), mapper);
-		}
-
-		public void setColumnTypes(SqlType[] columnTypes) {
-			throw new UnsupportedOperationException(
-					"You cannot call setColumnTypes() on queryForAllResults().  You must use the IteratorRaw().");
-		}
 	}
 
 	/**
-	 * Raw results from a list of results.
+	 * To be removed once the deprecated RawResults goes away.
 	 */
-	private static class RawResultsList extends BaseRawResults {
+	private class RawResultsWrapper implements RawResults {
 
-		private final List<String[]> results = new ArrayList<String[]>();
-
-		public RawResultsList(CompiledStatement preparedStmt) throws SQLException {
-			super(preparedStmt);
-		}
-
-		void add(String[] result) throws SQLException {
-			results.add(result);
-		}
-
-		int size() {
-			return results.size();
-		}
-
-		public CloseableIterator<String[]> iterator() {
-			return new RawResultsListIterator();
-		}
-
-		public void close() throws SQLException {
-			// this is a noop in list mode
-		}
-
-		/**
-		 * Internal iterator to work on our list.
-		 */
-		private class RawResultsListIterator implements CloseableIterator<String[]> {
-
-			private int resultC = 0;
-
-			public boolean hasNext() {
-				return results.size() > resultC;
-			}
-
-			public String[] next() {
-				return results.get(resultC++);
-			}
-
-			public void remove() {
-				// noop
-			}
-
-			public void close() {
-				// noop
-			}
-		}
-	}
-
-	/**
-	 * Raw results from an iterator.
-	 */
-	private static class RawResultsIterator extends BaseRawResults {
-
-		private final CompiledStatement statement;
-		private final String query;
-		private final ConnectionSource connectionSource;
+		private final GenericRawResults<String[]> rawResults;
 		private final DatabaseConnection connection;
-		private SelectIterator<String[], Void> iterator;
+		private final ConnectionSource connectionSource;
+		private final String query;
+		private final CompiledStatement compiledStatement;
+		private final String[] columnNames;
 
-		public RawResultsIterator(String query, ConnectionSource connectionSource, DatabaseConnection connection,
-				CompiledStatement statement) throws SQLException {
-			super(statement);
-			this.query = query;
-			this.statement = statement;
+		public RawResultsWrapper(ConnectionSource connectionSource, DatabaseConnection connection, String query,
+				CompiledStatement compiledStatement, String[] columnNames) throws SQLException {
 			this.connectionSource = connectionSource;
 			this.connection = connection;
-			logger.debug("executing raw results iterator for: {}", query);
+			this.query = query;
+			this.compiledStatement = compiledStatement;
+			this.columnNames = columnNames;
+			this.rawResults =
+					new RawResultsImpl<String[]>(connectionSource, connection, query, String[].class,
+							compiledStatement, columnNames, stringArrayRowMapper);
+		}
+
+		public int getNumberColumns() {
+			return rawResults.getNumberColumns();
+		}
+
+		public String[] getColumnNames() {
+			return rawResults.getColumnNames();
 		}
 
 		public CloseableIterator<String[]> iterator() {
-			try {
-				// we do this so we can iterate through the results multiple times
-				iterator =
-						new SelectIterator<String[], Void>(String[].class, null, this, connectionSource, connection,
-								statement, query);
-				return iterator;
-			} catch (SQLException e) {
-				// we have to do this because iterator can't throw Exceptions
-				throw new RuntimeException(e);
-			}
+			return rawResults.iterator();
+		}
+
+		public List<String[]> getResults() throws SQLException {
+			return rawResults.getResults();
 		}
 
 		public void close() throws SQLException {
-			if (iterator != null) {
-				iterator.close();
-				iterator = null;
+			rawResults.close();
+		}
+
+		public <UO> List<UO> getMappedResults(RawRowMapper<UO> rowMapper) throws SQLException {
+			List<UO> results = new ArrayList<UO>();
+			String[] columnNames = rawResults.getColumnNames();
+			for (String[] strings : this) {
+				results.add(rowMapper.mapRow(columnNames, strings));
 			}
+			return results;
 		}
 
-		@Override
-		public void setColumnTypes(SqlType[] columnTypes) {
-			DataType[] dataTypes = new DataType[columnTypes.length];
-			for (int i = 0; i < columnTypes.length; i++) {
-				dataTypes[i] = DataType.dataTypeFromSqlType(columnTypes[i]);
-			}
-			this.columnTypes = dataTypes;
-		}
-	}
-
-	/**
-	 * Internal iterator to work on our list.
-	 */
-	private static class RawRowMapperIterator<T> implements CloseableIterator<T> {
-
-		private String[] columnNames;
-		private CloseableIterator<String[]> stringIterator;
-		private RawRowMapper<T> rowMapper;
-
-		public RawRowMapperIterator(String[] columnNames, CloseableIterator<String[]> stringIterator,
-				RawRowMapper<T> rowMapper) {
-			this.columnNames = columnNames;
-			this.stringIterator = stringIterator;
-			this.rowMapper = rowMapper;
-		}
-
-		public boolean hasNext() {
-			return stringIterator.hasNext();
-		}
-
-		public T next() {
-			String[] stringResult = stringIterator.next();
-			return rowMapper.mapRow(columnNames, stringResult);
-		}
-
-		public void remove() {
-			stringIterator.remove();
-		}
-
-		public void close() throws SQLException {
-			stringIterator.close();
+		public <UO> CloseableIterator<UO> iterator(RawRowMapper<UO> rowMapper) throws SQLException {
+			return new RawResultsImpl<UO>(connectionSource, connection, query, String[].class, compiledStatement,
+					columnNames, new UserObjectRowMapper<UO>(rowMapper, columnNames)).iterator();
 		}
 	}
 }
