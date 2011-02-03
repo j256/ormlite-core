@@ -86,6 +86,14 @@
 	- need to be careful of recursion
 	- how would create work?  Maybe you could see if the id was set or something
 
+- allow callers to query for object B using the object A.  Some Where() construct where you say something like:
+	queryBuilder.where().idIs(1);
+	or
+	queryBuilder.where().idIs(a1, Dao<A,?>);
+	queryBuilder.where().isIsIn(Collection<A>, Dao<A,?>);
+
+    The id could either be a number (1) or it could be an object who has a field which is B.
+
 -----------------------------------------------------------------------------------------------------------------------------------
 
 - think about proxy objects for foreign objects that can throw if they do anything but getId()
