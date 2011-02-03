@@ -316,6 +316,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		int deleteN = 1002;
 		expect(compiledStmt.executeUpdate()).andReturn(deleteN);
 		expect(stmt.compile(databaseConnection)).andReturn(compiledStmt);
+		compiledStmt.close();
 		replay(databaseConnection, stmt, compiledStmt);
 		assertEquals(deleteN, baseFooDao.delete(stmt));
 		verify(compiledStmt, stmt, databaseConnection);
