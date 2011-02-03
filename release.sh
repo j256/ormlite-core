@@ -61,7 +61,7 @@ read gpgpass
 
 GPG_ARGS="-Darguments=-Dgpg.passphrase=$gpgpass -Dgpg.passphrase=$gpgpass"
 
-tmp="/tmp/$0.$$.t"
+tmp="/tmp/release.sh.$$.t"
 touch $tmp 
 gpg --passphrase $gpgpass -s -u D3412AC1 $tmp > /dev/null 2>&1 || exit 1 
 rm -f $tmp*
@@ -104,70 +104,85 @@ svn commit -m "checking in $release docs"
 
 echo ""
 echo ""
-echo -n "Releasing -core to sonatype [return to continue]: "
+echo -n "Should we release -core to sonatype [y]: "
 read cont
-cd $CORE_DIR
-svn -m cp delete https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-core/tags/ormlite-core-$release
-mvn -P st release:clean || exit 1
-mvn $GPG_ARGS -P st release:prepare || exit 1
-mvn $GPG_ARGS -P st release:perform || exit 1
+if [ "$cont" = "" ]; then
+    cd $CORE_DIR
+    svn -m cp delete https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-core/tags/ormlite-core-$release
+    mvn -P st release:clean || exit 1
+    mvn $GPG_ARGS -P st release:prepare || exit 1
+    mvn $GPG_ARGS -P st release:perform || exit 1
 
-echo ""
-echo ""
-echo -n "Installing -core locally [return to continue]: "
+    echo ""
+    echo ""
+fi
+
+echo -n "Should we install -core locally [y]: "
 read cont
-cd target/checkout
-mvn $GPG_ARGS install || exit 1
+if [ "$cont" = "" ]; then
+    cd target/checkout
+    mvn $GPG_ARGS install || exit 1
+fi
 
 #############################################################
 # releasing jdbc to sonatype
 
 echo ""
 echo ""
-echo -n "Releasing -jdbc to sonatype [return to continue]: "
+echo -n "Should we release -jdbc to sonatype [y]: "
 read cont
-cd $JDBC_DIR
-svn -m cp delete https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-jdbc/tags/ormlite-jdbc-$release
-mvn -P st release:clean || exit 1
-mvn $GPG_ARGS -Dormlite-version=$release -P st release:prepare || exit 1
-mvn $GPG_ARGS -P st release:perform || exit 1
+if [ "$cont" = "" ]; then
+    cd $JDBC_DIR
+    svn -m cp delete https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-jdbc/tags/ormlite-jdbc-$release
+    mvn -P st release:clean || exit 1
+    mvn $GPG_ARGS -Dormlite-version=$release -P st release:prepare || exit 1
+    mvn $GPG_ARGS -P st release:perform || exit 1
+fi
 
 #############################################################
 # releasing android to sonatype
 
 echo ""
 echo ""
-echo -n "Releasing -android to sonatype [return to continue]: "
+echo -n "Should we release -android to sonatype [y]: "
 read cont
-cd $ANDROID_DIR
-svn -m cp delete https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-jdbc/tags/ormlite-android-$release
-mvn -P st release:clean || exit 1
-mvn $GPG_ARGS -Dormlite-version=$release -P st release:prepare || exit 1
-mvn $GPG_ARGS -P st release:perform || exit 1
+if [ "$cont" = "" ]; then
+    cd $ANDROID_DIR
+    svn -m cp delete https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-jdbc/tags/ormlite-android-$release
+    mvn -P st release:clean || exit 1
+    mvn $GPG_ARGS -Dormlite-version=$release -P st release:prepare || exit 1
+    mvn $GPG_ARGS -P st release:perform || exit 1
+fi
 
 #############################################################
 # releasing all to sourceforge
 
 echo ""
 echo ""
-echo -n "Releasing -core to sourceforge [return to continue]: "
+echo -n "Should we release -core to sourceforge [y]: "
 read cont
-cd $CORE_DIR/target/checkout
-mvn $GPG_ARGS -P sf deploy
+if [ "$cont" = "" ]; then
+    cd $CORE_DIR/target/checkout
+    mvn $GPG_ARGS -P sf deploy
+fi
 
 echo ""
 echo ""
-echo -n "Releasing -jdbc to sourceforge [return to continue]: "
+echo -n "Should we release -jdbc to sourceforge [y]: "
 read cont
-cd $JDBC_DIR/target/checkout
-mvn $GPG_ARGS -P sf deploy
+if [ "$cont" = "" ]; then
+    cd $JDBC_DIR/target/checkout
+    mvn $GPG_ARGS -P sf deploy
+fi
 
 echo ""
 echo ""
-echo -n "Releasing -android to sourceforge [return to continue]: "
+echo -n "Should we release -android to sourceforge [y]: "
 read cont
-cd $ANDROID_DIR/target/checkout
-mvn $GPG_ARGS -P sf deploy
+if [ "$cont" = "" ]; then
+    cd $ANDROID_DIR/target/checkout
+    mvn $GPG_ARGS -P sf deploy
+fi
 
 #############################################################
 # run mvn eclipse/eclipse in local
