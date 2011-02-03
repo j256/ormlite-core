@@ -193,8 +193,7 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Return a results object associated with an internal iterator that returns String[] results.
 	 */
-	public GenericRawResults<String[]> queryRaw(ConnectionSource connectionSource, String query)
-			throws SQLException {
+	public GenericRawResults<String[]> queryRaw(ConnectionSource connectionSource, String query) throws SQLException {
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		logger.debug("executing raw results iterator for: {}", query);
 		CompiledStatement compiledStatement =
@@ -230,8 +229,8 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Return a results object associated with an internal iterator that returns Object[] results.
 	 */
-	public GenericRawResults<Object[]> queryRaw(ConnectionSource connectionSource, String query,
-			DataType[] columnTypes) throws SQLException {
+	public GenericRawResults<Object[]> queryRaw(ConnectionSource connectionSource, String query, DataType[] columnTypes)
+			throws SQLException {
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		logger.debug("executing raw results iterator for: {}", query);
 		CompiledStatement compiledStatement =
@@ -489,7 +488,10 @@ public class StatementExecutor<T, ID> {
 			List<UO> results = new ArrayList<UO>();
 			String[] columnNames = rawResults.getColumnNames();
 			for (String[] strings : this) {
-				results.add(rowMapper.mapRow(columnNames, strings));
+				UO result = rowMapper.mapRow(columnNames, strings);
+				if (result != null) {
+					results.add(result);
+				}
 			}
 			return results;
 		}

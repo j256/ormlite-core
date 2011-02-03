@@ -1,5 +1,7 @@
 package com.j256.ormlite.dao;
 
+import java.sql.SQLException;
+
 /**
  * Parameterized row mapper that takes output from the {@link RawResults} and returns a T. Is used in the
  * {@link Dao#queryRaw(String, RawRowMapper)} method.
@@ -19,11 +21,14 @@ public interface RawRowMapper<T> {
 	/**
 	 * Used to convert a raw results row to an object.
 	 * 
-	 * @return The created object with all of the fields set from the results;
+	 * @return The created object with all of the fields set from the results. Return if there is no object generated
+	 *         from these results.
 	 * @param columnNames
 	 *            Array of names of columns.
 	 * @param resultColumns
 	 *            Array of result columns.
+	 * @throws SQLException
+	 *             If there is any critical error with the data and you want to stop the paging.
 	 */
-	public T mapRow(String[] columnNames, String[] resultColumns);
+	public T mapRow(String[] columnNames, String[] resultColumns) throws SQLException;
 }
