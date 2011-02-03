@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * You should be using {@link GenericRawResults<String[]>} instead.
+ * You should be using {@link GenericRawResults} with &lt;String[]&gt; argument.
  * 
  * @deprecated
  */

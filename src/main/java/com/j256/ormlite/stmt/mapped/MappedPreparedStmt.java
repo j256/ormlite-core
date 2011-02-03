@@ -16,7 +16,7 @@ import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableInfo;
 
 /**
- * Mapped statement used by the {@link StatementBuilder#prepareQuery()} method.
+ * Mapped statement used by the {@link StatementBuilder#prepareStatement()} method.
  * 
  * @author graywatson
  */
