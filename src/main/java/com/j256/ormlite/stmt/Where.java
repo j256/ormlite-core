@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.query.And;
@@ -122,6 +123,8 @@ public class Where<T, ID> {
 
 	private final TableInfo<T> tableInfo;
 	private final StatementBuilder<T, ID> statementBuilder;
+	private final FieldType idFieldType;
+	private final String idColumnName;
 
 	private SimpleStack<Clause> clauseList = new SimpleStack<Clause>();
 	private NeedsFutureClause needsFuture = null;
@@ -130,6 +133,8 @@ public class Where<T, ID> {
 		// limit the constructor scope
 		this.tableInfo = tableInfo;
 		this.statementBuilder = statementBuilder;
+		this.idFieldType = tableInfo.getIdField();
+		this.idColumnName = idFieldType.getDbColumnName();
 	}
 
 	/**
@@ -284,6 +289,55 @@ public class Where<T, ID> {
 	}
 
 	/**
+	 * Add a clause where the ID is a .
+	 */
+	public <OD> Where<T, ID> idEq(OD data, Dao<OD, ?> dataDao) throws SQLException {
+		addClause(new Eq(idColumnName, idFieldType, dataDao.extractId(data)));
+		return this;
+	}
+
+	/**
+	 * Add an '=' clause where the ID is the id from a foreign field in the data that is passed in.
+	 */
+	public <OD, OID> Where<T, ID> foreignIdEq(Dao<OD, OID> dataDao, OD data) throws SQLException {
+		FieldType fieldType = getForeignFieldType(dataDao);
+		// extract the value of that field which should be the id already for the foreign field
+		ID id = fieldType.extractJavaFieldValue(data);
+		addClause(new Eq(idColumnName, idFieldType, id));
+		return this;
+	}
+
+	/**
+	 * Add a IN clause where the ID is the id from a foreign field in the data items that are passed in.
+	 */
+	public <OD, OID> Where<T, ID> foreignIdIn(Dao<OD, OID> dataDao, OD... datas) throws SQLException {
+		FieldType fieldType = getForeignFieldType(dataDao);
+		ArrayList<ID> idList = new ArrayList<ID>();
+		for (OD data : datas) {
+			// extract the value of that field which should be the id already for the foreign field
+			ID id = fieldType.extractJavaFieldValue(data);
+			idList.add(id);
+		}
+		addClause(new In(idColumnName, idFieldType, idList));
+		return this;
+	}
+
+	/**
+	 * Add a IN clause where the ID is the id from a foreign field in the data items iterable that is passed in.
+	 */
+	public <OD, OID> Where<T, ID> foreignIdIn(Dao<OD, OID> dataDao, Iterable<OD> datas) throws SQLException {
+		FieldType fieldType = getForeignFieldType(dataDao);
+		ArrayList<ID> idList = new ArrayList<ID>();
+		for (OD data : datas) {
+			// extract the value of that field which should be the id already for the foreign field
+			ID id = fieldType.extractJavaFieldValue(data);
+			idList.add(id);
+		}
+		addClause(new In(idColumnName, idFieldType, idList));
+		return this;
+	}
+
+	/**
 	 * A short-cut for calling prepare() on the original {@link QueryBuilder#prepare()}.
 	 */
 	public PreparedQuery<T> prepare() throws SQLException {
@@ -304,6 +358,19 @@ public class Where<T, ID> {
 
 		// we don't pop here because we may want to run the query multiple times
 		clauseList.peek().appendSql(databaseType, sb, columnArgList);
+	}
+
+	/**
+	 * find the field in that class that matches our type.
+	 */
+	private <OD, OID> FieldType getForeignFieldType(Dao<OD, OID> dataDao) throws SQLException {
+		Class<T> clazz = tableInfo.getDataClass();
+		FieldType fieldType = dataDao.findForeignFieldType(clazz);
+		if (fieldType == null) {
+			throw new SQLException("Could not find a field of type " + clazz + " in class " + dataDao.getDataClass());
+		} else {
+			return fieldType;
+		}
 	}
 
 	private void addNeedsFuture(NeedsFutureClause needsFuture) {

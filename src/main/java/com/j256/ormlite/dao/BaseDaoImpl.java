@@ -410,11 +410,24 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		return true;
 	}
 
-	/**
-	 * Returns the class associated with this DAO.
-	 */
+	public ID extractId(T data) throws SQLException {
+		checkForInitialized();
+		FieldType idField = tableInfo.getIdField();
+		return idField.extractJavaFieldValue(data);
+	}
+
 	public Class<T> getDataClass() {
 		return dataClass;
+	}
+
+	public FieldType findForeignFieldType(Class<?> clazz) {
+		checkForInitialized();
+		for (FieldType fieldType : tableInfo.getFieldTypes()) {
+			if (fieldType.getFieldType() == clazz) {
+				return fieldType;
+			}
+		}
+		return null;
 	}
 
 	/**

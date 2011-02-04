@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.misc.TransactionManager;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.PreparedDelete;
@@ -350,4 +351,20 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 *            The other data item that we are checking for equality.
 	 */
 	public boolean objectsEqual(T data1, T data2) throws SQLException;
+
+	/**
+	 * Returns the ID from the data argument passed in. This is used by some of the internal queries to be able to
+	 * search by id.
+	 */
+	public ID extractId(T data) throws SQLException;
+
+	/**
+	 * Returns the class of the DAO.  This is used by internal query operators. 
+	 */
+	public Class<T> getDataClass();
+
+	/**
+	 * Returns the class of the DAO.  This is used by internal query operators. 
+	 */
+	public FieldType findForeignFieldType(Class<?> clazz);
 }
