@@ -112,8 +112,7 @@ public abstract class StatementBuilder<T, ID> {
 			where.appendSql(databaseType, sb, selectArgList);
 		}
 		for (SelectArg selectArg : selectArgList) {
-			FieldType fieldType = tableInfo.getFieldTypeByColumnName(selectArg.getColumnName());
-			argFieldTypeList.add(fieldType);
+			argFieldTypeList.add(selectArg.getFieldType());
 		}
 		appendStatementEnd(sb);
 		String statement = sb.toString();
