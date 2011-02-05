@@ -112,15 +112,15 @@ public class StatementExecutor<T, ID> {
 	 * Return a list of all of the data in the table that matches the {@link PreparedStmt}. Should be used carefully if
 	 * the table is large. Consider using the {@link Dao#iterator} if this is the case.
 	 */
-	public List<T> query(ConnectionSource connectionSource, PreparedStmt<T> preparedQuery) throws SQLException {
+	public List<T> query(ConnectionSource connectionSource, PreparedStmt<T> preparedStmt) throws SQLException {
 		SelectIterator<T, ID> iterator = null;
 		try {
-			iterator = buildIterator(/* no dao specified because no removes */null, connectionSource, preparedQuery);
+			iterator = buildIterator(/* no dao specified because no removes */null, connectionSource, preparedStmt);
 			List<T> results = new ArrayList<T>();
 			while (iterator.hasNextThrow()) {
 				results.add(iterator.nextThrow());
 			}
-			logger.debug("query of '{}' returned {} results", preparedQuery.getStatement(), results.size());
+			logger.debug("query of '{}' returned {} results", preparedStmt.getStatement(), results.size());
 			return results;
 		} finally {
 			if (iterator != null) {
@@ -163,10 +163,10 @@ public class StatementExecutor<T, ID> {
 	 * Create and return an {@link SelectIterator} for the class using a prepared statement.
 	 */
 	public SelectIterator<T, ID> buildIterator(BaseDaoImpl<T, ID> classDao, ConnectionSource connectionSource,
-			PreparedStmt<T> preparedQuery) throws SQLException {
+			PreparedStmt<T> preparedStmt) throws SQLException {
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
-		return new SelectIterator<T, ID>(tableInfo.getDataClass(), classDao, preparedQuery, connectionSource,
-				connection, preparedQuery.compile(connection), preparedQuery.getStatement());
+		return new SelectIterator<T, ID>(tableInfo.getDataClass(), classDao, preparedStmt, connectionSource,
+				connection, preparedStmt.compile(connection), preparedStmt.getStatement());
 	}
 
 	/**
