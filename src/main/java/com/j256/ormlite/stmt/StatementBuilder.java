@@ -106,18 +106,32 @@ public abstract class StatementBuilder<T, ID> {
 	protected String buildStatementString(List<FieldType> argFieldTypeList, List<FieldType> resultFieldTypeList,
 			List<SelectArg> selectArgList) throws SQLException {
 		StringBuilder sb = new StringBuilder();
+		appendStatementString(sb, resultFieldTypeList, selectArgList);
+		for (SelectArg selectArg : selectArgList) {
+			argFieldTypeList.add(selectArg.getFieldType());
+		}
+		String statement = sb.toString();
+		logger.debug("built statement {}", statement);
+		return statement;
+	}
+
+	/**
+	 * Internal method to build a query while tracking various arguments. Users should use the
+	 * {@link #prepareStatementString()} method instead.
+	 * 
+	 * <p>
+	 * This needs to be protected because of (WARNING: DO NOT MAKE A JAVADOC LINK) InternalQueryBuilder (WARNING: DO NOT
+	 * MAKE A JAVADOC LINK).
+	 * </p>
+	 */
+	protected void appendStatementString(StringBuilder sb, List<FieldType> resultFieldTypeList,
+			List<SelectArg> selectArgList) throws SQLException {
 		appendStatementStart(sb, resultFieldTypeList);
 		if (where != null) {
 			sb.append("WHERE ");
 			where.appendSql(databaseType, sb, selectArgList);
 		}
-		for (SelectArg selectArg : selectArgList) {
-			argFieldTypeList.add(selectArg.getFieldType());
-		}
 		appendStatementEnd(sb);
-		String statement = sb.toString();
-		logger.debug("built statement {}", statement);
-		return statement;
 	}
 
 	/**

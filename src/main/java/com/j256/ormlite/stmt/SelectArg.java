@@ -110,6 +110,10 @@ public class SelectArg {
 		this.value = value;
 	}
 
+	public FieldType getFieldType() {
+		return fieldType;
+	}
+
 	@Override
 	public String toString() {
 		if (!hasBeenSet) {

@@ -7,6 +7,7 @@ import java.util.List;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.stmt.QueryBuilder.InternalQueryBuilderWrapper;
 import com.j256.ormlite.stmt.query.And;
 import com.j256.ormlite.stmt.query.Between;
 import com.j256.ormlite.stmt.query.Clause;
@@ -14,6 +15,7 @@ import com.j256.ormlite.stmt.query.Eq;
 import com.j256.ormlite.stmt.query.Ge;
 import com.j256.ormlite.stmt.query.Gt;
 import com.j256.ormlite.stmt.query.In;
+import com.j256.ormlite.stmt.query.InSubQuery;
 import com.j256.ormlite.stmt.query.IsNotNull;
 import com.j256.ormlite.stmt.query.IsNull;
 import com.j256.ormlite.stmt.query.Le;
@@ -134,7 +136,11 @@ public class Where<T, ID> {
 		this.tableInfo = tableInfo;
 		this.statementBuilder = statementBuilder;
 		this.idFieldType = tableInfo.getIdField();
-		this.idColumnName = idFieldType.getDbColumnName();
+		if (idFieldType == null) {
+			this.idColumnName = null;
+		} else {
+			this.idColumnName = idFieldType.getDbColumnName();
+		}
 	}
 
 	/**
@@ -203,6 +209,22 @@ public class Where<T, ID> {
 			throw new IllegalArgumentException("in(Object... objects) seems to be an array within an array");
 		}
 		addClause(new In(columnName, findColumnFieldType(columnName), objects));
+		return this;
+	}
+
+	/**
+	 * Add a IN clause with a sub-query inside of parenthesis. The QueryBuilder must have 1 and only one argument which
+	 * can be set with the {@link QueryBuilder#selectColumns(String...)} method calls. That 1 argument must match the
+	 * SQL type of the column-name passed to this method -- there is no internal checking to verify that they are the
+	 * same type.
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> The sub-query will be prepared at the same time that the outside query is.
+	 * </p>
+	 */
+	public Where<T, ID> in(String columnName, QueryBuilder<?, ?> subQueryBuilder) throws SQLException {
+		addClause(new InSubQuery(columnName, findColumnFieldType(columnName), new InternalQueryBuilderWrapper(
+				subQueryBuilder)));
 		return this;
 	}
 
@@ -291,7 +313,21 @@ public class Where<T, ID> {
 	/**
 	 * Add a clause where the ID is a .
 	 */
-	public <OD> Where<T, ID> idEq(OD data, Dao<OD, ?> dataDao) throws SQLException {
+	public Where<T, ID> idEq(ID id) throws SQLException {
+		if (idColumnName == null) {
+			throw new SQLException("Object has no id column specified");
+		}
+		addClause(new Eq(idColumnName, idFieldType, id));
+		return this;
+	}
+
+	/**
+	 * Add a clause where the ID is from an existing object.
+	 */
+	public <OD> Where<T, ID> idEq(Dao<OD, ?> dataDao, OD data) throws SQLException {
+		if (idColumnName == null) {
+			throw new SQLException("Object has no id column specified");
+		}
 		addClause(new Eq(idColumnName, idFieldType, dataDao.extractId(data)));
 		return this;
 	}
@@ -300,6 +336,9 @@ public class Where<T, ID> {
 	 * Add an '=' clause where the ID is the id from a foreign field in the data that is passed in.
 	 */
 	public <OD, OID> Where<T, ID> foreignIdEq(Dao<OD, OID> dataDao, OD data) throws SQLException {
+		if (idColumnName == null) {
+			throw new SQLException("Object has no id column specified");
+		}
 		FieldType fieldType = getForeignFieldType(dataDao);
 		// extract the value of that field which should be the id already for the foreign field
 		ID id = fieldType.extractJavaFieldValue(data);
@@ -311,6 +350,9 @@ public class Where<T, ID> {
 	 * Add a IN clause where the ID is the id from a foreign field in the data items that are passed in.
 	 */
 	public <OD, OID> Where<T, ID> foreignIdIn(Dao<OD, OID> dataDao, OD... datas) throws SQLException {
+		if (idColumnName == null) {
+			throw new SQLException("Object has no id column specified");
+		}
 		FieldType fieldType = getForeignFieldType(dataDao);
 		ArrayList<ID> idList = new ArrayList<ID>();
 		for (OD data : datas) {
@@ -326,6 +368,9 @@ public class Where<T, ID> {
 	 * Add a IN clause where the ID is the id from a foreign field in the data items iterable that is passed in.
 	 */
 	public <OD, OID> Where<T, ID> foreignIdIn(Dao<OD, OID> dataDao, Iterable<OD> datas) throws SQLException {
+		if (idColumnName == null) {
+			throw new SQLException("Object has no id column specified");
+		}
 		FieldType fieldType = getForeignFieldType(dataDao);
 		ArrayList<ID> idList = new ArrayList<ID>();
 		for (OD data : datas) {

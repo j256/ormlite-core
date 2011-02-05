@@ -57,7 +57,7 @@ abstract class BaseComparison implements Comparison {
 			List<SelectArg> selectArgList, Object argOrValue) throws SQLException {
 		boolean appendSpace = true;
 		if (argOrValue == null) {
-			throw new IllegalArgumentException("argument to comparison of '" + fieldType.getFieldName() + "' is null");
+			throw new SQLException("argument to comparison of '" + fieldType.getFieldName() + "' is null");
 		} else if (argOrValue instanceof SelectArg) {
 			sb.append('?');
 			SelectArg selectArg = (SelectArg) argOrValue;

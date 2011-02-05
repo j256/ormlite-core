@@ -447,6 +447,45 @@ public class BaseDaoImplTest extends BaseCoreTest {
 				databaseConnection.compileStatement(isA(String.class), isA(StatementType.class),
 						isA(FieldType[].class), isA(FieldType[].class))).andReturn(stmt);
 		DatabaseResults results = createMock(DatabaseResults.class);
+		expect(results.next()).andReturn(true);
+		int idCol = 1;
+		expect(results.findColumn(BaseFoo.ID_COLUMN_NAME)).andReturn(idCol);
+		expect(results.isNull(idCol)).andReturn(false);
+		String id = "id";
+		expect(results.getString(idCol)).andReturn(id);
+		int valCol = 1;
+		int val = 13123123;
+		expect(results.findColumn(BaseFoo.VAL_COLUMN_NAME)).andReturn(valCol);
+		expect(results.getInt(valCol)).andReturn(val);
+		int equalCol = 3;
+		int equal = 3123341;
+		expect(results.findColumn(BaseFoo.EQUAL_COLUMN_NAME)).andReturn(equalCol);
+		expect(results.getInt(equalCol)).andReturn(equal);
+		int nullCol = 4;
+		expect(results.findColumn(BaseFoo.NULL_COLUMN_NAME)).andReturn(nullCol);
+		expect(results.isNull(nullCol)).andReturn(true);
+		expect(stmt.executeQuery()).andReturn(results);
+		stmt.close();
+		replay(databaseConnection, stmt, results);
+		QueryBuilder<BaseFoo, String> builder = baseFooDao.queryBuilder();
+		PreparedQuery<BaseFoo> preparedStmt = builder.prepare();
+		BaseFoo baseFoo = baseFooDao.queryForFirst(preparedStmt);
+		assertNotNull(baseFoo);
+		assertEquals(id, baseFoo.id);
+		assertEquals(val, baseFoo.val);
+		assertEquals(equal, baseFoo.equal);
+		assertNull(baseFoo.nullField);
+		verify(databaseConnection, stmt, results);
+	}
+
+	@Test
+	public void testQueryForFirstNoResults() throws Exception {
+		startDao(false);
+		CompiledStatement stmt = createMock(CompiledStatement.class);
+		expect(
+				databaseConnection.compileStatement(isA(String.class), isA(StatementType.class),
+						isA(FieldType[].class), isA(FieldType[].class))).andReturn(stmt);
+		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(results.next()).andReturn(false);
 		expect(stmt.executeQuery()).andReturn(results);
 		stmt.close();

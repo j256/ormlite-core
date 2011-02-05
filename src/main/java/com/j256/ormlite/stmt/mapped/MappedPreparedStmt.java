@@ -73,4 +73,8 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 	public String getStatement() {
 		return statement;
 	}
+
+	public SelectArg[] getSelectArgs() {
+		return selectArgs;
+	}
 }

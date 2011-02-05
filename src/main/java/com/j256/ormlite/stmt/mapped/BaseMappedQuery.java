@@ -40,4 +40,8 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 		}
 		return instance;
 	}
+
+	public FieldType[] getResultsFieldTypes() {
+		return resultsFieldTypes;
+	}
 }

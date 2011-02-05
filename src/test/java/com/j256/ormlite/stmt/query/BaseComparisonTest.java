@@ -52,7 +52,7 @@ public class BaseComparisonTest extends BaseCoreTest {
 		}
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = SQLException.class)
 	public void testAppendArgOrValueNull() throws Exception {
 		cmpInt.appendArgOrValue(null, numberFieldType, new StringBuilder(), new ArrayList<SelectArg>(), null);
 	}
@@ -122,7 +122,7 @@ public class BaseComparisonTest extends BaseCoreTest {
 		assertEquals(expectSb.toString(), sb.toString());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = SQLException.class)
 	public void testForeignIdNull() throws SQLException {
 		StringBuilder sb = new StringBuilder();
 		ArrayList<SelectArg> selectArgList = new ArrayList<SelectArg>();

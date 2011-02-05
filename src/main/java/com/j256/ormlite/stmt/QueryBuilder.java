@@ -277,4 +277,22 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			return super.buildStatementString(argFieldTypeList, resultFieldTypeList, selectArgList);
 		}
 	}
+
+	/**
+	 * Internal class used to expose the {@link QueryBuilder#buildStatementString(List, List, List)} method to internal
+	 * classes but through a wrapper instead of a builder.
+	 */
+	public static class InternalQueryBuilderWrapper {
+
+		private final QueryBuilder<?, ?> queryBuilder;
+
+		public InternalQueryBuilderWrapper(QueryBuilder<?, ?> queryBuilder) {
+			this.queryBuilder = queryBuilder;
+		}
+
+		public void buildStatementString(StringBuilder sb, List<FieldType> resultFieldTypeList,
+				List<SelectArg> selectArgList) throws SQLException {
+			queryBuilder.appendStatementString(sb, resultFieldTypeList, selectArgList);
+		}
+	}
 }
