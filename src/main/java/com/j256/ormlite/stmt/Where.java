@@ -223,6 +223,8 @@ public class Where<T, ID> {
 	 * </p>
 	 */
 	public Where<T, ID> in(String columnName, QueryBuilder<?, ?> subQueryBuilder) throws SQLException {
+		// we do this to turn off the automatic addition of the ID column in the select column list
+		subQueryBuilder.enableInnerQuery();
 		addClause(new InSubQuery(columnName, findColumnFieldType(columnName), new InternalQueryBuilderWrapper(
 				subQueryBuilder)));
 		return this;

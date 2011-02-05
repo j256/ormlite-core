@@ -612,5 +612,4 @@ public class WhereTest extends BaseCoreTest {
 		ForeignFoo() {
 		}
 	}
-
 }

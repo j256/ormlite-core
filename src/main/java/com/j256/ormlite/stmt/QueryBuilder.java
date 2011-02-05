@@ -33,10 +33,20 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	private List<String> selectColumnList = null;
 	private List<OrderBy> orderByList = null;
 	private List<String> groupByList = null;
+	private boolean isInnerQuery = false;
 
 	public QueryBuilder(DatabaseType databaseType, TableInfo<T> tableInfo) {
 		super(databaseType, tableInfo, StatementType.SELECT);
 		this.idField = tableInfo.getIdField();
+	}
+
+	/**
+	 * Use this when you are building an inner query. This is necessary because by default, we add in the ID column on
+	 * every query. When you are returning a data item, its ID field _must_ be set otherwise you can't do a refresh() or
+	 * update().
+	 */
+	void enableInnerQuery() {
+		this.isInnerQuery = true;
 	}
 
 	/**
@@ -171,7 +181,12 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		}
 
 		boolean first = true;
-		boolean hasId = false;
+		boolean hasId;
+		if (isInnerQuery) {
+			hasId = true;
+		} else {
+			hasId = false;
+		}
 		for (String columnName : selectColumnList) {
 			if (first) {
 				first = false;
