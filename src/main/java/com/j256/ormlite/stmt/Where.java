@@ -214,10 +214,10 @@ public class Where<T, ID> {
 	}
 
 	/**
-	 * Add a IN clause with a sub-query inside of parenthesis. The QueryBuilder must have 1 and only one argument which
-	 * can be set with the {@link QueryBuilder#selectColumns(String...)} method calls. That 1 argument must match the
-	 * SQL type of the column-name passed to this method -- there is no internal checking to verify that they are the
-	 * same type.
+	 * Add a IN clause which makes sure the column is in one of the columns returned from a sub-query inside of
+	 * parenthesis. The QueryBuilder must return 1 and only one column which can be set with the
+	 * {@link QueryBuilder#selectColumns(String...)} method calls. That 1 argument must match the SQL type of the
+	 * column-name passed to this method.
 	 * 
 	 * <p>
 	 * <b>NOTE:</b> The sub-query will be prepared at the same time that the outside query is.
@@ -282,7 +282,7 @@ public class Where<T, ID> {
 	}
 
 	/**
-	 * Add a LIKE clause so the column must be like the value (where you can specify '%' patterns.
+	 * Add a LIKE clause so the column must mach the value using '%' patterns.
 	 */
 	public Where<T, ID> like(String columnName, Object value) throws SQLException {
 		addClause(new Like(columnName, findColumnFieldType(columnName), value));
@@ -332,7 +332,7 @@ public class Where<T, ID> {
 	}
 
 	/**
-	 * Add a clause where the ID is a .
+	 * Add a clause where the ID is equal to the argument.
 	 */
 	public Where<T, ID> idEq(ID id) throws SQLException {
 		if (idColumnName == null) {

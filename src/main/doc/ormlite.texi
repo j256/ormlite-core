@@ -534,6 +534,8 @@ the values in the index are unique.  For example, this means that you can insert
 @code{("pittsburgh", "tx")} but not another @code{("pittsburgh", "pa")}.
 
 @cindex foreign object, auto refresh
+@cindex auto refresh foreign objects
+@anchor{foreignAutoRefresh}
 @item foreignAutoRefresh
 
 Set this to be true (default false) to have a foreign field automagically refreshed when an object is queried.	This will @emph{not} automagically
@@ -705,6 +707,7 @@ helps to translate between the SQL types and the database specific handling of t
 @table @code
 
 @cindex String
+@cindex VARCHAR string
 @item String (DataType.STRING)
 
 Persisted as SQL type VARCHAR.  
@@ -900,7 +903,6 @@ pooled connection managers. You can instantiate your own directly and wrap it in
 which delegates to it.  Then you set that on the DAOs directly.
 
 @cindex BasicDataSource
-@cindex DataSourceConnectionSource
 @example
 // basic Apache data source
 BasicDataSource dataSource = new BasicDataSource();
@@ -959,7 +961,7 @@ For more information about the database specific code in the DatabaseType see la
 
 @table @asis
 
-@cindex MySQL
+@cindex MySQL database
 @item MySQL
 
 Tables are created in MySQL with the InnoDB engine by default using @code{CREATE TABLE ... ENGINE=InnoDB}.  If you want to use
@@ -967,43 +969,45 @@ another engine, you can instantiate the @code{MysqlDatabaseType} directly and us
 the default or another engine.  Also, MySQL does some funky stuff with the last-modification time if a @code{Date} is defined as a
 @code{TIMESTAMP} so @code{DATETIME} was used instead.
 
-@cindex Postgres
+@cindex Postgres database
 @item Postgres
 
-@cindex Microsoft SQL Server
-@cindex SQL Server
+@cindex Microsoft SQL Server database
+@cindex SQL Server database
 @item Microsoft SQL Server
 
-@cindex H2
+@cindex H2 database
 @item H2
 
-@cindex Derby
+@cindex Derby database
 @item Derby
 
 There are two drivers for Derby: one embedded and one client/server.  @value{package} makes an attempt to detect the right driver but you
 may have to set the right database type on your ConnectionSource directly if it doesn't.  @xref{Database Type}.
 
-@cindex HSQLDB
+@cindex HSQLDB database
 @item HSQLDB
 
-@cindex SQLite
+@cindex Xerial SQLite driver
+@cindex Zentus SQLite driver
+@cindex SQLite database
 @item SQLite
 
 There are multiple SQLite drivers out there.  Make sure you use the Xerial one (@uref{http://www.xerial.org/trac/Xerial/wiki/SQLiteJDBC})
 and not the Zentus one (@uref{http://www.zentus.com/sqlitejdbc/}) which does not support generated ids.
 
-@cindex Android SQLite
+@cindex Android SQLite database
 @item Android SQLite
 
 Android's SQLite database is accessed through direct calls to the Android database API methods.
 
-@cindex DB2
+@cindex DB2 database
 @item DB2
 
 I do not have access to an DB2 database so I cannot run any tests to make sure that my support for it works well.  Please contact me if you have
 an Oracle database that I can develop against.
 
-@cindex Oracle
+@cindex Oracle database
 @item Oracle
 
 I do not have access to an Oracle database so I cannot run any tests to make sure that my support for it works well.  Please contact me if you have
@@ -1324,9 +1328,9 @@ create unique indexes that ensure that no two row has the same value(s) for the 
 @section Issuing Raw Database Queries
 
 @cindex aggregation queries
-@cindex sum, using
-@cindex count, using
-@cindex avg, using
+@cindex SUM, using
+@cindex COUNT, using
+@cindex AVG, using
 @cindex queryForAllRaw
 @cindex iteratorRaw
 @cindex RawResults
@@ -1433,6 +1437,7 @@ with which you can construct custom queries to return a sub-set of the table.
 * QueryBuilder Basics::         How to start using the query builder.
 * Building Queries::            How to build simple and complex queries.
 * Building Statements::         How to build update and delete statements.
+* Where Capabilities::          Description of the various WHERE statements.
 * Select Arguments::            Using arguments to queries.
 @end menu
 
@@ -1559,19 +1564,15 @@ SELECT * FROM account
          OR (name = 'bar' AND password = 'qwerty'))
 @end example
 
-@cindex order by
-@cindex group by
-@cindex like
-@cindex in
-@cindex is null
-@cindex comparisons
+@cindex ORDER BY, SQL
+@cindex GROUP BY, SQL
 The @code{QueryBuilder} also allows you to set what specific select columns you want returned, specify the 'ORDER BY'
-and 'GROUP BY' fields, and various other SQL features (LIKE, IN, >, >=, <, <=, <>, IS NULL, DISTINCT, @dots{}).  See the
-javadocs on@code{QueryBuilder} and @code{Where} classes for more information.  A good SQL reference site can be found
-at @uref{http://www.w3schools.com/Sql/}.
+and 'GROUP BY' fields, and various other SQL features (LIKE, IN, >, >=, <, <=, <>, IS NULL, DISTINCT, @dots{}).
+@xref{Where Capabilities}. You can also see the javadocs on@code{QueryBuilder} and @code{Where} classes for more
+information.  A good SQL reference site can be found at @uref{http://www.w3schools.com/Sql/}.
 
 @c ----------------------------------------------------------------
-@node Building Statements, Select Arguments, Building Queries, Statement Builder
+@node Building Statements, Where Capabilities, Building Queries, Statement Builder
 @section Building Statements
 
 @cindex deleteBuilder
@@ -1621,7 +1622,173 @@ accountDao.delete(deleteBuilder.prepare());
 @end example
 
 @c ----------------------------------------------------------------
-@node Select Arguments, Foreign Objects, Building Statements, Statement Builder
+@node Where Capabilities, Select Arguments, Building Statements, Statement Builder
+@section Where Capabilities
+
+The following are some details about the various method calls for adding @code{WHERE} SQL statements to your custom
+select, delete, and update statements.  See the Javadocs for the @code{Where} class for the most up-to-date information
+about the available methods.  All of the methods return the @code{Where} object so you can chain them together.
+
+For a good tutorial of SQL commands, here's a good site: @uref{http://www.w3schools.com/sql/sql_where.asp}.
+
+@table @code
+
+@cindex AND, SQL
+@item and()
+
+Binary @code{AND} operation which takes the previous clause and the next clause and AND's them together.  This is when
+you are using inline query calls.
+
+@item and(Where<T, ID> left, Where<T, ID> right)
+
+Binary AND operation which takes 2 arguments and AND's them together.  This is when you are @emph{not} using inline
+query calls but instead want to use standard arguments.
+
+@cindex BETWEEN, SQL
+@item between(String columnName, Object low, Object high)
+
+Add a BETWEEN clause which makes sure the column is between the low and high parameters.
+
+@cindex =, SQL
+@cindex equals, SQL
+@item eq(String columnName, Object value)
+
+Add a '=' clause which makes sure the column is equal to the value.
+
+@cindex EXISTS, SQL
+@item exists(QueryBuilder<?, ?> subQueryBuilder)
+
+Add a EXISTS clause with a sub-query inside of parenthesis.  This will return returns as long as the inner query returns
+results.
+
+@emph{NOTE:} The sub-query will be prepared at the same time that the outside query is.
+
+@anchor{foreignIdEq}
+@item foreignIdEq(Dao<OD, OID> dataDao, OD data)
+
+Add a clause where the ID is the id from a foreign field in the data that is passed in.
+
+@anchor{foreignIdIn}
+@item foreignIdIn(Dao<OD, OID> dataDao, OD... datas)
+
+Add a IN clause where the ID is the id from a foreign field in the data items that are passed in.
+
+@item foreignIdIn(Dao<OD, OID> dataDao, Iterable<OD> datas)
+
+Add a IN clause where the ID is the id from a foreign field in the data items iterable that is passed in.
+
+@cindex >=, SQL
+@cindex ge, SQL
+@cindex greater than or equal, SQL
+@item ge(String columnName, Object value)
+
+Add a '>=' clause which makes sure the column is greater-than or equals-to the value.
+
+@cindex >, SQL
+@cindex gt, SQL
+@cindex greater than, SQL
+@item gt(String columnName, Object value)
+
+Add a '>' clause which makes sure the column is greater-than the value.
+
+@item idEq(ID id)
+
+Add a clause where the ID is equals to the argument.
+
+@item idEq(Dao<OD, ?> dataDao, OD data)
+
+Add a clause where the ID is extracted from an existing object.
+
+@cindex IN, SQL
+@item in(String columnName, Iterable<?> objects)
+
+Add a IN clause which makes sure the column is equal-to one of the objects from the Iterable (probably collection)
+passed in.
+
+@cindex IN, SQL
+@item in(String columnName, Object... objects)
+
+Add a IN clause which makes sure the column is equal-to one of the objects passed in.
+
+@cindex IN sub-query, SQL
+@cindex inner queries
+@cindex sub-queries
+@item in(String columnName, QueryBuilder<?, ?> subQueryBuilder)
+
+Add a IN clause which makes sure the column is in one of the columns returned from a sub-query inside of parenthesis.
+The @code{QueryBuilder} must return 1 and only one column which can be set with the @code{QueryBuilder.selectColumns(String...)}
+method calls. That 1 argument must match the SQL type of the column-name passed to this method.
+
+@emph{NOTE:} The sub-query will be prepared at the same time that the outside query is.
+
+@cindex IS NULL, SQL
+@cindex null comparison, SQL
+@item isNull(String columnName)
+
+Add a 'IS NULL' clause which makes sure the column's value is null. '=' NULL does not work.
+
+@cindex IS NOT NULL, SQL
+@cindex null comparison, SQL
+@item isNotNull(String columnName)
+
+Add a 'IS NOT NULL' clause so the column must not be null. '<>' NULL does not work.
+
+@cindex <=, SQL
+@cindex less than or equals, SQL
+@cindex le
+@item le(String columnName, Object value)
+
+Add a '<=' clause which makes sure the column is less-than or equals-to the value.
+
+@cindex <, SQL
+@cindex less than, SQL
+@cindex lt
+@item lt(String columnName, Object value)
+
+Add a '<' clause which makes sure the column is less-than the value.
+
+@cindex LIKE, SQL
+@item like(String columnName, Object value)
+
+Add a LIKE clause which makes sure the column match the value using '%' patterns.
+
+@cindex <>, SQL
+@cindex not equal to, SQL
+@cindex ne
+@item ne(String columnName, Object value)
+
+Add a '<>' clause which makes sure the column is not-equal-to the value.
+
+@cindex NOT, SQL
+@item not()
+
+Used to NOT the next clause specified when using inline query calls.
+
+@item not(Where<T, ID> comparison)
+
+Used to NOT the argument clause specified.  This is when you are @emph{not} using inline
+query calls but instead want to use standard arguments.
+
+@cindex OR, SQL
+@item or()
+
+Binary @code{OR} operation which takes the previous clause and the next clause and OR's them together.  This is when
+you are using inline query calls.
+
+@item or(Where<T, ID> left, Where<T, ID> right)
+
+Binary OR operation which takes 2 arguments and OR's them together.  This is when you are @emph{not} using inline
+query calls but instead want to use standard arguments.
+
+@item prepare()
+
+A short-cut for calling @code{prepare()} on the original @code{QueryBuilder.prepare()}.  This method returns a
+@code{PreparedQuery} object.
+
+@end table
+
+@c ----------------------------------------------------------------
+@node Select Arguments, Foreign Objects, Where Capabilities, Statement Builder
 @section Using Select Arguments
 
 @cindex query arguments
@@ -1739,7 +1906,11 @@ if (accountDao.refresh(order.getAccount()) != 1) @{
 System.out.println("Now the account fields will be set: " + order.account.name);
 @end example
 
+@value{package} can automagically refresh the objects for you if you'd like.  @xref{foreignAutoRefresh}.
+
 @emph{NOTE:} Because we use refresh, foreign objects are therefor @emph{required} to have an id field.
+
+The @code{Where()} object has some method calls to help with using foreign objects.  @pxref{foreignIdEq} and @pxref{foreignIdIn}.
 
 @c ----------------------------------------------------------------
 @node Use With Android, How to Upgrade, Foreign Objects, Top
@@ -1797,17 +1968,39 @@ Please see the example code posted to the website for more information: @uref{ht
 Again, feedback on this is welcome.
 
 @c ----------------------------------------------------------------
-@node How to Upgrade, 3.X to 4.0, Use With Android, Top
+@node How to Upgrade, 4.X to 4.10, Use With Android, Top
 @chapter Upgrading Old Versions
 
 @menu
+* 4.X to 4.10::                Upgrade from version 4.X to 4.10
 * 3.X to 4.0::                 Upgrade from version 3.X to 4.0
 * 2.X to 3.2::                 Upgrade from version 2.X to 3.2
 * 2.3 to 2.4::                 Upgrade from version 2.3 to 2.4
 @end menu
 
 @c ----------------------------------------------------------------
-@node 3.X to 4.0, 2.X to 3.2, How to Upgrade, How to Upgrade
+@node 4.X to 4.10, 3.X to 4.0, How to Upgrade, How to Upgrade
+@section Upgrade from Version 4.X to 4.10
+
+4.10 was a reasonably large release containing some feature upgrades and some bug fixes.  No data formats were changed, however
+the following changes were made which were large enough to enumerate here.
+
+@itemize @bullet
+
+@item We significantly refactored the @code{RawResults} class which is now deprecated and replaced it with the @code{GenericRawResults}
+class.  See the @code{GenericRawResults} for more information.  @xref{RawResults}.  
+
+@item The @code{Dao} methods @code{queryForAllRaw()} and @code{iteratorRaw()} are now deprecated.  They are replaced with @code{queryRaw()}
+methods.  See the @code{Dao} class javadocs for more information. 
+
+@item Before this release the -jdbc and -android versions of @value{package} contained the -core functionality.  In this release we split
+out the -core from the other packages so you will now need to install @emph{both} the core and android (or jdbc) packages to get the package
+to work.
+
+@end itemize
+
+@c ----------------------------------------------------------------
+@node 3.X to 4.0, 2.X to 3.2, 4.X to 4.10, How to Upgrade
 @section Upgrade from Version 3.X to 4.0
 
 Removed any outside usage of the @code{DatabaseType} since the @code{ConnectionSource} now provides it.  Also added
@@ -1826,7 +2019,7 @@ internally.  To create and drop the tables, also, you only need the @code{Connec
 @code{SQLException}.
 
 @item Constructing a @code{JdbcConnectionSource} or @code{DataSourceConnectionSource} also now
-throw a @code{SQLException} since they also now self-initialize if they are constructed with the URL.
+throws a @code{SQLException} since they also now self-initialize if they are constructed with the URL.
 This creates the internal database type and loads the driver class for it.  
 
 @item Deprecated the @code{createJdbcConnectionSource} method in the @code{DatabaseTypeUtils} and
@@ -1875,9 +2068,10 @@ Along the way a number of specific changes were made to the methods and classes:
 need to adjust any DAOs that you have.
 
 @item We are in the process of allowing custom delete and update methods so we took the major upgrade opportunity to
-rename the @code{QueryBuilder} object to be @code{StatementBuilder}.
+rename the @code{QueryBuilder} object to be @code{StatementBuilder}.  @emph{NOTE:} this was reverted later.
 
-@item Because of the above, we also renamed @code{Dao.queryBuilder()} method to be @code{queryBuilder()}.
+@item Because of the above, we also renamed @code{Dao.queryBuilder()} method to be @code{statementBuilder()}.  @emph{NOTE:} this
+was reverted later.
 
 @item Also renamed the @code{PreparedQuery} object to be @code{PreparedStmt}.
 
@@ -1930,12 +2124,11 @@ the Spring framework.  For more information about the Spring Framework, see @ure
 @cindex create tables
 @cindex generation of the schema
 @cindex schema generation
-@item TableCreator
-
 @cindex auto create tables
-@cindex create tables
 @cindex auto drop tables
 @cindex drop tables
+@item TableCreator
+
 Spring bean that auto-creates any tables that it finds DAOs for if the system property @code{ormlite.auto.create.tables}
 has been set to true. It will also auto-drop any tables that were auto-created if the property
 @code{ormlite.auto.drop.tables} has been set to true.  This should be used carefully and probably only in tests.

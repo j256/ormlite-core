@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on February, 2 2011 by texi2html 1.70 -->
+<!-- Created on February, 7 2011 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -47,14 +47,14 @@ ul.toc {list-style: none}
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite_2.html#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_4.html#SEC29" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_4.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC44" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC46" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h1 class="chapter"> 3. Custom Statement Builder </h1>
@@ -71,7 +71,9 @@ with which you can construct custom queries to return a sub-set of the table.
 </td></tr>
 <tr><td align="left" valign="top"><a href="#SEC27">3.3 Building Statements</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">         How to build update and delete statements.
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC28">3.4 Using Select Arguments</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">            Using arguments to queries.
+<tr><td align="left" valign="top"><a href="#SEC28">3.4 Where Capabilities</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">          Description of the various WHERE statements.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC29">3.5 Using Select Arguments</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">            Using arguments to queries.
 </td></tr>
 </table>
 
@@ -84,14 +86,14 @@ with which you can construct custom queries to return a sub-set of the table.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC24" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC24" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_4.html#SEC29" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_4.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC44" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC46" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.1 Query Builder Basics </h2>
@@ -111,7 +113,7 @@ public class Account {
 <p>This allows us to construct queries using the password field name without having the renaming of a field in the future break
 our queries.  This should be done <em>even</em> if the name of the field and the column name are the same.
 
-</p><a name="IDX134"></a>
+</p><a name="IDX137"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">// get our query builder from the DAO
 QueryBuilder&lt;Account, String&gt; queryBuilder =
   accountDao.queryBuilder();
@@ -123,7 +125,7 @@ PreparedQuery&lt;Account, String&gt; preparedQuery =
 // query for all accounts that have that password
 List&lt;Account&gt; accountList = accountDao.query(preparedQuery);
 </pre></td></tr></table>
-<a name="IDX135"></a>
+<a name="IDX138"></a>
 <p>You get a <code>QueryBuilder</code> object from the <code>Dao.queryBuilder</code> method, call methods on it to build your custom
 query, call <code>queryBuilder.prepare()</code> which returns a <code>PreparedQuery</code> object, and then pass the <code>PreparedQuery</code>
 to the DAO's <code>query</code> or <code>iterator</code> methods.
@@ -147,14 +149,14 @@ List&lt;Account&gt; accountList =
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC24" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC24" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_4.html#SEC29" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_4.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC44" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC46" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.2 Building Queries </h2>
@@ -180,7 +182,7 @@ PreparedQuery&lt;Account, String&gt; preparedQuery =
 </p><table><tr><td>&nbsp;</td><td><pre class="example">SELECT * FROM account
   WHERE (name = 'foo' AND password = '_secret')
 </pre></td></tr></table>
-<a name="IDX136"></a>
+<a name="IDX139"></a>
 <p>If you'd rather chain the methods onto one line (like StringBuilder), this can also be written as:
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">queryBuilder.where()
@@ -194,7 +196,7 @@ PreparedQuery&lt;Account, String&gt; preparedQuery =
 where.and(where.eq(Account.NAME_FIELD_NAME, &quot;foo&quot;),
           where.eq(Account.PASSWORD_FIELD_NAME, &quot;_secret&quot;));
 </pre></td></tr></table>
-<a name="IDX137"></a>
+<a name="IDX140"></a>
 <p>All three of the above call formats produce the same SQL.  For complex queries that mix ANDs and ORs, the last
 format may be necessary to get the grouping correct.  For example, here's a complex query:
 
@@ -213,16 +215,12 @@ where.or(
   WHERE ((name = 'foo' AND password = '_secret')
          OR (name = 'bar' AND password = 'qwerty'))
 </pre></td></tr></table>
-<a name="IDX138"></a>
-<a name="IDX139"></a>
-<a name="IDX140"></a>
 <a name="IDX141"></a>
 <a name="IDX142"></a>
-<a name="IDX143"></a>
 <p>The <code>QueryBuilder</code> also allows you to set what specific select columns you want returned, specify the 'ORDER BY'
-and 'GROUP BY' fields, and various other SQL features (LIKE, IN, &gt;, &gt;=, &lt;, &lt;=, &lt;&gt;, IS NULL, DISTINCT, &hellip;).  See the
-javadocs on<code>QueryBuilder</code> and <code>Where</code> classes for more information.  A good SQL reference site can be found
-at <a href="http://www.w3schools.com/Sql/">http://www.w3schools.com/Sql/</a>.
+and 'GROUP BY' fields, and various other SQL features (LIKE, IN, &gt;, &gt;=, &lt;, &lt;=, &lt;&gt;, IS NULL, DISTINCT, &hellip;).
+See section <a href="#SEC28">Where Capabilities</a>. You can also see the javadocs on<code>QueryBuilder</code> and <code>Where</code> classes for more
+information.  A good SQL reference site can be found at <a href="http://www.w3schools.com/Sql/">http://www.w3schools.com/Sql/</a>.
 
 </p><hr size="6">
 <a name="NOD28"></a>
@@ -233,20 +231,20 @@ at <a href="http://www.w3schools.com/Sql/">http://www.w3schools.com/Sql/</a>.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC24" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC24" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_4.html#SEC29" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_4.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC44" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC46" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.3 Building Statements </h2>
 
-<p><a name="ANC5"></a>
-<a name="ANC6"></a>
+<p><a name="ANC6"></a>
+<a name="ANC7"></a>
 The DAO can also be used to construct custom <code>UPDATE</code> and <code>DELETE</code> statements.  Update statements
 are used to change certain fields in rows from the table that match the <code>WHERE</code> pattern - or update <em>all</em>
 rows if no <code>where()</code>. Delete statements are used to delete rows from the table that match the <code>WHERE</code>
@@ -286,21 +284,231 @@ accountDao.delete(deleteBuilder.prepare());
 <a name="SEC28"></a>
 <table cellpadding="1" cellspacing="1" border="0">
 <tr><td valign="middle" align="left">[<a href="#SEC27" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_4.html#SEC29" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC29" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC24" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC24" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_4.html#SEC29" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_4.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC44" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC46" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 3.4 Using Select Arguments </h2>
+<h2 class="section"> 3.4 Where Capabilities </h2>
+
+<p>The following are some details about the various method calls for adding <code>WHERE</code> SQL statements to your custom
+select, delete, and update statements.  See the Javadocs for the <code>Where</code> class for the most up-to-date information
+about the available methods.  All of the methods return the <code>Where</code> object so you can chain them together.
+
+</p><p>For a good tutorial of SQL commands, here's a good site: <a href="http://www.w3schools.com/sql/sql_where.asp">http://www.w3schools.com/sql/sql_where.asp</a>.
+
+</p><dl compact="compact">
+<dd>
+<a name="IDX143"></a>
+</dd>
+<dt><code> and()</code></dt>
+<dd>
+<p>Binary <code>AND</code> operation which takes the previous clause and the next clause and AND's them together.  This is when
+you are using inline query calls.
+
+</p></dd>
+<dt><code> and(Where&lt;T, ID&gt; left, Where&lt;T, ID&gt; right)</code></dt>
+<dd>
+<p>Binary AND operation which takes 2 arguments and AND's them together.  This is when you are <em>not</em> using inline
+query calls but instead want to use standard arguments.
+
+</p><a name="IDX144"></a>
+</dd>
+<dt><code> between(String columnName, Object low, Object high)</code></dt>
+<dd>
+<p>Add a BETWEEN clause which makes sure the column is between the low and high parameters.
+
+</p><a name="IDX145"></a>
+<a name="IDX146"></a>
+</dd>
+<dt><code> eq(String columnName, Object value)</code></dt>
+<dd>
+<p>Add a '=' clause which makes sure the column is equal to the value.
+
+</p><a name="IDX147"></a>
+</dd>
+<dt><code> exists(QueryBuilder&lt;?, ?&gt; subQueryBuilder)</code></dt>
+<dd>
+<p>Add a EXISTS clause with a sub-query inside of parenthesis.  This will return returns as long as the inner query returns
+results.
+
+</p><p><em>NOTE:</em> The sub-query will be prepared at the same time that the outside query is.
+
+</p><p><a name="ANC8"></a>
+</p></dd>
+<dt><code> foreignIdEq(Dao&lt;OD, OID&gt; dataDao, OD data)</code></dt>
+<dd>
+<p>Add a clause where the ID is the id from a foreign field in the data that is passed in.
+
+</p><p><a name="ANC9"></a>
+</p></dd>
+<dt><code> foreignIdIn(Dao&lt;OD, OID&gt; dataDao, OD... datas)</code></dt>
+<dd>
+<p>Add a IN clause where the ID is the id from a foreign field in the data items that are passed in.
+
+</p></dd>
+<dt><code> foreignIdIn(Dao&lt;OD, OID&gt; dataDao, Iterable&lt;OD&gt; datas)</code></dt>
+<dd>
+<p>Add a IN clause where the ID is the id from a foreign field in the data items iterable that is passed in.
+
+</p><a name="IDX148"></a>
+<a name="IDX149"></a>
+<a name="IDX150"></a>
+</dd>
+<dt><code> ge(String columnName, Object value)</code></dt>
+<dd>
+<p>Add a '&gt;=' clause which makes sure the column is greater-than or equals-to the value.
+
+</p><a name="IDX151"></a>
+<a name="IDX152"></a>
+<a name="IDX153"></a>
+</dd>
+<dt><code> gt(String columnName, Object value)</code></dt>
+<dd>
+<p>Add a '&gt;' clause which makes sure the column is greater-than the value.
+
+</p></dd>
+<dt><code> idEq(ID id)</code></dt>
+<dd>
+<p>Add a clause where the ID is equals to the argument.
+
+</p></dd>
+<dt><code> idEq(Dao&lt;OD, ?&gt; dataDao, OD data)</code></dt>
+<dd>
+<p>Add a clause where the ID is extracted from an existing object.
+
+</p><a name="IDX154"></a>
+</dd>
+<dt><code> in(String columnName, Iterable&lt;?&gt; objects)</code></dt>
+<dd>
+<p>Add a IN clause which makes sure the column is equal-to one of the objects from the Iterable (probably collection)
+passed in.
+
+</p><a name="IDX155"></a>
+</dd>
+<dt><code> in(String columnName, Object... objects)</code></dt>
+<dd>
+<p>Add a IN clause which makes sure the column is equal-to one of the objects passed in.
+
+</p><a name="IDX156"></a>
+<a name="IDX157"></a>
+<a name="IDX158"></a>
+</dd>
+<dt><code> in(String columnName, QueryBuilder&lt;?, ?&gt; subQueryBuilder)</code></dt>
+<dd>
+<p>Add a IN clause which makes sure the column is in one of the columns returned from a sub-query inside of parenthesis.
+The <code>QueryBuilder</code> must return 1 and only one column which can be set with the <code>QueryBuilder.selectColumns(String...)</code>
+method calls. That 1 argument must match the SQL type of the column-name passed to this method.
+
+</p><p><em>NOTE:</em> The sub-query will be prepared at the same time that the outside query is.
+
+</p><a name="IDX159"></a>
+<a name="IDX160"></a>
+</dd>
+<dt><code> isNull(String columnName)</code></dt>
+<dd>
+<p>Add a 'IS NULL' clause which makes sure the column's value is null. '=' NULL does not work.
+
+</p><a name="IDX161"></a>
+<a name="IDX162"></a>
+</dd>
+<dt><code> isNotNull(String columnName)</code></dt>
+<dd>
+<p>Add a 'IS NOT NULL' clause so the column must not be null. '&lt;&gt;' NULL does not work.
+
+</p><a name="IDX163"></a>
+<a name="IDX164"></a>
+<a name="IDX165"></a>
+</dd>
+<dt><code> le(String columnName, Object value)</code></dt>
+<dd>
+<p>Add a '&lt;=' clause which makes sure the column is less-than or equals-to the value.
+
+</p><a name="IDX166"></a>
+<a name="IDX167"></a>
+<a name="IDX168"></a>
+</dd>
+<dt><code> lt(String columnName, Object value)</code></dt>
+<dd>
+<p>Add a '&lt;' clause which makes sure the column is less-than the value.
+
+</p><a name="IDX169"></a>
+</dd>
+<dt><code> like(String columnName, Object value)</code></dt>
+<dd>
+<p>Add a LIKE clause which makes sure the column match the value using '%' patterns.
+
+</p><a name="IDX170"></a>
+<a name="IDX171"></a>
+<a name="IDX172"></a>
+</dd>
+<dt><code> ne(String columnName, Object value)</code></dt>
+<dd>
+<p>Add a '&lt;&gt;' clause which makes sure the column is not-equal-to the value.
+
+</p><a name="IDX173"></a>
+</dd>
+<dt><code> not()</code></dt>
+<dd>
+<p>Used to NOT the next clause specified when using inline query calls.
+
+</p></dd>
+<dt><code> not(Where&lt;T, ID&gt; comparison)</code></dt>
+<dd>
+<p>Used to NOT the argument clause specified.  This is when you are <em>not</em> using inline
+query calls but instead want to use standard arguments.
+
+</p><a name="IDX174"></a>
+</dd>
+<dt><code> or()</code></dt>
+<dd>
+<p>Binary <code>OR</code> operation which takes the previous clause and the next clause and OR's them together.  This is when
+you are using inline query calls.
+
+</p></dd>
+<dt><code> or(Where&lt;T, ID&gt; left, Where&lt;T, ID&gt; right)</code></dt>
+<dd>
+<p>Binary OR operation which takes 2 arguments and OR's them together.  This is when you are <em>not</em> using inline
+query calls but instead want to use standard arguments.
+
+</p></dd>
+<dt><code> prepare()</code></dt>
+<dd>
+<p>A short-cut for calling <code>prepare()</code> on the original <code>QueryBuilder.prepare()</code>.  This method returns a
+<code>PreparedQuery</code> object.
+
+</p></dd>
+</dl>
+
+<hr size="6">
+<a name="NOD30"></a>
+<a name="SEC29"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC28" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_4.html#SEC30" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC24" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC24" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_4.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC46" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 3.5 Using Select Arguments </h2>
 
 <p>Select Arguments are arguments that are used in WHERE operations can be specified directly as value arguments (as in the
 above examples) or as a <code>SelectArg</code> object.  SelectArgs are used to set the value of an argument at a later time -
@@ -335,7 +543,7 @@ new object if you want to use a <code>SelectArg</code> with another column.
 </p><hr size="6">
 <table cellpadding="1" cellspacing="1" border="0">
 <tr><td valign="middle" align="left">[<a href="#SEC24" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_4.html#SEC29" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_4.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
@@ -343,12 +551,12 @@ new object if you want to use a <code>SelectArg</code> with another column.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC44" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC46" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>February, 2 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>February, 7 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 
