@@ -560,7 +560,7 @@ public class WhereTest extends BaseCoreTest {
 	}
 
 	@Test
-	public void testInSubQueryIdEqForiegnInIterable() throws Exception {
+	public void testInSubQuery() throws Exception {
 		TableInfo<ForeignFoo> tableInfo = new TableInfo<ForeignFoo>(connectionSource, ForeignFoo.class);
 		Where<ForeignFoo, Integer> where = new Where<ForeignFoo, Integer>(tableInfo, null);
 		BaseDaoImpl<ForeignFoo, Integer> foreignDao =
@@ -579,6 +579,44 @@ public class WhereTest extends BaseCoreTest {
 		sb.append(" FROM ");
 		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
 		sb.append(" ) ");
+		assertEquals(sb.toString(), whereSb.toString());
+	}
+
+	@Test
+	public void testExistsSubQuery() throws Exception {
+		TableInfo<ForeignFoo> tableInfo = new TableInfo<ForeignFoo>(connectionSource, ForeignFoo.class);
+		Where<ForeignFoo, Integer> where = new Where<ForeignFoo, Integer>(tableInfo, null);
+		BaseDaoImpl<ForeignFoo, Integer> foreignDao =
+				new BaseDaoImpl<ForeignFoo, Integer>(connectionSource, ForeignFoo.class) {
+				};
+		QueryBuilder<ForeignFoo, Integer> qb = foreignDao.queryBuilder();
+		where.exists(qb);
+		StringBuilder whereSb = new StringBuilder();
+		where.appendSql(databaseType, whereSb, new ArrayList<SelectArg>());
+		StringBuilder sb = new StringBuilder();
+		sb.append("EXISTS (");
+		sb.append("SELECT * FROM ");
+		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
+		sb.append(" ) ");
+		assertEquals(sb.toString(), whereSb.toString());
+	}
+
+	@Test
+	public void testNotExistsSubQuery() throws Exception {
+		TableInfo<ForeignFoo> tableInfo = new TableInfo<ForeignFoo>(connectionSource, ForeignFoo.class);
+		Where<ForeignFoo, Integer> where = new Where<ForeignFoo, Integer>(tableInfo, null);
+		BaseDaoImpl<ForeignFoo, Integer> foreignDao =
+				new BaseDaoImpl<ForeignFoo, Integer>(connectionSource, ForeignFoo.class) {
+				};
+		QueryBuilder<ForeignFoo, Integer> qb = foreignDao.queryBuilder();
+		where.not().exists(qb);
+		StringBuilder whereSb = new StringBuilder();
+		where.appendSql(databaseType, whereSb, new ArrayList<SelectArg>());
+		StringBuilder sb = new StringBuilder();
+		sb.append("(NOT EXISTS (");
+		sb.append("SELECT * FROM ");
+		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
+		sb.append(" ) ) ");
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 

@@ -41,18 +41,24 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * Use this when you are building an inner query. This is necessary because by default, we add in the ID column on
-	 * every query. When you are returning a data item, its ID field _must_ be set otherwise you can't do a refresh() or
-	 * update().
+	 * This is used by the internal call structure to note when a query builder is being used as an inner query. This is
+	 * necessary because by default, we add in the ID column on every query. When you are returning a data item, its ID
+	 * field _must_ be set otherwise you can't do a refresh() or update(). But internal queries must have 1 select
+	 * column set so we can't add the ID.
 	 */
 	void enableInnerQuery() throws SQLException {
-		if (selectColumnList == null) {
-			throw new SQLException("Inner query must have 1 select column specified instead of none");
-		} else if (selectColumnList.size() != 1) {
-			throw new SQLException("Inner query must have only 1 select column specified instead of "
-					+ selectColumnList.size());
-		}
 		this.isInnerQuery = true;
+	}
+
+	/**
+	 * Return the number of selected columns in the query.
+	 */
+	int getSelectColumnCount() {
+		if (selectColumnList == null) {
+			return 0;
+		} else {
+			return selectColumnList.size();
+		}
 	}
 
 	/**

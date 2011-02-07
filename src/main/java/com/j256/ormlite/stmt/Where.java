@@ -12,6 +12,7 @@ import com.j256.ormlite.stmt.query.And;
 import com.j256.ormlite.stmt.query.Between;
 import com.j256.ormlite.stmt.query.Clause;
 import com.j256.ormlite.stmt.query.Eq;
+import com.j256.ormlite.stmt.query.Exists;
 import com.j256.ormlite.stmt.query.Ge;
 import com.j256.ormlite.stmt.query.Gt;
 import com.j256.ormlite.stmt.query.In;
@@ -223,10 +224,28 @@ public class Where<T, ID> {
 	 * </p>
 	 */
 	public Where<T, ID> in(String columnName, QueryBuilder<?, ?> subQueryBuilder) throws SQLException {
+		if (subQueryBuilder.getSelectColumnCount() != 1) {
+			throw new SQLException("Inner query must have only 1 select column specified instead of "
+					+ subQueryBuilder.getSelectColumnCount());
+		}
 		// we do this to turn off the automatic addition of the ID column in the select column list
 		subQueryBuilder.enableInnerQuery();
 		addClause(new InSubQuery(columnName, findColumnFieldType(columnName), new InternalQueryBuilderWrapper(
 				subQueryBuilder)));
+		return this;
+	}
+
+	/**
+	 * Add a EXISTS clause with a sub-query inside of parenthesis.
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> The sub-query will be prepared at the same time that the outside query is.
+	 * </p>
+	 */
+	public Where<T, ID> exists(QueryBuilder<?, ?> subQueryBuilder) throws SQLException {
+		// we do this to turn off the automatic addition of the ID column in the select column list
+		subQueryBuilder.enableInnerQuery();
+		addClause(new Exists(new InternalQueryBuilderWrapper(subQueryBuilder)));
 		return this;
 	}
 
