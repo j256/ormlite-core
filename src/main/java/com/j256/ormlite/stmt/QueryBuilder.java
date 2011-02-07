@@ -45,7 +45,13 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * every query. When you are returning a data item, its ID field _must_ be set otherwise you can't do a refresh() or
 	 * update().
 	 */
-	void enableInnerQuery() {
+	void enableInnerQuery() throws SQLException {
+		if (selectColumnList == null) {
+			throw new SQLException("Inner query must have 1 select column specified instead of none");
+		} else if (selectColumnList.size() != 1) {
+			throw new SQLException("Inner query must have only 1 select column specified instead of "
+					+ selectColumnList.size());
+		}
 		this.isInnerQuery = true;
 	}
 
