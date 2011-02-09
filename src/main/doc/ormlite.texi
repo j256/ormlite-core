@@ -82,12 +82,10 @@ To get started quickly with @value{package}, see the code examples down in the @
 package test classes in the Java sources jar down in @code{src/test/java}.  They contain a couple different
 examples with working code.
 @ifhtml
-There is also a PDF version of this documentation -- see
-@uref{http://ormlite.sourceforge.net/javadoc/ormlite-core/doc-files/ormlite.pdf}.
+There is also a PDF version of this documentation -- see @uref{http://ormlite.com/docs/ormlite.pdf}.
 @end ifhtml
 @iftex
-There is also a HTML version of this documentation -- see
-@uref{http://ormlite.sourceforge.net/javadoc/ormlite-core/doc-files/ormlite.html}.
+There is also a HTML version of this documentation -- see @uref{http://ormlite.com/docs/ormlite.html}.
 @end iftex
 
 Gray Watson @uref{http://256.com/gray/}
@@ -121,7 +119,8 @@ Gray Watson @uref{http://256.com/gray/}
 @section Downloading @value{package} Jar
 
 To get started with @value{package}, you will need to download the jar files.  They are available on the central maven repository
-(@uref{http://repo1.maven.org/maven2/com/j256/ormlite/}) or from Sourceforge (@uref{http://sourceforge.net/projects/ormlite/files/}). 
+(@uref{http://repo1.maven.org/maven2/com/j256/ormlite/}) or from Sourceforge (@uref{http://sourceforge.net/projects/ormlite/files/}).
+See the @uref{http://ormlite.com/} home page for the most up-to-date repositories. 
 
 Users that are connecting to SQL databases via JDBC connections will need to download the ormlite-jdbc-@value{ormlite_version}.jar
 and ormlite-core-@value{ormlite_version}.jar files.  For use with Android applications, you should download the
@@ -1938,7 +1937,7 @@ used by your other classes.  Your helper class must implement the methods
 @code{onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion)}.
 @code{onCreate} creates the database when your app is first installed while @code{onUpgrade} handles the upgrading
 of the database tables when you upgrade your app to a new version.  There is a sample @code{DatabaseHelper} class as well as
-examples projects online: @uref{http://ormlite.sourceforge.net/android/examples/}. 
+examples projects online: @uref{http://ormlite.com/android/examples/}. 
 
 @item The helper can be kept open across all activities in your app with the same Sqlite database connection reused by
 all threads.  If you open multiple connections to the same database, stale data and unexpected results may occur.
@@ -1964,7 +1963,7 @@ you want, and then calling @code{OpenHelperManager.release()} when you are done 
 
 @end enumerate
 
-Please see the example code posted to the website for more information: @uref{http://ormlite.sourceforge.net/android/examples/}.
+Please see the example code posted to the website for more information: @uref{http://ormlite.com/android/examples/}.
 Again, feedback on this is welcome.
 
 @c ----------------------------------------------------------------
@@ -2604,6 +2603,8 @@ Thanks much to them all.
 @node License, Index of Concepts, Contributions, Top
 @chapter Project License
 
+@cindex license
+@cindex copyright
 This document is part of the ORMLite package.
 
 Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby
@@ -2615,7 +2616,7 @@ DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING F
 WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE
 USE OR PERFORMANCE OF THIS SOFTWARE.
 
-The author may be contacted via @uref{http://ormlite.sourceforge.net/}
+The author may be contacted via @uref{http://ormlite.com/}
 
 @c ----------------------------------------------------------------
 @node Index of Concepts,, License, Top
