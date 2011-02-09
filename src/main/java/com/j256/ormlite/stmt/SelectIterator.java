@@ -189,4 +189,12 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 			connectionSource.releaseConnection(connection);
 		}
 	}
+
+	/**
+	 * Return the internal raw results object that was created by this iterator. This should not be used unless you know
+	 * what you are doing.
+	 */
+	public DatabaseResults getRawResults() {
+		return results;
+	}
 }
