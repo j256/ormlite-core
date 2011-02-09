@@ -38,8 +38,7 @@ public class TableUtils {
 	}
 
 	/**
-	 * Issue the database statements to create the table associated with a class. Most likely this will be done
-	 * <i>only</i> when a database is configured or in unit tests.
+	 * Issue the database statements to create the table associated with a class.
 	 * 
 	 * @param connectionSource
 	 *            Associated connection source.
@@ -52,8 +51,7 @@ public class TableUtils {
 	}
 
 	/**
-	 * Issue the database statements to create the table associated with a class. Most likely this will be done
-	 * <i>only</i> when a database is configured or in unit tests.
+	 * Issue the database statements to create the table associated with a table configuration.
 	 * 
 	 * @param connectionSource
 	 *            connectionSource Associated connection source.
@@ -80,7 +78,7 @@ public class TableUtils {
 	 */
 	public static <T> List<String> getCreateTableStatements(ConnectionSource connectionSource, Class<T> dataClass)
 			throws SQLException {
-		return doCreateTableStatements(connectionSource, DatabaseTableConfig.fromClass(connectionSource, dataClass));
+		return addCreateTableStatements(connectionSource, DatabaseTableConfig.fromClass(connectionSource, dataClass));
 	}
 
 	/**
@@ -97,21 +95,20 @@ public class TableUtils {
 	public static <T> List<String> getCreateTableStatements(ConnectionSource connectionSource,
 			DatabaseTableConfig<T> tableConfig) throws SQLException {
 		tableConfig.extractFieldTypes(connectionSource);
-		return doCreateTableStatements(connectionSource, tableConfig);
+		return addCreateTableStatements(connectionSource, tableConfig);
 	}
 
 	/**
-	 * Issue the database statements to create the table associated with a class. Most likely this will be done
-	 * <i>only</i> in unit tests.
+	 * Issue the database statements to drop the table associated with a class.
 	 * 
 	 * <p>
-	 * <b>WARNING:</b> This is [obviously] very destructive and unrecoverable.
+	 * <b>WARNING:</b> This is [obviously] very destructive and is unrecoverable.
 	 * </p>
 	 * 
 	 * @param connectionSource
 	 *            Associated connection source.
 	 * @param dataClass
-	 *            The class for which a table will be created.
+	 *            The class for which a table will be dropped.
 	 * @param ignoreErrors
 	 *            If set to true then try each statement regardless of {@link SQLException} thrown previously.
 	 * @return The number of statements executed to do so.
@@ -124,8 +121,10 @@ public class TableUtils {
 	}
 
 	/**
+	 * Issue the database statements to drop the table associated with a table configuration.
+	 * 
 	 * <p>
-	 * <b>WARNING:</b> This is [obviously] very destructive and unrecoverable.
+	 * <b>WARNING:</b> This is [obviously] very destructive and is unrecoverable.
 	 * </p>
 	 * 
 	 * @param connectionSource
@@ -150,10 +149,10 @@ public class TableUtils {
 		logger.info("dropping table '{}'", tableInfo.getTableName());
 		List<String> statements = new ArrayList<String>();
 		addDropIndexStatements(databaseType, tableInfo, statements);
-		dropTableStatements(databaseType, tableInfo, statements);
+		addDropTableStatements(databaseType, tableInfo, statements);
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		try {
-			return doDropStatements(connection, statements, ignoreErrors);
+			return doStatements(connection, "drop", statements, ignoreErrors);
 		} finally {
 			connectionSource.releaseConnection(connection);
 		}
@@ -184,41 +183,10 @@ public class TableUtils {
 		}
 	}
 
-	private static int doDropStatements(DatabaseConnection connection, Collection<String> statements,
-			boolean ignoreErrors) throws SQLException {
-		int stmtC = 0;
-		for (String statement : statements) {
-			int rowC = 0;
-			CompiledStatement prepStmt = null;
-			try {
-				prepStmt = connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes, noFieldTypes);
-				rowC = prepStmt.executeUpdate();
-				logger.info("executed drop table statement changed {} rows: {}", rowC, statement);
-			} catch (SQLException e) {
-				if (ignoreErrors) {
-					logger.info("ignoring drop error '" + e.getMessage() + "' for statement: " + statement);
-				} else {
-					throw e;
-				}
-			} finally {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-			}
-			// sanity check
-			if (rowC < 0) {
-				throw new SQLException("SQL statement " + statement + " updated " + rowC
-						+ " rows, we were expecting >= 0");
-			}
-			stmtC++;
-		}
-		return stmtC;
-	}
-
 	/**
 	 * Generate and return the list of statements to create a database table and any associated features.
 	 */
-	private static <T> void createTableStatements(DatabaseType databaseType, TableInfo<T> tableInfo,
+	private static <T> void addCreateTableStatements(DatabaseType databaseType, TableInfo<T> tableInfo,
 			List<String> statements, List<String> queriesAfter) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("CREATE TABLE ");
@@ -304,7 +272,7 @@ public class TableUtils {
 	/**
 	 * Generate and return the list of statements to drop a database table.
 	 */
-	private static <T> Collection<String> dropTableStatements(DatabaseType databaseType, TableInfo<T> tableInfo,
+	private static <T> void addDropTableStatements(DatabaseType databaseType, TableInfo<T> tableInfo,
 			List<String> statements) {
 		List<String> statementsBefore = new ArrayList<String>();
 		List<String> statementsAfter = new ArrayList<String>();
@@ -318,7 +286,6 @@ public class TableUtils {
 		statements.addAll(statementsBefore);
 		statements.add(sb.toString());
 		statements.addAll(statementsAfter);
-		return statements;
 	}
 
 	private static <T> int doCreateTable(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig)
@@ -328,28 +295,33 @@ public class TableUtils {
 		logger.info("creating table '{}'", tableInfo.getTableName());
 		List<String> statements = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();
-		createTableStatements(databaseType, tableInfo, statements, queriesAfter);
+		addCreateTableStatements(databaseType, tableInfo, statements, queriesAfter);
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		try {
-			return doCreateStatements(connection, databaseType, statements, queriesAfter);
+			int stmtC = doStatements(connection, "create", statements, false);
+			stmtC += doCreateTestQueries(connection, databaseType, queriesAfter);
+			return stmtC;
 		} finally {
 			connectionSource.releaseConnection(connection);
 		}
 	}
 
-	private static int doCreateStatements(DatabaseConnection connection, DatabaseType databaseType,
-			List<String> statements, List<String> queriesAfter) throws SQLException {
+	private static int doStatements(DatabaseConnection connection, String label, Collection<String> statements,
+			boolean ignoreErrors) throws SQLException {
 		int stmtC = 0;
 		for (String statement : statements) {
-			int rowC;
+			int rowC = 0;
 			CompiledStatement prepStmt = null;
 			try {
 				prepStmt = connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes, noFieldTypes);
-				rowC = prepStmt.executeUpdate();
-				logger.info("executed create table statement changed {} rows: {}", rowC, statement);
+				rowC = prepStmt.runUpdate();
+				logger.info("executed {} table statement changed {} rows: {}", label, rowC, statement);
 			} catch (SQLException e) {
-				// we do this to make sure that the statement is in the exception
-				throw SqlExceptionUtil.create("SQL statement failed: " + statement, e);
+				if (ignoreErrors) {
+					logger.info("ignoring {} error '{}' for statement: {}", label, e.getMessage(), statement);
+				} else {
+					throw SqlExceptionUtil.create("SQL statement failed: " + statement, e);
+				}
 			} finally {
 				if (prepStmt != null) {
 					prepStmt.close();
@@ -357,20 +329,24 @@ public class TableUtils {
 			}
 			// sanity check
 			if (rowC < 0) {
-				throw new SQLException("SQL statement updated " + rowC + " rows, we were expecting >= 0: " + statement);
-			} else if (rowC > 0 && databaseType.isCreateTableReturnsZero()) {
-				throw new SQLException("SQL statement updated " + rowC + " rows, we were expecting == 0: " + statement);
+				throw new SQLException("SQL statement " + statement + " updated " + rowC
+						+ " rows, we were expecting >= 0");
 			}
-
 			stmtC++;
 		}
+		return stmtC;
+	}
+
+	private static int doCreateTestQueries(DatabaseConnection connection, DatabaseType databaseType,
+			List<String> queriesAfter) throws SQLException {
+		int stmtC = 0;
 		// now execute any test queries which test the newly created table
 		for (String query : queriesAfter) {
 			CompiledStatement prepStmt = null;
 			DatabaseResults results = null;
 			try {
 				prepStmt = connection.compileStatement(query, StatementType.EXECUTE, noFieldTypes, noFieldTypes);
-				results = prepStmt.executeQuery();
+				results = prepStmt.runQuery();
 				int rowC = 0;
 				// count the results
 				while (results.next()) {
@@ -391,13 +367,13 @@ public class TableUtils {
 		return stmtC;
 	}
 
-	private static <T> List<String> doCreateTableStatements(ConnectionSource connectionSource,
+	private static <T> List<String> addCreateTableStatements(ConnectionSource connectionSource,
 			DatabaseTableConfig<T> tableConfig) throws SQLException {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		TableInfo<T> tableInfo = new TableInfo<T>(databaseType, tableConfig);
 		List<String> statements = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();
-		createTableStatements(databaseType, tableInfo, statements, queriesAfter);
+		addCreateTableStatements(databaseType, tableInfo, statements, queriesAfter);
 		return statements;
 	}
 }
