@@ -25,14 +25,19 @@ public interface CompiledStatement {
 	public String getColumnName(int column) throws SQLException;
 
 	/**
-	 * Execute the prepared update statement returning the number of rows affected.
+	 * Run the prepared update statement returning the number of rows affected.
 	 */
-	public int executeUpdate() throws SQLException;
+	public int runUpdate() throws SQLException;
 
 	/**
-	 * Execute the prepared query statement returning the results.
+	 * Run the prepared query statement returning the results.
 	 */
-	public DatabaseResults executeQuery() throws SQLException;
+	public DatabaseResults runQuery() throws SQLException;
+
+	/**
+	 * Run the prepared execute statement returning whether it worked or not.
+	 */
+	public boolean runExecute() throws SQLException;
 
 	/**
 	 * Get the generated key results.

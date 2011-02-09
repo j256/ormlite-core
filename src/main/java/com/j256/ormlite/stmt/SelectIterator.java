@@ -49,7 +49,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 		this.connectionSource = connectionSource;
 		this.connection = connection;
 		this.compiledStmt = compiledStmt;
-		this.results = compiledStmt.executeQuery();
+		this.results = compiledStmt.runQuery();
 		this.statement = statement;
 		if (statement != null) {
 			logger.debug("starting iterator @{} for '{}'", hashCode(), statement);
