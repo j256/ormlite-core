@@ -35,9 +35,9 @@ public interface CompiledStatement {
 	public DatabaseResults runQuery() throws SQLException;
 
 	/**
-	 * Run the prepared execute statement returning whether it worked or not.
+	 * Run the prepared execute statement returning the number of rows affected.
 	 */
-	public boolean runExecute() throws SQLException;
+	public int runExecute() throws SQLException;
 
 	/**
 	 * Get the generated key results.
