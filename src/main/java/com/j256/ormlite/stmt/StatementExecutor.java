@@ -84,7 +84,7 @@ public class StatementExecutor<T, ID> {
 	public T queryForFirst(DatabaseConnection databaseConnection, PreparedStmt<T> preparedQuery) throws SQLException {
 		CompiledStatement stmt = preparedQuery.compile(databaseConnection);
 		try {
-			DatabaseResults results = stmt.executeQuery();
+			DatabaseResults results = stmt.runQuery();
 			if (results.next()) {
 				logger.debug("query-for-first of '{}' returned at least 1 result", preparedQuery.getStatement());
 				return preparedQuery.mapRow(results);
@@ -250,6 +250,40 @@ public class StatementExecutor<T, ID> {
 	}
 
 	/**
+	 * Return the number of rows affected.
+	 */
+	public int updateRaw(ConnectionSource connectionSource, String statement) throws SQLException {
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		logger.debug("running raw update statement: {}", statement);
+		CompiledStatement compiledStatement =
+				connection.compileStatement(statement, StatementType.UPDATE, noFieldTypes, tableInfo.getFieldTypes());
+		try {
+			return compiledStatement.runUpdate();
+		} finally {
+			if (compiledStatement != null) {
+				compiledStatement.close();
+			}
+		}
+	}
+
+	/**
+	 * Return true if it worked else false.
+	 */
+	public int executeRaw(ConnectionSource connectionSource, String statement) throws SQLException {
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		logger.debug("running raw execute statement: {}", statement);
+		CompiledStatement compiledStatement =
+				connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes, tableInfo.getFieldTypes());
+		try {
+			return compiledStatement.runExecute();
+		} finally {
+			if (compiledStatement != null) {
+				compiledStatement.close();
+			}
+		}
+	}
+
+	/**
 	 * Create a new entry in the database from an object.
 	 */
 	public int create(DatabaseConnection databaseConnection, T data) throws SQLException {
@@ -285,7 +319,7 @@ public class StatementExecutor<T, ID> {
 	public int update(DatabaseConnection databaseConnection, PreparedUpdate<T> preparedUpdate) throws SQLException {
 		CompiledStatement stmt = preparedUpdate.compile(databaseConnection);
 		try {
-			return stmt.executeUpdate();
+			return stmt.runUpdate();
 		} finally {
 			if (stmt != null) {
 				stmt.close();
@@ -337,7 +371,7 @@ public class StatementExecutor<T, ID> {
 	public int delete(DatabaseConnection databaseConnection, PreparedDelete<T> preparedDelete) throws SQLException {
 		CompiledStatement stmt = preparedDelete.compile(databaseConnection);
 		try {
-			return stmt.executeUpdate();
+			return stmt.runUpdate();
 		} finally {
 			if (stmt != null) {
 				stmt.close();

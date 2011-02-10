@@ -37,7 +37,7 @@ public class SelectIteratorTest extends BaseCoreTest {
 		CompiledStatement compiledStmt = createMock(CompiledStatement.class);
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(results.next()).andReturn(false);
-		expect(compiledStmt.executeQuery()).andReturn(results);
+		expect(compiledStmt.runQuery()).andReturn(results);
 		compiledStmt.close();
 		replay(databaseConnection, compiledStmt, preparedStmt, results);
 		SelectIterator<BaseFoo, String> iterator =
@@ -59,7 +59,7 @@ public class SelectIteratorTest extends BaseCoreTest {
 		String stmt = "select * from baseFoo";
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(results.next()).andReturn(false);
-		expect(compiledStmt.executeQuery()).andReturn(results);
+		expect(compiledStmt.runQuery()).andReturn(results);
 		compiledStmt.close();
 		replay(databaseConnection, preparedStmt, compiledStmt, results);
 		SelectIterator<BaseFoo, String> iterator =
@@ -78,7 +78,7 @@ public class SelectIteratorTest extends BaseCoreTest {
 		String stmt = "select * from baseFoo";
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(results.next()).andReturn(false);
-		expect(compiledStmt.executeQuery()).andReturn(results);
+		expect(compiledStmt.runQuery()).andReturn(results);
 		compiledStmt.close();
 		replay(databaseConnection, preparedStmt, compiledStmt, results);
 		SelectIterator<BaseFoo, String> iterator =
@@ -94,7 +94,7 @@ public class SelectIteratorTest extends BaseCoreTest {
 		@SuppressWarnings("unchecked")
 		PreparedQuery<BaseFoo> preparedStmt = createMock(PreparedQuery.class);
 		CompiledStatement compiledStmt = createMock(CompiledStatement.class);
-		expect(compiledStmt.executeQuery()).andThrow(new SQLException("expected"));
+		expect(compiledStmt.runQuery()).andThrow(new SQLException("expected"));
 		String stmt = "select * from baseFoo";
 		expect(preparedStmt.getStatement()).andReturn(stmt);
 		replay(databaseConnection, preparedStmt, compiledStmt);
@@ -111,7 +111,7 @@ public class SelectIteratorTest extends BaseCoreTest {
 		String stmt = "select * from baseFoo";
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(results.next()).andReturn(true);
-		expect(compiledStmt.executeQuery()).andReturn(results);
+		expect(compiledStmt.runQuery()).andReturn(results);
 		BaseFoo baseFoo = new BaseFoo();
 		expect(preparedStmt.mapRow(results)).andReturn(baseFoo);
 		compiledStmt.close();
@@ -134,7 +134,7 @@ public class SelectIteratorTest extends BaseCoreTest {
 		String stmt = "select * from baseFoo";
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(results.next()).andReturn(true);
-		expect(compiledStmt.executeQuery()).andReturn(results);
+		expect(compiledStmt.runQuery()).andReturn(results);
 		expect(preparedStmt.mapRow(results)).andThrow(new SQLException("expected exception"));
 		compiledStmt.close();
 		replay(databaseConnection, preparedStmt, compiledStmt, results);
@@ -154,7 +154,7 @@ public class SelectIteratorTest extends BaseCoreTest {
 		String stmt = "select * from baseFoo";
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(results.next()).andThrow(new SQLException("expected exception"));
-		expect(compiledStmt.executeQuery()).andReturn(results);
+		expect(compiledStmt.runQuery()).andReturn(results);
 		compiledStmt.close();
 		replay(databaseConnection, preparedStmt, compiledStmt, results);
 		SelectIterator<BaseFoo, String> iterator =
@@ -172,7 +172,7 @@ public class SelectIteratorTest extends BaseCoreTest {
 		String stmt = "select * from baseFoo";
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(results.next()).andReturn(true);
-		expect(compiledStmt.executeQuery()).andReturn(results);
+		expect(compiledStmt.runQuery()).andReturn(results);
 		BaseFoo baseFoo = new BaseFoo();
 		expect(preparedStmt.mapRow(results)).andReturn(baseFoo);
 		expect(databaseConnection.delete(isA(String.class), isA(Object[].class), isA(FieldType[].class))).andReturn(1);
@@ -197,7 +197,7 @@ public class SelectIteratorTest extends BaseCoreTest {
 		String stmt = "select * from baseFoo";
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(results.next()).andReturn(true);
-		expect(compiledStmt.executeQuery()).andReturn(results);
+		expect(compiledStmt.runQuery()).andReturn(results);
 		BaseFoo baseFoo = new BaseFoo();
 		expect(preparedStmt.mapRow(results)).andReturn(baseFoo);
 		expect(databaseConnection.delete(isA(String.class), isA(Object[].class), isA(FieldType[].class))).andThrow(
@@ -221,7 +221,7 @@ public class SelectIteratorTest extends BaseCoreTest {
 		String stmt = "select * from baseFoo";
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(results.next()).andReturn(true);
-		expect(compiledStmt.executeQuery()).andReturn(results);
+		expect(compiledStmt.runQuery()).andReturn(results);
 		BaseFoo baseFoo = new BaseFoo();
 		expect(preparedStmt.mapRow(results)).andReturn(baseFoo);
 		expect(databaseConnection.delete(isA(String.class), isA(Object[].class), isA(FieldType[].class))).andReturn(1);

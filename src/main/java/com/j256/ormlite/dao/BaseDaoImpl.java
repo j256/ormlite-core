@@ -377,6 +377,24 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	public int executeRaw(String statement) throws SQLException {
+		checkForInitialized();
+		try {
+			return statementExecutor.executeRaw(connectionSource, statement);
+		} catch (SQLException e) {
+			throw SqlExceptionUtil.create("Could not run raw execute statement " + statement, e);
+		}
+	}
+
+	public int updateRaw(String statement) throws SQLException {
+		checkForInitialized();
+		try {
+			return statementExecutor.updateRaw(connectionSource, statement);
+		} catch (SQLException e) {
+			throw SqlExceptionUtil.create("Could not run raw update statement " + statement, e);
+		}
+	}
+
 	public <CT> CT callBatchTasks(Callable<CT> callable) throws Exception {
 		checkForInitialized();
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();

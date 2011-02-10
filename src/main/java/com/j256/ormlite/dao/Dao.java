@@ -320,6 +320,20 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public GenericRawResults<Object[]> queryRaw(String query, DataType[] columnTypes) throws SQLException;
 
 	/**
+	 * Run a raw execute SQL statement to the database.
+	 * 
+	 * @return number of rows affected.
+	 */
+	public int executeRaw(String statement) throws SQLException;
+
+	/**
+	 * Run a raw update SQL statement to the database. The statement must be an SQL INSERT, UPDATE or DELETE statement.
+	 * 
+	 * @return number of rows affected.
+	 */
+	public int updateRaw(String statement) throws SQLException;
+
+	/**
 	 * Call the call-able that will perform a number of batch tasks. This is for performance when you want to run a
 	 * number of database operations at once -- maybe loading data from a file. This will turn off what databases call
 	 * "auto-commit" mode, run the call-able and then re-enable "auto-commit".
@@ -359,12 +373,12 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public ID extractId(T data) throws SQLException;
 
 	/**
-	 * Returns the class of the DAO.  This is used by internal query operators. 
+	 * Returns the class of the DAO. This is used by internal query operators.
 	 */
 	public Class<T> getDataClass();
 
 	/**
-	 * Returns the class of the DAO.  This is used by internal query operators. 
+	 * Returns the class of the DAO. This is used by internal query operators.
 	 */
 	public FieldType findForeignFieldType(Class<?> clazz);
 }

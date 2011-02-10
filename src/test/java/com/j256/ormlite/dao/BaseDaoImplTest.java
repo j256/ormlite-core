@@ -174,7 +174,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 				databaseConnection.compileStatement(isA(String.class), isA(StatementType.class),
 						isA(FieldType[].class), isA(FieldType[].class))).andReturn(stmt);
 		int rowN = 123;
-		expect(stmt.executeUpdate()).andReturn(rowN);
+		expect(stmt.runUpdate()).andReturn(rowN);
 		stmt.close();
 		replay(databaseConnection, stmt);
 		UpdateBuilder<BaseFoo, String> builder = baseFooDao.updateBuilder();
@@ -314,7 +314,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		PreparedDelete<BaseFoo> stmt = createMock(PreparedDelete.class);
 		CompiledStatement compiledStmt = createMock(CompiledStatement.class);
 		int deleteN = 1002;
-		expect(compiledStmt.executeUpdate()).andReturn(deleteN);
+		expect(compiledStmt.runUpdate()).andReturn(deleteN);
 		expect(stmt.compile(databaseConnection)).andReturn(compiledStmt);
 		compiledStmt.close();
 		replay(databaseConnection, stmt, compiledStmt);
@@ -423,7 +423,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 						isA(FieldType[].class), isA(FieldType[].class))).andReturn(stmt);
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(results.next()).andReturn(false);
-		expect(stmt.executeQuery()).andReturn(results);
+		expect(stmt.runQuery()).andReturn(results);
 		stmt.close();
 		replay(databaseConnection, stmt, results);
 		List<BaseFoo> list = baseFooDao.queryForAll();
@@ -464,7 +464,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		int nullCol = 4;
 		expect(results.findColumn(BaseFoo.NULL_COLUMN_NAME)).andReturn(nullCol);
 		expect(results.isNull(nullCol)).andReturn(true);
-		expect(stmt.executeQuery()).andReturn(results);
+		expect(stmt.runQuery()).andReturn(results);
 		stmt.close();
 		replay(databaseConnection, stmt, results);
 		QueryBuilder<BaseFoo, String> builder = baseFooDao.queryBuilder();
@@ -487,7 +487,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 						isA(FieldType[].class), isA(FieldType[].class))).andReturn(stmt);
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(results.next()).andReturn(false);
-		expect(stmt.executeQuery()).andReturn(results);
+		expect(stmt.runQuery()).andReturn(results);
 		stmt.close();
 		replay(databaseConnection, stmt, results);
 		QueryBuilder<BaseFoo, String> builder = baseFooDao.queryBuilder();
@@ -510,7 +510,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		expect(
 				databaseConnection.compileStatement(isA(String.class), isA(StatementType.class),
 						isA(FieldType[].class), isA(FieldType[].class))).andReturn(stmt);
-		expect(stmt.executeQuery()).andThrow(new SQLException("expected"));
+		expect(stmt.runQuery()).andThrow(new SQLException("expected"));
 		stmt.close();
 		replay(databaseConnection);
 		replay(stmt);
@@ -535,7 +535,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 						isA(FieldType[].class), isA(FieldType[].class))).andReturn(stmt);
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(results.next()).andReturn(false);
-		expect(stmt.executeQuery()).andReturn(results);
+		expect(stmt.runQuery()).andReturn(results);
 		stmt.close();
 		replay(databaseConnection, stmt, results);
 		QueryBuilder<BaseFoo, String> builder = baseFooDao.queryBuilder();
@@ -563,7 +563,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 						isA(FieldType[].class), isA(FieldType[].class))).andReturn(stmt);
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(results.next()).andReturn(false);
-		expect(stmt.executeQuery()).andReturn(results);
+		expect(stmt.runQuery()).andReturn(results);
 		int numColumns = 1;
 		expect(stmt.getColumnCount()).andReturn(numColumns);
 		String columnName = "foo";
@@ -606,7 +606,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		String value = "stuff";
 		expect(results.getString(1)).andReturn(value);
 		expect(results.next()).andReturn(false);
-		expect(stmt.executeQuery()).andReturn(results);
+		expect(stmt.runQuery()).andReturn(results);
 		expect(stmt.getColumnCount()).andReturn(numColumns);
 		String columnName = "foo";
 		expect(stmt.getColumnName(1)).andReturn(columnName);
@@ -685,7 +685,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		CompiledStatement stmt = createMock(CompiledStatement.class);
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(results.next()).andReturn(false);
-		expect(stmt.executeQuery()).andReturn(results);
+		expect(stmt.runQuery()).andReturn(results);
 		stmt.close();
 		expect(
 				databaseConnection.compileStatement(isA(String.class), isA(StatementType.class),
@@ -726,7 +726,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		expect(stmt.getStatement()).andReturn("select * from foo");
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(results.next()).andReturn(false);
-		expect(compiled.executeQuery()).andReturn(results);
+		expect(compiled.runQuery()).andReturn(results);
 		compiled.close();
 		replay(databaseConnection, stmt, compiled, results);
 		CloseableIterator<BaseFoo> iterator = baseFooDao.iterator(stmt);
@@ -805,7 +805,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		String val = "wodqjdqw";
 		expect(results.getColumnCount()).andReturn(numColumns);
 		expect(results.getString(1)).andReturn(val);
-		expect(stmt.executeQuery()).andReturn(results);
+		expect(stmt.runQuery()).andReturn(results);
 		expect(stmt.getColumnCount()).andReturn(numColumns);
 		expect(stmt.getColumnName(1)).andReturn(columnName);
 		stmt.close();
@@ -853,7 +853,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		expect(results.getString(1)).andReturn(id);
 		expect(results.getString(2)).andReturn(Integer.toString(val));
 		expect(results.next()).andReturn(false);
-		expect(stmt.executeQuery()).andReturn(results);
+		expect(stmt.runQuery()).andReturn(results);
 		expect(stmt.getColumnCount()).andReturn(numColumns);
 		expect(stmt.getColumnName(1)).andReturn(BaseFoo.ID_COLUMN_NAME);
 		expect(stmt.getColumnName(2)).andReturn(BaseFoo.VAL_COLUMN_NAME);
@@ -905,7 +905,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		expect(results.getColumnCount()).andReturn(numColumns);
 		expect(results.getString(1)).andReturn(id);
 		expect(results.getInt(2)).andReturn(val);
-		expect(stmt.executeQuery()).andReturn(results);
+		expect(stmt.runQuery()).andReturn(results);
 		expect(stmt.getColumnCount()).andReturn(numColumns);
 		expect(stmt.getColumnName(1)).andReturn(BaseFoo.ID_COLUMN_NAME);
 		expect(stmt.getColumnName(2)).andReturn(BaseFoo.VAL_COLUMN_NAME);
@@ -955,7 +955,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		expect(results.getColumnCount()).andReturn(numColumns);
 		expect(results.getString(1)).andReturn(id);
 		expect(results.getString(2)).andReturn(valStr);
-		expect(stmt.executeQuery()).andReturn(results);
+		expect(stmt.runQuery()).andReturn(results);
 		expect(stmt.getColumnCount()).andReturn(numColumns);
 		expect(stmt.getColumnName(1)).andReturn(BaseFoo.ID_COLUMN_NAME);
 		expect(stmt.getColumnName(2)).andReturn(BaseFoo.VAL_COLUMN_NAME);

@@ -209,7 +209,7 @@ public class TableUtilsTest extends BaseCoreTest {
 				return stmt;
 			}
 		}).anyTimes();
-		expect(stmt.executeUpdate()).andReturn(0).anyTimes();
+		expect(stmt.runUpdate()).andReturn(0).anyTimes();
 		connectionSource.releaseConnection(conn);
 		expectLastCall().anyTimes();
 		stmt.close();
@@ -249,7 +249,7 @@ public class TableUtilsTest extends BaseCoreTest {
 				return stmt;
 			}
 		}).anyTimes();
-		expect(stmt.executeUpdate()).andReturn(0).anyTimes();
+		expect(stmt.runUpdate()).andReturn(0).anyTimes();
 		connectionSource.releaseConnection(conn);
 		expectLastCall().anyTimes();
 		stmt.close();
@@ -258,7 +258,9 @@ public class TableUtilsTest extends BaseCoreTest {
 		TableUtils.createTable(connectionSource, ComboIndex.class);
 		verify(connectionSource, conn, stmt);
 	}
+
 	/* ================================================================ */
+
 	private void testCreate(ConnectionSource connectionSource, DatabaseType databaseType, int rowN,
 			boolean throwExecute, String queryAfter, Callable<Integer> callable) throws Exception {
 		testStatement(connectionSource, databaseType, expectedCreateStatement(), queryAfter, rowN, throwExecute,
@@ -300,7 +302,7 @@ public class TableUtilsTest extends BaseCoreTest {
 			expect(
 					conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class),
 							isA(FieldType[].class))).andReturn(stmt);
-			expect(stmt.executeUpdate()).andReturn(rowN);
+			expect(stmt.runUpdate()).andReturn(rowN);
 			stmt.close();
 			if (queryAfter != null) {
 				expect(
@@ -308,7 +310,7 @@ public class TableUtilsTest extends BaseCoreTest {
 								isA(FieldType[].class))).andReturn(stmt);
 				results = createMock(DatabaseResults.class);
 				expect(results.next()).andReturn(false);
-				expect(stmt.executeQuery()).andReturn(results);
+				expect(stmt.runQuery()).andReturn(results);
 				stmt.close();
 				replay(results);
 				rowC.incrementAndGet();

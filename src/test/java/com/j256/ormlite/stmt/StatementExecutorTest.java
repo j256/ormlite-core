@@ -45,7 +45,7 @@ public class StatementExecutorTest extends BaseCoreTest {
 		expect(preparedStmt.mapRow(databaseResults)).andReturn(baseFoo);
 		expect(databaseResults.next()).andReturn(true);
 		expect(databaseResults.next()).andReturn(false);
-		expect(compiledStmt.executeQuery()).andReturn(databaseResults);
+		expect(compiledStmt.runQuery()).andReturn(databaseResults);
 		compiledStmt.close();
 		replay(preparedStmt, compiledStmt, databaseResults);
 
@@ -172,7 +172,7 @@ public class StatementExecutorTest extends BaseCoreTest {
 		PreparedUpdate<BaseFoo> update = createMock(PreparedUpdate.class);
 		CompiledStatement compiledStmt = createMock(CompiledStatement.class);
 		expect(update.compile(connection)).andReturn(compiledStmt);
-		expect(compiledStmt.executeUpdate()).andThrow(new SQLException("expected"));
+		expect(compiledStmt.runUpdate()).andThrow(new SQLException("expected"));
 		compiledStmt.close();
 		StatementExecutor<BaseFoo, String> statementExec =
 				new StatementExecutor<BaseFoo, String>(databaseType, tableInfo);
@@ -194,7 +194,7 @@ public class StatementExecutorTest extends BaseCoreTest {
 		PreparedDelete<BaseFoo> delete = createMock(PreparedDelete.class);
 		CompiledStatement compiledStmt = createMock(CompiledStatement.class);
 		expect(delete.compile(connection)).andReturn(compiledStmt);
-		expect(compiledStmt.executeUpdate()).andThrow(new SQLException("expected"));
+		expect(compiledStmt.runUpdate()).andThrow(new SQLException("expected"));
 		compiledStmt.close();
 		StatementExecutor<BaseFoo, String> statementExec =
 				new StatementExecutor<BaseFoo, String>(databaseType, tableInfo);
