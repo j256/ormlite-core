@@ -399,8 +399,10 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		checkForInitialized();
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		try {
+			connectionSource.saveSpecialConnection(connection);
 			return statementExecutor.callBatchTasks(connection, callable);
 		} finally {
+			connectionSource.clearSpecialConnection(connection);
 			connectionSource.releaseConnection(connection);
 		}
 	}
