@@ -26,8 +26,8 @@ public class MappedUpdate<T, ID> extends BaseMappedStatement<T, ID> {
 			throw new SQLException("Cannot update " + tableInfo.getDataClass() + " because it doesn't have an id field");
 		}
 		if (tableInfo.getFieldTypes().length == 1) {
-			// can't update because there is nothing to set
-			return null;
+			throw new SQLException("Cannot update " + tableInfo.getDataClass()
+					+ " with only the id field.  You should use updateId().");
 		}
 		StringBuilder sb = new StringBuilder();
 		List<FieldType> argFieldTypeList = new ArrayList<FieldType>();

@@ -36,6 +36,16 @@ public class MappedUpdateTest {
 	}
 
 	@Test(expected = SQLException.class)
+	public void testUpdateJustId() throws Exception {
+		StatementExecutor<JustId, String> se =
+				new StatementExecutor<JustId, String>(databaseType, new TableInfo<JustId>(connectionSource,
+						JustId.class));
+		JustId justId = new JustId();
+		justId.id = 1;
+		se.update(null, justId);
+	}
+
+	@Test(expected = SQLException.class)
 	public void testNoIdBuildUpdater() throws Exception {
 		MappedUpdate.build(databaseType, new TableInfo<NoId>(connectionSource, NoId.class));
 	}
@@ -51,7 +61,7 @@ public class MappedUpdateTest {
 	}
 
 	protected static class JustId {
-		@DatabaseField(generatedId = true)
+		@DatabaseField(id = true)
 		int id;
 	}
 
