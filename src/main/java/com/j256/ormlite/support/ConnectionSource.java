@@ -46,7 +46,7 @@ public interface ConnectionSource {
 	 * 
 	 * @return True if the connection was saved or false if we were already inside of a saved connection.
 	 */
-	public boolean saveSpecialConnection(DatabaseConnection connection);
+	public boolean saveSpecialConnection(DatabaseConnection connection) throws SQLException;
 
 	/**
 	 * Clear the saved connection.

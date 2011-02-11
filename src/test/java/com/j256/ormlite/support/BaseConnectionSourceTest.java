@@ -48,7 +48,7 @@ public class BaseConnectionSourceTest extends BaseCoreTest {
 		assertEquals(conn, cs.getSpecialConnection());
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test(expected = SQLException.class)
 	public void testSaveDifferentConnection() throws Exception {
 		OurConnectionSource cs = new OurConnectionSource();
 		DatabaseConnection conn = cs.getReadOnlyConnection();
@@ -89,7 +89,7 @@ public class BaseConnectionSourceTest extends BaseCoreTest {
 			// noop
 		}
 
-		public boolean saveSpecialConnection(DatabaseConnection connection) {
+		public boolean saveSpecialConnection(DatabaseConnection connection) throws SQLException {
 			return saveSpecial(connection);
 		}
 

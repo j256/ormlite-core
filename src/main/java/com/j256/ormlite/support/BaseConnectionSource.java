@@ -56,7 +56,7 @@ public abstract class BaseConnectionSource implements ConnectionSource {
 	 * 
 	 * @return True if the connection was saved or false if it was already saved.
 	 */
-	protected boolean saveSpecial(DatabaseConnection connection) {
+	protected boolean saveSpecial(DatabaseConnection connection) throws SQLException {
 		// check for a connection already saved
 		NestedConnection currentSaved = specialConnection.get();
 		if (currentSaved == null) {
@@ -69,7 +69,7 @@ public abstract class BaseConnectionSource implements ConnectionSource {
 			return true;
 		} else {
 			if (currentSaved.connection != connection) {
-				throw new IllegalStateException("trying to save connection " + connection
+				throw new SQLException("trying to save connection " + connection
 						+ " but already have saved connection " + currentSaved.connection);
 			}
 			// we must have a save call within another save
