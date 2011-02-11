@@ -45,14 +45,14 @@ import com.j256.ormlite.table.TableInfo;
  */
 public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
-	private DatabaseType databaseType;
-	private ConnectionSource connectionSource;
-
-	private final Class<T> dataClass;
-	private DatabaseTableConfig<T> tableConfig;
-	private TableInfo<T> tableInfo;
 	private StatementExecutor<T, ID> statementExecutor;
 	private boolean initialized = false;
+
+	protected DatabaseType databaseType;
+	protected final Class<T> dataClass;
+	protected DatabaseTableConfig<T> tableConfig;
+	protected TableInfo<T> tableInfo;
+	protected ConnectionSource connectionSource;
 
 	/**
 	 * Construct our base DAO using Spring type wiring. The {@link ConnectionSource} must be set with the
@@ -476,7 +476,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		};
 	}
 
-	private void checkForInitialized() {
+	protected void checkForInitialized() {
 		if (!initialized) {
 			throw new IllegalStateException("you must call initialize() before you can use the dao");
 		}
