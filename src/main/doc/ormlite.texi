@@ -21,7 +21,7 @@
 @c ----------------------------------------------------------------
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.10
+@set ormlite_version 4.11
 @set ormlite_year 2011
 @set ormlite_date February @value{ormlite_year}
 @set package ORMLite
@@ -283,7 +283,7 @@ continue on with the next section.  @xref{Using}.
 * DAO Usage::                   Using the Data Access Objects.
 * Identity Columns::            How identity fields and columns work.
 * Creating Indexes::            How to create indexes on fields.
-* RawResults::                  Issuing raw database queries using GenericRawResults. 
+* Raw Statements::              Issuing raw database statements.
 @end menu
 
 @c ----------------------------------------------------------------
@@ -971,12 +971,18 @@ the default or another engine.  Also, MySQL does some funky stuff with the last-
 @cindex Postgres database
 @item Postgres
 
+No special instructions.
+
 @cindex Microsoft SQL Server database
 @cindex SQL Server database
 @item Microsoft SQL Server
 
+No special instructions.
+
 @cindex H2 database
 @item H2
+
+No special instructions.  I use this database for all of my internal testing with in-memory and small on-disk databases.
 
 @cindex Derby database
 @item Derby
@@ -986,6 +992,8 @@ may have to set the right database type on your ConnectionSource directly if it 
 
 @cindex HSQLDB database
 @item HSQLDB
+
+No special instructions.
 
 @cindex Xerial SQLite driver
 @cindex Zentus SQLite driver
@@ -1275,7 +1283,7 @@ sequences.
 @emph{NOTE:} Depending on the database type, you may not be able to change the value of an auto-generated id field.
 
 @c ----------------------------------------------------------------
-@node Creating Indexes, RawResults, GeneratedIdSequence Column, Using
+@node Creating Indexes, Raw Statements, GeneratedIdSequence Column, Using
 @section Indexing Fields
 
 @value{package} provides some limited support for indexing of various fields in your data classes.  First off, it
@@ -1323,8 +1331,21 @@ also available on the @code{@@DatabaseField} annotation.  These work the same as
 create unique indexes that ensure that no two row has the same value(s) for the indexed field(s).
 
 @c ----------------------------------------------------------------
-@node RawResults, Statement Builder, Creating Indexes, Using
-@section Issuing Raw Database Queries
+@node Raw Statements, Raw Queries, Creating Indexes, Using
+@section Issuing Raw SQL Statements
+
+In a number of instances, using the defined DAO functionality may not be enough to change your database.  For this
+reason, @value{package} has calls which allow you to issue raw query, update, and execute statments to the database.
+
+@menu
+* Raw Queries::                Running raw queries against the database.
+* Raw Updates::                Updating the database with raw SQL statements.
+* Raw Executes::               Executing other raw SQL statments.
+@end menu
+
+@c ----------------------------------------------------------------
+@node Raw Queries, Raw Updates, Raw Statements, Raw Statements
+@subsection Issuing Raw Queries
 
 @cindex aggregation queries
 @cindex SUM, using
@@ -1387,6 +1408,9 @@ for (Object[] resultArray : rawResults) @{
 rawResults.close();
 @end example
 
+@emph{NOTE}: @code{select *} can return fields in different orders depending on the database type.  To make sure that the data-type
+array matches the returned columns you must specify the fields specifically and @emph{not} with a SQL @code{*}.
+
 You can also map the results into your own object by passing in a @code{RawRowMapper} object.  This will call the mapping object
 with an array of strings and allow it to convert the strings into an object.  For example:
 
@@ -1414,6 +1438,7 @@ rawResults.close();
 @item Certain databases need any column names specified in uppercase -- others need lowercase.
 @item You may have to quote your column or table names if they are reserved words.
 @item The resulting column names also could be uppercase or lowercase.
+@item @code{select *} can return fields in different orders depending on the database type.
 @end enumerate
 
 @emph{NOTE}: Like other @value{package} iterators, you will need to make sure you iterate through all of the results
@@ -1421,7 +1446,37 @@ to have the statement closed automatically.  You can also call the @code{RawResu
 iterator, and any associated database connections, is closed.
 
 @c ----------------------------------------------------------------
-@node Statement Builder, QueryBuilder Basics, RawResults, Top
+@node Raw Updates, Raw Executes, Raw Queries, Raw Statements
+@subsection Issuing Raw Update Statements
+
+@cindex raw update statments
+@cindex update with raw sql
+You can also issue raw update statements against the database if the DAO functionality does not give you
+enough flexibility.  Update SQL statements must contain the reserved words @code{INSERT}, @code{DELETE}, or
+@code{UPDATE}.  For example:
+
+@example
+fooDao.updateRaw("INSERT INTO accountlog (account_id, total) "
+   + "VALUES ((SELECT account_id,sum(amount) FROM accounts))
+@end example
+
+@c ----------------------------------------------------------------
+@node Raw Executes, Statement Builder, Raw Updates, Raw Statements
+@subsection Issuing Raw Execute Statements
+
+@cindex raw execute statments
+@cindex execute raw sql statments
+You can also issue raw update statements against the database if the DAO functionality does not give you
+enough flexibility.  For example:
+
+@example
+fooDao.executeRaw("TRUNCATE TABLE accountlog ");
+@end example
+
+Certain database types allow table truncation which you can call through the raw execute method.
+
+@c ----------------------------------------------------------------
+@node Statement Builder, QueryBuilder Basics, Raw Executes, Top
 @chapter Custom Statement Builder
 
 @cindex query builder
@@ -1982,12 +2037,12 @@ Again, feedback on this is welcome.
 @section Upgrade from Version 4.X to 4.10
 
 4.10 was a reasonably large release containing some feature upgrades and some bug fixes.  No data formats were changed, however
-the following changes were made which were large enough to enumerate here.
+the following API code was altered:
 
 @itemize @bullet
 
 @item We significantly refactored the @code{RawResults} class which is now deprecated and replaced it with the @code{GenericRawResults}
-class.  See the @code{GenericRawResults} for more information.  @xref{RawResults}.  
+class.  See the @code{GenericRawResults} for more information.  @xref{Raw Queries}.  
 
 @item The @code{Dao} methods @code{queryForAllRaw()} and @code{iteratorRaw()} are now deprecated.  They are replaced with @code{queryRaw()}
 methods.  See the @code{Dao} class javadocs for more information. 
@@ -2360,15 +2415,6 @@ the object that matches a single unique column.  You should use queryForId if yo
 Query for all of the items in the object table and return a list of them. For medium sized or large tables,
 this may load a lot of objects into memory so you should consider using the @code{iterator} method instead.
 
-@cindex query for all raw
-@cindex raw select statements
-@cindex executing raw select statements
-@item queryForAllRaw(String query)
-
-Query for all of the items in the object table that match the SQL select query argument. This method allows you
-to do special queries that aren't supported otherwise. For medium sized or large tables, this may load a lot of 
-objects into memory so you should consider using the @code{iteratorRaw} method instead.
-
 @cindex query builder
 @cindex statement builder
 @item queryBuilder()
@@ -2470,6 +2516,35 @@ Same as the prepared statement iterator except it takes a raw SQL select stateme
 of the @code{queryForAllRaw} method.  Although you should use the @code{iterator} method for most queries, this method
 allows you to do special queries that aren't supported otherwise.  Like the above iterator methods, you must call close
 on the @code{CloseableIterator} object returned by the @code{RawResults.iterator()} method once you are done with it. 
+
+@cindex query for all raw
+@cindex raw select statements
+@cindex executing raw select statements
+@item queryRaw(String query)
+
+Query for all of the items in the object table that match the SQL select query argument. This method allows you
+to do special queries that aren't supported otherwise. For medium sized or large tables, this may load a lot of 
+objects into memory so you should consider using the @code{iterator()} method on the @code{GenericRawResults}
+instead of the @code{getResults} method.  @xref{Raw Queries}.
+
+@item queryRaw(String query, RawRowMapper<UO> mapper)
+
+Same as the above @code{queryRaw} method but with the addition of a row mapper.  Instead of each row being returned
+as an array of strings, this will map the row using the mapper object passed in.  @xref{Raw Queries}.
+
+@item queryRaw(String query, DataType[] columnTypes)
+
+Same as the above @code{queryRaw} method but with the addition of a an array of column data types.  Instead of each
+row being returned as an array of strings, they are returned as an array of objects.  @xref{Raw Queries}.
+
+@item executeRaw(String statement)
+
+Run a raw execute SQL statement against the database.  @xref{Raw Executes}.
+
+@item updateRaw(String statement)
+
+Run a raw update SQL statement (@code{INSERT}, @code{DELETE}, or @code{UPDATE} against the database.
+@xref{Raw Updates}.
 
 @item callBatchTasks(Callable callable)
 
