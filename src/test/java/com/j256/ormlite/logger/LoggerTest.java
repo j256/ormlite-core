@@ -270,11 +270,73 @@ public class LoggerTest {
 		verify(mockLog);
 	}
 
+	@Test
+	public void testTraceShouldNotCallToString() {
+		expect(mockLog.isLevelEnabled(Level.TRACE)).andReturn(false);
+		replay(mockLog);
+		logger.trace("msg {}", new ToStringThrow());
+		verify(mockLog);
+	}
+
+	@Test
+	public void testDebugShouldNotCallToString() {
+		expect(mockLog.isLevelEnabled(Level.DEBUG)).andReturn(false);
+		replay(mockLog);
+		logger.debug("msg {}", new ToStringThrow());
+		verify(mockLog);
+	}
+
+	@Test
+	public void testInfoShouldNotCallToString() {
+		expect(mockLog.isLevelEnabled(Level.INFO)).andReturn(false);
+		replay(mockLog);
+		logger.info("msg {}", new ToStringThrow());
+		verify(mockLog);
+	}
+
+	@Test
+	public void testWarnShouldNotCallToString() {
+		expect(mockLog.isLevelEnabled(Level.WARNING)).andReturn(false);
+		replay(mockLog);
+		logger.warn("msg {}", new ToStringThrow());
+		verify(mockLog);
+	}
+
+	@Test
+	public void testErrorShouldNotCallToString() {
+		expect(mockLog.isLevelEnabled(Level.ERROR)).andReturn(false);
+		replay(mockLog);
+		logger.error("msg {}", new ToStringThrow());
+		verify(mockLog);
+	}
+
+	@Test
+	public void testFatalShouldNotCallToString() {
+		expect(mockLog.isLevelEnabled(Level.FATAL)).andReturn(false);
+		replay(mockLog);
+		logger.fatal("msg {}", new ToStringThrow());
+		verify(mockLog);
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void testFatalToStringThrow() {
+		expect(mockLog.isLevelEnabled(Level.FATAL)).andReturn(true);
+		replay(mockLog);
+		logger.fatal("msg {}", new ToStringThrow());
+	}
+
 	private class Foo {
 		final static String TO_STRING = "foo to string";
 		@Override
 		public String toString() {
 			return TO_STRING;
+		}
+	}
+
+	private class ToStringThrow {
+		@Override
+		public String toString() {
+			throw new IllegalStateException("To string should not have been called");
 		}
 	}
 }
