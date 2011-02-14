@@ -1,3 +1,14 @@
+4.11: 2/14/2011
+	* CORE: Added Where.in(QueryBuilder) and Where.exists(QueryBuilder) sub-query handling.
+	* CORE: Added executeRaw() and updateRaw() methods to the Dao interface and associated classes.
+	* CORE: Added proper checking for the log level _before_ expanding the {} args.  Fixes bug #3180862.
+	* CORE: Fixed missing save/clear of special connection for setting autocommit for batch tasks.  Fixes bug #3178539.
+	* CORE: Made some fields and methods in BaseDaoImpl protected for folks extending this the base dao.  Thanks to jc.
+	* CORE: Replaced NPE with better SQLException if trying to update just the id.  Fixes bug #3178360.  Thanks to jc.
+	* CORE: Added Where.idEq(), Where.foreignIdEq(), and Where.foreignIdIn methods to expand query functionality.
+	* CORE: Added better handling of nulls returned by the RawRowMapper.  It also now throws SQLException.  Thanks to Larry.
+	* ANDROID: Exposed the cursor from the iterator and android database results.
+
 4.10: 2/2/2011
 	* CORE: Revamped the logging classes to use Levels.  Also added a JavaUtilLog implementation.
 	* CORE: Added support for the foreignAutoRefresh boolean in DatabaseField which automagically refreshes foreign fields.
