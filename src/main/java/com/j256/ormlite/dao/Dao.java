@@ -381,4 +381,10 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * Returns the class of the DAO. This is used by internal query operators.
 	 */
 	public FieldType findForeignFieldType(Class<?> clazz);
+
+	/**
+	 * Returns true if we can call update on this class. This is used most likely by folks who are extending the base
+	 * dao classes.
+	 */
+	public boolean isUpdatable();
 }

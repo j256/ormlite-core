@@ -38,7 +38,8 @@ public class TableInfo<T> {
 		this(connectionSource.getDatabaseType(), DatabaseTableConfig.fromClass(connectionSource, dataClass));
 	}
 
-	public TableInfo(ConnectionSource connectionSource, DatabaseType databaseType, Class<T> dataClass) throws SQLException {
+	public TableInfo(ConnectionSource connectionSource, DatabaseType databaseType, Class<T> dataClass)
+			throws SQLException {
 		this(databaseType, DatabaseTableConfig.fromClass(connectionSource, dataClass));
 	}
 
@@ -163,6 +164,14 @@ public class TableInfo<T> {
 				constructor.setAccessible(false);
 			}
 		}
+	}
+
+	/**
+	 * Return true if we can update this object via its ID.
+	 */
+	public boolean isUpdatable() {
+		// to update we must have an id field and there must be more than just the id field
+		return (idField != null && fieldTypes.length > 1);
 	}
 
 	private Constructor<T> findNoArgConstructor(Class<T> dataClass) {

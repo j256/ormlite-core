@@ -438,7 +438,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		checkForInitialized();
 		FieldType idField = tableInfo.getIdField();
 		@SuppressWarnings("unchecked")
-		ID id = (ID)idField.extractJavaFieldValue(data);
+		ID id = (ID) idField.extractJavaFieldValue(data);
 		return id;
 	}
 
@@ -454,6 +454,10 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			}
 		}
 		return null;
+	}
+
+	public boolean isUpdatable() {
+		return tableInfo.isUpdatable();
 	}
 
 	/**
