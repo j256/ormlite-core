@@ -362,7 +362,7 @@ public class Where<T, ID> {
 		}
 		FieldType fieldType = getForeignFieldType(dataDao);
 		// extract the value of that field which should be the id already for the foreign field
-		ID id = fieldType.extractJavaFieldValue(data);
+		Object id = fieldType.extractJavaFieldValue(data);
 		addClause(new Eq(idColumnName, idFieldType, id));
 		return this;
 	}
@@ -375,10 +375,10 @@ public class Where<T, ID> {
 			throw new SQLException("Object has no id column specified");
 		}
 		FieldType fieldType = getForeignFieldType(dataDao);
-		ArrayList<ID> idList = new ArrayList<ID>();
+		ArrayList<Object> idList = new ArrayList<Object>();
 		for (OD data : datas) {
 			// extract the value of that field which should be the id already for the foreign field
-			ID id = fieldType.extractJavaFieldValue(data);
+			Object id = fieldType.extractJavaFieldValue(data);
 			idList.add(id);
 		}
 		addClause(new In(idColumnName, idFieldType, idList));
@@ -393,10 +393,10 @@ public class Where<T, ID> {
 			throw new SQLException("Object has no id column specified");
 		}
 		FieldType fieldType = getForeignFieldType(dataDao);
-		ArrayList<ID> idList = new ArrayList<ID>();
+		ArrayList<Object> idList = new ArrayList<Object>();
 		for (OD data : datas) {
 			// extract the value of that field which should be the id already for the foreign field
-			ID id = fieldType.extractJavaFieldValue(data);
+			Object id = fieldType.extractJavaFieldValue(data);
 			idList.add(id);
 		}
 		addClause(new In(idColumnName, idFieldType, idList));

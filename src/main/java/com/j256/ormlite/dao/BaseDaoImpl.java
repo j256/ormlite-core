@@ -437,7 +437,9 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	public ID extractId(T data) throws SQLException {
 		checkForInitialized();
 		FieldType idField = tableInfo.getIdField();
-		return idField.extractJavaFieldValue(data);
+		@SuppressWarnings("unchecked")
+		ID id = (ID)idField.extractJavaFieldValue(data);
+		return id;
 	}
 
 	public Class<T> getDataClass() {
