@@ -94,10 +94,10 @@ Gray Watson @uref{http://256.com/gray/}
 * Getting Started::             Getting started with @value{package}.
 * Using::                       More details on how to use the system.
 * Statement Builder::           How to use the custom statement builder.
-* Foreign Objects::             Fields that represent foreign objects.
 * Use With Android::            Using with the Android OS.
-* How to Upgrade::              Upgrading from a previous version.
 * Advanced::                    Advanced concepts with @value{package}.
+* How to Upgrade::              Upgrading from a previous version.
+* Examples::                    Usage examples to help you get started.
 * Contributions::               Contributions from others who helped.
 * License::                     License for the project.
 * Index of Concepts::           Index of concepts in the manual.
@@ -284,6 +284,7 @@ continue on with the next section.  @xref{Using}.
 * Identity Columns::            How identity fields and columns work.
 * Creating Indexes::            How to create indexes on fields.
 * Raw Statements::              Issuing raw database statements.
+* Foreign Objects::             Fields that represent foreign objects.
 @end menu
 
 @c ----------------------------------------------------------------
@@ -526,6 +527,7 @@ the values in the index are unique.  If you just want to make sure of unique-nes
 String value (default none) to have the database add an index for this field with this name. You do not need to specify the index boolean
 as well. To index multiple fields together in one index, each of the fields should have the same indexName value.
 
+@cindex naming a unique index
 @item uniqueIndexName
 
 String value (default none) to have the database add a unique index for this field with this name. Same as index but this will ensure that all of
@@ -1461,7 +1463,7 @@ fooDao.updateRaw("INSERT INTO accountlog (account_id, total) "
 @end example
 
 @c ----------------------------------------------------------------
-@node Raw Executes, Statement Builder, Raw Updates, Raw Statements
+@node Raw Executes, Foreign Objects, Raw Updates, Raw Statements
 @subsection Issuing Raw Execute Statements
 
 @cindex raw execute statments
@@ -1476,7 +1478,93 @@ fooDao.executeRaw("TRUNCATE TABLE accountlog ");
 Certain database types allow table truncation which you can call through the raw execute method.
 
 @c ----------------------------------------------------------------
-@node Statement Builder, QueryBuilder Basics, Raw Executes, Top
+@node Foreign Objects, Statement Builder, Raw Executes, Using
+@section Foreign Object Fields
+
+@cindex foreign objects
+@value{package} supports the concept of "foreign" objects where one or more of the fields correspond to an object
+are persisted in another table in the same database.  For example, if you had an @code{Order} objects in your database
+and each @code{Order} had a corresponding @code{Account} object, then the @code{Order} object would have foreign
+@code{Account} field.  With foreign objects, @emph{just} the id field from the @code{Account} is persisted
+to the @code{Order} table as the column "@code{account_id}".  For example, the @code{Order} class might look
+something like:
+
+@example
+@@DatabaseTable(tableName = "orders")
+public class Order @{
+
+    @@DatabaseField(generatedId = true)
+    private int id;
+    
+    @@DatabaseField(canBeNull = false, foreign = true)
+    private Account account;
+    @dots{}
+@}
+@end example
+
+When the @code{Order} table was created, something like the following SQL would be generated:
+
+@example
+CREATE TABLE `orders`
+   (`id` INTEGER AUTO_INCREMENT , `account_id` INTEGER,
+    PRIMARY KEY (`id`)); 
+@end example
+
+@emph{Notice} that the name of the field is @emph{not} @code{account} but is instead @code{account_id}.  You will need to
+use this field name if you are querying for it.  You can set the column name using the @code{columnName} field in the
+@code{DatabaseField} annotation. @xref{columnName}.
+
+@cindex creating objects with foreign fields
+@cindex foreign objects, creating
+When you are creating a field with a foreign object, please note that the foreign object will @emph{not} automatically be
+created for you.  If your foreign object has a generated-id which is provided by the database then you need to create it
+@emph{before} you create any objects that reference it.  For example:
+
+@example
+Account account = new Account("Jim Coakley");
+if (accountDao.create(account) != 1) @{
+  // error handling @dots{} 
+@}
+// this will create the account object and set any generated ids
+
+// now we can set the account on the order and create it
+Order order = new Order("Jim Sanders", 12.34);
+order.setAccount(account);
+@dots{}
+if (orderDao.create(order) != 1) @{
+   // error handling unless 1 row was inserted
+@}
+@end example
+
+@cindex refreshing foreign objects
+@cindex foreign object refreshing
+When you query for an order, you will get an @code{Order} object with an account field object that @emph{only} has its id
+field set -- all of the fields in the foreign @code{Account} object will have default values (null, 0, false, etc.).  If
+you want to use other fields in the @code{Account}, you must call @code{refresh} on the @code{accountDao} class to get the
+@code{Account} object filled in.  For example:
+
+@example
+Order order = orderDao.queryForId(orderId);
+System.out.println("Account-id on the order should be set: " + order.account.id);
+// this should print null for order.account.name
+System.out.println("But other fields on the account should not be set: " + order.account.name);
+
+// so we refresh the account using the AccountDao
+if (accountDao.refresh(order.getAccount()) != 1) @{
+  // error handling @dots{} 
+@}
+System.out.println("Now the account fields will be set: " + order.account.name);
+@end example
+
+@value{package} can automagically refresh the objects for you if you'd like.  @xref{foreignAutoRefresh}.
+
+@emph{NOTE:} Because we use refresh, foreign objects are therefor @emph{required} to have an id field.
+
+The @code{Where()} object has some method calls to help with using foreign objects.  @pxref{foreignIdEq} and @pxref{foreignIdIn}.  Also, there
+is example code to show how to use foreign objects.  @xref{foreign objects example}.
+
+@c ----------------------------------------------------------------
+@node Statement Builder, QueryBuilder Basics, Foreign Objects, Top
 @chapter Custom Statement Builder
 
 @cindex query builder
@@ -1842,7 +1930,7 @@ A short-cut for calling @code{prepare()} on the original @code{QueryBuilder.prep
 @end table
 
 @c ----------------------------------------------------------------
-@node Select Arguments, Foreign Objects, Where Capabilities, Statement Builder
+@node Select Arguments, Use With Android, Where Capabilities, Statement Builder
 @section Using Select Arguments
 
 @cindex query arguments
@@ -1882,92 +1970,7 @@ database form of the object.  @code{java.util.Date} is one example of such a typ
 new object if you want to use a @code{SelectArg} with another column.
 
 @c ----------------------------------------------------------------
-@node Foreign Objects, Use With Android, Select Arguments, Top
-@chapter Foreign Object Fields
-
-@cindex foreign objects
-@value{package} supports the concept of "foreign" objects where one or more of the fields correspond to an object
-are persisted in another table in the same database.  For example, if you had an @code{Order} objects in your database
-and each @code{Order} had a corresponding @code{Account} object, then the @code{Order} object would have foreign
-@code{Account} field.  With foreign objects, @emph{just} the id field from the @code{Account} is persisted
-to the @code{Order} table as the column "@code{account_id}".  For example, the @code{Order} class might look
-something like:
-
-@example
-@@DatabaseTable(tableName = "orders")
-public class Order @{
-
-    @@DatabaseField(generatedId = true)
-    private int id;
-    
-    @@DatabaseField(canBeNull = false, foreign = true)
-    private Account account;
-    @dots{}
-@}
-@end example
-
-When the @code{Order} table was created, something like the following SQL would be generated:
-
-@example
-CREATE TABLE `orders`
-   (`id` INTEGER AUTO_INCREMENT , `account_id` INTEGER,
-    PRIMARY KEY (`id`)); 
-@end example
-
-@emph{Notice} that the name of the field is @emph{not} @code{account} but is instead @code{account_id}.  You will need to
-use this field name if you are querying for it.  You can set the column name using the @code{columnName} field in the
-@code{DatabaseField} annotation. @xref{columnName}.
-
-@cindex creating objects with foreign fields
-@cindex foreign objects, creating
-When you are creating a field with a foreign object, please note that the foreign object will @emph{not} automatically be
-created for you.  If your foreign object has a generated-id which is provided by the database then you need to create it
-@emph{before} you create any objects that reference it.  For example:
-
-@example
-Account account = new Account("Jim Coakley");
-if (accountDao.create(account) != 1) @{
-  // error handling @dots{} 
-@}
-// this will create the account object and set any generated ids
-
-// now we can set the account on the order and create it
-Order order = new Order("Jim Sanders", 12.34);
-order.setAccount(account);
-@dots{}
-if (orderDao.create(order) != 1) @{
-   // error handling unless 1 row was inserted
-@}
-@end example
-
-@cindex refreshing foreign objects
-@cindex foreign object refreshing
-When you query for an order, you will get an @code{Order} object with an account field object that @emph{only} has its id
-field set -- all of the fields in the foreign @code{Account} object will have default values (null, 0, false, etc.).  If
-you want to use other fields in the @code{Account}, you must call @code{refresh} on the @code{accountDao} class to get the
-@code{Account} object filled in.  For example:
-
-@example
-Order order = orderDao.queryForId(orderId);
-System.out.println("Account-id on the order should be set: " + order.account.id);
-// this should print null for order.account.name
-System.out.println("But other fields on the account should not be set: " + order.account.name);
-
-// so we refresh the account using the AccountDao
-if (accountDao.refresh(order.getAccount()) != 1) @{
-  // error handling @dots{} 
-@}
-System.out.println("Now the account fields will be set: " + order.account.name);
-@end example
-
-@value{package} can automagically refresh the objects for you if you'd like.  @xref{foreignAutoRefresh}.
-
-@emph{NOTE:} Because we use refresh, foreign objects are therefor @emph{required} to have an id field.
-
-The @code{Where()} object has some method calls to help with using foreign objects.  @pxref{foreignIdEq} and @pxref{foreignIdIn}.
-
-@c ----------------------------------------------------------------
-@node Use With Android, How to Upgrade, Foreign Objects, Top
+@node Use With Android, Advanced, Select Arguments, Top
 @chapter Using With Android
 
 @cindex use with Android OS
@@ -2022,135 +2025,7 @@ Please see the example code posted to the website for more information: @uref{ht
 Again, feedback on this is welcome.
 
 @c ----------------------------------------------------------------
-@node How to Upgrade, 4.X to 4.10, Use With Android, Top
-@chapter Upgrading Old Versions
-
-@menu
-* 4.X to 4.10::                Upgrade from version 4.X to 4.10
-* 3.X to 4.0::                 Upgrade from version 3.X to 4.0
-* 2.X to 3.2::                 Upgrade from version 2.X to 3.2
-* 2.3 to 2.4::                 Upgrade from version 2.3 to 2.4
-@end menu
-
-@c ----------------------------------------------------------------
-@node 4.X to 4.10, 3.X to 4.0, How to Upgrade, How to Upgrade
-@section Upgrade from Version 4.X to 4.10
-
-4.10 was a reasonably large release containing some feature upgrades and some bug fixes.  No data formats were changed, however
-the following API code was altered:
-
-@itemize @bullet
-
-@item We significantly refactored the @code{RawResults} class which is now deprecated and replaced it with the @code{GenericRawResults}
-class.  See the @code{GenericRawResults} for more information.  @xref{Raw Queries}.  
-
-@item The @code{Dao} methods @code{queryForAllRaw()} and @code{iteratorRaw()} are now deprecated.  They are replaced with @code{queryRaw()}
-methods.  See the @code{Dao} class javadocs for more information. 
-
-@item Before this release the -jdbc and -android versions of @value{package} contained the -core functionality.  In this release we split
-out the -core from the other packages so you will now need to install @emph{both} the core and android (or jdbc) packages to get the package
-to work.
-
-@end itemize
-
-@c ----------------------------------------------------------------
-@node 3.X to 4.0, 2.X to 3.2, 4.X to 4.10, How to Upgrade
-@section Upgrade from Version 3.X to 4.0
-
-Removed any outside usage of the @code{DatabaseType} since the @code{ConnectionSource} now provides it.  Also added
-features to be able to prepare update and delete statements.  To provide type safety, we've moved back to using
-@code{QueryBuilder} so we can have @code{UpdateBuilder} and @code{DeleteBuilder}.  And instead of a @code{PreparedStmt}
-there is @code{PreparedQuery}, @code{PreparedUpdate}, and @code{PreparedDelete}.  Here are the details:
-
-@itemize @bullet
-
-@item We have removed most of the cases where the user has to deal with the @code{DatabaseType}.
-All you need to set on the DAOs is the @code{ConnectionSource} which provides the database type 
-internally.  To create and drop the tables, also, you only need the @code{ConnectionSource}.
-
-@item Constructing a @code{BaseDaoImpl} now self-initializes if it is constructed with a
-@code{ConnectionSource}.  This validates the class configurations meaning that it now throws a
-@code{SQLException}.
-
-@item Constructing a @code{JdbcConnectionSource} or @code{DataSourceConnectionSource} also now
-throws a @code{SQLException} since they also now self-initialize if they are constructed with the URL.
-This creates the internal database type and loads the driver class for it.  
-
-@item Deprecated the @code{createJdbcConnectionSource} method in the @code{DatabaseTypeUtils} and
-turned the @code{loadDriver} method into a no-op.  You now just instantiate the @code{JdbcConnectionSource}
-directly and there is no need for referencing the @code{DatabaseTypeUtils} anymore.
-
-@item @code{Dao.statementBuilder()} method changed (back) to @code{Dao.queryBuilder()}.
-
-@item @code{Dao.queryBuilder()} returns a @code{QueryBuilder} instead of a @code{StatementBuilder}.
-
-@item You now call @code{distinct()} and @code{limit()} on the @code{QueryBuilder}.  Unfortunately,
-there are no deprecated methods for them on the @code{StatementBuilder}.
-
-@item You now call @code{selectColumns()} on the @code{QueryBuilder} instead of @code{columns()}
-since now we have columns also in the @code{UpdateBuilder}.  Unfortunately, there are no deprecated
-methods for them on the @code{StatementBuilder}.
-
-@item You call @code{QueryBuilder.prepare()} instead of @code{StatementBuilder.prepareStatement()}.
-It returns a @code{PreparedQuery} instead of a @code{PreparedStmt}.  You pass a @code{PreparedQuery}
-into the @code{Dao.query()} and @code{Dao.iterator()} methods instead of a @code{PreparedStmt}.
-
-@item We removed the @code{DatabaseTypeFactory} class since it was no longer needed for Spring
-configurations.
-
-@item Removed @code{BaseJdbcDao} since it had been deprecated in 3.X.
-
-@end itemize
-
-@c ----------------------------------------------------------------
-@node 2.X to 3.2, 2.3 to 2.4, 3.X to 4.0, How to Upgrade
-@section Upgrade from Version 2.X to 3.2
-
-The 3.2 release involved a @emph{very} large code reorganization and migration.  The project was basically split into 3 pieces:
-core functionality, JDBC database handlers, and the new Android handler.  With significant help from Kevin G, we abstracted all
-of the database calls into 3 interfaces: @code{ConnectionSource} (like a @code{DataSource}), @code{DatabaseConnection} (like a
-@code{Connection}) and @code{DatabaseResults} (like a @code{ResultSet}).  Once we had the interfaces in place, we wrote
-delegation classes for JDBC and Android handlers.  This means that as of 3.X we release 3 packages: ormlite-core (for developers),
-ormlite-jdbc (for people connecting to JDBC databases), and ormlite-android (for Android users).  Both the JDBC and Android
-packages include all of the core code as well.
-
-Along the way a number of specific changes were made to the methods and classes:
-
-@itemize @bullet
-
-@item Since we split off the JDBC, we renamed the @code{BaseJdbcDao} to be @code{BaseDaoImpl} in the core package. You will
-need to adjust any DAOs that you have.
-
-@item We are in the process of allowing custom delete and update methods so we took the major upgrade opportunity to
-rename the @code{QueryBuilder} object to be @code{StatementBuilder}.  @emph{NOTE:} this was reverted later.
-
-@item Because of the above, we also renamed @code{Dao.queryBuilder()} method to be @code{statementBuilder()}.  @emph{NOTE:} this
-was reverted later.
-
-@item Also renamed the @code{PreparedQuery} object to be @code{PreparedStmt}.
-
-@item One of the big changes for those of you using an external JDBC @code{DataSource} is that you no longer set it on the
-DAO directly.  You need to wrap your @code{DataSource} in a @code{DataSourceDatabaseConnection} wrapper class which gets
-set on the DAO instead.
-
-@end itemize
-
-There were no on-disk changes unless you somehow managed to get ORMLite working previously on Android.  Since we were using
-JDBC before to do the data marshalling and now are doing it by hand, some of the data representations may have changed.  Sorry for
-the lack of detail here.
-
-@c ----------------------------------------------------------------
-@node 2.3 to 2.4, Advanced, 2.X to 3.2, How to Upgrade
-@section Upgrade from Version 2.3 to 2.4
-
-A bug was fixed in 2.4 with how we were handling Derby and Hsqldb.  Both of these databases seem to be capitalizing table and field
-names in certain situations which meant that customized queries of @value{package} generated tables were affected.  In version 2.4,
-all tables and field names are capitalized in the SQL generated for Derby and Hsqldb databases. This means that if you have data
-in these databases from a pre 2.4 version, the 2.4 version will not be able to find the tables and fields without renaming to be
-uppercase.
-
-@c ----------------------------------------------------------------
-@node Advanced, Spring Configuration, 2.3 to 2.4, Top
+@node Advanced, Spring Configuration, Use With Android, Top
 @chapter Advanced Concepts
 
 @menu
@@ -2220,6 +2095,8 @@ Here's an example of a full Spring configuration.
     parent="baseDao" />
 @end example
 
+You can also take a look at the spring example code.  @xref{spring example}.
+
 @c ----------------------------------------------------------------
 @node Class Configuration, Database Type Details, Spring Configuration, Advanced
 @section Class Configuration
@@ -2275,6 +2152,8 @@ configuring a class using Spring wiring.  Here is the above example in Spring:
     </property>
 </bean>
 @end example
+
+You can also look at the field configuration example code.  @xref{field config example}.
 
 @c ----------------------------------------------------------------
 @node Database Type Details, DAO Methods, Class Configuration, Advanced
@@ -2607,7 +2486,7 @@ various SQL calls.  This may expose passwords or other sensitive information in 
 only be used during debugging and should not be the default.
 
 @c ----------------------------------------------------------------
-@node Dependencies, Contributions, Logging, Advanced
+@node Dependencies, How to Upgrade, Logging, Advanced
 @section External Dependencies
 
 @value{package} does not have any direct dependencies.  It has logging classes that depend on Apache commons-logging
@@ -2644,7 +2523,204 @@ dependencies: @code{com.sun.jmx.jmxri}, @code{com.sun.jdmk.jmxtools}, @code{java
 @end table
 
 @c ----------------------------------------------------------------
-@node Contributions, License, Dependencies, Top
+@node How to Upgrade, 4.X to 4.10, Dependencies, Top
+@chapter Upgrading Old Versions
+
+@menu
+* 4.X to 4.10::                Upgrade from version 4.X to 4.10
+* 3.X to 4.0::                 Upgrade from version 3.X to 4.0
+* 2.X to 3.2::                 Upgrade from version 2.X to 3.2
+* 2.3 to 2.4::                 Upgrade from version 2.3 to 2.4
+@end menu
+
+@c ----------------------------------------------------------------
+@node 4.X to 4.10, 3.X to 4.0, How to Upgrade, How to Upgrade
+@section Upgrade from Version 4.X to 4.10
+
+4.10 was a reasonably large release containing some feature upgrades and some bug fixes.  No data formats were changed, however
+the following API code was altered:
+
+@itemize @bullet
+
+@item We significantly refactored the @code{RawResults} class which is now deprecated and replaced it with the @code{GenericRawResults}
+class.  See the @code{GenericRawResults} for more information.  @xref{Raw Queries}.  
+
+@item The @code{Dao} methods @code{queryForAllRaw()} and @code{iteratorRaw()} are now deprecated.  They are replaced with @code{queryRaw()}
+methods.  See the @code{Dao} class javadocs for more information. 
+
+@item Before this release the -jdbc and -android versions of @value{package} contained the -core functionality.  In this release we split
+out the -core from the other packages so you will now need to install @emph{both} the core and android (or jdbc) packages to get the package
+to work.
+
+@end itemize
+
+@c ----------------------------------------------------------------
+@node 3.X to 4.0, 2.X to 3.2, 4.X to 4.10, How to Upgrade
+@section Upgrade from Version 3.X to 4.0
+
+Removed any outside usage of the @code{DatabaseType} since the @code{ConnectionSource} now provides it.  Also added
+features to be able to prepare update and delete statements.  To provide type safety, we've moved back to using
+@code{QueryBuilder} so we can have @code{UpdateBuilder} and @code{DeleteBuilder}.  And instead of a @code{PreparedStmt}
+there is @code{PreparedQuery}, @code{PreparedUpdate}, and @code{PreparedDelete}.  Here are the details:
+
+@itemize @bullet
+
+@item We have removed most of the cases where the user has to deal with the @code{DatabaseType}.
+All you need to set on the DAOs is the @code{ConnectionSource} which provides the database type 
+internally.  To create and drop the tables, also, you only need the @code{ConnectionSource}.
+
+@item Constructing a @code{BaseDaoImpl} now self-initializes if it is constructed with a
+@code{ConnectionSource}.  This validates the class configurations meaning that it now throws a
+@code{SQLException}.
+
+@item Constructing a @code{JdbcConnectionSource} or @code{DataSourceConnectionSource} also now
+throws a @code{SQLException} since they also now self-initialize if they are constructed with the URL.
+This creates the internal database type and loads the driver class for it.  
+
+@item Deprecated the @code{createJdbcConnectionSource} method in the @code{DatabaseTypeUtils} and
+turned the @code{loadDriver} method into a no-op.  You now just instantiate the @code{JdbcConnectionSource}
+directly and there is no need for referencing the @code{DatabaseTypeUtils} anymore.
+
+@item @code{Dao.statementBuilder()} method changed (back) to @code{Dao.queryBuilder()}.
+
+@item @code{Dao.queryBuilder()} returns a @code{QueryBuilder} instead of a @code{StatementBuilder}.
+
+@item You now call @code{distinct()} and @code{limit()} on the @code{QueryBuilder}.  Unfortunately,
+there are no deprecated methods for them on the @code{StatementBuilder}.
+
+@item You now call @code{selectColumns()} on the @code{QueryBuilder} instead of @code{columns()}
+since now we have columns also in the @code{UpdateBuilder}.  Unfortunately, there are no deprecated
+methods for them on the @code{StatementBuilder}.
+
+@item You call @code{QueryBuilder.prepare()} instead of @code{StatementBuilder.prepareStatement()}.
+It returns a @code{PreparedQuery} instead of a @code{PreparedStmt}.  You pass a @code{PreparedQuery}
+into the @code{Dao.query()} and @code{Dao.iterator()} methods instead of a @code{PreparedStmt}.
+
+@item We removed the @code{DatabaseTypeFactory} class since it was no longer needed for Spring
+configurations.
+
+@item Removed @code{BaseJdbcDao} since it had been deprecated in 3.X.
+
+@end itemize
+
+@c ----------------------------------------------------------------
+@node 2.X to 3.2, 2.3 to 2.4, 3.X to 4.0, How to Upgrade
+@section Upgrade from Version 2.X to 3.2
+
+The 3.2 release involved a @emph{very} large code reorganization and migration.  The project was basically split into 3 pieces:
+core functionality, JDBC database handlers, and the new Android handler.  With significant help from Kevin G, we abstracted all
+of the database calls into 3 interfaces: @code{ConnectionSource} (like a @code{DataSource}), @code{DatabaseConnection} (like a
+@code{Connection}) and @code{DatabaseResults} (like a @code{ResultSet}).  Once we had the interfaces in place, we wrote
+delegation classes for JDBC and Android handlers.  This means that as of 3.X we release 3 packages: ormlite-core (for developers),
+ormlite-jdbc (for people connecting to JDBC databases), and ormlite-android (for Android users).  Both the JDBC and Android
+packages include all of the core code as well.
+
+Along the way a number of specific changes were made to the methods and classes:
+
+@itemize @bullet
+
+@item Since we split off the JDBC, we renamed the @code{BaseJdbcDao} to be @code{BaseDaoImpl} in the core package. You will
+need to adjust any DAOs that you have.
+
+@item We are in the process of allowing custom delete and update methods so we took the major upgrade opportunity to
+rename the @code{QueryBuilder} object to be @code{StatementBuilder}.  @emph{NOTE:} this was reverted later.
+
+@item Because of the above, we also renamed @code{Dao.queryBuilder()} method to be @code{statementBuilder()}.  @emph{NOTE:} this
+was reverted later.
+
+@item Also renamed the @code{PreparedQuery} object to be @code{PreparedStmt}.
+
+@item One of the big changes for those of you using an external JDBC @code{DataSource} is that you no longer set it on the
+DAO directly.  You need to wrap your @code{DataSource} in a @code{DataSourceDatabaseConnection} wrapper class which gets
+set on the DAO instead.
+
+@end itemize
+
+There were no on-disk changes unless you somehow managed to get ORMLite working previously on Android.  Since we were using
+JDBC before to do the data marshalling and now are doing it by hand, some of the data representations may have changed.  Sorry for
+the lack of detail here.
+
+@c ----------------------------------------------------------------
+@node 2.3 to 2.4, Examples, 2.X to 3.2, How to Upgrade
+@section Upgrade from Version 2.3 to 2.4
+
+A bug was fixed in 2.4 with how we were handling Derby and Hsqldb.  Both of these databases seem to be capitalizing table and field
+names in certain situations which meant that customized queries of @value{package} generated tables were affected.  In version 2.4,
+all tables and field names are capitalized in the SQL generated for Derby and Hsqldb databases. This means that if you have data
+in these databases from a pre 2.4 version, the 2.4 version will not be able to find the tables and fields without renaming to be
+uppercase.
+
+@c ----------------------------------------------------------------
+@node Examples, Contributions, 2.3 to 2.4, Top
+@chapter Example Code
+
+Here is some example code to help you get going with @value{package}.  I often find that code is the best documentation of how
+to get something working.  Please feel free to suggest additional example packages for inclusion here.  Source code submissions
+are welcome as long as you don't get piqued if we don't chose your's.
+
+@table @asis
+
+@cindex simple example
+@item Simple, basic
+
+Just to get you started, this is a simple application which performs database operations on a single class/table.  See soure code in
+SVN: @uref{http://ormlite.com/docs/example-simple}.
+
+@cindex foreign objects example
+@anchor{foreign objects example}
+@item Foreign objects 
+
+This example shows how to use foreign objects.  @xref{Foreign Objects}.  See the soure code in SVN: @uref{http://ormlite.com/docs/example-foreign}.
+
+@cindex field configuration example
+@anchor{field config example}
+@item Field configuration 
+
+This example shows how you can configure a class in @value{package} using Java code @emph{instead} of annotations.  @xref{Class Configuration}.
+See the soure code in SVN: @uref{http://ormlite.com/docs/example-config}.
+
+@cindex many to many example
+@anchor{many to many example}
+@item Many to many 
+
+This example is a bit more complicated with multiple tables and is designed for folks trying to model a many-to-many relationship.
+It has a join-table, foreign fields, and also utilizes inner queries.   See the soure code in
+SVN: @uref{http://ormlite.com/docs/example-many}.
+
+@cindex spring example
+@anchor{spring example}
+@item Spring wiring
+
+To demonstrate how to use Spring wiring with @value{package}, this little program includes classes and XML configuration files.
+See soure code in SVN: @uref{http://ormlite.com/docs/example-spring}.
+
+@end table
+
+@c -----------
+
+There are also complete example projects that produce some example applications to help you get started with that operating system.
+
+@table @asis
+
+@item HelloAndroid
+
+A basic Android application which does some database operations and then quits.  See the source code in SVN:
+@uref{http://ormlite.com/docs/android-hello}.  A tarball of the package is also here: @uref{http://ormlite.com/android/examples/}.
+
+@item ClickCounter
+
+A nice little application written by Kevin G. that provides a counter type application using @value{package}.  See the source code in SVN:
+@uref{http://ormlite.com/docs/android-click}.  A tarball of the package is also here: @uref{http://ormlite.com/android/examples/}.
+
+@item NotifyService
+
+An example of a service application that uses @value{package}.  See the source code in SVN:
+@uref{http://ormlite.com/docs/android-notify}.  A tarball of the package is also here: @uref{http://ormlite.com/android/examples/}.
+
+@end table
+
+@c ----------------------------------------------------------------
+@node Contributions, License, Examples, Top
 @chapter Contributions
 
 There are a couple of people that I'd like to thank who helped with the project.

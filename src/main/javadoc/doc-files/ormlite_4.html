@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on February, 14 2011 by texi2html 1.70 -->
+<!-- Created on February, 15 2011 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -11,10 +11,10 @@ Send bugs and suggestions to <users@texi2html.cvshome.org>
 
 -->
 <head>
-<title>ORM Lite Package: 4. Foreign Object Fields</title>
+<title>ORM Lite Package: 4. Using With Android</title>
 
-<meta name="description" content="ORM Lite Package: 4. Foreign Object Fields">
-<meta name="keywords" content="ORM Lite Package: 4. Foreign Object Fields">
+<meta name="description" content="ORM Lite Package: 4. Using With Android">
+<meta name="keywords" content="ORM Lite Package: 4. Using With Android">
 <meta name="resource-type" content="document">
 <meta name="distribution" content="global">
 <meta name="Generator" content="texi2html 1.70">
@@ -39,102 +39,77 @@ ul.toc {list-style: none}
 
 <body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
 
-<a name="NOD34"></a>
-<a name="SEC33"></a>
+<a name="NOD35"></a>
+<a name="SEC34"></a>
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_5.html#SEC34" title="Next section in reading order"> &gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="ormlite_3.html#SEC33" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_5.html#SEC35" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC27" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC28" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_5.html#SEC34" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_5.html#SEC35" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC49" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC50" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h1 class="chapter"> 4. Foreign Object Fields </h1>
+<h1 class="chapter"> 4. Using With Android </h1>
 
-<p>ORMLite supports the concept of &quot;foreign&quot; objects where one or more of the fields correspond to an object
-are persisted in another table in the same database.  For example, if you had an <code>Order</code> objects in your database
-and each <code>Order</code> had a corresponding <code>Account</code> object, then the <code>Order</code> object would have foreign
-<code>Account</code> field.  With foreign objects, <em>just</em> the id field from the <code>Account</code> is persisted
-to the <code>Order</code> table as the column &quot;<code>account_id</code>&quot;.  For example, the <code>Order</code> class might look
-something like:
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">@DatabaseTable(tableName = &quot;orders&quot;)
-public class Order {
+<p>Because of the lack of support for JDBC in Android OS, ORMLite makes direct calls to the Android database APIs
+to access SQLite databases.  You should make sure that you have downloaded and are depending on the
+<code>ormlite-android.jar</code> file and <em>not</em> the <code>ormlite-jdbc.jar</code> version.  Although a number of developers
+are using the package in their projects, we continue to improve how ORMLite integrates with the Android classes.
+Feedback on this would be welcome.
 
-    @DatabaseField(generatedId = true)
-    private int id;
-    
-    @DatabaseField(canBeNull = false, foreign = true)
-    private Account account;
-    &hellip;
-}
-</pre></td></tr></table>
-<p>When the <code>Order</code> table was created, something like the following SQL would be generated:
+</p><p>After you have read the getting started section (see section <a href="ormlite_1.html#SEC1">Getting Started</a>), the following instructions should be
+followed to help you get ORMLite working under Android OS.
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">CREATE TABLE `orders`
-   (`id` INTEGER AUTO_INCREMENT , `account_id` INTEGER,
-    PRIMARY KEY (`id`)); 
-</pre></td></tr></table>
-<p><em>Notice</em> that the name of the field is <em>not</em> <code>account</code> but is instead <code>account_id</code>.  You will need to
-use this field name if you are querying for it.  You can set the column name using the <code>columnName</code> field in the
-<code>DatabaseField</code> annotation. See <a href="ormlite_2.html#ANC1">columnName</a>.
+</p><ol>
+<li><p> You will need to create your own database helper class which should probably extend the <code>OrmLiteSqliteOpenHelper</code>  
+class.  This class creates and upgrades the database when your app is installed and can also provide the DAO classes
+used by your other classes.  Your helper class must implement the methods
+<code>onCreate(SQLiteDatabase sqliteDatabase, ConnectionSource connectionSource)</code> and
+<code>onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion)</code>.
+<code>onCreate</code> creates the database when your app is first installed while <code>onUpgrade</code> handles the upgrading
+of the database tables when you upgrade your app to a new version.  There is a sample <code>DatabaseHelper</code> class as well as
+examples projects online: <a href="http://ormlite.com/android/examples/">http://ormlite.com/android/examples/</a>. 
 
-</p><a name="IDX175"></a>
-<a name="IDX176"></a>
-<p>When you are creating a field with a foreign object, please note that the foreign object will <em>not</em> automatically be
-created for you.  If your foreign object has a generated-id which is provided by the database then you need to create it
-<em>before</em> you create any objects that reference it.  For example:
+</p></li><li><p> The helper can be kept open across all activities in your app with the same Sqlite database connection reused by
+all threads.  If you open multiple connections to the same database, stale data and unexpected results may occur.
+We recommend using the <code>OpenHelperManager</code> to monitor the usage of the helper - it will create it on the first
+access, track each time a part of your code is using it, and then it will close the last time the helper is released.
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">Account account = new Account(&quot;Jim Coakley&quot;);
-if (accountDao.create(account) != 1) {
-  // error handling &hellip; 
-}
-// this will create the account object and set any generated ids
+</p></li><li><p> The <code>OpenHelperManager</code> will by default look for the full class name of your own database helper class
+in the <code>open_helper_classname</code> value defined in <code>res/values/strings.xml</code>.  You can instead set a
+<code>SqliteOpenHelperFactory</code> on the manager directly in a <code>static {}</code> block in your code.   
 
-// now we can set the account on the order and create it
-Order order = new Order(&quot;Jim Sanders&quot;, 12.34);
-order.setAccount(account);
-&hellip;
-if (orderDao.create(order) != 1) {
-   // error handling unless 1 row was inserted
-}
-</pre></td></tr></table>
-<a name="IDX177"></a>
-<a name="IDX178"></a>
-<p>When you query for an order, you will get an <code>Order</code> object with an account field object that <em>only</em> has its id
-field set - all of the fields in the foreign <code>Account</code> object will have default values (null, 0, false, etc.).  If
-you want to use other fields in the <code>Account</code>, you must call <code>refresh</code> on the <code>accountDao</code> class to get the
-<code>Account</code> object filled in.  For example:
+</p></li><li><p>  Once you have defined your database helper and are managing it correctly, you will need to use it in your <code>Activity</code>
+classes.  An easy way to use the <code>OpenHelperManager</code> is to extend <code>OrmLiteBaseActivity</code> for each of your
+activity classes - there is also <code>OrmLiteBaseService</code> and <code>OrmLiteBaseTabActivity</code>.  These classes provide a
+<code>getHelper()</code> method to access the database helper whenever it is needed and will automatically release the helper
+in the <code>onDestroy()</code> method.  There is a sample <code>HelloAndroid</code> activity class in the the sample section of the tests 
+and on the web site along with a <code>SampleData</code> example class.
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">Order order = orderDao.queryForId(orderId);
-System.out.println(&quot;Account-id on the order should be set: &quot; + order.account.id);
-// this should print null for order.account.name
-System.out.println(&quot;But other fields on the account should not be set: &quot; + order.account.name);
+</p></li><li><p> If you do not want to extend the base classes then you will need to duplicate their basic functionality of calling
+<code>OpenHelperManager.getHelper(Context context)</code> at the start of your code, save the helper and use it as much as 
+you want, and then calling <code>OpenHelperManager.release()</code> when you are done with it.
 
-// so we refresh the account using the AccountDao
-if (accountDao.refresh(order.getAccount()) != 1) {
-  // error handling &hellip; 
-}
-System.out.println(&quot;Now the account fields will be set: &quot; + order.account.name);
-</pre></td></tr></table>
-<p>ORMLite can automagically refresh the objects for you if you'd like.  See <a href="ormlite_2.html#ANC4">foreignAutoRefresh</a>.
+</p></li><li><p> The Android native SQLite database type is <code>SqliteAndroidDatabaseType</code> and is used by the base classes internally.
 
-</p><p><em>NOTE:</em> Because we use refresh, foreign objects are therefor <em>required</em> to have an id field.
+</p></li></ol>
 
-</p><p>The <code>Where()</code> object has some method calls to help with using foreign objects.  see <a href="ormlite_3.html#ANC8">foreignIdEq</a> and see <a href="ormlite_3.html#ANC9">foreignIdIn</a>.
+<p>Please see the example code posted to the website for more information: <a href="http://ormlite.com/android/examples/">http://ormlite.com/android/examples/</a>.
+Again, feedback on this is welcome.
 
 </p><hr size="6">
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="ormlite_3.html#SEC27" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_5.html#SEC34" title="Next chapter"> &gt;&gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="ormlite_3.html#SEC28" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_5.html#SEC35" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
@@ -142,12 +117,12 @@ System.out.println(&quot;Now the account fields will be set: &quot; + order.acco
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC49" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC50" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>February, 14 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>February, 15 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 
