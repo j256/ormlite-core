@@ -2011,7 +2011,7 @@ classes.  An easy way to use the @code{OpenHelperManager} is to extend @code{Orm
 activity classes -- there is also @code{OrmLiteBaseService} and @code{OrmLiteBaseTabActivity}.  These classes provide a
 @code{getHelper()} method to access the database helper whenever it is needed and will automatically release the helper
 in the @code{onDestroy()} method.  There is a sample @code{HelloAndroid} activity class in the the sample section of the tests 
-and on the web site along with a @code{SampleData} example class.
+and on the web site along with a @code{SampleData} example class.  @xref{android examples}.
 
 @item If you do not want to extend the base classes then you will need to duplicate their basic functionality of calling
 @code{OpenHelperManager.getHelper(Context context)} at the start of your code, save the helper and use it as much as 
@@ -2698,7 +2698,9 @@ See soure code in SVN: @uref{http://ormlite.com/docs/example-spring}.
 
 @c -----------
 
-There are also complete example projects that produce some example applications to help you get started with that operating system.
+@cindex Android examples
+@anchor{android examples}.
+For Android developers, there are also complete example application projects to help you get started with that operating system.
 
 @table @asis
 
