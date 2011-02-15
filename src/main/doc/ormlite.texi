@@ -2021,8 +2021,7 @@ you want, and then calling @code{OpenHelperManager.release()} when you are done 
 
 @end enumerate
 
-Please see the example code posted to the website for more information: @uref{http://ormlite.com/android/examples/}.
-Again, feedback on this is welcome.
+Please see the example code documention for more information.  @xref{android examples}.  Again, feedback on this is welcome.
 
 @c ----------------------------------------------------------------
 @node Advanced, Spring Configuration, Use With Android, Top
