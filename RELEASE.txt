@@ -56,32 +56,36 @@ To release ORMLite:
 
 10) Go to SF and set the default download to the newest jar:
 
-	https://sourceforge.net/projects/ormlite/files/releases/com/j256/ormlite/ormlite-jdbc/
+	https://sourceforge.net/projects/ormlite/files/releases/com/j256/ormlite/ormlite-core/
 
-11) Create a sf shell.  Explode the javadocs with the newest release:
+11) Update the ormite.com website:
+
+	- cd /var/www/ormlite.com/release
+	- run get_release.sh  [enter release number]
+	- cd ..
+	- sh explode_javadocs.sh
+	- cd docs
+	- make links
+
+12) Possibly trim the older releases in the release directory on SF.  Try to leave last major release and couple minors.
 
 	create_sf_shell							(script)
-	sh explode_javadocs.sh					(enter version numbers)
-
-12) Possibly trim the older releases in the release directory.  Try to leave last major release and couple minors.
-
 	cd ~/frs/releases/com/j256/ormlite
 	rm -rf 1.11 1.12
+	shutdown
+	
+13) Add a News section to SF with the svn log highlights and subject: released version X.X
 
-13) Run  shutdown  on the sf shell
+14) Possibly publish to announcements forum if the release needs more information.
 
-14) Add a News section to SF with the svn log highlights and subject: released version X.X
-
-15) Possibly publish to announcements forum if the release needs more information.
-
-16) Send mail to users and developers mailing lists about the release:
+15) Send mail to users and developers mailing lists about the release:
 
 	- released version X.X
 	- show changelog
 	- tell them where they can get it
 
-17) Change the pom.xml ormlite-version to X.X-SNAPSHOT in ormlitetest
+16) Change the pom.xml ormlite-version to X.X-SNAPSHOT in ormlitetest
 
-18) Check in new jars into the Android example projects
+17) Check in new jars into the Android example projects
 
-19) Watch to make sure the central repository was updated.  http://repo1.maven.org/maven2/com/j256/ormlite/
+18) Watch to make sure the central repository was updated.  http://repo1.maven.org/maven2/com/j256/ormlite/
