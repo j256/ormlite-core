@@ -216,7 +216,6 @@ public enum DataType implements FieldConverter {
 	 * </p>
 	 */
 	JAVA_DATE_STRING(SqlType.STRING, null, new Class<?>[0]) {
-
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			String formatStr;
@@ -579,21 +578,6 @@ public enum DataType implements FieldConverter {
 	 */
 	SERIALIZABLE(SqlType.SERIALIZABLE, null, new Class<?>[] { Serializable.class }) {
 		@Override
-		public Object javaToSqlArg(FieldType fieldType, Object obj) throws SQLException {
-			try {
-				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-				ObjectOutputStream objOutStream = new ObjectOutputStream(outStream);
-				objOutStream.writeObject(obj);
-				return outStream.toByteArray();
-			} catch (Exception e) {
-				throw SqlExceptionUtil.create("Could not write serialized object to byte array: " + obj, e);
-			}
-		}
-		@Override
-		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
-			throw new SQLException("Default values for serializable types are not supported");
-		}
-		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			byte[] bytes = results.getBytes(columnPos);
 			// need to do this check because we are a stream type
@@ -616,6 +600,21 @@ public enum DataType implements FieldConverter {
 				return null;
 			} else {
 				return obj.toString();
+			}
+		}
+		@Override
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+			throw new SQLException("Default values for serializable types are not supported");
+		}
+		@Override
+		public Object javaToSqlArg(FieldType fieldType, Object obj) throws SQLException {
+			try {
+				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+				ObjectOutputStream objOutStream = new ObjectOutputStream(outStream);
+				objOutStream.writeObject(obj);
+				return outStream.toByteArray();
+			} catch (Exception e) {
+				throw SqlExceptionUtil.create("Could not write serialized object to byte array: " + obj, e);
 			}
 		}
 		@Override
@@ -646,15 +645,6 @@ public enum DataType implements FieldConverter {
 	 */
 	ENUM_STRING(SqlType.STRING, null, new Class<?>[] { Enum.class }) {
 		@Override
-		public Object javaToSqlArg(FieldType fieldType, Object obj) throws SQLException {
-			Enum<?> enumVal = (Enum<?>) obj;
-			return enumVal.name();
-		}
-		@Override
-		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
-			return defaultStr;
-		}
-		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			String val = results.getString(columnPos);
 			if (fieldType == null) {
@@ -667,6 +657,15 @@ public enum DataType implements FieldConverter {
 		public String resultToJavaString(DatabaseResults results, int columnPos) throws SQLException {
 			return results.getString(columnPos);
 		}
+		@Override
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
+			return defaultStr;
+		}
+		@Override
+		public Object javaToSqlArg(FieldType fieldType, Object obj) {
+			Enum<?> enumVal = (Enum<?>) obj;
+			return enumVal.name();
+		}
 	},
 
 	/**
@@ -674,15 +673,6 @@ public enum DataType implements FieldConverter {
 	 * type.
 	 */
 	ENUM_INTEGER(SqlType.INTEGER, null, new Class<?>[] { Enum.class }) {
-		@Override
-		public Object javaToSqlArg(FieldType fieldType, Object obj) throws SQLException {
-			Enum<?> enumVal = (Enum<?>) obj;
-			return (Integer) enumVal.ordinal();
-		}
-		@Override
-		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
-			return Integer.parseInt(defaultStr);
-		}
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			int val = results.getInt(columnPos);
@@ -697,6 +687,15 @@ public enum DataType implements FieldConverter {
 			return Integer.toString(results.getInt(columnPos));
 		}
 		@Override
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
+			return Integer.parseInt(defaultStr);
+		}
+		@Override
+		public Object javaToSqlArg(FieldType fieldType, Object obj) {
+			Enum<?> enumVal = (Enum<?>) obj;
+			return (Integer) enumVal.ordinal();
+		}
+		@Override
 		public boolean isEscapedValue() {
 			return false;
 		}
@@ -707,7 +706,11 @@ public enum DataType implements FieldConverter {
 	 */
 	UNKNOWN(SqlType.UNKNOWN, null, new Class<?>[0]) {
 		@Override
-		public Object javaToSqlArg(FieldType fieldType, Object obj) throws SQLException {
+		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) {
+			return null;
+		}
+		@Override
+		public String resultToJavaString(DatabaseResults results, int columnPos) {
 			return null;
 		}
 		@Override
@@ -715,11 +718,7 @@ public enum DataType implements FieldConverter {
 			return null;
 		}
 		@Override
-		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-			return null;
-		}
-		@Override
-		public String resultToJavaString(DatabaseResults results, int columnPos) throws SQLException {
+		public Object javaToSqlArg(FieldType fieldType, Object obj) {
 			return null;
 		}
 		@Override
