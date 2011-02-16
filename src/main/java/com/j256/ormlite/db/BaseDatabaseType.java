@@ -45,6 +45,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public void appendColumnArg(StringBuilder sb, FieldType fieldType, List<String> additionalArgs,
 			List<String> statementsBefore, List<String> statementsAfter, List<String> queriesAfter) {
 		appendEscapedEntityName(sb, fieldType.getDbColumnName());
@@ -69,6 +70,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 				appendBooleanType(sb);
 				break;
 
+			case DATE :
 			case JAVA_DATE :
 				fieldWidth = fieldType.getWidth();
 				if (fieldWidth == 0) {
@@ -77,10 +79,12 @@ public abstract class BaseDatabaseType implements DatabaseType {
 				appendDateType(sb, fieldWidth);
 				break;
 
+			case DATE_LONG :
 			case JAVA_DATE_LONG :
 				appendDateLongType(sb);
 				break;
 
+			case DATE_STRING :
 			case JAVA_DATE_STRING :
 				fieldWidth = fieldType.getWidth();
 				if (fieldWidth == 0) {

@@ -138,6 +138,38 @@ public enum DataType implements FieldConverter {
 	 * NOTE: This is <i>not</i> the same as the {@link java.sql.Date} class.
 	 * </p>
 	 */
+	DATE(SqlType.DATE, null, new Class<?>[] { Date.class }) {
+		@Override
+		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+			return new Date(results.getTimestamp(columnPos).getTime());
+		}
+		@Override
+		public String resultToJavaString(DatabaseResults results, int columnPos) throws SQLException {
+			return results.getTimestamp(columnPos).toString();
+		}
+		@Override
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+			try {
+				return new Timestamp(parseDateString(fieldType.getFormat(), defaultStr).getTime());
+			} catch (ParseException e) {
+				throw SqlExceptionUtil.create("Problems parsing default date string '" + defaultStr + "' using '"
+						+ formatOrDefault(fieldType.getFormat()) + '\'', e);
+			}
+		}
+		@Override
+		public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
+			Date date = (Date) javaObject;
+			return new Timestamp(date.getTime());
+		}
+		@Override
+		public boolean isSelectArgRequired() {
+			return true;
+		}
+	},
+	/**
+	 * @deprecated You should use {@link DataType#DATE}
+	 */
+	@Deprecated
 	JAVA_DATE(SqlType.DATE, null, new Class<?>[] { Date.class }) {
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
@@ -174,6 +206,38 @@ public enum DataType implements FieldConverter {
 	 * NOTE: This is <i>not</i> the same as the {@link java.sql.Date} class.
 	 * </p>
 	 */
+	DATE_LONG(SqlType.LONG, null, new Class<?>[0]) {
+		@Override
+		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+			return new Date(results.getLong(columnPos));
+		}
+		@Override
+		public String resultToJavaString(DatabaseResults results, int columnPos) throws SQLException {
+			return Long.toString(results.getLong(columnPos));
+		}
+		@Override
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+			try {
+				return Long.parseLong(defaultStr);
+			} catch (NumberFormatException e) {
+				throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing default date-long value: "
+						+ defaultStr, e);
+			}
+		}
+		@Override
+		public Object javaToSqlArg(FieldType fieldType, Object obj) {
+			Date date = (Date) obj;
+			return (Long) date.getTime();
+		}
+		@Override
+		public boolean isEscapedValue() {
+			return false;
+		}
+	},
+	/**
+	 * @deprecated You should use {@link DataType#DATE_LONG}
+	 */
+	@Deprecated
 	JAVA_DATE_LONG(SqlType.LONG, null, new Class<?>[0]) {
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
@@ -215,6 +279,47 @@ public enum DataType implements FieldConverter {
 	 * data in/out unfortunately.
 	 * </p>
 	 */
+	DATE_STRING(SqlType.STRING, null, new Class<?>[0]) {
+		@Override
+		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+			String formatStr;
+			if (fieldType == null) {
+				formatStr = DEFAULT_DATE_FORMAT_STRING;
+			} else {
+				formatStr = fieldType.getFormat();
+			}
+			String dateStr = results.getString(columnPos);
+			try {
+				return parseDateString(formatStr, dateStr);
+			} catch (ParseException e) {
+				throw SqlExceptionUtil.create("Problems with column " + columnPos + " parsing date-string '" + dateStr
+						+ "' using '" + formatOrDefault(formatStr) + "'", e);
+			}
+		}
+		@Override
+		public String resultToJavaString(DatabaseResults results, int columnPos) throws SQLException {
+			return results.getString(columnPos);
+		}
+		@Override
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+			try {
+				// we parse to make sure it works and then format it again
+				return normalizeDateString(fieldType.getFormat(), defaultStr);
+			} catch (ParseException e) {
+				throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing default date-string '"
+						+ defaultStr + "' using '" + formatOrDefault(fieldType.getFormat()) + "'", e);
+			}
+		}
+		@Override
+		public Object javaToSqlArg(FieldType fieldType, Object obj) {
+			Date date = (Date) obj;
+			return formatDate(fieldType.getFormat(), date);
+		}
+	},
+	/**
+	 * @deprecated You should use {@link DataType#DATE_STRING}
+	 */
+	@Deprecated
 	JAVA_DATE_STRING(SqlType.STRING, null, new Class<?>[0]) {
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {

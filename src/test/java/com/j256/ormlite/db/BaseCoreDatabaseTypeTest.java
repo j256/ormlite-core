@@ -331,9 +331,9 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 		boolean bool;
 		@DatabaseField
 		Date date;
-		@DatabaseField(dataType = DataType.JAVA_DATE_LONG)
+		@DatabaseField(dataType = DataType.DATE_LONG)
 		Date dateLong;
-		@DatabaseField(dataType = DataType.JAVA_DATE_STRING)
+		@DatabaseField(dataType = DataType.DATE_STRING)
 		Date dateString;
 		@DatabaseField
 		byte byteField;

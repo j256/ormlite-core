@@ -107,7 +107,7 @@ public class DataTypeTest extends BaseCoreTest {
 
 	@Test
 	public void testJavaDate() throws Exception {
-		DataType type = DataType.JAVA_DATE;
+		DataType type = DataType.DATE;
 		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
 		expect(results.getTimestamp(COLUMN)).andReturn(TIMESTAMP);
 		replay(results);
@@ -123,7 +123,7 @@ public class DataTypeTest extends BaseCoreTest {
 
 	@Test
 	public void testJavaDateLong() throws Exception {
-		DataType type = DataType.JAVA_DATE_LONG;
+		DataType type = DataType.DATE_LONG;
 		long millis = 5;
 		Date date = new Date(millis);
 
@@ -142,12 +142,12 @@ public class DataTypeTest extends BaseCoreTest {
 
 	@Test(expected = SQLException.class)
 	public void testBadJavaDateLong() throws Exception {
-		DataType.JAVA_DATE_LONG.parseDefaultString(null, "notALong");
+		DataType.DATE_LONG.parseDefaultString(null, "notALong");
 	}
 
 	@Test
 	public void testJavaDateString() throws Exception {
-		DataType type = DataType.JAVA_DATE_STRING;
+		DataType type = DataType.DATE_STRING;
 		FieldType fieldType = getFieldType("date");
 		assertEquals(DATE_STRING, type.javaToSqlArg(fieldType, DATE));
 		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
@@ -159,7 +159,7 @@ public class DataTypeTest extends BaseCoreTest {
 
 	@Test(expected = SQLException.class)
 	public void testJavaBadDateString() throws Exception {
-		DataType type = DataType.JAVA_DATE_STRING;
+		DataType type = DataType.DATE_STRING;
 		FieldType fieldType = getFieldType("date");
 		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
 		expect(results.getString(COLUMN)).andReturn(BAD_DATE_STRING);
@@ -170,14 +170,14 @@ public class DataTypeTest extends BaseCoreTest {
 
 	@Test
 	public void testJavaDateStringParseDefaultString() throws Exception {
-		DataType type = DataType.JAVA_DATE_STRING;
+		DataType type = DataType.DATE_STRING;
 		FieldType fieldType = getFieldType("date");
 		assertEquals(DATE_STRING, type.parseDefaultString(fieldType, DATE_STRING));
 	}
 
 	@Test(expected = SQLException.class)
 	public void testJavaDateStringParseBadDefaultString() throws Exception {
-		DataType type = DataType.JAVA_DATE_STRING;
+		DataType type = DataType.DATE_STRING;
 		FieldType fieldType = getFieldType("date");
 		type.parseDefaultString(fieldType, BAD_DATE_STRING);
 	}
