@@ -57,6 +57,11 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 	}
 
 	@Test
+	public void testAppendColumnLongString() throws Exception {
+		testFooColumn(databaseType, "longString", "TEXT");
+	}
+
+	@Test
 	public void testAppendColumnBoolean() throws Exception {
 		testFooColumn(databaseType, "bool", "BOOLEAN");
 	}
@@ -108,7 +113,7 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 
 	@Test
 	public void testAppendColumnSerialized() throws Exception {
-		testFooColumn(databaseType, "serialized", "VARBINARY");
+		testFooColumn(databaseType, "serialized", "BLOB");
 	}
 
 	@Test
@@ -320,6 +325,8 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 	protected class Foo {
 		@DatabaseField
 		String string;
+		@DatabaseField(dataType = DataType.LONG_STRING)
+		String longString;
 		@DatabaseField
 		boolean bool;
 		@DatabaseField

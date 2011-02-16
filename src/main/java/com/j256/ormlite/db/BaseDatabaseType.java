@@ -49,14 +49,19 @@ public abstract class BaseDatabaseType implements DatabaseType {
 			List<String> statementsBefore, List<String> statementsAfter, List<String> queriesAfter) {
 		appendEscapedEntityName(sb, fieldType.getDbColumnName());
 		sb.append(' ');
+		int fieldWidth;
 		switch (fieldType.getDataType()) {
 
 			case STRING :
-				int fieldWidth = fieldType.getWidth();
+				fieldWidth = fieldType.getWidth();
 				if (fieldWidth == 0) {
 					fieldWidth = getDefaultVarcharWidth();
 				}
 				appendStringType(sb, fieldWidth);
+				break;
+
+			case LONG_STRING :
+				appendLongStringType(sb);
 				break;
 
 			case BOOLEAN :
@@ -115,7 +120,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 				break;
 
 			case SERIALIZABLE :
-				appendObjectType(sb);
+				appendSerializableType(sb);
 				break;
 
 			case ENUM_STRING :
@@ -170,6 +175,13 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		} else {
 			sb.append("VARCHAR");
 		}
+	}
+
+	/**
+	 * Output the SQL type for a Java Long String.
+	 */
+	protected void appendLongStringType(StringBuilder sb) {
+		sb.append("TEXT");
 	}
 
 	/**
@@ -245,8 +257,8 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	/**
 	 * Output the SQL type for a Java object.
 	 */
-	protected void appendObjectType(StringBuilder sb) {
-		sb.append("VARBINARY");
+	protected void appendSerializableType(StringBuilder sb) {
+		sb.append("BLOB");
 	}
 
 	/**

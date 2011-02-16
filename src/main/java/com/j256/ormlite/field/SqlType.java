@@ -8,6 +8,7 @@ package com.j256.ormlite.field;
 public enum SqlType {
 
 	STRING,
+	LONG_STRING,
 	DATE,
 	BOOLEAN,
 	BYTE,

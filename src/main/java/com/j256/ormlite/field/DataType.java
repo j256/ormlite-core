@@ -54,6 +54,28 @@ public enum DataType implements FieldConverter {
 	},
 
 	/**
+	 * Persists the {@link String} Java class.
+	 */
+	LONG_STRING(SqlType.LONG_STRING, null, new Class<?>[0]) {
+		@Override
+		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+			return results.getString(columnPos);
+		}
+		@Override
+		public String resultToJavaString(DatabaseResults results, int columnPos) throws SQLException {
+			return results.getString(columnPos);
+		}
+		@Override
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
+			return defaultStr;
+		}
+		@Override
+		public boolean isAppropriateId() {
+			return false;
+		}
+	},
+
+	/**
 	 * Persists the boolean Java primitive.
 	 */
 	BOOLEAN(SqlType.BOOLEAN, null, new Class<?>[] { boolean.class }) {
@@ -77,6 +99,10 @@ public enum DataType implements FieldConverter {
 		public boolean isPrimitive() {
 			return true;
 		}
+		@Override
+		public boolean isAppropriateId() {
+			return false;
+		}
 	},
 
 	/**
@@ -97,6 +123,10 @@ public enum DataType implements FieldConverter {
 		}
 		@Override
 		public boolean isEscapedValue() {
+			return false;
+		}
+		@Override
+		public boolean isAppropriateId() {
 			return false;
 		}
 	},
@@ -547,7 +577,7 @@ public enum DataType implements FieldConverter {
 	/**
 	 * Persists an unknown Java Object that is serializable.
 	 */
-	SERIALIZABLE(SqlType.SERIALIZABLE, null, new Class<?>[] { Object.class }) {
+	SERIALIZABLE(SqlType.SERIALIZABLE, null, new Class<?>[] { Serializable.class }) {
 		@Override
 		public Object javaToSqlArg(FieldType fieldType, Object obj) throws SQLException {
 			try {
@@ -691,6 +721,10 @@ public enum DataType implements FieldConverter {
 		@Override
 		public String resultToJavaString(DatabaseResults results, int columnPos) throws SQLException {
 			return null;
+		}
+		@Override
+		public boolean isAppropriateId() {
+			return false;
 		}
 	},
 	// end
