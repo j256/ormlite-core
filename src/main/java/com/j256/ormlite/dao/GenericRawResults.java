@@ -37,8 +37,8 @@ public interface GenericRawResults<T> extends CloseableIterable<T> {
 	public String[] getColumnNames();
 
 	/**
-	 * Return a list of results with the iterator. For large queries, this should not be used but the iterator methods
-	 * returned by {@link #iterator()} should be called instead.
+	 * Return a list of all of the results. For large queries, this should not be used since the {@link #iterator()}
+	 * method will allow your to process the results page-by-page.
 	 */
 	public List<T> getResults() throws SQLException;
 

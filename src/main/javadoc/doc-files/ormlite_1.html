@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on February, 15 2011 by texi2html 1.70 -->
+<!-- Created on February, 17 2011 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -66,7 +66,7 @@ ul.toc {list-style: none}
 </td></tr>
 <tr><td align="left" valign="top"><a href="#SEC4">1.3 Configuring a DAO</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Configuring a Data Access Object.
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC5">1.4 Client Code Example</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">             Client code example on how its works.
+<tr><td align="left" valign="top"><a href="#SEC5">1.4 Code Example</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">               Client code example on how its works.
 </td></tr>
 </table>
 
@@ -95,10 +95,10 @@ ul.toc {list-style: none}
 (<a href="http://repo1.maven.org/maven2/com/j256/ormlite/">http://repo1.maven.org/maven2/com/j256/ormlite/</a>) or from Sourceforge (<a href="http://sourceforge.net/projects/ormlite/files/">http://sourceforge.net/projects/ormlite/files/</a>).
 See the <a href="http://ormlite.com/">http://ormlite.com/</a> home page for the most up-to-date repositories. 
 
-</p><p>Users that are connecting to SQL databases via JDBC connections will need to download the ormlite-jdbc-4.11.jar
-and ormlite-core-4.11.jar files.  For use with Android applications, you should download the
-ormlite-android-4.11.jar and ormlite-core-4.11.jar files instead.  For either JDBC or Android
-you will also need the ormlite-core release which has the ORMLite backend implementations.  ORMLite does not have
+</p><p>Users that are connecting to SQL databases via JDBC connections will need to download the <code>ormlite-jdbc-4.12.jar</code>
+and <code>ormlite-core-4.12.jar</code> files.  For use with Android applications, you should download the
+<code>ormlite-android-4.12.jar</code> and <code>ormlite-core-4.12.jar</code> files instead.  For either JDBC or
+Android you will also need the ormlite-core release which has the ORMLite backend implementations.  ORMLite does not have
 any required external dependencies although there are some other packages that you may want to use.  See section <a href="ormlite_5.html#SEC41">External Dependencies</a>.  The code
 works with Java 5 or later.
 
@@ -190,7 +190,8 @@ public interface AccountDao extends Dao&lt;Account,String&gt; {
 </p><table><tr><td>&nbsp;</td><td><pre class="example">/** JDBC implementation of the AccountDao interface. */
 public class AccountDaoImpl extends BaseDaoImpl&lt;Account,String&gt;
  implements AccountDao {
-    public AccountDaoImpl(ConnectionSource connectionSource) throws SQLException {
+    public AccountDaoImpl(ConnectionSource connectionSource)
+      throws SQLException {
         super(connectionSource, Account.class);
     }
 }
@@ -204,7 +205,7 @@ one.  For example:
 Dao&lt;Order, Integer&gt; orderDao =
   BaseDaoImpl.createDao(connectionSource, Order.class);
 </pre></td></tr></table>
-<p>More information about setting up the DOAs is available later in the manual. See section <a href="ormlite_2.html#SEC12">Setting Up the DAOs</a>.
+<p>More information about setting up the DAOs is available later in the manual. See section <a href="ormlite_2.html#SEC13">Setting Up the DAOs</a>.
 
 </p><hr size="6">
 <a name="NOD6"></a>
@@ -225,17 +226,17 @@ Dao&lt;Order, Integer&gt; orderDao =
 <td valign="middle" align="left">[<a href="ormlite_10.html#SEC50" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 1.4 Client Code Example </h2>
+<h2 class="section"> 1.4 Code Example </h2>
 
-<p>The client code in this section demonstrates how to use the classes presented in the previous two sections. The code uses H2 as a test database
-instance. You will need to add the H2 jar file to your classpath if you want to run the example as-is.  <em>NOTE:</em> Android users should see the
-Android specific documentation later in the manual. See section <a href="ormlite_4.html#SEC34">Using With Android</a>.
+<p>The code in this section demonstrates how to use the classes presented in the previous two sections. The code uses the native Java H2 database to
+create the in-memory test databases. You will need to add the H2 jar file to your classpath if you want to run the example as-is.  <em>NOTE:</em>
+Android users should see the Android specific documentation later in the manual. See section <a href="ormlite_4.html#SEC34">Using With Android</a>.
 
 </p><p>The client performs the following steps.
 
 </p><ul>
 <li><p> It creates a connection source which handles connections to the database.
-</p></li><li><p> It instantiates a AccountDaoImpl.
+</p></li><li><p> It instantiates a dao for the Account object.
 </p></li><li><p> The <code>accounts</code> database table is created. This step is not needed if the table already exists.
 </p></li></ul>
 
@@ -250,7 +251,8 @@ Android specific documentation later in the manual. See section <a href="ormlite
             new JdbcConnectionSource(databaseUrl);
 
         // instantiate the dao
-        AccountDaoImpl accountDao = new AccountDaoImpl(connectionSource);
+        Dao&lt;Account, String&gt; accountDao =
+            BaseDaoImpl.createDao(connectionSource, Account.class);
 
         // if you need to create the 'accounts' table make this call
         TableUtils.createTable(connectionSource, Account.class);
@@ -268,7 +270,7 @@ the database by its ID:
             throw new Exception(&quot;Failure adding account&quot;);
         }
 		
-        // retrieve the account
+        // retrieve the account from the database by its id field (name)
         Account account2 = accountDao.queryForId(&quot;Jim Coakley&quot;);
         System.out.println(&quot;Account: &quot; + account2.getName());
 
@@ -277,7 +279,9 @@ the database by its ID:
     }
 }
 </pre></td></tr></table>
-<p>You should be able to get started using ORMLite by this point. To understand more of the functionality available with ORMLite,
+<p>For more examples including working code and Android application projects see see section <a href="ormlite_7.html#SEC47">Example Code</a>.
+
+</p><p>You should be able to get started using ORMLite by this point. To understand more of the functionality available with ORMLite,
 continue on with the next section.  See section <a href="ormlite_2.html#SEC6">How to Use</a>.
 
 </p><hr size="6">
@@ -296,7 +300,7 @@ continue on with the next section.  See section <a href="ormlite_2.html#SEC6">Ho
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>February, 15 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>February, 17 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 

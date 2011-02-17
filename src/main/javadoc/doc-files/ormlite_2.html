@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on February, 15 2011 by texi2html 1.70 -->
+<!-- Created on February, 17 2011 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -59,14 +59,16 @@ ul.toc {list-style: none}
 </tr></table>
 <h1 class="chapter"> 2. How to Use </h1>
 
-<table class="menu" border="0" cellspacing="0">
+<p>This chapter goes into more detail about how to use ORMLite.
+
+</p><table class="menu" border="0" cellspacing="0">
 <tr><td align="left" valign="top"><a href="#SEC7">2.1 Setting Up Your Classes</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 How to setup your classes to be persisted.
 </td></tr>
 <tr><td align="left" valign="top"><a href="#SEC11">2.2 Persisted Data Types</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">             Data types that can be persisted.
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC12">2.3 Setting Up the DAOs</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                   How to configure the Data Access Objects.
+<tr><td align="left" valign="top"><a href="#SEC13">2.4 Setting Up the DAOs</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                   How to configure the Data Access Objects.
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC13">2.4 JDBC Connection Sources</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">           Setting up connections to databases.
+<tr><td align="left" valign="top"><a href="#SEC12">2.3 Connection Sources</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">           Setting up connections to databases.
 </td></tr>
 <tr><td align="left" valign="top"><a href="#SEC14">2.5 Database Type</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">               Defining your database type.
 </td></tr>
@@ -161,12 +163,12 @@ public class Account {
 &hellip;
 </pre></td></tr></table>
 <p>The <code>@DatabaseTable</code> annotations can have an optional <code>tableName</code> argument which specifies the name of the table
-that corresponds to the class.   If not specified, the class name, all lowercase, is used by default.  With the above example
+that corresponds to the class.   If not specified, the class name, with normalized case, is used by default.  With the above example
 each <code>Account</code> object will be persisted as a row in the <code>accounts</code> table in the database.  If the <code>tableName</code>
 was not specified, the <code>account</code> table would be used instead.
 
-</p><a name="IDX10"></a>
-<a name="IDX11"></a>
+</p><a name="IDX8"></a>
+<a name="IDX9"></a>
 <p>Additionally, for each of the classes, you will need to add a <code>@DatabaseField</code> annotation to each of the <em>fields</em>
 in the class that are to be persisted to the database.  Each field is persisted as a column of a database row.  For example:
 
@@ -192,58 +194,58 @@ public class Account {
 
 </p><dl compact="compact">
 <dd>
-<a name="IDX12"></a>
-<a name="IDX13"></a>
+<a name="IDX10"></a>
+<a name="IDX11"></a>
 <p><a name="ANC1"></a>
 </p></dd>
 <dt><code> columnName</code></dt>
 <dd>
-<p>String name of the column in the database that will hold this field. If not set then the field name, all lowercase, is used instead.
+<p>String name of the column in the database that will hold this field. If not set then the field name, with normalized case,
+is used instead.
 
-</p><a name="IDX14"></a>
-<a name="IDX15"></a>
-<a name="IDX16"></a>
+</p><a name="IDX12"></a>
+<a name="IDX13"></a>
+<a name="IDX14"></a>
 </dd>
 <dt><code> dataType</code></dt>
 <dd>
 <p>The type of the field as the DataType class.  Usually the type is taken from Java class of the field and does not need
 to be specified.  This corresponds to the SQL type.  See section <a href="#SEC11">Persisted Data Types</a>.
 
-</p><a name="IDX17"></a>
+</p><a name="IDX15"></a>
 </dd>
 <dt><code> defaultValue</code></dt>
 <dd>
 <p>String default value of the field when we are creating a new row in the table.  Default is none.
 
-</p><a name="IDX18"></a>
-<a name="IDX19"></a>
-<a name="IDX20"></a>
+</p><a name="IDX16"></a>
+<a name="IDX17"></a>
+<a name="IDX18"></a>
 </dd>
 <dt><code> width</code></dt>
 <dd>
-<p>Integer width of array fields - usually for strings.  Some databases do not support this unfortunately.  Default for 
-those that do is 255.
+<p>Integer width of string fields.  Some databases do not support this unfortunately.  Default for those that do is 255.
 
-</p><a name="IDX21"></a>
-<a name="IDX22"></a>
+</p><a name="IDX19"></a>
+<a name="IDX20"></a>
 </dd>
 <dt><code> canBeNull</code></dt>
 <dd>
 <p>Boolean whether the field can be assigned to null value. Default is true.  If set to false then you must provide a value
 for this field on every object inserted into the database.
 
-</p><a name="IDX23"></a>
-<a name="IDX24"></a>
-<a name="IDX25"></a>
+</p><a name="IDX21"></a>
+<a name="IDX22"></a>
+<a name="IDX23"></a>
 </dd>
 <dt><code> id</code></dt>
 <dd>
 <p>Boolean whether the field is the id field or not. Default is false. Only one field can have this set in a class. Id fields
-uniquely identity a row.  If you don't have it set then you won't be able to use the query, update, refresh, and delete by
-ID methods. Only one of this, <code>generatedId</code>, and <code>generatedIdSequence</code> can be specified.  See section <a href="#SEC19">Fields With id</a>.
+uniquely identity a row and are required if you want to use the query, update, refresh, and delete by ID methods. Only one
+of this, <code>generatedId</code>, and <code>generatedIdSequence</code> can be specified.  See section <a href="#SEC19">Fields With id</a>.
 
-</p><a name="IDX26"></a>
-<a name="IDX27"></a>
+</p><a name="IDX24"></a>
+<a name="IDX25"></a>
 </dd>
 <dt><code> generatedId</code></dt>
 <dd>
@@ -254,9 +256,9 @@ set in the object by the create method.  Some databases require sequences for ge
 name will be auto-generated. To specify the name of the sequence use <code>generatedIdSequence</code>. Only one of this,
 <code>id</code>, and <code>generatedIdSequence</code> can be specified.  See section <a href="#SEC20">Fields With generatedId</a>.
 
-</p><a name="IDX28"></a>
-<a name="IDX29"></a>
-<a name="IDX30"></a>
+</p><a name="IDX26"></a>
+<a name="IDX27"></a>
+<a name="IDX28"></a>
 </dd>
 <dt><code> generatedIdSequence</code></dt>
 <dd>
@@ -265,21 +267,21 @@ sequence name to use.  Default is none. Only one field can have this set in a cl
 which require sequences for generated ids.  If you use generatedId instead then the code will auto-generate a sequence name.
 Only one of this, <code>id</code>, and <code>generatedId</code> can be specified.  See section <a href="#SEC21">Fields With generatedIdSequence</a>.
 
-</p><a name="IDX31"></a>
-<a name="IDX32"></a>
+</p><a name="IDX29"></a>
+<a name="IDX30"></a>
 </dd>
 <dt><code> foreign</code></dt>
 <dd>
-<a name="IDX33"></a>
+<a name="IDX31"></a>
 <p>Boolean setting which identifies this field as corresponding to another class that is also stored in the database.
-Default is false.  The field can not be a primitive type.  The other class must have an id field (either <code>id</code>,
+Default is false.  The field must not be a primitive type.  The other class must have an id field (either <code>id</code>,
 <code>generatedId</code>, or <code>generatedIdSequence</code>) which will be stored in this table. When an object is returned
 from a query call, any foreign objects will <em>just</em> have the id field set.  See section <a href="#SEC27">Foreign Object Fields</a>.
 
-</p><a name="IDX34"></a>
+</p><a name="IDX32"></a>
+<a name="IDX33"></a>
+<a name="IDX34"></a>
 <a name="IDX35"></a>
-<a name="IDX36"></a>
-<a name="IDX37"></a>
 </dd>
 <dt><code> useGetSet</code></dt>
 <dd>
@@ -302,8 +304,8 @@ public void setOrderCount(Integer orderCount) {
   this.orderCount = orderCount;
 }
 </pre></td></tr></table>
-<a name="IDX38"></a>
-<a name="IDX39"></a>
+<a name="IDX36"></a>
+<a name="IDX37"></a>
 <p><a name="ANC2"></a>
 </p></dd>
 <dt><code> unknownEnumName</code></dt>
@@ -314,9 +316,9 @@ contain an unknown name or ordinal value then a <code>SQLException</code> is thr
 This is useful to handle backwards compatibility when handling out-of-date database values as well as forwards
 compatibility if old software is accessing up-to-date data or if you have to roll a release back.
 
-</p><a name="IDX40"></a>
-<a name="IDX41"></a>
-<a name="IDX42"></a>
+</p><a name="IDX38"></a>
+<a name="IDX39"></a>
+<a name="IDX40"></a>
 </dd>
 <dt><code> throwIfNull</code></dt>
 <dd>
@@ -330,27 +332,28 @@ primitive will be set to 0 (false, null, etc.).  This can only be used on a prim
 <p>Set this to be false (default true) to not store this field in the database. This is useful if you want to have
 the annotation on all of your fields but turn off the writing of some of them to the database.
 
-</p><a name="IDX43"></a>
-<a name="IDX44"></a>
+</p><a name="IDX41"></a>
+<a name="IDX42"></a>
 </dd>
 <dt><code> format</code></dt>
 <dd>
 <p>This allows you to specify format information of a particular field.  Right now only the Date fields support it when
-a default value is being converted or if you are using the <code>JAVA_DATE_STRING</code> type.
+a default value is being converted or if you are using the <code>DATE_STRING</code> type.
 
-</p><a name="IDX45"></a>
-<a name="IDX46"></a>
+</p><a name="IDX43"></a>
+<a name="IDX44"></a>
 </dd>
 <dt><code> unique</code></dt>
 <dd>
 <p>Adds a constraint to the field that it has to be unique across all rows in the table.  This allows you to have a
 unique field in the table even though it is not the id field.  For example, you might have an Account class which
 has a generated account-id but you also want the email address to be unique across all Accounts.  You can also
-use the uniqueIndexName to create an index for this field.
+use the uniqueIndexName to create an index for this field.  For unique constraints across multiple fields, see the
+<code>uniqueIndex</code> below. 
 
-</p><a name="IDX47"></a>
-<a name="IDX48"></a>
-<a name="IDX49"></a>
+</p><a name="IDX45"></a>
+<a name="IDX46"></a>
+<a name="IDX47"></a>
 <p><a name="ANC3"></a>
 </p></dd>
 <dt><code> index</code></dt>
@@ -358,21 +361,21 @@ use the uniqueIndexName to create an index for this field.
 <p>Boolean value (default false) to have the database add an index for this field. This will create an index with the name columnName with
 a &quot;_idx&quot; suffix. To specify a specific name of the index or to index multiple fields, use the indexName field.
 
-</p><a name="IDX50"></a>
+</p><a name="IDX48"></a>
 </dd>
 <dt><code> uniqueIndex</code></dt>
 <dd>
 <p>Boolean value (default false) to have the database add a unique index for this field. Same as index but this will ensure that all of
 the values in the index are unique.  If you just want to make sure of unique-ness then you can use the <code>unique</code> field instead.
 
-</p><a name="IDX51"></a>
+</p><a name="IDX49"></a>
 </dd>
 <dt><code> indexName</code></dt>
 <dd>
 <p>String value (default none) to have the database add an index for this field with this name. You do not need to specify the index boolean
 as well. To index multiple fields together in one index, each of the fields should have the same indexName value.
 
-</p><a name="IDX52"></a>
+</p><a name="IDX50"></a>
 </dd>
 <dt><code> uniqueIndexName</code></dt>
 <dd>
@@ -380,8 +383,8 @@ as well. To index multiple fields together in one index, each of the fields shou
 the values in the index are unique.  For example, this means that you can insert <code>(&quot;pittsburgh&quot;, &quot;pa&quot;)</code> and <code>(&quot;harrisburg&quot;, &quot;pa&quot;)</code> and
 <code>(&quot;pittsburgh&quot;, &quot;tx&quot;)</code> but not another <code>(&quot;pittsburgh&quot;, &quot;pa&quot;)</code>.
 
-</p><a name="IDX53"></a>
-<a name="IDX54"></a>
+</p><a name="IDX51"></a>
+<a name="IDX52"></a>
 <p><a name="ANC4"></a>
 </p></dd>
 <dt><code> foreignAutoRefresh</code></dt>
@@ -390,7 +393,7 @@ the values in the index are unique.  For example, this means that you can insert
 create the foreign object but when the object is queried, a separate database call will be made to load of the fields of the foreign object via an
 internal DAO. The default is to just have the ID field in the object retrieved and for the caller to call refresh on the correct DAO.
 
-</p><p><em>NOTE:</em> This will create another DAO object so that low memory devices may want to call refresh by hand.
+</p><p><em>NOTE:</em> This will create another DAO object internally so low memory devices may want to call refresh by hand.
 
 </p></dd>
 </dl>
@@ -425,9 +428,11 @@ public class Account {
 &hellip;
 </pre></td></tr></table>
 <p>The <code>@Entity</code> annotations can have an optional <code>name</code> argument which specifies the table name.   If not
-specified, the class name all lowercase is used by default.
+specified, the class name with normalized case is used by default.
 
-</p><a name="IDX55"></a>
+</p><a name="IDX53"></a>
+<a name="IDX54"></a>
+<a name="IDX55"></a>
 <a name="IDX56"></a>
 <a name="IDX57"></a>
 <a name="IDX58"></a>
@@ -435,8 +440,6 @@ specified, the class name all lowercase is used by default.
 <a name="IDX60"></a>
 <a name="IDX61"></a>
 <a name="IDX62"></a>
-<a name="IDX63"></a>
-<a name="IDX64"></a>
 <p>Instead of using the <code>@DatabaseField</code> annotation on each of the fields, you can use the <code>javax.persistence</code>
 annotations: <code>@Column</code>, <code>@Id</code>, <code>@GeneratedValue</code>, <code>@OneToOne</code>, and <code>@ManyToOne</code>. For example:
 
@@ -463,9 +466,9 @@ following annotation fields are supported, the rest are ignored.
 <dd>
 <p>Used to specify the name of the associated database column.  If not provided then the field name is taken.
 
-</p><a name="IDX65"></a>
-<a name="IDX66"></a>
-<a name="IDX67"></a>
+</p><a name="IDX63"></a>
+<a name="IDX64"></a>
+<a name="IDX65"></a>
 </dd>
 <dt><code> length</code></dt>
 <dd>
@@ -473,16 +476,16 @@ following annotation fields are supported, the rest are ignored.
 certain database types.  Default for those that do is 255.   Same as the <code>width</code> field in the
 <code>@DatabaseField</code> annotation.
 
-</p><a name="IDX68"></a>
-<a name="IDX69"></a>
+</p><a name="IDX66"></a>
+<a name="IDX67"></a>
 </dd>
 <dt><code> nullable</code></dt>
 <dd>
 <p>Set to true to have a field not be able to be inserted into the database with a null value.  Same as the
 <code>canBeNull</code> field in the <code>@DatabaseField</code> annotation.
 
-</p><a name="IDX70"></a>
-<a name="IDX71"></a>
+</p><a name="IDX68"></a>
+<a name="IDX69"></a>
 </dd>
 <dt><code> unique</code></dt>
 <dd>
@@ -492,9 +495,9 @@ certain database types.  Default for those that do is 255.   Same as the <code>w
 </p></dd>
 </dl>
 
+<a name="IDX70"></a>
+<a name="IDX71"></a>
 <a name="IDX72"></a>
-<a name="IDX73"></a>
-<a name="IDX74"></a>
 </dd>
 <dt><code> @Id</code></dt>
 <dd>
@@ -518,7 +521,7 @@ existence of either of these annotations to indicate that it is a foreign object
 </dl>
 
 <p>If the <code>@Column</code> annotation is used on a field that has a unknown type then it is assumed to be a
-Serializable field and the object should implement <code>java.io.Serializable</code>.  See <a href="#ANC5">serializable</a>.
+Serializable field and the object should implement <code>java.io.Serializable</code>.  See <a href="#ANC16">datatype serializable</a>.
 
 </p><hr size="6">
 <a name="NOD11"></a>
@@ -596,79 +599,108 @@ See section <a href="#SEC14">Database Type</a>.
 
 </p><dl compact="compact">
 <dd>
-<a name="IDX75"></a>
-<a name="IDX76"></a>
-</dd>
+<a name="IDX73"></a>
+<a name="IDX74"></a>
+<p><a name="ANC5"></a>
+</p></dd>
 <dt><code> String (DataType.STRING)</code></dt>
 <dd>
 <p>Persisted as SQL type VARCHAR.  
 
-</p><a name="IDX77"></a>
-</dd>
+</p><a name="IDX75"></a>
+<p><a name="ANC6"></a>
+</p></dd>
 <dt><code> boolean or Boolean (DataType.BOOLEAN or DataType.BOOLEAN_OBJ)</code></dt>
 <dd>
 <p>Persisted as SQL type BOOLEAN.
 
-</p><a name="IDX78"></a>
-<a name="IDX79"></a>
-<a name="IDX80"></a>
-</dd>
-<dt><code> java.util.Date (DataType.JAVA_DATE, DataType.JAVA_DATE_LONG, or JAVA_DATE_STRING)</code></dt>
+</p><a name="IDX76"></a>
+<a name="IDX77"></a>
+<p><a name="ANC7"></a>
+</p></dd>
+<dt><code> java.util.Date (DataType.DATE)</code></dt>
 <dd>
 <p>Persisted as SQL type TIMESTAMP.  This type automatically uses an internal <code>?</code> argument because the string format of it
-is unreliable to match the database format.  See section <a href="ormlite_3.html#SEC33">Using Select Arguments</a>.  
+is unreliable to match the database format.  See section <a href="ormlite_3.html#SEC33">Using Select Arguments</a>.  See also <code>DATE_LONG</code> and <code>DATE_STRING</code>.
 
-</p><p>You can also specify the <code>dataType</code> field to the <code>@DatabaseField</code> annotation as a <code>DataType.JAVA_DATE_LONG</code>
-in which case the milliseconds value of the <code>Date</code> will be stored as an LONG.  Or you can use
-<code>DataType.JAVA_DATE_STRING</code> in which case the date will be stored as a string in <code>yyyy-MM-dd HH:mm:ss.SSSSSS</code>
-format.  You can use the <code>format</code> field in <code>DatabaseField</code> to set the date to another format.
+</p><p><em>NOTE:</em> This is a different class from <code>java.sql.Date</code>.
+
+</p><p><em>NOTE:</em> Certain databases only provide seconds resolution so the milliseconds will be 0.
+
+</p><a name="IDX78"></a>
+<p><a name="ANC8"></a>
+</p></dd>
+<dt><code> java.util.Date (DataType.DATE_LONG)</code></dt>
+<dd>
+<p>You can also specify the <code>dataType</code> field to the <code>@DatabaseField</code> annotation as a <code>DataType.DATE_LONG</code>
+in which case the milliseconds value of the <code>Date</code> will be stored as an LONG.  See also <code>DATE</code> and <code>DATE_STRING</code>.
+
+</p><p><em>NOTE:</em> This is a different class from <code>java.sql.Date</code>.
+
+</p><p><em>NOTE:</em> Certain databases only provide seconds resolution so the milliseconds will be 0.
+
+</p><a name="IDX79"></a>
+<a name="IDX80"></a>
+<p><a name="ANC9"></a>
+</p></dd>
+<dt><code> java.util.Date (DATE_STRING)</code></dt>
+<dd>
+<p>You can also specify the <code>dataType</code> field to the <code>@DatabaseField</code> annotation as a <code>DataType.DATE_STRING</code>
+in which case the date will be stored as a string in <code>yyyy-MM-dd HH:mm:ss.SSSSSS</code> format.  You can use the
+<code>format</code> field in <code>DatabaseField</code> to set the date to another format.  See also <code>DATE</code> and <code>DATE_LONG</code>.
 
 </p><p><em>NOTE:</em> This is a different class from <code>java.sql.Date</code>.
 
 </p><p><em>NOTE:</em> Certain databases only provide seconds resolution so the milliseconds will be 0.
 
 </p><p><em>NOTE:</em> Because of reentrant issues with <code>SimpleDateFormat</code>, synchronization is done
-every time a JAVA_DATE_STRING date is converted to/from the database.
+every time a DATE_STRING date is converted to/from the database.
 
 </p><a name="IDX81"></a>
-</dd>
+<p><a name="ANC10"></a>
+</p></dd>
 <dt><code> byte or Byte (DataType.BYTE or DataType.BYTE_OBJ)</code></dt>
 <dd>
 <p>Persisted as SQL type TINYINT.
 
 </p><a name="IDX82"></a>
-</dd>
+<p><a name="ANC11"></a>
+</p></dd>
 <dt><code> short or Short (DataType.SHORT or DataType.SHORT_OBJ)</code></dt>
 <dd>
 <p>Persisted as SQL type SMALLINT.
 
 </p><a name="IDX83"></a>
-</dd>
+<p><a name="ANC12"></a>
+</p></dd>
 <dt><code> int or Integer (DataType.INTEGER or DataType.INTEGER_OBJ)</code></dt>
 <dd>
 <p>Persisted as SQL type INTEGER.
 
 </p><a name="IDX84"></a>
-</dd>
+<p><a name="ANC13"></a>
+</p></dd>
 <dt><code> long or Long (DataType.LONG or DataType.LONG_OBJ)</code></dt>
 <dd>
 <p>Persisted as SQL type BIGINT.
 
 </p><a name="IDX85"></a>
-</dd>
+<p><a name="ANC14"></a>
+</p></dd>
 <dt><code> float or Float (DataType.FLOAT or DataType.FLOAT_OBJ)</code></dt>
 <dd>
 <p>Persisted as SQL type FLOAT.
 
 </p><a name="IDX86"></a>
-</dd>
+<p><a name="ANC15"></a>
+</p></dd>
 <dt><code> double or Double (DataType.DOUBLE or DataType.DOUBLE_OBJ)</code></dt>
 <dd>
 <p>Persisted as SQL type DOUBLE.
 
 </p><a name="IDX87"></a>
 <a name="IDX88"></a>
-<p><a name="ANC5"></a>
+<p><a name="ANC16"></a>
 </p></dd>
 <dt><code> Serializable (DataType.SERIALIZABLE)</code></dt>
 <dd>
@@ -682,17 +714,31 @@ Select Argument to query for this type.  See section <a href="ormlite_3.html#SEC
 
 </p><a name="IDX89"></a>
 <a name="IDX90"></a>
-</dd>
-<dt><code> enum or Enum (DataType.ENUM_STRING or DataType.ENUM_INTEGER)</code></dt>
+<p><a name="ANC17"></a>
+</p></dd>
+<dt><code> enum or Enum (DataType.ENUM_STRING)</code></dt>
 <dd>
-<p>Persisted by default as the enumerated value's string <em>name</em> as a VARCHAR type.  You can also specify the
-<code>dataType</code> field (from the <code>@DatabaseField</code> annotation) as a <code>DataType.ENUM_INTEGER</code> in which case the
-<code>ordinal</code> of the enum value will be stored as an INTEGER.  The name is the default (and recommended) because
-it allows you to add additional enums anywhere in the list without worrying about having to convert data later.
-If you insert (or remove) an enum from the list that is being stored as a number, then old data will be un-persisted
-incorrectly.
+<p>Persisted by default as the enumerated value's string <em>name</em> as a VARCHAR type.  The string name is the
+default (and recommended over ENUM_INTEGER) because it allows you to add additional enums anywhere in the list
+without worrying about having to convert data later.
 
 </p><a name="IDX91"></a>
+<p>You can also also specify an <em>unknownEnumName</em> name with the <code>@DatabaseField</code> annotation which will be
+used if an unknown value is found in the database. See <a href="#ANC2">unknownEnumName</a>. 
+
+</p><a name="IDX92"></a>
+<a name="IDX93"></a>
+<p><a name="ANC18"></a>
+</p></dd>
+<dt><code> enum or Enum (DataType.ENUM_INTEGER)</code></dt>
+<dd>
+<p>You specify the <code>dataType</code> field (from the <code>@DatabaseField</code> annotation) as a <code>DataType.ENUM_INTEGER</code> in
+which case the <code>ordinal</code> of the enum value will be stored as an INTEGER.  The name (ENUM_STRING) is the default (and
+recommended) because it allows you to add additional enums anywhere in the list without worrying about having to convert
+data later.  If you insert (or remove) an enum from the list that is being stored as a number, then old data will be
+un-persisted incorrectly.
+
+</p><a name="IDX94"></a>
 <p>You can also also specify an <em>unknownEnumName</em> name with the <code>@DatabaseField</code> annotation which will be
 used if an unknown value is found in the database. See <a href="#ANC2">unknownEnumName</a>. 
 
@@ -721,47 +767,76 @@ stored in the database.  See section <a href="#SEC27">Foreign Object Fields</a>.
 <td valign="middle" align="left">[<a href="ormlite_10.html#SEC50" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 2.3 Setting Up the DAOs </h2>
+<h2 class="section"> 2.3 Connection Sources </h2>
 
-<p>Once you have annotated your classes, you will need to create the Data Access Object (DAO) class(es).  The pattern that
-we recommend is to define an interface which extends the <code>Dao</code> interface and will be used in the code.  The interface
-isn't required but it is a good pattern so your code is less tied to JDBC for persistence.  Each DAO has two generic
-parameters: the class we are persisting with the DAO, and the class of the ID-column that will be used to
-identify a specific database row.  If you class does not have an ID field, you can put <code>Object</code> or <code>Void</code>
-as the 2nd argument.  For example, in the above <code>Account</code> class, the &quot;name&quot; field is the ID column (id = true)
-so the ID class is <code>String</code>.  Example:
+<p><em>NOTE:</em> With regards to connection sources, Android users should see the Android specific documentation later in the manual.
+See section <a href="ormlite_4.html#SEC34">Using With Android</a>.
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">/** Account DAO which has a String id (Account.name) */
-public interface AccountDao extends Dao&lt;Account, String&gt; {
-    // empty wrapper, you can add additional DAO methods here
+</p><a name="IDX95"></a>
+<a name="IDX96"></a>
+<a name="IDX97"></a>
+<a name="IDX98"></a>
+<p>To use the database and the DAO objects, you will need to configure what JDBC calls a <code>DataSource</code> (see the
+<code>javax.sql.DataSource</code> class) and what ORMLite calls a <code>ConnectionSource</code>.  A <code>ConnectionSource</code> is
+a factory for connections to the physical SQL database.  Here is a code example that creates a simple, single-connection
+source.
+
+</p><a name="IDX99"></a>
+<a name="IDX100"></a>
+<table><tr><td>&nbsp;</td><td><pre class="example">// single connection source example for a database URI
+ConnectionSource connectionSource =
+  new JdbcConnectionSource(&quot;jdbc:h2:mem:account&quot;);
+</pre></td></tr></table>
+<a name="IDX101"></a>
+<a name="IDX102"></a>
+<p>The package also includes the class <code>JdbcPooledConnectionSource</code> which is a relatively simple implementation of a
+pooled connection source.  As database connections are released, instead of being closed they are added to an internal
+list so they can be reallocated at a later time.  New connections are created on demand only if there are no dormant
+connections that can be reused.  <code>JdbcPooledConnectionSource</code> is also synchronized and can be used my multiple
+threads.  It has settings for the maximum number of free connections before they are closed as well as a maximum age
+before a connection is closed.
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">// single connection source example
+JdbcPooledConnectionSource connectionSource =
+  new JdbcPooledConnectionSource(&quot;jdbc:h2:mem:account&quot;);
+// only keep the connections open for 5 minutes
+connectionSource.setMaxConnectionAgeMillis(5 * 60 * 1000);
+</pre></td></tr></table>
+<a name="IDX103"></a>
+<a name="IDX104"></a>
+<a name="IDX105"></a>
+<a name="IDX106"></a>
+<p>There are many other, external data sources that can be used instead, including more robust and probably higher-performance
+pooled connection managers. You can instantiate your own directly and wrap it in the <code>DataSourceConnectionSource</code> class
+which delegates to it.
+
+</p><a name="IDX107"></a>
+<table><tr><td>&nbsp;</td><td><pre class="example">// basic Apache data source
+BasicDataSource dataSource = new BasicDataSource();
+dataSource.setUrl(&quot;jdbc:h2:mem:account&quot;);
+// we wrap it in the DataSourceConnectionSource
+ConnectionSource connectionSource = 
+  new DataSourceConnectionSource(dataSource);
+</pre></td></tr></table>
+<a name="IDX108"></a>
+<a name="IDX109"></a>
+<p>When you are done with your <code>ConnectionSource</code>, you will want to call a <code>close()</code> method to close any
+underlying connections.  Something like the following pattern is recommended.
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">JdbcConnectionSource connectionSource =
+    new JdbcPooledConnectionSource(&quot;jdbc:h2:mem:account&quot;);
+try {
+    // work with the data-source and DAOs
+    &hellip;
+} finally {
+    connectionSource.close();
 }
 </pre></td></tr></table>
-<p>Here's the example implementation of this interface.
+<p>Unfortunately, the <code>DataSource</code> interface does not have a close method so if you are using the <code>DataSourceConnectionSource</code>
+you will have to close the underlying <code>DataSource</code> by hand - the <code>close()</code> method on the <code>DataSourceConnectionSource</code>
+does <em>nothing</em>.
 
-</p><a name="IDX92"></a>
-<table><tr><td>&nbsp;</td><td><pre class="example">/** JDBC implementation of the AccountDao interface. */
-public class AccountDaoImpl extends BaseDaoImpl&lt;Account, String&gt;
-  implements AccountDao {
-    public AccountDaoImpl(ConnectionSource connectionSource) throws SQLException {
-        super(connectionSource, Account.class);
-    }
-}
-</pre></td></tr></table>
-<p>That's all you need to define your DAO classes.  You are free to add more methods to your DAO interfaces and
-implementations if there are specific operations that are needed and not provided by the Dao base classes.
-More on how to use these DAOs later. See section <a href="#SEC17">DAO Usage</a>.
-
-</p><a name="IDX93"></a>
-<p>As mentioned above (see section <a href="ormlite_1.html#SEC4">Configuring a DAO</a>), you are not <em>required</em> to create a DAO class for every one of your persisted
-objects. You can use the <code>createDao</code> static method on the <code>BaseDaoImpl</code> class to create a DAO class without having
-to define one.  For example:
-
-</p><table><tr><td>&nbsp;</td><td><pre class="example">Dao&lt;Account, String&gt; accountDao =
-  BaseDaoImpl.createDao(connectionSource, Account.class);
-Dao&lt;Order, Integer&gt; orderDao =
-  BaseDaoImpl.createDao(connectionSource, Order.class);
-</pre></td></tr></table>
-<hr size="6">
+</p><hr size="6">
 <a name="NOD14"></a>
 <a name="SEC13"></a>
 <table cellpadding="1" cellspacing="1" border="0">
@@ -780,76 +855,47 @@ Dao&lt;Order, Integer&gt; orderDao =
 <td valign="middle" align="left">[<a href="ormlite_10.html#SEC50" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 2.4 JDBC Connection Sources </h2>
+<h2 class="section"> 2.4 Setting Up the DAOs </h2>
 
-<p><em>NOTE:</em> With regards to connection sources, Android users should see the Android specific documentation later in the manual.
-See section <a href="ormlite_4.html#SEC34">Using With Android</a>.
+<p>Once you have annotated your classes and defined your <code>ConnectionSource</code> you will need to create the Data Access Object
+(DAO) class(es).  The pattern that we recommend is to define an interface which extends the <code>Dao</code> interface and will be
+used in the code.  The interface isn't required but it is a good pattern so your code is less tied to JDBC for persistence.
+Each DAO has two generic parameters: the class we are persisting with the DAO, and the class of the ID-column that will be
+used to identify a specific database row.  If you class does not have an ID field, you can put <code>Object</code> or <code>Void</code>
+as the 2nd argument.  For example, in the above <code>Account</code> class, the &quot;name&quot; field is the ID column (id = true)
+so the ID class is <code>String</code>.  Example:
 
-</p><a name="IDX94"></a>
-<a name="IDX95"></a>
-<a name="IDX96"></a>
-<a name="IDX97"></a>
-<p>To use the database and the DAO objects, you will need to configure what JDBC calls a <code>DataSource</code> (see the
-<code>javax.sql.DataSource</code> class).  The <code>DataSource</code> is a factory for connections to the physical SQL
-database.  Since ORMLite also supports non-JDBC connections, we use a subset of the <code>DataSource</code>
-methods in the <code>ConnectionSource</code> interface so we can support non-JDBC database handlers.  Here is a code example
-that creates a simple, single-connection source.
-
-</p><a name="IDX98"></a>
-<a name="IDX99"></a>
-<table><tr><td>&nbsp;</td><td><pre class="example">// single connection source example
-ConnectionSource connectionSource =
-  new JdbcConnectionSource(&quot;jdbc:h2:mem:account&quot;);
-</pre></td></tr></table>
-<a name="IDX100"></a>
-<a name="IDX101"></a>
-<p>The package also includes the class <code>JdbcPooledConnectionSource</code>.  It is a relatively simple implementation of a
-pooled connection source.  As database connections are released, instead of being closed they are added to an internal
-list so they can be reallocated at a later time.  New connections are created on demand only if there are no dormant
-connections that can be reused.  <code>JdbcPooledConnectionSource</code> is also synchronized and can be used my multiple
-threads.  It has settings for the maximum number of free connections before they are closed as well as a maximum age
-before a connection is closed.
-
-</p><table><tr><td>&nbsp;</td><td><pre class="example">// single connection source example
-JdbcPooledConnectionSource connectionSource =
-  new JdbcPooledConnectionSource(&quot;jdbc:h2:mem:account&quot;);
-// only keep the connections open for 5 minutes
-connectionSource.setMaxConnectionAgeMillis(5 * 60 * 1000);
-</pre></td></tr></table>
-<a name="IDX102"></a>
-<a name="IDX103"></a>
-<a name="IDX104"></a>
-<a name="IDX105"></a>
-<p>There are many other, external data sources that can be used instead, including more robust and probably higher-performance
-pooled connection managers. You can instantiate your own directly and wrap it in the <code>DataSourceConnectionSource</code> class
-which delegates to it.  Then you set that on the DAOs directly.
-
-</p><a name="IDX106"></a>
-<table><tr><td>&nbsp;</td><td><pre class="example">// basic Apache data source
-BasicDataSource dataSource = new BasicDataSource();
-dataSource.setUrl(&quot;jdbc:h2:mem:account&quot;);
-// we wrap it in the DataSourceConnectionSource
-ConnectionSource connectionSource = 
-  new DataSourceConnectionSource(dataSource);
-</pre></td></tr></table>
-<a name="IDX107"></a>
-<a name="IDX108"></a>
-<p>When you are done with your <code>ConnectionSource</code>, you will want to call a <code>close()</code> method to close any
-underlying connections.  Something like the following pattern is recommended.
-
-</p><table><tr><td>&nbsp;</td><td><pre class="example">JdbcConnectionSource connectionSource =
-    new JdbcPooledConnectionSource(&quot;jdbc:h2:mem:account&quot;);
-try {
-    // work with the data-source and DAOs
-    &hellip;
-} finally {
-    connectionSource.close();
+</p><table><tr><td>&nbsp;</td><td><pre class="example">/** Account DAO which has a String id (Account.name) */
+public interface AccountDao extends Dao&lt;Account, String&gt; {
+    // empty wrapper, you can add additional DAO methods here
 }
 </pre></td></tr></table>
-<p>Unfortunately, the <code>DataSource</code> interface does not have a close method so you will have to close the <code>DataSource</code>
-by hand - the <code>close()</code> method on the <code>DataSourceConnectionSource</code> does <em>nothing</em>.
+<p>Here's the example implementation of this interface.
 
-</p><hr size="6">
+</p><a name="IDX110"></a>
+<table><tr><td>&nbsp;</td><td><pre class="example">/** JDBC implementation of the AccountDao interface. */
+public class AccountDaoImpl extends BaseDaoImpl&lt;Account, String&gt;
+  implements AccountDao {
+    public AccountDaoImpl(ConnectionSource connectionSource)
+      throws SQLException {
+        super(connectionSource, Account.class);
+    }
+}
+</pre></td></tr></table>
+<p>That's all you need to define your DAO classes.  You are free to add more methods to your DAO interfaces and
+implementations if there are specific operations that are needed and not provided by the Dao base classes.
+More on how to use these DAOs later. See section <a href="#SEC17">DAO Usage</a>.
+
+</p><a name="IDX111"></a>
+<p>You are not <em>required</em> to create a DAO class for every one of your persisted objects. You can use the <code>createDao</code>
+static method on the <code>BaseDaoImpl</code> class to create a DAO class without having to define one.  For example:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">Dao&lt;Account, String&gt; accountDao =
+  BaseDaoImpl.createDao(connectionSource, Account.class);
+Dao&lt;Order, Integer&gt; orderDao =
+  BaseDaoImpl.createDao(connectionSource, Order.class);
+</pre></td></tr></table>
+<hr size="6">
 <a name="NOD15"></a>
 <a name="SEC14"></a>
 <table cellpadding="1" cellspacing="1" border="0">
@@ -910,7 +956,7 @@ ConnectionSource connectionSource =
 
 </p><dl compact="compact">
 <dd>
-<a name="IDX109"></a>
+<a name="IDX112"></a>
 </dd>
 <dt> MySQL</dt>
 <dd>
@@ -919,71 +965,71 @@ another engine, you can instantiate the <code>MysqlDatabaseType</code> directly 
 the default or another engine.  Also, MySQL does some funky stuff with the last-modification time if a <code>Date</code> is defined as a
 <code>TIMESTAMP</code> so <code>DATETIME</code> was used instead.
 
-</p><a name="IDX110"></a>
+</p><a name="IDX113"></a>
 </dd>
 <dt> Postgres</dt>
 <dd>
 <p>No special instructions.
 
-</p><a name="IDX111"></a>
-<a name="IDX112"></a>
+</p><a name="IDX114"></a>
+<a name="IDX115"></a>
 </dd>
 <dt> Microsoft SQL Server</dt>
 <dd>
 <p>No special instructions.
 
-</p><a name="IDX113"></a>
+</p><a name="IDX116"></a>
 </dd>
 <dt> H2</dt>
 <dd>
 <p>No special instructions.  I use this database for all of my internal testing with in-memory and small on-disk databases.
 
-</p><a name="IDX114"></a>
+</p><a name="IDX117"></a>
 </dd>
 <dt> Derby</dt>
 <dd>
 <p>There are two drivers for Derby: one embedded and one client/server.  ORMLite makes an attempt to detect the right driver but you
 may have to set the right database type on your ConnectionSource directly if it doesn't.  See section <a href="#SEC14">Database Type</a>.
 
-</p><a name="IDX115"></a>
+</p><a name="IDX118"></a>
 </dd>
 <dt> HSQLDB</dt>
 <dd>
 <p>No special instructions.
 
-</p><a name="IDX116"></a>
-<a name="IDX117"></a>
-<a name="IDX118"></a>
+</p><a name="IDX119"></a>
+<a name="IDX120"></a>
+<a name="IDX121"></a>
 </dd>
 <dt> SQLite</dt>
 <dd>
 <p>There are multiple SQLite drivers out there.  Make sure you use the Xerial one (<a href="http://www.xerial.org/trac/Xerial/wiki/SQLiteJDBC">http://www.xerial.org/trac/Xerial/wiki/SQLiteJDBC</a>)
 and not the Zentus one (<a href="http://www.zentus.com/sqlitejdbc/">http://www.zentus.com/sqlitejdbc/</a>) which does not support generated ids.
 
-</p><a name="IDX119"></a>
+</p><a name="IDX122"></a>
 </dd>
 <dt> Android SQLite</dt>
 <dd>
 <p>Android's SQLite database is accessed through direct calls to the Android database API methods.
 
-</p><a name="IDX120"></a>
+</p><a name="IDX123"></a>
 </dd>
 <dt> DB2</dt>
 <dd>
-<p>I do not have access to an DB2 database so I cannot run any tests to make sure that my support for it works well.  Please contact me if you have
-an Oracle database that I can develop against.
+<p>I do not have access to an DB2 database so I cannot run any tests to make sure that my support for it works well.  Please contact me
+if you have an DB2 database that I can develop against.
 
-</p><a name="IDX121"></a>
+</p><a name="IDX124"></a>
 </dd>
 <dt> Oracle</dt>
 <dd>
-<p>I do not have access to an Oracle database so I cannot run any tests to make sure that my support for it works well.  Please contact me if you have
-an Oracle database that I can develop against.
+<p>I do not have access to an Oracle database so I cannot run any tests to make sure that my support for it works well.  Please contact me
+if you have an Oracle database that I can develop against.
 
 </p></dd>
 </dl>
 
-<a name="IDX122"></a>
+<a name="IDX125"></a>
 <p>Please contact the author if your database is not supported.
 
 </p><hr size="6">
@@ -1007,16 +1053,15 @@ an Oracle database that I can develop against.
 </tr></table>
 <h2 class="section"> 2.7 Tying It All Together </h2>
 
-<p>So you have annotated the objects to be persisted, added the no-arg constructor, defined your DAO classes,
-created your <code>DataSource</code>, and established your <code>DatabaseType</code>.  You are ready to start persisting and
-querying your database objects.  The following code ties it all together:
+<p>So you have annotated the objects to be persisted, added the no-arg constructor, created your <code>ConnectionSource</code>, and defined
+your DAO classes.  You are ready to start persisting and querying your database objects.  The following code ties it all together:
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">// h2 by default but change to match your database
 String databaseUrl = &quot;jdbc:h2:mem:account&quot;;
 JdbcConnectionSource connectionSource =
   new JdbcConnectionSource(databaseUrl);
 
-// instantiate the dao
+// instantiate the dao with the connection source
 AccountDaoImpl accountDao = new AccountDaoImpl(connectionSource);
 
 // if you need to create the 'accounts' table make this call
@@ -1035,8 +1080,7 @@ if (accountDao.create(account) != 1) {
 // destroy the data source which should close underlying connections
 connectionSource.destroy();
 </pre></td></tr></table>
-<a name="IDX123"></a>
-<p>For more examples, see the <code>com.j256.ormlite.examples</code> package test classes in the Java -jdbc sources jar.
+<p>For more examples, see the code later in the manual.  See section <a href="ormlite_7.html#SEC47">Example Code</a>.
 
 </p><hr size="6">
 <a name="NOD18"></a>
@@ -1060,14 +1104,14 @@ connectionSource.destroy();
 <h2 class="section"> 2.8 DAO Usage </h2>
 
 
-<p>The following database operations are easily accomplished by using the DAO classes:
+<p>The following database operations are easily accomplished by using the DAO methods:
 
 </p><dl compact="compact">
 <dd>
-<a name="IDX124"></a>
-<a name="IDX125"></a>
 <a name="IDX126"></a>
 <a name="IDX127"></a>
+<a name="IDX128"></a>
+<a name="IDX129"></a>
 </dd>
 <dt> create and persist an object to the database</dt>
 <dd>
@@ -1080,7 +1124,7 @@ if (accountDao.create(account) != 1) {
   // error handling &hellip; 
 }
 </pre></td></tr></table>
-<a name="IDX128"></a>
+<a name="IDX130"></a>
 </dd>
 <dt> query for it's id column </dt>
 <dd>
@@ -1091,12 +1135,12 @@ if (account == null) {
   account not found handling &hellip; 
 }
 </pre></td></tr></table>
-<a name="IDX129"></a>
+<a name="IDX131"></a>
 </dd>
 <dt> update the database row associated with the object</dt>
 <dd>
 <p>If you change fields in an object in memory, you must call update to persist those changes to the database.  This
-also requires an id field. 
+requires an id field. 
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">account.password = &quot;_secret&quot;;
 // 1 row should be updated
@@ -1104,32 +1148,32 @@ if (accountDao.update(account) != 1) {
   // error handling &hellip; 
 }
 </pre></td></tr></table>
-<a name="IDX130"></a>
+<a name="IDX132"></a>
 </dd>
 <dt> refreshing our object if the database has changed</dt>
 <dd>
 <p>If some other entity has changed a row the database corresponding to an object in memory, you will need to refresh that
-object to get the memory object up-to-date.  This also requires an id field. 
+object to get the memory object up-to-date.  This requires an id field. 
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">// 1 row should be found
 if (accountDao.refresh(account) != 1) {
   // error handling &hellip; 
 }
 </pre></td></tr></table>
-<a name="IDX131"></a>
+<a name="IDX133"></a>
 </dd>
 <dt> delete the account from the database</dt>
 <dd>
 <p>Removes the row that corresponds to the object from the database.  Once the object has been deleted from the database,
-you can continue to use the object in memory but any update or refresh calls will fail.  This also requires an id field.
+you can continue to use the object in memory but any update or refresh calls will fail.  This requires an id field.
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">// 1 row should be affected
 if (accountDao.delete(account) != 1) {
   // error handling &hellip; 
 }
 </pre></td></tr></table>
-<a name="IDX132"></a>
-<a name="IDX133"></a>
+<a name="IDX134"></a>
+<a name="IDX135"></a>
 </dd>
 <dt> iterate through all of the rows in a table:</dt>
 <dd>
@@ -1140,14 +1184,16 @@ for (Account account : accountDao) {
     System.out.println(account.getName());
 }
 </pre></td></tr></table>
-<a name="IDX134"></a>
+<a name="IDX136"></a>
 <p><em>NOTE:</em> you must page through <em>all</em> items for the iterator to close the underlying SQL object.   If you don't
 go all of the way, the garbage collector will close the SQL statement some time later which is considered bad form.
 
 </p></dd>
 </dl>
 
-<hr size="6">
+<p>For a detailed list of the methods in the DAO see see section <a href="ormlite_5.html#SEC39">DAO Methods</a>.
+
+</p><hr size="6">
 <a name="NOD19"></a>
 <a name="SEC18"></a>
 <table cellpadding="1" cellspacing="1" border="0">
@@ -1170,8 +1216,8 @@ go all of the way, the garbage collector will close the SQL statement some time 
 
 <p>Database rows are identified by a particular column which is defined as the <em>identity</em> column.  This can either be
 supplied by the user or auto-generated by the database.  Identity columns have unique values for every row in the table
-and they are required if you want to delete, refresh, or update a particular row using the DAO.  To configure a field as
-an identity field, you should use one (and only one) of the following three settings from <code>@DatabaseField</code>:
+and they are required if you want to query-by-id, delete, refresh, or update a particular row using the DAO.  To configure
+a field as an identity field, you should use one (and only one) of the following three settings from <code>@DatabaseField</code>:
 <code>id</code>, <code>generatedId</code>, or <code>generatedIdSequence</code>.
 
 </p><table class="menu" border="0" cellspacing="0">
@@ -1222,12 +1268,12 @@ if (account == null) {
     // the name &quot;John Smith&quot; does not match any rows
 }
 </pre></td></tr></table>
-<a name="IDX135"></a>
-<a name="IDX136"></a>
 <a name="IDX137"></a>
-<p>If you need to change the value of an object's id field, you must use the <code>Dao.updateId()</code> method which takes the
-current object still with its <em>old</em> id value and the new value.  ORMLite has to first locate the object
-by its old id and then update it with the new id.  See <a href="ormlite_5.html#ANC10">updateId</a>.
+<a name="IDX138"></a>
+<a name="IDX139"></a>
+<p><em>NOTE:</em> If you need to change the value of an object's id field, you must use the <code>Dao.updateId()</code> method which
+takes the current object still with its <em>old</em> id value and the new value.  ORMLite has to first locate the object
+by its old id and then update it with the new id.  See <a href="ormlite_5.html#ANC23">updateId</a>.
 
 </p><hr size="6">
 <a name="NOD21"></a>
@@ -1269,11 +1315,12 @@ Order order = new Order(&quot;Jim Sanders&quot;, 12.34);
 if (orderDao.create(order) != 1) {
    // error handling unless 1 row was inserted
 }
-System.out.println(&quot;Order id &quot; + order.getId() + &quot; was persisted to the database&quot;);
+System.out.println(&quot;Order id &quot; + order.getId() +
+   &quot; was persisted to the database&quot;);
 // query for the order with an id of 1372
 order = orderDao.queryForId(1372);
 if (order == null) {
-    // none of the order rows have an id of 1372
+   // none of the order rows have an id of 1372
 }
 </pre></td></tr></table>
 <p>In the above code example, an order is constructed with name and amount (for example).  When it is passed to the DAO's
@@ -1355,23 +1402,24 @@ significantly improve times on queries to medium to large sized tables.
 </p><table><tr><td>&nbsp;</td><td><pre class="example">public class Account {
     @DatabaseField(id = true)
     private String name;
-    // this indexes the city field so queries on city will go faster for large tables
+    // this indexes the city field so queries on city
+    // will go faster for large tables
     @DatabaseField(index = true)
     private String city;
     &hellip;
 }
 </pre></td></tr></table>
 
-<p>This example creates the index <code>city_idx</code> on the Account table.  If you want to use a different name, you
+<p>This example creates the index <code>account_city_idx</code> on the Account table.  If you want to use a different name, you
 can use the <code>indexName = &quot;othername&quot;</code> field instead which allows you to specify the name of the index.
 
 </p><p>If you often query on (for example) city <em>and</em> state fields together, you might want to create an index
 on both fields.  ORMLite supports creating indexes on multiple fields by specifying the same <code>indexName</code>
 value for each of the fields you want to be included in the index.
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">@DatabaseField(indexName = &quot;citystate_idx&quot;)
+</p><table><tr><td>&nbsp;</td><td><pre class="example">@DatabaseField(indexName = &quot;account_citystate_idx&quot;)
 private String city;
-@DatabaseField(indexName = &quot;citystate_idx&quot;)
+@DatabaseField(indexName = &quot;account_citystate_idx&quot;)
 private String state;
 </pre></td></tr></table>
 <p>This example will create one index for both the city and state fields.  Note that queries on the city by itself will
@@ -1517,7 +1565,7 @@ rawResults.close();
 </p></li></ol>
 
 <p><em>NOTE</em>: Like other ORMLite iterators, you will need to make sure you iterate through all of the results
-to have the statement closed automatically.  You can also call the <code>RawResults.close()</code> method to make sure the
+to have the statement closed automatically.  You can also call the <code>GenericRawResults.close()</code> method to make sure the
 iterator, and any associated database connections, is closed.
 
 </p><hr size="6">
@@ -1572,11 +1620,15 @@ enough flexibility.  Update SQL statements must contain the reserved words <code
 <p>You can also issue raw update statements against the database if the DAO functionality does not give you
 enough flexibility.  For example:
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">fooDao.executeRaw(&quot;TRUNCATE TABLE accountlog &quot;);
+</p><table><tr><td>&nbsp;</td><td><pre class="example">fooDao.executeRaw(&quot;TRUNCATE TABLE accountlog&quot;);
 </pre></td></tr></table>
-<p>Certain database types allow table truncation which you can call through the raw execute method.
+<a name="IDX140"></a>
+<p>Certain database types allow table truncation which you can call through the raw execute method.  If truncate
+is not supported by the database then you can instead do:
 
-</p><hr size="6">
+</p><table><tr><td>&nbsp;</td><td><pre class="example">fooDao.executeRaw(&quot;DELETE FROM accountlog&quot;);
+</pre></td></tr></table>
+<hr size="6">
 <a name="NOD28"></a>
 <a name="SEC27"></a>
 <table cellpadding="1" cellspacing="1" border="0">
@@ -1625,8 +1677,8 @@ public class Order {
 use this field name if you are querying for it.  You can set the column name using the <code>columnName</code> field in the
 <code>DatabaseField</code> annotation. See <a href="#ANC1">columnName</a>.
 
-</p><a name="IDX138"></a>
-<a name="IDX139"></a>
+</p><a name="IDX141"></a>
+<a name="IDX142"></a>
 <p>When you are creating a field with a foreign object, please note that the foreign object will <em>not</em> automatically be
 created for you.  If your foreign object has a generated-id which is provided by the database then you need to create it
 <em>before</em> you create any objects that reference it.  For example:
@@ -1645,30 +1697,33 @@ if (orderDao.create(order) != 1) {
    // error handling unless 1 row was inserted
 }
 </pre></td></tr></table>
-<a name="IDX140"></a>
-<a name="IDX141"></a>
+<a name="IDX143"></a>
+<a name="IDX144"></a>
 <p>When you query for an order, you will get an <code>Order</code> object with an account field object that <em>only</em> has its id
-field set - all of the fields in the foreign <code>Account</code> object will have default values (null, 0, false, etc.).  If
+field set.  The rest of the fields in the foreign <code>Account</code> object will have default values (null, 0, false, etc.).  If
 you want to use other fields in the <code>Account</code>, you must call <code>refresh</code> on the <code>accountDao</code> class to get the
 <code>Account</code> object filled in.  For example:
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">Order order = orderDao.queryForId(orderId);
-System.out.println(&quot;Account-id on the order should be set: &quot; + order.account.id);
+System.out.println(&quot;Account-id on the order should be set: &quot; +
+   order.account.id);
 // this should print null for order.account.name
-System.out.println(&quot;But other fields on the account should not be set: &quot; + order.account.name);
+System.out.println(&quot;But other fields on the account should not be set: &quot;
+   + order.account.name);
 
 // so we refresh the account using the AccountDao
 if (accountDao.refresh(order.getAccount()) != 1) {
-  // error handling &hellip; 
+   // error handling &hellip; 
 }
-System.out.println(&quot;Now the account fields will be set: &quot; + order.account.name);
+System.out.println(&quot;Now the account fields will be set: &quot; +
+   order.account.name);
 </pre></td></tr></table>
-<p>ORMLite can automagically refresh the objects for you if you'd like.  See <a href="#ANC4">foreignAutoRefresh</a>.
+<p>You can have the foreign objects automagically refreshed by using the <code>foreignAutoRefresh</code> setting. See <a href="#ANC4">foreignAutoRefresh</a>.
 
 </p><p><em>NOTE:</em> Because we use refresh, foreign objects are therefor <em>required</em> to have an id field.
 
-</p><p>The <code>Where()</code> object has some method calls to help with using foreign objects.  see <a href="ormlite_3.html#ANC8">foreignIdEq</a> and see <a href="ormlite_3.html#ANC9">foreignIdIn</a>.  Also, there
-is example code to show how to use foreign objects.  See <a href="ormlite_7.html#ANC11">foreign objects example</a>.
+</p><p>The <code>Where()</code> object has some method calls to help with using foreign objects.  see <a href="ormlite_3.html#ANC21">foreignIdEq</a> and see <a href="ormlite_3.html#ANC22">foreignIdIn</a>.
+There is also example code to show how to use foreign objects.  See <a href="ormlite_7.html#ANC24">foreign objects example</a>.
 
 </p><hr size="6">
 <table cellpadding="1" cellspacing="1" border="0">
@@ -1686,7 +1741,7 @@ is example code to show how to use foreign objects.  See <a href="ormlite_7.html
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>February, 15 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>February, 17 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 

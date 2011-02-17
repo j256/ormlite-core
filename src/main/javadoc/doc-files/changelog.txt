@@ -1,3 +1,10 @@
+4.12: 2/17/2011
+	* CORE: Added LONG_STRING data type for supporting longer String fields.
+	* CORE: Renamed and deprecated data types JAVA_DATE, JAVA_DATE_LONG, and JAVA_DATE_STRING to remove the JAVA_ prefix.
+	* JDBC: Added DaoFactory class for spring to create DAOs without having to define a Dao subclass.
+	* JDBC: Fixed spring TableCreator creating of tables from just the class name.  Fixes bug #3182783.
+	* ALL: Updated documentation with more examples and revamped examples to be more stand-alone.
+
 4.11: 2/14/2011
 	* CORE: Added Where.in(QueryBuilder) and Where.exists(QueryBuilder) sub-query handling.
 	* CORE: Added executeRaw() and updateRaw() methods to the Dao interface and associated classes.

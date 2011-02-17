@@ -21,7 +21,7 @@
 @c ----------------------------------------------------------------
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.11
+@set ormlite_version 4.12
 @set ormlite_year 2011
 @set ormlite_date February @value{ormlite_year}
 @set package ORMLite
@@ -76,11 +76,8 @@ Sqlite and can be extended to additional ones relatively easily.  @value{package
 calls on Android OS.  There are also initial implementations for DB2 and Oracle although the author needs
 access to each of these database types to tune the support.  Contact the author if your database is not supported.
 
-@cindex code examples
-@cindex examples of code
-To get started quickly with @value{package}, see the code examples down in the @code{com.j256.ormlite.examples}
-package test classes in the Java sources jar down in @code{src/test/java}.  They contain a couple different
-examples with working code.
+To get started quickly with @value{package}, see the examples section of the document which has various
+working code packages and Android applications.  @xref{Examples}.
 @ifhtml
 There is also a PDF version of this documentation -- see @uref{http://ormlite.com/docs/ormlite.pdf}.
 @end ifhtml
@@ -111,7 +108,7 @@ Gray Watson @uref{http://256.com/gray/}
 * Downloading ::                Downloading the @value{package} jar.
 * Starting Class::              Configuring a class to persist.
 * Starting DAO::                Configuring a Data Access Object.
-* Starting Client::             Client code example on how its works.
+* Starting Code::               Client code example on how its works.
 @end menu
 
 @c ----------------------------------------------------------------
@@ -122,10 +119,10 @@ To get started with @value{package}, you will need to download the jar files.  T
 (@uref{http://repo1.maven.org/maven2/com/j256/ormlite/}) or from Sourceforge (@uref{http://sourceforge.net/projects/ormlite/files/}).
 See the @uref{http://ormlite.com/} home page for the most up-to-date repositories. 
 
-Users that are connecting to SQL databases via JDBC connections will need to download the ormlite-jdbc-@value{ormlite_version}.jar
-and ormlite-core-@value{ormlite_version}.jar files.  For use with Android applications, you should download the
-ormlite-android-@value{ormlite_version}.jar and ormlite-core-@value{ormlite_version}.jar files instead.  For either JDBC or Android
-you will also need the ormlite-core release which has the @value{package} backend implementations.  @value{package} does not have
+Users that are connecting to SQL databases via JDBC connections will need to download the @code{ormlite-jdbc-@value{ormlite_version}.jar}
+and @code{ormlite-core-@value{ormlite_version}.jar} files.  For use with Android applications, you should download the
+@code{ormlite-android-@value{ormlite_version}.jar} and @code{ormlite-core-@value{ormlite_version}.jar} files instead.  For either JDBC or
+Android you will also need the ormlite-core release which has the @value{package} backend implementations.  @value{package} does not have
 any required external dependencies although there are some other packages that you may want to use.  @xref{Dependencies}.  The code
 works with Java 5 or later.
 
@@ -167,7 +164,7 @@ public class Account @{
 @end example
 
 @c ----------------------------------------------------------------
-@node Starting DAO, Starting Client, Starting Class, Getting Started
+@node Starting DAO, Starting Code, Starting Class, Getting Started
 @section Configuring a DAO
 
 A typical Java pattern is to isolate the database operations in Data Access Objects (DAO) classes. Each DAO provides create, delete,
@@ -188,7 +185,8 @@ The following is the example implementation class:
 /** JDBC implementation of the AccountDao interface. */
 public class AccountDaoImpl extends BaseDaoImpl<Account,String>
  implements AccountDao @{
-    public AccountDaoImpl(ConnectionSource connectionSource) throws SQLException @{
+    public AccountDaoImpl(ConnectionSource connectionSource)
+      throws SQLException @{
         super(connectionSource, Account.class);
     @}
 @}
@@ -205,21 +203,21 @@ Dao<Order, Integer> orderDao =
   BaseDaoImpl.createDao(connectionSource, Order.class);
 @end example
 
-More information about setting up the DOAs is available later in the manual. @xref{DAO Setup}.
+More information about setting up the DAOs is available later in the manual. @xref{DAO Setup}.
 
 @c ----------------------------------------------------------------
-@node Starting Client, Using, Starting DAO, Getting Started
-@section Client Code Example
+@node Starting Code, Using, Starting DAO, Getting Started
+@section Code Example
 
-The client code in this section demonstrates how to use the classes presented in the previous two sections. The code uses H2 as a test database
-instance. You will need to add the H2 jar file to your classpath if you want to run the example as-is.  @emph{NOTE:} Android users should see the
-Android specific documentation later in the manual. @xref{Use With Android}.
+The code in this section demonstrates how to use the classes presented in the previous two sections. The code uses the native Java H2 database to
+create the in-memory test databases. You will need to add the H2 jar file to your classpath if you want to run the example as-is.  @emph{NOTE:}
+Android users should see the Android specific documentation later in the manual. @xref{Use With Android}.
 
 The client performs the following steps.
 
 @itemize @bullet
 @item It creates a connection source which handles connections to the database.
-@item It instantiates a AccountDaoImpl.
+@item It instantiates a dao for the Account object.
 @item The @code{accounts} database table is created. This step is not needed if the table already exists.
 @end itemize
 
@@ -235,7 +233,8 @@ public class AccountApp @{
             new JdbcConnectionSource(databaseUrl);
 
         // instantiate the dao
-        AccountDaoImpl accountDao = new AccountDaoImpl(connectionSource);
+        Dao<Account, String> accountDao =
+            BaseDaoImpl.createDao(connectionSource, Account.class);
 
         // if you need to create the 'accounts' table make this call
         TableUtils.createTable(connectionSource, Account.class);
@@ -255,7 +254,7 @@ the database by its ID:
             throw new Exception("Failure adding account");
         @}
 		
-        // retrieve the account
+        // retrieve the account from the database by its id field (name)
         Account account2 = accountDao.queryForId("Jim Coakley");
         System.out.println("Account: " + account2.getName());
 
@@ -265,12 +264,16 @@ the database by its ID:
 @}
 @end example
 
+For more examples including working code and Android application projects see @pxref{Examples}.
+
 You should be able to get started using @value{package} by this point. To understand more of the functionality available with @value{package},
 continue on with the next section.  @xref{Using}.
 
 @c ----------------------------------------------------------------
-@node Using, Class Setup, Starting Client, Top
+@node Using, Class Setup, Starting Code, Top
 @chapter How to Use
+
+This chapter goes into more detail about how to use @value{package}.
 
 @menu
 * Class Setup::                 How to setup your classes to be persisted.
@@ -331,7 +334,7 @@ public class Account @{
 @end example
 
 The @code{@@DatabaseTable} annotations can have an optional @code{tableName} argument which specifies the name of the table
-that corresponds to the class.   If not specified, the class name, all lowercase, is used by default.  With the above example
+that corresponds to the class.   If not specified, the class name, with normalized case, is used by default.  With the above example
 each @code{Account} object will be persisted as a row in the @code{accounts} table in the database.  If the @code{tableName}
 was not specified, the @code{account} table would be used instead.
 
@@ -368,7 +371,8 @@ The @@DatabaseField annotation can have the following fields:
 @anchor{columnName}
 @item columnName
 
-String name of the column in the database that will hold this field. If not set then the field name, all lowercase, is used instead.
+String name of the column in the database that will hold this field. If not set then the field name, with normalized case,
+is used instead.
 
 @cindex field type
 @cindex jdbc type
@@ -388,8 +392,7 @@ String default value of the field when we are creating a new row in the table.  
 @cindex length of field
 @item width
 
-Integer width of array fields -- usually for strings.  Some databases do not support this unfortunately.  Default for 
-those that do is 255.
+Integer width of string fields.  Some databases do not support this unfortunately.  Default for those that do is 255.
 
 @cindex can be null
 @cindex null value allowed
@@ -404,8 +407,8 @@ for this field on every object inserted into the database.
 @item id
 
 Boolean whether the field is the id field or not. Default is false. Only one field can have this set in a class. Id fields
-uniquely identity a row.  If you don't have it set then you won't be able to use the query, update, refresh, and delete by
-ID methods. Only one of this, @code{generatedId}, and @code{generatedIdSequence} can be specified.  @xref{Id Column}.
+uniquely identity a row and are required if you want to use the query, update, refresh, and delete by ID methods. Only one
+of this, @code{generatedId}, and @code{generatedIdSequence} can be specified.  @xref{Id Column}.
 
 @cindex generated id
 @cindex auto-generated id
@@ -434,7 +437,7 @@ Only one of this, @code{id}, and @code{generatedId} can be specified.  @xref{Gen
 
 @cindex refreshing foreign objects
 Boolean setting which identifies this field as corresponding to another class that is also stored in the database.
-Default is false.  The field can not be a primitive type.  The other class must have an id field (either @code{id},
+Default is false.  The field must not be a primitive type.  The other class must have an id field (either @code{id},
 @code{generatedId}, or @code{generatedIdSequence}) which will be stored in this table. When an object is returned
 from a query call, any foreign objects will @emph{just} have the id field set.  @xref{Foreign Objects}.
 
@@ -495,7 +498,7 @@ the annotation on all of your fields but turn off the writing of some of them to
 @item format
 
 This allows you to specify format information of a particular field.  Right now only the Date fields support it when
-a default value is being converted or if you are using the @code{JAVA_DATE_STRING} type.
+a default value is being converted or if you are using the @code{DATE_STRING} type.
 
 @cindex unique constraint
 @cindex constraint, unique
@@ -504,7 +507,8 @@ a default value is being converted or if you are using the @code{JAVA_DATE_STRIN
 Adds a constraint to the field that it has to be unique across all rows in the table.  This allows you to have a
 unique field in the table even though it is not the id field.  For example, you might have an Account class which
 has a generated account-id but you also want the email address to be unique across all Accounts.  You can also
-use the uniqueIndexName to create an index for this field.
+use the uniqueIndexName to create an index for this field.  For unique constraints across multiple fields, see the
+@code{uniqueIndex} below. 
 
 @cindex index creation
 @cindex creating an index
@@ -543,7 +547,7 @@ Set this to be true (default false) to have a foreign field automagically refres
 create the foreign object but when the object is queried, a separate database call will be made to load of the fields of the foreign object via an
 internal DAO. The default is to just have the ID field in the object retrieved and for the caller to call refresh on the correct DAO.
 
-@emph{NOTE:} This will create another DAO object so that low memory devices may want to call refresh by hand.
+@emph{NOTE:} This will create another DAO object internally so low memory devices may want to call refresh by hand.
 
 @end table
 
@@ -566,7 +570,7 @@ public class Account @{
 @end example
 
 The @code{@@Entity} annotations can have an optional @code{name} argument which specifies the table name.   If not
-specified, the class name all lowercase is used by default.
+specified, the class name with normalized case is used by default.
 
 @cindex @@Column
 @cindex @@Id
@@ -655,7 +659,7 @@ existence of either of these annotations to indicate that it is a foreign object
 @end table
 
 If the @code{@@Column} annotation is used on a field that has a unknown type then it is assumed to be a
-Serializable field and the object should implement @code{java.io.Serializable}.  @xref{serializable}.
+Serializable field and the object should implement @code{java.io.Serializable}.  @xref{datatype serializable}.
 
 @c ----------------------------------------------------------------
 @node No Arg Constructor, Persisted Types, Javax Persistence Annotations, Class Setup
@@ -696,7 +700,7 @@ public class Account @{
 @end example
 
 @c ----------------------------------------------------------------
-@node Persisted Types, DAO Setup, No Arg Constructor, Using
+@node Persisted Types, Connection Source, No Arg Constructor, Using
 @section Persisted Data Types
 
 @cindex persisted types
@@ -709,68 +713,95 @@ helps to translate between the SQL types and the database specific handling of t
 
 @cindex String
 @cindex VARCHAR string
+@anchor{datatype string}
 @item String (DataType.STRING)
 
 Persisted as SQL type VARCHAR.  
 
 @cindex boolean
+@anchor{datatype boolean}
 @item boolean or Boolean (DataType.BOOLEAN or DataType.BOOLEAN_OBJ)
 
 Persisted as SQL type BOOLEAN.
 
 @cindex Date
 @cindex java date
-@cindex date formats
-@item java.util.Date (DataType.JAVA_DATE, DataType.JAVA_DATE_LONG, or JAVA_DATE_STRING)
+@anchor{datatype date}
+@item java.util.Date (DataType.DATE)
 
 Persisted as SQL type TIMESTAMP.  This type automatically uses an internal @code{?} argument because the string format of it
-is unreliable to match the database format.  @xref{Select Arguments}.  
+is unreliable to match the database format.  @xref{Select Arguments}.  See also @code{DATE_LONG} and @code{DATE_STRING}.
 
-You can also specify the @code{dataType} field to the @code{@@DatabaseField} annotation as a @code{DataType.JAVA_DATE_LONG}
-in which case the milliseconds value of the @code{Date} will be stored as an LONG.  Or you can use
-@code{DataType.JAVA_DATE_STRING} in which case the date will be stored as a string in @code{yyyy-MM-dd HH:mm:ss.SSSSSS}
-format.  You can use the @code{format} field in @code{DatabaseField} to set the date to another format.
+@emph{NOTE:} This is a different class from @code{java.sql.Date}.
+
+@emph{NOTE:} Certain databases only provide seconds resolution so the milliseconds will be 0.
+
+@cindex java long date
+@anchor{datatype date long}
+@item java.util.Date (DataType.DATE_LONG)
+
+You can also specify the @code{dataType} field to the @code{@@DatabaseField} annotation as a @code{DataType.DATE_LONG}
+in which case the milliseconds value of the @code{Date} will be stored as an LONG.  See also @code{DATE} and @code{DATE_STRING}.
+
+@emph{NOTE:} This is a different class from @code{java.sql.Date}.
+
+@emph{NOTE:} Certain databases only provide seconds resolution so the milliseconds will be 0.
+
+@cindex java string date
+@cindex date formats
+@anchor{datatype date string}
+@item java.util.Date (DATE_STRING)
+
+You can also specify the @code{dataType} field to the @code{@@DatabaseField} annotation as a @code{DataType.DATE_STRING}
+in which case the date will be stored as a string in @code{yyyy-MM-dd HH:mm:ss.SSSSSS} format.  You can use the
+@code{format} field in @code{DatabaseField} to set the date to another format.  See also @code{DATE} and @code{DATE_LONG}.
 
 @emph{NOTE:} This is a different class from @code{java.sql.Date}.
 
 @emph{NOTE:} Certain databases only provide seconds resolution so the milliseconds will be 0.
 
 @emph{NOTE:} Because of reentrant issues with @code{SimpleDateFormat}, synchronization is done
-every time a JAVA_DATE_STRING date is converted to/from the database.
+every time a DATE_STRING date is converted to/from the database.
 
 @cindex byte
+@anchor{datatype byte}
 @item byte or Byte (DataType.BYTE or DataType.BYTE_OBJ)
 
 Persisted as SQL type TINYINT.
 
 @cindex short
+@anchor{datatype short}
 @item short or Short (DataType.SHORT or DataType.SHORT_OBJ)
 
 Persisted as SQL type SMALLINT.
 
 @cindex int
+@anchor{datatype int}
 @item int or Integer (DataType.INTEGER or DataType.INTEGER_OBJ)
 
 Persisted as SQL type INTEGER.
 
 @cindex long
+@anchor{datatype long}
 @item long or Long (DataType.LONG or DataType.LONG_OBJ)
 
 Persisted as SQL type BIGINT.
 
 @cindex float
+@anchor{datatype float}
 @item float or Float (DataType.FLOAT or DataType.FLOAT_OBJ)
 
 Persisted as SQL type FLOAT.
 
 @cindex double
+@anchor{datatype double}
 @item double or Double (DataType.DOUBLE or DataType.DOUBLE_OBJ)
 
 Persisted as SQL type DOUBLE.
 
 @cindex Serializable
 @cindex persist objects
-@anchor{serializable}
+@anchor{datatype serializable}
 @item Serializable (DataType.SERIALIZABLE)
 
 Persisted as SQL type VARBINARY.  This is a special type that serializes an object as a sequence of bytes
@@ -781,16 +812,29 @@ Some databases place restrictions on this field type that it cannot be the id co
 not allow you to query on this type of field at all.  If your database does support it, you may also have to use a
 Select Argument to query for this type.  @xref{Select Arguments}.  
 
-@cindex Enum
+@cindex Enum string
 @cindex enumerated types
-@item enum or Enum (DataType.ENUM_STRING or DataType.ENUM_INTEGER)
+@anchor{datatype enum string}
+@item enum or Enum (DataType.ENUM_STRING)
 
-Persisted by default as the enumerated value's string @emph{name} as a VARCHAR type.  You can also specify the
-@code{dataType} field (from the @code{@@DatabaseField} annotation) as a @code{DataType.ENUM_INTEGER} in which case the
-@code{ordinal} of the enum value will be stored as an INTEGER.  The name is the default (and recommended) because
-it allows you to add additional enums anywhere in the list without worrying about having to convert data later.
-If you insert (or remove) an enum from the list that is being stored as a number, then old data will be un-persisted
-incorrectly.
+Persisted by default as the enumerated value's string @emph{name} as a VARCHAR type.  The string name is the
+default (and recommended over ENUM_INTEGER) because it allows you to add additional enums anywhere in the list
+without worrying about having to convert data later.
+
+@cindex unknownEnumName
+You can also also specify an @emph{unknownEnumName} name with the @code{@@DatabaseField} annotation which will be
+used if an unknown value is found in the database. @xref{unknownEnumName}. 
+
+@cindex Enum integer
+@cindex enumerated types
+@anchor{datatype enum integer}
+@item enum or Enum (DataType.ENUM_INTEGER)
+
+You specify the @code{dataType} field (from the @code{@@DatabaseField} annotation) as a @code{DataType.ENUM_INTEGER} in
+which case the @code{ordinal} of the enum value will be stored as an INTEGER.  The name (ENUM_STRING) is the default (and
+recommended) because it allows you to add additional enums anywhere in the list without worrying about having to convert
+data later.  If you insert (or remove) an enum from the list that is being stored as a number, then old data will be
+un-persisted incorrectly.
 
 @cindex unknownEnumName
 You can also also specify an @emph{unknownEnumName} name with the @code{@@DatabaseField} annotation which will be
@@ -802,60 +846,8 @@ used if an unknown value is found in the database. @xref{unknownEnumName}.
 stored in the database.  @xref{Foreign Objects}.
 
 @c ----------------------------------------------------------------
-@node DAO Setup, Connection Source, Persisted Types, Using
-@section Setting Up the DAOs
-
-@cindex DAO
-@cindex data access object
-@cindex id column
-@cindex Dao interface
-Once you have annotated your classes, you will need to create the Data Access Object (DAO) class(es).  The pattern that
-we recommend is to define an interface which extends the @code{Dao} interface and will be used in the code.  The interface
-isn't required but it is a good pattern so your code is less tied to JDBC for persistence.  Each DAO has two generic
-parameters: the class we are persisting with the DAO, and the class of the ID-column that will be used to
-identify a specific database row.  If you class does not have an ID field, you can put @code{Object} or @code{Void}
-as the 2nd argument.  For example, in the above @code{Account} class, the "name" field is the ID column (id = true)
-so the ID class is @code{String}.  Example:
-
-@example
-/** Account DAO which has a String id (Account.name) */
-public interface AccountDao extends Dao<Account, String> @{
-    // empty wrapper, you can add additional DAO methods here
-@}
-@end example
-
-Here's the example implementation of this interface.
-
-@cindex jdbc dao implementation
-@example
-/** JDBC implementation of the AccountDao interface. */
-public class AccountDaoImpl extends BaseDaoImpl<Account, String>
-  implements AccountDao @{
-    public AccountDaoImpl(ConnectionSource connectionSource) throws SQLException @{
-        super(connectionSource, Account.class);
-    @}
-@}
-@end example
-
-That's all you need to define your DAO classes.  You are free to add more methods to your DAO interfaces and
-implementations if there are specific operations that are needed and not provided by the Dao base classes.
-More on how to use these DAOs later. @xref{DAO Usage}.
-
-@cindex createDao method
-As mentioned above (@pxref{Starting DAO}), you are not @emph{required} to create a DAO class for every one of your persisted
-objects. You can use the @code{createDao} static method on the @code{BaseDaoImpl} class to create a DAO class without having
-to define one.  For example:
-
-@example
-Dao<Account, String> accountDao =
-  BaseDaoImpl.createDao(connectionSource, Account.class);
-Dao<Order, Integer> orderDao =
-  BaseDaoImpl.createDao(connectionSource, Order.class);
-@end example
-
-@c ----------------------------------------------------------------
-@node Connection Source, Database Type, DAO Setup, Using
-@section JDBC Connection Sources
+@node Connection Source, DAO Setup, Persisted Types, Using
+@section Connection Sources
 
 @emph{NOTE:} With regards to connection sources, Android users should see the Android specific documentation later in the manual.
 @xref{Use With Android}.
@@ -865,22 +857,21 @@ Dao<Order, Integer> orderDao =
 @cindex database connection
 @cindex simple connection source
 To use the database and the DAO objects, you will need to configure what JDBC calls a @code{DataSource} (see the
-@code{javax.sql.DataSource} class).  The @code{DataSource} is a factory for connections to the physical SQL
-database.  Since @value{package} also supports non-JDBC connections, we use a subset of the @code{DataSource}
-methods in the @code{ConnectionSource} interface so we can support non-JDBC database handlers.  Here is a code example
-that creates a simple, single-connection source.
+@code{javax.sql.DataSource} class) and what @value{package} calls a @code{ConnectionSource}.  A @code{ConnectionSource} is
+a factory for connections to the physical SQL database.  Here is a code example that creates a simple, single-connection
+source.
 
 @cindex JdbcConnectionSource
 @cindex connection source, simple
 @example
-// single connection source example
+// single connection source example for a database URI
 ConnectionSource connectionSource =
   new JdbcConnectionSource("jdbc:h2:mem:account");
 @end example
 
 @cindex pooled connection source
 @cindex connection pooling
-The package also includes the class @code{JdbcPooledConnectionSource}.  It is a relatively simple implementation of a
+The package also includes the class @code{JdbcPooledConnectionSource} which is a relatively simple implementation of a
 pooled connection source.  As database connections are released, instead of being closed they are added to an internal
 list so they can be reallocated at a later time.  New connections are created on demand only if there are no dormant
 connections that can be reused.  @code{JdbcPooledConnectionSource} is also synchronized and can be used my multiple
@@ -901,7 +892,7 @@ connectionSource.setMaxConnectionAgeMillis(5 * 60 * 1000);
 @cindex DataSourceConnectionSource
 There are many other, external data sources that can be used instead, including more robust and probably higher-performance
 pooled connection managers. You can instantiate your own directly and wrap it in the @code{DataSourceConnectionSource} class
-which delegates to it.  Then you set that on the DAOs directly.
+which delegates to it.
 
 @cindex BasicDataSource
 @example
@@ -929,11 +920,64 @@ try @{
 @}
 @end example
 
-Unfortunately, the @code{DataSource} interface does not have a close method so you will have to close the @code{DataSource}
-by hand -- the @code{close()} method on the @code{DataSourceConnectionSource} does @emph{nothing}.
+Unfortunately, the @code{DataSource} interface does not have a close method so if you are using the @code{DataSourceConnectionSource}
+you will have to close the underlying @code{DataSource} by hand -- the @code{close()} method on the @code{DataSourceConnectionSource}
+does @emph{nothing}.
 
 @c ----------------------------------------------------------------
-@node Database Type, Database Notes, Connection Source, Using
+@node DAO Setup, Database Type, Connection Source, Using
+@section Setting Up the DAOs
+
+@cindex DAO
+@cindex data access object
+@cindex id column
+@cindex Dao interface
+Once you have annotated your classes and defined your @code{ConnectionSource} you will need to create the Data Access Object
+(DAO) class(es).  The pattern that we recommend is to define an interface which extends the @code{Dao} interface and will be
+used in the code.  The interface isn't required but it is a good pattern so your code is less tied to JDBC for persistence.
+Each DAO has two generic parameters: the class we are persisting with the DAO, and the class of the ID-column that will be
+used to identify a specific database row.  If you class does not have an ID field, you can put @code{Object} or @code{Void}
+as the 2nd argument.  For example, in the above @code{Account} class, the "name" field is the ID column (id = true)
+so the ID class is @code{String}.  Example:
+
+@example
+/** Account DAO which has a String id (Account.name) */
+public interface AccountDao extends Dao<Account, String> @{
+    // empty wrapper, you can add additional DAO methods here
+@}
+@end example
+
+Here's the example implementation of this interface.
+
+@cindex jdbc dao implementation
+@example
+/** JDBC implementation of the AccountDao interface. */
+public class AccountDaoImpl extends BaseDaoImpl<Account, String>
+  implements AccountDao @{
+    public AccountDaoImpl(ConnectionSource connectionSource)
+      throws SQLException @{
+        super(connectionSource, Account.class);
+    @}
+@}
+@end example
+
+That's all you need to define your DAO classes.  You are free to add more methods to your DAO interfaces and
+implementations if there are specific operations that are needed and not provided by the Dao base classes.
+More on how to use these DAOs later. @xref{DAO Usage}.
+
+@cindex createDao method
+You are not @emph{required} to create a DAO class for every one of your persisted objects. You can use the @code{createDao}
+static method on the @code{BaseDaoImpl} class to create a DAO class without having to define one.  For example:
+
+@example
+Dao<Account, String> accountDao =
+  BaseDaoImpl.createDao(connectionSource, Account.class);
+Dao<Order, Integer> orderDao =
+  BaseDaoImpl.createDao(connectionSource, Order.class);
+@end example
+
+@c ----------------------------------------------------------------
+@node Database Type, Database Notes, DAO Setup, Using
 @section Database Type
 
 @cindex database type
@@ -1013,14 +1057,14 @@ Android's SQLite database is accessed through direct calls to the Android databa
 @cindex DB2 database
 @item DB2
 
-I do not have access to an DB2 database so I cannot run any tests to make sure that my support for it works well.  Please contact me if you have
-an Oracle database that I can develop against.
+I do not have access to an DB2 database so I cannot run any tests to make sure that my support for it works well.  Please contact me
+if you have an DB2 database that I can develop against.
 
 @cindex Oracle database
 @item Oracle
 
-I do not have access to an Oracle database so I cannot run any tests to make sure that my support for it works well.  Please contact me if you have
-an Oracle database that I can develop against.
+I do not have access to an Oracle database so I cannot run any tests to make sure that my support for it works well.  Please contact me
+if you have an Oracle database that I can develop against.
 
 @end table
 
@@ -1032,9 +1076,8 @@ Please contact the author if your database is not supported.
 @section Tying It All Together
 
 @cindex usage example
-So you have annotated the objects to be persisted, added the no-arg constructor, defined your DAO classes,
-created your @code{DataSource}, and established your @code{DatabaseType}.  You are ready to start persisting and
-querying your database objects.  The following code ties it all together:
+So you have annotated the objects to be persisted, added the no-arg constructor, created your @code{ConnectionSource}, and defined
+your DAO classes.  You are ready to start persisting and querying your database objects.  The following code ties it all together:
 
 @example
 // h2 by default but change to match your database
@@ -1042,7 +1085,7 @@ String databaseUrl = "jdbc:h2:mem:account";
 JdbcConnectionSource connectionSource =
   new JdbcConnectionSource(databaseUrl);
 
-// instantiate the dao
+// instantiate the dao with the connection source
 AccountDaoImpl accountDao = new AccountDaoImpl(connectionSource);
 
 // if you need to create the 'accounts' table make this call
@@ -1062,8 +1105,7 @@ if (accountDao.create(account) != 1) @{
 connectionSource.destroy();
 @end example
 
-@cindex code examples
-For more examples, see the @code{com.j256.ormlite.examples} package test classes in the Java -jdbc sources jar.
+For more examples, see the code later in the manual.  @xref{Examples}.
 
 @c ----------------------------------------------------------------
 @node DAO Usage, Identity Columns, Complete Wiring, Using
@@ -1072,7 +1114,7 @@ For more examples, see the @code{com.j256.ormlite.examples} package test classes
 @cindex DAO usage
 @cindex using the DAOs
 
-The following database operations are easily accomplished by using the DAO classes:
+The following database operations are easily accomplished by using the DAO methods:
 
 @table @asis
 
@@ -1109,7 +1151,7 @@ if (account == null) @{
 @item update the database row associated with the object
 
 If you change fields in an object in memory, you must call update to persist those changes to the database.  This
-also requires an id field. 
+requires an id field. 
 
 @example
 account.password = "_secret";
@@ -1123,7 +1165,7 @@ if (accountDao.update(account) != 1) @{
 @item refreshing our object if the database has changed
 
 If some other entity has changed a row the database corresponding to an object in memory, you will need to refresh that
-object to get the memory object up-to-date.  This also requires an id field. 
+object to get the memory object up-to-date.  This requires an id field. 
 
 @example
 // 1 row should be found
@@ -1136,7 +1178,7 @@ if (accountDao.refresh(account) != 1) @{
 @item delete the account from the database
 
 Removes the row that corresponds to the object from the database.  Once the object has been deleted from the database,
-you can continue to use the object in memory but any update or refresh calls will fail.  This also requires an id field.
+you can continue to use the object in memory but any update or refresh calls will fail.  This requires an id field.
 
 @example
 // 1 row should be affected
@@ -1164,14 +1206,16 @@ go all of the way, the garbage collector will close the SQL statement some time 
 
 @end table
 
+For a detailed list of the methods in the DAO see @pxref{DAO Methods}.
+
 @c ----------------------------------------------------------------
 @node Identity Columns, Id Column, DAO Usage, Using
 @section Identity Columns
 
 Database rows are identified by a particular column which is defined as the @emph{identity} column.  This can either be
 supplied by the user or auto-generated by the database.  Identity columns have unique values for every row in the table
-and they are required if you want to delete, refresh, or update a particular row using the DAO.  To configure a field as
-an identity field, you should use one (and only one) of the following three settings from @code{@@DatabaseField}:
+and they are required if you want to query-by-id, delete, refresh, or update a particular row using the DAO.  To configure
+a field as an identity field, you should use one (and only one) of the following three settings from @code{@@DatabaseField}:
 @code{id}, @code{generatedId}, or @code{generatedIdSequence}.
 
 @menu
@@ -1211,8 +1255,8 @@ if (account == null) @{
 @cindex updateId
 @cindex change id value
 @cindex update identity of object
-If you need to change the value of an object's id field, you must use the @code{Dao.updateId()} method which takes the
-current object still with its @emph{old} id value and the new value.  @value{package} has to first locate the object
+@emph{NOTE:} If you need to change the value of an object's id field, you must use the @code{Dao.updateId()} method which
+takes the current object still with its @emph{old} id value and the new value.  @value{package} has to first locate the object
 by its old id and then update it with the new id.  @xref{updateId}.
 
 @c ----------------------------------------------------------------
@@ -1243,11 +1287,12 @@ Order order = new Order("Jim Sanders", 12.34);
 if (orderDao.create(order) != 1) @{
    // error handling unless 1 row was inserted
 @}
-System.out.println("Order id " + order.getId() + " was persisted to the database");
+System.out.println("Order id " + order.getId() +
+   " was persisted to the database");
 // query for the order with an id of 1372
 order = orderDao.queryForId(1372);
 if (order == null) @{
-    // none of the order rows have an id of 1372
+   // none of the order rows have an id of 1372
 @}
 @end example
 
@@ -1301,14 +1346,15 @@ significantly improve times on queries to medium to large sized tables.
 public class Account @{
     @@DatabaseField(id = true)
     private String name;
-    // this indexes the city field so queries on city will go faster for large tables
+    // this indexes the city field so queries on city
+    // will go faster for large tables
     @@DatabaseField(index = true)
     private String city;
     @dots{}
 @}
 @end example 
 
-This example creates the index @code{city_idx} on the Account table.  If you want to use a different name, you
+This example creates the index @code{account_city_idx} on the Account table.  If you want to use a different name, you
 can use the @code{indexName = "othername"} field instead which allows you to specify the name of the index.
 
 If you often query on (for example) city @emph{and} state fields together, you might want to create an index
@@ -1316,9 +1362,9 @@ on both fields.  @value{package} supports creating indexes on multiple fields by
 value for each of the fields you want to be included in the index.
 
 @example
-@@DatabaseField(indexName = "citystate_idx")
+@@DatabaseField(indexName = "account_citystate_idx")
 private String city;
-@@DatabaseField(indexName = "citystate_idx")
+@@DatabaseField(indexName = "account_citystate_idx")
 private String state;
 @end example
 
@@ -1444,7 +1490,7 @@ rawResults.close();
 @end enumerate
 
 @emph{NOTE}: Like other @value{package} iterators, you will need to make sure you iterate through all of the results
-to have the statement closed automatically.  You can also call the @code{RawResults.close()} method to make sure the
+to have the statement closed automatically.  You can also call the @code{GenericRawResults.close()} method to make sure the
 iterator, and any associated database connections, is closed.
 
 @c ----------------------------------------------------------------
@@ -1472,10 +1518,16 @@ You can also issue raw update statements against the database if the DAO functio
 enough flexibility.  For example:
 
 @example
-fooDao.executeRaw("TRUNCATE TABLE accountlog ");
+fooDao.executeRaw("TRUNCATE TABLE accountlog");
 @end example
 
-Certain database types allow table truncation which you can call through the raw execute method.
+@cindex truncate table
+Certain database types allow table truncation which you can call through the raw execute method.  If truncate
+is not supported by the database then you can instead do:
+
+@example
+fooDao.executeRaw("DELETE FROM accountlog");
+@end example
 
 @c ----------------------------------------------------------------
 @node Foreign Objects, Statement Builder, Raw Executes, Using
@@ -1539,29 +1591,32 @@ if (orderDao.create(order) != 1) @{
 @cindex refreshing foreign objects
 @cindex foreign object refreshing
 When you query for an order, you will get an @code{Order} object with an account field object that @emph{only} has its id
-field set -- all of the fields in the foreign @code{Account} object will have default values (null, 0, false, etc.).  If
+field set.  The rest of the fields in the foreign @code{Account} object will have default values (null, 0, false, etc.).  If
 you want to use other fields in the @code{Account}, you must call @code{refresh} on the @code{accountDao} class to get the
 @code{Account} object filled in.  For example:
 
 @example
 Order order = orderDao.queryForId(orderId);
-System.out.println("Account-id on the order should be set: " + order.account.id);
+System.out.println("Account-id on the order should be set: " +
+   order.account.id);
 // this should print null for order.account.name
-System.out.println("But other fields on the account should not be set: " + order.account.name);
+System.out.println("But other fields on the account should not be set: "
+   + order.account.name);
 
 // so we refresh the account using the AccountDao
 if (accountDao.refresh(order.getAccount()) != 1) @{
-  // error handling @dots{} 
+   // error handling @dots{} 
 @}
-System.out.println("Now the account fields will be set: " + order.account.name);
+System.out.println("Now the account fields will be set: " +
+   order.account.name);
 @end example
 
-@value{package} can automagically refresh the objects for you if you'd like.  @xref{foreignAutoRefresh}.
+You can have the foreign objects automagically refreshed by using the @code{foreignAutoRefresh} setting. @xref{foreignAutoRefresh}.
 
 @emph{NOTE:} Because we use refresh, foreign objects are therefor @emph{required} to have an id field.
 
-The @code{Where()} object has some method calls to help with using foreign objects.  @pxref{foreignIdEq} and @pxref{foreignIdIn}.  Also, there
-is example code to show how to use foreign objects.  @xref{foreign objects example}.
+The @code{Where()} object has some method calls to help with using foreign objects.  @pxref{foreignIdEq} and @pxref{foreignIdIn}.
+There is also example code to show how to use foreign objects.  @xref{foreign objects example}.
 
 @c ----------------------------------------------------------------
 @node Statement Builder, QueryBuilder Basics, Foreign Objects, Top
@@ -1570,7 +1625,7 @@ is example code to show how to use foreign objects.  @xref{foreign objects examp
 @cindex query builder
 @cindex custom query builder
 @cindex custom statement builder
-The DOAs have methods to query for an object that matches an id field (@code{queryForId}) as well as query for all
+The DAOs have methods to query for an object that matches an id field (@code{queryForId}) as well as query for all
 objects (@code{queryForAll}) and iterating through all of the objects in a table (@code{iterator}).  However, for more
 specified queries, there is the @code{queryBuilder()} method which returns a @code{QueryBuilder} object for the DAO
 with which you can construct custom queries to return a sub-set of the table.
@@ -1710,7 +1765,7 @@ SELECT * FROM account
 @cindex GROUP BY, SQL
 The @code{QueryBuilder} also allows you to set what specific select columns you want returned, specify the 'ORDER BY'
 and 'GROUP BY' fields, and various other SQL features (LIKE, IN, >, >=, <, <=, <>, IS NULL, DISTINCT, @dots{}).
-@xref{Where Capabilities}. You can also see the javadocs on@code{QueryBuilder} and @code{Where} classes for more
+@xref{Where Capabilities}. You can also see the javadocs on @code{QueryBuilder} and @code{Where} classes for more
 information.  A good SQL reference site can be found at @uref{http://www.w3schools.com/Sql/}.
 
 @c ----------------------------------------------------------------
@@ -2061,6 +2116,11 @@ Spring bean that auto-creates any tables that it finds DAOs for if the system pr
 has been set to true. It will also auto-drop any tables that were auto-created if the property
 @code{ormlite.auto.drop.tables} has been set to true.  This should be used carefully and probably only in tests.
 
+@cindex dao factory
+@item DaoFactory
+
+Spring bean that can be used to create Dao's for certain classes without needing to define their own Dao class.
+
 @end table
 
 @cindex spring examples
@@ -2092,6 +2152,10 @@ Here's an example of a full Spring configuration.
 <bean id="accountDao"
     class="com.j256.ormlite.examples.common.AccountDaoImpl"
     parent="baseDao" />
+<bean id="deliveryDao" class="com.j256.ormlite.spring.DaoFactory" factory-method="createDao">
+	<constructor-arg index="0" ref="connectionSource" />
+	<constructor-arg index="1" value="com.j256.ormlite.examples.spring.Delivery" />
+</bean>
 @end example
 
 You can also take a look at the spring example code.  @xref{spring example}.
@@ -2393,7 +2457,7 @@ Same is the @code{iterator} method but with a prepared statement parameter. @xre
 Same as the prepared statement iterator except it takes a raw SQL select statement argument.  This is the iterator version
 of the @code{queryForAllRaw} method.  Although you should use the @code{iterator} method for most queries, this method
 allows you to do special queries that aren't supported otherwise.  Like the above iterator methods, you must call close
-on the @code{CloseableIterator} object returned by the @code{RawResults.iterator()} method once you are done with it. 
+on the @code{GenericRawResults} object returned by the method once you are done with it. 
 
 @cindex query for all raw
 @cindex raw select statements
@@ -2442,13 +2506,13 @@ seems to have the same batch performance implications.
 
 @cindex logging information
 @value{package} uses a log system which can plug into Apache commons logging, Log4j, Android Log, or its own internal
-log implementations.  The logger code in @code{com.j256.ormlite.logger} first looks for the
-@code{org.apache.commons.logging.LogFactory} class in the classpath -- if found it will use Apache commons logging.
-If that class is not found it then looks for @code{org.apache.log4j.Logger} and if found will use Log4j.  Next it
-looks for @code{android.util.Log} and if found will use the Android internal logger.  If none of these classes are
-available it will use an internal logger -- see @code{LocalLog}.  The logger code also provides simple @{@}
-argument expansion like @code{slf4j} which means that you can save on @code{toString()} calls and @code{StringBuilder} operations
-if the log level is not high enough.  This allows me to do something like the following:
+log implementations.  The logger code in @code{com.j256.ormlite.logger} first looks for the @code{android.util.Log} and
+if found will use the Android internal logger.  Next it looks for@code{org.apache.commons.logging.LogFactory} class in the
+classpath -- if found it will use Apache commons logging.  If that class is not found it then looks for
+@code{org.apache.log4j.Logger} and if found will use Log4j.  If none of these classes are available it will use an internal
+logger -- see @code{LocalLog}.  The logger code also provides simple @{@} argument expansion like @code{slf4j} which means
+that you can save on @code{toString()} calls and @code{StringBuilder} operations if the log level is not high enough.  This
+allows me to do something like the following:
 
 @example
 private static Logger logger =
@@ -2523,7 +2587,11 @@ dependencies: @code{com.sun.jmx.jmxri}, @code{com.sun.jdmk.jmxtools}, @code{java
 
 @c ----------------------------------------------------------------
 @node How to Upgrade, 4.X to 4.10, Dependencies, Top
-@chapter Upgrading Old Versions
+@chapter Upgrading From Old Versions
+
+We strive to maintain backwards compatibility and to provide deprecated versions of old classes and methods.
+However, sometimes when a new version is released, changes are made that require programmers to change their code
+and rarely the on-disk database formats. 
 
 @menu
 * 4.X to 4.10::                Upgrade from version 4.X to 4.10
@@ -2557,10 +2625,10 @@ to work.
 @node 3.X to 4.0, 2.X to 3.2, 4.X to 4.10, How to Upgrade
 @section Upgrade from Version 3.X to 4.0
 
-Removed any outside usage of the @code{DatabaseType} since the @code{ConnectionSource} now provides it.  Also added
-features to be able to prepare update and delete statements.  To provide type safety, we've moved back to using
-@code{QueryBuilder} so we can have @code{UpdateBuilder} and @code{DeleteBuilder}.  And instead of a @code{PreparedStmt}
-there is @code{PreparedQuery}, @code{PreparedUpdate}, and @code{PreparedDelete}.  Here are the details:
+No data formats were changed, however the following API code was altered.  Removed any outside usage of the @code{DatabaseType} since the
+@code{ConnectionSource} now provides it.  Also added features to be able to prepare update and delete statements.  To provide type safety,
+we've moved back to using @code{QueryBuilder} so we can have @code{UpdateBuilder} and @code{DeleteBuilder}.  And instead of a
+@code{PreparedStmt} there is @code{PreparedQuery}, @code{PreparedUpdate}, and @code{PreparedDelete}.  Here are the details:
 
 @itemize @bullet
 
@@ -2606,13 +2674,14 @@ configurations.
 @node 2.X to 3.2, 2.3 to 2.4, 3.X to 4.0, How to Upgrade
 @section Upgrade from Version 2.X to 3.2
 
-The 3.2 release involved a @emph{very} large code reorganization and migration.  The project was basically split into 3 pieces:
-core functionality, JDBC database handlers, and the new Android handler.  With significant help from Kevin G, we abstracted all
-of the database calls into 3 interfaces: @code{ConnectionSource} (like a @code{DataSource}), @code{DatabaseConnection} (like a
-@code{Connection}) and @code{DatabaseResults} (like a @code{ResultSet}).  Once we had the interfaces in place, we wrote
-delegation classes for JDBC and Android handlers.  This means that as of 3.X we release 3 packages: ormlite-core (for developers),
-ormlite-jdbc (for people connecting to JDBC databases), and ormlite-android (for Android users).  Both the JDBC and Android
-packages include all of the core code as well.
+The 3.2 release involved a @emph{very} large code reorganization and migration.  There were no on-disk changes unless you somehow
+managed to get ORMLite working previously on Android.  The project was basically split into 3 pieces: core functionality, JDBC
+database handlers, and the new Android handler.  With significant help from Kevin G, we abstracted all of the database calls into
+3 interfaces: @code{ConnectionSource} (like a @code{DataSource}), @code{DatabaseConnection} (like a @code{Connection}) and
+@code{DatabaseResults} (like a @code{ResultSet}).  Once we had the interfaces in place, we wrote delegation classes for JDBC and
+Android handlers.  This means that as of 3.X we release 3 packages: ormlite-core (for developers), ormlite-jdbc (for people
+connecting to JDBC databases), and ormlite-android (for Android users).  Both the JDBC and Android packages include all of the
+core code as well.
 
 Along the way a number of specific changes were made to the methods and classes:
 
@@ -2635,7 +2704,7 @@ set on the DAO instead.
 
 @end itemize
 
-There were no on-disk changes unless you somehow managed to get ORMLite working previously on Android.  Since we were using
+Again, there were no on-disk changes unless you somehow managed to get ORMLite working previously on Android.  Since we were using
 JDBC before to do the data marshalling and now are doing it by hand, some of the data representations may have changed.  Sorry for
 the lack of detail here.
 
@@ -2653,6 +2722,8 @@ uppercase.
 @node Examples, Contributions, 2.3 to 2.4, Top
 @chapter Example Code
 
+@cindex examples of code
+@cindex code examples
 Here is some example code to help you get going with @value{package}.  I often find that code is the best documentation of how
 to get something working.  Please feel free to suggest additional example packages for inclusion here.  Source code submissions
 are welcome as long as you don't get piqued if we don't chose your's.
@@ -2662,7 +2733,7 @@ are welcome as long as you don't get piqued if we don't chose your's.
 @cindex simple example
 @item Simple, basic
 
-Just to get you started, this is a simple application which performs database operations on a single class/table.  See soure code in
+This is a simple application which performs database operations on a single class/table.  See soure code in
 SVN: @uref{http://ormlite.com/docs/example-simple}.
 
 @cindex foreign objects example
@@ -2698,7 +2769,7 @@ See soure code in SVN: @uref{http://ormlite.com/docs/example-spring}.
 @c -----------
 
 @cindex Android examples
-@anchor{android examples}.
+@anchor{android examples}
 For Android developers, there are also complete example application projects to help you get started with that operating system.
 
 @table @asis

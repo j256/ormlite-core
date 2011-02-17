@@ -106,7 +106,7 @@ public class DataTypeTest extends BaseCoreTest {
 	}
 
 	@Test
-	public void testJavaDate() throws Exception {
+	public void testDate() throws Exception {
 		DataType type = DataType.DATE;
 		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
 		expect(results.getTimestamp(COLUMN)).andReturn(TIMESTAMP);
@@ -122,7 +122,24 @@ public class DataTypeTest extends BaseCoreTest {
 	}
 
 	@Test
-	public void testJavaDateLong() throws Exception {
+	public void testJavaDate() throws Exception {
+		@SuppressWarnings("deprecation")
+		DataType type = DataType.JAVA_DATE;
+		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
+		expect(results.getTimestamp(COLUMN)).andReturn(TIMESTAMP);
+		replay(results);
+		assertEquals(DATE, type.resultToJava(null, results, COLUMN));
+		verify(results);
+
+		Timestamp timestamp = new Timestamp(DATE_FORMATTER.parse(DATE_STRING).getTime());
+		assertEquals(timestamp, type.parseDefaultString(getFieldType("date"), DATE_STRING));
+
+		timestamp = (Timestamp) type.javaToSqlArg(null, DATE);
+		assertEquals(TIMESTAMP, timestamp);
+	}
+
+	@Test
+	public void testDateLong() throws Exception {
 		DataType type = DataType.DATE_LONG;
 		long millis = 5;
 		Date date = new Date(millis);
@@ -140,13 +157,39 @@ public class DataTypeTest extends BaseCoreTest {
 		assertEquals(new Long(longString), type.parseDefaultString(null, longString));
 	}
 
+	@Test
+	public void testJavaDateLong() throws Exception {
+		@SuppressWarnings("deprecation")
+		DataType type = DataType.JAVA_DATE_LONG;
+		long millis = 5;
+		Date date = new Date(millis);
+
+		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
+		expect(results.getLong(COLUMN)).andReturn(new Long(millis));
+		replay(results);
+		assertEquals(date, type.resultToJava(null, results, COLUMN));
+		verify(results);
+
+		Long expectedLong = (Long) type.javaToSqlArg(null, date);
+		assertEquals(millis, expectedLong.longValue());
+		assertFalse(type.isEscapedValue());
+		String longString = "255";
+		assertEquals(new Long(longString), type.parseDefaultString(null, longString));
+	}
+
 	@Test(expected = SQLException.class)
-	public void testBadJavaDateLong() throws Exception {
+	public void testBadDateLong() throws Exception {
 		DataType.DATE_LONG.parseDefaultString(null, "notALong");
 	}
 
+	@Test(expected = SQLException.class)
+	@SuppressWarnings("deprecation")
+	public void testBadJavaDateLong() throws Exception {
+		DataType.JAVA_DATE_LONG.parseDefaultString(null, "notALong");
+	}
+
 	@Test
-	public void testJavaDateString() throws Exception {
+	public void testDateString() throws Exception {
 		DataType type = DataType.DATE_STRING;
 		FieldType fieldType = getFieldType("date");
 		assertEquals(DATE_STRING, type.javaToSqlArg(fieldType, DATE));
@@ -157,8 +200,21 @@ public class DataTypeTest extends BaseCoreTest {
 		verify(results);
 	}
 
+	@Test
+	public void testJavaDateString() throws Exception {
+		@SuppressWarnings("deprecation")
+		DataType type = DataType.JAVA_DATE_STRING;
+		FieldType fieldType = getFieldType("date");
+		assertEquals(DATE_STRING, type.javaToSqlArg(fieldType, DATE));
+		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
+		expect(results.getString(COLUMN)).andReturn(DATE_STRING);
+		replay(results);
+		assertEquals(DATE, type.resultToJava(fieldType, results, COLUMN));
+		verify(results);
+	}
+
 	@Test(expected = SQLException.class)
-	public void testJavaBadDateString() throws Exception {
+	public void testBadDateString() throws Exception {
 		DataType type = DataType.DATE_STRING;
 		FieldType fieldType = getFieldType("date");
 		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
@@ -168,16 +224,44 @@ public class DataTypeTest extends BaseCoreTest {
 		verify(results);
 	}
 
+	@Test(expected = SQLException.class)
+	public void testJavaBadDateString() throws Exception {
+		@SuppressWarnings("deprecation")
+		DataType type = DataType.JAVA_DATE_STRING;
+		FieldType fieldType = getFieldType("date");
+		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
+		expect(results.getString(COLUMN)).andReturn(BAD_DATE_STRING);
+		replay(results);
+		type.resultToJava(fieldType, results, COLUMN);
+		verify(results);
+	}
+
 	@Test
-	public void testJavaDateStringParseDefaultString() throws Exception {
+	public void testDateStringParseDefaultString() throws Exception {
 		DataType type = DataType.DATE_STRING;
 		FieldType fieldType = getFieldType("date");
 		assertEquals(DATE_STRING, type.parseDefaultString(fieldType, DATE_STRING));
 	}
 
+	@Test
+	public void testJavaDateStringParseDefaultString() throws Exception {
+		@SuppressWarnings("deprecation")
+		DataType type = DataType.JAVA_DATE_STRING;
+		FieldType fieldType = getFieldType("date");
+		assertEquals(DATE_STRING, type.parseDefaultString(fieldType, DATE_STRING));
+	}
+
+	@Test(expected = SQLException.class)
+	public void testDateStringParseBadDefaultString() throws Exception {
+		DataType type = DataType.DATE_STRING;
+		FieldType fieldType = getFieldType("date");
+		type.parseDefaultString(fieldType, BAD_DATE_STRING);
+	}
+
 	@Test(expected = SQLException.class)
 	public void testJavaDateStringParseBadDefaultString() throws Exception {
-		DataType type = DataType.DATE_STRING;
+		@SuppressWarnings("deprecation")
+		DataType type = DataType.JAVA_DATE_STRING;
 		FieldType fieldType = getFieldType("date");
 		type.parseDefaultString(fieldType, BAD_DATE_STRING);
 	}

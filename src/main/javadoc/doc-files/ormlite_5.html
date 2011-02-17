@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on February, 15 2011 by texi2html 1.70 -->
+<!-- Created on February, 17 2011 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -100,14 +100,14 @@ the Spring framework.  For more information about the Spring Framework, see <a h
 
 </p><dl compact="compact">
 <dd>
-<a name="IDX180"></a>
-<a name="IDX181"></a>
-<a name="IDX182"></a>
 <a name="IDX183"></a>
 <a name="IDX184"></a>
 <a name="IDX185"></a>
 <a name="IDX186"></a>
 <a name="IDX187"></a>
+<a name="IDX188"></a>
+<a name="IDX189"></a>
+<a name="IDX190"></a>
 </dd>
 <dt><code> TableCreator</code></dt>
 <dd>
@@ -115,10 +115,16 @@ the Spring framework.  For more information about the Spring Framework, see <a h
 has been set to true. It will also auto-drop any tables that were auto-created if the property
 <code>ormlite.auto.drop.tables</code> has been set to true.  This should be used carefully and probably only in tests.
 
+</p><a name="IDX191"></a>
+</dd>
+<dt><code> DaoFactory</code></dt>
+<dd>
+<p>Spring bean that can be used to create Dao's for certain classes without needing to define their own Dao class.
+
 </p></dd>
 </dl>
 
-<a name="IDX188"></a>
+<a name="IDX192"></a>
 <p>Here's an example of a full Spring configuration.
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">&lt;!-- URL used for database, probably should be in properties file --&gt;
@@ -146,8 +152,12 @@ has been set to true. It will also auto-drop any tables that were auto-created i
 &lt;bean id=&quot;accountDao&quot;
     class=&quot;com.j256.ormlite.examples.common.AccountDaoImpl&quot;
     parent=&quot;baseDao&quot; /&gt;
+&lt;bean id=&quot;deliveryDao&quot; class=&quot;com.j256.ormlite.spring.DaoFactory&quot; factory-method=&quot;createDao&quot;&gt;
+	&lt;constructor-arg index=&quot;0&quot; ref=&quot;connectionSource&quot; /&gt;
+	&lt;constructor-arg index=&quot;1&quot; value=&quot;com.j256.ormlite.examples.spring.Delivery&quot; /&gt;
+&lt;/bean&gt;
 </pre></td></tr></table>
-<p>You can also take a look at the spring example code.  See <a href="ormlite_7.html#ANC14">spring example</a>.
+<p>You can also take a look at the spring example code.  See <a href="ormlite_7.html#ANC27">spring example</a>.
 
 </p><hr size="6">
 <a name="NOD38"></a>
@@ -174,7 +184,7 @@ has been set to true. It will also auto-drop any tables that were auto-created i
 and <code>@DatabaseField</code> annotations.  See section <a href="ormlite_2.html#SEC8">Adding ORMLite Annotations</a>.  However if you do not own the class you are
 persisting or there are permission problems with the class, you may want to configure the class using Java code instead.
 
-</p><a name="IDX189"></a>
+</p><a name="IDX193"></a>
 <p>To configure a class in code, you use the <code>DatabaseFieldConfig</code> and <code>DatabaseTableConfig</code> objects.
 The field config object holds all of the details that are in the <code>@DatabaseField</code> annotation as well as
 the name of the corresponding field in the object.  The <code>DatabaseTableConfig</code> object holds the class and the
@@ -194,7 +204,7 @@ DatabaseTableConfig&lt;Account&gt; accountTableConfig
 AccountDaoImpl accountDao =
     new AccountDaoImpl(connectionSource, accountTableConfig);
 </pre></td></tr></table>
-<a name="IDX190"></a>
+<a name="IDX194"></a>
 <p>See the Javadocs for the <code>DatabaseFieldConfig</code> class for the fields to pass to the constructor.  You can also
 use the no-argument constructor and call the setters for each field.  You use the setters as well when you are
 configuring a class using Spring wiring.  Here is the above example in Spring:
@@ -218,7 +228,7 @@ configuring a class using Spring wiring.  Here is the above example in Spring:
     &lt;/property&gt;
 &lt;/bean&gt;
 </pre></td></tr></table>
-<p>You can also look at the field configuration example code.  See <a href="ormlite_7.html#ANC12">field config example</a>.
+<p>You can also look at the field configuration example code.  See <a href="ormlite_7.html#ANC25">field config example</a>.
 
 </p><hr size="6">
 <a name="NOD39"></a>
@@ -393,46 +403,46 @@ This list may be out of date.  See the <code>Dao</code> interface class for the 
 
 </p><dl compact="compact">
 <dd>
-<a name="IDX191"></a>
+<a name="IDX195"></a>
 </dd>
 <dt><code> queryForId(ID id)</code></dt>
 <dd>
 <p>Looks up the id in the database and retrieves an object associated with it.
 
-</p><a name="IDX192"></a>
+</p><a name="IDX196"></a>
 </dd>
 <dt><code> queryForFirst(PreparedQuery&lt;T&gt; preparedQuery)</code></dt>
 <dd>
 <p>Query for and return the first item in the object table which matches a prepared statement. This can be used to return
 the object that matches a single unique column.  You should use queryForId if you want to query for the id column.
 
-</p><a name="IDX193"></a>
+</p><a name="IDX197"></a>
 </dd>
 <dt><code> queryForAll()</code></dt>
 <dd>
 <p>Query for all of the items in the object table and return a list of them. For medium sized or large tables,
 this may load a lot of objects into memory so you should consider using the <code>iterator</code> method instead.
 
-</p><a name="IDX194"></a>
-<a name="IDX195"></a>
+</p><a name="IDX198"></a>
+<a name="IDX199"></a>
 </dd>
 <dt><code> queryBuilder()</code></dt>
 <dd>
 <p>Create and return a new <code>QueryBuilder</code> object which allows you to build a custom query.  See section <a href="ormlite_3.html#SEC29">Query Builder Basics</a>.
 
-</p><a name="IDX196"></a>
+</p><a name="IDX200"></a>
 </dd>
 <dt><code> updateBuilder()</code></dt>
 <dd>
-<p>Create and return a new <code>UpdateBuilder</code> object which allows you to build a custom update statement.  See <a href="ormlite_3.html#ANC7">updateBuilder</a>.
+<p>Create and return a new <code>UpdateBuilder</code> object which allows you to build a custom update statement.  See <a href="ormlite_3.html#ANC20">updateBuilder</a>.
 
-</p><a name="IDX197"></a>
+</p><a name="IDX201"></a>
 </dd>
 <dt><code> deleteBuilder()</code></dt>
 <dd>
-<p>Create and return a new <code>DeleteBuilder</code> object which allows you to build a custom delete statement.  See <a href="ormlite_3.html#ANC6">deleteBuilder</a>.
+<p>Create and return a new <code>DeleteBuilder</code> object which allows you to build a custom delete statement.  See <a href="ormlite_3.html#ANC19">deleteBuilder</a>.
 
-</p><a name="IDX198"></a>
+</p><a name="IDX202"></a>
 </dd>
 <dt><code> query(PreparedQuery&lt;T&gt; preparedQuery)</code></dt>
 <dd>
@@ -440,13 +450,13 @@ this may load a lot of objects into memory so you should consider using the <cod
 list of matching objects. For medium sized or large tables, this may load a lot of objects into memory so you
 should consider using the <code>iterator</code> method instead.  
 
-</p><a name="IDX199"></a>
+</p><a name="IDX203"></a>
 </dd>
 <dt><code> create(T data)</code></dt>
 <dd>
 <p>Create a new entry in the database from an object.  Should return 1 indicating 1 row was inserted.
 
-</p><a name="IDX200"></a>
+</p><a name="IDX204"></a>
 </dd>
 <dt><code> update(T data)</code></dt>
 <dd>
@@ -454,8 +464,8 @@ should consider using the <code>iterator</code> method instead.
 those changes to the database. You cannot use this method to update the id field - see updateId.  This should
 return 1 since 1 row was updated.
 
-</p><a name="IDX201"></a>
-<p><a name="ANC10"></a>
+</p><a name="IDX205"></a>
+<p><a name="ANC23"></a>
 </p></dd>
 <dt><code> updateId(T data)</code></dt>
 <dd>
@@ -463,14 +473,14 @@ return 1 since 1 row was updated.
 the new-id is passed in as an argument.  After the id has been updated in the database, the id field of the data
 object will also be changed.  This should return 1 since 1 row was updated.
 
-</p><a name="IDX202"></a>
-<a name="IDX203"></a>
+</p><a name="IDX206"></a>
+<a name="IDX207"></a>
 </dd>
 <dt><code> update(PreparedUpdate&lt;T&gt; preparedUpdate)</code></dt>
 <dd>
 <p>Update objects that match a custom update statement.
 
-</p><a name="IDX204"></a>
+</p><a name="IDX208"></a>
 </dd>
 <dt><code> refresh(T data, ID newId)</code></dt>
 <dd>
@@ -478,34 +488,34 @@ object will also be changed.  This should return 1 since 1 row was updated.
 parameter. Any local object changes to persisted fields will be overwritten.  If the database has been updated
 this brings your local object up-to-date.  This should return 1 since 1 row was retrieved.
 
-</p><a name="IDX205"></a>
+</p><a name="IDX209"></a>
 </dd>
 <dt><code> delete(T data)</code></dt>
 <dd>
 <p>Delete an object from the database.  This should return 1 since 1 row was removed.
 
-</p><a name="IDX206"></a>
+</p><a name="IDX210"></a>
 </dd>
 <dt><code> delete (Collection&lt;T&gt; datas)</code></dt>
 <dd>
 <p>Delete a collection of objects from the database using an IN SQL clause.  This returns the number of rows that
 were deleted.
 
-</p><a name="IDX207"></a>
+</p><a name="IDX211"></a>
 </dd>
 <dt><code> deleteIds(Collection&lt;ID&gt; ids)</code></dt>
 <dd>
 <p>Delete the objects that match the collection of ids from the database using an IN SQL clause.   This returns the
 number of rows that were deleted.  
 
-</p><a name="IDX208"></a>
-<a name="IDX209"></a>
+</p><a name="IDX212"></a>
+<a name="IDX213"></a>
 </dd>
 <dt><code> delete(PreparedDelete&lt;T&gt; preparedDelete)</code></dt>
 <dd>
 <p>Delete objects that match a custom delete statement.
 
-</p><a name="IDX210"></a>
+</p><a name="IDX214"></a>
 </dd>
 <dt><code> iterator</code></dt>
 <dd>
@@ -527,11 +537,11 @@ in the table using SQL.  This method allows you to do something like:
 <p>Same as the prepared statement iterator except it takes a raw SQL select statement argument.  This is the iterator version
 of the <code>queryForAllRaw</code> method.  Although you should use the <code>iterator</code> method for most queries, this method
 allows you to do special queries that aren't supported otherwise.  Like the above iterator methods, you must call close
-on the <code>CloseableIterator</code> object returned by the <code>RawResults.iterator()</code> method once you are done with it. 
+on the <code>GenericRawResults</code> object returned by the method once you are done with it. 
 
-</p><a name="IDX211"></a>
-<a name="IDX212"></a>
-<a name="IDX213"></a>
+</p><a name="IDX215"></a>
+<a name="IDX216"></a>
+<a name="IDX217"></a>
 </dd>
 <dt><code> queryRaw(String query)</code></dt>
 <dd>
@@ -599,13 +609,13 @@ seems to have the same batch performance implications.
 <h2 class="section"> 5.5 ORMLite Logging </h2>
 
 <p>ORMLite uses a log system which can plug into Apache commons logging, Log4j, Android Log, or its own internal
-log implementations.  The logger code in <code>com.j256.ormlite.logger</code> first looks for the
-<code>org.apache.commons.logging.LogFactory</code> class in the classpath - if found it will use Apache commons logging.
-If that class is not found it then looks for <code>org.apache.log4j.Logger</code> and if found will use Log4j.  Next it
-looks for <code>android.util.Log</code> and if found will use the Android internal logger.  If none of these classes are
-available it will use an internal logger - see <code>LocalLog</code>.  The logger code also provides simple {}
-argument expansion like <code>slf4j</code> which means that you can save on <code>toString()</code> calls and <code>StringBuilder</code> operations
-if the log level is not high enough.  This allows me to do something like the following:
+log implementations.  The logger code in <code>com.j256.ormlite.logger</code> first looks for the <code>android.util.Log</code> and
+if found will use the Android internal logger.  Next it looks for<code>org.apache.commons.logging.LogFactory</code> class in the
+classpath - if found it will use Apache commons logging.  If that class is not found it then looks for
+<code>org.apache.log4j.Logger</code> and if found will use Log4j.  If none of these classes are available it will use an internal
+logger - see <code>LocalLog</code>.  The logger code also provides simple {} argument expansion like <code>slf4j</code> which means
+that you can save on <code>toString()</code> calls and <code>StringBuilder</code> operations if the log level is not high enough.  This
+allows me to do something like the following:
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">private static Logger logger =
   LoggerFactory.getLogger(QueryBuilder.class);
@@ -615,7 +625,7 @@ logger.debug(&quot;built statement {}&quot;, statement);
 <p>If you are using log4j (through Apache commons logging or directly), you can use something
 like the following as your log4j.properties file to see details about the SQL calls.
 
-</p><a name="IDX214"></a>
+</p><a name="IDX218"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">log4j.rootLogger=INFO, stdout
 
 log4j.appender.stdout=org.apache.log4j.ConsoleAppender
@@ -631,8 +641,8 @@ log4j.logger.com.j256.ormlite=DEBUG
 # uncomment the following line
 #log4j.logger.com.j256.ormlite.stmt.mapped.BaseMappedStatement=TRACE
 </pre></td></tr></table>
-<a name="IDX215"></a>
-<a name="IDX216"></a>
+<a name="IDX219"></a>
+<a name="IDX220"></a>
 <p><em>Notice</em> that you can uncomment the last line in the above log4j.properties file to log the arguments to the
 various SQL calls.  This may expose passwords or other sensitive information in the database so probably should
 only be used during debugging and should not be the default.
@@ -665,7 +675,7 @@ and Log4j but these classes will <em>not</em> be referenced unless they exist in
 
 </p><dl compact="compact">
 <dd>
-<a name="IDX217"></a>
+<a name="IDX221"></a>
 </dd>
 <dt><code> javax.persistence</code></dt>
 <dd>
@@ -713,7 +723,7 @@ dependencies: <code>com.sun.jmx.jmxri</code>, <code>com.sun.jdmk.jmxtools</code>
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>February, 15 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>February, 17 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 
