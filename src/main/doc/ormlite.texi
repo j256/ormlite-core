@@ -239,7 +239,7 @@ public class AccountApp @{
 
         // if you need to create the 'accounts' table make this call
         TableUtils.createTable(connectionSource, Account.class);
- @end example
+@end example
 
 Once we have configured our database objects, we can use them to create an Account, persist it to the database, and query for it from
 the database by its ID:
@@ -265,7 +265,7 @@ the database by its ID:
 @}
 @end example
 
-For more examples including working code and Android application projects see @pxref{Examples}.
+For more examples including working code and Android application projects @pxref{Examples}.
 
 You should be able to get started using @value{package} by this point. To understand more of the functionality available with @value{package},
 continue on with the next section.  @xref{Using}.
@@ -288,6 +288,7 @@ This chapter goes into more detail about how to use @value{package}.
 * Creating Indexes::            How to create indexes on fields.
 * Raw Statements::              Issuing raw database statements.
 * Foreign Objects::             Fields that represent foreign objects.
+* Table Creation::              Creating tables and loading schema.
 @end menu
 
 @c ----------------------------------------------------------------
@@ -1184,7 +1185,7 @@ go all of the way, the garbage collector will close the SQL statement some time 
 
 @end table
 
-For a detailed list of the methods in the DAO see @pxref{DAO Methods}.
+For a detailed list of the methods in the DAO @pxref{DAO Methods}.
 
 @c ----------------------------------------------------------------
 @node Identity Columns, Id Column, DAO Usage, Using
@@ -1509,7 +1510,7 @@ fooDao.executeRaw("DELETE FROM accountlog");
 @end example
 
 @c ----------------------------------------------------------------
-@node Foreign Objects, Statement Builder, Raw Executes, Using
+@node Foreign Objects, Table Creation, Raw Executes, Using
 @section Foreign Object Fields
 
 @cindex foreign objects
@@ -1598,7 +1599,112 @@ The @code{Where()} object has some method calls to help with using foreign objec
 There is also example code to show how to use foreign objects.  @xref{foreign objects example}.
 
 @c ----------------------------------------------------------------
-@node Statement Builder, QueryBuilder Basics, Foreign Objects, Top
+@node Table Creation, TableUtils, Foreign Objects, Using
+@section Table and Schema Creation
+
+@cindex table creation
+@cindex schema creation
+@cindex creating a table
+There a couple of tools that @value{package} provides to help with creating tables and schema for the classes that you are
+storing in the database.
+
+@menu
+* TableUtils::                 Class which creates and drops tables.
+* TableCreator::               Spring class which auto-creates tables.
+@end menu
+
+@c ----------------------------------------------------------------
+@node TableUtils, TableCreator, Table Creation, Table Creation
+@subsection TableUtils Class
+
+@cindex TableUtils
+
+The @code{TableUtils} class provides a number of static methods that help with creating and dropping tables as well as providing
+the schema statements.
+
+@table @code
+
+@item createTable(ConnectionSource, Class)
+
+This method takes the @code{ConnectionSource} and a class and creates the table associated with the class.  It uses the annotations
+from the class to determine the various fields and characteristics of the table.  It returns the number of statements executed to
+create the table.
+
+@example
+TableUtils.createTable(connectionSource, Account.class);
+@end example
+
+@item createTable(ConnectionSource, DatabaseTableConfig)
+
+Similar to the last method but instead of a class, this method uses a @code{DatabaseTableConfig} to determine the various fields and
+characteristics of the table.
+
+@example
+ArrayList<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
+fieldConfigs.add(new DatabaseFieldConfig("id", null, DataType.UNKNOWN, null, 0, false, false, true, null,
+		false, null, false, null, false, null, false, null, null, false));
+@dots{}
+DatabaseTableConfig<Account> tableConfig = new DatabaseTableConfig<Account>(Account.class, fieldConfigs);
+// this returns the number of statements executed to create the table
+TableUtils.createTable(connectionSource, tableConfig);
+@end example
+
+@item dropTable(ConnectionSource, Class, boolean ignoreErrors)
+
+This method drops the table associated with the class.  It uses the annotations from the class to determine the name of the table to drop.
+This is not undo-able and most likely will be used only in tests since production tables are dropped rarely.
+
+The ignoreErrors argument is useful when you are dropping a table before you are creating it and the table may not already exist.  If
+ignoreErrors is true then any exceptions are swallowed.
+
+@item dropTable(ConnectionSource, DatabaseTableConfig, boolean ignoreErrors)
+
+Same as the previous method but it will use the @code{DatabaseTableConfig} to determine the name of the table to drop.
+
+@item getCreateTableStatements(ConnectionSource, Class)
+
+This is similar to the @code{createTable} method but will return a list of statements that can be used to create a class.  This is useful
+if you want to load the schema during some sort of database initialization process.
+
+@item getCreateTableStatements(ConnectionSource, DatabaseTableConfig)
+
+Same as the previous method but with a @code{DatabaseTableConfig} instead.
+
+@end table
+
+@c ----------------------------------------------------------------
+@node TableCreator, Statement Builder, TableUtils, Table Creation
+@subsection TableCreator Class
+
+@cindex TableCreator
+The @code{TableCreator} class is engineered for use with Spring but could be useful in other configurations.  It is configured with the
+@code{ConnectionSource} and the list of DAOs that are being used by the program.
+
+It will automagically create the tables associated with those DAOs if the system propety @code{ormlite.auto.create.tables} is set with
+the value "true".  It also will automagically drop the tables that were created if the system propety @code{ormlite.auto.drop.tables} is set with
+the value "true".  This is especially useful in tests when you are starting with a test database that needs to get the latest schema but in
+production you want to make specific schema changes by hand.  You can set the system properties in your test start scripts but leave them off
+in the production scripts.
+
+@example
+List<BaseDaoImpl<?, ?>> daoList = new ArrayList<BaseDaoImpl<?, ?>>();
+daoList.add(accountDao);
+@dots{}
+
+TableCreator creator =
+   new TableCreator(connectionSource, daoList);
+// create the tables if the right system property is set
+creator.maybeCreateTables();
+@dots{}
+
+// later, we may want to drop the tables that were created 
+creator.maybeDropTables();
+@end example
+
+For a real life example of using @code{TableCreator} you can @pxref{spring example}.
+
+@c ----------------------------------------------------------------
+@node Statement Builder, QueryBuilder Basics, TableCreator, Top
 @chapter Custom Statement Builder
 
 @cindex query builder
