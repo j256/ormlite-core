@@ -108,7 +108,7 @@ Gray Watson @uref{http://256.com/gray/}
 * Downloading ::                Downloading the @value{package} jar.
 * Starting Class::              Configuring a class to persist.
 * Starting DAO::                Configuring a Data Access Object.
-* Starting Code::               Client code example on how its works.
+* Starting Code::               Code example on how its works.
 @end menu
 
 @c ----------------------------------------------------------------
@@ -210,10 +210,11 @@ More information about setting up the DAOs is available later in the manual. @xr
 @section Code Example
 
 The code in this section demonstrates how to use the classes presented in the previous two sections. The code uses the native Java H2 database to
-create the in-memory test databases. You will need to add the H2 jar file to your classpath if you want to run the example as-is.  @emph{NOTE:}
-Android users should see the Android specific documentation later in the manual. @xref{Use With Android}.
+create the in-memory test databases. You will need to download and add the H2 jar file to your classpath if you want to run the example as-is.  See
+the H2 home page: @uref{http://www.h2database.com/html/download.html}.  @emph{NOTE:} Android users should see the Android specific documentation
+later in the manual. @xref{Use With Android}.
 
-The client performs the following steps.
+The code performs the following steps.
 
 @itemize @bullet
 @item It creates a connection source which handles connections to the database.
@@ -278,9 +279,8 @@ This chapter goes into more detail about how to use @value{package}.
 @menu
 * Class Setup::                 How to setup your classes to be persisted.
 * Persisted Types::             Data types that can be persisted.
-* DAO Setup::                   How to configure the Data Access Objects.
 * Connection Source::           Setting up connections to databases.
-* Database Type::               Defining your database type.
+* DAO Setup::                   How to configure the Data Access Objects.
 * Database Notes::              Support databases and associated notes.
 * Complete Wiring::             Tying all of the wiring together.
 * DAO Usage::                   Using the Data Access Objects.
@@ -707,7 +707,7 @@ public class Account @{
 @cindex types that are persisted
 The following Java types can be persisted to the database by @value{package}.  Database specific code
 helps to translate between the SQL types and the database specific handling of those types.
-@xref{Database Type}.
+@xref{Database Type Details}.
 
 @table @code
 
@@ -806,7 +806,7 @@ Persisted as SQL type DOUBLE.
 
 Persisted as SQL type VARBINARY.  This is a special type that serializes an object as a sequence of bytes
 and then deserializes it on the way back.  The field must be an object that implements the @code{java.io.Serializable}
-interface.  Depending on the database type, there will be limits to the size of the object that can be stored.  YMMV.
+interface.  Depending on the database type, there will be limits to the size of the object that can be stored.
 
 Some databases place restrictions on this field type that it cannot be the id column in a class.  Other databases do
 not allow you to query on this type of field at all.  If your database does support it, you may also have to use a
@@ -925,7 +925,7 @@ you will have to close the underlying @code{DataSource} by hand -- the @code{clo
 does @emph{nothing}.
 
 @c ----------------------------------------------------------------
-@node DAO Setup, Database Type, Connection Source, Using
+@node DAO Setup, Database Notes, Connection Source, Using
 @section Setting Up the DAOs
 
 @cindex DAO
@@ -977,29 +977,7 @@ Dao<Order, Integer> orderDao =
 @end example
 
 @c ----------------------------------------------------------------
-@node Database Type, Database Notes, DAO Setup, Using
-@section Database Type
-
-@cindex database type
-@value{package} uses an internal @code{DatabaseType} object which defines all of the per-database information necessary
-to support the various features on all of the different database types.  The @code{JdbcConnectionSource} uses the database
-URL to pick the correct @code{DatabaseType}.  If it picks an incorrect one then you may need to set the @code{DatabaseType}
-on the connection source @emph{directly}.  For example:
-
-@example
-String databaseUrl = "jdbc:derby://dbserver1:1527/";
-DatabaseType databaseType = new DerbyClientServerDatabaseType();
-ConnectionSource connectionSource =
-   new JdbcConnectionSource(databaseUrl, databaseType);
-@end example
-
-Android users do not need to worry about this because the @code{AndroidConnectionSource} always uses the
-@code{SqliteAndroidDatabaseType}.  @xref{Use With Android}.
-
-For more information about the database specific code in the DatabaseType see later in the manual.  @xref{Database Type Details}.
-
-@c ----------------------------------------------------------------
-@node Database Notes, Complete Wiring, Database Type, Using
+@node Database Notes, Complete Wiring, DAO Setup, Using
 @section Supported Databases
 
 @value{package} supports the following database flavors.  Some of them have some specific documentation that needs to be obeyed.
@@ -1034,7 +1012,7 @@ No special instructions.  I use this database for all of my internal testing wit
 @item Derby
 
 There are two drivers for Derby: one embedded and one client/server.  @value{package} makes an attempt to detect the right driver but you
-may have to set the right database type on your ConnectionSource directly if it doesn't.  @xref{Database Type}.
+may have to set the right database type on your ConnectionSource directly if it doesn't.  @xref{Database Type Details}.
 
 @cindex HSQLDB database
 @item HSQLDB
@@ -1514,6 +1492,8 @@ fooDao.updateRaw("INSERT INTO accountlog (account_id, total) "
 
 @cindex raw execute statments
 @cindex execute raw sql statments
+@cindex truncate table
+@cindex clear table
 You can also issue raw update statements against the database if the DAO functionality does not give you
 enough flexibility.  For example:
 
@@ -1521,7 +1501,6 @@ enough flexibility.  For example:
 fooDao.executeRaw("TRUNCATE TABLE accountlog");
 @end example
 
-@cindex truncate table
 Certain database types allow table truncation which you can call through the raw execute method.  If truncate
 is not supported by the database then you can instead do:
 
@@ -2066,7 +2045,7 @@ classes.  An easy way to use the @code{OpenHelperManager} is to extend @code{Orm
 activity classes -- there is also @code{OrmLiteBaseService} and @code{OrmLiteBaseTabActivity}.  These classes provide a
 @code{getHelper()} method to access the database helper whenever it is needed and will automatically release the helper
 in the @code{onDestroy()} method.  There is a sample @code{HelloAndroid} activity class in the the sample section of the tests 
-and on the web site along with a @code{SampleData} example class.  @xref{android examples}.
+and on the web site along with a @code{SampleData} example class.  @xref{Android Examples}.
 
 @item If you do not want to extend the base classes then you will need to duplicate their basic functionality of calling
 @code{OpenHelperManager.getHelper(Context context)} at the start of your code, save the helper and use it as much as 
@@ -2076,7 +2055,7 @@ you want, and then calling @code{OpenHelperManager.release()} when you are done 
 
 @end enumerate
 
-Please see the example code documention for more information.  @xref{android examples}.  Again, feedback on this is welcome.
+Please see the example code documention for more information.  @xref{Android Examples}.  Again, feedback on this is welcome.
 
 @c ----------------------------------------------------------------
 @node Advanced, Spring Configuration, Use With Android, Top
@@ -2224,14 +2203,28 @@ You can also look at the field configuration example code.  @xref{field config e
 
 @cindex database type
 @cindex database specific code
-@value{package} isolates the database-specific code in the @code{DatabaseType} classes found in
-@code{com.j256.ormlite.db}.  Each of the supported databases has a class there which implements the code needed to
-handle the unique features of the database (H2DatabaseType, MySqlDatabaseType, etc.).   If you want to help develop
-and test against other SQL databases, a externally available server that the author could connect to and test
-against would be appreciated.  Please contact the author if your database is not supported or if you want to help.
+@value{package} uses an internal @code{DatabaseType} object which defines all of the per-database information necessary
+to support the various features on all of the different database types.  The @code{JdbcConnectionSource} uses the database
+URL to pick the correct @code{DatabaseType}.  If it picks an incorrect one then you may need to set the @code{DatabaseType}
+on the connection source @emph{directly}.  For example:
+
+@example
+String databaseUrl = "jdbc:derby://dbserver1:1527/";
+DatabaseType databaseType = new DerbyClientServerDatabaseType();
+ConnectionSource connectionSource =
+   new JdbcConnectionSource(databaseUrl, databaseType);
+@end example
+
+Android users do not need to worry about this because the @code{AndroidConnectionSource} always uses the
+@code{SqliteAndroidDatabaseType}.  @xref{Use With Android}.
+
+The @code{DatabaseType} classes are found in @code{com.j256.ormlite.db}.  Each of the supported databases has a class there
+which implements the code needed to handle the unique features of the database (H2DatabaseType, MySqlDatabaseType, etc.).
+If you want to help develop and test against other SQL databases, a externally available server that the author could connect
+to and test against would be appreciated.  Please contact the author if your database is not supported or if you want to help.
 
 The following methods are currently used by the system to isolate the database specific behavior in one place.
-See the javadocs for the @code{DatabaseType} class for more information.
+See the javadocs for the @code{DatabaseType} class for the most up to date information.
 
 @table @code
 
@@ -2587,7 +2580,7 @@ dependencies: @code{com.sun.jmx.jmxri}, @code{com.sun.jdmk.jmxtools}, @code{java
 
 @c ----------------------------------------------------------------
 @node How to Upgrade, 4.X to 4.10, Dependencies, Top
-@chapter Upgrading From Old Versions
+@chapter Upgrade From Old Versions
 
 We strive to maintain backwards compatibility and to provide deprecated versions of old classes and methods.
 However, sometimes when a new version is released, changes are made that require programmers to change their code
@@ -2719,7 +2712,7 @@ in these databases from a pre 2.4 version, the 2.4 version will not be able to f
 uppercase.
 
 @c ----------------------------------------------------------------
-@node Examples, Contributions, 2.3 to 2.4, Top
+@node Examples, JDBC Examples, 2.3 to 2.4, Top
 @chapter Example Code
 
 @cindex examples of code
@@ -2727,6 +2720,20 @@ uppercase.
 Here is some example code to help you get going with @value{package}.  I often find that code is the best documentation of how
 to get something working.  Please feel free to suggest additional example packages for inclusion here.  Source code submissions
 are welcome as long as you don't get piqued if we don't chose your's.
+
+@menu
+* JDBC Examples::           Example code using JDBC calls. 
+* Android Examples::        Example code for the Android OS.
+@end menu
+
+@c ----------------------------------------------------------------
+@node JDBC Examples, Android Examples, Examples, Examples
+@section JDBC Examples
+
+@cindex JDBC examples
+@cindex H2 examples
+All of the JDBC examples below depend on the H2 database which is a native Java SQL implementation.  You can download
+the latest jar from the website: @uref{http://www.h2database.com/html/download.html}.
 
 @table @asis
 
@@ -2766,11 +2773,12 @@ See soure code in SVN: @uref{http://ormlite.com/docs/example-spring}.
 
 @end table
 
-@c -----------
+@c ----------------------------------------------------------------
+@node Android Examples, Contributions, JDBC Examples, Examples
+@section Android Examples
 
 @cindex Android examples
-@anchor{android examples}
-For Android developers, there are also complete example application projects to help you get started with that operating system.
+For Android developers, here some complete example application projects to help you get started with that operating system.
 
 @table @asis
 
@@ -2786,13 +2794,13 @@ A nice little application written by Kevin G. that provides a counter type appli
 
 @item NotifyService
 
-An example of a service application that uses @value{package}.  See the source code in SVN:
+An example of a service application that uses @value{package} written by Kevin G.  See the source code in SVN:
 @uref{http://ormlite.com/docs/android-notify}.  A tarball of the package is also here: @uref{http://ormlite.com/android/examples/}.
 
 @end table
 
 @c ----------------------------------------------------------------
-@node Contributions, License, Examples, Top
+@node Contributions, License, Android Examples, Top
 @chapter Contributions
 
 There are a couple of people that I'd like to thank who helped with the project.

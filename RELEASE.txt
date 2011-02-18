@@ -33,7 +33,7 @@ To release ORMLite:
 
 	NOTE: if you need to, mvn -P st release:rollback will go back to the starting pom.xml 
 
-7) Login to Sontype:    https://oss.sonatype.org/   (graywatson)
+7) Login to Sontype:    https://oss.sonatype.org/
 
 8) Close and release the release:
 
