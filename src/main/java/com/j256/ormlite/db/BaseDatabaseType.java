@@ -33,6 +33,11 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	 */
 	protected abstract String getDriverClassName();
 
+	/**
+	 * Return the name of the database for logging purposes.
+	 */
+	protected abstract String getDatabaseName();
+
 	public void loadDriver() throws SQLException {
 		String className = getDriverClassName();
 		if (className != null) {
@@ -40,7 +45,8 @@ public abstract class BaseDatabaseType implements DatabaseType {
 			try {
 				Class.forName(className);
 			} catch (ClassNotFoundException e) {
-				throw SqlExceptionUtil.create("DatabaseType driver class was not found: " + className, e);
+				throw SqlExceptionUtil.create("Driver class was not found for " + getDatabaseName()
+						+ " database.  Missing jar with class " + className + ".", e);
 			}
 		}
 	}
@@ -300,7 +306,8 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	 */
 	protected void configureGeneratedIdSequence(StringBuilder sb, FieldType fieldType, List<String> statementsBefore,
 			List<String> additionalArgs, List<String> queriesAfter) {
-		throw new IllegalStateException("GeneratedIdSequence is not supported by this database type for " + fieldType);
+		throw new IllegalStateException("GeneratedIdSequence is not supported by database " + getDatabaseName()
+				+ " for field " + fieldType);
 	}
 
 	/**
@@ -311,7 +318,8 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	 */
 	protected void configureGeneratedId(StringBuilder sb, FieldType fieldType, List<String> statementsBefore,
 			List<String> additionalArgs, List<String> queriesAfter) {
-		throw new IllegalStateException("GeneratedId is not supported by this database type for " + fieldType);
+		throw new IllegalStateException("GeneratedId is not supported by database " + getDatabaseName() + " for field "
+				+ fieldType);
 	}
 
 	/**

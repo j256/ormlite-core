@@ -60,6 +60,9 @@ public class BaseSqliteDatabaseTypeTest extends BaseCoreTest {
 		protected String getDriverClassName() {
 			return null;
 		}
+		@Override
+		public String getDatabaseName() {
+			return "fake";
+		}
 	}
-
 }

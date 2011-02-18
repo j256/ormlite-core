@@ -52,6 +52,10 @@ public abstract class BaseCoreTest {
 		public String getDriverClassName() {
 			return "java.lang.String";
 		}
+		@Override
+		public String getDatabaseName() {
+			return "fake";
+		}
 		public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 			return false;
 		}

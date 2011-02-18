@@ -50,6 +50,10 @@ public class MappedDeleteTest {
 		public String getDriverClassName() {
 			return "foo.bar.baz";
 		}
+		@Override
+		public String getDatabaseName() {
+			return "fake";
+		}
 		public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 			return false;
 		}
