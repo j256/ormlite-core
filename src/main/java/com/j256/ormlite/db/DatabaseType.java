@@ -135,4 +135,10 @@ public interface DatabaseType {
 	 * Returns true if nested savePoints are supported, otherwise false.
 	 */
 	public boolean isNestedSavePointsSupported();
+
+	/**
+	 * Return an statement that doesn't do anything but which can be used to ping the database by sending it over a
+	 * database connection.
+	 */
+	public String getPingStatement();
 }
