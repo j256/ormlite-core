@@ -18,8 +18,7 @@
 	- maybe a check="> 10" type of addition to DatabaseField so we can add a check constraint
 	- foreign key constraint can be in addition to (or required for) the foreign=true
 
-- from nelson: can ORMLite help out with mapping many-to-many relationships?
-	- could it help with building the join table?
+- from nelson: can ORMLite build the join table to help with mapping many-to-many relationships?
 	- Accounts are associated with many Customers, Customers may have more than one Account
 	- three table: account, customer, account_customer
 	- account_customer has a column for account_id and customer_id to handle this relationship
@@ -42,9 +41,6 @@
 	- primitive types a problem for the 'no criteria' case
 	- maybe it would be better to have a Map with values 
 
-- need better documentation about the iterator
-	- example about how to use it outside of a for loop
-
 - JDO annotations?
 	- support as well as the JPA
 
@@ -64,6 +60,9 @@
 - consider allowing auto foreign object creation with internal doa's
 	- need to be careful of recursion
 	- maybe you could see if the id was set or something?
+
+- can the rawQuery method take ? arguments somehow? (from Luke Meyer)
+	- how to pass in arguments and types?
 
 -----------------------------------------------------------------------------------------------------------------------------------
 

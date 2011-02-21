@@ -212,7 +212,7 @@ More information about setting up the DAOs is available later in the manual. @xr
 The code in this section demonstrates how to use the classes presented in the previous two sections. The code uses the native Java H2 database to
 create the in-memory test databases. You will need to download and add the H2 jar file to your classpath if you want to run the example as-is.  See
 the H2 home page: @uref{http://www.h2database.com/html/download.html}.  @emph{NOTE:} Android users should see the Android specific documentation
-later in the manual. @xref{Use With Android}.
+later in the manual. @xref{Use With Android}.  There are also complete code examples that can be used.  @xref{Examples}.
 
 The code performs the following steps.
 
@@ -1078,7 +1078,7 @@ Account account = new Account("Jim Coakley");
 if (accountDao.create(account) != 1) @{
   // error handling @dots{} 
 @}
-// other code @dots{}
+@dots{}
 
 // destroy the data source which should close underlying connections
 connectionSource.destroy();
@@ -1182,6 +1182,21 @@ for (Account account : accountDao) @{
 @cindex closing an iterator 
 @emph{NOTE:} you must page through @emph{all} items for the iterator to close the underlying SQL object.   If you don't
 go all of the way, the garbage collector will close the SQL statement some time later which is considered bad form.
+
+@item use the iterator directly
+
+You can also use the iterator directly if the for-loop is not optimal.
+
+@example
+// page through all of the accounts in the database
+CloseableIterator<Account> iterator = accountDao.iterator();
+while (iterator.hasNext()) @{
+    Account account = iterator.next();
+    System.out.println(account.getName());
+@}
+// we must close it at the end to close the underlying SQL statement
+iterator.close();
+@end example
 
 @end table
 
@@ -1503,10 +1518,10 @@ fooDao.executeRaw("TRUNCATE TABLE accountlog");
 @end example
 
 Certain database types allow table truncation which you can call through the raw execute method.  If truncate
-is not supported by the database then you can instead do:
+is not supported by the database then you can instead do the following with the @code{updateRaw} method:
 
 @example
-fooDao.executeRaw("DELETE FROM accountlog");
+fooDao.updateRaw("DELETE FROM accountlog");
 @end example
 
 @c ----------------------------------------------------------------
