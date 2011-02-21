@@ -460,6 +460,16 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		return tableInfo.isUpdatable();
 	}
 
+	public boolean isTableExists() throws SQLException {
+		checkForInitialized();
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		try {
+			return connection.isTableExists(tableInfo.getTableName());
+		} finally {
+			connectionSource.releaseConnection(connection);
+		}
+	}
+
 	/**
 	 * Returns the table configuration information associated with the Dao's class.
 	 */

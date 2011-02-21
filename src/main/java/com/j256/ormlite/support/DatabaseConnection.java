@@ -154,4 +154,9 @@ public interface DatabaseConnection {
 	 * Return if the connection has been closed either through a call to {@link #close()} or because of a fatal error.
 	 */
 	public boolean isClosed() throws SQLException;
+
+	/**
+	 * Return true if the table exists in the database.
+	 */
+	public boolean isTableExists(String tableName) throws SQLException;
 }

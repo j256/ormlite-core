@@ -387,4 +387,9 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * dao classes.
 	 */
 	public boolean isUpdatable();
+
+	/**
+	 * Returns true if the table already exists otherwise false. This is not supported on Android.
+	 */
+	public boolean isTableExists() throws SQLException;
 }
