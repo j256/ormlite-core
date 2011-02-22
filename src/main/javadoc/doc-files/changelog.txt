@@ -104,6 +104,8 @@
 	* JDBC: DataSourceConnectionSource now needs the database URL as well as the DataSource.
 	* ANDROID: Made changes to OrmLiteSqliteOpenHelper to remove the DatabaseType references.
 
+----------------------------------------------------------------------------------------------------------------------------
+
 3.5: 9/28/2010
 	* CORE: Revamped the StatementBuilder to allow foreign fields to be queried from the object as opposed to just its id.
 	* CORE: Because of the internal changes, the prepareStatment() call now can throw SQLException.
@@ -132,6 +134,8 @@
 	* Renamed the PreparedQuery object to be PreparedStmt
 	* You don't set your DataSource on the DAOs anymore.  You use the DataSourceDatabaseConnection wrapper class.
 	* Created an internal SqlType enumeration which was a better external abstraction of SQL type integers.
+
+----------------------------------------------------------------------------------------------------------------------------
 
 2.12: 8/16/2010
 	* Added a logger which should detect and delegate to the internal Android logger.
@@ -195,6 +199,8 @@
 
 2.0: 6/12/2010
 	* Finally took the plunge and removed the Spring dependency.  Down to 2 dependencies.
+
+----------------------------------------------------------------------------------------------------------------------------
 
 1.13: 6/11/2010
 	* Fixed Postgres mixed case problem with fields and sequence numbers.
@@ -268,6 +274,8 @@
 	* Added deleteIds for deleting a collection of ids.
 	* Major revamping of the build statement stuff.
 	* Collapsed the StatementBuilder class into each of the mapped statements.  Feels a lot tighter. 
+
+----------------------------------------------------------------------------------------------------------------------------
 
 0.12: 2/1/2010
 	* Major revamping of the MappedStatement class to pair it down and get a class hierarchy going.
