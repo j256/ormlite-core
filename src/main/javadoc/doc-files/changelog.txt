@@ -205,3 +205,127 @@
 	* Added a cache of the column positions for mapped queries to make the looking up of column names faster.
 	* Finished up the next texinfo online and print documentation.
 	* Added an initial try at a DB2 database type. Completely untested.
+
+1.11: 5/21/2010
+	* Revamped the DatabaseTableConfig wiring.  Better.
+	* Found a problem with long sequence names in Postgres.
+	* Added new DatabaseFieldConfig wiring for hand or Spring wiring a class' details if you don't want to use annotations.
+	* Fixed problem when a class just has a generatedId field which cannot be inserted or updated.
+	* Found/fixed an interesting bug with generated-id and canBeNull = false.
+	* Added queryForFirst method to the DAO hierarchy.
+
+1.10: 5/15/2010
+	* Revamped the TableInfo constructors to support taking in a list of FieldType for external object configuration.  Bit messy.
+	* Made the InnoDB engine the default for tables created the the MySQL DatabaseType.
+
+1.9: 5/14/2010
+	* Added support for using getXXX and setXXX methods instead of field access reflection.
+	* Added initial TransactionManager for easy support of transactions.
+	* Lots of notes, documentation, javadocs.
+	* Added an int return value to the refresh() method to match update and delete.
+
+1.8: 5/2/2010
+	* Starting initial work to support foreign objects.
+	* Some refactoring of the id field assignment. 
+
+1.7: 4/29/2010
+	* Significant revamping of the junit tests. 
+	* Initial take on a MS SQL Server port using the JTDS driver.  Kudos to the JTDS folks.
+	* Turns out that HSQLDB is a bit different from the rest (grrrr) so I had to add an appendLimitValue to the database type.
+	* Added LIMIT support to the package.  This caused a bunch of trickle down.
+	* Renamed some of the is fields in the DatabaseType.  Added isLimitSupported because of Derby.  Grrrrrr.
+	* Added an initial take on an Oracle database type.  No access to an Oracle db so some guesses.
+	* Added a number min/max test.  Exposed some strangeness with Derby.
+	* Duplicate field issue in test found by Sqlite.  Added additional tests and moved tmp databses.
+
+1.6: 4/27/2010
+	* Added license stanza.
+	* Refactored the id-field configuration calls to allow for better override methods.
+	* Better hsqldb support with the help of the mailing list.
+
+1.5: 4/24/2010
+	* Massive move of source code down into trunk/branch hierarchy.
+	* Ton of changes as I add support for Sqlite and Hsqldb.
+	* Lot of refactoring to make the BaseDatabaseType more generic.
+	* Added logging of arguments to statements by setting the ormlite.log.arguments system property to be true.
+	* Added auto-drop for TableCreator and tuned the examples and tests.
+
+1.4: 3/24/2010
+	* Added a couple of examples showing simple usage of the package and usage with Spring.
+
+1.3: 3/18/2010
+	* New factory class and tuned the DAO wiring for better Spring wiring.
+	* Return the query string prepared by the query builder for logs or external use.
+	* Added better logging of arguments being null replacing NPEs.
+
+1.2: 2/9/2010
+	* Replaced Stack (which extends Vector) with internal stack that uses ArrayList.
+	* Allow rows with just GeneratedId fields.
+
+1.1: 2/2/2010
+	* "It's ready"
+	* Finally got the deploy to SF to work.	
+	* Added deleteIds for deleting a collection of ids.
+	* Major revamping of the build statement stuff.
+	* Collapsed the StatementBuilder class into each of the mapped statements.  Feels a lot tighter. 
+
+0.12: 2/1/2010
+	* Major revamping of the MappedStatement class to pair it down and get a class hierarchy going.
+
+0:11: 2/1/2010
+	* queryForAll(PreparedQuery) should be named query instead since it will not return all.  Bleah.
+	* Added delete(Collection) call to the Dao to delete a number of items using SQL IN clause.
+	* Added isNull and isNotNull methods to Where.
+	* Fixed some query issues with derby and NOT for all but h2.  Added QueryBuilder tests for each db type.
+
+0.10: 1/31/2010
+	* Added PreparedQuery interface to hide MappedStatement.
+	* Added updateId and refresh dao methods.
+
+0.9: 1/31/2010
+	* Added better handling of classes with just an id field.
+	* Renamed StatementMapper to MappedStatement which is much better.
+	* Moved the select args to the statement mapper and got rid of the prepared query. 
+
+0.8: 1/27/2010
+	* Lot of javadoc work.
+
+0.7: 1/27/2010
+	* Added prepared statement argument injection and moved that code into PreparedQuery.
+	* Renamed BaseDao to Dao since it was an interface.  Duh.
+	* Updated the SQL to produce uppercase SQL statements and changed method names from add to append.
+	* Major revamping of the query internals with the addition of the QueryBuilder class.
+	* Fixed escaping in H2 and MySQL.
+
+0.6: 1/23/2010
+	* Major reorganization after some good feedback from Chris.  I should be dealing with a DataSource.  
+	* Renamed DatabaseConnection to DatabaseType.
+	* Added initial take on queryAll and interator ordering. 
+
+0.5: 1/19/2010
+	* Ouch, fixed bad bug with storing of null dates in the database.
+	* Fixed postgres primary key id escaping.
+
+0.4: 1/17/2010
+	* Added initial support for the derby database.
+	* Fixed problems with ids not being set as primary keys.
+	* Added more types to the jdbc list: byte, short, float, double.
+
+0.3: 1/13/2010
+	* Improved the Postgres handling of sequence numbers.
+	* Fixed bugs with the default value stuff.
+	* More extensive postgres tests exposed a bunch of issues with table and column-name escaping.
+	* Added the objectsEqual call for testing purposes.
+
+0.2: 1/11/2010
+	* Some class renaming and reorganization.
+	* Lots of javadocs.
+
+0.1: 1/10/2010
+	* Starting to look stable-ish.
+	* Complete revamping of the query processing.
+	* Still fighting a bit with object hierarchy.
+	* Fixed a bunch of bugs in the state building escaping of reserved words. 
+
+0.0: 1/7/2010
+	* First check-in.
