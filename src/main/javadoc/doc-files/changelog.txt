@@ -1,11 +1,11 @@
-4.12: 2/17/2011
+4.12: 2/17/2011 (svn r1417)
 	* CORE: Added LONG_STRING data type for supporting longer String fields.
 	* CORE: Renamed and deprecated data types JAVA_DATE, JAVA_DATE_LONG, and JAVA_DATE_STRING to remove the JAVA_ prefix.
 	* JDBC: Added DaoFactory class for spring to create DAOs without having to define a Dao subclass.
 	* JDBC: Fixed spring TableCreator creating of tables from just the class name.  Fixes bug #3182783.
 	* ALL: Updated documentation with more examples and revamped examples to be more stand-alone.
 
-4.11: 2/14/2011
+4.11: 2/14/2011 (svn r1382)
 	* CORE: Added Where.in(QueryBuilder) and Where.exists(QueryBuilder) sub-query handling.
 	* CORE: Added executeRaw() and updateRaw() methods to the Dao interface and associated classes.
 	* CORE: Added proper checking for the log level _before_ expanding the {} args.  Fixes bug #3180862.
@@ -16,7 +16,7 @@
 	* CORE: Added better handling of nulls returned by the RawRowMapper.  It also now throws SQLException.  Thanks to Larry.
 	* ANDROID: Exposed the cursor from the iterator and android database results.
 
-4.10: 2/2/2011
+4.10: 2/2/2011 (svn r1339)
 	* CORE: Revamped the logging classes to use Levels.  Also added a JavaUtilLog implementation.
 	* CORE: Added support for the foreignAutoRefresh boolean in DatabaseField which automagically refreshes foreign fields.
 	* CORE: Significantly refactored the RawResults class (now deprecated) and created GenericRawResults.
@@ -31,28 +31,28 @@
 	* JDBC: Split out the -core from this package.  You now need to install BOTH the core and jdbc (or android) packages.
 	* ALL: Added LICENSE.txt file to all releases and documentation.  It is basically the ISC public domain license. 
 
-4.9: 1/26/2011
+4.9: 1/26/2011 (svn r1286)
 	* CORE: Changed the generated index names to have a table-name prefix and always have a "_idx" suffix.
 
-4.8: 1/25/2011
+4.8: 1/25/2011 (svn r1271)
 	* CORE: Added uniqueIndex = true and uniqueIndexName = "..." to the DatabaseField annotation to create unique indexes.
 	* ANDROID: Fixed the resulting jar so that it doesn't include the -core java files as well.
 	* JDBC: Fixed the resulting jar so that it doesn't include the -core java files as well.
 
-4.7: 1/24/2011
+4.7: 1/24/2011 (svn r1250)
 	* CORE: Added index = true and indexName = "..." to the DatabaseField annotation to create indexes.  Thanks to Larry.
 	* CORE: Added a <T,ID> generic arguments to the Where() to support a convenience prepare() method.
 	* CORE: Added a close() method to RawResults which will close the iterator if returned from iteratorRaw().
 	* ANDROID: Fixed the javadocs so they get merged in from CORE.  Still struggling with the source jar.
 	* JDBC: Fixed the javadocs so they get merged in from CORE.  Thanks to jaxelrod.  Still struggling with the source jar.
 
-4.6: 12/15/2010
+4.6: 12/15/2010 (svn r1217)
 	* CORE: Fixed issues with infinite recursion if there is a foreign object loop.  Fixes bug #3137579.
 	* CORE: Revamped a lot of the call structure internally to make way for the SimpleDB backend.  Exposed the FieldType array more.
 	* CORE: Removed some old deprecated methods from QueryBuilder and TableUtils.
 	* ANDROID: Added protection in case the subclass onCreate is called so another connection is not saved.  Fixes bug #3117883.
 
-4.5: 11/17/2010
+4.5: 11/17/2010 (svn r1178)
 	* CORE: Fixes some problems with Dates and Enums being id types.
 	* CORE: Fixed a big problem with boolean value escaping for some database types.  Fixed bug #3110466. 
 	* CORE: Added code to throw exceptions when Serializable fields are ids or part of SQL comparison.  Fixed bug #3110468.
@@ -63,10 +63,10 @@
 	* JDBC: Removed some deprecated methods from DatabaseTypeUtils.
 	* JDBC: Significantly improved the testing for all field types.  Thanks to Larry for point out some critical bugs.
 
-4.4: 11/10/2010
+4.4: 11/10/2010 (svn r1135)
 	* CORE: Fixed a major problem with refreshing some field types.  Fixes bug #3106962.
 
-4.3: 11/9/2010
+4.3: 11/9/2010 (svn r1113)
 	* CORE: Renamed the ConnectionSource#saveTransactionConnection and clear to be saveSpecialConnection and clear.
 	* CORE: Added functionality to RawResults to get all results as a List<String[]>.
 	* CORE: Added functionality to RawResults to get all results as a List<T> with RawRowMapper.
@@ -78,7 +78,7 @@
 	* JDBC: Added protection against inner connection saves.
 	* ANDROID: Solve the problem of recursion in onCreate and onUpdate differently.  Fixes bug #3096875.
 
-4.2: 10/13/2010
+4.2: 10/13/2010 (svn r1064)
 	* CORE: Improved messaging around unknown columns.
 	* CORE: Added a save and clearTransactionConnection to the TransactionManager.  Fixes bug #3085345.
 	* CORE: Added a missing releaseConnection call to the transactionManager.  Fixes bug #3085344.
@@ -87,12 +87,12 @@
 	* JDBC: Added support for transactions to DataSourceConnectionSource and pooled connection sources.
 	* ANDROID: none
 
-4.1: 10/8/2010
+4.1: 10/8/2010 (svn r1031)
 	* CORE: removed some old deprecated methods.
 	* JDBC: fixed problem where connections were not being closed in the DataSource wrapper.  Fixes bug #3083799.
 	* ANDROID: none
 
-4.0: 10/3/2010
+4.0: 10/3/2010 (svn r1004)
 	* CORE: Removed most external usage of the DatabaseType since the ConnectionSource now provides it.
 	* CORE: BaseDaoImpl now knows how to self-initialize if constructed with the ConnectionSource.
 	* CORE: Dao.queryBuilder() now returns a QueryBuilder.  You call QueryBuilder.prepare() to get a PreparedQuery.
@@ -106,25 +106,25 @@
 
 ----------------------------------------------------------------------------------------------------------------------------
 
-3.5: 9/28/2010
+3.5: 9/28/2010 (svn r948)
 	* CORE: Revamped the StatementBuilder to allow foreign fields to be queried from the object as opposed to just its id.
 	* CORE: Because of the internal changes, the prepareStatment() call now can throw SQLException.
 	* CORE: Significantly reduced the number of objects created by the DAO and other classes to lower GC overhead.
 	* ANDROID: Core refactoring should improve speeds due to reduced memory overhead
 
-3.4: 9/24/2010
+3.4: 9/24/2010 (svn r916)
 	* CORE: Revamped the log factory to use the internal LogType enum better and to construct the logs using reflection.
 	* CORE: Added javax unique=true handling which should have been in 3.3.
 	* ANDROID: Moved the AndroidLog implementation over to the Android package and reworked it to make direct calls to the android.util.Log.
 	* ANDROID: Fixed problem with Android cursor were the field-name escape characters were in the column map.  Fixes bug #3074249.
 
-3.3: 9/22/2010
+3.3: 9/22/2010 (svn r883)
 	* CORE: Added UNIQUE constraint handling for ensuring fields are unique in all rows of the table.
 	* CORE: Added a missing deprecated BaseJdbcDao that should have been in 3.2.
 	* CORE: Added a better 'Getting Started' section to the manual.  Thanks much Nelson!
 	* JDBC: Added a missing setDataSource to the DataSourceConnectionSource (fixes bug #3066894).
 
-3.2: 9/14/2010
+3.2: 9/14/2010 (svn r833)
 	* Large internal code reorganization to allow database calls outside of JDBC for better Android support.
 	* Split ormlite into 3 packages: -core, -jdbc, and -android
 	* Abstracted DataSource/Connection/ResultSet classes to be ConnectionSource/DatabaseConnection/DatabaseResults interfaces.
@@ -135,44 +135,50 @@
 	* You don't set your DataSource on the DAOs anymore.  You use the DataSourceDatabaseConnection wrapper class.
 	* Created an internal SqlType enumeration which was a better external abstraction of SQL type integers.
 
+3.1: 9/12/2010 (svn r717)
+	* Closer but still not ready.
+
+3.0: 8/17/2010 (svn r561)
+	* Not ready for prime time
+
 ----------------------------------------------------------------------------------------------------------------------------
 
-2.12: 8/16/2010
+2.12: 8/16/2010 (svn r548)
 	* Added a logger which should detect and delegate to the internal Android logger.
 	* Changed the logger classes to use reflection to remove the compilation errors if classes aren't there.
 	* Added to the documentation on how to remove log classes which are red because of missing classes.
 
-2.11: 8/13/2010
+2.11: 8/13/2010 (svn r537)
 	* Removed the final dependency by using reflection to get at the javax.persistance annotations.
 	* Added a persisted boolean to DatabaseField annotation so you can easily disable a field.
 
-2.10: 8/13/2010
+2.10: 8/13/2010 (svn r526)
 	* Added some better support for Android OS built-in and 3rd party JDBC drivers.
 
-2.9: 8/11/2010
+2.9: 8/11/2010 (svn r514)
 	* Found and fixed embarrassing problem where the local logger wasn't filtering by level. (bug #3043423)
 	* Improved some docs.
 
-2.8: 7/20/2010
+2.8: 7/20/2010 (svn r503)
 	* Found and fixed problems with boolean default values under Derby. (bug #3032387)
 	* Trickle down changes which affected a lot of FieldType and JdbcType. Also improved the null handling.
 	* Fixed the docs which referenced the BaseDao which was completely wrong.
 
-2.7: 7/19/2010
+2.7: 7/19/2010 (svn r488)
 	* Revamped the logging classes so we can remove the hard dependency on commons-logging.
 	* Changed MySQL to use DATETIME instead of TIMESTAMP for Date fields.
 	* Added the createDao static method to the BaseJdbcDao so you can create DAOs without a new class.
 
-2.6: 7/7/2010
+2.6: 7/7/2010 (svn r473)
 	* Fixed bug 3026487 where the limit in QueryBuilder was removed after a prepare.
 	* Added log wrapping so we can remove the commons-logging dependency and replace it with a LocalLog impl.
 	* Isolated the javax.persistence usage into one class for easy removal.
 	* Renamed some database type methods.
 
-2.5: 6/28/2010
+2.5: 6/28/2010 (svn r458)
 	* Finally figured out all of the tricky conf settings to get ORMLite published to the central maven repo.
 
-2.4: 6/26/2010
+2.4: 6/26/2010 (svn r397)
 	* Fixed bug with Derby and Hsqldb where raw queries would not match quoted names. Capitalized field names.
 	* Fixed a problem where value quoting for numbers and string arguments weren't handled right.
 	* Fixed problem in MySQL where timestamps were by default not-null and set to the current time.
@@ -182,14 +188,14 @@
 	* Changed the iterator returned by the Dao to a CloseableIterator to hide internal methods.
 	* Added throwIfNull annotation to DatabaseField to throw if a null field is pulled into a primitive.
 
-2.3: 6/23/2010
+2.3: 6/23/2010 (svn r382)
 	* Fixed a problem with null handling which would come back as 0s.
 
-2.2: 6/18/2010
+2.2: 6/18/2010 (svn r374)
 	* Added enum support with both integer orderinal and string name support.
 	* Changed the mechanism for detecting foreign fields with the the javax.annotations.
 
-2.1: 6/14/2010
+2.1: 6/14/2010 (svn r366)
 	* Added the ability of storing Serializable objects as the new SERIALIZABLE type.
 	* Fixed problem with generated ids under MS SQL.
 	* Trimmed the test dependencies and documented them.
@@ -197,22 +203,22 @@
 	* Fixed bug with username and password settings on the connection.
 	* Added Java 6 methods to the data source. Fixed Java 6 compile error.
 
-2.0: 6/12/2010
+2.0: 6/12/2010 (svn r344)
 	* Finally took the plunge and removed the Spring dependency.  Down to 2 dependencies.
 
 ----------------------------------------------------------------------------------------------------------------------------
 
-1.13: 6/11/2010
+1.13: 6/11/2010 (svn r332)
 	* Fixed Postgres mixed case problem with fields and sequence numbers.
 
-1.12: 6/7/2010
+1.12: 6/7/2010 (svn r324)
 	* Added database column case conversion because postgres had some problems with sequence name case
 	* Added support for javax.persistence annotations (@Entity, @Column, @Id, @GeneratedValue).
 	* Added a cache of the column positions for mapped queries to make the looking up of column names faster.
 	* Finished up the next texinfo online and print documentation.
 	* Added an initial try at a DB2 database type. Completely untested.
 
-1.11: 5/21/2010
+1.11: 5/21/2010 (svn r298)
 	* Revamped the DatabaseTableConfig wiring.  Better.
 	* Found a problem with long sequence names in Postgres.
 	* Added new DatabaseFieldConfig wiring for hand or Spring wiring a class' details if you don't want to use annotations.
@@ -220,21 +226,21 @@
 	* Found/fixed an interesting bug with generated-id and canBeNull = false.
 	* Added queryForFirst method to the DAO hierarchy.
 
-1.10: 5/15/2010
+1.10: 5/15/2010 (svn r281)
 	* Revamped the TableInfo constructors to support taking in a list of FieldType for external object configuration.  Bit messy.
 	* Made the InnoDB engine the default for tables created the the MySQL DatabaseType.
 
-1.9: 5/14/2010
+1.9: 5/14/2010 (svn r269)
 	* Added support for using getXXX and setXXX methods instead of field access reflection.
 	* Added initial TransactionManager for easy support of transactions.
 	* Lots of notes, documentation, javadocs.
 	* Added an int return value to the refresh() method to match update and delete.
 
-1.8: 5/2/2010
+1.8: 5/2/2010 (svn r246)
 	* Starting initial work to support foreign objects.
 	* Some refactoring of the id field assignment. 
 
-1.7: 4/29/2010
+1.7: 4/29/2010 (svn r236)
 	* Significant revamping of the junit tests. 
 	* Initial take on a MS SQL Server port using the JTDS driver.  Kudos to the JTDS folks.
 	* Turns out that HSQLDB is a bit different from the rest (grrrr) so I had to add an appendLimitValue to the database type.
@@ -244,31 +250,31 @@
 	* Added a number min/max test.  Exposed some strangeness with Derby.
 	* Duplicate field issue in test found by Sqlite.  Added additional tests and moved tmp databses.
 
-1.6: 4/27/2010
+1.6: 4/27/2010 (svn r195)
 	* Added license stanza.
 	* Refactored the id-field configuration calls to allow for better override methods.
 	* Better hsqldb support with the help of the mailing list.
 
-1.5: 4/24/2010
+1.5: 4/24/2010 (svn r181)
 	* Massive move of source code down into trunk/branch hierarchy.
 	* Ton of changes as I add support for Sqlite and Hsqldb.
 	* Lot of refactoring to make the BaseDatabaseType more generic.
 	* Added logging of arguments to statements by setting the ormlite.log.arguments system property to be true.
 	* Added auto-drop for TableCreator and tuned the examples and tests.
 
-1.4: 3/24/2010
+1.4: 3/24/2010 (svn r164)
 	* Added a couple of examples showing simple usage of the package and usage with Spring.
 
-1.3: 3/18/2010
+1.3: 3/18/2010 (svn r156)
 	* New factory class and tuned the DAO wiring for better Spring wiring.
 	* Return the query string prepared by the query builder for logs or external use.
 	* Added better logging of arguments being null replacing NPEs.
 
-1.2: 2/9/2010
+1.2: 2/9/2010 (svn r141)
 	* Replaced Stack (which extends Vector) with internal stack that uses ArrayList.
 	* Allow rows with just GeneratedId fields.
 
-1.1: 2/2/2010
+1.1: 2/2/2010 (svn r129)
 	* "It's ready"
 	* Finally got the deploy to SF to work.	
 	* Added deleteIds for deleting a collection of ids.
@@ -277,63 +283,63 @@
 
 ----------------------------------------------------------------------------------------------------------------------------
 
-0.12: 2/1/2010
+0.12: 2/1/2010 (svn r119)
 	* Major revamping of the MappedStatement class to pair it down and get a class hierarchy going.
 
-0:11: 2/1/2010
+0:11: 2/1/2010 (svn r110)
 	* queryForAll(PreparedQuery) should be named query instead since it will not return all.  Bleah.
 	* Added delete(Collection) call to the Dao to delete a number of items using SQL IN clause.
 	* Added isNull and isNotNull methods to Where.
 	* Fixed some query issues with derby and NOT for all but h2.  Added QueryBuilder tests for each db type.
 
-0.10: 1/31/2010
+0.10: 1/31/2010 (svn r102)
 	* Added PreparedQuery interface to hide MappedStatement.
 	* Added updateId and refresh dao methods.
 
-0.9: 1/31/2010
+0.9: 1/31/2010 (svn r99)
 	* Added better handling of classes with just an id field.
 	* Renamed StatementMapper to MappedStatement which is much better.
 	* Moved the select args to the statement mapper and got rid of the prepared query. 
 
-0.8: 1/27/2010
+0.8: 1/27/2010 (svn r85)
 	* Lot of javadoc work.
 
-0.7: 1/27/2010
+0.7: 1/27/2010 (svn r79)
 	* Added prepared statement argument injection and moved that code into PreparedQuery.
 	* Renamed BaseDao to Dao since it was an interface.  Duh.
 	* Updated the SQL to produce uppercase SQL statements and changed method names from add to append.
 	* Major revamping of the query internals with the addition of the QueryBuilder class.
 	* Fixed escaping in H2 and MySQL.
 
-0.6: 1/23/2010
+0.6: 1/23/2010 (svn r55)
 	* Major reorganization after some good feedback from Chris.  I should be dealing with a DataSource.  
 	* Renamed DatabaseConnection to DatabaseType.
 	* Added initial take on queryAll and interator ordering. 
 
-0.5: 1/19/2010
+0.5: 1/19/2010 (svn r39)
 	* Ouch, fixed bad bug with storing of null dates in the database.
 	* Fixed postgres primary key id escaping.
 
-0.4: 1/17/2010
+0.4: 1/17/2010 (svn r32)
 	* Added initial support for the derby database.
 	* Fixed problems with ids not being set as primary keys.
 	* Added more types to the jdbc list: byte, short, float, double.
 
-0.3: 1/13/2010
+0.3: 1/13/2010 (svn r19)
 	* Improved the Postgres handling of sequence numbers.
 	* Fixed bugs with the default value stuff.
 	* More extensive postgres tests exposed a bunch of issues with table and column-name escaping.
 	* Added the objectsEqual call for testing purposes.
 
-0.2: 1/11/2010
+0.2: 1/11/2010 (svn r13)
 	* Some class renaming and reorganization.
 	* Lots of javadocs.
 
-0.1: 1/10/2010
+0.1: 1/10/2010 (svn r8)
 	* Starting to look stable-ish.
 	* Complete revamping of the query processing.
 	* Still fighting a bit with object hierarchy.
 	* Fixed a bunch of bugs in the state building escaping of reserved words. 
 
-0.0: 1/7/2010
+0.0: 1/7/2010 (svn r1)
 	* First check-in.
