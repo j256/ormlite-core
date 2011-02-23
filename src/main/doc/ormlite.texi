@@ -283,8 +283,8 @@ This chapter goes into more detail about how to use @value{package}.
 * DAO Setup::                   How to configure the Data Access Objects.
 * Database Notes::              Support databases and associated notes.
 * Complete Wiring::             Tying all of the wiring together.
-* DAO Usage::                   Using the Data Access Objects.
 * Identity Columns::            How identity fields and columns work.
+* DAO Usage::                   Using the Data Access Objects.
 * Creating Indexes::            How to create indexes on fields.
 * Raw Statements::              Issuing raw database statements.
 * Foreign Objects::             Fields that represent foreign objects.
@@ -1051,12 +1051,15 @@ if you have an Oracle database that I can develop against.
 Please contact the author if your database is not supported.
 
 @c ----------------------------------------------------------------
-@node Complete Wiring, DAO Usage, Database Notes, Using
+@node Complete Wiring, Identity Columns, Database Notes, Using
 @section Tying It All Together
 
 @cindex usage example
 So you have annotated the objects to be persisted, added the no-arg constructor, created your @code{ConnectionSource}, and defined
-your DAO classes.  You are ready to start persisting and querying your database objects.  The following code ties it all together:
+your DAO classes.  You are ready to start persisting and querying your database objects.  You will need to download and add the H2
+jar file to your classpath if you want to run the example as-is.  See the H2 home page: @uref{http://www.h2database.com/html/download.html}.   
+
+The following code ties it all together:
 
 @example
 // h2 by default but change to match your database
@@ -1087,130 +1090,15 @@ connectionSource.destroy();
 For more examples, see the code later in the manual.  @xref{Examples}.
 
 @c ----------------------------------------------------------------
-@node DAO Usage, Identity Columns, Complete Wiring, Using
-@section DAO Usage
-
-@cindex DAO usage
-@cindex using the DAOs
-
-The following database operations are easily accomplished by using the DAO methods:
-
-@table @asis
-
-@cindex creating a database row
-@cindex saving an object
-@cindex persisting an object
-@cindex writing an object
-@item create and persist an object to the database
-
-This inserts a new row to the database table associated with the object.
-
-@example
-Account account = new Account();
-account.name = "Jim Coakley";
-// only 1 row should have been affected
-if (accountDao.create(account) != 1) @{
-  // error handling @dots{} 
-@}
-@end example
-
-@cindex query for id
-@item query for it's id column 
-
-If the object has an id field defined by the annotations, then we can lookup an object in the database using its id.
-
-@example
-Account account = accountDao.queryForId(name);
-if (account == null) @{
-  account not found handling @dots{} 
-@}
-@end example
-
-@cindex updating an object
-@item update the database row associated with the object
-
-If you change fields in an object in memory, you must call update to persist those changes to the database.  This
-requires an id field. 
-
-@example
-account.password = "_secret";
-// 1 row should be updated
-if (accountDao.update(account) != 1) @{
-  // error handling @dots{} 
-@}
-@end example
-
-@cindex refreshing an object
-@item refreshing our object if the database has changed
-
-If some other entity has changed a row the database corresponding to an object in memory, you will need to refresh that
-object to get the memory object up-to-date.  This requires an id field. 
-
-@example
-// 1 row should be found
-if (accountDao.refresh(account) != 1) @{
-  // error handling @dots{} 
-@}
-@end example
-
-@cindex deleting an object
-@item delete the account from the database
-
-Removes the row that corresponds to the object from the database.  Once the object has been deleted from the database,
-you can continue to use the object in memory but any update or refresh calls will fail.  This requires an id field.
-
-@example
-// 1 row should be affected
-if (accountDao.delete(account) != 1) @{
-  // error handling @dots{} 
-@}
-@end example
-
-@cindex iterator
-@cindex iterating through all rows
-@item iterate through all of the rows in a table:
-
-The DAO is also an iterator so you can easily run through all of the rows in the database:
-
-@example
-// page through all of the accounts in the database
-for (Account account : accountDao) @{
-    System.out.println(account.getName());
-@}
-@end example
-
-@cindex closing an iterator 
-@emph{NOTE:} you must page through @emph{all} items for the iterator to close the underlying SQL object.   If you don't
-go all of the way, the garbage collector will close the SQL statement some time later which is considered bad form.
-
-@item use the iterator directly
-
-You can also use the iterator directly if the for-loop is not optimal.
-
-@example
-// page through all of the accounts in the database
-CloseableIterator<Account> iterator = accountDao.iterator();
-while (iterator.hasNext()) @{
-    Account account = iterator.next();
-    System.out.println(account.getName());
-@}
-// we must close it at the end to close the underlying SQL statement
-iterator.close();
-@end example
-
-@end table
-
-For a detailed list of the methods in the DAO @pxref{DAO Methods}.
-
-@c ----------------------------------------------------------------
-@node Identity Columns, Id Column, DAO Usage, Using
+@node Identity Columns, Id Column, Complete Wiring, Using
 @section Identity Columns
 
-Database rows are identified by a particular column which is defined as the @emph{identity} column.  This can either be
-supplied by the user or auto-generated by the database.  Identity columns have unique values for every row in the table
-and they are required if you want to query-by-id, delete, refresh, or update a particular row using the DAO.  To configure
-a field as an identity field, you should use one (and only one) of the following three settings from @code{@@DatabaseField}:
-@code{id}, @code{generatedId}, or @code{generatedIdSequence}.
+Database rows can be identified by a particular column which is defined as the @emph{identity} column.  Rows do not need to
+have an identity column but for many of the DAO operations (update, delete, refresh) an identity column is required.  The
+identity can either be supplied by the user or auto-generated by the database.  Identity columns have unique values for every
+row in the table and they are required if you want to query-by-id, delete, refresh, or update a particular row using the DAO.
+To configure a field as an identity field, you should use one (and only one) of the following three settings from
+@code{@@DatabaseField}: @code{id}, @code{generatedId}, or @code{generatedIdSequence}.
 
 @menu
 * Id Column::                        Using fields with id = true.
@@ -1275,7 +1163,7 @@ by the database and set on the object by @value{package}.  In the majority of da
 1 and increases by 1 every time a new row is inserted into the table.
 
 @example
-// build our order object without and id
+// build our order object without an id
 Order order = new Order("Jim Sanders", 12.34);
 @dots{}
 if (orderDao.create(order) != 1) @{
@@ -1298,7 +1186,7 @@ be set on the id field by @value{package} and will be available when @code{getId
 @emph{NOTE:} Depending on the database type, you may not be able to change the value of an auto-generated id field.
 
 @c ----------------------------------------------------------------
-@node GeneratedIdSequence Column, Creating Indexes, GeneratedId Column, Identity Columns
+@node GeneratedIdSequence Column, DAO Usage, GeneratedId Column, Identity Columns
 @subsection Fields With generatedIdSequence
 
 @cindex generated identity sequence name
@@ -1324,7 +1212,123 @@ sequences.
 @emph{NOTE:} Depending on the database type, you may not be able to change the value of an auto-generated id field.
 
 @c ----------------------------------------------------------------
-@node Creating Indexes, Raw Statements, GeneratedIdSequence Column, Using
+@node DAO Usage, Creating Indexes, GeneratedIdSequence Column, Using
+@section DAO Usage
+
+@cindex DAO usage
+@cindex using the DAOs
+
+The following database operations are easily accomplished by using the DAO methods:
+
+@table @asis
+
+@cindex creating a database row
+@cindex saving an object
+@cindex persisting an object
+@cindex writing an object
+@item create and persist an object to the database
+
+This inserts a new row to the database table associated with the object.
+
+@example
+Account account = new Account();
+account.name = "Jim Coakley";
+// only 1 row should have been affected
+if (accountDao.create(account) != 1) @{
+  // error handling @dots{} 
+@}
+@end example
+
+@cindex query for id
+@item query for it's id column 
+
+If the object has an id field defined by the annotations, then we can lookup an object in the database using its id.
+
+@example
+Account account = accountDao.queryForId(name);
+if (account == null) @{
+  account not found handling @dots{} 
+@}
+@end example
+
+@cindex updating an object
+@item update the database row associated with the object
+
+If you change fields in an object in memory, you must call update to persist those changes to the database.  This
+requires an id field. 
+
+@example
+account.password = "_secret";
+// 1 row should be updated
+if (accountDao.update(account) != 1) @{
+  // error handling @dots{} 
+@}
+@end example
+
+@cindex refreshing an object
+@item refreshing an object if the database has changed
+
+If some other entity has changed a row the database corresponding to an object in memory, you will need to refresh that
+object to get the memory object up-to-date.  This requires an id field. 
+
+@example
+// 1 row should be found
+if (accountDao.refresh(account) != 1) @{
+  // error handling @dots{} 
+@}
+@end example
+
+@cindex deleting an object
+@item delete the account from the database
+
+Removes the row that corresponds to the object from the database.  Once the object has been deleted from the database,
+you can continue to use the object in memory but any update or refresh calls will fail.  This requires an id field.
+
+@example
+// 1 row should be affected
+if (accountDao.delete(account) != 1) @{
+  // error handling @dots{} 
+@}
+@end example
+
+@cindex iterator
+@cindex iterating through all rows
+@item iterate through all of the rows in a table:
+
+The DAO is also an iterator so you can easily run through all of the rows in the database:
+
+@example
+// page through all of the accounts in the database
+for (Account account : accountDao) @{
+    System.out.println(account.getName());
+@}
+@end example
+
+@cindex closing an iterator 
+@emph{NOTE:} you must page through @emph{all} items for the iterator to close the underlying SQL object.   If you don't
+go all of the way, the garbage collector will close the SQL statement some time later which is considered bad form.
+
+@item use the iterator directly
+
+You can also use the iterator directly if the for-loop is not optimal.
+
+@example
+// page through all of the accounts in the database
+CloseableIterator<Account> iterator = accountDao.iterator();
+while (iterator.hasNext()) @{
+    Account account = iterator.next();
+    System.out.println(account.getName());
+@}
+// we must close it at the end to close the underlying SQL statement
+iterator.close();
+@end example
+
+@end table
+
+For a detailed list of the methods in the DAO @pxref{DAO Methods}.
+
+@c ----------------------------------------------------------------
+@node Creating Indexes, Raw Statements, DAO Usage, Using
 @section Indexing Fields
 
 @value{package} provides some limited support for indexing of various fields in your data classes.  First off, it
@@ -2189,6 +2193,7 @@ Please see the example code documention for more information.  @xref{Android Exa
 * DAO Methods::                What functionality is provided by the DAO.
 * Logging::                    How to log messages with @value{package}.
 * Dependencies::               External dependencies of @value{package}.
+* Transactions::               Using Database Transactions.
 @end menu
 
 @c ----------------------------------------------------------------
@@ -2602,12 +2607,20 @@ Run a raw execute SQL statement against the database.  @xref{Raw Executes}.
 Run a raw update SQL statement (@code{INSERT}, @code{DELETE}, or @code{UPDATE} against the database.
 @xref{Raw Updates}.
 
+@cindex batch operations
+@cindex auto commit
+@cindex turn off auto commit
+@cindex large number of inserts
+@cindex callBatchTasks
+@anchor{callBatchTasks}
 @item callBatchTasks(Callable callable)
 
 Call the call-able that will perform a number of batch tasks. This is for performance when you want to run a
 number of database operations at once -- maybe loading data from a file. This will turn off what databases call
 "auto-commit" mode, run the call-able and then re-enable "auto-commit".
 
+@cindex Android transactions
+@cindex Android auto-commit
 @emph{NOTE:} This is only supported by databases that support auto-commit. Android, for example, does not
 support auto-commit although using the @code{TransactionManager} and performing actions within a transaction
 seems to have the same batch performance implications.
@@ -2663,7 +2676,7 @@ various SQL calls.  This may expose passwords or other sensitive information in 
 only be used during debugging and should not be the default.
 
 @c ----------------------------------------------------------------
-@node Dependencies, How to Upgrade, Logging, Advanced
+@node Dependencies, Transactions, Logging, Advanced
 @section External Dependencies
 
 @value{package} does not have any direct dependencies.  It has logging classes that depend on Apache commons-logging
@@ -2700,7 +2713,62 @@ dependencies: @code{com.sun.jmx.jmxri}, @code{com.sun.jdmk.jmxtools}, @code{java
 @end table
 
 @c ----------------------------------------------------------------
-@node How to Upgrade, 4.X to 4.10, Dependencies, Top
+@node Transactions, How to Upgrade, Dependencies, Advanced
+@section Using Database Transactions
+
+@cindex database transactions
+@cindex transactions
+@cindex commit
+@cindex roll back
+Database transactions allow you to make a number of changes to the database and then if any of them fail, none of the
+changes are actually written.  For example, let's say you are recording an order into your order entry system which
+requires you to insert a row into the Order table and also to update the Account table with the order number.  If the
+Order was inserted but then a disk error stopped the Account from being updated, the Order data would be left dangling.
+If you used a transaction then both changes would be saved to the database only when the transaction was closed.  Most (not all)
+databases support transactions which are designed specifically with these sorts of scenerios in mind.
+
+@cindex TransactionManager
+@value{package} has basic support for transactions through the use of the @code{TransactionManager} class which wraps
+databases operations in a transaction.  If those operations throw an exception, then the transaction is "rolled-back"
+and none of the operations are persisted to the database.  Once the operations are finished, if no exception is thrown,
+then the transaction is "committed" and the changes are written to the database.
+
+@example
+// you should create and use one transaction manager for your program
+TransactionManager mgr = new TransactionManager(connectionSource);
+
+// we need the final to see it within the Callable
+final Order order = new Order();
+
+mgr.callInTransaction(new Callable<Void>() @{
+	public Void call() throws Exception @{
+		// insert our order, should return 1
+		orderDao.create(order);
+		// now add the order to the account
+		account.setOrder(order);
+		// update our account object, should return 1
+		accountDao.update(account);
+		// you could pass back an object here
+		return null;
+	@}
+@});
+@end example
+
+If for some reason, the @code{accountDao.update()} fails in the above example, the order insert will not be committed to
+the database.  Transactions allow you to make multiple operations while still ensuring data integrity.  Notice that you
+can return an object from the callable so you could pass back the number of rows affected or other information.
+
+@cindex Android batch tasks
+@cindex callBatchTasks
+@emph{NOTE:} Performing database operations within a transaction also has the side effect of better performance since
+a number of changes are written at once in a batch.  For those databases which do support auto-commit, the
+@code{Dao.callBatchTasks()} method should be used. @xref{callBatchTasks}.  However, for those databases that do
+@emph{not} support auto-commit but do support transactions (for example Android), running a number of operations within
+a transaction seems to give a significant performance improvement. For exampe, if you are a making a large number of
+inserts into a database, consider running them within a transaction.
+
+@c ----------------------------------------------------------------
+@node How to Upgrade, 4.X to 4.10, Transactions, Top
 @chapter Upgrade From Old Versions
 
 We strive to maintain backwards compatibility and to provide deprecated versions of old classes and methods.
