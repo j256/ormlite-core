@@ -206,6 +206,25 @@ public class DatabaseFieldConfigTest {
 		assertEquals(ComboIndex.INDEX_NAME, fieldConfig.getIndexName());
 	}
 
+	@Test
+	public void testDefaultValue() throws Exception {
+		DatabaseType databaseType = new StubDatabaseType();
+		DatabaseFieldConfig fieldConfig =
+				DatabaseFieldConfig.fromField(databaseType, "defaultstring",
+						DefaultString.class.getDeclaredField("stuff"));
+		assertNotNull(fieldConfig.getDefaultValue());
+		assertEquals(DefaultString.STUFF_DEFAULT, fieldConfig.getDefaultValue());
+		fieldConfig =
+				DatabaseFieldConfig.fromField(databaseType, "defaultstring",
+						DefaultString.class.getDeclaredField("junk"));
+		assertNotNull(fieldConfig.getDefaultValue());
+		assertEquals(DefaultString.JUNK_DEFAULT, fieldConfig.getDefaultValue());
+		fieldConfig =
+				DatabaseFieldConfig.fromField(databaseType, "defaultstring",
+						DefaultString.class.getDeclaredField("none"));
+		assertNull(fieldConfig.getDefaultValue());
+	}
+
 	protected class Foo {
 		@DatabaseField(canBeNull = true)
 		String field;
@@ -301,5 +320,18 @@ public class DatabaseFieldConfigTest {
 		public ComboIndex() {
 		}
 		public static final String INDEX_NAME = "stuffjunk";
+	}
+
+	protected static class DefaultString {
+		public static final String STUFF_DEFAULT = "";
+		public static final String JUNK_DEFAULT = "xyzzy";
+		@DatabaseField(defaultValue = STUFF_DEFAULT)
+		String stuff;
+		@DatabaseField(defaultValue = JUNK_DEFAULT)
+		String junk;
+		@DatabaseField
+		String none;
+		public DefaultString() {
+		}
 	}
 }

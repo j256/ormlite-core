@@ -351,10 +351,10 @@ public class DatabaseFieldConfig {
 			config.columnName = null;
 		}
 		config.dataType = databaseField.dataType();
-		if (databaseField.defaultValue().length() > 0) {
-			config.defaultValue = databaseField.defaultValue();
-		} else {
+		if (databaseField.defaultValue().equals(DatabaseField.NO_DEFAULT)) {
 			config.defaultValue = null;
+		} else {
+			config.defaultValue = databaseField.defaultValue();
 		}
 		config.width = databaseField.width();
 		config.canBeNull = databaseField.canBeNull();
