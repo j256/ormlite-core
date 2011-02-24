@@ -25,12 +25,6 @@
 	- how can ORMLite assist in the loading of a Java list of Customers on an Account object
 	- at least a List of customer ids?
 
-- implement a "keep-alive" query ("select 1") to keep a connection warm
-	- for the pooled connection source
-	- needs another thread to run select 1 every minute or so
-	- should do a select 1 when the connection is handed to us and not closed
-	- database type should define the keep-alive query
-
 - delete method which deletes all of the rows that match a particular field.
 	- to support the foreign key stuff.
 	- deleteFieldEquals(String fieldName, Object value);
