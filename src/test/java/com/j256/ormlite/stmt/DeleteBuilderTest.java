@@ -4,13 +4,11 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseCoreTest;
-
-public class DeleteBuilderTest extends BaseCoreTest {
+public class DeleteBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testDeleteAll() throws Exception {
-		DeleteBuilder<BaseFoo, String> stmtb = new DeleteBuilder<BaseFoo, String>(databaseType, baseFooTableInfo);
+		DeleteBuilder<Foo, String> stmtb = new DeleteBuilder<Foo, String>(databaseType, baseFooTableInfo);
 		StringBuilder sb = new StringBuilder();
 		sb.append("DELETE FROM ");
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());

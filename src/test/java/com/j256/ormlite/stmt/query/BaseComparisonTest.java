@@ -11,11 +11,11 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.db.DatabaseType;
+import com.j256.ormlite.stmt.BaseCoreStmtTest;
 import com.j256.ormlite.stmt.SelectArg;
 
-public class BaseComparisonTest extends BaseCoreTest {
+public class BaseComparisonTest extends BaseCoreStmtTest {
 
 	private static final String INT_COLUMN_NAME = "column1";
 	private static final String STRING_COLUMN_NAME = "column2";
@@ -112,7 +112,7 @@ public class BaseComparisonTest extends BaseCoreTest {
 	public void testForeignId() throws SQLException {
 		StringBuilder sb = new StringBuilder();
 		ArrayList<SelectArg> selectArgList = new ArrayList<SelectArg>();
-		BaseFoo baseFoo = new BaseFoo();
+		Foo baseFoo = new Foo();
 		String id = "zebra";
 		baseFoo.id = id;
 		cmpForeign.appendArgOrValue(databaseType, foreignFieldType, sb, selectArgList, baseFoo);
@@ -126,7 +126,7 @@ public class BaseComparisonTest extends BaseCoreTest {
 	public void testForeignIdNull() throws SQLException {
 		StringBuilder sb = new StringBuilder();
 		ArrayList<SelectArg> selectArgList = new ArrayList<SelectArg>();
-		BaseFoo baseFoo = new BaseFoo();
+		Foo baseFoo = new Foo();
 		baseFoo.id = null;
 		cmpForeign.appendArgOrValue(databaseType, foreignFieldType, sb, selectArgList, baseFoo);
 	}

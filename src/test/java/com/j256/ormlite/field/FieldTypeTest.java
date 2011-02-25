@@ -23,6 +23,7 @@ import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.db.DatabaseType;
+import com.j256.ormlite.h2.H2DatabaseType;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
@@ -97,14 +98,10 @@ public class FieldTypeTest extends BaseCoreTest {
 		Field[] fields = GeneratedIdSequence.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
 		connectionSource.setDatabaseType(new NeedsSequenceDatabaseType());
-		try {
-			FieldType fieldType =
-					FieldType.createFieldType(connectionSource, GeneratedIdSequence.class.getSimpleName(), fields[0], 0);
-			assertTrue(fieldType.isGeneratedIdSequence());
-			assertEquals(SEQ_NAME, fieldType.getGeneratedIdSequence());
-		} finally {
-			connectionSource.resetDatabaseType();
-		}
+		FieldType fieldType =
+				FieldType.createFieldType(connectionSource, GeneratedIdSequence.class.getSimpleName(), fields[0], 0);
+		assertTrue(fieldType.isGeneratedIdSequence());
+		assertEquals(SEQ_NAME, fieldType.getGeneratedIdSequence());
 	}
 
 	@Test
@@ -112,14 +109,10 @@ public class FieldTypeTest extends BaseCoreTest {
 		Field[] fields = GeneratedIdSequence.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
 		connectionSource.setDatabaseType(new NeedsUppercaseSequenceDatabaseType());
-		try {
-			FieldType fieldType =
-					FieldType.createFieldType(connectionSource, GeneratedIdSequence.class.getSimpleName(), fields[0], 0);
-			assertTrue(fieldType.isGeneratedIdSequence());
-			assertEquals(SEQ_NAME.toUpperCase(), fieldType.getGeneratedIdSequence());
-		} finally {
-			connectionSource.resetDatabaseType();
-		}
+		FieldType fieldType =
+				FieldType.createFieldType(connectionSource, GeneratedIdSequence.class.getSimpleName(), fields[0], 0);
+		assertTrue(fieldType.isGeneratedIdSequence());
+		assertEquals(SEQ_NAME.toUpperCase(), fieldType.getGeneratedIdSequence());
 	}
 
 	@Test
@@ -127,13 +120,9 @@ public class FieldTypeTest extends BaseCoreTest {
 		Field[] fields = GeneratedId.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
 		connectionSource.setDatabaseType(new NeedsSequenceDatabaseType());
-		try {
-			FieldType fieldType =
-					FieldType.createFieldType(connectionSource, GeneratedId.class.getSimpleName(), fields[0], 0);
-			assertTrue(fieldType.isGeneratedIdSequence());
-		} finally {
-			connectionSource.resetDatabaseType();
-		}
+		FieldType fieldType =
+				FieldType.createFieldType(connectionSource, GeneratedId.class.getSimpleName(), fields[0], 0);
+		assertTrue(fieldType.isGeneratedIdSequence());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -174,25 +163,21 @@ public class FieldTypeTest extends BaseCoreTest {
 		expect(databaseType.isEntityNamesMustBeUpCase()).andReturn(false);
 		replay(databaseType);
 		connectionSource.setDatabaseType(databaseType);
-		try {
-			FieldType fieldType = FieldType.createFieldType(connectionSource, Foo.class.getSimpleName(), nameField, 0);
-			verify(databaseType);
+		FieldType fieldType = FieldType.createFieldType(connectionSource, Foo.class.getSimpleName(), nameField, 0);
+		verify(databaseType);
 
-			assertEquals(sqlType, fieldType.getSqlType());
-			Foo foo = new Foo();
-			// it can't be null
-			foo.name = nameArg + " not that";
-			assertEquals(nameArg, fieldType.extractJavaFieldToSqlArgValue(foo));
+		assertEquals(sqlType, fieldType.getSqlType());
+		Foo foo = new Foo();
+		// it can't be null
+		foo.name = nameArg + " not that";
+		assertEquals(nameArg, fieldType.extractJavaFieldToSqlArgValue(foo));
 
-			DatabaseResults resultMock = createMock(DatabaseResults.class);
-			expect(resultMock.findColumn("name")).andReturn(0);
-			expect(resultMock.isNull(0)).andReturn(false);
-			replay(resultMock);
-			assertEquals(nameResult, fieldType.resultToJava(resultMock, new HashMap<String, Integer>()));
-			verify(resultMock);
-		} finally {
-			connectionSource.resetDatabaseType();
-		}
+		DatabaseResults resultMock = createMock(DatabaseResults.class);
+		expect(resultMock.findColumn("name")).andReturn(0);
+		expect(resultMock.isNull(0)).andReturn(false);
+		replay(resultMock);
+		assertEquals(nameResult, fieldType.resultToJava(resultMock, new HashMap<String, Integer>()));
+		verify(resultMock);
 	}
 
 	@Test
@@ -817,7 +802,17 @@ public class FieldTypeTest extends BaseCoreTest {
 		String stuff;
 	}
 
-	protected class NeedsUppercaseSequenceDatabaseType extends NeedsSequenceDatabaseType {
+	@DatabaseTable
+	protected static class Recursive {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(foreign = true)
+		Recursive foreign;
+		public Recursive() {
+		}
+	}
+
+	private static class NeedsUppercaseSequenceDatabaseType extends NeedsSequenceDatabaseType {
 		public NeedsUppercaseSequenceDatabaseType() {
 		}
 		@Override
@@ -826,13 +821,12 @@ public class FieldTypeTest extends BaseCoreTest {
 		}
 	}
 
-	@DatabaseTable
-	protected static class Recursive {
-		@DatabaseField(generatedId = true)
-		int id;
-		@DatabaseField(foreign = true)
-		Recursive foreign;
-		public Recursive() {
+	private static class NeedsSequenceDatabaseType extends H2DatabaseType {
+		public NeedsSequenceDatabaseType() {
+		}
+		@Override
+		public boolean isIdSequenceNeeded() {
+			return true;
 		}
 	}
 }

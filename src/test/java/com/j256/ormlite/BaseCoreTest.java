@@ -1,103 +1,39 @@
 package com.j256.ormlite;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-import java.lang.reflect.Field;
 import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Set;
 
-import com.j256.ormlite.db.BaseDatabaseType;
+import org.junit.After;
+import org.junit.Before;
+
+import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.support.DatabaseConnection;
-import com.j256.ormlite.table.TableInfo;
+import com.j256.ormlite.h2.H2ConnectionSource;
+import com.j256.ormlite.h2.H2DatabaseType;
+import com.j256.ormlite.table.DatabaseTableConfig;
+import com.j256.ormlite.table.TableUtils;
 
 public abstract class BaseCoreTest {
 
-	protected final DatabaseType databaseType = new StubDatabaseType();
-	protected final StubConnectionSource connectionSource = new StubConnectionSource();
-	protected TableInfo<BaseFoo> baseFooTableInfo;
-	protected final FieldType numberFieldType;
-	protected final FieldType stringFieldType;
-	protected final FieldType foreignFieldType;
+	protected final DatabaseType databaseType = new H2DatabaseType();
+	protected H2ConnectionSource connectionSource;
 
-	{
-		try {
-			Field field = BaseFoo.class.getDeclaredField("id");
-			assertEquals(String.class, field.getType());
-			stringFieldType = FieldType.createFieldType(connectionSource, "BaseFoo", field, 0);
-			field = BaseFoo.class.getDeclaredField("val");
-			assertEquals(int.class, field.getType());
-			numberFieldType = FieldType.createFieldType(connectionSource, "BaseFoo", field, 0);
-			field = Foreign.class.getDeclaredField("baseFoo");
-			assertEquals(BaseFoo.class, field.getType());
-			foreignFieldType = FieldType.createFieldType(connectionSource, "BaseFoo", field, 0);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+	private Set<DatabaseTableConfig<?>> dropClassSet = new HashSet<DatabaseTableConfig<?>>();
+
+	@Before
+	public void before() throws Exception {
+		connectionSource = new H2ConnectionSource();
 	}
 
-	{
-		try {
-			baseFooTableInfo = new TableInfo<BaseFoo>(connectionSource, BaseFoo.class);
-		} catch (SQLException e) {
-			fail("Constructing our base table info threw an exception");
-		}
+	@After
+	public void after() throws Exception {
+		connectionSource.close();
 	}
 
-	protected class StubDatabaseType extends BaseDatabaseType {
-		@Override
-		public String getDriverClassName() {
-			return "java.lang.String";
-		}
-		@Override
-		public String getDatabaseName() {
-			return "fake";
-		}
-		public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
-			return false;
-		}
-	}
-
-	protected class StubConnectionSource implements ConnectionSource {
-		private DatabaseType stubDatabaseType = new StubDatabaseType();
-		private DatabaseType databaseType = stubDatabaseType;
-		private DatabaseConnection databaseConnection;
-		public DatabaseConnection getReadOnlyConnection() {
-			return databaseConnection;
-		}
-		public DatabaseConnection getReadWriteConnection() {
-			return databaseConnection;
-		}
-		public void releaseConnection(DatabaseConnection connection) {
-		}
-		public void close() throws SQLException {
-		}
-		public DatabaseType getDatabaseType() {
-			return databaseType;
-		}
-		public void setDatabaseConnection(DatabaseConnection databaseConnection) {
-			this.databaseConnection = databaseConnection;
-		}
-		public boolean saveSpecialConnection(DatabaseConnection connection) {
-			return true;
-		}
-		public void clearSpecialConnection(DatabaseConnection connection) {
-		}
-		public DatabaseConnection getSpecialConnection() {
-			return null;
-		}
-		public void setDatabaseType(DatabaseType databaseType) {
-			this.databaseType = databaseType;
-		}
-		public void resetDatabaseType() {
-			this.databaseType = stubDatabaseType;
-		}
-	}
-
-	protected class LimitAfterSelectDatabaseType extends StubDatabaseType {
+	protected class LimitAfterSelectDatabaseType extends H2DatabaseType {
 		public LimitAfterSelectDatabaseType() {
 		}
 		@Override
@@ -106,16 +42,7 @@ public abstract class BaseCoreTest {
 		}
 	}
 
-	protected class NeedsSequenceDatabaseType extends StubDatabaseType {
-		public NeedsSequenceDatabaseType() {
-		}
-		@Override
-		public boolean isIdSequenceNeeded() {
-			return true;
-		}
-	}
-
-	protected static class BaseFoo {
+	protected static class Foo {
 		public static final String ID_COLUMN_NAME = "id";
 		public static final String VAL_COLUMN_NAME = "val";
 		public static final String EQUAL_COLUMN_NAME = "equal";
@@ -128,7 +55,7 @@ public abstract class BaseCoreTest {
 		public int equal;
 		@DatabaseField(columnName = NULL_COLUMN_NAME)
 		public String nullField;
-		public BaseFoo() {
+		public Foo() {
 		}
 		@Override
 		public String toString() {
@@ -138,14 +65,70 @@ public abstract class BaseCoreTest {
 		public boolean equals(Object other) {
 			if (other == null || other.getClass() != getClass())
 				return false;
-			return id.equals(((BaseFoo) other).id);
+			return id.equals(((Foo) other).id);
 		}
 	}
 
-	protected class Foreign {
+	protected static class Foreign {
 		@DatabaseField(foreign = true)
-		public BaseFoo baseFoo;
+		public Foo foo;
 		public Foreign() {
 		}
+	}
+
+	protected <T, ID> Dao<T, ID> createDao(Class<T> clazz, boolean createTable) throws Exception {
+		if (connectionSource == null) {
+			throw new SQLException("Connection source is null");
+		}
+		return createDao(DatabaseTableConfig.fromClass(connectionSource, clazz), createTable);
+	}
+
+	protected <T, ID> Dao<T, ID> createDao(DatabaseTableConfig<T> tableConfig, boolean createTable) throws Exception {
+		if (connectionSource == null) {
+			throw new SQLException("Connection source is null");
+		}
+		BaseDaoImpl<T, ID> dao = new BaseDaoImpl<T, ID>(connectionSource, tableConfig) {
+		};
+		return configDao(tableConfig, createTable, dao);
+	}
+
+	protected <T> void createTable(Class<T> clazz, boolean dropAtEnd) throws Exception {
+		createTable(DatabaseTableConfig.fromClass(connectionSource, clazz), dropAtEnd);
+	}
+
+	protected <T> void createTable(DatabaseTableConfig<T> tableConfig, boolean dropAtEnd) throws Exception {
+		try {
+			// first we drop it in case it existed before
+			dropTable(tableConfig, true);
+		} catch (SQLException ignored) {
+			// ignore any errors about missing tables
+		}
+		TableUtils.createTable(connectionSource, tableConfig);
+		if (dropAtEnd) {
+			dropClassSet.add(tableConfig);
+		}
+	}
+
+	protected <T> void dropTable(Class<T> clazz, boolean ignoreErrors) throws Exception {
+		// drop the table and ignore any errors along the way
+		TableUtils.dropTable(connectionSource, clazz, ignoreErrors);
+	}
+
+	protected <T> void dropTable(DatabaseTableConfig<T> tableConfig, boolean ignoreErrors) throws Exception {
+		// drop the table and ignore any errors along the way
+		TableUtils.dropTable(connectionSource, tableConfig, ignoreErrors);
+	}
+
+	private <T, ID> Dao<T, ID> configDao(DatabaseTableConfig<T> tableConfig, boolean createTable, BaseDaoImpl<T, ID> dao)
+			throws Exception {
+		if (connectionSource == null) {
+			throw new SQLException("Connection source is null");
+		}
+		dao.setConnectionSource(connectionSource);
+		if (createTable) {
+			createTable(tableConfig, true);
+		}
+		dao.initialize();
+		return dao;
 	}
 }

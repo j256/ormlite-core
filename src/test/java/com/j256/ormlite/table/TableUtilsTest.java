@@ -24,6 +24,7 @@ import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.h2.H2DatabaseType;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.ConnectionSource;
@@ -70,7 +71,7 @@ public class TableUtilsTest extends BaseCoreTest {
 	@Test
 	public void testCreateTableQueriesAfter() throws Exception {
 		final String queryAfter = "SELECT * from foo";
-		DatabaseType databaseType = new StubDatabaseType() {
+		DatabaseType databaseType = new H2DatabaseType() {
 			@Override
 			public void appendColumnArg(StringBuilder sb, FieldType fieldType, List<String> additionalArgs,
 					List<String> statementsBefore, List<String> statementsAfter, List<String> queriesAfter) {

@@ -4,12 +4,12 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.stmt.BaseCoreStmtTest;
 import com.j256.ormlite.stmt.StatementExecutor;
 import com.j256.ormlite.table.TableInfo;
 
-public class MappedQueryForIdTest extends BaseCoreTest {
+public class MappedQueryForIdTest extends BaseCoreStmtTest {
 
 	@Test(expected = SQLException.class)
 	public void testQueryNoId() throws Exception {

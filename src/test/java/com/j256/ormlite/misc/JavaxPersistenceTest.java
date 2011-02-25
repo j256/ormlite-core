@@ -21,6 +21,7 @@ import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
+import com.j256.ormlite.h2.H2DatabaseType;
 
 public class JavaxPersistenceTest extends BaseCoreTest {
 
@@ -142,7 +143,7 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 		String stuff;
 	}
 
-	private class UpperCaseFieldDatabaseType extends StubDatabaseType {
+	private class UpperCaseFieldDatabaseType extends H2DatabaseType {
 		@Override
 		public boolean isEntityNamesMustBeUpCase() {
 			return true;

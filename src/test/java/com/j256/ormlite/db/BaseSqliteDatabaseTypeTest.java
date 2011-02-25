@@ -17,7 +17,7 @@ public class BaseSqliteDatabaseTypeTest extends BaseCoreTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testConfigureGeneratedIdNotInteger() throws Exception {
-		Field field = BaseFoo.class.getField("id");
+		Field field = Foo.class.getField("id");
 		FieldType fieldType = FieldType.createFieldType(connectionSource, "foo", field, 0);
 		OurSqliteDatabaseType dbType = new OurSqliteDatabaseType();
 		StringBuilder sb = new StringBuilder();
@@ -27,7 +27,7 @@ public class BaseSqliteDatabaseTypeTest extends BaseCoreTest {
 
 	@Test
 	public void testConfigureGeneratedIdInteger() throws Exception {
-		Field field = BaseFoo.class.getField("val");
+		Field field = Foo.class.getField("val");
 		FieldType fieldType = FieldType.createFieldType(connectionSource, "foo", field, 0);
 		OurSqliteDatabaseType dbType = new OurSqliteDatabaseType();
 		StringBuilder sb = new StringBuilder();

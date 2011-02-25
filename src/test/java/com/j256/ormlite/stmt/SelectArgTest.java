@@ -8,9 +8,7 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseCoreTest;
-
-public class SelectArgTest extends BaseCoreTest {
+public class SelectArgTest extends BaseCoreStmtTest {
 
 	@Test(expected = SQLException.class)
 	public void testGetBeforeSetValue() throws Exception {
@@ -67,7 +65,7 @@ public class SelectArgTest extends BaseCoreTest {
 	public void testForeignValue() throws Exception {
 		SelectArg selectArg = new SelectArg();
 		assertTrue(selectArg.toString().contains("[unset]"));
-		BaseFoo value = new BaseFoo();
+		Foo value = new Foo();
 		String id = "dewpofjweee";
 		value.id = id;
 		selectArg.setValue(value);

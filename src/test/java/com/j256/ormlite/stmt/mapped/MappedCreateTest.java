@@ -13,17 +13,17 @@ import org.easymock.IAnswer;
 import org.easymock.internal.LastControl;
 import org.junit.Test;
 
-import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.db.BaseDatabaseType;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.stmt.BaseCoreStmtTest;
 import com.j256.ormlite.stmt.StatementExecutor;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.GeneratedKeyHolder;
 import com.j256.ormlite.table.TableInfo;
 
-public class MappedCreateTest extends BaseCoreTest {
+public class MappedCreateTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testGeneratedId() throws Exception {
@@ -49,44 +49,33 @@ public class MappedCreateTest extends BaseCoreTest {
 	public void testGeneratedIdSequence() throws Exception {
 		DatabaseType databaseType = new NeedsSequenceDatabaseType();
 		connectionSource.setDatabaseType(databaseType);
-		try {
-			TableInfo<GeneratedId> tableInfo = new TableInfo<GeneratedId>(connectionSource, GeneratedId.class);
-			StatementExecutor<GeneratedId, String> se =
-					new StatementExecutor<GeneratedId, String>(databaseType, tableInfo);
-			DatabaseConnection databaseConnection = createMock(DatabaseConnection.class);
-			expect(databaseConnection.queryForLong(isA(String.class))).andReturn(1L);
-			expect(databaseConnection.insert(isA(String.class), isA(Object[].class), isA(FieldType[].class))).andReturn(
-					1);
+		TableInfo<GeneratedId> tableInfo = new TableInfo<GeneratedId>(connectionSource, GeneratedId.class);
+		StatementExecutor<GeneratedId, String> se = new StatementExecutor<GeneratedId, String>(databaseType, tableInfo);
+		DatabaseConnection databaseConnection = createMock(DatabaseConnection.class);
+		expect(databaseConnection.queryForLong(isA(String.class))).andReturn(1L);
+		expect(databaseConnection.insert(isA(String.class), isA(Object[].class), isA(FieldType[].class))).andReturn(1);
 
-			replay(databaseConnection);
-			GeneratedId genIdSeq = new GeneratedId();
-			se.create(databaseConnection, genIdSeq);
-			verify(databaseConnection);
-		} finally {
-			connectionSource.resetDatabaseType();
-		}
+		replay(databaseConnection);
+		GeneratedId genIdSeq = new GeneratedId();
+		se.create(databaseConnection, genIdSeq);
+		verify(databaseConnection);
 	}
 
 	@Test
 	public void testGeneratedIdSequenceLong() throws Exception {
 		DatabaseType databaseType = new NeedsSequenceDatabaseType();
 		connectionSource.setDatabaseType(databaseType);
-		try {
-			StatementExecutor<GeneratedIdLong, String> se =
-					new StatementExecutor<GeneratedIdLong, String>(databaseType, new TableInfo<GeneratedIdLong>(
-							connectionSource, GeneratedIdLong.class));
-			DatabaseConnection databaseConnection = createMock(DatabaseConnection.class);
-			expect(databaseConnection.queryForLong(isA(String.class))).andReturn(1L);
-			expect(databaseConnection.insert(isA(String.class), isA(Object[].class), isA(FieldType[].class))).andReturn(
-					1);
+		StatementExecutor<GeneratedIdLong, String> se =
+				new StatementExecutor<GeneratedIdLong, String>(databaseType, new TableInfo<GeneratedIdLong>(
+						connectionSource, GeneratedIdLong.class));
+		DatabaseConnection databaseConnection = createMock(DatabaseConnection.class);
+		expect(databaseConnection.queryForLong(isA(String.class))).andReturn(1L);
+		expect(databaseConnection.insert(isA(String.class), isA(Object[].class), isA(FieldType[].class))).andReturn(1);
 
-			replay(databaseConnection);
-			GeneratedIdLong genIdSeq = new GeneratedIdLong();
-			se.create(databaseConnection, genIdSeq);
-			verify(databaseConnection);
-		} finally {
-			connectionSource.resetDatabaseType();
-		}
+		replay(databaseConnection);
+		GeneratedIdLong genIdSeq = new GeneratedIdLong();
+		se.create(databaseConnection, genIdSeq);
+		verify(databaseConnection);
 	}
 
 	@Test

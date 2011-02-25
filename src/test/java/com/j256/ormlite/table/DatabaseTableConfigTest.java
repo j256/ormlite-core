@@ -34,7 +34,7 @@ public class DatabaseTableConfigTest {
 		expect(connectionSource.getDatabaseType()).andReturn(databaseType).anyTimes();
 		replay(connectionSource);
 	}
-	
+
 	@Test
 	public void testDatabaseTableConfig() throws SQLException {
 		DatabaseTableConfig<DatabaseTableAnno> dbTableConf =

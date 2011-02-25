@@ -70,8 +70,9 @@ public class TableInfoTest extends BaseCoreTest {
 
 	@Test(expected = SQLException.class)
 	public void testZeroFieldConfigsSpecified() throws Exception {
-		DatabaseTableConfig<NoTableNameAnnotation> tableConfig = new DatabaseTableConfig<NoTableNameAnnotation>(
-				NoTableNameAnnotation.class, new ArrayList<DatabaseFieldConfig>());
+		DatabaseTableConfig<NoTableNameAnnotation> tableConfig =
+				new DatabaseTableConfig<NoTableNameAnnotation>(NoTableNameAnnotation.class,
+						new ArrayList<DatabaseFieldConfig>());
 		tableConfig.extractFieldTypes(connectionSource);
 		new TableInfo<NoTableNameAnnotation>(databaseType, tableConfig);
 	}
