@@ -23,7 +23,8 @@ public class RawResultsImpl<T> implements GenericRawResults<T> {
 	protected final String[] columnNames;
 
 	public RawResultsImpl(ConnectionSource connectionSource, DatabaseConnection connection, String query,
-			Class<?> clazz, CompiledStatement compiledStmt, String[] columnNames, GenericRowMapper<T> rowMapper) throws SQLException {
+			Class<?> clazz, CompiledStatement compiledStmt, String[] columnNames, GenericRowMapper<T> rowMapper)
+			throws SQLException {
 		this.rowMapper = rowMapper;
 		iterator =
 				new SelectIterator<T, Void>(clazz, null, rowMapper, connectionSource, connection, compiledStmt, query);
