@@ -15,6 +15,7 @@ import com.j256.ormlite.dao.RawRowMapper;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
@@ -193,26 +194,46 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Return a results object associated with an internal iterator that returns String[] results.
 	 */
-	public GenericRawResults<String[]> queryRaw(ConnectionSource connectionSource, String query) throws SQLException {
+	public GenericRawResults<String[]> queryRaw(ConnectionSource connectionSource, String query, String[] arguments)
+			throws SQLException {
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
-		logger.debug("executing raw results iterator for: {}", query);
+		logger.debug("executing raw query for: {}", query);
+		if (arguments.length > 0) {
+			// need to do the (Object) cast to force args to be a single object
+			logger.trace("query arguments: {}", (Object) arguments);
+		}
 		CompiledStatement compiledStatement =
 				connection.compileStatement(query, StatementType.SELECT, noFieldTypes, tableInfo.getFieldTypes());
-		String[] columnNames = extractColumnNames(compiledStatement);
-		return new RawResultsImpl<String[]>(connectionSource, connection, query, String[].class, compiledStatement,
-				columnNames, new StringArrayRowMapper());
+		try {
+			assignStatementArguments(compiledStatement, arguments);
+			String[] columnNames = extractColumnNames(compiledStatement);
+			GenericRawResults<String[]> rawResults =
+					new RawResultsImpl<String[]>(connectionSource, connection, query, String[].class,
+							compiledStatement, columnNames, new StringArrayRowMapper());
+			compiledStatement = null;
+			return rawResults;
+		} finally {
+			if (compiledStatement != null) {
+				compiledStatement.close();
+			}
+		}
 	}
 
 	/**
 	 * Return a results object associated with an internal iterator is mapped by the user's rowMapper.
 	 */
 	public <UO> GenericRawResults<UO> queryRaw(ConnectionSource connectionSource, String query,
-			RawRowMapper<UO> rowMapper) throws SQLException {
+			RawRowMapper<UO> rowMapper, String[] arguments) throws SQLException {
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
-		logger.debug("executing raw results iterator for: {}", query);
+		logger.debug("executing raw query for: {}", query);
+		if (arguments.length > 0) {
+			// need to do the (Object) cast to force args to be a single object
+			logger.trace("query arguments: {}", (Object) arguments);
+		}
 		CompiledStatement compiledStatement =
 				connection.compileStatement(query, StatementType.SELECT, noFieldTypes, tableInfo.getFieldTypes());
 		try {
+			assignStatementArguments(compiledStatement, arguments);
 			String[] columnNames = extractColumnNames(compiledStatement);
 			RawResultsImpl<UO> rawResults =
 					new RawResultsImpl<UO>(connectionSource, connection, query, String[].class, compiledStatement,
@@ -229,13 +250,18 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Return a results object associated with an internal iterator that returns Object[] results.
 	 */
-	public GenericRawResults<Object[]> queryRaw(ConnectionSource connectionSource, String query, DataType[] columnTypes)
-			throws SQLException {
+	public GenericRawResults<Object[]> queryRaw(ConnectionSource connectionSource, String query,
+			DataType[] columnTypes, String[] arguments) throws SQLException {
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
-		logger.debug("executing raw results iterator for: {}", query);
+		logger.debug("executing raw query for: {}", query);
+		if (arguments.length > 0) {
+			// need to do the (Object) cast to force args to be a single object
+			logger.trace("query arguments: {}", (Object) arguments);
+		}
 		CompiledStatement compiledStatement =
 				connection.compileStatement(query, StatementType.SELECT, noFieldTypes, tableInfo.getFieldTypes());
 		try {
+			assignStatementArguments(compiledStatement, arguments);
 			String[] columnNames = extractColumnNames(compiledStatement);
 			RawResultsImpl<Object[]> rawResults =
 					new RawResultsImpl<Object[]>(connectionSource, connection, query, Object[].class,
@@ -252,12 +278,17 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Return the number of rows affected.
 	 */
-	public int updateRaw(ConnectionSource connectionSource, String statement) throws SQLException {
+	public int updateRaw(ConnectionSource connectionSource, String statement, String[] arguments) throws SQLException {
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		logger.debug("running raw update statement: {}", statement);
+		if (arguments.length > 0) {
+			// need to do the (Object) cast to force args to be a single object
+			logger.trace("update arguments: {}", (Object) arguments);
+		}
 		CompiledStatement compiledStatement =
 				connection.compileStatement(statement, StatementType.UPDATE, noFieldTypes, tableInfo.getFieldTypes());
 		try {
+			assignStatementArguments(compiledStatement, arguments);
 			return compiledStatement.runUpdate();
 		} finally {
 			if (compiledStatement != null) {
@@ -269,12 +300,17 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Return true if it worked else false.
 	 */
-	public int executeRaw(ConnectionSource connectionSource, String statement) throws SQLException {
+	public int executeRaw(ConnectionSource connectionSource, String statement, String[] arguments) throws SQLException {
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		logger.debug("running raw execute statement: {}", statement);
+		if (arguments.length > 0) {
+			// need to do the (Object) cast to force args to be a single object
+			logger.trace("execute arguments: {}", (Object) arguments);
+		}
 		CompiledStatement compiledStatement =
 				connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes, tableInfo.getFieldTypes());
 		try {
+			assignStatementArguments(compiledStatement, arguments);
 			return compiledStatement.runExecute();
 		} finally {
 			if (compiledStatement != null) {
@@ -396,6 +432,16 @@ public class StatementExecutor<T, ID> {
 				// try to restore if we are in auto-commit mode
 				connection.setAutoCommit(true);
 				logger.debug("re-enabled auto-commit on table {} after batch tasks", tableInfo.getTableName());
+			}
+		}
+	}
+
+	private void assignStatementArguments(CompiledStatement compiledStatement, String[] arguments) throws SQLException {
+		for (int i = 0; i < arguments.length; i++) {
+			if (arguments[i] == null) {
+				compiledStatement.setNull(i + 1, SqlType.STRING);
+			} else {
+				compiledStatement.setObject(i + 1, arguments[i], SqlType.STRING);
 			}
 		}
 	}

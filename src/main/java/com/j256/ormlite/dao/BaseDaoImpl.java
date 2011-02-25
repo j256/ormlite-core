@@ -350,46 +350,48 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
-	public GenericRawResults<String[]> queryRaw(String query) throws SQLException {
+	public GenericRawResults<String[]> queryRaw(String query, String... arguments) throws SQLException {
 		checkForInitialized();
 		try {
-			return statementExecutor.queryRaw(connectionSource, query);
+			return statementExecutor.queryRaw(connectionSource, query, arguments);
 		} catch (SQLException e) {
 			throw SqlExceptionUtil.create("Could not build iterator for " + query, e);
 		}
 	}
 
-	public <GR> GenericRawResults<GR> queryRaw(String query, RawRowMapper<GR> mapper) throws SQLException {
+	public <GR> GenericRawResults<GR> queryRaw(String query, RawRowMapper<GR> mapper, String... arguments)
+			throws SQLException {
 		checkForInitialized();
 		try {
-			return statementExecutor.queryRaw(connectionSource, query, mapper);
+			return statementExecutor.queryRaw(connectionSource, query, mapper, arguments);
 		} catch (SQLException e) {
 			throw SqlExceptionUtil.create("Could not build iterator for " + query, e);
 		}
 	}
 
-	public GenericRawResults<Object[]> queryRaw(String query, DataType[] columnTypes) throws SQLException {
+	public GenericRawResults<Object[]> queryRaw(String query, DataType[] columnTypes, String... arguments)
+			throws SQLException {
 		checkForInitialized();
 		try {
-			return statementExecutor.queryRaw(connectionSource, query, columnTypes);
+			return statementExecutor.queryRaw(connectionSource, query, columnTypes, arguments);
 		} catch (SQLException e) {
 			throw SqlExceptionUtil.create("Could not build iterator for " + query, e);
 		}
 	}
 
-	public int executeRaw(String statement) throws SQLException {
+	public int executeRaw(String statement, String... arguments) throws SQLException {
 		checkForInitialized();
 		try {
-			return statementExecutor.executeRaw(connectionSource, statement);
+			return statementExecutor.executeRaw(connectionSource, statement, arguments);
 		} catch (SQLException e) {
 			throw SqlExceptionUtil.create("Could not run raw execute statement " + statement, e);
 		}
 	}
 
-	public int updateRaw(String statement) throws SQLException {
+	public int updateRaw(String statement, String... arguments) throws SQLException {
 		checkForInitialized();
 		try {
-			return statementExecutor.updateRaw(connectionSource, statement);
+			return statementExecutor.updateRaw(connectionSource, statement, arguments);
 		} catch (SQLException e) {
 			throw SqlExceptionUtil.create("Could not run raw update statement " + statement, e);
 		}

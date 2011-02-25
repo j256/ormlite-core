@@ -302,36 +302,43 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * Similar to the {@link #iterator(PreparedQuery)} except it returns a RawResults object associated with the SQL
 	 * select query argument. Although you should use the {@link #iterator()} for most queries, this method allows you
 	 * to do special queries that aren't supported otherwise. Like the above iterator methods, you must call close on
-	 * the returned RawResults object once you are done with it.
+	 * the returned RawResults object once you are done with it. The arguments are optional but can be set with strings
+	 * to expand ? type of SQL.
 	 */
-	public GenericRawResults<String[]> queryRaw(String query) throws SQLException;
+	public GenericRawResults<String[]> queryRaw(String query, String... arguments) throws SQLException;
 
 	/**
 	 * Similar to the {@link #queryRaw(String)} but this iterator returns rows that you can map yourself. For every
 	 * result that is returned by the database, the {@link RawRowMapper#mapRow(String[], String[])} method is called so
-	 * you can convert the result columns into an object to be returned by the iterator.
+	 * you can convert the result columns into an object to be returned by the iterator. The arguments are optional but
+	 * can be set with strings to expand ? type of SQL.
 	 */
-	public <UO> GenericRawResults<UO> queryRaw(String query, RawRowMapper<UO> mapper) throws SQLException;
+	public <UO> GenericRawResults<UO> queryRaw(String query, RawRowMapper<UO> mapper, String... arguments)
+			throws SQLException;
 
 	/**
 	 * Similar to the {@link #queryRaw(String)} but instead of an array of String results being returned by the
-	 * iterator, this uses the column-types parameter to return an array of Objects instead.
+	 * iterator, this uses the column-types parameter to return an array of Objects instead. The arguments are optional
+	 * but can be set with strings to expand ? type of SQL.
 	 */
-	public GenericRawResults<Object[]> queryRaw(String query, DataType[] columnTypes) throws SQLException;
+	public GenericRawResults<Object[]> queryRaw(String query, DataType[] columnTypes, String... arguments)
+			throws SQLException;
 
 	/**
-	 * Run a raw execute SQL statement to the database.
+	 * Run a raw execute SQL statement to the database.The arguments are optional but can be set with strings to expand
+	 * ? type of SQL.
 	 * 
 	 * @return number of rows affected.
 	 */
-	public int executeRaw(String statement) throws SQLException;
+	public int executeRaw(String statement, String... arguments) throws SQLException;
 
 	/**
-	 * Run a raw update SQL statement to the database. The statement must be an SQL INSERT, UPDATE or DELETE statement.
+	 * Run a raw update SQL statement to the database. The statement must be an SQL INSERT, UPDATE or DELETE
+	 * statement.The arguments are optional but can be set with strings to expand ? type of SQL.
 	 * 
 	 * @return number of rows affected.
 	 */
-	public int updateRaw(String statement) throws SQLException;
+	public int updateRaw(String statement, String... arguments) throws SQLException;
 
 	/**
 	 * Call the call-able that will perform a number of batch tasks. This is for performance when you want to run a
