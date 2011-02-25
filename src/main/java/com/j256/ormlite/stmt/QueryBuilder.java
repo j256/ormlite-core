@@ -143,11 +143,22 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * Limit the output to maxRows maximum number of rows. Set to null for no limit (the default). This is implemented
-	 * at the database level either through a LIMIT SQL query addition or a JDBC setMaxRows method call.
+	 * Limit the output to maxRows maximum number of rows. Set to null for no limit (the default).
 	 */
 	public QueryBuilder<T, ID> limit(Integer maxRows) {
 		limit = maxRows;
+		return this;
+	}
+
+	/**
+	 * Start the output at this row number. Set to null for no offset (the default).
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> For some databases, the limit _must_ also be specified since the offset is an argument of the limit.
+	 * </p>
+	 */
+	public QueryBuilder<T, ID> offset(Integer startRow) {
+		offset = startRow;
 		return this;
 	}
 
@@ -167,13 +178,14 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	@Override
-	protected void appendStatementEnd(StringBuilder sb) {
+	protected void appendStatementEnd(StringBuilder sb) throws SQLException {
 		// 'group by' comes before 'order by'
 		appendGroupBys(sb);
 		appendOrderBys(sb);
 		if (!databaseType.isLimitAfterSelect()) {
 			appendLimit(sb);
 		}
+		appendOffset(sb);
 	}
 
 	private void addSelectColumnToList(String column) {
@@ -231,7 +243,19 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 
 	private void appendLimit(StringBuilder sb) {
 		if (limit != null && databaseType.isLimitSqlSupported()) {
-			databaseType.appendLimitValue(sb, limit);
+			databaseType.appendLimitValue(sb, limit, offset);
+		}
+	}
+
+	private void appendOffset(StringBuilder sb) throws SQLException {
+		if (offset != null && databaseType.isOffsetSqlSupported()) {
+			if (databaseType.isOffsetLimitArgument()) {
+				if (limit == null) {
+					throw new SQLException("If the offset is specified, limit must also be specified with this database");
+				}
+			} else {
+				databaseType.appendOffsetValue(sb, offset);
+			}
 		}
 	}
 

@@ -379,12 +379,24 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		return true;
 	}
 
+	public boolean isOffsetSqlSupported() {
+		return true;
+	}
+
+	public boolean isOffsetLimitArgument() {
+		return false;
+	}
+
 	public boolean isLimitAfterSelect() {
 		return false;
 	}
 
-	public void appendLimitValue(StringBuilder sb, int limit) {
+	public void appendLimitValue(StringBuilder sb, int limit, Integer offset) {
 		sb.append("LIMIT ").append(limit).append(' ');
+	}
+
+	public void appendOffsetValue(StringBuilder sb, int offset) {
+		sb.append("OFFSET ").append(offset).append(' ');
 	}
 
 	/**

@@ -31,6 +31,7 @@ public abstract class StatementBuilder<T, ID> {
 
 	private Where<T, ID> where = null;
 	protected Integer limit = null;
+	protected Integer offset = null;
 
 	/**
 	 * Provides statements for various SQL operations.
@@ -143,7 +144,7 @@ public abstract class StatementBuilder<T, ID> {
 	/**
 	 * Append the end of our statement string to the StringBuilder.
 	 */
-	protected abstract void appendStatementEnd(StringBuilder sb);
+	protected abstract void appendStatementEnd(StringBuilder sb) throws SQLException;
 
 	/**
 	 * Verify the columnName is valid and return its FieldType.
