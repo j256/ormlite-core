@@ -383,7 +383,7 @@ public class DatabaseFieldConfig {
 		// add in the index information
 		config.indexName = findIndexName(tableName, databaseField.indexName(), databaseField.index(), config);
 		config.uniqueIndexName =
-			findIndexName(tableName, databaseField.uniqueIndexName(), databaseField.uniqueIndex(), config);
+				findIndexName(tableName, databaseField.uniqueIndexName(), databaseField.uniqueIndex(), config);
 		config.foreignAutoRefresh = databaseField.foreignAutoRefresh();
 
 		return config;
