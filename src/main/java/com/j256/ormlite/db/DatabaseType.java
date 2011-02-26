@@ -99,7 +99,7 @@ public interface DatabaseType {
 
 	/**
 	 * Return true if the database supports the offset as a comma argument from the limit. This also means that the
-	 * limit _must_ be specified.
+	 * limit _must_ be specified if the offset is specified
 	 */
 	public boolean isOffsetLimitArgument();
 

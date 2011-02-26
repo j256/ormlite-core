@@ -1,3 +1,14 @@
+4.13: 2/XX/2011 (svn rYYYY)
+	* CORE: Added a special default string to @DatabaseField to allow default values of "".  Fixes bug #3191367.
+	* CORE: Added parameters to the queryRaw(), updateRaw(), and executeRaw() DAO methods.  Thanks to Luke.
+	* CORE: Added support for the QueryBuilder.offset() method.  Not supported on all database types.
+	* CORE: Added initial ping statements for verification that the database connection is still valid.
+	* CORE: Revamped the test hierachy and implemented H2 stubs to be able to test CORE better.
+	* ANDROID: LONG_STRING handling under Android never worked.  Fixed bug #3192744.
+	* JDBC: Added isTableExists() boolean to the DAO and the DatabaseConnection.  This does not work in Android.
+	* JDBC: Added a new constructor and other methods to allow use of TableCreator outside of Spring.
+	* JDBC: Revamped the jdbc pooled connection source to add a keep-alive thread and connection testing.
+
 4.12: 2/17/2011 (svn r1417)
 	* CORE: Added LONG_STRING data type for supporting longer String fields.
 	* CORE: Renamed and deprecated data types JAVA_DATE, JAVA_DATE_LONG, and JAVA_DATE_STRING to remove the JAVA_ prefix.

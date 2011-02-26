@@ -21,7 +21,7 @@
 @c ----------------------------------------------------------------
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.12
+@set ormlite_version 4.13
 @set ormlite_year 2011
 @set ormlite_date February @value{ormlite_year}
 @set package ORMLite
@@ -167,34 +167,14 @@ public class Account @{
 @node Starting DAO, Starting Code, Starting Class, Getting Started
 @section Configuring a DAO
 
+@cindex DAO
+@cindex data access objects
+@cindex createDao
+@cindex BaseDaoImpl base class
 A typical Java pattern is to isolate the database operations in Data Access Objects (DAO) classes. Each DAO provides create, delete,
-update, etc. type of functionality and specializes in the handling a particular persisted class.  To set up a DAO, you will need a DAO
-interface and an implementation class.  @value{package} provides a base DAO interface and a base implementation class. The following is
-an example DAO interface corresponding to the Account class from the previous section of the manual:
-
-@example
-/** Account DAO which has a String id (Account.name) */
-public interface AccountDao extends Dao<Account,String> @{
-    // empty wrapper, you can add additional DAO methods here
-@}
-@end example
-
-The following is the example implementation class:
-
-@example
-/** JDBC implementation of the AccountDao interface. */
-public class AccountDaoImpl extends BaseDaoImpl<Account,String>
- implements AccountDao @{
-    public AccountDaoImpl(ConnectionSource connectionSource)
-      throws SQLException @{
-        super(connectionSource, Account.class);
-    @}
-@}
-@end example
-
-You are not @emph{required} to create a DAO class for every one of your persisted objects.  You can use the
-@code{createDao} static method on the @code{BaseDaoImpl} class to create a DAO class without having to define
-one.  For example:
+update, etc. type of functionality and specializes in the handling a single persisted class.  A simple way to build a DAO is
+to use the @code{createDao} static method on the @code{BaseDaoImpl} class.  For example, to create a DAO for the Account class
+defined above you would do:
 
 @example
 Dao<Account, String> accountDao =
@@ -873,18 +853,30 @@ ConnectionSource connectionSource =
 @cindex pooled connection source
 @cindex connection pooling
 The package also includes the class @code{JdbcPooledConnectionSource} which is a relatively simple implementation of a
-pooled connection source.  As database connections are released, instead of being closed they are added to an internal
-list so they can be reallocated at a later time.  New connections are created on demand only if there are no dormant
-connections that can be reused.  @code{JdbcPooledConnectionSource} is also synchronized and can be used my multiple
-threads.  It has settings for the maximum number of free connections before they are closed as well as a maximum age
-before a connection is closed.
+pooled connection source.  As database connections are released, instead of being closed, they are added to an internal
+list so they can be reused at a later time.  New connections are created on demand only if there are no dormant
+connections available.  @code{JdbcPooledConnectionSource} is also synchronized and can be used my multiple threads.  It
+has settings for the maximum number of free connections before they are closed as well as a maximum age before a
+connection is closed.  
 
 @example
-// single connection source example
+// pooled connection source
 JdbcPooledConnectionSource connectionSource =
   new JdbcPooledConnectionSource("jdbc:h2:mem:account");
 // only keep the connections open for 5 minutes
 connectionSource.setMaxConnectionAgeMillis(5 * 60 * 1000);
+@end example
+
+Recently (2/2011), we added a keep-alive thread which pings each of the dormant pooled connections every so often to make
+sure they are valid -- closing the ones that are no long good.  You can also enable the testing of the connection right before
+you get a connection from the pool.  See the javadocs for more information.
+
+@example
+// change the check-every milliseconds from 30 seconds to 60
+connectionSource.setCheckConnectionsEveryMillis(60 * 1000);
+// for extra protection, enable the testing of connections
+// right before they are handed to the user
+connectionSource.setTestBeforeGet(true);
 @end example
 
 @cindex other data sources
@@ -929,17 +921,29 @@ does @emph{nothing}.
 @node DAO Setup, Database Notes, Connection Source, Using
 @section Setting Up the DAOs
 
-@cindex DAO
-@cindex data access object
 @cindex id column
-@cindex Dao interface
+@cindex createDao method
 Once you have annotated your classes and defined your @code{ConnectionSource} you will need to create the Data Access Object
-(DAO) class(es).  The pattern that we recommend is to define an interface which extends the @code{Dao} interface and will be
-used in the code.  The interface isn't required but it is a good pattern so your code is less tied to JDBC for persistence.
-Each DAO has two generic parameters: the class we are persisting with the DAO, and the class of the ID-column that will be
-used to identify a specific database row.  If you class does not have an ID field, you can put @code{Object} or @code{Void}
-as the 2nd argument.  For example, in the above @code{Account} class, the "name" field is the ID column (id = true)
-so the ID class is @code{String}.  Example:
+(DAO) class(es), each of which will handle all database operations for a single persisted class.  Each DAO has two generic parameters:
+the class we are persisting with the DAO, and the class of the ID-column that will be used to identify a specific database row.  If
+your class does not have an ID field, you can put @code{Object} or @code{Void} as the 2nd argument.  For example, in the above
+@code{Account} class, the "name" field is the ID column (id = true) so the ID class is @code{String}.
+
+The simplest way to create your DAO is to use the @code{createDao} static method on the @code{BaseDaoImpl} class to create a
+DAO class.  For example:
+
+@example
+Dao<Account, String> accountDao =
+  BaseDaoImpl.createDao(connectionSource, Account.class);
+Dao<Order, Integer> orderDao =
+  BaseDaoImpl.createDao(connectionSource, Order.class);
+@end example
+
+@cindex Dao interface
+If you want a better class hierarchy or if you need to add additional methods to your DAOs, you should consider defining
+an interface which extends the @code{Dao} interface.  The interface isn't required but it is a good pattern so your code is
+less tied to JDBC for persistence.  The following is an example DAO interface corresponding to the Account class from the
+previous section of the manual:
 
 @example
 /** Account DAO which has a String id (Account.name) */
@@ -948,7 +952,8 @@ public interface AccountDao extends Dao<Account, String> @{
 @}
 @end example
 
-Here's the example implementation of this interface.
+Then in the implementation, you should extend the @code{BaseDaoImpl} base class.  Here's the example implementation of your DAO
+interface.
 
 @cindex jdbc dao implementation
 @example
@@ -965,17 +970,6 @@ public class AccountDaoImpl extends BaseDaoImpl<Account, String>
 That's all you need to define your DAO classes.  You are free to add more methods to your DAO interfaces and
 implementations if there are specific operations that are needed and not provided by the Dao base classes.
 More on how to use these DAOs later. @xref{DAO Usage}.
-
-@cindex createDao method
-You are not @emph{required} to create a DAO class for every one of your persisted objects. You can use the @code{createDao}
-static method on the @code{BaseDaoImpl} class to create a DAO class without having to define one.  For example:
-
-@example
-Dao<Account, String> accountDao =
-  BaseDaoImpl.createDao(connectionSource, Account.class);
-Dao<Order, Integer> orderDao =
-  BaseDaoImpl.createDao(connectionSource, Order.class);
-@end example
 
 @c ----------------------------------------------------------------
 @node Database Notes, Complete Wiring, DAO Setup, Using
@@ -2417,6 +2411,15 @@ Return true if the database supports the LIMIT sql command.
 
 Return true if the LIMIT should be called after SELECT otherwise at the end of the WHERE (the default).
 
+@item isOffsetSqlSupported
+
+Return true if the database supports the OFFSET SQL command in some form.
+
+@item isOffsetLimitArgument 
+
+Return true if the database supports the offset as a comma argument from the limit. This also means that the
+limit @emph{must} be specified if the offset is specified.
+
 @item appendLimitValue
 
 Add the necessary SQL to limit the results to a certain number.
@@ -2665,8 +2668,9 @@ log4j.appender.stdout.layout.ConversionPattern=%d@{ISO8601@} [%p] %c@{1@} %m%n
 log4j.logger.com.j256.ormlite=DEBUG
 
 # to enable logging of arguments to all of the SQL calls
-# uncomment the following line
+# uncomment the following lines
 #log4j.logger.com.j256.ormlite.stmt.mapped.BaseMappedStatement=TRACE
+#log4j.logger.com.j256.ormlite.stmt.StatementExecutor=TRACE
 @end example
 
 @cindex logging sql arguments
@@ -2834,8 +2838,8 @@ directly and there is no need for referencing the @code{DatabaseTypeUtils} anymo
 
 @item @code{Dao.queryBuilder()} returns a @code{QueryBuilder} instead of a @code{StatementBuilder}.
 
-@item You now call @code{distinct()} and @code{limit()} on the @code{QueryBuilder}.  Unfortunately,
-there are no deprecated methods for them on the @code{StatementBuilder}.
+@item You now call @code{distinct()}, @code{limit()} and @code{offset()} on the @code{QueryBuilder}.
+Unfortunately, there are no deprecated methods for them on the @code{StatementBuilder}.
 
 @item You now call @code{selectColumns()} on the @code{QueryBuilder} instead of @code{columns()}
 since now we have columns also in the @code{UpdateBuilder}.  Unfortunately, there are no deprecated
