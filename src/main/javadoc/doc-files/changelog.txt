@@ -1,4 +1,4 @@
-4.13: 2/XX/2011 (svn rYYYY)
+4.13: 2/26/2011 (svn r1451)
 	* CORE: Added a special default string to @DatabaseField to allow default values of "".  Fixes bug #3191367.
 	* CORE: Added parameters to the queryRaw(), updateRaw(), and executeRaw() DAO methods.  Thanks to Luke.
 	* CORE: Added support for the QueryBuilder.offset() method.  Not supported on all database types.
