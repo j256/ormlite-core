@@ -93,17 +93,6 @@ public interface DatabaseType {
 	public boolean isLimitSqlSupported();
 
 	/**
-	 * Return true if the database supports the OFFSET SQL command in some form.
-	 */
-	public boolean isOffsetSqlSupported();
-
-	/**
-	 * Return true if the database supports the offset as a comma argument from the limit. This also means that the
-	 * limit _must_ be specified if the offset is specified
-	 */
-	public boolean isOffsetLimitArgument();
-
-	/**
 	 * Return true if the LIMIT should be called after SELECT otherwise at the end of the WHERE (the default).
 	 */
 	public boolean isLimitAfterSelect();
@@ -114,6 +103,17 @@ public interface DatabaseType {
 	 * in.  The database type can choose to ignore it.
 	 */
 	public void appendLimitValue(StringBuilder sb, int limit, Integer offset);
+
+	/**
+	 * Return true if the database supports the OFFSET SQL command in some form.
+	 */
+	public boolean isOffsetSqlSupported();
+
+	/**
+	 * Return true if the database supports the offset as a comma argument from the limit. This also means that the
+	 * limit _must_ be specified if the offset is specified
+	 */
+	public boolean isOffsetLimitArgument();
 
 	/**
 	 * Append to the string builder the necessary SQL to start the results at a certain row number.

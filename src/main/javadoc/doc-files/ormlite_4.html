@@ -39,22 +39,22 @@ ul.toc {list-style: none}
 
 <body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
 
-<a name="NOD37"></a>
-<a name="SEC36"></a>
+<a name="NOD38"></a>
+<a name="SEC37"></a>
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="ormlite_3.html#SEC35" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_5.html#SEC37" title="Next section in reading order"> &gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="ormlite_3.html#SEC36" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_5.html#SEC38" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite_3.html#SEC30" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_5.html#SEC37" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_5.html#SEC38" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC55" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC56" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h1 class="chapter"> 4. Using With Android </h1>
@@ -71,7 +71,7 @@ followed to help you get ORMLite working under Android OS.
 
 </p><ol>
 <li><p> You will need to create your own database helper class which should probably extend the <code>OrmLiteSqliteOpenHelper</code>  
-class.  This class creates and upgrades the database when your app is installed and can also provide the DAO classes
+class.  This class creates and upgrades the database when your application is installed and can also provide the DAO classes
 used by your other classes.  Your helper class must implement the methods
 <code>onCreate(SQLiteDatabase sqliteDatabase, ConnectionSource connectionSource)</code> and
 <code>onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion)</code>.
@@ -79,7 +79,7 @@ used by your other classes.  Your helper class must implement the methods
 of the database tables when you upgrade your app to a new version.  There is a sample <code>DatabaseHelper</code> class as well as
 examples projects online: <a href="http://ormlite.com/android/examples/">http://ormlite.com/android/examples/</a>. 
 
-</p></li><li><p> The helper can be kept open across all activities in your app with the same Sqlite database connection reused by
+</p></li><li><p> The helper can be kept open across all activities in your app with the same SQLite database connection reused by
 all threads.  If you open multiple connections to the same database, stale data and unexpected results may occur.
 We recommend using the <code>OpenHelperManager</code> to monitor the usage of the helper - it will create it on the first
 access, track each time a part of your code is using it, and then it will close the last time the helper is released.
@@ -93,7 +93,7 @@ classes.  An easy way to use the <code>OpenHelperManager</code> is to extend <co
 activity classes - there is also <code>OrmLiteBaseService</code> and <code>OrmLiteBaseTabActivity</code>.  These classes provide a
 <code>getHelper()</code> method to access the database helper whenever it is needed and will automatically release the helper
 in the <code>onDestroy()</code> method.  There is a sample <code>HelloAndroid</code> activity class in the the sample section of the tests 
-and on the web site along with a <code>SampleData</code> example class.  See section <a href="ormlite_7.html#SEC52">Android Examples</a>.
+and on the web site along with a <code>SampleData</code> example class.  See section <a href="ormlite_7.html#SEC53">Android Examples</a>.
 
 </p></li><li><p> If you do not want to extend the base classes then you will need to duplicate their basic functionality of calling
 <code>OpenHelperManager.getHelper(Context context)</code> at the start of your code, save the helper and use it as much as 
@@ -103,12 +103,12 @@ you want, and then calling <code>OpenHelperManager.release()</code> when you are
 
 </p></li></ol>
 
-<p>Please see the example code documention for more information.  See section <a href="ormlite_7.html#SEC52">Android Examples</a>.  Again, feedback on this is welcome.
+<p>Please see the example code documentation for more information.  See section <a href="ormlite_7.html#SEC53">Android Examples</a>.  Again, feedback on this is welcome.
 
 </p><hr size="6">
 <table cellpadding="1" cellspacing="1" border="0">
 <tr><td valign="middle" align="left">[<a href="ormlite_3.html#SEC30" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_5.html#SEC37" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_5.html#SEC38" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
@@ -116,7 +116,7 @@ you want, and then calling <code>OpenHelperManager.release()</code> when you are
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC55" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC56" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>

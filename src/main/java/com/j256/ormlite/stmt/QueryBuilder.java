@@ -71,8 +71,8 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * Add columns to be returned by the SELECT query. If no column...() method called then all columns are returned by
-	 * default.
+	 * Add columns to be returned by the SELECT query. If no columns are selected then all columns are returned by
+	 * default. For classes with id columns, the id column is added to the select list automagically.
 	 */
 	public QueryBuilder<T, ID> selectColumns(String... columns) {
 		if (selectColumnList == null) {
@@ -85,8 +85,8 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * Add columns to be returned by the SELECT query. If no column...() method called then all columns are returned by
-	 * default.
+	 * Add columns to be returned by the SELECT query. If no columns are selected then all columns are returned by
+	 * default. For classes with id columns, the id column is added to the select list automagically.
 	 */
 	public QueryBuilder<T, ID> selectColumns(Iterable<String> columns) {
 		if (selectColumnList == null) {
@@ -151,10 +151,13 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * Start the output at this row number. Set to null for no offset (the default).
+	 * Start the output at this row number. Set to null for no offset (the default). If you are paging through a table,
+	 * you should consider using the {@link Dao#iterator()} method instead which handles paging with a database cursor.
+	 * Otherwise, if you are paging you probably want to specify a {@link #orderBy(String, boolean)}.
 	 * 
 	 * <p>
-	 * <b>NOTE:</b> For some databases, the limit _must_ also be specified since the offset is an argument of the limit.
+	 * <b>NOTE:</b> This is not supported for all databases. Also, for some databases, the limit _must_ also be
+	 * specified since the offset is an argument of the limit.
 	 * </p>
 	 */
 	public QueryBuilder<T, ID> offset(Integer startRow) {
@@ -248,14 +251,18 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	private void appendOffset(StringBuilder sb) throws SQLException {
-		if (offset != null && databaseType.isOffsetSqlSupported()) {
-			if (databaseType.isOffsetLimitArgument()) {
-				if (limit == null) {
-					throw new SQLException("If the offset is specified, limit must also be specified with this database");
-				}
-			} else {
-				databaseType.appendOffsetValue(sb, offset);
+		if (offset == null) {
+			return;
+		}
+		if (!databaseType.isOffsetSqlSupported()) {
+			throw new SQLException("Offset is not supported by this database");
+		}
+		if (databaseType.isOffsetLimitArgument()) {
+			if (limit == null) {
+				throw new SQLException("If the offset is specified, limit must also be specified with this database");
 			}
+		} else {
+			databaseType.appendOffsetValue(sb, offset);
 		}
 	}
 
