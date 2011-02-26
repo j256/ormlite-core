@@ -72,7 +72,7 @@ dependencies.
 @cindex databases supported
 @cindex supported databases
 @value{package} supports JDBC connections to MySQL, Postgres, Microsoft SQL Server, H2, Derby, HSQLDB, and
-Sqlite and can be extended to additional ones relatively easily.  @value{package} also supports native database
+SQLite and can be extended to additional ones relatively easily.  @value{package} also supports native database
 calls on Android OS.  There are also initial implementations for DB2 and Oracle although the author needs
 access to each of these database types to tune the support.  Contact the author if your database is not supported.
 
@@ -198,7 +198,7 @@ The code performs the following steps.
 
 @itemize @bullet
 @item It creates a connection source which handles connections to the database.
-@item It instantiates a dao for the Account object.
+@item It instantiates a DAO for the Account object.
 @item The @code{accounts} database table is created. This step is not needed if the table already exists.
 @end itemize
 
@@ -498,7 +498,7 @@ use the uniqueIndexName to create an index for this field.  For unique constrain
 @item index
 
 Boolean value (default false) to have the database add an index for this field. This will create an index with the name columnName with
-a "_idx" suffix. To specify a specific name of the index or to index multiple fields, use the indexName field.
+a "_idx" suffix. To specify a specific name of the index or to index multiple fields, use the @code{indexName} field.
 
 @cindex unique index creation
 @item uniqueIndex
@@ -640,7 +640,8 @@ existence of either of these annotations to indicate that it is a foreign object
 @end table
 
 If the @code{@@Column} annotation is used on a field that has a unknown type then it is assumed to be a
-Serializable field and the object should implement @code{java.io.Serializable}.  @xref{datatype serializable}.
+@code{Serializable} type field and the object should implement @code{java.io.Serializable}.
+@xref{datatype serializable}.
 
 @c ----------------------------------------------------------------
 @node No Arg Constructor, Persisted Types, Javax Persistence Annotations, Class Setup
@@ -697,21 +698,22 @@ helps to translate between the SQL types and the database specific handling of t
 @anchor{datatype string}
 @item String (DataType.STRING)
 
-Persisted as SQL type VARCHAR.  
+Persisted as SQL type @code{VARCHAR}.  
 
 @cindex boolean
 @anchor{datatype boolean}
 @item boolean or Boolean (DataType.BOOLEAN or DataType.BOOLEAN_OBJ)
 
-Persisted as SQL type BOOLEAN.
+Persisted as SQL type @code{BOOLEAN}.
 
 @cindex Date
 @cindex java date
 @anchor{datatype date}
 @item java.util.Date (DataType.DATE)
 
-Persisted as SQL type TIMESTAMP.  This type automatically uses an internal @code{?} argument because the string format of it
-is unreliable to match the database format.  @xref{Select Arguments}.  See also @code{DATE_LONG} and @code{DATE_STRING}.
+Persisted as SQL type @code{TIMESTAMP}.  This type automatically uses an internal @code{?} argument because the string
+format of it is unreliable to match the database format.  @xref{Select Arguments}.  See also @code{DATE_LONG} and
+@code{DATE_STRING}.
 
 @emph{NOTE:} This is a different class from @code{java.sql.Date}.
 
@@ -742,13 +744,13 @@ in which case the date will be stored as a string in @code{yyyy-MM-dd HH:mm:ss.S
 @emph{NOTE:} Certain databases only provide seconds resolution so the milliseconds will be 0.
 
 @emph{NOTE:} Because of reentrant issues with @code{SimpleDateFormat}, synchronization is done
-every time a DATE_STRING date is converted to/from the database.
+every time a @code{DATE_STRING} date is converted to/from the database.
 
 @cindex byte
 @anchor{datatype byte}
 @item byte or Byte (DataType.BYTE or DataType.BYTE_OBJ)
 
-Persisted as SQL type TINYINT.
+Persisted as SQL type @code{TINYINT}.
 
 @cindex short
 @anchor{datatype short}
@@ -760,33 +762,33 @@ Persisted as SQL type SMALLINT.
 @anchor{datatype int}
 @item int or Integer (DataType.INTEGER or DataType.INTEGER_OBJ)
 
-Persisted as SQL type INTEGER.
+Persisted as SQL type @code{INTEGER}.
 
 @cindex long
 @anchor{datatype long}
 @item long or Long (DataType.LONG or DataType.LONG_OBJ)
 
-Persisted as SQL type BIGINT.
+Persisted as SQL type @code{BIGINT}.
 
 @cindex float
 @anchor{datatype float}
 @item float or Float (DataType.FLOAT or DataType.FLOAT_OBJ)
 
-Persisted as SQL type FLOAT.
+Persisted as SQL type @code{FLOAT}.
 
 @cindex double
 @anchor{datatype double}
 @item double or Double (DataType.DOUBLE or DataType.DOUBLE_OBJ)
 
-Persisted as SQL type DOUBLE.
+Persisted as SQL type @code{DOUBLE}.
 
 @cindex Serializable
 @cindex persist objects
 @anchor{datatype serializable}
 @item Serializable (DataType.SERIALIZABLE)
 
-Persisted as SQL type VARBINARY.  This is a special type that serializes an object as a sequence of bytes
-and then deserializes it on the way back.  The field must be an object that implements the @code{java.io.Serializable}
+Persisted as SQL type @code{VARBINARY}.  This is a special type that serializes an object as a sequence of bytes
+and then de-serializes it on the way back.  The field must be an object that implements the @code{java.io.Serializable}
 interface.  Depending on the database type, there will be limits to the size of the object that can be stored.
 
 Some databases place restrictions on this field type that it cannot be the id column in a class.  Other databases do
@@ -798,7 +800,7 @@ Select Argument to query for this type.  @xref{Select Arguments}.
 @anchor{datatype enum string}
 @item enum or Enum (DataType.ENUM_STRING)
 
-Persisted by default as the enumerated value's string @emph{name} as a VARCHAR type.  The string name is the
+Persisted by default as the enumerated value's string @emph{name} as a @code{VARCHAR} type.  The string name is the
 default (and recommended over ENUM_INTEGER) because it allows you to add additional enums anywhere in the list
 without worrying about having to convert data later.
 
@@ -812,10 +814,10 @@ used if an unknown value is found in the database. @xref{unknownEnumName}.
 @item enum or Enum (DataType.ENUM_INTEGER)
 
 You specify the @code{dataType} field (from the @code{@@DatabaseField} annotation) as a @code{DataType.ENUM_INTEGER} in
-which case the @code{ordinal} of the enum value will be stored as an INTEGER.  The name (ENUM_STRING) is the default (and
-recommended) because it allows you to add additional enums anywhere in the list without worrying about having to convert
-data later.  If you insert (or remove) an enum from the list that is being stored as a number, then old data will be
-un-persisted incorrectly.
+which case the @code{ordinal} of the enum value will be stored as an @code{INTEGER}.  The name (ENUM_STRING) is the
+default (and recommended) because it allows you to add additional enums anywhere in the list without worrying about
+having to convert data later.  If you insert (or remove) an enum from the list that is being stored as a number, then
+old data will be un-persisted incorrectly.
 
 @cindex unknownEnumName
 You can also also specify an @emph{unknownEnumName} name with the @code{@@DatabaseField} annotation which will be
@@ -1049,9 +1051,9 @@ Please contact the author if your database is not supported.
 @section Tying It All Together
 
 @cindex usage example
-So you have annotated the objects to be persisted, added the no-arg constructor, created your @code{ConnectionSource}, and defined
+So you have annotated the objects to be persisted, added the no-argument constructor, created your @code{ConnectionSource}, and defined
 your DAO classes.  You are ready to start persisting and querying your database objects.  You will need to download and add the H2
-jar file to your classpath if you want to run the example as-is.  See the H2 home page: @uref{http://www.h2database.com/html/download.html}.   
+jar file to your class-path if you want to run the example as-is.  See the H2 home page: @uref{http://www.h2database.com/html/download.html}.   
 
 The following code ties it all together:
 
@@ -1364,7 +1366,7 @@ This example will create one index for both the city and state fields.  Note tha
 @emph{not} be optimized -- only queries on @emph{both} city and state will be.  With some databases, it may be better to
 create a single field index on each field and let the database use both indexes if you are querying on city and state.
 For other databases, creating an index on multiple fields is recommended. You may need to experiment and use the SQL
-@code{EXPLAIN} command to pinpoint how your database is utilizing your indicies.
+@code{EXPLAIN} command to pinpoint how your database is utilizing your indexes.
 
 To create @emph{unique} indexes, there is a @code{uniqueIndex = true} and @code{uniqueIndexName = "othername"} fields
 also available on the @code{@@DatabaseField} annotation.  These work the same as the above settings but will instead
@@ -1375,12 +1377,12 @@ create unique indexes that ensure that no two row has the same value(s) for the 
 @section Issuing Raw SQL Statements
 
 In a number of instances, using the defined DAO functionality may not be enough to change your database.  For this
-reason, @value{package} has calls which allow you to issue raw query, update, and execute statments to the database.
+reason, @value{package} has calls which allow you to issue raw query, update, and execute statements to the database.
 
 @menu
 * Raw Queries::                Running raw queries against the database.
 * Raw Updates::                Updating the database with raw SQL statements.
-* Raw Executes::               Executing other raw SQL statments.
+* Raw Executes::               Executing other raw SQL statements.
 @end menu
 
 @c ----------------------------------------------------------------
@@ -1489,7 +1491,7 @@ iterator, and any associated database connections, is closed.
 @node Raw Updates, Raw Executes, Raw Queries, Raw Statements
 @subsection Issuing Raw Update Statements
 
-@cindex raw update statments
+@cindex raw update statements
 @cindex update with raw sql
 You can also issue raw update statements against the database if the DAO functionality does not give you
 enough flexibility.  Update SQL statements must contain the reserved words @code{INSERT}, @code{DELETE}, or
@@ -1504,8 +1506,8 @@ fooDao.updateRaw("INSERT INTO accountlog (account_id, total) "
 @node Raw Executes, Foreign Objects, Raw Updates, Raw Statements
 @subsection Issuing Raw Execute Statements
 
-@cindex raw execute statments
-@cindex execute raw sql statments
+@cindex raw execute statements
+@cindex execute raw sql statements
 @cindex truncate table
 @cindex clear table
 You can also issue raw update statements against the database if the DAO functionality does not give you
@@ -1693,8 +1695,8 @@ Same as the previous method but with a @code{DatabaseTableConfig} instead.
 The @code{TableCreator} class is engineered for use with Spring but could be useful in other configurations.  It is configured with the
 @code{ConnectionSource} and the list of DAOs that are being used by the program.
 
-It will automagically create the tables associated with those DAOs if the system propety @code{ormlite.auto.create.tables} is set with
-the value "true".  It also will automagically drop the tables that were created if the system propety @code{ormlite.auto.drop.tables} is set with
+It will automagically create the tables associated with those DAOs if the system property @code{ormlite.auto.create.tables} is set with
+the value "true".  It also will automagically drop the tables that were created if the system property @code{ormlite.auto.drop.tables} is set with
 the value "true".  This is especially useful in tests when you are starting with a test database that needs to get the latest schema but in
 production you want to make specific schema changes by hand.  You can set the system properties in your test start scripts but leave them off
 in the production scripts.
@@ -1732,7 +1734,8 @@ with which you can construct custom queries to return a sub-set of the table.
 * QueryBuilder Basics::         How to start using the query builder.
 * Building Queries::            How to build simple and complex queries.
 * Building Statements::         How to build update and delete statements.
-* Where Capabilities::          Description of the various WHERE statements.
+* QueryBuilder Capabilities::   Description of the various QueryBuilder methods.
+* Where Capabilities::          Description of the various WHERE methods.
 * Select Arguments::            Using arguments to queries.
 @end menu
 
@@ -1867,7 +1870,7 @@ and 'GROUP BY' fields, and various other SQL features (LIKE, IN, >, >=, <, <=, <
 information.  A good SQL reference site can be found at @uref{http://www.w3schools.com/Sql/}.
 
 @c ----------------------------------------------------------------
-@node Building Statements, Where Capabilities, Building Queries, Statement Builder
+@node Building Statements, QueryBuilder Capabilities, Building Queries, Statement Builder
 @section Building Statements
 
 @cindex deleteBuilder
@@ -1917,7 +1920,73 @@ accountDao.delete(deleteBuilder.prepare());
 @end example
 
 @c ----------------------------------------------------------------
-@node Where Capabilities, Select Arguments, Building Statements, Statement Builder
+@node QueryBuilder Capabilities, Where Capabilities, Building Statements, Statement Builder
+@section QueryBuilder Capabilities
+
+The following are some details about the various method calls on the @code{QueryBuilder} object which build custom
+select, delete, and update statements.  See the Javadocs for the @code{QueryBuilder} class for the most up-to-date
+information about the available methods.  Most of these methods return the @code{QueryBuilder} object so they can
+be chained.
+
+For a good tutorial of SQL commands, here's a good site: @uref{http://www.w3schools.com/sql/sql_where.asp}.
+
+@table @code
+
+@cindex distinct
+@item distinct()
+
+Add "DISTINCT" clause to the SQL query statement.
+
+@emph{NOTE:} Use of this means that the resulting objects may not have a valid ID column value so cannot be deleted
+or updated.
+
+@cindex group by columns
+@item groupBy(String columnName) 
+
+@emph{NOTE:} Use of this means that the resulting objects may not have a valid ID column value so cannot be deleted
+or updated.
+
+@cindex limit
+@item limit(Integer maxRows)
+
+Limit the output to maxRows maximum number of rows. Set to null for no limit (the default).
+
+@cindex offset
+@item offset(Integer startRow)
+
+Start the output at this row number. Set to null for no offset (the default). If you are paging through a table,
+you should consider using the @code{Dao.iterator()} method instead which handles paging with a database cursor.
+Otherwise, if you are paging you probably want to specify a column to @code{orderBy}.
+
+@emph{NOTE:} This is not supported for all databases. Also, for some databases, the limit @emph{must} also be
+specified since the offset is an argument of the limit.
+
+@cindex order by columns
+@item orderBy(String columnName, boolean ascending)
+
+Add "ORDER BY" clause to the SQL query statement.
+
+@cindex prepare the query
+@item prepare()
+
+Build and return a prepared query that can be used by @code{Dao.query(PreparedQuery)} or
+@code{Dao.iterator(PreparedQuery)} methods. If you change the where or make other calls you will need
+to re-call this method to re-prepare the statement for execution.
+
+@cindex select columns
+@item selectColumns(String... columns)
+
+Add columns to be returned by the SELECT query. If no columns are selected then all columns are returned by
+default. For classes with id columns, the id column is added to the select list automagically.
+
+@item selectColumns(Iterable<String> columns)
+
+Same as the above but with an iterable (such as a collection) instead of a variable list of column names.
+
+@end table
+
+@c ----------------------------------------------------------------
+@node Where Capabilities, Select Arguments, QueryBuilder Capabilities, Statement Builder
 @section Where Capabilities
 
 The following are some details about the various method calls for adding @code{WHERE} SQL statements to your custom
@@ -2142,7 +2211,7 @@ followed to help you get @value{package} working under Android OS.
 @enumerate
 
 @item You will need to create your own database helper class which should probably extend the @code{OrmLiteSqliteOpenHelper}  
-class.  This class creates and upgrades the database when your app is installed and can also provide the DAO classes
+class.  This class creates and upgrades the database when your application is installed and can also provide the DAO classes
 used by your other classes.  Your helper class must implement the methods
 @code{onCreate(SQLiteDatabase sqliteDatabase, ConnectionSource connectionSource)} and
 @code{onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion)}.
@@ -2150,7 +2219,7 @@ used by your other classes.  Your helper class must implement the methods
 of the database tables when you upgrade your app to a new version.  There is a sample @code{DatabaseHelper} class as well as
 examples projects online: @uref{http://ormlite.com/android/examples/}. 
 
-@item The helper can be kept open across all activities in your app with the same Sqlite database connection reused by
+@item The helper can be kept open across all activities in your app with the same SQLite database connection reused by
 all threads.  If you open multiple connections to the same database, stale data and unexpected results may occur.
 We recommend using the @code{OpenHelperManager} to monitor the usage of the helper -- it will create it on the first
 access, track each time a part of your code is using it, and then it will close the last time the helper is released.
@@ -2174,7 +2243,7 @@ you want, and then calling @code{OpenHelperManager.release()} when you are done 
 
 @end enumerate
 
-Please see the example code documention for more information.  @xref{Android Examples}.  Again, feedback on this is welcome.
+Please see the example code documentation for more information.  @xref{Android Examples}.  Again, feedback on this is welcome.
 
 @c ----------------------------------------------------------------
 @node Advanced, Spring Configuration, Use With Android, Top
@@ -2403,13 +2472,17 @@ convert a field as necessary before it goes to the database.
 
 Return true if the database supports the width parameter on VARCHAR fields.
 
-@item isLimitSupported
+@item isLimitSqlSupported
 
 Return true if the database supports the LIMIT sql command.
 
 @item isLimitAfterSelect
 
 Return true if the LIMIT should be called after SELECT otherwise at the end of the WHERE (the default).
+
+@item appendLimitValue
+
+Add the necessary SQL to limit the results to a certain number.
 
 @item isOffsetSqlSupported
 
@@ -2420,9 +2493,9 @@ Return true if the database supports the OFFSET SQL command in some form.
 Return true if the database supports the offset as a comma argument from the limit. This also means that the
 limit @emph{must} be specified if the offset is specified.
 
-@item appendLimitValue
+@item appendOffsetValue
 
-Add the necessary SQL to limit the results to a certain number.
+Append to the string builder the necessary SQL to start the results at a certain row number.
 
 @item appendSelectNextValFromSequence
 
@@ -2446,9 +2519,10 @@ See the Javadocs for the class for more information.
 
 Returns true if the database supports nested savepoints (transactions).
 
-@item isSerializableIdAllowed
+@item getPingStatement()
 
-Returns true if the datatype Seriliable is allowed as an identity column. Mostly for testing purposes.
+Return an statement that doesn't do anything but which can be used to ping the database by sending it over a
+database connection.
 
 @end table
 
@@ -2638,7 +2712,7 @@ seems to have the same batch performance implications.
 @value{package} uses a log system which can plug into Apache commons logging, Log4j, Android Log, or its own internal
 log implementations.  The logger code in @code{com.j256.ormlite.logger} first looks for the @code{android.util.Log} and
 if found will use the Android internal logger.  Next it looks for@code{org.apache.commons.logging.LogFactory} class in the
-classpath -- if found it will use Apache commons logging.  If that class is not found it then looks for
+class-path -- if found it will use Apache commons logging.  If that class is not found it then looks for
 @code{org.apache.log4j.Logger} and if found will use Log4j.  If none of these classes are available it will use an internal
 logger -- see @code{LocalLog}.  The logger code also provides simple @{@} argument expansion like @code{slf4j} which means
 that you can save on @code{toString()} calls and @code{StringBuilder} operations if the log level is not high enough.  This
@@ -2684,7 +2758,7 @@ only be used during debugging and should not be the default.
 @section External Dependencies
 
 @value{package} does not have any direct dependencies.  It has logging classes that depend on Apache commons-logging
-and Log4j but these classes will @emph{not} be referenced unless they exist in the classpath.
+and Log4j but these classes will @emph{not} be referenced unless they exist in the class-path.
   
 If you want to get the @value{package} Junit tests to run, there are test dependencies on the following packages:
 
@@ -2729,7 +2803,7 @@ changes are actually written.  For example, let's say you are recording an order
 requires you to insert a row into the Order table and also to update the Account table with the order number.  If the
 Order was inserted but then a disk error stopped the Account from being updated, the Order data would be left dangling.
 If you used a transaction then both changes would be saved to the database only when the transaction was closed.  Most (not all)
-databases support transactions which are designed specifically with these sorts of scenerios in mind.
+databases support transactions which are designed specifically with these sorts of scenarios in mind.
 
 @cindex TransactionManager
 @value{package} has basic support for transactions through the use of the @code{TransactionManager} class which wraps
@@ -2768,7 +2842,7 @@ can return an object from the callable so you could pass back the number of rows
 a number of changes are written at once in a batch.  For those databases which do support auto-commit, the
 @code{Dao.callBatchTasks()} method should be used. @xref{callBatchTasks}.  However, for those databases that do
 @emph{not} support auto-commit but do support transactions (for example Android), running a number of operations within
-a transaction seems to give a significant performance improvement. For exampe, if you are a making a large number of
+a transaction seems to give a significant performance improvement. For example, if you are a making a large number of
 inserts into a database, consider running them within a transaction.
 
 @c ----------------------------------------------------------------
@@ -2933,28 +3007,28 @@ the latest jar from the website: @uref{http://www.h2database.com/html/download.h
 @cindex simple example
 @item Simple, basic
 
-This is a simple application which performs database operations on a single class/table.  See soure code in
+This is a simple application which performs database operations on a single class/table.  See source code in
 SVN: @uref{http://ormlite.com/docs/example-simple}.
 
 @cindex foreign objects example
 @anchor{foreign objects example}
 @item Foreign objects 
 
-This example shows how to use foreign objects.  @xref{Foreign Objects}.  See the soure code in SVN: @uref{http://ormlite.com/docs/example-foreign}.
+This example shows how to use foreign objects.  @xref{Foreign Objects}.  See the source code in SVN: @uref{http://ormlite.com/docs/example-foreign}.
 
 @cindex field configuration example
 @anchor{field config example}
 @item Field configuration 
 
 This example shows how you can configure a class in @value{package} using Java code @emph{instead} of annotations.  @xref{Class Configuration}.
-See the soure code in SVN: @uref{http://ormlite.com/docs/example-config}.
+See the source code in SVN: @uref{http://ormlite.com/docs/example-config}.
 
 @cindex many to many example
 @anchor{many to many example}
 @item Many to many 
 
 This example is a bit more complicated with multiple tables and is designed for folks trying to model a many-to-many relationship.
-It has a join-table, foreign fields, and also utilizes inner queries.   See the soure code in
+It has a join-table, foreign fields, and also utilizes inner queries.   See the source code in
 SVN: @uref{http://ormlite.com/docs/example-many}.
 
 @cindex spring example
@@ -2962,7 +3036,7 @@ SVN: @uref{http://ormlite.com/docs/example-many}.
 @item Spring wiring
 
 To demonstrate how to use Spring wiring with @value{package}, this little program includes classes and XML configuration files.
-See soure code in SVN: @uref{http://ormlite.com/docs/example-spring}.
+See source code in SVN: @uref{http://ormlite.com/docs/example-spring}.
 
 @end table
 
