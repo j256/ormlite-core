@@ -10,7 +10,7 @@ import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.table.TableInfo;
 
-public class BaseCoreStmtTest extends BaseCoreTest {
+public abstract class BaseCoreStmtTest extends BaseCoreTest {
 
 	protected TableInfo<Foo> baseFooTableInfo;
 	protected FieldType numberFieldType;
