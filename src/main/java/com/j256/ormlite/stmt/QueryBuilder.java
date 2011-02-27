@@ -160,9 +160,13 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * specified since the offset is an argument of the limit.
 	 * </p>
 	 */
-	public QueryBuilder<T, ID> offset(Integer startRow) {
-		offset = startRow;
-		return this;
+	public QueryBuilder<T, ID> offset(Integer startRow) throws SQLException {
+		if (databaseType.isOffsetSqlSupported()) {
+			offset = startRow;
+			return this;
+		} else {
+			throw new SQLException("Offset is not supported by this database");
+		}
 	}
 
 	@Override
@@ -253,9 +257,6 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	private void appendOffset(StringBuilder sb) throws SQLException {
 		if (offset == null) {
 			return;
-		}
-		if (!databaseType.isOffsetSqlSupported()) {
-			throw new SQLException("Offset is not supported by this database");
 		}
 		if (databaseType.isOffsetLimitArgument()) {
 			if (limit == null) {
