@@ -472,8 +472,8 @@ public class FieldType {
 	/**
 	 * Return whether this field's default value should be escaped in SQL.
 	 */
-	public boolean isEscapeDefaultValue() {
-		return dataType.isEscapeDefaultValue();
+	public boolean isEscapedDefaultValue() {
+		return dataType.isEscapedDefaultValue();
 	}
 
 	/**

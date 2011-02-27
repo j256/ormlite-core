@@ -1,34 +1,38 @@
 package com.j256.ormlite.field;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.ByteArrayInputStream;
-import java.io.ObjectInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.text.ParseException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.junit.AfterClass;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.StatementBuilder.StatementType;
+import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTable;
 
 public class DataTypeTest extends BaseCoreTest {
 
+	private static Set<DataType> dataTypeSet = new HashSet<DataType>();
+
 	private static final String TABLE_NAME = "foo";
 
-	private static final String STRING_COLUMN = "id";
+	private static final String STRING_COLUMN = "string";
 	private static final String BOOLEAN_COLUMN = "bool";
 	private static final String DATE_COLUMN = "date";
 	private static final String BYTE_COLUMN = "byteField";
@@ -37,519 +41,642 @@ public class DataTypeTest extends BaseCoreTest {
 	private static final String LONG_COLUMN = "longField";
 	private static final String FLOAT_COLUMN = "floatField";
 	private static final String DOUBLE_COLUMN = "doubleField";
-	private static final String ENUM_COLUMN = "enum";
+	private static final String SERIALIZABLE_COLUMN = "serializable";
+	private static final String ENUM_COLUMN = "ourEnum";
+	private static final FieldType[] noFieldTypes = new FieldType[0];
 
-	private static final String DATE_FORMAT = "MM/dd/yyyy";
-	private static final String DATE_STRING = "10/10/2010";
-	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT);
-	private static Date DATE;
-	private static Timestamp TIMESTAMP;
-	private static final int COLUMN = 0;
-	private static final String BAD_DATE_STRING = "badDateString";
-	private static final String INT_STRING = "5";
-	private static final String FLOAT_STRING = "5.0";
-
-	static {
-		try {
-			DATE = DATE_FORMATTER.parse(DATE_STRING);
-			TIMESTAMP = new Timestamp(DATE.getTime());
-		} catch (ParseException pe) {
-			new RuntimeException("Unable to parse date from " + DATE_STRING);
+	@AfterClass
+	public static void afterClass() throws Exception {
+		for (DataType dataType : DataType.values()) {
+			if (!dataTypeSet.contains(dataType)) {
+				throw new IllegalStateException("Did not properly test data type " + dataType);
+			}
 		}
 	}
 
 	@Test
-	public void testUnknownClass() {
-		assertEquals(DataType.UNKNOWN, DataType.lookupClass(getClass()));
+	public void testString() throws Exception {
+		Class<LocalString> clazz = LocalString.class;
+		Dao<LocalString, Object> dao = createDao(clazz, true);
+		String val = "str";
+		String valStr = val;
+		LocalString foo = new LocalString();
+		foo.string = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, val, val, valStr, DataType.STRING, STRING_COLUMN, false, true, true, false, false, false,
+				true);
 	}
 
 	@Test
-	public void testSerializableLookup() {
-		assertEquals(DataType.SERIALIZABLE, DataType.lookupClass(Serializable.class));
-	}
-
-	@Test
-	public void testEnumLookup() {
-		assertEquals(DataType.ENUM_STRING, DataType.lookupClass(Enum.class));
+	public void testLongString() throws Exception {
+		Class<LocalLongString> clazz = LocalLongString.class;
+		Dao<LocalLongString, Object> dao = createDao(LocalLongString.class, true);
+		String val = "str";
+		String valStr = val;
+		LocalLongString foo = new LocalLongString();
+		foo.string = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, val, val, valStr, DataType.LONG_STRING, STRING_COLUMN, false, false, true, false, false,
+				false, true);
 	}
 
 	@Test
 	public void testBoolean() throws Exception {
-		DataType type = DataType.BOOLEAN;
-		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
-		Boolean booleanResult = Boolean.TRUE;
-		expect(results.getBoolean(COLUMN)).andReturn(booleanResult);
-		replay(results);
-		assertEquals(booleanResult, type.resultToJava(null, results, COLUMN));
-		verify(results);
-
-		assertFalse(type.isEscapeDefaultValue());
-		assertTrue(type.isPrimitive());
-		assertEquals(Boolean.TRUE, type.parseDefaultString(null, "true"));
-		assertEquals(Boolean.FALSE, type.parseDefaultString(null, "false"));
-		assertNull(type.resultToId(null, 0));
+		Class<LocalBoolean> clazz = LocalBoolean.class;
+		Dao<LocalBoolean, Object> dao = createDao(clazz, true);
+		boolean val = true;
+		String valStr = Boolean.toString(val);
+		LocalBoolean foo = new LocalBoolean();
+		foo.bool = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, val, val, valStr, DataType.BOOLEAN, BOOLEAN_COLUMN, false, false, false, true, false,
+				false, true);
 	}
 
 	@Test
 	public void testBooleanObj() throws Exception {
-		DataType type = DataType.BOOLEAN_OBJ;
-		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
-		Boolean booleanResult = Boolean.TRUE;
-		expect(results.getBoolean(COLUMN)).andReturn(booleanResult);
-		replay(results);
-		assertEquals(booleanResult, type.resultToJava(null, results, COLUMN));
-		verify(results);
-
-		assertFalse(type.isEscapeDefaultValue());
-		assertEquals(Boolean.TRUE, type.parseDefaultString(null, "true"));
-		assertEquals(Boolean.FALSE, type.parseDefaultString(null, "false"));
+		Class<LocalBooleanObj> clazz = LocalBooleanObj.class;
+		Dao<LocalBooleanObj, Object> dao = createDao(clazz, true);
+		Boolean val = true;
+		String valStr = val.toString();
+		LocalBooleanObj foo = new LocalBooleanObj();
+		foo.bool = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, val, val, valStr, DataType.BOOLEAN_OBJ, BOOLEAN_COLUMN, false, false, false, false, false,
+				false, true);
 	}
 
 	@Test
 	public void testDate() throws Exception {
-		DataType type = DataType.DATE;
-		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
-		expect(results.getTimestamp(COLUMN)).andReturn(TIMESTAMP);
-		replay(results);
-		assertEquals(DATE, type.resultToJava(null, results, COLUMN));
-		verify(results);
-
-		Timestamp timestamp = new Timestamp(DATE_FORMATTER.parse(DATE_STRING).getTime());
-		assertEquals(timestamp, type.parseDefaultString(getFieldType("date"), DATE_STRING));
-
-		timestamp = (Timestamp) type.javaToSqlArg(null, DATE);
-		assertEquals(TIMESTAMP, timestamp);
+		Class<LocalDate> clazz = LocalDate.class;
+		Dao<LocalDate, Object> dao = createDao(clazz, true);
+		Date val = new Date();
+		String format = "yyyy-MM-dd HH:mm:ss.SSSSSS";
+		DateFormat dateFormat = new SimpleDateFormat(format);
+		String valStr = dateFormat.format(val);
+		LocalDate foo = new LocalDate();
+		foo.date = val;
+		assertEquals(1, dao.create(foo));
+		Field[] fields = LocalDate.class.getDeclaredFields();
+		assertTrue(fields.length > 0);
+		testType(clazz, val, val, val, valStr, DataType.DATE, DATE_COLUMN, false, true, true, false, true, false, true);
 	}
 
+	@Test(expected = SQLException.class)
+	public void testDateParseInvalid() throws Exception {
+		FieldType fieldType =
+				FieldType.createFieldType(connectionSource, TABLE_NAME, LocalDate.class.getDeclaredField(DATE_COLUMN),
+						0);
+		DataType.DATE.parseDefaultString(fieldType, "not valid date string");
+	}
+
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testJavaDate() throws Exception {
-		@SuppressWarnings("deprecation")
-		DataType type = DataType.JAVA_DATE;
-		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
-		expect(results.getTimestamp(COLUMN)).andReturn(TIMESTAMP);
-		replay(results);
-		assertEquals(DATE, type.resultToJava(null, results, COLUMN));
-		verify(results);
-
-		Timestamp timestamp = new Timestamp(DATE_FORMATTER.parse(DATE_STRING).getTime());
-		assertEquals(timestamp, type.parseDefaultString(getFieldType("date"), DATE_STRING));
-
-		timestamp = (Timestamp) type.javaToSqlArg(null, DATE);
-		assertEquals(TIMESTAMP, timestamp);
+		Class<LocalDate> clazz = LocalDate.class;
+		Dao<LocalDate, Object> dao = createDao(clazz, true);
+		Date val = new Date();
+		String format = "yyyy-MM-dd HH:mm:ss.SSSSSS";
+		DateFormat dateFormat = new SimpleDateFormat(format);
+		String valStr = dateFormat.format(val);
+		LocalDate foo = new LocalDate();
+		foo.date = val;
+		assertEquals(1, dao.create(foo));
+		Field[] fields = LocalDate.class.getDeclaredFields();
+		assertTrue(fields.length > 0);
+		testType(clazz, val, val, val, valStr, DataType.JAVA_DATE, DATE_COLUMN, false, true, true, false, true, false,
+				true);
 	}
 
-	@Test
-	public void testDateLong() throws Exception {
-		DataType type = DataType.DATE_LONG;
-		long millis = 5;
-		Date date = new Date(millis);
-
-		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
-		expect(results.getLong(COLUMN)).andReturn(new Long(millis));
-		replay(results);
-		assertEquals(date, type.resultToJava(null, results, COLUMN));
-		verify(results);
-
-		Long expectedLong = (Long) type.javaToSqlArg(null, date);
-		assertEquals(millis, expectedLong.longValue());
-		assertFalse(type.isEscapedValue());
-		String longString = "255";
-		assertEquals(new Long(longString), type.parseDefaultString(null, longString));
-	}
-
-	@Test
-	public void testJavaDateLong() throws Exception {
-		@SuppressWarnings("deprecation")
-		DataType type = DataType.JAVA_DATE_LONG;
-		long millis = 5;
-		Date date = new Date(millis);
-
-		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
-		expect(results.getLong(COLUMN)).andReturn(new Long(millis));
-		replay(results);
-		assertEquals(date, type.resultToJava(null, results, COLUMN));
-		verify(results);
-
-		Long expectedLong = (Long) type.javaToSqlArg(null, date);
-		assertEquals(millis, expectedLong.longValue());
-		assertFalse(type.isEscapedValue());
-		String longString = "255";
-		assertEquals(new Long(longString), type.parseDefaultString(null, longString));
-	}
-
-	@Test(expected = SQLException.class)
-	public void testBadDateLong() throws Exception {
-		DataType.DATE_LONG.parseDefaultString(null, "notALong");
-	}
-
-	@Test(expected = SQLException.class)
 	@SuppressWarnings("deprecation")
-	public void testBadJavaDateLong() throws Exception {
-		DataType.JAVA_DATE_LONG.parseDefaultString(null, "notALong");
+	@Test(expected = SQLException.class)
+	public void testJavaDateParseInvalid() throws Exception {
+		FieldType fieldType =
+				FieldType.createFieldType(connectionSource, TABLE_NAME, LocalDate.class.getDeclaredField(DATE_COLUMN),
+						0);
+		DataType.JAVA_DATE.parseDefaultString(fieldType, "not valid date string");
 	}
 
 	@Test
 	public void testDateString() throws Exception {
-		DataType type = DataType.DATE_STRING;
-		FieldType fieldType = getFieldType("date");
-		assertEquals(DATE_STRING, type.javaToSqlArg(fieldType, DATE));
-		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
-		expect(results.getString(COLUMN)).andReturn(DATE_STRING);
-		replay(results);
-		assertEquals(DATE, type.resultToJava(fieldType, results, COLUMN));
-		verify(results);
+		Class<LocalDateString> clazz = LocalDateString.class;
+		Dao<LocalDateString, Object> dao = createDao(clazz, true);
+		Date val = new Date();
+		String format = "yyyy-MM-dd HH:mm:ss.SSSSSS";
+		DateFormat dateFormat = new SimpleDateFormat(format);
+		String valStr = dateFormat.format(val);
+		String sqlVal = valStr;
+		LocalDateString foo = new LocalDateString();
+		foo.date = val;
+		assertEquals(1, dao.create(foo));
+		Field[] fields = LocalDateString.class.getDeclaredFields();
+		assertTrue(fields.length > 0);
+		testType(clazz, val, valStr, sqlVal, sqlVal, DataType.DATE_STRING, DATE_COLUMN, false, true, true, false,
+				false, false, true);
 	}
 
+	@Test(expected = SQLException.class)
+	public void testDateStringResultInvalid() throws Exception {
+		Class<LocalString> clazz = LocalString.class;
+		Dao<LocalString, Object> dao = createDao(clazz, true);
+		LocalString foo = new LocalString();
+		foo.string = "not a date format";
+		assertEquals(1, dao.create(foo));
+		CompiledStatement stmt =
+				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
+						StatementType.SELECT, noFieldTypes, noFieldTypes);
+		DatabaseResults results = stmt.runQuery();
+		assertTrue(results.next());
+		int colNum = results.findColumn(STRING_COLUMN);
+		DataType.DATE_STRING.resultToJava(null, results, colNum);
+	}
+
+	@Test(expected = SQLException.class)
+	public void testDateStringParseInvalid() throws Exception {
+		FieldType fieldType =
+				FieldType.createFieldType(connectionSource, TABLE_NAME,
+						LocalDateString.class.getDeclaredField(DATE_COLUMN), 0);
+		DataType.DATE_STRING.parseDefaultString(fieldType, "not valid date string");
+	}
+
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testJavaDateString() throws Exception {
-		@SuppressWarnings("deprecation")
-		DataType type = DataType.JAVA_DATE_STRING;
-		FieldType fieldType = getFieldType("date");
-		assertEquals(DATE_STRING, type.javaToSqlArg(fieldType, DATE));
-		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
-		expect(results.getString(COLUMN)).andReturn(DATE_STRING);
-		replay(results);
-		assertEquals(DATE, type.resultToJava(fieldType, results, COLUMN));
-		verify(results);
+		Class<LocalDateString> clazz = LocalDateString.class;
+		Dao<LocalDateString, Object> dao = createDao(LocalDateString.class, true);
+		Date val = new Date();
+		String format = "yyyy-MM-dd HH:mm:ss.SSSSSS";
+		DateFormat dateFormat = new SimpleDateFormat(format);
+		String valStr = dateFormat.format(val);
+		String sqlVal = valStr;
+		LocalDateString foo = new LocalDateString();
+		foo.date = val;
+		assertEquals(1, dao.create(foo));
+		Field[] fields = LocalDateString.class.getDeclaredFields();
+		assertTrue(fields.length > 0);
+		testType(clazz, val, sqlVal, sqlVal, valStr, DataType.JAVA_DATE_STRING, DATE_COLUMN, false, true, true, false,
+				false, false, true);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test(expected = SQLException.class)
-	public void testBadDateString() throws Exception {
-		DataType type = DataType.DATE_STRING;
-		FieldType fieldType = getFieldType("date");
-		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
-		expect(results.getString(COLUMN)).andReturn(BAD_DATE_STRING);
-		replay(results);
-		type.resultToJava(fieldType, results, COLUMN);
-		verify(results);
+	public void testJavaDateStringResultInvalid() throws Exception {
+		Class<LocalString> clazz = LocalString.class;
+		Dao<LocalString, Object> dao = createDao(clazz, true);
+		LocalString foo = new LocalString();
+		foo.string = "not a date format";
+		assertEquals(1, dao.create(foo));
+		CompiledStatement stmt =
+				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
+						StatementType.SELECT, noFieldTypes, noFieldTypes);
+		DatabaseResults results = stmt.runQuery();
+		assertTrue(results.next());
+		int colNum = results.findColumn(STRING_COLUMN);
+		DataType.JAVA_DATE_STRING.resultToJava(null, results, colNum);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test(expected = SQLException.class)
-	public void testJavaBadDateString() throws Exception {
-		@SuppressWarnings("deprecation")
-		DataType type = DataType.JAVA_DATE_STRING;
-		FieldType fieldType = getFieldType("date");
-		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
-		expect(results.getString(COLUMN)).andReturn(BAD_DATE_STRING);
-		replay(results);
-		type.resultToJava(fieldType, results, COLUMN);
-		verify(results);
+	public void testJavaDateStringParseInvalid() throws Exception {
+		FieldType fieldType =
+				FieldType.createFieldType(connectionSource, TABLE_NAME,
+						LocalDateString.class.getDeclaredField(DATE_COLUMN), 0);
+		DataType.JAVA_DATE_STRING.parseDefaultString(fieldType, "not valid date string");
 	}
 
 	@Test
-	public void testDateStringParseDefaultString() throws Exception {
-		DataType type = DataType.DATE_STRING;
-		FieldType fieldType = getFieldType("date");
-		assertEquals(DATE_STRING, type.parseDefaultString(fieldType, DATE_STRING));
+	public void testDateLong() throws Exception {
+		Class<LocalDateLong> clazz = LocalDateLong.class;
+		Dao<LocalDateLong, Object> dao = createDao(clazz, true);
+		Date val = new Date();
+		long sqlVal = val.getTime();
+		String valStr = Long.toString(val.getTime());
+		LocalDateLong foo = new LocalDateLong();
+		foo.date = val;
+		assertEquals(1, dao.create(foo));
+		Field[] fields = LocalDateLong.class.getDeclaredFields();
+		assertTrue(fields.length > 0);
+		testType(clazz, val, sqlVal, sqlVal, valStr, DataType.DATE_LONG, DATE_COLUMN, false, true, false, false, false,
+				false, true);
 	}
 
+	@Test(expected = SQLException.class)
+	public void testDateLongParseInvalid() throws Exception {
+		FieldType fieldType =
+				FieldType.createFieldType(connectionSource, TABLE_NAME,
+						LocalDateLong.class.getDeclaredField(DATE_COLUMN), 0);
+		DataType.DATE_LONG.parseDefaultString(fieldType, "not valid long number");
+	}
+
+	@SuppressWarnings("deprecation")
 	@Test
-	public void testJavaDateStringParseDefaultString() throws Exception {
-		@SuppressWarnings("deprecation")
-		DataType type = DataType.JAVA_DATE_STRING;
-		FieldType fieldType = getFieldType("date");
-		assertEquals(DATE_STRING, type.parseDefaultString(fieldType, DATE_STRING));
+	public void testJavaDateLong() throws Exception {
+		Class<LocalDateLong> clazz = LocalDateLong.class;
+		Dao<LocalDateLong, Object> dao = createDao(clazz, true);
+		Date val = new Date();
+		long sqlVal = val.getTime();
+		String valStr = Long.toString(val.getTime());
+		LocalDateLong foo = new LocalDateLong();
+		foo.date = val;
+		assertEquals(1, dao.create(foo));
+		Field[] fields = LocalDateString.class.getDeclaredFields();
+		assertTrue(fields.length > 0);
+		testType(clazz, val, sqlVal, sqlVal, valStr, DataType.JAVA_DATE_LONG, DATE_COLUMN, false, true, false, false,
+				false, false, true);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test(expected = SQLException.class)
-	public void testDateStringParseBadDefaultString() throws Exception {
-		DataType type = DataType.DATE_STRING;
-		FieldType fieldType = getFieldType("date");
-		type.parseDefaultString(fieldType, BAD_DATE_STRING);
-	}
-
-	@Test(expected = SQLException.class)
-	public void testJavaDateStringParseBadDefaultString() throws Exception {
-		@SuppressWarnings("deprecation")
-		DataType type = DataType.JAVA_DATE_STRING;
-		FieldType fieldType = getFieldType("date");
-		type.parseDefaultString(fieldType, BAD_DATE_STRING);
+	public void testJavaDateLongParseInvalid() throws Exception {
+		FieldType fieldType =
+				FieldType.createFieldType(connectionSource, TABLE_NAME,
+						LocalDateLong.class.getDeclaredField(DATE_COLUMN), 0);
+		DataType.JAVA_DATE_LONG.parseDefaultString(fieldType, "not valid long number");
 	}
 
 	@Test
 	public void testByte() throws Exception {
-		DataType type = DataType.BYTE;
-		byte testByte = Byte.parseByte(INT_STRING);
-		assertEquals(new Byte(INT_STRING), type.parseDefaultString(null, INT_STRING));
-
-		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
-		expect(results.getByte(COLUMN)).andReturn(testByte);
-		replay(results);
-		assertEquals(testByte, type.resultToJava(getFieldType("count"), results, COLUMN));
-		verify(results);
-
-		assertFalse(type.isEscapedValue());
-		assertTrue(type.isPrimitive());
+		Class<LocalByte> clazz = LocalByte.class;
+		Dao<LocalByte, Object> dao = createDao(clazz, true);
+		byte val = 123;
+		String valStr = Byte.toString(val);
+		LocalByte foo = new LocalByte();
+		foo.byteField = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, val, val, valStr, DataType.BYTE, BYTE_COLUMN, false, true, false, true, false, false, true);
 	}
 
 	@Test
 	public void testByteObj() throws Exception {
-		DataType type = DataType.BYTE_OBJ;
-		byte testByte = Byte.parseByte(INT_STRING);
-		assertEquals(new Byte(INT_STRING), type.parseDefaultString(null, INT_STRING));
+		Class<LocalByteObj> clazz = LocalByteObj.class;
+		Dao<LocalByteObj, Object> dao = createDao(clazz, true);
+		byte val = 123;
+		String valStr = Byte.toString(val);
+		LocalByteObj foo = new LocalByteObj();
+		foo.byteField = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, val, val, valStr, DataType.BYTE_OBJ, BYTE_COLUMN, false, true, false, false, false, false,
+				true);
+	}
 
-		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
-		expect(results.getByte(COLUMN)).andReturn(testByte);
-		replay(results);
-		assertEquals(testByte, type.resultToJava(getFieldType("count"), results, COLUMN));
-		verify(results);
-		assertFalse(type.isEscapedValue());
-		assertFalse(type.isPrimitive());
+	@Test
+	public void testByteArray() throws Exception {
+		Class<LocalByteArray> clazz = LocalByteArray.class;
+		Dao<LocalByteArray, Object> dao = createDao(clazz, true);
+		byte[] val = new byte[] { 123, 4, 124, 1, 0, 72 };
+		String valStr = Arrays.toString(val);
+		LocalByteArray foo = new LocalByteArray();
+		foo.byteField = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, val, val, valStr, DataType.BYTE_ARRAY, BYTE_COLUMN, false, false, true, false, true,
+				false, true);
+	}
+
+	@Test(expected = SQLException.class)
+	public void testByteArrayParseDefault() throws Exception {
+		DataType.BYTE_ARRAY.parseDefaultString(null, null);
 	}
 
 	@Test
 	public void testShort() throws Exception {
-		DataType type = DataType.SHORT;
-		short testShort = Short.parseShort(INT_STRING);
-		assertEquals(new Short(INT_STRING), type.parseDefaultString(null, INT_STRING));
-
-		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
-		expect(results.getShort(COLUMN)).andReturn(testShort);
-		replay(results);
-		assertEquals(testShort, type.resultToJava(getFieldType("count"), results, COLUMN));
-		verify(results);
-		assertFalse(type.isEscapedValue());
-		assertTrue(type.isPrimitive());
+		Class<LocalShort> clazz = LocalShort.class;
+		Dao<LocalShort, Object> dao = createDao(clazz, true);
+		short val = 12312;
+		String valStr = Short.toString(val);
+		LocalShort foo = new LocalShort();
+		foo.shortField = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, val, val, valStr, DataType.SHORT, SHORT_COLUMN, false, true, false, true, false, false,
+				true);
 	}
 
 	@Test
 	public void testShortObj() throws Exception {
-		DataType type = DataType.SHORT_OBJ;
-		short testShort = Short.parseShort(INT_STRING);
-		assertEquals(new Short(INT_STRING), type.parseDefaultString(null, INT_STRING));
-
-		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
-		expect(results.getShort(COLUMN)).andReturn(testShort);
-		replay(results);
-		assertEquals(testShort, type.resultToJava(getFieldType("count"), results, COLUMN));
-		verify(results);
-		assertFalse(type.isEscapedValue());
-		assertFalse(type.isPrimitive());
+		Class<LocalShortObj> clazz = LocalShortObj.class;
+		Dao<LocalShortObj, Object> dao = createDao(clazz, true);
+		Short val = 12312;
+		String valStr = val.toString();
+		LocalShortObj foo = new LocalShortObj();
+		foo.shortField = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, val, val, valStr, DataType.SHORT_OBJ, SHORT_COLUMN, false, true, false, false, false,
+				false, true);
 	}
 
 	@Test
-	public void testInteger() throws Exception {
-		DataType type = DataType.INTEGER;
-		int testInt = Integer.parseInt(INT_STRING);
-		assertEquals(new Integer(INT_STRING), type.parseDefaultString(null, INT_STRING));
-
-		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
-		expect(results.getInt(COLUMN)).andReturn(testInt);
-		expect(results.getInt(COLUMN)).andReturn(testInt);
-		replay(results);
-		assertEquals(testInt, type.resultToJava(getFieldType("count"), results, COLUMN));
-		assertEquals(testInt, type.resultToId(results, COLUMN));
-		verify(results);
-		assertFalse(type.isEscapedValue());
-		assertTrue(type.isPrimitive());
+	public void testInt() throws Exception {
+		Class<LocalInt> clazz = LocalInt.class;
+		Dao<LocalInt, Object> dao = createDao(clazz, true);
+		int val = 313213123;
+		String valStr = Integer.toString(val);
+		LocalInt foo = new LocalInt();
+		foo.intField = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, val, val, valStr, DataType.INTEGER, INT_COLUMN, true, true, false, true, false, false,
+				true);
 	}
 
 	@Test
-	public void testIntegerObj() throws Exception {
-		DataType type = DataType.INTEGER_OBJ;
-		int testInt = Integer.parseInt(INT_STRING);
-		assertEquals(new Integer(INT_STRING), type.parseDefaultString(null, INT_STRING));
+	public void testIntObj() throws Exception {
+		Class<LocalIntObj> clazz = LocalIntObj.class;
+		Dao<LocalIntObj, Object> dao = createDao(clazz, true);
+		Integer val = 313213123;
+		String valStr = val.toString();
+		LocalIntObj foo = new LocalIntObj();
+		foo.intField = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, val, val, valStr, DataType.INTEGER_OBJ, INT_COLUMN, true, true, false, false, false,
+				false, true);
+	}
 
-		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
-		expect(results.getInt(COLUMN)).andReturn(testInt);
-		expect(results.getInt(COLUMN)).andReturn(testInt);
-		replay(results);
-		assertEquals(testInt, type.resultToJava(getFieldType("count"), results, COLUMN));
-		assertEquals(testInt, type.resultToId(results, COLUMN));
-		verify(results);
-		assertFalse(type.isEscapedValue());
-		assertFalse(type.isPrimitive());
+	@Test
+	public void testIntConvertId() throws Exception {
+		assertTrue(DataType.INTEGER.isConvertableId());
+		int intId = 213123123;
+		long longId = new Long(intId);
+		assertEquals(intId, DataType.INTEGER.convertIdNumber(longId));
 	}
 
 	@Test
 	public void testLong() throws Exception {
-		DataType type = DataType.LONG;
-		long testLong = Long.parseLong(INT_STRING);
-		assertEquals(new Long(INT_STRING), type.parseDefaultString(null, INT_STRING));
-
-		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
-		expect(results.getLong(COLUMN)).andReturn(testLong);
-		expect(results.getLong(COLUMN)).andReturn(testLong);
-		replay(results);
-		assertEquals(testLong, type.resultToJava(getFieldType("count"), results, COLUMN));
-		assertEquals(testLong, type.resultToId(results, COLUMN));
-		verify(results);
-		assertFalse(type.isEscapedValue());
-		assertTrue(type.isPrimitive());
+		Class<LocalLong> clazz = LocalLong.class;
+		Dao<LocalLong, Object> dao = createDao(clazz, true);
+		long val = 13312321312312L;
+		String valStr = Long.toString(val);
+		LocalLong foo = new LocalLong();
+		foo.longField = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, val, val, valStr, DataType.LONG, LONG_COLUMN, true, true, false, true, false, false, true);
 	}
 
 	@Test
 	public void testLongObj() throws Exception {
-		DataType type = DataType.LONG_OBJ;
-		long testLong = Long.parseLong(INT_STRING);
-		assertEquals(new Long(INT_STRING), type.parseDefaultString(null, INT_STRING));
+		Class<LocalLongObj> clazz = LocalLongObj.class;
+		Dao<LocalLongObj, Object> dao = createDao(clazz, true);
+		Long val = 13312321312312L;
+		String valStr = val.toString();
+		LocalLongObj foo = new LocalLongObj();
+		foo.longField = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, val, val, valStr, DataType.LONG_OBJ, LONG_COLUMN, true, true, false, false, false, false,
+				true);
+	}
 
-		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
-		expect(results.getLong(COLUMN)).andReturn(testLong);
-		expect(results.getLong(COLUMN)).andReturn(testLong);
-		replay(results);
-		assertEquals(testLong, type.resultToJava(getFieldType("count"), results, COLUMN));
-		assertEquals(testLong, type.resultToId(results, COLUMN));
-		verify(results);
-		assertFalse(type.isEscapedValue());
-		assertFalse(type.isPrimitive());
+	@Test
+	public void testLongConvertId() throws Exception {
+		assertTrue(DataType.LONG.isConvertableId());
+		long longId = new Long(1312313123131L);
+		assertEquals(longId, DataType.LONG.convertIdNumber(longId));
 	}
 
 	@Test
 	public void testFloat() throws Exception {
-		DataType type = DataType.FLOAT;
-		float testFloat = Float.parseFloat(FLOAT_STRING);
-		assertEquals(new Float(FLOAT_STRING), type.parseDefaultString(null, FLOAT_STRING));
-
-		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
-		expect(results.getFloat(COLUMN)).andReturn(testFloat);
-		replay(results);
-		assertEquals(testFloat, type.resultToJava(getFieldType("count"), results, COLUMN));
-		verify(results);
-		assertFalse(type.isEscapedValue());
-		assertTrue(type.isPrimitive());
+		Class<LocalFloat> clazz = LocalFloat.class;
+		Dao<LocalFloat, Object> dao = createDao(clazz, true);
+		float val = 1331.221F;
+		String valStr = Float.toString(val);
+		LocalFloat foo = new LocalFloat();
+		foo.floatField = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, val, val, valStr, DataType.FLOAT, FLOAT_COLUMN, false, true, false, true, false, false,
+				true);
 	}
 
 	@Test
 	public void testFloatObj() throws Exception {
-		DataType type = DataType.FLOAT_OBJ;
-		float testFloat = Float.parseFloat(FLOAT_STRING);
-		assertEquals(new Float(FLOAT_STRING), type.parseDefaultString(null, FLOAT_STRING));
-
-		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
-		expect(results.getFloat(COLUMN)).andReturn(testFloat);
-		replay(results);
-		assertEquals(testFloat, type.resultToJava(getFieldType("count"), results, COLUMN));
-		verify(results);
-		assertFalse(type.isEscapedValue());
-		assertFalse(type.isPrimitive());
+		Class<LocalFloatObj> clazz = LocalFloatObj.class;
+		Dao<LocalFloatObj, Object> dao = createDao(clazz, true);
+		Float val = 1331.221F;
+		String valStr = val.toString();
+		LocalFloatObj foo = new LocalFloatObj();
+		foo.floatField = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, val, val, valStr, DataType.FLOAT_OBJ, FLOAT_COLUMN, false, true, false, false, false,
+				false, true);
 	}
 
 	@Test
 	public void testDouble() throws Exception {
-		DataType type = DataType.DOUBLE;
-		double testDouble = Double.parseDouble(FLOAT_STRING);
-		assertEquals(new Double(FLOAT_STRING), type.parseDefaultString(null, FLOAT_STRING));
-
-		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
-		expect(results.getDouble(COLUMN)).andReturn(testDouble);
-		replay(results);
-		assertEquals(testDouble, type.resultToJava(getFieldType("count"), results, COLUMN));
-		verify(results);
-		assertFalse(type.isEscapedValue());
-		assertTrue(type.isPrimitive());
+		Class<LocalDouble> clazz = LocalDouble.class;
+		Dao<LocalDouble, Object> dao = createDao(clazz, true);
+		double val = 13313323131.221;
+		String valStr = Double.toString(val);
+		LocalDouble foo = new LocalDouble();
+		foo.doubleField = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, val, val, valStr, DataType.DOUBLE, DOUBLE_COLUMN, false, true, false, true, false, false,
+				true);
 	}
 
 	@Test
 	public void testDoubleObj() throws Exception {
-		DataType type = DataType.DOUBLE_OBJ;
-		double testDouble = Double.parseDouble(FLOAT_STRING);
-		assertEquals(new Double(FLOAT_STRING), type.parseDefaultString(null, FLOAT_STRING));
-
-		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
-		expect(results.getDouble(COLUMN)).andReturn(testDouble);
-		replay(results);
-		assertEquals(testDouble, type.resultToJava(getFieldType("count"), results, COLUMN));
-		verify(results);
-		assertFalse(type.isEscapedValue());
-		assertFalse(type.isPrimitive());
-	}
-
-	@Test(expected = SQLException.class)
-	public void testSerializableDefaultNull() throws Exception {
-		DataType type = DataType.SERIALIZABLE;
-		assertTrue(type.isStreamType());
-		type.parseDefaultString(null, null);
+		Class<LocalDoubleObj> clazz = LocalDoubleObj.class;
+		Dao<LocalDoubleObj, Object> dao = createDao(clazz, true);
+		Double val = 13313323131.221;
+		String valStr = val.toString();
+		LocalDoubleObj foo = new LocalDoubleObj();
+		foo.doubleField = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, val, val, valStr, DataType.DOUBLE_OBJ, DOUBLE_COLUMN, false, true, false, false, false,
+				false, true);
 	}
 
 	@Test
 	public void testSerializable() throws Exception {
-		DataType type = DataType.SERIALIZABLE;
-		Integer serializable = new Integer(0);
-		byte[] bytes = (byte[]) type.javaToSqlArg(null, serializable);
-		ObjectInputStream stream = new ObjectInputStream(new ByteArrayInputStream(bytes));
-		Object val = stream.readObject();
-		assertEquals(serializable, val);
-
-		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
-		expect(results.getBytes(COLUMN)).andReturn(bytes);
-		expect(results.getBytes(COLUMN)).andReturn(null);
-		replay(results);
-		assertEquals(serializable, type.resultToJava(getFieldType("serializable"), results, COLUMN));
-		assertNull(type.resultToJava(getFieldType("serializable"), results, COLUMN));
-		verify(results);
-		assertTrue(type.isEscapedValue());
-		assertFalse(type.isPrimitive());
-	}
-
-	@Test(expected = SQLException.class)
-	public void testBadSerializableBytes() throws Exception {
-		DataType type = DataType.SERIALIZABLE;
-		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
-		expect(results.getBytes(COLUMN)).andReturn(new byte[] { 1, 2, 3 });
-		replay(results);
-		type.resultToJava(getFieldType("serializable"), results, COLUMN);
-	}
-
-	@Test(expected = SQLException.class)
-	public void testSerializableBadObject() throws Exception {
-		DataType type = DataType.SERIALIZABLE;
-		type.javaToSqlArg(null, new LocalString());
+		Class<LocalSerializable> clazz = LocalSerializable.class;
+		Dao<LocalSerializable, Object> dao = createDao(clazz, true);
+		Integer val = 1331333131;
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		ObjectOutputStream objOutStream = new ObjectOutputStream(outStream);
+		objOutStream.writeObject(val);
+		byte[] sqlArg = outStream.toByteArray();
+		String valStr = val.toString();
+		LocalSerializable foo = new LocalSerializable();
+		foo.serializable = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, val, sqlArg, valStr, DataType.SERIALIZABLE, SERIALIZABLE_COLUMN, false, false, true,
+				false, true, true, false);
 	}
 
 	@Test
-	public void testSerializableIsValid() throws Exception {
-		DataType type = DataType.SERIALIZABLE;
-		assertFalse(type.isValidForType(LocalString.class));
-		assertTrue(type.isValidForType(Serializable.class));
+	public void testSerializableNoValue() throws Exception {
+		Class<LocalSerializable> clazz = LocalSerializable.class;
+		Dao<LocalSerializable, Object> dao = createDao(clazz, true);
+		LocalSerializable foo = new LocalSerializable();
+		foo.serializable = null;
+		assertEquals(1, dao.create(foo));
+		CompiledStatement stmt =
+				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
+						StatementType.SELECT, noFieldTypes, noFieldTypes);
+		DatabaseResults results = stmt.runQuery();
+		assertTrue(results.next());
+		FieldType fieldType =
+				FieldType.createFieldType(connectionSource, TABLE_NAME, clazz.getDeclaredField(SERIALIZABLE_COLUMN), 0);
+		assertNull(DataType.SERIALIZABLE.resultToJava(fieldType, results, results.findColumn(SERIALIZABLE_COLUMN)));
+		assertNull(DataType.SERIALIZABLE.resultToJavaString(fieldType, results, results.findColumn(SERIALIZABLE_COLUMN)));
+	}
+
+	@Test(expected = SQLException.class)
+	public void testSerializableParseDefault() throws Exception {
+		DataType.SERIALIZABLE.parseDefaultString(null, null);
+	}
+
+	@Test(expected = SQLException.class)
+	public void testSerializableInvalidResult() throws Exception {
+		Class<LocalByteArray> clazz = LocalByteArray.class;
+		Dao<LocalByteArray, Object> dao = createDao(clazz, true);
+		LocalByteArray foo = new LocalByteArray();
+		foo.byteField = new byte[] { 1, 2, 3, 4, 5 };
+		assertEquals(1, dao.create(foo));
+		CompiledStatement stmt =
+				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
+						StatementType.SELECT, noFieldTypes, noFieldTypes);
+		DatabaseResults results = stmt.runQuery();
+		assertTrue(results.next());
+		FieldType fieldType =
+				FieldType.createFieldType(connectionSource, TABLE_NAME,
+						LocalSerializable.class.getDeclaredField(SERIALIZABLE_COLUMN), 0);
+		DataType.SERIALIZABLE.resultToJava(fieldType, results, results.findColumn(BYTE_COLUMN));
 	}
 
 	@Test
 	public void testEnumString() throws Exception {
-		DataType type = DataType.ENUM_STRING;
-		AnotherEnum anotherEnum = AnotherEnum.A;
-		assertEquals(anotherEnum.name(), type.javaToSqlArg(null, anotherEnum));
-		String defaultString = "default";
-		assertEquals(defaultString, type.parseDefaultString(null, defaultString));
-
-		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
-		expect(results.getString(COLUMN)).andReturn(AnotherEnum.A.name());
-		replay(results);
-		assertEquals(AnotherEnum.A, type.resultToJava(getFieldType("grade"), results, COLUMN));
-		verify(results);
-		assertTrue(type.isEscapedValue());
+		Class<LocalEnumString> clazz = LocalEnumString.class;
+		Dao<LocalEnumString, Object> dao = createDao(clazz, true);
+		OurEnum val = OurEnum.SECOND;
+		String valStr = val.toString();
+		String sqlVal = valStr;
+		LocalEnumString foo = new LocalEnumString();
+		foo.ourEnum = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, sqlVal, sqlVal, valStr, DataType.ENUM_STRING, ENUM_COLUMN, false, true, true, false,
+				false, false, true);
 	}
 
 	@Test
-	public void testEnumInteger() throws Exception {
-		DataType type = DataType.ENUM_INTEGER;
-		AnotherEnum anotherEnum = AnotherEnum.A;
-		assertEquals(anotherEnum.ordinal(), type.javaToSqlArg(null, anotherEnum));
-		String integerString = "5";
-		Integer defaultInteger = new Integer(integerString);
-		assertEquals(defaultInteger, type.parseDefaultString(null, integerString));
-
-		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
-		expect(results.getInt(COLUMN)).andReturn(AnotherEnum.A.ordinal());
-		replay(results);
-		assertEquals(AnotherEnum.A, type.resultToJava(getFieldType("grade"), results, COLUMN));
-		verify(results);
-
-		assertFalse(type.isEscapedValue());
+	public void testEnumStringResultsNoFieldType() throws Exception {
+		Class<LocalEnumString> clazz = LocalEnumString.class;
+		Dao<LocalEnumString, Object> dao = createDao(clazz, true);
+		OurEnum val = OurEnum.SECOND;
+		LocalEnumString foo = new LocalEnumString();
+		foo.ourEnum = val;
+		assertEquals(1, dao.create(foo));
+		CompiledStatement stmt =
+				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
+						StatementType.SELECT, noFieldTypes, noFieldTypes);
+		DatabaseResults results = stmt.runQuery();
+		assertTrue(results.next());
+		assertEquals(val.toString(), DataType.ENUM_STRING.resultToJava(null, results, results.findColumn(ENUM_COLUMN)));
 	}
 
 	@Test
-	public void testUnknown() throws Exception {
-		DataType type = DataType.UNKNOWN;
-		String defaultString = "5";
-		assertNull(type.javaToSqlArg(null, defaultString));
-		assertNull(type.parseDefaultString(null, defaultString));
-		assertNull(type.resultToJava(null, null, 0));
+	public void testEnumInt() throws Exception {
+		Class<LocalEnumInt> clazz = LocalEnumInt.class;
+		Dao<LocalEnumInt, Object> dao = createDao(clazz, true);
+		OurEnum val = OurEnum.SECOND;
+		int sqlVal = val.ordinal();
+		String valStr = Integer.toString(sqlVal);
+		LocalEnumInt foo = new LocalEnumInt();
+		foo.ourEnum = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, sqlVal, sqlVal, valStr, DataType.ENUM_INTEGER, ENUM_COLUMN, false, true, false, false,
+				false, false, true);
+	}
+
+	@Test
+	public void testEnumIntResultsNoFieldType() throws Exception {
+		Class<LocalEnumInt> clazz = LocalEnumInt.class;
+		Dao<LocalEnumInt, Object> dao = createDao(clazz, true);
+		OurEnum val = OurEnum.SECOND;
+		LocalEnumInt foo = new LocalEnumInt();
+		foo.ourEnum = val;
+		assertEquals(1, dao.create(foo));
+		CompiledStatement stmt =
+				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
+						StatementType.SELECT, noFieldTypes, noFieldTypes);
+		DatabaseResults results = stmt.runQuery();
+		assertTrue(results.next());
+		assertEquals(val.ordinal(), DataType.ENUM_INTEGER.resultToJava(null, results, results.findColumn(ENUM_COLUMN)));
+	}
+
+	@Test
+	public void testUnknownGetResult() throws Exception {
+		Class<LocalLong> clazz = LocalLong.class;
+		Dao<LocalLong, Object> dao = createDao(LocalLong.class, true);
+		LocalLong foo = new LocalLong();
+		assertEquals(1, dao.create(foo));
+		testType(clazz, null, null, null, null, DataType.UNKNOWN, LONG_COLUMN, false, false, true, false, false, false,
+				true);
+	}
+
+	@Test
+	public void testUnknownClass() throws Exception {
+		assertEquals(DataType.UNKNOWN, DataType.lookupClass(getClass()));
+	}
+
+	@Test
+	public void testSerializableClass() throws Exception {
+		assertEquals(DataType.SERIALIZABLE, DataType.lookupClass(Serializable.class));
+		assertEquals(DataType.SERIALIZABLE, DataType.lookupClass(Exception.class));
+	}
+
+	@Test(expected = SQLException.class)
+	public void testClassLookupByteArray() throws Exception {
+		DataType.lookupClass(byte[].class);
+	}
+
+	private void testType(Class<?> clazz, Object javaVal, Object sqlVal, Object sqlArg, String valStr,
+			DataType dataType, String columnName, boolean isValidGeneratedType, boolean isAppropriateId,
+			boolean isEscapedValue, boolean isPrimitive, boolean isSelectArgRequired, boolean isStreamType,
+			boolean isComparable) throws Exception {
+		CompiledStatement stmt =
+				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
+						StatementType.SELECT, noFieldTypes, noFieldTypes);
+		DatabaseResults results = stmt.runQuery();
+		assertTrue(results.next());
+		int colNum = results.findColumn(columnName);
+		FieldType fieldType =
+				FieldType.createFieldType(connectionSource, TABLE_NAME, clazz.getDeclaredField(columnName), 0);
+		if (javaVal instanceof byte[]) {
+			assertTrue(Arrays.equals((byte[]) javaVal, (byte[]) dataType.resultToJava(fieldType, results, colNum)));
+		} else {
+			assertEquals(javaVal, dataType.resultToJava(fieldType, results, colNum));
+		}
+		assertEquals(valStr, dataType.resultToJavaString(fieldType, results, colNum));
+		if (dataType != DataType.BYTE_ARRAY && dataType != DataType.SERIALIZABLE) {
+			assertEquals(sqlVal, dataType.parseDefaultString(fieldType, valStr));
+		}
+		if (sqlArg instanceof byte[]) {
+			assertTrue(Arrays.equals((byte[]) sqlArg, (byte[]) dataType.javaToSqlArg(fieldType, javaVal)));
+		} else {
+			assertEquals(sqlArg, dataType.javaToSqlArg(fieldType, javaVal));
+		}
+		if (dataType.isConvertableId()) {
+			assertEquals(javaVal, dataType.resultToId(results, colNum));
+		} else {
+			assertNull(dataType.resultToId(results, colNum));
+			assertNull(dataType.convertIdNumber(21312312L));
+		}
+		assertEquals(isValidGeneratedType, dataType.isValidGeneratedType());
+		assertEquals(isAppropriateId, dataType.isAppropriateId());
+		assertEquals(isEscapedValue, dataType.isEscapedValue());
+		assertEquals(isEscapedValue, dataType.isEscapedDefaultValue());
+		assertEquals(isPrimitive, dataType.isPrimitive());
+		assertEquals(isSelectArgRequired, dataType.isSelectArgRequired());
+		assertEquals(isStreamType, dataType.isStreamType());
+		assertEquals(isComparable, dataType.isComparable());
+		dataTypeSet.add(dataType);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalString {
-		@DatabaseField(id = true, columnName = STRING_COLUMN)
+		@DatabaseField(columnName = STRING_COLUMN)
+		String string;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalLongString {
+		@DatabaseField(columnName = STRING_COLUMN, dataType = DataType.LONG_STRING)
 		String string;
 	}
 
@@ -560,14 +687,26 @@ public class DataTypeTest extends BaseCoreTest {
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalBooleanObj {
+		@DatabaseField(columnName = BOOLEAN_COLUMN)
+		Boolean bool;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalDate {
 		@DatabaseField(columnName = DATE_COLUMN)
 		Date date;
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
-	protected static class DateBadFormat {
-		@DatabaseField(columnName = DATE_COLUMN, format = "yyyy")
+	protected static class LocalDateString {
+		@DatabaseField(columnName = DATE_COLUMN, dataType = DataType.DATE_STRING)
+		Date date;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalDateLong {
+		@DatabaseField(columnName = DATE_COLUMN, dataType = DataType.DATE_LONG)
 		Date date;
 	}
 
@@ -578,9 +717,27 @@ public class DataTypeTest extends BaseCoreTest {
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalByteObj {
+		@DatabaseField(columnName = BYTE_COLUMN)
+		Byte byteField;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalByteArray {
+		@DatabaseField(columnName = BYTE_COLUMN, dataType = DataType.BYTE_ARRAY)
+		byte[] byteField;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalShort {
 		@DatabaseField(columnName = SHORT_COLUMN)
 		short shortField;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalShortObj {
+		@DatabaseField(columnName = SHORT_COLUMN)
+		Short shortField;
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
@@ -590,9 +747,21 @@ public class DataTypeTest extends BaseCoreTest {
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalIntObj {
+		@DatabaseField(columnName = INT_COLUMN)
+		Integer intField;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalLong {
 		@DatabaseField(columnName = LONG_COLUMN)
 		long longField;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalLongObj {
+		@DatabaseField(columnName = LONG_COLUMN)
+		Long longField;
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
@@ -602,13 +771,31 @@ public class DataTypeTest extends BaseCoreTest {
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalFloatObj {
+		@DatabaseField(columnName = FLOAT_COLUMN)
+		Float floatField;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalDouble {
 		@DatabaseField(columnName = DOUBLE_COLUMN)
 		double doubleField;;
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
-	protected static class LocalEnum {
+	protected static class LocalDoubleObj {
+		@DatabaseField(columnName = DOUBLE_COLUMN)
+		Double doubleField;;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalSerializable {
+		@DatabaseField(columnName = SERIALIZABLE_COLUMN, dataType = DataType.SERIALIZABLE)
+		Integer serializable;;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalEnumString {
 		@DatabaseField(columnName = ENUM_COLUMN)
 		OurEnum ourEnum;
 	}
@@ -632,29 +819,5 @@ public class DataTypeTest extends BaseCoreTest {
 
 	private enum OurEnum2 {
 		FIRST, ;
-	}
-
-	protected enum AnotherEnum {
-		A,
-		B,
-		// end
-		;
-	}
-
-	private FieldType getFieldType(String fieldName) throws Exception {
-		return FieldType.createFieldType(connectionSource, "Foo", Foo.class.getDeclaredField(fieldName), 0);
-	}
-
-	protected static class Foo {
-		@DatabaseField
-		String name;
-		@DatabaseField
-		int count;
-		@DatabaseField
-		AnotherEnum grade;
-		@DatabaseField(format = DATE_FORMAT)
-		Date date;
-		@DatabaseField
-		Integer serializable;
 	}
 }

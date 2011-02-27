@@ -510,12 +510,12 @@ public class FieldTypeTest extends BaseCoreTest {
 		Field field = Foo.class.getDeclaredField("name");
 		FieldType fieldType = FieldType.createFieldType(connectionSource, Foo.class.getSimpleName(), field, 0);
 		assertTrue(fieldType.isEscapedValue());
-		assertTrue(fieldType.isEscapeDefaultValue());
+		assertTrue(fieldType.isEscapedDefaultValue());
 
 		field = Foo.class.getDeclaredField("intLong");
 		fieldType = FieldType.createFieldType(connectionSource, Foo.class.getSimpleName(), field, 0);
 		assertFalse(fieldType.isEscapedValue());
-		assertFalse(fieldType.isEscapeDefaultValue());
+		assertFalse(fieldType.isEscapedDefaultValue());
 	}
 
 	@Test

@@ -129,8 +129,9 @@ public abstract class BaseDatabaseType implements DatabaseType {
 				appendDoubleType(sb);
 				break;
 
+			case BYTE_ARRAY :
 			case SERIALIZABLE :
-				appendSerializableType(sb);
+				appendByteArrayType(sb);
 				break;
 
 			case ENUM_STRING :
@@ -265,9 +266,9 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	}
 
 	/**
-	 * Output the SQL type for a Java object.
+	 * Output the SQL type for either a serialized Java object or a byte[].
 	 */
-	protected void appendSerializableType(StringBuilder sb) {
+	protected void appendByteArrayType(StringBuilder sb) {
 		sb.append("BLOB");
 	}
 
@@ -291,7 +292,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	 * Output the SQL type for a Java boolean default value.
 	 */
 	protected void appendDefaultValue(StringBuilder sb, FieldType fieldType, Object defaultValue) {
-		if (fieldType.isEscapeDefaultValue()) {
+		if (fieldType.isEscapedDefaultValue()) {
 			appendEscapedWord(sb, defaultValue.toString());
 		} else {
 			sb.append(defaultValue);

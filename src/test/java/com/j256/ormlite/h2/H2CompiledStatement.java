@@ -74,6 +74,8 @@ public class H2CompiledStatement implements CompiledStatement {
 				return Types.BOOLEAN;
 			case BYTE :
 				return Types.TINYINT;
+			case BYTE_ARRAY :
+				return Types.VARBINARY;
 			case SHORT :
 				return Types.SMALLINT;
 			case INTEGER :

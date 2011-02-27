@@ -12,6 +12,7 @@ public enum SqlType {
 	DATE,
 	BOOLEAN,
 	BYTE,
+	BYTE_ARRAY,
 	SHORT,
 	INTEGER,
 	LONG,
