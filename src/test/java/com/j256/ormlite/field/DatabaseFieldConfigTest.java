@@ -131,12 +131,6 @@ public class DatabaseFieldConfigTest {
 		assertTrue(config.isForeign());
 		assertEquals(DataType.UNKNOWN, config.getDataType());
 		assertEquals(fields[6].getName(), config.getFieldName());
-
-		config = DatabaseFieldConfig.fromField(databaseType, "foo", fields[7]);
-		assertNotNull(config);
-		assertFalse(config.isForeign());
-		assertEquals(DataType.SERIALIZABLE, config.getDataType());
-		assertEquals(fields[7].getName(), config.getFieldName());
 	}
 
 	@Test
@@ -253,9 +247,6 @@ public class DatabaseFieldConfigTest {
 		Foo foo;
 		@OneToOne
 		Foo foo2;
-		// serializable
-		@Column
-		Serial serial;
 	}
 
 	protected class JavaxAnnoJustId {

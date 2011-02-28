@@ -1,5 +1,6 @@
 package com.j256.ormlite.field;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
@@ -64,13 +65,14 @@ public class FieldType {
 		this.tableName = tableName;
 		this.field = field;
 		this.fieldName = field.getName();
+		Class<?> clazz = field.getType();
 		DataType dataType;
 		if (fieldConfig.getDataType() == DataType.UNKNOWN) {
-			dataType = DataType.lookupClass(field.getType());
+			dataType = DataType.lookupClass(clazz);
 		} else {
 			dataType = fieldConfig.getDataType();
-			if (!dataType.isValidForType(field.getType())) {
-				throw new IllegalArgumentException("Field class " + field.getType() + " for field " + this
+			if (!dataType.isValidForType(clazz)) {
+				throw new IllegalArgumentException("Field class " + clazz + " for field " + this
 						+ " is not valid for data type " + dataType);
 			}
 		}
@@ -78,19 +80,19 @@ public class FieldType {
 		if (fieldConfig.isForeign() || fieldConfig.isForeignAutoRefresh()) {
 			if (recurseLevel < MAX_FOREIGN_RECURSE_LEVEL) {
 				if (dataType.isPrimitive()) {
-					throw new IllegalArgumentException("Field " + this + " is a primitive class " + field.getType()
+					throw new IllegalArgumentException("Field " + this + " is a primitive class " + clazz
 							+ " but marked as foreign");
 				}
 				DatabaseTableConfig<?> tableConfig = fieldConfig.getForeignTableConfig();
 				if (tableConfig == null) {
-					tableConfig = DatabaseTableConfig.fromClass(connectionSource, field.getType(), recurseLevel + 1);
+					tableConfig = DatabaseTableConfig.fromClass(connectionSource, clazz, recurseLevel + 1);
 				} else {
 					tableConfig.extractFieldTypes(connectionSource);
 				}
 				@SuppressWarnings({ "unchecked", "rawtypes" })
 				TableInfo<?> foreignInfo = new TableInfo(databaseType, tableConfig);
 				if (foreignInfo.getIdField() == null) {
-					throw new IllegalArgumentException("Foreign field " + field.getType() + " does not have id field");
+					throw new IllegalArgumentException("Foreign field " + clazz + " does not have id field");
 				}
 				this.foreignTableInfo = foreignInfo;
 				defaultFieldName = defaultFieldName + FOREIGN_ID_FIELD_SUFFIX;
@@ -98,8 +100,7 @@ public class FieldType {
 				dataType = foreignInfo.getIdField().getDataType();
 				if (fieldConfig.isForeignAutoRefresh()) {
 					@SuppressWarnings("unchecked")
-					Dao<Object, Object> dao =
-							(Dao<Object, Object>) BaseDaoImpl.createDao(connectionSource, field.getType());
+					Dao<Object, Object> dao = (Dao<Object, Object>) BaseDaoImpl.createDao(connectionSource, clazz);
 					this.foreignDao = dao;
 				} else {
 					this.foreignDao = null;
@@ -110,8 +111,16 @@ public class FieldType {
 				this.foreignDao = null;
 			}
 		} else if (dataType == DataType.UNKNOWN) {
-			throw new IllegalArgumentException("ORMLite does not know how to store field class " + field.getType()
-					+ " for field " + this);
+			if (byte[].class.isAssignableFrom(clazz)) {
+				throw new SQLException("ORMLite can't store unknown class " + clazz + " for field '" + field.getName()
+						+ "'. byte[] fields must specify dataType=DataType.BYTE_ARRAY or SERIALIZABLE");
+			} else if (Serializable.class.isAssignableFrom(clazz)) {
+				throw new SQLException("ORMLite can't store unknown class " + clazz + " for field '" + field.getName()
+						+ "'. Serializable fields must specify dataType=DataType.SERIALIZABLE");
+			} else {
+				throw new IllegalArgumentException("ORMLite does not know how to store field class " + clazz
+						+ " for field " + this);
+			}
 		} else {
 			this.foreignTableInfo = null;
 			this.foreignDao = null;
@@ -185,7 +194,7 @@ public class FieldType {
 		if (dataType == DataType.ENUM_INTEGER || dataType == DataType.ENUM_STRING) {
 			this.enumStringMap = new HashMap<String, Enum<?>>();
 			this.enumValueMap = new HashMap<Integer, Enum<?>>();
-			Enum<?>[] constants = (Enum<?>[]) field.getType().getEnumConstants();
+			Enum<?>[] constants = (Enum<?>[]) clazz.getEnumConstants();
 			if (constants == null) {
 				throw new SQLException("Field " + field.getName() + " improperly configured as type " + dataType);
 			}
@@ -220,7 +229,6 @@ public class FieldType {
 					+ " which cannot be the ID field");
 		}
 	}
-
 	public String getTableName() {
 		return tableName;
 	}

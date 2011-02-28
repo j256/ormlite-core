@@ -568,6 +568,20 @@ public class FieldTypeTest extends BaseCoreTest {
 		verify(results, connectionSource, connection);
 	}
 
+	@Test(expected = SQLException.class)
+	public void testSerializableNoDataType() throws Exception {
+		Field field = SerializableNoDataType.class.getDeclaredField("serial");
+		// this will throw without the recursive fix
+		FieldType.createFieldType(connectionSource, SerializableNoDataType.class.getSimpleName(), field, 0);
+	}
+
+	@Test(expected = SQLException.class)
+	public void testByteArrayNoDataType() throws Exception {
+		Field field = ByteArrayNoDataType.class.getDeclaredField("bytes");
+		// this will throw without the recursive fix
+		FieldType.createFieldType(connectionSource, ByteArrayNoDataType.class.getSimpleName(), field, 0);
+	}
+
 	/* ========================================================================================================= */
 
 	protected static class Foo {
@@ -810,6 +824,18 @@ public class FieldTypeTest extends BaseCoreTest {
 		Recursive foreign;
 		public Recursive() {
 		}
+	}
+
+	@DatabaseTable
+	protected static class SerializableNoDataType {
+		@DatabaseField
+		Serializable serial;
+	}
+
+	@DatabaseTable
+	protected static class ByteArrayNoDataType {
+		@DatabaseField
+		byte[] bytes;
 	}
 
 	private static class NeedsUppercaseSequenceDatabaseType extends NeedsSequenceDatabaseType {

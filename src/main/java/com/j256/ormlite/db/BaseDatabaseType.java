@@ -103,6 +103,10 @@ public abstract class BaseDatabaseType implements DatabaseType {
 			case BYTE_OBJ :
 				appendByteType(sb);
 				break;
+				
+			case BYTE_ARRAY :
+				appendByteArrayType(sb);
+				break;
 
 			case SHORT :
 			case SHORT_OBJ :
@@ -129,9 +133,8 @@ public abstract class BaseDatabaseType implements DatabaseType {
 				appendDoubleType(sb);
 				break;
 
-			case BYTE_ARRAY :
 			case SERIALIZABLE :
-				appendByteArrayType(sb);
+				appendSerializableType(sb);
 				break;
 
 			case ENUM_STRING :
@@ -176,7 +179,6 @@ public abstract class BaseDatabaseType implements DatabaseType {
 			}
 		}
 	}
-
 	/**
 	 * Output the SQL type for a Java String.
 	 */
@@ -269,6 +271,13 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	 * Output the SQL type for either a serialized Java object or a byte[].
 	 */
 	protected void appendByteArrayType(StringBuilder sb) {
+		sb.append("BLOB");
+	}
+
+	/**
+	 * Output the SQL type for a serialized Java object.
+	 */
+	protected void appendSerializableType(StringBuilder sb) {
 		sb.append("BLOB");
 	}
 

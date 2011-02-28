@@ -54,12 +54,6 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 				assertEquals(DataType.UNKNOWN, config.getDataType());
 				assertEquals(field.getName(), config.getFieldName());
 				assertNull(config.getColumnName());
-			} else if (field.getName().equals("serializable")) {
-				assertFalse(config.isId());
-				assertFalse(config.isGeneratedId());
-				assertEquals(DataType.SERIALIZABLE, config.getDataType());
-				assertEquals(field.getName(), config.getFieldName());
-				assertNull(config.getColumnName());
 			} else if (field.getName().equals("foreignManyToOne")) {
 				assertFalse(config.isId());
 				assertFalse(config.isGeneratedId());
@@ -114,9 +108,6 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 		// this thing is not serializable
 		@Column
 		public Javax unknown;
-		// this is serializable
-		@Column
-		public SerialField serializable;
 		@ManyToOne
 		Foreign foreignManyToOne;
 		@OneToOne

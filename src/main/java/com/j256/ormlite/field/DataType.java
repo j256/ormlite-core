@@ -743,7 +743,7 @@ public enum DataType implements FieldConverter {
 	/**
 	 * Persists an unknown Java Object that is serializable.
 	 */
-	SERIALIZABLE(SqlType.SERIALIZABLE, new Class<?>[] { Serializable.class }) {
+	SERIALIZABLE(SqlType.SERIALIZABLE, new Class<?>[0]) {
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			byte[] bytes = results.getBytes(columnPos);
@@ -975,10 +975,6 @@ public enum DataType implements FieldConverter {
 	 * Static method that returns the DataType associated with the class argument or {@link #UNKNOWN} if not found.
 	 */
 	public static DataType lookupClass(Class<?> dataClass) throws SQLException {
-		if (byte[].class.isAssignableFrom(dataClass)) {
-			throw new SQLException("For backwards compatibility, byte[] must specify the dataType field as a "
-					+ BYTE_ARRAY + " (newer) or " + SERIALIZABLE + " (older)");
-		}
 		for (DataType dataType : values()) {
 			// build a static map from class to associated type
 			for (Class<?> dataTypeClass : dataType.classes) {
@@ -990,9 +986,6 @@ public enum DataType implements FieldConverter {
 		if (dataClass.isEnum()) {
 			// special handling of the Enum type
 			return ENUM_STRING;
-		} else if (Serializable.class.isAssignableFrom(dataClass)) {
-			// special handling of the serializable type
-			return SERIALIZABLE;
 		} else {
 			return UNKNOWN;
 		}

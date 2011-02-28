@@ -351,7 +351,7 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 		float floatField;
 		@DatabaseField
 		double doubleField;
-		@DatabaseField
+		@DatabaseField(dataType = DataType.SERIALIZABLE)
 		SerialClass serialized;
 		@DatabaseField(dataType = DataType.ENUM_INTEGER)
 		OurEnum enumInt;

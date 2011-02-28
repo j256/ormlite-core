@@ -616,13 +616,12 @@ public class DataTypeTest extends BaseCoreTest {
 
 	@Test
 	public void testSerializableClass() throws Exception {
-		assertEquals(DataType.SERIALIZABLE, DataType.lookupClass(Serializable.class));
-		assertEquals(DataType.SERIALIZABLE, DataType.lookupClass(Exception.class));
+		assertEquals(DataType.UNKNOWN, DataType.lookupClass(Serializable.class));
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testClassLookupByteArray() throws Exception {
-		DataType.lookupClass(byte[].class);
+		assertEquals(DataType.UNKNOWN, DataType.lookupClass(byte[].class));
 	}
 
 	private void testType(Class<?> clazz, Object javaVal, Object sqlVal, Object sqlArg, String valStr,
