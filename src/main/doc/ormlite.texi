@@ -2182,9 +2182,9 @@ A short-cut for calling @code{prepare()} on the original @code{QueryBuilder.prep
 @cindex raw where statement
 @item raw(String rawStatement)
 
-If you need more access to the parts of the @code{WHERE} statement than the above methods give you, you can also
-insert a raw statement into the query with this method.  Using the structured methods is certainly recommended but
-this is here to fill in any missing features.
+Add a raw statement as part of the @code{WHERE} that can be anything that the database supports. Using the more
+structured methods above is recommended but this gives more control over the query and allows you to utilize
+database specific features.
 
 @end table
 
@@ -2907,6 +2907,25 @@ would have been stored as a serialized array of bytes.  To not break backwards c
 @code{byte[]} type @emph{must} specify either the @code{BYTE_ARRAY} or @code{SERIALIZABLE} types using the @code{dataType} field on
 @code{@@DatabaseField} -- it will not be chosen automatically.  @xref{DatabaseField dataType}.  If we did not do this then
 previously stored data would be read from the database improperly.
+
+In addition, serialized types must also have their @code{dataType} values specified as well.  You should use
+@code{DataType.SERIALIZABLE} to continue to store serialized objects in the database.
+
+If you already have Serializable data (byte[] or other objects) stored in a database then you will need to add something like the
+following to your fields:
+
+@example
+@@DatabaseField(dataType = DataType.SERIALIZABLE)
+@dots{}
+@end example
+
+For newly stored byte[] fields, you could use the BYTE_ARRAY type to store the bytes directly.  But any existing data will @emph{not}
+be converted automatically.
+
+@example
+@@DatabaseField(dataType = DataType.BYTE_ARRAY)
+@dots{}
+@end example
 
 @c ----------------------------------------------------------------
 @node 4.X to 4.10, 3.X to 4.0, 4.13 to 4.14, How to Upgrade

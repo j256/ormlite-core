@@ -1,4 +1,4 @@
-4.14: 2/28/2011 (svn rYYYY)
+4.14: 2/28/2011 (svn r1474)
 	* CORE: Added BYTE_ARRAY type for handling byte[] directly and not as a serializable.  dataType _must_ be specified.
 	* CORE: Changed SERIALIZABLE type so that it _must_ be specified with the dataType.
 	* CORE: Added a Where.raw() method which allows you to inject a raw statement into the WHERE SQL clause.
