@@ -16,6 +16,6 @@ public interface Clause {
 	/**
 	 * Add to the string-builder the appropriate SQL for this clause.
 	 */
-	public StringBuilder appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
+	public void appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
 			throws SQLException;
 }

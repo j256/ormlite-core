@@ -19,10 +19,9 @@ public class Raw implements Clause {
 		this.statement = statement;
 	}
 
-	public StringBuilder appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
+	public void appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
 			throws SQLException {
 		sb.append(statement);
 		sb.append(' ');
-		return sb;
 	}
 }

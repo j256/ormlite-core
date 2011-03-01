@@ -12,8 +12,7 @@ public class BaseBinaryClauseTest {
 	@Test(expected = IllegalStateException.class)
 	public void testDoubleSet() {
 		Clause clause = new Clause() {
-			public StringBuilder appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList) {
-				return sb;
+			public void appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList) {
 			}
 		};
 		BaseBinaryClause binaryClause = new BaseBinaryClause(clause) {

@@ -45,7 +45,7 @@ public class Not implements Clause, NeedsFutureClause {
 		}
 	}
 
-	public StringBuilder appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
+	public void appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
 			throws SQLException {
 		if (comparison == null && exists == null) {
 			throw new IllegalStateException("Clause has not been set in NOT operation");
@@ -62,7 +62,6 @@ public class Not implements Clause, NeedsFutureClause {
 			comparison.appendValue(databaseType, sb, selectArgList);
 		}
 		sb.append(") ");
-		return sb;
 	}
 
 	@Override

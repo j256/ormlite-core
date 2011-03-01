@@ -30,14 +30,13 @@ abstract class BaseComparison implements Comparison {
 
 	public abstract StringBuilder appendOperation(StringBuilder sb);
 
-	public StringBuilder appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
+	public void appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
 			throws SQLException {
 		databaseType.appendEscapedEntityName(sb, columnName);
 		sb.append(' ');
 		appendOperation(sb);
 		// this needs to call appendValue (not appendArgOrValue) because it may be overridden
 		appendValue(databaseType, sb, selectArgList);
-		return sb;
 	}
 
 	public String getColumnName() {

@@ -30,14 +30,13 @@ abstract class BaseBinaryClause implements NeedsFutureClause {
 	 */
 	public abstract StringBuilder appendOperation(StringBuilder sb);
 
-	public StringBuilder appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> columnArgList)
+	public void appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> columnArgList)
 			throws SQLException {
 		sb.append("(");
 		left.appendSql(databaseType, sb, columnArgList);
 		appendOperation(sb);
 		right.appendSql(databaseType, sb, columnArgList);
 		sb.append(") ");
-		return sb;
 	}
 
 	public void setMissingClause(Clause right) {

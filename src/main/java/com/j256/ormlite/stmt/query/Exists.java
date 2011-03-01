@@ -23,12 +23,11 @@ public class Exists implements Clause {
 		this.subQueryBuilder = subQueryBuilder;
 	}
 
-	public StringBuilder appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
+	public void appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
 			throws SQLException {
 		sb.append("EXISTS (");
 		List<FieldType> resultFieldTypeList = new ArrayList<FieldType>();
 		subQueryBuilder.buildStatementString(sb, resultFieldTypeList, selectArgList);
 		sb.append(") ");
-		return sb;
 	}
 }
