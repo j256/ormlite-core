@@ -95,7 +95,7 @@ public interface DatabaseResults {
 	public InputStream getBlobStream(int columnIndex) throws SQLException;
 
 	/**
-	 * Returns true if the object in column index is null.
+	 * Returns true if the last object returned with the column index is null.
 	 */
-	public boolean isNull(int columnIndex) throws SQLException;
+	public boolean wasNull(int columnIndex) throws SQLException;
 }

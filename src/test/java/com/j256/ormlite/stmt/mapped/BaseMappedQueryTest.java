@@ -33,9 +33,9 @@ public class BaseMappedQueryTest extends BaseCoreStmtTest {
 		DatabaseResults results = createMock(DatabaseResults.class);
 		int colN = 1;
 		expect(results.findColumn(Foo.ID_COLUMN_NAME)).andReturn(colN);
-		expect(results.isNull(colN)).andReturn(false);
 		String idString = "deopdjed";
 		expect(results.getString(colN)).andReturn(idString);
+		expect(results.wasNull(colN)).andReturn(false);
 		replay(results);
 		Foo baseFoo = baseMappedQuery.mapRow(results);
 		assertNotNull(baseFoo);

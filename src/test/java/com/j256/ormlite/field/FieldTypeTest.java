@@ -174,7 +174,7 @@ public class FieldTypeTest extends BaseCoreTest {
 
 		DatabaseResults resultMock = createMock(DatabaseResults.class);
 		expect(resultMock.findColumn("name")).andReturn(0);
-		expect(resultMock.isNull(0)).andReturn(false);
+		expect(resultMock.wasNull(0)).andReturn(false);
 		replay(resultMock);
 		assertEquals(nameResult, fieldType.resultToJava(resultMock, new HashMap<String, Integer>()));
 		verify(resultMock);
@@ -468,7 +468,8 @@ public class FieldTypeTest extends BaseCoreTest {
 		DatabaseResults results = createMock(DatabaseResults.class);
 		int fieldNum = 1;
 		expect(results.findColumn(field.getName())).andReturn(fieldNum);
-		expect(results.isNull(fieldNum)).andReturn(true);
+		expect(results.getInt(fieldNum)).andReturn(0);
+		expect(results.wasNull(fieldNum)).andReturn(true);
 		replay(results);
 		fieldType.resultToJava(results, new HashMap<String, Integer>());
 		verify(results);
@@ -484,7 +485,8 @@ public class FieldTypeTest extends BaseCoreTest {
 		DatabaseResults results = createMock(DatabaseResults.class);
 		int fieldNum = 1;
 		expect(results.findColumn(field.getName())).andReturn(fieldNum);
-		expect(results.isNull(fieldNum)).andReturn(true);
+		expect(results.getTimestamp(fieldNum)).andReturn(null);
+		expect(results.wasNull(fieldNum)).andReturn(true);
 		replay(results);
 		assertNull(fieldType.resultToJava(results, new HashMap<String, Integer>()));
 		verify(results);
@@ -499,7 +501,7 @@ public class FieldTypeTest extends BaseCoreTest {
 		DatabaseResults results = createMock(DatabaseResults.class);
 		int fieldNum = 1;
 		expect(results.findColumn(field.getName())).andReturn(fieldNum);
-		expect(results.isNull(fieldNum)).andReturn(true);
+		expect(results.wasNull(fieldNum)).andReturn(true);
 		replay(results);
 		assertNull(fieldType.resultToJava(results, new HashMap<String, Integer>()));
 		verify(results);

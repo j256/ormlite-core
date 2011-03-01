@@ -507,17 +507,17 @@ public class FieldType {
 			dbColumnPos = results.findColumn(dbColumnName);
 			columnPositions.put(dbColumnName, dbColumnPos);
 		}
+		@SuppressWarnings("unchecked")
+		T converted = (T) fieldConverter.resultToJava(this, results, dbColumnPos);
 		if (dataType.isPrimitive()) {
-			if (throwIfNull && results.isNull(dbColumnPos)) {
+			if (throwIfNull && results.wasNull(dbColumnPos)) {
 				throw new SQLException("Results value for primitive field '" + fieldName
 						+ "' was an invalid null value");
 			}
-		} else if (!fieldConverter.isStreamType() && results.isNull(dbColumnPos)) {
+		} else if (!fieldConverter.isStreamType() && results.wasNull(dbColumnPos)) {
 			// we can't check if we have a null if this is a stream type
 			return null;
 		}
-		@SuppressWarnings("unchecked")
-		T converted = (T) fieldConverter.resultToJava(this, results, dbColumnPos);
 		return converted;
 	}
 
@@ -538,7 +538,9 @@ public class FieldType {
 	 * Get the Enum associated with the String value.
 	 */
 	public Enum<?> enumFromString(String val) throws SQLException {
-		if (enumStringMap == null) {
+		if (val == null) {
+			return null;
+		} else if (enumStringMap == null) {
 			return enumVal(val, null);
 		} else {
 			return enumVal(val, enumStringMap.get(val));

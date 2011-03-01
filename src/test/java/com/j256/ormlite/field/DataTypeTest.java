@@ -1,19 +1,22 @@
 package com.j256.ormlite.field;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.AfterClass;
@@ -107,6 +110,27 @@ public class DataTypeTest extends BaseCoreTest {
 	}
 
 	@Test
+	public void testBooleanObjNull() throws Exception {
+		Class<LocalBooleanObj> clazz = LocalBooleanObj.class;
+		Dao<LocalBooleanObj, Object> dao = createDao(clazz, true);
+		assertEquals(1, dao.create(new LocalBooleanObj()));
+		testType(clazz, null, null, null, null, DataType.BOOLEAN_OBJ, BOOLEAN_COLUMN, false, false, false, false,
+				false, false, true);
+	}
+
+	@Test
+	public void testBooleanPrimitiveNull() throws Exception {
+		Dao<LocalBooleanObj, Object> objDao = createDao(LocalBooleanObj.class, true);
+		LocalBooleanObj foo = new LocalBooleanObj();
+		foo.bool = null;
+		assertEquals(1, objDao.create(foo));
+		Dao<LocalBoolean, Object> dao = createDao(LocalBoolean.class, false);
+		List<LocalBoolean> all = dao.queryForAll();
+		assertEquals(1, all.size());
+		assertFalse(all.get(0).bool);
+	}
+
+	@Test
 	public void testDate() throws Exception {
 		Class<LocalDate> clazz = LocalDate.class;
 		Dao<LocalDate, Object> dao = createDao(clazz, true);
@@ -117,9 +141,15 @@ public class DataTypeTest extends BaseCoreTest {
 		LocalDate foo = new LocalDate();
 		foo.date = val;
 		assertEquals(1, dao.create(foo));
-		Field[] fields = LocalDate.class.getDeclaredFields();
-		assertTrue(fields.length > 0);
 		testType(clazz, val, val, val, valStr, DataType.DATE, DATE_COLUMN, false, true, true, false, true, false, true);
+	}
+
+	@Test
+	public void testDateNull() throws Exception {
+		Class<LocalDate> clazz = LocalDate.class;
+		Dao<LocalDate, Object> dao = createDao(clazz, true);
+		assertEquals(1, dao.create(new LocalDate()));
+		testType(clazz, null, null, null, null, DataType.DATE, DATE_COLUMN, false, true, true, false, true, false, true);
 	}
 
 	@Test(expected = SQLException.class)
@@ -142,9 +172,17 @@ public class DataTypeTest extends BaseCoreTest {
 		LocalDate foo = new LocalDate();
 		foo.date = val;
 		assertEquals(1, dao.create(foo));
-		Field[] fields = LocalDate.class.getDeclaredFields();
-		assertTrue(fields.length > 0);
 		testType(clazz, val, val, val, valStr, DataType.JAVA_DATE, DATE_COLUMN, false, true, true, false, true, false,
+				true);
+	}
+
+	@SuppressWarnings("deprecation")
+	@Test
+	public void testJavaDateNull() throws Exception {
+		Class<LocalDate> clazz = LocalDate.class;
+		Dao<LocalDate, Object> dao = createDao(clazz, true);
+		assertEquals(1, dao.create(new LocalDate()));
+		testType(clazz, null, null, null, null, DataType.JAVA_DATE, DATE_COLUMN, false, true, true, false, true, false,
 				true);
 	}
 
@@ -169,10 +207,17 @@ public class DataTypeTest extends BaseCoreTest {
 		LocalDateString foo = new LocalDateString();
 		foo.date = val;
 		assertEquals(1, dao.create(foo));
-		Field[] fields = LocalDateString.class.getDeclaredFields();
-		assertTrue(fields.length > 0);
 		testType(clazz, val, valStr, sqlVal, sqlVal, DataType.DATE_STRING, DATE_COLUMN, false, true, true, false,
 				false, false, true);
+	}
+
+	@Test
+	public void testDateStringNull() throws Exception {
+		Class<LocalDateString> clazz = LocalDateString.class;
+		Dao<LocalDateString, Object> dao = createDao(clazz, true);
+		assertEquals(1, dao.create(new LocalDateString()));
+		testType(clazz, null, null, null, null, DataType.DATE_STRING, DATE_COLUMN, false, true, true, false, false,
+				false, true);
 	}
 
 	@Test(expected = SQLException.class)
@@ -212,9 +257,17 @@ public class DataTypeTest extends BaseCoreTest {
 		LocalDateString foo = new LocalDateString();
 		foo.date = val;
 		assertEquals(1, dao.create(foo));
-		Field[] fields = LocalDateString.class.getDeclaredFields();
-		assertTrue(fields.length > 0);
 		testType(clazz, val, sqlVal, sqlVal, valStr, DataType.JAVA_DATE_STRING, DATE_COLUMN, false, true, true, false,
+				false, false, true);
+	}
+
+	@SuppressWarnings("deprecation")
+	@Test
+	public void testJavaDateStringNull() throws Exception {
+		Class<LocalDateString> clazz = LocalDateString.class;
+		Dao<LocalDateString, Object> dao = createDao(clazz, true);
+		assertEquals(1, dao.create(new LocalDateString()));
+		testType(clazz, null, null, null, null, DataType.JAVA_DATE_STRING, DATE_COLUMN, false, true, true, false,
 				false, false, true);
 	}
 
@@ -254,9 +307,16 @@ public class DataTypeTest extends BaseCoreTest {
 		LocalDateLong foo = new LocalDateLong();
 		foo.date = val;
 		assertEquals(1, dao.create(foo));
-		Field[] fields = LocalDateLong.class.getDeclaredFields();
-		assertTrue(fields.length > 0);
 		testType(clazz, val, sqlVal, sqlVal, valStr, DataType.DATE_LONG, DATE_COLUMN, false, true, false, false, false,
+				false, true);
+	}
+
+	@Test
+	public void testDateLongNull() throws Exception {
+		Class<LocalDateLong> clazz = LocalDateLong.class;
+		Dao<LocalDateLong, Object> dao = createDao(clazz, true);
+		assertEquals(1, dao.create(new LocalDateLong()));
+		testType(clazz, null, null, null, null, DataType.DATE_LONG, DATE_COLUMN, false, true, false, false, false,
 				false, true);
 	}
 
@@ -279,10 +339,18 @@ public class DataTypeTest extends BaseCoreTest {
 		LocalDateLong foo = new LocalDateLong();
 		foo.date = val;
 		assertEquals(1, dao.create(foo));
-		Field[] fields = LocalDateString.class.getDeclaredFields();
-		assertTrue(fields.length > 0);
 		testType(clazz, val, sqlVal, sqlVal, valStr, DataType.JAVA_DATE_LONG, DATE_COLUMN, false, true, false, false,
 				false, false, true);
+	}
+
+	@SuppressWarnings("deprecation")
+	@Test
+	public void testJavaDateLongNull() throws Exception {
+		Class<LocalDateLong> clazz = LocalDateLong.class;
+		Dao<LocalDateLong, Object> dao = createDao(clazz, true);
+		assertEquals(1, dao.create(new LocalDateLong()));
+		testType(clazz, null, null, null, null, DataType.JAVA_DATE_LONG, DATE_COLUMN, false, true, false, false, false,
+				false, true);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -320,6 +388,27 @@ public class DataTypeTest extends BaseCoreTest {
 	}
 
 	@Test
+	public void testByteObjNull() throws Exception {
+		Class<LocalByteObj> clazz = LocalByteObj.class;
+		Dao<LocalByteObj, Object> dao = createDao(clazz, true);
+		assertEquals(1, dao.create(new LocalByteObj()));
+		testType(clazz, null, null, null, null, DataType.BYTE_OBJ, BYTE_COLUMN, false, true, false, false, false,
+				false, true);
+	}
+
+	@Test
+	public void testBytePrimitiveNull() throws Exception {
+		Dao<LocalByteObj, Object> objDao = createDao(LocalByteObj.class, true);
+		LocalByteObj foo = new LocalByteObj();
+		foo.byteField = null;
+		assertEquals(1, objDao.create(foo));
+		Dao<LocalByte, Object> dao = createDao(LocalByte.class, false);
+		List<LocalByte> all = dao.queryForAll();
+		assertEquals(1, all.size());
+		assertEquals(0, all.get(0).byteField);
+	}
+
+	@Test
 	public void testByteArray() throws Exception {
 		Class<LocalByteArray> clazz = LocalByteArray.class;
 		Dao<LocalByteArray, Object> dao = createDao(clazz, true);
@@ -329,6 +418,15 @@ public class DataTypeTest extends BaseCoreTest {
 		foo.byteField = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, val, val, valStr, DataType.BYTE_ARRAY, BYTE_COLUMN, false, false, true, false, true,
+				false, true);
+	}
+
+	@Test
+	public void testByteArrayNull() throws Exception {
+		Class<LocalByteArray> clazz = LocalByteArray.class;
+		Dao<LocalByteArray, Object> dao = createDao(clazz, true);
+		assertEquals(1, dao.create(new LocalByteArray()));
+		testType(clazz, null, null, null, null, DataType.BYTE_ARRAY, BYTE_COLUMN, false, false, true, false, true,
 				false, true);
 	}
 
@@ -364,6 +462,27 @@ public class DataTypeTest extends BaseCoreTest {
 	}
 
 	@Test
+	public void testShortObjNull() throws Exception {
+		Class<LocalShortObj> clazz = LocalShortObj.class;
+		Dao<LocalShortObj, Object> dao = createDao(clazz, true);
+		assertEquals(1, dao.create(new LocalShortObj()));
+		testType(clazz, null, null, null, null, DataType.SHORT_OBJ, SHORT_COLUMN, false, true, false, false, false,
+				false, true);
+	}
+
+	@Test
+	public void testShortPrimitiveNull() throws Exception {
+		Dao<LocalShortObj, Object> objDao = createDao(LocalShortObj.class, true);
+		LocalShortObj foo = new LocalShortObj();
+		foo.shortField = null;
+		assertEquals(1, objDao.create(foo));
+		Dao<LocalShort, Object> dao = createDao(LocalShort.class, false);
+		List<LocalShort> all = dao.queryForAll();
+		assertEquals(1, all.size());
+		assertEquals(0, all.get(0).shortField);
+	}
+
+	@Test
 	public void testInt() throws Exception {
 		Class<LocalInt> clazz = LocalInt.class;
 		Dao<LocalInt, Object> dao = createDao(clazz, true);
@@ -387,6 +506,27 @@ public class DataTypeTest extends BaseCoreTest {
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, val, val, valStr, DataType.INTEGER_OBJ, INT_COLUMN, true, true, false, false, false,
 				false, true);
+	}
+
+	@Test
+	public void testIntObjNull() throws Exception {
+		Class<LocalIntObj> clazz = LocalIntObj.class;
+		Dao<LocalIntObj, Object> dao = createDao(clazz, true);
+		assertEquals(1, dao.create(new LocalIntObj()));
+		testType(clazz, null, null, null, null, DataType.INTEGER_OBJ, INT_COLUMN, true, true, false, false, false,
+				false, true);
+	}
+
+	@Test
+	public void testIntPrimitiveNull() throws Exception {
+		Dao<LocalIntObj, Object> objDao = createDao(LocalIntObj.class, true);
+		LocalIntObj foo = new LocalIntObj();
+		foo.intField = null;
+		assertEquals(1, objDao.create(foo));
+		Dao<LocalInt, Object> dao = createDao(LocalInt.class, false);
+		List<LocalInt> all = dao.queryForAll();
+		assertEquals(1, all.size());
+		assertEquals(0, all.get(0).intField);
 	}
 
 	@Test
@@ -423,6 +563,27 @@ public class DataTypeTest extends BaseCoreTest {
 	}
 
 	@Test
+	public void testLongObjNull() throws Exception {
+		Class<LocalLongObj> clazz = LocalLongObj.class;
+		Dao<LocalLongObj, Object> dao = createDao(clazz, true);
+		assertEquals(1, dao.create(new LocalLongObj()));
+		testType(clazz, null, null, null, null, DataType.LONG_OBJ, LONG_COLUMN, true, true, false, false, false, false,
+				true);
+	}
+
+	@Test
+	public void testLongPrimitiveNull() throws Exception {
+		Dao<LocalLongObj, Object> objDao = createDao(LocalLongObj.class, true);
+		LocalLongObj foo = new LocalLongObj();
+		foo.longField = null;
+		assertEquals(1, objDao.create(foo));
+		Dao<LocalLong, Object> dao = createDao(LocalLong.class, false);
+		List<LocalLong> all = dao.queryForAll();
+		assertEquals(1, all.size());
+		assertEquals(0, all.get(0).longField);
+	}
+
+	@Test
 	public void testLongConvertId() throws Exception {
 		assertTrue(DataType.LONG.isConvertableId());
 		long longId = new Long(1312313123131L);
@@ -456,6 +617,27 @@ public class DataTypeTest extends BaseCoreTest {
 	}
 
 	@Test
+	public void testFloatObjNull() throws Exception {
+		Class<LocalFloatObj> clazz = LocalFloatObj.class;
+		Dao<LocalFloatObj, Object> dao = createDao(clazz, true);
+		assertEquals(1, dao.create(new LocalFloatObj()));
+		testType(clazz, null, null, null, null, DataType.FLOAT_OBJ, FLOAT_COLUMN, false, true, false, false, false,
+				false, true);
+	}
+
+	@Test
+	public void testFloatPrimitiveNull() throws Exception {
+		Dao<LocalFloatObj, Object> objDao = createDao(LocalFloatObj.class, true);
+		LocalFloatObj foo = new LocalFloatObj();
+		foo.floatField = null;
+		assertEquals(1, objDao.create(foo));
+		Dao<LocalFloat, Object> dao = createDao(LocalFloat.class, false);
+		List<LocalFloat> all = dao.queryForAll();
+		assertEquals(1, all.size());
+		assertEquals(0.0F, all.get(0).floatField, 0.0F);
+	}
+
+	@Test
 	public void testDouble() throws Exception {
 		Class<LocalDouble> clazz = LocalDouble.class;
 		Dao<LocalDouble, Object> dao = createDao(clazz, true);
@@ -482,6 +664,27 @@ public class DataTypeTest extends BaseCoreTest {
 	}
 
 	@Test
+	public void testDoubleObjNull() throws Exception {
+		Class<LocalDoubleObj> clazz = LocalDoubleObj.class;
+		Dao<LocalDoubleObj, Object> dao = createDao(clazz, true);
+		assertEquals(1, dao.create(new LocalDoubleObj()));
+		testType(clazz, null, null, null, null, DataType.DOUBLE_OBJ, DOUBLE_COLUMN, false, true, false, false, false,
+				false, true);
+	}
+
+	@Test
+	public void testDoublePrimitiveNull() throws Exception {
+		Dao<LocalDoubleObj, Object> objDao = createDao(LocalDoubleObj.class, true);
+		LocalDoubleObj foo = new LocalDoubleObj();
+		foo.doubleField = null;
+		assertEquals(1, objDao.create(foo));
+		Dao<LocalDouble, Object> dao = createDao(LocalDouble.class, false);
+		List<LocalDouble> all = dao.queryForAll();
+		assertEquals(1, all.size());
+		assertEquals(0.0F, all.get(0).doubleField, 0.0F);
+	}
+
+	@Test
 	public void testSerializable() throws Exception {
 		Class<LocalSerializable> clazz = LocalSerializable.class;
 		Dao<LocalSerializable, Object> dao = createDao(clazz, true);
@@ -499,6 +702,15 @@ public class DataTypeTest extends BaseCoreTest {
 	}
 
 	@Test
+	public void testSerializableNull() throws Exception {
+		Class<LocalSerializable> clazz = LocalSerializable.class;
+		Dao<LocalSerializable, Object> dao = createDao(clazz, true);
+		assertEquals(1, dao.create(new LocalSerializable()));
+		testType(clazz, null, null, null, null, DataType.SERIALIZABLE, SERIALIZABLE_COLUMN, false, false, true, false,
+				true, true, false);
+	}
+
+	@Test
 	public void testSerializableNoValue() throws Exception {
 		Class<LocalSerializable> clazz = LocalSerializable.class;
 		Dao<LocalSerializable, Object> dao = createDao(clazz, true);
@@ -513,7 +725,6 @@ public class DataTypeTest extends BaseCoreTest {
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, TABLE_NAME, clazz.getDeclaredField(SERIALIZABLE_COLUMN), 0);
 		assertNull(DataType.SERIALIZABLE.resultToJava(fieldType, results, results.findColumn(SERIALIZABLE_COLUMN)));
-		assertNull(DataType.SERIALIZABLE.resultToJavaString(fieldType, results, results.findColumn(SERIALIZABLE_COLUMN)));
 	}
 
 	@Test(expected = SQLException.class)
@@ -554,6 +765,15 @@ public class DataTypeTest extends BaseCoreTest {
 	}
 
 	@Test
+	public void testEnumStringNull() throws Exception {
+		Class<LocalEnumString> clazz = LocalEnumString.class;
+		Dao<LocalEnumString, Object> dao = createDao(clazz, true);
+		assertEquals(1, dao.create(new LocalEnumString()));
+		testType(clazz, null, null, null, null, DataType.ENUM_STRING, ENUM_COLUMN, false, true, true, false, false,
+				false, true);
+	}
+
+	@Test
 	public void testEnumStringResultsNoFieldType() throws Exception {
 		Class<LocalEnumString> clazz = LocalEnumString.class;
 		Dao<LocalEnumString, Object> dao = createDao(clazz, true);
@@ -584,6 +804,15 @@ public class DataTypeTest extends BaseCoreTest {
 	}
 
 	@Test
+	public void testEnumIntNull() throws Exception {
+		Class<LocalEnumInt> clazz = LocalEnumInt.class;
+		Dao<LocalEnumInt, Object> dao = createDao(clazz, true);
+		assertEquals(1, dao.create(new LocalEnumInt()));
+		testType(clazz, null, null, null, null, DataType.ENUM_INTEGER, ENUM_COLUMN, false, true, false, false, false,
+				false, true);
+	}
+
+	@Test
 	public void testEnumIntResultsNoFieldType() throws Exception {
 		Class<LocalEnumInt> clazz = LocalEnumInt.class;
 		Dao<LocalEnumInt, Object> dao = createDao(clazz, true);
@@ -601,12 +830,21 @@ public class DataTypeTest extends BaseCoreTest {
 
 	@Test
 	public void testUnknownGetResult() throws Exception {
-		Class<LocalLong> clazz = LocalLong.class;
-		Dao<LocalLong, Object> dao = createDao(LocalLong.class, true);
-		LocalLong foo = new LocalLong();
-		assertEquals(1, dao.create(foo));
-		testType(clazz, null, null, null, null, DataType.UNKNOWN, LONG_COLUMN, false, false, true, false, false, false,
-				true);
+		DataType dataType = DataType.UNKNOWN;
+		assertNull(dataType.resultToJava(null, null, 0));
+		assertNull(dataType.parseDefaultString(null, null));
+		assertNull(dataType.javaToSqlArg(null, null));
+		assertNull(dataType.resultToId(null, 0));
+		assertNull(dataType.convertIdNumber(null));
+		assertFalse(dataType.isValidGeneratedType());
+		assertFalse(dataType.isAppropriateId());
+		assertFalse(dataType.isEscapedValue());
+		assertFalse(dataType.isEscapedDefaultValue());
+		assertFalse(dataType.isPrimitive());
+		assertFalse(dataType.isSelectArgRequired());
+		assertFalse(dataType.isStreamType());
+		assertFalse(dataType.isComparable());
+		dataTypeSet.add(dataType);
 	}
 
 	@Test
@@ -639,13 +877,16 @@ public class DataTypeTest extends BaseCoreTest {
 		if (javaVal instanceof byte[]) {
 			assertTrue(Arrays.equals((byte[]) javaVal, (byte[]) dataType.resultToJava(fieldType, results, colNum)));
 		} else {
-			assertEquals(javaVal, dataType.resultToJava(fieldType, results, colNum));
+			Map<String, Integer> colMap = new HashMap<String, Integer>();
+			colMap.put(columnName, colNum);
+			assertEquals(javaVal, fieldType.resultToJava(results, colMap));
 		}
-		assertEquals(valStr, dataType.resultToJavaString(fieldType, results, colNum));
-		if (dataType != DataType.BYTE_ARRAY && dataType != DataType.SERIALIZABLE) {
+		if (dataType != DataType.BYTE_ARRAY && dataType != DataType.SERIALIZABLE && valStr != null) {
 			assertEquals(sqlVal, dataType.parseDefaultString(fieldType, valStr));
 		}
-		if (sqlArg instanceof byte[]) {
+		if (sqlArg == null) {
+			// noop
+		} else if (sqlArg instanceof byte[]) {
 			assertTrue(Arrays.equals((byte[]) sqlArg, (byte[]) dataType.javaToSqlArg(fieldType, javaVal)));
 		} else {
 			assertEquals(sqlArg, dataType.javaToSqlArg(fieldType, javaVal));
@@ -809,6 +1050,12 @@ public class DataTypeTest extends BaseCoreTest {
 	protected static class LocalEnumInt2 {
 		@DatabaseField(columnName = ENUM_COLUMN, dataType = DataType.ENUM_INTEGER)
 		OurEnum2 ourEnum;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalUnknown {
+		@DatabaseField
+		LocalUnknown unkown;
 	}
 
 	private enum OurEnum {
