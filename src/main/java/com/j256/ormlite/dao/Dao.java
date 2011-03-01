@@ -43,8 +43,8 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 
 	/**
 	 * Query for and return the first item in the object table which matches the PreparedQuery. See
-	 * {@link #queryBuilder} for more information. This can be used to return the object that matches a single unique
-	 * column. You should use {@link #queryForId} if you want to query for the id column.
+	 * {@link #queryBuilder()} for more information. This can be used to return the object that matches a single unique
+	 * column. You should use {@link #queryForId(Object)} if you want to query for the id column.
 	 * 
 	 * @param preparedQuery
 	 *            Query used to match the objects in the database.
@@ -56,7 +56,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 
 	/**
 	 * Query for all of the items in the object table. For medium sized or large tables, this may load a lot of objects
-	 * into memory so you should consider using the {@link #iterator} method instead.
+	 * into memory so you should consider using the {@link #iterator()} method instead.
 	 * 
 	 * @return A list of all of the objects in the table.
 	 * @throws SQLException
@@ -65,7 +65,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public List<T> queryForAll() throws SQLException;
 
 	/**
-	 * You should be using {@link #queryRaw(String)}.
+	 * You should be using {@link #queryRaw(String, String...)}
 	 * 
 	 * @deprecated
 	 */
@@ -291,7 +291,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public CloseableIterator<T> iterator(PreparedQuery<T> preparedQuery) throws SQLException;
 
 	/**
-	 * You should be using {@link #queryRaw(String)};
+	 * You should be using {@link #queryRaw(String, String...)};
 	 * 
 	 * @deprecated
 	 */
@@ -308,18 +308,18 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public GenericRawResults<String[]> queryRaw(String query, String... arguments) throws SQLException;
 
 	/**
-	 * Similar to the {@link #queryRaw(String)} but this iterator returns rows that you can map yourself. For every
-	 * result that is returned by the database, the {@link RawRowMapper#mapRow(String[], String[])} method is called so
-	 * you can convert the result columns into an object to be returned by the iterator. The arguments are optional but
-	 * can be set with strings to expand ? type of SQL.
+	 * Similar to the {@link #queryRaw(String, String...)} but this iterator returns rows that you can map yourself. For
+	 * every result that is returned by the database, the {@link RawRowMapper#mapRow(String[], String[])} method is
+	 * called so you can convert the result columns into an object to be returned by the iterator. The arguments are
+	 * optional but can be set with strings to expand ? type of SQL.
 	 */
 	public <UO> GenericRawResults<UO> queryRaw(String query, RawRowMapper<UO> mapper, String... arguments)
 			throws SQLException;
 
 	/**
-	 * Similar to the {@link #queryRaw(String)} but instead of an array of String results being returned by the
-	 * iterator, this uses the column-types parameter to return an array of Objects instead. The arguments are optional
-	 * but can be set with strings to expand ? type of SQL.
+	 * Similar to the {@link #queryRaw(String, String...)} but instead of an array of String results being returned by
+	 * the iterator, this uses the column-types parameter to return an array of Objects instead. The arguments are
+	 * optional but can be set with strings to expand ? type of SQL.
 	 */
 	public GenericRawResults<Object[]> queryRaw(String query, DataType[] columnTypes, String... arguments)
 			throws SQLException;
