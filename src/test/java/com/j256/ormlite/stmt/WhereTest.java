@@ -622,6 +622,23 @@ public class WhereTest extends BaseCoreTest {
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
+	@Test
+	public void testRaw() throws Exception {
+		TableInfo<Foo> tableInfo = new TableInfo<Foo>(connectionSource, Foo.class);
+		Where<Foo, Integer> where = new Where<Foo, Integer>(tableInfo, null);
+		String raw = "VAL = 1";
+		int val = 17;
+		where.eq(Foo.VAL_COLUMN_NAME, val).and().raw(raw);
+		StringBuilder whereSb = new StringBuilder();
+		where.appendSql(databaseType, whereSb, new ArrayList<SelectArg>());
+		StringBuilder sb = new StringBuilder();
+		sb.append("(");
+		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
+		sb.append(" = ").append(val);
+		sb.append(" AND ").append(raw).append(" ) ");
+		assertEquals(sb.toString(), whereSb.toString());
+	}
+
 	private TableInfo<Foo> createTableInfo() throws SQLException {
 		return new TableInfo<Foo>(connectionSource, Foo.class);
 	}

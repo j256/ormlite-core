@@ -19,7 +19,7 @@ public class Exists implements Clause {
 
 	private final InternalQueryBuilderWrapper subQueryBuilder;
 
-	public Exists(InternalQueryBuilderWrapper subQueryBuilder) throws SQLException {
+	public Exists(InternalQueryBuilderWrapper subQueryBuilder) {
 		this.subQueryBuilder = subQueryBuilder;
 	}
 

@@ -26,6 +26,7 @@ import com.j256.ormlite.stmt.query.Ne;
 import com.j256.ormlite.stmt.query.NeedsFutureClause;
 import com.j256.ormlite.stmt.query.Not;
 import com.j256.ormlite.stmt.query.Or;
+import com.j256.ormlite.stmt.query.Raw;
 import com.j256.ormlite.table.TableInfo;
 
 /**
@@ -400,6 +401,15 @@ public class Where<T, ID> {
 			idList.add(id);
 		}
 		addClause(new In(idColumnName, idFieldType, idList));
+		return this;
+	}
+
+	/**
+	 * Add a raw statement as part of the where that can be anything that the database supports. Using more structured
+	 * methods is recommended but this gives more control over the query.
+	 */
+	public Where<T, ID> raw(String rawStatement) {
+		addClause(new Raw(rawStatement));
 		return this;
 	}
 
