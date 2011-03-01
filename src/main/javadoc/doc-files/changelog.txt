@@ -1,3 +1,8 @@
+4.14: 2/28/2011 (svn rYYYY)
+	* CORE: Added BYTE_ARRAY type for handling byte[] directly and not as a serializable.  dataType _must_ be specified.
+	* CORE: Changed SERIALIZABLE type so that it _must_ be specified with the dataType.
+	* CORE: Added a Where.raw() method which allows you to inject a raw statement into the WHERE SQL clause.
+
 4.13: 2/26/2011 (svn r1453)
 	* CORE: Added a special default string to @DatabaseField to allow default values of "".  Fixes bug #3191367.
 	* CORE: Added parameters to the queryRaw(), updateRaw(), and executeRaw() DAO methods.  Thanks to Luke.
@@ -96,12 +101,10 @@
 	* CORE: TableUtils was not releasing its database connection for table create/drop.  Fixes bug 3086752.
 	* JDBC: Added new reentrant, pooled connection manager JdbcPooledConnectionSource.  Needs to be reviewed!!
 	* JDBC: Added support for transactions to DataSourceConnectionSource and pooled connection sources.
-	* ANDROID: none
 
 4.1: 10/8/2010 (svn r1031)
 	* CORE: removed some old deprecated methods.
 	* JDBC: fixed problem where connections were not being closed in the DataSource wrapper.  Fixes bug #3083799.
-	* ANDROID: none
 
 4.0: 10/3/2010 (svn r1004)
 	* CORE: Removed most external usage of the DatabaseType since the ConnectionSource now provides it.
@@ -203,7 +206,7 @@
 	* Fixed a problem with null handling which would come back as 0s.
 
 2.2: 6/18/2010 (svn r374)
-	* Added enum support with both integer orderinal and string name support.
+	* Added enum support with both integer ordinal and string name support.
 	* Changed the mechanism for detecting foreign fields with the the javax.annotations.
 
 2.1: 6/14/2010 (svn r366)

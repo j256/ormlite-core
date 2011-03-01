@@ -8,7 +8,7 @@
 
 @dircategory Libraries
 @direntry
-* ORMLite: (orm lite).			Lightweight ORM package.
+* ORMLite: (orm lite).        Lightweight ORM package.
 @end direntry
 
 @c ----------------------------------------------------------------
@@ -21,7 +21,7 @@
 @c ----------------------------------------------------------------
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.13
+@set ormlite_version 4.14
 @set ormlite_year 2011
 @set ormlite_date February @value{ormlite_year}
 @set package ORMLite
@@ -234,7 +234,7 @@ the database by its ID:
         if (accountDao.create(account) != 1) @{
             throw new Exception("Failure adding account");
         @}
-		
+        
         // retrieve the account from the database by its id field (name)
         Account account2 = accountDao.queryForId("Jim Coakley");
         System.out.println("Account: " + account2.getName());
@@ -358,6 +358,7 @@ is used instead.
 @cindex field type
 @cindex jdbc type
 @cindex SQL type
+@anchor{DatabaseField dataType}
 @item dataType
 
 The type of the field as the DataType class.  Usually the type is taken from Java class of the field and does not need
@@ -524,7 +525,7 @@ the values in the index are unique.  For example, this means that you can insert
 @anchor{foreignAutoRefresh}
 @item foreignAutoRefresh
 
-Set this to be true (default false) to have a foreign field automagically refreshed when an object is queried.	This will @emph{not} automagically
+Set this to be true (default false) to have a foreign field automagically refreshed when an object is queried.  This will @emph{not} automagically
 create the foreign object but when the object is queried, a separate database call will be made to load of the fields of the foreign object via an
 internal DAO. The default is to just have the ID field in the object retrieved and for the caller to call refresh on the correct DAO.
 
@@ -655,8 +656,8 @@ using Java reflection and a constructor needs to be called.
 
 @example
 Account() @{
-  	// all persisted classes must define a no-arg constructor
-  	// with at least package visibility
+    // all persisted classes must define a no-arg constructor
+    // with at least package visibility
 @}
 @end example
 
@@ -665,7 +666,7 @@ So your final example Account class with annotations and constructor would look 
 @example
 @@DatabaseTable(tableName = "accounts")
 public class Account @{
-	
+    
     @@DatabaseField(id = true)
     private String name;
     
@@ -699,6 +700,11 @@ helps to translate between the SQL types and the database specific handling of t
 @item String (DataType.STRING)
 
 Persisted as SQL type @code{VARCHAR}.  
+
+@cindex long string
+@item String (DataType.LONG_STRING)
+
+Persisted as SQL type @code{LONGVARCHAR} which handles longer strings.  
 
 @cindex boolean
 @anchor{datatype boolean}
@@ -752,6 +758,18 @@ every time a @code{DATE_STRING} date is converted to/from the database.
 
 Persisted as SQL type @code{TINYINT}.
 
+@cindex byte array
+@cindex array of bytes
+@anchor{BYTE_ARRAY}
+@item byte array (DataType.BYTE_ARRAY)
+
+Array of bytes (byte[]) persisted as SQL type @code{VARBINARY}.  This is different from the @code{DataType.SERIALIZABLE} type which 
+serializes an object as an array of bytes.
+
+@emph{NOTE:} Because of backwards compatibility, any fields that are of type @code{byte[]} @emph{must} be specified as
+@code{DataType.BYTE_ARRAY} or @code{DataType.SERIALIZABLE} using the @code{dataType} field and will not be auto-detected.
+@xref{DatabaseField dataType}.
+
 @cindex short
 @anchor{datatype short}
 @item short or Short (DataType.SHORT or DataType.SHORT_OBJ)
@@ -790,10 +808,14 @@ Persisted as SQL type @code{DOUBLE}.
 Persisted as SQL type @code{VARBINARY}.  This is a special type that serializes an object as a sequence of bytes
 and then de-serializes it on the way back.  The field must be an object that implements the @code{java.io.Serializable}
 interface.  Depending on the database type, there will be limits to the size of the object that can be stored.
+This is different from the @code{DataType.BYTE_ARRAY} type which stores the byte array directly.
 
 Some databases place restrictions on this field type that it cannot be the id column in a class.  Other databases do
 not allow you to query on this type of field at all.  If your database does support it, you may also have to use a
-Select Argument to query for this type.  @xref{Select Arguments}.  
+Select Argument to query for this type.  @xref{Select Arguments}.
+
+@emph{NOTE:} To use this type, you @emph{must} specify @code{DataType.SERIALIZABLE} using the @code{dataType} field.  It will
+not be auto-detected.  @xref{DatabaseField dataType}.
 
 @cindex Enum string
 @cindex enumerated types
@@ -1462,10 +1484,10 @@ GenericRawResults<Foo> rawResults =
   orderDao.queryRaw(
     "select account_id,sum(amount) from orders group by account_id",
     new RawRowMapper<Foo>() @{
-    		public Foo mapRow(String[] columnNames, String[] resultColumns) @{
-    			return new Foo(Long.parseLong(resultColumns[0]),
-    			    Integer.parseInt(resultColumns[1]));
-    		@}
+            public Foo mapRow(String[] columnNames, String[] resultColumns) @{
+                return new Foo(Long.parseLong(resultColumns[0]),
+                    Integer.parseInt(resultColumns[1]));
+        @}
     @});
 // page through the results
 for (Foo foo : rawResults) @{
@@ -1657,7 +1679,7 @@ characteristics of the table.
 @example
 ArrayList<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
 fieldConfigs.add(new DatabaseFieldConfig("id", null, DataType.UNKNOWN, null, 0, false, false, true, null,
-		false, null, false, null, false, null, false, null, null, false));
+        false, null, false, null, false, null, false, null, null, false));
 @dots{}
 DatabaseTableConfig<Account> tableConfig = new DatabaseTableConfig<Account>(Account.class, fieldConfigs);
 // this returns the number of statements executed to create the table
@@ -1750,11 +1772,11 @@ set the column names of the fields with Java constants so you can use them in qu
 @@DatabaseTable(tableName = "accounts")
 public class Account @{
     public static final String PASSWORD_FIELD_NAME = "password"; 
-	
-	@dots{}
+    
+    @dots{}
     @@DatabaseField(canBeNull = false, columnName = PASSWORD_FIELD_NAME)
     private String password;
-	@dots{}
+    @dots{}
 @end example
 
 This allows us to construct queries using the password field name without having the renaming of a field in the future break
@@ -1923,12 +1945,13 @@ accountDao.delete(deleteBuilder.prepare());
 @node QueryBuilder Capabilities, Where Capabilities, Building Statements, Statement Builder
 @section QueryBuilder Capabilities
 
+@cindex QueryBuilder methods
 The following are some details about the various method calls on the @code{QueryBuilder} object which build custom
 select, delete, and update statements.  See the Javadocs for the @code{QueryBuilder} class for the most up-to-date
 information about the available methods.  Most of these methods return the @code{QueryBuilder} object so they can
 be chained.
 
-For a good tutorial of SQL commands, here's a good site: @uref{http://www.w3schools.com/sql/sql_where.asp}.
+For a good tutorial of SQL commands, here's a good site: @uref{http://www.w3schools.com/sql/sql_select.asp}.
 
 @table @code
 
@@ -1983,12 +2006,19 @@ default. For classes with id columns, the id column is added to the select list 
 
 Same as the above but with an iterable (such as a collection) instead of a variable list of column names.
 
+@cindex where
+@item where()
+
+Build and return the @code{Where} object with which you can customize your @code{WHERE} SQL statements.
+@xref{Where Capabilities}.
+
 @end table
 
 @c ----------------------------------------------------------------
 @node Where Capabilities, Select Arguments, QueryBuilder Capabilities, Statement Builder
 @section Where Capabilities
 
+@cindex where methods
 The following are some details about the various method calls for adding @code{WHERE} SQL statements to your custom
 select, delete, and update statements.  See the Javadocs for the @code{Where} class for the most up-to-date information
 about the available methods.  All of the methods return the @code{Where} object so you can chain them together.
@@ -2148,6 +2178,13 @@ query calls but instead want to use standard arguments.
 
 A short-cut for calling @code{prepare()} on the original @code{QueryBuilder.prepare()}.  This method returns a
 @code{PreparedQuery} object.
+
+@cindex raw where statement
+@item raw(String rawStatement)
+
+If you need more access to the parts of the @code{WHERE} statement than the above methods give you, you can also
+insert a raw statement into the query with this method.  Using the structured methods is certainly recommended but
+this is here to fill in any missing features.
 
 @end table
 
@@ -2321,8 +2358,8 @@ Here's an example of a full Spring configuration.
     class="com.j256.ormlite.examples.common.AccountDaoImpl"
     parent="baseDao" />
 <bean id="deliveryDao" class="com.j256.ormlite.spring.DaoFactory" factory-method="createDao">
-	<constructor-arg index="0" ref="connectionSource" />
-	<constructor-arg index="1" value="com.j256.ormlite.examples.spring.Delivery" />
+    <constructor-arg index="0" ref="connectionSource" />
+    <constructor-arg index="1" value="com.j256.ormlite.examples.spring.Delivery" />
 </bean>
 @end example
 
@@ -2819,16 +2856,16 @@ TransactionManager mgr = new TransactionManager(connectionSource);
 final Order order = new Order();
 
 mgr.callInTransaction(new Callable<Void>() @{
-	public Void call() throws Exception @{
-		// insert our order, should return 1
-		orderDao.create(order);
-		// now add the order to the account
-		account.setOrder(order);
-		// update our account object, should return 1
-		accountDao.update(account);
-		// you could pass back an object here
-		return null;
-	@}
+    public Void call() throws Exception @{
+        // insert our order, should return 1
+        orderDao.create(order);
+        // now add the order to the account
+        account.setOrder(order);
+        // update our account object, should return 1
+        accountDao.update(account);
+        // you could pass back an object here
+        return null;
+    @}
 @});
 @end example
 
@@ -2846,7 +2883,7 @@ a transaction seems to give a significant performance improvement. For example, 
 inserts into a database, consider running them within a transaction.
 
 @c ----------------------------------------------------------------
-@node How to Upgrade, 4.X to 4.10, Transactions, Top
+@node How to Upgrade, 4.13 to 4.14, Transactions, Top
 @chapter Upgrade From Old Versions
 
 We strive to maintain backwards compatibility and to provide deprecated versions of old classes and methods.
@@ -2854,6 +2891,7 @@ However, sometimes when a new version is released, changes are made that require
 and rarely the on-disk database formats. 
 
 @menu
+* 4.13 to 4.14::               Upgrade from version 4.13 to 4.14
 * 4.X to 4.10::                Upgrade from version 4.X to 4.10
 * 3.X to 4.0::                 Upgrade from version 3.X to 4.0
 * 2.X to 3.2::                 Upgrade from version 2.X to 3.2
@@ -2861,7 +2899,17 @@ and rarely the on-disk database formats.
 @end menu
 
 @c ----------------------------------------------------------------
-@node 4.X to 4.10, 3.X to 4.0, How to Upgrade, How to Upgrade
+@node 4.13 to 4.14, 4.X to 4.10, How to Upgrade, How to Upgrade
+@section Upgrade from Version 4.13 to 4.14
+
+In 4.14 we added a @code{DatabaseType.BYTE_ARRAY} which stores @code{byte[]} directly.  @xref{BYTE_ARRAY}.  In the past, this array
+would have been stored as a serialized array of bytes.  To not break backwards compatibility with the database, fields with the
+@code{byte[]} type @emph{must} specify either the @code{BYTE_ARRAY} or @code{SERIALIZABLE} types using the @code{dataType} field on
+@code{@@DatabaseField} -- it will not be chosen automatically.  @xref{DatabaseField dataType}.  If we did not do this then
+previously stored data would be read from the database improperly.
+
+@c ----------------------------------------------------------------
+@node 4.X to 4.10, 3.X to 4.0, 4.13 to 4.14, How to Upgrade
 @section Upgrade from Version 4.X to 4.10
 
 4.10 was a reasonably large release containing some feature upgrades and some bug fixes.  No data formats were changed, however
