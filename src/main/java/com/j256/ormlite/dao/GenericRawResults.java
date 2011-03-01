@@ -6,9 +6,9 @@ import java.util.List;
 import com.j256.ormlite.field.DataType;
 
 /**
- * Results returned by a call to {@link Dao#queryRaw(String)} which returns results as a String[],
- * {@link Dao#queryRaw(String, RawRowMapper)} which returns results mapped by the caller to an Object, and
- * {@link Dao#queryRaw(String, DataType[])} which returns each results as a Object[].
+ * Results returned by a call to {@link Dao#queryRaw(String, String...)} which returns results as a String[],
+ * {@link Dao#queryRaw(String, RawRowMapper, String...)} which returns results mapped by the caller to an Object, and
+ * {@link Dao#queryRaw(String, DataType[], String...)} which returns each results as a Object[].
  * 
  * <p>
  * You can access the results one of two ways using this object. You can call the {@link #getResults()} method which

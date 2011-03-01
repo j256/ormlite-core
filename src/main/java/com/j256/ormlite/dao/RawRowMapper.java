@@ -4,12 +4,12 @@ import java.sql.SQLException;
 
 /**
  * Parameterized row mapper that takes output from the {@link RawResults} and returns a T. Is used in the
- * {@link Dao#queryRaw(String, RawRowMapper)} method.
+ * {@link Dao#queryRaw(String, RawRowMapper, String...)} method.
  * 
  * <p>
  * <b> NOTE: </b> If you need to map Objects instead then consider using the
- * {@link Dao#queryRaw(String, com.j256.ormlite.field.DataType[])} method which allows you to iterate over the raw
- * results as Object[].
+ * {@link Dao#queryRaw(String, com.j256.ormlite.field.DataType[], String...)} method which allows you to iterate over
+ * the raw results as Object[].
  * </p>
  * 
  * @param <T>
