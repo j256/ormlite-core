@@ -44,11 +44,6 @@ public enum DataType implements FieldConverter {
 			return results.getString(columnPos);
 		}
 		@Override
-		public String resultToJavaString(FieldType fieldType, DatabaseResults results, int columnPos)
-				throws SQLException {
-			return results.getString(columnPos);
-		}
-		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return defaultStr;
 		}
@@ -60,11 +55,6 @@ public enum DataType implements FieldConverter {
 	LONG_STRING(SqlType.LONG_STRING, new Class<?>[0]) {
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-			return results.getString(columnPos);
-		}
-		@Override
-		public String resultToJavaString(FieldType fieldType, DatabaseResults results, int columnPos)
-				throws SQLException {
 			return results.getString(columnPos);
 		}
 		@Override
@@ -84,11 +74,6 @@ public enum DataType implements FieldConverter {
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			return (Boolean) results.getBoolean(columnPos);
-		}
-		@Override
-		public String resultToJavaString(FieldType fieldType, DatabaseResults results, int columnPos)
-				throws SQLException {
-			return Boolean.toString(results.getBoolean(columnPos));
 		}
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
@@ -117,11 +102,6 @@ public enum DataType implements FieldConverter {
 			return (Boolean) results.getBoolean(columnPos);
 		}
 		@Override
-		public String resultToJavaString(FieldType fieldType, DatabaseResults results, int columnPos)
-				throws SQLException {
-			return Boolean.toString(results.getBoolean(columnPos));
-		}
-		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Boolean.parseBoolean(defaultStr);
 		}
@@ -145,13 +125,12 @@ public enum DataType implements FieldConverter {
 	DATE(SqlType.DATE, new Class<?>[] { Date.class }) {
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-			return new Date(results.getTimestamp(columnPos).getTime());
-		}
-		@Override
-		public String resultToJavaString(FieldType fieldType, DatabaseResults results, int columnPos)
-				throws SQLException {
-			Date date = new Date(results.getTimestamp(columnPos).getTime());
-			return formatDate(fieldType.getFormat(), date);
+			Timestamp timeStamp = results.getTimestamp(columnPos);
+			if (timeStamp == null) {
+				return null;
+			} else {
+				return new Date(timeStamp.getTime());
+			}
 		}
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
@@ -179,13 +158,12 @@ public enum DataType implements FieldConverter {
 	JAVA_DATE(SqlType.DATE, new Class<?>[] { Date.class }) {
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-			return new Date(results.getTimestamp(columnPos).getTime());
-		}
-		@Override
-		public String resultToJavaString(FieldType fieldType, DatabaseResults results, int columnPos)
-				throws SQLException {
-			Date date = new Date(results.getTimestamp(columnPos).getTime());
-			return formatDate(fieldType.getFormat(), date);
+			Timestamp timeStamp = results.getTimestamp(columnPos);
+			if (timeStamp == null) {
+				return null;
+			} else {
+				return new Date(timeStamp.getTime());
+			}
 		}
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
@@ -220,11 +198,6 @@ public enum DataType implements FieldConverter {
 			return new Date(results.getLong(columnPos));
 		}
 		@Override
-		public String resultToJavaString(FieldType fieldType, DatabaseResults results, int columnPos)
-				throws SQLException {
-			return Long.toString(results.getLong(columnPos));
-		}
-		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 			try {
 				return Long.parseLong(defaultStr);
@@ -252,11 +225,6 @@ public enum DataType implements FieldConverter {
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			return new Date(results.getLong(columnPos));
-		}
-		@Override
-		public String resultToJavaString(FieldType fieldType, DatabaseResults results, int columnPos)
-				throws SQLException {
-			return Long.toString(results.getLong(columnPos));
 		}
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
@@ -293,24 +261,22 @@ public enum DataType implements FieldConverter {
 	DATE_STRING(SqlType.STRING, new Class<?>[0]) {
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+			String dateStr = results.getString(columnPos);
+			if (dateStr == null) {
+				return null;
+			}
 			String formatStr;
 			if (fieldType == null) {
 				formatStr = DEFAULT_DATE_FORMAT_STRING;
 			} else {
 				formatStr = fieldType.getFormat();
 			}
-			String dateStr = results.getString(columnPos);
 			try {
 				return parseDateString(formatStr, dateStr);
 			} catch (ParseException e) {
 				throw SqlExceptionUtil.create("Problems with column " + columnPos + " parsing date-string '" + dateStr
 						+ "' using '" + formatOrDefault(formatStr) + "'", e);
 			}
-		}
-		@Override
-		public String resultToJavaString(FieldType fieldType, DatabaseResults results, int columnPos)
-				throws SQLException {
-			return results.getString(columnPos);
 		}
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
@@ -336,24 +302,22 @@ public enum DataType implements FieldConverter {
 	JAVA_DATE_STRING(SqlType.STRING, new Class<?>[0]) {
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+			String dateStr = results.getString(columnPos);
+			if (dateStr == null) {
+				return null;
+			}
 			String formatStr;
 			if (fieldType == null) {
 				formatStr = DEFAULT_DATE_FORMAT_STRING;
 			} else {
 				formatStr = fieldType.getFormat();
 			}
-			String dateStr = results.getString(columnPos);
 			try {
 				return parseDateString(formatStr, dateStr);
 			} catch (ParseException e) {
 				throw SqlExceptionUtil.create("Problems with column " + columnPos + " parsing date-string '" + dateStr
 						+ "' using '" + formatOrDefault(formatStr) + "'", e);
 			}
-		}
-		@Override
-		public String resultToJavaString(FieldType fieldType, DatabaseResults results, int columnPos)
-				throws SQLException {
-			return results.getString(columnPos);
 		}
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
@@ -381,11 +345,6 @@ public enum DataType implements FieldConverter {
 			return (Byte) results.getByte(columnPos);
 		}
 		@Override
-		public String resultToJavaString(FieldType fieldType, DatabaseResults results, int columnPos)
-				throws SQLException {
-			return Byte.toString(results.getByte(columnPos));
-		}
-		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Byte.parseByte(defaultStr);
 		}
@@ -406,12 +365,6 @@ public enum DataType implements FieldConverter {
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			return (byte[]) results.getBytes(columnPos);
-		}
-		@Override
-		public String resultToJavaString(FieldType fieldType, DatabaseResults results, int columnPos)
-				throws SQLException {
-			byte[] bytes = results.getBytes(columnPos);
-			return Arrays.toString(bytes);
 		}
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
@@ -436,11 +389,6 @@ public enum DataType implements FieldConverter {
 			return (Byte) results.getByte(columnPos);
 		}
 		@Override
-		public String resultToJavaString(FieldType fieldType, DatabaseResults results, int columnPos)
-				throws SQLException {
-			return Byte.toString(results.getByte(columnPos));
-		}
-		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Byte.parseByte(defaultStr);
 		}
@@ -457,11 +405,6 @@ public enum DataType implements FieldConverter {
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			return (Short) results.getShort(columnPos);
-		}
-		@Override
-		public String resultToJavaString(FieldType fieldType, DatabaseResults results, int columnPos)
-				throws SQLException {
-			return Short.toString(results.getShort(columnPos));
 		}
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
@@ -486,11 +429,6 @@ public enum DataType implements FieldConverter {
 			return (Short) results.getShort(columnPos);
 		}
 		@Override
-		public String resultToJavaString(FieldType fieldType, DatabaseResults results, int columnPos)
-				throws SQLException {
-			return Short.toString(results.getShort(columnPos));
-		}
-		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Short.parseShort(defaultStr);
 		}
@@ -507,11 +445,6 @@ public enum DataType implements FieldConverter {
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			return (Integer) results.getInt(columnPos);
-		}
-		@Override
-		public String resultToJavaString(FieldType fieldType, DatabaseResults results, int columnPos)
-				throws SQLException {
-			return Integer.toString(results.getInt(columnPos));
 		}
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
@@ -552,11 +485,6 @@ public enum DataType implements FieldConverter {
 			return (Integer) results.getInt(columnPos);
 		}
 		@Override
-		public String resultToJavaString(FieldType fieldType, DatabaseResults results, int columnPos)
-				throws SQLException {
-			return Integer.toString(results.getInt(columnPos));
-		}
-		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Integer.parseInt(defaultStr);
 		}
@@ -577,11 +505,6 @@ public enum DataType implements FieldConverter {
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			return (Long) results.getLong(columnPos);
-		}
-		@Override
-		public String resultToJavaString(FieldType fieldType, DatabaseResults results, int columnPos)
-				throws SQLException {
-			return Long.toString(results.getLong(columnPos));
 		}
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
@@ -622,11 +545,6 @@ public enum DataType implements FieldConverter {
 			return (Long) results.getLong(columnPos);
 		}
 		@Override
-		public String resultToJavaString(FieldType fieldType, DatabaseResults results, int columnPos)
-				throws SQLException {
-			return Long.toString(results.getLong(columnPos));
-		}
-		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Long.parseLong(defaultStr);
 		}
@@ -647,11 +565,6 @@ public enum DataType implements FieldConverter {
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			return (Float) results.getFloat(columnPos);
-		}
-		@Override
-		public String resultToJavaString(FieldType fieldType, DatabaseResults results, int columnPos)
-				throws SQLException {
-			return Float.toString(results.getFloat(columnPos));
 		}
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
@@ -676,11 +589,6 @@ public enum DataType implements FieldConverter {
 			return (Float) results.getFloat(columnPos);
 		}
 		@Override
-		public String resultToJavaString(FieldType fieldType, DatabaseResults results, int columnPos)
-				throws SQLException {
-			return Float.toString(results.getFloat(columnPos));
-		}
-		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Float.parseFloat(defaultStr);
 		}
@@ -697,11 +605,6 @@ public enum DataType implements FieldConverter {
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			return (Double) results.getDouble(columnPos);
-		}
-		@Override
-		public String resultToJavaString(FieldType fieldType, DatabaseResults results, int columnPos)
-				throws SQLException {
-			return Double.toString(results.getDouble(columnPos));
 		}
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
@@ -724,11 +627,6 @@ public enum DataType implements FieldConverter {
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			return (Double) results.getDouble(columnPos);
-		}
-		@Override
-		public String resultToJavaString(FieldType fieldType, DatabaseResults results, int columnPos)
-				throws SQLException {
-			return Double.toString(results.getDouble(columnPos));
 		}
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
@@ -758,16 +656,6 @@ public enum DataType implements FieldConverter {
 				throw SqlExceptionUtil.create(
 						"Could not read serialized object from byte array: " + Arrays.toString(bytes) + "(len "
 								+ bytes.length + ")", e);
-			}
-		}
-		@Override
-		public String resultToJavaString(FieldType fieldType, DatabaseResults results, int columnPos)
-				throws SQLException {
-			Object obj = resultToJava(null, results, columnPos);
-			if (obj == null) {
-				return null;
-			} else {
-				return obj.toString();
 			}
 		}
 		@Override
@@ -822,11 +710,6 @@ public enum DataType implements FieldConverter {
 			}
 		}
 		@Override
-		public String resultToJavaString(FieldType fieldType, DatabaseResults results, int columnPos)
-				throws SQLException {
-			return results.getString(columnPos);
-		}
-		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return defaultStr;
 		}
@@ -852,11 +735,6 @@ public enum DataType implements FieldConverter {
 			}
 		}
 		@Override
-		public String resultToJavaString(FieldType fieldType, DatabaseResults results, int columnPos)
-				throws SQLException {
-			return Integer.toString(results.getInt(columnPos));
-		}
-		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Integer.parseInt(defaultStr);
 		}
@@ -880,10 +758,6 @@ public enum DataType implements FieldConverter {
 			return null;
 		}
 		@Override
-		public String resultToJavaString(FieldType fieldType, DatabaseResults results, int columnPos) {
-			return null;
-		}
-		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return null;
 		}
@@ -893,6 +767,18 @@ public enum DataType implements FieldConverter {
 		}
 		@Override
 		public boolean isAppropriateId() {
+			return false;
+		}
+		@Override
+		public boolean isComparable() {
+			return false;
+		}
+		@Override
+		public boolean isEscapedValue() {
+			return false;
+		}
+		@Override
+		public boolean isEscapedDefaultValue() {
 			return false;
 		}
 	},
@@ -912,13 +798,6 @@ public enum DataType implements FieldConverter {
 	}
 
 	public abstract Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos)
-			throws SQLException;
-
-	/**
-	 * Return the string equivalent to a certain column from the results. This is uses by the raw-results classes to
-	 * convert various result types to a string.
-	 */
-	public abstract String resultToJavaString(FieldType fieldType, DatabaseResults results, int columnPos)
 			throws SQLException;
 
 	public abstract Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException;
