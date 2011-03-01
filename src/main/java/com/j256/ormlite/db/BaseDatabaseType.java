@@ -103,7 +103,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 			case BYTE_OBJ :
 				appendByteType(sb);
 				break;
-				
+
 			case BYTE_ARRAY :
 				appendByteArrayType(sb);
 				break;

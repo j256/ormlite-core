@@ -64,8 +64,6 @@ To release ORMLite:
 	- run get_release.sh  [enter release number]
 	- cd ..
 	- sh explode_javadocs.sh
-	- cd docs
-	- make links
 
 12) Possibly trim the older releases in the release directory on SF.  Try to leave last major release and couple minors.
 

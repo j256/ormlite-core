@@ -182,16 +182,16 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		Foo foo2 = new Foo();
 		foo2.id = "stuff2";
 		assertEquals(1, dao.create(foo2));
-		
+
 		assertEquals(2, dao.queryForAll().size());
-		
+
 		QueryBuilder<Foo, Object> qb = dao.queryBuilder();
 		int offset = 1;
 		int limit = 2;
 		qb.offset(offset);
 		qb.limit(limit);
 		List<Foo> results = dao.query(qb.prepare());
-		
+
 		assertEquals(1, results.size());
 	}
 

@@ -99,8 +99,8 @@ public interface DatabaseType {
 
 	/**
 	 * Append to the string builder the necessary SQL to limit the results to a certain number. With some database
-	 * types, the offset is an argument to the LIMIT so the offset value (which could be null or not) is passed
-	 * in.  The database type can choose to ignore it.
+	 * types, the offset is an argument to the LIMIT so the offset value (which could be null or not) is passed in. The
+	 * database type can choose to ignore it.
 	 */
 	public void appendLimitValue(StringBuilder sb, int limit, Integer offset);
 

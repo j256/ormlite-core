@@ -406,7 +406,8 @@ public class Where<T, ID> {
 
 	/**
 	 * Add a raw statement as part of the where that can be anything that the database supports. Using more structured
-	 * methods is recommended but this gives more control over the query.
+	 * methods is recommended but this gives more control over the query and allows you to utilize database specific
+	 * features.
 	 */
 	public Where<T, ID> raw(String rawStatement) {
 		addClause(new Raw(rawStatement));
