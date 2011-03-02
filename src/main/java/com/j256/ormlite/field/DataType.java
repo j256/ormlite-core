@@ -455,10 +455,6 @@ public enum DataType implements FieldConverter {
 			return (Integer) number.intValue();
 		}
 		@Override
-		public Number resultToId(DatabaseResults results, int columnPos) throws SQLException {
-			return (Integer) results.getInt(columnPos);
-		}
-		@Override
 		public boolean isEscapedValue() {
 			return false;
 		}
@@ -513,10 +509,6 @@ public enum DataType implements FieldConverter {
 		@Override
 		public Object convertIdNumber(Number number) {
 			return (Long) number.longValue();
-		}
-		@Override
-		public Number resultToId(DatabaseResults results, int columnPos) throws SQLException {
-			return (Long) results.getLong(columnPos);
 		}
 		@Override
 		public boolean isEscapedValue() {
@@ -831,15 +823,6 @@ public enum DataType implements FieldConverter {
 	 */
 	public boolean isConvertableId() {
 		return false;
-	}
-
-	/**
-	 * Return the object suitable to be set on an id field that was extracted from the results associated with column in
-	 * position columnPos.
-	 */
-	public Number resultToId(DatabaseResults results, int columnPos) throws SQLException {
-		// by default the type cannot convert an id number
-		return null;
 	}
 
 	/**
