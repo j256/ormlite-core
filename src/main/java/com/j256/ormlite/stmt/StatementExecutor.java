@@ -439,9 +439,9 @@ public class StatementExecutor<T, ID> {
 	private void assignStatementArguments(CompiledStatement compiledStatement, String[] arguments) throws SQLException {
 		for (int i = 0; i < arguments.length; i++) {
 			if (arguments[i] == null) {
-				compiledStatement.setNull(i + 1, SqlType.STRING);
+				compiledStatement.setNull(i, SqlType.STRING);
 			} else {
-				compiledStatement.setObject(i + 1, arguments[i], SqlType.STRING);
+				compiledStatement.setObject(i, arguments[i], SqlType.STRING);
 			}
 		}
 	}
@@ -450,7 +450,7 @@ public class StatementExecutor<T, ID> {
 		int colN = compiledStatement.getColumnCount();
 		String[] columnNames = new String[colN];
 		for (int colC = 0; colC < colN; colC++) {
-			columnNames[colC] = compiledStatement.getColumnName(colC + 1);
+			columnNames[colC] = compiledStatement.getColumnName(colC);
 		}
 		return columnNames;
 	}
@@ -470,7 +470,7 @@ public class StatementExecutor<T, ID> {
 			int columnN = results.getColumnCount();
 			String[] result = new String[columnN];
 			for (int colC = 0; colC < columnN; colC++) {
-				result[colC] = results.getString(colC + 1);
+				result[colC] = results.getString(colC);
 			}
 			return result;
 		}
@@ -511,9 +511,9 @@ public class StatementExecutor<T, ID> {
 			Object[] result = new Object[columnN];
 			for (int colC = 0; colC < columnN; colC++) {
 				if (colC >= columnTypes.length) {
-					result[colC] = DataType.STRING.resultToJava(null, results, colC + 1);
+					result[colC] = DataType.STRING.resultToJava(null, results, colC);
 				} else {
-					result[colC] = columnTypes[colC].resultToJava(null, results, colC + 1);
+					result[colC] = columnTypes[colC].resultToJava(null, results, colC);
 				}
 			}
 			return result;

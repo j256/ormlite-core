@@ -18,11 +18,8 @@ public interface CompiledStatement {
 
 	/**
 	 * Get the designated column's name.
-	 * 
-	 * @param column
-	 *            The first column is 1, the second is 2, ...
 	 */
-	public String getColumnName(int column) throws SQLException;
+	public String getColumnName(int columnIndex) throws SQLException;
 
 	/**
 	 * Run the prepared update statement returning the number of rows affected.
@@ -53,7 +50,7 @@ public interface CompiledStatement {
 	 * Set the parameter specified by the index and type to be null.
 	 * 
 	 * @param parameterIndex
-	 *            Index of the parameter with 1 being the first parameter, etc..
+	 *            Index of the parameter with 0 being the first parameter, etc..
 	 * @param sqlType
 	 *            SQL type of the parameter.
 	 */
@@ -63,7 +60,7 @@ public interface CompiledStatement {
 	 * Set the parameter specified by the index and type to be an object.
 	 * 
 	 * @param parameterIndex
-	 *            Index of the parameter with 1 being the first parameter, etc..
+	 *            Index of the parameter with 0 being the first parameter, etc..
 	 * @param obj
 	 *            Object that we are setting.
 	 * @param sqlType

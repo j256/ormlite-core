@@ -26,7 +26,7 @@ public class H2CompiledStatement implements CompiledStatement {
 	}
 
 	public String getColumnName(int column) throws SQLException {
-		return preparedStatement.getMetaData().getColumnName(column);
+		return preparedStatement.getMetaData().getColumnName(column + 1);
 	}
 
 	public int runUpdate() throws SQLException {
@@ -51,11 +51,11 @@ public class H2CompiledStatement implements CompiledStatement {
 	}
 
 	public void setNull(int parameterIndex, SqlType sqlType) throws SQLException {
-		preparedStatement.setNull(parameterIndex, sqlTypeToJdbcInt(sqlType));
+		preparedStatement.setNull(parameterIndex + 1, sqlTypeToJdbcInt(sqlType));
 	}
 
 	public void setObject(int parameterIndex, Object obj, SqlType sqlType) throws SQLException {
-		preparedStatement.setObject(parameterIndex, obj, sqlTypeToJdbcInt(sqlType));
+		preparedStatement.setObject(parameterIndex + 1, obj, sqlTypeToJdbcInt(sqlType));
 	}
 
 	public void setMaxRows(int max) throws SQLException {
