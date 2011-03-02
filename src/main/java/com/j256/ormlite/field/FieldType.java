@@ -306,7 +306,7 @@ public class FieldType {
 	 * Return the {@link TableInfo} associated with the foreign object if the {@link DatabaseField#foreign()} annotation
 	 * was set to true or null if none.
 	 */
-	public TableInfo<?> getForeignTableInfo() {
+	TableInfo<?> getForeignTableInfo() {
 		return foreignTableInfo;
 	}
 
@@ -460,7 +460,7 @@ public class FieldType {
 	/**
 	 * Return the format of the field.
 	 */
-	public String getFormat() {
+	String getFormat() {
 		return format;
 	}
 
