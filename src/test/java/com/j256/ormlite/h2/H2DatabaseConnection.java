@@ -4,8 +4,11 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Savepoint;
+import java.sql.Statement;
+import java.sql.Types;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.GenericRowMapper;
@@ -67,7 +70,20 @@ public class H2DatabaseConnection implements DatabaseConnection {
 
 	public int insert(String statement, Object[] args, FieldType[] argFieldTypes, GeneratedKeyHolder keyHolder)
 			throws SQLException {
-		return insert(statement, args, argFieldTypes, keyHolder);
+		PreparedStatement stmt = connection.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+		statementSetArgs(stmt, args, argFieldTypes);
+		int rowN = stmt.executeUpdate();
+		ResultSet resultSet = stmt.getGeneratedKeys();
+		ResultSetMetaData metaData = resultSet.getMetaData();
+		int colN = metaData.getColumnCount();
+		while (resultSet.next()) {
+			for (int colC = 1; colC <= colN; colC++) {
+				// get the id column data so we can pass it back to the caller thru the keyHolder
+				Number id = getIdColumnData(resultSet, metaData, colC);
+				keyHolder.addKey(id);
+			}
+		}
+		return rowN;
 	}
 
 	public int update(String statement, Object[] args, FieldType[] argFieldTypes) throws SQLException {
@@ -138,6 +154,24 @@ public class H2DatabaseConnection implements DatabaseConnection {
 			if (results != null) {
 				results.close();
 			}
+		}
+	}
+
+	/**
+	 * Return the id associated with the column.
+	 */
+	private Number getIdColumnData(ResultSet resultSet, ResultSetMetaData metaData, int columnIndex)
+			throws SQLException {
+		int typeVal = metaData.getColumnType(columnIndex);
+		switch (typeVal) {
+			case Types.BIGINT :
+			case Types.DECIMAL :
+			case Types.NUMERIC :
+				return (Number) resultSet.getLong(columnIndex);
+			case Types.INTEGER :
+				return (Number) resultSet.getInt(columnIndex);
+			default :
+				throw new SQLException("Unknown DataType for typeVal " + typeVal + " in column " + columnIndex);
 		}
 	}
 

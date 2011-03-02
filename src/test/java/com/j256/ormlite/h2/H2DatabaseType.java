@@ -1,7 +1,10 @@
 package com.j256.ormlite.h2;
 
+import java.util.List;
+
 import com.j256.ormlite.db.BaseDatabaseType;
 import com.j256.ormlite.db.DatabaseType;
+import com.j256.ormlite.field.FieldType;
 
 /**
  * H2 database type.
@@ -41,5 +44,12 @@ public class H2DatabaseType extends BaseDatabaseType implements DatabaseType {
 	@Override
 	public void appendOffsetValue(StringBuilder sb, int offset) {
 		throw new IllegalStateException("Offset is part of the LIMIT in database type " + getClass());
+	}
+
+	@Override
+	protected void configureGeneratedId(StringBuilder sb, FieldType fieldType, List<String> statementsBefore,
+			List<String> additionalArgs, List<String> queriesAfter) {
+		sb.append("AUTO_INCREMENT ");
+		configureId(sb, fieldType, statementsBefore, additionalArgs, queriesAfter);
 	}
 }

@@ -21,6 +21,7 @@ import org.easymock.IAnswer;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
@@ -56,16 +57,6 @@ public class TableUtilsTest extends BaseCoreTest {
 						DatabaseTableConfig.fromClass(connectionSource, Foo.class));
 		assertEquals(1, stmts.size());
 		assertEquals(expectedCreateStatement(), stmts.get(0));
-	}
-
-	@Test
-	public void testCreateTable() throws Exception {
-		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
-		testCreate(connectionSource, databaseType, 0, false, null, new Callable<Integer>() {
-			public Integer call() throws Exception {
-				return TableUtils.createTable(connectionSource, Foo.class);
-			}
-		});
 	}
 
 	@Test
@@ -260,7 +251,78 @@ public class TableUtilsTest extends BaseCoreTest {
 		verify(connectionSource, conn, stmt);
 	}
 
+	@Test(expected = SQLException.class)
+	public void testMissingCreate() throws Exception {
+		Dao<LocalFoo, Integer> fooDao = createDao(LocalFoo.class, false);
+		fooDao.queryForAll();
+	}
+
+	@Test
+	public void testCreateTable() throws Exception {
+		Dao<LocalFoo, Integer> fooDao = createDao(LocalFoo.class, false);
+		// first we create the table
+		createTable(LocalFoo.class, false);
+		// test it out
+		assertEquals(0, fooDao.queryForAll().size());
+		// now we drop it
+		dropTable(LocalFoo.class, true);
+		try {
+			// query should fail
+			fooDao.queryForAll();
+			fail("Was expecting a SQL exception");
+		} catch (Exception expected) {
+			// expected
+		}
+		// now create it again
+		createTable(LocalFoo.class, false);
+		assertEquals(0, fooDao.queryForAll().size());
+		dropTable(LocalFoo.class, true);
+	}
+
+	@Test(expected = SQLException.class)
+	public void testDropThenQuery() throws Exception {
+		Dao<LocalFoo, Integer> fooDao = createDao(LocalFoo.class, true);
+		assertEquals(0, fooDao.queryForAll().size());
+		dropTable(LocalFoo.class, true);
+		fooDao.queryForAll();
+	}
+
+	@Test(expected = SQLException.class)
+	public void testRawExecuteDropThenQuery() throws Exception {
+		Dao<LocalFoo, Integer> fooDao = createDao(LocalFoo.class, true);
+		StringBuilder sb = new StringBuilder();
+		sb.append("DROP TABLE ");
+		if (databaseType.isEntityNamesMustBeUpCase()) {
+			databaseType.appendEscapedEntityName(sb, "FOO");
+		} else {
+			databaseType.appendEscapedEntityName(sb, "foo");
+		}
+		// can't check the return value because of sql-server
+		fooDao.executeRaw(sb.toString());
+		fooDao.queryForAll();
+	}
+
+	@Test(expected = SQLException.class)
+	public void testDoubleDrop() throws Exception {
+		Dao<LocalFoo, Integer> fooDao = createDao(LocalFoo.class, false);
+		// first we create the table
+		createTable(LocalFoo.class, false);
+		// test it out
+		assertEquals(0, fooDao.queryForAll().size());
+		// now we drop it
+		dropTable(LocalFoo.class, true);
+		// this should fail
+		dropTable(LocalFoo.class, false);
+	}
+
 	/* ================================================================ */
+
+	protected static class LocalFoo {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField
+		String name;
+	}
 
 	private void testCreate(ConnectionSource connectionSource, DatabaseType databaseType, int rowN,
 			boolean throwExecute, String queryAfter, Callable<Integer> callable) throws Exception {

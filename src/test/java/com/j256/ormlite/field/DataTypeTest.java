@@ -834,7 +834,6 @@ public class DataTypeTest extends BaseCoreTest {
 		assertNull(dataType.resultToJava(null, null, 0));
 		assertNull(dataType.parseDefaultString(null, null));
 		assertNull(dataType.javaToSqlArg(null, null));
-		assertNull(dataType.resultToId(null, 0));
 		assertNull(dataType.convertIdNumber(null));
 		assertFalse(dataType.isValidGeneratedType());
 		assertFalse(dataType.isAppropriateId());
@@ -891,10 +890,7 @@ public class DataTypeTest extends BaseCoreTest {
 		} else {
 			assertEquals(sqlArg, dataType.javaToSqlArg(fieldType, javaVal));
 		}
-		if (dataType.isConvertableId()) {
-			assertEquals(javaVal, dataType.resultToId(results, colNum));
-		} else {
-			assertNull(dataType.resultToId(results, colNum));
+		if (!dataType.isConvertableId()) {
 			assertNull(dataType.convertIdNumber(21312312L));
 		}
 		assertEquals(isValidGeneratedType, dataType.isValidGeneratedType());
