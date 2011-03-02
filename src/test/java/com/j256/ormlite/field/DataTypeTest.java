@@ -531,7 +531,6 @@ public class DataTypeTest extends BaseCoreTest {
 
 	@Test
 	public void testIntConvertId() throws Exception {
-		assertTrue(DataType.INTEGER.isConvertableId());
 		int intId = 213123123;
 		long longId = new Long(intId);
 		assertEquals(intId, DataType.INTEGER.convertIdNumber(longId));
@@ -585,7 +584,6 @@ public class DataTypeTest extends BaseCoreTest {
 
 	@Test
 	public void testLongConvertId() throws Exception {
-		assertTrue(DataType.LONG.isConvertableId());
 		long longId = new Long(1312313123131L);
 		assertEquals(longId, DataType.LONG.convertIdNumber(longId));
 	}
@@ -843,6 +841,7 @@ public class DataTypeTest extends BaseCoreTest {
 		assertFalse(dataType.isSelectArgRequired());
 		assertFalse(dataType.isStreamType());
 		assertFalse(dataType.isComparable());
+		assertNull(dataType.convertIdNumber(21312312L));
 		dataTypeSet.add(dataType);
 	}
 
@@ -889,9 +888,6 @@ public class DataTypeTest extends BaseCoreTest {
 			assertTrue(Arrays.equals((byte[]) sqlArg, (byte[]) dataType.javaToSqlArg(fieldType, javaVal)));
 		} else {
 			assertEquals(sqlArg, dataType.javaToSqlArg(fieldType, javaVal));
-		}
-		if (!dataType.isConvertableId()) {
-			assertNull(dataType.convertIdNumber(21312312L));
 		}
 		assertEquals(isValidGeneratedType, dataType.isValidGeneratedType());
 		assertEquals(isAppropriateId, dataType.isAppropriateId());

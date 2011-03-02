@@ -463,10 +463,6 @@ public enum DataType implements FieldConverter {
 			return true;
 		}
 		@Override
-		public boolean isConvertableId() {
-			return true;
-		}
-		@Override
 		public boolean isValidGeneratedType() {
 			return true;
 		}
@@ -520,10 +516,6 @@ public enum DataType implements FieldConverter {
 		}
 		@Override
 		public boolean isValidGeneratedType() {
-			return true;
-		}
-		@Override
-		public boolean isConvertableId() {
 			return true;
 		}
 	},
@@ -816,13 +808,6 @@ public enum DataType implements FieldConverter {
 	public Object convertIdNumber(Number number) {
 		// by default the type cannot convert an id number
 		return null;
-	}
-
-	/**
-	 * Return true if it can be used to convert the sql value into an id.
-	 */
-	public boolean isConvertableId() {
-		return false;
 	}
 
 	/**

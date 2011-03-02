@@ -369,7 +369,6 @@ public class FieldType {
 	public Object assignIdValue(Object data, Number val) throws SQLException {
 		Object idVal = dataType.convertIdNumber(val);
 		if (idVal == null) {
-			// may never get here because id fields _must_ be convert-able but let's be careful out there
 			throw new SQLException("Invalid class " + dataType + " for sequence-id " + this);
 		} else {
 			assignField(data, idVal);
