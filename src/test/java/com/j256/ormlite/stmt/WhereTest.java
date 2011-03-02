@@ -639,6 +639,30 @@ public class WhereTest extends BaseCoreTest {
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
+	@Test
+	public void testClear() throws Exception {
+		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		int val = 112;
+		where.eq(Foo.VAL_COLUMN_NAME, val);
+		StringBuilder whereSb = new StringBuilder();
+		where.appendSql(databaseType, whereSb, new ArrayList<SelectArg>());
+		StringBuilder sb = new StringBuilder();
+		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
+		sb.append(" = ");
+		sb.append(val).append(' ');
+		assertEquals(sb.toString(), whereSb.toString());
+
+		where.clear();
+		whereSb.setLength(0);
+		where.eq(Foo.VAL_COLUMN_NAME, val + 1);
+		where.appendSql(databaseType, whereSb, new ArrayList<SelectArg>());
+		sb.setLength(0);
+		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
+		sb.append(" = ");
+		sb.append(val + 1).append(' ');
+		assertEquals(sb.toString(), whereSb.toString());
+	}
+
 	private TableInfo<Foo> createTableInfo() throws SQLException {
 		return new TableInfo<Foo>(connectionSource, Foo.class);
 	}

@@ -422,6 +422,13 @@ public class Where<T, ID> {
 	}
 
 	/**
+	 * Clear out the Where object so it can be re-used.
+	 */
+	public void clear() {
+		clauseList.clear();
+	}
+
+	/**
 	 * Used by the internal classes to add the where SQL to the {@link StringBuilder}.
 	 */
 	void appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> columnArgList) throws SQLException {
