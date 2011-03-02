@@ -1,5 +1,6 @@
 package com.j256.ormlite.table;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class DatabaseTableConfig<T> {
 	private String tableName;
 	private List<DatabaseFieldConfig> fieldConfigs;
 	private FieldType[] fieldTypes;
+	private Constructor<T> constructor;
 
 	public DatabaseTableConfig() {
 		// for spring
@@ -113,6 +115,22 @@ public class DatabaseTableConfig<T> {
 	}
 
 	/**
+	 * Return the constructor for this class. If not constructor has been set on the class then it will be found on the
+	 * class through reflection.
+	 */
+	public Constructor<T> getConstructor() {
+		if (constructor == null) {
+			constructor = findNoArgConstructor(dataClass);
+		}
+		return constructor;
+	}
+
+	// @NotRequired
+	public void setConstructor(Constructor<T> constructor) {
+		this.constructor = constructor;
+	}
+
+	/**
 	 * Extract the DatabaseTableConfig for a particular class by looking for class and field annotations. This is used
 	 * by internal classes to configure a class.
 	 */
@@ -196,5 +214,23 @@ public class DatabaseTableConfig<T> {
 			throw new SQLException("No fields were configured for class " + dataClass);
 		}
 		return fieldTypes.toArray(new FieldType[fieldTypes.size()]);
+	}
+
+	private Constructor<T> findNoArgConstructor(Class<T> dataClass) {
+		Constructor<T>[] constructors;
+		try {
+			@SuppressWarnings("unchecked")
+			Constructor<T>[] consts = (Constructor<T>[]) dataClass.getDeclaredConstructors();
+			// i do this [grossness] to be able to move the Suppress inside the method
+			constructors = consts;
+		} catch (Exception e) {
+			throw new IllegalArgumentException("Can't lookup declared constructors for " + dataClass, e);
+		}
+		for (Constructor<T> con : constructors) {
+			if (con.getParameterTypes().length == 0) {
+				return con;
+			}
+		}
+		throw new IllegalArgumentException("Can't find a no-arg constructor for " + dataClass);
 	}
 }

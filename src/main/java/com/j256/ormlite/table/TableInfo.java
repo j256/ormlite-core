@@ -72,7 +72,7 @@ public class TableInfo<T> {
 		}
 		// can be null if there is no id field
 		this.idField = findIdFieldType;
-		this.constructor = findNoArgConstructor(dataClass);
+		this.constructor = tableConfig.getConstructor();
 	}
 
 	/**
@@ -172,23 +172,5 @@ public class TableInfo<T> {
 	public boolean isUpdatable() {
 		// to update we must have an id field and there must be more than just the id field
 		return (idField != null && fieldTypes.length > 1);
-	}
-
-	private Constructor<T> findNoArgConstructor(Class<T> dataClass) {
-		Constructor<T>[] constructors;
-		try {
-			@SuppressWarnings("unchecked")
-			Constructor<T>[] consts = (Constructor<T>[]) dataClass.getDeclaredConstructors();
-			// i do this [grossness] to be able to move the Suppress inside the method
-			constructors = consts;
-		} catch (Exception e) {
-			throw new IllegalArgumentException("Can't lookup declared constructors for " + dataClass, e);
-		}
-		for (Constructor<T> con : constructors) {
-			if (con.getParameterTypes().length == 0) {
-				return con;
-			}
-		}
-		throw new IllegalArgumentException("Can't find a no-arg constructor for " + dataClass);
 	}
 }
