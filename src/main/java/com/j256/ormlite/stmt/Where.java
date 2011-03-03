@@ -355,7 +355,15 @@ public class Where<T, ID> {
 	}
 
 	/**
-	 * Add an '=' clause where the ID is the id from a foreign field in the data that is passed in.
+	 * Add an '=' clause where the ID is the id from a foreign field in the data that is passed in. So if you have a
+	 * class with a foreign field, this will find all of the instances of that class that have the same foreign field's
+	 * id as the data parameter passed in.
+	 * 
+	 * <p>
+	 * If you have an Order object that has a foreign Account field, you could do something like
+	 * orderDao.queryBuilder().where().foreignIdEq(accountDao, account1). That would make a query for all orders that
+	 * have an account field that matches the id from account1.
+	 * </p>
 	 */
 	public <OD, OID> Where<T, ID> foreignIdEq(Dao<OD, OID> dataDao, OD data) throws SQLException {
 		if (idColumnName == null) {
@@ -369,7 +377,9 @@ public class Where<T, ID> {
 	}
 
 	/**
-	 * Add a IN clause where the ID is the id from a foreign field in the data items that are passed in.
+	 * Add a IN clause where the ID is the id from a foreign field in the data items that are passed in. This is the
+	 * same as {@link #foreignIdEq(Dao, Object)} except that multiple foreign objects can be specified as variable
+	 * arguments.
 	 */
 	public <OD, OID> Where<T, ID> foreignIdIn(Dao<OD, OID> dataDao, OD... datas) throws SQLException {
 		if (idColumnName == null) {
@@ -387,7 +397,9 @@ public class Where<T, ID> {
 	}
 
 	/**
-	 * Add a IN clause where the ID is the id from a foreign field in the data items iterable that is passed in.
+	 * Add a IN clause where the ID is the id from a foreign field in the data items iterable that is passed in. This is
+	 * the same as {@link #foreignIdEq(Dao, Object)} except that multiple foreign objects can be specified in an
+	 * iterable, such as a collection.
 	 */
 	public <OD, OID> Where<T, ID> foreignIdIn(Dao<OD, OID> dataDao, Iterable<OD> datas) throws SQLException {
 		if (idColumnName == null) {
