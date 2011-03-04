@@ -385,6 +385,7 @@ public class FieldTypeTest extends BaseCoreTest {
 		// we assign the id, not the object
 		fieldType.assignField(parent, id);
 		ForeignForeign foreign = parent.foreign;
+		assertNotNull(foreign);
 		assertEquals(id, foreign.id);
 
 		// not try assigning it again

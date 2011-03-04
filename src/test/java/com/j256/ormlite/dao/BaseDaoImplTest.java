@@ -17,6 +17,7 @@ import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -1203,5 +1204,33 @@ public class BaseDaoImplTest extends BaseCoreTest {
 				throw new Exception("for the hell of it");
 			}
 		});
+	}
+
+	@Test
+	public void testForeignNull() throws Exception {
+		final Dao<Foreign, Integer> dao = createDao(Foreign.class, true);
+		final Foreign foreign = new Foreign();
+		foreign.foo = null;
+		assertEquals(1, dao.create(foreign));
+		Foreign foreign2 = dao.queryForId(foreign.id);
+		assertNotNull(foreign2);
+		assertNull(foreign2.foo);
+	}
+
+	@Test(expected = SQLException.class)
+	public void testForeignCantBeNull() throws Exception {
+		final Dao<ForeignNotNull, Integer> dao = createDao(ForeignNotNull.class, true);
+		final ForeignNotNull foreign = new ForeignNotNull();
+		foreign.foo = null;
+		dao.create(foreign);
+	}
+
+	protected static class ForeignNotNull {
+		@DatabaseField(generatedId = true)
+		public int id;
+		@DatabaseField(foreign = true, canBeNull = false)
+		public Foo foo;
+		public ForeignNotNull() {
+		}
 	}
 }

@@ -70,6 +70,8 @@ public abstract class BaseCoreTest {
 	}
 
 	protected static class Foreign {
+		@DatabaseField(generatedId = true)
+		public int id;
 		@DatabaseField(foreign = true)
 		public Foo foo;
 		public Foreign() {

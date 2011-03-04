@@ -315,7 +315,7 @@ public class FieldType {
 	 */
 	public void assignField(Object data, Object val) throws SQLException {
 		// if this is a foreign object then val is the foreign object's id val
-		if (foreignTableInfo != null) {
+		if (foreignTableInfo != null && val != null) {
 			// get the current field value which is the foreign-id
 			Object foreignId = extractJavaFieldValue(data);
 			/*
