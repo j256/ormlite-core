@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on March, 1 2011 by texi2html 1.70 -->
+<!-- Created on March, 5 2011 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -11,10 +11,10 @@ Send bugs and suggestions to <users@texi2html.cvshome.org>
 
 -->
 <head>
-<title>ORM Lite Package: 2. How to Use</title>
+<title>ORMLite Package: 2. How to Use</title>
 
-<meta name="description" content="ORM Lite Package: 2. How to Use">
-<meta name="keywords" content="ORM Lite Package: 2. How to Use">
+<meta name="description" content="ORMLite Package: 2. How to Use">
+<meta name="keywords" content="ORMLite Package: 2. How to Use">
 <meta name="resource-type" content="document">
 <meta name="distribution" content="global">
 <meta name="Generator" content="texi2html 1.70">
@@ -818,7 +818,7 @@ ConnectionSource connectionSource =
 <p>The package also includes the class <code>JdbcPooledConnectionSource</code> which is a relatively simple implementation of a
 pooled connection source.  As database connections are released, instead of being closed, they are added to an internal
 list so they can be reused at a later time.  New connections are created on demand only if there are no dormant
-connections available.  <code>JdbcPooledConnectionSource</code> is also synchronized and can be used my multiple threads.  It
+connections available.  <code>JdbcPooledConnectionSource</code> is also synchronized and can be used by multiple threads.  It
 has settings for the maximum number of free connections before they are closed as well as a maximum age before a
 connection is closed.  
 
@@ -976,64 +976,79 @@ the default or another engine.  Also, MySQL does some funky stuff with the last-
 <p>No special instructions.
 
 </p><a name="IDX117"></a>
-<a name="IDX118"></a>
-</dd>
-<dt> Microsoft SQL Server</dt>
-<dd>
-<p>No special instructions.
-
-</p><a name="IDX119"></a>
 </dd>
 <dt> H2</dt>
 <dd>
-<p>No special instructions.  I use this database for all of my internal testing with in-memory and small on-disk databases.
+<p>No special instructions.  We use this database for all of our internal testing with in-memory and small on-disk databases.
 
-</p><a name="IDX120"></a>
-</dd>
-<dt> Derby</dt>
-<dd>
-<p>There are two drivers for Derby: one embedded and one client/server.  ORMLite makes an attempt to detect the right driver but you
-may have to set the right database type on your ConnectionSource directly if it doesn't.  See section <a href="ormlite_5.html#SEC41">Database Specific Code</a>.
-
-</p><a name="IDX121"></a>
-</dd>
-<dt> HSQLDB</dt>
-<dd>
-<p>No special instructions.
-
-</p><a name="IDX122"></a>
-<a name="IDX123"></a>
-<a name="IDX124"></a>
+</p><a name="IDX118"></a>
+<a name="IDX119"></a>
+<a name="IDX120"></a>
 </dd>
 <dt> SQLite</dt>
 <dd>
 <p>There are multiple SQLite drivers out there.  Make sure you use the Xerial one (<a href="http://www.xerial.org/trac/Xerial/wiki/SQLiteJDBC">http://www.xerial.org/trac/Xerial/wiki/SQLiteJDBC</a>)
 and not the Zentus one (<a href="http://www.zentus.com/sqlitejdbc/">http://www.zentus.com/sqlitejdbc/</a>) which does not support generated ids.
 
-</p><a name="IDX125"></a>
+</p><a name="IDX121"></a>
 </dd>
 <dt> Android SQLite</dt>
 <dd>
 <p>Android's SQLite database is accessed through direct calls to the Android database API methods.
 
+</p><a name="IDX122"></a>
+</dd>
+<dt> Derby</dt>
+<dd>
+<p>There are two drivers for Derby: one embedded and one client/server.  ORMLite makes an attempt to detect the right driver but you
+may have to set the right database type on your ConnectionSource directly if it doesn't.  See section <a href="ormlite_5.html#SEC41">Database Specific Code</a>.
+
+</p><a name="IDX123"></a>
+</dd>
+<dt> HSQLDB</dt>
+<dd>
+<p>No special instructions.
+
+</p><a name="IDX124"></a>
+<a name="IDX125"></a>
+</dd>
+<dt> Microsoft SQL Server</dt>
+<dd>
+<p>No special instructions.
+
 </p><a name="IDX126"></a>
+</dd>
+<dt> Netezza</dt>
+<dd>
+<p>As of March 2011, the driver should be considered provisional.  I do not currently have access to a server running a Netezza database.
+We will try to keep this driver up to date with the help of contributors.  Thanks to Richard Kooijman for the driver.
+
+</p><a name="IDX127"></a>
+<a name="IDX128"></a>
+</dd>
+<dt> ODBC</dt>
+<dd>
+<p>As of March 2011, the driver should be considered provisional.  I do not have access to a server running Microsoft's Open Database
+Connectivity.  We will try to keep this driver up to date with the help of contributors.  Thanks to Dale Asberry for the driver.
+
+</p><a name="IDX129"></a>
 </dd>
 <dt> DB2</dt>
 <dd>
-<p>I do not have access to an DB2 database so I cannot run any tests to make sure that my support for it works well.  Please contact me
-if you have an DB2 database that I can develop against.
+<p>I do not have access to an DB2 database so we cannot run any tests to make sure that our support for it works well.  Please contact me
+if you have an DB2 database that we can develop against.
 
-</p><a name="IDX127"></a>
+</p><a name="IDX130"></a>
 </dd>
 <dt> Oracle</dt>
 <dd>
-<p>I do not have access to an Oracle database so I cannot run any tests to make sure that my support for it works well.  Please contact me
-if you have an Oracle database that I can develop against.
+<p>I do not have access to an Oracle database so we cannot run any tests to make sure that our support for it works well.  Please contact me
+if you have an Oracle database that we can develop against.
 
 </p></dd>
 </dl>
 
-<a name="IDX128"></a>
+<a name="IDX131"></a>
 <p>Please contact the author if your database is not supported.
 
 </p><hr size="6">
@@ -1165,9 +1180,9 @@ if (account == null) {
     // the name &quot;John Smith&quot; does not match any rows
 }
 </pre></td></tr></table>
-<a name="IDX129"></a>
-<a name="IDX130"></a>
-<a name="IDX131"></a>
+<a name="IDX132"></a>
+<a name="IDX133"></a>
+<a name="IDX134"></a>
 <p><em>NOTE:</em> If you need to change the value of an object's id field, you must use the <code>Dao.updateId()</code> method which
 takes the current object still with its <em>old</em> id value and the new value.  ORMLite has to first locate the object
 by its old id and then update it with the new id.  See <a href="ormlite_5.html#ANC25">updateId</a>.
@@ -1292,10 +1307,10 @@ sequences.
 
 </p><dl compact="compact">
 <dd>
-<a name="IDX132"></a>
-<a name="IDX133"></a>
-<a name="IDX134"></a>
 <a name="IDX135"></a>
+<a name="IDX136"></a>
+<a name="IDX137"></a>
+<a name="IDX138"></a>
 </dd>
 <dt> create and persist an object to the database</dt>
 <dd>
@@ -1308,7 +1323,7 @@ if (accountDao.create(account) != 1) {
   // error handling &hellip; 
 }
 </pre></td></tr></table>
-<a name="IDX136"></a>
+<a name="IDX139"></a>
 </dd>
 <dt> query for it's id column </dt>
 <dd>
@@ -1319,7 +1334,7 @@ if (account == null) {
   account not found handling &hellip; 
 }
 </pre></td></tr></table>
-<a name="IDX137"></a>
+<a name="IDX140"></a>
 </dd>
 <dt> update the database row associated with the object</dt>
 <dd>
@@ -1332,7 +1347,7 @@ if (accountDao.update(account) != 1) {
   // error handling &hellip; 
 }
 </pre></td></tr></table>
-<a name="IDX138"></a>
+<a name="IDX141"></a>
 </dd>
 <dt> refreshing an object if the database has changed</dt>
 <dd>
@@ -1344,7 +1359,7 @@ if (accountDao.refresh(account) != 1) {
   // error handling &hellip; 
 }
 </pre></td></tr></table>
-<a name="IDX139"></a>
+<a name="IDX142"></a>
 </dd>
 <dt> delete the account from the database</dt>
 <dd>
@@ -1356,8 +1371,8 @@ if (accountDao.delete(account) != 1) {
   // error handling &hellip; 
 }
 </pre></td></tr></table>
-<a name="IDX140"></a>
-<a name="IDX141"></a>
+<a name="IDX143"></a>
+<a name="IDX144"></a>
 </dd>
 <dt> iterate through all of the rows in a table:</dt>
 <dd>
@@ -1368,7 +1383,7 @@ for (Account account : accountDao) {
     System.out.println(account.getName());
 }
 </pre></td></tr></table>
-<a name="IDX142"></a>
+<a name="IDX145"></a>
 <p><em>NOTE:</em> you must page through <em>all</em> items for the iterator to close the underlying SQL object.   If you don't
 go all of the way, the garbage collector will close the SQL statement some time later which is considered bad form.
 
@@ -1698,8 +1713,8 @@ public class Order {
 use this field name if you are querying for it.  You can set the column name using the <code>columnName</code> field in the
 <code>DatabaseField</code> annotation. See <a href="#ANC1">columnName</a>.
 
-</p><a name="IDX143"></a>
-<a name="IDX144"></a>
+</p><a name="IDX146"></a>
+<a name="IDX147"></a>
 <p>When you are creating a field with a foreign object, please note that the foreign object will <em>not</em> automatically be
 created for you.  If your foreign object has a generated-id which is provided by the database then you need to create it
 <em>before</em> you create any objects that reference it.  For example:
@@ -1718,8 +1733,8 @@ if (orderDao.create(order) != 1) {
    // error handling unless 1 row was inserted
 }
 </pre></td></tr></table>
-<a name="IDX145"></a>
-<a name="IDX146"></a>
+<a name="IDX148"></a>
+<a name="IDX149"></a>
 <p>When you query for an order, you will get an <code>Order</code> object with an account field object that <em>only</em> has its id
 field set.  The rest of the fields in the foreign <code>Account</code> object will have default values (null, 0, false, etc.).  If
 you want to use other fields in the <code>Account</code>, you must call <code>refresh</code> on the <code>accountDao</code> class to get the
@@ -1817,12 +1832,15 @@ create the table.
 <p>Similar to the last method but instead of a class, this method uses a <code>DatabaseTableConfig</code> to determine the various fields and
 characteristics of the table.
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">ArrayList&lt;DatabaseFieldConfig&gt; fieldConfigs = new ArrayList&lt;DatabaseFieldConfig&gt;();
-fieldConfigs.add(new DatabaseFieldConfig(&quot;id&quot;, null, DataType.UNKNOWN, null, 0, false, false, true, null,
-        false, null, false, null, false, null, false, null, null, false));
+</p><table><tr><td>&nbsp;</td><td><pre class="example">ArrayList&lt;DatabaseFieldConfig&gt; fieldConfigs =
+   new ArrayList&lt;DatabaseFieldConfig&gt;();
+fieldConfigs.add(new DatabaseFieldConfig(&quot;id&quot;, null, DataType.UNKNOWN,
+   null, 0, false, false, true, null, false, null, false, null, false,
+   null, false, null, null, false));
 &hellip;
-DatabaseTableConfig&lt;Account&gt; tableConfig = new DatabaseTableConfig&lt;Account&gt;(Account.class, fieldConfigs);
-// this returns the number of statements executed to create the table
+DatabaseTableConfig&lt;Account&gt; tableConfig =
+   new DatabaseTableConfig&lt;Account&gt;(Account.class, fieldConfigs);
+// this returns number of statements executed to create table
 TableUtils.createTable(connectionSource, tableConfig);
 </pre></td></tr></table>
 </dd>
@@ -1914,7 +1932,7 @@ creator.maybeDropTables();
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>March, 1 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>March, 5 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 

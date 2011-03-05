@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on March, 1 2011 by texi2html 1.70 -->
+<!-- Created on March, 5 2011 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -11,10 +11,10 @@ Send bugs and suggestions to <users@texi2html.cvshome.org>
 
 -->
 <head>
-<title>ORM Lite Package: 6. Upgrade From Old Versions</title>
+<title>ORMLite Package: 6. Upgrade From Old Versions</title>
 
-<meta name="description" content="ORM Lite Package: 6. Upgrade From Old Versions">
-<meta name="keywords" content="ORM Lite Package: 6. Upgrade From Old Versions">
+<meta name="description" content="ORMLite Package: 6. Upgrade From Old Versions">
+<meta name="keywords" content="ORMLite Package: 6. Upgrade From Old Versions">
 <meta name="resource-type" content="document">
 <meta name="distribution" content="global">
 <meta name="Generator" content="texi2html 1.70">
@@ -64,15 +64,15 @@ However, sometimes when a new version is released, changes are made that require
 and rarely the on-disk database formats. 
 
 </p><table class="menu" border="0" cellspacing="0">
-<tr><td align="left" valign="top"><a href="#SEC47">6.1 Upgrade from Version 4.13 to 4.14</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">               Upgrade from version 4.13 to 4.14
+<tr><td align="left" valign="top"><a href="#SEC47">6.1 Upgrade to Version 4.14</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.14
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC48">6.2 Upgrade from Version 4.X to 4.10</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade from version 4.X to 4.10
+<tr><td align="left" valign="top"><a href="#SEC48">6.2 Upgrade to Version 4.10</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.10
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC49">6.3 Upgrade from Version 3.X to 4.0</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Upgrade from version 3.X to 4.0
+<tr><td align="left" valign="top"><a href="#SEC49">6.3 Upgrade to Version 4.0</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Upgrade to version 4.0
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC50">6.4 Upgrade from Version 2.X to 3.2</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Upgrade from version 2.X to 3.2
+<tr><td align="left" valign="top"><a href="#SEC50">6.4 Upgrade to Version 3.2</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Upgrade to version 3.2
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC51">6.5 Upgrade from Version 2.3 to 2.4</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Upgrade from version 2.3 to 2.4
+<tr><td align="left" valign="top"><a href="#SEC51">6.5 Upgrade to Version 2.4</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Upgrade to version 2.4
 </td></tr>
 </table>
 
@@ -95,7 +95,7 @@ and rarely the on-disk database formats.
 <td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 6.1 Upgrade from Version 4.13 to 4.14 </h2>
+<h2 class="section"> 6.1 Upgrade to Version 4.14 </h2>
 
 <p>In 4.14 we added a <code>DatabaseType.BYTE_ARRAY</code> which stores <code>byte[]</code> directly.  See <a href="ormlite_2.html#ANC12">BYTE_ARRAY</a>.  In the past, this array
 would have been stored as a serialized array of bytes.  To not break backwards compatibility with the database, fields with the
@@ -103,20 +103,21 @@ would have been stored as a serialized array of bytes.  To not break backwards c
 <code>@DatabaseField</code> - it will not be chosen automatically.  See <a href="ormlite_2.html#ANC2">DatabaseField dataType</a>.  If we did not do this then
 previously stored data would be read from the database improperly.
 
-</p><p>In addition, serialized types must also have their <code>dataType</code> values specified as well.  You should use
-<code>DataType.SERIALIZABLE</code> to continue to store serialized objects in the database.
+</p><p>In addition, serialized types must also now specify their <code>dataType</code> value.  You should use <code>DataType.SERIALIZABLE</code> to
+continue to store serialized objects in the database.  This will allow us to add direct support for other serialized types in the
+future without breaking backwards compatibility.
 
 </p><p>If you already have Serializable data (byte[] or other objects) stored in a database then you will need to add something like the
 following to your fields:
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">@DatabaseField(dataType = DataType.SERIALIZABLE)
-&hellip;
+Serializable field;
 </pre></td></tr></table>
 <p>For newly stored byte[] fields, you could use the BYTE_ARRAY type to store the bytes directly.  But any existing data will <em>not</em>
 be converted automatically.
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">@DatabaseField(dataType = DataType.BYTE_ARRAY)
-&hellip;
+byte[] field;
 </pre></td></tr></table>
 <hr size="6">
 <a name="NOD49"></a>
@@ -137,7 +138,7 @@ be converted automatically.
 <td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 6.2 Upgrade from Version 4.X to 4.10 </h2>
+<h2 class="section"> 6.2 Upgrade to Version 4.10 </h2>
 
 <p>4.10 was a reasonably large release containing some feature upgrades and some bug fixes.  No data formats were changed, however
 the following API code was altered:
@@ -174,7 +175,7 @@ to work.
 <td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 6.3 Upgrade from Version 3.X to 4.0 </h2>
+<h2 class="section"> 6.3 Upgrade to Version 4.0 </h2>
 
 <p>No data formats were changed, however the following API code was altered.  Removed any outside usage of the <code>DatabaseType</code> since the
 <code>ConnectionSource</code> now provides it.  Also added features to be able to prepare update and delete statements.  To provide type safety,
@@ -239,7 +240,7 @@ configurations.
 <td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 6.4 Upgrade from Version 2.X to 3.2 </h2>
+<h2 class="section"> 6.4 Upgrade to Version 3.2 </h2>
 
 <p>The 3.2 release involved a <em>very</em> large code reorganization and migration.  There were no on-disk changes unless you somehow
 managed to get ORMLite working previously on Android.  The project was basically split into 3 pieces: core functionality, JDBC
@@ -293,7 +294,7 @@ the lack of detail here.
 <td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 6.5 Upgrade from Version 2.3 to 2.4 </h2>
+<h2 class="section"> 6.5 Upgrade to Version 2.4 </h2>
 
 <p>A bug was fixed in 2.4 with how we were handling Derby and Hsqldb.  Both of these databases seem to be capitalizing table and field
 names in certain situations which meant that customized queries of ORMLite generated tables were affected.  In version 2.4,
@@ -317,7 +318,7 @@ uppercase.
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>March, 1 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>March, 5 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 

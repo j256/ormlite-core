@@ -1,3 +1,9 @@
+4.15: 3/5/2011 (svn rYYYY)
+	* CORE: Resolved bad problem with querying for objects with null foreign field values.  Fixes bug #3199649.  Thanks to Micael.
+	* CORE: Refactored the +1/-1 dance that core was doing to access and set SQL arguments.  Now everything is 0 based in -CORE.
+	* JDBC: Added initial take on generic ODBC database type.  Had to refactor null detection.  Thanks much to Dale Asberry.
+	* JDBC: Added initial take on Netezza database type.  Thanks much to Richard Kooijman.
+
 4.14: 2/28/2011 (svn r1474)
 	* CORE: Added BYTE_ARRAY type for handling byte[] directly and not as a serializable.  dataType _must_ be specified.
 	* CORE: Changed SERIALIZABLE type so that it _must_ be specified with the dataType.
@@ -8,7 +14,7 @@
 	* CORE: Added parameters to the queryRaw(), updateRaw(), and executeRaw() DAO methods.  Thanks to Luke.
 	* CORE: Added support for the QueryBuilder.offset() method.  Not supported on all database types.
 	* CORE: Added initial ping statements for verification that the database connection is still valid.
-	* CORE: Revamped the test hierachy and implemented H2 stubs to be able to test CORE better.
+	* CORE: Revamped the test hierarchy and implemented H2 stubs to be able to test CORE better.
 	* ANDROID: LONG_STRING handling under Android never worked.  Fixed bug #3192744.
 	* JDBC: Added isTableExists() boolean to the DAO and the DatabaseConnection.  This does not work in Android.
 	* JDBC: Added a new constructor and other methods to allow use of TableCreator outside of Spring.

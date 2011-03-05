@@ -38,12 +38,6 @@
 - JDO annotations?
 	- support as well as the JPA
 
-- anyway to simplify the query builder call structure:
-	- take a look at http://www.javalobby.org/articles/activeobjects/
-	- Person[] people = manager.find(Person.class, Query.select().where("age > 18").limit(10));
-	- dao.queryBuilder().where().gt("age", 18).limit(10);
-	- maybe have a query(), delete(), update(), ... methods on Where?
-
 - flesh out the SimpleDB version of the library:
 	- get all tests passing
 	- think about batch operations
@@ -55,10 +49,14 @@
 	- need to be careful of recursion
 	- maybe you could see if the id was set or something?
 
-- can the rawQuery method take ? arguments somehow? (from Luke Meyer)
-	- how to pass in arguments and types?
-
 -----------------------------------------------------------------------------------------------------------------------------------
+
+- anyway to simplify the query builder call structure:
+	- ANSWER: for now we leave it as it.  Added a Where().raw() method which should help.
+	- take a look at http://www.javalobby.org/articles/activeobjects/
+	- Person[] people = manager.find(Person.class, Query.select().where("age > 18").limit(10));
+	- dao.queryBuilder().where().gt("age", 18).limit(10);
+	- maybe have a query(), delete(), update(), ... methods on Where?
 
 - think about proxy objects for foreign objects that can throw if they do anything but getId()
 	- ANSWER: for now we leave it as it is since it works and is simple, ORMLite != ORMMediumOrHeavy

@@ -1,43 +1,19 @@
 \input texinfo @c -*-texinfo-*-
 @c %**start of header
 @setfilename ormlite.info
-@settitle ORM Lite Documentation
-@setchapternewpage odd
+@settitle ORMLite Documentation
 @headings double
 @c %**end of header
 
-@dircategory Libraries
-@direntry
-* ORMLite: (orm lite).        Lightweight ORM package.
-@end direntry
-
 @c ----------------------------------------------------------------
-@c This file has the new style title page commands.
-@c Also, it uses `@@include' files instead of `@@input' files.
-
-@c Run using special version of `texinfo.tex'.
-
-@c Also, run `makeinfo' rather than `texinfo-format-buffer'.
-@c ----------------------------------------------------------------
-
-@c ----------------------------------------------------------------
-@set ormlite_version 4.14
+@set ormlite_version 4.15
 @set ormlite_year 2011
-@set ormlite_date February @value{ormlite_year}
+@set ormlite_date March @value{ormlite_year}
 @set package ORMLite
 @c ----------------------------------------------------------------
 
-@ifinfo
-This file is an introduction to the ORM Lite package which is a simple Object Relationship Mapping package.
-
-Copyright @value{ormlite_year} by Gray Watson.
-
-Permission is granted to make and distribute verbatim copies of this manual provided the copyright notice
-and this permission notice are preserved on all copies.
-@end ifinfo
-
 @titlepage
-@title ORM Lite Package
+@title ORMLite Package
 @subtitle Version @value{ormlite_version}
 @subtitle @value{ormlite_date}
 @author Gray Watson
@@ -45,12 +21,16 @@ and this permission notice are preserved on all copies.
 @page
 Copyright 2010 to @value{ormlite_year} by Gray Watson.
 
-Published by Gray Watson
-
 Permission is granted to make and distribute verbatim copies of this manual provided the copyright notice
 and this permission notice are preserved on all copies.
-
 @end titlepage
+
+@c ----------------------------------------------------------------
+
+@c In the printed manual, we put the contents at the front.  For the digital manuals it is at the end. 
+@iftex
+@contents
+@end iftex
 
 @c ----------------------------------------------------------------
 @node Top, Getting Started, (dir), (dir)
@@ -66,18 +46,18 @@ Version @value{ormlite_version} -- @value{ormlite_date}
 @value{package} provides a lightweight Object Relational Mapping between Java classes and SQL databases -- see
 @uref{http://en.wikipedia.org/wiki/Object-relational_mapping}.  There are certainly more mature ORMs which
 provide this functionality including Hibernate and iBatis.  However, the author wanted a simple yet powerful
-wrapper around the JDBC functions and Hibernate and iBatis are significantly more complicated with many
+wrapper around the JDBC functions, and Hibernate and iBatis are significantly more complicated with many
 dependencies.
 
 @cindex databases supported
 @cindex supported databases
-@value{package} supports JDBC connections to MySQL, Postgres, Microsoft SQL Server, H2, Derby, HSQLDB, and
-SQLite and can be extended to additional ones relatively easily.  @value{package} also supports native database
-calls on Android OS.  There are also initial implementations for DB2 and Oracle although the author needs
-access to each of these database types to tune the support.  Contact the author if your database is not supported.
+@value{package} supports JDBC connections to MySQL, Postgres, H2, SQLite, Derby, HSQLDB, Microsoft SQL Server, generic
+ODBC, Netezza, and can be extended to additional ones relatively easily.  @value{package} also supports native database
+calls on Android OS.  There are also initial implementations for DB2 and Oracle although the author needs access to
+an instance of each of these databases to tune the support.  Contact the author if your database is not supported.
 
-To get started quickly with @value{package}, see the examples section of the document which has various
-working code packages and Android applications.  @xref{Examples}.
+To get started quickly with @value{package}, @pxref{Getting Started}.  You can also take a look at the  the examples
+section of the document which has various working code packages and Android applications.  @xref{Examples}.
 @ifhtml
 There is also a PDF version of this documentation -- see @uref{http://ormlite.com/docs/ormlite.pdf}.
 @end ifhtml
@@ -96,7 +76,7 @@ Gray Watson @uref{http://256.com/gray/}
 * How to Upgrade::              Upgrading from a previous version.
 * Examples::                    Usage examples to help you get started.
 * Contributions::               Contributions from others who helped.
-* License::                     License for the project.
+* License::                     Open Source license for the project.
 * Index of Concepts::           Index of concepts in the manual.
 @end menu
 
@@ -879,7 +859,7 @@ ConnectionSource connectionSource =
 The package also includes the class @code{JdbcPooledConnectionSource} which is a relatively simple implementation of a
 pooled connection source.  As database connections are released, instead of being closed, they are added to an internal
 list so they can be reused at a later time.  New connections are created on demand only if there are no dormant
-connections available.  @code{JdbcPooledConnectionSource} is also synchronized and can be used my multiple threads.  It
+connections available.  @code{JdbcPooledConnectionSource} is also synchronized and can be used by multiple threads.  It
 has settings for the maximum number of free connections before they are closed as well as a maximum age before a
 connection is closed.  
 
@@ -1016,27 +996,10 @@ the default or another engine.  Also, MySQL does some funky stuff with the last-
 
 No special instructions.
 
-@cindex Microsoft SQL Server database
-@cindex SQL Server database
-@item Microsoft SQL Server
-
-No special instructions.
-
 @cindex H2 database
 @item H2
 
-No special instructions.  I use this database for all of my internal testing with in-memory and small on-disk databases.
-
-@cindex Derby database
-@item Derby
-
-There are two drivers for Derby: one embedded and one client/server.  @value{package} makes an attempt to detect the right driver but you
-may have to set the right database type on your ConnectionSource directly if it doesn't.  @xref{Database Type Details}.
-
-@cindex HSQLDB database
-@item HSQLDB
-
-No special instructions.
+No special instructions.  We use this database for all of our internal testing with in-memory and small on-disk databases.
 
 @cindex Xerial SQLite driver
 @cindex Zentus SQLite driver
@@ -1051,17 +1014,47 @@ and not the Zentus one (@uref{http://www.zentus.com/sqlitejdbc/}) which does not
 
 Android's SQLite database is accessed through direct calls to the Android database API methods.
 
+@cindex Derby database
+@item Derby
+
+There are two drivers for Derby: one embedded and one client/server.  @value{package} makes an attempt to detect the right driver but you
+may have to set the right database type on your ConnectionSource directly if it doesn't.  @xref{Database Type Details}.
+
+@cindex HSQLDB database
+@item HSQLDB
+
+No special instructions.
+
+@cindex Microsoft SQL Server database
+@cindex SQL Server database
+@item Microsoft SQL Server
+
+No special instructions.
+
+@cindex Netezza database
+@item Netezza
+
+As of March 2011, the driver should be considered provisional.  I do not currently have access to a server running a Netezza database.
+We will try to keep this driver up to date with the help of contributors.  Thanks to Richard Kooijman for the driver.
+
+@cindex ODBC database
+@cindex Microsoft ODBC database
+@item ODBC
+
+As of March 2011, the driver should be considered provisional.  I do not have access to a server running Microsoft's Open Database
+Connectivity.  We will try to keep this driver up to date with the help of contributors.  Thanks to Dale Asberry for the driver.
+
 @cindex DB2 database
 @item DB2
 
-I do not have access to an DB2 database so I cannot run any tests to make sure that my support for it works well.  Please contact me
-if you have an DB2 database that I can develop against.
+I do not have access to an DB2 database so we cannot run any tests to make sure that our support for it works well.  Please contact me
+if you have an DB2 database that we can develop against.
 
 @cindex Oracle database
 @item Oracle
 
-I do not have access to an Oracle database so I cannot run any tests to make sure that my support for it works well.  Please contact me
-if you have an Oracle database that I can develop against.
+I do not have access to an Oracle database so we cannot run any tests to make sure that our support for it works well.  Please contact me
+if you have an Oracle database that we can develop against.
 
 @end table
 
@@ -1677,12 +1670,15 @@ Similar to the last method but instead of a class, this method uses a @code{Data
 characteristics of the table.
 
 @example
-ArrayList<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
-fieldConfigs.add(new DatabaseFieldConfig("id", null, DataType.UNKNOWN, null, 0, false, false, true, null,
-        false, null, false, null, false, null, false, null, null, false));
+ArrayList<DatabaseFieldConfig> fieldConfigs =
+   new ArrayList<DatabaseFieldConfig>();
+fieldConfigs.add(new DatabaseFieldConfig("id", null, DataType.UNKNOWN,
+   null, 0, false, false, true, null, false, null, false, null, false,
+   null, false, null, null, false));
 @dots{}
-DatabaseTableConfig<Account> tableConfig = new DatabaseTableConfig<Account>(Account.class, fieldConfigs);
-// this returns the number of statements executed to create the table
+DatabaseTableConfig<Account> tableConfig =
+   new DatabaseTableConfig<Account>(Account.class, fieldConfigs);
+// this returns number of statements executed to create table
 TableUtils.createTable(connectionSource, tableConfig);
 @end example
 
@@ -1899,8 +1895,8 @@ information.  A good SQL reference site can be found at @uref{http://www.w3schoo
 @cindex updateBuilder
 @cindex custom update statements
 @cindex custom delete statements
-@anchor{deleteBuilder}
-@anchor{updateBuilder}
+@anchor{DeleteBuilder}
+@anchor{UpdateBuilder}
 The DAO can also be used to construct custom @code{UPDATE} and @code{DELETE} statements.  Update statements
 are used to change certain fields in rows from the table that match the @code{WHERE} pattern -- or update @emph{all}
 rows if no @code{where()}. Delete statements are used to delete rows from the table that match the @code{WHERE}
@@ -1927,7 +1923,7 @@ updateBuilder.updateColumnExpression(
   "hasDogs", "dogC > 0");
 @end example
 
-To help you construct your expressions, you can use the UpdateBuilder's escape methods @code{escapeColumnName} and
+To help you construct your expressions, you can use the @code{UpdateBuilder}'s escape methods @code{escapeColumnName} and
 @code{escapeValue} can take a string or a @code{StringBuilder}.  This will protect you if columns or values are reserved words. 
 
 If, instead, you wanted to delete the rows in the Accounts table whose password is currently null, then you might do
@@ -1966,6 +1962,9 @@ or updated.
 @cindex group by columns
 @item groupBy(String columnName) 
 
+This adds a "GROUP" clause to the SQL query statement for the specified column name.  This can be called multiple
+times to group by multiple columns.
+
 @emph{NOTE:} Use of this means that the resulting objects may not have a valid ID column value so cannot be deleted
 or updated.
 
@@ -1987,7 +1986,8 @@ specified since the offset is an argument of the limit.
 @cindex order by columns
 @item orderBy(String columnName, boolean ascending)
 
-Add "ORDER BY" clause to the SQL query statement.
+Add "ORDER BY" clause to the SQL query statement to order the results by the specified column name.  Use the ascending
+boolean to get a ascending or decending order.  This can be called multiple times to group by multiple columns.
 
 @cindex prepare the query
 @item prepare()
@@ -2174,17 +2174,22 @@ you are using inline query calls.
 Binary OR operation which takes 2 arguments and OR's them together.  This is when you are @emph{not} using inline
 query calls but instead want to use standard arguments.
 
-@item prepare()
-
-A short-cut for calling @code{prepare()} on the original @code{QueryBuilder.prepare()}.  This method returns a
-@code{PreparedQuery} object.
-
 @cindex raw where statement
 @item raw(String rawStatement)
 
 Add a raw statement as part of the @code{WHERE} that can be anything that the database supports. Using the more
 structured methods above is recommended but this gives more control over the query and allows you to utilize
 database specific features.
+
+@item prepare()
+
+A short-cut for calling @code{prepare()} on the original @code{QueryBuilder.prepare()}.  This method returns a
+@code{PreparedQuery} object.
+
+@cindex clear Where object
+@item clear()
+
+Clear out the where object so it can be reused in a new query but with the same @code{QueryBuilder}.
 
 @end table
 
@@ -2222,8 +2227,12 @@ selectArg.setValue("bar");
 accounts = accountDao.query(preparedQuery);
 @end example
 
+@cindex quotes in queries
+@cindex string quoting in queries
 Certain data types use an internal @code{SelectArg} object because the string value of the object does not reliably match the
-database form of the object.  @code{java.util.Date} is one example of such a type.
+database form of the object.  @code{java.util.Date} is one example of such a type.  Also, in places where strings may have quote
+characters inside them that clash with the database escaping quotes, a @code{SelectArg} may be required for queries to be formatted
+correctly.
 
 @emph{NOTE:} @code{SelectArg} objects have protection against being used in more than one column name.  You must instantiate a
 new object if you want to use a @code{SelectArg} with another column.
@@ -2599,12 +2608,12 @@ Create and return a new @code{QueryBuilder} object which allows you to build a c
 @cindex update builder
 @item updateBuilder()
 
-Create and return a new @code{UpdateBuilder} object which allows you to build a custom update statement.  @xref{updateBuilder}.
+Create and return a new @code{UpdateBuilder} object which allows you to build a custom update statement.  @xref{UpdateBuilder}.
 
 @cindex delete builder
 @item deleteBuilder()
 
-Create and return a new @code{DeleteBuilder} object which allows you to build a custom delete statement.  @xref{deleteBuilder}.
+Create and return a new @code{DeleteBuilder} object which allows you to build a custom delete statement.  @xref{DeleteBuilder}.
 
 @cindex query for objects
 @item query(PreparedQuery<T> preparedQuery)
@@ -2622,8 +2631,8 @@ Create a new entry in the database from an object.  Should return 1 indicating 1
 @item update(T data)
 
 Save the fields from an object to the database. If you have made changes to an object, this is how you persist
-those changes to the database. You cannot use this method to update the id field -- see updateId.  This should
-return 1 since 1 row was updated.
+those changes to the database. You cannot use this method to update the id field -- see @code{updateId()}.  This
+should return 1 since 1 row was updated.
 
 @cindex update an object id
 @anchor{updateId}
@@ -2747,13 +2756,12 @@ seems to have the same batch performance implications.
 
 @cindex logging information
 @value{package} uses a log system which can plug into Apache commons logging, Log4j, Android Log, or its own internal
-log implementations.  The logger code in @code{com.j256.ormlite.logger} first looks for the @code{android.util.Log} and
-if found will use the Android internal logger.  Next it looks for@code{org.apache.commons.logging.LogFactory} class in the
-class-path -- if found it will use Apache commons logging.  If that class is not found it then looks for
-@code{org.apache.log4j.Logger} and if found will use Log4j.  If none of these classes are available it will use an internal
-logger -- see @code{LocalLog}.  The logger code also provides simple @{@} argument expansion like @code{slf4j} which means
-that you can save on @code{toString()} calls and @code{StringBuilder} operations if the log level is not high enough.  This
-allows me to do something like the following:
+log implementations.  The logger code first looks for the @code{android.util.Log} and if found will use the Android internal
+logger.  Next it looks for@code{org.apache.commons.logging.LogFactory} class in the class-path -- if found it will use Apache
+commons logging.  If that class is not found it then looks for @code{org.apache.log4j.Logger} and if found will use Log4j.
+If none of these classes are available it will use an internal logger -- see @code{LocalLog}.  The logger code also provides
+simple @{@} argument expansion like @code{slf4j} which means that you can save on @code{toString()} calls and
+@code{StringBuilder} operations if the log level is not high enough.  This allows us to do something like the following:
 
 @example
 private static Logger logger =
@@ -2883,7 +2891,7 @@ a transaction seems to give a significant performance improvement. For example, 
 inserts into a database, consider running them within a transaction.
 
 @c ----------------------------------------------------------------
-@node How to Upgrade, 4.13 to 4.14, Transactions, Top
+@node How to Upgrade, 4.14, Transactions, Top
 @chapter Upgrade From Old Versions
 
 We strive to maintain backwards compatibility and to provide deprecated versions of old classes and methods.
@@ -2891,16 +2899,16 @@ However, sometimes when a new version is released, changes are made that require
 and rarely the on-disk database formats. 
 
 @menu
-* 4.13 to 4.14::               Upgrade from version 4.13 to 4.14
-* 4.X to 4.10::                Upgrade from version 4.X to 4.10
-* 3.X to 4.0::                 Upgrade from version 3.X to 4.0
-* 2.X to 3.2::                 Upgrade from version 2.X to 3.2
-* 2.3 to 2.4::                 Upgrade from version 2.3 to 2.4
+* 4.14::                Upgrade to version 4.14
+* 4.10::                Upgrade to version 4.10
+* 4.0::                 Upgrade to version 4.0
+* 3.2::                 Upgrade to version 3.2
+* 2.4::                 Upgrade to version 2.4
 @end menu
 
 @c ----------------------------------------------------------------
-@node 4.13 to 4.14, 4.X to 4.10, How to Upgrade, How to Upgrade
-@section Upgrade from Version 4.13 to 4.14
+@node 4.14, 4.10, How to Upgrade, How to Upgrade
+@section Upgrade to Version 4.14
 
 In 4.14 we added a @code{DatabaseType.BYTE_ARRAY} which stores @code{byte[]} directly.  @xref{BYTE_ARRAY}.  In the past, this array
 would have been stored as a serialized array of bytes.  To not break backwards compatibility with the database, fields with the
@@ -2908,15 +2916,16 @@ would have been stored as a serialized array of bytes.  To not break backwards c
 @code{@@DatabaseField} -- it will not be chosen automatically.  @xref{DatabaseField dataType}.  If we did not do this then
 previously stored data would be read from the database improperly.
 
-In addition, serialized types must also have their @code{dataType} values specified as well.  You should use
-@code{DataType.SERIALIZABLE} to continue to store serialized objects in the database.
+In addition, serialized types must also now specify their @code{dataType} value.  You should use @code{DataType.SERIALIZABLE} to
+continue to store serialized objects in the database.  This will allow us to add direct support for other serialized types in the
+future without breaking backwards compatibility.
 
 If you already have Serializable data (byte[] or other objects) stored in a database then you will need to add something like the
 following to your fields:
 
 @example
 @@DatabaseField(dataType = DataType.SERIALIZABLE)
-@dots{}
+Serializable field;
 @end example
 
 For newly stored byte[] fields, you could use the BYTE_ARRAY type to store the bytes directly.  But any existing data will @emph{not}
@@ -2924,12 +2933,12 @@ be converted automatically.
 
 @example
 @@DatabaseField(dataType = DataType.BYTE_ARRAY)
-@dots{}
+byte[] field;
 @end example
 
 @c ----------------------------------------------------------------
-@node 4.X to 4.10, 3.X to 4.0, 4.13 to 4.14, How to Upgrade
-@section Upgrade from Version 4.X to 4.10
+@node 4.10, 4.0, 4.14, How to Upgrade
+@section Upgrade to Version 4.10
 
 4.10 was a reasonably large release containing some feature upgrades and some bug fixes.  No data formats were changed, however
 the following API code was altered:
@@ -2949,8 +2958,8 @@ to work.
 @end itemize
 
 @c ----------------------------------------------------------------
-@node 3.X to 4.0, 2.X to 3.2, 4.X to 4.10, How to Upgrade
-@section Upgrade from Version 3.X to 4.0
+@node 4.0, 3.2, 4.10, How to Upgrade
+@section Upgrade to Version 4.0
 
 No data formats were changed, however the following API code was altered.  Removed any outside usage of the @code{DatabaseType} since the
 @code{ConnectionSource} now provides it.  Also added features to be able to prepare update and delete statements.  To provide type safety,
@@ -2998,8 +3007,8 @@ configurations.
 @end itemize
 
 @c ----------------------------------------------------------------
-@node 2.X to 3.2, 2.3 to 2.4, 3.X to 4.0, How to Upgrade
-@section Upgrade from Version 2.X to 3.2
+@node 3.2, 2.4, 4.0, How to Upgrade
+@section Upgrade to Version 3.2
 
 The 3.2 release involved a @emph{very} large code reorganization and migration.  There were no on-disk changes unless you somehow
 managed to get ORMLite working previously on Android.  The project was basically split into 3 pieces: core functionality, JDBC
@@ -3036,8 +3045,8 @@ JDBC before to do the data marshalling and now are doing it by hand, some of the
 the lack of detail here.
 
 @c ----------------------------------------------------------------
-@node 2.3 to 2.4, Examples, 2.X to 3.2, How to Upgrade
-@section Upgrade from Version 2.3 to 2.4
+@node 2.4, Examples, 3.2, How to Upgrade
+@section Upgrade to Version 2.4
 
 A bug was fixed in 2.4 with how we were handling Derby and Hsqldb.  Both of these databases seem to be capitalizing table and field
 names in certain situations which meant that customized queries of @value{package} generated tables were affected.  In version 2.4,
@@ -3046,7 +3055,7 @@ in these databases from a pre 2.4 version, the 2.4 version will not be able to f
 uppercase.
 
 @c ----------------------------------------------------------------
-@node Examples, JDBC Examples, 2.3 to 2.4, Top
+@node Examples, JDBC Examples, 2.4, Top
 @chapter Example Code
 
 @cindex examples of code
@@ -3166,11 +3175,11 @@ Thanks much to them all.
 
 @c ----------------------------------------------------------------
 @node License, Index of Concepts, Contributions, Top
-@chapter Project License
+@chapter Open Source License
 
 @cindex license
-@cindex copyright
-This document is part of the ORMLite package.
+@cindex open source license
+This document is part of the @value{package} project.
 
 Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby
 granted, provided that the above copyright notice and this permission notice appear in all copies.
@@ -3188,6 +3197,9 @@ The author may be contacted via @uref{http://ormlite.com/}
 @unnumbered Index of Concepts
 
 @printindex cp
+
+@ifhtml
 @contents
+@end ifhtml
 
 @bye
