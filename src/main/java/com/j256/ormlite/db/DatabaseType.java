@@ -36,7 +36,7 @@ public interface DatabaseType {
 	 * that will be performed afterward to test portions of the config.
 	 */
 	public void appendColumnArg(StringBuilder sb, FieldType fieldType, List<String> additionalArgs,
-			List<String> statementsBefore, List<String> statementsAfter, List<String> queriesAfter);
+			List<String> statementsBefore, List<String> statementsAfter, List<String> queriesAfter) throws SQLException;
 
 	/**
 	 * Takes a {@link FieldType} and adds the necessary statements to the before and after lists necessary so that the

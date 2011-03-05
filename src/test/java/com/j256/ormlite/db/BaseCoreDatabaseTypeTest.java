@@ -9,6 +9,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -136,7 +137,7 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 		testFooColumn(databaseType, "genId", "BIGINT AUTO_INCREMENT");
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test(expected = SQLException.class)
 	public void testAppendColumnGenIdSeq() throws Exception {
 		testFooColumn(databaseType, "genIdSeq", "");
 	}

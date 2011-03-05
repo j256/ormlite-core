@@ -53,7 +53,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 
 	@SuppressWarnings("deprecation")
 	public void appendColumnArg(StringBuilder sb, FieldType fieldType, List<String> additionalArgs,
-			List<String> statementsBefore, List<String> statementsAfter, List<String> queriesAfter) {
+			List<String> statementsBefore, List<String> statementsAfter, List<String> queriesAfter) throws SQLException {
 		appendEscapedEntityName(sb, fieldType.getDbColumnName());
 		sb.append(' ');
 		int fieldWidth;
@@ -315,9 +315,9 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	 * NOTE: Only one of configureGeneratedIdSequence, configureGeneratedId, or configureId will be called.
 	 */
 	protected void configureGeneratedIdSequence(StringBuilder sb, FieldType fieldType, List<String> statementsBefore,
-			List<String> additionalArgs, List<String> queriesAfter) {
-		throw new IllegalStateException("GeneratedIdSequence is not supported by database " + getDatabaseName()
-				+ " for field " + fieldType);
+			List<String> additionalArgs, List<String> queriesAfter) throws SQLException {
+		throw new SQLException("GeneratedIdSequence is not supported by database " + getDatabaseName() + " for field "
+				+ fieldType);
 	}
 
 	/**

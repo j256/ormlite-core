@@ -65,7 +65,8 @@ public class TableUtilsTest extends BaseCoreTest {
 		DatabaseType databaseType = new H2DatabaseType() {
 			@Override
 			public void appendColumnArg(StringBuilder sb, FieldType fieldType, List<String> additionalArgs,
-					List<String> statementsBefore, List<String> statementsAfter, List<String> queriesAfter) {
+					List<String> statementsBefore, List<String> statementsAfter, List<String> queriesAfter)
+					throws SQLException {
 				super.appendColumnArg(sb, fieldType, additionalArgs, statementsBefore, statementsAfter, queriesAfter);
 				if (fieldType.getDbColumnName().equals(Foo.ID_FIELD_NAME)) {
 					queriesAfter.add(queryAfter);

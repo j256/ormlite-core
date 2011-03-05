@@ -8,6 +8,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.db.BaseDatabaseType;
 
 public class QueryBuilderTest extends BaseCoreStmtTest {
 
@@ -255,5 +256,50 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
 		sb.append(' ');
 		assertEquals(sb.toString(), qb.prepareStatementString());
+	}
+
+	@Test
+	public void testLimitInline() throws Exception {
+		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(new LimitInline(), baseFooTableInfo);
+		int limit = 213;
+		qb.limit(limit);
+		PreparedQuery<Foo> stmt = qb.prepare();
+		stmt.getStatement();
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT * FROM ");
+		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
+		sb.append(" LIMIT ").append(limit).append(' ');
+		assertEquals(sb.toString(), qb.prepareStatementString());
+	}
+
+	@Test
+	public void testOffsetAndLimit() throws Exception {
+		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(new LimitInline(), baseFooTableInfo);
+		int offset = 200;
+		int limit = 213;
+		qb.offset(offset);
+		qb.limit(limit);
+		PreparedQuery<Foo> stmt = qb.prepare();
+		stmt.getStatement();
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT * FROM ");
+		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
+		sb.append(" LIMIT ").append(limit);
+		sb.append(" OFFSET ").append(offset).append(' ');
+		assertEquals(sb.toString(), qb.prepareStatementString());
+	}
+
+	private class LimitInline extends BaseDatabaseType {
+		public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
+			return true;
+		}
+		@Override
+		protected String getDriverClassName() {
+			return "foo.bar.baz";
+		}
+		@Override
+		protected String getDatabaseName() {
+			return "zipper";
+		}
 	}
 }

@@ -187,7 +187,7 @@ public class TableUtils {
 	 * Generate and return the list of statements to create a database table and any associated features.
 	 */
 	private static <T> void addCreateTableStatements(DatabaseType databaseType, TableInfo<T> tableInfo,
-			List<String> statements, List<String> queriesAfter) {
+			List<String> statements, List<String> queriesAfter) throws SQLException {
 		StringBuilder sb = new StringBuilder();
 		sb.append("CREATE TABLE ");
 		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
