@@ -2,6 +2,7 @@ package com.j256.ormlite.field;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -67,7 +68,7 @@ public class DataTypeTest extends BaseCoreTest {
 		foo.string = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, val, val, valStr, DataType.STRING, STRING_COLUMN, false, true, true, false, false, false,
-				true);
+				true, false);
 	}
 
 	@Test
@@ -80,7 +81,7 @@ public class DataTypeTest extends BaseCoreTest {
 		foo.string = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, val, val, valStr, DataType.LONG_STRING, STRING_COLUMN, false, false, true, false, false,
-				false, true);
+				false, true, false);
 	}
 
 	@Test
@@ -93,7 +94,7 @@ public class DataTypeTest extends BaseCoreTest {
 		foo.bool = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, val, val, valStr, DataType.BOOLEAN, BOOLEAN_COLUMN, false, false, false, true, false,
-				false, true);
+				false, true, false);
 	}
 
 	@Test
@@ -106,7 +107,7 @@ public class DataTypeTest extends BaseCoreTest {
 		foo.bool = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, val, val, valStr, DataType.BOOLEAN_OBJ, BOOLEAN_COLUMN, false, false, false, false, false,
-				false, true);
+				false, true, false);
 	}
 
 	@Test
@@ -115,7 +116,7 @@ public class DataTypeTest extends BaseCoreTest {
 		Dao<LocalBooleanObj, Object> dao = createDao(clazz, true);
 		assertEquals(1, dao.create(new LocalBooleanObj()));
 		testType(clazz, null, null, null, null, DataType.BOOLEAN_OBJ, BOOLEAN_COLUMN, false, false, false, false,
-				false, false, true);
+				false, false, true, false);
 	}
 
 	@Test
@@ -141,7 +142,8 @@ public class DataTypeTest extends BaseCoreTest {
 		LocalDate foo = new LocalDate();
 		foo.date = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, val, val, valStr, DataType.DATE, DATE_COLUMN, false, true, true, false, true, false, true);
+		testType(clazz, val, val, val, valStr, DataType.DATE, DATE_COLUMN, false, true, true, false, true, false, true,
+				false);
 	}
 
 	@Test
@@ -149,7 +151,8 @@ public class DataTypeTest extends BaseCoreTest {
 		Class<LocalDate> clazz = LocalDate.class;
 		Dao<LocalDate, Object> dao = createDao(clazz, true);
 		assertEquals(1, dao.create(new LocalDate()));
-		testType(clazz, null, null, null, null, DataType.DATE, DATE_COLUMN, false, true, true, false, true, false, true);
+		testType(clazz, null, null, null, null, DataType.DATE, DATE_COLUMN, false, true, true, false, true, false,
+				true, false);
 	}
 
 	@Test(expected = SQLException.class)
@@ -173,7 +176,7 @@ public class DataTypeTest extends BaseCoreTest {
 		foo.date = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, val, val, valStr, DataType.JAVA_DATE, DATE_COLUMN, false, true, true, false, true, false,
-				true);
+				true, false);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -183,7 +186,7 @@ public class DataTypeTest extends BaseCoreTest {
 		Dao<LocalDate, Object> dao = createDao(clazz, true);
 		assertEquals(1, dao.create(new LocalDate()));
 		testType(clazz, null, null, null, null, DataType.JAVA_DATE, DATE_COLUMN, false, true, true, false, true, false,
-				true);
+				true, false);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -208,7 +211,7 @@ public class DataTypeTest extends BaseCoreTest {
 		foo.date = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, valStr, sqlVal, sqlVal, DataType.DATE_STRING, DATE_COLUMN, false, true, true, false,
-				false, false, true);
+				false, false, true, false);
 	}
 
 	@Test
@@ -217,7 +220,7 @@ public class DataTypeTest extends BaseCoreTest {
 		Dao<LocalDateString, Object> dao = createDao(clazz, true);
 		assertEquals(1, dao.create(new LocalDateString()));
 		testType(clazz, null, null, null, null, DataType.DATE_STRING, DATE_COLUMN, false, true, true, false, false,
-				false, true);
+				false, true, false);
 	}
 
 	@Test(expected = SQLException.class)
@@ -258,7 +261,7 @@ public class DataTypeTest extends BaseCoreTest {
 		foo.date = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, sqlVal, sqlVal, valStr, DataType.JAVA_DATE_STRING, DATE_COLUMN, false, true, true, false,
-				false, false, true);
+				false, false, true, false);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -268,7 +271,7 @@ public class DataTypeTest extends BaseCoreTest {
 		Dao<LocalDateString, Object> dao = createDao(clazz, true);
 		assertEquals(1, dao.create(new LocalDateString()));
 		testType(clazz, null, null, null, null, DataType.JAVA_DATE_STRING, DATE_COLUMN, false, true, true, false,
-				false, false, true);
+				false, false, true, false);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -308,7 +311,7 @@ public class DataTypeTest extends BaseCoreTest {
 		foo.date = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, sqlVal, sqlVal, valStr, DataType.DATE_LONG, DATE_COLUMN, false, true, false, false, false,
-				false, true);
+				false, true, false);
 	}
 
 	@Test
@@ -317,7 +320,7 @@ public class DataTypeTest extends BaseCoreTest {
 		Dao<LocalDateLong, Object> dao = createDao(clazz, true);
 		assertEquals(1, dao.create(new LocalDateLong()));
 		testType(clazz, null, null, null, null, DataType.DATE_LONG, DATE_COLUMN, false, true, false, false, false,
-				false, true);
+				false, true, false);
 	}
 
 	@Test(expected = SQLException.class)
@@ -340,7 +343,7 @@ public class DataTypeTest extends BaseCoreTest {
 		foo.date = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, sqlVal, sqlVal, valStr, DataType.JAVA_DATE_LONG, DATE_COLUMN, false, true, false, false,
-				false, false, true);
+				false, false, true, false);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -350,7 +353,7 @@ public class DataTypeTest extends BaseCoreTest {
 		Dao<LocalDateLong, Object> dao = createDao(clazz, true);
 		assertEquals(1, dao.create(new LocalDateLong()));
 		testType(clazz, null, null, null, null, DataType.JAVA_DATE_LONG, DATE_COLUMN, false, true, false, false, false,
-				false, true);
+				false, true, false);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -371,7 +374,8 @@ public class DataTypeTest extends BaseCoreTest {
 		LocalByte foo = new LocalByte();
 		foo.byteField = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, val, val, valStr, DataType.BYTE, BYTE_COLUMN, false, true, false, true, false, false, true);
+		testType(clazz, val, val, val, valStr, DataType.BYTE, BYTE_COLUMN, false, true, false, true, false, false,
+				true, false);
 	}
 
 	@Test
@@ -384,7 +388,7 @@ public class DataTypeTest extends BaseCoreTest {
 		foo.byteField = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, val, val, valStr, DataType.BYTE_OBJ, BYTE_COLUMN, false, true, false, false, false, false,
-				true);
+				true, false);
 	}
 
 	@Test
@@ -393,7 +397,7 @@ public class DataTypeTest extends BaseCoreTest {
 		Dao<LocalByteObj, Object> dao = createDao(clazz, true);
 		assertEquals(1, dao.create(new LocalByteObj()));
 		testType(clazz, null, null, null, null, DataType.BYTE_OBJ, BYTE_COLUMN, false, true, false, false, false,
-				false, true);
+				false, true, false);
 	}
 
 	@Test
@@ -418,7 +422,7 @@ public class DataTypeTest extends BaseCoreTest {
 		foo.byteField = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, val, val, valStr, DataType.BYTE_ARRAY, BYTE_COLUMN, false, false, true, false, true,
-				false, true);
+				false, true, false);
 	}
 
 	@Test
@@ -427,7 +431,7 @@ public class DataTypeTest extends BaseCoreTest {
 		Dao<LocalByteArray, Object> dao = createDao(clazz, true);
 		assertEquals(1, dao.create(new LocalByteArray()));
 		testType(clazz, null, null, null, null, DataType.BYTE_ARRAY, BYTE_COLUMN, false, false, true, false, true,
-				false, true);
+				false, true, false);
 	}
 
 	@Test(expected = SQLException.class)
@@ -445,7 +449,7 @@ public class DataTypeTest extends BaseCoreTest {
 		foo.shortField = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, val, val, valStr, DataType.SHORT, SHORT_COLUMN, false, true, false, true, false, false,
-				true);
+				true, false);
 	}
 
 	@Test
@@ -458,7 +462,7 @@ public class DataTypeTest extends BaseCoreTest {
 		foo.shortField = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, val, val, valStr, DataType.SHORT_OBJ, SHORT_COLUMN, false, true, false, false, false,
-				false, true);
+				false, true, false);
 	}
 
 	@Test
@@ -467,7 +471,7 @@ public class DataTypeTest extends BaseCoreTest {
 		Dao<LocalShortObj, Object> dao = createDao(clazz, true);
 		assertEquals(1, dao.create(new LocalShortObj()));
 		testType(clazz, null, null, null, null, DataType.SHORT_OBJ, SHORT_COLUMN, false, true, false, false, false,
-				false, true);
+				false, true, false);
 	}
 
 	@Test
@@ -492,7 +496,7 @@ public class DataTypeTest extends BaseCoreTest {
 		foo.intField = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, val, val, valStr, DataType.INTEGER, INT_COLUMN, true, true, false, true, false, false,
-				true);
+				true, true);
 	}
 
 	@Test
@@ -505,7 +509,7 @@ public class DataTypeTest extends BaseCoreTest {
 		foo.intField = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, val, val, valStr, DataType.INTEGER_OBJ, INT_COLUMN, true, true, false, false, false,
-				false, true);
+				false, true, true);
 	}
 
 	@Test
@@ -514,7 +518,7 @@ public class DataTypeTest extends BaseCoreTest {
 		Dao<LocalIntObj, Object> dao = createDao(clazz, true);
 		assertEquals(1, dao.create(new LocalIntObj()));
 		testType(clazz, null, null, null, null, DataType.INTEGER_OBJ, INT_COLUMN, true, true, false, false, false,
-				false, true);
+				false, true, true);
 	}
 
 	@Test
@@ -545,7 +549,8 @@ public class DataTypeTest extends BaseCoreTest {
 		LocalLong foo = new LocalLong();
 		foo.longField = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, val, val, valStr, DataType.LONG, LONG_COLUMN, true, true, false, true, false, false, true);
+		testType(clazz, val, val, val, valStr, DataType.LONG, LONG_COLUMN, true, true, false, true, false, false, true,
+				true);
 	}
 
 	@Test
@@ -558,7 +563,7 @@ public class DataTypeTest extends BaseCoreTest {
 		foo.longField = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, val, val, valStr, DataType.LONG_OBJ, LONG_COLUMN, true, true, false, false, false, false,
-				true);
+				true, true);
 	}
 
 	@Test
@@ -567,7 +572,7 @@ public class DataTypeTest extends BaseCoreTest {
 		Dao<LocalLongObj, Object> dao = createDao(clazz, true);
 		assertEquals(1, dao.create(new LocalLongObj()));
 		testType(clazz, null, null, null, null, DataType.LONG_OBJ, LONG_COLUMN, true, true, false, false, false, false,
-				true);
+				true, true);
 	}
 
 	@Test
@@ -598,7 +603,7 @@ public class DataTypeTest extends BaseCoreTest {
 		foo.floatField = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, val, val, valStr, DataType.FLOAT, FLOAT_COLUMN, false, true, false, true, false, false,
-				true);
+				true, false);
 	}
 
 	@Test
@@ -611,7 +616,7 @@ public class DataTypeTest extends BaseCoreTest {
 		foo.floatField = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, val, val, valStr, DataType.FLOAT_OBJ, FLOAT_COLUMN, false, true, false, false, false,
-				false, true);
+				false, true, false);
 	}
 
 	@Test
@@ -620,7 +625,7 @@ public class DataTypeTest extends BaseCoreTest {
 		Dao<LocalFloatObj, Object> dao = createDao(clazz, true);
 		assertEquals(1, dao.create(new LocalFloatObj()));
 		testType(clazz, null, null, null, null, DataType.FLOAT_OBJ, FLOAT_COLUMN, false, true, false, false, false,
-				false, true);
+				false, true, false);
 	}
 
 	@Test
@@ -645,7 +650,7 @@ public class DataTypeTest extends BaseCoreTest {
 		foo.doubleField = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, val, val, valStr, DataType.DOUBLE, DOUBLE_COLUMN, false, true, false, true, false, false,
-				true);
+				true, false);
 	}
 
 	@Test
@@ -658,7 +663,7 @@ public class DataTypeTest extends BaseCoreTest {
 		foo.doubleField = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, val, val, valStr, DataType.DOUBLE_OBJ, DOUBLE_COLUMN, false, true, false, false, false,
-				false, true);
+				false, true, false);
 	}
 
 	@Test
@@ -667,7 +672,7 @@ public class DataTypeTest extends BaseCoreTest {
 		Dao<LocalDoubleObj, Object> dao = createDao(clazz, true);
 		assertEquals(1, dao.create(new LocalDoubleObj()));
 		testType(clazz, null, null, null, null, DataType.DOUBLE_OBJ, DOUBLE_COLUMN, false, true, false, false, false,
-				false, true);
+				false, true, false);
 	}
 
 	@Test
@@ -696,7 +701,7 @@ public class DataTypeTest extends BaseCoreTest {
 		foo.serializable = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, val, sqlArg, valStr, DataType.SERIALIZABLE, SERIALIZABLE_COLUMN, false, false, true,
-				false, true, true, false);
+				false, true, true, false, false);
 	}
 
 	@Test
@@ -705,7 +710,7 @@ public class DataTypeTest extends BaseCoreTest {
 		Dao<LocalSerializable, Object> dao = createDao(clazz, true);
 		assertEquals(1, dao.create(new LocalSerializable()));
 		testType(clazz, null, null, null, null, DataType.SERIALIZABLE, SERIALIZABLE_COLUMN, false, false, true, false,
-				true, true, false);
+				true, true, false, false);
 	}
 
 	@Test
@@ -759,7 +764,7 @@ public class DataTypeTest extends BaseCoreTest {
 		foo.ourEnum = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, sqlVal, sqlVal, valStr, DataType.ENUM_STRING, ENUM_COLUMN, false, true, true, false,
-				false, false, true);
+				false, false, true, false);
 	}
 
 	@Test
@@ -768,7 +773,7 @@ public class DataTypeTest extends BaseCoreTest {
 		Dao<LocalEnumString, Object> dao = createDao(clazz, true);
 		assertEquals(1, dao.create(new LocalEnumString()));
 		testType(clazz, null, null, null, null, DataType.ENUM_STRING, ENUM_COLUMN, false, true, true, false, false,
-				false, true);
+				false, true, false);
 	}
 
 	@Test
@@ -798,7 +803,7 @@ public class DataTypeTest extends BaseCoreTest {
 		foo.ourEnum = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, sqlVal, sqlVal, valStr, DataType.ENUM_INTEGER, ENUM_COLUMN, false, true, false, false,
-				false, false, true);
+				false, false, true, false);
 	}
 
 	@Test
@@ -807,7 +812,7 @@ public class DataTypeTest extends BaseCoreTest {
 		Dao<LocalEnumInt, Object> dao = createDao(clazz, true);
 		assertEquals(1, dao.create(new LocalEnumInt()));
 		testType(clazz, null, null, null, null, DataType.ENUM_INTEGER, ENUM_COLUMN, false, true, false, false, false,
-				false, true);
+				false, true, false);
 	}
 
 	@Test
@@ -863,7 +868,7 @@ public class DataTypeTest extends BaseCoreTest {
 	private void testType(Class<?> clazz, Object javaVal, Object sqlVal, Object sqlArg, String valStr,
 			DataType dataType, String columnName, boolean isValidGeneratedType, boolean isAppropriateId,
 			boolean isEscapedValue, boolean isPrimitive, boolean isSelectArgRequired, boolean isStreamType,
-			boolean isComparable) throws Exception {
+			boolean isComparable, boolean isConvertableId) throws Exception {
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
 						StatementType.SELECT, noFieldTypes, noFieldTypes);
@@ -897,6 +902,11 @@ public class DataTypeTest extends BaseCoreTest {
 		assertEquals(isSelectArgRequired, dataType.isSelectArgRequired());
 		assertEquals(isStreamType, dataType.isStreamType());
 		assertEquals(isComparable, dataType.isComparable());
+		if (isConvertableId) {
+			assertNotNull(dataType.convertIdNumber(10));
+		} else {
+			assertNull(dataType.convertIdNumber(10));
+		}
 		dataTypeSet.add(dataType);
 	}
 

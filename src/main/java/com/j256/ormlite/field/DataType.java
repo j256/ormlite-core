@@ -481,6 +481,10 @@ public enum DataType implements FieldConverter {
 			return Integer.parseInt(defaultStr);
 		}
 		@Override
+		public Object convertIdNumber(Number number) {
+			return (Integer) number.intValue();
+		}
+		@Override
 		public boolean isEscapedValue() {
 			return false;
 		}
@@ -531,6 +535,10 @@ public enum DataType implements FieldConverter {
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Long.parseLong(defaultStr);
+		}
+		@Override
+		public Object convertIdNumber(Number number) {
+			return (Long) number.longValue();
 		}
 		@Override
 		public boolean isEscapedValue() {
