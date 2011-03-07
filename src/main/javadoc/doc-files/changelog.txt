@@ -1,7 +1,8 @@
-4.15: 3/??/2011 (svn rYYYY)
+4.15: 3/7/2011 (svn rYYYY)
 	* CORE: Removed the confusing Where().foreignIdEq() and foreignIdIn() methods.  Little extra value and loads of confusion.
 	* CORE: Resolved bad problem with querying for objects with null foreign field values.  Fixes bug #3199649.  Thanks to Micael.
 	* CORE: Refactored the +1/-1 dance that core was doing to access and set SQL arguments.  Now everything is 0 based in -CORE.
+	* JDBC: Changed TableCreator to take a list of Dao instead of BaseDaoImpl.
 	* JDBC: Added alpha version of a generic ODBC database type.  Had to refactor null detection.  Thanks much to Dale Asberry.
 	* JDBC: Added alpha version of a Netezza database type.  Thanks much to Richard Kooijman.
 
