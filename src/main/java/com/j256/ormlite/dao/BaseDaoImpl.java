@@ -473,7 +473,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	/**
-	 * Returns the table configuration information associated with the Dao's class.
+	 * Returns the table configuration information associated with the Dao's class or null if none.
 	 */
 	public DatabaseTableConfig<T> getTableConfig() {
 		return tableConfig;

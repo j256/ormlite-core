@@ -25,6 +25,7 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableUtils;
 
@@ -1208,8 +1209,8 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testForeignNull() throws Exception {
-		final Dao<Foreign, Integer> dao = createDao(Foreign.class, true);
-		final Foreign foreign = new Foreign();
+		Dao<Foreign, Integer> dao = createDao(Foreign.class, true);
+		Foreign foreign = new Foreign();
 		foreign.foo = null;
 		assertEquals(1, dao.create(foreign));
 		Foreign foreign2 = dao.queryForId(foreign.id);
@@ -1219,10 +1220,49 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test(expected = SQLException.class)
 	public void testForeignCantBeNull() throws Exception {
-		final Dao<ForeignNotNull, Integer> dao = createDao(ForeignNotNull.class, true);
-		final ForeignNotNull foreign = new ForeignNotNull();
+		Dao<ForeignNotNull, Integer> dao = createDao(ForeignNotNull.class, true);
+		ForeignNotNull foreign = new ForeignNotNull();
 		foreign.foo = null;
 		dao.create(foreign);
+	}
+
+	/**
+	 * Test inserting an object either as a generated-id or just an id using another object. This really isn't testing
+	 * any capabilities since it is really the underlying database which either allows or throws with this. But it's an
+	 * interesting test of a question asked by a user on stackoverflow.com.
+	 */
+	@Test
+	public void testGenIdVersusJustId() throws Exception {
+		Dao<One, Integer> oneDao = createDao(One.class, true);
+		Dao<Two, Integer> twoDao = createDao(Two.class, false);
+
+		One one = new One();
+		String oneStuff = "efweggwgee";
+		one.stuff = oneStuff;
+		assertEquals(1, oneDao.create(one));
+		assertNotNull(oneDao.queryForId(one.id));
+		assertEquals(1, one.id);
+		assertEquals(1, oneDao.queryForAll().size());
+
+		Two two = new Two();
+		String twoStuff = "efweggwefdggwgee";
+		two.id = one.id + 1;
+		two.stuff = twoStuff;
+		assertEquals(1, twoDao.create(two));
+		assertNotNull(oneDao.queryForId(one.id));
+		assertNotNull(oneDao.queryForId(two.id));
+		assertEquals(2, two.id);
+		assertEquals(2, oneDao.queryForAll().size());
+
+		One anonterOne = new One();
+		String anonterOneOneStuff = "e24fweggwgee";
+		anonterOne.stuff = anonterOneOneStuff;
+		assertEquals(1, oneDao.create(anonterOne));
+		assertNotNull(oneDao.queryForId(one.id));
+		assertNotNull(oneDao.queryForId(two.id));
+		assertNotNull(oneDao.queryForId(anonterOne.id));
+		assertEquals(3, anonterOne.id);
+		assertEquals(3, oneDao.queryForAll().size());
 	}
 
 	protected static class ForeignNotNull {
@@ -1231,6 +1271,26 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		@DatabaseField(foreign = true, canBeNull = false)
 		public Foo foo;
 		public ForeignNotNull() {
+		}
+	}
+
+	@DatabaseTable(tableName = "oneandtwo")
+	protected static class One {
+		@DatabaseField(generatedId = true)
+		public int id;
+		@DatabaseField
+		public String stuff;
+		public One() {
+		}
+	}
+
+	@DatabaseTable(tableName = "oneandtwo")
+	protected static class Two {
+		@DatabaseField(id = true)
+		public int id;
+		@DatabaseField
+		public String stuff;
+		public Two() {
 		}
 	}
 }

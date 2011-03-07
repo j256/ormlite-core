@@ -13,6 +13,7 @@
 @c ----------------------------------------------------------------
 
 @titlepage
+@headings off
 @title ORMLite Package
 @subtitle Version @value{ormlite_version}
 @subtitle @value{ormlite_date}
@@ -35,6 +36,7 @@ and this permission notice are preserved on all copies.
 @c ----------------------------------------------------------------
 @node Top, Getting Started, (dir), (dir)
 @top @value{package}
+@everyheading @thischapter @| @thispage @| @today{}
 
 Version @value{ormlite_version} -- @value{ormlite_date}
 
@@ -1034,27 +1036,29 @@ No special instructions.
 @cindex Netezza database
 @item Netezza
 
-As of March 2011, the driver should be considered provisional.  I do not currently have access to a server running a Netezza database.
-We will try to keep this driver up to date with the help of contributors.  Thanks to Richard Kooijman for the driver.
-
+As of March 2011, the driver should be considered alpha and possibly with bugs.  I do not currently have access to a server running a
+Netezza database. We will try to keep this driver up to date with the help of contributors.  Thanks to Richard Kooijman for the driver.
+Please contact us if you want to help with development of this driver.
+  
 @cindex ODBC database
 @cindex Microsoft ODBC database
 @item ODBC
 
-As of March 2011, the driver should be considered provisional.  I do not have access to a server running Microsoft's Open Database
-Connectivity.  We will try to keep this driver up to date with the help of contributors.  Thanks to Dale Asberry for the driver.
+As of March 2011, the driver should be considered alpha and possibly with bugs.  I do not have access to a server running Microsoft's
+Open Database Connectivity.  We will try to keep this driver up to date with the help of contributors.  Thanks to Dale Asberry for the
+driver.  Please contact us if you want to help with development of this driver.
 
 @cindex DB2 database
 @item DB2
 
-I do not have access to an DB2 database so we cannot run any tests to make sure that our support for it works well.  Please contact me
-if you have an DB2 database that we can develop against.
+I do not have access to an DB2 database so we cannot run any tests to make sure that our support for it works well.  Please contact us
+if you want to help with development of this driver.
 
 @cindex Oracle database
 @item Oracle
 
-I do not have access to an Oracle database so we cannot run any tests to make sure that our support for it works well.  Please contact me
-if you have an Oracle database that we can develop against.
+I do not have access to an Oracle database so we cannot run any tests to make sure that our support for it works well.  Please contact us
+if you want to help with development of this driver.
 
 @end table
 
@@ -1330,7 +1334,7 @@ while (iterator.hasNext()) @{
     Account account = iterator.next();
     System.out.println(account.getName());
 @}
-// we must close it at the end to close the underlying SQL statement
+// close it at the end to close underlying SQL statement
 iterator.close();
 @end example
 
@@ -1477,7 +1481,8 @@ GenericRawResults<Foo> rawResults =
   orderDao.queryRaw(
     "select account_id,sum(amount) from orders group by account_id",
     new RawRowMapper<Foo>() @{
-            public Foo mapRow(String[] columnNames, String[] resultColumns) @{
+            public Foo mapRow(String[] columnNames,
+              String[] resultColumns) @{
                 return new Foo(Long.parseLong(resultColumns[0]),
                     Integer.parseInt(resultColumns[1]));
         @}
@@ -1671,12 +1676,14 @@ characteristics of the table.
 @example
 ArrayList<DatabaseFieldConfig> fieldConfigs =
    new ArrayList<DatabaseFieldConfig>();
-fieldConfigs.add(new DatabaseFieldConfig("id", null, DataType.UNKNOWN,
-   null, 0, false, false, true, null, false, null, false, null, false,
-   null, false, null, null, false));
+fieldConfigs.add(new DatabaseFieldConfig("id", null,
+   DataType.UNKNOWN, null, 0, false, false, true, null,
+   false, null, false, null, false, null, false, null,
+   null, false));
 @dots{}
 DatabaseTableConfig<Account> tableConfig =
-   new DatabaseTableConfig<Account>(Account.class, fieldConfigs);
+   new DatabaseTableConfig<Account>(Account.class,
+     fieldConfigs);
 // this returns number of statements executed to create table
 TableUtils.createTable(connectionSource, tableConfig);
 @end example
@@ -2353,7 +2360,8 @@ Here's an example of a full Spring configuration.
     parent="baseDao" />
 <bean id="deliveryDao" class="com.j256.ormlite.spring.DaoFactory" factory-method="createDao">
     <constructor-arg index="0" ref="connectionSource" />
-    <constructor-arg index="1" value="com.j256.ormlite.examples.spring.Delivery" />
+    <constructor-arg index="1"
+      value="com.j256.ormlite.examples.spring.Delivery" />
 </bean>
 @end example
 

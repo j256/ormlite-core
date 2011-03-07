@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on March, 5 2011 by texi2html 1.70 -->
+<!-- Created on March, 7 2011 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -1020,30 +1020,32 @@ may have to set the right database type on your ConnectionSource directly if it 
 </dd>
 <dt> Netezza</dt>
 <dd>
-<p>As of March 2011, the driver should be considered provisional.  I do not currently have access to a server running a Netezza database.
-We will try to keep this driver up to date with the help of contributors.  Thanks to Richard Kooijman for the driver.
-
+<p>As of March 2011, the driver should be considered alpha and possibly with bugs.  I do not currently have access to a server running a
+Netezza database. We will try to keep this driver up to date with the help of contributors.  Thanks to Richard Kooijman for the driver.
+Please contact us if you want to help with development of this driver.
+  
 </p><a name="IDX127"></a>
 <a name="IDX128"></a>
 </dd>
 <dt> ODBC</dt>
 <dd>
-<p>As of March 2011, the driver should be considered provisional.  I do not have access to a server running Microsoft's Open Database
-Connectivity.  We will try to keep this driver up to date with the help of contributors.  Thanks to Dale Asberry for the driver.
+<p>As of March 2011, the driver should be considered alpha and possibly with bugs.  I do not have access to a server running Microsoft's
+Open Database Connectivity.  We will try to keep this driver up to date with the help of contributors.  Thanks to Dale Asberry for the
+driver.  Please contact us if you want to help with development of this driver.
 
 </p><a name="IDX129"></a>
 </dd>
 <dt> DB2</dt>
 <dd>
-<p>I do not have access to an DB2 database so we cannot run any tests to make sure that our support for it works well.  Please contact me
-if you have an DB2 database that we can develop against.
+<p>I do not have access to an DB2 database so we cannot run any tests to make sure that our support for it works well.  Please contact us
+if you want to help with development of this driver.
 
 </p><a name="IDX130"></a>
 </dd>
 <dt> Oracle</dt>
 <dd>
-<p>I do not have access to an Oracle database so we cannot run any tests to make sure that our support for it works well.  Please contact me
-if you have an Oracle database that we can develop against.
+<p>I do not have access to an Oracle database so we cannot run any tests to make sure that our support for it works well.  Please contact us
+if you want to help with development of this driver.
 
 </p></dd>
 </dl>
@@ -1185,7 +1187,7 @@ if (account == null) {
 <a name="IDX134"></a>
 <p><em>NOTE:</em> If you need to change the value of an object's id field, you must use the <code>Dao.updateId()</code> method which
 takes the current object still with its <em>old</em> id value and the new value.  ORMLite has to first locate the object
-by its old id and then update it with the new id.  See <a href="ormlite_5.html#ANC25">updateId</a>.
+by its old id and then update it with the new id.  See <a href="ormlite_5.html#ANC23">updateId</a>.
 
 </p><hr size="6">
 <a name="NOD19"></a>
@@ -1398,7 +1400,7 @@ while (iterator.hasNext()) {
     Account account = iterator.next();
     System.out.println(account.getName());
 }
-// we must close it at the end to close the underlying SQL statement
+// close it at the end to close underlying SQL statement
 iterator.close();
 </pre></td></tr></table>
 </dd>
@@ -1581,7 +1583,8 @@ GenericRawResults&lt;Foo&gt; rawResults =
   orderDao.queryRaw(
     &quot;select account_id,sum(amount) from orders group by account_id&quot;,
     new RawRowMapper&lt;Foo&gt;() {
-            public Foo mapRow(String[] columnNames, String[] resultColumns) {
+            public Foo mapRow(String[] columnNames,
+              String[] resultColumns) {
                 return new Foo(Long.parseLong(resultColumns[0]),
                     Integer.parseInt(resultColumns[1]));
         }
@@ -1758,8 +1761,7 @@ System.out.println(&quot;Now the account fields will be set: &quot; +
 
 </p><p><em>NOTE:</em> Because we use refresh, foreign objects are therefor <em>required</em> to have an id field.
 
-</p><p>The <code>Where()</code> object has some method calls to help with using foreign objects.  see <a href="ormlite_3.html#ANC23">foreignIdEq</a> and see <a href="ormlite_3.html#ANC24">foreignIdIn</a>.
-There is also example code to show how to use foreign objects.  See <a href="ormlite_7.html#ANC27">foreign objects example</a>.
+</p><p>There is example code to show how to use foreign objects.  See <a href="ormlite_7.html#ANC25">foreign objects example</a>.
 
 </p><hr size="6">
 <a name="NOD28"></a>
@@ -1834,12 +1836,14 @@ characteristics of the table.
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">ArrayList&lt;DatabaseFieldConfig&gt; fieldConfigs =
    new ArrayList&lt;DatabaseFieldConfig&gt;();
-fieldConfigs.add(new DatabaseFieldConfig(&quot;id&quot;, null, DataType.UNKNOWN,
-   null, 0, false, false, true, null, false, null, false, null, false,
-   null, false, null, null, false));
+fieldConfigs.add(new DatabaseFieldConfig(&quot;id&quot;, null,
+   DataType.UNKNOWN, null, 0, false, false, true, null,
+   false, null, false, null, false, null, false, null,
+   null, false));
 &hellip;
 DatabaseTableConfig&lt;Account&gt; tableConfig =
-   new DatabaseTableConfig&lt;Account&gt;(Account.class, fieldConfigs);
+   new DatabaseTableConfig&lt;Account&gt;(Account.class,
+     fieldConfigs);
 // this returns number of statements executed to create table
 TableUtils.createTable(connectionSource, tableConfig);
 </pre></td></tr></table>
@@ -1914,7 +1918,7 @@ creator.maybeCreateTables();
 // later, we may want to drop the tables that were created 
 creator.maybeDropTables();
 </pre></td></tr></table>
-<p>For a real life example of using <code>TableCreator</code> you can see <a href="ormlite_7.html#ANC30">spring example</a>.
+<p>For a real life example of using <code>TableCreator</code> you can see <a href="ormlite_7.html#ANC28">spring example</a>.
 
 </p><hr size="6">
 <table cellpadding="1" cellspacing="1" border="0">
@@ -1932,7 +1936,7 @@ creator.maybeDropTables();
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>March, 5 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>March, 7 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 
