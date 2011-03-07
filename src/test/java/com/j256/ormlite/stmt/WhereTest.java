@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -427,131 +426,6 @@ public class WhereTest extends BaseCoreTest {
 		sb.append(" = ").append(id);
 		sb.append(' ');
 		assertEquals(sb.toString(), whereSb.toString());
-	}
-
-	@Test
-	public void testIdEqForiegn() throws Exception {
-		FooId foo = new FooId();
-		int id = 112132;
-		foo.id = id;
-		ForeignFoo foreign = new ForeignFoo();
-		foreign.foo = foo;
-		Where<FooId, Integer> where =
-				new Where<FooId, Integer>(new TableInfo<FooId>(connectionSource, FooId.class), null);
-		BaseDaoImpl<ForeignFoo, Integer> foreignDao =
-				new BaseDaoImpl<ForeignFoo, Integer>(connectionSource, ForeignFoo.class) {
-				};
-		where.foreignIdEq(foreignDao, foreign);
-		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<SelectArg>());
-		StringBuilder sb = new StringBuilder();
-		databaseType.appendEscapedEntityName(sb, ID_COLUMN_NAME);
-		sb.append(" = ").append(id);
-		sb.append(' ');
-		assertEquals(sb.toString(), whereSb.toString());
-	}
-
-	@Test(expected = SQLException.class)
-	public void testIdEqForiegnNull() throws Exception {
-		ForeignFoo foreign1 = new ForeignFoo();
-		Where<FooId, Integer> where =
-				new Where<FooId, Integer>(new TableInfo<FooId>(connectionSource, FooId.class), null);
-		BaseDaoImpl<ForeignFoo, Integer> foreignDao =
-				new BaseDaoImpl<ForeignFoo, Integer>(connectionSource, ForeignFoo.class) {
-				};
-		where.foreignIdEq(foreignDao, foreign1);
-		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<SelectArg>());
-	}
-
-	@Test(expected = SQLException.class)
-	public void testIdEqForeignNoId() throws Exception {
-		Where<Foo, Integer> where = new Where<Foo, Integer>(new TableInfo<Foo>(connectionSource, Foo.class), null);
-		BaseDaoImpl<Foo, Integer> foreignDao = new BaseDaoImpl<Foo, Integer>(connectionSource, Foo.class) {
-		};
-		where.foreignIdEq(foreignDao, new Foo());
-	}
-
-	@Test(expected = SQLException.class)
-	public void testIdEqForiegnNoFieldOfType() throws Exception {
-		Where<ForeignFoo, Integer> where =
-				new Where<ForeignFoo, Integer>(new TableInfo<ForeignFoo>(connectionSource, ForeignFoo.class), null);
-		BaseDaoImpl<ForeignFoo, Integer> foreignDao =
-				new BaseDaoImpl<ForeignFoo, Integer>(connectionSource, ForeignFoo.class) {
-				};
-		where.foreignIdEq(foreignDao, new ForeignFoo());
-	}
-
-	@Test
-	public void testIdForiegnIn() throws Exception {
-		FooId foo1 = new FooId();
-		int id1 = 112132;
-		foo1.id = id1;
-		FooId foo2 = new FooId();
-		int id2 = 113413122;
-		foo2.id = id2;
-		ForeignFoo foreign1 = new ForeignFoo();
-		foreign1.foo = foo1;
-		ForeignFoo foreign2 = new ForeignFoo();
-		foreign2.foo = foo2;
-		Where<FooId, Integer> where =
-				new Where<FooId, Integer>(new TableInfo<FooId>(connectionSource, FooId.class), null);
-		BaseDaoImpl<ForeignFoo, Integer> foreignDao =
-				new BaseDaoImpl<ForeignFoo, Integer>(connectionSource, ForeignFoo.class) {
-				};
-		where.foreignIdIn(foreignDao, foreign1, foreign2);
-		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<SelectArg>());
-		StringBuilder sb = new StringBuilder();
-		databaseType.appendEscapedEntityName(sb, ID_COLUMN_NAME);
-		sb.append(" IN (").append(id1);
-		sb.append(" ,").append(id2);
-		sb.append(" ) ");
-		assertEquals(sb.toString(), whereSb.toString());
-	}
-
-	@Test(expected = SQLException.class)
-	public void testIdForeignInNoId() throws Exception {
-		Where<Foo, Integer> where = new Where<Foo, Integer>(new TableInfo<Foo>(connectionSource, Foo.class), null);
-		BaseDaoImpl<Foo, Integer> foreignDao = new BaseDaoImpl<Foo, Integer>(connectionSource, Foo.class) {
-		};
-		where.foreignIdIn(foreignDao, new Foo());
-	}
-
-	@Test
-	public void testIdEqForiegnInIterable() throws Exception {
-		FooId foo1 = new FooId();
-		int id1 = 112132;
-		foo1.id = id1;
-		FooId foo2 = new FooId();
-		int id2 = 113413122;
-		foo2.id = id2;
-		ForeignFoo foreign1 = new ForeignFoo();
-		foreign1.foo = foo1;
-		ForeignFoo foreign2 = new ForeignFoo();
-		foreign2.foo = foo2;
-		Where<FooId, Integer> where =
-				new Where<FooId, Integer>(new TableInfo<FooId>(connectionSource, FooId.class), null);
-		BaseDaoImpl<ForeignFoo, Integer> foreignDao =
-				new BaseDaoImpl<ForeignFoo, Integer>(connectionSource, ForeignFoo.class) {
-				};
-		where.foreignIdIn(foreignDao, Arrays.asList(foreign1, foreign2));
-		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<SelectArg>());
-		StringBuilder sb = new StringBuilder();
-		databaseType.appendEscapedEntityName(sb, ID_COLUMN_NAME);
-		sb.append(" IN (").append(id1);
-		sb.append(" ,").append(id2);
-		sb.append(" ) ");
-		assertEquals(sb.toString(), whereSb.toString());
-	}
-
-	@Test(expected = SQLException.class)
-	public void testIdForeignInIterableNoId() throws Exception {
-		Where<Foo, Integer> where = new Where<Foo, Integer>(new TableInfo<Foo>(connectionSource, Foo.class), null);
-		BaseDaoImpl<Foo, Integer> foreignDao = new BaseDaoImpl<Foo, Integer>(connectionSource, Foo.class) {
-		};
-		where.foreignIdIn(foreignDao, Arrays.asList(new Foo()));
 	}
 
 	@Test(expected = SQLException.class)

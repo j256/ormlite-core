@@ -355,68 +355,6 @@ public class Where<T, ID> {
 	}
 
 	/**
-	 * Add an '=' clause where the ID is the id from a foreign field in the data that is passed in. So if you have a
-	 * class with a foreign field, this will find all of the instances of that class that have the same foreign field's
-	 * id as the data parameter passed in.
-	 * 
-	 * <p>
-	 * If you have an Order object that has a foreign Account field, you could do something like
-	 * orderDao.queryBuilder().where().foreignIdEq(accountDao, account1). That would make a query for all orders that
-	 * have an account field that matches the id from account1.
-	 * </p>
-	 */
-	public <OD, OID> Where<T, ID> foreignIdEq(Dao<OD, OID> dataDao, OD data) throws SQLException {
-		if (idColumnName == null) {
-			throw new SQLException("Object has no id column specified");
-		}
-		FieldType fieldType = getForeignFieldType(dataDao);
-		// extract the value of that field which should be the id already for the foreign field
-		Object id = fieldType.extractJavaFieldValue(data);
-		addClause(new Eq(idColumnName, idFieldType, id));
-		return this;
-	}
-
-	/**
-	 * Add a IN clause where the ID is the id from a foreign field in the data items that are passed in. This is the
-	 * same as {@link #foreignIdEq(Dao, Object)} except that multiple foreign objects can be specified as variable
-	 * arguments.
-	 */
-	public <OD, OID> Where<T, ID> foreignIdIn(Dao<OD, OID> dataDao, OD... datas) throws SQLException {
-		if (idColumnName == null) {
-			throw new SQLException("Object has no id column specified");
-		}
-		FieldType fieldType = getForeignFieldType(dataDao);
-		ArrayList<Object> idList = new ArrayList<Object>();
-		for (OD data : datas) {
-			// extract the value of that field which should be the id already for the foreign field
-			Object id = fieldType.extractJavaFieldValue(data);
-			idList.add(id);
-		}
-		addClause(new In(idColumnName, idFieldType, idList));
-		return this;
-	}
-
-	/**
-	 * Add a IN clause where the ID is the id from a foreign field in the data items iterable that is passed in. This is
-	 * the same as {@link #foreignIdEq(Dao, Object)} except that multiple foreign objects can be specified in an
-	 * iterable, such as a collection.
-	 */
-	public <OD, OID> Where<T, ID> foreignIdIn(Dao<OD, OID> dataDao, Iterable<OD> datas) throws SQLException {
-		if (idColumnName == null) {
-			throw new SQLException("Object has no id column specified");
-		}
-		FieldType fieldType = getForeignFieldType(dataDao);
-		ArrayList<Object> idList = new ArrayList<Object>();
-		for (OD data : datas) {
-			// extract the value of that field which should be the id already for the foreign field
-			Object id = fieldType.extractJavaFieldValue(data);
-			idList.add(id);
-		}
-		addClause(new In(idColumnName, idFieldType, idList));
-		return this;
-	}
-
-	/**
 	 * Add a raw statement as part of the where that can be anything that the database supports. Using more structured
 	 * methods is recommended but this gives more control over the query and allows you to utilize database specific
 	 * features.
@@ -454,19 +392,6 @@ public class Where<T, ID> {
 
 		// we don't pop here because we may want to run the query multiple times
 		clauseList.peek().appendSql(databaseType, sb, columnArgList);
-	}
-
-	/**
-	 * find the field in that class that matches our type.
-	 */
-	private <OD, OID> FieldType getForeignFieldType(Dao<OD, OID> dataDao) throws SQLException {
-		Class<T> clazz = tableInfo.getDataClass();
-		FieldType fieldType = dataDao.findForeignFieldType(clazz);
-		if (fieldType == null) {
-			throw new SQLException("Could not find a field of type " + clazz + " in class " + dataDao.getDataClass());
-		} else {
-			return fieldType;
-		}
 	}
 
 	private void addNeedsFuture(NeedsFutureClause needsFuture) {

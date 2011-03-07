@@ -1625,8 +1625,7 @@ You can have the foreign objects automagically refreshed by using the @code{fore
 
 @emph{NOTE:} Because we use refresh, foreign objects are therefor @emph{required} to have an id field.
 
-The @code{Where()} object has some method calls to help with using foreign objects.  @pxref{foreignIdEq} and @pxref{foreignIdIn}.
-There is also example code to show how to use foreign objects.  @xref{foreign objects example}.
+There is example code to show how to use foreign objects.  @xref{foreign objects example}.
 
 @c ----------------------------------------------------------------
 @node Table Creation, TableUtils, Foreign Objects, Using
@@ -2056,20 +2055,6 @@ Add a EXISTS clause with a sub-query inside of parenthesis.  This will return re
 results.
 
 @emph{NOTE:} The sub-query will be prepared at the same time that the outside query is.
-
-@anchor{foreignIdEq}
-@item foreignIdEq(Dao<OD, OID> dataDao, OD data)
-
-Add a clause where the ID is the id from a foreign field in the data that is passed in.
-
-@anchor{foreignIdIn}
-@item foreignIdIn(Dao<OD, OID> dataDao, OD... datas)
-
-Add a IN clause where the ID is the id from a foreign field in the data items that are passed in.
-
-@item foreignIdIn(Dao<OD, OID> dataDao, Iterable<OD> datas)
-
-Add a IN clause where the ID is the id from a foreign field in the data items iterable that is passed in.
 
 @cindex >=, SQL
 @cindex ge, SQL
