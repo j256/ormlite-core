@@ -45,7 +45,7 @@ To release ORMLite:
 	- Click on 'Release'.  Description: X.X release
 
 9) Check to make sure it has been released:
-	
+
 	- Click on 'Repositories' from left nav
 	- select Releases (not-bold) -> com -> j256 -> ormlite
 	- see if the release is there

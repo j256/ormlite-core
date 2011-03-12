@@ -1,4 +1,8 @@
-4.15: 3/7/2011 (svn rYYYY)
+4.16: 3/XX/2011 (svn rYYYY)
+	* CORE: Fixed problem with SQLite (JDBC and Android) was not handling nested transactions correctly.  Fixed bug #3208074.
+	* Android: Fixed problem with SQLite nested transactions correctly.  They are not supported under Android.
+
+4.15: 3/7/2011 (svn r1513)
 	* CORE: Fixed a problem where Integer and Long fields could not be id fields.  Fixes bug #3202117.
 	* CORE: Resolved bad problem with querying for objects with null foreign field values.  Fixes bug #3199649.  Thanks to Micael.
 	* CORE: Removed the confusing Where().foreignIdEq() and foreignIdIn() methods.  Little extra value and loads of confusion.
