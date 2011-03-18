@@ -13,8 +13,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
@@ -77,23 +75,26 @@ public enum DataType implements FieldConverter {
 			byte[] bytes = results.getBytes(columnPos);
 			if (bytes == null) {
 				return null;
-			} else if (fieldType.getFormat() == null) {
-				return new String(bytes, DEFAULT_STRING_BYTES_CHARSET);
-			} else {
-				return new String(bytes, Charset.forName(fieldType.getFormat()));
 			}
+			Charset charset = convertStringBytesConfig(fieldType);
+			return new String(bytes, charset);
 		}
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
-			return defaultStr;
+			throw new SQLException("String bytes type cannot have default values");
 		}
 		@Override
 		public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
 			String string = (String) javaObject;
+			Charset charset = convertStringBytesConfig(fieldType);
+			return string.getBytes(charset);
+		}
+		@Override
+		public Object makeConfigObject(FieldType fieldType) {
 			if (fieldType.getFormat() == null) {
-				return string.getBytes(DEFAULT_STRING_BYTES_CHARSET);
+				return DEFAULT_STRING_BYTES_CHARSET;
 			} else {
-				return string.getBytes(Charset.forName(fieldType.getFormat()));
+				return Charset.forName(fieldType.getFormat());
 			}
 		}
 		@Override
@@ -173,11 +174,12 @@ public enum DataType implements FieldConverter {
 		}
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+			DateStringFormatConfig dateFormatConfig = convertDateStringConfig(fieldType);
 			try {
-				return new Timestamp(parseDateString(fieldType.getFormat(), defaultStr).getTime());
+				return new Timestamp(parseDateString(dateFormatConfig, defaultStr).getTime());
 			} catch (ParseException e) {
 				throw SqlExceptionUtil.create("Problems parsing default date string '" + defaultStr + "' using '"
-						+ formatOrDefault(fieldType.getFormat()) + '\'', e);
+						+ dateFormatConfig + '\'', e);
 			}
 		}
 		@Override
@@ -190,6 +192,7 @@ public enum DataType implements FieldConverter {
 			return true;
 		}
 	},
+
 	/**
 	 * @deprecated You should use {@link DataType#DATE}
 	 */
@@ -206,11 +209,12 @@ public enum DataType implements FieldConverter {
 		}
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+			DateStringFormatConfig dateFormatConfig = convertDateStringConfig(fieldType);
 			try {
-				return new Timestamp(parseDateString(fieldType.getFormat(), defaultStr).getTime());
+				return new Timestamp(parseDateString(dateFormatConfig, defaultStr).getTime());
 			} catch (ParseException e) {
 				throw SqlExceptionUtil.create("Problems parsing default date string '" + defaultStr + "' using '"
-						+ formatOrDefault(fieldType.getFormat()) + '\'', e);
+						+ dateFormatConfig + '\'', e);
 			}
 		}
 		@Override
@@ -304,33 +308,38 @@ public enum DataType implements FieldConverter {
 			if (dateStr == null) {
 				return null;
 			}
-			String formatStr;
-			if (fieldType == null) {
-				formatStr = DEFAULT_DATE_FORMAT_STRING;
-			} else {
-				formatStr = fieldType.getFormat();
-			}
+			DateStringFormatConfig formatConfig = convertDateStringConfig(fieldType);
 			try {
-				return parseDateString(formatStr, dateStr);
+				return parseDateString(formatConfig, dateStr);
 			} catch (ParseException e) {
 				throw SqlExceptionUtil.create("Problems with column " + columnPos + " parsing date-string '" + dateStr
-						+ "' using '" + formatOrDefault(formatStr) + "'", e);
+						+ "' using '" + formatConfig + "'", e);
 			}
 		}
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+			DateStringFormatConfig formatConfig = convertDateStringConfig(fieldType);
 			try {
 				// we parse to make sure it works and then format it again
-				return normalizeDateString(fieldType.getFormat(), defaultStr);
+				return normalizeDateString(formatConfig, defaultStr);
 			} catch (ParseException e) {
 				throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing default date-string '"
-						+ defaultStr + "' using '" + formatOrDefault(fieldType.getFormat()) + "'", e);
+						+ defaultStr + "' using '" + formatConfig + "'", e);
 			}
 		}
 		@Override
 		public Object javaToSqlArg(FieldType fieldType, Object obj) {
 			Date date = (Date) obj;
-			return formatDate(fieldType.getFormat(), date);
+			return formatDate(convertDateStringConfig(fieldType), date);
+		}
+		@Override
+		public Object makeConfigObject(FieldType fieldType) {
+			String format = fieldType.getFormat();
+			if (format == null) {
+				return defaultDateFormatConfig;
+			} else {
+				return new DateStringFormatConfig(format);
+			}
 		}
 	},
 
@@ -345,33 +354,39 @@ public enum DataType implements FieldConverter {
 			if (dateStr == null) {
 				return null;
 			}
-			String formatStr;
-			if (fieldType == null) {
-				formatStr = DEFAULT_DATE_FORMAT_STRING;
-			} else {
-				formatStr = fieldType.getFormat();
-			}
+			DateStringFormatConfig formatConfig = convertDateStringConfig(fieldType);
 			try {
-				return parseDateString(formatStr, dateStr);
+				return parseDateString(formatConfig, dateStr);
 			} catch (ParseException e) {
 				throw SqlExceptionUtil.create("Problems with column " + columnPos + " parsing date-string '" + dateStr
-						+ "' using '" + formatOrDefault(formatStr) + "'", e);
+						+ "' using '" + formatConfig + "'", e);
 			}
 		}
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+			DateStringFormatConfig formatConfig = convertDateStringConfig(fieldType);
 			try {
 				// we parse to make sure it works and then format it again
-				return normalizeDateString(fieldType.getFormat(), defaultStr);
+				return normalizeDateString(formatConfig, defaultStr);
 			} catch (ParseException e) {
 				throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing default date-string '"
-						+ defaultStr + "' using '" + formatOrDefault(fieldType.getFormat()) + "'", e);
+						+ defaultStr + "' using '" + formatConfig + "'", e);
 			}
 		}
 		@Override
 		public Object javaToSqlArg(FieldType fieldType, Object obj) {
 			Date date = (Date) obj;
-			return formatDate(fieldType.getFormat(), date);
+			DateStringFormatConfig formatConfig = convertDateStringConfig(fieldType);
+			return formatDate(formatConfig, date);
+		}
+		@Override
+		public Object makeConfigObject(FieldType fieldType) {
+			String format = fieldType.getFormat();
+			if (format == null) {
+				return defaultDateFormatConfig;
+			} else {
+				return new DateStringFormatConfig(format);
+			}
 		}
 	},
 
@@ -407,7 +422,7 @@ public enum DataType implements FieldConverter {
 		}
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
-			throw new SQLException("byte[] types cannot have default values");
+			throw new SQLException("byte[] type cannot have default values");
 		}
 		@Override
 		public boolean isAppropriateId() {
@@ -816,9 +831,9 @@ public enum DataType implements FieldConverter {
 	// end
 	;
 
-	public static final String DEFAULT_DATE_FORMAT_STRING = "yyyy-MM-dd HH:mm:ss.SSSSSS";
+	public static final DateStringFormatConfig defaultDateFormatConfig = new DateStringFormatConfig(
+			"yyyy-MM-dd HH:mm:ss.SSSSSS");
 
-	private static Map<String, DateFormat> dateFormatMap;
 	private final SqlType sqlType;
 	private final Class<?>[] classes;
 	public static final String DEFAULT_STRING_BYTES_CHARSET_NAME = "Unicode";
@@ -858,6 +873,14 @@ public enum DataType implements FieldConverter {
 	public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {
 		// noop pass-thru is the default
 		return javaObject;
+	}
+
+	/**
+	 * This makes a configuration object for the data-type or returns null if none. The object can be accessed later via
+	 * {@link FieldType#getDataTypeConfigObj()}.
+	 */
+	public Object makeConfigObject(FieldType fieldType) throws SQLException {
+		return null;
 	}
 
 	public SqlType getSqlType() {
@@ -935,45 +958,67 @@ public enum DataType implements FieldConverter {
 		return false;
 	}
 
-	private static synchronized Date parseDateString(String format, String dateStr) throws ParseException {
-		DateFormat dateFormat = getDateFormat(format);
+	private static Date parseDateString(DateStringFormatConfig formatConfig, String dateStr) throws ParseException {
+		DateFormat dateFormat = formatConfig.getDateFormat();
 		return dateFormat.parse(dateStr);
 	}
 
-	private static synchronized String normalizeDateString(String format, String dateStr) throws ParseException {
-		DateFormat dateFormat = getDateFormat(format);
+	private static DateStringFormatConfig convertDateStringConfig(FieldType fieldType) {
+		if (fieldType == null) {
+			return defaultDateFormatConfig;
+		}
+		DateStringFormatConfig configObj = (DateStringFormatConfig) fieldType.getDataTypeConfigObj();
+		if (configObj == null) {
+			return defaultDateFormatConfig;
+		} else {
+			return (DateStringFormatConfig) configObj;
+		}
+	}
+
+	private static Charset convertStringBytesConfig(FieldType fieldType) {
+		if (fieldType == null) {
+			return DEFAULT_STRING_BYTES_CHARSET;
+		}
+		Charset charset = (Charset) fieldType.getDataTypeConfigObj();
+		if (charset == null) {
+			return DEFAULT_STRING_BYTES_CHARSET;
+		} else {
+			return charset;
+		}
+	}
+
+	private static String normalizeDateString(DateStringFormatConfig formatConfig, String dateStr)
+			throws ParseException {
+		DateFormat dateFormat = formatConfig.getDateFormat();
 		Date date = dateFormat.parse(dateStr);
 		return dateFormat.format(date);
 	}
 
-	private static synchronized String formatDate(String format, Date date) {
-		DateFormat dateFormat = getDateFormat(format);
+	private static String formatDate(DateStringFormatConfig formatConfig, Date date) {
+		DateFormat dateFormat = formatConfig.getDateFormat();
 		return dateFormat.format(date);
 	}
 
 	/**
-	 * Return the date format for the format string.
-	 * 
-	 * NOTE: We should already be synchronized here.
+	 * Configuration information for the {@link #DATE_STRING} type.
 	 */
-	private static DateFormat getDateFormat(String formatStr) {
-		if (dateFormatMap == null) {
-			dateFormatMap = new HashMap<String, DateFormat>();
+	private static class DateStringFormatConfig {
+		private final ThreadLocal<DateFormat> threadLocal = new ThreadLocal<DateFormat>();
+		final String dateFormatStr;
+		public DateStringFormatConfig(String dateFormatStr) {
+			this.dateFormatStr = dateFormatStr;
 		}
-		formatStr = formatOrDefault(formatStr);
-		DateFormat dateFormat = dateFormatMap.get(formatStr);
-		if (dateFormat == null) {
-			dateFormat = new SimpleDateFormat(formatStr);
-			dateFormatMap.put(formatStr, dateFormat);
+		public DateFormat getDateFormat() {
+			DateFormat dateFormat = threadLocal.get();
+			if (dateFormat == null) {
+				dateFormat = new SimpleDateFormat(dateFormatStr);
+				threadLocal.set(dateFormat);
+			}
+			return dateFormat;
 		}
-		return dateFormat;
-	}
-
-	private static String formatOrDefault(String format) {
-		if (format == null) {
-			return DEFAULT_DATE_FORMAT_STRING;
-		} else {
-			return format;
+		@Override
+		public String toString() {
+			return dateFormatStr;
 		}
 	}
 }

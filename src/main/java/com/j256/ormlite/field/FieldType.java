@@ -33,6 +33,7 @@ public class FieldType {
 	private final String fieldName;
 	private final String dbColumnName;
 	private final DataType dataType;
+	private final Object dataTypeConfigObj;
 	private final Object defaultValue;
 	private final int width;
 	private final boolean canBeNull;
@@ -212,6 +213,14 @@ public class FieldType {
 		if (this.throwIfNull && !dataType.isPrimitive()) {
 			throw new SQLException("Field " + field.getName() + " must be a primitive if set with throwIfNull");
 		}
+		this.unique = fieldConfig.isUnique();
+		this.indexName = fieldConfig.getIndexName();
+		this.uniqueIndexName = fieldConfig.getUniqueIndexName();
+		if (this.isId && !dataType.isAppropriateId()) {
+			throw new SQLException("Field '" + field.getName() + "' is of data type " + dataType
+					+ " which cannot be the ID field");
+		}
+		this.dataTypeConfigObj = dataType.makeConfigObject(this);
 		String defaultStr = fieldConfig.getDefaultValue();
 		if (defaultStr == null || defaultStr.equals("")) {
 			this.defaultValue = null;
@@ -221,14 +230,8 @@ public class FieldType {
 		} else {
 			this.defaultValue = this.fieldConverter.parseDefaultString(this, defaultStr);
 		}
-		this.unique = fieldConfig.isUnique();
-		this.indexName = fieldConfig.getIndexName();
-		this.uniqueIndexName = fieldConfig.getUniqueIndexName();
-		if (this.isId && !dataType.isAppropriateId()) {
-			throw new SQLException("Field '" + field.getName() + "' is of data type " + dataType
-					+ " which cannot be the ID field");
-		}
 	}
+
 	public String getTableName() {
 		return tableName;
 	}
@@ -247,6 +250,10 @@ public class FieldType {
 
 	public DataType getDataType() {
 		return dataType;
+	}
+
+	public Object getDataTypeConfigObj() {
+		return dataTypeConfigObj;
 	}
 
 	public SqlType getSqlType() {

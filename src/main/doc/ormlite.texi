@@ -743,7 +743,7 @@ in which case the date will be stored as a string in @code{yyyy-MM-dd HH:mm:ss.S
 
 @emph{NOTE:} Certain databases only provide seconds resolution so the milliseconds will be 0.
 
-@emph{NOTE:} Because of reentrant issues with @code{SimpleDateFormat}, synchronization is done
+@emph{NOTE:} Because of reentrant issues with @code{SimpleDateFormat}, thread locals are used to access the formatters
 every time a @code{DATE_STRING} date is converted to/from the database.
 
 @cindex byte

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
@@ -93,8 +94,9 @@ public class DataTypeTest extends BaseCoreTest {
 		LocalStringBytes foo = new LocalStringBytes();
 		foo.string = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, val, val.getBytes(Charset.forName(DataType.DEFAULT_STRING_BYTES_CHARSET_NAME)), val,
-				DataType.STRING_BYTES, STRING_COLUMN, false, false, true, false, true, false, true, false);
+		byte[] valBytes = val.getBytes(Charset.forName(DataType.DEFAULT_STRING_BYTES_CHARSET_NAME));
+		testType(clazz, val, val, valBytes, val, DataType.STRING_BYTES, STRING_COLUMN, false, false, true, false, true,
+				false, true, false);
 	}
 
 	@Test
@@ -899,7 +901,7 @@ public class DataTypeTest extends BaseCoreTest {
 		assertEquals(DataType.UNKNOWN, DataType.lookupClass(byte[].class));
 	}
 
-	private void testType(Class<?> clazz, Object javaVal, Object sqlVal, Object sqlArg, String valStr,
+	private void testType(Class<?> clazz, Object javaVal, Object sqlVal, Object sqlArg, String defaultValStr,
 			DataType dataType, String columnName, boolean isValidGeneratedType, boolean isAppropriateId,
 			boolean isEscapedValue, boolean isPrimitive, boolean isSelectArgRequired, boolean isStreamType,
 			boolean isComparable, boolean isConvertableId) throws Exception {
@@ -919,8 +921,15 @@ public class DataTypeTest extends BaseCoreTest {
 			Object result = fieldType.resultToJava(results, colMap);
 			assertEquals(javaVal, result);
 		}
-		if (dataType != DataType.BYTE_ARRAY && dataType != DataType.SERIALIZABLE && valStr != null) {
-			assertEquals(sqlVal, dataType.parseDefaultString(fieldType, valStr));
+		if (dataType == DataType.STRING_BYTES || dataType == DataType.BYTE_ARRAY || dataType == DataType.SERIALIZABLE) {
+			try {
+				dataType.parseDefaultString(fieldType, "");
+				fail("parseDefaultString should have thrown for " + dataType);
+			} catch (SQLException e) {
+				// expected
+			}
+		} else if (defaultValStr != null) {
+			assertEquals(sqlVal, dataType.parseDefaultString(fieldType, defaultValStr));
 		}
 		if (sqlArg == null) {
 			// noop
