@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -64,6 +65,44 @@ public enum DataType implements FieldConverter {
 		@Override
 		public boolean isAppropriateId() {
 			return false;
+		}
+	},
+
+	/**
+	 * Persists the {@link String} Java class.
+	 */
+	STRING_BYTES(SqlType.BYTE_ARRAY, new Class<?>[0]) {
+		@Override
+		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+			byte[] bytes = results.getBytes(columnPos);
+			if (bytes == null) {
+				return null;
+			} else if (fieldType.getFormat() == null) {
+				return new String(bytes, DEFAULT_STRING_BYTES_CHARSET);
+			} else {
+				return new String(bytes, Charset.forName(fieldType.getFormat()));
+			}
+		}
+		@Override
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+			return defaultStr;
+		}
+		@Override
+		public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
+			String string = (String) javaObject;
+			if (fieldType.getFormat() == null) {
+				return string.getBytes(DEFAULT_STRING_BYTES_CHARSET);
+			} else {
+				return string.getBytes(Charset.forName(fieldType.getFormat()));
+			}
+		}
+		@Override
+		public boolean isAppropriateId() {
+			return false;
+		}
+		@Override
+		public boolean isSelectArgRequired() {
+			return true;
 		}
 	},
 
@@ -782,6 +821,8 @@ public enum DataType implements FieldConverter {
 	private static Map<String, DateFormat> dateFormatMap;
 	private final SqlType sqlType;
 	private final Class<?>[] classes;
+	public static final String DEFAULT_STRING_BYTES_CHARSET_NAME = "Unicode";
+	private static final Charset DEFAULT_STRING_BYTES_CHARSET = Charset.forName(DEFAULT_STRING_BYTES_CHARSET_NAME);
 
 	private DataType(SqlType sqlType, Class<?>[] classes) {
 		this.sqlType = sqlType;

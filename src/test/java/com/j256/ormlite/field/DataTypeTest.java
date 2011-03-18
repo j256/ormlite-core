@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -81,6 +82,39 @@ public class DataTypeTest extends BaseCoreTest {
 		foo.string = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, val, val, valStr, DataType.LONG_STRING, STRING_COLUMN, false, false, true, false, false,
+				false, true, false);
+	}
+
+	@Test
+	public void testStringBytes() throws Exception {
+		Class<LocalStringBytes> clazz = LocalStringBytes.class;
+		Dao<LocalStringBytes, Object> dao = createDao(clazz, true);
+		String val = "string with \u0185";
+		LocalStringBytes foo = new LocalStringBytes();
+		foo.string = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, val, val.getBytes(Charset.forName(DataType.DEFAULT_STRING_BYTES_CHARSET_NAME)), val,
+				DataType.STRING_BYTES, STRING_COLUMN, false, false, true, false, true, false, true, false);
+	}
+
+	@Test
+	public void testStringBytesFormat() throws Exception {
+		Class<LocalStringBytesUtf8> clazz = LocalStringBytesUtf8.class;
+		Dao<LocalStringBytesUtf8, Object> dao = createDao(clazz, true);
+		String val = "string with \u0185";
+		LocalStringBytesUtf8 foo = new LocalStringBytesUtf8();
+		foo.string = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, val, val.getBytes(Charset.forName("UTF-8")), val, DataType.STRING_BYTES, STRING_COLUMN,
+				false, false, true, false, true, false, true, false);
+	}
+
+	@Test
+	public void testStringBytesNull() throws Exception {
+		Class<LocalStringBytes> clazz = LocalStringBytes.class;
+		Dao<LocalStringBytes, Object> dao = createDao(clazz, true);
+		assertEquals(1, dao.create(new LocalStringBytes()));
+		testType(clazz, null, null, null, null, DataType.STRING_BYTES, STRING_COLUMN, false, false, true, false, true,
 				false, true, false);
 	}
 
@@ -882,7 +916,8 @@ public class DataTypeTest extends BaseCoreTest {
 		} else {
 			Map<String, Integer> colMap = new HashMap<String, Integer>();
 			colMap.put(columnName, colNum);
-			assertEquals(javaVal, fieldType.resultToJava(results, colMap));
+			Object result = fieldType.resultToJava(results, colMap);
+			assertEquals(javaVal, result);
 		}
 		if (dataType != DataType.BYTE_ARRAY && dataType != DataType.SERIALIZABLE && valStr != null) {
 			assertEquals(sqlVal, dataType.parseDefaultString(fieldType, valStr));
@@ -919,6 +954,18 @@ public class DataTypeTest extends BaseCoreTest {
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalLongString {
 		@DatabaseField(columnName = STRING_COLUMN, dataType = DataType.LONG_STRING)
+		String string;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalStringBytes {
+		@DatabaseField(columnName = STRING_COLUMN, dataType = DataType.STRING_BYTES)
+		String string;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalStringBytesUtf8 {
+		@DatabaseField(columnName = STRING_COLUMN, dataType = DataType.STRING_BYTES, format = "UTF-8")
 		String string;
 	}
 

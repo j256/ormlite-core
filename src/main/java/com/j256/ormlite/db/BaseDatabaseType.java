@@ -71,6 +71,10 @@ public abstract class BaseDatabaseType implements DatabaseType {
 				appendLongStringType(sb);
 				break;
 
+			case STRING_BYTES :
+				appendByteArrayType(sb);
+				break;
+
 			case BOOLEAN :
 			case BOOLEAN_OBJ :
 				appendBooleanType(sb);

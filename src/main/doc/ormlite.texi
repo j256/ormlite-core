@@ -53,9 +53,9 @@ dependencies.
 
 @cindex databases supported
 @cindex supported databases
-@value{package} supports JDBC connections to MySQL, Postgres, H2, SQLite, Derby, HSQLDB, Microsoft SQL Server, generic
-ODBC, Netezza, and can be extended to additional ones relatively easily.  @value{package} also supports native database
-calls on Android OS.  There are also initial implementations for DB2 and Oracle although the author needs access to
+@value{package} supports JDBC connections to MySQL, Postgres, H2, SQLite, Derby, HSQLDB, Microsoft SQL Server, and can be
+extended to additional ones relatively easily.  @value{package} also supports native database calls on Android OS.  There
+are also initial implementations for DB2, Oracle, generic ODBC, and Netezza although the author needs access to
 an instance of each of these databases to tune the support.  Contact the author if your database is not supported.
 
 To get started quickly with @value{package}, @pxref{Getting Started}.  You can also take a look at the  the examples
@@ -461,8 +461,13 @@ the annotation on all of your fields but turn off the writing of some of them to
 @cindex format, field
 @item format
 
-This allows you to specify format information of a particular field.  Right now only the Date fields support it when
-a default value is being converted or if you are using the @code{DATE_STRING} type.
+This allows you to specify format information of a particular field.  Right now this is only appplicable for the following
+types:
+
+@itemize @bullet
+@item @code{DATE_STRING} for specifying the format of the date string stored in the database  
+@item @code{STRING_BYTES} for specifying the @code{Charset} used to encode the string as an array of bytes
+@end itemize 
 
 @cindex unique constraint
 @cindex constraint, unique
@@ -687,6 +692,13 @@ Persisted as SQL type @code{VARCHAR}.
 @item String (DataType.LONG_STRING)
 
 Persisted as SQL type @code{LONGVARCHAR} which handles longer strings.  
+
+@cindex string byte array
+@item String (DataType.STRING_BYTES)
+
+A Java String persisted as an array of bytes (byte[]) with the SQL type @code{VARBINARY}.  By default the @code{Unicode}
+@code{Charset} is used to convert the string to bytes and back again.  You can use the @code{format} field in
+@code{DatabaseField} to specify a custom character-set to use instead for the field.
 
 @cindex boolean
 @anchor{datatype boolean}
@@ -3132,6 +3144,13 @@ A nice little application written by Kevin G. that provides a counter type appli
 
 An example of a service application that uses @value{package} written by Kevin G.  See the source code in SVN:
 @uref{http://ormlite.com/docs/android-notify}.  A tarball of the package is also here: @uref{http://ormlite.com/android/examples/}.
+
+@item HelloAndroidH2
+
+This is similar to the HelloAndroid example but it is using JDBC and H2 instead of the build-in Android database calls.  This is more a
+proof of concept rather than a true example.  The wiring for the @code{onCreate} and @code{onUpdate} is a hack.   H2 is certainly fatter
+and slower than the native SQLite.  Also, JDBC under Android is not completely sanctioned by Google and support for it may be removed in the
+future.  See the source code in SVN:  @uref{http://ormlite.com/docs/example-android-hello}.
 
 @end table
 
