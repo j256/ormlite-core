@@ -11,6 +11,7 @@ import static org.junit.Assert.assertTrue;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 
 import org.junit.Test;
@@ -1265,6 +1266,21 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(3, oneDao.queryForAll().size());
 	}
 
+	@Test
+	public void testUuidInsertQuery() throws Exception {
+		Dao<UuidGeneratedId, UUID> dao = createDao(UuidGeneratedId.class, true);
+		UuidGeneratedId uuid = new UuidGeneratedId();
+		String stuff = "fopewfjefjwgw";
+		uuid.stuff = stuff;
+		assertEquals(1, dao.create(uuid));
+		UuidGeneratedId uuid2 = dao.queryForId(uuid.id);
+		assertNotNull(uuid2);
+		assertEquals(uuid.id, uuid2.id);
+		assertEquals(stuff, uuid2.stuff);
+	}
+
+	/* ============================================================================================== */
+
 	protected static class ForeignNotNull {
 		@DatabaseField(generatedId = true)
 		public int id;
@@ -1291,6 +1307,15 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		@DatabaseField
 		public String stuff;
 		public Two() {
+		}
+	}
+
+	protected static class UuidGeneratedId {
+		@DatabaseField(generatedId = true)
+		public UUID id;
+		@DatabaseField
+		public String stuff;
+		public UuidGeneratedId() {
 		}
 	}
 }

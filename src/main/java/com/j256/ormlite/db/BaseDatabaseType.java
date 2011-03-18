@@ -60,6 +60,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		switch (fieldType.getDataType()) {
 
 			case STRING :
+			case UUID :
 				fieldWidth = fieldType.getWidth();
 				if (fieldWidth == 0) {
 					fieldWidth = getDefaultVarcharWidth();
@@ -149,6 +150,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 				appendEnumIntType(sb, fieldType);
 				break;
 
+			case UNKNOWN :
 			default :
 				// shouldn't be able to get here unless we have a missing case
 				throw new IllegalArgumentException("Unknown field type " + fieldType.getDataType());
@@ -158,9 +160,9 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		 * NOTE: the configure id methods must be in this order since isGeneratedIdSequence is also isGeneratedId and
 		 * isId. isGeneratedId is also isId.
 		 */
-		if (fieldType.isGeneratedIdSequence()) {
+		if (fieldType.isGeneratedIdSequence() && !fieldType.isSelfGeneratedId()) {
 			configureGeneratedIdSequence(sb, fieldType, statementsBefore, additionalArgs, queriesAfter);
-		} else if (fieldType.isGeneratedId()) {
+		} else if (fieldType.isGeneratedId() && !fieldType.isSelfGeneratedId()) {
 			configureGeneratedId(sb, fieldType, statementsBefore, additionalArgs, queriesAfter);
 		} else if (fieldType.isId()) {
 			configureId(sb, fieldType, statementsBefore, additionalArgs, queriesAfter);

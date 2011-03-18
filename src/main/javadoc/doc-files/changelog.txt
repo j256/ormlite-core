@@ -1,5 +1,6 @@
-4.16: 3/XX/2011 (svn rYYYY)
-	* CORE: Added the STRING_BYTES DataType for supporting storing Unicode strings as byte[] blobs in the database.
+4.16: 3/18/2011 (svn rYYYY)
+	* CORE: Added the UUID DataType for supporting the storing UUID fields.  Auto-generation of UUID ids also works.  Thanks to jc.
+	* CORE: Added the STRING_BYTES DataType for supporting the storing of Unicode strings as byte[] blobs in the database.
 	* CORE: Fixed problem with SQLite (JDBC and Android) was not handling nested transactions correctly.  Fixed bug #3208074.
 	* Android: Fixed problem with SQLite nested transactions correctly.  They are not supported under Android.
 	* Android: Added the STRING_BYTES DataType so you can store Unicode strings in SQLite appropriately.

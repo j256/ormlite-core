@@ -458,7 +458,7 @@ public class FieldType {
 	}
 
 	/**
-	 * Return whether this field is a number.
+	 * Call through to {@link DataType#isEscapedValue()} 
 	 */
 	public boolean isEscapedValue() {
 		return dataType.isEscapedValue();
@@ -484,21 +484,21 @@ public class FieldType {
 	}
 
 	/**
-	 * Return whether this field's default value should be escaped in SQL.
+	 * Call through to {@link DataType#isEscapedDefaultValue()} 
 	 */
 	public boolean isEscapedDefaultValue() {
 		return dataType.isEscapedDefaultValue();
 	}
 
 	/**
-	 * Return if this data type be compared in SQL statements.
+	 * Call through to {@link DataType#isComparable()} 
 	 */
 	public boolean isComparable() {
 		return dataType.isComparable();
 	}
 
 	/**
-	 * Return if this data type must use a SelectArg when doing query comparisons.
+	 * Call through to {@link DataType#isSelectArgRequired()} 
 	 */
 	public boolean isSelectArgRequired() {
 		return dataType.isSelectArgRequired();
@@ -551,6 +551,20 @@ public class FieldType {
 		} else {
 			return enumVal(val, enumStringMap.get(val));
 		}
+	}
+
+	/**
+	 * Call through to {@link DataType#isSelfGeneratedId()} 
+	 */
+	public boolean isSelfGeneratedId() {
+		return dataType.isSelfGeneratedId();
+	}
+	
+	/**
+	 * Call through to {@link DataType#generatedId()} 
+	 */
+	public Object generatedId() {
+		return dataType.generatedId();
 	}
 
 	/**

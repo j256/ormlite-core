@@ -34,7 +34,9 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 	@Override
 	public int insert(DatabaseConnection databaseConnection, T data) throws SQLException {
 		if (idField != null) {
-			if (idField.isGeneratedIdSequence()) {
+			if (idField.isSelfGeneratedId()) {
+				idField.assignField(data, idField.generatedId());
+			} else if (idField.isGeneratedIdSequence()) {
 				assignSequenceId(databaseConnection, data);
 				// fall down to do the update below
 			} else if (idField.isGeneratedId()) {
@@ -57,7 +59,7 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 		for (FieldType fieldType : tableInfo.getFieldTypes()) {
 			if (databaseType.isIdSequenceNeeded()) {
 				// we need to query for the next value from the sequence and the idField is inserted afterwards
-			} else if (fieldType.isGeneratedId()) {
+			} else if (fieldType.isGeneratedId() && !fieldType.isSelfGeneratedId()) {
 				// skip generated-id fields because they will be auto-inserted
 				continue;
 			}

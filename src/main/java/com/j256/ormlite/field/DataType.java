@@ -13,6 +13,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.UUID;
 
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
@@ -796,6 +797,51 @@ public enum DataType implements FieldConverter {
 	},
 
 	/**
+	 * Persists the {@link java.util.UUID} Java class.
+	 */
+	UUID(SqlType.STRING, new Class<?>[] { UUID.class }) {
+		@Override
+		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+			String uuidStr = results.getString(columnPos);
+			if (uuidStr == null) {
+				return null;
+			}
+			try {
+				return java.util.UUID.fromString(uuidStr);
+			} catch (IllegalArgumentException e) {
+				throw SqlExceptionUtil.create("Problems with column " + columnPos + " parsing UUID-string '" + uuidStr
+						+ "'", e);
+			}
+		}
+		@Override
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+			try {
+				return java.util.UUID.fromString(defaultStr);
+			} catch (IllegalArgumentException e) {
+				throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing default UUID-string '"
+						+ defaultStr + "'", e);
+			}
+		}
+		@Override
+		public Object javaToSqlArg(FieldType fieldType, Object obj) {
+			UUID uuid = (UUID) obj;
+			return uuid.toString();
+		}
+		@Override
+		boolean isValidGeneratedType() {
+			return true;
+		}
+		@Override
+		public boolean isSelfGeneratedId() {
+			return true;
+		}
+		@Override
+		public Object generatedId() {
+			return java.util.UUID.randomUUID();
+		}
+	},
+
+	/**
 	 * Marker for fields that are unknown.
 	 */
 	UNKNOWN(SqlType.UNKNOWN, new Class<?>[0]) {
@@ -956,6 +1002,20 @@ public enum DataType implements FieldConverter {
 	 */
 	boolean isSelectArgRequired() {
 		return false;
+	}
+
+	/**
+	 * Return true if this type creates its own generated ids else false to have the database do it.
+	 */
+	public boolean isSelfGeneratedId() {
+		return false;
+	}
+
+	/**
+	 * Return a generated id if appropriate or null if none.
+	 */
+	public Object generatedId() {
+		return null;
 	}
 
 	private static Date parseDateString(DateStringFormatConfig formatConfig, String dateStr) throws ParseException {

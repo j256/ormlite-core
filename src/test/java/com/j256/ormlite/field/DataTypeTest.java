@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.junit.AfterClass;
 import org.junit.Test;
@@ -49,6 +50,7 @@ public class DataTypeTest extends BaseCoreTest {
 	private static final String DOUBLE_COLUMN = "doubleField";
 	private static final String SERIALIZABLE_COLUMN = "serializable";
 	private static final String ENUM_COLUMN = "ourEnum";
+	private static final String UUID_COLUMN = "uuid";
 	private static final FieldType[] noFieldTypes = new FieldType[0];
 
 	@AfterClass
@@ -868,6 +870,19 @@ public class DataTypeTest extends BaseCoreTest {
 	}
 
 	@Test
+	public void testUuid() throws Exception {
+		Class<LocalUuid> clazz = LocalUuid.class;
+		Dao<LocalUuid, Object> dao = createDao(clazz, true);
+		LocalUuid foo = new LocalUuid();
+		UUID val = UUID.randomUUID();
+		foo.uuid = val;
+		assertEquals(1, dao.create(foo));
+		String valStr = val.toString();
+		testType(clazz, val, val, valStr, valStr, DataType.UUID, UUID_COLUMN, true, true, true, false, false, false,
+				true, false);
+	}
+
+	@Test
 	public void testUnknownGetResult() throws Exception {
 		DataType dataType = DataType.UNKNOWN;
 		assertNull(dataType.resultToJava(null, null, 0));
@@ -901,7 +916,7 @@ public class DataTypeTest extends BaseCoreTest {
 		assertEquals(DataType.UNKNOWN, DataType.lookupClass(byte[].class));
 	}
 
-	private void testType(Class<?> clazz, Object javaVal, Object sqlVal, Object sqlArg, String defaultValStr,
+	private void testType(Class<?> clazz, Object javaVal, Object defaultSqlVal, Object sqlArg, String defaultValStr,
 			DataType dataType, String columnName, boolean isValidGeneratedType, boolean isAppropriateId,
 			boolean isEscapedValue, boolean isPrimitive, boolean isSelectArgRequired, boolean isStreamType,
 			boolean isComparable, boolean isConvertableId) throws Exception {
@@ -929,7 +944,7 @@ public class DataTypeTest extends BaseCoreTest {
 				// expected
 			}
 		} else if (defaultValStr != null) {
-			assertEquals(sqlVal, dataType.parseDefaultString(fieldType, defaultValStr));
+			assertEquals(defaultSqlVal, dataType.parseDefaultString(fieldType, defaultValStr));
 		}
 		if (sqlArg == null) {
 			// noop
@@ -1108,6 +1123,12 @@ public class DataTypeTest extends BaseCoreTest {
 	protected static class LocalEnumInt2 {
 		@DatabaseField(columnName = ENUM_COLUMN, dataType = DataType.ENUM_INTEGER)
 		OurEnum2 ourEnum;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalUuid {
+		@DatabaseField(columnName = UUID_COLUMN)
+		UUID uuid;
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
