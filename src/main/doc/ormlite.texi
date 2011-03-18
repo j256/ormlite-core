@@ -6,7 +6,7 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.15
+@set ormlite_version 4.16
 @set ormlite_year 2011
 @set ormlite_date March @value{ormlite_year}
 @set package ORMLite
@@ -838,6 +838,14 @@ old data will be un-persisted incorrectly.
 @cindex unknownEnumName
 You can also also specify an @emph{unknownEnumName} name with the @code{@@DatabaseField} annotation which will be
 used if an unknown value is found in the database. @xref{unknownEnumName}. 
+
+@cindex UUID type
+@item UUID (DataType.UUID)
+
+The @code{java.util.UUID} class persisted as a @code{VARCHAR} type.  It saves it as the @code{uuid.toString()} and used the
+@code{UUID.fromString(String)} method to convert it back again.  You can also mark a UUID field as being generated-id in
+which case whenever it is inserted, @code{java.util.UUID.randomUUID()} is called and set on the field.
+@xref{GeneratedId Column}.
 
 @end table
 
