@@ -49,6 +49,8 @@
 	- need to be careful of recursion
 	- maybe you could see if the id was set or something?
 
+- support for CREATE IF NOT EXISTS
+
 -----------------------------------------------------------------------------------------------------------------------------------
 
 - anyway to simplify the query builder call structure:
