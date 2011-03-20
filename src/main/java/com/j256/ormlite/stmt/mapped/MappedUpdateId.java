@@ -17,7 +17,7 @@ import com.j256.ormlite.table.TableInfo;
  */
 public class MappedUpdateId<T, ID> extends BaseMappedStatement<T, ID> {
 
-	private MappedUpdateId(TableInfo<T> tableInfo, String statement, List<FieldType> argFieldTypeList) {
+	private MappedUpdateId(TableInfo<T, ID> tableInfo, String statement, List<FieldType> argFieldTypeList) {
 		super(tableInfo, statement, argFieldTypeList);
 	}
 
@@ -44,7 +44,7 @@ public class MappedUpdateId<T, ID> extends BaseMappedStatement<T, ID> {
 		}
 	}
 
-	public static <T, ID> MappedUpdateId<T, ID> build(DatabaseType databaseType, TableInfo<T> tableInfo)
+	public static <T, ID> MappedUpdateId<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo)
 			throws SQLException {
 		FieldType idField = tableInfo.getIdField();
 		if (idField == null) {

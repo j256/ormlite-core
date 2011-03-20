@@ -125,7 +125,7 @@ import com.j256.ormlite.table.TableInfo;
  */
 public class Where<T, ID> {
 
-	private final TableInfo<T> tableInfo;
+	private final TableInfo<T, ID> tableInfo;
 	private final StatementBuilder<T, ID> statementBuilder;
 	private final FieldType idFieldType;
 	private final String idColumnName;
@@ -133,7 +133,7 @@ public class Where<T, ID> {
 	private SimpleStack<Clause> clauseList = new SimpleStack<Clause>();
 	private NeedsFutureClause needsFuture = null;
 
-	Where(TableInfo<T> tableInfo, StatementBuilder<T, ID> statementBuilder) {
+	Where(TableInfo<T, ID> tableInfo, StatementBuilder<T, ID> statementBuilder) {
 		// limit the constructor scope
 		this.tableInfo = tableInfo;
 		this.statementBuilder = statementBuilder;

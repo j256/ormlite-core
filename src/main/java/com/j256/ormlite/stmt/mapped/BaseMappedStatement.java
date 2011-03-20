@@ -20,12 +20,12 @@ public abstract class BaseMappedStatement<T, ID> {
 
 	protected static Logger logger = LoggerFactory.getLogger(BaseMappedStatement.class);
 
-	protected final TableInfo<T> tableInfo;
+	protected final TableInfo<T, ID> tableInfo;
 	protected final FieldType idField;
 	protected final String statement;
 	protected final FieldType[] argFieldTypes;
 
-	protected BaseMappedStatement(TableInfo<T> tableInfo, String statement, List<FieldType> argFieldTypeList) {
+	protected BaseMappedStatement(TableInfo<T, ID> tableInfo, String statement, List<FieldType> argFieldTypeList) {
 		this.tableInfo = tableInfo;
 		this.idField = tableInfo.getIdField();
 		this.statement = statement;

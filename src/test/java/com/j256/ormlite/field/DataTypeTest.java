@@ -916,6 +916,30 @@ public class DataTypeTest extends BaseCoreTest {
 		assertEquals(DataType.UNKNOWN, DataType.lookupClass(byte[].class));
 	}
 
+	@Test(expected = SQLException.class)
+	public void testUnknownEnumValue() throws Exception {
+		Class<LocalEnumString> clazz = LocalEnumString.class;
+		Dao<LocalEnumString, Object> dao = createDao(clazz, true);
+		LocalEnumString localEnumString = new LocalEnumString();
+		localEnumString.ourEnum = OurEnum.FIRST;
+		assertEquals(1, dao.create(localEnumString));
+		assertEquals(1, dao.updateRaw("UPDATE Foo set ourEnum = 'THIRD'"));
+		dao.queryForAll();
+	}
+
+	@Test
+	public void testUnknownValueAnnotation() throws Exception {
+		Class<LocalUnknownEnum> clazz = LocalUnknownEnum.class;
+		Dao<LocalUnknownEnum, Object> dao = createDao(clazz, true);
+		LocalUnknownEnum localUnknownEnum = new LocalUnknownEnum();
+		localUnknownEnum.ourEnum = OurEnum.SECOND;
+		assertEquals(1, dao.create(localUnknownEnum));
+		assertEquals(1, dao.updateRaw("UPDATE Foo set ourEnum = 'THIRD'"));
+		List<LocalUnknownEnum> unknowns = dao.queryForAll();
+		assertEquals(1, unknowns.size());
+		assertEquals(OurEnum.FIRST, unknowns.get(0).ourEnum);
+	}
+
 	private void testType(Class<?> clazz, Object javaVal, Object defaultSqlVal, Object sqlArg, String defaultValStr,
 			DataType dataType, String columnName, boolean isValidGeneratedType, boolean isAppropriateId,
 			boolean isEscapedValue, boolean isPrimitive, boolean isSelectArgRequired, boolean isStreamType,
@@ -1110,6 +1134,12 @@ public class DataTypeTest extends BaseCoreTest {
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalEnumString {
 		@DatabaseField(columnName = ENUM_COLUMN)
+		OurEnum ourEnum;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalUnknownEnum {
+		@DatabaseField(columnName = ENUM_COLUMN, unknownEnumName = "FIRST")
 		OurEnum ourEnum;
 	}
 

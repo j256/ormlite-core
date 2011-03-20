@@ -27,7 +27,7 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 	private final Integer limit;
 	private final StatementType type;
 
-	public MappedPreparedStmt(TableInfo<T> tableInfo, String statement, List<FieldType> argFieldTypeList,
+	public MappedPreparedStmt(TableInfo<T, ID> tableInfo, String statement, List<FieldType> argFieldTypeList,
 			List<FieldType> resultFieldTypeList, List<SelectArg> selectArgList, Integer limit, StatementType type) {
 		super(tableInfo, statement, argFieldTypeList, resultFieldTypeList);
 		this.selectArgs = selectArgList.toArray(new SelectArg[selectArgList.size()]);

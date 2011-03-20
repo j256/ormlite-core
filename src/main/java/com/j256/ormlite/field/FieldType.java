@@ -4,14 +4,15 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Map;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
-import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
+import com.j256.ormlite.misc.BaseDaoEnabled;
 import com.j256.ormlite.misc.SqlExceptionUtil;
+import com.j256.ormlite.stmt.mapped.MappedQueryForId;
 import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableInfo;
@@ -28,6 +29,7 @@ public class FieldType {
 	public static final String FOREIGN_ID_FIELD_SUFFIX = "_id";
 	public static final int MAX_FOREIGN_RECURSE_LEVEL = 10;
 
+	private final ConnectionSource connectionSource;
 	private final String tableName;
 	private final Field field;
 	private final String fieldName;
@@ -41,12 +43,10 @@ public class FieldType {
 	private final boolean isGeneratedId;
 	private final String generatedIdSequence;
 	private final FieldConverter fieldConverter;
-	private final TableInfo<?> foreignTableInfo;
-	private final Dao<Object, Object> foreignDao;
+	private final TableInfo<?, ?> foreignTableInfo;
+	private final MappedQueryForId<Object, Object> mappedQueryForId;
 	private final Method fieldGetMethod;
 	private final Method fieldSetMethod;
-	private final Map<String, Enum<?>> enumStringMap;
-	private final Map<Integer, Enum<?>> enumValueMap;
 	private final Enum<?> unknownEnumVal;
 	private final boolean throwIfNull;
 	private final String format;
@@ -62,6 +62,7 @@ public class FieldType {
 	 */
 	public FieldType(ConnectionSource connectionSource, String tableName, Field field, DatabaseFieldConfig fieldConfig,
 			int recurseLevel) throws SQLException {
+		this.connectionSource = connectionSource;
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		this.tableName = tableName;
 		this.field = field;
@@ -90,26 +91,33 @@ public class FieldType {
 				} else {
 					tableConfig.extractFieldTypes(connectionSource);
 				}
-				@SuppressWarnings({ "unchecked", "rawtypes" })
-				TableInfo<?> foreignInfo = new TableInfo(databaseType, tableConfig);
-				if (foreignInfo.getIdField() == null) {
+				if (BaseDaoEnabled.class.isAssignableFrom(clazz)) {
+					BaseDaoImpl<?, ?> dao = (BaseDaoImpl<?, ?>) BaseDaoImpl.createDao(connectionSource, tableConfig);
+					this.foreignTableInfo = dao.getTableInfo();
+				} else {
+					@SuppressWarnings({ "unchecked", "rawtypes" })
+					TableInfo<?, ?> foreignInfo = new TableInfo(databaseType, null, tableConfig);
+					this.foreignTableInfo = foreignInfo;
+				}
+				if (this.foreignTableInfo.getIdField() == null) {
 					throw new IllegalArgumentException("Foreign field " + clazz + " does not have id field");
 				}
-				this.foreignTableInfo = foreignInfo;
 				defaultFieldName = defaultFieldName + FOREIGN_ID_FIELD_SUFFIX;
 				// this field's data type is the foreign id's type
-				dataType = foreignInfo.getIdField().getDataType();
+				dataType = this.foreignTableInfo.getIdField().getDataType();
 				if (fieldConfig.isForeignAutoRefresh()) {
 					@SuppressWarnings("unchecked")
-					Dao<Object, Object> dao = (Dao<Object, Object>) BaseDaoImpl.createDao(connectionSource, clazz);
-					this.foreignDao = dao;
+					MappedQueryForId<Object, Object> castedMappedQueryForId =
+							(MappedQueryForId<Object, Object>) MappedQueryForId.build(databaseType,
+									this.foreignTableInfo);
+					this.mappedQueryForId = castedMappedQueryForId;
 				} else {
-					this.foreignDao = null;
+					this.mappedQueryForId = null;
 				}
 			} else {
 				// act like it's not foreign
 				this.foreignTableInfo = null;
-				this.foreignDao = null;
+				this.mappedQueryForId = null;
 			}
 		} else if (dataType == DataType.UNKNOWN) {
 			if (byte[].class.isAssignableFrom(clazz)) {
@@ -124,7 +132,7 @@ public class FieldType {
 			}
 		} else {
 			this.foreignTableInfo = null;
-			this.foreignDao = null;
+			this.mappedQueryForId = null;
 		}
 		if (fieldConfig.getColumnName() == null) {
 			this.dbColumnName = defaultFieldName;
@@ -192,23 +200,7 @@ public class FieldType {
 			this.fieldGetMethod = null;
 			this.fieldSetMethod = null;
 		}
-		if (dataType == DataType.ENUM_INTEGER || dataType == DataType.ENUM_STRING) {
-			this.enumStringMap = new HashMap<String, Enum<?>>();
-			this.enumValueMap = new HashMap<Integer, Enum<?>>();
-			Enum<?>[] constants = (Enum<?>[]) clazz.getEnumConstants();
-			if (constants == null) {
-				throw new SQLException("Field " + field.getName() + " improperly configured as type " + dataType);
-			}
-			for (Enum<?> enumVal : constants) {
-				this.enumStringMap.put(enumVal.name(), enumVal);
-				this.enumValueMap.put(enumVal.ordinal(), enumVal);
-			}
-			this.unknownEnumVal = fieldConfig.getUnknownEnumvalue();
-		} else {
-			this.enumStringMap = null;
-			this.enumValueMap = null;
-			this.unknownEnumVal = null;
-		}
+		this.unknownEnumVal = fieldConfig.getUnknownEnumvalue();
 		this.throwIfNull = fieldConfig.isThrowIfNull();
 		if (this.throwIfNull && !dataType.isPrimitive()) {
 			throw new SQLException("Field " + field.getName() + " must be a primitive if set with throwIfNull");
@@ -313,7 +305,7 @@ public class FieldType {
 	 * Return the {@link TableInfo} associated with the foreign object if the {@link DatabaseField#foreign()} annotation
 	 * was set to true or null if none.
 	 */
-	TableInfo<?> getForeignTableInfo() {
+	TableInfo<?, ?> getForeignTableInfo() {
 		return foreignTableInfo;
 	}
 
@@ -333,11 +325,19 @@ public class FieldType {
 			if (foreignId != null && foreignId.equals(val)) {
 				return;
 			}
-			Object foreignObject = foreignTableInfo.createObject();
-			// assign the val to its id field
-			foreignTableInfo.getIdField().assignField(foreignObject, val);
-			if (foreignDao != null) {
-				foreignDao.refresh(foreignObject);
+			Object foreignObject;
+			if (mappedQueryForId == null) {
+				// create a shell and assign its id field
+				foreignObject = foreignTableInfo.createObject();
+				foreignTableInfo.getIdField().assignField(foreignObject, val);
+			} else {
+				// do we need to auto-refresh the field?
+				DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection();
+				try {
+					foreignObject = mappedQueryForId.execute(databaseConnection, val);
+				} finally {
+					connectionSource.releaseConnection(databaseConnection);
+				}
 			}
 			// the value we are to assign to our field is now the foreign object itself
 			val = foreignObject;
@@ -369,7 +369,6 @@ public class FieldType {
 			}
 		}
 	}
-
 	/**
 	 * Assign an ID value to this field.
 	 */
@@ -458,10 +457,14 @@ public class FieldType {
 	}
 
 	/**
-	 * Call through to {@link DataType#isEscapedValue()} 
+	 * Call through to {@link DataType#isEscapedValue()}
 	 */
 	public boolean isEscapedValue() {
 		return dataType.isEscapedValue();
+	}
+
+	Enum<?> getUnknownEnumVal() {
+		return unknownEnumVal;
 	}
 
 	/**
@@ -484,21 +487,21 @@ public class FieldType {
 	}
 
 	/**
-	 * Call through to {@link DataType#isEscapedDefaultValue()} 
+	 * Call through to {@link DataType#isEscapedDefaultValue()}
 	 */
 	public boolean isEscapedDefaultValue() {
 		return dataType.isEscapedDefaultValue();
 	}
 
 	/**
-	 * Call through to {@link DataType#isComparable()} 
+	 * Call through to {@link DataType#isComparable()}
 	 */
 	public boolean isComparable() {
 		return dataType.isComparable();
 	}
 
 	/**
-	 * Call through to {@link DataType#isSelectArgRequired()} 
+	 * Call through to {@link DataType#isSelectArgRequired()}
 	 */
 	public boolean isSelectArgRequired() {
 		return dataType.isSelectArgRequired();
@@ -528,40 +531,14 @@ public class FieldType {
 	}
 
 	/**
-	 * Get the Enum associated with the integer value.
-	 */
-	public Enum<?> enumFromInt(int val) throws SQLException {
-		// just do this once
-		Integer integerVal = new Integer(val);
-		if (enumValueMap == null) {
-			return enumVal(integerVal, null);
-		} else {
-			return enumVal(integerVal, enumValueMap.get(integerVal));
-		}
-	}
-
-	/**
-	 * Get the Enum associated with the String value.
-	 */
-	public Enum<?> enumFromString(String val) throws SQLException {
-		if (val == null) {
-			return null;
-		} else if (enumStringMap == null) {
-			return enumVal(val, null);
-		} else {
-			return enumVal(val, enumStringMap.get(val));
-		}
-	}
-
-	/**
-	 * Call through to {@link DataType#isSelfGeneratedId()} 
+	 * Call through to {@link DataType#isSelfGeneratedId()}
 	 */
 	public boolean isSelfGeneratedId() {
 		return dataType.isSelfGeneratedId();
 	}
-	
+
 	/**
-	 * Call through to {@link DataType#generatedId()} 
+	 * Call through to {@link DataType#generatedId()}
 	 */
 	public Object generatedId() {
 		return dataType.generatedId();
@@ -602,15 +579,5 @@ public class FieldType {
 	public String toString() {
 		return getClass().getSimpleName() + ":name=" + field.getName() + ",class="
 				+ field.getDeclaringClass().getSimpleName();
-	}
-
-	private Enum<?> enumVal(Object val, Enum<?> enumVal) throws SQLException {
-		if (enumVal != null) {
-			return enumVal;
-		} else if (unknownEnumVal == null) {
-			throw new SQLException("Cannot get enum value of '" + val + "' for field " + field);
-		} else {
-			return unknownEnumVal;
-		}
 	}
 }

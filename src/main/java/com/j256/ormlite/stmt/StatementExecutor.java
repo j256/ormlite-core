@@ -49,7 +49,7 @@ public class StatementExecutor<T, ID> {
 	private static Logger logger = LoggerFactory.getLogger(StatementExecutor.class);
 
 	private final DatabaseType databaseType;
-	private final TableInfo<T> tableInfo;
+	private final TableInfo<T, ID> tableInfo;
 	private MappedQueryForId<T, ID> mappedQueryForId;
 	private PreparedQuery<T> preparedQueryForAll;
 	private MappedCreate<T, ID> mappedInsert;
@@ -63,7 +63,7 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Provides statements for various SQL operations.
 	 */
-	public StatementExecutor(DatabaseType databaseType, TableInfo<T> tableInfo) throws SQLException {
+	public StatementExecutor(DatabaseType databaseType, TableInfo<T, ID> tableInfo) throws SQLException {
 		this.databaseType = databaseType;
 		this.tableInfo = tableInfo;
 	}

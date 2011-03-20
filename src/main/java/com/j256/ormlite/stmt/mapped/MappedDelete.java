@@ -15,11 +15,11 @@ import com.j256.ormlite.table.TableInfo;
  */
 public class MappedDelete<T, ID> extends BaseMappedStatement<T, ID> {
 
-	private MappedDelete(TableInfo<T> tableInfo, String statement, List<FieldType> argFieldTypeList) {
+	private MappedDelete(TableInfo<T, ID> tableInfo, String statement, List<FieldType> argFieldTypeList) {
 		super(tableInfo, statement, argFieldTypeList);
 	}
 
-	public static <T, ID> MappedDelete<T, ID> build(DatabaseType databaseType, TableInfo<T> tableInfo)
+	public static <T, ID> MappedDelete<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo)
 			throws SQLException {
 		FieldType idField = tableInfo.getIdField();
 		if (idField == null) {

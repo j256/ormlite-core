@@ -27,7 +27,7 @@ public class MappedUpdateIdTest {
 
 	@Test(expected = SQLException.class)
 	public void testUpdateIdNoId() throws Exception {
-		MappedUpdateId.build(databaseType, new TableInfo<NoId>(connectionSource, NoId.class));
+		MappedUpdateId.build(databaseType, new TableInfo<NoId, Void>(connectionSource, null, NoId.class));
 	}
 
 	protected static class NoId {

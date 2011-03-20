@@ -25,7 +25,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testToString() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		assertTrue(where.toString().contains("empty where clause"));
 		String value = "bar";
 		FieldType numberFieldType =
@@ -37,7 +37,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testAlreadyNeedsClause() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		where.eq(Foo.VAL_COLUMN_NAME, "bar");
 		where.and();
 		where.and();
@@ -45,13 +45,13 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testNoClauses() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		where.appendSql(databaseType, new StringBuilder(), new ArrayList<SelectArg>());
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testMissingAndOr() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		int val = 1;
 		where.eq(Foo.VAL_COLUMN_NAME, val);
 		where.eq(Foo.VAL_COLUMN_NAME, val);
@@ -60,7 +60,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testMissingClause() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		int val = 1;
 		where.and();
 		where.eq(Foo.VAL_COLUMN_NAME, val);
@@ -69,14 +69,14 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testComparisonUnknownField() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		int val = 1;
 		where.eq("unknown-field", val);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testComparisonFieldNameNotColumnName() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		assertNotNull(Foo.class.getDeclaredField(Foo.ID_COLUMN_NAME));
 		int val = 1;
 		where.eq("string", val);
@@ -84,7 +84,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testAndInline() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		int val = 1;
 		where.eq(Foo.VAL_COLUMN_NAME, val);
 		where.and();
@@ -104,7 +104,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testAndRemoveClauses() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		int val = 1;
 		where.and(where.eq(Foo.VAL_COLUMN_NAME, val), where.eq(Foo.VAL_COLUMN_NAME, val));
 		StringBuilder whereSb = new StringBuilder();
@@ -122,7 +122,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testBetween() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		int low = 1;
 		int high = 1;
 		where.between(Foo.VAL_COLUMN_NAME, low, high);
@@ -138,7 +138,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testEq() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		int val = 112;
 		where.eq(Foo.VAL_COLUMN_NAME, val);
 		testOperation(where, Foo.VAL_COLUMN_NAME, "=", val);
@@ -146,7 +146,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testGe() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		int val = 112;
 		where.ge(Foo.VAL_COLUMN_NAME, val);
 		testOperation(where, Foo.VAL_COLUMN_NAME, ">=", val);
@@ -154,7 +154,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testGt() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		int val = 112;
 		where.gt(Foo.VAL_COLUMN_NAME, val);
 		testOperation(where, Foo.VAL_COLUMN_NAME, ">", val);
@@ -162,7 +162,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testLt() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		int val = 112;
 		where.lt(Foo.VAL_COLUMN_NAME, val);
 		testOperation(where, Foo.VAL_COLUMN_NAME, "<", val);
@@ -170,7 +170,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testLe() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		int val = 112;
 		where.le(Foo.VAL_COLUMN_NAME, val);
 		testOperation(where, Foo.VAL_COLUMN_NAME, "<=", val);
@@ -178,7 +178,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testNe() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		int val = 112;
 		where.ne(Foo.VAL_COLUMN_NAME, val);
 		testOperation(where, Foo.VAL_COLUMN_NAME, "<>", val);
@@ -186,7 +186,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testIn() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		int val = 112;
 		where.in(Foo.VAL_COLUMN_NAME, val);
 		StringBuilder whereSb = new StringBuilder();
@@ -200,7 +200,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testInMany() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		int[] vals = new int[] { 112, 123, 61 };
 		// NOTE: we can't pass in vals here
 		where.in(Foo.VAL_COLUMN_NAME, vals[0], vals[1], vals[2]);
@@ -221,7 +221,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testInManyist() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		List<Integer> vals = new ArrayList<Integer>();
 		vals.add(112);
 		vals.add(123);
@@ -245,7 +245,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testIsNull() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		where.isNull(Foo.VAL_COLUMN_NAME);
 		StringBuilder whereSb = new StringBuilder();
 		where.appendSql(databaseType, whereSb, new ArrayList<SelectArg>());
@@ -257,7 +257,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testIsNotNull() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		where.isNotNull(Foo.VAL_COLUMN_NAME);
 		StringBuilder whereSb = new StringBuilder();
 		where.appendSql(databaseType, whereSb, new ArrayList<SelectArg>());
@@ -269,14 +269,14 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testInArrayWithinArray() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		// NOTE: we can't pass in vals here
 		where.in(Foo.VAL_COLUMN_NAME, new int[] { 112 });
 	}
 
 	@Test
 	public void testLike() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		int val = 112;
 		where.like(Foo.VAL_COLUMN_NAME, val);
 		StringBuilder whereSb = new StringBuilder();
@@ -290,7 +290,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testNotFuture() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		int val = 112;
 		where.not();
 		where.like(Foo.VAL_COLUMN_NAME, val);
@@ -306,7 +306,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testNotAbsorb() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		int val = 112;
 		where.like(Foo.VAL_COLUMN_NAME, val);
 		where.not(where);
@@ -322,7 +322,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testAndFuture() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		int val = 112;
 		where.eq(Foo.VAL_COLUMN_NAME, val);
 		where.and();
@@ -342,7 +342,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testOrFuture() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		int val = 112;
 		where.eq(Foo.VAL_COLUMN_NAME, val);
 		where.or();
@@ -362,7 +362,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testOrAbsorb() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		int val = 112;
 		where.or(where.eq(Foo.VAL_COLUMN_NAME, val), where.eq(Foo.VAL_COLUMN_NAME, val));
 		StringBuilder whereSb = new StringBuilder();
@@ -378,7 +378,7 @@ public class WhereTest extends BaseCoreTest {
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
-	private void testOperation(Where<Foo, Void> where, String columnName, String operation, Object value)
+	private void testOperation(Where<Foo, String> where, String columnName, String operation, Object value)
 			throws Exception {
 		StringBuilder whereSb = new StringBuilder();
 		where.appendSql(databaseType, whereSb, new ArrayList<SelectArg>());
@@ -392,7 +392,7 @@ public class WhereTest extends BaseCoreTest {
 	@Test
 	public void testIdEq() throws Exception {
 		Where<FooId, Integer> where =
-				new Where<FooId, Integer>(new TableInfo<FooId>(connectionSource, FooId.class), null);
+				new Where<FooId, Integer>(new TableInfo<FooId, Integer>(connectionSource, null, FooId.class), null);
 		int val = 112;
 		where.idEq(val);
 		StringBuilder whereSb = new StringBuilder();
@@ -406,7 +406,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test(expected = SQLException.class)
 	public void testIdEqNoId() throws Exception {
-		new Where<FooNoId, Integer>(new TableInfo<FooNoId>(connectionSource, FooNoId.class), null).idEq(100);
+		new Where<FooNoId, Integer>(new TableInfo<FooNoId, Integer>(connectionSource, null, FooNoId.class), null).idEq(100);
 	}
 
 	@Test
@@ -415,7 +415,7 @@ public class WhereTest extends BaseCoreTest {
 		int id = 112132;
 		foo.id = id;
 		Where<FooId, Integer> where =
-				new Where<FooId, Integer>(new TableInfo<FooId>(connectionSource, FooId.class), null);
+				new Where<FooId, Integer>(new TableInfo<FooId, Integer>(connectionSource, null, FooId.class), null);
 		BaseDaoImpl<FooId, Integer> fooDao = new BaseDaoImpl<FooId, Integer>(connectionSource, FooId.class) {
 		};
 		where.idEq(fooDao, foo);
@@ -430,14 +430,15 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test(expected = SQLException.class)
 	public void testIdEqObjectIdNoId() throws Exception {
-		new Where<FooNoId, Integer>(new TableInfo<FooNoId>(connectionSource, FooNoId.class), null).idEq(
+		new Where<FooNoId, Integer>(new TableInfo<FooNoId, Integer>(connectionSource, null, FooNoId.class), null).idEq(
 				new BaseDaoImpl<FooNoId, Integer>(connectionSource, FooNoId.class) {
 				}, new FooNoId());
 	}
 
 	@Test
 	public void testInSubQuery() throws Exception {
-		TableInfo<ForeignFoo> tableInfo = new TableInfo<ForeignFoo>(connectionSource, ForeignFoo.class);
+		TableInfo<ForeignFoo, Integer> tableInfo =
+				new TableInfo<ForeignFoo, Integer>(connectionSource, null, ForeignFoo.class);
 		Where<ForeignFoo, Integer> where = new Where<ForeignFoo, Integer>(tableInfo, null);
 		BaseDaoImpl<ForeignFoo, Integer> foreignDao =
 				new BaseDaoImpl<ForeignFoo, Integer>(connectionSource, ForeignFoo.class) {
@@ -460,7 +461,8 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testExistsSubQuery() throws Exception {
-		TableInfo<ForeignFoo> tableInfo = new TableInfo<ForeignFoo>(connectionSource, ForeignFoo.class);
+		TableInfo<ForeignFoo, Integer> tableInfo =
+				new TableInfo<ForeignFoo, Integer>(connectionSource, null, ForeignFoo.class);
 		Where<ForeignFoo, Integer> where = new Where<ForeignFoo, Integer>(tableInfo, null);
 		BaseDaoImpl<ForeignFoo, Integer> foreignDao =
 				new BaseDaoImpl<ForeignFoo, Integer>(connectionSource, ForeignFoo.class) {
@@ -479,7 +481,8 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testNotExistsSubQuery() throws Exception {
-		TableInfo<ForeignFoo> tableInfo = new TableInfo<ForeignFoo>(connectionSource, ForeignFoo.class);
+		TableInfo<ForeignFoo, Integer> tableInfo =
+				new TableInfo<ForeignFoo, Integer>(connectionSource, null, ForeignFoo.class);
 		Where<ForeignFoo, Integer> where = new Where<ForeignFoo, Integer>(tableInfo, null);
 		BaseDaoImpl<ForeignFoo, Integer> foreignDao =
 				new BaseDaoImpl<ForeignFoo, Integer>(connectionSource, ForeignFoo.class) {
@@ -498,8 +501,8 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testRaw() throws Exception {
-		TableInfo<Foo> tableInfo = new TableInfo<Foo>(connectionSource, Foo.class);
-		Where<Foo, Integer> where = new Where<Foo, Integer>(tableInfo, null);
+		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
+		Where<Foo, String> where = new Where<Foo, String>(tableInfo, null);
 		String raw = "VAL = 1";
 		int val = 17;
 		where.eq(Foo.VAL_COLUMN_NAME, val).and().raw(raw);
@@ -515,7 +518,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testClear() throws Exception {
-		Where<Foo, Void> where = new Where<Foo, Void>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		int val = 112;
 		where.eq(Foo.VAL_COLUMN_NAME, val);
 		StringBuilder whereSb = new StringBuilder();
@@ -537,8 +540,8 @@ public class WhereTest extends BaseCoreTest {
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
-	private TableInfo<Foo> createTableInfo() throws SQLException {
-		return new TableInfo<Foo>(connectionSource, Foo.class);
+	private TableInfo<Foo, String> createTableInfo() throws SQLException {
+		return new TableInfo<Foo, String>(connectionSource, null, Foo.class);
 	}
 
 	protected static class FooNoId {

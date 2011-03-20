@@ -21,7 +21,7 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 	// cache of column names to results position
 	private Map<String, Integer> columnPositions = null;
 
-	protected BaseMappedQuery(TableInfo<T> tableInfo, String statement, List<FieldType> argFieldTypeList,
+	protected BaseMappedQuery(TableInfo<T, ID> tableInfo, String statement, List<FieldType> argFieldTypeList,
 			List<FieldType> resultFieldTypeList) {
 		super(tableInfo, statement, argFieldTypeList);
 		this.resultsFieldTypes = resultFieldTypeList.toArray(new FieldType[resultFieldTypeList.size()]);

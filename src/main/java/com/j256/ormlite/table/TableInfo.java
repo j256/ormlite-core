@@ -5,8 +5,10 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.misc.BaseDaoEnabled;
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.ConnectionSource;
 
@@ -17,8 +19,9 @@ import com.j256.ormlite.support.ConnectionSource;
  *            The class that the code will be operating on.
  * @author graywatson
  */
-public class TableInfo<T> {
+public class TableInfo<T, ID> {
 
+	private final Dao<T, ID> dao;
 	private final Class<T> dataClass;
 	private final String tableName;
 	private final FieldType[] fieldTypes;
@@ -34,13 +37,8 @@ public class TableInfo<T> {
 	 * @param dataClass
 	 *            Class that we are holding information about.
 	 */
-	public TableInfo(ConnectionSource connectionSource, Class<T> dataClass) throws SQLException {
-		this(connectionSource.getDatabaseType(), DatabaseTableConfig.fromClass(connectionSource, dataClass));
-	}
-
-	public TableInfo(ConnectionSource connectionSource, DatabaseType databaseType, Class<T> dataClass)
-			throws SQLException {
-		this(databaseType, DatabaseTableConfig.fromClass(connectionSource, dataClass));
+	public TableInfo(ConnectionSource connectionSource, Dao<T, ID> dao, Class<T> dataClass) throws SQLException {
+		this(connectionSource.getDatabaseType(), dao, DatabaseTableConfig.fromClass(connectionSource, dataClass));
 	}
 
 	/**
@@ -51,7 +49,8 @@ public class TableInfo<T> {
 	 * @param tableConfig
 	 *            Configuration for our table.
 	 */
-	public TableInfo(DatabaseType databaseType, DatabaseTableConfig<T> tableConfig) throws SQLException {
+	public TableInfo(DatabaseType databaseType, Dao<T, ID> dao, DatabaseTableConfig<T> tableConfig) throws SQLException {
+		this.dao = dao;
 		this.dataClass = tableConfig.getDataClass();
 		this.tableName = tableConfig.getTableName();
 		this.fieldTypes = tableConfig.getFieldTypes(databaseType);
@@ -156,7 +155,13 @@ public class TableInfo<T> {
 				constructor.setAccessible(true);
 			}
 			// create our instance
-			return constructor.newInstance();
+			T instance = constructor.newInstance();
+			if (instance instanceof BaseDaoEnabled) {
+				@SuppressWarnings("unchecked")
+				BaseDaoEnabled<T, ID> daoEnabled = (BaseDaoEnabled<T, ID>) instance;
+				daoEnabled.setDao(dao);
+			}
+			return instance;
 		} catch (Exception e) {
 			throw SqlExceptionUtil.create("Could not create object for " + dataClass, e);
 		} finally {

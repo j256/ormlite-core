@@ -31,8 +31,10 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testGeneratedId() throws Exception {
-		TableInfo<GeneratedId> tableInfo = new TableInfo<GeneratedId>(connectionSource, GeneratedId.class);
-		StatementExecutor<GeneratedId, String> se = new StatementExecutor<GeneratedId, String>(databaseType, tableInfo);
+		TableInfo<GeneratedId, Integer> tableInfo =
+				new TableInfo<GeneratedId, Integer>(connectionSource, null, GeneratedId.class);
+		StatementExecutor<GeneratedId, Integer> se =
+				new StatementExecutor<GeneratedId, Integer>(databaseType, tableInfo);
 		DatabaseConnection databaseConnection = createMock(DatabaseConnection.class);
 		databaseConnection.insert(isA(String.class), isA(Object[].class), isA(FieldType[].class),
 				isA(GeneratedKeyHolder.class));
@@ -53,8 +55,10 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 	public void testGeneratedIdSequence() throws Exception {
 		DatabaseType databaseType = new NeedsSequenceDatabaseType();
 		connectionSource.setDatabaseType(databaseType);
-		TableInfo<GeneratedId> tableInfo = new TableInfo<GeneratedId>(connectionSource, GeneratedId.class);
-		StatementExecutor<GeneratedId, String> se = new StatementExecutor<GeneratedId, String>(databaseType, tableInfo);
+		TableInfo<GeneratedId, Integer> tableInfo =
+				new TableInfo<GeneratedId, Integer>(connectionSource, null, GeneratedId.class);
+		StatementExecutor<GeneratedId, Integer> se =
+				new StatementExecutor<GeneratedId, Integer>(databaseType, tableInfo);
 		DatabaseConnection databaseConnection = createMock(DatabaseConnection.class);
 		expect(databaseConnection.queryForLong(isA(String.class))).andReturn(1L);
 		expect(databaseConnection.insert(isA(String.class), isA(Object[].class), isA(FieldType[].class))).andReturn(1);
@@ -69,9 +73,9 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 	public void testGeneratedIdSequenceLong() throws Exception {
 		DatabaseType databaseType = new NeedsSequenceDatabaseType();
 		connectionSource.setDatabaseType(databaseType);
-		StatementExecutor<GeneratedIdLong, String> se =
-				new StatementExecutor<GeneratedIdLong, String>(databaseType, new TableInfo<GeneratedIdLong>(
-						connectionSource, GeneratedIdLong.class));
+		StatementExecutor<GeneratedIdLong, Long> se =
+				new StatementExecutor<GeneratedIdLong, Long>(databaseType, new TableInfo<GeneratedIdLong, Long>(
+						connectionSource, null, GeneratedIdLong.class));
 		DatabaseConnection databaseConnection = createMock(DatabaseConnection.class);
 		expect(databaseConnection.queryForLong(isA(String.class))).andReturn(1L);
 		expect(databaseConnection.insert(isA(String.class), isA(Object[].class), isA(FieldType[].class))).andReturn(1);
@@ -84,7 +88,7 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testNoCreateSequence() throws Exception {
-		MappedCreate.build(databaseType, new TableInfo<GeneratedId>(connectionSource, GeneratedId.class));
+		MappedCreate.build(databaseType, new TableInfo<GeneratedId, Integer>(connectionSource, null, GeneratedId.class));
 	}
 
 	@Test(expected = SQLException.class)
@@ -93,7 +97,7 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 		expect(databaseConnection.queryForLong(isA(String.class))).andReturn(0L);
 		replay(databaseConnection);
 		MappedCreate<GeneratedIdSequence, Integer> mappedCreate =
-				MappedCreate.build(databaseType, new TableInfo<GeneratedIdSequence>(connectionSource,
+				MappedCreate.build(databaseType, new TableInfo<GeneratedIdSequence, Integer>(connectionSource, null,
 						GeneratedIdSequence.class));
 		mappedCreate.insert(databaseConnection, new GeneratedIdSequence());
 		verify(databaseConnection);

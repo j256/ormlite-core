@@ -23,27 +23,27 @@ public class TableInfoTest extends BaseCoreTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testTableInfo() throws SQLException {
-		new TableInfo<NoFieldAnnotations>(connectionSource, NoFieldAnnotations.class);
+		new TableInfo<NoFieldAnnotations, Void>(connectionSource, null, NoFieldAnnotations.class);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testNoNoArgConstructor() throws SQLException {
-		new TableInfo<NoNoArgConstructor>(connectionSource, NoNoArgConstructor.class);
+		new TableInfo<NoNoArgConstructor, Void>(connectionSource, null, NoNoArgConstructor.class);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testObjectNoFields() throws SQLException {
-		new TableInfo<NoFields>(connectionSource, NoFields.class);
+		new TableInfo<NoFields, Void>(connectionSource, null, NoFields.class);
 	}
 
 	@Test(expected = SQLException.class)
 	public void testObjectDoubleId() throws SQLException {
-		new TableInfo<DoubleId>(connectionSource, DoubleId.class);
+		new TableInfo<DoubleId, String>(connectionSource, null, DoubleId.class);
 	}
 
 	@Test
 	public void testBasic() throws SQLException {
-		TableInfo<Foo> tableInfo = new TableInfo<Foo>(connectionSource, Foo.class);
+		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
 		assertEquals(Foo.class, tableInfo.getDataClass());
 		assertEquals(TABLE_NAME, tableInfo.getTableName());
 		assertEquals(COLUMN_NAME, tableInfo.getIdField().getDbColumnName());
@@ -58,14 +58,14 @@ public class TableInfoTest extends BaseCoreTest {
 		Foo foo = new Foo();
 		foo.id = id;
 		assertEquals(id, foo.id);
-		TableInfo<Foo> tableInfo = new TableInfo<Foo>(connectionSource, Foo.class);
+		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
 		assertTrue(tableInfo.objectToString(foo).contains(id));
 	}
 
 	@Test
 	public void testNoTableNameInAnnotation() throws Exception {
-		TableInfo<NoTableNameAnnotation> tableInfo =
-				new TableInfo<NoTableNameAnnotation>(connectionSource, NoTableNameAnnotation.class);
+		TableInfo<NoTableNameAnnotation, Void> tableInfo =
+				new TableInfo<NoTableNameAnnotation, Void>(connectionSource, null, NoTableNameAnnotation.class);
 		assertEquals(NoTableNameAnnotation.class.getSimpleName().toLowerCase(), tableInfo.getTableName());
 	}
 
@@ -75,24 +75,24 @@ public class TableInfoTest extends BaseCoreTest {
 				new DatabaseTableConfig<NoTableNameAnnotation>(NoTableNameAnnotation.class,
 						new ArrayList<DatabaseFieldConfig>());
 		tableConfig.extractFieldTypes(connectionSource);
-		new TableInfo<NoTableNameAnnotation>(databaseType, tableConfig);
+		new TableInfo<NoTableNameAnnotation, Void>(databaseType, null, tableConfig);
 	}
 
 	@Test(expected = SQLException.class)
 	public void testJustGeneratedId() throws Exception {
-		new TableInfo<JustGeneratedId>(connectionSource, JustGeneratedId.class);
+		new TableInfo<JustGeneratedId, Integer>(connectionSource, null, JustGeneratedId.class);
 	}
 
 	@Test
 	public void testConstruct() throws Exception {
-		TableInfo<Foo> tableInfo = new TableInfo<Foo>(connectionSource, Foo.class);
+		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
 		Foo foo = tableInfo.createObject();
 		assertNotNull(foo);
 	}
 
 	@Test
 	public void testUnknownForeignField() throws Exception {
-		TableInfo<Foreign> tableInfo = new TableInfo<Foreign>(connectionSource, Foreign.class);
+		TableInfo<Foreign, Void> tableInfo = new TableInfo<Foreign, Void>(connectionSource, null, Foreign.class);
 		try {
 			tableInfo.getFieldTypeByColumnName("foo");
 			fail("expected exception");

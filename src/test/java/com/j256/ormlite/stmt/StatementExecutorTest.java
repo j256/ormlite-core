@@ -25,7 +25,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testUpdateThrow() throws Exception {
-		TableInfo<Foo> tableInfo = new TableInfo<Foo>(connectionSource, Foo.class);
+		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
 		DatabaseConnection connection = createMock(DatabaseConnection.class);
 		@SuppressWarnings("unchecked")
 		PreparedUpdate<Foo> update = createMock(PreparedUpdate.class);
@@ -46,7 +46,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testDeleteThrow() throws Exception {
-		TableInfo<Foo> tableInfo = new TableInfo<Foo>(connectionSource, Foo.class);
+		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
 		DatabaseConnection connection = createMock(DatabaseConnection.class);
 		@SuppressWarnings("unchecked")
 		PreparedDelete<Foo> delete = createMock(PreparedDelete.class);
@@ -67,7 +67,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testCallBatchTasksNoAutoCommit() throws Exception {
-		TableInfo<Foo> tableInfo = new TableInfo<Foo>(connectionSource, Foo.class);
+		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
 		DatabaseConnection connection = createMock(DatabaseConnection.class);
 		expect(connection.isAutoCommitSupported()).andReturn(false);
 		StatementExecutor<Foo, String> statementExec = new StatementExecutor<Foo, String>(databaseType, tableInfo);
@@ -85,7 +85,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testCallBatchTasksAutoCommitFalse() throws Exception {
-		TableInfo<Foo> tableInfo = new TableInfo<Foo>(connectionSource, Foo.class);
+		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
 		DatabaseConnection connection = createMock(DatabaseConnection.class);
 		expect(connection.isAutoCommitSupported()).andReturn(true);
 		expect(connection.getAutoCommit()).andReturn(false);
@@ -104,7 +104,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testCallBatchTasksAutoCommitTrue() throws Exception {
-		TableInfo<Foo> tableInfo = new TableInfo<Foo>(connectionSource, Foo.class);
+		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
 		DatabaseConnection connection = createMock(DatabaseConnection.class);
 		expect(connection.isAutoCommitSupported()).andReturn(true);
 		expect(connection.getAutoCommit()).andReturn(true);
@@ -125,7 +125,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testCallBatchTasksAutoCommitTrueThrow() throws Exception {
-		TableInfo<Foo> tableInfo = new TableInfo<Foo>(connectionSource, Foo.class);
+		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
 		DatabaseConnection connection = createMock(DatabaseConnection.class);
 		expect(connection.isAutoCommitSupported()).andReturn(true);
 		expect(connection.getAutoCommit()).andReturn(true);

@@ -26,8 +26,9 @@ public class MappedDeleteCollectionTest {
 		ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		expect(connectionSource.getDatabaseType()).andReturn(databaseType).anyTimes();
 		replay(connectionSource);
-		MappedDeleteCollection.deleteObjects(databaseType, new TableInfo<NoId>(connectionSource, NoId.class),
-				databaseConnection, new ArrayList<NoId>());
+		MappedDeleteCollection.deleteObjects(databaseType,
+				new TableInfo<NoId, Void>(connectionSource, null, NoId.class), databaseConnection,
+				new ArrayList<NoId>());
 	}
 
 	protected static class NoId {

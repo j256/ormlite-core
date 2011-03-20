@@ -472,13 +472,6 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		};
 	}
 
-	@Test
-	public void testAnotherConstructor2() throws Exception {
-		DatabaseTableConfig<Foo> tableConfig = DatabaseTableConfig.fromClass(connectionSource, Foo.class);
-		new BaseDaoImpl<Foo, String>(tableConfig) {
-		};
-	}
-
 	@Test(expected = IllegalStateException.class)
 	public void testNoDatabaseType() throws Exception {
 		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(Foo.class) {
@@ -1219,6 +1212,53 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertNull(foreign2.foo);
 	}
 
+	@Test
+	public void testForeign() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
+		Dao<Foreign, Integer> foreignDao = createDao(Foreign.class, true);
+
+		Foo foo = new Foo();
+		foo.id = "jpoejfew";
+		int val = 6389;
+		foo.val = val;
+		assertEquals(1, fooDao.create(foo));
+
+		Foreign foreign = new Foreign();
+		foreign.foo = foo;
+		assertEquals(1, foreignDao.create(foreign));
+
+		Foreign foreign2 = foreignDao.queryForId(foreign.id);
+		assertNotNull(foreign2);
+		assertNotNull(foreign2.foo.id);
+		assertEquals(foo.id, foreign2.foo.id);
+		assertEquals(0, foreign2.foo.val);
+
+		assertEquals(1, fooDao.refresh(foreign2.foo));
+		assertEquals(val, foreign2.foo.val);
+	}
+
+	@Test
+	public void testForeignAutoRefresh() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
+		Dao<ForeignAutoRefresh, Integer> foreignDao = createDao(ForeignAutoRefresh.class, true);
+
+		Foo foo = new Foo();
+		foo.id = "jpoejfew";
+		int val = 6389;
+		foo.val = val;
+		assertEquals(1, fooDao.create(foo));
+
+		ForeignAutoRefresh foreign = new ForeignAutoRefresh();
+		foreign.foo = foo;
+		assertEquals(1, foreignDao.create(foreign));
+
+		ForeignAutoRefresh foreign2 = foreignDao.queryForId(foreign.id);
+		assertNotNull(foreign2);
+		assertNotNull(foreign2.foo.id);
+		assertEquals(foo.id, foreign2.foo.id);
+		assertEquals(val, foreign2.foo.val);
+	}
+
 	@Test(expected = SQLException.class)
 	public void testForeignCantBeNull() throws Exception {
 		Dao<ForeignNotNull, Integer> dao = createDao(ForeignNotNull.class, true);
@@ -1316,6 +1356,15 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		@DatabaseField
 		public String stuff;
 		public UuidGeneratedId() {
+		}
+	}
+
+	protected static class ForeignAutoRefresh {
+		@DatabaseField(generatedId = true)
+		public int id;
+		@DatabaseField(foreign = true, foreignAutoRefresh = true)
+		public Foo foo;
+		public ForeignAutoRefresh() {
 		}
 	}
 }

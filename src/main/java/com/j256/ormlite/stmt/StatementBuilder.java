@@ -25,7 +25,7 @@ public abstract class StatementBuilder<T, ID> {
 
 	private static Logger logger = LoggerFactory.getLogger(StatementBuilder.class);
 
-	protected final TableInfo<T> tableInfo;
+	protected final TableInfo<T, ID> tableInfo;
 	protected final DatabaseType databaseType;
 	private final StatementType type;
 
@@ -43,7 +43,7 @@ public abstract class StatementBuilder<T, ID> {
 	 * @param type
 	 *            Type of statement we are building.
 	 */
-	public StatementBuilder(DatabaseType databaseType, TableInfo<T> tableInfo, StatementType type) {
+	public StatementBuilder(DatabaseType databaseType, TableInfo<T, ID> tableInfo, StatementType type) {
 		this.databaseType = databaseType;
 		this.tableInfo = tableInfo;
 		this.type = type;

@@ -16,7 +16,7 @@ import com.j256.ormlite.table.TableInfo;
  */
 public class MappedRefresh<T, ID> extends MappedQueryForId<T, ID> {
 
-	private MappedRefresh(TableInfo<T> tableInfo, String statement, List<FieldType> argFieldTypeList,
+	private MappedRefresh(TableInfo<T, ID> tableInfo, String statement, List<FieldType> argFieldTypeList,
 			List<FieldType> resultFieldTypeList) {
 		super(tableInfo, statement, argFieldTypeList, resultFieldTypeList, "refresh");
 	}
@@ -43,7 +43,7 @@ public class MappedRefresh<T, ID> extends MappedQueryForId<T, ID> {
 		}
 	}
 
-	public static <T, ID> MappedRefresh<T, ID> build(DatabaseType databaseType, TableInfo<T> tableInfo)
+	public static <T, ID> MappedRefresh<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo)
 			throws SQLException {
 		List<FieldType> argFieldTypeList = new ArrayList<FieldType>();
 		List<FieldType> resultFieldTypeList = new ArrayList<FieldType>();

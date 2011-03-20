@@ -21,7 +21,7 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 	private final String queryNextSequenceStmt;
 	private String dataClassName;
 
-	private MappedCreate(TableInfo<T> tableInfo, String statement, List<FieldType> argFieldTypeList,
+	private MappedCreate(TableInfo<T, ID> tableInfo, String statement, List<FieldType> argFieldTypeList,
 			String queryNextSequenceStmt) {
 		super(tableInfo, statement, argFieldTypeList);
 		this.dataClassName = tableInfo.getDataClass().getSimpleName();
@@ -49,7 +49,7 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 		return super.insert(databaseConnection, data);
 	}
 
-	public static <T, ID> MappedCreate<T, ID> build(DatabaseType databaseType, TableInfo<T> tableInfo) {
+	public static <T, ID> MappedCreate<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo) {
 		StringBuilder sb = new StringBuilder();
 		StringBuilder questionSb = new StringBuilder();
 		List<FieldType> argFieldTypeList = new ArrayList<FieldType>();

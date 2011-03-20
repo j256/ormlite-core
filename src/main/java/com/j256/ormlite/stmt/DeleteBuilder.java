@@ -20,7 +20,7 @@ import com.j256.ormlite.table.TableInfo;
  */
 public class DeleteBuilder<T, ID> extends StatementBuilder<T, ID> {
 
-	public DeleteBuilder(DatabaseType databaseType, TableInfo<T> tableInfo) {
+	public DeleteBuilder(DatabaseType databaseType, TableInfo<T, ID> tableInfo) {
 		super(databaseType, tableInfo, StatementType.DELETE);
 	}
 

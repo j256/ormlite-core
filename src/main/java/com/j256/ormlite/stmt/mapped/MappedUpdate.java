@@ -15,11 +15,11 @@ import com.j256.ormlite.table.TableInfo;
  */
 public class MappedUpdate<T, ID> extends BaseMappedStatement<T, ID> {
 
-	private MappedUpdate(TableInfo<T> tableInfo, String statement, List<FieldType> argFieldTypeList) {
+	private MappedUpdate(TableInfo<T, ID> tableInfo, String statement, List<FieldType> argFieldTypeList) {
 		super(tableInfo, statement, argFieldTypeList);
 	}
 
-	public static <T, ID> MappedUpdate<T, ID> build(DatabaseType databaseType, TableInfo<T> tableInfo)
+	public static <T, ID> MappedUpdate<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo)
 			throws SQLException {
 		FieldType idField = tableInfo.getIdField();
 		if (idField == null) {

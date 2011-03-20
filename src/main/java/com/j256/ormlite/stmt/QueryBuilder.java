@@ -35,7 +35,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	private List<String> groupByList = null;
 	private boolean isInnerQuery = false;
 
-	public QueryBuilder(DatabaseType databaseType, TableInfo<T> tableInfo) {
+	public QueryBuilder(DatabaseType databaseType, TableInfo<T, ID> tableInfo) {
 		super(databaseType, tableInfo, StatementType.SELECT);
 		this.idField = tableInfo.getIdField();
 	}
@@ -322,7 +322,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 */
 	public static class InternalQueryBuilder<T, ID> extends QueryBuilder<T, ID> {
 
-		public InternalQueryBuilder(DatabaseType databaseType, TableInfo<T> tableInfo) {
+		public InternalQueryBuilder(DatabaseType databaseType, TableInfo<T, ID> tableInfo) {
 			super(databaseType, tableInfo);
 		}
 

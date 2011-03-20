@@ -29,7 +29,8 @@ public class MappedUpdateTest {
 	@Test(expected = SQLException.class)
 	public void testUpdateNoId() throws Exception {
 		StatementExecutor<NoId, String> se =
-				new StatementExecutor<NoId, String>(databaseType, new TableInfo<NoId>(connectionSource, NoId.class));
+				new StatementExecutor<NoId, String>(databaseType, new TableInfo<NoId, String>(connectionSource, null,
+						NoId.class));
 		NoId noId = new NoId();
 		noId.id = "1";
 		se.update(null, noId);
@@ -37,9 +38,9 @@ public class MappedUpdateTest {
 
 	@Test(expected = SQLException.class)
 	public void testUpdateJustId() throws Exception {
-		StatementExecutor<JustId, String> se =
-				new StatementExecutor<JustId, String>(databaseType, new TableInfo<JustId>(connectionSource,
-						JustId.class));
+		StatementExecutor<JustId, Integer> se =
+				new StatementExecutor<JustId, Integer>(databaseType, new TableInfo<JustId, Integer>(connectionSource,
+						null, JustId.class));
 		JustId justId = new JustId();
 		justId.id = 1;
 		se.update(null, justId);
@@ -47,12 +48,12 @@ public class MappedUpdateTest {
 
 	@Test(expected = SQLException.class)
 	public void testNoIdBuildUpdater() throws Exception {
-		MappedUpdate.build(databaseType, new TableInfo<NoId>(connectionSource, NoId.class));
+		MappedUpdate.build(databaseType, new TableInfo<NoId, Void>(connectionSource, null, NoId.class));
 	}
 
 	@Test(expected = SQLException.class)
 	public void testJustIdBuildUpdater() throws Exception {
-		MappedUpdate.build(databaseType, new TableInfo<NoId>(connectionSource, NoId.class));
+		MappedUpdate.build(databaseType, new TableInfo<NoId, Void>(connectionSource, null, NoId.class));
 	}
 
 	protected static class NoId {

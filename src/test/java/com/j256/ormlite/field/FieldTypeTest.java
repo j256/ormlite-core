@@ -199,7 +199,7 @@ public class FieldTypeTest extends BaseCoreTest {
 		assertEquals(bazField.getName() + FieldType.FOREIGN_ID_FIELD_SUFFIX, fieldType.getDbColumnName());
 		// this is the type of the foreign object's id
 		assertEquals(DataType.INTEGER, fieldType.getDataType());
-		TableInfo<?> foreignTableInfo = fieldType.getForeignTableInfo();
+		TableInfo<?, ?> foreignTableInfo = fieldType.getForeignTableInfo();
 		assertNotNull(foreignTableInfo);
 		assertEquals(ForeignForeign.class, foreignTableInfo.getDataClass());
 	}
@@ -425,43 +425,6 @@ public class FieldTypeTest extends BaseCoreTest {
 	}
 
 	@Test(expected = SQLException.class)
-	public void testUnknownEnumValue() throws Exception {
-		Field[] fields = EnumVal.class.getDeclaredFields();
-		assertTrue(fields.length >= 1);
-		Field field = fields[0];
-		FieldType fieldType = FieldType.createFieldType(connectionSource, EnumVal.class.getSimpleName(), field, 0);
-		fieldType.enumFromInt(100);
-	}
-
-	@Test
-	public void testKnownEnumValue() throws Exception {
-		Field[] fields = EnumVal.class.getDeclaredFields();
-		assertTrue(fields.length >= 1);
-		Field field = fields[0];
-		FieldType fieldType = FieldType.createFieldType(connectionSource, EnumVal.class.getSimpleName(), field, 0);
-		assertEquals(OurEnum.ONE, fieldType.enumFromInt(OurEnum.ONE.ordinal()));
-	}
-
-	@Test
-	public void testKnownEnumValueString() throws Exception {
-		Field[] fields = EnumVal.class.getDeclaredFields();
-		assertTrue(fields.length >= 1);
-		Field field = fields[0];
-		FieldType fieldType = FieldType.createFieldType(connectionSource, EnumVal.class.getSimpleName(), field, 0);
-		assertEquals(OurEnum.ONE, fieldType.enumFromString(OurEnum.ONE.toString()));
-	}
-
-	@Test
-	public void testUnknownValueAnnotation() throws Exception {
-		Field[] fields = UnknownEnumVal.class.getDeclaredFields();
-		assertTrue(fields.length >= 1);
-		Field field = fields[0];
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, UnknownEnumVal.class.getSimpleName(), field, 0);
-		assertEquals(AnotherEnum.A, fieldType.enumFromInt(100));
-	}
-
-	@Test(expected = SQLException.class)
 	public void testNullPrimitiveThrow() throws Exception {
 		Field field = ThrowIfNullNonPrimitive.class.getDeclaredField("primitive");
 		FieldType fieldType =
@@ -552,13 +515,14 @@ public class FieldTypeTest extends BaseCoreTest {
 		expect(connectionSource.getReadOnlyConnection()).andReturn(connection);
 		ForeignForeign foreignForeign = new ForeignForeign();
 		String stuff = "21312j3213";
+		int id = 4123123;
+		foreignForeign.id = id;
 		foreignForeign.stuff = stuff;
 		expect(
 				connection.queryForOne(isA(String.class), isA(Object[].class), isA(FieldType[].class),
 						isA(GenericRowMapper.class))).andReturn(foreignForeign);
 		connectionSource.releaseConnection(connection);
 		DatabaseResults results = createMock(DatabaseResults.class);
-		int id = 4123123;
 		ForeignAutoRefresh foreign = new ForeignAutoRefresh();
 		replay(results, connectionSource, connection);
 		FieldType fieldType =
@@ -782,30 +746,6 @@ public class FieldTypeTest extends BaseCoreTest {
 		Integer notPrimitive;
 		@DatabaseField(throwIfNull = true)
 		int primitive;
-	}
-
-	protected static class EnumVal {
-		@DatabaseField
-		OurEnum enumField;
-	}
-
-	protected enum OurEnum {
-		ONE,
-		TWO,
-		// end
-		;
-	}
-
-	protected static class UnknownEnumVal {
-		@DatabaseField(unknownEnumName = "A")
-		AnotherEnum enumField;
-	}
-
-	protected enum AnotherEnum {
-		A,
-		B,
-		// end
-		;
 	}
 
 	protected static class InvalidType {

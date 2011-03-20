@@ -30,7 +30,8 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 		LocalFoo foo1 = new LocalFoo();
 		fooDao.create(foo1);
 
-		TableInfo<LocalFoo> tableInfo = new TableInfo<LocalFoo>(connectionSource, LocalFoo.class);
+		TableInfo<LocalFoo, Integer> tableInfo =
+				new TableInfo<LocalFoo, Integer>(connectionSource, null, LocalFoo.class);
 		MappedPreparedStmt<LocalFoo, Integer> rowMapper =
 				new MappedPreparedStmt<LocalFoo, Integer>(tableInfo, null, new ArrayList<FieldType>(),
 						Arrays.asList(tableInfo.getFieldTypes()), new ArrayList<SelectArg>(), null,
@@ -60,7 +61,8 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 		fooDao.create(foo);
 		foos.add(foo);
 
-		TableInfo<LocalFoo> tableInfo = new TableInfo<LocalFoo>(connectionSource, LocalFoo.class);
+		TableInfo<LocalFoo, Integer> tableInfo =
+				new TableInfo<LocalFoo, Integer>(connectionSource, null, LocalFoo.class);
 		MappedPreparedStmt<LocalFoo, Integer> preparedQuery =
 				new MappedPreparedStmt<LocalFoo, Integer>(tableInfo, "select * from " + TABLE_NAME,
 						new ArrayList<FieldType>(), Arrays.asList(tableInfo.getFieldTypes()),
@@ -96,17 +98,18 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testObjectNoConstructor() throws SQLException {
-		new MappedPreparedStmt<NoConstructor, Void>(
-				new TableInfo<NoConstructor>(connectionSource, NoConstructor.class), null, new ArrayList<FieldType>(),
-				new ArrayList<FieldType>(), new ArrayList<SelectArg>(), null, StatementType.SELECT);
+		new MappedPreparedStmt<NoConstructor, Void>(new TableInfo<NoConstructor, Void>(connectionSource, null,
+				NoConstructor.class), null, new ArrayList<FieldType>(), new ArrayList<FieldType>(),
+				new ArrayList<SelectArg>(), null, StatementType.SELECT);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testDifferentArgSizes() throws SQLException {
 		ArrayList<SelectArg> selectArgList = new ArrayList<SelectArg>();
 		selectArgList.add(new SelectArg());
-		new MappedPreparedStmt<LocalFoo, Integer>(new TableInfo<LocalFoo>(connectionSource, LocalFoo.class), null,
-				new ArrayList<FieldType>(), new ArrayList<FieldType>(), selectArgList, null, StatementType.SELECT);
+		new MappedPreparedStmt<LocalFoo, Integer>(new TableInfo<LocalFoo, Integer>(connectionSource, null,
+				LocalFoo.class), null, new ArrayList<FieldType>(), new ArrayList<FieldType>(), selectArgList, null,
+				StatementType.SELECT);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

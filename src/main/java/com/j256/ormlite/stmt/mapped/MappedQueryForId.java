@@ -20,7 +20,7 @@ public class MappedQueryForId<T, ID> extends BaseMappedQuery<T, ID> {
 
 	private final String label;
 
-	protected MappedQueryForId(TableInfo<T> tableInfo, String statement, List<FieldType> argFieldTypeList,
+	protected MappedQueryForId(TableInfo<T, ID> tableInfo, String statement, List<FieldType> argFieldTypeList,
 			List<FieldType> resultFieldTypeList, String label) {
 		super(tableInfo, statement, argFieldTypeList, resultFieldTypeList);
 		this.label = label;
@@ -48,7 +48,7 @@ public class MappedQueryForId<T, ID> extends BaseMappedQuery<T, ID> {
 		return castResult;
 	}
 
-	public static <T, ID> MappedQueryForId<T, ID> build(DatabaseType databaseType, TableInfo<T> tableInfo)
+	public static <T, ID> MappedQueryForId<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo)
 			throws SQLException {
 		List<FieldType> argFieldTypeList = new ArrayList<FieldType>();
 		List<FieldType> resultFieldTypeList = new ArrayList<FieldType>();
@@ -56,7 +56,7 @@ public class MappedQueryForId<T, ID> extends BaseMappedQuery<T, ID> {
 		return new MappedQueryForId<T, ID>(tableInfo, statement, argFieldTypeList, resultFieldTypeList, "query-for-id");
 	}
 
-	protected static <ID, T> String buildStatement(DatabaseType databaseType, TableInfo<T> tableInfo,
+	protected static <T, ID> String buildStatement(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
 			List<FieldType> argFieldTypeList, List<FieldType> resultFieldTypeList) throws SQLException {
 		FieldType idField = tableInfo.getIdField();
 		if (idField == null) {

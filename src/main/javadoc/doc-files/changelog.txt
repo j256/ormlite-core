@@ -1,4 +1,5 @@
 4.16: 3/18/2011 (svn rYYYY)
+	* CORE: Added the BaseDaoEnabled class for supporting data objects which can self refresh/update/etc..  Good bit of refactoring.
 	* CORE: Added the UUID DataType for supporting the storing UUID fields.  Auto-generation of UUID ids also works.  Thanks to jc.
 	* CORE: Added the STRING_BYTES DataType for supporting the storing of Unicode strings as byte[] blobs in the database.
 	* CORE: Fixed problem with SQLite (JDBC and Android) was not handling nested transactions correctly.  Fixed bug #3208074.

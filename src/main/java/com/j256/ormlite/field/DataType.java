@@ -13,6 +13,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import com.j256.ormlite.misc.SqlExceptionUtil;
@@ -752,8 +754,15 @@ public enum DataType implements FieldConverter {
 			String val = results.getString(columnPos);
 			if (fieldType == null) {
 				return val;
+			} else if (val == null) {
+				return null;
+			}
+			@SuppressWarnings("unchecked")
+			Map<String, Enum<?>> enumStringMap = (Map<String, Enum<?>>) fieldType.getDataTypeConfigObj();
+			if (enumStringMap == null) {
+				return enumVal(fieldType, val, null, fieldType.getUnknownEnumVal());
 			} else {
-				return fieldType.enumFromString(val);
+				return enumVal(fieldType, val, enumStringMap.get(val), fieldType.getUnknownEnumVal());
 			}
 		}
 		@Override
@@ -764,6 +773,18 @@ public enum DataType implements FieldConverter {
 		public Object javaToSqlArg(FieldType fieldType, Object obj) {
 			Enum<?> enumVal = (Enum<?>) obj;
 			return enumVal.name();
+		}
+		@Override
+		public Object makeConfigObject(FieldType fieldType) throws SQLException {
+			Map<String, Enum<?>> enumStringMap = new HashMap<String, Enum<?>>();
+			Enum<?>[] constants = (Enum<?>[]) fieldType.getFieldType().getEnumConstants();
+			if (constants == null) {
+				throw new SQLException("Field " + fieldType + " improperly configured as type " + this);
+			}
+			for (Enum<?> enumVal : constants) {
+				enumStringMap.put(enumVal.name(), enumVal);
+			}
+			return enumStringMap;
 		}
 	},
 
@@ -777,8 +798,15 @@ public enum DataType implements FieldConverter {
 			int val = results.getInt(columnPos);
 			if (fieldType == null) {
 				return val;
+			}
+			// do this once
+			Integer valInteger = val;
+			@SuppressWarnings("unchecked")
+			Map<Integer, Enum<?>> enumIntMap = (Map<Integer, Enum<?>>) fieldType.getDataTypeConfigObj();
+			if (enumIntMap == null) {
+				return enumVal(fieldType, valInteger, null, fieldType.getUnknownEnumVal());
 			} else {
-				return fieldType.enumFromInt(val);
+				return enumVal(fieldType, valInteger, enumIntMap.get(valInteger), fieldType.getUnknownEnumVal());
 			}
 		}
 		@Override
@@ -793,6 +821,18 @@ public enum DataType implements FieldConverter {
 		@Override
 		public boolean isEscapedValue() {
 			return false;
+		}
+		@Override
+		public Object makeConfigObject(FieldType fieldType) throws SQLException {
+			Map<Integer, Enum<?>> enumIntMap = new HashMap<Integer, Enum<?>>();
+			Enum<?>[] constants = (Enum<?>[]) fieldType.getFieldType().getEnumConstants();
+			if (constants == null) {
+				throw new SQLException("Field " + fieldType + " improperly configured as type " + this);
+			}
+			for (Enum<?> enumVal : constants) {
+				enumIntMap.put(enumVal.ordinal(), enumVal);
+			}
+			return enumIntMap;
 		}
 	},
 
@@ -1057,6 +1097,17 @@ public enum DataType implements FieldConverter {
 	private static String formatDate(DateStringFormatConfig formatConfig, Date date) {
 		DateFormat dateFormat = formatConfig.getDateFormat();
 		return dateFormat.format(date);
+	}
+
+	private static Enum<?> enumVal(FieldType fieldType, Object val, Enum<?> enumVal, Enum<?> unknownEnumVal)
+			throws SQLException {
+		if (enumVal != null) {
+			return enumVal;
+		} else if (unknownEnumVal == null) {
+			throw new SQLException("Cannot get enum value of '" + val + "' for field " + fieldType);
+		} else {
+			return unknownEnumVal;
+		}
 	}
 
 	/**

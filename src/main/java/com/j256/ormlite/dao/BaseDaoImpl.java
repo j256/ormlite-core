@@ -51,7 +51,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	protected DatabaseType databaseType;
 	protected final Class<T> dataClass;
 	protected DatabaseTableConfig<T> tableConfig;
-	protected TableInfo<T> tableInfo;
+	protected TableInfo<T, ID> tableInfo;
 	protected ConnectionSource connectionSource;
 
 	/**
@@ -82,17 +82,6 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	 */
 	protected BaseDaoImpl(ConnectionSource connectionSource, Class<T> dataClass) throws SQLException {
 		this(connectionSource, dataClass, null);
-	}
-
-	/**
-	 * Construct our base DAO class for Spring type wiring. The {@link ConnectionSource} must be set with the
-	 * {@link #setConnectionSource} method and then the {@link #initialize()} method must be called.
-	 * 
-	 * @param tableConfig
-	 *            Hand or spring wired table configuration information.
-	 */
-	protected BaseDaoImpl(DatabaseTableConfig<T> tableConfig) throws SQLException {
-		this(null, tableConfig.getDataClass(), tableConfig);
 	}
 
 	/**
@@ -135,10 +124,10 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 					+ getClass().getSimpleName());
 		}
 		if (tableConfig == null) {
-			tableInfo = new TableInfo<T>(connectionSource, dataClass);
+			tableInfo = new TableInfo<T, ID>(connectionSource, this, dataClass);
 		} else {
 			tableConfig.extractFieldTypes(connectionSource);
-			tableInfo = new TableInfo<T>(databaseType, tableConfig);
+			tableInfo = new TableInfo<T, ID>(databaseType, this, tableConfig);
 		}
 		statementExecutor = new StatementExecutor<T, ID>(databaseType, tableInfo);
 		initialized = true;
@@ -479,6 +468,13 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		return tableConfig;
 	}
 
+	/**
+	 * Used by internal classes to get the table information structure for the Dao's class.
+	 */
+	public TableInfo<T, ID> getTableInfo() {
+		return tableInfo;
+	}
+
 	public void setConnectionSource(ConnectionSource connectionSource) {
 		this.connectionSource = connectionSource;
 	}
@@ -497,6 +493,15 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	 */
 	public static <T, ID> Dao<T, ID> createDao(ConnectionSource connectionSource, Class<T> clazz) throws SQLException {
 		return new BaseDaoImpl<T, ID>(connectionSource, clazz) {
+		};
+	}
+
+	/**
+	 * Helper method to create a Dao object used by some internal methods that already have the {@link TableInfo}.
+	 */
+	public static <T, ID> Dao<T, ID> createDao(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig)
+			throws SQLException {
+		return new BaseDaoImpl<T, ID>(connectionSource, tableConfig) {
 		};
 	}
 

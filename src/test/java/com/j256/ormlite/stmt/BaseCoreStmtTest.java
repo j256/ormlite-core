@@ -12,7 +12,7 @@ import com.j256.ormlite.table.TableInfo;
 
 public abstract class BaseCoreStmtTest extends BaseCoreTest {
 
-	protected TableInfo<Foo> baseFooTableInfo;
+	protected TableInfo<Foo, String> baseFooTableInfo;
 	protected FieldType numberFieldType;
 	protected FieldType stringFieldType;
 	protected FieldType foreignFieldType;
@@ -32,6 +32,6 @@ public abstract class BaseCoreStmtTest extends BaseCoreTest {
 		assertEquals(Foo.class, field.getType());
 		foreignFieldType = FieldType.createFieldType(connectionSource, "BaseFoo", field, 0);
 
-		baseFooTableInfo = new TableInfo<Foo>(connectionSource, Foo.class);
+		baseFooTableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
 	}
 }

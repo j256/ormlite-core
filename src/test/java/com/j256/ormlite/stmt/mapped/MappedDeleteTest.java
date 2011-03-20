@@ -28,8 +28,9 @@ public class MappedDeleteTest {
 
 	@Test(expected = SQLException.class)
 	public void testDeleteNoId() throws Exception {
-		StatementExecutor<NoId, String> se =
-				new StatementExecutor<NoId, String>(databaseType, new TableInfo<NoId>(connectionSource, NoId.class));
+		StatementExecutor<NoId, Void> se =
+				new StatementExecutor<NoId, Void>(databaseType, new TableInfo<NoId, Void>(connectionSource, null,
+						NoId.class));
 		NoId noId = new NoId();
 		noId.stuff = "1";
 		se.delete(null, noId);
@@ -37,7 +38,7 @@ public class MappedDeleteTest {
 
 	@Test(expected = SQLException.class)
 	public void testNoIdBuildDelete() throws Exception {
-		MappedDelete.build(databaseType, new TableInfo<NoId>(connectionSource, NoId.class));
+		MappedDelete.build(databaseType, new TableInfo<NoId, Void>(connectionSource, null, NoId.class));
 	}
 
 	protected static class NoId {

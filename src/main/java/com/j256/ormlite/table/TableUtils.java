@@ -143,9 +143,9 @@ public class TableUtils {
 		return doDropTable(databaseType, connectionSource, tableConfig, ignoreErrors);
 	}
 
-	private static <T> int doDropTable(DatabaseType databaseType, ConnectionSource connectionSource,
+	private static <T, ID> int doDropTable(DatabaseType databaseType, ConnectionSource connectionSource,
 			DatabaseTableConfig<T> tableConfig, boolean ignoreErrors) throws SQLException {
-		TableInfo<T> tableInfo = new TableInfo<T>(databaseType, tableConfig);
+		TableInfo<T, ID> tableInfo = new TableInfo<T, ID>(databaseType, null, tableConfig);
 		logger.info("dropping table '{}'", tableInfo.getTableName());
 		List<String> statements = new ArrayList<String>();
 		addDropIndexStatements(databaseType, tableInfo, statements);
@@ -158,7 +158,7 @@ public class TableUtils {
 		}
 	}
 
-	private static <T> void addDropIndexStatements(DatabaseType databaseType, TableInfo<T> tableInfo,
+	private static <T, ID> void addDropIndexStatements(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
 			List<String> statements) {
 		// run through and look for index annotations
 		Set<String> indexSet = new HashSet<String>();
@@ -186,7 +186,7 @@ public class TableUtils {
 	/**
 	 * Generate and return the list of statements to create a database table and any associated features.
 	 */
-	private static <T> void addCreateTableStatements(DatabaseType databaseType, TableInfo<T> tableInfo,
+	private static <T, ID> void addCreateTableStatements(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
 			List<String> statements, List<String> queriesAfter) throws SQLException {
 		StringBuilder sb = new StringBuilder();
 		sb.append("CREATE TABLE ");
@@ -219,7 +219,7 @@ public class TableUtils {
 		addCreateIndexStatements(databaseType, tableInfo, statements, true);
 	}
 
-	private static <T> void addCreateIndexStatements(DatabaseType databaseType, TableInfo<T> tableInfo,
+	private static <T, ID> void addCreateIndexStatements(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
 			List<String> statements, boolean unique) {
 		// run through and look for index annotations
 		Map<String, List<String>> indexMap = new HashMap<String, List<String>>();
@@ -272,7 +272,7 @@ public class TableUtils {
 	/**
 	 * Generate and return the list of statements to drop a database table.
 	 */
-	private static <T> void addDropTableStatements(DatabaseType databaseType, TableInfo<T> tableInfo,
+	private static <T, ID> void addDropTableStatements(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
 			List<String> statements) {
 		List<String> statementsBefore = new ArrayList<String>();
 		List<String> statementsAfter = new ArrayList<String>();
@@ -288,10 +288,10 @@ public class TableUtils {
 		statements.addAll(statementsAfter);
 	}
 
-	private static <T> int doCreateTable(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig)
+	private static <T, ID> int doCreateTable(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig)
 			throws SQLException {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
-		TableInfo<T> tableInfo = new TableInfo<T>(databaseType, tableConfig);
+		TableInfo<T, ID> tableInfo = new TableInfo<T, ID>(databaseType, null, tableConfig);
 		logger.info("creating table '{}'", tableInfo.getTableName());
 		List<String> statements = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();
@@ -369,10 +369,10 @@ public class TableUtils {
 		return stmtC;
 	}
 
-	private static <T> List<String> addCreateTableStatements(ConnectionSource connectionSource,
+	private static <T, ID> List<String> addCreateTableStatements(ConnectionSource connectionSource,
 			DatabaseTableConfig<T> tableConfig) throws SQLException {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
-		TableInfo<T> tableInfo = new TableInfo<T>(databaseType, tableConfig);
+		TableInfo<T, ID> tableInfo = new TableInfo<T, ID>(databaseType, null, tableConfig);
 		List<String> statements = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();
 		addCreateTableStatements(databaseType, tableInfo, statements, queriesAfter);

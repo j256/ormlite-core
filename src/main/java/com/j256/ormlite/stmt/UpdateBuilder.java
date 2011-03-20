@@ -26,7 +26,7 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 
 	private List<Clause> updateClauseList = null;
 
-	public UpdateBuilder(DatabaseType databaseType, TableInfo<T> tableInfo) {
+	public UpdateBuilder(DatabaseType databaseType, TableInfo<T, ID> tableInfo) {
 		super(databaseType, tableInfo, StatementType.UPDATE);
 	}
 

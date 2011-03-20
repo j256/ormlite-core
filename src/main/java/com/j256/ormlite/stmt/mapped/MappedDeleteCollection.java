@@ -18,7 +18,7 @@ import com.j256.ormlite.table.TableInfo;
  */
 public class MappedDeleteCollection<T, ID> extends BaseMappedStatement<T, ID> {
 
-	private MappedDeleteCollection(TableInfo<T> tableInfo, String statement, List<FieldType> argFieldTypeList) {
+	private MappedDeleteCollection(TableInfo<T, ID> tableInfo, String statement, List<FieldType> argFieldTypeList) {
 		super(tableInfo, statement, argFieldTypeList);
 	}
 
@@ -26,7 +26,7 @@ public class MappedDeleteCollection<T, ID> extends BaseMappedStatement<T, ID> {
 	 * Delete all of the objects in the collection. This builds a {@link MappedDeleteCollection} on the fly because the
 	 * datas could be variable sized.
 	 */
-	public static <T, ID> int deleteObjects(DatabaseType databaseType, TableInfo<T> tableInfo,
+	public static <T, ID> int deleteObjects(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
 			DatabaseConnection databaseConnection, Collection<T> datas) throws SQLException {
 		MappedDeleteCollection<T, ID> deleteCollection =
 				MappedDeleteCollection.build(databaseType, tableInfo, datas.size());
@@ -43,7 +43,7 @@ public class MappedDeleteCollection<T, ID> extends BaseMappedStatement<T, ID> {
 	 * Delete all of the objects in the collection. This builds a {@link MappedDeleteCollection} on the fly because the
 	 * ids could be variable sized.
 	 */
-	public static <T, ID> int deleteIds(DatabaseType databaseType, TableInfo<T> tableInfo,
+	public static <T, ID> int deleteIds(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
 			DatabaseConnection databaseConnection, Collection<ID> ids) throws SQLException {
 		MappedDeleteCollection<T, ID> deleteCollection =
 				MappedDeleteCollection.build(databaseType, tableInfo, ids.size());
@@ -59,7 +59,7 @@ public class MappedDeleteCollection<T, ID> extends BaseMappedStatement<T, ID> {
 	/**
 	 * This is private because the execute is the only method that should be called here.
 	 */
-	private static <T, ID> MappedDeleteCollection<T, ID> build(DatabaseType databaseType, TableInfo<T> tableInfo,
+	private static <T, ID> MappedDeleteCollection<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
 			int dataSize) throws SQLException {
 		FieldType idField = tableInfo.getIdField();
 		if (idField == null) {
