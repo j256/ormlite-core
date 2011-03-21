@@ -9,6 +9,7 @@ import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.misc.BaseDaoEnabled;
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.PreparedDelete;
@@ -190,6 +191,11 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		if (data == null) {
 			return 0;
 		} else {
+			if (data instanceof BaseDaoEnabled) {
+				@SuppressWarnings("unchecked")
+				BaseDaoEnabled<T, ID> daoEnabled = (BaseDaoEnabled<T, ID>) data;
+				daoEnabled.setDao(this);
+			}
 			DatabaseConnection connection = connectionSource.getReadWriteConnection();
 			try {
 				return statementExecutor.create(connection, data);
@@ -245,6 +251,11 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		if (data == null) {
 			return 0;
 		} else {
+			if (data instanceof BaseDaoEnabled) {
+				@SuppressWarnings("unchecked")
+				BaseDaoEnabled<T, ID> daoEnabled = (BaseDaoEnabled<T, ID>) data;
+				daoEnabled.setDao(this);
+			}
 			DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 			try {
 				return statementExecutor.refresh(connection, data);

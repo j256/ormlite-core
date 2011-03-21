@@ -212,11 +212,8 @@ the database by its ID:
         account.setName("Jim Coakley");
 
         // persist the account object to the database
-        // it should return 1 for the 1 row inserted
-        if (accountDao.create(account) != 1) @{
-            throw new Exception("Failure adding account");
-        @}
-        
+        accountDao.create(account);
+
         // retrieve the account from the database by its id field (name)
         Account account2 = accountDao.queryForId("Jim Coakley");
         System.out.println("Account: " + account2.getName());
@@ -251,6 +248,7 @@ This chapter goes into more detail about how to use @value{package}.
 * Raw Statements::              Issuing raw database statements.
 * Foreign Objects::             Fields that represent foreign objects.
 * Table Creation::              Creating tables and loading schema.
+* DAO Enabled Objects::         Another pattern for your data classes.
 @end menu
 
 @c ----------------------------------------------------------------
@@ -843,8 +841,8 @@ used if an unknown value is found in the database. @xref{unknownEnumName}.
 @item UUID (DataType.UUID)
 
 The @code{java.util.UUID} class persisted as a @code{VARCHAR} type.  It saves it as the @code{uuid.toString()} and used the
-@code{UUID.fromString(String)} method to convert it back again.  You can also mark a UUID field as being generated-id in
-which case whenever it is inserted, @code{java.util.UUID.randomUUID()} is called and set on the field.
+@code{UUID.fromString(String)} method to convert it back again.  You can also mark a @code{UUID} field as being generated-id
+in which case whenever it is inserted, @code{java.util.UUID.randomUUID()} is called and set on the field.
 @xref{GeneratedId Column}.
 
 @end table
@@ -1112,10 +1110,7 @@ TableUtils.createTable(connectionSource, Account.class);
 Account account = new Account("Jim Coakley");
 
 // persist the account object to the database
-// it should return 1 for the 1 row inserted
-if (accountDao.create(account) != 1) @{
-  // error handling @dots{} 
-@}
+accountDao.create(account);
 @dots{}
 
 // destroy the data source which should close underlying connections
@@ -1201,9 +1196,7 @@ by the database and set on the object by @value{package}.  In the majority of da
 // build our order object without an id
 Order order = new Order("Jim Sanders", 12.34);
 @dots{}
-if (orderDao.create(order) != 1) @{
-   // error handling unless 1 row was inserted
-@}
+orderDao.create(order);
 System.out.println("Order id " + order.getId() +
    " was persisted to the database");
 // query for the order with an id of 1372
@@ -1268,10 +1261,7 @@ This inserts a new row to the database table associated with the object.
 @example
 Account account = new Account();
 account.name = "Jim Coakley";
-// only 1 row should have been affected
-if (accountDao.create(account) != 1) @{
-  // error handling @dots{} 
-@}
+accountDao.create(account);
 @end example
 
 @cindex query for id
@@ -1294,10 +1284,7 @@ requires an id field.
 
 @example
 account.password = "_secret";
-// 1 row should be updated
-if (accountDao.update(account) != 1) @{
-  // error handling @dots{} 
-@}
+accountDao.update(account);
 @end example
 
 @cindex refreshing an object
@@ -1307,10 +1294,7 @@ If some other entity has changed a row the database corresponding to an object i
 object to get the memory object up-to-date.  This requires an id field. 
 
 @example
-// 1 row should be found
-if (accountDao.refresh(account) != 1) @{
-  // error handling @dots{} 
-@}
+accountDao.refresh(account);
 @end example
 
 @cindex deleting an object
@@ -1320,10 +1304,7 @@ Removes the row that corresponds to the object from the database.  Once the obje
 you can continue to use the object in memory but any update or refresh calls will fail.  This requires an id field.
 
 @example
-// 1 row should be affected
-if (accountDao.delete(account) != 1) @{
-  // error handling @dots{} 
-@}
+accountDao.delete(account);
 @end example
 
 @cindex iterator
@@ -1609,18 +1590,14 @@ created for you.  If your foreign object has a generated-id which is provided by
 
 @example
 Account account = new Account("Jim Coakley");
-if (accountDao.create(account) != 1) @{
-  // error handling @dots{} 
-@}
+accountDao.create(account);
 // this will create the account object and set any generated ids
 
 // now we can set the account on the order and create it
 Order order = new Order("Jim Sanders", 12.34);
 order.setAccount(account);
 @dots{}
-if (orderDao.create(order) != 1) @{
-   // error handling unless 1 row was inserted
-@}
+orderDao.create(order);
 @end example
 
 @cindex refreshing foreign objects
@@ -1639,9 +1616,7 @@ System.out.println("But other fields on the account should not be set: "
    + order.account.name);
 
 // so we refresh the account using the AccountDao
-if (accountDao.refresh(order.getAccount()) != 1) @{
-   // error handling @dots{} 
-@}
+accountDao.refresh(order.getAccount());
 System.out.println("Now the account fields will be set: " +
    order.account.name);
 @end example
@@ -1732,7 +1707,7 @@ Same as the previous method but with a @code{DatabaseTableConfig} instead.
 @end table
 
 @c ----------------------------------------------------------------
-@node TableCreator, Statement Builder, TableUtils, Table Creation
+@node TableCreator, DAO Enabled Objects, TableUtils, Table Creation
 @subsection TableCreator Class
 
 @cindex TableCreator
@@ -1763,7 +1738,90 @@ creator.maybeDropTables();
 For a real life example of using @code{TableCreator} you can @pxref{spring example}.
 
 @c ----------------------------------------------------------------
-@node Statement Builder, QueryBuilder Basics, TableCreator, Top
+@node DAO Enabled Objects, Statement Builder, TableCreator, Using
+@section DAO Enabled Objects
+
+@cindex dao enabled objects
+Another ORM pattern is to have the objects perform the database operations on themselves instead of using a
+Database Access Object (DAO).  For example, given a data object @code{foo},  you would call @code{foo.refresh()}
+instead of @code{fooDao.refresh(foo)}.  The default pattern is to use the Dao classes to operate on your
+data classes. This will allow your data classes to have their own hierarchy and isolates the database code in the
+Daos. However, you are free to use this base class if you prefer this pattern.  As of March 2011, it is one of the
+newer parts of @value{package} so feedback and bug reports are welcome.
+
+@cindex BaseDaoEnabled
+All classes that are able to refresh (update, delete, etc.) themselves should extend the @code{BaseDaoEnabled} 
+class.  For example:
+
+@example
+@@DatabaseTable(tableName = "accounts")
+public class Account extends BaseDaoEnabled @{
+
+    @@DatabaseField(id = true)
+    private String name;
+
+    @@DatabaseField(canBeNull = false)
+    private String password;
+    @dots{}
+@end example
+
+To first create the object, you will need to use the DAO object or you will need to set the dao on the object so
+that it can self create:
+
+@example
+account.setDao(accountDao);
+account.create();
+@end example
+
+However, whenever an object is returned by @value{package} as query results, the DAO has already been set on the
+object it extends the @code{BaseDaoEnabled} class.
+
+@example
+Account account = accountDao.queryForId(name);
+account.setPassword(newPassword);
+account.update();
+@end example
+
+This will also work for foreign fields.
+
+@example
+Order order = orderDao.queryForId(orderId);
+// load all of the fields from the account
+order.getAccount().refresh();
+@end example
+
+The javadocs for @code{BaseDaoEnabled} will have the most up-to-date list of self operations but right now the
+class can do:
+
+@table @code
+
+@item create
+
+To create the object you will need to use the DAO or to call @code{setDao()} on the object.
+
+@item refresh
+
+Refresh the object in case it was updated in the database.
+
+@item update
+
+After you make changes to the object in memory, update it in the database.
+
+@item updateId
+
+If you need to update the id of the object, you must use this method.  You cannot change the id field in the object and
+then call the update method because then the object will not be found.
+
+@item delete
+
+Delete it from the database.
+
+@end table
+
+Feedback on this is welcome.
+
+@c ----------------------------------------------------------------
+@node Statement Builder, QueryBuilder Basics, DAO Enabled Objects, Top
 @chapter Custom Statement Builder
 
 @cindex query builder
@@ -2878,11 +2936,11 @@ final Order order = new Order();
 
 mgr.callInTransaction(new Callable<Void>() @{
     public Void call() throws Exception @{
-        // insert our order, should return 1
+        // insert our order
         orderDao.create(order);
         // now add the order to the account
         account.setOrder(order);
-        // update our account object, should return 1
+        // update our account object
         accountDao.update(account);
         // you could pass back an object here
         return null;
@@ -3166,30 +3224,38 @@ future.  See the source code in SVN:  @uref{http://ormlite.com/docs/example-andr
 @node Contributions, License, Android Examples, Top
 @chapter Contributions
 
-There are a couple of people that I'd like to thank who helped with the project.
+There are a number of people who have helped with this project.  If I've forgotten you @emph{please} remind me so I can add you to this list.
+Let me know if you'd like to tune your name or add link to your home page here as well.
 
-@table @asis
+@itemize @bullet
 
-@item Kevin Galligan
+@item Kevin Galligan was the impetus and the author of a good bit of the Android compatible code.  He wrote the Android level support
+classes and did a ton of beta-testing of it.  He's also provided all of the Android examples.  Thanks much Kevin.  See @uref{http://www.kagii.com/}.
 
-Kevin was the impetus and the author of a good bit of the Android compatible code.  He wrote the Android level support classes
-and did a ton of beta-testing of it.  He's also provided all of the Android examples.  Thanks much Kevin.  See @uref{http://www.kagii.com/}.
+@item Nelson Erb  was our self-appointed documentation and testing volunteer for a year.  He did a great job summarizing sections of
+this document so we could create a better 'Getting Started' section.  He also fleshed out a bunch of unit tests to improve coverage in some areas.
 
-@item Jim Gloor
+@item JC has been an excellent addition to the user list pushing for feedbacks, discovering and reporting bugs, providing patches for new
+features, and thinking a lot about how @value{package} can be extended and improved.   
 
-Jim was one of the Java gurus at a previous company.  Thanks much for his JDBC code samples that started this effort.
+@item Jim Gloor was one of the Java gurus at a previous company.  Thanks much for his great object instincts and the JDBC code samples that
+started this effort.
 
-@item Nelson Erb
+@item Robert Adamsky was a colleage of mine at a company where he laid out our entire DAO and hibernate class hierarchy.  The @code{DAO} interface
+and the @code{BaseDaoImpl} where in some part modeled after his code.  Thanks dude.
 
-Nelson was our self-appointed documentation and testing volunteer for a year.  He did a great job summarizing sections of this document
-so we could create a better 'Getting Started' section.  He also fleshed out a bunch of unit tests to improve coverage in some areas.
+@c -----------------
 
-@item Robert Adamsky
+@item Micael Dahlgren helped resolve a bad bug foreign field bug.
+@item Dale Asberry added the initial take on the generic ODBC database type.
+@item Richard Kooijman added the initial take on the Netezza database type.
+@item Markus Wiederkehr provided feedback on Android initialization and class hierarchies.
+@item Wayne Stidolph helped with Android usage feedback.
+@item Luke Meyer helped with Android functionality and the queryRaw features.
+@item Larry Hamel recommended index features and pointed out some bugs.
+@item Jaxelrod for pushing on the maven release mechanisms and missing javadocs.
 
-I worked with Robert at a company where he laid out our entire DAO and hibernate class hierarchy.  The @code{DAO} interface and the
-@code{BaseDaoImpl} where in some part modeled after his code.  Thanks dude.  
-
-@end table
+@end itemize
 
 Thanks much to them all.
 

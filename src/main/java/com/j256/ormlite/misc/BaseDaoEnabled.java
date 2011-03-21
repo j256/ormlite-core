@@ -16,11 +16,16 @@ import com.j256.ormlite.dao.Dao;
  * use this base class if you prefer this pattern.
  * </p>
  * 
+ * <p>
+ * <b>NOTE:</b> The internal Dao field has been marked with transient so that it won't be serialized (thanks jc). If you
+ * do de-serialize on these classes, you will need to refresh it with the Dao to get it to work again.
+ * </p>
+ * 
  * @author graywatson
  */
 public abstract class BaseDaoEnabled<T, ID> {
 
-	protected Dao<T, ID> dao;
+	protected transient Dao<T, ID> dao;
 
 	/**
 	 * A call through to the {@link Dao#create(Object)}.
