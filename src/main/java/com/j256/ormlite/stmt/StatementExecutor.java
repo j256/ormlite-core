@@ -82,15 +82,15 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Return the first object that matches the {@link PreparedStmt} or null if none.
 	 */
-	public T queryForFirst(DatabaseConnection databaseConnection, PreparedStmt<T> preparedQuery) throws SQLException {
-		CompiledStatement stmt = preparedQuery.compile(databaseConnection);
+	public T queryForFirst(DatabaseConnection databaseConnection, PreparedStmt<T> preparedStmt) throws SQLException {
+		CompiledStatement stmt = preparedStmt.compile(databaseConnection);
 		try {
 			DatabaseResults results = stmt.runQuery();
 			if (results.next()) {
-				logger.debug("query-for-first of '{}' returned at least 1 result", preparedQuery.getStatement());
-				return preparedQuery.mapRow(results);
+				logger.debug("query-for-first of '{}' returned at least 1 result", preparedStmt.getStatement());
+				return preparedStmt.mapRow(results);
 			} else {
-				logger.debug("query-for-first of '{}' returned at 0 results", preparedQuery.getStatement());
+				logger.debug("query-for-first of '{}' returned at 0 results", preparedStmt.getStatement());
 				return null;
 			}
 		} finally {
