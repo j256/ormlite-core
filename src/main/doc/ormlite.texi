@@ -963,6 +963,12 @@ Dao<Order, Integer> orderDao =
   BaseDaoImpl.createDao(connectionSource, Order.class);
 @end example
 
+@cindex DaoManager
+@cindex reusing DAOs
+@emph{NOTE:} You should use the @code{DaoManager#createDao} methods instead of @code{BaseDaoImpl.createDao} if you are using any of the
+features which require inner Dao creation such as auto-refresh of foreign fields and collections of sub-objects.  The @code{DaoManager}
+caches the DAO classes so they can be reused.
+
 @cindex Dao interface
 If you want a better class hierarchy or if you need to add additional methods to your DAOs, you should consider defining
 an interface which extends the @code{Dao} interface.  The interface isn't required but it is a good pattern so your code is

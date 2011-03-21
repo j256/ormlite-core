@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.Map;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.misc.BaseDaoEnabled;
 import com.j256.ormlite.misc.SqlExceptionUtil;
@@ -92,7 +93,7 @@ public class FieldType {
 					tableConfig.extractFieldTypes(connectionSource);
 				}
 				if (BaseDaoEnabled.class.isAssignableFrom(clazz)) {
-					BaseDaoImpl<?, ?> dao = (BaseDaoImpl<?, ?>) BaseDaoImpl.createDao(connectionSource, tableConfig);
+					BaseDaoImpl<?, ?> dao = (BaseDaoImpl<?, ?>) DaoManager.createDao(connectionSource, tableConfig);
 					this.foreignTableInfo = dao.getTableInfo();
 				} else {
 					@SuppressWarnings({ "unchecked", "rawtypes" })

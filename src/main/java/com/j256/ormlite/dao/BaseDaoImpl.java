@@ -501,6 +501,12 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	/**
 	 * Helper method to create a Dao object without having to define a class. Dao classes are supposed to be convenient
 	 * but if you have a lot of classes, they can seem to be a pain.
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> You should use {@link DaoManager#createDao(ConnectionSource, Class)} instead of this method if you
+	 * are using any of the features which require inner Dao creation such as auto-refresh of foreign fields and
+	 * Collections of sub objects.
+	 * </p>
 	 */
 	public static <T, ID> Dao<T, ID> createDao(ConnectionSource connectionSource, Class<T> clazz) throws SQLException {
 		return new BaseDaoImpl<T, ID>(connectionSource, clazz) {
@@ -509,6 +515,12 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
 	/**
 	 * Helper method to create a Dao object used by some internal methods that already have the {@link TableInfo}.
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> You should use {@link DaoManager#createDao(ConnectionSource, DatabaseTableConfig)} instead of this
+	 * method if you are using any of the features which require inner Dao creation such as auto-refresh of foreign
+	 * fields and Collections of sub objects.
+	 * </p>
 	 */
 	public static <T, ID> Dao<T, ID> createDao(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig)
 			throws SQLException {
