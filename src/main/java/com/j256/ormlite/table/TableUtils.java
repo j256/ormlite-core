@@ -198,7 +198,10 @@ public class TableUtils {
 		// our statement will be set here later
 		boolean first = true;
 		for (FieldType fieldType : tableInfo.getFieldTypes()) {
-			if (first) {
+			// skip foreign collections
+			if (fieldType.isForeignCollection()) {
+				continue;
+			} else if (first) {
 				first = false;
 			} else {
 				sb.append(", ");

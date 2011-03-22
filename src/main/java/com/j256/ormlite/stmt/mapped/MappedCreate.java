@@ -57,7 +57,11 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 		sb.append('(');
 		boolean first = true;
 		for (FieldType fieldType : tableInfo.getFieldTypes()) {
-			if (databaseType.isIdSequenceNeeded()) {
+			// we don't insert anything if it is a collection
+			if (fieldType.isForeignCollection()) {
+				// skip foreign collections
+				continue;
+			} else if (databaseType.isIdSequenceNeeded()) {
 				// we need to query for the next value from the sequence and the idField is inserted afterwards
 			} else if (fieldType.isGeneratedId() && !fieldType.isSelfGeneratedId()) {
 				// skip generated-id fields because they will be auto-inserted

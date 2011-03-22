@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.j256.ormlite.dao.BaseForeignCollection;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.support.DatabaseResults;
@@ -34,9 +35,27 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 		// create our instance
 		T instance = tableInfo.createObject();
 		// populate its fields
+		Object id = null;
+		boolean foreignCollections = false;
 		for (FieldType fieldType : resultsFieldTypes) {
-			Object val = fieldType.resultToJava(results, columnPositions);
-			fieldType.assignField(instance, val);
+			if (fieldType.isForeignCollection()) {
+				foreignCollections = true;
+			} else {
+				Object val = fieldType.resultToJava(results, columnPositions);
+				fieldType.assignField(instance, val);
+				if (fieldType == idField) {
+					id = val;
+				}
+			}
+		}
+		if (foreignCollections) {
+			// go back and initialize any foreign collections
+			for (FieldType fieldType : resultsFieldTypes) {
+				if (fieldType.isForeignCollection()) {
+					BaseForeignCollection<?, ?> collection = fieldType.buildForeignCollection(id);
+					fieldType.assignField(instance, collection);
+				}
+			}
 		}
 		return instance;
 	}

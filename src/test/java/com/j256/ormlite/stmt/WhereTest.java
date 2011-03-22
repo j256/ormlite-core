@@ -29,7 +29,8 @@ public class WhereTest extends BaseCoreTest {
 		assertTrue(where.toString().contains("empty where clause"));
 		String value = "bar";
 		FieldType numberFieldType =
-				FieldType.createFieldType(connectionSource, "foo", Foo.class.getDeclaredField(Foo.VAL_COLUMN_NAME), 0);
+				FieldType.createFieldType(connectionSource, "foo", Foo.class.getDeclaredField(Foo.VAL_COLUMN_NAME),
+						Foo.class, 0);
 		Eq eq = new Eq(Foo.VAL_COLUMN_NAME, numberFieldType, value);
 		where.eq(Foo.VAL_COLUMN_NAME, value);
 		assertTrue(where.toString().contains(eq.toString()));

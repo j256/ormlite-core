@@ -197,7 +197,7 @@ public class DataTypeTest extends BaseCoreTest {
 	public void testDateParseInvalid() throws Exception {
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, TABLE_NAME, LocalDate.class.getDeclaredField(DATE_COLUMN),
-						0);
+						LocalDate.class, 0);
 		DataType.DATE.parseDefaultString(fieldType, "not valid date string");
 	}
 
@@ -232,7 +232,7 @@ public class DataTypeTest extends BaseCoreTest {
 	public void testJavaDateParseInvalid() throws Exception {
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, TABLE_NAME, LocalDate.class.getDeclaredField(DATE_COLUMN),
-						0);
+						LocalDate.class, 0);
 		DataType.JAVA_DATE.parseDefaultString(fieldType, "not valid date string");
 	}
 
@@ -281,7 +281,7 @@ public class DataTypeTest extends BaseCoreTest {
 	public void testDateStringParseInvalid() throws Exception {
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, TABLE_NAME,
-						LocalDateString.class.getDeclaredField(DATE_COLUMN), 0);
+						LocalDateString.class.getDeclaredField(DATE_COLUMN), LocalDateString.class, 0);
 		DataType.DATE_STRING.parseDefaultString(fieldType, "not valid date string");
 	}
 
@@ -334,7 +334,7 @@ public class DataTypeTest extends BaseCoreTest {
 	public void testJavaDateStringParseInvalid() throws Exception {
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, TABLE_NAME,
-						LocalDateString.class.getDeclaredField(DATE_COLUMN), 0);
+						LocalDateString.class.getDeclaredField(DATE_COLUMN), LocalDateString.class, 0);
 		DataType.JAVA_DATE_STRING.parseDefaultString(fieldType, "not valid date string");
 	}
 
@@ -365,7 +365,7 @@ public class DataTypeTest extends BaseCoreTest {
 	public void testDateLongParseInvalid() throws Exception {
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, TABLE_NAME,
-						LocalDateLong.class.getDeclaredField(DATE_COLUMN), 0);
+						LocalDateLong.class.getDeclaredField(DATE_COLUMN), LocalDateLong.class, 0);
 		DataType.DATE_LONG.parseDefaultString(fieldType, "not valid long number");
 	}
 
@@ -399,7 +399,7 @@ public class DataTypeTest extends BaseCoreTest {
 	public void testJavaDateLongParseInvalid() throws Exception {
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, TABLE_NAME,
-						LocalDateLong.class.getDeclaredField(DATE_COLUMN), 0);
+						LocalDateLong.class.getDeclaredField(DATE_COLUMN), LocalDateLong.class, 0);
 		DataType.JAVA_DATE_LONG.parseDefaultString(fieldType, "not valid long number");
 	}
 
@@ -764,7 +764,8 @@ public class DataTypeTest extends BaseCoreTest {
 		DatabaseResults results = stmt.runQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, TABLE_NAME, clazz.getDeclaredField(SERIALIZABLE_COLUMN), 0);
+				FieldType.createFieldType(connectionSource, TABLE_NAME, clazz.getDeclaredField(SERIALIZABLE_COLUMN),
+						clazz, 0);
 		assertNull(DataType.SERIALIZABLE.resultToJava(fieldType, results, results.findColumn(SERIALIZABLE_COLUMN)));
 	}
 
@@ -787,7 +788,7 @@ public class DataTypeTest extends BaseCoreTest {
 		assertTrue(results.next());
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, TABLE_NAME,
-						LocalSerializable.class.getDeclaredField(SERIALIZABLE_COLUMN), 0);
+						LocalSerializable.class.getDeclaredField(SERIALIZABLE_COLUMN), LocalSerializable.class, 0);
 		DataType.SERIALIZABLE.resultToJava(fieldType, results, results.findColumn(BYTE_COLUMN));
 	}
 
@@ -951,7 +952,7 @@ public class DataTypeTest extends BaseCoreTest {
 		assertTrue(results.next());
 		int colNum = results.findColumn(columnName);
 		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, TABLE_NAME, clazz.getDeclaredField(columnName), 0);
+				FieldType.createFieldType(connectionSource, TABLE_NAME, clazz.getDeclaredField(columnName), clazz, 0);
 		if (javaVal instanceof byte[]) {
 			assertTrue(Arrays.equals((byte[]) javaVal, (byte[]) dataType.resultToJava(fieldType, results, colNum)));
 		} else {

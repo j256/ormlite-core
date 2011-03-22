@@ -35,6 +35,8 @@ public class DatabaseFieldConfig {
 	private String indexName;
 	private String uniqueIndexName;
 	private boolean foreignAutoRefresh;
+	private boolean foreignCollection;
+	private boolean foreignCollectionEager;
 
 	public DatabaseFieldConfig() {
 		// for spring
@@ -255,6 +257,22 @@ public class DatabaseFieldConfig {
 		return foreignAutoRefresh;
 	}
 
+	public void setForeignCollection(boolean foreignCollection) {
+		this.foreignCollection = foreignCollection;
+	}
+
+	public boolean isForeignCollection() {
+		return foreignCollection;
+	}
+
+	public void setForeignCollectionEager(boolean foreignCollectionEager) {
+		this.foreignCollectionEager = foreignCollectionEager;
+	}
+
+	public boolean isForeignCollectionEager() {
+		return foreignCollectionEager;
+	}
+
 	/**
 	 * Create and return a config converted from a {@link Field} that may have either a {@link DatabaseField} annotation
 	 * or the javax.persistence annotations.
@@ -269,6 +287,11 @@ public class DatabaseFieldConfig {
 			} else {
 				return null;
 			}
+		}
+
+		ForeignCollectionField foreignCollection = field.getAnnotation(ForeignCollectionField.class);
+		if (foreignCollection != null) {
+			return fromForeignCollection(databaseType, tableName, field, foreignCollection);
 		}
 
 		/*
@@ -386,6 +409,14 @@ public class DatabaseFieldConfig {
 				findIndexName(tableName, databaseField.uniqueIndexName(), databaseField.uniqueIndex(), config);
 		config.foreignAutoRefresh = databaseField.foreignAutoRefresh();
 
+		return config;
+	}
+
+	private static DatabaseFieldConfig fromForeignCollection(DatabaseType databaseType, String tableName, Field field,
+			ForeignCollectionField foreignCollection) {
+		DatabaseFieldConfig config = new DatabaseFieldConfig();
+		config.foreignCollection = true;
+		config.foreignCollectionEager = foreignCollection.eager();
 		return config;
 	}
 

@@ -17,6 +17,7 @@ import com.j256.ormlite.table.DatabaseTableConfig;
 public class DaoManager {
 
 	private static Map<Class<?>, Dao<?, ?>> classMap;
+	private static Map<DatabaseTableConfig<?>, Dao<?, ?>> tableMap;
 
 	/**
 	 * Helper method to create a Dao object without having to define a class. This checks to see if the Dao has already
@@ -43,14 +44,14 @@ public class DaoManager {
 	 */
 	public synchronized static <T, ID> Dao<T, ID> createDao(ConnectionSource connectionSource,
 			DatabaseTableConfig<T> tableConfig) throws SQLException {
-		if (classMap == null) {
-			classMap = new HashMap<Class<?>, Dao<?, ?>>();
+		if (tableMap == null) {
+			tableMap = new HashMap<DatabaseTableConfig<?>, Dao<?, ?>>();
 		}
 		@SuppressWarnings("unchecked")
-		Dao<T, ID> dao = (Dao<T, ID>) classMap.get(tableConfig.getDataClass());
+		Dao<T, ID> dao = (Dao<T, ID>) tableMap.get(tableConfig);
 		if (dao == null) {
 			dao = BaseDaoImpl.createDao(connectionSource, tableConfig);
-			classMap.put(tableConfig.getDataClass(), dao);
+			tableMap.put(tableConfig, dao);
 		}
 		return dao;
 	}

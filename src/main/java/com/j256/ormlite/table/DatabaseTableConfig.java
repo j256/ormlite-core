@@ -165,7 +165,8 @@ public class DatabaseTableConfig<T> {
 		List<FieldType> fieldTypes = new ArrayList<FieldType>();
 		for (Class<?> classWalk = clazz; classWalk != null; classWalk = classWalk.getSuperclass()) {
 			for (Field field : classWalk.getDeclaredFields()) {
-				FieldType fieldType = FieldType.createFieldType(connectionSource, tableName, field, recurseLevel);
+				FieldType fieldType =
+						FieldType.createFieldType(connectionSource, tableName, field, clazz, recurseLevel);
 				if (fieldType != null) {
 					fieldTypes.add(fieldType);
 				}
@@ -207,7 +208,7 @@ public class DatabaseTableConfig<T> {
 				throw SqlExceptionUtil.create("Could not configure field with name '" + fieldConfig.getFieldName()
 						+ "' for " + dataClass, e);
 			}
-			FieldType fieldType = new FieldType(connectionSource, tableName, field, fieldConfig, 0);
+			FieldType fieldType = new FieldType(connectionSource, tableName, field, fieldConfig, dataClass, 0);
 			fieldTypes.add(fieldType);
 		}
 		if (fieldTypes.size() == 0) {

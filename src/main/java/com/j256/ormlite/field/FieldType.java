@@ -3,11 +3,19 @@ package com.j256.ormlite.field;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Map;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.dao.BaseForeignCollection;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.dao.EagerForeignCollection;
+import com.j256.ormlite.dao.ForeignCollection;
+import com.j256.ormlite.dao.LazyForeignCollection;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.misc.BaseDaoEnabled;
 import com.j256.ormlite.misc.SqlExceptionUtil;
@@ -38,22 +46,17 @@ public class FieldType {
 	private final DataType dataType;
 	private final Object dataTypeConfigObj;
 	private final Object defaultValue;
-	private final int width;
-	private final boolean canBeNull;
+	private final DatabaseFieldConfig fieldConfig;
 	private final boolean isId;
 	private final boolean isGeneratedId;
 	private final String generatedIdSequence;
 	private final FieldConverter fieldConverter;
 	private final TableInfo<?, ?> foreignTableInfo;
+	private final FieldType foreignFieldType;
+	private final Dao<?, ?> foreignDao;
 	private final MappedQueryForId<Object, Object> mappedQueryForId;
 	private final Method fieldGetMethod;
 	private final Method fieldSetMethod;
-	private final Enum<?> unknownEnumVal;
-	private final boolean throwIfNull;
-	private final String format;
-	private final boolean unique;
-	private String indexName;
-	private String uniqueIndexName;
 
 	/**
 	 * You should use {@link FieldType#createFieldType} to instantiate one of these field if you have a {@link Field}.
@@ -62,7 +65,7 @@ public class FieldType {
 	 *            is used to make sure we done get in an infinite recursive loop if a foreign object refers to itself.
 	 */
 	public FieldType(ConnectionSource connectionSource, String tableName, Field field, DatabaseFieldConfig fieldConfig,
-			int recurseLevel) throws SQLException {
+			Class<?> parentClass, int recurseLevel) throws SQLException {
 		this.connectionSource = connectionSource;
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		this.tableName = tableName;
@@ -92,6 +95,11 @@ public class FieldType {
 				} else {
 					tableConfig.extractFieldTypes(connectionSource);
 				}
+				/*
+				 * If we have a BaseDaoEnabled class then we generate the DAO and gets it's table information which has
+				 * been set with the DAO. This seems like an extraneous DAO construction but it will be cached by the
+				 * DaoManager and it is needed to be part of the TableInfo so it can be set on the resulting objects.
+				 */
 				if (BaseDaoEnabled.class.isAssignableFrom(clazz)) {
 					BaseDaoImpl<?, ?> dao = (BaseDaoImpl<?, ?>) DaoManager.createDao(connectionSource, tableConfig);
 					this.foreignTableInfo = dao.getTableInfo();
@@ -120,7 +128,51 @@ public class FieldType {
 				this.foreignTableInfo = null;
 				this.mappedQueryForId = null;
 			}
-		} else if (dataType == DataType.UNKNOWN) {
+			this.foreignDao = null;
+			this.foreignFieldType = null;
+		} else if (fieldConfig.isForeignCollection() && recurseLevel == 0) {
+			if (clazz != Collection.class && ForeignCollection.class.isAssignableFrom(clazz)) {
+				throw new SQLException("Field class for '" + field.getName()
+						+ "' must be of class ForeignCollection or Collection.");
+			}
+			Type type = field.getGenericType();
+			if (!(type instanceof ParameterizedType)) {
+				throw new SQLException("Field class for '" + field.getName() + "' must be a parameterized Collection.");
+			}
+			Type[] genericArguments = ((ParameterizedType) type).getActualTypeArguments();
+			if (genericArguments.length == 0) {
+				// i doubt this will ever be hit
+				throw new SQLException("Field class for '" + field.getName()
+						+ "' must be a parameterized Collection with at least 1 type.");
+			}
+			clazz = (Class<?>) genericArguments[0];
+			DatabaseTableConfig<?> tableConfig = fieldConfig.getForeignTableConfig();
+			if (tableConfig == null) {
+				tableConfig = DatabaseTableConfig.fromClass(connectionSource, clazz, recurseLevel + 1);
+			} else {
+				tableConfig.extractFieldTypes(connectionSource);
+			}
+
+			FieldType foreignFieldType = null;
+			for (FieldType fieldType : tableConfig.getFieldTypes(databaseType)) {
+				if (fieldType.getFieldType() == parentClass) {
+					foreignFieldType = fieldType;
+					break;
+				}
+			}
+			if (foreignFieldType == null) {
+				throw new SQLException("Foreign collection object " + clazz + " for field '" + field.getName()
+						+ "' does not contain a foreign field of class " + parentClass);
+			}
+			if (!foreignFieldType.isForeign()) {
+				throw new SQLException("Foreign collection object " + clazz + " for field '" + field.getName()
+						+ "' contains a field of class " + parentClass + " but it's not foreign");
+			}
+			this.foreignDao = DaoManager.createDao(connectionSource, tableConfig);
+			this.foreignFieldType = foreignFieldType;
+			this.foreignTableInfo = null;
+			this.mappedQueryForId = null;
+		} else if (dataType == DataType.UNKNOWN && (!fieldConfig.isForeignCollection())) {
 			if (byte[].class.isAssignableFrom(clazz)) {
 				throw new SQLException("ORMLite can't store unknown class " + clazz + " for field '" + field.getName()
 						+ "'. byte[] fields must specify dataType=DataType.BYTE_ARRAY or SERIALIZABLE");
@@ -134,6 +186,8 @@ public class FieldType {
 		} else {
 			this.foreignTableInfo = null;
 			this.mappedQueryForId = null;
+			this.foreignDao = null;
+			this.foreignFieldType = null;
 		}
 		if (fieldConfig.getColumnName() == null) {
 			this.dbColumnName = defaultFieldName;
@@ -141,8 +195,7 @@ public class FieldType {
 			this.dbColumnName = fieldConfig.getColumnName();
 		}
 		this.dataType = dataType;
-		this.width = fieldConfig.getWidth();
-		this.canBeNull = fieldConfig.isCanBeNull();
+		this.fieldConfig = fieldConfig;
 		if (fieldConfig.isId()) {
 			if (fieldConfig.isGeneratedId() || fieldConfig.getGeneratedIdSequence() != null) {
 				throw new IllegalArgumentException("Must specify one of id, generatedId, and generatedIdSequence with "
@@ -190,7 +243,6 @@ public class FieldType {
 			throw new IllegalArgumentException(sb.toString());
 		}
 		this.fieldConverter = databaseType.getFieldConverter(dataType);
-		this.format = fieldConfig.getFormat();
 		if (this.isId && foreignTableInfo != null) {
 			throw new IllegalArgumentException("Id field " + field.getName() + " cannot also be a foreign object");
 		}
@@ -201,14 +253,9 @@ public class FieldType {
 			this.fieldGetMethod = null;
 			this.fieldSetMethod = null;
 		}
-		this.unknownEnumVal = fieldConfig.getUnknownEnumvalue();
-		this.throwIfNull = fieldConfig.isThrowIfNull();
-		if (this.throwIfNull && !dataType.isPrimitive()) {
+		if (fieldConfig.isThrowIfNull() && !dataType.isPrimitive()) {
 			throw new SQLException("Field " + field.getName() + " must be a primitive if set with throwIfNull");
 		}
-		this.unique = fieldConfig.isUnique();
-		this.indexName = fieldConfig.getIndexName();
-		this.uniqueIndexName = fieldConfig.getUniqueIndexName();
 		if (this.isId && !dataType.isAppropriateId()) {
 			throw new SQLException("Field '" + field.getName() + "' is of data type " + dataType
 					+ " which cannot be the ID field");
@@ -258,11 +305,11 @@ public class FieldType {
 	}
 
 	public int getWidth() {
-		return width;
+		return fieldConfig.getWidth();
 	}
 
 	public boolean isCanBeNull() {
-		return canBeNull;
+		return fieldConfig.isCanBeNull();
 	}
 
 	/**
@@ -465,26 +512,26 @@ public class FieldType {
 	}
 
 	Enum<?> getUnknownEnumVal() {
-		return unknownEnumVal;
+		return fieldConfig.getUnknownEnumvalue();
 	}
 
 	/**
 	 * Return the format of the field.
 	 */
 	String getFormat() {
-		return format;
+		return fieldConfig.getFormat();
 	}
 
 	public boolean isUnique() {
-		return unique;
+		return fieldConfig.isUnique();
 	}
 
 	public String getIndexName() {
-		return indexName;
+		return fieldConfig.getIndexName();
 	}
 
 	public String getUniqueIndexName() {
-		return uniqueIndexName;
+		return fieldConfig.getUniqueIndexName();
 	}
 
 	/**
@@ -509,6 +556,28 @@ public class FieldType {
 	}
 
 	/**
+	 * Call through to {@link DatabaseFieldConfig#isForeignCollection()}
+	 */
+	public boolean isForeignCollection() {
+		return fieldConfig.isForeignCollection();
+	}
+
+	/**
+	 * Build a foreign collection based on the field settings that matches the id argument.
+	 */
+	public <FT, FID> BaseForeignCollection<FT, FID> buildForeignCollection(Object id) throws SQLException {
+		BaseForeignCollection<FT, FID> collection;
+		@SuppressWarnings("unchecked")
+		Dao<FT, FID> castDao = (Dao<FT, FID>) foreignDao;
+		if (fieldConfig.isForeignCollectionEager()) {
+			collection = new EagerForeignCollection<FT, FID>(castDao, foreignFieldType.dbColumnName, id);
+		} else {
+			collection = new LazyForeignCollection<FT, FID>(castDao, foreignFieldType.dbColumnName, id);
+		}
+		return collection;
+	}
+
+	/**
 	 * Get the result object from the results. A call through to {@link FieldConverter#resultToJava}.
 	 */
 	public <T> T resultToJava(DatabaseResults results, Map<String, Integer> columnPositions) throws SQLException {
@@ -520,7 +589,7 @@ public class FieldType {
 		@SuppressWarnings("unchecked")
 		T converted = (T) fieldConverter.resultToJava(this, results, dbColumnPos);
 		if (dataType.isPrimitive()) {
-			if (throwIfNull && results.wasNull(dbColumnPos)) {
+			if (fieldConfig.isThrowIfNull() && results.wasNull(dbColumnPos)) {
 				throw new SQLException("Results value for primitive field '" + fieldName
 						+ "' was an invalid null value");
 			}
@@ -552,13 +621,13 @@ public class FieldType {
 	 *            is used to make sure we done get in an infinite recursive loop if a foreign object refers to itself. =
 	 */
 	public static FieldType createFieldType(ConnectionSource connectionSource, String tableName, Field field,
-			int recurseLevel) throws SQLException {
+			Class<?> parentClass, int recurseLevel) throws SQLException {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		DatabaseFieldConfig fieldConfig = DatabaseFieldConfig.fromField(databaseType, tableName, field);
 		if (fieldConfig == null) {
 			return null;
 		} else {
-			return new FieldType(connectionSource, tableName, field, fieldConfig, recurseLevel);
+			return new FieldType(connectionSource, tableName, field, fieldConfig, parentClass, recurseLevel);
 		}
 	}
 
