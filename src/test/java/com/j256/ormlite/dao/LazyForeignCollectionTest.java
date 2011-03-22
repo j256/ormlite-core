@@ -3,8 +3,6 @@ package com.j256.ormlite.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.Collection;
-
 import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
@@ -110,7 +108,7 @@ public class LazyForeignCollectionTest extends BaseCoreTest {
 		@DatabaseField
 		String name;
 		@ForeignCollectionField
-		Collection<Order> orders;
+		ForeignCollection<Order> orders;
 		protected Account() {
 		}
 	}

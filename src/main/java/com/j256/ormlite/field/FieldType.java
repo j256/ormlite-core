@@ -131,7 +131,7 @@ public class FieldType {
 			this.foreignDao = null;
 			this.foreignFieldType = null;
 		} else if (fieldConfig.isForeignCollection() && recurseLevel == 0) {
-			if (clazz != Collection.class && ForeignCollection.class.isAssignableFrom(clazz)) {
+			if (clazz != Collection.class && !ForeignCollection.class.isAssignableFrom(clazz)) {
 				throw new SQLException("Field class for '" + field.getName()
 						+ "' must be of class ForeignCollection or Collection.");
 			}
