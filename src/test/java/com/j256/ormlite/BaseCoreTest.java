@@ -1,8 +1,6 @@
 package com.j256.ormlite;
 
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.junit.After;
 import org.junit.Before;
@@ -22,8 +20,6 @@ public abstract class BaseCoreTest {
 	protected final DatabaseType databaseType = new H2DatabaseType();
 	protected H2ConnectionSource connectionSource;
 
-	private Set<DatabaseTableConfig<?>> dropClassSet = new HashSet<DatabaseTableConfig<?>>();
-
 	@Before
 	public void before() throws Exception {
 		connectionSource = new H2ConnectionSource();
@@ -32,6 +28,7 @@ public abstract class BaseCoreTest {
 	@After
 	public void after() throws Exception {
 		connectionSource.close();
+		DaoManager.clearCache();
 	}
 
 	protected class LimitAfterSelectDatabaseType extends H2DatabaseType {
@@ -109,9 +106,6 @@ public abstract class BaseCoreTest {
 			// ignore any errors about missing tables
 		}
 		TableUtils.createTable(connectionSource, tableConfig);
-		if (dropAtEnd) {
-			dropClassSet.add(tableConfig);
-		}
 	}
 
 	protected <T> void dropTable(Class<T> clazz, boolean ignoreErrors) throws Exception {

@@ -51,46 +51,7 @@
 
 - support for CREATE IF NOT EXISTS
 
-- basic support for public class Account { @DatabaseField(fetched = EAGER) Collection<Order> orders } fields
-	- needs a DaoManager static class
-	- it would _only_ support Collection<?>
-	- Order must then have a foreign Account field
-	- with eager fetch it would load in all of the objects using a separate orderDao.queryAll()
-	- for lazy fetch it would keep the ConnectionSource and load at a later time
-	- it would support adds because it could have the dao object
-	- isEmpty(), size(), contains(), containsAll() would iterate through the entire list if lazy -- needs documentation
-	- iterator() would generate
-	- maybe have a LazyCollection() and EagerCollection() types with a BaseCollection()
-	- it would do a 'select * from order where account_id = ?' query
-	- methods:
-		int size();
-	    boolean isEmpty();
-	    boolean contains(Object o);
-	    boolean containsAll(Collection<?> c);
-			- iterate through collection
-
-    	Object[] toArray();
-    	<T> T[] toArray(T[] a);
-	    boolean equals(Object o);
-	    int hashCode();
-			- get a list of items and call the same methods on the list
-
-	    Iterator<E> iterator();
-	    	- call through to dao.iterator()
-	    	
-	    boolean add(E e);
-	    boolean addAll(Collection<? extends E> c);
-	    	- call to create and then tweak numbers
-
-    	boolean remove(Object o);
-	    boolean removeAll(Collection<?> c);
-	    	- call to delete and then tweak numbers
-    	
-	    boolean retainAll(Collection<?> c);
-	    	- call to delete in iterator and then tweak numbers
-
-	    void clear();
-	    	- call to deleteAll and then tweak numbers
+- support for Dao.countOf() or some such that would do a 'SELECT COUNT(*) FROM FOO' 
 
 -----------------------------------------------------------------------------------------------------------------------------------
 

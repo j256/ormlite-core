@@ -8,6 +8,7 @@ import org.junit.Test;
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.table.DatabaseTable;
 
 public class LazyForeignCollectionTest extends BaseCoreTest {
 
@@ -102,12 +103,13 @@ public class LazyForeignCollectionTest extends BaseCoreTest {
 		assertEquals(4, orderC);
 	}
 
+	@DatabaseTable
 	protected static class Account {
 		@DatabaseField(generatedId = true)
 		int id;
 		@DatabaseField
 		String name;
-		@ForeignCollectionField
+		@ForeignCollectionField(eager = false)
 		ForeignCollection<Order> orders;
 		protected Account() {
 		}

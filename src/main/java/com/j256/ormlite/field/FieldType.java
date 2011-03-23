@@ -133,7 +133,7 @@ public class FieldType {
 		} else if (fieldConfig.isForeignCollection() && recurseLevel == 0) {
 			if (clazz != Collection.class && !ForeignCollection.class.isAssignableFrom(clazz)) {
 				throw new SQLException("Field class for '" + field.getName()
-						+ "' must be of class ForeignCollection or Collection.");
+						+ "' must be of class " + ForeignCollection.class.getSimpleName() + " or Collection.");
 			}
 			Type type = field.getGenericType();
 			if (!(type instanceof ParameterizedType)) {
