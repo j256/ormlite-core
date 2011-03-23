@@ -5,8 +5,7 @@ To release ORMLite:
 	- ormlite-core
 	- ormlite-jdbc
 	- ormlite-android
-
-	Run ormliteAndroidTests on the simulator as a Android Junit Test
+	- ormliteAndroidTests on the simulator as a Android Junit Test
 
 2) Run Android example programs:
 
