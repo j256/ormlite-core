@@ -84,7 +84,7 @@ ul.toc {list-style: none}
 </td></tr>
 <tr><td align="left" valign="top"><a href="#SEC26">2.11 Foreign Object Fields</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">             Fields that represent foreign objects.
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC27">2.12 Collections of Foreign Objects</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">         Fields that are collections of foreign objects.
+<tr><td align="left" valign="top"><a href="#SEC27">2.12 Foreign Collections</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">          Fields that are collections of foreign objects.
 </td></tr>
 <tr><td align="left" valign="top"><a href="#SEC28">2.13 Table and Schema Creation</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">              Creating tables and loading schema.
 </td></tr>
@@ -1795,7 +1795,7 @@ System.out.println(&quot;Now the account fields will be set: &quot; +
 <td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 2.12 Collections of Foreign Objects </h2>
+<h2 class="section"> 2.12 Foreign Collections </h2>
 
 <p>As of March 2011, one of the newest features of ORMLite is the concept of a &quot;Foreign Collection&quot;.  In the above section of the
 manual we gave the example of the <code>Order</code> class having a foreign object field to the <code>Account</code> table.  A foreign collection
@@ -1810,11 +1810,11 @@ in the collection have a corresponding foreign object that matches the account. 
     &hellip;
 }
 </pre></td></tr></table>
-<p>In the above example, the <code>orders</code> field is a collection of the orders that match the account.  The field type of <code>orders</code>
-must be either <code>ForeignCollection&lt;T&gt;</code> or <code>Collection&lt;T&gt;</code> - no other collections are supported.  There are two different types
-of foreign collections: eager or lazy.   If eager is set to true then the separate query is made immediately and the orders are stored
-as a list within the collection.  If eager is set to false (the default) then the collection will iterate over the database using
-the <code>Dao.iterator()</code> whenever a method is called on the collection.
+<p>In the above example, the <code>@ForeignCollectionField</code> annotation marks that the <code>orders</code> field is a collection of the orders
+that match the account.  The field type of <code>orders</code> must be either <code>ForeignCollection&lt;T&gt;</code> or <code>Collection&lt;T&gt;</code> - no other
+collections are supported.  There are two different types of foreign collections: eager or lazy.   If eager is set to true then the
+separate query is made immediately and the orders are stored as a list within the collection.  If eager is set to false (the default)
+then the collection will iterate over the database using the <code>Dao.iterator()</code> whenever a method is called on the collection.
 
 </p><p><em>WARNING:</em> With lazy collections, even the <code>size()</code> method causes a iteration across the database.  You most likely just want
 to use the <code>iterator()</code> and <code>toArray()</code> methods on lazy collections.
@@ -1825,6 +1825,8 @@ iterator or if you call <code>close()</code> on it.  Only the <code>ForeignColle
 
 </p><p>The foreign collections support the <code>add()</code> and <code>remove()</code> methods in which case the objects will be both added or removed from
 the eager list (if there) and DAO calls will be made to affect the order table as well.
+
+</p><p>There is example code to show how to use foreign collections.  See <a href="ormlite_7.html#ANC26">foreign collections example</a>.
 
 </p><hr size="6">
 <a name="NOD29"></a>
@@ -1981,7 +1983,7 @@ creator.maybeCreateTables();
 // later, we may want to drop the tables that were created 
 creator.maybeDropTables();
 </pre></td></tr></table>
-<p>For a real life example of using <code>TableCreator</code> you can see <a href="ormlite_7.html#ANC28">spring example</a>.
+<p>For a real life example of using <code>TableCreator</code> you can see <a href="ormlite_7.html#ANC29">spring example</a>.
 
 </p><hr size="6">
 <a name="NOD32"></a>
