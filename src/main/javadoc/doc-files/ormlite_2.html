@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on March, 18 2011 by texi2html 1.70 -->
+<!-- Created on March, 23 2011 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -47,14 +47,14 @@ ul.toc {list-style: none}
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite_1.html#SEC1" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h1 class="chapter"> 2. How to Use </h1>
@@ -84,7 +84,11 @@ ul.toc {list-style: none}
 </td></tr>
 <tr><td align="left" valign="top"><a href="#SEC26">2.11 Foreign Object Fields</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">             Fields that represent foreign objects.
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC27">2.12 Table and Schema Creation</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">              Creating tables and loading schema.
+<tr><td align="left" valign="top"><a href="#SEC27">2.12 Collections of Foreign Objects</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">         Fields that are collections of foreign objects.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC28">2.13 Table and Schema Creation</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">              Creating tables and loading schema.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC31">2.14 DAO Enabled Objects</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">         Another pattern for your data classes.
 </td></tr>
 </table>
 
@@ -97,14 +101,14 @@ ul.toc {list-style: none}
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 2.1 Setting Up Your Classes </h2>
@@ -135,14 +139,14 @@ ul.toc {list-style: none}
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC7" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h3 class="subsection"> 2.1.1 Adding ORMLite Annotations </h3>
@@ -152,7 +156,7 @@ about classes, methods, or fields.  To specify what classes and fields to store 
 supports either its own annotations (<code>@DatabaseTable</code> and <code>@DatabaseField</code>) or the more standard
 annotations from the <code>javax.persistence</code> package.  See section <a href="#SEC9">Using javax.persistence Annotations</a>.   Annotations are the
 easiest way to configure your classes but you can also configure the class using Java code or Spring XML.
-See section <a href="ormlite_5.html#SEC40">Class Configuration</a>.
+See section <a href="ormlite_5.html#SEC42">Class Configuration</a>.
 
 </p><p>With ORMLite annotations, for each of the Java classes that you would like to persist to your SQL database, you
 will need to add the <code>@DatabaseTable</code> annotation right above the <code>public class</code> line.  Each class marked with
@@ -166,6 +170,9 @@ public class Account {
 that corresponds to the class.   If not specified, the class name, with normalized case, is used by default.  With the above example
 each <code>Account</code> object will be persisted as a row in the <code>accounts</code> table in the database.  If the <code>tableName</code>
 was not specified, the <code>account</code> table would be used instead.
+
+</p><p>More advanced users may want to add a <code>daoClassName</code> argument which specifies the full name of the class (including the package)
+as a string.  This is used by
 
 </p><a name="IDX8"></a>
 <a name="IDX9"></a>
@@ -414,14 +421,14 @@ internal DAO. The default is to just have the ID field in the object retrieved a
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC7" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h3 class="subsection"> 2.1.2 Using javax.persistence Annotations </h3>
@@ -540,14 +547,14 @@ See <a href="#ANC18">datatype serializable</a>.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC7" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h3 class="subsection"> 2.1.3 Adding a No-Argument-Constructor </h3>
@@ -589,21 +596,21 @@ public class Account {
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 2.2 Persisted Data Types </h2>
 
 <p>The following Java types can be persisted to the database by ORMLite.  Database specific code
 helps to translate between the SQL types and the database specific handling of those types.
-See section <a href="ormlite_5.html#SEC41">Database Specific Code</a>.
+See section <a href="ormlite_5.html#SEC43">Database Specific Code</a>.
 
 </p><dl compact="compact">
 <dd>
@@ -643,7 +650,7 @@ See section <a href="ormlite_5.html#SEC41">Database Specific Code</a>.
 <dt><code> java.util.Date (DataType.DATE)</code></dt>
 <dd>
 <p>Persisted as SQL type <code>TIMESTAMP</code>.  This type automatically uses an internal <code>?</code> argument because the string
-format of it is unreliable to match the database format.  See section <a href="ormlite_3.html#SEC36">Using Select Arguments</a>.  See also <code>DATE_LONG</code> and
+format of it is unreliable to match the database format.  See section <a href="ormlite_3.html#SEC38">Using Select Arguments</a>.  See also <code>DATE_LONG</code> and
 <code>DATE_STRING</code>.
 
 </p><p><em>NOTE:</em> This is a different class from <code>java.sql.Date</code>.
@@ -747,7 +754,7 @@ This is different from the <code>DataType.BYTE_ARRAY</code> type which stores th
 
 </p><p>Some databases place restrictions on this field type that it cannot be the id column in a class.  Other databases do
 not allow you to query on this type of field at all.  If your database does support it, you may also have to use a
-Select Argument to query for this type.  See section <a href="ormlite_3.html#SEC36">Using Select Arguments</a>.
+Select Argument to query for this type.  See section <a href="ormlite_3.html#SEC38">Using Select Arguments</a>.
 
 </p><p><em>NOTE:</em> To use this type, you <em>must</em> specify <code>DataType.SERIALIZABLE</code> using the <code>dataType</code> field.  It will
 not be auto-detected.  See <a href="#ANC2">DatabaseField dataType</a>.
@@ -787,8 +794,8 @@ used if an unknown value is found in the database. See <a href="#ANC3">unknownEn
 <dt><code> UUID (DataType.UUID)</code></dt>
 <dd>
 <p>The <code>java.util.UUID</code> class persisted as a <code>VARCHAR</code> type.  It saves it as the <code>uuid.toString()</code> and used the
-<code>UUID.fromString(String)</code> method to convert it back again.  You can also mark a UUID field as being generated-id in
-which case whenever it is inserted, <code>java.util.UUID.randomUUID()</code> is called and set on the field.
+<code>UUID.fromString(String)</code> method to convert it back again.  You can also mark a <code>UUID</code> field as being generated-id
+in which case whenever it is inserted, <code>java.util.UUID.randomUUID()</code> is called and set on the field.
 See section <a href="#SEC18">Fields With generatedId</a>.
 
 </p></dd>
@@ -806,20 +813,20 @@ stored in the database.  See section <a href="#SEC26">Foreign Object Fields</a>.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 2.3 Connection Sources </h2>
 
 <p><em>NOTE:</em> With regards to connection sources, Android users should see the Android specific documentation later in the manual.
-See section <a href="ormlite_4.html#SEC37">Using With Android</a>.
+See section <a href="ormlite_4.html#SEC39">Using With Android</a>.
 
 </p><a name="IDX100"></a>
 <a name="IDX101"></a>
@@ -904,14 +911,14 @@ does <em>nothing</em>.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 2.4 Setting Up the DAOs </h2>
@@ -931,6 +938,12 @@ Dao&lt;Order, Integer&gt; orderDao =
   BaseDaoImpl.createDao(connectionSource, Order.class);
 </pre></td></tr></table>
 <a name="IDX115"></a>
+<a name="IDX116"></a>
+<p><em>NOTE:</em> You should use the <code>DaoManager#createDao</code> methods instead of <code>BaseDaoImpl.createDao</code> if you are using any of the
+features which require inner Dao creation such as auto-refresh of foreign fields and collections of sub-objects.  The <code>DaoManager</code>
+caches the DAO classes so they can be reused.
+
+</p><a name="IDX117"></a>
 <p>If you want a better class hierarchy or if you need to add additional methods to your DAOs, you should consider defining
 an interface which extends the <code>Dao</code> interface.  The interface isn't required but it is a good pattern so your code is
 less tied to JDBC for persistence.  The following is an example DAO interface corresponding to the Account class from the
@@ -944,7 +957,7 @@ public interface AccountDao extends Dao&lt;Account, String&gt; {
 <p>Then in the implementation, you should extend the <code>BaseDaoImpl</code> base class.  Here's the example implementation of your DAO
 interface.
 
-</p><a name="IDX116"></a>
+</p><a name="IDX118"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">/** JDBC implementation of the AccountDao interface. */
 public class AccountDaoImpl extends BaseDaoImpl&lt;Account, String&gt;
   implements AccountDao {
@@ -967,14 +980,14 @@ More on how to use these DAOs later. See section <a href="#SEC20">DAO Usage</a>.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 2.5 Supported Databases </h2>
@@ -983,7 +996,7 @@ More on how to use these DAOs later. See section <a href="#SEC20">DAO Usage</a>.
 
 </p><dl compact="compact">
 <dd>
-<a name="IDX117"></a>
+<a name="IDX119"></a>
 </dd>
 <dt> MySQL</dt>
 <dd>
@@ -992,54 +1005,54 @@ another engine, you can instantiate the <code>MysqlDatabaseType</code> directly 
 the default or another engine.  Also, MySQL does some funky stuff with the last-modification time if a <code>Date</code> is defined as a
 <code>TIMESTAMP</code> so <code>DATETIME</code> was used instead.
 
-</p><a name="IDX118"></a>
+</p><a name="IDX120"></a>
 </dd>
 <dt> Postgres</dt>
 <dd>
 <p>No special instructions.
 
-</p><a name="IDX119"></a>
+</p><a name="IDX121"></a>
 </dd>
 <dt> H2</dt>
 <dd>
 <p>No special instructions.  We use this database for all of our internal testing with in-memory and small on-disk databases.
 
-</p><a name="IDX120"></a>
-<a name="IDX121"></a>
-<a name="IDX122"></a>
+</p><a name="IDX122"></a>
+<a name="IDX123"></a>
+<a name="IDX124"></a>
 </dd>
 <dt> SQLite</dt>
 <dd>
 <p>There are multiple SQLite drivers out there.  Make sure you use the Xerial one (<a href="http://www.xerial.org/trac/Xerial/wiki/SQLiteJDBC">http://www.xerial.org/trac/Xerial/wiki/SQLiteJDBC</a>)
 and not the Zentus one (<a href="http://www.zentus.com/sqlitejdbc/">http://www.zentus.com/sqlitejdbc/</a>) which does not support generated ids.
 
-</p><a name="IDX123"></a>
+</p><a name="IDX125"></a>
 </dd>
 <dt> Android SQLite</dt>
 <dd>
 <p>Android's SQLite database is accessed through direct calls to the Android database API methods.
 
-</p><a name="IDX124"></a>
+</p><a name="IDX126"></a>
 </dd>
 <dt> Derby</dt>
 <dd>
 <p>There are two drivers for Derby: one embedded and one client/server.  ORMLite makes an attempt to detect the right driver but you
-may have to set the right database type on your ConnectionSource directly if it doesn't.  See section <a href="ormlite_5.html#SEC41">Database Specific Code</a>.
+may have to set the right database type on your ConnectionSource directly if it doesn't.  See section <a href="ormlite_5.html#SEC43">Database Specific Code</a>.
 
-</p><a name="IDX125"></a>
+</p><a name="IDX127"></a>
 </dd>
 <dt> HSQLDB</dt>
 <dd>
 <p>No special instructions.
 
-</p><a name="IDX126"></a>
-<a name="IDX127"></a>
+</p><a name="IDX128"></a>
+<a name="IDX129"></a>
 </dd>
 <dt> Microsoft SQL Server</dt>
 <dd>
 <p>No special instructions.
 
-</p><a name="IDX128"></a>
+</p><a name="IDX130"></a>
 </dd>
 <dt> Netezza</dt>
 <dd>
@@ -1047,8 +1060,8 @@ may have to set the right database type on your ConnectionSource directly if it 
 Netezza database. We will try to keep this driver up to date with the help of contributors.  Thanks to Richard Kooijman for the driver.
 Please contact us if you want to help with development of this driver.
   
-</p><a name="IDX129"></a>
-<a name="IDX130"></a>
+</p><a name="IDX131"></a>
+<a name="IDX132"></a>
 </dd>
 <dt> ODBC</dt>
 <dd>
@@ -1056,14 +1069,14 @@ Please contact us if you want to help with development of this driver.
 Open Database Connectivity.  We will try to keep this driver up to date with the help of contributors.  Thanks to Dale Asberry for the
 driver.  Please contact us if you want to help with development of this driver.
 
-</p><a name="IDX131"></a>
+</p><a name="IDX133"></a>
 </dd>
 <dt> DB2</dt>
 <dd>
 <p>I do not have access to an DB2 database so we cannot run any tests to make sure that our support for it works well.  Please contact us
 if you want to help with development of this driver.
 
-</p><a name="IDX132"></a>
+</p><a name="IDX134"></a>
 </dd>
 <dt> Oracle</dt>
 <dd>
@@ -1073,7 +1086,7 @@ if you want to help with development of this driver.
 </p></dd>
 </dl>
 
-<a name="IDX133"></a>
+<a name="IDX135"></a>
 <p>Please contact the author if your database is not supported.
 
 </p><hr size="6">
@@ -1085,14 +1098,14 @@ if you want to help with development of this driver.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 2.6 Tying It All Together </h2>
@@ -1118,16 +1131,13 @@ TableUtils.createTable(connectionSource, Account.class);
 Account account = new Account(&quot;Jim Coakley&quot;);
 
 // persist the account object to the database
-// it should return 1 for the 1 row inserted
-if (accountDao.create(account) != 1) {
-  // error handling &hellip; 
-}
+accountDao.create(account);
 &hellip;
 
 // destroy the data source which should close underlying connections
 connectionSource.destroy();
 </pre></td></tr></table>
-<p>For more examples, see the code later in the manual.  See section <a href="ormlite_7.html#SEC52">Example Code</a>.
+<p>For more examples, see the code later in the manual.  See section <a href="ormlite_7.html#SEC54">Example Code</a>.
 
 </p><hr size="6">
 <a name="NOD17"></a>
@@ -1138,14 +1148,14 @@ connectionSource.destroy();
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 2.7 Identity Columns </h2>
@@ -1175,14 +1185,14 @@ To configure a field as an identity field, you should use one (and only one) of 
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC16" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h3 class="subsection"> 2.7.1 Fields With id </h3>
@@ -1205,9 +1215,9 @@ if (account == null) {
     // the name &quot;John Smith&quot; does not match any rows
 }
 </pre></td></tr></table>
-<a name="IDX134"></a>
-<a name="IDX135"></a>
 <a name="IDX136"></a>
+<a name="IDX137"></a>
+<a name="IDX138"></a>
 <p><em>NOTE:</em> If you need to change the value of an object's id field, you must use the <code>Dao.updateId()</code> method which
 takes the current object still with its <em>old</em> id value and the new value.  ORMLite has to first locate the object
 by its old id and then update it with the new id.  See <a href="ormlite_5.html#ANC23">updateId</a>.
@@ -1221,14 +1231,14 @@ by its old id and then update it with the new id.  See <a href="ormlite_5.html#A
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC16" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h3 class="subsection"> 2.7.2 Fields With generatedId </h3>
@@ -1249,9 +1259,7 @@ by the database and set on the object by ORMLite.  In the majority of database t
 </p><table><tr><td>&nbsp;</td><td><pre class="example">// build our order object without an id
 Order order = new Order(&quot;Jim Sanders&quot;, 12.34);
 &hellip;
-if (orderDao.create(order) != 1) {
-   // error handling unless 1 row was inserted
-}
+orderDao.create(order);
 System.out.println(&quot;Order id &quot; + order.getId() +
    &quot; was persisted to the database&quot;);
 // query for the order with an id of 1372
@@ -1276,14 +1284,14 @@ be set on the id field by ORMLite and will be available when <code>getId()</code
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC16" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h3 class="subsection"> 2.7.3 Fields With generatedIdSequence </h3>
@@ -1315,14 +1323,14 @@ sequences.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 2.8 DAO Usage </h2>
@@ -1332,10 +1340,10 @@ sequences.
 
 </p><dl compact="compact">
 <dd>
-<a name="IDX137"></a>
-<a name="IDX138"></a>
 <a name="IDX139"></a>
 <a name="IDX140"></a>
+<a name="IDX141"></a>
+<a name="IDX142"></a>
 </dd>
 <dt> create and persist an object to the database</dt>
 <dd>
@@ -1343,12 +1351,9 @@ sequences.
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">Account account = new Account();
 account.name = &quot;Jim Coakley&quot;;
-// only 1 row should have been affected
-if (accountDao.create(account) != 1) {
-  // error handling &hellip; 
-}
+accountDao.create(account);
 </pre></td></tr></table>
-<a name="IDX141"></a>
+<a name="IDX143"></a>
 </dd>
 <dt> query for it's id column </dt>
 <dd>
@@ -1359,7 +1364,7 @@ if (account == null) {
   account not found handling &hellip; 
 }
 </pre></td></tr></table>
-<a name="IDX142"></a>
+<a name="IDX144"></a>
 </dd>
 <dt> update the database row associated with the object</dt>
 <dd>
@@ -1367,37 +1372,28 @@ if (account == null) {
 requires an id field. 
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">account.password = &quot;_secret&quot;;
-// 1 row should be updated
-if (accountDao.update(account) != 1) {
-  // error handling &hellip; 
-}
+accountDao.update(account);
 </pre></td></tr></table>
-<a name="IDX143"></a>
+<a name="IDX145"></a>
 </dd>
 <dt> refreshing an object if the database has changed</dt>
 <dd>
 <p>If some other entity has changed a row the database corresponding to an object in memory, you will need to refresh that
 object to get the memory object up-to-date.  This requires an id field. 
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">// 1 row should be found
-if (accountDao.refresh(account) != 1) {
-  // error handling &hellip; 
-}
+</p><table><tr><td>&nbsp;</td><td><pre class="example">accountDao.refresh(account);
 </pre></td></tr></table>
-<a name="IDX144"></a>
+<a name="IDX146"></a>
 </dd>
 <dt> delete the account from the database</dt>
 <dd>
 <p>Removes the row that corresponds to the object from the database.  Once the object has been deleted from the database,
 you can continue to use the object in memory but any update or refresh calls will fail.  This requires an id field.
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">// 1 row should be affected
-if (accountDao.delete(account) != 1) {
-  // error handling &hellip; 
-}
+</p><table><tr><td>&nbsp;</td><td><pre class="example">accountDao.delete(account);
 </pre></td></tr></table>
-<a name="IDX145"></a>
-<a name="IDX146"></a>
+<a name="IDX147"></a>
+<a name="IDX148"></a>
 </dd>
 <dt> iterate through all of the rows in a table:</dt>
 <dd>
@@ -1408,7 +1404,7 @@ for (Account account : accountDao) {
     System.out.println(account.getName());
 }
 </pre></td></tr></table>
-<a name="IDX147"></a>
+<a name="IDX149"></a>
 <p><em>NOTE:</em> you must page through <em>all</em> items for the iterator to close the underlying SQL object.   If you don't
 go all of the way, the garbage collector will close the SQL statement some time later which is considered bad form.
 
@@ -1429,7 +1425,7 @@ iterator.close();
 </dd>
 </dl>
 
-<p>For a detailed list of the methods in the DAO see section <a href="ormlite_5.html#SEC42">DAO Methods</a>.
+<p>For a detailed list of the methods in the DAO see section <a href="ormlite_5.html#SEC44">DAO Methods</a>.
 
 </p><hr size="6">
 <a name="NOD22"></a>
@@ -1440,14 +1436,14 @@ iterator.close();
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 2.9 Indexing Fields </h2>
@@ -1503,14 +1499,14 @@ create unique indexes that ensure that no two row has the same value(s) for the 
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 2.10 Issuing Raw SQL Statements </h2>
@@ -1536,14 +1532,14 @@ reason, ORMLite has calls which allow you to issue raw query, update, and execut
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC22" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h3 class="subsection"> 2.10.1 Issuing Raw Queries </h3>
@@ -1640,14 +1636,14 @@ iterator, and any associated database connections, is closed.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC22" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h3 class="subsection"> 2.10.2 Issuing Raw Update Statements </h3>
@@ -1668,14 +1664,14 @@ enough flexibility.  Update SQL statements must contain the reserved words <code
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC22" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h3 class="subsection"> 2.10.3 Issuing Raw Execute Statements </h3>
@@ -1699,14 +1695,14 @@ is not supported by the database then you can instead do the following with the 
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 2.11 Foreign Object Fields </h2>
@@ -1739,28 +1735,24 @@ public class Order {
 use this field name if you are querying for it.  You can set the column name using the <code>columnName</code> field in the
 <code>DatabaseField</code> annotation. See <a href="#ANC1">columnName</a>.
 
-</p><a name="IDX148"></a>
-<a name="IDX149"></a>
+</p><a name="IDX150"></a>
+<a name="IDX151"></a>
 <p>When you are creating a field with a foreign object, please note that the foreign object will <em>not</em> automatically be
 created for you.  If your foreign object has a generated-id which is provided by the database then you need to create it
 <em>before</em> you create any objects that reference it.  For example:
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">Account account = new Account(&quot;Jim Coakley&quot;);
-if (accountDao.create(account) != 1) {
-  // error handling &hellip; 
-}
+accountDao.create(account);
 // this will create the account object and set any generated ids
 
 // now we can set the account on the order and create it
 Order order = new Order(&quot;Jim Sanders&quot;, 12.34);
 order.setAccount(account);
 &hellip;
-if (orderDao.create(order) != 1) {
-   // error handling unless 1 row was inserted
-}
+orderDao.create(order);
 </pre></td></tr></table>
-<a name="IDX150"></a>
-<a name="IDX151"></a>
+<a name="IDX152"></a>
+<a name="IDX153"></a>
 <p>When you query for an order, you will get an <code>Order</code> object with an account field object that <em>only</em> has its id
 field set.  The rest of the fields in the foreign <code>Account</code> object will have default values (null, 0, false, etc.).  If
 you want to use other fields in the <code>Account</code>, you must call <code>refresh</code> on the <code>accountDao</code> class to get the
@@ -1774,9 +1766,7 @@ System.out.println(&quot;But other fields on the account should not be set: &quo
    + order.account.name);
 
 // so we refresh the account using the AccountDao
-if (accountDao.refresh(order.getAccount()) != 1) {
-   // error handling &hellip; 
-}
+accountDao.refresh(order.getAccount());
 System.out.println(&quot;Now the account fields will be set: &quot; +
    order.account.name);
 </pre></td></tr></table>
@@ -1795,29 +1785,48 @@ System.out.println(&quot;Now the account fields will be set: &quot; +
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 2.12 Table and Schema Creation </h2>
+<h2 class="section"> 2.12 Collections of Foreign Objects </h2>
 
-<p>There a couple of tools that ORMLite provides to help with creating tables and schema for the classes that you are
-storing in the database.
+<p>As of March 2011, one of the newest features of ORMLite is the concept of a &quot;Foreign Collection&quot;.  In the above section of the
+manual we gave the example of the <code>Order</code> class having a foreign object field to the <code>Account</code> table.  A foreign collection
+allows you to add a collection of orders on the account table.  Whenever an <code>Account</code> object is returned by a query or refreshed
+by the DAO, a <em>separate</em> query is made over the order table and a collection of orders is set on the account.  All of the orders
+in the collection have a corresponding foreign object that matches the account.  For example:
 
-</p><table class="menu" border="0" cellspacing="0">
-<tr><td align="left" valign="top"><a href="#SEC28">2.12.1 TableUtils Class</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Class which creates and drops tables.
-</td></tr>
-<tr><td align="left" valign="top"><a href="#SEC29">2.12.2 TableCreator Class</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">               Spring class which auto-creates tables.
-</td></tr>
-</table>
+</p><table><tr><td>&nbsp;</td><td><pre class="example">public class Account {
+    &hellip;
+    @ForeignCollectionField(eager = false)
+    ForeignCollection&lt;Order&gt; orders;
+    &hellip;
+}
+</pre></td></tr></table>
+<p>In the above example, the <code>orders</code> field is a collection of the orders that match the account.  The field type of <code>orders</code>
+must be either <code>ForeignCollection&lt;T&gt;</code> or <code>Collection&lt;T&gt;</code> - no other collections are supported.  There are two different types
+of foreign collections: eager or lazy.   If eager is set to true then the separate query is made immediately and the orders are stored
+as a list within the collection.  If eager is set to false (the default) then the collection will iterate over the database using
+the <code>Dao.iterator()</code> whenever a method is called on the collection.
 
-<hr size="6">
+</p><p><em>WARNING:</em> With lazy collections, even the <code>size()</code> method causes a iteration across the database.  You most likely just want
+to use the <code>iterator()</code> and <code>toArray()</code> methods on lazy collections.
+
+</p><p><em>NOTE:</em> Like with the <code>Dao.iterator()</code> method, the iterator returned by a lazy collection must be closed when you are done
+with it because there is a connection open to the database underneath.  A close happens either if you go all of the way through the
+iterator or if you call <code>close()</code> on it.  Only the <code>ForeignCollection</code> returns a closable iterator.
+
+</p><p>The foreign collections support the <code>add()</code> and <code>remove()</code> methods in which case the objects will be both added or removed from
+the eager list (if there) and DAO calls will be made to affect the order table as well.
+
+</p><hr size="6">
 <a name="NOD29"></a>
 <a name="SEC28"></a>
 <table cellpadding="1" cellspacing="1" border="0">
@@ -1825,18 +1834,49 @@ storing in the database.
 <td valign="middle" align="left">[<a href="#SEC29" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC27" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC6" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h3 class="subsection"> 2.12.1 TableUtils Class </h3>
+<h2 class="section"> 2.13 Table and Schema Creation </h2>
+
+<p>There a couple of tools that ORMLite provides to help with creating tables and schema for the classes that you are
+storing in the database.
+
+</p><table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top"><a href="#SEC29">2.13.1 TableUtils Class</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Class which creates and drops tables.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC30">2.13.2 TableCreator Class</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">               Spring class which auto-creates tables.
+</td></tr>
+</table>
+
+<hr size="6">
+<a name="NOD30"></a>
+<a name="SEC29"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC28" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC30" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC28" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h3 class="subsection"> 2.13.1 TableUtils Class </h3>
 
 
 <p>The <code>TableUtils</code> class provides a number of static methods that help with creating and dropping tables as well as providing
@@ -1899,25 +1939,25 @@ if you want to load the schema during some sort of database initialization proce
 </dl>
 
 <hr size="6">
-<a name="NOD30"></a>
-<a name="SEC29"></a>
+<a name="NOD31"></a>
+<a name="SEC30"></a>
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC28" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC30" title="Next section in reading order"> &gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="#SEC29" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC31" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC27" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC28" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h3 class="subsection"> 2.12.2 TableCreator Class </h3>
+<h3 class="subsection"> 2.13.2 TableCreator Class </h3>
 
 <p>The <code>TableCreator</code> class is engineered for use with Spring but could be useful in other configurations.  It is configured with the
 <code>ConnectionSource</code> and the list of DAOs that are being used by the program.
@@ -1944,9 +1984,104 @@ creator.maybeDropTables();
 <p>For a real life example of using <code>TableCreator</code> you can see <a href="ormlite_7.html#ANC28">spring example</a>.
 
 </p><hr size="6">
+<a name="NOD32"></a>
+<a name="SEC31"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC30" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC6" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 2.14 DAO Enabled Objects </h2>
+
+<p>Another ORM pattern is to have the objects perform the database operations on themselves instead of using a
+Database Access Object (DAO).  For example, given a data object <code>foo</code>,  you would call <code>foo.refresh()</code>
+instead of <code>fooDao.refresh(foo)</code>.  The default pattern is to use the Dao classes to operate on your
+data classes. This will allow your data classes to have their own hierarchy and isolates the database code in the
+Daos. However, you are free to use this base class if you prefer this pattern.  As of March 2011, it is one of the
+newer parts of ORMLite so feedback and bug reports are welcome.
+
+</p><a name="IDX154"></a>
+<p>All classes that are able to refresh (update, delete, etc.) themselves should extend the <code>BaseDaoEnabled</code> 
+class.  For example:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">@DatabaseTable(tableName = &quot;accounts&quot;)
+public class Account extends BaseDaoEnabled {
+
+    @DatabaseField(id = true)
+    private String name;
+
+    @DatabaseField(canBeNull = false)
+    private String password;
+    &hellip;
+</pre></td></tr></table>
+<p>To first create the object, you will need to use the DAO object or you will need to set the dao on the object so
+that it can self create:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">account.setDao(accountDao);
+account.create();
+</pre></td></tr></table>
+<p>However, whenever an object is returned by ORMLite as query results, the DAO has already been set on the
+object it extends the <code>BaseDaoEnabled</code> class.
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">Account account = accountDao.queryForId(name);
+account.setPassword(newPassword);
+account.update();
+</pre></td></tr></table>
+<p>This will also work for foreign fields.
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">Order order = orderDao.queryForId(orderId);
+// load all of the fields from the account
+order.getAccount().refresh();
+</pre></td></tr></table>
+<p>The javadocs for <code>BaseDaoEnabled</code> will have the most up-to-date list of self operations but right now the
+class can do:
+
+</p><dl compact="compact">
+<dt><code> create</code></dt>
+<dd>
+<p>To create the object you will need to use the DAO or to call <code>setDao()</code> on the object.
+
+</p></dd>
+<dt><code> refresh</code></dt>
+<dd>
+<p>Refresh the object in case it was updated in the database.
+
+</p></dd>
+<dt><code> update</code></dt>
+<dd>
+<p>After you make changes to the object in memory, update it in the database.
+
+</p></dd>
+<dt><code> updateId</code></dt>
+<dd>
+<p>If you need to update the id of the object, you must use this method.  You cannot change the id field in the object and
+then call the update method because then the object will not be found.
+
+</p></dd>
+<dt><code> delete</code></dt>
+<dd>
+<p>Delete it from the database.
+
+</p></dd>
+</dl>
+
+<p>Feedback on this is welcome.
+
+</p><hr size="6">
 <table cellpadding="1" cellspacing="1" border="0">
 <tr><td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC30" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
@@ -1954,12 +2089,12 @@ creator.maybeDropTables();
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC57" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>March, 18 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>March, 23 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 

@@ -247,6 +247,7 @@ This chapter goes into more detail about how to use @value{package}.
 * Creating Indexes::            How to create indexes on fields.
 * Raw Statements::              Issuing raw database statements.
 * Foreign Objects::             Fields that represent foreign objects.
+* Foreign Collection::          Fields that are collections of foreign objects.
 * Table Creation::              Creating tables and loading schema.
 * DAO Enabled Objects::         Another pattern for your data classes.
 @end menu
@@ -298,6 +299,9 @@ The @code{@@DatabaseTable} annotations can have an optional @code{tableName} arg
 that corresponds to the class.   If not specified, the class name, with normalized case, is used by default.  With the above example
 each @code{Account} object will be persisted as a row in the @code{accounts} table in the database.  If the @code{tableName}
 was not specified, the @code{account} table would be used instead.
+
+More advanced users may want to add a @code{daoClassName} argument which specifies the full name of the class (including the package)
+as a string.  This is used by
 
 @cindex @@DatabaseField
 @cindex DatabaseField annotation
@@ -1552,7 +1556,7 @@ fooDao.updateRaw("DELETE FROM accountlog");
 @end example
 
 @c ----------------------------------------------------------------
-@node Foreign Objects, Table Creation, Raw Executes, Using
+@node Foreign Objects, Foreign Collection, Raw Executes, Using
 @section Foreign Object Fields
 
 @cindex foreign objects
@@ -1634,7 +1638,47 @@ You can have the foreign objects automagically refreshed by using the @code{fore
 There is example code to show how to use foreign objects.  @xref{foreign objects example}.
 
 @c ----------------------------------------------------------------
-@node Table Creation, TableUtils, Foreign Objects, Using
+@node Foreign Collection, Table Creation, Foreign Objects, Using
+@section Foreign Collections
+
+@cindex foreign collections
+@cindex eager load collections
+@cindex lazy load collections
+As of March 2011, one of the newest features of @value{package} is the concept of a "Foreign Collection".  In the above section of the
+manual we gave the example of the @code{Order} class having a foreign object field to the @code{Account} table.  A foreign collection
+allows you to add a collection of orders on the account table.  Whenever an @code{Account} object is returned by a query or refreshed
+by the DAO, a @emph{separate} query is made over the order table and a collection of orders is set on the account.  All of the orders
+in the collection have a corresponding foreign object that matches the account.  For example:
+
+@example
+public class Account @{
+    @dots{}
+    @@ForeignCollectionField(eager = false)
+    ForeignCollection<Order> orders;
+    @dots{}
+@}
+@end example
+
+In the above example, the @code{@@ForeignCollectionField} annotation marks that the @code{orders} field is a collection of the orders
+that match the account.  The field type of @code{orders} must be either @code{ForeignCollection<T>} or @code{Collection<T>} -- no other
+collections are supported.  There are two different types of foreign collections: eager or lazy.   If eager is set to true then the
+separate query is made immediately and the orders are stored as a list within the collection.  If eager is set to false (the default)
+then the collection will iterate over the database using the @code{Dao.iterator()} whenever a method is called on the collection.
+
+@emph{WARNING:} With lazy collections, even the @code{size()} method causes a iteration across the database.  You most likely just want
+to use the @code{iterator()} and @code{toArray()} methods on lazy collections.
+
+@emph{NOTE:} Like with the @code{Dao.iterator()} method, the iterator returned by a lazy collection must be closed when you are done
+with it because there is a connection open to the database underneath.  A close happens either if you go all of the way through the
+iterator or if you call @code{close()} on it.  Only the @code{ForeignCollection} returns a closable iterator.
+
+The foreign collections support the @code{add()} and @code{remove()} methods in which case the objects will be both added or removed from
+the eager list (if there) and DAO calls will be made to affect the order table as well.
+
+There is example code to show how to use foreign collections.  @xref{foreign collections example}.
+
+@c ----------------------------------------------------------------
+@node Table Creation, TableUtils, Foreign Collection, Using
 @section Table and Schema Creation
 
 @cindex table creation
@@ -3168,6 +3212,13 @@ SVN: @uref{http://ormlite.com/docs/example-simple}.
 @item Foreign objects 
 
 This example shows how to use foreign objects.  @xref{Foreign Objects}.  See the source code in SVN: @uref{http://ormlite.com/docs/example-foreign}.
+
+@cindex foreign collections example
+@anchor{foreign collections example}
+@item Foreign collections 
+
+This example shows how to use foreign collections.  @xref{Foreign Collection}.  See the source code in SVN:
+@uref{http://ormlite.com/docs/example-foreign-collection}.
 
 @cindex field configuration example
 @anchor{field config example}

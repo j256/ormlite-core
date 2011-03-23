@@ -1,8 +1,11 @@
-4.16: 3/18/2011 (svn rYYYY)
+4.16: 3/23/2011 (svn rYYYY)
+	* CORE: Added support for @@ForeignCollectionField annotation which supports eager and lazy loaded collections of foreign objects.
+	* CORE: Added a DaoManager which caches DAOs that are constructed so we only do it once per class.  Thanks to jc.
 	* CORE: Added the BaseDaoEnabled class for supporting data objects which can self refresh/update/etc..  Good bit of refactoring.
 	* CORE: Added the UUID DataType for supporting the storing UUID fields.  Auto-generation of UUID ids also works.  Thanks to jc.
 	* CORE: Added the STRING_BYTES DataType for supporting the storing of Unicode strings as byte[] blobs in the database.
 	* CORE: Fixed problem with SQLite (JDBC and Android) was not handling nested transactions correctly.  Fixed bug #3208074.
+	* Android: Users should consider using the new DaoManager instead of making DAOs by calling BaseDaoImpl directly.
 	* Android: Fixed problem with SQLite nested transactions correctly.  They are not supported under Android.
 	* Android: Added the STRING_BYTES DataType so you can store Unicode strings in SQLite appropriately.
 
