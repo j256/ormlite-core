@@ -415,6 +415,7 @@ public class DatabaseFieldConfig {
 	private static DatabaseFieldConfig fromForeignCollection(DatabaseType databaseType, String tableName, Field field,
 			ForeignCollectionField foreignCollection) {
 		DatabaseFieldConfig config = new DatabaseFieldConfig();
+		config.fieldName = field.getName();
 		config.foreignCollection = true;
 		config.foreignCollectionEager = foreignCollection.eager();
 		return config;

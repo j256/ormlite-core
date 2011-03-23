@@ -30,10 +30,6 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 		preparedQuery = dao.queryBuilder().where().eq(fieldName, fieldArg).prepare();
 	}
 
-	public CloseableIterator<T> iterator() {
-		return dao.iterator();
-	}
-
 	public boolean add(T data) {
 		try {
 			dao.create(data);
@@ -85,7 +81,7 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 	 */
 	public boolean retainAll(Collection<?> collection) {
 		boolean changed = false;
-		CloseableIterator<T> iterator = iterator();
+		CloseableIterator<T> iterator = dao.iterator();
 		try {
 			while (iterator.hasNext()) {
 				T data = iterator.next();
@@ -109,7 +105,7 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 	 * elements in the table since this iterator is across just one item's foreign objects.
 	 */
 	public void clear() {
-		CloseableIterator<T> iterator = iterator();
+		CloseableIterator<T> iterator = dao.iterator();
 		try {
 			while (iterator.hasNext()) {
 				iterator.next();

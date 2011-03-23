@@ -25,6 +25,10 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 		super(dao, fieldName, fieldValue);
 	}
 
+	public CloseableIterator<T> iterator() {
+		return dao.iterator();
+	}
+
 	public int size() {
 		int sizeC = 0;
 		CloseableIterator<T> iterator = iterator();
@@ -135,6 +139,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 				} else {
 					array[itemC] = castData;
 				}
+				itemC++;
 			}
 		} finally {
 			try {

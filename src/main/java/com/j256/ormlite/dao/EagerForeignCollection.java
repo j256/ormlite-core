@@ -23,19 +23,26 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 		results = dao.query(preparedQuery);
 	}
 
-	@Override
 	public CloseableIterator<T> iterator() {
 		final Iterator<T> iterator = results.iterator();
 		// we have to wrap the iterator since we are returning the List's iterator
 		return new CloseableIterator<T>() {
+			private T last = null;
 			public boolean hasNext() {
 				return iterator.hasNext();
 			}
 			public T next() {
-				return iterator.next();
+				last = iterator.next();
+				return last;
 			}
 			public void remove() {
 				iterator.remove();
+				try {
+					dao.delete(last);
+				} catch (SQLException e) {
+					// have to demote this to be runtime
+					throw new RuntimeException(e);
+				}
 			}
 			public void close() {
 				// noop

@@ -141,7 +141,7 @@ public class FieldType {
 			}
 			Type[] genericArguments = ((ParameterizedType) type).getActualTypeArguments();
 			if (genericArguments.length == 0) {
-				// i doubt this will ever be hit
+				// i doubt this will ever be reached
 				throw new SQLException("Field class for '" + field.getName()
 						+ "' must be a parameterized Collection with at least 1 type.");
 			}
@@ -165,6 +165,7 @@ public class FieldType {
 						+ "' does not contain a foreign field of class " + parentClass);
 			}
 			if (!foreignFieldType.isForeign()) {
+				// this may never be reached
 				throw new SQLException("Foreign collection object " + clazz + " for field '" + field.getName()
 						+ "' contains a field of class " + parentClass + " but it's not foreign");
 			}

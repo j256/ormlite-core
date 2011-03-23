@@ -109,9 +109,13 @@ public class DatabaseTableConfig<T> {
 	 */
 	public FieldType[] getFieldTypes(DatabaseType databaseType) throws SQLException {
 		if (fieldTypes == null) {
-			throw new SQLException("");
+			throw new SQLException("Field types have not been extracted in table config");
 		}
 		return fieldTypes;
+	}
+
+	public List<DatabaseFieldConfig> getFieldConfigs() {
+		return fieldConfigs;
 	}
 
 	/**
