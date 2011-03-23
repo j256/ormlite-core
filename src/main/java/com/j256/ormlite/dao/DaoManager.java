@@ -48,16 +48,36 @@ public class DaoManager {
 			dao = BaseDaoImpl.createDao(connectionSource, clazz);
 		} else {
 			Class<?> daoClass = databaseTable.daoClass();
-			Constructor<?> constructor;
-			try {
-				constructor = daoClass.getConstructor(ConnectionSource.class);
-			} catch (Exception e) {
+			Constructor<?> daoConstructor = null;
+			Object[] arguments = null;
+			Constructor<?>[] constructors = daoClass.getConstructors();
+			// look first for the constructor with a class parameter in case it is a generic dao
+			for (Constructor<?> constructor : constructors) {
+				Class<?>[] params = constructor.getParameterTypes();
+				if (params.length == 2 && params[0] == ConnectionSource.class && params[1] == Class.class) {
+					daoConstructor = constructor;
+					arguments = new Object[] { connectionSource, clazz };
+					break;
+				}
+			}
+			// then look first for the constructor with just the ConnectionSource
+			if (daoConstructor == null) {
+				for (Constructor<?> constructor : constructors) {
+					Class<?>[] params = constructor.getParameterTypes();
+					if (params.length == 1 && params[0] == ConnectionSource.class) {
+						daoConstructor = constructor;
+						arguments = new Object[] { connectionSource };
+						break;
+					}
+				}
+			}
+			if (daoConstructor == null) {
 				throw new SQLException("Could not find public constructor with ConnectionSource parameter in class "
-						+ daoClass, e);
+						+ daoClass);
 			}
 			try {
 				@SuppressWarnings("unchecked")
-				Dao<T, ID> castInstance = (Dao<T, ID>) constructor.newInstance(connectionSource);
+				Dao<T, ID> castInstance = (Dao<T, ID>) daoConstructor.newInstance(arguments);
 				dao = castInstance;
 			} catch (Exception e) {
 				throw new SQLException("Could not call the constructor in class " + daoClass, e);
@@ -66,6 +86,14 @@ public class DaoManager {
 
 		classMap.put(key, dao);
 		return dao;
+	}
+
+	/**
+	 * Same as {@link #createDao(ConnectionSource, Class)} but with an extra argument to help with casting.
+	 */
+	public static <T, ID> Dao<T, ID> createDao(ConnectionSource connectionSource, Class<T> clazz, Class<ID> idClass)
+			throws SQLException {
+		return createDao(connectionSource, clazz);
 	}
 
 	/**
@@ -113,9 +141,38 @@ public class DaoManager {
 	}
 
 	/**
+	 * Same as {@link #createDao(ConnectionSource, DatabaseTableConfig)} but with an extra argument to help with
+	 * casting.
+	 */
+	public static <T, ID> Dao<T, ID> createDao(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig,
+			Class<ID> idClass) throws SQLException {
+		return createDao(connectionSource, tableConfig);
+	}
+
+	/**
+	 * Register the dao with the cache inside of this class. This will allow folks to build a DAO externally and then
+	 * register so it can be used internally as necessary.
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> It is better to use the {@link DatabaseTable#daoClassName()} and have the DaoManager construct the
+	 * DAO if possible.
+	 * </p>
+	 */
+	public static synchronized void registerDao(ConnectionSource connectionSource, Dao<?, ?> dao) {
+		if (dao instanceof BaseDaoImpl) {
+			DatabaseTableConfig<?> tableConfig = ((BaseDaoImpl<?, ?>) dao).getTableConfig();
+			if (tableConfig != null) {
+				tableMap.put(new TableConfigConnectionSource(connectionSource, tableConfig), dao);
+				return;
+			}
+		}
+		classMap.put(new ClazzConnectionSource(connectionSource, dao.getDataClass()), dao);
+	}
+
+	/**
 	 * Clear out the cache.
 	 */
-	public synchronized static void clearCache() {
+	public static synchronized void clearCache() {
 		if (classMap != null) {
 			classMap.clear();
 			classMap = null;

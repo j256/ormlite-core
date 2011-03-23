@@ -92,6 +92,38 @@ public class DaoManagerTest extends BaseCoreTest {
 		}
 	}
 
+	@Test
+	public void testDaoClassGenericDao() throws Exception {
+		testClass(GenericBar.class);
+		DatabaseTableConfig<GenericBar> tableConfig =
+				new DatabaseTableConfig<GenericBar>(GenericBar.class, Arrays.asList(new DatabaseFieldConfig("foo",
+						null, DataType.UNKNOWN, null, 0, false, false, false, null, false, null, false, null, false,
+						null, false, null, null, false)));
+		testTable(tableConfig);
+	}
+
+	@Test
+	public void testDaoClassGenericDaoWithId() throws Exception {
+		testClass(GenericBaz.class);
+		DatabaseTableConfig<GenericBaz> tableConfig =
+				new DatabaseTableConfig<GenericBaz>(GenericBaz.class, Arrays.asList(new DatabaseFieldConfig("foo",
+						null, DataType.UNKNOWN, null, 0, false, false, false, null, false, null, false, null, false,
+						null, false, null, null, false)));
+		testTable(tableConfig);
+	}
+
+	@Test
+	public void testDaoClassGenericDaoMethod() throws Exception {
+		GenericDao<GenericBaz, String> bazdao =
+				(GenericDao<GenericBaz, String>) DaoManager.createDao(connectionSource, GenericBaz.class, String.class);
+		assertSame(GenericBaz.class.getName(), bazdao.doGenericAction());
+		GenericDao<GenericBar, Void> bardao =
+				(GenericDao<GenericBar, Void>) DaoManager.createDao(connectionSource, GenericBar.class, Void.class);
+		assertSame(GenericBar.class.getName(), bardao.doGenericAction());
+	}
+
+	/* ================================================================== */
+
 	private <T> void testClass(Class<T> clazz) throws Exception {
 		Dao<T, Void> dao1 = DaoManager.createDao(connectionSource, clazz);
 		Dao<T, Void> dao2 = DaoManager.createDao(connectionSource, clazz);
@@ -116,6 +148,8 @@ public class DaoManagerTest extends BaseCoreTest {
 		dao2 = DaoManager.createDao(connectionSource, config);
 		assertNotSame(dao, dao2);
 	}
+
+	/* ================================================================== */
 
 	@DatabaseTable(daoClass = BaseDaoImpl.class)
 	protected static class Bar {
@@ -149,6 +183,26 @@ public class DaoManagerTest extends BaseCoreTest {
 		}
 	}
 
+	@DatabaseTable(daoClass = GenericDao.class)
+	protected static class GenericBar extends Bar {
+		@DatabaseField
+		String foo;
+		public GenericBar() {
+		}
+	}
+
+	@DatabaseTable(daoClass = GenericDao.class)
+	protected static class GenericBaz extends Baz {
+		@DatabaseField(id = true)
+		String fooId;
+		@DatabaseField
+		String foo;
+		public GenericBaz() {
+		}
+	}
+
+	/* ================================================================== */
+
 	public static class BazDao extends BaseDaoImpl<Baz, Void> {
 		public BazDao(ConnectionSource connectionSource) throws SQLException {
 			super(connectionSource, Baz.class);
@@ -177,6 +231,18 @@ public class DaoManagerTest extends BaseCoreTest {
 				throws SQLException {
 			super(connectionSource, tableConfig);
 			throw new RuntimeException("throw throw throw");
+		}
+	}
+
+	public static class GenericDao<T, ID> extends BaseDaoImpl<T, ID> {
+		public GenericDao(ConnectionSource connectionSource, Class<T> dataClass) throws SQLException {
+			super(connectionSource, dataClass);
+		}
+		public GenericDao(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig) throws SQLException {
+			super(connectionSource, tableConfig);
+		}
+		public String doGenericAction() {
+			return getDataClass().getName();
 		}
 	}
 }
