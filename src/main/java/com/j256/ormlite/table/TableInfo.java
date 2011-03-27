@@ -101,10 +101,11 @@ public class TableInfo<T, ID> {
 	public FieldType getFieldTypeByColumnName(String columnName) {
 		if (fieldNameMap == null) {
 			// build our alias map if we need it
-			fieldNameMap = new HashMap<String, FieldType>();
+			Map<String, FieldType> map = new HashMap<String, FieldType>();
 			for (FieldType fieldType : fieldTypes) {
-				fieldNameMap.put(fieldType.getDbColumnName(), fieldType);
+				map.put(fieldType.getDbColumnName(), fieldType);
 			}
+			fieldNameMap = map;
 		}
 		FieldType fieldType = fieldNameMap.get(columnName);
 		// if column name is not found

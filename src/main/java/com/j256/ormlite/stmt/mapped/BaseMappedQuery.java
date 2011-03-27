@@ -29,8 +29,11 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 	}
 
 	public T mapRow(DatabaseResults results) throws SQLException {
+		Map<String, Integer> colPosMap;
 		if (columnPositions == null) {
-			columnPositions = new HashMap<String, Integer>();
+			colPosMap = new HashMap<String, Integer>();
+		} else {
+			colPosMap = columnPositions;
 		}
 		// create our instance
 		T instance = tableInfo.createObject();
@@ -41,7 +44,7 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 			if (fieldType.isForeignCollection()) {
 				foreignCollections = true;
 			} else {
-				Object val = fieldType.resultToJava(results, columnPositions);
+				Object val = fieldType.resultToJava(results, colPosMap);
 				fieldType.assignField(instance, val);
 				if (fieldType == idField) {
 					id = val;
@@ -56,6 +59,9 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 					fieldType.assignField(instance, collection);
 				}
 			}
+		}
+		if (columnPositions == null) {
+			columnPositions = colPosMap;
 		}
 		return instance;
 	}
