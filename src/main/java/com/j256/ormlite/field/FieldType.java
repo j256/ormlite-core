@@ -169,7 +169,10 @@ public class FieldType {
 				throw new SQLException("Foreign collection object " + clazz + " for field '" + field.getName()
 						+ "' contains a field of class " + parentClass + " but it's not foreign");
 			}
-			this.foreignDao = DaoManager.createDao(connectionSource, tableConfig);
+			// we have to do this because of maven compile failures otherwise
+			@SuppressWarnings("unchecked")
+			Dao<Object, Object> otherDao = (Dao<Object,Object>)DaoManager.createDao(connectionSource, tableConfig);
+			this.foreignDao = otherDao;
 			this.foreignFieldType = foreignFieldType;
 			this.foreignTableInfo = null;
 			this.mappedQueryForId = null;
