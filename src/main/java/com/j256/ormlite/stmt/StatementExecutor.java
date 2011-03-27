@@ -58,7 +58,7 @@ public class StatementExecutor<T, ID> {
 	private MappedDelete<T, ID> mappedDelete;
 	private MappedRefresh<T, ID> mappedRefresh;
 	private final FieldType[] noFieldTypes = new FieldType[0];
-	private static final StringArrayRowMapper stringArrayRowMapper = new StringArrayRowMapper();
+	private static StringArrayRowMapper stringArrayRowMapper;
 
 	/**
 	 * Provides statements for various SQL operations.
@@ -461,6 +461,13 @@ public class StatementExecutor<T, ID> {
 		}
 	}
 
+	private static StringArrayRowMapper getStringArrayRowMapper() {
+		if (stringArrayRowMapper == null) {
+			stringArrayRowMapper = new StringArrayRowMapper();
+		}
+		return stringArrayRowMapper;
+	}
+	
 	/**
 	 * Map raw results to return String[].
 	 */
@@ -483,14 +490,16 @@ public class StatementExecutor<T, ID> {
 
 		private final RawRowMapper<UO> mapper;
 		private final String[] columnNames;
+		private StringArrayRowMapper rowMapper;
 
 		public UserObjectRowMapper(RawRowMapper<UO> mapper, String[] columnNames) {
+			rowMapper = getStringArrayRowMapper();
 			this.mapper = mapper;
 			this.columnNames = columnNames;
 		}
 
 		public UO mapRow(DatabaseResults results) throws SQLException {
-			String[] stringResults = stringArrayRowMapper.mapRow(results);
+			String[] stringResults = rowMapper.mapRow(results);
 			return mapper.mapRow(columnNames, stringResults);
 		}
 	}
@@ -541,7 +550,7 @@ public class StatementExecutor<T, ID> {
 			this.columnNames = columnNames;
 			this.rawResults =
 					new RawResultsImpl<String[]>(connectionSource, connection, query, String[].class,
-							compiledStatement, columnNames, stringArrayRowMapper);
+							compiledStatement, columnNames, getStringArrayRowMapper());
 		}
 
 		public int getNumberColumns() {
