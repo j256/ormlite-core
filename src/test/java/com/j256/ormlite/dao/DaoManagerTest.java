@@ -114,11 +114,9 @@ public class DaoManagerTest extends BaseCoreTest {
 
 	@Test
 	public void testDaoClassGenericDaoMethod() throws Exception {
-		GenericDao<GenericBaz, String> bazdao =
-				(GenericDao<GenericBaz, String>) DaoManager.createDao(connectionSource, GenericBaz.class, String.class);
+		GenericDao<GenericBaz, String> bazdao = DaoManager.createDao(connectionSource, GenericBaz.class);
 		assertSame(GenericBaz.class.getName(), bazdao.doGenericAction());
-		GenericDao<GenericBar, Void> bardao =
-				(GenericDao<GenericBar, Void>) DaoManager.createDao(connectionSource, GenericBar.class, Void.class);
+		GenericDao<GenericBar, Void> bardao = DaoManager.createDao(connectionSource, GenericBar.class);
 		assertSame(GenericBar.class.getName(), bardao.doGenericAction());
 	}
 

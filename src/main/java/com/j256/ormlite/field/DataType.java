@@ -5,7 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.nio.charset.Charset;
+import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -73,31 +73,34 @@ public enum DataType implements FieldConverter {
 	 * Persists the {@link String} Java class.
 	 */
 	STRING_BYTES(SqlType.BYTE_ARRAY, new Class<?>[0]) {
+		private static final String DEFAULT_STRING_BYTES_CHARSET_NAME = "Unicode";
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			byte[] bytes = results.getBytes(columnPos);
 			if (bytes == null) {
 				return null;
 			}
-			Charset charset = convertStringBytesConfig(fieldType);
-			return new String(bytes, charset);
+			String charsetName = getCharsetName(fieldType);
+			try {
+				// NOTE: I can't use new String(bytes, Charset) because it was introduced in 1.6.
+				return new String(bytes, charsetName);
+			} catch (UnsupportedEncodingException e) {
+				throw SqlExceptionUtil.create("Could not convert string with charset name: " + charsetName, e);
+			}
 		}
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 			throw new SQLException("String bytes type cannot have default values");
 		}
 		@Override
-		public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
+		public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {
 			String string = (String) javaObject;
-			Charset charset = convertStringBytesConfig(fieldType);
-			return string.getBytes(charset);
-		}
-		@Override
-		public Object makeConfigObject(FieldType fieldType) {
-			if (fieldType.getFormat() == null) {
-				return DEFAULT_STRING_BYTES_CHARSET;
-			} else {
-				return Charset.forName(fieldType.getFormat());
+			String charsetName = getCharsetName(fieldType);
+			try {
+				// NOTE: I can't use string.getBytes(Charset) because it was introduced in 1.6.
+				return string.getBytes(charsetName);
+			} catch (UnsupportedEncodingException e) {
+				throw SqlExceptionUtil.create("Could not convert string with charset name: " + charsetName, e);
 			}
 		}
 		@Override
@@ -107,6 +110,13 @@ public enum DataType implements FieldConverter {
 		@Override
 		public boolean isSelectArgRequired() {
 			return true;
+		}
+		private String getCharsetName(FieldType fieldType) {
+			if (fieldType == null || fieldType.getFormat() == null) {
+				return DEFAULT_STRING_BYTES_CHARSET_NAME;
+			} else {
+				return fieldType.getFormat();
+			}
 		}
 	},
 
@@ -922,8 +932,6 @@ public enum DataType implements FieldConverter {
 
 	private final SqlType sqlType;
 	private final Class<?>[] classes;
-	public static final String DEFAULT_STRING_BYTES_CHARSET_NAME = "Unicode";
-	private static final Charset DEFAULT_STRING_BYTES_CHARSET = Charset.forName(DEFAULT_STRING_BYTES_CHARSET_NAME);
 
 	private DataType(SqlType sqlType, Class<?>[] classes) {
 		this.sqlType = sqlType;
@@ -1072,18 +1080,6 @@ public enum DataType implements FieldConverter {
 			return defaultDateFormatConfig;
 		} else {
 			return (DateStringFormatConfig) configObj;
-		}
-	}
-
-	private static Charset convertStringBytesConfig(FieldType fieldType) {
-		if (fieldType == null) {
-			return DEFAULT_STRING_BYTES_CHARSET;
-		}
-		Charset charset = (Charset) fieldType.getDataTypeConfigObj();
-		if (charset == null) {
-			return DEFAULT_STRING_BYTES_CHARSET;
-		} else {
-			return charset;
 		}
 	}
 
