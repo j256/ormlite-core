@@ -1,3 +1,25 @@
+- support for CREATE IF NOT EXISTS
+- support for Dao.countOf() or some such that would do a 'SELECT COUNT(*) FROM FOO'
+- look at support for clearTable() which either does a DELETE * or TRUNCATE if supported
+- the callBatchTasks should use a isAutoCommitSupported() DatabaseType method and wrap itself
+	in a transaction otherwise
+
+- support for JTA annotations, whatever the common one is
+	- maybe also JDO?
+
+- consider allowing auto foreign object creation with internal doa's
+	- need to be careful of recursion
+	- maybe you could see if the id was set or something?
+	- maybe just require someone to use the other DAO
+
+- support for embedded objects
+	- look to see if the unknown class has a DatabaseTable(embedded = true or javax annotation
+	- take all of the fields as if they were fields in this class
+
+- more support for more constraints (other than primary and unique):
+	- maybe a check="> 10" type of addition to DatabaseField so we can add a check constraint
+	- foreign key constraint can be in addition to (or required for) the foreign=true
+
 - allow any field as the foreign id column (not just the id field)
 	- specify the field in the remote object (must match the name directly)
 	- creates a prepared query 'WHERE field = value'
@@ -9,14 +31,6 @@
 	- can't do it as part of the annotation, has to be setup with a DatabaseTableConfig I guess
 	- this will allow you to call a constructor with (for example) some null fields to get an instance that can be overridden
 	- should we do the same for setters and getters?  use this method to set the field, use this to get it? (doesn't sound worth it)
-
-- support for embedded objects
-	- look to see if the unknown class has a DatabaseTable(embedded = true or javax annotation
-	- take all of the fields as if they were fields in this class
-
-- more support for more constraints (other than primary and unique):
-	- maybe a check="> 10" type of addition to DatabaseField so we can add a check constraint
-	- foreign key constraint can be in addition to (or required for) the foreign=true
 
 - from nelson: can ORMLite build the join table to help with mapping many-to-many relationships?
 	- Accounts are associated with many Customers, Customers may have more than one Account
@@ -35,23 +49,12 @@
 	- primitive types a problem for the 'no criteria' case
 	- maybe it would be better to have a Map with values 
 
-- JDO annotations?
-	- support as well as the JPA
-
 - flesh out the SimpleDB version of the library:
 	- get all tests passing
 	- think about batch operations
 	- maybe add a insert(Collection)?
 
 - backend for HBase (Hadoop's bigtable) 
-
-- consider allowing auto foreign object creation with internal doa's
-	- need to be careful of recursion
-	- maybe you could see if the id was set or something?
-
-- support for CREATE IF NOT EXISTS
-
-- support for Dao.countOf() or some such that would do a 'SELECT COUNT(*) FROM FOO' 
 
 -----------------------------------------------------------------------------------------------------------------------------------
 

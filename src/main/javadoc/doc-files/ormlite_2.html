@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on March, 23 2011 by texi2html 1.70 -->
+<!-- Created on March, 27 2011 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -59,7 +59,7 @@ ul.toc {list-style: none}
 </tr></table>
 <h1 class="chapter"> 2. How to Use </h1>
 
-<p>This chapter goes into more detail about how to use ORMLite.
+<p>This chapter goes into more detail about how to use the various features in ORMLite.
 
 </p><table class="menu" border="0" cellspacing="0">
 <tr><td align="left" valign="top"><a href="#SEC7">2.1 Setting Up Your Classes</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 How to setup your classes to be persisted.
@@ -171,8 +171,8 @@ that corresponds to the class.   If not specified, the class name, with normaliz
 each <code>Account</code> object will be persisted as a row in the <code>accounts</code> table in the database.  If the <code>tableName</code>
 was not specified, the <code>account</code> table would be used instead.
 
-</p><p>More advanced users may want to add a <code>daoClassName</code> argument which specifies the full name of the class (including the package)
-as a string.  This is used by
+</p><p>More advanced users may want to add a <code>daoClass</code> argument which specifies the class of the DAO object that will be
+operating on the class.  This is used by the DaoManager to instantiate the DAO internally.  See <a href="#ANC21">DaoManager</a>.
 
 </p><a name="IDX8"></a>
 <a name="IDX9"></a>
@@ -629,22 +629,28 @@ See section <a href="ormlite_5.html#SEC43">Database Specific Code</a>.
 <p>Persisted as SQL type <code>LONGVARCHAR</code> which handles longer strings.  
 
 </p><a name="IDX76"></a>
+<a name="IDX77"></a>
+<a name="IDX78"></a>
+<a name="IDX79"></a>
 </dd>
 <dt><code> String (DataType.STRING_BYTES)</code></dt>
 <dd>
-<p>A Java String persisted as an array of bytes (byte[]) with the SQL type <code>VARBINARY</code>.  By default the <code>Unicode</code>
+<p>A Java String persisted as an array of bytes (byte[]) with the SQL type <code>VARBINARY</code>.  Many databases are
+Unicode compliant (MySQL/Postgres) but some are not (SQLite).  To store strings with accents or other special
+characters, you may have to encode them as an array of bytes using this type.  By default the <code>Unicode</code>
 <code>Charset</code> is used to convert the string to bytes and back again.  You can use the <code>format</code> field in
-<code>DatabaseField</code> to specify a custom character-set to use instead for the field.
+<code>DatabaseField</code> to specify a custom character-set to use instead for the field.  Comparison and ordering
+of this type may not be possible depending on the database type.
 
-</p><a name="IDX77"></a>
+</p><a name="IDX80"></a>
 <p><a name="ANC7"></a>
 </p></dd>
 <dt><code> boolean or Boolean (DataType.BOOLEAN or DataType.BOOLEAN_OBJ)</code></dt>
 <dd>
 <p>Persisted as SQL type <code>BOOLEAN</code>.
 
-</p><a name="IDX78"></a>
-<a name="IDX79"></a>
+</p><a name="IDX81"></a>
+<a name="IDX82"></a>
 <p><a name="ANC8"></a>
 </p></dd>
 <dt><code> java.util.Date (DataType.DATE)</code></dt>
@@ -657,7 +663,7 @@ format of it is unreliable to match the database format.  See section <a href="o
 
 </p><p><em>NOTE:</em> Certain databases only provide seconds resolution so the milliseconds will be 0.
 
-</p><a name="IDX80"></a>
+</p><a name="IDX83"></a>
 <p><a name="ANC9"></a>
 </p></dd>
 <dt><code> java.util.Date (DataType.DATE_LONG)</code></dt>
@@ -669,8 +675,8 @@ in which case the milliseconds value of the <code>Date</code> will be stored as 
 
 </p><p><em>NOTE:</em> Certain databases only provide seconds resolution so the milliseconds will be 0.
 
-</p><a name="IDX81"></a>
-<a name="IDX82"></a>
+</p><a name="IDX84"></a>
+<a name="IDX85"></a>
 <p><a name="ANC10"></a>
 </p></dd>
 <dt><code> java.util.Date (DATE_STRING)</code></dt>
@@ -686,15 +692,15 @@ in which case the date will be stored as a string in <code>yyyy-MM-dd HH:mm:ss.S
 </p><p><em>NOTE:</em> Because of reentrant issues with <code>SimpleDateFormat</code>, thread locals are used to access the formatters
 every time a <code>DATE_STRING</code> date is converted to/from the database.
 
-</p><a name="IDX83"></a>
+</p><a name="IDX86"></a>
 <p><a name="ANC11"></a>
 </p></dd>
 <dt><code> byte or Byte (DataType.BYTE or DataType.BYTE_OBJ)</code></dt>
 <dd>
 <p>Persisted as SQL type <code>TINYINT</code>.
 
-</p><a name="IDX84"></a>
-<a name="IDX85"></a>
+</p><a name="IDX87"></a>
+<a name="IDX88"></a>
 <p><a name="ANC12"></a>
 </p></dd>
 <dt><code> byte array (DataType.BYTE_ARRAY)</code></dt>
@@ -706,43 +712,43 @@ serializes an object as an array of bytes.
 <code>DataType.BYTE_ARRAY</code> or <code>DataType.SERIALIZABLE</code> using the <code>dataType</code> field and will not be auto-detected.
 See <a href="#ANC2">DatabaseField dataType</a>.
 
-</p><a name="IDX86"></a>
+</p><a name="IDX89"></a>
 <p><a name="ANC13"></a>
 </p></dd>
 <dt><code> short or Short (DataType.SHORT or DataType.SHORT_OBJ)</code></dt>
 <dd>
 <p>Persisted as SQL type SMALLINT.
 
-</p><a name="IDX87"></a>
+</p><a name="IDX90"></a>
 <p><a name="ANC14"></a>
 </p></dd>
 <dt><code> int or Integer (DataType.INTEGER or DataType.INTEGER_OBJ)</code></dt>
 <dd>
 <p>Persisted as SQL type <code>INTEGER</code>.
 
-</p><a name="IDX88"></a>
+</p><a name="IDX91"></a>
 <p><a name="ANC15"></a>
 </p></dd>
 <dt><code> long or Long (DataType.LONG or DataType.LONG_OBJ)</code></dt>
 <dd>
 <p>Persisted as SQL type <code>BIGINT</code>.
 
-</p><a name="IDX89"></a>
+</p><a name="IDX92"></a>
 <p><a name="ANC16"></a>
 </p></dd>
 <dt><code> float or Float (DataType.FLOAT or DataType.FLOAT_OBJ)</code></dt>
 <dd>
 <p>Persisted as SQL type <code>FLOAT</code>.
 
-</p><a name="IDX90"></a>
+</p><a name="IDX93"></a>
 <p><a name="ANC17"></a>
 </p></dd>
 <dt><code> double or Double (DataType.DOUBLE or DataType.DOUBLE_OBJ)</code></dt>
 <dd>
 <p>Persisted as SQL type <code>DOUBLE</code>.
 
-</p><a name="IDX91"></a>
-<a name="IDX92"></a>
+</p><a name="IDX94"></a>
+<a name="IDX95"></a>
 <p><a name="ANC18"></a>
 </p></dd>
 <dt><code> Serializable (DataType.SERIALIZABLE)</code></dt>
@@ -759,8 +765,8 @@ Select Argument to query for this type.  See section <a href="ormlite_3.html#SEC
 </p><p><em>NOTE:</em> To use this type, you <em>must</em> specify <code>DataType.SERIALIZABLE</code> using the <code>dataType</code> field.  It will
 not be auto-detected.  See <a href="#ANC2">DatabaseField dataType</a>.
 
-</p><a name="IDX93"></a>
-<a name="IDX94"></a>
+</p><a name="IDX96"></a>
+<a name="IDX97"></a>
 <p><a name="ANC19"></a>
 </p></dd>
 <dt><code> enum or Enum (DataType.ENUM_STRING)</code></dt>
@@ -769,12 +775,12 @@ not be auto-detected.  See <a href="#ANC2">DatabaseField dataType</a>.
 default (and recommended over ENUM_INTEGER) because it allows you to add additional enums anywhere in the list
 without worrying about having to convert data later.
 
-</p><a name="IDX95"></a>
+</p><a name="IDX98"></a>
 <p>You can also also specify an <em>unknownEnumName</em> name with the <code>@DatabaseField</code> annotation which will be
 used if an unknown value is found in the database. See <a href="#ANC3">unknownEnumName</a>. 
 
-</p><a name="IDX96"></a>
-<a name="IDX97"></a>
+</p><a name="IDX99"></a>
+<a name="IDX100"></a>
 <p><a name="ANC20"></a>
 </p></dd>
 <dt><code> enum or Enum (DataType.ENUM_INTEGER)</code></dt>
@@ -785,11 +791,11 @@ default (and recommended) because it allows you to add additional enums anywhere
 having to convert data later.  If you insert (or remove) an enum from the list that is being stored as a number, then
 old data will be un-persisted incorrectly.
 
-</p><a name="IDX98"></a>
+</p><a name="IDX101"></a>
 <p>You can also also specify an <em>unknownEnumName</em> name with the <code>@DatabaseField</code> annotation which will be
 used if an unknown value is found in the database. See <a href="#ANC3">unknownEnumName</a>. 
 
-</p><a name="IDX99"></a>
+</p><a name="IDX102"></a>
 </dd>
 <dt><code> UUID (DataType.UUID)</code></dt>
 <dd>
@@ -828,23 +834,23 @@ stored in the database.  See section <a href="#SEC26">Foreign Object Fields</a>.
 <p><em>NOTE:</em> With regards to connection sources, Android users should see the Android specific documentation later in the manual.
 See section <a href="ormlite_4.html#SEC39">Using With Android</a>.
 
-</p><a name="IDX100"></a>
-<a name="IDX101"></a>
-<a name="IDX102"></a>
-<a name="IDX103"></a>
+</p><a name="IDX103"></a>
+<a name="IDX104"></a>
+<a name="IDX105"></a>
+<a name="IDX106"></a>
 <p>To use the database and the DAO objects, you will need to configure what JDBC calls a <code>DataSource</code> (see the
 <code>javax.sql.DataSource</code> class) and what ORMLite calls a <code>ConnectionSource</code>.  A <code>ConnectionSource</code> is
 a factory for connections to the physical SQL database.  Here is a code example that creates a simple, single-connection
 source.
 
-</p><a name="IDX104"></a>
-<a name="IDX105"></a>
+</p><a name="IDX107"></a>
+<a name="IDX108"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">// single connection source example for a database URI
 ConnectionSource connectionSource =
   new JdbcConnectionSource(&quot;jdbc:h2:mem:account&quot;);
 </pre></td></tr></table>
-<a name="IDX106"></a>
-<a name="IDX107"></a>
+<a name="IDX109"></a>
+<a name="IDX110"></a>
 <p>The package also includes the class <code>JdbcPooledConnectionSource</code> which is a relatively simple implementation of a
 pooled connection source.  As database connections are released, instead of being closed, they are added to an internal
 list so they can be reused at a later time.  New connections are created on demand only if there are no dormant
@@ -868,15 +874,15 @@ connectionSource.setCheckConnectionsEveryMillis(60 * 1000);
 // right before they are handed to the user
 connectionSource.setTestBeforeGet(true);
 </pre></td></tr></table>
-<a name="IDX108"></a>
-<a name="IDX109"></a>
-<a name="IDX110"></a>
 <a name="IDX111"></a>
+<a name="IDX112"></a>
+<a name="IDX113"></a>
+<a name="IDX114"></a>
 <p>There are many other, external data sources that can be used instead, including more robust and probably higher-performance
 pooled connection managers. You can instantiate your own directly and wrap it in the <code>DataSourceConnectionSource</code> class
 which delegates to it.
 
-</p><a name="IDX112"></a>
+</p><a name="IDX115"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">// basic Apache data source
 BasicDataSource dataSource = new BasicDataSource();
 dataSource.setUrl(&quot;jdbc:h2:mem:account&quot;);
@@ -884,8 +890,8 @@ dataSource.setUrl(&quot;jdbc:h2:mem:account&quot;);
 ConnectionSource connectionSource = 
   new DataSourceConnectionSource(dataSource);
 </pre></td></tr></table>
-<a name="IDX113"></a>
-<a name="IDX114"></a>
+<a name="IDX116"></a>
+<a name="IDX117"></a>
 <p>When you are done with your <code>ConnectionSource</code>, you will want to call a <code>close()</code> method to close any
 underlying connections.  Something like the following pattern is recommended.
 
@@ -929,21 +935,23 @@ the class we are persisting with the DAO, and the class of the ID-column that wi
 your class does not have an ID field, you can put <code>Object</code> or <code>Void</code> as the 2nd argument.  For example, in the above
 <code>Account</code> class, the &quot;name&quot; field is the ID column (id = true) so the ID class is <code>String</code>.
 
-</p><p>The simplest way to create your DAO is to use the <code>createDao</code> static method on the <code>BaseDaoImpl</code> class to create a
+</p><p><a name="ANC21"></a>
+The simplest way to create your DAO is to use the <code>createDao</code> static method on the <code>DaoManager</code> class to create a
 DAO class.  For example:
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">Dao&lt;Account, String&gt; accountDao =
-  BaseDaoImpl.createDao(connectionSource, Account.class);
+  DaoManager.createDao(connectionSource, Account.class);
 Dao&lt;Order, Integer&gt; orderDao =
-  BaseDaoImpl.createDao(connectionSource, Order.class);
+  DaoManager.createDao(connectionSource, Order.class);
 </pre></td></tr></table>
-<a name="IDX115"></a>
-<a name="IDX116"></a>
+<a name="IDX118"></a>
+<a name="IDX119"></a>
 <p><em>NOTE:</em> You should use the <code>DaoManager#createDao</code> methods instead of <code>BaseDaoImpl.createDao</code> if you are using any of the
 features which require inner Dao creation such as auto-refresh of foreign fields and collections of sub-objects.  The <code>DaoManager</code>
-caches the DAO classes so they can be reused.
+caches the DAO classes so if they are created again, they can be reused and not regenerated.  Building a DAO can be an expensive
+operation and for devices with limited resources (like mobile apps), DAOs should be reused if at all possible.
 
-</p><a name="IDX117"></a>
+</p><a name="IDX120"></a>
 <p>If you want a better class hierarchy or if you need to add additional methods to your DAOs, you should consider defining
 an interface which extends the <code>Dao</code> interface.  The interface isn't required but it is a good pattern so your code is
 less tied to JDBC for persistence.  The following is an example DAO interface corresponding to the Account class from the
@@ -954,10 +962,11 @@ public interface AccountDao extends Dao&lt;Account, String&gt; {
     // empty wrapper, you can add additional DAO methods here
 }
 </pre></td></tr></table>
+<a name="IDX121"></a>
 <p>Then in the implementation, you should extend the <code>BaseDaoImpl</code> base class.  Here's the example implementation of your DAO
 interface.
 
-</p><a name="IDX118"></a>
+</p><a name="IDX122"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">/** JDBC implementation of the AccountDao interface. */
 public class AccountDaoImpl extends BaseDaoImpl&lt;Account, String&gt;
   implements AccountDao {
@@ -996,7 +1005,7 @@ More on how to use these DAOs later. See section <a href="#SEC20">DAO Usage</a>.
 
 </p><dl compact="compact">
 <dd>
-<a name="IDX119"></a>
+<a name="IDX123"></a>
 </dd>
 <dt> MySQL</dt>
 <dd>
@@ -1005,54 +1014,54 @@ another engine, you can instantiate the <code>MysqlDatabaseType</code> directly 
 the default or another engine.  Also, MySQL does some funky stuff with the last-modification time if a <code>Date</code> is defined as a
 <code>TIMESTAMP</code> so <code>DATETIME</code> was used instead.
 
-</p><a name="IDX120"></a>
+</p><a name="IDX124"></a>
 </dd>
 <dt> Postgres</dt>
 <dd>
 <p>No special instructions.
 
-</p><a name="IDX121"></a>
+</p><a name="IDX125"></a>
 </dd>
 <dt> H2</dt>
 <dd>
 <p>No special instructions.  We use this database for all of our internal testing with in-memory and small on-disk databases.
 
-</p><a name="IDX122"></a>
-<a name="IDX123"></a>
-<a name="IDX124"></a>
+</p><a name="IDX126"></a>
+<a name="IDX127"></a>
+<a name="IDX128"></a>
 </dd>
 <dt> SQLite</dt>
 <dd>
 <p>There are multiple SQLite drivers out there.  Make sure you use the Xerial one (<a href="http://www.xerial.org/trac/Xerial/wiki/SQLiteJDBC">http://www.xerial.org/trac/Xerial/wiki/SQLiteJDBC</a>)
 and not the Zentus one (<a href="http://www.zentus.com/sqlitejdbc/">http://www.zentus.com/sqlitejdbc/</a>) which does not support generated ids.
 
-</p><a name="IDX125"></a>
+</p><a name="IDX129"></a>
 </dd>
 <dt> Android SQLite</dt>
 <dd>
 <p>Android's SQLite database is accessed through direct calls to the Android database API methods.
 
-</p><a name="IDX126"></a>
+</p><a name="IDX130"></a>
 </dd>
 <dt> Derby</dt>
 <dd>
 <p>There are two drivers for Derby: one embedded and one client/server.  ORMLite makes an attempt to detect the right driver but you
 may have to set the right database type on your ConnectionSource directly if it doesn't.  See section <a href="ormlite_5.html#SEC43">Database Specific Code</a>.
 
-</p><a name="IDX127"></a>
+</p><a name="IDX131"></a>
 </dd>
 <dt> HSQLDB</dt>
 <dd>
 <p>No special instructions.
 
-</p><a name="IDX128"></a>
-<a name="IDX129"></a>
+</p><a name="IDX132"></a>
+<a name="IDX133"></a>
 </dd>
 <dt> Microsoft SQL Server</dt>
 <dd>
 <p>No special instructions.
 
-</p><a name="IDX130"></a>
+</p><a name="IDX134"></a>
 </dd>
 <dt> Netezza</dt>
 <dd>
@@ -1060,8 +1069,8 @@ may have to set the right database type on your ConnectionSource directly if it 
 Netezza database. We will try to keep this driver up to date with the help of contributors.  Thanks to Richard Kooijman for the driver.
 Please contact us if you want to help with development of this driver.
   
-</p><a name="IDX131"></a>
-<a name="IDX132"></a>
+</p><a name="IDX135"></a>
+<a name="IDX136"></a>
 </dd>
 <dt> ODBC</dt>
 <dd>
@@ -1069,14 +1078,14 @@ Please contact us if you want to help with development of this driver.
 Open Database Connectivity.  We will try to keep this driver up to date with the help of contributors.  Thanks to Dale Asberry for the
 driver.  Please contact us if you want to help with development of this driver.
 
-</p><a name="IDX133"></a>
+</p><a name="IDX137"></a>
 </dd>
 <dt> DB2</dt>
 <dd>
 <p>I do not have access to an DB2 database so we cannot run any tests to make sure that our support for it works well.  Please contact us
 if you want to help with development of this driver.
 
-</p><a name="IDX134"></a>
+</p><a name="IDX138"></a>
 </dd>
 <dt> Oracle</dt>
 <dd>
@@ -1086,7 +1095,7 @@ if you want to help with development of this driver.
 </p></dd>
 </dl>
 
-<a name="IDX135"></a>
+<a name="IDX139"></a>
 <p>Please contact the author if your database is not supported.
 
 </p><hr size="6">
@@ -1215,12 +1224,12 @@ if (account == null) {
     // the name &quot;John Smith&quot; does not match any rows
 }
 </pre></td></tr></table>
-<a name="IDX136"></a>
-<a name="IDX137"></a>
-<a name="IDX138"></a>
+<a name="IDX140"></a>
+<a name="IDX141"></a>
+<a name="IDX142"></a>
 <p><em>NOTE:</em> If you need to change the value of an object's id field, you must use the <code>Dao.updateId()</code> method which
 takes the current object still with its <em>old</em> id value and the new value.  ORMLite has to first locate the object
-by its old id and then update it with the new id.  See <a href="ormlite_5.html#ANC23">updateId</a>.
+by its old id and then update it with the new id.  See <a href="ormlite_5.html#ANC24">updateId</a>.
 
 </p><hr size="6">
 <a name="NOD19"></a>
@@ -1340,10 +1349,10 @@ sequences.
 
 </p><dl compact="compact">
 <dd>
-<a name="IDX139"></a>
-<a name="IDX140"></a>
-<a name="IDX141"></a>
-<a name="IDX142"></a>
+<a name="IDX143"></a>
+<a name="IDX144"></a>
+<a name="IDX145"></a>
+<a name="IDX146"></a>
 </dd>
 <dt> create and persist an object to the database</dt>
 <dd>
@@ -1353,7 +1362,7 @@ sequences.
 account.name = &quot;Jim Coakley&quot;;
 accountDao.create(account);
 </pre></td></tr></table>
-<a name="IDX143"></a>
+<a name="IDX147"></a>
 </dd>
 <dt> query for it's id column </dt>
 <dd>
@@ -1364,7 +1373,7 @@ if (account == null) {
   account not found handling &hellip; 
 }
 </pre></td></tr></table>
-<a name="IDX144"></a>
+<a name="IDX148"></a>
 </dd>
 <dt> update the database row associated with the object</dt>
 <dd>
@@ -1374,7 +1383,7 @@ requires an id field.
 </p><table><tr><td>&nbsp;</td><td><pre class="example">account.password = &quot;_secret&quot;;
 accountDao.update(account);
 </pre></td></tr></table>
-<a name="IDX145"></a>
+<a name="IDX149"></a>
 </dd>
 <dt> refreshing an object if the database has changed</dt>
 <dd>
@@ -1383,7 +1392,7 @@ object to get the memory object up-to-date.  This requires an id field.
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">accountDao.refresh(account);
 </pre></td></tr></table>
-<a name="IDX146"></a>
+<a name="IDX150"></a>
 </dd>
 <dt> delete the account from the database</dt>
 <dd>
@@ -1392,8 +1401,8 @@ you can continue to use the object in memory but any update or refresh calls wil
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">accountDao.delete(account);
 </pre></td></tr></table>
-<a name="IDX147"></a>
-<a name="IDX148"></a>
+<a name="IDX151"></a>
+<a name="IDX152"></a>
 </dd>
 <dt> iterate through all of the rows in a table:</dt>
 <dd>
@@ -1404,7 +1413,7 @@ for (Account account : accountDao) {
     System.out.println(account.getName());
 }
 </pre></td></tr></table>
-<a name="IDX149"></a>
+<a name="IDX153"></a>
 <p><em>NOTE:</em> you must page through <em>all</em> items for the iterator to close the underlying SQL object.   If you don't
 go all of the way, the garbage collector will close the SQL statement some time later which is considered bad form.
 
@@ -1735,8 +1744,8 @@ public class Order {
 use this field name if you are querying for it.  You can set the column name using the <code>columnName</code> field in the
 <code>DatabaseField</code> annotation. See <a href="#ANC1">columnName</a>.
 
-</p><a name="IDX150"></a>
-<a name="IDX151"></a>
+</p><a name="IDX154"></a>
+<a name="IDX155"></a>
 <p>When you are creating a field with a foreign object, please note that the foreign object will <em>not</em> automatically be
 created for you.  If your foreign object has a generated-id which is provided by the database then you need to create it
 <em>before</em> you create any objects that reference it.  For example:
@@ -1751,8 +1760,8 @@ order.setAccount(account);
 &hellip;
 orderDao.create(order);
 </pre></td></tr></table>
-<a name="IDX152"></a>
-<a name="IDX153"></a>
+<a name="IDX156"></a>
+<a name="IDX157"></a>
 <p>When you query for an order, you will get an <code>Order</code> object with an account field object that <em>only</em> has its id
 field set.  The rest of the fields in the foreign <code>Account</code> object will have default values (null, 0, false, etc.).  If
 you want to use other fields in the <code>Account</code>, you must call <code>refresh</code> on the <code>accountDao</code> class to get the
@@ -1774,7 +1783,7 @@ System.out.println(&quot;Now the account fields will be set: &quot; +
 
 </p><p><em>NOTE:</em> Because we use refresh, foreign objects are therefor <em>required</em> to have an id field.
 
-</p><p>There is example code to show how to use foreign objects.  See <a href="ormlite_7.html#ANC25">foreign objects example</a>.
+</p><p>There is example code to show how to use foreign objects.  See <a href="ormlite_7.html#ANC26">foreign objects example</a>.
 
 </p><hr size="6">
 <a name="NOD28"></a>
@@ -1814,7 +1823,8 @@ in the collection have a corresponding foreign object that matches the account. 
 that match the account.  The field type of <code>orders</code> must be either <code>ForeignCollection&lt;T&gt;</code> or <code>Collection&lt;T&gt;</code> - no other
 collections are supported.  There are two different types of foreign collections: eager or lazy.   If eager is set to true then the
 separate query is made immediately and the orders are stored as a list within the collection.  If eager is set to false (the default)
-then the collection will iterate over the database using the <code>Dao.iterator()</code> whenever a method is called on the collection.
+then the collection is considered to be &quot;lazy&quot; and will iterate over the database using the <code>Dao.iterator()</code> only when a method
+is called on the collection.
 
 </p><p><em>WARNING:</em> With lazy collections, even the <code>size()</code> method causes a iteration across the database.  You most likely just want
 to use the <code>iterator()</code> and <code>toArray()</code> methods on lazy collections.
@@ -1823,10 +1833,11 @@ to use the <code>iterator()</code> and <code>toArray()</code> methods on lazy co
 with it because there is a connection open to the database underneath.  A close happens either if you go all of the way through the
 iterator or if you call <code>close()</code> on it.  Only the <code>ForeignCollection</code> returns a closable iterator.
 
-</p><p>The foreign collections support the <code>add()</code> and <code>remove()</code> methods in which case the objects will be both added or removed from
-the eager list (if there) and DAO calls will be made to affect the order table as well.
+</p><p>The foreign collections support the <code>add()</code> and <code>remove()</code> methods in which case the objects will be both added or removed
+from the internal list if the collection is eager, and DAO calls will be made to affect the order table as well for both eager and
+lazy collections.
 
-</p><p>There is example code to show how to use foreign collections.  See <a href="ormlite_7.html#ANC26">foreign collections example</a>.
+</p><p>There is example code to show how to use foreign collections.  See <a href="ormlite_7.html#ANC27">foreign collections example</a>.
 
 </p><hr size="6">
 <a name="NOD29"></a>
@@ -1970,7 +1981,7 @@ the value &quot;true&quot;.  This is especially useful in tests when you are sta
 production you want to make specific schema changes by hand.  You can set the system properties in your test start scripts but leave them off
 in the production scripts.
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">List&lt;BaseDaoImpl&lt;?, ?&gt;&gt; daoList = new ArrayList&lt;BaseDaoImpl&lt;?, ?&gt;&gt;();
+</p><table><tr><td>&nbsp;</td><td><pre class="example">List&lt;Dao&lt;?, ?&gt;&gt; daoList = new ArrayList&lt;Dao&lt;?, ?&gt;&gt;();
 daoList.add(accountDao);
 &hellip;
 
@@ -1983,7 +1994,7 @@ creator.maybeCreateTables();
 // later, we may want to drop the tables that were created 
 creator.maybeDropTables();
 </pre></td></tr></table>
-<p>For a real life example of using <code>TableCreator</code> you can see <a href="ormlite_7.html#ANC29">spring example</a>.
+<p>For a real life example of using <code>TableCreator</code> you can see <a href="ormlite_7.html#ANC30">spring example</a>.
 
 </p><hr size="6">
 <a name="NOD32"></a>
@@ -2013,7 +2024,7 @@ data classes. This will allow your data classes to have their own hierarchy and 
 Daos. However, you are free to use this base class if you prefer this pattern.  As of March 2011, it is one of the
 newer parts of ORMLite so feedback and bug reports are welcome.
 
-</p><a name="IDX154"></a>
+</p><a name="IDX158"></a>
 <p>All classes that are able to refresh (update, delete, etc.) themselves should extend the <code>BaseDaoEnabled</code> 
 class.  For example:
 
@@ -2096,7 +2107,7 @@ then call the update method because then the object will not be found.
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>March, 23 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>March, 27 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 

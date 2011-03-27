@@ -6,7 +6,7 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.16
+@set ormlite_version 4.17
 @set ormlite_year 2011
 @set ormlite_date March @value{ormlite_year}
 @set package ORMLite
@@ -105,8 +105,8 @@ Users that are connecting to SQL databases via JDBC connections will need to dow
 and @code{ormlite-core-@value{ormlite_version}.jar} files.  For use with Android applications, you should download the
 @code{ormlite-android-@value{ormlite_version}.jar} and @code{ormlite-core-@value{ormlite_version}.jar} files instead.  For either JDBC or
 Android you will also need the ormlite-core release which has the @value{package} backend implementations.  @value{package} does not have
-any required external dependencies although there are some other packages that you may want to use.  @xref{Dependencies}.  The code
-works with Java 5 or later.
+any required external dependencies although there are some @emph{optional} packages that you may want to use.  @xref{Dependencies}.  The
+code works with Java 5 or later.
 
 @c ----------------------------------------------------------------
 @node Starting Class, Starting DAO, Downloading, Getting Started
@@ -152,17 +152,17 @@ public class Account @{
 @cindex DAO
 @cindex data access objects
 @cindex createDao
-@cindex BaseDaoImpl base class
+@cindex DaoManager class
 A typical Java pattern is to isolate the database operations in Data Access Objects (DAO) classes. Each DAO provides create, delete,
 update, etc. type of functionality and specializes in the handling a single persisted class.  A simple way to build a DAO is
-to use the @code{createDao} static method on the @code{BaseDaoImpl} class.  For example, to create a DAO for the Account class
+to use the @code{createDao} static method on the @code{DaoManager} class.  For example, to create a DAO for the Account class
 defined above you would do:
 
 @example
 Dao<Account, String> accountDao =
-  BaseDaoImpl.createDao(connectionSource, Account.class);
+  DaoManager.createDao(connectionSource, Account.class);
 Dao<Order, Integer> orderDao =
-  BaseDaoImpl.createDao(connectionSource, Order.class);
+  DaoManager.createDao(connectionSource, Order.class);
 @end example
 
 More information about setting up the DAOs is available later in the manual. @xref{DAO Setup}.
@@ -171,8 +171,8 @@ More information about setting up the DAOs is available later in the manual. @xr
 @node Starting Code, Using, Starting DAO, Getting Started
 @section Code Example
 
-The code in this section demonstrates how to use the classes presented in the previous two sections. The code uses the native Java H2 database to
-create the in-memory test databases. You will need to download and add the H2 jar file to your classpath if you want to run the example as-is.  See
+The code in this section demonstrates how to use the concepts presented in the previous sections. The code uses the native Java H2 database to
+create an in-memory test database. You will need to download and add the H2 jar file to your classpath if you want to run the example as-is.  See
 the H2 home page: @uref{http://www.h2database.com/html/download.html}.  @emph{NOTE:} Android users should see the Android specific documentation
 later in the manual. @xref{Use With Android}.  There are also complete code examples that can be used.  @xref{Examples}.
 
@@ -197,7 +197,7 @@ public class AccountApp @{
 
         // instantiate the dao
         Dao<Account, String> accountDao =
-            BaseDaoImpl.createDao(connectionSource, Account.class);
+            DaoManager.createDao(connectionSource, Account.class);
 
         // if you need to create the 'accounts' table make this call
         TableUtils.createTable(connectionSource, Account.class);
@@ -233,7 +233,7 @@ continue on with the next section.  @xref{Using}.
 @node Using, Class Setup, Starting Code, Top
 @chapter How to Use
 
-This chapter goes into more detail about how to use @value{package}.
+This chapter goes into more detail about how to use the various features in @value{package}.
 
 @menu
 * Class Setup::                 How to setup your classes to be persisted.
@@ -300,8 +300,8 @@ that corresponds to the class.   If not specified, the class name, with normaliz
 each @code{Account} object will be persisted as a row in the @code{accounts} table in the database.  If the @code{tableName}
 was not specified, the @code{account} table would be used instead.
 
-More advanced users may want to add a @code{daoClassName} argument which specifies the full name of the class (including the package)
-as a string.  This is used by
+More advanced users may want to add a @code{daoClass} argument which specifies the class of the DAO object that will be
+operating on the class.  This is used by the DaoManager to instantiate the DAO internally.  @xref{DaoManager}.
 
 @cindex @@DatabaseField
 @cindex DatabaseField annotation
@@ -696,11 +696,17 @@ Persisted as SQL type @code{VARCHAR}.
 Persisted as SQL type @code{LONGVARCHAR} which handles longer strings.  
 
 @cindex string byte array
+@cindex STRING_BYTES
+@cindex unicode strings, storing
+@cindex accented strings, storing
 @item String (DataType.STRING_BYTES)
 
-A Java String persisted as an array of bytes (byte[]) with the SQL type @code{VARBINARY}.  By default the @code{Unicode}
+A Java String persisted as an array of bytes (byte[]) with the SQL type @code{VARBINARY}.  Many databases are
+Unicode compliant (MySQL/Postgres) but some are not (SQLite).  To store strings with accents or other special
+characters, you may have to encode them as an array of bytes using this type.  By default the @code{Unicode}
 @code{Charset} is used to convert the string to bytes and back again.  You can use the @code{format} field in
-@code{DatabaseField} to specify a custom character-set to use instead for the field.
+@code{DatabaseField} to specify a custom character-set to use instead for the field.  Comparison and ordering
+of this type may not be possible depending on the database type.
 
 @cindex boolean
 @anchor{datatype boolean}
@@ -957,21 +963,23 @@ the class we are persisting with the DAO, and the class of the ID-column that wi
 your class does not have an ID field, you can put @code{Object} or @code{Void} as the 2nd argument.  For example, in the above
 @code{Account} class, the "name" field is the ID column (id = true) so the ID class is @code{String}.
 
-The simplest way to create your DAO is to use the @code{createDao} static method on the @code{BaseDaoImpl} class to create a
+@anchor{DaoManager}
+The simplest way to create your DAO is to use the @code{createDao} static method on the @code{DaoManager} class to create a
 DAO class.  For example:
 
 @example
 Dao<Account, String> accountDao =
-  BaseDaoImpl.createDao(connectionSource, Account.class);
+  DaoManager.createDao(connectionSource, Account.class);
 Dao<Order, Integer> orderDao =
-  BaseDaoImpl.createDao(connectionSource, Order.class);
+  DaoManager.createDao(connectionSource, Order.class);
 @end example
 
 @cindex DaoManager
 @cindex reusing DAOs
 @emph{NOTE:} You should use the @code{DaoManager#createDao} methods instead of @code{BaseDaoImpl.createDao} if you are using any of the
 features which require inner Dao creation such as auto-refresh of foreign fields and collections of sub-objects.  The @code{DaoManager}
-caches the DAO classes so they can be reused.
+caches the DAO classes so if they are created again, they can be reused and not regenerated.  Building a DAO can be an expensive
+operation and for devices with limited resources (like mobile apps), DAOs should be reused if at all possible.
 
 @cindex Dao interface
 If you want a better class hierarchy or if you need to add additional methods to your DAOs, you should consider defining
@@ -986,6 +994,7 @@ public interface AccountDao extends Dao<Account, String> @{
 @}
 @end example
 
+@cindex BaseDaoImpl base class
 Then in the implementation, you should extend the @code{BaseDaoImpl} base class.  Here's the example implementation of your DAO
 interface.
 
@@ -1663,7 +1672,8 @@ In the above example, the @code{@@ForeignCollectionField} annotation marks that 
 that match the account.  The field type of @code{orders} must be either @code{ForeignCollection<T>} or @code{Collection<T>} -- no other
 collections are supported.  There are two different types of foreign collections: eager or lazy.   If eager is set to true then the
 separate query is made immediately and the orders are stored as a list within the collection.  If eager is set to false (the default)
-then the collection will iterate over the database using the @code{Dao.iterator()} whenever a method is called on the collection.
+then the collection is considered to be "lazy" and will iterate over the database using the @code{Dao.iterator()} only when a method
+is called on the collection.
 
 @emph{WARNING:} With lazy collections, even the @code{size()} method causes a iteration across the database.  You most likely just want
 to use the @code{iterator()} and @code{toArray()} methods on lazy collections.
@@ -1672,8 +1682,9 @@ to use the @code{iterator()} and @code{toArray()} methods on lazy collections.
 with it because there is a connection open to the database underneath.  A close happens either if you go all of the way through the
 iterator or if you call @code{close()} on it.  Only the @code{ForeignCollection} returns a closable iterator.
 
-The foreign collections support the @code{add()} and @code{remove()} methods in which case the objects will be both added or removed from
-the eager list (if there) and DAO calls will be made to affect the order table as well.
+The foreign collections support the @code{add()} and @code{remove()} methods in which case the objects will be both added or removed
+from the internal list if the collection is eager, and DAO calls will be made to affect the order table as well for both eager and
+lazy collections.
 
 There is example code to show how to use foreign collections.  @xref{foreign collections example}.
 
@@ -1771,7 +1782,7 @@ production you want to make specific schema changes by hand.  You can set the sy
 in the production scripts.
 
 @example
-List<BaseDaoImpl<?, ?>> daoList = new ArrayList<BaseDaoImpl<?, ?>>();
+List<Dao<?, ?>> daoList = new ArrayList<Dao<?, ?>>();
 daoList.add(accountDao);
 @dots{}
 
@@ -2915,7 +2926,7 @@ log4j.logger.com.j256.ormlite=DEBUG
 
 @cindex logging sql arguments
 @cindex sql argument logging
-@emph{Notice} that you can uncomment the last line in the above log4j.properties file to log the arguments to the
+@emph{Notice} that you can uncomment the last lines in the above log4j.properties file to log the arguments to the
 various SQL calls.  This may expose passwords or other sensitive information in the database so probably should
 only be used during debugging and should not be the default.
 
@@ -2946,7 +2957,8 @@ concentrate on testing a particular class instead of the whole package.
 
 @item com.h2database
 
-As a test database implementation, H2 is very fast and simple to use.  Not as recommended as a production level database.
+As a test database implementation, H2 is very fast and simple to use.  However, we recommend MySQL or Postgres for
+multi-threaded, high-performance, production databases.
 
 @item org.apache.log4j
 
@@ -3033,8 +3045,8 @@ and rarely the on-disk database formats.
 
 In 4.14 we added a @code{DatabaseType.BYTE_ARRAY} which stores @code{byte[]} directly.  @xref{BYTE_ARRAY}.  In the past, this array
 would have been stored as a serialized array of bytes.  To not break backwards compatibility with the database, fields with the
-@code{byte[]} type @emph{must} specify either the @code{BYTE_ARRAY} or @code{SERIALIZABLE} types using the @code{dataType} field on
-@code{@@DatabaseField} -- it will not be chosen automatically.  @xref{DatabaseField dataType}.  If we did not do this then
+@code{byte[]} type @emph{must} now specify either the @code{BYTE_ARRAY} or @code{SERIALIZABLE} types using the @code{dataType} field
+on @code{@@DatabaseField} -- it will not be chosen automatically.  @xref{DatabaseField dataType}.  If we did not do this then
 previously stored data would be read from the database improperly.
 
 In addition, serialized types must also now specify their @code{dataType} value.  You should use @code{DataType.SERIALIZABLE} to
@@ -3292,8 +3304,8 @@ classes and did a ton of beta-testing of it.  He's also provided all of the Andr
 @item Nelson Erb  was our self-appointed documentation and testing volunteer for a year.  He did a great job summarizing sections of
 this document so we could create a better 'Getting Started' section.  He also fleshed out a bunch of unit tests to improve coverage in some areas.
 
-@item JC has been an excellent addition to the user list pushing for feedbacks, discovering and reporting bugs, providing patches for new
-features, and thinking a lot about how @value{package} can be extended and improved.   
+@item JC Romanda has been an excellent addition to the user base providing feedback, discovering and reporting bugs, providing patches for new
+features, testing new features before the release, and thinking a lot about how @value{package} can be extended and improved.
 
 @item Jim Gloor was one of the Java gurus at a previous company.  Thanks much for his great object instincts and the JDBC code samples that
 started this effort.
@@ -3307,10 +3319,10 @@ and the @code{BaseDaoImpl} where in some part modeled after his code.  Thanks du
 @item Dale Asberry added the initial take on the generic ODBC database type.
 @item Richard Kooijman added the initial take on the Netezza database type.
 @item Markus Wiederkehr provided feedback on Android initialization and class hierarchies.
-@item Wayne Stidolph helped with Android usage feedback.
+@item Wayne Stidolph helped with Android usage feedback and help test some new features.
 @item Luke Meyer helped with Android functionality and the queryRaw features.
 @item Larry Hamel recommended index features and pointed out some bugs.
-@item Jaxelrod for pushing on the maven release mechanisms and missing javadocs.
+@item Jaxelrod provided feedback on the maven release mechanisms and missing javadocs.
 
 @end itemize
 

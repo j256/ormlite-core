@@ -60,9 +60,10 @@ To release ORMLite:
 11) Update the ormite.com website:
 
 	- cd /var/www/ormlite.com/release
-	- run get_release.sh  [enter release number]
+	- sh get_release.sh  [enter release number]
 	- cd ..
 	- sh explode_javadocs.sh
+	- add new release to the release/index.shtml file
 
 12) Possibly trim the older releases in the release directory on SF.  Try to leave last major release and couple minors.
 

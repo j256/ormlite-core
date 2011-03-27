@@ -1,4 +1,9 @@
-4.16: 3/23/2011 (svn rYYYY)
+4.17: 3/27/2011 (svn rYYYY)
+	* CORE: Fixed a couple of places were I was using Java 1.6 only methods.  This broke Android v1.6 support.  Thanks to Javier and jc.
+	* CORE: Improved the reentrance during query and class configuration initialization.
+	* CORE: Improved the DaoManager handling of generic dao classes and a registerDao method.  Thanks to jc.
+
+4.16: 3/23/2011 (svn r1553)
 	* CORE: Added support for @@ForeignCollectionField annotation which supports eager and lazy loaded collections of foreign objects.
 	* CORE: Added a DaoManager which caches DAOs that are constructed so we only do it once per class.  Thanks to jc.
 	* CORE: Added the BaseDaoEnabled class for supporting data objects which can self refresh/update/etc..  Good bit of refactoring.
