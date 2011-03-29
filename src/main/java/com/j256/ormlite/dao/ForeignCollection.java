@@ -1,5 +1,6 @@
 package com.j256.ormlite.dao;
 
+import java.sql.SQLException;
 import java.util.Collection;
 
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -32,7 +33,13 @@ import com.j256.ormlite.field.ForeignCollectionField;
 public interface ForeignCollection<T> extends Collection<T> {
 
 	/**
-	 * Like {@link Collection#iterator()} but returns a closable iterator instead.
+	 * Like {@link Collection#iterator()} but returns a closeable iterator instead. This may throw
+	 * {@link RuntimeException} if there is any SQL exceptions unfortunately.
 	 */
 	public CloseableIterator<T> iterator();
+
+	/**
+	 * Like {@link Collection#iterator()} but returns a closeable iterator instead and can throw a SQLException.
+	 */
+	public CloseableIterator<T> iteratorThrow() throws SQLException;
 }

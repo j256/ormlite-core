@@ -10,7 +10,8 @@ import com.j256.ormlite.field.ForeignCollectionField;
 /**
  * Collection that is set on a field that as been marked with the {@link ForeignCollectionField} annotation when an
  * object is refreshed or queried (i.e. not created). Most of the methods here require a pass through the database.
- * Operations such as size() therefore should not be used. Only the iterator or toArray methods probably should be used.
+ * Operations such as size() therefore should most likely not be used because of their expense. Chances are you only
+ * want to use the {@link #iterator()}, {@link #toArray()}, and {@link #toArray(Object[])} methods.
  * 
  * <p>
  * <b>WARNING:</b> Most likely for(;;) loops should not be used here since we need to be careful about closing the
@@ -26,7 +27,15 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 	}
 
 	public CloseableIterator<T> iterator() {
-		return dao.iterator();
+		try {
+			return iteratorThrow();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public CloseableIterator<T> iteratorThrow() throws SQLException {
+		return dao.iterator(preparedQuery);
 	}
 
 	public int size() {
