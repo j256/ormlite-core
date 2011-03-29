@@ -1,8 +1,6 @@
 - support for CREATE IF NOT EXISTS
 - support for Dao.countOf() or some such that would do a 'SELECT COUNT(*) FROM FOO'
 - look at support for clearTable() which either does a DELETE * or TRUNCATE if supported
-- the callBatchTasks should use a isAutoCommitSupported() DatabaseType method and wrap itself
-	in a transaction otherwise
 
 - support for JTA annotations, whatever the common one is
 	- maybe also JDO?

@@ -73,7 +73,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		StatementExecutor<Foo, String> statementExec = new StatementExecutor<Foo, String>(databaseType, tableInfo);
 		replay(connection);
 		final AtomicBoolean called = new AtomicBoolean(false);
-		statementExec.callBatchTasks(connection, new Callable<Void>() {
+		statementExec.callBatchTasks(connection, false, new Callable<Void>() {
 			public Void call() throws Exception {
 				called.set(true);
 				return null;
@@ -92,7 +92,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		StatementExecutor<Foo, String> statementExec = new StatementExecutor<Foo, String>(databaseType, tableInfo);
 		replay(connection);
 		final AtomicBoolean called = new AtomicBoolean(false);
-		statementExec.callBatchTasks(connection, new Callable<Void>() {
+		statementExec.callBatchTasks(connection, false, new Callable<Void>() {
 			public Void call() throws Exception {
 				called.set(true);
 				return null;
@@ -113,7 +113,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		StatementExecutor<Foo, String> statementExec = new StatementExecutor<Foo, String>(databaseType, tableInfo);
 		replay(connection);
 		final AtomicBoolean called = new AtomicBoolean(false);
-		statementExec.callBatchTasks(connection, new Callable<Void>() {
+		statementExec.callBatchTasks(connection, false, new Callable<Void>() {
 			public Void call() throws Exception {
 				called.set(true);
 				return null;
@@ -134,7 +134,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		StatementExecutor<Foo, String> statementExec = new StatementExecutor<Foo, String>(databaseType, tableInfo);
 		replay(connection);
 		try {
-			statementExec.callBatchTasks(connection, new Callable<Void>() {
+			statementExec.callBatchTasks(connection, false, new Callable<Void>() {
 				public Void call() throws Exception {
 					throw new Exception("expected");
 				}

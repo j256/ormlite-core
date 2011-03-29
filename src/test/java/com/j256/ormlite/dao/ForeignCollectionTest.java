@@ -49,28 +49,40 @@ public class ForeignCollectionTest extends BaseCoreTest {
 	private void testCollection(Dao<Account, Integer> accountDao, boolean eager) throws Exception {
 		Dao<Order, Integer> orderDao = createDao(Order.class, true);
 
-		Account account = new Account();
-		String name = "fwepfjewfew";
-		account.name = name;
-		assertEquals(1, accountDao.create(account));
+		Account account1 = new Account();
+		String name1 = "fwepfjewfew";
+		account1.name = name1;
+		assertEquals(1, accountDao.create(account1));
 
 		Order order1 = new Order();
 		int val1 = 13123441;
 		order1.val = val1;
-		order1.account = account;
+		order1.account = account1;
 		assertEquals(1, orderDao.create(order1));
 
 		Order order2 = new Order();
 		int val2 = 113787097;
 		order2.val = val2;
-		order2.account = account;
+		order2.account = account1;
 		assertEquals(1, orderDao.create(order2));
 
-		Account account2 = accountDao.queryForId(account.id);
-		assertEquals(name, account2.name);
-		assertNotNull(account2.orders);
+		// insert some other stuff just to confuse matters
+		Account account2 = new Account();
+		String name2 = "another name";
+		account1.name = name2;
+		assertEquals(1, accountDao.create(account2));
+
+		Order order3 = new Order();
+		int val3 = 17097;
+		order3.val = val3;
+		order3.account = account2;
+		assertEquals(1, orderDao.create(order3));
+
+		Account account3 = accountDao.queryForId(account1.id);
+		assertEquals(name1, account3.name);
+		assertNotNull(account3.orders);
 		int orderC = 0;
-		for (Order order : account2.orders) {
+		for (Order order : account3.orders) {
 			orderC++;
 			switch (orderC) {
 				case 1 :
@@ -82,30 +94,30 @@ public class ForeignCollectionTest extends BaseCoreTest {
 			}
 		}
 		assertEquals(2, orderC);
-		assertFalse(account2.orders.isEmpty());
-		assertTrue(account2.orders.contains(order1));
-		assertTrue(account2.orders.containsAll(Arrays.asList(order1, order2)));
-		Object[] orders = account2.orders.toArray();
+		assertFalse(account3.orders.isEmpty());
+		assertTrue(account3.orders.contains(order1));
+		assertTrue(account3.orders.containsAll(Arrays.asList(order1, order2)));
+		Object[] orders = account3.orders.toArray();
 		assertNotNull(orders);
 		assertEquals(2, orders.length);
 		assertEquals(order1, orders[0]);
 		assertEquals(order2, orders[1]);
-		orders = account2.orders.toArray(new Order[0]);
+		orders = account3.orders.toArray(new Order[0]);
 		assertNotNull(orders);
 		assertEquals(2, orders.length);
 		assertEquals(order1, orders[0]);
 		assertEquals(order2, orders[1]);
-		orders = account2.orders.toArray(new Order[1]);
+		orders = account3.orders.toArray(new Order[1]);
 		assertNotNull(orders);
 		assertEquals(2, orders.length);
 		assertEquals(order1, orders[0]);
 		assertEquals(order2, orders[1]);
-		orders = account2.orders.toArray(new Order[2]);
+		orders = account3.orders.toArray(new Order[2]);
 		assertNotNull(orders);
 		assertEquals(2, orders.length);
 		assertEquals(order1, orders[0]);
 		assertEquals(order2, orders[1]);
-		orders = account2.orders.toArray(new Order[3]);
+		orders = account3.orders.toArray(new Order[3]);
 		assertNotNull(orders);
 		assertEquals(3, orders.length);
 		assertEquals(order1, orders[0]);
@@ -113,34 +125,34 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertNull(orders[2]);
 
 		// insert it via the collection
-		Order order3 = new Order();
-		int val3 = 76557654;
-		order3.val = val3;
-		order3.account = account;
-		account2.orders.add(order3);
+		Order order5 = new Order();
+		int val5 = 76557654;
+		order5.val = val5;
+		order5.account = account1;
+		account3.orders.add(order5);
 		// the size should change immediately
-		assertEquals(3, account2.orders.size());
+		assertEquals(3, account3.orders.size());
 
 		// now insert it behind the collections back
-		Order order4 = new Order();
-		int val4 = 1123587097;
-		order4.val = val4;
-		order4.account = account;
-		assertEquals(1, orderDao.create(order4));
+		Order order6 = new Order();
+		int val6 = 1123587097;
+		order6.val = val6;
+		order6.account = account1;
+		assertEquals(1, orderDao.create(order6));
 		if (eager) {
 			// account2's collection should not have changed
-			assertEquals(3, account2.orders.size());
+			assertEquals(3, account3.orders.size());
 		} else {
 			// lazy does another query
-			assertEquals(4, account2.orders.size());
+			assertEquals(4, account3.orders.size());
 		}
 
 		// now we refresh the collection
-		assertEquals(1, accountDao.refresh(account2));
-		assertEquals(name, account2.name);
-		assertNotNull(account2.orders);
+		assertEquals(1, accountDao.refresh(account3));
+		assertEquals(name1, account3.name);
+		assertNotNull(account3.orders);
 		orderC = 0;
-		for (Order order : account2.orders) {
+		for (Order order : account3.orders) {
 			orderC++;
 			switch (orderC) {
 				case 1 :
@@ -150,22 +162,22 @@ public class ForeignCollectionTest extends BaseCoreTest {
 					assertEquals(val2, order.val);
 					break;
 				case 3 :
-					assertEquals(val3, order.val);
+					assertEquals(val5, order.val);
 					break;
 				case 4 :
-					assertEquals(val4, order.val);
+					assertEquals(val6, order.val);
 					break;
 			}
 		}
 		assertEquals(4, orderC);
 
-		assertTrue(account2.orders.remove(order3));
-		assertEquals(3, account2.orders.size());
-		assertTrue(account2.orders.removeAll(Arrays.asList(order3, order4)));
-		assertEquals(2, account2.orders.size());
-		assertEquals(1, accountDao.refresh(account2));
+		assertTrue(account3.orders.remove(order5));
+		assertEquals(3, account3.orders.size());
+		assertTrue(account3.orders.removeAll(Arrays.asList(order5, order6)));
+		assertEquals(2, account3.orders.size());
+		assertEquals(1, accountDao.refresh(account3));
 		orderC = 0;
-		for (Order order : account2.orders) {
+		for (Order order : account3.orders) {
 			orderC++;
 			switch (orderC) {
 				case 1 :
@@ -178,9 +190,9 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		}
 		assertEquals(2, orderC);
 
-		assertTrue(account2.orders.retainAll(Arrays.asList(order1)));
+		assertTrue(account3.orders.retainAll(Arrays.asList(order1)));
 		orderC = 0;
-		for (Order order : account2.orders) {
+		for (Order order : account3.orders) {
 			orderC++;
 			switch (orderC) {
 				case 1 :
@@ -190,18 +202,18 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		}
 		assertEquals(1, orderC);
 
-		CloseableIterator<Order> iterator = account2.orders.iterator();
+		CloseableIterator<Order> iterator = account3.orders.iterator();
 		assertTrue(iterator.hasNext());
 		assertEquals(order1, iterator.next());
 		iterator.remove();
 		assertFalse(iterator.hasNext());
 		iterator.close();
-		assertEquals(0, account2.orders.size());
+		assertEquals(0, account3.orders.size());
 
-		account2.orders.addAll(Arrays.asList(order1, order2, order3, order4));
+		account3.orders.addAll(Arrays.asList(order1, order2, order5, order6));
 
 		orderC = 0;
-		for (Order order : account2.orders) {
+		for (Order order : account3.orders) {
 			orderC++;
 			switch (orderC) {
 				case 1 :
@@ -211,26 +223,26 @@ public class ForeignCollectionTest extends BaseCoreTest {
 					assertEquals(val2, order.val);
 					break;
 				case 3 :
-					assertEquals(val3, order.val);
+					assertEquals(val5, order.val);
 					break;
 				case 4 :
-					assertEquals(val4, order.val);
+					assertEquals(val6, order.val);
 					break;
 			}
 		}
 		assertEquals(4, orderC);
 
-		account2.orders.clear();
-		assertEquals(0, account2.orders.size());
+		account3.orders.clear();
+		assertEquals(0, account3.orders.size());
 		
-		orders = account2.orders.toArray(new Order[2]);
+		orders = account3.orders.toArray(new Order[2]);
 		assertNotNull(orders);
 		assertEquals(2, orders.length);
 		assertNull(orders[0]);
 		assertNull(orders[1]);
 		
-		assertFalse(account2.orders.contains(order1));
-		assertFalse(account2.orders.containsAll(Arrays.asList(order1, order2, order3, order4)));
+		assertFalse(account3.orders.contains(order1));
+		assertFalse(account3.orders.containsAll(Arrays.asList(order1, order2, order5, order6)));
 	}
 
 	@Test(expected = SQLException.class)

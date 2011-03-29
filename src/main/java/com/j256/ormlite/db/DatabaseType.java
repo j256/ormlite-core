@@ -159,4 +159,10 @@ public interface DatabaseType {
 	 * database connection.
 	 */
 	public String getPingStatement();
+
+	/**
+	 * Returns true if batch operations should be done inside of a transaction. Default is false in which case
+	 * auto-commit disabling will be done.
+	 */
+	public boolean isBatchUseTransaction();
 }

@@ -405,8 +405,8 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			 * We need to save the connection because we are going to be disabling auto-commit on it and we don't want
 			 * pooled connection factories to give us another connection where auto-commit might still be enabled.
 			 */
-			connectionSource.saveSpecialConnection(connection);
-			return statementExecutor.callBatchTasks(connection, callable);
+			boolean saved = connectionSource.saveSpecialConnection(connection);
+			return statementExecutor.callBatchTasks(connection, saved, callable);
 		} finally {
 			connectionSource.clearSpecialConnection(connection);
 			connectionSource.releaseConnection(connection);

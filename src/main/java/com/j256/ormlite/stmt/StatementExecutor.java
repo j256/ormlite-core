@@ -18,6 +18,7 @@ import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
+import com.j256.ormlite.misc.TransactionManager;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.stmt.mapped.MappedCreate;
 import com.j256.ormlite.stmt.mapped.MappedDelete;
@@ -415,18 +416,25 @@ public class StatementExecutor<T, ID> {
 		}
 	}
 
-	public <CT> CT callBatchTasks(DatabaseConnection connection, Callable<CT> callable) throws Exception {
+	/**
+	 * Call batch tasks insude of a connection which may, or may not, have been "saved".
+	 */
+	public <CT> CT callBatchTasks(DatabaseConnection connection, boolean saved, Callable<CT> callable) throws Exception {
 		boolean autoCommitAtStart = false;
 		try {
-			if (connection.isAutoCommitSupported()) {
-				autoCommitAtStart = connection.getAutoCommit();
-				if (autoCommitAtStart) {
-					// disable auto-commit mode if supported and enabled at start
-					connection.setAutoCommit(false);
-					logger.debug("disabled auto-commit on table {} before batch tasks", tableInfo.getTableName());
+			if (databaseType.isBatchUseTransaction()) {
+				return TransactionManager.callInTransaction(connection, saved, databaseType, callable);
+			} else {
+				if (connection.isAutoCommitSupported()) {
+					autoCommitAtStart = connection.getAutoCommit();
+					if (autoCommitAtStart) {
+						// disable auto-commit mode if supported and enabled at start
+						connection.setAutoCommit(false);
+						logger.debug("disabled auto-commit on table {} before batch tasks", tableInfo.getTableName());
+					}
 				}
+				return callable.call();
 			}
-			return callable.call();
 		} finally {
 			if (autoCommitAtStart) {
 				// try to restore if we are in auto-commit mode
@@ -467,7 +475,7 @@ public class StatementExecutor<T, ID> {
 		}
 		return stringArrayRowMapper;
 	}
-	
+
 	/**
 	 * Map raw results to return String[].
 	 */

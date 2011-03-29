@@ -23,19 +23,21 @@ import com.j256.ormlite.support.DatabaseConnection;
  * set methods. In Spring XML, init-method="initialize" should be used.
  * </p>
  * 
+ * <p>
+ * You can call this as an instance with a new TransactionManager(dataSource); or you can call it as a static like the
+ * below example:
+ * 
  * <blockquote>
  * 
  * <pre>
- * TransactionManager transactionMgr = new TransactionManager(dataSource);
- * ...
- * mgr.callInTransaction(new Callable&lt;Void&gt;() {
- * 		public Void call() throws Exception {
- * 			// delete both objects but make sure that if either one fails, the transaction is rolled back
- * 			// and both objects are "restored" to the database
- * 			fooDao.delete(foo);
- * 			barDao.delete(bar);
- * 			return null;
- * 		}
+ * TransactionManager.callInTransaction(dataSource, new Callable&lt;Void&gt;() {
+ * 	public Void call() throws Exception {
+ * 		// delete both objects but make sure that if either one fails, the transaction is rolled back
+ * 		// and both objects are &quot;restored&quot; to the database
+ * 		fooDao.delete(foo);
+ * 		barDao.delete(bar);
+ * 		return null;
+ * 	}
  * });
  * </pre>
  * 
@@ -63,7 +65,6 @@ public class TransactionManager {
 	private static final String SAVE_POINT_PREFIX = "ORMLITE";
 
 	private ConnectionSource connectionSource;
-	private DatabaseType databaseType;
 	private static AtomicInteger savePointCounter = new AtomicInteger();
 
 	/**
@@ -88,7 +89,6 @@ public class TransactionManager {
 		if (connectionSource == null) {
 			throw new IllegalStateException("dataSource was not set on " + getClass().getSimpleName());
 		}
-		databaseType = connectionSource.getDatabaseType();
 	}
 
 	/**
@@ -109,12 +109,44 @@ public class TransactionManager {
 	 *             callable exception and is thrown by this method.
 	 */
 	public <T> T callInTransaction(final Callable<T> callable) throws SQLException {
+		return callInTransaction(connectionSource, callable);
+	}
+
+	/**
+	 * Same as {@link #callInTransaction(Callable)} except as a static method with a connection source.
+	 */
+	public static <T> T callInTransaction(final ConnectionSource connectionSource, final Callable<T> callable)
+			throws SQLException {
+
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
+		try {
+			boolean saved = connectionSource.saveSpecialConnection(connection);
+			return callInTransaction(connection, saved, connectionSource.getDatabaseType(), callable);
+		} finally {
+			// we should clear aggressively
+			connectionSource.clearSpecialConnection(connection);
+			connectionSource.releaseConnection(connection);
+		}
+	}
+
+	/**
+	 * Same as {@link #callInTransaction(Callable)} except as a static method on a connection.
+	 */
+	public static <T> T callInTransaction(final DatabaseConnection connection, final DatabaseType databaseType,
+			final Callable<T> callable) throws SQLException {
+		return callInTransaction(connection, false, databaseType, callable);
+	}
+
+	/**
+	 * Same as {@link #callInTransaction(Callable)} except as a static method on a connection.
+	 */
+	public static <T> T callInTransaction(final DatabaseConnection connection, boolean saved,
+			final DatabaseType databaseType, final Callable<T> callable) throws SQLException {
+
 		boolean autoCommitAtStart = false;
 		try {
 			boolean hasSavePoint = false;
 			Savepoint savePoint = null;
-			boolean saved = connectionSource.saveSpecialConnection(connection);
 			if (saved || databaseType.isNestedSavePointsSupported()) {
 				if (connection.isAutoCommitSupported()) {
 					autoCommitAtStart = connection.getAutoCommit();
@@ -150,14 +182,11 @@ public class TransactionManager {
 				throw SqlExceptionUtil.create("Operation in transaction threw non-SQL exception", e);
 			}
 		} finally {
-			// we should clear aggressively
-			connectionSource.clearSpecialConnection(connection);
 			if (autoCommitAtStart) {
 				// try to restore if we are in auto-commit mode
 				connection.setAutoCommit(true);
 				logger.debug("restored auto-commit to true");
 			}
-			connectionSource.releaseConnection(connection);
 		}
 	}
 
@@ -165,7 +194,7 @@ public class TransactionManager {
 		this.connectionSource = connectionSource;
 	}
 
-	private void commit(DatabaseConnection connection, Savepoint savePoint) throws SQLException {
+	private static void commit(DatabaseConnection connection, Savepoint savePoint) throws SQLException {
 		String name = (savePoint == null ? null : savePoint.getSavepointName());
 		connection.commit(savePoint);
 		if (name == null) {
@@ -175,7 +204,7 @@ public class TransactionManager {
 		}
 	}
 
-	private void rollBack(DatabaseConnection connection, Savepoint savePoint) throws SQLException {
+	private static void rollBack(DatabaseConnection connection, Savepoint savePoint) throws SQLException {
 		String name = (savePoint == null ? null : savePoint.getSavepointName());
 		connection.rollback(savePoint);
 		if (name == null) {
