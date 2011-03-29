@@ -6,7 +6,7 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.17
+@set ormlite_version 4.18
 @set ormlite_year 2011
 @set ormlite_date March @value{ormlite_year}
 @set package ORMLite
@@ -2874,11 +2874,7 @@ Call the call-able that will perform a number of batch tasks. This is for perfor
 number of database operations at once -- maybe loading data from a file. This will turn off what databases call
 "auto-commit" mode, run the call-able and then re-enable "auto-commit".
 
-@cindex Android transactions
-@cindex Android auto-commit
-@emph{NOTE:} This is only supported by databases that support auto-commit. Android, for example, does not
-support auto-commit although using the @code{TransactionManager} and performing actions within a transaction
-seems to have the same batch performance implications.
+@emph{NOTE:} If neither auto-commit nor transactions areq supported by the database type then this may do nothing.
 
 @end table
 
