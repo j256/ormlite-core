@@ -74,7 +74,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * Add columns to be returned by the SELECT query. If no columns are selected then all columns are returned by
 	 * default. For classes with id columns, the id column is added to the select list automagically.
 	 */
-	public QueryBuilder<T, ID> selectColumns(String... columns) {
+	public QueryBuilder<T, ID> selectColumns(String... columns) throws SQLException {
 		if (selectColumnList == null) {
 			selectColumnList = new ArrayList<String>();
 		}
@@ -88,7 +88,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * Add columns to be returned by the SELECT query. If no columns are selected then all columns are returned by
 	 * default. For classes with id columns, the id column is added to the select list automagically.
 	 */
-	public QueryBuilder<T, ID> selectColumns(Iterable<String> columns) {
+	public QueryBuilder<T, ID> selectColumns(Iterable<String> columns) throws SQLException {
 		if (selectColumnList == null) {
 			selectColumnList = new ArrayList<String>();
 		}
@@ -106,8 +106,11 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * updated.
 	 * </p>
 	 */
-	public QueryBuilder<T, ID> groupBy(String columnName) {
-		verifyColumnName(columnName);
+	public QueryBuilder<T, ID> groupBy(String columnName) throws SQLException {
+		FieldType fieldType = verifyColumnName(columnName);
+		if (fieldType.isForeignCollection()) {
+			throw new SQLException("Can't groupBy foreign colletion field: " + columnName);
+		}
 		if (groupByList == null) {
 			groupByList = new ArrayList<String>();
 		}
@@ -119,8 +122,11 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	/**
 	 * Add "ORDER BY" clause to the SQL query statement.
 	 */
-	public QueryBuilder<T, ID> orderBy(String columnName, boolean ascending) {
-		verifyColumnName(columnName);
+	public QueryBuilder<T, ID> orderBy(String columnName, boolean ascending) throws SQLException {
+		FieldType fieldType = verifyColumnName(columnName);
+		if (fieldType.isForeignCollection()) {
+			throw new SQLException("Can't orderBy foreign colletion field: " + columnName);
+		}
 		if (orderByList == null) {
 			orderByList = new ArrayList<OrderBy>();
 		}
@@ -195,12 +201,15 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		appendOffset(sb);
 	}
 
-	private void addSelectColumnToList(String column) {
-		verifyColumnName(column);
-		selectColumnList.add(column);
+	private void addSelectColumnToList(String columnName) throws SQLException {
+		FieldType fieldType = verifyColumnName(columnName);
+		if (fieldType.isForeignCollection()) {
+			throw new SQLException("Can't select from foreign colletion field: " + columnName);
+		}
+		selectColumnList.add(columnName);
 	}
 
-	private void appendColumns(StringBuilder sb, List<FieldType> fieldTypeList) {
+	private void appendColumns(StringBuilder sb, List<FieldType> fieldTypeList) throws SQLException {
 		// if no columns were specified then * is the default
 		if (selectColumnList == null) {
 			sb.append("* ");
@@ -285,7 +294,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		sb.append(' ');
 	}
 
-	private void appendOrderBys(StringBuilder sb) {
+	private void appendOrderBys(StringBuilder sb) throws SQLException {
 		if (orderByList == null || orderByList.size() == 0) {
 			return;
 		}
@@ -299,7 +308,6 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 				sb.append(',');
 			}
 			String columnName = orderBy.getColumnName();
-			verifyColumnName(columnName);
 			databaseType.appendEscapedEntityName(sb, columnName);
 			if (orderBy.isAscending()) {
 				// sb.append(" ASC");

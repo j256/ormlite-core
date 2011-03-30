@@ -68,14 +68,14 @@ public class WhereTest extends BaseCoreTest {
 		where.appendSql(databaseType, new StringBuilder(), new ArrayList<SelectArg>());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = SQLException.class)
 	public void testComparisonUnknownField() throws Exception {
 		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		int val = 1;
 		where.eq("unknown-field", val);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = SQLException.class)
 	public void testComparisonFieldNameNotColumnName() throws Exception {
 		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
 		assertNotNull(Foo.class.getDeclaredField(Foo.ID_COLUMN_NAME));

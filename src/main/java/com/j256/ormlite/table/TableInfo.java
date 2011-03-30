@@ -98,7 +98,7 @@ public class TableInfo<T, ID> {
 	/**
 	 * Return the {@link FieldType} associated with the columnName.
 	 */
-	public FieldType getFieldTypeByColumnName(String columnName) {
+	public FieldType getFieldTypeByColumnName(String columnName) throws SQLException {
 		if (fieldNameMap == null) {
 			// build our alias map if we need it
 			Map<String, FieldType> map = new HashMap<String, FieldType>();
@@ -113,11 +113,11 @@ public class TableInfo<T, ID> {
 			// look to see if someone is using the field-name instead of column-name
 			for (FieldType fieldType2 : fieldTypes) {
 				if (fieldType2.getFieldName().equals(columnName)) {
-					throw new IllegalArgumentException("You should use columnName '" + fieldType2.getDbColumnName()
+					throw new SQLException("You should use columnName '" + fieldType2.getDbColumnName()
 							+ "' for table " + tableName + " instead of fieldName '" + columnName + "'");
 				}
 			}
-			throw new IllegalArgumentException("Unknown column name '" + columnName + "' in table " + tableName);
+			throw new SQLException("Unknown column name '" + columnName + "' in table " + tableName);
 		}
 		return fieldType;
 	}

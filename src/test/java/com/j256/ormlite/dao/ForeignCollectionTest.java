@@ -234,15 +234,33 @@ public class ForeignCollectionTest extends BaseCoreTest {
 
 		account3.orders.clear();
 		assertEquals(0, account3.orders.size());
-		
+
 		orders = account3.orders.toArray(new Order[2]);
 		assertNotNull(orders);
 		assertEquals(2, orders.length);
 		assertNull(orders[0]);
 		assertNull(orders[1]);
-		
+
 		assertFalse(account3.orders.contains(order1));
 		assertFalse(account3.orders.containsAll(Arrays.asList(order1, order2, order5, order6)));
+
+		assertEquals(name1, account3.name);
+		String name3 = "gjrogejroregjpo";
+		account3.name = name3;
+		assertEquals(1, accountDao.update(account3));
+
+		account3 = accountDao.queryForId(account1.id);
+		assertNotNull(account3);
+		assertEquals(name3, account3.name);
+
+		int newId = account1.id + 100;
+		assertEquals(1, accountDao.updateId(account3, newId));
+		account3 = accountDao.queryForId(newId);
+		assertNotNull(account3);
+
+		assertEquals(1, accountDao.delete(account3));
+		account3 = accountDao.queryForId(newId);
+		assertNull(account3);
 	}
 
 	@Test(expected = SQLException.class)

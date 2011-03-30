@@ -1,10 +1,11 @@
-4.18: 3/XX/2011 (svn rYYYY)
-	* CORE: Fixed a bug with the lazy foreign collections which were not properly limiting the iterator.  Thanks to Brady.
-	* CORE: Added better support for batch tasks by using a database transaction if auto-commit doesn't work.
+4.18: 3/30/2011 (svn rYYYY)
+	* CORE: Fixed bug with lazy foreign collections are not properly limiting the iterator.  Fixes bug #3260099. Thanks to Brady.
+	* CORE: Fixed bug with updating of foreign collections.  Fixes bug #3260103. Thanks to ede.
+	* CORE: Added better support for batch tasks by using a database transaction if auto-commit isn't supported.
 	* ANDROID: You can now use the callBatchTask method on the DAO which will use a transaction.
 
 4.17: 3/27/2011 (svn r1576)
-	* CORE: Fixed a couple of places were I was using Java 1.6 only methods.  This broke Android v1.6 support.  Thanks to Javier and jc.
+	* CORE: Fixed a couple of places were I was using Java 1.6 only methods.  Fixes bug #3260096.  Thanks to Javier and jc.
 	* CORE: Improved the reentrance during query and class configuration initialization.
 	* CORE: Improved the DaoManager handling of generic dao classes and a registerDao method.  Thanks to jc.
 	* ANDROID: Fixed Android v1.6 support by removing some Java 1.6 methods. 

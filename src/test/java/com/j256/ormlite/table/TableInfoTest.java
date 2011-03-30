@@ -96,7 +96,7 @@ public class TableInfoTest extends BaseCoreTest {
 		try {
 			tableInfo.getFieldTypeByColumnName("foo");
 			fail("expected exception");
-		} catch (IllegalArgumentException e) {
+		} catch (SQLException e) {
 			assertTrue(e.getMessage().contains("'" + Foreign.FOREIGN_FIELD_NAME + "'"));
 			assertTrue(e.getMessage().contains("'foo'"));
 		}

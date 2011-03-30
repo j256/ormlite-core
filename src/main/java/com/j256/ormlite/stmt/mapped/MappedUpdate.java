@@ -34,8 +34,8 @@ public class MappedUpdate<T, ID> extends BaseMappedStatement<T, ID> {
 		appendTableName(databaseType, sb, "UPDATE ", tableInfo.getTableName());
 		boolean first = true;
 		for (FieldType fieldType : tableInfo.getFieldTypes()) {
-			// we never update the idField
-			if (fieldType == idField) {
+			// we never update the idField or foreign collections
+			if (fieldType == idField || fieldType.isForeignCollection()) {
 				continue;
 			}
 			if (first) {
