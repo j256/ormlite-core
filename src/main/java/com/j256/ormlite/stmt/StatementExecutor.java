@@ -51,6 +51,7 @@ public class StatementExecutor<T, ID> {
 
 	private final DatabaseType databaseType;
 	private final TableInfo<T, ID> tableInfo;
+	private final Dao<T, ID> dao;
 	private MappedQueryForId<T, ID> mappedQueryForId;
 	private PreparedQuery<T> preparedQueryForAll;
 	private MappedCreate<T, ID> mappedInsert;
@@ -64,9 +65,10 @@ public class StatementExecutor<T, ID> {
 	/**
 	 * Provides statements for various SQL operations.
 	 */
-	public StatementExecutor(DatabaseType databaseType, TableInfo<T, ID> tableInfo) throws SQLException {
+	public StatementExecutor(DatabaseType databaseType, TableInfo<T, ID> tableInfo, Dao<T, ID> dao) throws SQLException {
 		this.databaseType = databaseType;
 		this.tableInfo = tableInfo;
+		this.dao = dao;
 	}
 
 	/**
@@ -75,7 +77,7 @@ public class StatementExecutor<T, ID> {
 	 */
 	public T queryForId(DatabaseConnection databaseConnection, ID id) throws SQLException {
 		if (mappedQueryForId == null) {
-			mappedQueryForId = MappedQueryForId.build(databaseType, tableInfo);
+			mappedQueryForId = MappedQueryForId.build(databaseType, tableInfo, dao);
 		}
 		return mappedQueryForId.execute(databaseConnection, id);
 	}
@@ -370,7 +372,7 @@ public class StatementExecutor<T, ID> {
 	 */
 	public int refresh(DatabaseConnection databaseConnection, T data) throws SQLException {
 		if (mappedRefresh == null) {
-			mappedRefresh = MappedRefresh.build(databaseType, tableInfo);
+			mappedRefresh = MappedRefresh.build(databaseType, tableInfo, dao);
 		}
 		return mappedRefresh.executeRefresh(databaseConnection, data);
 	}
@@ -465,7 +467,7 @@ public class StatementExecutor<T, ID> {
 
 	private void prepareQueryForAll() throws SQLException {
 		if (preparedQueryForAll == null) {
-			preparedQueryForAll = new QueryBuilder<T, ID>(databaseType, tableInfo).prepare();
+			preparedQueryForAll = new QueryBuilder<T, ID>(databaseType, tableInfo, dao).prepare();
 		}
 	}
 

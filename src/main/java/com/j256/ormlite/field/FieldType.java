@@ -118,7 +118,7 @@ public class FieldType {
 					@SuppressWarnings("unchecked")
 					MappedQueryForId<Object, Object> castedMappedQueryForId =
 							(MappedQueryForId<Object, Object>) MappedQueryForId.build(databaseType,
-									this.foreignTableInfo);
+									this.foreignTableInfo, null);
 					this.mappedQueryForId = castedMappedQueryForId;
 				} else {
 					this.mappedQueryForId = null;

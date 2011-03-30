@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
@@ -34,10 +35,12 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	private List<OrderBy> orderByList = null;
 	private List<String> groupByList = null;
 	private boolean isInnerQuery = false;
+	private final Dao<T, ID> dao;
 
-	public QueryBuilder(DatabaseType databaseType, TableInfo<T, ID> tableInfo) {
+	public QueryBuilder(DatabaseType databaseType, TableInfo<T, ID> tableInfo, Dao<T, ID> dao) {
 		super(databaseType, tableInfo, StatementType.SELECT);
 		this.idField = tableInfo.getIdField();
+		this.dao = dao;
 	}
 
 	/**
@@ -173,6 +176,20 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		} else {
 			throw new SQLException("Offset is not supported by this database");
 		}
+	}
+
+	/**
+	 * A short cut for Dao.query(prepare()). {@link Dao#query(PreparedQuery)}.
+	 */
+	public List<T> query() throws SQLException {
+		return dao.query(prepare());
+	}
+
+	/**
+	 * A short cut for Dao.iterator(prepare()). {@link Dao#iterator(PreparedQuery)}.
+	 */
+	public CloseableIterator<T> iterator() throws SQLException {
+		return dao.iterator(prepare());
 	}
 
 	@Override
@@ -330,8 +347,8 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 */
 	public static class InternalQueryBuilder<T, ID> extends QueryBuilder<T, ID> {
 
-		public InternalQueryBuilder(DatabaseType databaseType, TableInfo<T, ID> tableInfo) {
-			super(databaseType, tableInfo);
+		public InternalQueryBuilder(DatabaseType databaseType, TableInfo<T, ID> tableInfo, Dao<T, ID> dao) {
+			super(databaseType, tableInfo, dao);
 		}
 
 		/**

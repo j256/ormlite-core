@@ -130,7 +130,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			tableConfig.extractFieldTypes(connectionSource);
 			tableInfo = new TableInfo<T, ID>(databaseType, this, tableConfig);
 		}
-		statementExecutor = new StatementExecutor<T, ID>(databaseType, tableInfo);
+		statementExecutor = new StatementExecutor<T, ID>(databaseType, tableInfo, this);
 		initialized = true;
 	}
 
@@ -161,7 +161,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
 	public QueryBuilder<T, ID> queryBuilder() {
 		checkForInitialized();
-		return new QueryBuilder<T, ID>(databaseType, tableInfo);
+		return new QueryBuilder<T, ID>(databaseType, tableInfo, this);
 	}
 
 	public UpdateBuilder<T, ID> updateBuilder() {

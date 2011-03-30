@@ -30,7 +30,7 @@ public class MappedDeleteTest {
 	public void testDeleteNoId() throws Exception {
 		StatementExecutor<NoId, Void> se =
 				new StatementExecutor<NoId, Void>(databaseType, new TableInfo<NoId, Void>(connectionSource, null,
-						NoId.class));
+						NoId.class), null);
 		NoId noId = new NoId();
 		noId.stuff = "1";
 		se.delete(null, noId);

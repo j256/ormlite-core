@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
@@ -369,6 +370,28 @@ public class Where<T, ID> {
 	 */
 	public PreparedQuery<T> prepare() throws SQLException {
 		return statementBuilder.prepareStatement();
+	}
+
+	/**
+	 * A short-cut for calling query() on the original {@link QueryBuilder#query()}.
+	 */
+	public List<T> query() throws SQLException {
+		if (statementBuilder instanceof QueryBuilder) {
+			return ((QueryBuilder<T, ID>) statementBuilder).query();
+		} else {
+			throw new SQLException("Cannot call query on a statement of type " + statementBuilder.getType());
+		}
+	}
+
+	/**
+	 * A short-cut for calling query() on the original {@link QueryBuilder#iterator()}.
+	 */
+	public CloseableIterator<T> iterator() throws SQLException {
+		if (statementBuilder instanceof QueryBuilder) {
+			return ((QueryBuilder<T, ID>) statementBuilder).iterator();
+		} else {
+			throw new SQLException("Cannot call iterator on a statement of type " + statementBuilder.getType());
+		}
 	}
 
 	/**

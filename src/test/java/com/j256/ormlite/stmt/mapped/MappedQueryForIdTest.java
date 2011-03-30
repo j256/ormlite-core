@@ -21,7 +21,7 @@ public class MappedQueryForIdTest extends BaseCoreStmtTest {
 	public void testQueryNoId() throws Exception {
 		StatementExecutor<NoId, String> se =
 				new StatementExecutor<NoId, String>(databaseType, new TableInfo<NoId, String>(connectionSource, null,
-						NoId.class));
+						NoId.class), null);
 		se.queryForId(null, "1");
 	}
 
@@ -32,7 +32,7 @@ public class MappedQueryForIdTest extends BaseCoreStmtTest {
 
 	@Test(expected = SQLException.class)
 	public void testNoIdBuildQueryForId() throws Exception {
-		MappedQueryForId.build(databaseType, new TableInfo<NoId, Void>(connectionSource, null, NoId.class));
+		MappedQueryForId.build(databaseType, new TableInfo<NoId, Void>(connectionSource, null, NoId.class), null);
 	}
 
 	@Test

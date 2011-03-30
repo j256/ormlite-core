@@ -33,7 +33,8 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		expect(update.compile(connection)).andReturn(compiledStmt);
 		expect(compiledStmt.runUpdate()).andThrow(new SQLException("expected"));
 		compiledStmt.close();
-		StatementExecutor<Foo, String> statementExec = new StatementExecutor<Foo, String>(databaseType, tableInfo);
+		StatementExecutor<Foo, String> statementExec =
+				new StatementExecutor<Foo, String>(databaseType, tableInfo, null);
 		replay(connection, compiledStmt, update);
 		try {
 			statementExec.update(connection, update);
@@ -54,7 +55,8 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		expect(delete.compile(connection)).andReturn(compiledStmt);
 		expect(compiledStmt.runUpdate()).andThrow(new SQLException("expected"));
 		compiledStmt.close();
-		StatementExecutor<Foo, String> statementExec = new StatementExecutor<Foo, String>(databaseType, tableInfo);
+		StatementExecutor<Foo, String> statementExec =
+				new StatementExecutor<Foo, String>(databaseType, tableInfo, null);
 		replay(connection, compiledStmt, delete);
 		try {
 			statementExec.delete(connection, delete);
@@ -70,7 +72,8 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
 		DatabaseConnection connection = createMock(DatabaseConnection.class);
 		expect(connection.isAutoCommitSupported()).andReturn(false);
-		StatementExecutor<Foo, String> statementExec = new StatementExecutor<Foo, String>(databaseType, tableInfo);
+		StatementExecutor<Foo, String> statementExec =
+				new StatementExecutor<Foo, String>(databaseType, tableInfo, null);
 		replay(connection);
 		final AtomicBoolean called = new AtomicBoolean(false);
 		statementExec.callBatchTasks(connection, false, new Callable<Void>() {
@@ -89,7 +92,8 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		DatabaseConnection connection = createMock(DatabaseConnection.class);
 		expect(connection.isAutoCommitSupported()).andReturn(true);
 		expect(connection.getAutoCommit()).andReturn(false);
-		StatementExecutor<Foo, String> statementExec = new StatementExecutor<Foo, String>(databaseType, tableInfo);
+		StatementExecutor<Foo, String> statementExec =
+				new StatementExecutor<Foo, String>(databaseType, tableInfo, null);
 		replay(connection);
 		final AtomicBoolean called = new AtomicBoolean(false);
 		statementExec.callBatchTasks(connection, false, new Callable<Void>() {
@@ -110,7 +114,8 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		expect(connection.getAutoCommit()).andReturn(true);
 		connection.setAutoCommit(false);
 		connection.setAutoCommit(true);
-		StatementExecutor<Foo, String> statementExec = new StatementExecutor<Foo, String>(databaseType, tableInfo);
+		StatementExecutor<Foo, String> statementExec =
+				new StatementExecutor<Foo, String>(databaseType, tableInfo, null);
 		replay(connection);
 		final AtomicBoolean called = new AtomicBoolean(false);
 		statementExec.callBatchTasks(connection, false, new Callable<Void>() {
@@ -131,7 +136,8 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		expect(connection.getAutoCommit()).andReturn(true);
 		connection.setAutoCommit(false);
 		connection.setAutoCommit(true);
-		StatementExecutor<Foo, String> statementExec = new StatementExecutor<Foo, String>(databaseType, tableInfo);
+		StatementExecutor<Foo, String> statementExec =
+				new StatementExecutor<Foo, String>(databaseType, tableInfo, null);
 		replay(connection);
 		try {
 			statementExec.callBatchTasks(connection, false, new Callable<Void>() {

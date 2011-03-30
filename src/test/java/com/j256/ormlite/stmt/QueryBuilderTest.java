@@ -1,8 +1,11 @@
 package com.j256.ormlite.stmt;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Test;
@@ -14,7 +17,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testSelectAll() throws Exception {
-		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo);
+		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo, null);
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT * FROM ");
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
@@ -24,7 +27,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testAddColumns() throws Exception {
-		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo);
+		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo, null);
 		String[] columns1 = new String[] { Foo.ID_COLUMN_NAME, Foo.VAL_COLUMN_NAME };
 		String column2 = "equal";
 		qb.selectColumns(columns1);
@@ -44,13 +47,13 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testAddBadColumn() throws Exception {
-		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo);
+		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo, null);
 		qb.selectColumns("unknown-column");
 	}
 
 	@Test
 	public void testDontAddIdColumn() throws Exception {
-		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo);
+		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo, null);
 		String column = Foo.VAL_COLUMN_NAME;
 		String idColumn = Foo.ID_COLUMN_NAME;
 		qb.selectColumns(column);
@@ -67,7 +70,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testAddColumnsIterable() throws Exception {
-		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo);
+		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo, null);
 		List<String> columns1 = new ArrayList<String>();
 		columns1.add(Foo.ID_COLUMN_NAME);
 		columns1.add(Foo.VAL_COLUMN_NAME);
@@ -89,7 +92,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testGroupBy() throws Exception {
-		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo);
+		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo, null);
 		String field1 = Foo.VAL_COLUMN_NAME;
 		qb.groupBy(field1);
 		String field2 = Foo.ID_COLUMN_NAME;
@@ -107,7 +110,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testOrderBy() throws Exception {
-		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo);
+		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo, null);
 		String field1 = Foo.VAL_COLUMN_NAME;
 		qb.orderBy(field1, true);
 		String field2 = Foo.ID_COLUMN_NAME;
@@ -125,7 +128,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testOrderByDesc() throws Exception {
-		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo);
+		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo, null);
 		String field = Foo.VAL_COLUMN_NAME;
 		qb.orderBy(field, false);
 		StringBuilder sb = new StringBuilder();
@@ -139,7 +142,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testDistinct() throws Exception {
-		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo);
+		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo, null);
 		qb.distinct();
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT DISTINCT * FROM ");
@@ -150,7 +153,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testLimit() throws Exception {
-		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo);
+		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo, null);
 		int limit = 103;
 		qb.limit(limit);
 		StringBuilder sb = new StringBuilder();
@@ -162,7 +165,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testOffset() throws Exception {
-		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo);
+		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo, null);
 		int offset = 1;
 		int limit = 2;
 		qb.offset(offset);
@@ -199,7 +202,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 	@Test
 	public void testLimitAfterSelect() throws Exception {
 		QueryBuilder<Foo, String> qb =
-				new QueryBuilder<Foo, String>(new LimitAfterSelectDatabaseType(), baseFooTableInfo);
+				new QueryBuilder<Foo, String>(new LimitAfterSelectDatabaseType(), baseFooTableInfo, null);
 		int limit = 103;
 		qb.limit(limit);
 		StringBuilder sb = new StringBuilder();
@@ -212,7 +215,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testWhere() throws Exception {
-		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo);
+		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo, null);
 		Where<Foo, String> where = qb.where();
 		String val = "1";
 		where.eq(Foo.ID_COLUMN_NAME, val);
@@ -229,7 +232,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testWhereSelectArg() throws Exception {
-		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo);
+		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo, null);
 		Where<Foo, String> where = qb.where();
 		SelectArg val = new SelectArg();
 		where.eq(Foo.ID_COLUMN_NAME, val);
@@ -248,7 +251,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testPrepareStatement() throws Exception {
-		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo);
+		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo, null);
 		PreparedQuery<Foo> stmt = qb.prepare();
 		stmt.getStatement();
 		StringBuilder sb = new StringBuilder();
@@ -260,7 +263,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testLimitInline() throws Exception {
-		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(new LimitInline(), baseFooTableInfo);
+		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(new LimitInline(), baseFooTableInfo, null);
 		int limit = 213;
 		qb.limit(limit);
 		PreparedQuery<Foo> stmt = qb.prepare();
@@ -274,7 +277,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testOffsetAndLimit() throws Exception {
-		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(new LimitInline(), baseFooTableInfo);
+		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(new LimitInline(), baseFooTableInfo, null);
 		int offset = 200;
 		int limit = 213;
 		qb.offset(offset);
@@ -287,6 +290,24 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		sb.append(" LIMIT ").append(limit);
 		sb.append(" OFFSET ").append(offset).append(' ');
 		assertEquals(sb.toString(), qb.prepareStatementString());
+	}
+
+	@Test
+	public void testShortCuts() throws Exception {
+		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		foo1.id = "stuff1";
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		foo2.id = "stuff2";
+		assertEquals(1, dao.create(foo2));
+		List<Foo> results = dao.queryBuilder().where().eq(Foo.ID_COLUMN_NAME, foo2.id).query();
+		assertEquals(1, results.size());
+		assertEquals(foo2.id, results.get(0).id);
+		Iterator<Foo> iterator = dao.queryBuilder().where().eq(Foo.ID_COLUMN_NAME, foo2.id).iterator();
+		assertTrue(iterator.hasNext());
+		assertEquals(foo2.id, iterator.next().id);
+		assertFalse(iterator.hasNext());
 	}
 
 	private class LimitInline extends BaseDatabaseType {

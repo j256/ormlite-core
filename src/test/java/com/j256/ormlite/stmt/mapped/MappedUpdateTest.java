@@ -30,7 +30,7 @@ public class MappedUpdateTest {
 	public void testUpdateNoId() throws Exception {
 		StatementExecutor<NoId, String> se =
 				new StatementExecutor<NoId, String>(databaseType, new TableInfo<NoId, String>(connectionSource, null,
-						NoId.class));
+						NoId.class), null);
 		NoId noId = new NoId();
 		noId.id = "1";
 		se.update(null, noId);
@@ -40,7 +40,7 @@ public class MappedUpdateTest {
 	public void testUpdateJustId() throws Exception {
 		StatementExecutor<JustId, Integer> se =
 				new StatementExecutor<JustId, Integer>(databaseType, new TableInfo<JustId, Integer>(connectionSource,
-						null, JustId.class));
+						null, JustId.class), null);
 		JustId justId = new JustId();
 		justId.id = 1;
 		se.update(null, justId);

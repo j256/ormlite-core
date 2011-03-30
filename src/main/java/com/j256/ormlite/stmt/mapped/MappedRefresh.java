@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.support.DatabaseConnection;
@@ -43,11 +44,11 @@ public class MappedRefresh<T, ID> extends MappedQueryForId<T, ID> {
 		}
 	}
 
-	public static <T, ID> MappedRefresh<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo)
-			throws SQLException {
+	public static <T, ID> MappedRefresh<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
+			Dao<T, ID> dao) throws SQLException {
 		List<FieldType> argFieldTypeList = new ArrayList<FieldType>();
 		List<FieldType> resultFieldTypeList = new ArrayList<FieldType>();
-		String statement = buildStatement(databaseType, tableInfo, argFieldTypeList, resultFieldTypeList);
+		String statement = buildStatement(databaseType, tableInfo, argFieldTypeList, resultFieldTypeList, dao);
 		return new MappedRefresh<T, ID>(tableInfo, statement, argFieldTypeList, resultFieldTypeList);
 	}
 }
