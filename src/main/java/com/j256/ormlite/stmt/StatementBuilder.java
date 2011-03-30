@@ -152,7 +152,7 @@ public abstract class StatementBuilder<T, ID> {
 	 * @throws IllegalArgumentException
 	 *             if the column name is not valid.
 	 */
-	protected FieldType verifyColumnName(String columnName) throws SQLException {
+	protected FieldType verifyColumnName(String columnName) {
 		return tableInfo.getFieldTypeByColumnName(columnName);
 	}
 

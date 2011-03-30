@@ -2,7 +2,6 @@ package com.j256.ormlite.stmt;
 
 import static org.junit.Assert.assertEquals;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +42,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(sb.toString(), qb.prepareStatementString());
 	}
 
-	@Test(expected = SQLException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testAddBadColumn() throws Exception {
 		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo);
 		qb.selectColumns("unknown-column");
