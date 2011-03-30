@@ -16,7 +16,7 @@ import com.j256.ormlite.table.DatabaseTableConfig;
  * in an attempt to only create a DAO once for each class.
  * 
  * <p>
- * <b>NOTE:</b> To use this cache, you should make sure you've added a {@link DatabaseTable#daoClassName()} value to the
+ * <b>NOTE:</b> To use this cache, you should make sure you've added a {@link DatabaseTable#daoClass()} value to the
  * annotation to the top of your class.
  * </p>
  * 
@@ -140,7 +140,7 @@ public class DaoManager {
 	 * register so it can be used internally as necessary.
 	 * 
 	 * <p>
-	 * <b>NOTE:</b> It is better to use the {@link DatabaseTable#daoClassName()} and have the DaoManager construct the
+	 * <b>NOTE:</b> It is better to use the {@link DatabaseTable#daoClass()} and have the DaoManager construct the
 	 * DAO if possible.
 	 * </p>
 	 */
