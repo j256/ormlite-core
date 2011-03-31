@@ -159,6 +159,10 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		return statementExecutor.queryForAll(connectionSource);
 	}
 
+	public List<T> queryForEq(String fieldName, Object value) throws SQLException {
+		return queryBuilder().where().eq(fieldName, value).query();
+	}
+
 	public QueryBuilder<T, ID> queryBuilder() {
 		checkForInitialized();
 		return new QueryBuilder<T, ID>(databaseType, tableInfo, this);

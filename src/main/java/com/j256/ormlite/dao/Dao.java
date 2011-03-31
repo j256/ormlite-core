@@ -64,6 +64,16 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public List<T> queryForAll() throws SQLException;
 
 	/**
+	 * Query for the items in the object table that match a simple where with a single field = value type of WHERE
+	 * clause. This is a convenience method for calling queryBuilder().where().eq(fieldName, value).query().
+	 * 
+	 * @return A list of the objects in the table that match the fieldName = value;
+	 * @throws SQLException
+	 *             on any SQL problems.
+	 */
+	public List<T> queryForEq(String fieldName, Object value) throws SQLException;
+
+	/**
 	 * You should be using {@link #queryRaw(String, String...)}
 	 * 
 	 * @deprecated

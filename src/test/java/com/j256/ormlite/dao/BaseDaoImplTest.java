@@ -1332,6 +1332,25 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(2, dao.countOf());
 	}
 
+	@Test
+	public void testQueryForEq() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		assertEquals(0, dao.countOf());
+		Foo foo = new Foo();
+		String id = "1";
+		foo.id = id;
+		int val = 1231231;
+		foo.val = val;
+		assertEquals(1, dao.create(foo));
+		foo.id = "not " + id;
+		foo.val = val + 1;
+		assertEquals(1, dao.create(foo));
+
+		List<Foo> results = dao.queryForEq(Foo.VAL_COLUMN_NAME, val);
+		assertEquals(1, results.size());
+		assertEquals(id, results.get(0).id);
+	}
+
 	/* ============================================================================================== */
 
 	protected static class ForeignNotNull {
