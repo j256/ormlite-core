@@ -1,5 +1,4 @@
 - support for CREATE IF NOT EXISTS
-- look at support for clearTable() which either does a DELETE * or TRUNCATE if supported
 
 - support for JTA annotations, whatever the common one is
 	- maybe also JDO?

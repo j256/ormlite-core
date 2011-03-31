@@ -450,6 +450,10 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		return false;
 	}
 
+	public boolean isTruncateSupported() {
+		return false;
+	}
+
 	/**
 	 * If the field can be nullable, do we need to add some sort of NULL SQL for the create table. By default it is a
 	 * noop. This is necessary because MySQL has a auto default value for the TIMESTAMP type that required a default

@@ -45,7 +45,7 @@ public class TableUtilsTest extends BaseCoreTest {
 
 	@Test
 	public void testCreateStatements() throws Exception {
-		List<String> stmts = TableUtils.getCreateTableStatements(connectionSource, Foo.class);
+		List<String> stmts = TableUtils.getCreateTableStatements(connectionSource, LocalFoo.class);
 		assertEquals(1, stmts.size());
 		assertEquals(expectedCreateStatement(), stmts.get(0));
 	}
@@ -54,7 +54,7 @@ public class TableUtilsTest extends BaseCoreTest {
 	public void testCreateStatementsTableConfig() throws Exception {
 		List<String> stmts =
 				TableUtils.getCreateTableStatements(connectionSource,
-						DatabaseTableConfig.fromClass(connectionSource, Foo.class));
+						DatabaseTableConfig.fromClass(connectionSource, LocalFoo.class));
 		assertEquals(1, stmts.size());
 		assertEquals(expectedCreateStatement(), stmts.get(0));
 	}
@@ -68,7 +68,7 @@ public class TableUtilsTest extends BaseCoreTest {
 					List<String> statementsBefore, List<String> statementsAfter, List<String> queriesAfter)
 					throws SQLException {
 				super.appendColumnArg(sb, fieldType, additionalArgs, statementsBefore, statementsAfter, queriesAfter);
-				if (fieldType.getDbColumnName().equals(Foo.ID_FIELD_NAME)) {
+				if (fieldType.getDbColumnName().equals(LocalFoo.ID_FIELD_NAME)) {
 					queriesAfter.add(queryAfter);
 				}
 			}
@@ -76,7 +76,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		testCreate(connectionSource, databaseType, 0, false, queryAfter, new Callable<Integer>() {
 			public Integer call() throws Exception {
-				return TableUtils.createTable(connectionSource, Foo.class);
+				return TableUtils.createTable(connectionSource, LocalFoo.class);
 			}
 		});
 	}
@@ -86,7 +86,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		testCreate(connectionSource, databaseType, 1, true, null, new Callable<Integer>() {
 			public Integer call() throws Exception {
-				return TableUtils.createTable(connectionSource, Foo.class);
+				return TableUtils.createTable(connectionSource, LocalFoo.class);
 			}
 		});
 	}
@@ -96,7 +96,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		testCreate(connectionSource, databaseType, 1, false, null, new Callable<Integer>() {
 			public Integer call() throws Exception {
-				return TableUtils.createTable(connectionSource, Foo.class);
+				return TableUtils.createTable(connectionSource, LocalFoo.class);
 			}
 		});
 	}
@@ -106,7 +106,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		testCreate(connectionSource, databaseType, -1, false, null, new Callable<Integer>() {
 			public Integer call() throws Exception {
-				return TableUtils.createTable(connectionSource, Foo.class);
+				return TableUtils.createTable(connectionSource, LocalFoo.class);
 			}
 		});
 	}
@@ -117,7 +117,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		testCreate(connectionSource, databaseType, 0, false, null, new Callable<Integer>() {
 			public Integer call() throws Exception {
 				return TableUtils.createTable(connectionSource,
-						DatabaseTableConfig.fromClass(connectionSource, Foo.class));
+						DatabaseTableConfig.fromClass(connectionSource, LocalFoo.class));
 			}
 		});
 	}
@@ -127,7 +127,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		testDrop(connectionSource, 0, false, new Callable<Integer>() {
 			public Integer call() throws Exception {
-				return TableUtils.dropTable(connectionSource, Foo.class, false);
+				return TableUtils.dropTable(connectionSource, LocalFoo.class, false);
 			}
 		});
 	}
@@ -137,7 +137,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		testDrop(connectionSource, 0, true, new Callable<Integer>() {
 			public Integer call() throws Exception {
-				return TableUtils.dropTable(connectionSource, Foo.class, false);
+				return TableUtils.dropTable(connectionSource, LocalFoo.class, false);
 			}
 		});
 	}
@@ -147,7 +147,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		testDrop(connectionSource, 0, true, new Callable<Integer>() {
 			public Integer call() throws Exception {
-				return TableUtils.dropTable(connectionSource, Foo.class, true);
+				return TableUtils.dropTable(connectionSource, LocalFoo.class, true);
 			}
 		});
 	}
@@ -157,7 +157,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		testDrop(connectionSource, -1, false, new Callable<Integer>() {
 			public Integer call() throws Exception {
-				return TableUtils.dropTable(connectionSource, Foo.class, false);
+				return TableUtils.dropTable(connectionSource, LocalFoo.class, false);
 			}
 		});
 	}
@@ -168,7 +168,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		testDrop(connectionSource, 0, false, new Callable<Integer>() {
 			public Integer call() throws Exception {
 				return TableUtils.dropTable(connectionSource,
-						DatabaseTableConfig.fromClass(connectionSource, Foo.class), false);
+						DatabaseTableConfig.fromClass(connectionSource, LocalFoo.class), false);
 			}
 		});
 	}
@@ -316,14 +316,18 @@ public class TableUtilsTest extends BaseCoreTest {
 		dropTable(LocalFoo.class, false);
 	}
 
-	/* ================================================================ */
-
-	protected static class LocalFoo {
-		@DatabaseField(generatedId = true)
-		int id;
-		@DatabaseField
-		String name;
+	@Test
+	public void testClearTable() throws Exception {
+		Dao<LocalFoo, Integer> fooDao = createDao(LocalFoo.class, true);
+		assertEquals(0, fooDao.countOf());
+		LocalFoo foo = new LocalFoo();
+		assertEquals(1, fooDao.create(foo));
+		assertEquals(1, fooDao.countOf());
+		TableUtils.clearTable(connectionSource, LocalFoo.class);
+		assertEquals(0, fooDao.countOf());
 	}
+
+	/* ================================================================ */
 
 	private void testCreate(ConnectionSource connectionSource, DatabaseType databaseType, int rowN,
 			boolean throwExecute, String queryAfter, Callable<Integer> callable) throws Exception {
@@ -334,11 +338,11 @@ public class TableUtilsTest extends BaseCoreTest {
 	private String expectedCreateStatement() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("CREATE TABLE ");
-		databaseType.appendEscapedEntityName(sb, "foo");
+		databaseType.appendEscapedEntityName(sb, "localfoo");
 		sb.append(" (");
-		databaseType.appendEscapedEntityName(sb, Foo.ID_FIELD_NAME);
+		databaseType.appendEscapedEntityName(sb, LocalFoo.ID_FIELD_NAME);
 		sb.append(" INTEGER , ");
-		databaseType.appendEscapedEntityName(sb, Foo.NAME_FIELD_NAME);
+		databaseType.appendEscapedEntityName(sb, LocalFoo.NAME_FIELD_NAME);
 		sb.append(" VARCHAR(255) ) ");
 		return sb.toString();
 	}
@@ -392,7 +396,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		}
 	}
 
-	protected static class Foo {
+	protected static class LocalFoo {
 		public static final String ID_FIELD_NAME = "id";
 		public static final String NAME_FIELD_NAME = "name";
 		@DatabaseField(columnName = ID_FIELD_NAME)

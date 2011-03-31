@@ -165,4 +165,9 @@ public interface DatabaseType {
 	 * auto-commit disabling will be done.
 	 */
 	public boolean isBatchUseTransaction();
+
+	/**
+	 * Returns true if the table truncate operation is supported.
+	 */
+	public boolean isTruncateSupported();
 }

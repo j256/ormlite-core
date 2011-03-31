@@ -143,6 +143,48 @@ public class TableUtils {
 		return doDropTable(databaseType, connectionSource, tableConfig, ignoreErrors);
 	}
 
+	/**
+	 * Clear all data out of the table. For certain database types and with large sized tables, which may take a long
+	 * time. In some configurations, it may be faster to drop and re-create the table.
+	 * 
+	 * <p>
+	 * <b>WARNING:</b> This is [obviously] very destructive and is unrecoverable.
+	 * </p>
+	 */
+	public static <T> int clearTable(ConnectionSource connectionSource, Class<T> dataClass) throws SQLException {
+		return clearTable(connectionSource, DatabaseTableConfig.fromClass(connectionSource, dataClass));
+	}
+
+	/**
+	 * Clear all data out of the table. For certain database types and with large sized tables, which may take a long
+	 * time. In some configurations, it may be faster to drop and re-create the table.
+	 * 
+	 * <p>
+	 * <b>WARNING:</b> This is [obviously] very destructive and is unrecoverable.
+	 * </p>
+	 */
+	public static <T> int clearTable(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig)
+			throws SQLException {
+		DatabaseType databaseType = connectionSource.getDatabaseType();
+		DatabaseConnection connection = connectionSource.getReadWriteConnection();
+		StringBuilder sb = new StringBuilder();
+		if (databaseType.isTruncateSupported()) {
+			sb.append("TRUNCATE TABLE ");
+		} else {
+			sb.append("DELETE FROM ");
+		}
+		databaseType.appendEscapedEntityName(sb, tableConfig.getTableName());
+		String statement = sb.toString();
+		logger.info("clearing table '{}' with '{}", tableConfig.getTableName(), statement);
+		try {
+			CompiledStatement stmt =
+					connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes, noFieldTypes);
+			return stmt.runExecute();
+		} finally {
+			connectionSource.releaseConnection(connection);
+		}
+	}
+
 	private static <T, ID> int doDropTable(DatabaseType databaseType, ConnectionSource connectionSource,
 			DatabaseTableConfig<T> tableConfig, boolean ignoreErrors) throws SQLException {
 		TableInfo<T, ID> tableInfo = new TableInfo<T, ID>(databaseType, null, tableConfig);
