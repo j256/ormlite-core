@@ -1319,6 +1319,19 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(stuff, uuid2.stuff);
 	}
 
+	@Test
+	public void testCountOf() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		assertEquals(0, dao.countOf());
+		Foo foo = new Foo();
+		foo.id = "1";
+		assertEquals(1, dao.create(foo));
+		assertEquals(1, dao.countOf());
+		foo.id = "2";
+		assertEquals(1, dao.create(foo));
+		assertEquals(2, dao.countOf());
+	}
+
 	/* ============================================================================================== */
 
 	protected static class ForeignNotNull {
