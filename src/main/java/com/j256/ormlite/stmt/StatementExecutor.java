@@ -113,6 +113,19 @@ public class StatementExecutor<T, ID> {
 	}
 
 	/**
+	 * Return a long value which is the number of rows in the table.
+	 */
+	public long queryForCountStar(DatabaseConnection databaseConnection) throws SQLException {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT COUNT(*) FROM ");
+		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
+		String statement = sb.toString();
+		long count = databaseConnection.queryForLong(statement);
+		logger.debug("query of '{}' returned {}", statement, count);
+		return count;
+	}
+
+	/**
 	 * Return a list of all of the data in the table that matches the {@link PreparedStmt}. Should be used carefully if
 	 * the table is large. Consider using the {@link Dao#iterator} if this is the case.
 	 */

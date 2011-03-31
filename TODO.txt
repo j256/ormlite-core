@@ -1,5 +1,4 @@
 - support for CREATE IF NOT EXISTS
-- support for Dao.countOf() or some such that would do a 'SELECT COUNT(*) FROM FOO'
 - look at support for clearTable() which either does a DELETE * or TRUNCATE if supported
 
 - support for JTA annotations, whatever the common one is
@@ -57,7 +56,7 @@
 -----------------------------------------------------------------------------------------------------------------------------------
 
 - anyway to simplify the query builder call structure:
-	- ANSWER: for now we leave it as it.  Added a Where().raw() method which should help.
+	- ANSWER: for now we leave it as it.  Added Where.raw(), .query(), and .iterator() methods
 	- take a look at http://www.javalobby.org/articles/activeobjects/
 	- Person[] people = manager.find(Person.class, Query.select().where("age > 18").limit(10));
 	- dao.queryBuilder().where().gt("age", 18).limit(10);

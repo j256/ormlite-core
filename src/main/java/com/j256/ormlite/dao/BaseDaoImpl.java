@@ -472,6 +472,16 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	public long countOf() throws SQLException {
+		checkForInitialized();
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		try {
+			return statementExecutor.queryForCountStar(connection);
+		} finally {
+			connectionSource.releaseConnection(connection);
+		}
+	}
+
 	/**
 	 * Returns the table configuration information associated with the Dao's class or null if none.
 	 */

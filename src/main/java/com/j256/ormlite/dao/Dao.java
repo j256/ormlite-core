@@ -346,8 +346,8 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * transaction will be used instead.
 	 * 
 	 * <p>
-	 * <b>NOTE:</b> If neither auto-commit nor transactions are supported by the database type then this may just
-	 * call the callable.
+	 * <b>NOTE:</b> If neither auto-commit nor transactions are supported by the database type then this may just call
+	 * the callable.
 	 * </p>
 	 */
 	public <CT> CT callBatchTasks(Callable<CT> callable) throws Exception;
@@ -398,4 +398,10 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * Returns true if the table already exists otherwise false. This is not supported on Android.
 	 */
 	public boolean isTableExists() throws SQLException;
+
+	/**
+	 * Returns the number of rows in the table associated with the data class. Depending on the size of the table and
+	 * the database type, this may be expensive and take a while.
+	 */
+	public long countOf() throws SQLException;
 }
