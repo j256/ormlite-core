@@ -140,8 +140,8 @@ public class DaoManager {
 	 * register so it can be used internally as necessary.
 	 * 
 	 * <p>
-	 * <b>NOTE:</b> It is better to use the {@link DatabaseTable#daoClass()} and have the DaoManager construct the
-	 * DAO if possible.
+	 * <b>NOTE:</b> It is better to use the {@link DatabaseTable#daoClass()} and have the DaoManager construct the DAO
+	 * if possible.
 	 * </p>
 	 */
 	public static synchronized void registerDao(ConnectionSource connectionSource, Dao<?, ?> dao) {

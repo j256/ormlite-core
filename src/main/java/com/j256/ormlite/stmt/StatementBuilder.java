@@ -157,7 +157,7 @@ public abstract class StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * Return the type of the statement. 
+	 * Return the type of the statement.
 	 */
 	StatementType getType() {
 		return type;

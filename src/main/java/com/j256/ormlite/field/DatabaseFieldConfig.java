@@ -374,6 +374,7 @@ public class DatabaseFieldConfig {
 			config.columnName = null;
 		}
 		config.dataType = databaseField.dataType();
+		// NOTE: == did not work with the NO_DEFAULT string
 		if (databaseField.defaultValue().equals(DatabaseField.NO_DEFAULT)) {
 			config.defaultValue = null;
 		} else {

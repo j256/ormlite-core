@@ -132,8 +132,8 @@ public class FieldType {
 			this.foreignFieldType = null;
 		} else if (fieldConfig.isForeignCollection() && recurseLevel == 0) {
 			if (clazz != Collection.class && !ForeignCollection.class.isAssignableFrom(clazz)) {
-				throw new SQLException("Field class for '" + field.getName()
-						+ "' must be of class " + ForeignCollection.class.getSimpleName() + " or Collection.");
+				throw new SQLException("Field class for '" + field.getName() + "' must be of class "
+						+ ForeignCollection.class.getSimpleName() + " or Collection.");
 			}
 			Type type = field.getGenericType();
 			if (!(type instanceof ParameterizedType)) {
@@ -171,7 +171,7 @@ public class FieldType {
 			}
 			// we have to do this because of maven compile failures otherwise
 			@SuppressWarnings("unchecked")
-			Dao<Object, Object> otherDao = (Dao<Object,Object>)DaoManager.createDao(connectionSource, tableConfig);
+			Dao<Object, Object> otherDao = (Dao<Object, Object>) DaoManager.createDao(connectionSource, tableConfig);
 			this.foreignDao = otherDao;
 			this.foreignFieldType = foreignFieldType;
 			this.foreignTableInfo = null;
