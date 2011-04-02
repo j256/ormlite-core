@@ -46,6 +46,11 @@ public interface DatabaseResults {
 	public boolean getBoolean(int columnIndex) throws SQLException;
 
 	/**
+	 * Returns the char value from the results at the column index.
+	 */
+	public char getChar(int columnIndex) throws SQLException;
+
+	/**
 	 * Returns the byte value from the results at the column index.
 	 */
 	public byte getByte(int columnIndex) throws SQLException;

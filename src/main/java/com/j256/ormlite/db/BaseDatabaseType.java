@@ -104,6 +104,11 @@ public abstract class BaseDatabaseType implements DatabaseType {
 				appendDateStringType(sb, fieldWidth);
 				break;
 
+			case CHAR :
+			case CHAR_OBJ :
+				appendCharType(sb);
+				break;
+
 			case BYTE :
 			case BYTE_OBJ :
 				appendByteType(sb);
@@ -229,6 +234,13 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	 */
 	protected void appendBooleanType(StringBuilder sb) {
 		sb.append("BOOLEAN");
+	}
+
+	/**
+	 * Output the SQL type for a Java char.
+	 */
+	protected void appendCharType(StringBuilder sb) {
+		sb.append("CHAR");
 	}
 
 	/**

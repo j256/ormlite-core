@@ -404,6 +404,56 @@ public enum DataType implements FieldConverter {
 	},
 
 	/**
+	 * Persists the char primitive.
+	 */
+	CHAR(SqlType.CHAR, new Class<?>[] { char.class }) {
+		@Override
+		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+			return (char) results.getChar(columnPos);
+		}
+		@Override
+		public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {
+			Character character = (Character) javaObject;
+			// this is required because otherwise we try to store \0 in the database
+			if (character == null || character == 0) {
+				return null;
+			} else {
+				return character;
+			}
+		}
+		@Override
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+			if (defaultStr.length() != 1) {
+				throw new SQLException("Problems with field " + fieldType + ", default string to long: '" + defaultStr
+						+ "'");
+			}
+			return defaultStr.charAt(0);
+		}
+		@Override
+		public boolean isPrimitive() {
+			return true;
+		}
+	},
+
+	/**
+	 * Persists the char primitive.
+	 */
+	CHAR_OBJ(SqlType.CHAR, new Class<?>[] { Character.class }) {
+		@Override
+		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+			return (Character) results.getChar(columnPos);
+		}
+		@Override
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+			if (defaultStr.length() != 1) {
+				throw new SQLException("Problems with field " + fieldType + ", default string to long: '" + defaultStr
+						+ "'");
+			}
+			return (Character) defaultStr.charAt(0);
+		}
+	},
+
+	/**
 	 * Persists the byte primitive.
 	 */
 	BYTE(SqlType.BYTE, new Class<?>[] { byte.class }) {

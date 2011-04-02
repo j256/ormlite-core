@@ -72,6 +72,8 @@ public class H2CompiledStatement implements CompiledStatement {
 				return Types.TIMESTAMP;
 			case BOOLEAN :
 				return Types.BOOLEAN;
+			case CHAR :
+				return Types.CHAR;
 			case BYTE :
 				return Types.TINYINT;
 			case BYTE_ARRAY :

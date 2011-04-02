@@ -41,6 +41,17 @@ public class H2DatabaseResults implements DatabaseResults {
 		return resultSet.getBoolean(columnIndex + 1);
 	}
 
+	public char getChar(int columnIndex) throws SQLException {
+		String string = resultSet.getString(columnIndex + 1);
+		if (string == null || string.length() == 0) {
+			return 0;
+		} else if (string.length() == 1) {
+			return string.charAt(columnIndex);
+		} else {
+			throw new SQLException("More than 1 character stored in database column: " + columnIndex);
+		}
+	}
+
 	public byte getByte(int columnIndex) throws SQLException {
 		return resultSet.getByte(columnIndex + 1);
 	}
