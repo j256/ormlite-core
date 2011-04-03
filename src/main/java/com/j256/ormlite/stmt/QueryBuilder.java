@@ -363,7 +363,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * Internal class used to expose the {@link QueryBuilder#buildStatementString(List, List, List)} method to internal
+	 * Internal class used to expose the {@link QueryBuilder#buildStatementString(List, List)} method to internal
 	 * classes but through a wrapper instead of a builder.
 	 */
 	public static class InternalQueryBuilderWrapper {
