@@ -113,7 +113,7 @@ public abstract class BaseConnectionSource implements ConnectionSource {
 		}
 	}
 
-	private class NestedConnection {
+	private static class NestedConnection {
 		public final DatabaseConnection connection;
 		private int nestedC;
 

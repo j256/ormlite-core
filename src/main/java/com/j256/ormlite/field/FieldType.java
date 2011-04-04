@@ -116,10 +116,10 @@ public class FieldType {
 				dataType = this.foreignTableInfo.getIdField().getDataType();
 				if (fieldConfig.isForeignAutoRefresh()) {
 					@SuppressWarnings("unchecked")
-					MappedQueryForId<Object, Object> castedMappedQueryForId =
+					MappedQueryForId<Object, Object> castMappedQueryForId =
 							(MappedQueryForId<Object, Object>) MappedQueryForId.build(databaseType,
-									this.foreignTableInfo, null);
-					this.mappedQueryForId = castedMappedQueryForId;
+									this.foreignTableInfo);
+					this.mappedQueryForId = castMappedQueryForId;
 				} else {
 					this.mappedQueryForId = null;
 				}

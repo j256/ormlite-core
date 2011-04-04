@@ -491,11 +491,11 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		}
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 			boolean bool = (boolean) Boolean.parseBoolean(defaultStr);
-			return (bool ? new Byte((byte) 1) : new Byte((byte) 0));
+			return (bool ? Byte.valueOf((byte) 1) : Byte.valueOf((byte) 0));
 		}
 		public Object javaToSqlArg(FieldType fieldType, Object obj) throws SQLException {
 			Boolean bool = (Boolean) obj;
-			return (bool ? new Byte((byte) 1) : new Byte((byte) 0));
+			return (bool ? Byte.valueOf((byte) 1) : Byte.valueOf((byte) 0));
 		}
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			byte result = results.getByte(columnPos);

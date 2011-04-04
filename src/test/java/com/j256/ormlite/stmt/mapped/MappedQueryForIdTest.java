@@ -32,7 +32,7 @@ public class MappedQueryForIdTest extends BaseCoreStmtTest {
 
 	@Test(expected = SQLException.class)
 	public void testNoIdBuildQueryForId() throws Exception {
-		MappedQueryForId.build(databaseType, new TableInfo<NoId, Void>(connectionSource, null, NoId.class), null);
+		MappedQueryForId.build(databaseType, new TableInfo<NoId, Void>(connectionSource, null, NoId.class));
 	}
 
 	@Test

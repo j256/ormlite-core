@@ -31,7 +31,7 @@ public abstract class BaseCoreTest {
 		DaoManager.clearCache();
 	}
 
-	protected class LimitAfterSelectDatabaseType extends H2DatabaseType {
+	protected static class LimitAfterSelectDatabaseType extends H2DatabaseType {
 		public LimitAfterSelectDatabaseType() {
 		}
 		@Override
@@ -64,6 +64,10 @@ public abstract class BaseCoreTest {
 			if (other == null || other.getClass() != getClass())
 				return false;
 			return id.equals(((Foo) other).id);
+		}
+		@Override
+		public int hashCode() {
+			return id.hashCode();
 		}
 	}
 
