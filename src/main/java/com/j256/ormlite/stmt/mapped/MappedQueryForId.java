@@ -2,7 +2,6 @@ package com.j256.ormlite.stmt.mapped;
 
 import java.sql.SQLException;
 
-import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.support.DatabaseConnection;
@@ -45,14 +44,14 @@ public class MappedQueryForId<T, ID> extends BaseMappedQuery<T, ID> {
 		return castResult;
 	}
 
-	public static <T, ID> MappedQueryForId<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
-			Dao<T, ID> dao) throws SQLException {
-		String statement = buildStatement(databaseType, tableInfo, dao);
+	public static <T, ID> MappedQueryForId<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo)
+			throws SQLException {
+		String statement = buildStatement(databaseType, tableInfo);
 		return new MappedQueryForId<T, ID>(tableInfo, statement, new FieldType[] { tableInfo.getIdField() },
 				tableInfo.getFieldTypes(), "query-for-id");
 	}
 
-	protected static <T, ID> String buildStatement(DatabaseType databaseType, TableInfo<T, ID> tableInfo, Dao<T, ID> dao)
+	protected static <T, ID> String buildStatement(DatabaseType databaseType, TableInfo<T, ID> tableInfo)
 			throws SQLException {
 		FieldType idField = tableInfo.getIdField();
 		if (idField == null) {
