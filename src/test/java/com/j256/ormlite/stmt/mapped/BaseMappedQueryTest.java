@@ -8,8 +8,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.Test;
 
@@ -21,13 +19,13 @@ public class BaseMappedQueryTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testMappedQuery() throws Exception {
-		List<FieldType> resultFieldTypeList = new ArrayList<FieldType>();
 		Field field = Foo.class.getDeclaredField(Foo.ID_COLUMN_NAME);
 		String tableName = "basefoo";
-		resultFieldTypeList.add(FieldType.createFieldType(connectionSource, tableName, field, Foo.class, 0));
+		FieldType[] resultFieldTypes =
+				new FieldType[] { FieldType.createFieldType(connectionSource, tableName, field, Foo.class, 0) };
 		BaseMappedQuery<Foo, String> baseMappedQuery =
 				new BaseMappedQuery<Foo, String>(baseFooTableInfo, "select * from " + tableName, new FieldType[0],
-						resultFieldTypeList) {
+						resultFieldTypes) {
 				};
 		DatabaseResults results = createMock(DatabaseResults.class);
 		int colN = 1;

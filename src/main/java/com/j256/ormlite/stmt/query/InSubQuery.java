@@ -1,7 +1,6 @@
 package com.j256.ormlite.stmt.query;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.j256.ormlite.db.DatabaseType;
@@ -29,15 +28,15 @@ public class InSubQuery extends BaseComparison {
 	public StringBuilder appendValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
 			throws SQLException {
 		sb.append('(');
-		List<FieldType> resultFieldTypeList = new ArrayList<FieldType>();
-		subQueryBuilder.buildStatementString(sb, resultFieldTypeList, selectArgList);
-		if (resultFieldTypeList.size() != 1) {
+		subQueryBuilder.buildStatementString(sb, selectArgList);
+		FieldType[] resultFieldTypes = subQueryBuilder.getResultFieldTypes();
+		if (resultFieldTypes.length != 1) {
 			throw new SQLException("There must be only 1 result column in sub-query but we found "
-					+ resultFieldTypeList.size());
+					+ resultFieldTypes.length);
 		}
-		if (fieldType.getSqlType() != resultFieldTypeList.get(0).getSqlType()) {
+		if (fieldType.getSqlType() != resultFieldTypes[0].getSqlType()) {
 			throw new SQLException("Outer column " + fieldType + " is not the same type as inner column "
-					+ resultFieldTypeList.get(0));
+					+ resultFieldTypes[0]);
 		}
 		sb.append(") ");
 		return sb;

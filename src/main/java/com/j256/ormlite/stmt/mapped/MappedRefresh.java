@@ -1,8 +1,6 @@
 package com.j256.ormlite.stmt.mapped;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
@@ -18,8 +16,8 @@ import com.j256.ormlite.table.TableInfo;
 public class MappedRefresh<T, ID> extends MappedQueryForId<T, ID> {
 
 	private MappedRefresh(TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes,
-			List<FieldType> resultFieldTypeList) {
-		super(tableInfo, statement, argFieldTypes, resultFieldTypeList, "refresh");
+			FieldType[] resultFieldTypes) {
+		super(tableInfo, statement, argFieldTypes, resultFieldTypes, "refresh");
 	}
 
 	/**
@@ -46,9 +44,8 @@ public class MappedRefresh<T, ID> extends MappedQueryForId<T, ID> {
 
 	public static <T, ID> MappedRefresh<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
 			Dao<T, ID> dao) throws SQLException {
-		List<FieldType> resultFieldTypeList = new ArrayList<FieldType>();
-		String statement = buildStatement(databaseType, tableInfo, resultFieldTypeList, dao);
+		String statement = buildStatement(databaseType, tableInfo, dao);
 		return new MappedRefresh<T, ID>(tableInfo, statement, new FieldType[] { tableInfo.getIdField() },
-				resultFieldTypeList);
+				tableInfo.getFieldTypes());
 	}
 }

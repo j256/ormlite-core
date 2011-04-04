@@ -106,7 +106,7 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	@Override
-	protected void appendStatementStart(StringBuilder sb, List<FieldType> resultFieldTypeList) throws SQLException {
+	protected void appendStatementStart(StringBuilder sb) throws SQLException {
 		if (updateClauseList == null || updateClauseList.size() == 0) {
 			throw new IllegalArgumentException("UPDATE statements must have at least one SET column");
 		}

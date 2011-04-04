@@ -35,6 +35,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	private List<String> groupByList = null;
 	private boolean isInnerQuery = false;
 	private final Dao<T, ID> dao;
+	private FieldType[] resultFieldTypes;
 
 	public QueryBuilder(DatabaseType databaseType, TableInfo<T, ID> tableInfo, Dao<T, ID> dao) {
 		super(databaseType, tableInfo, StatementType.SELECT);
@@ -192,7 +193,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	@Override
-	protected void appendStatementStart(StringBuilder sb, List<FieldType> resultFieldTypeList) throws SQLException {
+	protected void appendStatementStart(StringBuilder sb) throws SQLException {
 		sb.append("SELECT ");
 		if (databaseType.isLimitAfterSelect()) {
 			appendLimit(sb);
@@ -200,10 +201,15 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		if (distinct) {
 			sb.append("DISTINCT ");
 		}
-		appendColumns(sb, resultFieldTypeList);
+		appendColumns(sb);
 		sb.append("FROM ");
 		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
 		sb.append(' ');
+	}
+
+	@Override
+	protected FieldType[] getResultFieldTypes() throws SQLException {
+		return resultFieldTypes;
 	}
 
 	@Override
@@ -225,14 +231,11 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		selectColumnList.add(columnName);
 	}
 
-	private void appendColumns(StringBuilder sb, List<FieldType> fieldTypeList) throws SQLException {
+	private void appendColumns(StringBuilder sb) throws SQLException {
 		// if no columns were specified then * is the default
 		if (selectColumnList == null) {
 			sb.append("* ");
-			// add all of the field types
-			for (FieldType fieldType : tableInfo.getFieldTypes()) {
-				fieldTypeList.add(fieldType);
-			}
+			resultFieldTypes = tableInfo.getFieldTypes();
 			return;
 		}
 
@@ -243,6 +246,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		} else {
 			hasId = false;
 		}
+		List<FieldType> fieldTypeList = new ArrayList<FieldType>(selectColumnList.size() + 1);
 		for (String columnName : selectColumnList) {
 			if (first) {
 				first = false;
@@ -264,6 +268,8 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			appendFieldColumnName(sb, idField, fieldTypeList);
 		}
 		sb.append(' ');
+
+		resultFieldTypes = fieldTypeList.toArray(new FieldType[fieldTypeList.size()]);
 	}
 
 	private void appendFieldColumnName(StringBuilder sb, FieldType fieldType, List<FieldType> fieldTypeList) {
@@ -346,9 +352,12 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			this.queryBuilder = queryBuilder;
 		}
 
-		public void buildStatementString(StringBuilder sb, List<FieldType> resultFieldTypeList,
-				List<SelectArg> selectArgList) throws SQLException {
-			queryBuilder.appendStatementString(sb, resultFieldTypeList, selectArgList);
+		public void buildStatementString(StringBuilder sb, List<SelectArg> selectArgList) throws SQLException {
+			queryBuilder.appendStatementString(sb, selectArgList);
+		}
+
+		public FieldType[] getResultFieldTypes() throws SQLException {
+			return queryBuilder.resultFieldTypes;
 		}
 	}
 }

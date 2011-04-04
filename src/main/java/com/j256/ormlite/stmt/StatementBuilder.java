@@ -72,16 +72,16 @@ public abstract class StatementBuilder<T, ID> {
 	 * Prepare our statement for the subclasses.
 	 */
 	protected MappedPreparedStmt<T, ID> prepareStatement() throws SQLException {
-		List<FieldType> resultFieldTypeList = new ArrayList<FieldType>();
 		List<SelectArg> selectArgList = new ArrayList<SelectArg>();
-		String statement = buildStatementString(resultFieldTypeList, selectArgList);
+		String statement = buildStatementString(selectArgList);
+		FieldType[] resultFieldTypes = getResultFieldTypes();
 		FieldType[] argFieldTypes = new FieldType[selectArgList.size()];
 		int selectC = 0;
 		for (SelectArg selectArg : selectArgList) {
 			argFieldTypes[selectC] = selectArg.getFieldType();
 			selectC++;
 		}
-		return new MappedPreparedStmt<T, ID>(tableInfo, statement, argFieldTypes, resultFieldTypeList, selectArgList,
+		return new MappedPreparedStmt<T, ID>(tableInfo, statement, argFieldTypes, resultFieldTypes, selectArgList,
 				(databaseType.isLimitSqlSupported() ? null : limit), type);
 	}
 
@@ -94,24 +94,13 @@ public abstract class StatementBuilder<T, ID> {
 	 * </p>
 	 */
 	public String prepareStatementString() throws SQLException {
-		List<FieldType> resultFieldTypeList = new ArrayList<FieldType>();
 		List<SelectArg> selectArgList = new ArrayList<SelectArg>();
-		return buildStatementString(resultFieldTypeList, selectArgList);
+		return buildStatementString(selectArgList);
 	}
 
-	/**
-	 * Internal method to build a query while tracking various arguments. Users should use the
-	 * {@link #prepareStatementString()} method instead.
-	 * 
-	 * <p>
-	 * This needs to be protected because of (WARNING: DO NOT MAKE A JAVADOC LINK) InternalQueryBuilder (WARNING: DO NOT
-	 * MAKE A JAVADOC LINK).
-	 * </p>
-	 */
-	protected String buildStatementString(List<FieldType> resultFieldTypeList, List<SelectArg> selectArgList)
-			throws SQLException {
+	private String buildStatementString(List<SelectArg> selectArgList) throws SQLException {
 		StringBuilder sb = new StringBuilder();
-		appendStatementString(sb, resultFieldTypeList, selectArgList);
+		appendStatementString(sb, selectArgList);
 		String statement = sb.toString();
 		logger.debug("built statement {}", statement);
 		return statement;
@@ -126,9 +115,8 @@ public abstract class StatementBuilder<T, ID> {
 	 * MAKE A JAVADOC LINK).
 	 * </p>
 	 */
-	protected void appendStatementString(StringBuilder sb, List<FieldType> resultFieldTypeList,
-			List<SelectArg> selectArgList) throws SQLException {
-		appendStatementStart(sb, resultFieldTypeList);
+	protected void appendStatementString(StringBuilder sb, List<SelectArg> selectArgList) throws SQLException {
+		appendStatementStart(sb);
 		if (where != null) {
 			sb.append("WHERE ");
 			where.appendSql(databaseType, sb, selectArgList);
@@ -139,8 +127,15 @@ public abstract class StatementBuilder<T, ID> {
 	/**
 	 * Append the start of our statement string to the StringBuilder.
 	 */
-	protected abstract void appendStatementStart(StringBuilder sb, List<FieldType> resultFieldTypeList)
-			throws SQLException;
+	protected abstract void appendStatementStart(StringBuilder sb) throws SQLException;
+
+	/**
+	 * Get the result array from our statement after the {@link #appendStatementStart(StringBuilder)} was called. This
+	 * will be null except for the QueryBuilder.
+	 */
+	protected FieldType[] getResultFieldTypes() throws SQLException {
+		return null;
+	}
 
 	/**
 	 * Append the end of our statement string to the StringBuilder.

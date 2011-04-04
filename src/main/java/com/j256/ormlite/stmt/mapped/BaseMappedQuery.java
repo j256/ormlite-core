@@ -2,7 +2,6 @@ package com.j256.ormlite.stmt.mapped;
 
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.j256.ormlite.dao.BaseForeignCollection;
@@ -23,9 +22,9 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 	private Map<String, Integer> columnPositions = null;
 
 	protected BaseMappedQuery(TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes,
-			List<FieldType> resultFieldTypeList) {
+			FieldType[] resultsFieldTypes) {
 		super(tableInfo, statement, argFieldTypes);
-		this.resultsFieldTypes = resultFieldTypeList.toArray(new FieldType[resultFieldTypeList.size()]);
+		this.resultsFieldTypes = resultsFieldTypes;
 	}
 
 	public T mapRow(DatabaseResults results) throws SQLException {
