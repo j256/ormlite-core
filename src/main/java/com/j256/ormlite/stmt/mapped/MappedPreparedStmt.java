@@ -1,7 +1,6 @@
 package com.j256.ormlite.stmt.mapped;
 
 import java.sql.SQLException;
-import java.util.List;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.logger.Log.Level;
@@ -28,13 +27,9 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 	private final StatementType type;
 
 	public MappedPreparedStmt(TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes,
-			FieldType[] resultFieldTypes, List<SelectArg> selectArgList, Integer limit, StatementType type) {
+			FieldType[] resultFieldTypes, SelectArg[] selectArgs, Integer limit, StatementType type) {
 		super(tableInfo, statement, argFieldTypes, resultFieldTypes);
-		this.selectArgs = selectArgList.toArray(new SelectArg[selectArgList.size()]);
-		// select args should match the field-type list
-		if (argFieldTypes == null || selectArgs.length != argFieldTypes.length) {
-			throw new IllegalArgumentException("Should be the same number of SelectArg and field-types in the arrays");
-		}
+		this.selectArgs = selectArgs;
 		// this is an Integer because it may be null
 		this.limit = limit;
 		this.type = type;

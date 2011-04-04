@@ -33,7 +33,7 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 				new TableInfo<LocalFoo, Integer>(connectionSource, null, LocalFoo.class);
 		MappedPreparedStmt<LocalFoo, Integer> rowMapper =
 				new MappedPreparedStmt<LocalFoo, Integer>(tableInfo, null, new FieldType[0], tableInfo.getFieldTypes(),
-						new ArrayList<SelectArg>(), null, StatementType.SELECT);
+						new SelectArg[0], null, StatementType.SELECT);
 
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
@@ -63,12 +63,12 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 				new TableInfo<LocalFoo, Integer>(connectionSource, null, LocalFoo.class);
 		MappedPreparedStmt<LocalFoo, Integer> preparedQuery =
 				new MappedPreparedStmt<LocalFoo, Integer>(tableInfo, "select * from " + TABLE_NAME, new FieldType[0],
-						tableInfo.getFieldTypes(), new ArrayList<SelectArg>(), 1, StatementType.SELECT);
+						tableInfo.getFieldTypes(), new SelectArg[0], 1, StatementType.SELECT);
 
 		checkResults(foos, preparedQuery, 1);
 		preparedQuery =
 				new MappedPreparedStmt<LocalFoo, Integer>(tableInfo, "select * from " + TABLE_NAME, new FieldType[0],
-						tableInfo.getFieldTypes(), new ArrayList<SelectArg>(), null, StatementType.SELECT);
+						tableInfo.getFieldTypes(), new SelectArg[0], null, StatementType.SELECT);
 		checkResults(foos, preparedQuery, 2);
 	}
 
@@ -95,16 +95,8 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testObjectNoConstructor() throws SQLException {
 		new MappedPreparedStmt<NoConstructor, Void>(new TableInfo<NoConstructor, Void>(connectionSource, null,
-				NoConstructor.class), null, new FieldType[0], new FieldType[0], new ArrayList<SelectArg>(), null,
+				NoConstructor.class), null, new FieldType[0], new FieldType[0], new SelectArg[0], null,
 				StatementType.SELECT);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testDifferentArgSizes() throws SQLException {
-		ArrayList<SelectArg> selectArgList = new ArrayList<SelectArg>();
-		selectArgList.add(new SelectArg());
-		new MappedPreparedStmt<LocalFoo, Integer>(new TableInfo<LocalFoo, Integer>(connectionSource, null,
-				LocalFoo.class), null, new FieldType[0], new FieldType[0], selectArgList, null, StatementType.SELECT);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

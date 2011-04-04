@@ -74,14 +74,13 @@ public abstract class StatementBuilder<T, ID> {
 	protected MappedPreparedStmt<T, ID> prepareStatement() throws SQLException {
 		List<SelectArg> selectArgList = new ArrayList<SelectArg>();
 		String statement = buildStatementString(selectArgList);
+		SelectArg[] selectArgs = selectArgList.toArray(new SelectArg[selectArgList.size()]);
 		FieldType[] resultFieldTypes = getResultFieldTypes();
-		FieldType[] argFieldTypes = new FieldType[selectArgList.size()];
-		int selectC = 0;
-		for (SelectArg selectArg : selectArgList) {
-			argFieldTypes[selectC] = selectArg.getFieldType();
-			selectC++;
+		FieldType[] argFieldTypes = new FieldType[selectArgList.size()];;
+		for (int selectC = 0; selectC < selectArgs.length; selectC++) {
+			argFieldTypes[selectC] = selectArgs[selectC].getFieldType();
 		}
-		return new MappedPreparedStmt<T, ID>(tableInfo, statement, argFieldTypes, resultFieldTypes, selectArgList,
+		return new MappedPreparedStmt<T, ID>(tableInfo, statement, argFieldTypes, resultFieldTypes, selectArgs,
 				(databaseType.isLimitSqlSupported() ? null : limit), type);
 	}
 
