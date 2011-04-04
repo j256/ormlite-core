@@ -1,4 +1,11 @@
-4.18: 3/30/2011 (svn rYYYY)
+4.19: 4/XX/2011 (svn r1593)
+	* CORE: Added support for storing char fields with ORMLite.  Derby, of course, was the most painful to get working.
+	* CORE: Added some convenience methods like query() and iterator() on the QueryBuilder and Where objects.
+	* CORE: Added a countOf() call to the Dao to return the select count(*) result for the table.
+	* CORE: Added s clearTable() method to TableUtils.  It will do a TRUNCATE if supported otherwise a DELETE.
+	* CORE: Added a convenience queryForEq() method to the Dao which matches on a single field value.
+
+4.18: 3/30/2011 (svn r1593)
 	* CORE: Fixed bug with lazy foreign collections are not properly limiting the iterator.  Fixes bug #3260099. Thanks to Brady.
 	* CORE: Fixed bug with updating of foreign collections.  Fixes bug #3260103. Thanks to ede.
 	* CORE: Added better support for batch tasks by using a database transaction if auto-commit isn't supported.
@@ -11,6 +18,7 @@
 	* ANDROID: Fixed Android v1.6 support by removing some Java 1.6 methods. 
 
 4.16: 3/23/2011 (svn r1553)
+	** WARNING: ** 4.16 was released with some Java 1.6 calls which broke a lot of people.  This was fixed in 4.17.
 	* CORE: Added support for @@ForeignCollectionField annotation which supports eager and lazy loaded collections of foreign objects.
 	* CORE: Added a DaoManager which caches DAOs that are constructed so we only do it once per class.  Thanks to jc.
 	* CORE: Added the BaseDaoEnabled class for supporting data objects which can self refresh/update/etc..  Good bit of refactoring.

@@ -1,9 +1,7 @@
 package com.j256.ormlite.stmt.mapped;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
@@ -18,8 +16,8 @@ import com.j256.ormlite.table.TableInfo;
  */
 public class MappedDeleteCollection<T, ID> extends BaseMappedStatement<T, ID> {
 
-	private MappedDeleteCollection(TableInfo<T, ID> tableInfo, String statement, List<FieldType> argFieldTypeList) {
-		super(tableInfo, statement, argFieldTypeList);
+	private MappedDeleteCollection(TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes) {
+		super(tableInfo, statement, argFieldTypes);
 	}
 
 	/**
@@ -67,10 +65,10 @@ public class MappedDeleteCollection<T, ID> extends BaseMappedStatement<T, ID> {
 					+ " because it doesn't have an id field defined");
 		}
 		StringBuilder sb = new StringBuilder();
-		List<FieldType> argFieldTypeList = new ArrayList<FieldType>();
 		appendTableName(databaseType, sb, "DELETE FROM ", tableInfo.getTableName());
-		appendWhereIds(databaseType, idField, sb, dataSize, argFieldTypeList);
-		return new MappedDeleteCollection<T, ID>(tableInfo, sb.toString(), argFieldTypeList);
+		FieldType[] argFieldTypes = new FieldType[dataSize];
+		appendWhereIds(databaseType, idField, sb, dataSize, argFieldTypes);
+		return new MappedDeleteCollection<T, ID>(tableInfo, sb.toString(), argFieldTypes);
 	}
 
 	private static <T, ID> int updateRows(DatabaseConnection databaseConnection,
@@ -90,7 +88,7 @@ public class MappedDeleteCollection<T, ID> extends BaseMappedStatement<T, ID> {
 	}
 
 	private static void appendWhereIds(DatabaseType databaseType, FieldType idField, StringBuilder sb, int numDatas,
-			List<FieldType> fieldTypeList) {
+			FieldType[] fieldTypes) {
 		sb.append("WHERE ");
 		databaseType.appendEscapedEntityName(sb, idField.getDbColumnName());
 		sb.append(" IN (");
@@ -102,8 +100,8 @@ public class MappedDeleteCollection<T, ID> extends BaseMappedStatement<T, ID> {
 				sb.append(',');
 			}
 			sb.append('?');
-			if (fieldTypeList != null) {
-				fieldTypeList.add(idField);
+			if (fieldTypes != null) {
+				fieldTypes[i] = idField;
 			}
 		}
 		sb.append(") ");

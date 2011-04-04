@@ -72,12 +72,17 @@ public abstract class StatementBuilder<T, ID> {
 	 * Prepare our statement for the subclasses.
 	 */
 	protected MappedPreparedStmt<T, ID> prepareStatement() throws SQLException {
-		List<FieldType> argFieldTypeList = new ArrayList<FieldType>();
 		List<FieldType> resultFieldTypeList = new ArrayList<FieldType>();
 		List<SelectArg> selectArgList = new ArrayList<SelectArg>();
-		String statement = buildStatementString(argFieldTypeList, resultFieldTypeList, selectArgList);
-		return new MappedPreparedStmt<T, ID>(tableInfo, statement, argFieldTypeList, resultFieldTypeList,
-				selectArgList, (databaseType.isLimitSqlSupported() ? null : limit), type);
+		String statement = buildStatementString(resultFieldTypeList, selectArgList);
+		FieldType[] argFieldTypes = new FieldType[selectArgList.size()];
+		int selectC = 0;
+		for (SelectArg selectArg : selectArgList) {
+			argFieldTypes[selectC] = selectArg.getFieldType();
+			selectC++;
+		}
+		return new MappedPreparedStmt<T, ID>(tableInfo, statement, argFieldTypes, resultFieldTypeList, selectArgList,
+				(databaseType.isLimitSqlSupported() ? null : limit), type);
 	}
 
 	/**
@@ -89,10 +94,9 @@ public abstract class StatementBuilder<T, ID> {
 	 * </p>
 	 */
 	public String prepareStatementString() throws SQLException {
-		List<FieldType> argFieldTypeList = new ArrayList<FieldType>();
 		List<FieldType> resultFieldTypeList = new ArrayList<FieldType>();
 		List<SelectArg> selectArgList = new ArrayList<SelectArg>();
-		return buildStatementString(argFieldTypeList, resultFieldTypeList, selectArgList);
+		return buildStatementString(resultFieldTypeList, selectArgList);
 	}
 
 	/**
@@ -104,13 +108,10 @@ public abstract class StatementBuilder<T, ID> {
 	 * MAKE A JAVADOC LINK).
 	 * </p>
 	 */
-	protected String buildStatementString(List<FieldType> argFieldTypeList, List<FieldType> resultFieldTypeList,
-			List<SelectArg> selectArgList) throws SQLException {
+	protected String buildStatementString(List<FieldType> resultFieldTypeList, List<SelectArg> selectArgList)
+			throws SQLException {
 		StringBuilder sb = new StringBuilder();
 		appendStatementString(sb, resultFieldTypeList, selectArgList);
-		for (SelectArg selectArg : selectArgList) {
-			argFieldTypeList.add(selectArg.getFieldType());
-		}
 		String statement = sb.toString();
 		logger.debug("built statement {}", statement);
 		return statement;

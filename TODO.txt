@@ -3,11 +3,6 @@
 - support for JTA annotations, whatever the common one is
 	- maybe also JDO?
 
-- consider allowing auto foreign object creation with internal doa's
-	- need to be careful of recursion
-	- maybe you could see if the id was set or something?
-	- maybe just require someone to use the other DAO
-
 - support for embedded objects
 	- look to see if the unknown class has a DatabaseTable(embedded = true or javax annotation
 	- take all of the fields as if they were fields in this class
@@ -15,12 +10,6 @@
 - more support for more constraints (other than primary and unique):
 	- maybe a check="> 10" type of addition to DatabaseField so we can add a check constraint
 	- foreign key constraint can be in addition to (or required for) the foreign=true
-
-- allow any field as the foreign id column (not just the id field)
-	- specify the field in the remote object (must match the name directly)
-	- creates a prepared query 'WHERE field = value'
-	- uses queryForFirst to return object
-	- creates account_field-name instead of account_id field in local table 
 
 - for objects that a user does not have control over, how about the ability of defining a Method to construct a particular class
 	- when you create the dao, you have to somehow inject a Method which returns a new object of a certain type
@@ -53,6 +42,19 @@
 - backend for HBase (Hadoop's bigtable) 
 
 -----------------------------------------------------------------------------------------------------------------------------------
+
+- consider allowing auto foreign object creation with internal doa's
+	- ANSWER: could be confusing and misleading, no easy way to see if the id field is set
+	- need to be careful of recursion
+	- maybe you could see if the id was set or something?
+	- maybe just require someone to use the other DAO
+
+- allow any field as the foreign id column (not just the id field)
+	- ANSWER: cost/benefit is not there
+	- specify the field in the remote object (must match the name directly)
+	- creates a prepared query 'WHERE field = value'
+	- uses queryForFirst to return object
+	- creates account_field-name instead of account_id field in local table 
 
 - anyway to simplify the query builder call structure:
 	- ANSWER: for now we leave it as it.  Added Where.raw(), .query(), and .iterator() methods

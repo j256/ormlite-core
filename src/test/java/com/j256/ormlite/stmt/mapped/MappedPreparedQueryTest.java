@@ -33,7 +33,7 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 		TableInfo<LocalFoo, Integer> tableInfo =
 				new TableInfo<LocalFoo, Integer>(connectionSource, null, LocalFoo.class);
 		MappedPreparedStmt<LocalFoo, Integer> rowMapper =
-				new MappedPreparedStmt<LocalFoo, Integer>(tableInfo, null, new ArrayList<FieldType>(),
+				new MappedPreparedStmt<LocalFoo, Integer>(tableInfo, null, new FieldType[0],
 						Arrays.asList(tableInfo.getFieldTypes()), new ArrayList<SelectArg>(), null,
 						StatementType.SELECT);
 
@@ -64,15 +64,14 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 		TableInfo<LocalFoo, Integer> tableInfo =
 				new TableInfo<LocalFoo, Integer>(connectionSource, null, LocalFoo.class);
 		MappedPreparedStmt<LocalFoo, Integer> preparedQuery =
-				new MappedPreparedStmt<LocalFoo, Integer>(tableInfo, "select * from " + TABLE_NAME,
-						new ArrayList<FieldType>(), Arrays.asList(tableInfo.getFieldTypes()),
-						new ArrayList<SelectArg>(), 1, StatementType.SELECT);
+				new MappedPreparedStmt<LocalFoo, Integer>(tableInfo, "select * from " + TABLE_NAME, new FieldType[0],
+						Arrays.asList(tableInfo.getFieldTypes()), new ArrayList<SelectArg>(), 1, StatementType.SELECT);
 
 		checkResults(foos, preparedQuery, 1);
 		preparedQuery =
-				new MappedPreparedStmt<LocalFoo, Integer>(tableInfo, "select * from " + TABLE_NAME,
-						new ArrayList<FieldType>(), Arrays.asList(tableInfo.getFieldTypes()),
-						new ArrayList<SelectArg>(), null, StatementType.SELECT);
+				new MappedPreparedStmt<LocalFoo, Integer>(tableInfo, "select * from " + TABLE_NAME, new FieldType[0],
+						Arrays.asList(tableInfo.getFieldTypes()), new ArrayList<SelectArg>(), null,
+						StatementType.SELECT);
 		checkResults(foos, preparedQuery, 2);
 	}
 
@@ -99,8 +98,8 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testObjectNoConstructor() throws SQLException {
 		new MappedPreparedStmt<NoConstructor, Void>(new TableInfo<NoConstructor, Void>(connectionSource, null,
-				NoConstructor.class), null, new ArrayList<FieldType>(), new ArrayList<FieldType>(),
-				new ArrayList<SelectArg>(), null, StatementType.SELECT);
+				NoConstructor.class), null, new FieldType[0], new ArrayList<FieldType>(), new ArrayList<SelectArg>(),
+				null, StatementType.SELECT);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -108,7 +107,7 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 		ArrayList<SelectArg> selectArgList = new ArrayList<SelectArg>();
 		selectArgList.add(new SelectArg());
 		new MappedPreparedStmt<LocalFoo, Integer>(new TableInfo<LocalFoo, Integer>(connectionSource, null,
-				LocalFoo.class), null, new ArrayList<FieldType>(), new ArrayList<FieldType>(), selectArgList, null,
+				LocalFoo.class), null, new FieldType[0], new ArrayList<FieldType>(), selectArgList, null,
 				StatementType.SELECT);
 	}
 

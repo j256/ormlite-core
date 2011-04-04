@@ -1,8 +1,6 @@
 package com.j256.ormlite.stmt.mapped;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
@@ -21,9 +19,9 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 	private final String queryNextSequenceStmt;
 	private String dataClassName;
 
-	private MappedCreate(TableInfo<T, ID> tableInfo, String statement, List<FieldType> argFieldTypeList,
+	private MappedCreate(TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes,
 			String queryNextSequenceStmt) {
-		super(tableInfo, statement, argFieldTypeList);
+		super(tableInfo, statement, argFieldTypes);
 		this.dataClassName = tableInfo.getDataClass().getSimpleName();
 		this.queryNextSequenceStmt = queryNextSequenceStmt;
 	}
@@ -52,19 +50,20 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 	public static <T, ID> MappedCreate<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo) {
 		StringBuilder sb = new StringBuilder();
 		StringBuilder questionSb = new StringBuilder();
-		List<FieldType> argFieldTypeList = new ArrayList<FieldType>();
 		appendTableName(databaseType, sb, "INSERT INTO ", tableInfo.getTableName());
 		sb.append('(');
+		int argFieldC = 0;
+		// first we count up how many arguments we are going to have
+		for (FieldType fieldType : tableInfo.getFieldTypes()) {
+			if (isFieldCreatable(databaseType, fieldType)) {
+				argFieldC++;
+			}
+		}
+		FieldType[] argFieldTypes = new FieldType[argFieldC];
+		argFieldC = 0;
 		boolean first = true;
 		for (FieldType fieldType : tableInfo.getFieldTypes()) {
-			// we don't insert anything if it is a collection
-			if (fieldType.isForeignCollection()) {
-				// skip foreign collections
-				continue;
-			} else if (databaseType.isIdSequenceNeeded()) {
-				// we need to query for the next value from the sequence and the idField is inserted afterwards
-			} else if (fieldType.isGeneratedId() && !fieldType.isSelfGeneratedId()) {
-				// skip generated-id fields because they will be auto-inserted
+			if (!isFieldCreatable(databaseType, fieldType)) {
 				continue;
 			}
 			if (first) {
@@ -73,13 +72,30 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 				sb.append(",");
 				questionSb.append(",");
 			}
-			appendFieldColumnName(databaseType, sb, fieldType, argFieldTypeList);
+			appendFieldColumnName(databaseType, sb, fieldType, null);
+			argFieldTypes[argFieldC++] = fieldType;
 			questionSb.append("?");
 		}
 		sb.append(") VALUES (").append(questionSb).append(")");
 		FieldType idField = tableInfo.getIdField();
 		String queryNext = buildQueryNextSequence(databaseType, idField);
-		return new MappedCreate<T, ID>(tableInfo, sb.toString(), argFieldTypeList, queryNext);
+		return new MappedCreate<T, ID>(tableInfo, sb.toString(), argFieldTypes, queryNext);
+	}
+
+	private static boolean isFieldCreatable(DatabaseType databaseType, FieldType fieldType) {
+		// we don't insert anything if it is a collection
+		if (fieldType.isForeignCollection()) {
+			// skip foreign collections
+			return false;
+		} else if (databaseType.isIdSequenceNeeded()) {
+			// we need to query for the next value from the sequence and the idField is inserted afterwards
+			return true;
+		} else if (fieldType.isGeneratedId() && !fieldType.isSelfGeneratedId()) {
+			// skip generated-id fields because they will be auto-inserted
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	private static String buildQueryNextSequence(DatabaseType databaseType, FieldType idField) {

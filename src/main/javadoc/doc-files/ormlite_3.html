@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on March, 29 2011 by texi2html 1.70 -->
+<!-- Created on March, 31 2011 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -141,6 +141,15 @@ List&lt;Account&gt; accountList =
       accountDao.queryBuilder().where()
          .eq(Account.PASSWORD_FIELD_NAME, &quot;qwerty&quot;)
          .prepare());
+</pre></td></tr></table>
+<p>You can use another short cut to call <code>query()</code> or <code>iterator()</code> either on the <code>QueryBuilder</code> or <code>Where</code>
+objects.
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">// query for all accounts that have that password
+List&lt;Account&gt; accountList =
+      accountDao.queryBuilder().where()
+         .eq(Account.PASSWORD_FIELD_NAME, &quot;qwerty&quot;)
+         .query();
 </pre></td></tr></table>
 <hr size="6">
 <a name="NOD35"></a>
@@ -366,15 +375,23 @@ to re-call this method to re-prepare the statement for execution.
 </dd>
 <dt><code> selectColumns(String... columns)</code></dt>
 <dd>
-<p>Add columns to be returned by the SELECT query. If no columns are selected then all columns are returned by
-default. For classes with id columns, the id column is added to the select list automagically.
+<a name="IDX172"></a>
+<a name="IDX173"></a>
+<p>Add columns to be returned by the SELECT query and set on any resulting objects. If no columns are selected then
+all columns are returned by default. For classes with id columns, the id column is added to the select list
+automagically.  All fields not selected in the object with be their default values (null, 0, false, etc.).  
+
+</p><p>This allows you to in effect have lazy loaded fields.  You can specify exactly which fields to be set on the
+resulting objects. This is especially helpful if you have large fields in a table that you don't always
+want to access.  To get all of the fields on the object later, you can either do another query or call
+<code>refresh()</code> with the object.
 
 </p></dd>
 <dt><code> selectColumns(Iterable&lt;String&gt; columns)</code></dt>
 <dd>
 <p>Same as the above but with an iterable (such as a collection) instead of a variable list of column names.
 
-</p><a name="IDX172"></a>
+</p><a name="IDX174"></a>
 </dd>
 <dt><code> where()</code></dt>
 <dd>
@@ -413,7 +430,7 @@ about the available methods.  All of the methods return the <code>Where</code> o
 
 </p><dl compact="compact">
 <dd>
-<a name="IDX173"></a>
+<a name="IDX175"></a>
 </dd>
 <dt><code> and()</code></dt>
 <dd>
@@ -426,20 +443,20 @@ you are using inline query calls.
 <p>Binary AND operation which takes 2 arguments and AND's them together.  This is when you are <em>not</em> using inline
 query calls but instead want to use standard arguments.
 
-</p><a name="IDX174"></a>
+</p><a name="IDX176"></a>
 </dd>
 <dt><code> between(String columnName, Object low, Object high)</code></dt>
 <dd>
 <p>Add a BETWEEN clause which makes sure the column is between the low and high parameters.
 
-</p><a name="IDX175"></a>
-<a name="IDX176"></a>
+</p><a name="IDX177"></a>
+<a name="IDX178"></a>
 </dd>
 <dt><code> eq(String columnName, Object value)</code></dt>
 <dd>
 <p>Add a '=' clause which makes sure the column is equal to the value.
 
-</p><a name="IDX177"></a>
+</p><a name="IDX179"></a>
 </dd>
 <dt><code> exists(QueryBuilder&lt;?, ?&gt; subQueryBuilder)</code></dt>
 <dd>
@@ -448,17 +465,17 @@ results.
 
 </p><p><em>NOTE:</em> The sub-query will be prepared at the same time that the outside query is.
 
-</p><a name="IDX178"></a>
-<a name="IDX179"></a>
-<a name="IDX180"></a>
+</p><a name="IDX180"></a>
+<a name="IDX181"></a>
+<a name="IDX182"></a>
 </dd>
 <dt><code> ge(String columnName, Object value)</code></dt>
 <dd>
 <p>Add a '&gt;=' clause which makes sure the column is greater-than or equals-to the value.
 
-</p><a name="IDX181"></a>
-<a name="IDX182"></a>
-<a name="IDX183"></a>
+</p><a name="IDX183"></a>
+<a name="IDX184"></a>
+<a name="IDX185"></a>
 </dd>
 <dt><code> gt(String columnName, Object value)</code></dt>
 <dd>
@@ -474,22 +491,22 @@ results.
 <dd>
 <p>Add a clause where the ID is extracted from an existing object.
 
-</p><a name="IDX184"></a>
+</p><a name="IDX186"></a>
 </dd>
 <dt><code> in(String columnName, Iterable&lt;?&gt; objects)</code></dt>
 <dd>
 <p>Add a IN clause which makes sure the column is equal-to one of the objects from the Iterable (probably collection)
 passed in.
 
-</p><a name="IDX185"></a>
+</p><a name="IDX187"></a>
 </dd>
 <dt><code> in(String columnName, Object... objects)</code></dt>
 <dd>
 <p>Add a IN clause which makes sure the column is equal-to one of the objects passed in.
 
-</p><a name="IDX186"></a>
-<a name="IDX187"></a>
-<a name="IDX188"></a>
+</p><a name="IDX188"></a>
+<a name="IDX189"></a>
+<a name="IDX190"></a>
 </dd>
 <dt><code> in(String columnName, QueryBuilder&lt;?, ?&gt; subQueryBuilder)</code></dt>
 <dd>
@@ -499,51 +516,51 @@ method calls. That 1 argument must match the SQL type of the column-name passed 
 
 </p><p><em>NOTE:</em> The sub-query will be prepared at the same time that the outside query is.
 
-</p><a name="IDX189"></a>
-<a name="IDX190"></a>
+</p><a name="IDX191"></a>
+<a name="IDX192"></a>
 </dd>
 <dt><code> isNull(String columnName)</code></dt>
 <dd>
 <p>Add a 'IS NULL' clause which makes sure the column's value is null. '=' NULL does not work.
 
-</p><a name="IDX191"></a>
-<a name="IDX192"></a>
+</p><a name="IDX193"></a>
+<a name="IDX194"></a>
 </dd>
 <dt><code> isNotNull(String columnName)</code></dt>
 <dd>
 <p>Add a 'IS NOT NULL' clause so the column must not be null. '&lt;&gt;' NULL does not work.
 
-</p><a name="IDX193"></a>
-<a name="IDX194"></a>
-<a name="IDX195"></a>
+</p><a name="IDX195"></a>
+<a name="IDX196"></a>
+<a name="IDX197"></a>
 </dd>
 <dt><code> le(String columnName, Object value)</code></dt>
 <dd>
 <p>Add a '&lt;=' clause which makes sure the column is less-than or equals-to the value.
 
-</p><a name="IDX196"></a>
-<a name="IDX197"></a>
-<a name="IDX198"></a>
+</p><a name="IDX198"></a>
+<a name="IDX199"></a>
+<a name="IDX200"></a>
 </dd>
 <dt><code> lt(String columnName, Object value)</code></dt>
 <dd>
 <p>Add a '&lt;' clause which makes sure the column is less-than the value.
 
-</p><a name="IDX199"></a>
+</p><a name="IDX201"></a>
 </dd>
 <dt><code> like(String columnName, Object value)</code></dt>
 <dd>
 <p>Add a LIKE clause which makes sure the column match the value using '%' patterns.
 
-</p><a name="IDX200"></a>
-<a name="IDX201"></a>
-<a name="IDX202"></a>
+</p><a name="IDX202"></a>
+<a name="IDX203"></a>
+<a name="IDX204"></a>
 </dd>
 <dt><code> ne(String columnName, Object value)</code></dt>
 <dd>
 <p>Add a '&lt;&gt;' clause which makes sure the column is not-equal-to the value.
 
-</p><a name="IDX203"></a>
+</p><a name="IDX205"></a>
 </dd>
 <dt><code> not()</code></dt>
 <dd>
@@ -555,7 +572,7 @@ method calls. That 1 argument must match the SQL type of the column-name passed 
 <p>Used to NOT the argument clause specified.  This is when you are <em>not</em> using inline
 query calls but instead want to use standard arguments.
 
-</p><a name="IDX204"></a>
+</p><a name="IDX206"></a>
 </dd>
 <dt><code> or()</code></dt>
 <dd>
@@ -568,7 +585,7 @@ you are using inline query calls.
 <p>Binary OR operation which takes 2 arguments and OR's them together.  This is when you are <em>not</em> using inline
 query calls but instead want to use standard arguments.
 
-</p><a name="IDX205"></a>
+</p><a name="IDX207"></a>
 </dd>
 <dt><code> raw(String rawStatement)</code></dt>
 <dd>
@@ -582,7 +599,7 @@ database specific features.
 <p>A short-cut for calling <code>prepare()</code> on the original <code>QueryBuilder.prepare()</code>.  This method returns a
 <code>PreparedQuery</code> object.
 
-</p><a name="IDX206"></a>
+</p><a name="IDX208"></a>
 </dd>
 <dt><code> clear()</code></dt>
 <dd>
@@ -636,8 +653,8 @@ List&lt;Account&gt; accounts = accountDao.query(preparedQuery);
 selectArg.setValue(&quot;bar&quot;);
 accounts = accountDao.query(preparedQuery);
 </pre></td></tr></table>
-<a name="IDX207"></a>
-<a name="IDX208"></a>
+<a name="IDX209"></a>
+<a name="IDX210"></a>
 <p>Certain data types use an internal <code>SelectArg</code> object because the string value of the object does not reliably match the
 database form of the object.  <code>java.util.Date</code> is one example of such a type.  Also, in places where strings may have quote
 characters inside them that clash with the database escaping quotes, a <code>SelectArg</code> may be required for queries to be formatted
@@ -662,7 +679,7 @@ new object if you want to use a <code>SelectArg</code> with another column.
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>March, 29 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>March, 31 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 

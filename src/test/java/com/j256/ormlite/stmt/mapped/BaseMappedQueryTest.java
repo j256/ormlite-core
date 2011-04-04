@@ -21,13 +21,12 @@ public class BaseMappedQueryTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testMappedQuery() throws Exception {
-		List<FieldType> argFieldTypeList = new ArrayList<FieldType>();
 		List<FieldType> resultFieldTypeList = new ArrayList<FieldType>();
 		Field field = Foo.class.getDeclaredField(Foo.ID_COLUMN_NAME);
 		String tableName = "basefoo";
 		resultFieldTypeList.add(FieldType.createFieldType(connectionSource, tableName, field, Foo.class, 0));
 		BaseMappedQuery<Foo, String> baseMappedQuery =
-				new BaseMappedQuery<Foo, String>(baseFooTableInfo, "select * from " + tableName, argFieldTypeList,
+				new BaseMappedQuery<Foo, String>(baseFooTableInfo, "select * from " + tableName, new FieldType[0],
 						resultFieldTypeList) {
 				};
 		DatabaseResults results = createMock(DatabaseResults.class);

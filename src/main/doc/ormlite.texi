@@ -224,10 +224,10 @@ the database by its ID:
 @}
 @end example
 
-For more examples including working code and Android application projects @pxref{Examples}.
-
 You should be able to get started using @value{package} by this point. To understand more of the functionality available with @value{package},
 continue on with the next section.  @xref{Using}.
+
+For more examples including working code and Android application projects @pxref{Examples}.
 
 @c ----------------------------------------------------------------
 @node Using, Class Setup, Starting Code, Top
@@ -242,13 +242,13 @@ This chapter goes into more detail about how to use the various features in @val
 * DAO Setup::                   How to configure the Data Access Objects.
 * Database Notes::              Support databases and associated notes.
 * Complete Wiring::             Tying all of the wiring together.
+* Table Creation::              Creating tables and loading schema.
 * Identity Columns::            How identity fields and columns work.
 * DAO Usage::                   Using the Data Access Objects.
 * Creating Indexes::            How to create indexes on fields.
 * Raw Statements::              Issuing raw database statements.
 * Foreign Objects::             Fields that represent foreign objects.
 * Foreign Collection::          Fields that are collections of foreign objects.
-* Table Creation::              Creating tables and loading schema.
 * DAO Enabled Objects::         Another pattern for your data classes.
 @end menu
 
@@ -1103,7 +1103,7 @@ if you want to help with development of this driver.
 Please contact the author if your database is not supported.
 
 @c ----------------------------------------------------------------
-@node Complete Wiring, Identity Columns, Database Notes, Using
+@node Complete Wiring, Table Creation, Database Notes, Using
 @section Tying It All Together
 
 @cindex usage example
@@ -1139,14 +1139,133 @@ connectionSource.destroy();
 For more examples, see the code later in the manual.  @xref{Examples}.
 
 @c ----------------------------------------------------------------
-@node Identity Columns, Id Column, Complete Wiring, Using
+@node Table Creation, TableUtils, Complete Wiring, Using
+@section Table and Schema Creation
+
+@cindex table creation
+@cindex schema creation
+@cindex creating a table
+There a couple of tools that @value{package} provides to help with creating tables and schema for the classes that you are
+storing in the database.
+
+@menu
+* TableUtils::                 Class which creates and drops tables.
+* TableCreator::               Spring class which auto-creates tables.
+@end menu
+
+@c ----------------------------------------------------------------
+@node TableUtils, TableCreator, Table Creation, Table Creation
+@subsection TableUtils Class
+
+@cindex TableUtils
+
+The @code{TableUtils} class provides a number of static methods that help with creating and dropping tables as well as providing
+the schema statements.
+
+@table @code
+
+@item createTable(ConnectionSource, Class)
+
+This method takes the @code{ConnectionSource} and a class and creates the table associated with the class.  It uses the annotations
+from the class to determine the various fields and characteristics of the table.  It returns the number of statements executed to
+create the table.
+
+@example
+TableUtils.createTable(connectionSource, Account.class);
+@end example
+
+@item createTable(ConnectionSource, DatabaseTableConfig)
+
+Similar to the last method but instead of a class, this method uses a @code{DatabaseTableConfig} to determine the various fields and
+characteristics of the table.
+
+@example
+ArrayList<DatabaseFieldConfig> fieldConfigs =
+   new ArrayList<DatabaseFieldConfig>();
+fieldConfigs.add(new DatabaseFieldConfig("id", null,
+   DataType.UNKNOWN, null, 0, false, false, true, null,
+   false, null, false, null, false, null, false, null,
+   null, false));
+@dots{}
+DatabaseTableConfig<Account> tableConfig =
+   new DatabaseTableConfig<Account>(Account.class,
+     fieldConfigs);
+// this returns number of statements executed to create table
+TableUtils.createTable(connectionSource, tableConfig);
+@end example
+
+@item dropTable(ConnectionSource, Class, boolean ignoreErrors)
+
+This method drops the table associated with the class.  It uses the annotations from the class to determine the name of the table to drop.
+This is not undo-able and most likely will be used only in tests since production tables are dropped rarely.
+
+The ignoreErrors argument is useful when you are dropping a table before you are creating it and the table may not already exist.  If
+ignoreErrors is true then any exceptions are swallowed.
+
+@item dropTable(ConnectionSource, DatabaseTableConfig, boolean ignoreErrors)
+
+Same as the previous method but it will use the @code{DatabaseTableConfig} to determine the name of the table to drop.
+
+@item getCreateTableStatements(ConnectionSource, Class)
+
+This is similar to the @code{createTable} method but will return a list of statements that can be used to create a class.  This is useful
+if you want to load the schema during some sort of database initialization process.
+
+@item getCreateTableStatements(ConnectionSource, DatabaseTableConfig)
+
+Same as the previous method but with a @code{DatabaseTableConfig} instead.
+
+@item clearTable(ConnectionSource, Class)
+
+Clear all data out of the table. For certain database types and with large sized tables, which may take a long time. In some configurations,
+it may be faster to drop and re-create the table.  This is [obviously] very destructive and is unrecoverable.
+
+@item clearTable(ConnectionSource, DatabaseTableConfig)
+
+Same as the previous method but with a @code{DatabaseTableConfig} instead.
+
+@end table
+
+@c ----------------------------------------------------------------
+@node TableCreator, Identity Columns, TableUtils, Table Creation
+@subsection TableCreator Class
+
+@cindex TableCreator
+The @code{TableCreator} class is engineered for use with Spring but could be useful in other configurations.  It is configured with the
+@code{ConnectionSource} and the list of DAOs that are being used by the program.
+
+It will automagically create the tables associated with those DAOs if the system property @code{ormlite.auto.create.tables} is set with
+the value "true".  It also will automagically drop the tables that were created if the system property @code{ormlite.auto.drop.tables} is set with
+the value "true".  This is especially useful in tests when you are starting with a test database that needs to get the latest schema but in
+production you want to make specific schema changes by hand.  You can set the system properties in your test start scripts but leave them off
+in the production scripts.
+
+@example
+List<Dao<?, ?>> daoList = new ArrayList<Dao<?, ?>>();
+daoList.add(accountDao);
+@dots{}
+
+TableCreator creator =
+   new TableCreator(connectionSource, daoList);
+// create the tables if the right system property is set
+creator.maybeCreateTables();
+@dots{}
+
+// later, we may want to drop the tables that were created 
+creator.maybeDropTables();
+@end example
+
+For a real life example of using @code{TableCreator} you can @pxref{spring example}.
+
+@c ----------------------------------------------------------------
+@node Identity Columns, Id Column, TableCreator, Using
 @section Identity Columns
 
 Database rows can be identified by a particular column which is defined as the @emph{identity} column.  Rows do not need to
-have an identity column but for many of the DAO operations (update, delete, refresh) an identity column is required.  The
-identity can either be supplied by the user or auto-generated by the database.  Identity columns have unique values for every
-row in the table and they are required if you want to query-by-id, delete, refresh, or update a particular row using the DAO.
-To configure a field as an identity field, you should use one (and only one) of the following three settings from
+have an identity column but many of the DAO operations (update, delete, refresh) require an identity column.  The identity can
+either be supplied by the user or auto-generated by the database.  Identity columns have unique values for every row in the
+table and they must exist if you want to query-by-id, delete, refresh, or update a particular row using the DAO.  To
+configure a field as an identity field, you should use one (and only one) of the following three settings from
 @code{@@DatabaseField}: @code{id}, @code{generatedId}, or @code{generatedIdSequence}.
 
 @menu
@@ -1320,7 +1439,8 @@ accountDao.refresh(account);
 @item delete the account from the database
 
 Removes the row that corresponds to the object from the database.  Once the object has been deleted from the database,
-you can continue to use the object in memory but any update or refresh calls will fail.  This requires an id field.
+you can continue to use the object in memory but any update or refresh calls will most likely fail.  This requires an id
+field.
 
 @example
 accountDao.delete(account);
@@ -1647,7 +1767,7 @@ You can have the foreign objects automagically refreshed by using the @code{fore
 There is example code to show how to use foreign objects.  @xref{foreign objects example}.
 
 @c ----------------------------------------------------------------
-@node Foreign Collection, Table Creation, Foreign Objects, Using
+@node Foreign Collection, DAO Enabled Objects, Foreign Objects, Using
 @section Foreign Collections
 
 @cindex foreign collections
@@ -1675,8 +1795,12 @@ separate query is made immediately and the orders are stored as a list within th
 then the collection is considered to be "lazy" and will iterate over the database using the @code{Dao.iterator()} only when a method
 is called on the collection.
 
-@emph{WARNING:} With lazy collections, even the @code{size()} method causes a iteration across the database.  You most likely just want
-to use the @code{iterator()} and @code{toArray()} methods on lazy collections.
+Remember that when you have a @code{ForeignCollection} field, the class in the collection @emph{must} (in this example Order) must
+gave a foreign field for the class that has the collection (in this example Account).  If Account has a foreign collection of Orders,
+then Order must have an Account foreign field.  It is required so @value{package} can find the orders that match a particular account.   
+
+@emph{WARNING:} With lazy collections, even the @code{size()} method causes a iteration across the database.  You'll most likely want
+to just use the @code{iterator()} and @code{toArray()} methods on lazy collections.
 
 @emph{NOTE:} Like with the @code{Dao.iterator()} method, the iterator returned by a lazy collection must be closed when you are done
 with it because there is a connection open to the database underneath.  A close happens either if you go all of the way through the
@@ -1689,126 +1813,16 @@ lazy collections.
 There is example code to show how to use foreign collections.  @xref{foreign collections example}.
 
 @c ----------------------------------------------------------------
-@node Table Creation, TableUtils, Foreign Collection, Using
-@section Table and Schema Creation
-
-@cindex table creation
-@cindex schema creation
-@cindex creating a table
-There a couple of tools that @value{package} provides to help with creating tables and schema for the classes that you are
-storing in the database.
-
-@menu
-* TableUtils::                 Class which creates and drops tables.
-* TableCreator::               Spring class which auto-creates tables.
-@end menu
-
-@c ----------------------------------------------------------------
-@node TableUtils, TableCreator, Table Creation, Table Creation
-@subsection TableUtils Class
-
-@cindex TableUtils
-
-The @code{TableUtils} class provides a number of static methods that help with creating and dropping tables as well as providing
-the schema statements.
-
-@table @code
-
-@item createTable(ConnectionSource, Class)
-
-This method takes the @code{ConnectionSource} and a class and creates the table associated with the class.  It uses the annotations
-from the class to determine the various fields and characteristics of the table.  It returns the number of statements executed to
-create the table.
-
-@example
-TableUtils.createTable(connectionSource, Account.class);
-@end example
-
-@item createTable(ConnectionSource, DatabaseTableConfig)
-
-Similar to the last method but instead of a class, this method uses a @code{DatabaseTableConfig} to determine the various fields and
-characteristics of the table.
-
-@example
-ArrayList<DatabaseFieldConfig> fieldConfigs =
-   new ArrayList<DatabaseFieldConfig>();
-fieldConfigs.add(new DatabaseFieldConfig("id", null,
-   DataType.UNKNOWN, null, 0, false, false, true, null,
-   false, null, false, null, false, null, false, null,
-   null, false));
-@dots{}
-DatabaseTableConfig<Account> tableConfig =
-   new DatabaseTableConfig<Account>(Account.class,
-     fieldConfigs);
-// this returns number of statements executed to create table
-TableUtils.createTable(connectionSource, tableConfig);
-@end example
-
-@item dropTable(ConnectionSource, Class, boolean ignoreErrors)
-
-This method drops the table associated with the class.  It uses the annotations from the class to determine the name of the table to drop.
-This is not undo-able and most likely will be used only in tests since production tables are dropped rarely.
-
-The ignoreErrors argument is useful when you are dropping a table before you are creating it and the table may not already exist.  If
-ignoreErrors is true then any exceptions are swallowed.
-
-@item dropTable(ConnectionSource, DatabaseTableConfig, boolean ignoreErrors)
-
-Same as the previous method but it will use the @code{DatabaseTableConfig} to determine the name of the table to drop.
-
-@item getCreateTableStatements(ConnectionSource, Class)
-
-This is similar to the @code{createTable} method but will return a list of statements that can be used to create a class.  This is useful
-if you want to load the schema during some sort of database initialization process.
-
-@item getCreateTableStatements(ConnectionSource, DatabaseTableConfig)
-
-Same as the previous method but with a @code{DatabaseTableConfig} instead.
-
-@end table
-
-@c ----------------------------------------------------------------
-@node TableCreator, DAO Enabled Objects, TableUtils, Table Creation
-@subsection TableCreator Class
-
-@cindex TableCreator
-The @code{TableCreator} class is engineered for use with Spring but could be useful in other configurations.  It is configured with the
-@code{ConnectionSource} and the list of DAOs that are being used by the program.
-
-It will automagically create the tables associated with those DAOs if the system property @code{ormlite.auto.create.tables} is set with
-the value "true".  It also will automagically drop the tables that were created if the system property @code{ormlite.auto.drop.tables} is set with
-the value "true".  This is especially useful in tests when you are starting with a test database that needs to get the latest schema but in
-production you want to make specific schema changes by hand.  You can set the system properties in your test start scripts but leave them off
-in the production scripts.
-
-@example
-List<Dao<?, ?>> daoList = new ArrayList<Dao<?, ?>>();
-daoList.add(accountDao);
-@dots{}
-
-TableCreator creator =
-   new TableCreator(connectionSource, daoList);
-// create the tables if the right system property is set
-creator.maybeCreateTables();
-@dots{}
-
-// later, we may want to drop the tables that were created 
-creator.maybeDropTables();
-@end example
-
-For a real life example of using @code{TableCreator} you can @pxref{spring example}.
-
-@c ----------------------------------------------------------------
-@node DAO Enabled Objects, Statement Builder, TableCreator, Using
+@node DAO Enabled Objects, Statement Builder, Foreign Collection, Using
 @section DAO Enabled Objects
 
 @cindex dao enabled objects
 Another ORM pattern is to have the objects perform the database operations on themselves instead of using a
 Database Access Object (DAO).  For example, given a data object @code{foo},  you would call @code{foo.refresh()}
-instead of @code{fooDao.refresh(foo)}.  The default pattern is to use the Dao classes to operate on your
-data classes. This will allow your data classes to have their own hierarchy and isolates the database code in the
-Daos. However, you are free to use this base class if you prefer this pattern.  As of March 2011, it is one of the
-newer parts of @value{package} so feedback and bug reports are welcome.
+instead of @code{fooDao.refresh(foo)}.  The default pattern is to use the Dao classes which allow your data
+classes to have their own hierarchy and it isolates the database code in the Daos. However, you are free to use
+the @code{BaseDaoEnabled} class if you prefer this pattern.  As of March 2011, it is one of the newer parts of
+@value{package} so feedback and bug reports are welcome.
 
 @cindex BaseDaoEnabled
 All classes that are able to refresh (update, delete, etc.) themselves should extend the @code{BaseDaoEnabled} 
@@ -1952,6 +1966,17 @@ List<Account> accountList =
       accountDao.queryBuilder().where()
          .eq(Account.PASSWORD_FIELD_NAME, "qwerty")
          .prepare());
+@end example
+
+You can use another short cut to call @code{query()} or @code{iterator()} either on the @code{QueryBuilder} or @code{Where}
+objects.
+
+@example
+// query for all accounts that have that password
+List<Account> accountList =
+      accountDao.queryBuilder().where()
+         .eq(Account.PASSWORD_FIELD_NAME, "qwerty")
+         .query();
 @end example
 
 @c ----------------------------------------------------------------
@@ -2144,8 +2169,16 @@ to re-call this method to re-prepare the statement for execution.
 @cindex select columns
 @item selectColumns(String... columns)
 
-Add columns to be returned by the SELECT query. If no columns are selected then all columns are returned by
-default. For classes with id columns, the id column is added to the select list automagically.
+@cindex lazy load fields
+@cindex partial fields returned
+Add columns to be returned by the SELECT query and set on any resulting objects. If no columns are selected then
+all columns are returned by default. For classes with id columns, the id column is added to the select list
+automagically.  All fields not selected in the object with be their default values (null, 0, false, etc.).  
+
+This allows you to in effect have lazy loaded fields.  You can specify exactly which fields to be set on the
+resulting objects. This is especially helpful if you have large fields in a table that you don't always
+want to access.  To get all of the fields on the object later, you can either do another query or call
+@code{refresh()} with the object.
 
 @item selectColumns(Iterable<String> columns)
 
@@ -2731,6 +2764,13 @@ the object that matches a single unique column.  You should use queryForId if yo
 Query for all of the items in the object table and return a list of them. For medium sized or large tables,
 this may load a lot of objects into memory so you should consider using the @code{iterator} method instead.
 
+@cindex queryForEq
+@cindex query for single value
+@item queryForEq(String fieldName, Object value)
+
+Query for the items in the object table that match a simple where with a single @code{field = value} type of WHERE clause.  This
+is a convenience method for calling @code{queryBuilder().where().eq(fieldName, value).query()}.
+
 @cindex query builder
 @cindex statement builder
 @item queryBuilder()
@@ -2768,7 +2808,7 @@ should return 1 since 1 row was updated.
 
 @cindex update an object id
 @anchor{updateId}
-@item updateId(T data)
+@item updateId(T data, ID newId)
 
 Update an object in the database to change its id to a new id. The data @emph{must} have its current id set and
 the new-id is passed in as an argument.  After the id has been updated in the database, the id field of the data
@@ -2875,6 +2915,12 @@ number of database operations at once -- maybe loading data from a file. This wi
 "auto-commit" mode, run the call-able and then re-enable "auto-commit".
 
 @emph{NOTE:} If neither auto-commit nor transactions areq supported by the database type then this may do nothing.
+
+@cindex count table rows
+@item countOf()
+
+Returns the value returned from a @code{SELECT COUNT(*)} query which is the number of rows in the table.  Depending on the
+database and the size of the table, this could be expensive. 
 
 @end table
 
@@ -2986,13 +3032,11 @@ and none of the operations are persisted to the database.  Once the operations a
 then the transaction is "committed" and the changes are written to the database.
 
 @example
-// you should create and use one transaction manager for your program
-TransactionManager mgr = new TransactionManager(connectionSource);
-
 // we need the final to see it within the Callable
 final Order order = new Order();
 
-mgr.callInTransaction(new Callable<Void>() @{
+TransactionManager.callInTransaction(connectionSource,
+  new Callable<Void>() @{
     public Void call() throws Exception @{
         // insert our order
         orderDao.create(order);
@@ -3258,30 +3302,31 @@ See source code in SVN: @uref{http://ormlite.com/docs/example-spring}.
 
 @cindex Android examples
 For Android developers, here some complete example application projects to help you get started with that operating system.
+Tarballs of all of the packages are available here: @uref{http://ormlite.com/android/examples/}.
 
 @table @asis
 
 @item HelloAndroid
 
 A basic Android application which does some database operations and then quits.  See the source code in SVN:
-@uref{http://ormlite.com/docs/android-hello}.  A tarball of the package is also here: @uref{http://ormlite.com/android/examples/}.
+@uref{http://ormlite.com/docs/android-hello}.
 
 @item ClickCounter
 
 A nice little application written by Kevin G. that provides a counter type application using @value{package}.  See the source code in SVN:
-@uref{http://ormlite.com/docs/android-click}.  A tarball of the package is also here: @uref{http://ormlite.com/android/examples/}.
+@uref{http://ormlite.com/docs/android-click}.
 
 @item NotifyService
 
 An example of a service application that uses @value{package} written by Kevin G.  See the source code in SVN:
-@uref{http://ormlite.com/docs/android-notify}.  A tarball of the package is also here: @uref{http://ormlite.com/android/examples/}.
+@uref{http://ormlite.com/docs/android-notify}.
 
 @item HelloAndroidH2
 
 This is similar to the HelloAndroid example but it is using JDBC and H2 instead of the build-in Android database calls.  This is more a
 proof of concept rather than a true example.  The wiring for the @code{onCreate} and @code{onUpdate} is a hack.   H2 is certainly fatter
-and slower than the native SQLite.  Also, JDBC under Android is not completely sanctioned by Google and support for it may be removed in the
-future.  See the source code in SVN:  @uref{http://ormlite.com/docs/example-android-hello}.
+and slower than the native SQLite.  Also, JDBC under Android is @emph{not} completely sanctioned by Google and support for it may be removed in the
+future.  See the source code in SVN:  @uref{http://ormlite.com/docs/android-helloh2}.
 
 @end table
 

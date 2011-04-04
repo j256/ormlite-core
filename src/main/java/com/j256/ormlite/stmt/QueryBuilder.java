@@ -8,7 +8,6 @@ import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.stmt.mapped.MappedQueryForId;
 import com.j256.ormlite.stmt.query.OrderBy;
 import com.j256.ormlite.table.TableInfo;
 
@@ -333,33 +332,6 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			}
 		}
 		sb.append(' ');
-	}
-
-	/**
-	 * Internal class used to expose the {@link QueryBuilder#buildStatementString(List, List, List)} method to internal
-	 * classes. Users should use the {@link #prepareStatementString()} method instead.
-	 * 
-	 * This is needed for mapped mapped statements such as {@link MappedQueryForId} but I didn't want the dao user to
-	 * access it directly.
-	 * 
-	 * That I had to do this probably means that I have a bad type hierarchy or package layout but I don't see a better
-	 * way to do it right now.
-	 */
-	public static class InternalQueryBuilder<T, ID> extends QueryBuilder<T, ID> {
-
-		public InternalQueryBuilder(DatabaseType databaseType, TableInfo<T, ID> tableInfo, Dao<T, ID> dao) {
-			super(databaseType, tableInfo, dao);
-		}
-
-		/**
-		 * Internal method to build a query while tracking various arguments. Users should use the
-		 * {@link QueryBuilder#prepare()} method instead.
-		 */
-		@Override
-		public String buildStatementString(List<FieldType> argFieldTypeList, List<FieldType> resultFieldTypeList,
-				List<SelectArg> selectArgList) throws SQLException {
-			return super.buildStatementString(argFieldTypeList, resultFieldTypeList, selectArgList);
-		}
 	}
 
 	/**

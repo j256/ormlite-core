@@ -7,8 +7,6 @@ import java.util.List;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.stmt.QueryBuilder.InternalQueryBuilder;
-import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableInfo;
 
@@ -21,9 +19,9 @@ public class MappedQueryForId<T, ID> extends BaseMappedQuery<T, ID> {
 
 	private final String label;
 
-	protected MappedQueryForId(TableInfo<T, ID> tableInfo, String statement, List<FieldType> argFieldTypeList,
+	protected MappedQueryForId(TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes,
 			List<FieldType> resultFieldTypeList, String label) {
-		super(tableInfo, statement, argFieldTypeList, resultFieldTypeList);
+		super(tableInfo, statement, argFieldTypes, resultFieldTypeList);
 		this.label = label;
 	}
 
@@ -51,25 +49,27 @@ public class MappedQueryForId<T, ID> extends BaseMappedQuery<T, ID> {
 
 	public static <T, ID> MappedQueryForId<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
 			Dao<T, ID> dao) throws SQLException {
-		List<FieldType> argFieldTypeList = new ArrayList<FieldType>();
 		List<FieldType> resultFieldTypeList = new ArrayList<FieldType>();
-		String statement = buildStatement(databaseType, tableInfo, argFieldTypeList, resultFieldTypeList, dao);
-		return new MappedQueryForId<T, ID>(tableInfo, statement, argFieldTypeList, resultFieldTypeList, "query-for-id");
+		String statement = buildStatement(databaseType, tableInfo, resultFieldTypeList, dao);
+		return new MappedQueryForId<T, ID>(tableInfo, statement, new FieldType[] { tableInfo.getIdField() },
+				resultFieldTypeList, "query-for-id");
 	}
 
 	protected static <T, ID> String buildStatement(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
-			List<FieldType> argFieldTypeList, List<FieldType> resultFieldTypeList, Dao<T, ID> dao) throws SQLException {
+			List<FieldType> resultFieldTypeList, Dao<T, ID> dao) throws SQLException {
 		FieldType idField = tableInfo.getIdField();
 		if (idField == null) {
 			throw new SQLException("Cannot query-for-id with " + tableInfo.getDataClass()
 					+ " because it doesn't have an id field");
 		}
-		InternalQueryBuilder<T, ID> qb = new InternalQueryBuilder<T, ID>(databaseType, tableInfo, dao);
-		// this selectArg is ignored here because we pass in the id as a fixed argument
-		SelectArg idSelectArg = new SelectArg();
-		qb.where().eq(idField.getDbColumnName(), idSelectArg);
-		List<SelectArg> selectArgList = new ArrayList<SelectArg>();
-		return qb.buildStatementString(argFieldTypeList, resultFieldTypeList, selectArgList);
+		// build the select statement by hand
+		StringBuilder sb = new StringBuilder();
+		appendTableName(databaseType, sb, "SELECT * FROM ", tableInfo.getTableName());
+		for (FieldType fieldType : tableInfo.getFieldTypes()) {
+			resultFieldTypeList.add(fieldType);
+		}
+		appendWhereId(databaseType, idField, sb, null);
+		return sb.toString();
 	}
 
 	private void logArgs(Object[] args) {

@@ -1,8 +1,6 @@
 package com.j256.ormlite.stmt.mapped;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
@@ -17,8 +15,8 @@ import com.j256.ormlite.table.TableInfo;
  */
 public class MappedUpdateId<T, ID> extends BaseMappedStatement<T, ID> {
 
-	private MappedUpdateId(TableInfo<T, ID> tableInfo, String statement, List<FieldType> argFieldTypeList) {
-		super(tableInfo, statement, argFieldTypeList);
+	private MappedUpdateId(TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes) {
+		super(tableInfo, statement, argFieldTypes);
 	}
 
 	/**
@@ -52,12 +50,11 @@ public class MappedUpdateId<T, ID> extends BaseMappedStatement<T, ID> {
 					+ " because it doesn't have an id field");
 		}
 		StringBuilder sb = new StringBuilder();
-		List<FieldType> argFieldTypeList = new ArrayList<FieldType>();
 		appendTableName(databaseType, sb, "UPDATE ", tableInfo.getTableName());
 		sb.append("SET ");
-		appendFieldColumnName(databaseType, sb, idField, argFieldTypeList);
+		appendFieldColumnName(databaseType, sb, idField, null);
 		sb.append("= ? ");
-		appendWhereId(databaseType, idField, sb, argFieldTypeList);
-		return new MappedUpdateId<T, ID>(tableInfo, sb.toString(), argFieldTypeList);
+		appendWhereId(databaseType, idField, sb, null);
+		return new MappedUpdateId<T, ID>(tableInfo, sb.toString(), new FieldType[] { idField, idField });
 	}
 }

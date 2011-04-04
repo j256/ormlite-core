@@ -25,11 +25,11 @@ public abstract class BaseMappedStatement<T, ID> {
 	protected final String statement;
 	protected final FieldType[] argFieldTypes;
 
-	protected BaseMappedStatement(TableInfo<T, ID> tableInfo, String statement, List<FieldType> argFieldTypeList) {
+	protected BaseMappedStatement(TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes) {
 		this.tableInfo = tableInfo;
 		this.idField = tableInfo.getIdField();
 		this.statement = statement;
-		this.argFieldTypes = argFieldTypeList.toArray(new FieldType[argFieldTypeList.size()]);
+		this.argFieldTypes = argFieldTypes;
 	}
 
 	/**
