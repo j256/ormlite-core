@@ -47,7 +47,15 @@ public class TableUtils {
 	 * @return The number of statements executed to do so.
 	 */
 	public static <T> int createTable(ConnectionSource connectionSource, Class<T> dataClass) throws SQLException {
-		return doCreateTable(connectionSource, DatabaseTableConfig.fromClass(connectionSource, dataClass));
+		return doCreateTable(connectionSource, DatabaseTableConfig.fromClass(connectionSource, dataClass), false);
+	}
+
+	/**
+	 * Create a table if it does not already exist. This is not supported by all databases.
+	 */
+	public static <T> int createTableIfNotExists(ConnectionSource connectionSource, Class<T> dataClass)
+			throws SQLException {
+		return doCreateTable(connectionSource, DatabaseTableConfig.fromClass(connectionSource, dataClass), true);
 	}
 
 	/**
@@ -63,7 +71,16 @@ public class TableUtils {
 	public static <T> int createTable(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig)
 			throws SQLException {
 		tableConfig.extractFieldTypes(connectionSource);
-		return doCreateTable(connectionSource, tableConfig);
+		return doCreateTable(connectionSource, tableConfig, false);
+	}
+
+	/**
+	 * Create a table if it does not already exist. This is not supported by all databases.
+	 */
+	public static <T> int createTableIfNotExists(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig)
+			throws SQLException {
+		tableConfig.extractFieldTypes(connectionSource);
+		return doCreateTable(connectionSource, tableConfig, true);
 	}
 
 	/**
@@ -78,7 +95,8 @@ public class TableUtils {
 	 */
 	public static <T> List<String> getCreateTableStatements(ConnectionSource connectionSource, Class<T> dataClass)
 			throws SQLException {
-		return addCreateTableStatements(connectionSource, DatabaseTableConfig.fromClass(connectionSource, dataClass));
+		return addCreateTableStatements(connectionSource, DatabaseTableConfig.fromClass(connectionSource, dataClass),
+				false);
 	}
 
 	/**
@@ -95,7 +113,7 @@ public class TableUtils {
 	public static <T> List<String> getCreateTableStatements(ConnectionSource connectionSource,
 			DatabaseTableConfig<T> tableConfig) throws SQLException {
 		tableConfig.extractFieldTypes(connectionSource);
-		return addCreateTableStatements(connectionSource, tableConfig);
+		return addCreateTableStatements(connectionSource, tableConfig, false);
 	}
 
 	/**
@@ -229,9 +247,12 @@ public class TableUtils {
 	 * Generate and return the list of statements to create a database table and any associated features.
 	 */
 	private static <T, ID> void addCreateTableStatements(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
-			List<String> statements, List<String> queriesAfter) throws SQLException {
+			List<String> statements, List<String> queriesAfter, boolean ifNotExists) throws SQLException {
 		StringBuilder sb = new StringBuilder();
 		sb.append("CREATE TABLE ");
+		if (ifNotExists && databaseType.isCreateIfNotExistsSupported()) {
+			sb.append("IF NOT EXISTS ");
+		}
 		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
 		sb.append(" (");
 		List<String> additionalArgs = new ArrayList<String>();
@@ -333,14 +354,14 @@ public class TableUtils {
 		statements.addAll(statementsAfter);
 	}
 
-	private static <T, ID> int doCreateTable(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig)
-			throws SQLException {
+	private static <T, ID> int doCreateTable(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig,
+			boolean ifNotExists) throws SQLException {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		TableInfo<T, ID> tableInfo = new TableInfo<T, ID>(databaseType, null, tableConfig);
 		logger.info("creating table '{}'", tableInfo.getTableName());
 		List<String> statements = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();
-		addCreateTableStatements(databaseType, tableInfo, statements, queriesAfter);
+		addCreateTableStatements(databaseType, tableInfo, statements, queriesAfter, ifNotExists);
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		try {
 			int stmtC = doStatements(connection, "create", statements, false, databaseType.isCreateTableReturnsZero());
@@ -415,12 +436,12 @@ public class TableUtils {
 	}
 
 	private static <T, ID> List<String> addCreateTableStatements(ConnectionSource connectionSource,
-			DatabaseTableConfig<T> tableConfig) throws SQLException {
+			DatabaseTableConfig<T> tableConfig, boolean ifNotExists) throws SQLException {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		TableInfo<T, ID> tableInfo = new TableInfo<T, ID>(databaseType, null, tableConfig);
 		List<String> statements = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();
-		addCreateTableStatements(databaseType, tableInfo, statements, queriesAfter);
+		addCreateTableStatements(databaseType, tableInfo, statements, queriesAfter, ifNotExists);
 		return statements;
 	}
 }

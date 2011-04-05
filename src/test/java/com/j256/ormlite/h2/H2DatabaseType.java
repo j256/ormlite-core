@@ -52,4 +52,9 @@ public class H2DatabaseType extends BaseDatabaseType implements DatabaseType {
 		sb.append("AUTO_INCREMENT ");
 		configureId(sb, fieldType, statementsBefore, additionalArgs, queriesAfter);
 	}
+
+	@Override
+	public boolean isCreateIfNotExistsSupported() {
+		return true;
+	}
 }

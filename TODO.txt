@@ -1,5 +1,3 @@
-- support for CREATE IF NOT EXISTS
-
 - support for JTA annotations, whatever the common one is
 	- maybe also JDO?
 
@@ -10,24 +8,6 @@
 - more support for more constraints (other than primary and unique):
 	- maybe a check="> 10" type of addition to DatabaseField so we can add a check constraint
 	- foreign key constraint can be in addition to (or required for) the foreign=true
-
-- for objects that a user does not have control over, how about the ability of defining a Method to construct a particular class
-	- when you create the dao, you have to somehow inject a Method which returns a new object of a certain type
-	- can't do it as part of the annotation, has to be setup with a DatabaseTableConfig I guess
-	- this will allow you to call a constructor with (for example) some null fields to get an instance that can be overridden
-	- should we do the same for setters and getters?  use this method to set the field, use this to get it? (doesn't sound worth it)
-
-- from nelson: can ORMLite build the join table to help with mapping many-to-many relationships?
-	- Accounts are associated with many Customers, Customers may have more than one Account
-	- three table: account, customer, account_customer
-	- account_customer has a column for account_id and customer_id to handle this relationship
-	- how can ORMLite assist in the loading of a Java list of Customers on an Account object
-	- at least a List of customer ids?
-
-- delete method which deletes all of the rows that match a particular field.
-	- to support the foreign key stuff.
-	- deleteFieldEquals(String fieldName, Object value);
-	- List<Object> selectFieldEquals(String fieldName, Object value);
 
 - from Larry: an example-based query, where you supply an object with fields set as criteria
 	- no setting --> no criteria for that field
@@ -42,6 +22,21 @@
 - backend for HBase (Hadoop's bigtable) 
 
 -----------------------------------------------------------------------------------------------------------------------------------
+
+- for objects that a user does not have control over, how about the ability of defining a Method to construct a particular class
+	- ANSWER: not good cost/benefit
+	- when you create the dao, you have to somehow inject a Method which returns a new object of a certain type
+	- can't do it as part of the annotation, has to be setup with a DatabaseTableConfig I guess
+	- this will allow you to call a constructor with (for example) some null fields to get an instance that can be overridden
+	- should we do the same for setters and getters?  use this method to set the field, use this to get it? (doesn't sound worth it)
+
+- from nelson: can ORMLite build the join table to help with mapping many-to-many relationships?
+	- ANSWER: for now I think the foreign collection stuff is the best way
+	- Accounts are associated with many Customers, Customers may have more than one Account
+	- three table: account, customer, account_customer
+	- account_customer has a column for account_id and customer_id to handle this relationship
+	- how can ORMLite assist in the loading of a Java list of Customers on an Account object
+	- at least a List of customer ids?
 
 - consider allowing auto foreign object creation with internal doa's
 	- ANSWER: could be confusing and misleading, no easy way to see if the id field is set

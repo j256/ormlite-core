@@ -268,8 +268,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		// now we drop it
 		dropTable(LocalFoo.class, true);
 		try {
-			// query should fail
-			fooDao.queryForAll();
+			fooDao.countOf();
 			fail("Was expecting a SQL exception");
 		} catch (Exception expected) {
 			// expected
@@ -324,6 +323,39 @@ public class TableUtilsTest extends BaseCoreTest {
 		assertEquals(1, fooDao.create(foo));
 		assertEquals(1, fooDao.countOf());
 		TableUtils.clearTable(connectionSource, LocalFoo.class);
+		assertEquals(0, fooDao.countOf());
+	}
+
+	@Test
+	public void testCreateTableIfNotExists() throws Exception {
+		Dao<LocalFoo, Integer> fooDao = createDao(LocalFoo.class, false);
+		try {
+			fooDao.countOf();
+			fail("Should have thrown an exception");
+		} catch (Exception e) {
+			// ignored
+		}
+		TableUtils.createTableIfNotExists(connectionSource, LocalFoo.class);
+		assertEquals(0, fooDao.countOf());
+		// should not throw
+		TableUtils.createTableIfNotExists(connectionSource, LocalFoo.class);
+		assertEquals(0, fooDao.countOf());
+	}
+
+	@Test
+	public void testCreateTableConfigIfNotExists() throws Exception {
+		Dao<LocalFoo, Integer> fooDao = createDao(LocalFoo.class, false);
+		try {
+			fooDao.countOf();
+			fail("Should have thrown an exception");
+		} catch (Exception e) {
+			// ignored
+		}
+		DatabaseTableConfig<LocalFoo> tableConfig = DatabaseTableConfig.fromClass(connectionSource, LocalFoo.class);
+		TableUtils.createTableIfNotExists(connectionSource, tableConfig);
+		assertEquals(0, fooDao.countOf());
+		// should not throw
+		TableUtils.createTableIfNotExists(connectionSource, tableConfig);
 		assertEquals(0, fooDao.countOf());
 	}
 

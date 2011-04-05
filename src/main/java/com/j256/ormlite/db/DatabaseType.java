@@ -170,4 +170,9 @@ public interface DatabaseType {
 	 * Returns true if the table truncate operation is supported.
 	 */
 	public boolean isTruncateSupported();
+
+	/**
+	 * Returns true if the table creation IF NOT EXISTS syntax is supported.
+	 */
+	public boolean isCreateIfNotExistsSupported();
 }
