@@ -74,7 +74,7 @@ public abstract class BaseDaoEnabled<T, ID> {
 		checkForDao();
 		@SuppressWarnings("unchecked")
 		T t = (T) this;
-		return dao.update(t);
+		return dao.delete(t);
 	}
 
 	/**
