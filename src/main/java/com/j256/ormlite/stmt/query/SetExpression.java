@@ -20,8 +20,8 @@ import com.j256.ormlite.stmt.StatementBuilder;
  */
 public class SetExpression extends BaseComparison {
 
-	public SetExpression(String columnName, String string) throws SQLException {
-		super(columnName, null, string);
+	public SetExpression(String columnName, FieldType fieldType, String string) throws SQLException {
+		super(columnName, fieldType, string);
 	}
 
 	@Override

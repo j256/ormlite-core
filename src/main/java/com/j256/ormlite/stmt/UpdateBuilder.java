@@ -62,7 +62,11 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * </p>
 	 */
 	public StatementBuilder<T, ID> updateColumnExpression(String columnName, String expression) throws SQLException {
-		addUpdateColumnToList(columnName, new SetExpression(columnName, expression));
+		FieldType fieldType = verifyColumnName(columnName);
+		if (fieldType.isForeignCollection()) {
+			throw new SQLException("Can't update foreign colletion field: " + columnName);
+		}
+		addUpdateColumnToList(columnName, new SetExpression(columnName, fieldType, expression));
 		return this;
 	}
 
@@ -130,10 +134,6 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	private void addUpdateColumnToList(String columnName, Clause clause) {
-		FieldType fieldType = verifyColumnName(columnName);
-		if (fieldType.isForeignCollection()) {
-			throw new IllegalArgumentException("Can't update foreign colletion field: " + columnName);
-		}
 		if (updateClauseList == null) {
 			updateClauseList = new ArrayList<Clause>();
 		}
