@@ -567,11 +567,10 @@ public class WhereTest extends BaseCoreTest {
 		assertEquals(sb.toString(), whereSb.toString());
 
 		where.clear();
-		List<Where<Foo, String>> args = new ArrayList<Where<Foo, String>>();
-		args.add(where.eq(Foo.VAL_COLUMN_NAME, val1));
-		args.add(where.eq(Foo.VAL_COLUMN_NAME, val2));
-		args.add(where.eq(Foo.VAL_COLUMN_NAME, val3));
-		where.andMany(args);
+		where.eq(Foo.VAL_COLUMN_NAME, val1);
+		where.eq(Foo.VAL_COLUMN_NAME, val2);
+		where.eq(Foo.VAL_COLUMN_NAME, val3);
+		where.andMany(3);
 		whereSb = new StringBuilder();
 		where.appendSql(databaseType, whereSb, new ArrayList<SelectArg>());
 		sb = new StringBuilder();
@@ -615,11 +614,10 @@ public class WhereTest extends BaseCoreTest {
 		assertEquals(sb.toString(), whereSb.toString());
 
 		where = new Where<Foo, String>(createTableInfo(), null);
-		List<Where<Foo, String>> args = new ArrayList<Where<Foo, String>>();
-		args.add(where.eq(Foo.VAL_COLUMN_NAME, val1));
-		args.add(where.eq(Foo.VAL_COLUMN_NAME, val2));
-		args.add(where.eq(Foo.VAL_COLUMN_NAME, val3));
-		where.orMany(args);
+		where.eq(Foo.VAL_COLUMN_NAME, val1);
+		where.eq(Foo.VAL_COLUMN_NAME, val2);
+		where.eq(Foo.VAL_COLUMN_NAME, val3);
+		where.orMany(3);
 		whereSb = new StringBuilder();
 		where.appendSql(databaseType, whereSb, new ArrayList<SelectArg>());
 		sb = new StringBuilder();

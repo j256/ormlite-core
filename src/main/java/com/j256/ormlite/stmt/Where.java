@@ -187,17 +187,18 @@ public class Where<T, ID> {
 	}
 
 	/**
-	 * Many AND operations strung together. No inline equivalent.
+	 * This method needs to be used carefully. This will absorb a number of clauses that were registered previously with
+	 * calls to {@link Where#eq(String, Object)} or other methods and will string them together with AND's. There is no
+	 * way to verify the number of previous clauses so the programmer has to count precisely.
 	 * 
 	 * <p>
 	 * <b>NOTE:</b> There is no guarantee of the order of the clauses that are generated in the final query.
 	 * </p>
 	 */
-	public Where<T, ID> andMany(Iterable<Where<T, ID>> iterable) {
-		List<Clause> clauses = new ArrayList<Clause>();
-		for (@SuppressWarnings("unused")
-		Where<T, ID> where : iterable) {
-			clauses.add(removeLastClause(idColumnName));
+	public Where<T, ID> andMany(int numClauses) {
+		Clause[] clauses = new Clause[numClauses];
+		for (int i = 0; i < numClauses; i++) {
+			clauses[i] = removeLastClause("andMany");
 		}
 		addClause(new AndMany(clauses));
 		return this;
@@ -393,17 +394,18 @@ public class Where<T, ID> {
 	}
 
 	/**
-	 * Many OR operations strung together. No inline equivalent.
+	 * This method needs to be used carefully. This will absorb a number of clauses that were registered previously with
+	 * calls to {@link Where#eq(String, Object)} or other methods and will string them together with OR's. There is no
+	 * way to verify the number of previous clauses so the programmer has to count precisely.
 	 * 
 	 * <p>
 	 * <b>NOTE:</b> There is no guarantee of the order of the clauses that are generated in the final query.
 	 * </p>
 	 */
-	public Where<T, ID> orMany(Iterable<Where<T, ID>> iterable) {
-		List<Clause> clauses = new ArrayList<Clause>();
-		for (@SuppressWarnings("unused")
-		Where<T, ID> where : iterable) {
-			clauses.add(removeLastClause(idColumnName));
+	public Where<T, ID> orMany(int numClauses) {
+		Clause[] clauses = new Clause[numClauses];
+		for (int i = 0; i < numClauses; i++) {
+			clauses[i] = removeLastClause("orMany");
 		}
 		addClause(new OrMany(clauses));
 		return this;

@@ -2242,14 +2242,22 @@ query calls but instead want to use standard arguments.
 @cindex AND, many in a row
 @item andMany(Where<T, ID>... arguments)
 
-A series of AND operations which takes 2 or more arguments and AND's them together.  The arguments are specified as a
-variable number of arguments type.  This does not have an inline equivalent.
+This takes 2 or more arguments and AND's them together.  The arguments are specified as a variable number of arguments type.
+This does not have an inline equivalent.
+
+@emph{NOTE:} There is no guarantee of the order of the clauses that are generated in the final query.
 
 @emph{NOTE:} There is an annoying code warning that I get with the usage of this method that can be ignored. 
 
-@item andMany(Iterable<Where<T, ID>> arguments)
+@item andMany(int numClauses)
 
-Like the other andMany method except this uses an @code{Iterable} instead of variable arguments.  Usually this is a
+This method needs to be used carefully. This will absorb a number of clauses that were registered previously with
+calls to @code{Where.eq()} or other methods and will string them together with AND's. There is no way to verify the number of
+previous clauses so the programmer has to count precisely.
+
+@emph{NOTE:} There is no guarantee of the order of the clauses that are generated in the final query.
+
+ an @code{Iterable} instead of variable arguments.  Usually this is a
 @code{Collection}.
 
 @cindex BETWEEN, SQL
@@ -2379,15 +2387,16 @@ query calls but instead want to use standard arguments.
 @cindex OR, many in a row
 @item orMany(Where<T, ID>... arguments)
 
-A series of OR operations which takes 2 or more arguments and OR's them together.  The arguments are specified as a
-variable number of arguments type.  This does not have an inline equivalent.
+This takes 2 or more arguments and OR's them together.  The arguments are specified as a variable number of arguments type.
+This does not have an inline equivalent.
 
 @emph{NOTE:} There is an annoying code warning that I get with the usage of this method that can be ignored. 
 
-@item orMany(Iterable<Where<T, ID>> arguments)
+@item orMany(int numClauses)
 
-Like the other orMany method except this uses an @code{Iterable} instead of variable arguments.  Usually this is a
-@code{Collection}.
+This method needs to be used carefully. This will absorb a number of clauses that were registered previously with
+calls to @code{Where.eq()} or other methods and will string them together with OR's. There is no way to verify the number of
+previous clauses so the programmer has to count precisely.
 
 @cindex raw where statement
 @item raw(String rawStatement)

@@ -1,7 +1,6 @@
 package com.j256.ormlite.dao;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -195,25 +194,25 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	public List<T> queryForMatching(T matchObj) throws SQLException {
 		QueryBuilder<T, ID> qb = queryBuilder();
 		Where<T, ID> where = qb.where();
-		List<Where<T, ID>> matchingFields = new ArrayList<Where<T, ID>>();
+		int fieldC = 0;
 		for (FieldType fieldType : tableInfo.getFieldTypes()) {
 			Object fieldValue = fieldType.getFieldValueIfNotDefault(matchObj);
 			if (fieldValue != null) {
-				matchingFields.add(where.eq(fieldType.getDbColumnName(), fieldValue));
+				where.eq(fieldType.getDbColumnName(), fieldValue);
+				fieldC++;
 			}
 		}
-		where.andMany(matchingFields);
+		where.andMany(fieldC);
 		return qb.query();
 	}
 
 	public List<T> queryForFieldValues(Map<String, Object> fieldValues) throws SQLException {
 		QueryBuilder<T, ID> qb = queryBuilder();
 		Where<T, ID> where = qb.where();
-		List<Where<T, ID>> matchingFields = new ArrayList<Where<T, ID>>();
 		for (Map.Entry<String, Object> entry : fieldValues.entrySet()) {
-			matchingFields.add(where.eq(entry.getKey(), entry.getValue()));
+			where.eq(entry.getKey(), entry.getValue());
 		}
-		where.andMany(matchingFields);
+		where.andMany(fieldValues.size());
 		return qb.query();
 	}
 
