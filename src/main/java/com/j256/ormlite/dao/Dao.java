@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 import com.j256.ormlite.field.DataType;
@@ -80,6 +81,17 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 */
 	@Deprecated
 	public RawResults queryForAllRaw(String query) throws SQLException;
+
+	/**
+	 * Query for the rows in the database that match the object passed in as an argument. Any fields in the matching
+	 * object that are not the default value (null, false, 0, 0.0, etc.) are used as the matching parameters with AND.
+	 */
+	public List<T> queryForMatching(T matchObj) throws SQLException;
+
+	/**
+	 * Query for the rows in the database that matches all of the field to value entries from the map passed in.
+	 */
+	public List<T> queryForFieldValues(Map<String, Object> fieldValues) throws SQLException;
 
 	/**
 	 * Create and return a new query builder object which allows you to build a custom SELECT statement. You call

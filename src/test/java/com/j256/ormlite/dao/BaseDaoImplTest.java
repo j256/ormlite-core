@@ -10,7 +10,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
@@ -1406,6 +1408,61 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(2, results.size());
 		assertEquals(id, results.get(0).id);
 		assertEquals(notId, results.get(1).id);
+	}
+
+	@Test
+	public void testQueryForMatching() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		assertEquals(0, dao.countOf());
+		Foo foo = new Foo();
+		String id = "1";
+		foo.id = id;
+		int val = 1231231;
+		foo.val = val;
+		assertEquals(1, dao.create(foo));
+		String notId = "not " + id;
+		foo.id = notId;
+		foo.val = val + 1;
+		assertEquals(1, dao.create(foo));
+
+		Foo match = new Foo();
+		match.val = val;
+		List<Foo> results = dao.queryForMatching(match);
+		assertEquals(1, results.size());
+		assertEquals(id, results.get(0).id);
+
+		match = new Foo();
+		match.id = notId;
+		match.val = val;
+		results = dao.queryForMatching(match);
+		assertEquals(0, results.size());
+	}
+
+	@Test
+	public void testQueryForFieldValues() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		assertEquals(0, dao.countOf());
+		Foo foo = new Foo();
+		String id = "1";
+		foo.id = id;
+		int val = 1231231;
+		foo.val = val;
+		assertEquals(1, dao.create(foo));
+		String notId = "not " + id;
+		foo.id = notId;
+		foo.val = val + 1;
+		assertEquals(1, dao.create(foo));
+
+		Map<String, Object> fieldValues = new HashMap<String, Object>();
+		fieldValues.put(Foo.VAL_COLUMN_NAME, val);
+		List<Foo> results = dao.queryForFieldValues(fieldValues);
+		assertEquals(1, results.size());
+		assertEquals(id, results.get(0).id);
+
+		fieldValues.put(Foo.ID_COLUMN_NAME, notId);
+		fieldValues.put(Foo.VAL_COLUMN_NAME, val);
+		results = dao.queryForFieldValues(fieldValues);
+		assertEquals(0, results.size());
 	}
 
 	/* ============================================================================================== */

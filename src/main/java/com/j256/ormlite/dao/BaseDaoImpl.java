@@ -1,8 +1,10 @@
 package com.j256.ormlite.dao;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 import com.j256.ormlite.db.DatabaseType;
@@ -19,6 +21,7 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.SelectIterator;
 import com.j256.ormlite.stmt.StatementExecutor;
 import com.j256.ormlite.stmt.UpdateBuilder;
+import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.DatabaseTableConfig;
@@ -187,6 +190,31 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	public RawResults queryForAllRaw(String queryString) throws SQLException {
 		checkForInitialized();
 		return statementExecutor.queryForAllRawOld(connectionSource, queryString);
+	}
+
+	public List<T> queryForMatching(T matchObj) throws SQLException {
+		QueryBuilder<T, ID> qb = queryBuilder();
+		Where<T, ID> where = qb.where();
+		List<Where<T, ID>> matchingFields = new ArrayList<Where<T, ID>>();
+		for (FieldType fieldType : tableInfo.getFieldTypes()) {
+			Object fieldValue = fieldType.getFieldValueIfNotDefault(matchObj);
+			if (fieldValue != null) {
+				matchingFields.add(where.eq(fieldType.getDbColumnName(), fieldValue));
+			}
+		}
+		where.andMany(matchingFields);
+		return qb.query();
+	}
+
+	public List<T> queryForFieldValues(Map<String, Object> fieldValues) throws SQLException {
+		QueryBuilder<T, ID> qb = queryBuilder();
+		Where<T, ID> where = qb.where();
+		List<Where<T, ID>> matchingFields = new ArrayList<Where<T, ID>>();
+		for (Map.Entry<String, Object> entry : fieldValues.entrySet()) {
+			matchingFields.add(where.eq(entry.getKey(), entry.getValue()));
+		}
+		where.andMany(matchingFields);
+		return qb.query();
 	}
 
 	public int create(T data) throws SQLException {

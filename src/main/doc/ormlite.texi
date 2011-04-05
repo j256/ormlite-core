@@ -772,6 +772,11 @@ serializes an object as an array of bytes.
 @code{DataType.BYTE_ARRAY} or @code{DataType.SERIALIZABLE} using the @code{dataType} field and will not be auto-detected.
 @xref{DatabaseField dataType}.
 
+@cindex char
+@item char or Character (DataType.CHAR or DataType.CHAR_OBJ)
+
+Persisted as SQL type @code{CHAR}.
+
 @cindex short
 @anchor{datatype short}
 @item short or Short (DataType.SHORT or DataType.SHORT_OBJ)
@@ -1174,6 +1179,10 @@ create the table.
 TableUtils.createTable(connectionSource, Account.class);
 @end example
 
+@item createTableIfNotExists(ConnectionSource, Class)
+
+Similar to the last method but it will only create the table if it doesn't exist.  This is not supported on all database types.
+
 @item createTable(ConnectionSource, DatabaseTableConfig)
 
 Similar to the last method but instead of a class, this method uses a @code{DatabaseTableConfig} to determine the various fields and
@@ -1193,6 +1202,10 @@ DatabaseTableConfig<Account> tableConfig =
 // this returns number of statements executed to create table
 TableUtils.createTable(connectionSource, tableConfig);
 @end example
+
+@item createTableIfNotExists(ConnectionSource, DatabaseTableConfig)
+
+Similar to the last method but it will only create the table if it doesn't exist.  This is not supported on all database types.
 
 @item dropTable(ConnectionSource, Class, boolean ignoreErrors)
 
@@ -2184,11 +2197,19 @@ want to access.  To get all of the fields on the object later, you can either do
 
 Same as the above but with an iterable (such as a collection) instead of a variable list of column names.
 
-@cindex where
+@cindex where method
 @item where()
 
 Build and return the @code{Where} object with which you can customize your @code{WHERE} SQL statements.
 @xref{Where Capabilities}.
+
+@item query()
+
+Convenience method to perform the query.  Same as @code{dao.query(queryBuilder.prepare())}.
+
+@item iterator()
+
+Convenience method to generate the iterator for the query.  Same as @code{dao.iterator(queryBuilder.prepare())}.
 
 @end table
 
@@ -2217,6 +2238,7 @@ Binary AND operation which takes 2 arguments and AND's them together.  This is w
 query calls but instead want to use standard arguments.
 
 @cindex many ANDs in a row
+@cindex andMany
 @cindex AND, many in a row
 @item andMany(Where<T, ID>... arguments)
 
@@ -2353,17 +2375,18 @@ Binary OR operation which takes 2 arguments and OR's them together.  This is whe
 query calls but instead want to use standard arguments.
 
 @cindex many ORs in a row
+@cindex orMany
 @cindex OR, many in a row
 @item orMany(Where<T, ID>... arguments)
 
-A series of AND operations which takes 2 or more arguments and AND's them together.  The arguments are specified as a
+A series of OR operations which takes 2 or more arguments and OR's them together.  The arguments are specified as a
 variable number of arguments type.  This does not have an inline equivalent.
 
 @emph{NOTE:} There is an annoying code warning that I get with the usage of this method that can be ignored. 
 
 @item orMany(Iterable<Where<T, ID>> arguments)
 
-Like the other andMany method except this uses an @code{Iterable} instead of variable arguments.  Usually this is a
+Like the other orMany method except this uses an @code{Iterable} instead of variable arguments.  Usually this is a
 @code{Collection}.
 
 @cindex raw where statement
@@ -2382,6 +2405,16 @@ A short-cut for calling @code{prepare()} on the original @code{QueryBuilder.prep
 @item clear()
 
 Clear out the where object so it can be reused in a new query but with the same @code{QueryBuilder}.
+
+@item query()
+
+Convenience method to perform the query.  Same as @code{queryBuilder.query()} and
+@code{dao.query(queryBuilder.prepare())}.
+
+@item iterator()
+
+Convenience method to generate the iterator for the query.  Same as @code{queryBuilder.iterator()} and
+@code{dao.iterator(queryBuilder.prepare())}.
 
 @end table
 
@@ -2798,6 +2831,19 @@ this may load a lot of objects into memory so you should consider using the @cod
 
 Query for the items in the object table that match a simple where with a single @code{field = value} type of WHERE clause.  This
 is a convenience method for calling @code{queryBuilder().where().eq(fieldName, value).query()}.
+
+@cindex queryForMatching
+@cindex query for matching object
+@item Dao.queryForMatching(T matchObj)
+
+Query for the rows in the database that match the object passed in as an argument. Any fields in the matching object that
+are not the default value (null, false, 0, 0.0, etc.) are used as the matching parameters with @code{AND}.
+
+@cindex queryForFieldValues
+@cindex query for field value map
+@item Dao.queryForFieldValues(T matchObj)
+
+Query for the rows in the database that matches all of the field to value entries from the map passed in.
 
 @cindex query builder
 @cindex statement builder

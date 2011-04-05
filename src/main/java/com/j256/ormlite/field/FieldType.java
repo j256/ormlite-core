@@ -38,6 +38,16 @@ public class FieldType {
 	public static final String FOREIGN_ID_FIELD_SUFFIX = "_id";
 	public static final int MAX_FOREIGN_RECURSE_LEVEL = 10;
 
+	// default values
+	private static boolean DEFAULT_VALUE_BOOLEAN;
+	private static byte DEFAULT_VALUE_BYTE;
+	private static char DEFAULT_VALUE_CHAR;
+	private static short DEFAULT_VALUE_SHORT;
+	private static int DEFAULT_VALUE_INT;
+	private static long DEFAULT_VALUE_LONG;
+	private static float DEFAULT_VALUE_FLOAT;
+	private static double DEFAULT_VALUE_DOUBLE;
+
 	private final ConnectionSource connectionSource;
 	private final String tableName;
 	private final Field field;
@@ -616,6 +626,42 @@ public class FieldType {
 	 */
 	public Object generatedId() {
 		return dataType.generatedId();
+	}
+
+	/**
+	 * Return the value of field in the data argument if it is not the default value for the class. If it is the default
+	 * then null is returned.
+	 */
+	public <FV> FV getFieldValueIfNotDefault(Object object) throws SQLException {
+		FV fieldValue = extractJavaFieldValue(object);
+		if (fieldValue == null) {
+			return null;
+		}
+		boolean isDefault;
+		if (field.getType() == boolean.class) {
+			isDefault = fieldValue.equals(DEFAULT_VALUE_BOOLEAN);
+		} else if (field.getType() == byte.class || field.getType() == Byte.class) {
+			isDefault = fieldValue.equals(DEFAULT_VALUE_BYTE);
+		} else if (field.getType() == char.class || field.getType() == Character.class) {
+			isDefault = fieldValue.equals(DEFAULT_VALUE_CHAR);
+		} else if (field.getType() == short.class || field.getType() == Short.class) {
+			isDefault = fieldValue.equals(DEFAULT_VALUE_SHORT);
+		} else if (field.getType() == int.class || field.getType() == Integer.class) {
+			isDefault = fieldValue.equals(DEFAULT_VALUE_INT);
+		} else if (field.getType() == long.class || field.getType() == Long.class) {
+			isDefault = fieldValue.equals(DEFAULT_VALUE_LONG);
+		} else if (field.getType() == float.class || field.getType() == Float.class) {
+			isDefault = fieldValue.equals(DEFAULT_VALUE_FLOAT);
+		} else if (field.getType() == double.class || field.getType() == Double.class) {
+			isDefault = fieldValue.equals(DEFAULT_VALUE_DOUBLE);
+		} else {
+			isDefault = false;
+		}
+		if (isDefault) {
+			return null;
+		} else {
+			return fieldValue;
+		}
 	}
 
 	/**
