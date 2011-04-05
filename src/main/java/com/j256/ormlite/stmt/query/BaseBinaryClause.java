@@ -28,7 +28,7 @@ abstract class BaseBinaryClause implements NeedsFutureClause {
 	/**
 	 * Append the associated operation to the StringBuilder.
 	 */
-	public abstract StringBuilder appendOperation(StringBuilder sb);
+	public abstract void appendOperation(StringBuilder sb);
 
 	public void appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> columnArgList)
 			throws SQLException {

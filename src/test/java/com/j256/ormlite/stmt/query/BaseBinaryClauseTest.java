@@ -17,8 +17,7 @@ public class BaseBinaryClauseTest {
 		};
 		BaseBinaryClause binaryClause = new BaseBinaryClause(clause) {
 			@Override
-			public StringBuilder appendOperation(StringBuilder sb) {
-				return sb;
+			public void appendOperation(StringBuilder sb) {
 			}
 		};
 		binaryClause.setMissingClause(clause);

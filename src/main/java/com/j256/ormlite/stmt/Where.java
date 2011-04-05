@@ -10,6 +10,7 @@ import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.QueryBuilder.InternalQueryBuilderWrapper;
 import com.j256.ormlite.stmt.query.And;
+import com.j256.ormlite.stmt.query.AndMany;
 import com.j256.ormlite.stmt.query.Between;
 import com.j256.ormlite.stmt.query.Clause;
 import com.j256.ormlite.stmt.query.Eq;
@@ -27,6 +28,7 @@ import com.j256.ormlite.stmt.query.Ne;
 import com.j256.ormlite.stmt.query.NeedsFutureClause;
 import com.j256.ormlite.stmt.query.Not;
 import com.j256.ormlite.stmt.query.Or;
+import com.j256.ormlite.stmt.query.OrMany;
 import com.j256.ormlite.stmt.query.Raw;
 import com.j256.ormlite.table.TableInfo;
 
@@ -161,6 +163,43 @@ public class Where<T, ID> {
 		Clause rightClause = removeLastClause("AND");
 		Clause leftClause = removeLastClause("AND");
 		addClause(new And(leftClause, rightClause));
+		return this;
+	}
+
+	/**
+	 * Many AND operations strung together. No inline equivalent.
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> There is no guarantee of the order of the clauses that are generated in the final query.
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> I can't remove the code warning associated with this method. Use the iterator method below.
+	 * </p>
+	 */
+	public Where<T, ID> andMany(Where<T, ID>... args) {
+		Clause[] clauses = new Clause[args.length];
+		for (int i = 0; i < args.length; i++) {
+			clauses[i] = removeLastClause("andMany");
+		}
+		addClause(new AndMany(clauses));
+		return this;
+	}
+
+	/**
+	 * Many AND operations strung together. No inline equivalent.
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> There is no guarantee of the order of the clauses that are generated in the final query.
+	 * </p>
+	 */
+	public Where<T, ID> andMany(Iterable<Where<T, ID>> iterable) {
+		List<Clause> clauses = new ArrayList<Clause>();
+		for (@SuppressWarnings("unused")
+		Where<T, ID> where : iterable) {
+			clauses.add(removeLastClause(idColumnName));
+		}
+		addClause(new AndMany(clauses));
 		return this;
 	}
 
@@ -330,6 +369,43 @@ public class Where<T, ID> {
 		Clause rightClause = removeLastClause("OR");
 		Clause leftClause = removeLastClause("OR");
 		addClause(new Or(leftClause, rightClause));
+		return this;
+	}
+
+	/**
+	 * Many OR operations strung together. No inline equivalent.
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> There is no guarantee of the order of the clauses that are generated in the final query.
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> I can't remove the code warning associated with this method. Use the iterator method below.
+	 * </p>
+	 */
+	public Where<T, ID> orMany(Where<T, ID>... args) {
+		Clause[] clauses = new Clause[args.length];
+		for (int i = 0; i < args.length; i++) {
+			clauses[i] = removeLastClause("andMany");
+		}
+		addClause(new OrMany(clauses));
+		return this;
+	}
+
+	/**
+	 * Many OR operations strung together. No inline equivalent.
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> There is no guarantee of the order of the clauses that are generated in the final query.
+	 * </p>
+	 */
+	public Where<T, ID> orMany(Iterable<Where<T, ID>> iterable) {
+		List<Clause> clauses = new ArrayList<Clause>();
+		for (@SuppressWarnings("unused")
+		Where<T, ID> where : iterable) {
+			clauses.add(removeLastClause(idColumnName));
+		}
+		addClause(new OrMany(clauses));
 		return this;
 	}
 

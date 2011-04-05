@@ -19,8 +19,7 @@ public class And extends BaseBinaryClause {
 	}
 
 	@Override
-	public StringBuilder appendOperation(StringBuilder sb) {
+	public void appendOperation(StringBuilder sb) {
 		sb.append("AND ");
-		return sb;
 	}
 }

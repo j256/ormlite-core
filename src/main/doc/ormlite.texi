@@ -2216,6 +2216,20 @@ you are using inline query calls.
 Binary AND operation which takes 2 arguments and AND's them together.  This is when you are @emph{not} using inline
 query calls but instead want to use standard arguments.
 
+@cindex many ANDs in a row
+@cindex AND, many in a row
+@item andMany(Where<T, ID>... arguments)
+
+A series of AND operations which takes 2 or more arguments and AND's them together.  The arguments are specified as a
+variable number of arguments type.  This does not have an inline equivalent.
+
+@emph{NOTE:} There is an annoying code warning that I get with the usage of this method that can be ignored. 
+
+@item andMany(Iterable<Where<T, ID>> arguments)
+
+Like the other andMany method except this uses an @code{Iterable} instead of variable arguments.  Usually this is a
+@code{Collection}.
+
 @cindex BETWEEN, SQL
 @item between(String columnName, Object low, Object high)
 
@@ -2337,6 +2351,20 @@ you are using inline query calls.
 
 Binary OR operation which takes 2 arguments and OR's them together.  This is when you are @emph{not} using inline
 query calls but instead want to use standard arguments.
+
+@cindex many ORs in a row
+@cindex OR, many in a row
+@item orMany(Where<T, ID>... arguments)
+
+A series of AND operations which takes 2 or more arguments and AND's them together.  The arguments are specified as a
+variable number of arguments type.  This does not have an inline equivalent.
+
+@emph{NOTE:} There is an annoying code warning that I get with the usage of this method that can be ignored. 
+
+@item orMany(Iterable<Where<T, ID>> arguments)
+
+Like the other andMany method except this uses an @code{Iterable} instead of variable arguments.  Usually this is a
+@code{Collection}.
 
 @cindex raw where statement
 @item raw(String rawStatement)

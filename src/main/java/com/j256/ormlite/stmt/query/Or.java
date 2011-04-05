@@ -18,8 +18,7 @@ public class Or extends BaseBinaryClause {
 	}
 
 	@Override
-	public StringBuilder appendOperation(StringBuilder sb) {
+	public void appendOperation(StringBuilder sb) {
 		sb.append("OR ");
-		return sb;
 	}
 }

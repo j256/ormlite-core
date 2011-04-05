@@ -4,6 +4,8 @@
 	* CORE: Added a countOf() call to the Dao to return the select count(*) result for the table.
 	* CORE: Added s clearTable() method to TableUtils.  It will do a TRUNCATE if supported otherwise a DELETE.
 	* CORE: Added a convenience queryForEq() method to the Dao which matches on a single field value.
+	* CORE: Added support for CREATE TABLE IF NOT EXISTS for those databases which support it: H2, MySQL, SQLite.
+	* CORE: Added a Where.andMany() and Where.orMany() to string many clauses together with AND/OR.
 	* CORE: Tightened up some of the allocations done internally when building statements.
 
 4.18: 3/30/2011 (svn r1593)
