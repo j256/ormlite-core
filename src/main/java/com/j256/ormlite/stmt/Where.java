@@ -152,7 +152,7 @@ public class Where<T, ID> {
 	 * AND operation which takes the previous clause and the next clause and AND's them together.
 	 */
 	public Where<T, ID> and() {
-		addNeedsFuture(new AndMany(removeLastClause("AND")));
+		addNeedsFuture(new AndMany(pop("AND")));
 		return this;
 	}
 
@@ -172,12 +172,13 @@ public class Where<T, ID> {
 			clauses = null;
 		} else {
 			clauses = new Clause[others.length];
+			// fill in reverse order
 			for (int i = others.length - 1; i >= 0; i--) {
-				clauses[i] = removeLastClause("AND");
+				clauses[i] = pop("AND");
 			}
 		}
-		Clause secondClause = removeLastClause("AND");
-		Clause firstClause = removeLastClause("AND");
+		Clause secondClause = pop("AND");
+		Clause firstClause = pop("AND");
 		addClause(new AndMany(firstClause, secondClause, clauses));
 		return this;
 	}
@@ -194,7 +195,7 @@ public class Where<T, ID> {
 	public Where<T, ID> and(int numClauses) {
 		Clause[] clauses = new Clause[numClauses];
 		for (int i = numClauses - 1; i >= 0; i--) {
-			clauses[i] = removeLastClause("AND");
+			clauses[i] = pop("AND");
 		}
 		addClause(new AndMany(clauses));
 		return this;
@@ -347,7 +348,7 @@ public class Where<T, ID> {
 	 * Used to NOT the argument clause specified.
 	 */
 	public Where<T, ID> not(Where<T, ID> comparison) {
-		addClause(new Not(removeLastClause("NOT")));
+		addClause(new Not(pop("NOT")));
 		return this;
 	}
 
@@ -355,7 +356,7 @@ public class Where<T, ID> {
 	 * OR operation which takes the previous clause and the next clause and OR's them together.
 	 */
 	public Where<T, ID> or() {
-		addNeedsFuture(new OrMany(removeLastClause("OR")));
+		addNeedsFuture(new OrMany(pop("OR")));
 		return this;
 	}
 
@@ -375,12 +376,13 @@ public class Where<T, ID> {
 			clauses = null;
 		} else {
 			clauses = new Clause[others.length];
+			// fill in reverse order
 			for (int i = others.length - 1; i >= 0; i--) {
-				clauses[i] = removeLastClause("OR");
+				clauses[i] = pop("OR");
 			}
 		}
-		Clause secondClause = removeLastClause("OR");
-		Clause firstClause = removeLastClause("OR");
+		Clause secondClause = pop("OR");
+		Clause firstClause = pop("OR");
 		addClause(new OrMany(firstClause, secondClause, clauses));
 		return this;
 	}
@@ -397,7 +399,7 @@ public class Where<T, ID> {
 	public Where<T, ID> or(int numClauses) {
 		Clause[] clauses = new Clause[numClauses];
 		for (int i = numClauses - 1; i >= 0; i--) {
-			clauses[i] = removeLastClause("OR");
+			clauses[i] = pop("OR");
 		}
 		addClause(new OrMany(clauses));
 		return this;
@@ -493,7 +495,7 @@ public class Where<T, ID> {
 	private void addNeedsFuture(NeedsFutureClause needsFuture) {
 		if (this.needsFuture == null) {
 			this.needsFuture = needsFuture;
-			addClause(needsFuture);
+			push(needsFuture);
 		} else {
 			throw new IllegalStateException(this.needsFuture + " is already waiting for a future clause, can't add: "
 					+ needsFuture);
@@ -501,21 +503,12 @@ public class Where<T, ID> {
 	}
 
 	private void addClause(Clause clause) {
-		if (needsFuture == null || clause == needsFuture) {
+		if (needsFuture == null) {
 			push(clause);
 		} else {
 			// we have a binary statement which was called before the right clause was defined
 			needsFuture.setMissingClause(clause);
 			needsFuture = null;
-		}
-	}
-
-	private Clause removeLastClause(String label) {
-		if (isEmpty()) {
-			throw new IllegalStateException("Expecting there to be a clause already defined for '" + label
-					+ "' operation");
-		} else {
-			return pop();
 		}
 	}
 
@@ -546,7 +539,11 @@ public class Where<T, ID> {
 		clauseStack[clauseStackLevel++] = clause;
 	}
 
-	private Clause pop() {
+	private Clause pop(String label) {
+		if (clauseStackLevel == 0) {
+			throw new IllegalStateException("Expecting there to be a clause already defined for '" + label
+					+ "' operation");
+		}
 		Clause clause = clauseStack[--clauseStackLevel];
 		// to help gc
 		clauseStack[clauseStackLevel] = null;
