@@ -202,7 +202,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 				fieldC++;
 			}
 		}
-		where.andMany(fieldC);
+		where.and(fieldC);
 		return qb.query();
 	}
 
@@ -212,7 +212,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		for (Map.Entry<String, Object> entry : fieldValues.entrySet()) {
 			where.eq(entry.getKey(), entry.getValue());
 		}
-		where.andMany(fieldValues.size());
+		where.and(fieldValues.size());
 		return qb.query();
 	}
 

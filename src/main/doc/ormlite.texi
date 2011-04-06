@@ -2232,24 +2232,17 @@ For a good tutorial of SQL commands, here's a good site: @uref{http://www.w3scho
 Binary @code{AND} operation which takes the previous clause and the next clause and AND's them together.  This is when
 you are using inline query calls.
 
-@item and(Where<T, ID> left, Where<T, ID> right)
+@cindex AND, many arguments
+@item and(Where<T, ID> first, Where<T, ID> second, Where<T, ID>... others)
 
-Binary AND operation which takes 2 arguments and AND's them together.  This is when you are @emph{not} using inline
+AND operation which takes 2 or more arguments and AND's them together.  This is when you are @emph{not} using inline
 query calls but instead want to use standard arguments.
-
-@cindex many ANDs in a row
-@cindex andMany
-@cindex AND, many in a row
-@item andMany(Where<T, ID>... arguments)
-
-This takes 2 or more arguments and AND's them together.  The arguments are specified as a variable number of arguments type.
-This does not have an inline equivalent.
 
 @emph{NOTE:} There is no guarantee of the order of the clauses that are generated in the final query.
 
-@emph{NOTE:} There is an annoying code warning that I get with the usage of this method that can be ignored. 
+@emph{NOTE:} There is an annoying code warning that I get with the usage of this method with more than 2 arguments that can be ignored. 
 
-@item andMany(int numClauses)
+@item and(int numClauses)
 
 This method needs to be used carefully. This will absorb a number of clauses that were registered previously with
 calls to @code{Where.eq()} or other methods and will string them together with AND's. There is no way to verify the number of
@@ -2377,22 +2370,16 @@ query calls but instead want to use standard arguments.
 Binary @code{OR} operation which takes the previous clause and the next clause and OR's them together.  This is when
 you are using inline query calls.
 
-@item or(Where<T, ID> left, Where<T, ID> right)
+@item or(Where<T, ID> first, Where<T, ID> second, Where<T, ID>... others)
 
-Binary OR operation which takes 2 arguments and OR's them together.  This is when you are @emph{not} using inline
+OR operation which takes 2 or more arguments and OR's them together.  This is when you are @emph{not} using inline
 query calls but instead want to use standard arguments.
 
-@cindex many ORs in a row
-@cindex orMany
-@cindex OR, many in a row
-@item orMany(Where<T, ID>... arguments)
-
-This takes 2 or more arguments and OR's them together.  The arguments are specified as a variable number of arguments type.
-This does not have an inline equivalent.
+@emph{NOTE:} There is no guarantee of the order of the clauses that are generated in the final query.
 
 @emph{NOTE:} There is an annoying code warning that I get with the usage of this method that can be ignored. 
 
-@item orMany(int numClauses)
+@item or(int numClauses)
 
 This method needs to be used carefully. This will absorb a number of clauses that were registered previously with
 calls to @code{Where.eq()} or other methods and will string them together with OR's. There is no way to verify the number of

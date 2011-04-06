@@ -9,7 +9,6 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.QueryBuilder.InternalQueryBuilderWrapper;
-import com.j256.ormlite.stmt.query.And;
 import com.j256.ormlite.stmt.query.AndMany;
 import com.j256.ormlite.stmt.query.Between;
 import com.j256.ormlite.stmt.query.Clause;
@@ -27,7 +26,6 @@ import com.j256.ormlite.stmt.query.Lt;
 import com.j256.ormlite.stmt.query.Ne;
 import com.j256.ormlite.stmt.query.NeedsFutureClause;
 import com.j256.ormlite.stmt.query.Not;
-import com.j256.ormlite.stmt.query.Or;
 import com.j256.ormlite.stmt.query.OrMany;
 import com.j256.ormlite.stmt.query.Raw;
 import com.j256.ormlite.table.TableInfo;
@@ -152,37 +150,33 @@ public class Where<T, ID> {
 	 * AND operation which takes the previous clause and the next clause and AND's them together.
 	 */
 	public Where<T, ID> and() {
-		addNeedsFuture(new And(removeLastClause("AND")));
+		addNeedsFuture(new AndMany(removeLastClause("AND")));
 		return this;
 	}
 
 	/**
-	 * AND operation which takes 2 arguments and AND's them together.
-	 */
-	public Where<T, ID> and(Where<T, ID> left, Where<T, ID> right) {
-		Clause rightClause = removeLastClause("AND");
-		Clause leftClause = removeLastClause("AND");
-		addClause(new And(leftClause, rightClause));
-		return this;
-	}
-
-	/**
-	 * Many AND operations strung together. No inline equivalent.
+	 * AND operation which takes 2 (or more) arguments and AND's them together.
 	 * 
 	 * <p>
 	 * <b>NOTE:</b> There is no guarantee of the order of the clauses that are generated in the final query.
 	 * </p>
-	 * 
 	 * <p>
-	 * <b>NOTE:</b> I can't remove the code warning associated with this method. Use the iterator method below.
+	 * <b>NOTE:</b> I couldn't remove the code warning associated with this method when used with more than 2 arguments.
 	 * </p>
 	 */
-	public Where<T, ID> andMany(Where<T, ID>... args) {
-		Clause[] clauses = new Clause[args.length];
-		for (int i = 0; i < args.length; i++) {
-			clauses[i] = removeLastClause("andMany");
+	public Where<T, ID> and(Where<T, ID> first, Where<T, ID> second, Where<T, ID>... others) {
+		Clause[] clauses;
+		if (others.length == 0) {
+			clauses = null;
+		} else {
+			clauses = new Clause[others.length];
+			for (int i = others.length - 1; i >= 0; i--) {
+				clauses[i] = removeLastClause("AND");
+			}
 		}
-		addClause(new AndMany(clauses));
+		Clause secondClause = removeLastClause("AND");
+		Clause firstClause = removeLastClause("AND");
+		addClause(new AndMany(firstClause, secondClause, clauses));
 		return this;
 	}
 
@@ -195,10 +189,10 @@ public class Where<T, ID> {
 	 * <b>NOTE:</b> There is no guarantee of the order of the clauses that are generated in the final query.
 	 * </p>
 	 */
-	public Where<T, ID> andMany(int numClauses) {
+	public Where<T, ID> and(int numClauses) {
 		Clause[] clauses = new Clause[numClauses];
-		for (int i = 0; i < numClauses; i++) {
-			clauses[i] = removeLastClause("andMany");
+		for (int i = numClauses - 1; i >= 0; i--) {
+			clauses[i] = removeLastClause("AND");
 		}
 		addClause(new AndMany(clauses));
 		return this;
@@ -359,37 +353,33 @@ public class Where<T, ID> {
 	 * OR operation which takes the previous clause and the next clause and OR's them together.
 	 */
 	public Where<T, ID> or() {
-		addNeedsFuture(new Or(removeLastClause("OR")));
+		addNeedsFuture(new OrMany(removeLastClause("OR")));
 		return this;
 	}
 
 	/**
 	 * OR operation which takes 2 arguments and OR's them together.
-	 */
-	public Where<T, ID> or(Where<T, ID> left, Where<T, ID> right) {
-		Clause rightClause = removeLastClause("OR");
-		Clause leftClause = removeLastClause("OR");
-		addClause(new Or(leftClause, rightClause));
-		return this;
-	}
-
-	/**
-	 * Many OR operations strung together. No inline equivalent.
 	 * 
 	 * <p>
 	 * <b>NOTE:</b> There is no guarantee of the order of the clauses that are generated in the final query.
 	 * </p>
-	 * 
 	 * <p>
 	 * <b>NOTE:</b> I can't remove the code warning associated with this method. Use the iterator method below.
 	 * </p>
 	 */
-	public Where<T, ID> orMany(Where<T, ID>... args) {
-		Clause[] clauses = new Clause[args.length];
-		for (int i = 0; i < args.length; i++) {
-			clauses[i] = removeLastClause("andMany");
+	public Where<T, ID> or(Where<T, ID> left, Where<T, ID> right, Where<T, ID>... others) {
+		Clause[] clauses;
+		if (others.length == 0) {
+			clauses = null;
+		} else {
+			clauses = new Clause[others.length];
+			for (int i = others.length - 1; i >= 0; i--) {
+				clauses[i] = removeLastClause("OR");
+			}
 		}
-		addClause(new OrMany(clauses));
+		Clause secondClause = removeLastClause("OR");
+		Clause firstClause = removeLastClause("OR");
+		addClause(new OrMany(firstClause, secondClause, clauses));
 		return this;
 	}
 
@@ -402,10 +392,10 @@ public class Where<T, ID> {
 	 * <b>NOTE:</b> There is no guarantee of the order of the clauses that are generated in the final query.
 	 * </p>
 	 */
-	public Where<T, ID> orMany(int numClauses) {
+	public Where<T, ID> or(int numClauses) {
 		Clause[] clauses = new Clause[numClauses];
-		for (int i = 0; i < numClauses; i++) {
-			clauses[i] = removeLastClause("orMany");
+		for (int i = numClauses - 1; i >= 0; i--) {
+			clauses[i] = removeLastClause("OR");
 		}
 		addClause(new OrMany(clauses));
 		return this;

@@ -9,11 +9,6 @@
 	- maybe a check="> 10" type of addition to DatabaseField so we can add a check constraint
 	- foreign key constraint can be in addition to (or required for) the foreign=true
 
-- from Larry: an example-based query, where you supply an object with fields set as criteria
-	- no setting --> no criteria for that field
-	- primitive types a problem for the 'no criteria' case
-	- maybe it would be better to have a Map with values 
-
 - flesh out the SimpleDB version of the library:
 	- get all tests passing
 	- think about batch operations
@@ -31,7 +26,7 @@
 	- should we do the same for setters and getters?  use this method to set the field, use this to get it? (doesn't sound worth it)
 
 - from nelson: can ORMLite build the join table to help with mapping many-to-many relationships?
-	- ANSWER: for now I think the foreign collection stuff is the best way
+	- ANSWER: for now I think the foreign collection stuff works adequately for this
 	- Accounts are associated with many Customers, Customers may have more than one Account
 	- three table: account, customer, account_customer
 	- account_customer has a column for account_id and customer_id to handle this relationship
@@ -45,7 +40,7 @@
 	- maybe just require someone to use the other DAO
 
 - allow any field as the foreign id column (not just the id field)
-	- ANSWER: cost/benefit is not there
+	- ANSWER: not good cost/benefit
 	- specify the field in the remote object (must match the name directly)
 	- creates a prepared query 'WHERE field = value'
 	- uses queryForFirst to return object

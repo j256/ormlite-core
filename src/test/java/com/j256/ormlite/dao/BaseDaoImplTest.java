@@ -1370,7 +1370,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(1, dao.create(foo));
 
 		Where<Foo, String> where = dao.queryBuilder().where();
-		where.andMany(where.eq(Foo.VAL_COLUMN_NAME, val), where.eq(Foo.ID_COLUMN_NAME, id));
+		where.and(where.eq(Foo.VAL_COLUMN_NAME, val), where.eq(Foo.ID_COLUMN_NAME, id));
 
 		List<Foo> results = where.query();
 		assertEquals(1, results.size());
@@ -1378,8 +1378,44 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 		// this should match none
 		where.clear();
-		where.andMany(where.eq(Foo.VAL_COLUMN_NAME, val), where.eq(Foo.ID_COLUMN_NAME, id),
-				where.eq(Foo.ID_COLUMN_NAME, notId));
+		where.and(where.eq(Foo.ID_COLUMN_NAME, id), where.eq(Foo.ID_COLUMN_NAME, notId),
+				where.eq(Foo.VAL_COLUMN_NAME, val), where.eq(Foo.VAL_COLUMN_NAME, val + 1));
+		results = where.query();
+		assertEquals(0, results.size());
+	}
+
+	@Test
+	public void testUseOfAndInt() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		assertEquals(0, dao.countOf());
+		Foo foo = new Foo();
+		String id = "1";
+		foo.id = id;
+		int val = 1231231;
+		foo.val = val;
+		assertEquals(1, dao.create(foo));
+		String notId = "not " + id;
+		foo.id = notId;
+		foo.val = val + 1;
+		assertEquals(1, dao.create(foo));
+
+		Where<Foo, String> where = dao.queryBuilder().where();
+		where.eq(Foo.VAL_COLUMN_NAME, val);
+		where.eq(Foo.ID_COLUMN_NAME, id);
+		where.and(2);
+
+		List<Foo> results = where.query();
+		assertEquals(1, results.size());
+		assertEquals(id, results.get(0).id);
+
+		// this should match none
+		where.clear();
+		where.eq(Foo.ID_COLUMN_NAME, id);
+		where.eq(Foo.ID_COLUMN_NAME, notId);
+		where.eq(Foo.VAL_COLUMN_NAME, val);
+		where.eq(Foo.VAL_COLUMN_NAME, val + 1);
+		where.and(4);
+
 		results = where.query();
 		assertEquals(0, results.size());
 	}
@@ -1401,8 +1437,36 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(1, dao.create(foo));
 
 		Where<Foo, String> where = dao.queryBuilder().where();
-		where.orMany(where.eq(Foo.ID_COLUMN_NAME, id), where.eq(Foo.ID_COLUMN_NAME, notId),
-				where.eq(Foo.VAL_COLUMN_NAME, val + 1), where.eq(Foo.VAL_COLUMN_NAME, val + 1));
+		where.or(where.eq(Foo.ID_COLUMN_NAME, id), where.eq(Foo.ID_COLUMN_NAME, notId),
+				where.eq(Foo.VAL_COLUMN_NAME, val), where.eq(Foo.VAL_COLUMN_NAME, val + 1));
+
+		List<Foo> results = where.query();
+		assertEquals(2, results.size());
+		assertEquals(id, results.get(0).id);
+		assertEquals(notId, results.get(1).id);
+	}
+
+	@Test
+	public void testUseOfOrInt() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		assertEquals(0, dao.countOf());
+		Foo foo = new Foo();
+		String id = "1";
+		foo.id = id;
+		int val = 1231231;
+		foo.val = val;
+		assertEquals(1, dao.create(foo));
+		String notId = "not " + id;
+		foo.id = notId;
+		foo.val = val + 1;
+		assertEquals(1, dao.create(foo));
+
+		Where<Foo, String> where = dao.queryBuilder().where();
+		where.eq(Foo.ID_COLUMN_NAME, id);
+		where.eq(Foo.ID_COLUMN_NAME, notId);
+		where.eq(Foo.VAL_COLUMN_NAME, val);
+		where.eq(Foo.VAL_COLUMN_NAME, val + 1);
+		where.or(4);
 
 		List<Foo> results = where.query();
 		assertEquals(2, results.size());

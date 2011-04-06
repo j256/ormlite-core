@@ -544,25 +544,29 @@ public class WhereTest extends BaseCoreTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testAnyMany() throws Exception {
-		int val1 = 112;
-		int val2 = 113;
-		int val3 = 114;
+		int val1 = 111;
+		int val2 = 112;
+		int val3 = 113;
+		int val4 = 114;
 		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
-		where.andMany(where.eq(Foo.VAL_COLUMN_NAME, val1), where.eq(Foo.VAL_COLUMN_NAME, val2),
-				where.eq(Foo.VAL_COLUMN_NAME, val3));
+		where.and(where.eq(Foo.VAL_COLUMN_NAME, val1), where.eq(Foo.VAL_COLUMN_NAME, val2),
+				where.eq(Foo.VAL_COLUMN_NAME, val3), where.eq(Foo.VAL_COLUMN_NAME, val4));
 		StringBuilder whereSb = new StringBuilder();
 		where.appendSql(databaseType, whereSb, new ArrayList<SelectArg>());
 		StringBuilder sb = new StringBuilder();
 		sb.append("(");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		// NOTE: they are done in reverse order
-		sb.append(" = ").append(val3);
+		sb.append(" = ").append(val1);
 		sb.append(" AND ");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" = ").append(val2);
 		sb.append(" AND ");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
-		sb.append(" = ").append(val1);
+		sb.append(" = ").append(val3);
+		sb.append(" AND ");
+		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
+		sb.append(" = ").append(val4);
 		sb.append(" ) ");
 		assertEquals(sb.toString(), whereSb.toString());
 
@@ -570,7 +574,7 @@ public class WhereTest extends BaseCoreTest {
 		where.eq(Foo.VAL_COLUMN_NAME, val1);
 		where.eq(Foo.VAL_COLUMN_NAME, val2);
 		where.eq(Foo.VAL_COLUMN_NAME, val3);
-		where.andMany(3);
+		where.and(3);
 		whereSb = new StringBuilder();
 		where.appendSql(databaseType, whereSb, new ArrayList<SelectArg>());
 		sb = new StringBuilder();
@@ -592,24 +596,28 @@ public class WhereTest extends BaseCoreTest {
 	@SuppressWarnings("unchecked")
 	public void testOrMany() throws Exception {
 		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
-		int val1 = 112;
-		int val2 = 113;
-		int val3 = 114;
-		where.orMany(where.eq(Foo.VAL_COLUMN_NAME, val1), where.eq(Foo.VAL_COLUMN_NAME, val2),
-				where.eq(Foo.VAL_COLUMN_NAME, val3));
+		int val1 = 111;
+		int val2 = 112;
+		int val3 = 113;
+		int val4 = 114;
+		where.or(where.eq(Foo.VAL_COLUMN_NAME, val1), where.eq(Foo.VAL_COLUMN_NAME, val2),
+				where.eq(Foo.VAL_COLUMN_NAME, val3), where.eq(Foo.VAL_COLUMN_NAME, val4));
 		StringBuilder whereSb = new StringBuilder();
 		where.appendSql(databaseType, whereSb, new ArrayList<SelectArg>());
 		StringBuilder sb = new StringBuilder();
 		sb.append("(");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		// NOTE: they are done in reverse order
-		sb.append(" = ").append(val3);
+		sb.append(" = ").append(val1);
 		sb.append(" OR ");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" = ").append(val2);
 		sb.append(" OR ");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
-		sb.append(" = ").append(val1);
+		sb.append(" = ").append(val3);
+		sb.append(" OR ");
+		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
+		sb.append(" = ").append(val4);
 		sb.append(" ) ");
 		assertEquals(sb.toString(), whereSb.toString());
 
@@ -617,7 +625,7 @@ public class WhereTest extends BaseCoreTest {
 		where.eq(Foo.VAL_COLUMN_NAME, val1);
 		where.eq(Foo.VAL_COLUMN_NAME, val2);
 		where.eq(Foo.VAL_COLUMN_NAME, val3);
-		where.orMany(3);
+		where.or(3);
 		whereSb = new StringBuilder();
 		where.appendSql(databaseType, whereSb, new ArrayList<SelectArg>());
 		sb = new StringBuilder();
