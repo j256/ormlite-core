@@ -574,20 +574,24 @@ public class WhereTest extends BaseCoreTest {
 		where.eq(Foo.VAL_COLUMN_NAME, val1);
 		where.eq(Foo.VAL_COLUMN_NAME, val2);
 		where.eq(Foo.VAL_COLUMN_NAME, val3);
-		where.and(3);
+		where.eq(Foo.VAL_COLUMN_NAME, val4);
+		where.and(4);
 		whereSb = new StringBuilder();
 		where.appendSql(databaseType, whereSb, new ArrayList<SelectArg>());
 		sb = new StringBuilder();
 		sb.append("(");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		// NOTE: they are done in reverse order
-		sb.append(" = ").append(val3);
+		sb.append(" = ").append(val1);
 		sb.append(" AND ");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" = ").append(val2);
 		sb.append(" AND ");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
-		sb.append(" = ").append(val1);
+		sb.append(" = ").append(val3);
+		sb.append(" AND ");
+		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
+		sb.append(" = ").append(val4);
 		sb.append(" ) ");
 		assertEquals(sb.toString(), whereSb.toString());
 	}
@@ -625,20 +629,24 @@ public class WhereTest extends BaseCoreTest {
 		where.eq(Foo.VAL_COLUMN_NAME, val1);
 		where.eq(Foo.VAL_COLUMN_NAME, val2);
 		where.eq(Foo.VAL_COLUMN_NAME, val3);
-		where.or(3);
+		where.eq(Foo.VAL_COLUMN_NAME, val4);
+		where.or(4);
 		whereSb = new StringBuilder();
 		where.appendSql(databaseType, whereSb, new ArrayList<SelectArg>());
 		sb = new StringBuilder();
 		sb.append("(");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		// NOTE: they are done in reverse order
-		sb.append(" = ").append(val3);
+		sb.append(" = ").append(val1);
 		sb.append(" OR ");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" = ").append(val2);
 		sb.append(" OR ");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
-		sb.append(" = ").append(val1);
+		sb.append(" = ").append(val3);
+		sb.append(" OR ");
+		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
+		sb.append(" = ").append(val4);
 		sb.append(" ) ");
 		assertEquals(sb.toString(), whereSb.toString());
 	}
