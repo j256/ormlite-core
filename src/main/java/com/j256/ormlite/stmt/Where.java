@@ -1,7 +1,6 @@
 package com.j256.ormlite.stmt;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.j256.ormlite.dao.CloseableIterator;
@@ -126,12 +125,15 @@ import com.j256.ormlite.table.TableInfo;
  */
 public class Where<T, ID> {
 
+	private final static int START_CLAUSE_SIZE = 4;
+
 	private final TableInfo<T, ID> tableInfo;
 	private final StatementBuilder<T, ID> statementBuilder;
 	private final FieldType idFieldType;
 	private final String idColumnName;
 
-	private SimpleStack<Clause> clauseList = new SimpleStack<Clause>();
+	private Clause[] clauseStack = new Clause[START_CLAUSE_SIZE];
+	private int clauseStackLevel = 0;
 	private NeedsFutureClause needsFuture = null;
 
 	Where(TableInfo<T, ID> tableInfo, StatementBuilder<T, ID> statementBuilder) {
@@ -466,23 +468,26 @@ public class Where<T, ID> {
 	 * Clear out the Where object so it can be re-used.
 	 */
 	public void clear() {
-		clauseList.clear();
+		for (int i = 0; i < clauseStackLevel; i++) {
+			clauseStack[i] = null;
+		}
+		clauseStackLevel = 0;
 	}
 
 	/**
 	 * Used by the internal classes to add the where SQL to the {@link StringBuilder}.
 	 */
 	void appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> columnArgList) throws SQLException {
-		if (clauseList.isEmpty()) {
+		if (isEmpty()) {
 			throw new IllegalStateException("No where clauses defined.  Did you miss a where operation?");
 		}
-		if (clauseList.size() != 1) {
+		if (size() != 1) {
 			throw new IllegalStateException(
 					"Both the \"left-hand\" and \"right-hand\" clauses have been defined.  Did you miss an AND or OR?");
 		}
 
 		// we don't pop here because we may want to run the query multiple times
-		clauseList.peek().appendSql(databaseType, sb, columnArgList);
+		peek().appendSql(databaseType, sb, columnArgList);
 	}
 
 	private void addNeedsFuture(NeedsFutureClause needsFuture) {
@@ -497,7 +502,7 @@ public class Where<T, ID> {
 
 	private void addClause(Clause clause) {
 		if (needsFuture == null || clause == needsFuture) {
-			clauseList.push(clause);
+			push(clause);
 		} else {
 			// we have a binary statement which was called before the right clause was defined
 			needsFuture.setMissingClause(clause);
@@ -506,20 +511,20 @@ public class Where<T, ID> {
 	}
 
 	private Clause removeLastClause(String label) {
-		if (clauseList.isEmpty()) {
+		if (isEmpty()) {
 			throw new IllegalStateException("Expecting there to be a clause already defined for '" + label
 					+ "' operation");
 		} else {
-			return clauseList.pop();
+			return pop();
 		}
 	}
 
 	@Override
 	public String toString() {
-		if (clauseList.isEmpty()) {
+		if (isEmpty()) {
 			return "empty where clause";
 		} else {
-			Clause clause = clauseList.peek();
+			Clause clause = peek();
 			return "where clause: " + clause;
 		}
 	}
@@ -528,22 +533,35 @@ public class Where<T, ID> {
 		return tableInfo.getFieldTypeByColumnName(columnName);
 	}
 
-	/**
-	 * Little inner class to provide stack features. The java.util.Stack extends Vector which is synchronized.
-	 */
-	private class SimpleStack<E> extends ArrayList<E> {
-		private static final long serialVersionUID = -8116427380277806666L;
-
-		public void push(E obj) {
-			add(obj);
+	private void push(Clause clause) {
+		if (clauseStackLevel == clauseStack.length) {
+			Clause[] newStack = new Clause[clauseStackLevel * 2];
+			for (int i = 0; i < clauseStackLevel; i++) {
+				newStack[i] = clauseStack[i];
+				// to help gc
+				clauseStack[i] = null;
+			}
+			clauseStack = newStack;
 		}
+		clauseStack[clauseStackLevel++] = clause;
+	}
 
-		public E pop() {
-			return remove(size() - 1);
-		}
+	private Clause pop() {
+		Clause clause = clauseStack[--clauseStackLevel];
+		// to help gc
+		clauseStack[clauseStackLevel] = null;
+		return clause;
+	}
 
-		public E peek() {
-			return get(size() - 1);
-		}
+	private Clause peek() {
+		return clauseStack[clauseStackLevel - 1];
+	}
+
+	private boolean isEmpty() {
+		return size() == 0;
+	}
+
+	private int size() {
+		return clauseStackLevel;
 	}
 }
