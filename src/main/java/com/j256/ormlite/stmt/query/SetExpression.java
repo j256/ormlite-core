@@ -25,9 +25,8 @@ public class SetExpression extends BaseComparison {
 	}
 
 	@Override
-	public StringBuilder appendOperation(StringBuilder sb) {
+	public void appendOperation(StringBuilder sb) {
 		sb.append("= ");
-		return sb;
 	}
 
 	@Override

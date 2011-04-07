@@ -20,14 +20,12 @@ public class IsNotNull extends BaseComparison {
 	}
 
 	@Override
-	public StringBuilder appendOperation(StringBuilder sb) {
+	public void appendOperation(StringBuilder sb) {
 		sb.append("IS NOT NULL ");
-		return sb;
 	}
 
 	@Override
-	public StringBuilder appendValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList) {
+	public void appendValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList) {
 		// there is no value
-		return sb;
 	}
 }

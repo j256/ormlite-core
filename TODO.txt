@@ -16,6 +16,12 @@
 
 - backend for HBase (Hadoop's bigtable) 
 
+- consider allowing auto foreign object creation with internal doa's
+	- ANSWER: could be confusing and misleading, no easy way to see if the id field is set
+	- need to be careful of recursion
+	- maybe you could see if the id was set or something?
+	- maybe just require someone to use the other DAO
+
 -----------------------------------------------------------------------------------------------------------------------------------
 
 - for objects that a user does not have control over, how about the ability of defining a Method to construct a particular class
@@ -32,12 +38,6 @@
 	- account_customer has a column for account_id and customer_id to handle this relationship
 	- how can ORMLite assist in the loading of a Java list of Customers on an Account object
 	- at least a List of customer ids?
-
-- consider allowing auto foreign object creation with internal doa's
-	- ANSWER: could be confusing and misleading, no easy way to see if the id field is set
-	- need to be careful of recursion
-	- maybe you could see if the id was set or something?
-	- maybe just require someone to use the other DAO
 
 - allow any field as the foreign id column (not just the id field)
 	- ANSWER: not good cost/benefit

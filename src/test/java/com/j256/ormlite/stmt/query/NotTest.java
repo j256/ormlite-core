@@ -19,11 +19,9 @@ public class NotTest extends BaseCoreStmtTest {
 	public void test() {
 		Not not = new Not();
 		Clause clause = new Comparison() {
-			public StringBuilder appendOperation(StringBuilder sb) {
-				return sb;
+			public void appendOperation(StringBuilder sb) {
 			}
-			public StringBuilder appendValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList) {
-				return sb;
+			public void appendValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList) {
 			}
 			public String getColumnName() {
 				return null;
@@ -39,7 +37,7 @@ public class NotTest extends BaseCoreStmtTest {
 	public void testToString() throws Exception {
 		String name = "foo";
 		String value = "bar";
-		Eq eq = new Eq(name, numberFieldType, value);
+		SimpleComparison eq = new SimpleComparison(name, numberFieldType, value, SimpleComparison.EQUAL_TO_OPERATION);
 		Not not = new Not();
 		assertTrue(not.toString().contains("NOT without comparison"));
 		not.setMissingClause(eq);

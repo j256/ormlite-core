@@ -14,7 +14,7 @@ import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.stmt.query.Eq;
+import com.j256.ormlite.stmt.query.SimpleComparison;
 import com.j256.ormlite.table.TableInfo;
 
 public class WhereTest extends BaseCoreTest {
@@ -31,7 +31,8 @@ public class WhereTest extends BaseCoreTest {
 		FieldType numberFieldType =
 				FieldType.createFieldType(connectionSource, "foo", Foo.class.getDeclaredField(Foo.VAL_COLUMN_NAME),
 						Foo.class, 0);
-		Eq eq = new Eq(Foo.VAL_COLUMN_NAME, numberFieldType, value);
+		SimpleComparison eq =
+				new SimpleComparison(Foo.VAL_COLUMN_NAME, numberFieldType, value, SimpleComparison.EQUAL_TO_OPERATION);
 		where.eq(Foo.VAL_COLUMN_NAME, value);
 		assertTrue(where.toString().contains(eq.toString()));
 	}

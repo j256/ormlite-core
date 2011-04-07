@@ -8,25 +8,18 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.QueryBuilder.InternalQueryBuilderWrapper;
-import com.j256.ormlite.stmt.query.AndMany;
 import com.j256.ormlite.stmt.query.Between;
 import com.j256.ormlite.stmt.query.Clause;
-import com.j256.ormlite.stmt.query.Eq;
 import com.j256.ormlite.stmt.query.Exists;
-import com.j256.ormlite.stmt.query.Ge;
-import com.j256.ormlite.stmt.query.Gt;
 import com.j256.ormlite.stmt.query.In;
 import com.j256.ormlite.stmt.query.InSubQuery;
 import com.j256.ormlite.stmt.query.IsNotNull;
 import com.j256.ormlite.stmt.query.IsNull;
-import com.j256.ormlite.stmt.query.Le;
-import com.j256.ormlite.stmt.query.Like;
-import com.j256.ormlite.stmt.query.Lt;
-import com.j256.ormlite.stmt.query.Ne;
+import com.j256.ormlite.stmt.query.ManyClause;
 import com.j256.ormlite.stmt.query.NeedsFutureClause;
 import com.j256.ormlite.stmt.query.Not;
-import com.j256.ormlite.stmt.query.OrMany;
 import com.j256.ormlite.stmt.query.Raw;
+import com.j256.ormlite.stmt.query.SimpleComparison;
 import com.j256.ormlite.table.TableInfo;
 
 /**
@@ -152,7 +145,7 @@ public class Where<T, ID> {
 	 * AND operation which takes the previous clause and the next clause and AND's them together.
 	 */
 	public Where<T, ID> and() {
-		addNeedsFuture(new AndMany(pop("AND")));
+		addNeedsFuture(new ManyClause(pop("AND"), ManyClause.AND_OPERATION));
 		return this;
 	}
 
@@ -167,19 +160,10 @@ public class Where<T, ID> {
 	 * </p>
 	 */
 	public Where<T, ID> and(Where<T, ID> first, Where<T, ID> second, Where<T, ID>... others) {
-		Clause[] clauses;
-		if (others.length == 0) {
-			clauses = null;
-		} else {
-			clauses = new Clause[others.length];
-			// fill in reverse order
-			for (int i = others.length - 1; i >= 0; i--) {
-				clauses[i] = pop("AND");
-			}
-		}
+		Clause[] clauses = buildClauseArray(others, "AND");
 		Clause secondClause = pop("AND");
 		Clause firstClause = pop("AND");
-		addClause(new AndMany(firstClause, secondClause, clauses));
+		addClause(new ManyClause(firstClause, secondClause, clauses, ManyClause.AND_OPERATION));
 		return this;
 	}
 
@@ -197,7 +181,7 @@ public class Where<T, ID> {
 		for (int i = numClauses - 1; i >= 0; i--) {
 			clauses[i] = pop("AND");
 		}
-		addClause(new AndMany(clauses));
+		addClause(new ManyClause(clauses, ManyClause.AND_OPERATION));
 		return this;
 	}
 
@@ -213,7 +197,8 @@ public class Where<T, ID> {
 	 * Add a '=' clause so the column must be equal to the value.
 	 */
 	public Where<T, ID> eq(String columnName, Object value) throws SQLException {
-		addClause(new Eq(columnName, findColumnFieldType(columnName), value));
+		addClause(new SimpleComparison(columnName, findColumnFieldType(columnName), value,
+				SimpleComparison.EQUAL_TO_OPERATION));
 		return this;
 	}
 
@@ -221,7 +206,8 @@ public class Where<T, ID> {
 	 * Add a '&gt;=' clause so the column must be greater-than or equals-to the value.
 	 */
 	public Where<T, ID> ge(String columnName, Object value) throws SQLException {
-		addClause(new Ge(columnName, findColumnFieldType(columnName), value));
+		addClause(new SimpleComparison(columnName, findColumnFieldType(columnName), value,
+				SimpleComparison.GREATER_THAN_EQUAL_TO_OPERATION));
 		return this;
 	}
 
@@ -229,7 +215,8 @@ public class Where<T, ID> {
 	 * Add a '&gt;' clause so the column must be greater-than the value.
 	 */
 	public Where<T, ID> gt(String columnName, Object value) throws SQLException {
-		addClause(new Gt(columnName, findColumnFieldType(columnName), value));
+		addClause(new SimpleComparison(columnName, findColumnFieldType(columnName), value,
+				SimpleComparison.GREATER_THAN_OPERATION));
 		return this;
 	}
 
@@ -308,7 +295,8 @@ public class Where<T, ID> {
 	 * Add a '&lt;=' clause so the column must be less-than or equals-to the value.
 	 */
 	public Where<T, ID> le(String columnName, Object value) throws SQLException {
-		addClause(new Le(columnName, findColumnFieldType(columnName), value));
+		addClause(new SimpleComparison(columnName, findColumnFieldType(columnName), value,
+				SimpleComparison.LESS_THAN_EQUAL_TO_OPERATION));
 		return this;
 	}
 
@@ -316,7 +304,8 @@ public class Where<T, ID> {
 	 * Add a '&lt;' clause so the column must be less-than the value.
 	 */
 	public Where<T, ID> lt(String columnName, Object value) throws SQLException {
-		addClause(new Lt(columnName, findColumnFieldType(columnName), value));
+		addClause(new SimpleComparison(columnName, findColumnFieldType(columnName), value,
+				SimpleComparison.LESS_THAN_OPERATION));
 		return this;
 	}
 
@@ -324,7 +313,8 @@ public class Where<T, ID> {
 	 * Add a LIKE clause so the column must mach the value using '%' patterns.
 	 */
 	public Where<T, ID> like(String columnName, Object value) throws SQLException {
-		addClause(new Like(columnName, findColumnFieldType(columnName), value));
+		addClause(new SimpleComparison(columnName, findColumnFieldType(columnName), value,
+				SimpleComparison.LIKE_OPERATION));
 		return this;
 	}
 
@@ -332,7 +322,8 @@ public class Where<T, ID> {
 	 * Add a '&lt;&gt;' clause so the column must be not-equal-to the value.
 	 */
 	public Where<T, ID> ne(String columnName, Object value) throws SQLException {
-		addClause(new Ne(columnName, findColumnFieldType(columnName), value));
+		addClause(new SimpleComparison(columnName, findColumnFieldType(columnName), value,
+				SimpleComparison.NOT_EQUAL_TO_OPERATION));
 		return this;
 	}
 
@@ -356,7 +347,7 @@ public class Where<T, ID> {
 	 * OR operation which takes the previous clause and the next clause and OR's them together.
 	 */
 	public Where<T, ID> or() {
-		addNeedsFuture(new OrMany(pop("OR")));
+		addNeedsFuture(new ManyClause(pop("OR"), ManyClause.OR_OPERATION));
 		return this;
 	}
 
@@ -371,19 +362,10 @@ public class Where<T, ID> {
 	 * </p>
 	 */
 	public Where<T, ID> or(Where<T, ID> left, Where<T, ID> right, Where<T, ID>... others) {
-		Clause[] clauses;
-		if (others.length == 0) {
-			clauses = null;
-		} else {
-			clauses = new Clause[others.length];
-			// fill in reverse order
-			for (int i = others.length - 1; i >= 0; i--) {
-				clauses[i] = pop("OR");
-			}
-		}
+		Clause[] clauses = buildClauseArray(others, "OR");
 		Clause secondClause = pop("OR");
 		Clause firstClause = pop("OR");
-		addClause(new OrMany(firstClause, secondClause, clauses));
+		addClause(new ManyClause(firstClause, secondClause, clauses, ManyClause.OR_OPERATION));
 		return this;
 	}
 
@@ -401,7 +383,7 @@ public class Where<T, ID> {
 		for (int i = numClauses - 1; i >= 0; i--) {
 			clauses[i] = pop("OR");
 		}
-		addClause(new OrMany(clauses));
+		addClause(new ManyClause(clauses, ManyClause.OR_OPERATION));
 		return this;
 	}
 
@@ -412,7 +394,7 @@ public class Where<T, ID> {
 		if (idColumnName == null) {
 			throw new SQLException("Object has no id column specified");
 		}
-		addClause(new Eq(idColumnName, idFieldType, id));
+		addClause(new SimpleComparison(idColumnName, idFieldType, id, SimpleComparison.EQUAL_TO_OPERATION));
 		return this;
 	}
 
@@ -423,7 +405,8 @@ public class Where<T, ID> {
 		if (idColumnName == null) {
 			throw new SQLException("Object has no id column specified");
 		}
-		addClause(new Eq(idColumnName, idFieldType, dataDao.extractId(data)));
+		addClause(new SimpleComparison(idColumnName, idFieldType, dataDao.extractId(data),
+				SimpleComparison.EQUAL_TO_OPERATION));
 		return this;
 	}
 
@@ -490,6 +473,20 @@ public class Where<T, ID> {
 
 		// we don't pop here because we may want to run the query multiple times
 		peek().appendSql(databaseType, sb, columnArgList);
+	}
+
+	private Clause[] buildClauseArray(Where<T, ID>[] others, String label) {
+		Clause[] clauses;
+		if (others.length == 0) {
+			clauses = null;
+		} else {
+			clauses = new Clause[others.length];
+			// fill in reverse order
+			for (int i = others.length - 1; i >= 0; i--) {
+				clauses[i] = pop("AND");
+			}
+		}
+		return clauses;
 	}
 
 	private void addNeedsFuture(NeedsFutureClause needsFuture) {

@@ -28,23 +28,20 @@ public class BaseComparisonTest extends BaseCoreStmtTest {
 		try {
 			cmpInt = new BaseComparison(INT_COLUMN_NAME, numberFieldType, 10L) {
 				@Override
-				public StringBuilder appendOperation(StringBuilder sb) {
+				public void appendOperation(StringBuilder sb) {
 					sb.append("op");
-					return sb;
 				}
 			};
 			cmpString = new BaseComparison(STRING_COLUMN_NAME, stringFieldType, 10L) {
 				@Override
-				public StringBuilder appendOperation(StringBuilder sb) {
+				public void appendOperation(StringBuilder sb) {
 					sb.append("op");
-					return sb;
 				}
 			};
 			cmpForeign = new BaseComparison(INT_COLUMN_NAME, foreignFieldType, 10L) {
 				@Override
-				public StringBuilder appendOperation(StringBuilder sb) {
+				public void appendOperation(StringBuilder sb) {
 					sb.append("op");
-					return sb;
 				}
 			};
 		} catch (SQLException e) {

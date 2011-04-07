@@ -25,13 +25,12 @@ public class Between extends BaseComparison {
 	}
 
 	@Override
-	public StringBuilder appendOperation(StringBuilder sb) {
+	public void appendOperation(StringBuilder sb) {
 		sb.append("BETWEEN ");
-		return sb;
 	}
 
 	@Override
-	public StringBuilder appendValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
+	public void appendValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
 			throws SQLException {
 		if (low == null) {
 			throw new IllegalArgumentException("BETWEEN low value for '" + columnName + "' is null");
@@ -42,6 +41,5 @@ public class Between extends BaseComparison {
 		appendArgOrValue(databaseType, fieldType, sb, selectArgList, low);
 		sb.append("AND ");
 		appendArgOrValue(databaseType, fieldType, sb, selectArgList, high);
-		return sb;
 	}
 }

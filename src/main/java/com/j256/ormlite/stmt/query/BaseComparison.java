@@ -28,7 +28,7 @@ abstract class BaseComparison implements Comparison {
 		this.value = value;
 	}
 
-	public abstract StringBuilder appendOperation(StringBuilder sb);
+	public abstract void appendOperation(StringBuilder sb);
 
 	public void appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
 			throws SQLException {
@@ -43,10 +43,9 @@ abstract class BaseComparison implements Comparison {
 		return columnName;
 	}
 
-	public StringBuilder appendValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
+	public void appendValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
 			throws SQLException {
 		appendArgOrValue(databaseType, fieldType, sb, selectArgList, value);
-		return sb;
 	}
 
 	/**
@@ -94,7 +93,8 @@ abstract class BaseComparison implements Comparison {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(columnName).append(' ');
-		appendOperation(sb).append(' ');
+		appendOperation(sb);
+		sb.append(' ');
 		sb.append(value);
 		return sb.toString();
 	}

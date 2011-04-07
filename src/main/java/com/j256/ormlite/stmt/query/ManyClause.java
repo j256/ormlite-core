@@ -7,25 +7,38 @@ import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.stmt.SelectArg;
 
 /**
- * Base class for operations with a number of them in a row.
+ * For operations with a number of them in a row.
  * 
  * @author graywatson
  */
-public abstract class BaseManyClause implements Clause, NeedsFutureClause {
+public class ManyClause implements Clause, NeedsFutureClause {
 
+	public static final String AND_OPERATION = "AND";
+	public static final String OR_OPERATION = "OR";
+	
 	private final Clause first;
 	private Clause second;
 	private final Clause[] others;
 	private final int startOthersAt;
+	private final String operation;
 
-	public BaseManyClause(Clause first, Clause second, Clause[] others) {
+	public ManyClause(Clause first, String operation) {
+		this.first = first;
+		this.second = null;
+		this.others = null;
+		this.startOthersAt = 0;
+		this.operation = operation;
+	}
+
+	public ManyClause(Clause first, Clause second, Clause[] others, String operation) {
 		this.first = first;
 		this.second = second;
 		this.others = others;
 		this.startOthersAt = 0;
+		this.operation = operation;
 	}
 
-	public BaseManyClause(Clause[] others) {
+	public ManyClause(Clause[] others, String operation) {
 		this.first = others[0];
 		if (others.length < 2) {
 			this.second = null;
@@ -35,6 +48,7 @@ public abstract class BaseManyClause implements Clause, NeedsFutureClause {
 			this.startOthersAt = 2;
 		}
 		this.others = others;
+		this.operation = operation;
 	}
 
 	public void appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
@@ -42,12 +56,14 @@ public abstract class BaseManyClause implements Clause, NeedsFutureClause {
 		sb.append("(");
 		first.appendSql(databaseType, sb, selectArgList);
 		if (second != null) {
-			appendOperation(sb);
+			sb.append(operation);
+			sb.append(' ');
 			second.appendSql(databaseType, sb, selectArgList);
 		}
 		if (others != null) {
 			for (int i = startOthersAt; i < others.length; i++) {
-				appendOperation(sb);
+				sb.append(operation);
+				sb.append(' ');
 				others[i].appendSql(databaseType, sb, selectArgList);
 			}
 		}
@@ -57,9 +73,4 @@ public abstract class BaseManyClause implements Clause, NeedsFutureClause {
 	public void setMissingClause(Clause right) {
 		second = right;
 	}
-
-	/**
-	 * Append the associated operation to the StringBuilder.
-	 */
-	public abstract void appendOperation(StringBuilder sb);
 }

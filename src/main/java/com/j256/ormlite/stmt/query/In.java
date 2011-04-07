@@ -30,13 +30,12 @@ public class In extends BaseComparison {
 	}
 
 	@Override
-	public StringBuilder appendOperation(StringBuilder sb) {
+	public void appendOperation(StringBuilder sb) {
 		sb.append("IN ");
-		return sb;
 	}
 
 	@Override
-	public StringBuilder appendValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> columnArgList)
+	public void appendValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> columnArgList)
 			throws SQLException {
 		sb.append('(');
 		boolean first = true;
@@ -53,6 +52,5 @@ public class In extends BaseComparison {
 			super.appendArgOrValue(databaseType, fieldType, sb, columnArgList, value);
 		}
 		sb.append(") ");
-		return sb;
 	}
 }

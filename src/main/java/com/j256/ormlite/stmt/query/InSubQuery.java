@@ -25,7 +25,7 @@ public class InSubQuery extends BaseComparison {
 	}
 
 	@Override
-	public StringBuilder appendValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
+	public void appendValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
 			throws SQLException {
 		sb.append('(');
 		subQueryBuilder.buildStatementString(sb, selectArgList);
@@ -39,12 +39,10 @@ public class InSubQuery extends BaseComparison {
 					+ resultFieldTypes[0]);
 		}
 		sb.append(") ");
-		return sb;
 	}
 
 	@Override
-	public StringBuilder appendOperation(StringBuilder sb) {
+	public void appendOperation(StringBuilder sb) {
 		sb.append("IN ");
-		return sb;
 	}
 }

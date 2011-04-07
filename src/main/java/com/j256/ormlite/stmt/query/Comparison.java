@@ -21,11 +21,11 @@ interface Comparison extends Clause {
 	/**
 	 * Add the operation used in this comparison to the string builder.
 	 */
-	public StringBuilder appendOperation(StringBuilder sb);
+	public void appendOperation(StringBuilder sb);
 
 	/**
 	 * Add the value of the comparison to the string builder.
 	 */
-	public StringBuilder appendValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
+	public void appendValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
 			throws SQLException;
 }

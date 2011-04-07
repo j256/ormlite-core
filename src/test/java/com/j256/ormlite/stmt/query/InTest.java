@@ -31,7 +31,7 @@ public class InTest extends BaseCoreStmtTest {
 		}
 		In in = new In("foo", numberFieldType, objList);
 		StringBuilder sb = new StringBuilder();
-		assertEquals(sb, in.appendValue(null, sb, new ArrayList<SelectArg>()));
+		in.appendValue(null, sb, new ArrayList<SelectArg>());
 		String[] args = sb.toString().split(",");
 		assertEquals("(" + objList.get(0) + " ", args[0]);
 		for (int i = 1; i < numArgs - 1; i++) {

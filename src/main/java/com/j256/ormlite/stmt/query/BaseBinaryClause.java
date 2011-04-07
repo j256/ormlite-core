@@ -13,11 +13,12 @@ import com.j256.ormlite.stmt.SelectArg;
  */
 abstract class BaseBinaryClause implements NeedsFutureClause {
 
-	private Clause left;
-	private Clause right = null;
+	private final Clause left;
+	private Clause right;
 
 	protected BaseBinaryClause(Clause left) {
 		this.left = left;
+		this.right = null;
 	}
 
 	protected BaseBinaryClause(Clause left, Clause right) {

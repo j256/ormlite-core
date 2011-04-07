@@ -6,7 +6,7 @@
 	* CORE: Added s clearTable() method to TableUtils.  It will do a TRUNCATE if supported otherwise a DELETE.
 	* CORE: Added a convenience queryForEq() method to the Dao which matches on a single field value.
 	* CORE: Added support for CREATE TABLE IF NOT EXISTS for those databases which support it: H2, MySQL, SQLite.
-	* CORE: Added multiple handling of >2 arguments to Where.and() and or() which now string together many clauses with AND/OR.
+	* CORE: Added handling of >2 arguments to Where.and() and or() which can now string together many clauses with AND/OR.
 	* CORE: Added a Dao.queryForMatching() method to find entries in the database that match fields in the object passed in.
 	* CORE: Added a Dao.queryForFieldValues() method to find entries in the database that match the field/value map argument.
 	* CORE: Tightened up some of the allocations done internally when building statements.
