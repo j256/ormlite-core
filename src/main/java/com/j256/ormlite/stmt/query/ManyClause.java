@@ -15,7 +15,7 @@ public class ManyClause implements Clause, NeedsFutureClause {
 
 	public static final String AND_OPERATION = "AND";
 	public static final String OR_OPERATION = "OR";
-	
+
 	private final Clause first;
 	private Clause second;
 	private final Clause[] others;
@@ -24,6 +24,7 @@ public class ManyClause implements Clause, NeedsFutureClause {
 
 	public ManyClause(Clause first, String operation) {
 		this.first = first;
+		// second will be set later
 		this.second = null;
 		this.others = null;
 		this.startOthersAt = 0;

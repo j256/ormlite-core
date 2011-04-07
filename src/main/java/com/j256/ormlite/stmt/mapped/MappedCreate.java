@@ -165,7 +165,7 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 		logger.debug("assigned id '{}' from {} to '{}' in {} object", val, label, idField.getFieldName(), dataClassName);
 	}
 
-	private class KeyHolder implements GeneratedKeyHolder {
+	private static class KeyHolder implements GeneratedKeyHolder {
 		Number key;
 
 		public Number getKey() {

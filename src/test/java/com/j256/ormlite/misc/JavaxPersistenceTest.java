@@ -134,7 +134,7 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 		String stuff;
 	}
 
-	private class UpperCaseFieldDatabaseType extends H2DatabaseType {
+	private static class UpperCaseFieldDatabaseType extends H2DatabaseType {
 		@Override
 		public boolean isEntityNamesMustBeUpCase() {
 			return true;

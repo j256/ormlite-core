@@ -292,7 +292,7 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 		assertEquals(expectedSb.toString(), sb.toString());
 	}
 
-	private class OurDbType extends BaseDatabaseType {
+	private static class OurDbType extends BaseDatabaseType {
 		@Override
 		public String getDriverClassName() {
 			return "driver.class";
@@ -306,21 +306,21 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 		}
 	}
 
-	private class OurDbTypeNoFieldWidth extends OurDbType {
+	private static class OurDbTypeNoFieldWidth extends OurDbType {
 		@Override
 		public boolean isVarcharFieldWidthSupported() {
 			return false;
 		}
 	}
 
-	private class OurDbTypeUppercaseEntities extends OurDbType {
+	private static class OurDbTypeUppercaseEntities extends OurDbType {
 		@Override
 		public boolean isEntityNamesMustBeUpCase() {
 			return true;
 		}
 	}
 
-	private class OurDbTypeGeneratedId extends OurDbType {
+	private static class OurDbTypeGeneratedId extends OurDbType {
 		FieldType fieldType;
 		@Override
 		protected void configureGeneratedId(StringBuilder sb, FieldType fieldType, List<String> statementsBefore,
@@ -383,7 +383,7 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 		long unique;
 	}
 
-	private class SerialClass implements Serializable {
+	private static class SerialClass implements Serializable {
 		private static final long serialVersionUID = 4092506968116021313L;
 	}
 

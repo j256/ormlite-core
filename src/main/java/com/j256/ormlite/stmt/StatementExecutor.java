@@ -542,7 +542,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	/**
 	 * To be removed once the deprecated RawResults goes away.
 	 */
-	private class RawResultsWrapper implements RawResults {
+	private static class RawResultsWrapper implements RawResults {
 
 		private final GenericRawResults<String[]> rawResults;
 		private final DatabaseConnection connection;

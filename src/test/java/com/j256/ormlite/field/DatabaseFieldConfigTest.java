@@ -282,7 +282,7 @@ public class DatabaseFieldConfigTest {
 		SECOND, ;
 	}
 
-	private class StubDatabaseType extends BaseDatabaseType {
+	private static class StubDatabaseType extends BaseDatabaseType {
 		@Override
 		public String getDriverClassName() {
 			return "foo.bar.baz";

@@ -28,7 +28,7 @@ public class BaseDatabaseTypeTest {
 		assertEquals("SELECT 1", databaseType.getPingStatement());
 	}
 
-	private class TestDatabaseType extends BaseDatabaseType implements DatabaseType {
+	private static class TestDatabaseType extends BaseDatabaseType implements DatabaseType {
 
 		public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 			return false;

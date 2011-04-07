@@ -236,6 +236,11 @@ public class DatabaseTableConfig<T> {
 				return con;
 			}
 		}
-		throw new IllegalArgumentException("Can't find a no-arg constructor for " + dataClass);
+		if (dataClass.getEnclosingClass() == null) {
+			throw new IllegalArgumentException("Can't find a no-arg constructor for " + dataClass);
+		} else {
+			throw new IllegalArgumentException("Can't find a no-arg constructor for " + dataClass
+					+ ".  Missing static on inner class?");
+		}
 	}
 }

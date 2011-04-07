@@ -18,7 +18,7 @@ public class SimpleComparison extends BaseComparison {
 	public final static String LESS_THAN_EQUAL_TO_OPERATION = "<=";
 	public final static String LIKE_OPERATION = "LIKE";
 	public final static String NOT_EQUAL_TO_OPERATION = "<>";
-	
+
 	private final String operation;
 
 	public SimpleComparison(String columnName, FieldType fieldType, Object value, String operation) throws SQLException {

@@ -310,7 +310,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertFalse(iterator.hasNext());
 	}
 
-	private class LimitInline extends BaseDatabaseType {
+	private static class LimitInline extends BaseDatabaseType {
 		public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 			return true;
 		}

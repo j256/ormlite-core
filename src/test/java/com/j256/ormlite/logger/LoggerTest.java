@@ -325,7 +325,7 @@ public class LoggerTest {
 		logger.fatal("msg {}", new ToStringThrow());
 	}
 
-	private class Foo {
+	private static class Foo {
 		final static String TO_STRING = "foo to string";
 		@Override
 		public String toString() {
@@ -333,7 +333,7 @@ public class LoggerTest {
 		}
 	}
 
-	private class ToStringThrow {
+	private static class ToStringThrow {
 		@Override
 		public String toString() {
 			throw new IllegalStateException("To string should not have been called");

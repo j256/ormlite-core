@@ -52,7 +52,7 @@ public class BaseSqliteDatabaseTypeTest extends BaseCoreTest {
 		assertEquals(new Byte((byte) 1), dbType.getFieldConverter(DataType.BOOLEAN).parseDefaultString(null, "true"));
 	}
 
-	private class OurSqliteDatabaseType extends BaseSqliteDatabaseType {
+	private static class OurSqliteDatabaseType extends BaseSqliteDatabaseType {
 		public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 			return false;
 		}

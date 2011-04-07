@@ -33,7 +33,7 @@ abstract class BaseBinaryClause implements NeedsFutureClause {
 
 	public void appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> columnArgList)
 			throws SQLException {
-		sb.append("(");
+		sb.append('(');
 		left.appendSql(databaseType, sb, columnArgList);
 		appendOperation(sb);
 		right.appendSql(databaseType, sb, columnArgList);

@@ -454,6 +454,7 @@ public class Where<T, ID> {
 	 */
 	public void clear() {
 		for (int i = 0; i < clauseStackLevel; i++) {
+			// help with gc
 			clauseStack[i] = null;
 		}
 		clauseStackLevel = 0;
@@ -463,10 +464,10 @@ public class Where<T, ID> {
 	 * Used by the internal classes to add the where SQL to the {@link StringBuilder}.
 	 */
 	void appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> columnArgList) throws SQLException {
-		if (isEmpty()) {
+		if (clauseStackLevel == 0) {
 			throw new IllegalStateException("No where clauses defined.  Did you miss a where operation?");
 		}
-		if (size() != 1) {
+		if (clauseStackLevel != 1) {
 			throw new IllegalStateException(
 					"Both the \"left-hand\" and \"right-hand\" clauses have been defined.  Did you miss an AND or OR?");
 		}
@@ -489,14 +490,13 @@ public class Where<T, ID> {
 		return clauses;
 	}
 
-	private void addNeedsFuture(NeedsFutureClause needsFuture) {
-		if (this.needsFuture == null) {
-			this.needsFuture = needsFuture;
-			push(needsFuture);
-		} else {
-			throw new IllegalStateException(this.needsFuture + " is already waiting for a future clause, can't add: "
-					+ needsFuture);
+	private void addNeedsFuture(NeedsFutureClause clause) {
+		if (needsFuture != null) {
+			throw new IllegalStateException(needsFuture + " is already waiting for a future clause, can't add: "
+					+ clause);
 		}
+		needsFuture = clause;
+		push(clause);
 	}
 
 	private void addClause(Clause clause) {
@@ -511,7 +511,7 @@ public class Where<T, ID> {
 
 	@Override
 	public String toString() {
-		if (isEmpty()) {
+		if (clauseStackLevel == 0) {
 			return "empty where clause";
 		} else {
 			Clause clause = peek();
@@ -524,8 +524,11 @@ public class Where<T, ID> {
 	}
 
 	private void push(Clause clause) {
+		// if the stack is full then we need to grow it
 		if (clauseStackLevel == clauseStack.length) {
+			// double its size each time
 			Clause[] newStack = new Clause[clauseStackLevel * 2];
+			// copy the entries over to the new stack
 			for (int i = 0; i < clauseStackLevel; i++) {
 				newStack[i] = clauseStack[i];
 				// to help gc
@@ -549,13 +552,5 @@ public class Where<T, ID> {
 
 	private Clause peek() {
 		return clauseStack[clauseStackLevel - 1];
-	}
-
-	private boolean isEmpty() {
-		return size() == 0;
-	}
-
-	private int size() {
-		return clauseStackLevel;
 	}
 }
