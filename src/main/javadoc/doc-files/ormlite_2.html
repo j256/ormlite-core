@@ -1276,7 +1276,9 @@ if you want to load the schema during some sort of database initialization proce
 <dd>
 <p>Same as the previous method but with a <code>DatabaseTableConfig</code> instead.
 
-</p></dd>
+</p><a name="IDX141"></a>
+<a name="IDX142"></a>
+</dd>
 <dt><code> clearTable(ConnectionSource, Class)</code></dt>
 <dd>
 <p>Clear all data out of the table. For certain database types and with large sized tables, which may take a long time. In some configurations,
@@ -1411,9 +1413,9 @@ if (account == null) {
     // the name &quot;John Smith&quot; does not match any rows
 }
 </pre></td></tr></table>
-<a name="IDX141"></a>
-<a name="IDX142"></a>
 <a name="IDX143"></a>
+<a name="IDX144"></a>
+<a name="IDX145"></a>
 <p><em>NOTE:</em> If you need to change the value of an object's id field, you must use the <code>Dao.updateId()</code> method which
 takes the current object still with its <em>old</em> id value and the new value.  ORMLite has to first locate the object
 by its old id and then update it with the new id.  See <a href="ormlite_5.html#ANC24">updateId</a>.
@@ -1536,10 +1538,10 @@ sequences.
 
 </p><dl compact="compact">
 <dd>
-<a name="IDX144"></a>
-<a name="IDX145"></a>
 <a name="IDX146"></a>
 <a name="IDX147"></a>
+<a name="IDX148"></a>
+<a name="IDX149"></a>
 </dd>
 <dt> create and persist an object to the database</dt>
 <dd>
@@ -1549,7 +1551,7 @@ sequences.
 account.name = &quot;Jim Coakley&quot;;
 accountDao.create(account);
 </pre></td></tr></table>
-<a name="IDX148"></a>
+<a name="IDX150"></a>
 </dd>
 <dt> query for it's id column </dt>
 <dd>
@@ -1560,7 +1562,7 @@ if (account == null) {
   account not found handling &hellip; 
 }
 </pre></td></tr></table>
-<a name="IDX149"></a>
+<a name="IDX151"></a>
 </dd>
 <dt> update the database row associated with the object</dt>
 <dd>
@@ -1570,7 +1572,7 @@ requires an id field.
 </p><table><tr><td>&nbsp;</td><td><pre class="example">account.password = &quot;_secret&quot;;
 accountDao.update(account);
 </pre></td></tr></table>
-<a name="IDX150"></a>
+<a name="IDX152"></a>
 </dd>
 <dt> refreshing an object if the database has changed</dt>
 <dd>
@@ -1579,7 +1581,7 @@ object to get the memory object up-to-date.  This requires an id field.
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">accountDao.refresh(account);
 </pre></td></tr></table>
-<a name="IDX151"></a>
+<a name="IDX153"></a>
 </dd>
 <dt> delete the account from the database</dt>
 <dd>
@@ -1589,8 +1591,8 @@ field.
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">accountDao.delete(account);
 </pre></td></tr></table>
-<a name="IDX152"></a>
-<a name="IDX153"></a>
+<a name="IDX154"></a>
+<a name="IDX155"></a>
 </dd>
 <dt> iterate through all of the rows in a table:</dt>
 <dd>
@@ -1601,7 +1603,7 @@ for (Account account : accountDao) {
     System.out.println(account.getName());
 }
 </pre></td></tr></table>
-<a name="IDX154"></a>
+<a name="IDX156"></a>
 <p><em>NOTE:</em> you must page through <em>all</em> items for the iterator to close the underlying SQL object.   If you don't
 go all of the way, the garbage collector will close the SQL statement some time later which is considered bad form.
 
@@ -1876,12 +1878,7 @@ enough flexibility.  Update SQL statements must contain the reserved words <code
 <p>You can also issue raw update statements against the database if the DAO functionality does not give you
 enough flexibility.  For example:
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">fooDao.executeRaw(&quot;TRUNCATE TABLE accountlog&quot;);
-</pre></td></tr></table>
-<p>Certain database types allow table truncation which you can call through the raw execute method.  If truncate
-is not supported by the database then you can instead do the following with the <code>updateRaw</code> method:
-
-</p><table><tr><td>&nbsp;</td><td><pre class="example">fooDao.updateRaw(&quot;DELETE FROM accountlog&quot;);
+</p><table><tr><td>&nbsp;</td><td><pre class="example">fooDao.executeRaw(&quot;ALTER TABLE accountlog DROP COLUMN partner&quot;);
 </pre></td></tr></table>
 <hr size="6">
 <a name="NOD30"></a>
@@ -1932,8 +1929,8 @@ public class Order {
 use this field name if you are querying for it.  You can set the column name using the <code>columnName</code> field in the
 <code>DatabaseField</code> annotation. See <a href="#ANC1">columnName</a>.
 
-</p><a name="IDX155"></a>
-<a name="IDX156"></a>
+</p><a name="IDX157"></a>
+<a name="IDX158"></a>
 <p>When you are creating a field with a foreign object, please note that the foreign object will <em>not</em> automatically be
 created for you.  If your foreign object has a generated-id which is provided by the database then you need to create it
 <em>before</em> you create any objects that reference it.  For example:
@@ -1948,8 +1945,8 @@ order.setAccount(account);
 &hellip;
 orderDao.create(order);
 </pre></td></tr></table>
-<a name="IDX157"></a>
-<a name="IDX158"></a>
+<a name="IDX159"></a>
+<a name="IDX160"></a>
 <p>When you query for an order, you will get an <code>Order</code> object with an account field object that <em>only</em> has its id
 field set.  The rest of the fields in the foreign <code>Account</code> object will have default values (null, 0, false, etc.).  If
 you want to use other fields in the <code>Account</code>, you must call <code>refresh</code> on the <code>accountDao</code> class to get the
@@ -2059,7 +2056,7 @@ classes to have their own hierarchy and it isolates the database code in the Dao
 the <code>BaseDaoEnabled</code> class if you prefer this pattern.  As of March 2011, it is one of the newer parts of
 ORMLite so feedback and bug reports are welcome.
 
-</p><a name="IDX159"></a>
+</p><a name="IDX161"></a>
 <p>All classes that are able to refresh (update, delete, etc.) themselves should extend the <code>BaseDaoEnabled</code> 
 class.  For example:
 

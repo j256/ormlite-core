@@ -1231,6 +1231,8 @@ if you want to load the schema during some sort of database initialization proce
 
 Same as the previous method but with a @code{DatabaseTableConfig} instead.
 
+@cindex clear table
+@cindex delete rows in table
 @item clearTable(ConnectionSource, Class)
 
 Clear all data out of the table. For certain database types and with large sized tables, which may take a long time. In some configurations,
@@ -1684,20 +1686,11 @@ fooDao.updateRaw("INSERT INTO accountlog (account_id, total) "
 
 @cindex raw execute statements
 @cindex execute raw sql statements
-@cindex truncate table
-@cindex clear table
 You can also issue raw update statements against the database if the DAO functionality does not give you
 enough flexibility.  For example:
 
 @example
-fooDao.executeRaw("TRUNCATE TABLE accountlog");
-@end example
-
-Certain database types allow table truncation which you can call through the raw execute method.  If truncate
-is not supported by the database then you can instead do the following with the @code{updateRaw} method:
-
-@example
-fooDao.updateRaw("DELETE FROM accountlog");
+fooDao.executeRaw("ALTER TABLE accountlog DROP COLUMN partner");
 @end example
 
 @c ----------------------------------------------------------------
@@ -2705,10 +2698,6 @@ Load the driver class associated with this database so it can wire itself into J
 Takes a field type and appends the SQL necessary to create the field.  It may also generate arguments
 for the end of the table create statement or commands that must run before or after the table create.
 
-@item convertColumnName
-
-Convert and return the column name for table and sequence creation. Often this is necessary to fix case issues.
-
 @item dropColumnArg
 
 Takes a field type and adds all of the commands necessary to drop the column from the database.
@@ -2793,10 +2782,23 @@ See the Javadocs for the class for more information.
 
 Returns true if the database supports nested savepoints (transactions).
 
-@item getPingStatement()
+@item getPingStatement
 
 Return an statement that doesn't do anything but which can be used to ping the database by sending it over a
 database connection.
+
+@item isBatchUseTransaction
+
+Returns true if batch operations should be done inside of a transaction. Default is false in which case
+auto-commit disabling will be done.
+
+@item isTruncateSupported
+
+Returns true if the table truncate operation is supported.
+
+@item isCreateIfNotExistsSupported
+
+Returns true if the table creation @code{IF NOT EXISTS} syntax is supported.
 
 @end table
 
@@ -2837,14 +2839,14 @@ is a convenience method for calling @code{queryBuilder().where().eq(fieldName, v
 @cindex queryForMatching
 @cindex query for matching object
 @cindex matching object
-@item Dao.queryForMatching(T matchObj)
+@item queryForMatching(T matchObj)
 
 Query for the rows in the database that match the object passed in as an argument. Any fields in the matching object that
 are not the default value (null, false, 0, 0.0, etc.) are used as the matching parameters with @code{AND}.
 
 @cindex queryForFieldValues
 @cindex query for field value map
-@item Dao.queryForFieldValues(Map<String, Object> fieldValues)
+@item queryForFieldValues(Map<String, Object> fieldValues)
 
 Query for the rows in the database that matches all of the field to value entries from the map passed in.
 
