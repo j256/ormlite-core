@@ -1,7 +1,7 @@
 4.19: 4/11/2011 (svn r####)
 	* CORE: Fixed stupid DaoDaoEnabled.delete() cut and paste bug.  Fixes bug #3276679.
 	* CORE: Added support for storing char fields with ORMLite.  Derby, of course, was the most painful to get working.
-	* CORE: Added some convenience methods like query() and iterator() on the QueryBuilder and Where objects.
+	* CORE: Added convenience query() and iterator() methods to the QueryBuilder and Where objects.
 	* CORE: Added a countOf() call to the Dao to return the select count(*) result for the table.
 	* CORE: Added s clearTable() method to TableUtils.  It will do a TRUNCATE if supported otherwise a DELETE.
 	* CORE: Added a convenience queryForEq() method to the Dao which matches on a single field value.
