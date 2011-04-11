@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on April, 5 2011 by texi2html 1.70 -->
+<!-- Created on April, 11 2011 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -54,7 +54,7 @@ ul.toc {list-style: none}
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h1 class="chapter"> 3. Custom Statement Builder </h1>
@@ -95,7 +95,7 @@ with which you can construct custom queries to return a sub-set of the table.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.1 Query Builder Basics </h2>
@@ -167,7 +167,7 @@ List&lt;Account&gt; accountList =
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.2 Building Queries </h2>
@@ -249,7 +249,7 @@ information.  A good SQL reference site can be found at <a href="http://www.w3sc
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.3 Building Statements </h2>
@@ -306,7 +306,7 @@ accountDao.delete(deleteBuilder.prepare());
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.4 QueryBuilder Capabilities </h2>
@@ -427,7 +427,7 @@ See section <a href="#SEC37">Where Capabilities</a>.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.5 Where Capabilities </h2>
@@ -447,43 +447,44 @@ about the available methods.  All of the methods return the <code>Where</code> o
 <p>Binary <code>AND</code> operation which takes the previous clause and the next clause and AND's them together.  This is when
 you are using inline query calls.
 
-</p></dd>
-<dt><code> and(Where&lt;T, ID&gt; left, Where&lt;T, ID&gt; right)</code></dt>
+</p><a name="IDX177"></a>
+</dd>
+<dt><code> and(Where&lt;T, ID&gt; first, Where&lt;T, ID&gt; second, Where&lt;T, ID&gt;... others)</code></dt>
 <dd>
-<p>Binary AND operation which takes 2 arguments and AND's them together.  This is when you are <em>not</em> using inline
+<p>AND operation which takes 2 or more arguments and AND's them together.  This is when you are <em>not</em> using inline
 query calls but instead want to use standard arguments.
 
-</p><a name="IDX177"></a>
-<a name="IDX178"></a>
-<a name="IDX179"></a>
-</dd>
-<dt><code> andMany(Where&lt;T, ID&gt;... arguments)</code></dt>
-<dd>
-<p>A series of AND operations which takes 2 or more arguments and AND's them together.  The arguments are specified as a
-variable number of arguments type.  This does not have an inline equivalent.
+</p><p><em>NOTE:</em> There is no guarantee of the order of the clauses that are generated in the final query.
 
-</p><p><em>NOTE:</em> There is an annoying code warning that I get with the usage of this method that can be ignored. 
+</p><p><em>NOTE:</em> There is an annoying code warning that I get with the usage of this method with more than 2 arguments that can
+be ignored. 
 
 </p></dd>
-<dt><code> andMany(Iterable&lt;Where&lt;T, ID&gt;&gt; arguments)</code></dt>
+<dt><code> and(int numClauses)</code></dt>
 <dd>
-<p>Like the other andMany method except this uses an <code>Iterable</code> instead of variable arguments.  Usually this is a
+<p>This method needs to be used carefully. This will absorb a number of clauses that were registered previously with
+calls to <code>Where.eq()</code> or other methods and will string them together with AND's. There is no way to verify the number of
+previous clauses so the programmer has to count precisely.
+
+</p><p><em>NOTE:</em> There is no guarantee of the order of the clauses that are generated in the final query.
+
+</p><p> an <code>Iterable</code> instead of variable arguments.  Usually this is a
 <code>Collection</code>.
 
-</p><a name="IDX180"></a>
+</p><a name="IDX178"></a>
 </dd>
 <dt><code> between(String columnName, Object low, Object high)</code></dt>
 <dd>
 <p>Add a BETWEEN clause which makes sure the column is between the low and high parameters.
 
-</p><a name="IDX181"></a>
-<a name="IDX182"></a>
+</p><a name="IDX179"></a>
+<a name="IDX180"></a>
 </dd>
 <dt><code> eq(String columnName, Object value)</code></dt>
 <dd>
 <p>Add a '=' clause which makes sure the column is equal to the value.
 
-</p><a name="IDX183"></a>
+</p><a name="IDX181"></a>
 </dd>
 <dt><code> exists(QueryBuilder&lt;?, ?&gt; subQueryBuilder)</code></dt>
 <dd>
@@ -492,17 +493,17 @@ results.
 
 </p><p><em>NOTE:</em> The sub-query will be prepared at the same time that the outside query is.
 
-</p><a name="IDX184"></a>
-<a name="IDX185"></a>
-<a name="IDX186"></a>
+</p><a name="IDX182"></a>
+<a name="IDX183"></a>
+<a name="IDX184"></a>
 </dd>
 <dt><code> ge(String columnName, Object value)</code></dt>
 <dd>
 <p>Add a '&gt;=' clause which makes sure the column is greater-than or equals-to the value.
 
-</p><a name="IDX187"></a>
-<a name="IDX188"></a>
-<a name="IDX189"></a>
+</p><a name="IDX185"></a>
+<a name="IDX186"></a>
+<a name="IDX187"></a>
 </dd>
 <dt><code> gt(String columnName, Object value)</code></dt>
 <dd>
@@ -518,22 +519,22 @@ results.
 <dd>
 <p>Add a clause where the ID is extracted from an existing object.
 
-</p><a name="IDX190"></a>
+</p><a name="IDX188"></a>
 </dd>
 <dt><code> in(String columnName, Iterable&lt;?&gt; objects)</code></dt>
 <dd>
 <p>Add a IN clause which makes sure the column is equal-to one of the objects from the Iterable (probably collection)
 passed in.
 
-</p><a name="IDX191"></a>
+</p><a name="IDX189"></a>
 </dd>
 <dt><code> in(String columnName, Object... objects)</code></dt>
 <dd>
 <p>Add a IN clause which makes sure the column is equal-to one of the objects passed in.
 
-</p><a name="IDX192"></a>
-<a name="IDX193"></a>
-<a name="IDX194"></a>
+</p><a name="IDX190"></a>
+<a name="IDX191"></a>
+<a name="IDX192"></a>
 </dd>
 <dt><code> in(String columnName, QueryBuilder&lt;?, ?&gt; subQueryBuilder)</code></dt>
 <dd>
@@ -543,51 +544,51 @@ method calls. That 1 argument must match the SQL type of the column-name passed 
 
 </p><p><em>NOTE:</em> The sub-query will be prepared at the same time that the outside query is.
 
-</p><a name="IDX195"></a>
-<a name="IDX196"></a>
+</p><a name="IDX193"></a>
+<a name="IDX194"></a>
 </dd>
 <dt><code> isNull(String columnName)</code></dt>
 <dd>
 <p>Add a 'IS NULL' clause which makes sure the column's value is null. '=' NULL does not work.
 
-</p><a name="IDX197"></a>
-<a name="IDX198"></a>
+</p><a name="IDX195"></a>
+<a name="IDX196"></a>
 </dd>
 <dt><code> isNotNull(String columnName)</code></dt>
 <dd>
 <p>Add a 'IS NOT NULL' clause so the column must not be null. '&lt;&gt;' NULL does not work.
 
-</p><a name="IDX199"></a>
-<a name="IDX200"></a>
-<a name="IDX201"></a>
+</p><a name="IDX197"></a>
+<a name="IDX198"></a>
+<a name="IDX199"></a>
 </dd>
 <dt><code> le(String columnName, Object value)</code></dt>
 <dd>
 <p>Add a '&lt;=' clause which makes sure the column is less-than or equals-to the value.
 
-</p><a name="IDX202"></a>
-<a name="IDX203"></a>
-<a name="IDX204"></a>
+</p><a name="IDX200"></a>
+<a name="IDX201"></a>
+<a name="IDX202"></a>
 </dd>
 <dt><code> lt(String columnName, Object value)</code></dt>
 <dd>
 <p>Add a '&lt;' clause which makes sure the column is less-than the value.
 
-</p><a name="IDX205"></a>
+</p><a name="IDX203"></a>
 </dd>
 <dt><code> like(String columnName, Object value)</code></dt>
 <dd>
 <p>Add a LIKE clause which makes sure the column match the value using '%' patterns.
 
-</p><a name="IDX206"></a>
-<a name="IDX207"></a>
-<a name="IDX208"></a>
+</p><a name="IDX204"></a>
+<a name="IDX205"></a>
+<a name="IDX206"></a>
 </dd>
 <dt><code> ne(String columnName, Object value)</code></dt>
 <dd>
 <p>Add a '&lt;&gt;' clause which makes sure the column is not-equal-to the value.
 
-</p><a name="IDX209"></a>
+</p><a name="IDX207"></a>
 </dd>
 <dt><code> not()</code></dt>
 <dd>
@@ -599,7 +600,7 @@ method calls. That 1 argument must match the SQL type of the column-name passed 
 <p>Used to NOT the argument clause specified.  This is when you are <em>not</em> using inline
 query calls but instead want to use standard arguments.
 
-</p><a name="IDX210"></a>
+</p><a name="IDX208"></a>
 </dd>
 <dt><code> or()</code></dt>
 <dd>
@@ -607,29 +608,24 @@ query calls but instead want to use standard arguments.
 you are using inline query calls.
 
 </p></dd>
-<dt><code> or(Where&lt;T, ID&gt; left, Where&lt;T, ID&gt; right)</code></dt>
+<dt><code> or(Where&lt;T, ID&gt; first, Where&lt;T, ID&gt; second, Where&lt;T, ID&gt;... others)</code></dt>
 <dd>
-<p>Binary OR operation which takes 2 arguments and OR's them together.  This is when you are <em>not</em> using inline
+<p>OR operation which takes 2 or more arguments and OR's them together.  This is when you are <em>not</em> using inline
 query calls but instead want to use standard arguments.
 
-</p><a name="IDX211"></a>
-<a name="IDX212"></a>
-<a name="IDX213"></a>
-</dd>
-<dt><code> orMany(Where&lt;T, ID&gt;... arguments)</code></dt>
-<dd>
-<p>A series of AND operations which takes 2 or more arguments and AND's them together.  The arguments are specified as a
-variable number of arguments type.  This does not have an inline equivalent.
+</p><p><em>NOTE:</em> There is no guarantee of the order of the clauses that are generated in the final query.
 
-</p><p><em>NOTE:</em> There is an annoying code warning that I get with the usage of this method that can be ignored. 
+</p><p><em>NOTE:</em> There is an annoying code warning that I get with the usage of this method with more than 2 arguments that can
+be ignored. 
 
 </p></dd>
-<dt><code> orMany(Iterable&lt;Where&lt;T, ID&gt;&gt; arguments)</code></dt>
+<dt><code> or(int numClauses)</code></dt>
 <dd>
-<p>Like the other andMany method except this uses an <code>Iterable</code> instead of variable arguments.  Usually this is a
-<code>Collection</code>.
+<p>This method needs to be used carefully. This will absorb a number of clauses that were registered previously with
+calls to <code>Where.eq()</code> or other methods and will string them together with OR's. There is no way to verify the number of
+previous clauses so the programmer has to count precisely.
 
-</p><a name="IDX214"></a>
+</p><a name="IDX209"></a>
 </dd>
 <dt><code> raw(String rawStatement)</code></dt>
 <dd>
@@ -643,7 +639,7 @@ database specific features.
 <p>A short-cut for calling <code>prepare()</code> on the original <code>QueryBuilder.prepare()</code>.  This method returns a
 <code>PreparedQuery</code> object.
 
-</p><a name="IDX215"></a>
+</p><a name="IDX210"></a>
 </dd>
 <dt><code> clear()</code></dt>
 <dd>
@@ -680,7 +676,7 @@ database specific features.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.6 Using Select Arguments </h2>
@@ -709,8 +705,8 @@ List&lt;Account&gt; accounts = accountDao.query(preparedQuery);
 selectArg.setValue(&quot;bar&quot;);
 accounts = accountDao.query(preparedQuery);
 </pre></td></tr></table>
-<a name="IDX216"></a>
-<a name="IDX217"></a>
+<a name="IDX211"></a>
+<a name="IDX212"></a>
 <p>Certain data types use an internal <code>SelectArg</code> object because the string value of the object does not reliably match the
 database form of the object.  <code>java.util.Date</code> is one example of such a type.  Also, in places where strings may have quote
 characters inside them that clash with the database escaping quotes, a <code>SelectArg</code> may be required for queries to be formatted
@@ -730,12 +726,12 @@ new object if you want to use a <code>SelectArg</code> with another column.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC59" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>April, 5 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>April, 11 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 

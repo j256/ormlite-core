@@ -6,9 +6,9 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.18
+@set ormlite_version 4.19
 @set ormlite_year 2011
-@set ormlite_date March @value{ormlite_year}
+@set ormlite_date April @value{ormlite_year}
 @set package ORMLite
 @c ----------------------------------------------------------------
 
@@ -776,6 +776,9 @@ serializes an object as an array of bytes.
 @item char or Character (DataType.CHAR or DataType.CHAR_OBJ)
 
 Persisted as SQL type @code{CHAR}.
+
+@emph{NOTE:} If you are using Derby you should consider using a String instead since comparisons of character fields are
+not allowed.
 
 @cindex short
 @anchor{datatype short}
@@ -2240,7 +2243,8 @@ query calls but instead want to use standard arguments.
 
 @emph{NOTE:} There is no guarantee of the order of the clauses that are generated in the final query.
 
-@emph{NOTE:} There is an annoying code warning that I get with the usage of this method with more than 2 arguments that can be ignored. 
+@emph{NOTE:} There is an annoying code warning that I get with the usage of this method with more than 2 arguments that can
+be ignored. 
 
 @item and(int numClauses)
 
@@ -2377,7 +2381,8 @@ query calls but instead want to use standard arguments.
 
 @emph{NOTE:} There is no guarantee of the order of the clauses that are generated in the final query.
 
-@emph{NOTE:} There is an annoying code warning that I get with the usage of this method that can be ignored. 
+@emph{NOTE:} There is an annoying code warning that I get with the usage of this method with more than 2 arguments that can
+be ignored. 
 
 @item or(int numClauses)
 
@@ -2523,7 +2528,8 @@ Please see the example code documentation for more information.  @xref{Android E
 * DAO Methods::                What functionality is provided by the DAO.
 * Logging::                    How to log messages with @value{package}.
 * Dependencies::               External dependencies of @value{package}.
-* Transactions::               Using Database Transactions.
+* Transactions::               Using database transactions.
+* Maven::                      Configure a maven project for @value{package}.
 @end menu
 
 @c ----------------------------------------------------------------
@@ -2830,6 +2836,7 @@ is a convenience method for calling @code{queryBuilder().where().eq(fieldName, v
 
 @cindex queryForMatching
 @cindex query for matching object
+@cindex matching object
 @item Dao.queryForMatching(T matchObj)
 
 Query for the rows in the database that match the object passed in as an argument. Any fields in the matching object that
@@ -2837,7 +2844,7 @@ are not the default value (null, false, 0, 0.0, etc.) are used as the matching p
 
 @cindex queryForFieldValues
 @cindex query for field value map
-@item Dao.queryForFieldValues(T matchObj)
+@item Dao.queryForFieldValues(Map<String, Object> fieldValues)
 
 Query for the rows in the database that matches all of the field to value entries from the map passed in.
 
@@ -2986,7 +2993,8 @@ number of database operations at once -- maybe loading data from a file. This wi
 
 @emph{NOTE:} If neither auto-commit nor transactions areq supported by the database type then this may do nothing.
 
-@cindex count table rows
+@cindex count of table rows
+@cindex countOf
 @item countOf()
 
 Returns the value returned from a @code{SELECT COUNT(*)} query which is the number of rows in the table.  Depending on the
@@ -3081,7 +3089,7 @@ dependencies: @code{com.sun.jmx.jmxri}, @code{com.sun.jdmk.jmxtools}, @code{java
 @end table
 
 @c ----------------------------------------------------------------
-@node Transactions, How to Upgrade, Dependencies, Advanced
+@node Transactions, Maven, Dependencies, Advanced
 @section Using Database Transactions
 
 @cindex database transactions
@@ -3134,7 +3142,42 @@ a transaction seems to give a significant performance improvement. For example, 
 inserts into a database, consider running them within a transaction.
 
 @c ----------------------------------------------------------------
-@node How to Upgrade, 4.14, Transactions, Top
+@node Maven, How to Upgrade, Transactions, Advanced
+@section Configuring a Maven Project
+
+@cindex maven configuration
+
+To use @value{package} in your project if you are using maven, then you should add the following configuration stanza
+to your @code{pom.xml} file.  As mentioned below, you will also need to add some database driver as well to your
+dependency list.  In this example we are using MySQL but any of the supported JDBC database drivers will do.
+
+@example
+<project>
+    @dots{}
+    <dependencies>
+        <dependency>
+            <groupId>com.j256.ormlite</groupId>
+            <artifactId>ormlite-jdbc</artifactId>
+            <version>@value{ormlite_version}</version>
+        </dependency>
+        <!-- You will need to add some sort of database driver as well.  In this example it is MySQL. -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.10</version>
+        </dependency>
+    </dependencies>
+</project>
+@end example
+
+The @code{-jdbc} artifact mentioned in the example depends on the @code{-core} artifact, but that should be pulled
+in automatically by maven.
+
+@emph{NOTE:} I do not have any details about how to configure Android projects with maven.  If you are doing so
+then just replace the @code{ormlite-jdbc} artifact name with @code{ormlite-android}.
+
+@c ----------------------------------------------------------------
+@node How to Upgrade, 4.14, Maven, Top
 @chapter Upgrade From Old Versions
 
 We strive to maintain backwards compatibility and to provide deprecated versions of old classes and methods.
