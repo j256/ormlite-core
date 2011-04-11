@@ -3160,7 +3160,8 @@ dependency list.  In this example we are using MySQL but any of the supported JD
             <artifactId>ormlite-jdbc</artifactId>
             <version>@value{ormlite_version}</version>
         </dependency>
-        <!-- You will need to add some sort of database driver as well.  In this example it is MySQL. -->
+        <!-- You will need to add some sort of database driver too.
+             In this example we've used MySQL. -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
