@@ -634,7 +634,7 @@ public class FieldType {
 	 */
 	public <FV> FV getFieldValueIfNotDefault(Object object) throws SQLException {
 		@SuppressWarnings("unchecked")
-		FV fieldValue = (FV)extractJavaFieldValue(object);
+		FV fieldValue = (FV) extractJavaFieldValue(object);
 		if (fieldValue == null) {
 			return null;
 		}

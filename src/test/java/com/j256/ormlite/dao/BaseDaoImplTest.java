@@ -862,12 +862,18 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		GenericRawResults<String[]> results =
 				dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME + " FROM FOO WHERE "
 						+ Foo.ID_COLUMN_NAME + " = ?", id2);
+		assertEquals(2, results.getNumberColumns());
+		String[] names = results.getColumnNames();
+		assertEquals(2, names.length);
+		assertEquals(Foo.ID_COLUMN_NAME.toUpperCase(), names[0]);
+		assertEquals(Foo.EQUAL_COLUMN_NAME.toUpperCase(), names[1]);
 		List<String[]> resultList = results.getResults();
 		assertEquals(1, resultList.size());
 		String[] row = resultList.get(0);
 		assertEquals(2, row.length);
 		assertEquals(foo2.id, row[0]);
 		assertEquals(foo2.equal, Integer.parseInt(row[1]));
+		results.close();
 	}
 
 	@Test

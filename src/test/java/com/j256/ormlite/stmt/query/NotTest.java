@@ -2,6 +2,7 @@ package com.j256.ormlite.stmt.query;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
@@ -31,6 +32,18 @@ public class NotTest extends BaseCoreStmtTest {
 		};
 		not.setMissingClause(clause);
 		not.setMissingClause(clause);
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void testNoClause() throws Exception {
+		Not not = new Not();
+		not.appendSql(databaseType, new StringBuilder(), new ArrayList<SelectArg>());
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testBaseNotClause() throws Exception {
+		Not not = new Not();
+		not.setMissingClause(new ManyClause((Clause) null, "AND"));
 	}
 
 	@Test

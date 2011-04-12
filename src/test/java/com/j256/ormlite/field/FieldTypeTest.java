@@ -22,6 +22,7 @@ import java.util.HashMap;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.h2.H2DatabaseType;
 import com.j256.ormlite.stmt.GenericRowMapper;
@@ -67,10 +68,12 @@ public class FieldTypeTest extends BaseCoreTest {
 		assertEquals(DataType.INTEGER_OBJ, fieldType.getDataType());
 		assertEquals(Integer.parseInt(SERIAL_DEFAULT_VALUE), fieldType.getDefaultValue());
 
-		fieldType = FieldType.createFieldType(connectionSource, Foo.class.getSimpleName(), intLongField, Foo.class, 0);
+		String tableName = Foo.class.getSimpleName();
+		fieldType = FieldType.createFieldType(connectionSource, tableName, intLongField, Foo.class, 0);
 		assertEquals(intLongField.getName(), fieldType.getDbColumnName());
 		assertFalse(fieldType.isGeneratedId());
 		assertEquals(DataType.LONG, fieldType.getDataType());
+		assertSame(tableName, fieldType.getTableName());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -591,6 +594,125 @@ public class FieldTypeTest extends BaseCoreTest {
 				ByteArrayNoDataType.class, 0);
 	}
 
+	@Test(expected = SQLException.class)
+	public void testForeignCollectionNoGeneric() throws Exception {
+		Field field = ForeignCollectionNoGeneric.class.getDeclaredField("foreignStuff");
+		FieldType.createFieldType(connectionSource, ForeignCollectionNoGeneric.class.getSimpleName(), field,
+				ForeignCollectionNoGeneric.class, 0);
+	}
+
+	@Test(expected = SQLException.class)
+	public void testImproperId() throws Exception {
+		Field field = ImproperIdType.class.getDeclaredField("id");
+		FieldType.createFieldType(connectionSource, ImproperIdType.class.getSimpleName(), field, ImproperIdType.class,
+				0);
+	}
+
+	@Test
+	public void testDefaultValues() throws Exception {
+		DefaultTypes defaultTypes = new DefaultTypes();
+		Field field = DefaultTypes.class.getDeclaredField("booleanField");
+		FieldType fieldType =
+				FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field,
+						DefaultTypes.class, 0);
+		assertNull(fieldType.getFieldValueIfNotDefault(defaultTypes));
+		defaultTypes.booleanField = true;
+		assertEquals(defaultTypes.booleanField, fieldType.getFieldValueIfNotDefault(defaultTypes));
+
+		field = DefaultTypes.class.getDeclaredField("byteField");
+		fieldType =
+				FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field,
+						DefaultTypes.class, 0);
+		assertNull(fieldType.getFieldValueIfNotDefault(defaultTypes));
+		defaultTypes.byteField = 1;
+		assertEquals(defaultTypes.byteField, fieldType.getFieldValueIfNotDefault(defaultTypes));
+
+		field = DefaultTypes.class.getDeclaredField("charField");
+		fieldType =
+				FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field,
+						DefaultTypes.class, 0);
+		assertNull(fieldType.getFieldValueIfNotDefault(defaultTypes));
+		defaultTypes.charField = '1';
+		assertEquals(defaultTypes.charField, fieldType.getFieldValueIfNotDefault(defaultTypes));
+
+		field = DefaultTypes.class.getDeclaredField("shortField");
+		fieldType =
+				FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field,
+						DefaultTypes.class, 0);
+		assertNull(fieldType.getFieldValueIfNotDefault(defaultTypes));
+		defaultTypes.shortField = 32000;
+		assertEquals(defaultTypes.shortField, fieldType.getFieldValueIfNotDefault(defaultTypes));
+
+		field = DefaultTypes.class.getDeclaredField("intField");
+		fieldType =
+				FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field,
+						DefaultTypes.class, 0);
+		assertNull(fieldType.getFieldValueIfNotDefault(defaultTypes));
+		defaultTypes.intField = 1000000000;
+		assertEquals(defaultTypes.intField, fieldType.getFieldValueIfNotDefault(defaultTypes));
+
+		field = DefaultTypes.class.getDeclaredField("longField");
+		fieldType =
+				FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field,
+						DefaultTypes.class, 0);
+		assertNull(fieldType.getFieldValueIfNotDefault(defaultTypes));
+		defaultTypes.longField = 1000000000000000L;
+		assertEquals(defaultTypes.longField, fieldType.getFieldValueIfNotDefault(defaultTypes));
+
+		field = DefaultTypes.class.getDeclaredField("floatField");
+		fieldType =
+				FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field,
+						DefaultTypes.class, 0);
+		assertNull(fieldType.getFieldValueIfNotDefault(defaultTypes));
+		defaultTypes.floatField = 10.123213F;
+		assertEquals(defaultTypes.floatField, fieldType.getFieldValueIfNotDefault(defaultTypes));
+
+		field = DefaultTypes.class.getDeclaredField("doubleField");
+		fieldType =
+				FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field,
+						DefaultTypes.class, 0);
+		assertNull(fieldType.getFieldValueIfNotDefault(defaultTypes));
+		defaultTypes.doubleField = 102123123123.123213;
+		assertEquals(defaultTypes.doubleField, fieldType.getFieldValueIfNotDefault(defaultTypes));
+	}
+
+	@Test
+	public void testEquals() throws Exception {
+		Field field1 = DefaultTypes.class.getDeclaredField("booleanField");
+		FieldType fieldType1 =
+				FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field1,
+						DefaultTypes.class, 0);
+		FieldType fieldType2 =
+				FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field1,
+						DefaultTypes.class, 0);
+
+		Field field2 = DefaultTypes.class.getDeclaredField("byteField");
+		FieldType fieldType3 =
+				FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field2,
+						DefaultTypes.class, 0);
+		FieldType fieldType4 =
+				FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field2,
+						DefaultTypes.class, 0);
+
+		assertTrue(fieldType1.equals(fieldType1));
+		assertTrue(fieldType2.equals(fieldType2));
+		assertTrue(fieldType1.equals(fieldType2));
+		assertTrue(fieldType2.equals(fieldType1));
+		assertEquals(fieldType1.hashCode(), fieldType2.hashCode());
+
+		assertFalse(fieldType1.equals(null));
+		assertFalse(fieldType1.equals(fieldType3));
+		assertFalse(fieldType1.equals(fieldType4));
+		assertFalse(fieldType3.equals(fieldType1));
+		assertFalse(fieldType4.equals(fieldType1));
+
+		assertTrue(fieldType3.equals(fieldType3));
+		assertTrue(fieldType4.equals(fieldType4));
+		assertTrue(fieldType3.equals(fieldType4));
+		assertTrue(fieldType4.equals(fieldType3));
+		assertEquals(fieldType3.hashCode(), fieldType4.hashCode());
+	}
+
 	/* ========================================================================================================= */
 
 	protected static class Foo {
@@ -682,7 +804,7 @@ public class FieldTypeTest extends BaseCoreTest {
 
 	protected static class ForeignPrimitive {
 		@DatabaseField(foreign = true)
-		String id;
+		int id;
 	}
 
 	protected static class ForeignNoId {
@@ -821,6 +943,41 @@ public class FieldTypeTest extends BaseCoreTest {
 	protected static class ByteArrayNoDataType {
 		@DatabaseField
 		byte[] bytes;
+	}
+
+	@DatabaseTable
+	protected static class ForeignCollectionNoGeneric {
+		@DatabaseField
+		int id;
+		@SuppressWarnings("rawtypes")
+		@ForeignCollectionField
+		ForeignCollection foreignStuff;
+	}
+
+	@DatabaseTable
+	protected static class ImproperIdType {
+		@DatabaseField(id = true, dataType = DataType.SERIALIZABLE)
+		Serializable id;
+	}
+
+	@DatabaseTable
+	protected static class DefaultTypes {
+		@DatabaseField
+		boolean booleanField;
+		@DatabaseField
+		byte byteField;
+		@DatabaseField
+		char charField;
+		@DatabaseField
+		short shortField;
+		@DatabaseField
+		int intField;
+		@DatabaseField
+		long longField;
+		@DatabaseField
+		float floatField;
+		@DatabaseField
+		double doubleField;
 	}
 
 	private static class NeedsUppercaseSequenceDatabaseType extends NeedsSequenceDatabaseType {
