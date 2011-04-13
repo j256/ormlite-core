@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.stmt.SelectArg;
+import com.j256.ormlite.stmt.ArgumentHolder;
 import com.j256.ormlite.stmt.Where;
 
 /**
@@ -35,7 +35,7 @@ public class In extends BaseComparison {
 	}
 
 	@Override
-	public void appendValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> columnArgList)
+	public void appendValue(DatabaseType databaseType, StringBuilder sb, List<ArgumentHolder> columnArgList)
 			throws SQLException {
 		sb.append('(');
 		boolean first = true;

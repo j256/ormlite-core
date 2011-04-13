@@ -86,6 +86,10 @@ public abstract class BaseMappedStatement<T, ID> {
 		}
 	}
 
+	public String getStatement() {
+		return statement;
+	}
+
 	/**
 	 * Return the array of field objects pulled from the data object.
 	 */

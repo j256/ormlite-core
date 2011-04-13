@@ -12,7 +12,7 @@ import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.stmt.SelectArg;
+import com.j256.ormlite.stmt.ArgumentHolder;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.DatabaseResults;
@@ -33,7 +33,7 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 				new TableInfo<LocalFoo, Integer>(connectionSource, null, LocalFoo.class);
 		MappedPreparedStmt<LocalFoo, Integer> rowMapper =
 				new MappedPreparedStmt<LocalFoo, Integer>(tableInfo, null, new FieldType[0], tableInfo.getFieldTypes(),
-						new SelectArg[0], null, StatementType.SELECT);
+						new ArgumentHolder[0], null, StatementType.SELECT);
 
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
@@ -63,12 +63,12 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 				new TableInfo<LocalFoo, Integer>(connectionSource, null, LocalFoo.class);
 		MappedPreparedStmt<LocalFoo, Integer> preparedQuery =
 				new MappedPreparedStmt<LocalFoo, Integer>(tableInfo, "select * from " + TABLE_NAME, new FieldType[0],
-						tableInfo.getFieldTypes(), new SelectArg[0], 1, StatementType.SELECT);
+						tableInfo.getFieldTypes(), new ArgumentHolder[0], 1, StatementType.SELECT);
 
 		checkResults(foos, preparedQuery, 1);
 		preparedQuery =
 				new MappedPreparedStmt<LocalFoo, Integer>(tableInfo, "select * from " + TABLE_NAME, new FieldType[0],
-						tableInfo.getFieldTypes(), new SelectArg[0], null, StatementType.SELECT);
+						tableInfo.getFieldTypes(), new ArgumentHolder[0], null, StatementType.SELECT);
 		checkResults(foos, preparedQuery, 2);
 	}
 
@@ -95,7 +95,7 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testObjectNoConstructor() throws SQLException {
 		new MappedPreparedStmt<NoConstructor, Void>(new TableInfo<NoConstructor, Void>(connectionSource, null,
-				NoConstructor.class), null, new FieldType[0], new FieldType[0], new SelectArg[0], null,
+				NoConstructor.class), null, new FieldType[0], new FieldType[0], new ArgumentHolder[0], null,
 				StatementType.SELECT);
 	}
 

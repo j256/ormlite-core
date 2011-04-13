@@ -4,10 +4,10 @@ import java.sql.SQLException;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.logger.Log.Level;
+import com.j256.ormlite.stmt.ArgumentHolder;
 import com.j256.ormlite.stmt.PreparedDelete;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.PreparedUpdate;
-import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.StatementBuilder;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.CompiledStatement;
@@ -22,14 +22,14 @@ import com.j256.ormlite.table.TableInfo;
 public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements PreparedQuery<T>, PreparedDelete<T>,
 		PreparedUpdate<T> {
 
-	private final SelectArg[] selectArgs;
+	private final ArgumentHolder[] argHolders;
 	private final Integer limit;
 	private final StatementType type;
 
 	public MappedPreparedStmt(TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes,
-			FieldType[] resultFieldTypes, SelectArg[] selectArgs, Integer limit, StatementType type) {
+			FieldType[] resultFieldTypes, ArgumentHolder[] argHolders, Integer limit, StatementType type) {
 		super(tableInfo, statement, argFieldTypes, resultFieldTypes);
-		this.selectArgs = selectArgs;
+		this.argHolders = argHolders;
 		// this is an Integer because it may be null
 		this.limit = limit;
 		this.type = type;
@@ -38,38 +38,30 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 	public CompiledStatement compile(DatabaseConnection databaseConnection) throws SQLException {
 		CompiledStatement stmt = databaseConnection.compileStatement(statement, type, argFieldTypes, resultsFieldTypes);
 		if (limit != null) {
+			// we use this if SQL statement LIMITs are not supported by this database type
 			stmt.setMaxRows(limit);
 		}
-		// set any arguments if there are any selectArgs
-		Object[] args = null;
-		if (logger.isLevelEnabled(Level.TRACE) && selectArgs.length > 0) {
-			args = new Object[selectArgs.length];
+		// set any arguments if we are logging our object
+		Object[] argValues = null;
+		if (logger.isLevelEnabled(Level.TRACE) && argHolders.length > 0) {
+			argValues = new Object[argHolders.length];
 		}
-		for (int i = 0; i < selectArgs.length; i++) {
-			Object arg = selectArgs[i].getSqlArgValue();
-			// sql statement arguments start at 1
-			if (arg == null) {
+		for (int i = 0; i < argHolders.length; i++) {
+			Object argValue = argHolders[i].getSqlArgValue();
+			if (argValue == null) {
 				stmt.setNull(i, argFieldTypes[i].getSqlType());
 			} else {
-				stmt.setObject(i, arg, argFieldTypes[i].getSqlType());
+				stmt.setObject(i, argValue, argFieldTypes[i].getSqlType());
 			}
-			if (args != null) {
-				args[i] = arg;
+			if (argValues != null) {
+				argValues[i] = argValue;
 			}
 		}
-		logger.debug("prepared statement '{}' with {} args", statement, selectArgs.length);
-		if (args != null) {
+		logger.debug("prepared statement '{}' with {} args", statement, argHolders.length);
+		if (argValues != null) {
 			// need to do the (Object) cast to force args to be a single object
-			logger.trace("prepared statement arguments: {}", (Object) args);
+			logger.trace("prepared statement arguments: {}", (Object) argValues);
 		}
 		return stmt;
-	}
-
-	public String getStatement() {
-		return statement;
-	}
-
-	public SelectArg[] getSelectArgs() {
-		return selectArgs;
 	}
 }

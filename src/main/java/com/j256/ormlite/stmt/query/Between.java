@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.stmt.SelectArg;
+import com.j256.ormlite.stmt.ArgumentHolder;
 import com.j256.ormlite.stmt.Where;
 
 /**
@@ -30,7 +30,7 @@ public class Between extends BaseComparison {
 	}
 
 	@Override
-	public void appendValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
+	public void appendValue(DatabaseType databaseType, StringBuilder sb, List<ArgumentHolder> argList)
 			throws SQLException {
 		if (low == null) {
 			throw new IllegalArgumentException("BETWEEN low value for '" + columnName + "' is null");
@@ -38,8 +38,8 @@ public class Between extends BaseComparison {
 		if (high == null) {
 			throw new IllegalArgumentException("BETWEEN high value for '" + columnName + "' is null");
 		}
-		appendArgOrValue(databaseType, fieldType, sb, selectArgList, low);
+		appendArgOrValue(databaseType, fieldType, sb, argList, low);
 		sb.append("AND ");
-		appendArgOrValue(databaseType, fieldType, sb, selectArgList, high);
+		appendArgOrValue(databaseType, fieldType, sb, argList, high);
 	}
 }

@@ -8,10 +8,12 @@ import static org.junit.Assert.fail;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 
 import com.j256.ormlite.db.DatabaseType;
+import com.j256.ormlite.stmt.ArgumentHolder;
 import com.j256.ormlite.stmt.BaseCoreStmtTest;
 import com.j256.ormlite.stmt.SelectArg;
 
@@ -51,14 +53,14 @@ public class BaseComparisonTest extends BaseCoreStmtTest {
 
 	@Test(expected = SQLException.class)
 	public void testAppendArgOrValueNull() throws Exception {
-		cmpInt.appendArgOrValue(null, numberFieldType, new StringBuilder(), new ArrayList<SelectArg>(), null);
+		cmpInt.appendArgOrValue(null, numberFieldType, new StringBuilder(), new ArrayList<ArgumentHolder>(), null);
 	}
 
 	@Test
 	public void testAppendArgOrValueLong() throws SQLException {
 		long value = 23213L;
 		StringBuilder sb = new StringBuilder();
-		cmpInt.appendArgOrValue(null, numberFieldType, sb, new ArrayList<SelectArg>(), value);
+		cmpInt.appendArgOrValue(null, numberFieldType, sb, new ArrayList<ArgumentHolder>(), value);
 		assertEquals(Long.toString(value) + " ", sb.toString());
 	}
 
@@ -66,7 +68,7 @@ public class BaseComparisonTest extends BaseCoreStmtTest {
 	public void testAppendArgOrValueInteger() throws SQLException {
 		int value = 23213;
 		StringBuilder sb = new StringBuilder();
-		cmpInt.appendArgOrValue(null, numberFieldType, sb, new ArrayList<SelectArg>(), value);
+		cmpInt.appendArgOrValue(null, numberFieldType, sb, new ArrayList<ArgumentHolder>(), value);
 		assertEquals(Integer.toString(value) + " ", sb.toString());
 	}
 
@@ -74,7 +76,7 @@ public class BaseComparisonTest extends BaseCoreStmtTest {
 	public void testAppendArgOrValueShort() throws SQLException {
 		short value = 23213;
 		StringBuilder sb = new StringBuilder();
-		cmpInt.appendArgOrValue(null, numberFieldType, sb, new ArrayList<SelectArg>(), value);
+		cmpInt.appendArgOrValue(null, numberFieldType, sb, new ArrayList<ArgumentHolder>(), value);
 		assertEquals(Short.toString(value) + " ", sb.toString());
 	}
 
@@ -85,7 +87,7 @@ public class BaseComparisonTest extends BaseCoreStmtTest {
 		DatabaseType databaseType = createMock(DatabaseType.class);
 		databaseType.appendEscapedWord(sb, value);
 		replay(databaseType);
-		cmpString.appendArgOrValue(databaseType, stringFieldType, sb, new ArrayList<SelectArg>(), value);
+		cmpString.appendArgOrValue(databaseType, stringFieldType, sb, new ArrayList<ArgumentHolder>(), value);
 		verify(databaseType);
 	}
 
@@ -93,26 +95,25 @@ public class BaseComparisonTest extends BaseCoreStmtTest {
 	public void testAppendArgOrValueSelectArg() throws SQLException {
 		SelectArg value = new SelectArg();
 		StringBuilder sb = new StringBuilder();
-		ArrayList<SelectArg> selectArgList = new ArrayList<SelectArg>();
+		List<ArgumentHolder> argList = new ArrayList<ArgumentHolder>();
 		try {
 			value.getColumnName();
 			fail("Should have thrown");
 		} catch (IllegalArgumentException e) {
 			// expected
 		}
-		cmpInt.appendArgOrValue(null, numberFieldType, sb, selectArgList, value);
-		assertEquals(1, selectArgList.size());
+		cmpInt.appendArgOrValue(null, numberFieldType, sb, argList, value);
+		assertEquals(1, argList.size());
 		assertEquals(INT_COLUMN_NAME, value.getColumnName());
 	}
 
 	@Test
 	public void testForeignId() throws SQLException {
 		StringBuilder sb = new StringBuilder();
-		ArrayList<SelectArg> selectArgList = new ArrayList<SelectArg>();
 		Foo baseFoo = new Foo();
 		String id = "zebra";
 		baseFoo.id = id;
-		cmpForeign.appendArgOrValue(databaseType, foreignFieldType, sb, selectArgList, baseFoo);
+		cmpForeign.appendArgOrValue(databaseType, foreignFieldType, sb, new ArrayList<ArgumentHolder>(), baseFoo);
 		StringBuilder expectSb = new StringBuilder();
 		databaseType.appendEscapedWord(expectSb, id);
 		expectSb.append(' ');
@@ -122,9 +123,8 @@ public class BaseComparisonTest extends BaseCoreStmtTest {
 	@Test(expected = SQLException.class)
 	public void testForeignIdNull() throws SQLException {
 		StringBuilder sb = new StringBuilder();
-		ArrayList<SelectArg> selectArgList = new ArrayList<SelectArg>();
 		Foo baseFoo = new Foo();
 		baseFoo.id = null;
-		cmpForeign.appendArgOrValue(databaseType, foreignFieldType, sb, selectArgList, baseFoo);
+		cmpForeign.appendArgOrValue(databaseType, foreignFieldType, sb, new ArrayList<ArgumentHolder>(), baseFoo);
 	}
 }

@@ -7,8 +7,8 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
+import com.j256.ormlite.stmt.ArgumentHolder;
 import com.j256.ormlite.stmt.BaseCoreStmtTest;
-import com.j256.ormlite.stmt.SelectArg;
 
 public class BetweenTest extends BaseCoreStmtTest {
 
@@ -23,19 +23,19 @@ public class BetweenTest extends BaseCoreStmtTest {
 		btw.appendOperation(sb);
 		assertTrue(sb.toString().contains("BETWEEN"));
 		sb.setLength(0);
-		btw.appendValue(null, sb, new ArrayList<SelectArg>());
+		btw.appendValue(null, sb, new ArrayList<ArgumentHolder>());
 		assertEquals(low + " AND " + high + " ", sb.toString());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testAppendValueLowNull() throws Exception {
 		new Between(COLUMN_NAME, numberFieldType, null, 20L).appendValue(null, new StringBuilder(),
-				new ArrayList<SelectArg>());
+				new ArrayList<ArgumentHolder>());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testAppendValueHighNull() throws Exception {
 		new Between(COLUMN_NAME, numberFieldType, 10L, null).appendValue(null, new StringBuilder(),
-				new ArrayList<SelectArg>());
+				new ArrayList<ArgumentHolder>());
 	}
 }

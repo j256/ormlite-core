@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.j256.ormlite.db.DatabaseType;
-import com.j256.ormlite.stmt.SelectArg;
+import com.j256.ormlite.stmt.ArgumentHolder;
 
 /**
  * For operations with a number of them in a row.
@@ -52,7 +52,7 @@ public class ManyClause implements Clause, NeedsFutureClause {
 		this.operation = operation;
 	}
 
-	public void appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
+	public void appendSql(DatabaseType databaseType, StringBuilder sb, List<ArgumentHolder> selectArgList)
 			throws SQLException {
 		sb.append("(");
 		first.appendSql(databaseType, sb, selectArgList);

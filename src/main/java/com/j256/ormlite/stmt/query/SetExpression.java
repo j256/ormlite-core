@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.stmt.SelectArg;
+import com.j256.ormlite.stmt.ArgumentHolder;
 import com.j256.ormlite.stmt.StatementBuilder;
 
 /**
@@ -31,7 +31,7 @@ public class SetExpression extends BaseComparison {
 
 	@Override
 	protected void appendArgOrValue(DatabaseType databaseType, FieldType fieldType, StringBuilder sb,
-			List<SelectArg> selectArgList, Object argOrValue) {
+			List<ArgumentHolder> selectArgList, Object argOrValue) {
 		// we know it is a string so just append it
 		sb.append(argOrValue).append(' ');
 	}

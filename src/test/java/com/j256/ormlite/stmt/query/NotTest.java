@@ -8,8 +8,8 @@ import java.util.List;
 import org.junit.Test;
 
 import com.j256.ormlite.db.DatabaseType;
+import com.j256.ormlite.stmt.ArgumentHolder;
 import com.j256.ormlite.stmt.BaseCoreStmtTest;
-import com.j256.ormlite.stmt.SelectArg;
 
 /**
  * Oh yes it _is_ a test, just of the NOT operation.
@@ -22,12 +22,12 @@ public class NotTest extends BaseCoreStmtTest {
 		Clause clause = new Comparison() {
 			public void appendOperation(StringBuilder sb) {
 			}
-			public void appendValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList) {
+			public void appendValue(DatabaseType databaseType, StringBuilder sb, List<ArgumentHolder> argList) {
 			}
 			public String getColumnName() {
 				return null;
 			}
-			public void appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList) {
+			public void appendSql(DatabaseType databaseType, StringBuilder sb, List<ArgumentHolder> argList) {
 			}
 		};
 		not.setMissingClause(clause);
@@ -37,7 +37,7 @@ public class NotTest extends BaseCoreStmtTest {
 	@Test(expected = IllegalStateException.class)
 	public void testNoClause() throws Exception {
 		Not not = new Not();
-		not.appendSql(databaseType, new StringBuilder(), new ArrayList<SelectArg>());
+		not.appendSql(databaseType, new StringBuilder(), new ArrayList<ArgumentHolder>());
 	}
 
 	@Test(expected = IllegalArgumentException.class)

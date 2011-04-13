@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.stmt.ArgumentHolder;
 import com.j256.ormlite.stmt.SelectArg;
 
 /**
@@ -30,52 +31,51 @@ abstract class BaseComparison implements Comparison {
 
 	public abstract void appendOperation(StringBuilder sb);
 
-	public void appendSql(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
+	public void appendSql(DatabaseType databaseType, StringBuilder sb, List<ArgumentHolder> argList)
 			throws SQLException {
 		databaseType.appendEscapedEntityName(sb, columnName);
 		sb.append(' ');
 		appendOperation(sb);
 		// this needs to call appendValue (not appendArgOrValue) because it may be overridden
-		appendValue(databaseType, sb, selectArgList);
+		appendValue(databaseType, sb, argList);
 	}
 
 	public String getColumnName() {
 		return columnName;
 	}
 
-	public void appendValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
+	public void appendValue(DatabaseType databaseType, StringBuilder sb, List<ArgumentHolder> argList)
 			throws SQLException {
-		appendArgOrValue(databaseType, fieldType, sb, selectArgList, value);
+		appendArgOrValue(databaseType, fieldType, sb, argList, value);
 	}
 
 	/**
-	 * Append to the string builder either a {@link SelectArg} argument or a value object.
+	 * Append to the string builder either a {@link ArgumentHolder} argument or a value object.
 	 */
 	protected void appendArgOrValue(DatabaseType databaseType, FieldType fieldType, StringBuilder sb,
-			List<SelectArg> selectArgList, Object argOrValue) throws SQLException {
+			List<ArgumentHolder> argList, Object argOrValue) throws SQLException {
 		boolean appendSpace = true;
 		if (argOrValue == null) {
 			throw new SQLException("argument to comparison of '" + fieldType.getFieldName() + "' is null");
-		} else if (argOrValue instanceof SelectArg) {
+		} else if (argOrValue instanceof ArgumentHolder) {
 			sb.append('?');
-			SelectArg selectArg = (SelectArg) argOrValue;
+			ArgumentHolder selectArg = (ArgumentHolder) argOrValue;
 			selectArg.setMetaInfo(columnName, fieldType);
-			selectArgList.add(selectArg);
+			argList.add(selectArg);
 		} else if (fieldType.isSelectArgRequired()) {
 			sb.append('?');
-			SelectArg selectArg = new SelectArg();
+			ArgumentHolder selectArg = new SelectArg();
 			selectArg.setMetaInfo(columnName, fieldType);
 			// conversion is done when the getValue() is called
 			selectArg.setValue(argOrValue);
-			selectArgList.add(selectArg);
+			argList.add(selectArg);
 		} else if (fieldType.isForeign() && fieldType.getFieldType() == argOrValue.getClass()) {
 			/*
 			 * If we have a foreign field and our argument is an instance of the foreign object (i.e. not its id), then
 			 * we need to extract the id.
 			 */
 			FieldType idFieldType = fieldType.getForeignIdField();
-			appendArgOrValue(databaseType, idFieldType, sb, selectArgList,
-					idFieldType.extractJavaFieldValue(argOrValue));
+			appendArgOrValue(databaseType, idFieldType, sb, argList, idFieldType.extractJavaFieldValue(argOrValue));
 			// no need for the space since it was done in the recursion
 			appendSpace = false;
 		} else if (fieldType.isEscapedValue()) {

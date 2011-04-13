@@ -8,8 +8,8 @@ import java.util.Random;
 
 import org.junit.Test;
 
+import com.j256.ormlite.stmt.ArgumentHolder;
 import com.j256.ormlite.stmt.BaseCoreStmtTest;
-import com.j256.ormlite.stmt.SelectArg;
 
 public class InTest extends BaseCoreStmtTest {
 
@@ -31,7 +31,7 @@ public class InTest extends BaseCoreStmtTest {
 		}
 		In in = new In("foo", numberFieldType, objList);
 		StringBuilder sb = new StringBuilder();
-		in.appendValue(null, sb, new ArrayList<SelectArg>());
+		in.appendValue(null, sb, new ArrayList<ArgumentHolder>());
 		String[] args = sb.toString().split(",");
 		assertEquals("(" + objList.get(0) + " ", args[0]);
 		for (int i = 1; i < numArgs - 1; i++) {

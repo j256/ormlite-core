@@ -72,11 +72,11 @@ public abstract class StatementBuilder<T, ID> {
 	 * Prepare our statement for the subclasses.
 	 */
 	protected MappedPreparedStmt<T, ID> prepareStatement() throws SQLException {
-		List<SelectArg> selectArgList = new ArrayList<SelectArg>();
-		String statement = buildStatementString(selectArgList);
-		SelectArg[] selectArgs = selectArgList.toArray(new SelectArg[selectArgList.size()]);
+		List<ArgumentHolder> argList = new ArrayList<ArgumentHolder>();
+		String statement = buildStatementString(argList);
+		ArgumentHolder[] selectArgs = argList.toArray(new ArgumentHolder[argList.size()]);
 		FieldType[] resultFieldTypes = getResultFieldTypes();
-		FieldType[] argFieldTypes = new FieldType[selectArgList.size()];;
+		FieldType[] argFieldTypes = new FieldType[argList.size()];;
 		for (int selectC = 0; selectC < selectArgs.length; selectC++) {
 			argFieldTypes[selectC] = selectArgs[selectC].getFieldType();
 		}
@@ -93,13 +93,13 @@ public abstract class StatementBuilder<T, ID> {
 	 * </p>
 	 */
 	public String prepareStatementString() throws SQLException {
-		List<SelectArg> selectArgList = new ArrayList<SelectArg>();
-		return buildStatementString(selectArgList);
+		List<ArgumentHolder> argList = new ArrayList<ArgumentHolder>();
+		return buildStatementString(argList);
 	}
 
-	private String buildStatementString(List<SelectArg> selectArgList) throws SQLException {
+	private String buildStatementString(List<ArgumentHolder> argList) throws SQLException {
 		StringBuilder sb = new StringBuilder();
-		appendStatementString(sb, selectArgList);
+		appendStatementString(sb, argList);
 		String statement = sb.toString();
 		logger.debug("built statement {}", statement);
 		return statement;
@@ -114,11 +114,11 @@ public abstract class StatementBuilder<T, ID> {
 	 * MAKE A JAVADOC LINK).
 	 * </p>
 	 */
-	protected void appendStatementString(StringBuilder sb, List<SelectArg> selectArgList) throws SQLException {
+	protected void appendStatementString(StringBuilder sb, List<ArgumentHolder> argList) throws SQLException {
 		appendStatementStart(sb);
 		if (where != null) {
 			sb.append("WHERE ");
-			where.appendSql(databaseType, sb, selectArgList);
+			where.appendSql(databaseType, sb, argList);
 		}
 		appendStatementEnd(sb);
 	}

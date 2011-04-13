@@ -352,8 +352,8 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			this.queryBuilder = queryBuilder;
 		}
 
-		public void buildStatementString(StringBuilder sb, List<SelectArg> selectArgList) throws SQLException {
-			queryBuilder.appendStatementString(sb, selectArgList);
+		public void buildStatementString(StringBuilder sb, List<ArgumentHolder> argList) throws SQLException {
+			queryBuilder.appendStatementString(sb, argList);
 		}
 
 		public FieldType[] getResultFieldTypes() throws SQLException {

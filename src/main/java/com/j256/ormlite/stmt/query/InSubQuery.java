@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.stmt.ArgumentHolder;
 import com.j256.ormlite.stmt.QueryBuilder.InternalQueryBuilderWrapper;
-import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.Where;
 
 /**
@@ -25,10 +25,10 @@ public class InSubQuery extends BaseComparison {
 	}
 
 	@Override
-	public void appendValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
+	public void appendValue(DatabaseType databaseType, StringBuilder sb, List<ArgumentHolder> argList)
 			throws SQLException {
 		sb.append('(');
-		subQueryBuilder.buildStatementString(sb, selectArgList);
+		subQueryBuilder.buildStatementString(sb, argList);
 		FieldType[] resultFieldTypes = subQueryBuilder.getResultFieldTypes();
 		if (resultFieldTypes.length != 1) {
 			throw new SQLException("There must be only 1 result column in sub-query but we found "

@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.j256.ormlite.db.DatabaseType;
-import com.j256.ormlite.stmt.SelectArg;
+import com.j256.ormlite.stmt.ArgumentHolder;
 
 /**
  * Internal interfaces which define a comparison operation.
@@ -26,6 +26,6 @@ interface Comparison extends Clause {
 	/**
 	 * Add the value of the comparison to the string builder.
 	 */
-	public void appendValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList)
+	public void appendValue(DatabaseType databaseType, StringBuilder sb, List<ArgumentHolder> argList)
 			throws SQLException;
 }

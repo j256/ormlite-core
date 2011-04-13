@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.stmt.SelectArg;
+import com.j256.ormlite.stmt.ArgumentHolder;
 import com.j256.ormlite.stmt.Where;
 
 /**
@@ -25,7 +25,7 @@ public class IsNotNull extends BaseComparison {
 	}
 
 	@Override
-	public void appendValue(DatabaseType databaseType, StringBuilder sb, List<SelectArg> selectArgList) {
+	public void appendValue(DatabaseType databaseType, StringBuilder sb, List<ArgumentHolder> argList) {
 		// there is no value
 	}
 }
