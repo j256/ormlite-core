@@ -1,3 +1,6 @@
+4.20: 4XX/2011 (svn rYYYY)
+	* Turned the SelectArg into the ArgumentHolder interface so we could add a ThreadLocalSelectArg.
+
 4.19: 4/11/2011 (svn r1638)
 	* CORE: Fixed stupid DaoDaoEnabled.delete() cut and paste bug.  Fixes bug #3276679.
 	* CORE: Added support for storing char fields with ORMLite.  Derby, of course, was the most painful to get working.

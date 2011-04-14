@@ -1954,8 +1954,7 @@ QueryBuilder<Account, String> queryBuilder =
 // the 'password' field must be equal to "qwerty"
 queryBuilder.where().eq(Account.PASSWORD_FIELD_NAME, "qwerty");
 // prepare our sql statement
-PreparedQuery<Account, String> preparedQuery =
-  queryBuilder.prepare();
+PreparedQuery<Account> preparedQuery = queryBuilder.prepare();
 // query for all accounts that have that password
 List<Account> accountList = accountDao.query(preparedQuery);
 @end example
@@ -2007,8 +2006,7 @@ where.eq(Account.NAME_FIELD_NAME, "foo");
 where.and();
 // the password field must be equal to "_secret"
 where.eq(Account.PASSWORD_FIELD_NAME, "_secret");
-PreparedQuery<Account, String> preparedQuery =
-  queryBuilder.prepare();
+PreparedQuery<Account> preparedQuery = queryBuilder.prepare();
 @end example
 
 The SQL query that will be generated from the above example will be approximately:
@@ -2434,8 +2432,7 @@ SelectArg selectArg = new SelectArg();
 // define our query as 'name = ?'
 where.eq(Account.NAME_FIELD_NAME, selectArg);
 // prepare it so it is ready for later query or iterator calls
-PreparedQuery<Account, String> preparedQuery =
-  queryBuilder.prepare();
+PreparedQuery<Account> preparedQuery = queryBuilder.prepare();
 
 // later we can set the select argument and issue the query
 selectArg.setValue("foo");
