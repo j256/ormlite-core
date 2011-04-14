@@ -9,6 +9,11 @@
 	- maybe a check="> 10" type of addition to DatabaseField so we can add a check constraint
 	- foreign key constraint can be in addition to (or required for) the foreign=true
 
+- look into a prepared query which keeps the connection open to the database
+	- needs to have a lot of warnings on it
+
+- allow unique across multiple fields
+
 - flesh out the SimpleDB version of the library:
 	- get all tests passing
 	- think about batch operations

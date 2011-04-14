@@ -193,7 +193,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	@Override
-	protected void appendStatementStart(StringBuilder sb) throws SQLException {
+	protected void appendStatementStart(StringBuilder sb, List<ArgumentHolder> argList) throws SQLException {
 		sb.append("SELECT ");
 		if (databaseType.isLimitAfterSelect()) {
 			appendLimit(sb);
@@ -341,8 +341,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * Internal class used to expose the {@link QueryBuilder#buildStatementString(List, List)} method to internal
-	 * classes but through a wrapper instead of a builder.
+	 * Internal class used to expose methods to internal classes but through a wrapper instead of a builder.
 	 */
 	public static class InternalQueryBuilderWrapper {
 
@@ -352,7 +351,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			this.queryBuilder = queryBuilder;
 		}
 
-		public void buildStatementString(StringBuilder sb, List<ArgumentHolder> argList) throws SQLException {
+		public void appendStatementString(StringBuilder sb, List<ArgumentHolder> argList) throws SQLException {
 			queryBuilder.appendStatementString(sb, argList);
 		}
 

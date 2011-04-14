@@ -115,7 +115,7 @@ public abstract class StatementBuilder<T, ID> {
 	 * </p>
 	 */
 	protected void appendStatementString(StringBuilder sb, List<ArgumentHolder> argList) throws SQLException {
-		appendStatementStart(sb);
+		appendStatementStart(sb, argList);
 		if (where != null) {
 			sb.append("WHERE ");
 			where.appendSql(databaseType, sb, argList);
@@ -126,7 +126,7 @@ public abstract class StatementBuilder<T, ID> {
 	/**
 	 * Append the start of our statement string to the StringBuilder.
 	 */
-	protected abstract void appendStatementStart(StringBuilder sb) throws SQLException;
+	protected abstract void appendStatementStart(StringBuilder sb, List<ArgumentHolder> argList) throws SQLException;
 
 	/**
 	 * Get the result array from our statement after the {@link #appendStatementStart(StringBuilder)} was called. This

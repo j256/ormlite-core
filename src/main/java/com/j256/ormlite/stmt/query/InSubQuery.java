@@ -28,7 +28,7 @@ public class InSubQuery extends BaseComparison {
 	public void appendValue(DatabaseType databaseType, StringBuilder sb, List<ArgumentHolder> argList)
 			throws SQLException {
 		sb.append('(');
-		subQueryBuilder.buildStatementString(sb, argList);
+		subQueryBuilder.appendStatementString(sb, argList);
 		FieldType[] resultFieldTypes = subQueryBuilder.getResultFieldTypes();
 		if (resultFieldTypes.length != 1) {
 			throw new SQLException("There must be only 1 result column in sub-query but we found "

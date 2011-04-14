@@ -1,11 +1,14 @@
 package com.j256.ormlite.stmt;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.sql.SQLException;
+import java.util.Date;
 
 import org.junit.Test;
 
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -133,6 +136,26 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 		stmtb.prepare();
 	}
 
+	@Test
+	public void testUpdateDate() throws Exception {
+		Dao<UpdateDate, Object> dao = createDao(UpdateDate.class, true);
+		UpdateDate updateDate = new UpdateDate();
+		updateDate.date = new Date();
+		assertEquals(1, dao.create(updateDate));
+		TableInfo<UpdateDate, Integer> tableInfo =
+				new TableInfo<UpdateDate, Integer>(connectionSource, null, UpdateDate.class);
+		UpdateBuilder<UpdateDate, Integer> stmtb = new UpdateBuilder<UpdateDate, Integer>(databaseType, tableInfo);
+		Thread.sleep(10);
+		Date newDate = new Date();
+		stmtb.updateColumnValue(UpdateDate.DATE_FIELD, newDate);
+		// this used to cause a NPE because of a missing args
+		assertEquals(1, dao.update(stmtb.prepare()));
+		// make sure the update worked
+		UpdateDate updateDate2 = dao.queryForId(updateDate.id);
+		assertNotNull(updateDate2);
+		assertEquals(newDate, updateDate2.date);
+	}
+
 	protected static class OurForeignCollection {
 		public static final String FOOS_FIELD_NAME = "foos";
 		@DatabaseField(generatedId = true)
@@ -151,6 +174,16 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 		@DatabaseField(foreign = true)
 		OurForeignCollection foreign;
 		public OurForeign() {
+		}
+	}
+
+	protected static class UpdateDate {
+		public static final String DATE_FIELD = "date";
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(columnName = DATE_FIELD)
+		Date date;
+		public UpdateDate() {
 		}
 	}
 }
