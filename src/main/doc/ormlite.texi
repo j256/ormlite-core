@@ -3469,6 +3469,7 @@ and the @code{BaseDaoImpl} where in some part modeled after his code.  Thanks du
 
 @c -----------------
 
+@item Stewert helped itentify a bug with using the UpdateBuilder with Date fields.
 @item Micael Dahlgren helped resolve a bad bug foreign field bug.
 @item Dale Asberry added the initial take on the generic ODBC database type.
 @item Richard Kooijman added the initial take on the Netezza database type.

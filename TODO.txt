@@ -27,6 +27,9 @@
 	- maybe you could see if the id was set or something?
 	- maybe just require someone to use the other DAO
 
+- JPA:
+	- @Enumerated(EnumType.STRING)
+
 -----------------------------------------------------------------------------------------------------------------------------------
 
 - for objects that a user does not have control over, how about the ability of defining a Method to construct a particular class

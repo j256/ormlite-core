@@ -8,6 +8,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
+import org.h2.api.Trigger;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
@@ -1533,6 +1535,39 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		fieldValues.put(Foo.VAL_COLUMN_NAME, val);
 		results = dao.queryForFieldValues(fieldValues);
 		assertEquals(0, results.size());
+	}
+
+	/**
+	 * A little test of executeRaw that sets up a H2 trigger.
+	 */
+	@Test
+	public void testExecuteRawTrigger() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		dao.executeRaw("CREATE TRIGGER foo_trigger AFTER INSERT ON foo\n" + "FOR EACH ROW CALL " + "\""
+				+ ExampleH2Trigger.class.getName() + "\"");
+
+		Foo foo = new Foo();
+		foo.id = "1";
+		assertEquals(0, ExampleH2Trigger.callC);
+		assertEquals(1, dao.create(foo));
+		assertEquals(1, ExampleH2Trigger.callC);
+		foo.id = "2";
+		assertEquals(1, dao.create(foo));
+		assertEquals(2, ExampleH2Trigger.callC);
+	}
+
+	/**
+	 * Example of a H2 trigger.
+	 */
+	public static class ExampleH2Trigger implements Trigger {
+		static int callC = 0;
+		public void init(Connection conn, String schemaName, String triggerName, String tableName, boolean before,
+				int type) {
+			// noop
+		}
+		public void fire(Connection conn, Object[] oldRow, Object[] newRow) throws SQLException {
+			callC++;
+		}
 	}
 
 	/* ============================================================================================== */
