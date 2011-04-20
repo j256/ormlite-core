@@ -42,6 +42,10 @@ public class DatabaseFieldConfig {
 		// for spring
 	}
 
+	public DatabaseFieldConfig(String fieldName) {
+		this.fieldName = fieldName;
+	}
+
 	public DatabaseFieldConfig(String fieldName, String columnName, DataType dataType, String defaultValue, int width,
 			boolean canBeNull, boolean id, boolean generatedId, String generatedIdSequence, boolean foreign,
 			DatabaseTableConfig<?> foreignTableConfig, boolean useGetSet, Enum<?> unknownEnumValue,
