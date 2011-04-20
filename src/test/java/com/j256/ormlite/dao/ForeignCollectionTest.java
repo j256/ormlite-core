@@ -46,6 +46,25 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		testCollection(accountDao, false);
 	}
 
+	@Test
+	public void testForeignAutoRefreshWithCollection() throws Exception {
+		Dao<Account, Object> accountDao = createDao(Account.class, true);
+		Dao<ForeignAutoRefresh, Object> farDao = createDao(ForeignAutoRefresh.class, true);
+		Account account = new Account();
+		String name1 = "fwepfjewfew";
+		account.name = name1;
+		assertEquals(1, accountDao.create(account));
+
+		ForeignAutoRefresh far = new ForeignAutoRefresh();
+		far.account = account;
+		assertEquals(1, farDao.create(far));
+
+		List<ForeignAutoRefresh> results = farDao.queryForAll();
+		assertEquals(1, results.size());
+		assertNotNull(results.get(0).account);
+		assertNull(results.get(0).account.orders);
+	}
+
 	private void testCollection(Dao<Account, Integer> accountDao, boolean eager) throws Exception {
 		Dao<Order, Integer> orderDao = createDao(Order.class, true);
 
@@ -336,6 +355,15 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		@ForeignCollectionField(eager = true)
 		Collection<Order> orders;
 		protected NoForeign() {
+		}
+	}
+
+	protected static class ForeignAutoRefresh {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(foreign = true, foreignAutoRefresh = true)
+		Account account;
+		protected ForeignAutoRefresh() {
 		}
 	}
 }
