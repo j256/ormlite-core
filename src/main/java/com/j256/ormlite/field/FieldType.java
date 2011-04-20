@@ -577,9 +577,14 @@ public class FieldType {
 	}
 
 	/**
-	 * Build a foreign collection based on the field settings that matches the id argument.
+	 * Build and return a foreign collection based on the field settings that matches the id argument. This can return
+	 * null in certain circumstances.
 	 */
 	public <FT, FID> BaseForeignCollection<FT, FID> buildForeignCollection(Object id) throws SQLException {
+		// this can happen if we have a foreign-auto-refresh scenario
+		if (foreignFieldType == null) {
+			return null;
+		}
 		BaseForeignCollection<FT, FID> collection;
 		@SuppressWarnings("unchecked")
 		Dao<FT, FID> castDao = (Dao<FT, FID>) foreignDao;
