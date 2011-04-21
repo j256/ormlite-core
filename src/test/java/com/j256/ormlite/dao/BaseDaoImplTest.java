@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -1570,6 +1571,58 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		}
 	}
 
+	@Test
+	public void testUnique() throws Exception {
+		Dao<Unique, Long> dao = createDao(Unique.class, true);
+		String stuff = "this doesn't need to be unique";
+		String uniqueStuff = "this needs to be unique";
+		Unique unique = new Unique();
+		unique.stuff = stuff;
+		unique.uniqueStuff = uniqueStuff;
+		assertEquals(1, dao.create(unique));
+		// can't create it twice with the same stuff which needs to be unique
+		unique = new Unique();
+		unique.stuff = stuff;
+		assertEquals(1, dao.create(unique));
+		unique = new Unique();
+		unique.uniqueStuff = uniqueStuff;
+		try {
+			dao.create(unique);
+			fail("Should have thrown");
+		} catch (SQLException e) {
+			// expected
+			return;
+		}
+	}
+
+	@Test
+	public void testMultipleUnique() throws Exception {
+		Dao<DoubleUnique, Long> dao = createDao(DoubleUnique.class, true);
+		String stuff = "this doesn't need to be unique";
+		String uniqueStuff = "this needs to be unique";
+		DoubleUnique unique = new DoubleUnique();
+		unique.stuff = stuff;
+		unique.uniqueStuff = uniqueStuff;
+		assertEquals(1, dao.create(unique));
+		// can't create it twice with the same stuff which needs to be unique
+		unique = new DoubleUnique();
+		unique.stuff = stuff;
+		assertEquals(1, dao.create(unique));
+		unique = new DoubleUnique();
+		unique.uniqueStuff = uniqueStuff;
+		assertEquals(1, dao.create(unique));
+		unique = new DoubleUnique();
+		unique.stuff = stuff;
+		unique.uniqueStuff = uniqueStuff;
+		try {
+			dao.create(unique);
+			fail("Should have thrown");
+		} catch (SQLException e) {
+			// expected
+			return;
+		}
+	}
+
 	/* ============================================================================================== */
 
 	protected static class ForeignNotNull {
@@ -1617,5 +1670,23 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		public Foo foo;
 		public ForeignAutoRefresh() {
 		}
+	}
+
+	protected static class Unique {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField
+		String stuff;
+		@DatabaseField(unique = true)
+		String uniqueStuff;
+	}
+
+	protected static class DoubleUnique {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(unique = true)
+		String stuff;
+		@DatabaseField(unique = true)
+		String uniqueStuff;
 	}
 }

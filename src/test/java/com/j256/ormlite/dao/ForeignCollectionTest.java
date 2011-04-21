@@ -48,6 +48,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 
 	@Test
 	public void testForeignAutoRefreshWithCollection() throws Exception {
+		createDao(Order.class, true);
 		Dao<Account, Object> accountDao = createDao(Account.class, true);
 		Dao<ForeignAutoRefresh, Object> farDao = createDao(ForeignAutoRefresh.class, true);
 		Account account = new Account();
@@ -62,7 +63,8 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		List<ForeignAutoRefresh> results = farDao.queryForAll();
 		assertEquals(1, results.size());
 		assertNotNull(results.get(0).account);
-		assertNull(results.get(0).account.orders);
+		assertNotNull(results.get(0).account.orders);
+		assertEquals(0, results.get(0).account.orders.size());
 	}
 
 	private void testCollection(Dao<Account, Integer> accountDao, boolean eager) throws Exception {

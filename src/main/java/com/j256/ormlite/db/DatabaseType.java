@@ -39,6 +39,18 @@ public interface DatabaseType {
 			List<String> statementsBefore, List<String> statementsAfter, List<String> queriesAfter) throws SQLException;
 
 	/**
+	 * Appends information about primary key field(s) to the additional-args or other lists.
+	 */
+	public void addPrimaryKeySql(FieldType[] fieldTypes, List<String> additionalArgs, List<String> statementsBefore,
+			List<String> statementsAfter, List<String> queriesAfter) throws SQLException;
+
+	/**
+	 * Appends information about unique field(s) to the additional-args or other lists.
+	 */
+	public void addUniqueSql(FieldType[] fieldTypes, List<String> additionalArgs, List<String> statementsBefore,
+			List<String> statementsAfter, List<String> queriesAfter) throws SQLException;
+
+	/**
 	 * Takes a {@link FieldType} and adds the necessary statements to the before and after lists necessary so that the
 	 * dropping of the table will succeed and will clear other associated sequences or other database artifacts
 	 */

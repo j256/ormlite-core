@@ -24,6 +24,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
+import com.j256.ormlite.h2.H2DatabaseType;
 import com.j256.ormlite.support.DatabaseResults;
 
 public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
@@ -165,7 +166,14 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 
 	@Test
 	public void testAppendColumnUnique() throws Exception {
-		testFooColumn(databaseType, "unique", "BIGINT UNIQUE");
+		testFooColumn(new UniqueDatabaseType(), "unique", "BIGINT UNIQUE");
+	}
+
+	private static class UniqueDatabaseType extends H2DatabaseType {
+		@Override
+		protected void appendUniqueAfterField(StringBuilder sb, FieldType fieldType, List<String> statementsAfter) {
+			sb.append("UNIQUE ");
+		}
 	}
 
 	@Test

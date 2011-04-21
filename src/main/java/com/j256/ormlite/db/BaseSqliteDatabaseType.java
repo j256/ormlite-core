@@ -29,6 +29,11 @@ public abstract class BaseSqliteDatabaseType extends BaseDatabaseType implements
 	}
 
 	@Override
+	protected boolean generatedIdSqlAtEnd() {
+		return false;
+	}
+
+	@Override
 	public boolean isVarcharFieldWidthSupported() {
 		return false;
 	}

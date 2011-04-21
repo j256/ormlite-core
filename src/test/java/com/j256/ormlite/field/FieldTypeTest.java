@@ -30,7 +30,6 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTable;
-import com.j256.ormlite.table.TableInfo;
 
 public class FieldTypeTest extends BaseCoreTest {
 
@@ -205,7 +204,7 @@ public class FieldTypeTest extends BaseCoreTest {
 						ForeignParent.class, 0);
 		assertEquals(nameField.getName(), fieldType.getDbColumnName());
 		assertEquals(DataType.STRING, fieldType.getDataType());
-		assertNull(fieldType.getForeignTableInfo());
+		assertFalse(fieldType.isForeign());
 		assertEquals(0, fieldType.getWidth());
 
 		fieldType =
@@ -214,9 +213,7 @@ public class FieldTypeTest extends BaseCoreTest {
 		assertEquals(bazField.getName() + FieldType.FOREIGN_ID_FIELD_SUFFIX, fieldType.getDbColumnName());
 		// this is the type of the foreign object's id
 		assertEquals(DataType.INTEGER, fieldType.getDataType());
-		TableInfo<?, ?> foreignTableInfo = fieldType.getForeignTableInfo();
-		assertNotNull(foreignTableInfo);
-		assertEquals(ForeignForeign.class, foreignTableInfo.getDataClass());
+		assertTrue(fieldType.isForeign());
 	}
 
 	@Test(expected = IllegalArgumentException.class)

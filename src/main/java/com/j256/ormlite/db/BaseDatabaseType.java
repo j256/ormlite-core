@@ -161,6 +161,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 				throw new IllegalArgumentException("Unknown field type " + fieldType.getDataType());
 		}
 		sb.append(' ');
+
 		/*
 		 * NOTE: the configure id methods must be in this order since isGeneratedIdSequence is also isGeneratedId and
 		 * isId. isGeneratedId is also isId.
@@ -186,10 +187,11 @@ public abstract class BaseDatabaseType implements DatabaseType {
 				sb.append("NOT NULL ");
 			}
 			if (fieldType.isUnique()) {
-				appendUnique(sb, fieldType, statementsAfter);
+				appendUniqueAfterField(sb, fieldType, statementsAfter);
 			}
 		}
 	}
+
 	/**
 	 * Output the SQL type for a Java String.
 	 */
@@ -358,11 +360,57 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	 */
 	protected void configureId(StringBuilder sb, FieldType fieldType, List<String> statementsBefore,
 			List<String> additionalArgs, List<String> queriesAfter) {
-		StringBuilder primaryKeySb = new StringBuilder();
-		primaryKeySb.append("PRIMARY KEY (");
-		appendEscapedEntityName(primaryKeySb, fieldType.getDbColumnName());
-		primaryKeySb.append(") ");
-		additionalArgs.add(primaryKeySb.toString());
+		// default is noop since we do it at the end in appendPrimaryKeys()
+	}
+
+	public void addPrimaryKeySql(FieldType[] fieldTypes, List<String> additionalArgs, List<String> statementsBefore,
+			List<String> statementsAfter, List<String> queriesAfter) throws SQLException {
+		StringBuilder sb = null;
+		for (FieldType fieldType : fieldTypes) {
+			if (fieldType.isGeneratedId() && (!generatedIdSqlAtEnd())) {
+				// don't add anything
+			} else if (fieldType.isId()) {
+				if (sb == null) {
+					sb = new StringBuilder();
+					sb.append("PRIMARY KEY (");
+				} else {
+					sb.append(',');
+				}
+				appendEscapedEntityName(sb, fieldType.getDbColumnName());
+			}
+		}
+		if (sb != null) {
+			sb.append(") ");
+			additionalArgs.add(sb.toString());
+		}
+	}
+
+	/**
+	 * Return true if we should add generated-id SQL in the {@link #addPrimaryKeySql} method at the end. If false then
+	 * it needs to be done by hand inline.
+	 */
+	protected boolean generatedIdSqlAtEnd() {
+		return true;
+	}
+
+	public void addUniqueSql(FieldType[] fieldTypes, List<String> additionalArgs, List<String> statementsBefore,
+			List<String> statementsAfter, List<String> queriesAfter) throws SQLException {
+		StringBuilder sb = null;
+		for (FieldType fieldType : fieldTypes) {
+			if (fieldType.isUnique()) {
+				if (sb == null) {
+					sb = new StringBuilder();
+					sb.append("UNIQUE (");
+				} else {
+					sb.append(',');
+				}
+				appendEscapedEntityName(sb, fieldType.getDbColumnName());
+			}
+		}
+		if (sb != null) {
+			sb.append(") ");
+			additionalArgs.add(sb.toString());
+		}
 	}
 
 	public void dropColumnArg(FieldType fieldType, List<String> statementsBefore, List<String> statementsAfter) {
@@ -482,8 +530,8 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	/**
 	 * If the fieldType is unique then added per-field unique qualifier.
 	 */
-	protected void appendUnique(StringBuilder sb, FieldType fieldType, List<String> statementsAfter) {
-		sb.append("UNIQUE ");
+	protected void appendUniqueAfterField(StringBuilder sb, FieldType fieldType, List<String> statementsAfter) {
+		// noop because default is to add in the appendUniques
 	}
 
 	/**
