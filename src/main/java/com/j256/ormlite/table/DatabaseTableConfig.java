@@ -97,7 +97,7 @@ public class DatabaseTableConfig<T> {
 	public void extractFieldTypes(ConnectionSource connectionSource) throws SQLException {
 		if (fieldTypes == null) {
 			if (fieldConfigs == null) {
-				fieldTypes = extractFieldTypes(connectionSource, dataClass, tableName, 0);
+				fieldTypes = extractFieldTypes(connectionSource, dataClass, tableName);
 			} else {
 				fieldTypes = convertFieldConfigs(connectionSource, tableName, fieldConfigs);
 			}
@@ -140,50 +140,17 @@ public class DatabaseTableConfig<T> {
 	 */
 	public static <T> DatabaseTableConfig<T> fromClass(ConnectionSource connectionSource, Class<T> clazz)
 			throws SQLException {
-		return fromClass(connectionSource, clazz, 0);
-	}
-
-	/**
-	 * This is used by internal methods to configure the database in case we recurse. It should not be called by users
-	 * directly. Instead use {@link #fromClass(ConnectionSource, Class)}.
-	 * 
-	 * @param recurseLevel
-	 *            is used to make sure we done get in an infinite recursive loop if a foreign object refers to itself.
-	 */
-	public static <T> DatabaseTableConfig<T> fromClass(ConnectionSource connectionSource, Class<T> clazz,
-			int recurseLevel) throws SQLException {
 		String tableName = extractTableName(clazz);
 		if (connectionSource.getDatabaseType().isEntityNamesMustBeUpCase()) {
 			tableName = tableName.toUpperCase();
 		}
-		return new DatabaseTableConfig<T>(clazz, tableName, extractFieldTypes(connectionSource, clazz, tableName,
-				recurseLevel));
+		return new DatabaseTableConfig<T>(clazz, tableName, extractFieldTypes(connectionSource, clazz, tableName));
 	}
 
 	/**
-	 * @param recurseLevel
-	 *            is used to make sure we done get in an infinite recursive loop if a foreign object refers to itself.
+	 * Extract and return the table name for a class.
 	 */
-	private static <T> FieldType[] extractFieldTypes(ConnectionSource connectionSource, Class<T> clazz,
-			String tableName, int recurseLevel) throws SQLException {
-		List<FieldType> fieldTypes = new ArrayList<FieldType>();
-		for (Class<?> classWalk = clazz; classWalk != null; classWalk = classWalk.getSuperclass()) {
-			for (Field field : classWalk.getDeclaredFields()) {
-				FieldType fieldType =
-						FieldType.createFieldType(connectionSource, tableName, field, clazz, recurseLevel);
-				if (fieldType != null) {
-					fieldTypes.add(fieldType);
-				}
-			}
-		}
-		if (fieldTypes.size() == 0) {
-			throw new IllegalArgumentException("No fields have a " + DatabaseField.class.getSimpleName()
-					+ " annotation in " + clazz);
-		}
-		return fieldTypes.toArray(new FieldType[fieldTypes.size()]);
-	}
-
-	private static <T> String extractTableName(Class<T> clazz) {
+	public static <T> String extractTableName(Class<T> clazz) {
 		DatabaseTable databaseTable = clazz.getAnnotation(DatabaseTable.class);
 		String name = null;
 		if (databaseTable != null && databaseTable.tableName() != null && databaseTable.tableName().length() > 0) {
@@ -201,27 +168,27 @@ public class DatabaseTableConfig<T> {
 		return name;
 	}
 
-	private FieldType[] convertFieldConfigs(ConnectionSource connectionSource, String tableName,
-			List<DatabaseFieldConfig> fieldConfigs) throws SQLException {
-		List<FieldType> fieldTypes = new ArrayList<FieldType>();
-		for (DatabaseFieldConfig fieldConfig : fieldConfigs) {
-			Field field;
-			try {
-				field = dataClass.getDeclaredField(fieldConfig.getFieldName());
-			} catch (Exception e) {
-				throw SqlExceptionUtil.create("Could not configure field with name '" + fieldConfig.getFieldName()
-						+ "' for " + dataClass, e);
+	/**
+	 * Find and return the field-type of the id field in this class.
+	 */
+	public static <T> FieldType extractIdFieldType(ConnectionSource connectionSource, Class<T> clazz, String tableName)
+			throws SQLException {
+		for (Class<?> classWalk = clazz; classWalk != null; classWalk = classWalk.getSuperclass()) {
+			for (Field field : classWalk.getDeclaredFields()) {
+				FieldType fieldType = FieldType.createFieldType(connectionSource, tableName, field, clazz);
+				if (fieldType != null
+						&& (fieldType.isId() || fieldType.isGeneratedId() || fieldType.isGeneratedIdSequence())) {
+					return fieldType;
+				}
 			}
-			FieldType fieldType = new FieldType(connectionSource, tableName, field, fieldConfig, dataClass, 0);
-			fieldTypes.add(fieldType);
 		}
-		if (fieldTypes.size() == 0) {
-			throw new SQLException("No fields were configured for class " + dataClass);
-		}
-		return fieldTypes.toArray(new FieldType[fieldTypes.size()]);
+		return null;
 	}
 
-	private Constructor<T> findNoArgConstructor(Class<T> dataClass) {
+	/**
+	 * Locate the no arg constructor for the class.
+	 */
+	public static <T> Constructor<T> findNoArgConstructor(Class<T> dataClass) {
 		Constructor<T>[] constructors;
 		try {
 			@SuppressWarnings("unchecked")
@@ -242,5 +209,43 @@ public class DatabaseTableConfig<T> {
 			throw new IllegalArgumentException("Can't find a no-arg constructor for " + dataClass
 					+ ".  Missing static on inner class?");
 		}
+	}
+
+	private static <T> FieldType[] extractFieldTypes(ConnectionSource connectionSource, Class<T> clazz, String tableName)
+			throws SQLException {
+		List<FieldType> fieldTypes = new ArrayList<FieldType>();
+		for (Class<?> classWalk = clazz; classWalk != null; classWalk = classWalk.getSuperclass()) {
+			for (Field field : classWalk.getDeclaredFields()) {
+				FieldType fieldType = FieldType.createFieldType(connectionSource, tableName, field, clazz);
+				if (fieldType != null) {
+					fieldTypes.add(fieldType);
+				}
+			}
+		}
+		if (fieldTypes.size() == 0) {
+			throw new IllegalArgumentException("No fields have a " + DatabaseField.class.getSimpleName()
+					+ " annotation in " + clazz);
+		}
+		return fieldTypes.toArray(new FieldType[fieldTypes.size()]);
+	}
+
+	private FieldType[] convertFieldConfigs(ConnectionSource connectionSource, String tableName,
+			List<DatabaseFieldConfig> fieldConfigs) throws SQLException {
+		List<FieldType> fieldTypes = new ArrayList<FieldType>();
+		for (DatabaseFieldConfig fieldConfig : fieldConfigs) {
+			Field field;
+			try {
+				field = dataClass.getDeclaredField(fieldConfig.getFieldName());
+			} catch (Exception e) {
+				throw SqlExceptionUtil.create("Could not configure field with name '" + fieldConfig.getFieldName()
+						+ "' for " + dataClass, e);
+			}
+			FieldType fieldType = new FieldType(connectionSource, tableName, field, fieldConfig, dataClass);
+			fieldTypes.add(fieldType);
+		}
+		if (fieldTypes.size() == 0) {
+			throw new SQLException("No fields were configured for class " + dataClass);
+		}
+		return fieldTypes.toArray(new FieldType[fieldTypes.size()]);
 	}
 }
