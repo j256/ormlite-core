@@ -31,6 +31,7 @@ public class DaoManager {
 	 * Helper method to create a Dao object without having to define a class. This checks to see if the Dao has already
 	 * been created. If not then it is a call through to {@link BaseDaoImpl#createDao(ConnectionSource, Class)}.
 	 */
+	@SuppressWarnings("deprecation")
 	public synchronized static <D extends Dao<T, ?>, T> D createDao(ConnectionSource connectionSource, Class<T> clazz)
 			throws SQLException {
 		if (classMap == null) {
@@ -95,6 +96,7 @@ public class DaoManager {
 	 * been created. If not then it is a call through to
 	 * {@link BaseDaoImpl#createDao(ConnectionSource, DatabaseTableConfig)}.
 	 */
+	@SuppressWarnings("deprecation")
 	public synchronized static <D extends Dao<T, ?>, T> D createDao(ConnectionSource connectionSource,
 			DatabaseTableConfig<T> tableConfig) throws SQLException {
 		if (tableMap == null) {
