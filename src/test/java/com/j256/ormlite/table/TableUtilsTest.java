@@ -116,7 +116,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		testCreate(connectionSource, databaseType, 0, false, null, new Callable<Integer>() {
 			public Integer call() throws Exception {
-				return TableUtils.createTable(connectionSource,
+				return (int) TableUtils.createTable(connectionSource,
 						DatabaseTableConfig.fromClass(connectionSource, LocalFoo.class));
 			}
 		});
@@ -127,7 +127,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		testDrop(connectionSource, 0, false, new Callable<Integer>() {
 			public Integer call() throws Exception {
-				return TableUtils.dropTable(connectionSource, LocalFoo.class, false);
+				return (int) TableUtils.dropTable(connectionSource, LocalFoo.class, false);
 			}
 		});
 	}
@@ -137,7 +137,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		testDrop(connectionSource, 0, true, new Callable<Integer>() {
 			public Integer call() throws Exception {
-				return TableUtils.dropTable(connectionSource, LocalFoo.class, false);
+				return (int) TableUtils.dropTable(connectionSource, LocalFoo.class, false);
 			}
 		});
 	}
@@ -147,7 +147,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		testDrop(connectionSource, 0, true, new Callable<Integer>() {
 			public Integer call() throws Exception {
-				return TableUtils.dropTable(connectionSource, LocalFoo.class, true);
+				return (int) TableUtils.dropTable(connectionSource, LocalFoo.class, true);
 			}
 		});
 	}
@@ -157,7 +157,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		testDrop(connectionSource, -1, false, new Callable<Integer>() {
 			public Integer call() throws Exception {
-				return TableUtils.dropTable(connectionSource, LocalFoo.class, false);
+				return (int) TableUtils.dropTable(connectionSource, LocalFoo.class, false);
 			}
 		});
 	}
@@ -167,7 +167,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		testDrop(connectionSource, 0, false, new Callable<Integer>() {
 			public Integer call() throws Exception {
-				return TableUtils.dropTable(connectionSource,
+				return (int) TableUtils.dropTable(connectionSource,
 						DatabaseTableConfig.fromClass(connectionSource, LocalFoo.class), false);
 			}
 		});

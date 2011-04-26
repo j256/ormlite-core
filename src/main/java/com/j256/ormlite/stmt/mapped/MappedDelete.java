@@ -24,7 +24,7 @@ public class MappedDelete<T, ID> extends BaseMappedStatement<T, ID> {
 			throw new SQLException("Cannot delete from " + tableInfo.getDataClass()
 					+ " because it doesn't have an id field");
 		}
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(64);
 		appendTableName(databaseType, sb, "DELETE FROM ", tableInfo.getTableName());
 		appendWhereId(databaseType, idField, sb, null);
 		return new MappedDelete<T, ID>(tableInfo, sb.toString(), new FieldType[] { idField });

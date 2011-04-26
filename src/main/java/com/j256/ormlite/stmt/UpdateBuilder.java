@@ -84,7 +84,7 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * method is more efficient since this method creates a {@link StatementBuilder} internally.
 	 */
 	public String escapeColumnName(String columnName) {
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(columnName.length() + 4);
 		databaseType.appendEscapedEntityName(sb, columnName);
 		return sb.toString();
 	}
@@ -104,7 +104,7 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * internally.
 	 */
 	public String escapeValue(String value) {
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(value.length() + 4);
 		databaseType.appendEscapedWord(sb, value);
 		return sb.toString();
 	}

@@ -22,7 +22,7 @@ public class BaseMappedQueryTest extends BaseCoreStmtTest {
 		Field field = Foo.class.getDeclaredField(Foo.ID_COLUMN_NAME);
 		String tableName = "basefoo";
 		FieldType[] resultFieldTypes =
-				new FieldType[] { FieldType.createFieldType(connectionSource, tableName, field, Foo.class, 0) };
+				new FieldType[] { FieldType.createFieldType(connectionSource, tableName, field, Foo.class) };
 		BaseMappedQuery<Foo, String> baseMappedQuery =
 				new BaseMappedQuery<Foo, String>(baseFooTableInfo, "select * from " + tableName, new FieldType[0],
 						resultFieldTypes) {

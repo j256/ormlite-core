@@ -190,7 +190,7 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 	public void testBooleanConverterJavaToArg() throws Exception {
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, "foo", ManyFields.class.getDeclaredField("bool"),
-						ManyFields.class, 0);
+						ManyFields.class);
 		assertEquals(new Byte((byte) 1), booleanFieldConverter.javaToSqlArg(fieldType, Boolean.TRUE));
 		assertEquals(new Byte((byte) 0), booleanFieldConverter.javaToSqlArg(fieldType, Boolean.FALSE));
 	}
@@ -205,7 +205,7 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 		replay(results);
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, "foo", ManyFields.class.getDeclaredField("bool"),
-						ManyFields.class, 0);
+						ManyFields.class);
 		assertEquals(first, booleanFieldConverter.resultToJava(fieldType, results, 1));
 		assertEquals(second, booleanFieldConverter.resultToJava(fieldType, results, 2));
 		verify(results);
@@ -215,7 +215,7 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 	public void testBooleanConverterParseDefaultString() throws Exception {
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, "foo", ManyFields.class.getDeclaredField("bool"),
-						ManyFields.class, 0);
+						ManyFields.class);
 		assertEquals(new Byte((byte) 1), booleanFieldConverter.parseDefaultString(fieldType, Boolean.TRUE.toString()));
 		assertEquals(new Byte((byte) 0), booleanFieldConverter.parseDefaultString(fieldType, Boolean.FALSE.toString()));
 	}
@@ -292,7 +292,7 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 		List<String> queriesAfter = new ArrayList<String>();
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, "foo", ManyFields.class.getDeclaredField(fieldName),
-						ManyFields.class, 0);
+						ManyFields.class);
 		databaseType.appendColumnArg(sb, fieldType, additionalArgs, stmtsBefore, stmtsAfter, queriesAfter);
 		StringBuilder expectedSb = new StringBuilder();
 		databaseType.appendEscapedEntityName(expectedSb, fieldName);

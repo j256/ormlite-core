@@ -115,7 +115,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 * Return a long value which is the number of rows in the table.
 	 */
 	public long queryForCountStar(DatabaseConnection databaseConnection) throws SQLException {
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(64);
 		sb.append("SELECT COUNT(*) FROM ");
 		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
 		String statement = sb.toString();

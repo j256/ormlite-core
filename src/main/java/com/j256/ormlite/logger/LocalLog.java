@@ -84,7 +84,7 @@ public class LocalLog implements Log {
 		if (!isLevelEnabled(level)) {
 			return;
 		}
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(128);
 		DateFormat dateFormat = dateFormatThreadLocal.get();
 		if (dateFormat == null) {
 			dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");

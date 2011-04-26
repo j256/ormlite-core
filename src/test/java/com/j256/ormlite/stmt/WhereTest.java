@@ -30,7 +30,7 @@ public class WhereTest extends BaseCoreTest {
 		String value = "bar";
 		FieldType numberFieldType =
 				FieldType.createFieldType(connectionSource, "foo", Foo.class.getDeclaredField(Foo.VAL_COLUMN_NAME),
-						Foo.class, 0);
+						Foo.class);
 		SimpleComparison eq =
 				new SimpleComparison(Foo.VAL_COLUMN_NAME, numberFieldType, value, SimpleComparison.EQUAL_TO_OPERATION);
 		where.eq(Foo.VAL_COLUMN_NAME, value);

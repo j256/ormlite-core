@@ -126,7 +126,7 @@ public class Logger {
 	 * Return a combined single message from the msg (with possible {}) and optional arguments.
 	 */
 	private String buildFullMessage(String msg, Object[] args) {
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(128);
 		int lastIndex = 0;
 		int argC = 0;
 		while (true) {

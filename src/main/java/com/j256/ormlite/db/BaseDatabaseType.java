@@ -371,7 +371,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 				// don't add anything
 			} else if (fieldType.isId()) {
 				if (sb == null) {
-					sb = new StringBuilder();
+					sb = new StringBuilder(48);
 					sb.append("PRIMARY KEY (");
 				} else {
 					sb.append(',');
@@ -399,7 +399,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		for (FieldType fieldType : fieldTypes) {
 			if (fieldType.isUnique()) {
 				if (sb == null) {
-					sb = new StringBuilder();
+					sb = new StringBuilder(48);
 					sb.append("UNIQUE (");
 				} else {
 					sb.append(',');

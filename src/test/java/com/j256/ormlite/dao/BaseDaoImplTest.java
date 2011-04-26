@@ -25,6 +25,7 @@ import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -1623,6 +1624,12 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		}
 	}
 
+	@Test
+	public void testForeignCollectionAutoRefresh() throws Exception {
+		// this got a stack overflow error
+		createDao(ForeignCollectionAutoRefresh.class, false);
+	}
+
 	/* ============================================================================================== */
 
 	protected static class ForeignNotNull {
@@ -1669,6 +1676,23 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		@DatabaseField(foreign = true, foreignAutoRefresh = true)
 		public Foo foo;
 		public ForeignAutoRefresh() {
+		}
+	}
+
+	protected static class ForeignAutoRefresh2 {
+		public int id;
+		@DatabaseField(foreign = true, foreignAutoRefresh = true)
+		public ForeignCollectionAutoRefresh foo;
+		public ForeignAutoRefresh2() {
+		}
+	}
+
+	protected static class ForeignCollectionAutoRefresh {
+		@DatabaseField(generatedId = true)
+		public int id;
+		@ForeignCollectionField
+		public ForeignCollection<ForeignAutoRefresh2> foreignAutoRefresh;
+		public ForeignCollectionAutoRefresh() {
 		}
 	}
 

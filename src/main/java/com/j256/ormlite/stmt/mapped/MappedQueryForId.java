@@ -59,7 +59,7 @@ public class MappedQueryForId<T, ID> extends BaseMappedQuery<T, ID> {
 					+ " because it doesn't have an id field");
 		}
 		// build the select statement by hand
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(64);
 		appendTableName(databaseType, sb, "SELECT * FROM ", tableInfo.getTableName());
 		appendWhereId(databaseType, idField, sb, null);
 		return sb.toString();

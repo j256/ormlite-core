@@ -98,7 +98,7 @@ public abstract class StatementBuilder<T, ID> {
 	}
 
 	private String buildStatementString(List<ArgumentHolder> argList) throws SQLException {
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(128);
 		appendStatementString(sb, argList);
 		String statement = sb.toString();
 		logger.debug("built statement {}", statement);

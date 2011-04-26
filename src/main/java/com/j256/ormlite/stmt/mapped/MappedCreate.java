@@ -48,8 +48,7 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 	}
 
 	public static <T, ID> MappedCreate<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo) {
-		StringBuilder sb = new StringBuilder();
-		StringBuilder questionSb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(128);
 		appendTableName(databaseType, sb, "INSERT INTO ", tableInfo.getTableName());
 		sb.append('(');
 		int argFieldC = 0;
@@ -70,13 +69,24 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 				first = false;
 			} else {
 				sb.append(",");
-				questionSb.append(",");
 			}
 			appendFieldColumnName(databaseType, sb, fieldType, null);
 			argFieldTypes[argFieldC++] = fieldType;
-			questionSb.append("?");
 		}
-		sb.append(") VALUES (").append(questionSb).append(")");
+		sb.append(") VALUES (");
+		first = true;
+		for (FieldType fieldType : tableInfo.getFieldTypes()) {
+			if (!isFieldCreatable(databaseType, fieldType)) {
+				continue;
+			}
+			if (first) {
+				first = false;
+			} else {
+				sb.append(",");
+			}
+			sb.append("?");
+		}
+		sb.append(")");
 		FieldType idField = tableInfo.getIdField();
 		String queryNext = buildQueryNextSequence(databaseType, idField);
 		return new MappedCreate<T, ID>(tableInfo, sb.toString(), argFieldTypes, queryNext);
@@ -106,7 +116,7 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 		if (seqName == null) {
 			return null;
 		} else {
-			StringBuilder sb = new StringBuilder();
+			StringBuilder sb = new StringBuilder(64);
 			databaseType.appendSelectNextValFromSequence(sb, seqName);
 			return sb.toString();
 		}

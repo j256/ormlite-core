@@ -49,7 +49,7 @@ public class MappedUpdateId<T, ID> extends BaseMappedStatement<T, ID> {
 			throw new SQLException("Cannot update-id in " + tableInfo.getDataClass()
 					+ " because it doesn't have an id field");
 		}
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(64);
 		appendTableName(databaseType, sb, "UPDATE ", tableInfo.getTableName());
 		sb.append("SET ");
 		appendFieldColumnName(databaseType, sb, idField, null);

@@ -27,7 +27,7 @@ public class MappedUpdate<T, ID> extends BaseMappedStatement<T, ID> {
 			throw new SQLException("Cannot update " + tableInfo.getDataClass()
 					+ " with only the id field.  You should use updateId().");
 		}
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(64);
 		appendTableName(databaseType, sb, "UPDATE ", tableInfo.getTableName());
 		boolean first = true;
 		int argFieldC = 0;
