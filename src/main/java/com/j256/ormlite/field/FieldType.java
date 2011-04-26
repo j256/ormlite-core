@@ -1,6 +1,7 @@
 package com.j256.ormlite.field;
 
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -8,6 +9,7 @@ import java.lang.reflect.Type;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.BaseForeignCollection;
@@ -33,6 +35,8 @@ import com.j256.ormlite.table.TableInfo;
  * @author graywatson
  */
 public class FieldType {
+
+	private static final AtomicInteger recursionProtection = new AtomicInteger();
 
 	/** default suffix added to fields that are id fields of foreign objects */
 	public static final String FOREIGN_ID_FIELD_SUFFIX = "_id";
@@ -61,6 +65,8 @@ public class FieldType {
 	private final boolean isGeneratedId;
 	private final String generatedIdSequence;
 	private final FieldConverter fieldConverter;
+	private final FieldType foreignIdField;
+	private final Constructor<?> foreignConstructor;
 	private final TableInfo<?, ?> foreignTableInfo;
 	private final FieldType foreignFieldType;
 	private final Dao<?, ?> foreignDao;
@@ -70,12 +76,9 @@ public class FieldType {
 
 	/**
 	 * You should use {@link FieldType#createFieldType} to instantiate one of these field if you have a {@link Field}.
-	 * 
-	 * @param recurseLevel
-	 *            is used to make sure we done get in an infinite recursive loop if a foreign object refers to itself.
 	 */
 	public FieldType(ConnectionSource connectionSource, String tableName, Field field, DatabaseFieldConfig fieldConfig,
-			Class<?> parentClass, int recurseLevel) throws SQLException {
+			Class<?> parentClass) throws SQLException {
 		this.connectionSource = connectionSource;
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		this.tableName = tableName;
@@ -93,54 +96,99 @@ public class FieldType {
 			}
 		}
 		String defaultFieldName = field.getName();
-		if (fieldConfig.isForeign() || fieldConfig.isForeignAutoRefresh()) {
-			if (recurseLevel < MAX_FOREIGN_RECURSE_LEVEL) {
+		if (fieldConfig.isForeignAutoRefresh()) {
+			if (recursionProtection.get() < MAX_FOREIGN_RECURSE_LEVEL) {
 				if (dataType.isPrimitive()) {
 					throw new IllegalArgumentException("Field " + this + " is a primitive class " + clazz
 							+ " but marked as foreign");
 				}
 				DatabaseTableConfig<?> tableConfig = fieldConfig.getForeignTableConfig();
-				if (tableConfig == null) {
-					tableConfig = DatabaseTableConfig.fromClass(connectionSource, clazz, recurseLevel + 1);
-				} else {
-					tableConfig.extractFieldTypes(connectionSource);
-				}
-				/*
-				 * If we have a BaseDaoEnabled class then we generate the DAO and gets it's table information which has
-				 * been set with the DAO. This seems like an extraneous DAO construction but it will be cached by the
-				 * DaoManager and it is needed to be part of the TableInfo so it can be set on the resulting objects.
-				 */
-				if (BaseDaoEnabled.class.isAssignableFrom(clazz)) {
-					BaseDaoImpl<?, ?> dao = (BaseDaoImpl<?, ?>) DaoManager.createDao(connectionSource, tableConfig);
-					this.foreignTableInfo = dao.getTableInfo();
-				} else {
-					@SuppressWarnings({ "unchecked", "rawtypes" })
-					TableInfo<?, ?> foreignInfo = new TableInfo(databaseType, null, tableConfig);
-					this.foreignTableInfo = foreignInfo;
+				recursionProtection.incrementAndGet();
+				try {
+					if (tableConfig == null) {
+						// NOTE: the cast is necessary for maven
+						this.foreignDao = (BaseDaoImpl<?, ?>) DaoManager.createDao(connectionSource, clazz);
+						this.foreignTableInfo = ((BaseDaoImpl<?, ?>) this.foreignDao).getTableInfo();
+					} else {
+						tableConfig.extractFieldTypes(connectionSource);
+						// NOTE: the cast is necessary for maven
+						this.foreignDao = (BaseDaoImpl<?, ?>) DaoManager.createDao(connectionSource, tableConfig);
+						this.foreignTableInfo = ((BaseDaoImpl<?, ?>) this.foreignDao).getTableInfo();
+					}
+				} finally {
+					recursionProtection.decrementAndGet();
 				}
 				if (this.foreignTableInfo.getIdField() == null) {
 					throw new IllegalArgumentException("Foreign field " + clazz + " does not have id field");
 				}
 				defaultFieldName = defaultFieldName + FOREIGN_ID_FIELD_SUFFIX;
+				this.foreignIdField = this.foreignTableInfo.getIdField();
 				// this field's data type is the foreign id's type
-				dataType = this.foreignTableInfo.getIdField().getDataType();
-				if (fieldConfig.isForeignAutoRefresh()) {
-					@SuppressWarnings("unchecked")
-					MappedQueryForId<Object, Object> castMappedQueryForId =
-							(MappedQueryForId<Object, Object>) MappedQueryForId.build(databaseType,
-									this.foreignTableInfo);
-					this.mappedQueryForId = castMappedQueryForId;
-				} else {
-					this.mappedQueryForId = null;
-				}
+				dataType = this.foreignIdField.getDataType();
+				@SuppressWarnings("unchecked")
+				MappedQueryForId<Object, Object> castMappedQueryForId =
+						(MappedQueryForId<Object, Object>) MappedQueryForId.build(databaseType, this.foreignTableInfo);
+				this.mappedQueryForId = castMappedQueryForId;
+				this.foreignConstructor = this.foreignTableInfo.getConstructor();
 			} else {
 				// act like it's not foreign
 				this.foreignTableInfo = null;
 				this.mappedQueryForId = null;
+				this.foreignIdField = null;
+				this.foreignConstructor = null;
+				this.foreignDao = null;
 			}
-			this.foreignDao = null;
 			this.foreignFieldType = null;
-		} else if (fieldConfig.isForeignCollection() && recurseLevel == 0) {
+		} else if (fieldConfig.isForeign()) {
+			if (recursionProtection.get() < MAX_FOREIGN_RECURSE_LEVEL) {
+				if (dataType.isPrimitive()) {
+					throw new IllegalArgumentException("Field " + this + " is a primitive class " + clazz
+							+ " but marked as foreign");
+				}
+				DatabaseTableConfig<?> tableConfig = fieldConfig.getForeignTableConfig();
+				recursionProtection.incrementAndGet();
+				try {
+					if (tableConfig != null) {
+						tableConfig.extractFieldTypes(connectionSource);
+						// NOTE: the cast is necessary for maven
+						this.foreignDao = (BaseDaoImpl<?, ?>) DaoManager.createDao(connectionSource, tableConfig);
+						this.foreignTableInfo = ((BaseDaoImpl<?, ?>) this.foreignDao).getTableInfo();
+						this.foreignIdField = this.foreignTableInfo.getIdField();
+						this.foreignConstructor = this.foreignTableInfo.getConstructor();
+					} else if (BaseDaoEnabled.class.isAssignableFrom(clazz)) {
+						// NOTE: the cast is necessary for maven
+						this.foreignDao = (BaseDaoImpl<?, ?>) DaoManager.createDao(connectionSource, clazz);
+						this.foreignTableInfo = ((BaseDaoImpl<?, ?>) this.foreignDao).getTableInfo();
+						this.foreignIdField = this.foreignTableInfo.getIdField();
+						this.foreignConstructor = this.foreignTableInfo.getConstructor();
+					} else {
+						this.foreignDao = null;
+						this.foreignTableInfo = null;
+						this.foreignIdField =
+								DatabaseTableConfig.extractIdFieldType(connectionSource, clazz,
+										DatabaseTableConfig.extractTableName(clazz));
+						this.foreignConstructor = DatabaseTableConfig.findNoArgConstructor(clazz);
+					}
+				} finally {
+					recursionProtection.decrementAndGet();
+				}
+				if (this.foreignIdField == null) {
+					throw new IllegalArgumentException("Foreign field " + clazz + " does not have id field");
+				}
+				defaultFieldName = defaultFieldName + FOREIGN_ID_FIELD_SUFFIX;
+				// this field's data type is the foreign id's type
+				dataType = this.foreignIdField.getDataType();
+				this.mappedQueryForId = null;
+			} else {
+				// act like it's not foreign
+				this.mappedQueryForId = null;
+				this.foreignIdField = null;
+				this.foreignConstructor = null;
+				this.foreignTableInfo = null;
+				this.foreignDao = null;
+			}
+			this.foreignFieldType = null;
+		} else if (fieldConfig.isForeignCollection() && recursionProtection.get() == 0) {
 			if (clazz != Collection.class && !ForeignCollection.class.isAssignableFrom(clazz)) {
 				throw new SQLException("Field class for '" + field.getName() + "' must be of class "
 						+ ForeignCollection.class.getSimpleName() + " or Collection.");
@@ -157,14 +205,23 @@ public class FieldType {
 			}
 			clazz = (Class<?>) genericArguments[0];
 			DatabaseTableConfig<?> tableConfig = fieldConfig.getForeignTableConfig();
-			if (tableConfig == null) {
-				tableConfig = DatabaseTableConfig.fromClass(connectionSource, clazz, recurseLevel + 1);
-			} else {
-				tableConfig.extractFieldTypes(connectionSource);
+			recursionProtection.incrementAndGet();
+			try {
+				if (tableConfig == null) {
+					@SuppressWarnings("unchecked")
+					Dao<Object, Object> castDao = (Dao<Object, Object>) DaoManager.createDao(connectionSource, clazz);
+					this.foreignDao = castDao;
+				} else {
+					@SuppressWarnings("unchecked")
+					Dao<Object, Object> castDao = (Dao<Object, Object>) DaoManager.createDao(connectionSource, tableConfig);
+					this.foreignDao = castDao;
+				}
+			} finally {
+				recursionProtection.decrementAndGet();
 			}
 
 			FieldType foreignFieldType = null;
-			for (FieldType fieldType : tableConfig.getFieldTypes(databaseType)) {
+			for (FieldType fieldType : ((BaseDaoImpl<?, ?>) this.foreignDao).getTableInfo().getFieldTypes()) {
 				if (fieldType.getFieldType() == parentClass) {
 					foreignFieldType = fieldType;
 					break;
@@ -179,13 +236,11 @@ public class FieldType {
 				throw new SQLException("Foreign collection object " + clazz + " for field '" + field.getName()
 						+ "' contains a field of class " + parentClass + " but it's not foreign");
 			}
-			// we have to do this because of maven compile failures otherwise
-			@SuppressWarnings("unchecked")
-			Dao<Object, Object> otherDao = (Dao<Object, Object>) DaoManager.createDao(connectionSource, tableConfig);
-			this.foreignDao = otherDao;
 			this.foreignFieldType = foreignFieldType;
 			this.foreignTableInfo = null;
 			this.mappedQueryForId = null;
+			this.foreignIdField = null;
+			this.foreignConstructor = null;
 		} else if (dataType == DataType.UNKNOWN && (!fieldConfig.isForeignCollection())) {
 			if (byte[].class.isAssignableFrom(clazz)) {
 				throw new SQLException("ORMLite can't store unknown class " + clazz + " for field '" + field.getName()
@@ -202,6 +257,8 @@ public class FieldType {
 			this.mappedQueryForId = null;
 			this.foreignDao = null;
 			this.foreignFieldType = null;
+			this.foreignIdField = null;
+			this.foreignConstructor = null;
 		}
 		if (fieldConfig.getColumnName() == null) {
 			this.dbColumnName = defaultFieldName;
@@ -257,7 +314,7 @@ public class FieldType {
 			throw new IllegalArgumentException(sb.toString());
 		}
 		this.fieldConverter = databaseType.getFieldConverter(dataType);
-		if (this.isId && foreignTableInfo != null) {
+		if (this.isId && this.foreignIdField != null) {
 			throw new IllegalArgumentException("Id field " + field.getName() + " cannot also be a foreign object");
 		}
 		if (fieldConfig.isUseGetSet()) {
@@ -360,15 +417,7 @@ public class FieldType {
 	}
 
 	public boolean isForeign() {
-		return foreignTableInfo != null;
-	}
-
-	/**
-	 * Return the {@link TableInfo} associated with the foreign object if the {@link DatabaseField#foreign()} annotation
-	 * was set to true or null if none.
-	 */
-	TableInfo<?, ?> getForeignTableInfo() {
-		return foreignTableInfo;
+		return foreignIdField != null;
 	}
 
 	/**
@@ -376,7 +425,7 @@ public class FieldType {
 	 */
 	public void assignField(Object data, Object val) throws SQLException {
 		// if this is a foreign object then val is the foreign object's id val
-		if (foreignTableInfo != null && val != null) {
+		if (foreignIdField != null && val != null) {
 			// get the current field value which is the foreign-id
 			Object foreignId = extractJavaFieldValue(data);
 			/*
@@ -390,8 +439,8 @@ public class FieldType {
 			Object foreignObject;
 			if (mappedQueryForId == null) {
 				// create a shell and assign its id field
-				foreignObject = foreignTableInfo.createObject();
-				foreignTableInfo.getIdField().assignField(foreignObject, val);
+				foreignObject = TableInfo.createObject(foreignConstructor, foreignDao);
+				foreignIdField.assignField(foreignObject, val);
 			} else {
 				// do we need to auto-refresh the field?
 				DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection();
@@ -477,8 +526,8 @@ public class FieldType {
 		}
 
 		// if this is a foreign object then we want its id field
-		if (foreignTableInfo != null) {
-			val = foreignTableInfo.getIdField().extractJavaFieldValue(val);
+		if (foreignIdField != null) {
+			val = foreignIdField.extractJavaFieldValue(val);
 		}
 
 		@SuppressWarnings("unchecked")
@@ -511,11 +560,7 @@ public class FieldType {
 	 * Return the id field associated with the foreign object or null if none.
 	 */
 	public FieldType getForeignIdField() throws SQLException {
-		if (foreignTableInfo == null) {
-			return null;
-		} else {
-			return foreignTableInfo.getIdField();
-		}
+		return foreignIdField;
 	}
 
 	/**
@@ -672,18 +717,15 @@ public class FieldType {
 
 	/**
 	 * Return An instantiated {@link FieldType} or null if the field does not have a {@link DatabaseField} annotation.
-	 * 
-	 * @param recurseLevel
-	 *            is used to make sure we done get in an infinite recursive loop if a foreign object refers to itself. =
 	 */
 	public static FieldType createFieldType(ConnectionSource connectionSource, String tableName, Field field,
-			Class<?> parentClass, int recurseLevel) throws SQLException {
+			Class<?> parentClass) throws SQLException {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		DatabaseFieldConfig fieldConfig = DatabaseFieldConfig.fromField(databaseType, tableName, field);
 		if (fieldConfig == null) {
 			return null;
 		} else {
-			return new FieldType(connectionSource, tableName, field, fieldConfig, parentClass, recurseLevel);
+			return new FieldType(connectionSource, tableName, field, fieldConfig, parentClass);
 		}
 	}
 
