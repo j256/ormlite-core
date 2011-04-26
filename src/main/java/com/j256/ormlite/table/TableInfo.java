@@ -57,7 +57,7 @@ public class TableInfo<T, ID> {
 		// find the id field
 		FieldType findIdFieldType = null;
 		for (FieldType fieldType : fieldTypes) {
-			if (fieldType.isId()) {
+			if (fieldType.isId() || fieldType.isGeneratedId() || fieldType.isGeneratedIdSequence()) {
 				if (findIdFieldType != null) {
 					throw new SQLException("More than 1 idField configured for class " + dataClass + " ("
 							+ findIdFieldType + "," + fieldType + ")");
@@ -129,11 +129,15 @@ public class TableInfo<T, ID> {
 		return idField;
 	}
 
+	public Constructor<T> getConstructor() {
+		return constructor;
+	}
+
 	/**
 	 * Return a string representation of the object.
 	 */
 	public String objectToString(T object) {
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(64);
 		sb.append(object.getClass().getSimpleName());
 		for (FieldType fieldType : fieldTypes) {
 			sb.append(' ').append(fieldType.getDbColumnName()).append("=");
@@ -150,13 +154,21 @@ public class TableInfo<T, ID> {
 	 * Create and return an object of this type using our reflection constructor.
 	 */
 	public T createObject() throws SQLException {
+		return createObject(constructor, dao);
+	}
+
+	/**
+	 * Create and return an object of this type using our reflection constructor.
+	 */
+	public static <T, ID> T createObject(Constructor<?> constructor, Dao<T, ID> dao) throws SQLException {
 		boolean accessible = constructor.isAccessible();
 		try {
 			if (!accessible) {
 				constructor.setAccessible(true);
 			}
 			// create our instance
-			T instance = constructor.newInstance();
+			@SuppressWarnings("unchecked")
+			T instance = (T) constructor.newInstance();
 			if (instance instanceof BaseDaoEnabled) {
 				@SuppressWarnings("unchecked")
 				BaseDaoEnabled<T, ID> daoEnabled = (BaseDaoEnabled<T, ID>) instance;
@@ -164,7 +176,7 @@ public class TableInfo<T, ID> {
 			}
 			return instance;
 		} catch (Exception e) {
-			throw SqlExceptionUtil.create("Could not create object for " + dataClass, e);
+			throw SqlExceptionUtil.create("Could not create object for " + constructor.getDeclaringClass(), e);
 		} finally {
 			if (!accessible) {
 				constructor.setAccessible(false);
