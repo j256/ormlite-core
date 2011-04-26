@@ -544,11 +544,13 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	 * but if you have a lot of classes, they can seem to be a pain.
 	 * 
 	 * <p>
-	 * <b>NOTE:</b> You should use {@link DaoManager#createDao(ConnectionSource, Class)} instead of this method if you
-	 * are using any of the features which require inner Dao creation such as auto-refresh of foreign fields and
-	 * Collections of sub objects.
+	 * <b>NOTE:</b> You should use {@link DaoManager#createDao(ConnectionSource, DatabaseTableConfig)} instead of this
+	 * method so you won't have to create the DAO multiple times.
 	 * </p>
+	 * 
+	 * @deprecated You should be using the {@link DaoManager#createDao(ConnectionSource, Class)}
 	 */
+	@Deprecated
 	public static <T, ID> Dao<T, ID> createDao(ConnectionSource connectionSource, Class<T> clazz) throws SQLException {
 		return new BaseDaoImpl<T, ID>(connectionSource, clazz) {
 		};
@@ -559,10 +561,12 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	 * 
 	 * <p>
 	 * <b>NOTE:</b> You should use {@link DaoManager#createDao(ConnectionSource, DatabaseTableConfig)} instead of this
-	 * method if you are using any of the features which require inner Dao creation such as auto-refresh of foreign
-	 * fields and Collections of sub objects.
+	 * method so you won't have to create the DAO multiple times.
 	 * </p>
+	 * 
+	 * @deprecated You should be using the {@link DaoManager#createDao(ConnectionSource, DatabaseTableConfig)}
 	 */
+	@Deprecated
 	public static <T, ID> Dao<T, ID> createDao(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig)
 			throws SQLException {
 		return new BaseDaoImpl<T, ID>(connectionSource, tableConfig) {
