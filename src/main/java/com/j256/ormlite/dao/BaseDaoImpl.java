@@ -48,9 +48,9 @@ import com.j256.ormlite.table.TableInfo;
  */
 public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
-	private StatementExecutor<T, ID> statementExecutor;
 	private boolean initialized = false;
 
+	protected StatementExecutor<T, ID> statementExecutor;
 	protected DatabaseType databaseType;
 	protected final Class<T> dataClass;
 	protected DatabaseTableConfig<T> tableConfig;
