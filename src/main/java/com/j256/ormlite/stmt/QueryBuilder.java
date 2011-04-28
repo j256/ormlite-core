@@ -32,7 +32,9 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	private final FieldType idField;
 	private List<String> selectColumnList = null;
 	private List<OrderBy> orderByList = null;
+	private String orderByRaw = null;
 	private List<String> groupByList = null;
+	private String groupByRaw = null;
 	private boolean isInnerQuery = false;
 	private final Dao<T, ID> dao;
 	private FieldType[] resultFieldTypes;
@@ -123,6 +125,14 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	/**
+	 * Add a raw SQL "GROUP BY" clause to the SQL query statement. This should not include the "GROUP BY".
+	 */
+	public QueryBuilder<T, ID> groupByRaw(String rawSql) {
+		groupByRaw = rawSql;
+		return this;
+	}
+
+	/**
 	 * Add "ORDER BY" clause to the SQL query statement.
 	 */
 	public QueryBuilder<T, ID> orderBy(String columnName, boolean ascending) {
@@ -134,6 +144,14 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			orderByList = new ArrayList<OrderBy>();
 		}
 		orderByList.add(new OrderBy(columnName, ascending));
+		return this;
+	}
+
+	/**
+	 * Add raw SQL "ORDER BY" clause to the SQL query statement. This should not include the "ORDER BY".
+	 */
+	public QueryBuilder<T, ID> orderByRaw(String rawSql) {
+		orderByRaw = rawSql;
 		return this;
 	}
 
@@ -299,42 +317,50 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	private void appendGroupBys(StringBuilder sb) {
-		if (groupByList == null || groupByList.size() == 0) {
+		if ((groupByList == null || groupByList.size() == 0) && groupByRaw == null) {
 			return;
 		}
 
 		sb.append("GROUP BY ");
-		boolean first = true;
-		for (String columnName : groupByList) {
-			if (first) {
-				first = false;
-			} else {
-				sb.append(',');
+		if (groupByRaw != null) {
+			sb.append(groupByRaw);
+		} else {
+			boolean first = true;
+			for (String columnName : groupByList) {
+				if (first) {
+					first = false;
+				} else {
+					sb.append(',');
+				}
+				databaseType.appendEscapedEntityName(sb, columnName);
 			}
-			databaseType.appendEscapedEntityName(sb, columnName);
 		}
 		sb.append(' ');
 	}
 
 	private void appendOrderBys(StringBuilder sb) throws SQLException {
-		if (orderByList == null || orderByList.size() == 0) {
+		if ((orderByList == null || orderByList.size() == 0) && orderByRaw == null) {
 			return;
 		}
 
 		sb.append("ORDER BY ");
-		boolean first = true;
-		for (OrderBy orderBy : orderByList) {
-			if (first) {
-				first = false;
-			} else {
-				sb.append(',');
-			}
-			String columnName = orderBy.getColumnName();
-			databaseType.appendEscapedEntityName(sb, columnName);
-			if (orderBy.isAscending()) {
-				// sb.append(" ASC");
-			} else {
-				sb.append(" DESC");
+		if (orderByRaw != null) {
+			sb.append(orderByRaw);
+		} else {
+			boolean first = true;
+			for (OrderBy orderBy : orderByList) {
+				if (first) {
+					first = false;
+				} else {
+					sb.append(',');
+				}
+				String columnName = orderBy.getColumnName();
+				databaseType.appendEscapedEntityName(sb, columnName);
+				if (orderBy.isAscending()) {
+					// sb.append(" ASC");
+				} else {
+					sb.append(" DESC");
+				}
 			}
 		}
 		sb.append(' ');

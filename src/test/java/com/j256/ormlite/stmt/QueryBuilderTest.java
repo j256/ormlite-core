@@ -310,6 +310,28 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertFalse(iterator.hasNext());
 	}
 
+	@Test
+	public void testOrderByRaw() throws Exception {
+		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		foo1.id = "stuff1";
+		foo1.val = 1;
+		foo1.equal = 10;
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		foo2.id = "stuff2";
+		foo2.val = 5;
+		foo2.equal = 7;
+		assertEquals(1, dao.create(foo2));
+		List<Foo> results =
+				dao.queryBuilder()
+						.orderByRaw("(" + Foo.VAL_COLUMN_NAME + "+" + Foo.EQUAL_COLUMN_NAME + ") DESC")
+						.query();
+		assertEquals(2, results.size());
+		assertEquals(foo2.id, results.get(0).id);
+		assertEquals(foo1.id, results.get(1).id);
+	}
+
 	private static class LimitInline extends BaseDatabaseType {
 		public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 			return true;
