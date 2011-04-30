@@ -4,6 +4,7 @@
 - support for embedded objects
 	- look to see if the unknown class has a DatabaseTable(embedded = true or javax annotation
 	- take all of the fields as if they were fields in this class
+	- embedded keys are going to be _hard_, maybe punt them
 
 - more support for more constraints (other than primary and unique):
 	- maybe a check="> 10" type of addition to DatabaseField so we can add a check constraint
@@ -11,8 +12,6 @@
 
 - look into a prepared query which keeps the connection open to the database
 	- needs to have a lot of warnings on it
-
-- allow unique across multiple fields
 
 - flesh out the SimpleDB version of the library:
 	- get all tests passing
@@ -29,6 +28,9 @@
 
 - JPA:
 	- @Enumerated(EnumType.STRING)
+
+- test QueryBuilder.groupBy() in field and raw form
+	- org.h2.jdbc.JdbcSQLException: Column "FOO.ID" must be in the GROUP BY list; SQL statement:
 
 -----------------------------------------------------------------------------------------------------------------------------------
 
