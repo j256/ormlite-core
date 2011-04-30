@@ -1,7 +1,18 @@
-4.20: 4/XX/2011 (svn rYYYY)
-	* Turned the SelectArg into the ArgumentHolder interface so we could add other implementations.
-	* Fixed a bug with using the UpdateBuilder with Date fields.  Thanks to stewert.  Fixes bug #3286455.
-	* Fixed some documentation problems with PreparedQuery.  Thanks to Harry.
+4.20: 4/30/2011 (svn rYYYY)
+	* CORE: Refactored a couple of places to try and improve DAO creation with foreign fields.  Thanks to the user list.
+	* CORE: Improved the dao caching when creating/dropping tables.  Thanks to the user list.
+	* CORE: Refactored TableUtils.clearTable() and other methods to improve memory usage.
+	* CORE: Deprecated the BaseDao.createDao() methods.  The DaoManager.createDao() methods should be used instead.
+	* CORE: Improved the size guessing during StringBuilder creation to reduce enlarge calls.  Thanks to Andy.
+	* CORE: Added support for uniqueCombo field in DatabaseField annotation that supports combined unique fields.
+	* CORE: Turned the SelectArg into the ArgumentHolder interface so we could add other implementations.
+	* CORE: Added QueryBuilder.orderByRaw() and groupByRaw() so users can construct their own SQL.  Thanks to jrj.
+	* CORE: Fixed interaction between foreignAutoRefresh and foreign collections.  Thanks to jaxelrod.  Fixes bug #3290093.
+	* CORE: Fixed a bug with using the UpdateBuilder with Date fields.  Thanks to stewert.  Fixes bug #3286455.
+	* CORE: Fixed some documentation problems with PreparedQuery.  Thanks to Harry.
+	* ANDROID: Significantly improved the mechanism to inject the open helper class.  Thanks to JC and Chris Banes.
+	* ANDROID: Improved the OrmLiteBaseActivity and other base classes' use of the context.  Thanks to Chris Banes.
+	* ANDROID: Added level caching for speed and added a ORMLite log tag for easy enabling all logs.
 
 4.19: 4/11/2011 (svn r1638)
 	* CORE: Fixed stupid DaoDaoEnabled.delete() cut and paste bug.  Fixes bug #3276679.

@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on April, 14 2011 by texi2html 1.70 -->
+<!-- Created on April, 30 2011 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -54,7 +54,7 @@ ul.toc {list-style: none}
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h1 class="chapter"> 2. How to Use </h1>
@@ -108,7 +108,7 @@ ul.toc {list-style: none}
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 2.1 Setting Up Your Classes </h2>
@@ -146,7 +146,7 @@ ul.toc {list-style: none}
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h3 class="subsection"> 2.1.1 Adding ORMLite Annotations </h3>
@@ -156,7 +156,7 @@ about classes, methods, or fields.  To specify what classes and fields to store 
 supports either its own annotations (<code>@DatabaseTable</code> and <code>@DatabaseField</code>) or the more standard
 annotations from the <code>javax.persistence</code> package.  See section <a href="#SEC9">Using javax.persistence Annotations</a>.   Annotations are the
 easiest way to configure your classes but you can also configure the class using Java code or Spring XML.
-See section <a href="ormlite_5.html#SEC42">Class Configuration</a>.
+See section <a href="ormlite_5.html#SEC44">Class Configuration</a>.
 
 </p><p>With ORMLite annotations, for each of the Java classes that you would like to persist to your SQL database, you
 will need to add the <code>@DatabaseTable</code> annotation right above the <code>public class</code> line.  Each class marked with
@@ -359,55 +359,78 @@ types:
 </dd>
 <dt><code> unique</code></dt>
 <dd>
-<p>Adds a constraint to the field that it has to be unique across all rows in the table.  This allows you to have a
-unique field in the table even though it is not the id field.  For example, you might have an Account class which
-has a generated account-id but you also want the email address to be unique across all Accounts.  You can also
-use the uniqueIndexName to create an index for this field.  For unique constraints across multiple fields, see the
-<code>uniqueIndex</code> below. 
+<p>Adds a constraint to the table so that this field that it has to be unique across all rows in the table.  For example, you
+might have an Account class which has a generated account-id but you also want the email address to be unique across all
+Accounts.  If more than one field is marked as unique in a table, then each of the fields by themselves must be unique.
+For example, if you have the <code>firstName</code> and <code>lastName</code> fields, both with <code>unique=true</code> and you have &quot;Bob&quot;,
+&quot;Smith&quot; in the database, you cannot insert &quot;Bob&quot;, &quot;Jones&quot; nor &quot;Kevin&quot;, &quot;Smith&quot;.
+
+</p><p>To have more than 1 field that are each unique in <em>combination</em>, see the <code>uniqueCombo</code> setting.    You can also
+use the <code>uniqueIndexName</code> to create an index for this field.  
 
 </p><a name="IDX45"></a>
 <a name="IDX46"></a>
-<a name="IDX47"></a>
+</dd>
+<dt><code> uniqueCombo</code></dt>
+<dd>
+<p>Adds a constraint to the table so that a combination of all fields that have <code>uniqueCombo</code> set to true has to be unique
+across all rows in the table.  For example, if you have the <code>firstName</code> and <code>lastName</code> fields, both with
+<code>uniqueCombo=true</code>, and you have &quot;Bob&quot;, &quot;Smith&quot; in the database, you cannot insert another &quot;Bob&quot;, &quot;Smith&quot; but you
+<em>can</em> insert &quot;Bob&quot;, &quot;Jones&quot; and &quot;Kevin&quot;, &quot;Smith&quot;.
+
+</p><p>To have fields be unique by themselves, see the <code>unique</code> setting.  You can also use the <code>uniqueIndexName</code> to
+create an index for this field.  
+
+</p><a name="IDX47"></a>
+<a name="IDX48"></a>
+<a name="IDX49"></a>
 <p><a name="ANC4"></a>
 </p></dd>
 <dt><code> index</code></dt>
 <dd>
-<p>Boolean value (default false) to have the database add an index for this field. This will create an index with the name columnName with
-a &quot;_idx&quot; suffix. To specify a specific name of the index or to index multiple fields, use the <code>indexName</code> field.
+<p>Boolean value (default false) to have the database add an index for this field. This will create an index with the name
+columnName with a &quot;_idx&quot; suffix. To specify a specific name of the index or to index multiple fields, use the
+<code>indexName</code> field.
 
-</p><a name="IDX48"></a>
+</p><a name="IDX50"></a>
 </dd>
 <dt><code> uniqueIndex</code></dt>
 <dd>
 <p>Boolean value (default false) to have the database add a unique index for this field. Same as index but this will ensure that all of
 the values in the index are unique.  If you just want to make sure of unique-ness then you can use the <code>unique</code> field instead.
 
-</p><a name="IDX49"></a>
+</p><a name="IDX51"></a>
 </dd>
 <dt><code> indexName</code></dt>
 <dd>
-<p>String value (default none) to have the database add an index for this field with this name. You do not need to specify the index boolean
-as well. To index multiple fields together in one index, each of the fields should have the same indexName value.
+<p>String value (default none) to have the database add an index for this field with this name. You do not need to specify the index
+boolean as well. To index multiple fields together in one index, each of the fields should have the same indexName value.
 
-</p><a name="IDX50"></a>
+</p><a name="IDX52"></a>
 </dd>
 <dt><code> uniqueIndexName</code></dt>
 <dd>
-<p>String value (default none) to have the database add a unique index for this field with this name. Same as index but this will ensure that all of
-the values in the index are unique.  For example, this means that you can insert <code>(&quot;pittsburgh&quot;, &quot;pa&quot;)</code> and <code>(&quot;harrisburg&quot;, &quot;pa&quot;)</code> and
-<code>(&quot;pittsburgh&quot;, &quot;tx&quot;)</code> but not another <code>(&quot;pittsburgh&quot;, &quot;pa&quot;)</code>.
+<p>String value (default none) to have the database add a unique index for this field with this name. Same as index but this will ensure
+that all of the values in the index are unique.  For example, this means that you can insert <code>(&quot;pittsburgh&quot;, &quot;pa&quot;)</code> and
+<code>(&quot;harrisburg&quot;, &quot;pa&quot;)</code> and <code>(&quot;pittsburgh&quot;, &quot;tx&quot;)</code> but not another <code>(&quot;pittsburgh&quot;, &quot;pa&quot;)</code>.
 
-</p><a name="IDX51"></a>
-<a name="IDX52"></a>
+</p><a name="IDX53"></a>
+<a name="IDX54"></a>
 <p><a name="ANC5"></a>
 </p></dd>
 <dt><code> foreignAutoRefresh</code></dt>
 <dd>
-<p>Set this to be true (default false) to have a foreign field automagically refreshed when an object is queried.  This will <em>not</em> automagically
-create the foreign object but when the object is queried, a separate database call will be made to load of the fields of the foreign object via an
-internal DAO. The default is to just have the ID field in the object retrieved and for the caller to call refresh on the correct DAO.
+<p>Set this to be true (default false) to have a foreign field automagically refreshed when an object is queried.  This will <em>not</em>
+automagically create the foreign object but when the object is queried, a separate database call will be made to load of the fields
+of the foreign object via an internal DAO. The default is to just have the ID field in the object retrieved and for the caller to
+call refresh on the correct DAO.
 
 </p><p><em>NOTE:</em> This will create another DAO object internally so low memory devices may want to call refresh by hand.
+
+</p><p><em>NOTE:</em> To protect against recursion, there are a couple of places were auto-refreshing has been limited.  If you are
+auto-refreshing a class that itself has field with <code>foreignAutoRefresh</code> set to true or if you are auto-refreshing a class with
+a foreign collection, in both cases the resulting field will be set to null and <em>not</em> auto-refreshed.  You can always call
+refresh on the field directly if you need it.
 
 </p></dd>
 </dl>
@@ -428,7 +451,7 @@ internal DAO. The default is to just have the ID field in the object retrieved a
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h3 class="subsection"> 2.1.2 Using javax.persistence Annotations </h3>
@@ -444,9 +467,7 @@ public class Account {
 <p>The <code>@Entity</code> annotations can have an optional <code>name</code> argument which specifies the table name.   If not
 specified, the class name with normalized case is used by default.
 
-</p><a name="IDX53"></a>
-<a name="IDX54"></a>
-<a name="IDX55"></a>
+</p><a name="IDX55"></a>
 <a name="IDX56"></a>
 <a name="IDX57"></a>
 <a name="IDX58"></a>
@@ -454,6 +475,8 @@ specified, the class name with normalized case is used by default.
 <a name="IDX60"></a>
 <a name="IDX61"></a>
 <a name="IDX62"></a>
+<a name="IDX63"></a>
+<a name="IDX64"></a>
 <p>Instead of using the <code>@DatabaseField</code> annotation on each of the fields, you can use the <code>javax.persistence</code>
 annotations: <code>@Column</code>, <code>@Id</code>, <code>@GeneratedValue</code>, <code>@OneToOne</code>, and <code>@ManyToOne</code>. For example:
 
@@ -480,9 +503,9 @@ following annotation fields are supported, the rest are ignored.
 <dd>
 <p>Used to specify the name of the associated database column.  If not provided then the field name is taken.
 
-</p><a name="IDX63"></a>
-<a name="IDX64"></a>
-<a name="IDX65"></a>
+</p><a name="IDX65"></a>
+<a name="IDX66"></a>
+<a name="IDX67"></a>
 </dd>
 <dt><code> length</code></dt>
 <dd>
@@ -490,16 +513,16 @@ following annotation fields are supported, the rest are ignored.
 certain database types.  Default for those that do is 255.   Same as the <code>width</code> field in the
 <code>@DatabaseField</code> annotation.
 
-</p><a name="IDX66"></a>
-<a name="IDX67"></a>
+</p><a name="IDX68"></a>
+<a name="IDX69"></a>
 </dd>
 <dt><code> nullable</code></dt>
 <dd>
 <p>Set to true to have a field not be able to be inserted into the database with a null value.  Same as the
 <code>canBeNull</code> field in the <code>@DatabaseField</code> annotation.
 
-</p><a name="IDX68"></a>
-<a name="IDX69"></a>
+</p><a name="IDX70"></a>
+<a name="IDX71"></a>
 </dd>
 <dt><code> unique</code></dt>
 <dd>
@@ -509,9 +532,9 @@ certain database types.  Default for those that do is 255.   Same as the <code>w
 </p></dd>
 </dl>
 
-<a name="IDX70"></a>
-<a name="IDX71"></a>
 <a name="IDX72"></a>
+<a name="IDX73"></a>
+<a name="IDX74"></a>
 </dd>
 <dt><code> @Id</code></dt>
 <dd>
@@ -554,7 +577,7 @@ See <a href="#ANC18">datatype serializable</a>.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h3 class="subsection"> 2.1.3 Adding a No-Argument-Constructor </h3>
@@ -603,35 +626,35 @@ public class Account {
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 2.2 Persisted Data Types </h2>
 
 <p>The following Java types can be persisted to the database by ORMLite.  Database specific code
 helps to translate between the SQL types and the database specific handling of those types.
-See section <a href="ormlite_5.html#SEC43">Database Specific Code</a>.
+See section <a href="ormlite_5.html#SEC45">Database Specific Code</a>.
 
 </p><dl compact="compact">
 <dd>
-<a name="IDX73"></a>
-<a name="IDX74"></a>
+<a name="IDX75"></a>
+<a name="IDX76"></a>
 <p><a name="ANC6"></a>
 </p></dd>
 <dt><code> String (DataType.STRING)</code></dt>
 <dd>
 <p>Persisted as SQL type <code>VARCHAR</code>.  
 
-</p><a name="IDX75"></a>
+</p><a name="IDX77"></a>
 </dd>
 <dt><code> String (DataType.LONG_STRING)</code></dt>
 <dd>
 <p>Persisted as SQL type <code>LONGVARCHAR</code> which handles longer strings.  
 
-</p><a name="IDX76"></a>
-<a name="IDX77"></a>
-<a name="IDX78"></a>
+</p><a name="IDX78"></a>
 <a name="IDX79"></a>
+<a name="IDX80"></a>
+<a name="IDX81"></a>
 </dd>
 <dt><code> String (DataType.STRING_BYTES)</code></dt>
 <dd>
@@ -642,15 +665,15 @@ characters, you may have to encode them as an array of bytes using this type.  B
 <code>DatabaseField</code> to specify a custom character-set to use instead for the field.  Comparison and ordering
 of this type may not be possible depending on the database type.
 
-</p><a name="IDX80"></a>
+</p><a name="IDX82"></a>
 <p><a name="ANC7"></a>
 </p></dd>
 <dt><code> boolean or Boolean (DataType.BOOLEAN or DataType.BOOLEAN_OBJ)</code></dt>
 <dd>
 <p>Persisted as SQL type <code>BOOLEAN</code>.
 
-</p><a name="IDX81"></a>
-<a name="IDX82"></a>
+</p><a name="IDX83"></a>
+<a name="IDX84"></a>
 <p><a name="ANC8"></a>
 </p></dd>
 <dt><code> java.util.Date (DataType.DATE)</code></dt>
@@ -663,7 +686,7 @@ format of it is unreliable to match the database format.  See section <a href="o
 
 </p><p><em>NOTE:</em> Certain databases only provide seconds resolution so the milliseconds will be 0.
 
-</p><a name="IDX83"></a>
+</p><a name="IDX85"></a>
 <p><a name="ANC9"></a>
 </p></dd>
 <dt><code> java.util.Date (DataType.DATE_LONG)</code></dt>
@@ -675,8 +698,8 @@ in which case the milliseconds value of the <code>Date</code> will be stored as 
 
 </p><p><em>NOTE:</em> Certain databases only provide seconds resolution so the milliseconds will be 0.
 
-</p><a name="IDX84"></a>
-<a name="IDX85"></a>
+</p><a name="IDX86"></a>
+<a name="IDX87"></a>
 <p><a name="ANC10"></a>
 </p></dd>
 <dt><code> java.util.Date (DATE_STRING)</code></dt>
@@ -692,15 +715,15 @@ in which case the date will be stored as a string in <code>yyyy-MM-dd HH:mm:ss.S
 </p><p><em>NOTE:</em> Because of reentrant issues with <code>SimpleDateFormat</code>, thread locals are used to access the formatters
 every time a <code>DATE_STRING</code> date is converted to/from the database.
 
-</p><a name="IDX86"></a>
+</p><a name="IDX88"></a>
 <p><a name="ANC11"></a>
 </p></dd>
 <dt><code> byte or Byte (DataType.BYTE or DataType.BYTE_OBJ)</code></dt>
 <dd>
 <p>Persisted as SQL type <code>TINYINT</code>.
 
-</p><a name="IDX87"></a>
-<a name="IDX88"></a>
+</p><a name="IDX89"></a>
+<a name="IDX90"></a>
 <p><a name="ANC12"></a>
 </p></dd>
 <dt><code> byte array (DataType.BYTE_ARRAY)</code></dt>
@@ -712,7 +735,7 @@ serializes an object as an array of bytes.
 <code>DataType.BYTE_ARRAY</code> or <code>DataType.SERIALIZABLE</code> using the <code>dataType</code> field and will not be auto-detected.
 See <a href="#ANC2">DatabaseField dataType</a>.
 
-</p><a name="IDX89"></a>
+</p><a name="IDX91"></a>
 </dd>
 <dt><code> char or Character (DataType.CHAR or DataType.CHAR_OBJ)</code></dt>
 <dd>
@@ -721,43 +744,43 @@ See <a href="#ANC2">DatabaseField dataType</a>.
 </p><p><em>NOTE:</em> If you are using Derby you should consider using a String instead since comparisons of character fields are
 not allowed.
 
-</p><a name="IDX90"></a>
+</p><a name="IDX92"></a>
 <p><a name="ANC13"></a>
 </p></dd>
 <dt><code> short or Short (DataType.SHORT or DataType.SHORT_OBJ)</code></dt>
 <dd>
 <p>Persisted as SQL type SMALLINT.
 
-</p><a name="IDX91"></a>
+</p><a name="IDX93"></a>
 <p><a name="ANC14"></a>
 </p></dd>
 <dt><code> int or Integer (DataType.INTEGER or DataType.INTEGER_OBJ)</code></dt>
 <dd>
 <p>Persisted as SQL type <code>INTEGER</code>.
 
-</p><a name="IDX92"></a>
+</p><a name="IDX94"></a>
 <p><a name="ANC15"></a>
 </p></dd>
 <dt><code> long or Long (DataType.LONG or DataType.LONG_OBJ)</code></dt>
 <dd>
 <p>Persisted as SQL type <code>BIGINT</code>.
 
-</p><a name="IDX93"></a>
+</p><a name="IDX95"></a>
 <p><a name="ANC16"></a>
 </p></dd>
 <dt><code> float or Float (DataType.FLOAT or DataType.FLOAT_OBJ)</code></dt>
 <dd>
 <p>Persisted as SQL type <code>FLOAT</code>.
 
-</p><a name="IDX94"></a>
+</p><a name="IDX96"></a>
 <p><a name="ANC17"></a>
 </p></dd>
 <dt><code> double or Double (DataType.DOUBLE or DataType.DOUBLE_OBJ)</code></dt>
 <dd>
 <p>Persisted as SQL type <code>DOUBLE</code>.
 
-</p><a name="IDX95"></a>
-<a name="IDX96"></a>
+</p><a name="IDX97"></a>
+<a name="IDX98"></a>
 <p><a name="ANC18"></a>
 </p></dd>
 <dt><code> Serializable (DataType.SERIALIZABLE)</code></dt>
@@ -774,8 +797,8 @@ Select Argument to query for this type.  See section <a href="ormlite_3.html#SEC
 </p><p><em>NOTE:</em> To use this type, you <em>must</em> specify <code>DataType.SERIALIZABLE</code> using the <code>dataType</code> field.  It will
 not be auto-detected.  See <a href="#ANC2">DatabaseField dataType</a>.
 
-</p><a name="IDX97"></a>
-<a name="IDX98"></a>
+</p><a name="IDX99"></a>
+<a name="IDX100"></a>
 <p><a name="ANC19"></a>
 </p></dd>
 <dt><code> enum or Enum (DataType.ENUM_STRING)</code></dt>
@@ -784,12 +807,12 @@ not be auto-detected.  See <a href="#ANC2">DatabaseField dataType</a>.
 default (and recommended over ENUM_INTEGER) because it allows you to add additional enums anywhere in the list
 without worrying about having to convert data later.
 
-</p><a name="IDX99"></a>
+</p><a name="IDX101"></a>
 <p>You can also also specify an <em>unknownEnumName</em> name with the <code>@DatabaseField</code> annotation which will be
 used if an unknown value is found in the database. See <a href="#ANC3">unknownEnumName</a>. 
 
-</p><a name="IDX100"></a>
-<a name="IDX101"></a>
+</p><a name="IDX102"></a>
+<a name="IDX103"></a>
 <p><a name="ANC20"></a>
 </p></dd>
 <dt><code> enum or Enum (DataType.ENUM_INTEGER)</code></dt>
@@ -800,11 +823,11 @@ default (and recommended) because it allows you to add additional enums anywhere
 having to convert data later.  If you insert (or remove) an enum from the list that is being stored as a number, then
 old data will be un-persisted incorrectly.
 
-</p><a name="IDX102"></a>
+</p><a name="IDX104"></a>
 <p>You can also also specify an <em>unknownEnumName</em> name with the <code>@DatabaseField</code> annotation which will be
 used if an unknown value is found in the database. See <a href="#ANC3">unknownEnumName</a>. 
 
-</p><a name="IDX103"></a>
+</p><a name="IDX105"></a>
 </dd>
 <dt><code> UUID (DataType.UUID)</code></dt>
 <dd>
@@ -835,7 +858,7 @@ stored in the database.  See section <a href="#SEC29">Foreign Object Fields</a>.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 2.3 Connection Sources </h2>
@@ -843,23 +866,23 @@ stored in the database.  See section <a href="#SEC29">Foreign Object Fields</a>.
 <p><em>NOTE:</em> With regards to connection sources, Android users should see the Android specific documentation later in the manual.
 See section <a href="ormlite_4.html#SEC39">Using With Android</a>.
 
-</p><a name="IDX104"></a>
-<a name="IDX105"></a>
-<a name="IDX106"></a>
+</p><a name="IDX106"></a>
 <a name="IDX107"></a>
+<a name="IDX108"></a>
+<a name="IDX109"></a>
 <p>To use the database and the DAO objects, you will need to configure what JDBC calls a <code>DataSource</code> (see the
 <code>javax.sql.DataSource</code> class) and what ORMLite calls a <code>ConnectionSource</code>.  A <code>ConnectionSource</code> is
 a factory for connections to the physical SQL database.  Here is a code example that creates a simple, single-connection
 source.
 
-</p><a name="IDX108"></a>
-<a name="IDX109"></a>
+</p><a name="IDX110"></a>
+<a name="IDX111"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">// single connection source example for a database URI
 ConnectionSource connectionSource =
   new JdbcConnectionSource(&quot;jdbc:h2:mem:account&quot;);
 </pre></td></tr></table>
-<a name="IDX110"></a>
-<a name="IDX111"></a>
+<a name="IDX112"></a>
+<a name="IDX113"></a>
 <p>The package also includes the class <code>JdbcPooledConnectionSource</code> which is a relatively simple implementation of a
 pooled connection source.  As database connections are released, instead of being closed, they are added to an internal
 list so they can be reused at a later time.  New connections are created on demand only if there are no dormant
@@ -883,15 +906,15 @@ connectionSource.setCheckConnectionsEveryMillis(60 * 1000);
 // right before they are handed to the user
 connectionSource.setTestBeforeGet(true);
 </pre></td></tr></table>
-<a name="IDX112"></a>
-<a name="IDX113"></a>
 <a name="IDX114"></a>
 <a name="IDX115"></a>
+<a name="IDX116"></a>
+<a name="IDX117"></a>
 <p>There are many other, external data sources that can be used instead, including more robust and probably higher-performance
 pooled connection managers. You can instantiate your own directly and wrap it in the <code>DataSourceConnectionSource</code> class
 which delegates to it.
 
-</p><a name="IDX116"></a>
+</p><a name="IDX118"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">// basic Apache data source
 BasicDataSource dataSource = new BasicDataSource();
 dataSource.setUrl(&quot;jdbc:h2:mem:account&quot;);
@@ -899,8 +922,8 @@ dataSource.setUrl(&quot;jdbc:h2:mem:account&quot;);
 ConnectionSource connectionSource = 
   new DataSourceConnectionSource(dataSource);
 </pre></td></tr></table>
-<a name="IDX117"></a>
-<a name="IDX118"></a>
+<a name="IDX119"></a>
+<a name="IDX120"></a>
 <p>When you are done with your <code>ConnectionSource</code>, you will want to call a <code>close()</code> method to close any
 underlying connections.  Something like the following pattern is recommended.
 
@@ -933,7 +956,7 @@ does <em>nothing</em>.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 2.4 Setting Up the DAOs </h2>
@@ -953,14 +976,13 @@ DAO class.  For example:
 Dao&lt;Order, Integer&gt; orderDao =
   DaoManager.createDao(connectionSource, Order.class);
 </pre></td></tr></table>
-<a name="IDX119"></a>
-<a name="IDX120"></a>
-<p><em>NOTE:</em> You should use the <code>DaoManager#createDao</code> methods instead of <code>BaseDaoImpl.createDao</code> if you are using any of the
-features which require inner Dao creation such as auto-refresh of foreign fields and collections of sub-objects.  The <code>DaoManager</code>
-caches the DAO classes so if they are created again, they can be reused and not regenerated.  Building a DAO can be an expensive
-operation and for devices with limited resources (like mobile apps), DAOs should be reused if at all possible.
+<a name="IDX121"></a>
+<a name="IDX122"></a>
+<p><em>NOTE:</em> You should use the <code>DaoManager#createDao</code> methods to create your DAO classes so if they are needed by internal
+ORMLite functionality, they can be reused and not regenerated.  Building a DAO can be an expensive operation and for devices with
+limited resources (like mobile apps), DAOs should be reused if at all possible.
 
-</p><a name="IDX121"></a>
+</p><a name="IDX123"></a>
 <p>If you want a better class hierarchy or if you need to add additional methods to your DAOs, you should consider defining
 an interface which extends the <code>Dao</code> interface.  The interface isn't required but it is a good pattern so your code is
 less tied to JDBC for persistence.  The following is an example DAO interface corresponding to the Account class from the
@@ -971,11 +993,11 @@ public interface AccountDao extends Dao&lt;Account, String&gt; {
     // empty wrapper, you can add additional DAO methods here
 }
 </pre></td></tr></table>
-<a name="IDX122"></a>
+<a name="IDX124"></a>
 <p>Then in the implementation, you should extend the <code>BaseDaoImpl</code> base class.  Here's the example implementation of your DAO
 interface.
 
-</p><a name="IDX123"></a>
+</p><a name="IDX125"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">/** JDBC implementation of the AccountDao interface. */
 public class AccountDaoImpl extends BaseDaoImpl&lt;Account, String&gt;
   implements AccountDao {
@@ -988,6 +1010,9 @@ public class AccountDaoImpl extends BaseDaoImpl&lt;Account, String&gt;
 <p>That's all you need to define your DAO classes.  You are free to add more methods to your DAO interfaces and
 implementations if there are specific operations that are needed and not provided by the Dao base classes.
 More on how to use these DAOs later. See section <a href="#SEC23">DAO Usage</a>.
+
+</p><p><em>NOTE:</em> If you are using a custom DAO then be sure to add the <code>daoClass</code> argument to the <code>@DatabaseTable</code> annotaion
+which specifies the class of your custom DAO.  This is used by the DaoManager to instantiate the DAO internally.  See <a href="#ANC21">DaoManager</a>.
 
 </p><hr size="6">
 <a name="NOD15"></a>
@@ -1005,7 +1030,7 @@ More on how to use these DAOs later. See section <a href="#SEC23">DAO Usage</a>.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 2.5 Supported Databases </h2>
@@ -1014,7 +1039,7 @@ More on how to use these DAOs later. See section <a href="#SEC23">DAO Usage</a>.
 
 </p><dl compact="compact">
 <dd>
-<a name="IDX124"></a>
+<a name="IDX126"></a>
 </dd>
 <dt> MySQL</dt>
 <dd>
@@ -1023,78 +1048,79 @@ another engine, you can instantiate the <code>MysqlDatabaseType</code> directly 
 the default or another engine.  Also, MySQL does some funky stuff with the last-modification time if a <code>Date</code> is defined as a
 <code>TIMESTAMP</code> so <code>DATETIME</code> was used instead.
 
-</p><a name="IDX125"></a>
+</p><a name="IDX127"></a>
 </dd>
 <dt> Postgres</dt>
 <dd>
 <p>No special instructions.
 
-</p><a name="IDX126"></a>
+</p><a name="IDX128"></a>
 </dd>
 <dt> H2</dt>
 <dd>
 <p>No special instructions.  We use this database for all of our internal testing with in-memory and small on-disk databases.
 
-</p><a name="IDX127"></a>
-<a name="IDX128"></a>
-<a name="IDX129"></a>
+</p><a name="IDX129"></a>
+<a name="IDX130"></a>
+<a name="IDX131"></a>
 </dd>
 <dt> SQLite</dt>
 <dd>
-<p>There are multiple SQLite drivers out there.  Make sure you use the Xerial one (<a href="http://www.xerial.org/trac/Xerial/wiki/SQLiteJDBC">http://www.xerial.org/trac/Xerial/wiki/SQLiteJDBC</a>)
-and not the Zentus one (<a href="http://www.zentus.com/sqlitejdbc/">http://www.zentus.com/sqlitejdbc/</a>) which does not support generated ids.
+<p>There are multiple SQLite drivers out there.  Make sure you use the Xerial one
+(<a href="http://www.xerial.org/trac/Xerial/wiki/SQLiteJDBC">http://www.xerial.org/trac/Xerial/wiki/SQLiteJDBC</a>) and not the Zentus one
+(<a href="http://www.zentus.com/sqlitejdbc/">http://www.zentus.com/sqlitejdbc/</a>) which does not support generated ids.
 
-</p><a name="IDX130"></a>
+</p><a name="IDX132"></a>
 </dd>
 <dt> Android SQLite</dt>
 <dd>
 <p>Android's SQLite database is accessed through direct calls to the Android database API methods.
 
-</p><a name="IDX131"></a>
+</p><a name="IDX133"></a>
 </dd>
 <dt> Derby</dt>
 <dd>
 <p>There are two drivers for Derby: one embedded and one client/server.  ORMLite makes an attempt to detect the right driver but you
-may have to set the right database type on your ConnectionSource directly if it doesn't.  See section <a href="ormlite_5.html#SEC43">Database Specific Code</a>.
+may have to set the right database type on your ConnectionSource directly if it doesn't.  See section <a href="ormlite_5.html#SEC45">Database Specific Code</a>.
 
-</p><a name="IDX132"></a>
+</p><a name="IDX134"></a>
 </dd>
 <dt> HSQLDB</dt>
 <dd>
 <p>No special instructions.
 
-</p><a name="IDX133"></a>
-<a name="IDX134"></a>
+</p><a name="IDX135"></a>
+<a name="IDX136"></a>
 </dd>
 <dt> Microsoft SQL Server</dt>
 <dd>
 <p>No special instructions.
 
-</p><a name="IDX135"></a>
+</p><a name="IDX137"></a>
 </dd>
 <dt> Netezza</dt>
 <dd>
 <p>As of March 2011, the driver should be considered alpha and possibly with bugs.  I do not currently have access to a server running a
-Netezza database. We will try to keep this driver up to date with the help of contributors.  Thanks to Richard Kooijman for the driver.
-Please contact us if you want to help with development of this driver.
+Netezza database. We will try to keep this driver up to date with the help of contributors.  Thanks to Richard Kooijman for the
+driver. Please contact us if you want to help with development of this driver.
   
-</p><a name="IDX136"></a>
-<a name="IDX137"></a>
+</p><a name="IDX138"></a>
+<a name="IDX139"></a>
 </dd>
 <dt> ODBC</dt>
 <dd>
 <p>As of March 2011, the driver should be considered alpha and possibly with bugs.  I do not have access to a server running Microsoft's
-Open Database Connectivity.  We will try to keep this driver up to date with the help of contributors.  Thanks to Dale Asberry for the
-driver.  Please contact us if you want to help with development of this driver.
+Open Database Connectivity.  We will try to keep this driver up to date with the help of contributors.  Thanks to Dale Asberry for
+the driver.  Please contact us if you want to help with development of this driver.
 
-</p><a name="IDX138"></a>
+</p><a name="IDX140"></a>
 </dd>
 <dt> DB2</dt>
 <dd>
-<p>I do not have access to an DB2 database so we cannot run any tests to make sure that our support for it works well.  Please contact us
-if you want to help with development of this driver.
+<p>I do not have access to an DB2 database so we cannot run any tests to make sure that our support for it works well.  Please contact
+us if you want to help with development of this driver.
 
-</p><a name="IDX139"></a>
+</p><a name="IDX141"></a>
 </dd>
 <dt> Oracle</dt>
 <dd>
@@ -1104,7 +1130,7 @@ if you want to help with development of this driver.
 </p></dd>
 </dl>
 
-<a name="IDX140"></a>
+<a name="IDX142"></a>
 <p>Please contact the author if your database is not supported.
 
 </p><hr size="6">
@@ -1123,14 +1149,15 @@ if you want to help with development of this driver.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 2.6 Tying It All Together </h2>
 
-<p>So you have annotated the objects to be persisted, added the no-argument constructor, created your <code>ConnectionSource</code>, and defined
-your DAO classes.  You are ready to start persisting and querying your database objects.  You will need to download and add the H2
-jar file to your class-path if you want to run the example as-is.  See the H2 home page: <a href="http://www.h2database.com/html/download.html">http://www.h2database.com/html/download.html</a>.   
+<p>So you have annotated the objects to be persisted, added the no-argument constructor, created your <code>ConnectionSource</code>, and
+defined your DAO classes.  You are ready to start persisting and querying your database objects.  You will need to download and add
+the H2 jar file to your class-path if you want to run the example as-is.  See the H2 home page:
+<a href="http://www.h2database.com/html/download.html">http://www.h2database.com/html/download.html</a>.   
 
 </p><p>The following code ties it all together:
 
@@ -1155,7 +1182,7 @@ accountDao.create(account);
 // destroy the data source which should close underlying connections
 connectionSource.destroy();
 </pre></td></tr></table>
-<p>For more examples, see the code later in the manual.  See section <a href="ormlite_7.html#SEC55">Example Code</a>.
+<p>For more examples, see the code later in the manual.  See section <a href="ormlite_7.html#SEC57">Example Code</a>.
 
 </p><hr size="6">
 <a name="NOD17"></a>
@@ -1173,7 +1200,7 @@ connectionSource.destroy();
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 2.7 Table and Schema Creation </h2>
@@ -1204,7 +1231,7 @@ storing in the database.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h3 class="subsection"> 2.7.1 TableUtils Class </h3>
@@ -1254,8 +1281,8 @@ TableUtils.createTable(connectionSource, tableConfig);
 </p></dd>
 <dt><code> dropTable(ConnectionSource, Class, boolean ignoreErrors)</code></dt>
 <dd>
-<p>This method drops the table associated with the class.  It uses the annotations from the class to determine the name of the table to drop.
-This is not undo-able and most likely will be used only in tests since production tables are dropped rarely.
+<p>This method drops the table associated with the class.  It uses the annotations from the class to determine the name of the table to
+drop. This is not undo-able and most likely will be used only in tests since production tables are dropped rarely.
 
 </p><p>The ignoreErrors argument is useful when you are dropping a table before you are creating it and the table may not already exist.  If
 ignoreErrors is true then any exceptions are swallowed.
@@ -1268,21 +1295,21 @@ ignoreErrors is true then any exceptions are swallowed.
 </p></dd>
 <dt><code> getCreateTableStatements(ConnectionSource, Class)</code></dt>
 <dd>
-<p>This is similar to the <code>createTable</code> method but will return a list of statements that can be used to create a class.  This is useful
-if you want to load the schema during some sort of database initialization process.
+<p>This is similar to the <code>createTable</code> method but will return a list of statements that can be used to create a class.  This is
+useful if you want to load the schema during some sort of database initialization process.
 
 </p></dd>
 <dt><code> getCreateTableStatements(ConnectionSource, DatabaseTableConfig)</code></dt>
 <dd>
 <p>Same as the previous method but with a <code>DatabaseTableConfig</code> instead.
 
-</p><a name="IDX141"></a>
-<a name="IDX142"></a>
+</p><a name="IDX143"></a>
+<a name="IDX144"></a>
 </dd>
 <dt><code> clearTable(ConnectionSource, Class)</code></dt>
 <dd>
-<p>Clear all data out of the table. For certain database types and with large sized tables, which may take a long time. In some configurations,
-it may be faster to drop and re-create the table.  This is [obviously] very destructive and is unrecoverable.
+<p>Clear all data out of the table. For certain database types and with large sized tables, which may take a long time. In some
+configurations, it may be faster to drop and re-create the table.  This is [obviously] very destructive and is unrecoverable.
 
 </p></dd>
 <dt><code> clearTable(ConnectionSource, DatabaseTableConfig)</code></dt>
@@ -1308,19 +1335,19 @@ it may be faster to drop and re-create the table.  This is [obviously] very dest
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h3 class="subsection"> 2.7.2 TableCreator Class </h3>
 
-<p>The <code>TableCreator</code> class is engineered for use with Spring but could be useful in other configurations.  It is configured with the
-<code>ConnectionSource</code> and the list of DAOs that are being used by the program.
+<p>The <code>TableCreator</code> class is engineered for use with Spring but could be useful in other configurations.  It is configured with
+the <code>ConnectionSource</code> and the list of DAOs that are being used by the program.
 
-</p><p>It will automagically create the tables associated with those DAOs if the system property <code>ormlite.auto.create.tables</code> is set with
-the value &quot;true&quot;.  It also will automagically drop the tables that were created if the system property <code>ormlite.auto.drop.tables</code> is set with
-the value &quot;true&quot;.  This is especially useful in tests when you are starting with a test database that needs to get the latest schema but in
-production you want to make specific schema changes by hand.  You can set the system properties in your test start scripts but leave them off
-in the production scripts.
+</p><p>It will automagically create the tables associated with those DAOs if the system property <code>ormlite.auto.create.tables</code> is set
+with the value &quot;true&quot;.  It also will automagically drop the tables that were created if the system property
+<code>ormlite.auto.drop.tables</code> is set with the value &quot;true&quot;.  This is especially useful in tests when you are starting with a test
+database that needs to get the latest schema but in production you want to make specific schema changes by hand.  You can set the
+system properties in your test start scripts but leave them off in the production scripts.
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">List&lt;Dao&lt;?, ?&gt;&gt; daoList = new ArrayList&lt;Dao&lt;?, ?&gt;&gt;();
 daoList.add(accountDao);
@@ -1335,7 +1362,7 @@ creator.maybeCreateTables();
 // later, we may want to drop the tables that were created 
 creator.maybeDropTables();
 </pre></td></tr></table>
-<p>For a real life example of using <code>TableCreator</code> you can see <a href="ormlite_7.html#ANC30">spring example</a>.
+<p>For a real life example of using <code>TableCreator</code> you can see <a href="ormlite_7.html#ANC31">spring example</a>.
 
 </p><hr size="6">
 <a name="NOD20"></a>
@@ -1353,7 +1380,7 @@ creator.maybeDropTables();
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 2.8 Identity Columns </h2>
@@ -1390,7 +1417,7 @@ configure a field as an identity field, you should use one (and only one) of the
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h3 class="subsection"> 2.8.1 Fields With id </h3>
@@ -1413,12 +1440,12 @@ if (account == null) {
     // the name &quot;John Smith&quot; does not match any rows
 }
 </pre></td></tr></table>
-<a name="IDX143"></a>
-<a name="IDX144"></a>
 <a name="IDX145"></a>
+<a name="IDX146"></a>
+<a name="IDX147"></a>
 <p><em>NOTE:</em> If you need to change the value of an object's id field, you must use the <code>Dao.updateId()</code> method which
 takes the current object still with its <em>old</em> id value and the new value.  ORMLite has to first locate the object
-by its old id and then update it with the new id.  See <a href="ormlite_5.html#ANC24">updateId</a>.
+by its old id and then update it with the new id.  See <a href="ormlite_5.html#ANC25">updateId</a>.
 
 </p><hr size="6">
 <a name="NOD22"></a>
@@ -1436,7 +1463,7 @@ by its old id and then update it with the new id.  See <a href="ormlite_5.html#A
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h3 class="subsection"> 2.8.2 Fields With generatedId </h3>
@@ -1489,7 +1516,7 @@ be set on the id field by ORMLite and will be available when <code>getId()</code
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h3 class="subsection"> 2.8.3 Fields With generatedIdSequence </h3>
@@ -1528,7 +1555,7 @@ sequences.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 2.9 DAO Usage </h2>
@@ -1538,10 +1565,10 @@ sequences.
 
 </p><dl compact="compact">
 <dd>
-<a name="IDX146"></a>
-<a name="IDX147"></a>
 <a name="IDX148"></a>
 <a name="IDX149"></a>
+<a name="IDX150"></a>
+<a name="IDX151"></a>
 </dd>
 <dt> create and persist an object to the database</dt>
 <dd>
@@ -1551,7 +1578,7 @@ sequences.
 account.name = &quot;Jim Coakley&quot;;
 accountDao.create(account);
 </pre></td></tr></table>
-<a name="IDX150"></a>
+<a name="IDX152"></a>
 </dd>
 <dt> query for it's id column </dt>
 <dd>
@@ -1562,7 +1589,7 @@ if (account == null) {
   account not found handling &hellip; 
 }
 </pre></td></tr></table>
-<a name="IDX151"></a>
+<a name="IDX153"></a>
 </dd>
 <dt> update the database row associated with the object</dt>
 <dd>
@@ -1572,7 +1599,7 @@ requires an id field.
 </p><table><tr><td>&nbsp;</td><td><pre class="example">account.password = &quot;_secret&quot;;
 accountDao.update(account);
 </pre></td></tr></table>
-<a name="IDX152"></a>
+<a name="IDX154"></a>
 </dd>
 <dt> refreshing an object if the database has changed</dt>
 <dd>
@@ -1581,7 +1608,7 @@ object to get the memory object up-to-date.  This requires an id field.
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">accountDao.refresh(account);
 </pre></td></tr></table>
-<a name="IDX153"></a>
+<a name="IDX155"></a>
 </dd>
 <dt> delete the account from the database</dt>
 <dd>
@@ -1591,8 +1618,8 @@ field.
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">accountDao.delete(account);
 </pre></td></tr></table>
-<a name="IDX154"></a>
-<a name="IDX155"></a>
+<a name="IDX156"></a>
+<a name="IDX157"></a>
 </dd>
 <dt> iterate through all of the rows in a table:</dt>
 <dd>
@@ -1603,7 +1630,7 @@ for (Account account : accountDao) {
     System.out.println(account.getName());
 }
 </pre></td></tr></table>
-<a name="IDX156"></a>
+<a name="IDX158"></a>
 <p><em>NOTE:</em> you must page through <em>all</em> items for the iterator to close the underlying SQL object.   If you don't
 go all of the way, the garbage collector will close the SQL statement some time later which is considered bad form.
 
@@ -1624,7 +1651,7 @@ iterator.close();
 </dd>
 </dl>
 
-<p>For a detailed list of the methods in the DAO see section <a href="ormlite_5.html#SEC44">DAO Methods</a>.
+<p>For a detailed list of the methods in the DAO see section <a href="ormlite_5.html#SEC46">DAO Methods</a>.
 
 </p><hr size="6">
 <a name="NOD25"></a>
@@ -1642,7 +1669,7 @@ iterator.close();
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 2.10 Indexing Fields </h2>
@@ -1705,7 +1732,7 @@ create unique indexes that ensure that no two row has the same value(s) for the 
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 2.11 Issuing Raw SQL Statements </h2>
@@ -1738,7 +1765,7 @@ reason, ORMLite has calls which allow you to issue raw query, update, and execut
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h3 class="subsection"> 2.11.1 Issuing Raw Queries </h3>
@@ -1842,7 +1869,7 @@ iterator, and any associated database connections, is closed.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h3 class="subsection"> 2.11.2 Issuing Raw Update Statements </h3>
@@ -1870,7 +1897,7 @@ enough flexibility.  Update SQL statements must contain the reserved words <code
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h3 class="subsection"> 2.11.3 Issuing Raw Execute Statements </h3>
@@ -1896,7 +1923,7 @@ enough flexibility.  For example:
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 2.12 Foreign Object Fields </h2>
@@ -1929,8 +1956,8 @@ public class Order {
 use this field name if you are querying for it.  You can set the column name using the <code>columnName</code> field in the
 <code>DatabaseField</code> annotation. See <a href="#ANC1">columnName</a>.
 
-</p><a name="IDX157"></a>
-<a name="IDX158"></a>
+</p><a name="IDX159"></a>
+<a name="IDX160"></a>
 <p>When you are creating a field with a foreign object, please note that the foreign object will <em>not</em> automatically be
 created for you.  If your foreign object has a generated-id which is provided by the database then you need to create it
 <em>before</em> you create any objects that reference it.  For example:
@@ -1945,8 +1972,8 @@ order.setAccount(account);
 &hellip;
 orderDao.create(order);
 </pre></td></tr></table>
-<a name="IDX159"></a>
-<a name="IDX160"></a>
+<a name="IDX161"></a>
+<a name="IDX162"></a>
 <p>When you query for an order, you will get an <code>Order</code> object with an account field object that <em>only</em> has its id
 field set.  The rest of the fields in the foreign <code>Account</code> object will have default values (null, 0, false, etc.).  If
 you want to use other fields in the <code>Account</code>, you must call <code>refresh</code> on the <code>accountDao</code> class to get the
@@ -1968,7 +1995,7 @@ System.out.println(&quot;Now the account fields will be set: &quot; +
 
 </p><p><em>NOTE:</em> Because we use refresh, foreign objects are therefor <em>required</em> to have an id field.
 
-</p><p>There is example code to show how to use foreign objects.  See <a href="ormlite_7.html#ANC26">foreign objects example</a>.
+</p><p>There is example code to show how to use foreign objects.  See <a href="ormlite_7.html#ANC27">foreign objects example</a>.
 
 </p><hr size="6">
 <a name="NOD31"></a>
@@ -1986,7 +2013,7 @@ System.out.println(&quot;Now the account fields will be set: &quot; +
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 2.13 Foreign Collections </h2>
@@ -2005,11 +2032,11 @@ in the collection have a corresponding foreign object that matches the account. 
 }
 </pre></td></tr></table>
 <p>In the above example, the <code>@ForeignCollectionField</code> annotation marks that the <code>orders</code> field is a collection of the orders
-that match the account.  The field type of <code>orders</code> must be either <code>ForeignCollection&lt;T&gt;</code> or <code>Collection&lt;T&gt;</code> - no other
-collections are supported.  There are two different types of foreign collections: eager or lazy.   If eager is set to true then the
-separate query is made immediately and the orders are stored as a list within the collection.  If eager is set to false (the default)
-then the collection is considered to be &quot;lazy&quot; and will iterate over the database using the <code>Dao.iterator()</code> only when a method
-is called on the collection.
+that match the account.  The field type of <code>orders</code> must be either <code>ForeignCollection&lt;T&gt;</code> or <code>Collection&lt;T&gt;</code> - no
+other collections are supported.  There are two different types of foreign collections: eager or lazy.   If eager is set to true then
+the separate query is made immediately and the orders are stored as a list within the collection.  If eager is set to false (the
+default) then the collection is considered to be &quot;lazy&quot; and will iterate over the database using the <code>Dao.iterator()</code> only when
+a method is called on the collection.
 
 </p><p>Remember that when you have a <code>ForeignCollection</code> field, the class in the collection <em>must</em> (in this example Order) must
 gave a foreign field for the class that has the collection (in this example Account).  If Account has a foreign collection of Orders,
@@ -2026,7 +2053,7 @@ iterator or if you call <code>close()</code> on it.  Only the <code>ForeignColle
 from the internal list if the collection is eager, and DAO calls will be made to affect the order table as well for both eager and
 lazy collections.
 
-</p><p>There is example code to show how to use foreign collections.  See <a href="ormlite_7.html#ANC27">foreign collections example</a>.
+</p><p>There is example code to show how to use foreign collections.  See <a href="ormlite_7.html#ANC28">foreign collections example</a>.
 
 </p><hr size="6">
 <a name="NOD32"></a>
@@ -2044,7 +2071,7 @@ lazy collections.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 2.14 DAO Enabled Objects </h2>
@@ -2056,7 +2083,7 @@ classes to have their own hierarchy and it isolates the database code in the Dao
 the <code>BaseDaoEnabled</code> class if you prefer this pattern.  As of March 2011, it is one of the newer parts of
 ORMLite so feedback and bug reports are welcome.
 
-</p><a name="IDX161"></a>
+</p><a name="IDX163"></a>
 <p>All classes that are able to refresh (update, delete, etc.) themselves should extend the <code>BaseDaoEnabled</code> 
 class.  For example:
 
@@ -2134,12 +2161,12 @@ then call the update method because then the object will not be found.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>April, 14 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>April, 30 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 

@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on April, 14 2011 by texi2html 1.70 -->
+<!-- Created on April, 30 2011 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -43,26 +43,54 @@ ul.toc {list-style: none}
 <a name="SEC39"></a>
 <table cellpadding="1" cellspacing="1" border="0">
 <tr><td valign="middle" align="left">[<a href="ormlite_3.html#SEC38" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_5.html#SEC40" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC40" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_5.html#SEC40" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_5.html#SEC42" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h1 class="chapter"> 4. Using With Android </h1>
 
 
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top"><a href="#SEC40">4.1 Android Basics</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">            How to use ORMLite on Android OS.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC41">4.2 Android Logging</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">           How to log messages under Android.
+</td></tr>
+</table>
+
+<hr size="6">
+<a name="NOD41"></a>
+<a name="SEC40"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC39" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC41" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_5.html#SEC42" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 4.1 Android Basics </h2>
+
 <p>Because of the lack of support for JDBC in Android OS, ORMLite makes direct calls to the Android database APIs
-to access SQLite databases.  You should make sure that you have downloaded and are depending on the
-<code>ormlite-android.jar</code> file and <em>not</em> the <code>ormlite-jdbc.jar</code> version.  Although a number of developers
+to access SQLite databases.  You should make sure that you have downloaded and are depending on the <code>ormlite-core.jar</code>
+and <code>ormlite-android.jar</code> files, but <em>not</em> the <code>ormlite-jdbc.jar</code> version.  Although a number of developers
 are using the package in their projects, we continue to improve how ORMLite integrates with the Android classes.
 Feedback on this would be welcome.
 
@@ -70,7 +98,7 @@ Feedback on this would be welcome.
 followed to help you get ORMLite working under Android OS.
 
 </p><ol>
-<li><p> You will need to create your own database helper class which should probably extend the <code>OrmLiteSqliteOpenHelper</code>  
+<li><p> You will need to create your own database helper class which should extend the <code>OrmLiteSqliteOpenHelper</code> 
 class.  This class creates and upgrades the database when your application is installed and can also provide the DAO classes
 used by your other classes.  Your helper class must implement the methods
 <code>onCreate(SQLiteDatabase sqliteDatabase, ConnectionSource connectionSource)</code> and
@@ -84,31 +112,91 @@ all threads.  If you open multiple connections to the same database, stale data 
 We recommend using the <code>OpenHelperManager</code> to monitor the usage of the helper - it will create it on the first
 access, track each time a part of your code is using it, and then it will close the last time the helper is released.
 
-</p></li><li><p> The <code>OpenHelperManager</code> will by default look for the full class name of your own database helper class
-in the <code>open_helper_classname</code> value defined in <code>res/values/strings.xml</code>.  You can instead set a
-<code>SqliteOpenHelperFactory</code> on the manager directly in a <code>static {}</code> block in your code.   
-
 </p></li><li><p>  Once you have defined your database helper and are managing it correctly, you will need to use it in your <code>Activity</code>
 classes.  An easy way to use the <code>OpenHelperManager</code> is to extend <code>OrmLiteBaseActivity</code> for each of your
-activity classes - there is also <code>OrmLiteBaseService</code> and <code>OrmLiteBaseTabActivity</code>.  These classes provide a
-<code>getHelper()</code> method to access the database helper whenever it is needed and will automatically release the helper
-in the <code>onDestroy()</code> method.  There is a sample <code>HelloAndroid</code> activity class in the the sample section of the tests 
-and on the web site along with a <code>SampleData</code> example class.  See section <a href="ormlite_7.html#SEC57">Android Examples</a>.
+activity classes - there is also <code>OrmLiteBaseListActivity</code>, <code>OrmLiteBaseService</code>, and <code>OrmLiteBaseTabActivity</code>.
+These classes provide a <code>helper</code> protected field and a <code>getHelper()</code> method to access the database helper whenever it
+is needed and will automatically create the helper in the <code>onCreate()</code> method and release it in the <code>onDestroy()</code>
+method.  See the sample <code>HelloAndroid</code> activity class in the examples.  See section <a href="ormlite_7.html#SEC59">Android Examples</a>.
 
-</p></li><li><p> If you do not want to extend the base classes then you will need to duplicate their basic functionality of calling
-<code>OpenHelperManager.getHelper(Context context)</code> at the start of your code, save the helper and use it as much as 
-you want, and then calling <code>OpenHelperManager.release()</code> when you are done with it.
+</p></li><li><p> If you do not want to extend the <code>OrmLiteBaseActivity</code> and other base classes then you will need to duplicate their
+functionality.  You will need to call <code>OpenHelperManager.getHelper(Context context, Class openHelperClass)</code> at the start of
+your code, save the helper and use it as much as you want, and then call <code>OpenHelperManager.release()</code> when you are done with
+it.
+
+</p></li><li><p> Another way to wire in the appropriate database helper class is to set the full class name of it in the the
+<code>open_helper_classname</code> value defined in <code>res/values/strings.xml</code>.  You can also set the class using the
+<code>OpenHelperManager.setOpenHelperClass(Class)</code> method in a <code>static {}</code> block in your code.
 
 </p></li><li><p> The Android native SQLite database type is <code>SqliteAndroidDatabaseType</code> and is used by the base classes internally.
 
+</p></li><li><p> <em>WARNING:</em> You must make sure that any background threads call the <em>OpenHelperManager.getHelper()</em> and
+<em>release()</em> methods appropriately.
+
 </p></li></ol>
 
-<p>Please see the example code documentation for more information.  See section <a href="ormlite_7.html#SEC57">Android Examples</a>.  Again, feedback on this is welcome.
+<p>Please see the example code documentation for more information.  See section <a href="ormlite_7.html#SEC59">Android Examples</a>.  Again, feedback on this is welcome.
 
 </p><hr size="6">
+<a name="NOD42"></a>
+<a name="SEC41"></a>
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_5.html#SEC40" title="Next chapter"> &gt;&gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="#SEC40" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_5.html#SEC42" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_5.html#SEC42" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 4.2 Android Logging </h2>
+
+<p><a name="ANC24"></a>
+
+</p><p>The <code>ormlite-android.jar</code> classes define the <code>AndroidLog</code> class which is the Android specific version of ORMLite
+logging.  This class makes calls to the <code>Log.d</code>, <code>Log.i</code>, &hellip; methods in the Android API.  To see the log output,
+you will need to use the <code>adb</code> utility to view the log output:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">adb logcat
+</pre></td></tr></table>
+<p>Since <code>INFO</code> is the default under Android, only message such as the following will be spit out by default:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">I/TableUtils(  254): creating table 'simpledata'
+I/TableUtils(  254): creating index 'simpledata_string_idx' for table
+   'simpledata
+I/TableUtils(  254): executed create table statement changed 1 rows:
+   CREATE TABLE `simpledata` (`date` VARCHAR, `id` INTEGER PRIMARY
+   KEY AUTOINCREMENT , `even` SMALLINT )
+I/TableUtils(  254): executed create table statement changed 1 rows:
+   CREATE INDEX `simpledata_string_idx` ON `simpledata` ( `string` )
+</pre></td></tr></table>
+<p>To enable more debug information you will want to do something like the following to turn on logging for a particular class:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">adb shell setprop log.tag.BaseMappedStatement DEBUG
+</pre></td></tr></table>
+<p>This enables messages such as:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">D/BaseMappedStatement(  465): create object using 'INSERT INTO `simpledata`
+   (`date` ,`string` ,`millis` ,`even` ) VALUES (?,?,?,?)' and 4 args,
+   changed 1 rows
+D/BaseMappedStatement(  465): assigned id '9' from keyholder to 'id' in
+   SimpleData object
+</pre></td></tr></table>
+<p>To enable all debug messages for all ORMLite classes then use the following:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">adb shell setprop log.tag.ORMLite DEBUG
+</pre></td></tr></table>
+<hr size="6">
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC39" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_5.html#SEC42" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
@@ -116,12 +204,12 @@ you want, and then calling <code>OpenHelperManager.release()</code> when you are
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC60" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>April, 14 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>April, 30 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 

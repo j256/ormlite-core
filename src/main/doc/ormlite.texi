@@ -6,7 +6,7 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.19
+@set ormlite_version 4.20
 @set ormlite_year 2011
 @set ormlite_date April @value{ormlite_year}
 @set package ORMLite
@@ -35,7 +35,7 @@ and this permission notice are preserved on all copies.
 
 @c ----------------------------------------------------------------
 @node Top, Getting Started, (dir), (dir)
-@top @value{package}
+@top ORMLite
 @everyheading @thischapter @| @thispage @| @today{}
 
 Version @value{ormlite_version} -- @value{ormlite_date}
@@ -45,7 +45,7 @@ Version @value{ormlite_version} -- @value{ormlite_date}
 @cindex object relational mapping
 @cindex hibernate
 @cindex ibatis
-@value{package} provides a lightweight Object Relational Mapping between Java classes and SQL databases -- see
+ORMLite provides a lightweight Object Relational Mapping between Java classes and SQL databases -- see
 @uref{http://en.wikipedia.org/wiki/Object-relational_mapping}.  There are certainly more mature ORMs which
 provide this functionality including Hibernate and iBatis.  However, the author wanted a simple yet powerful
 wrapper around the JDBC functions, and Hibernate and iBatis are significantly more complicated with many
@@ -53,12 +53,12 @@ dependencies.
 
 @cindex databases supported
 @cindex supported databases
-@value{package} supports JDBC connections to MySQL, Postgres, H2, SQLite, Derby, HSQLDB, Microsoft SQL Server, and can be
-extended to additional ones relatively easily.  @value{package} also supports native database calls on Android OS.  There
+ORMLite supports JDBC connections to MySQL, Postgres, H2, SQLite, Derby, HSQLDB, Microsoft SQL Server, and can be
+extended to additional ones relatively easily.  ORMLite also supports native database calls on Android OS.  There
 are also initial implementations for DB2, Oracle, generic ODBC, and Netezza although the author needs access to
 an instance of each of these databases to tune the support.  Contact the author if your database is not supported.
 
-To get started quickly with @value{package}, @pxref{Getting Started}.  You can also take a look at the  the examples
+To get started quickly with ORMLite, @pxref{Getting Started}.  You can also take a look at the  the examples
 section of the document which has various working code packages and Android applications.  @xref{Examples}.
 @ifhtml
 There is also a PDF version of this documentation -- see @uref{http://ormlite.com/docs/ormlite.pdf}.
@@ -70,11 +70,11 @@ There is also a HTML version of this documentation -- see @uref{http://ormlite.c
 Gray Watson @uref{http://256.com/gray/}
 
 @menu
-* Getting Started::             Getting started with @value{package}.
+* Getting Started::             Getting started with ORMLite.
 * Using::                       More details on how to use the system.
 * Statement Builder::           How to use the custom statement builder.
 * Use With Android::            Using with the Android OS.
-* Advanced::                    Advanced concepts with @value{package}.
+* Advanced::                    Advanced concepts with ORMLite.
 * How to Upgrade::              Upgrading from a previous version.
 * Examples::                    Usage examples to help you get started.
 * Contributions::               Contributions from others who helped.
@@ -87,7 +87,7 @@ Gray Watson @uref{http://256.com/gray/}
 @chapter Getting Started
 
 @menu
-* Downloading ::                Downloading the @value{package} jar.
+* Downloading ::                Downloading the ORMLite jar.
 * Starting Class::              Configuring a class to persist.
 * Starting DAO::                Configuring a Data Access Object.
 * Starting Code::               Code example on how its works.
@@ -95,16 +95,16 @@ Gray Watson @uref{http://256.com/gray/}
 
 @c ----------------------------------------------------------------
 @node Downloading, Starting Class, Getting Started, Getting Started
-@section Downloading @value{package} Jar
+@section Downloading ORMLite Jar
 
-To get started with @value{package}, you will need to download the jar files.  They are available on the central maven repository
+To get started with ORMLite, you will need to download the jar files.  They are available on the central maven repository
 (@uref{http://repo1.maven.org/maven2/com/j256/ormlite/}) or from Sourceforge (@uref{http://sourceforge.net/projects/ormlite/files/}).
 See the @uref{http://ormlite.com/} home page for the most up-to-date repositories. 
 
 Users that are connecting to SQL databases via JDBC connections will need to download the @code{ormlite-jdbc-@value{ormlite_version}.jar}
 and @code{ormlite-core-@value{ormlite_version}.jar} files.  For use with Android applications, you should download the
 @code{ormlite-android-@value{ormlite_version}.jar} and @code{ormlite-core-@value{ormlite_version}.jar} files instead.  For either JDBC or
-Android you will also need the ormlite-core release which has the @value{package} backend implementations.  @value{package} does not have
+Android you will also need the ormlite-core release which has the ORMLite backend implementations.  ORMLite does not have
 any required external dependencies although there are some @emph{optional} packages that you may want to use.  @xref{Dependencies}.  The
 code works with Java 5 or later.
 
@@ -112,7 +112,7 @@ code works with Java 5 or later.
 @node Starting Class, Starting DAO, Downloading, Getting Started
 @section Configuring a Class
 
-The following is an example class that is configured to be persisted to a database using @value{package} annotations.  The @code{@@DatabaseTable}
+The following is an example class that is configured to be persisted to a database using ORMLite annotations.  The @code{@@DatabaseTable}
 annotation configures the Account class to be persisted to the database table named @code{accounts}. The @code{@@DatabaseField} annotations map
 the fields on the Account to the database columns with the same names.
 
@@ -130,7 +130,7 @@ public class Account @{
     private String password;
     
     public Account() @{
-        // @value{package} needs a no-arg constructor 
+        // ORMLite needs a no-arg constructor 
     @}
     public Account(String name, String password) @{
         this.name = name;
@@ -224,7 +224,7 @@ the database by its ID:
 @}
 @end example
 
-You should be able to get started using @value{package} by this point. To understand more of the functionality available with @value{package},
+You should be able to get started using ORMLite by this point. To understand more of the functionality available with ORMLite,
 continue on with the next section.  @xref{Using}.
 
 For more examples including working code and Android application projects @pxref{Examples}.
@@ -233,7 +233,7 @@ For more examples including working code and Android application projects @pxref
 @node Using, Class Setup, Starting Code, Top
 @chapter How to Use
 
-This chapter goes into more detail about how to use the various features in @value{package}.
+This chapter goes into more detail about how to use the various features in ORMLite.
 
 @menu
 * Class Setup::                 How to setup your classes to be persisted.
@@ -272,20 +272,20 @@ To setup your classes to be persisted you need to do the following things:
 
 @c ----------------------------------------------------------------
 @node Local Annotations, Javax Persistence Annotations, Class Setup, Class Setup
-@subsection Adding @value{package} Annotations
+@subsection Adding ORMLite Annotations
 
 @cindex annotations
 @cindex java annotations
 @cindex @@DatabaseTable
 @cindex DatabaseTable annotation
 Annotations are special code markers have have been available in Java since version 5 that provide meta information
-about classes, methods, or fields.  To specify what classes and fields to store in the database, @value{package}
+about classes, methods, or fields.  To specify what classes and fields to store in the database, ORMLite
 supports either its own annotations (@code{@@DatabaseTable} and @code{@@DatabaseField}) or the more standard
 annotations from the @code{javax.persistence} package.  @xref{Javax Persistence Annotations}.   Annotations are the
 easiest way to configure your classes but you can also configure the class using Java code or Spring XML.
 @xref{Class Configuration}.
 
-With @value{package} annotations, for each of the Java classes that you would like to persist to your SQL database, you
+With ORMLite annotations, for each of the Java classes that you would like to persist to your SQL database, you
 will need to add the @code{@@DatabaseTable} annotation right above the @code{public class} line.  Each class marked with
 one of these annotations will be persisted into its own database table.  For example:
 
@@ -450,7 +450,7 @@ compatibility if old software is accessing up-to-date data or if you have to rol
 @cindex null values and primitives
 @item throwIfNull
 
-Boolean that tells @value{package} to throw an exception if it sees a null value in a database row and is trying to store
+Boolean that tells ORMLite to throw an exception if it sees a null value in a database row and is trying to store
 it in a primitive field.  By default it is false.  If it is false and the database field is null, then the value of the
 primitive will be set to 0 (false, null, etc.).  This can only be used on a primitive field.
 
@@ -475,11 +475,26 @@ types:
 @cindex constraint, unique
 @item unique
 
-Adds a constraint to the field that it has to be unique across all rows in the table.  This allows you to have a
-unique field in the table even though it is not the id field.  For example, you might have an Account class which
-has a generated account-id but you also want the email address to be unique across all Accounts.  You can also
-use the uniqueIndexName to create an index for this field.  For unique constraints across multiple fields, see the
-@code{uniqueIndex} below. 
+Adds a constraint to the table so that this field that it has to be unique across all rows in the table.  For example, you
+might have an Account class which has a generated account-id but you also want the email address to be unique across all
+Accounts.  If more than one field is marked as unique in a table, then each of the fields by themselves must be unique.
+For example, if you have the @code{firstName} and @code{lastName} fields, both with @code{unique=true} and you have "Bob",
+"Smith" in the database, you cannot insert "Bob", "Jones" nor "Kevin", "Smith".
+
+To have more than 1 field that are each unique in @emph{combination}, see the @code{uniqueCombo} setting.    You can also
+use the @code{uniqueIndexName} to create an index for this field.  
+
+@cindex multiple fields unique
+@cindex unique, multiple fields
+@item uniqueCombo
+
+Adds a constraint to the table so that a combination of all fields that have @code{uniqueCombo} set to true has to be unique
+across all rows in the table.  For example, if you have the @code{firstName} and @code{lastName} fields, both with
+@code{uniqueCombo=true}, and you have "Bob", "Smith" in the database, you cannot insert another "Bob", "Smith" but you
+@emph{can} insert "Bob", "Jones" and "Kevin", "Smith".
+
+To have fields be unique by themselves, see the @code{unique} setting.  You can also use the @code{uniqueIndexName} to
+create an index for this field.  
 
 @cindex index creation
 @cindex creating an index
@@ -487,8 +502,9 @@ use the uniqueIndexName to create an index for this field.  For unique constrain
 @anchor{index}
 @item index
 
-Boolean value (default false) to have the database add an index for this field. This will create an index with the name columnName with
-a "_idx" suffix. To specify a specific name of the index or to index multiple fields, use the @code{indexName} field.
+Boolean value (default false) to have the database add an index for this field. This will create an index with the name
+columnName with a "_idx" suffix. To specify a specific name of the index or to index multiple fields, use the
+@code{indexName} field.
 
 @cindex unique index creation
 @item uniqueIndex
@@ -499,26 +515,32 @@ the values in the index are unique.  If you just want to make sure of unique-nes
 @cindex naming an index
 @item indexName
 
-String value (default none) to have the database add an index for this field with this name. You do not need to specify the index boolean
-as well. To index multiple fields together in one index, each of the fields should have the same indexName value.
+String value (default none) to have the database add an index for this field with this name. You do not need to specify the index
+boolean as well. To index multiple fields together in one index, each of the fields should have the same indexName value.
 
 @cindex naming a unique index
 @item uniqueIndexName
 
-String value (default none) to have the database add a unique index for this field with this name. Same as index but this will ensure that all of
-the values in the index are unique.  For example, this means that you can insert @code{("pittsburgh", "pa")} and @code{("harrisburg", "pa")} and
-@code{("pittsburgh", "tx")} but not another @code{("pittsburgh", "pa")}.
+String value (default none) to have the database add a unique index for this field with this name. Same as index but this will ensure
+that all of the values in the index are unique.  For example, this means that you can insert @code{("pittsburgh", "pa")} and
+@code{("harrisburg", "pa")} and @code{("pittsburgh", "tx")} but not another @code{("pittsburgh", "pa")}.
 
 @cindex foreign object, auto refresh
 @cindex auto refresh foreign objects
 @anchor{foreignAutoRefresh}
 @item foreignAutoRefresh
 
-Set this to be true (default false) to have a foreign field automagically refreshed when an object is queried.  This will @emph{not} automagically
-create the foreign object but when the object is queried, a separate database call will be made to load of the fields of the foreign object via an
-internal DAO. The default is to just have the ID field in the object retrieved and for the caller to call refresh on the correct DAO.
+Set this to be true (default false) to have a foreign field automagically refreshed when an object is queried.  This will @emph{not}
+automagically create the foreign object but when the object is queried, a separate database call will be made to load of the fields
+of the foreign object via an internal DAO. The default is to just have the ID field in the object retrieved and for the caller to
+call refresh on the correct DAO.
 
 @emph{NOTE:} This will create another DAO object internally so low memory devices may want to call refresh by hand.
+
+@emph{NOTE:} To protect against recursion, there are a couple of places were auto-refreshing has been limited.  If you are
+auto-refreshing a class that itself has field with @code{foreignAutoRefresh} set to true or if you are auto-refreshing a class with
+a foreign collection, in both cases the resulting field will be set to null and @emph{not} auto-refreshed.  You can always call
+refresh on the field directly if you need it.
 
 @end table
 
@@ -530,7 +552,7 @@ internal DAO. The default is to just have the ID field in the object retrieved a
 @cindex javax.persistence
 @cindex @@Entity
 @cindex Entity annotation
-Instead of using the @value{package} annotations (@pxref{Local Annotations}), you can use the more standard
+Instead of using the ORMLite annotations (@pxref{Local Annotations}), you can use the more standard
 JPA annotations from the @code{javax.persistence} package.  In place of the @code{@@DatabaseTable} annotation, you can
 use the @code{javax.persistence} @code{@@Entity} annotation.  For example:
 
@@ -623,7 +645,7 @@ annotation.  See the @code{generatedId} field in the @code{@@DatabaseField} anno
 
 @item @@OneToOne or @@ManyToOne
 
-Fields with these annotations are assumed to be foreign fields.  @xref{Foreign Objects}.  @value{package} does
+Fields with these annotations are assumed to be foreign fields.  @xref{Foreign Objects}.  ORMLite does
 @emph{not} enforce the many or one relationship nor does it use any of the annotation fields.  It just uses the
 existence of either of these annotations to indicate that it is a foreign object.
 
@@ -640,7 +662,7 @@ If the @code{@@Column} annotation is used on a field that has a unknown type the
 @cindex no argument constructor
 @cindex constructor with no args
 After you have added the class and field annotations, you will also need to add a no-argument constructor with
-@emph{at least} package visibility.  When an object is returned from a query, @value{package} constructs the object
+@emph{at least} package visibility.  When an object is returned from a query, ORMLite constructs the object
 using Java reflection and a constructor needs to be called.
 
 @example
@@ -677,7 +699,7 @@ public class Account @{
 
 @cindex persisted types
 @cindex types that are persisted
-The following Java types can be persisted to the database by @value{package}.  Database specific code
+The following Java types can be persisted to the database by ORMLite.  Database specific code
 helps to translate between the SQL types and the database specific handling of those types.
 @xref{Database Type Details}.
 
@@ -865,7 +887,7 @@ in which case whenever it is inserted, @code{java.util.UUID.randomUUID()} is cal
 
 @end table
 
-@emph{NOTE:} @value{package} also supports the concept of foreign objects where the id of another object is
+@emph{NOTE:} ORMLite also supports the concept of foreign objects where the id of another object is
 stored in the database.  @xref{Foreign Objects}.
 
 @c ----------------------------------------------------------------
@@ -880,7 +902,7 @@ stored in the database.  @xref{Foreign Objects}.
 @cindex database connection
 @cindex simple connection source
 To use the database and the DAO objects, you will need to configure what JDBC calls a @code{DataSource} (see the
-@code{javax.sql.DataSource} class) and what @value{package} calls a @code{ConnectionSource}.  A @code{ConnectionSource} is
+@code{javax.sql.DataSource} class) and what ORMLite calls a @code{ConnectionSource}.  A @code{ConnectionSource} is
 a factory for connections to the physical SQL database.  Here is a code example that creates a simple, single-connection
 source.
 
@@ -984,10 +1006,9 @@ Dao<Order, Integer> orderDao =
 
 @cindex DaoManager
 @cindex reusing DAOs
-@emph{NOTE:} You should use the @code{DaoManager#createDao} methods instead of @code{BaseDaoImpl.createDao} if you are using any of the
-features which require inner Dao creation such as auto-refresh of foreign fields and collections of sub-objects.  The @code{DaoManager}
-caches the DAO classes so if they are created again, they can be reused and not regenerated.  Building a DAO can be an expensive
-operation and for devices with limited resources (like mobile apps), DAOs should be reused if at all possible.
+@emph{NOTE:} You should use the @code{DaoManager#createDao} methods to create your DAO classes so if they are needed by internal
+ORMLite functionality, they can be reused and not regenerated.  Building a DAO can be an expensive operation and for devices with
+limited resources (like mobile apps), DAOs should be reused if at all possible.
 
 @cindex Dao interface
 If you want a better class hierarchy or if you need to add additional methods to your DAOs, you should consider defining
@@ -1022,11 +1043,14 @@ That's all you need to define your DAO classes.  You are free to add more method
 implementations if there are specific operations that are needed and not provided by the Dao base classes.
 More on how to use these DAOs later. @xref{DAO Usage}.
 
+@emph{NOTE:} If you are using a custom DAO then be sure to add the @code{daoClass} argument to the @code{@@DatabaseTable} annotaion
+which specifies the class of your custom DAO.  This is used by the DaoManager to instantiate the DAO internally.  @xref{DaoManager}.
+
 @c ----------------------------------------------------------------
 @node Database Notes, Complete Wiring, DAO Setup, Using
 @section Supported Databases
 
-@value{package} supports the following database flavors.  Some of them have some specific documentation that needs to be obeyed.
+ORMLite supports the following database flavors.  Some of them have some specific documentation that needs to be obeyed.
 
 @table @asis
 
@@ -1053,8 +1077,9 @@ No special instructions.  We use this database for all of our internal testing w
 @cindex SQLite database
 @item SQLite
 
-There are multiple SQLite drivers out there.  Make sure you use the Xerial one (@uref{http://www.xerial.org/trac/Xerial/wiki/SQLiteJDBC})
-and not the Zentus one (@uref{http://www.zentus.com/sqlitejdbc/}) which does not support generated ids.
+There are multiple SQLite drivers out there.  Make sure you use the Xerial one
+(@uref{http://www.xerial.org/trac/Xerial/wiki/SQLiteJDBC}) and not the Zentus one
+(@uref{http://www.zentus.com/sqlitejdbc/}) which does not support generated ids.
 
 @cindex Android SQLite database
 @item Android SQLite
@@ -1064,7 +1089,7 @@ Android's SQLite database is accessed through direct calls to the Android databa
 @cindex Derby database
 @item Derby
 
-There are two drivers for Derby: one embedded and one client/server.  @value{package} makes an attempt to detect the right driver but you
+There are two drivers for Derby: one embedded and one client/server.  ORMLite makes an attempt to detect the right driver but you
 may have to set the right database type on your ConnectionSource directly if it doesn't.  @xref{Database Type Details}.
 
 @cindex HSQLDB database
@@ -1082,22 +1107,22 @@ No special instructions.
 @item Netezza
 
 As of March 2011, the driver should be considered alpha and possibly with bugs.  I do not currently have access to a server running a
-Netezza database. We will try to keep this driver up to date with the help of contributors.  Thanks to Richard Kooijman for the driver.
-Please contact us if you want to help with development of this driver.
+Netezza database. We will try to keep this driver up to date with the help of contributors.  Thanks to Richard Kooijman for the
+driver. Please contact us if you want to help with development of this driver.
   
 @cindex ODBC database
 @cindex Microsoft ODBC database
 @item ODBC
 
 As of March 2011, the driver should be considered alpha and possibly with bugs.  I do not have access to a server running Microsoft's
-Open Database Connectivity.  We will try to keep this driver up to date with the help of contributors.  Thanks to Dale Asberry for the
-driver.  Please contact us if you want to help with development of this driver.
+Open Database Connectivity.  We will try to keep this driver up to date with the help of contributors.  Thanks to Dale Asberry for
+the driver.  Please contact us if you want to help with development of this driver.
 
 @cindex DB2 database
 @item DB2
 
-I do not have access to an DB2 database so we cannot run any tests to make sure that our support for it works well.  Please contact us
-if you want to help with development of this driver.
+I do not have access to an DB2 database so we cannot run any tests to make sure that our support for it works well.  Please contact
+us if you want to help with development of this driver.
 
 @cindex Oracle database
 @item Oracle
@@ -1115,9 +1140,10 @@ Please contact the author if your database is not supported.
 @section Tying It All Together
 
 @cindex usage example
-So you have annotated the objects to be persisted, added the no-argument constructor, created your @code{ConnectionSource}, and defined
-your DAO classes.  You are ready to start persisting and querying your database objects.  You will need to download and add the H2
-jar file to your class-path if you want to run the example as-is.  See the H2 home page: @uref{http://www.h2database.com/html/download.html}.   
+So you have annotated the objects to be persisted, added the no-argument constructor, created your @code{ConnectionSource}, and
+defined your DAO classes.  You are ready to start persisting and querying your database objects.  You will need to download and add
+the H2 jar file to your class-path if you want to run the example as-is.  See the H2 home page:
+@uref{http://www.h2database.com/html/download.html}.   
 
 The following code ties it all together:
 
@@ -1153,7 +1179,7 @@ For more examples, see the code later in the manual.  @xref{Examples}.
 @cindex table creation
 @cindex schema creation
 @cindex creating a table
-There a couple of tools that @value{package} provides to help with creating tables and schema for the classes that you are
+There a couple of tools that ORMLite provides to help with creating tables and schema for the classes that you are
 storing in the database.
 
 @menu
@@ -1212,8 +1238,8 @@ Similar to the last method but it will only create the table if it doesn't exist
 
 @item dropTable(ConnectionSource, Class, boolean ignoreErrors)
 
-This method drops the table associated with the class.  It uses the annotations from the class to determine the name of the table to drop.
-This is not undo-able and most likely will be used only in tests since production tables are dropped rarely.
+This method drops the table associated with the class.  It uses the annotations from the class to determine the name of the table to
+drop. This is not undo-able and most likely will be used only in tests since production tables are dropped rarely.
 
 The ignoreErrors argument is useful when you are dropping a table before you are creating it and the table may not already exist.  If
 ignoreErrors is true then any exceptions are swallowed.
@@ -1224,8 +1250,8 @@ Same as the previous method but it will use the @code{DatabaseTableConfig} to de
 
 @item getCreateTableStatements(ConnectionSource, Class)
 
-This is similar to the @code{createTable} method but will return a list of statements that can be used to create a class.  This is useful
-if you want to load the schema during some sort of database initialization process.
+This is similar to the @code{createTable} method but will return a list of statements that can be used to create a class.  This is
+useful if you want to load the schema during some sort of database initialization process.
 
 @item getCreateTableStatements(ConnectionSource, DatabaseTableConfig)
 
@@ -1235,8 +1261,8 @@ Same as the previous method but with a @code{DatabaseTableConfig} instead.
 @cindex delete rows in table
 @item clearTable(ConnectionSource, Class)
 
-Clear all data out of the table. For certain database types and with large sized tables, which may take a long time. In some configurations,
-it may be faster to drop and re-create the table.  This is [obviously] very destructive and is unrecoverable.
+Clear all data out of the table. For certain database types and with large sized tables, which may take a long time. In some
+configurations, it may be faster to drop and re-create the table.  This is [obviously] very destructive and is unrecoverable.
 
 @item clearTable(ConnectionSource, DatabaseTableConfig)
 
@@ -1249,14 +1275,14 @@ Same as the previous method but with a @code{DatabaseTableConfig} instead.
 @subsection TableCreator Class
 
 @cindex TableCreator
-The @code{TableCreator} class is engineered for use with Spring but could be useful in other configurations.  It is configured with the
-@code{ConnectionSource} and the list of DAOs that are being used by the program.
+The @code{TableCreator} class is engineered for use with Spring but could be useful in other configurations.  It is configured with
+the @code{ConnectionSource} and the list of DAOs that are being used by the program.
 
-It will automagically create the tables associated with those DAOs if the system property @code{ormlite.auto.create.tables} is set with
-the value "true".  It also will automagically drop the tables that were created if the system property @code{ormlite.auto.drop.tables} is set with
-the value "true".  This is especially useful in tests when you are starting with a test database that needs to get the latest schema but in
-production you want to make specific schema changes by hand.  You can set the system properties in your test start scripts but leave them off
-in the production scripts.
+It will automagically create the tables associated with those DAOs if the system property @code{ormlite.auto.create.tables} is set
+with the value "true".  It also will automagically drop the tables that were created if the system property
+@code{ormlite.auto.drop.tables} is set with the value "true".  This is especially useful in tests when you are starting with a test
+database that needs to get the latest schema but in production you want to make specific schema changes by hand.  You can set the
+system properties in your test start scripts but leave them off in the production scripts.
 
 @example
 List<Dao<?, ?>> daoList = new ArrayList<Dao<?, ?>>();
@@ -1324,7 +1350,7 @@ if (account == null) @{
 @cindex change id value
 @cindex update identity of object
 @emph{NOTE:} If you need to change the value of an object's id field, you must use the @code{Dao.updateId()} method which
-takes the current object still with its @emph{old} id value and the new value.  @value{package} has to first locate the object
+takes the current object still with its @emph{old} id value and the new value.  ORMLite has to first locate the object
 by its old id and then update it with the new id.  @xref{updateId}.
 
 @c ----------------------------------------------------------------
@@ -1345,7 +1371,7 @@ public class Order @{
 @end example
 
 When an @code{Order} object is passed to @code{create} and stored to the database, the generated identity value is returned
-by the database and set on the object by @value{package}.  In the majority of database types, the generated value starts at
+by the database and set on the object by ORMLite.  In the majority of database types, the generated value starts at
 1 and increases by 1 every time a new row is inserted into the table.
 
 @example
@@ -1364,7 +1390,7 @@ if (order == null) @{
 
 In the above code example, an order is constructed with name and amount (for example).  When it is passed to the DAO's
 @code{create} method, the id field has not been set.  After it has been saved to the database, the generated-id will
-be set on the id field by @value{package} and will be available when @code{getId()} is called on the order after the
+be set on the id field by ORMLite and will be available when @code{getId()} is called on the order after the
 @code{create} method returns.
 
 @emph{NOTE:} Depending on the database type, you may not be able to change the value of an auto-generated id field.
@@ -1377,7 +1403,7 @@ be set on the id field by @value{package} and will be available when @code{getId
 @cindex generatedIdSequence column
 
 Some databases use what's called a sequence number generator to provide the generated id value.  If you use
-@code{generatedId = true} with those databases, a sequence name will be auto-generated by @value{package}.
+@code{generatedId = true} with those databases, a sequence name will be auto-generated by ORMLite.
 If, however, you need to set the name of the sequence to match existing schema, you can used the
 @code{generatedIdSequence} value which takes a string name for the sequence.
 
@@ -1504,7 +1530,7 @@ For a detailed list of the methods in the DAO @pxref{DAO Methods}.
 @node Creating Indexes, Raw Statements, DAO Usage, Using
 @section Indexing Fields
 
-@value{package} provides some limited support for indexing of various fields in your data classes.  First off, it
+ORMLite provides some limited support for indexing of various fields in your data classes.  First off, it
 is important to point out that any field marked as an @code{id} field is already indexed.  Fields that are id fields
 do not need to have additional indexes built and if they are specified, errors may result with certain database.
 
@@ -1529,7 +1555,7 @@ This example creates the index @code{account_city_idx} on the Account table.  If
 can use the @code{indexName = "othername"} field instead which allows you to specify the name of the index.
 
 If you often query on (for example) city @emph{and} state fields together, you might want to create an index
-on both fields.  @value{package} supports creating indexes on multiple fields by specifying the same @code{indexName}
+on both fields.  ORMLite supports creating indexes on multiple fields by specifying the same @code{indexName}
 value for each of the fields you want to be included in the index.
 
 @example
@@ -1554,7 +1580,7 @@ create unique indexes that ensure that no two row has the same value(s) for the 
 @section Issuing Raw SQL Statements
 
 In a number of instances, using the defined DAO functionality may not be enough to change your database.  For this
-reason, @value{package} has calls which allow you to issue raw query, update, and execute statements to the database.
+reason, ORMLite has calls which allow you to issue raw query, update, and execute statements to the database.
 
 @menu
 * Raw Queries::                Running raw queries against the database.
@@ -1661,7 +1687,7 @@ rawResults.close();
 @item @code{select *} can return fields in different orders depending on the database type.
 @end enumerate
 
-@emph{NOTE}: Like other @value{package} iterators, you will need to make sure you iterate through all of the results
+@emph{NOTE}: Like other ORMLite iterators, you will need to make sure you iterate through all of the results
 to have the statement closed automatically.  You can also call the @code{GenericRawResults.close()} method to make sure the
 iterator, and any associated database connections, is closed.
 
@@ -1698,7 +1724,7 @@ fooDao.executeRaw("ALTER TABLE accountlog DROP COLUMN partner");
 @section Foreign Object Fields
 
 @cindex foreign objects
-@value{package} supports the concept of "foreign" objects where one or more of the fields correspond to an object
+ORMLite supports the concept of "foreign" objects where one or more of the fields correspond to an object
 are persisted in another table in the same database.  For example, if you had an @code{Order} objects in your database
 and each @code{Order} had a corresponding @code{Account} object, then the @code{Order} object would have foreign
 @code{Account} field.  With foreign objects, @emph{just} the id field from the @code{Account} is persisted
@@ -1782,7 +1808,7 @@ There is example code to show how to use foreign objects.  @xref{foreign objects
 @cindex foreign collections
 @cindex eager load collections
 @cindex lazy load collections
-As of March 2011, one of the newest features of @value{package} is the concept of a "Foreign Collection".  In the above section of the
+As of March 2011, one of the newest features of ORMLite is the concept of a "Foreign Collection".  In the above section of the
 manual we gave the example of the @code{Order} class having a foreign object field to the @code{Account} table.  A foreign collection
 allows you to add a collection of orders on the account table.  Whenever an @code{Account} object is returned by a query or refreshed
 by the DAO, a @emph{separate} query is made over the order table and a collection of orders is set on the account.  All of the orders
@@ -1798,15 +1824,15 @@ public class Account @{
 @end example
 
 In the above example, the @code{@@ForeignCollectionField} annotation marks that the @code{orders} field is a collection of the orders
-that match the account.  The field type of @code{orders} must be either @code{ForeignCollection<T>} or @code{Collection<T>} -- no other
-collections are supported.  There are two different types of foreign collections: eager or lazy.   If eager is set to true then the
-separate query is made immediately and the orders are stored as a list within the collection.  If eager is set to false (the default)
-then the collection is considered to be "lazy" and will iterate over the database using the @code{Dao.iterator()} only when a method
-is called on the collection.
+that match the account.  The field type of @code{orders} must be either @code{ForeignCollection<T>} or @code{Collection<T>} -- no
+other collections are supported.  There are two different types of foreign collections: eager or lazy.   If eager is set to true then
+the separate query is made immediately and the orders are stored as a list within the collection.  If eager is set to false (the
+default) then the collection is considered to be "lazy" and will iterate over the database using the @code{Dao.iterator()} only when
+a method is called on the collection.
 
 Remember that when you have a @code{ForeignCollection} field, the class in the collection @emph{must} (in this example Order) must
 gave a foreign field for the class that has the collection (in this example Account).  If Account has a foreign collection of Orders,
-then Order must have an Account foreign field.  It is required so @value{package} can find the orders that match a particular account.   
+then Order must have an Account foreign field.  It is required so ORMLite can find the orders that match a particular account.   
 
 @emph{WARNING:} With lazy collections, even the @code{size()} method causes a iteration across the database.  You'll most likely want
 to just use the @code{iterator()} and @code{toArray()} methods on lazy collections.
@@ -1831,7 +1857,7 @@ Database Access Object (DAO).  For example, given a data object @code{foo},  you
 instead of @code{fooDao.refresh(foo)}.  The default pattern is to use the Dao classes which allow your data
 classes to have their own hierarchy and it isolates the database code in the Daos. However, you are free to use
 the @code{BaseDaoEnabled} class if you prefer this pattern.  As of March 2011, it is one of the newer parts of
-@value{package} so feedback and bug reports are welcome.
+ORMLite so feedback and bug reports are welcome.
 
 @cindex BaseDaoEnabled
 All classes that are able to refresh (update, delete, etc.) themselves should extend the @code{BaseDaoEnabled} 
@@ -1857,7 +1883,7 @@ account.setDao(accountDao);
 account.create();
 @end example
 
-However, whenever an object is returned by @value{package} as query results, the DAO has already been set on the
+However, whenever an object is returned by ORMLite as query results, the DAO has already been set on the
 object it extends the @code{BaseDaoEnabled} class.
 
 @example
@@ -2145,6 +2171,12 @@ times to group by multiple columns.
 @emph{NOTE:} Use of this means that the resulting objects may not have a valid ID column value so cannot be deleted
 or updated.
 
+@cindex group by raw SQL
+@item groupByRaw(String sql)
+
+Add a raw SQL "GROUP BY" clause to the SQL query statement. This allows you to group by things that are not just column
+names.  The SQL argument should not include the "GROUP BY" string.
+
 @cindex limit
 @item limit(Integer maxRows)
 
@@ -2165,6 +2197,12 @@ specified since the offset is an argument of the limit.
 
 Add "ORDER BY" clause to the SQL query statement to order the results by the specified column name.  Use the ascending
 boolean to get a ascending or decending order.  This can be called multiple times to group by multiple columns.
+
+@cindex order by raw SQL
+@item orderByRaw(String sql)
+
+Add a raw SQL "ORDER BY" clause to the SQL query statement. This allows you to order by things that are not just columns
+but can include calculations.  The SQL argument should not include the "ORDER BY" string.
 
 @cindex prepare the query
 @item prepare()
@@ -2446,33 +2484,43 @@ accounts = accountDao.query(preparedQuery);
 @cindex quotes in queries
 @cindex string quoting in queries
 Certain data types use an internal @code{SelectArg} object because the string value of the object does not reliably match the
-database form of the object.  @code{java.util.Date} is one example of such a type.  Also, in places where strings may have quote
-characters inside them that clash with the database escaping quotes, a @code{SelectArg} may be required for queries to be formatted
-correctly.
+database form of the object.  @code{java.util.Date} is one example of such a type.  Also, in places where strings may have
+quote characters inside them that clash with the database escaping quotes, a @code{SelectArg} may be required for queries to
+be formatted correctly.
 
 @emph{NOTE:} @code{SelectArg} objects have protection against being used in more than one column name.  You must instantiate a
 new object if you want to use a @code{SelectArg} with another column.
 
 @c ----------------------------------------------------------------
-@node Use With Android, Advanced, Select Arguments, Top
+@node Use With Android, Android Basics, Select Arguments, Top
 @chapter Using With Android
 
 @cindex use with Android OS
 @cindex Android OS support
 @cindex droid support
 
-Because of the lack of support for JDBC in Android OS, @value{package} makes direct calls to the Android database APIs
-to access SQLite databases.  You should make sure that you have downloaded and are depending on the
-@code{ormlite-android.jar} file and @emph{not} the @code{ormlite-jdbc.jar} version.  Although a number of developers
-are using the package in their projects, we continue to improve how @value{package} integrates with the Android classes.
+@menu
+* Android Basics::            How to use ORMLite on Android OS.
+* Android Logging::           How to log messages under Android.
+@end menu
+
+@c ----------------------------------------------------------------
+@node Android Basics, Android Logging, Use With Android, Use With Android
+@section Android Basics
+
+@cindex Android basics
+Because of the lack of support for JDBC in Android OS, ORMLite makes direct calls to the Android database APIs
+to access SQLite databases.  You should make sure that you have downloaded and are depending on the @code{ormlite-core.jar}
+and @code{ormlite-android.jar} files, but @emph{not} the @code{ormlite-jdbc.jar} version.  Although a number of developers
+are using the package in their projects, we continue to improve how ORMLite integrates with the Android classes.
 Feedback on this would be welcome.
 
 After you have read the getting started section (@pxref{Getting Started}), the following instructions should be
-followed to help you get @value{package} working under Android OS.
+followed to help you get ORMLite working under Android OS.
 
 @enumerate
 
-@item You will need to create your own database helper class which should probably extend the @code{OrmLiteSqliteOpenHelper}  
+@item You will need to create your own database helper class which should extend the @code{OrmLiteSqliteOpenHelper} 
 class.  This class creates and upgrades the database when your application is installed and can also provide the DAO classes
 used by your other classes.  Your helper class must implement the methods
 @code{onCreate(SQLiteDatabase sqliteDatabase, ConnectionSource connectionSource)} and
@@ -2486,40 +2534,95 @@ all threads.  If you open multiple connections to the same database, stale data 
 We recommend using the @code{OpenHelperManager} to monitor the usage of the helper -- it will create it on the first
 access, track each time a part of your code is using it, and then it will close the last time the helper is released.
 
-@item The @code{OpenHelperManager} will by default look for the full class name of your own database helper class
-in the @code{open_helper_classname} value defined in @code{res/values/strings.xml}.  You can instead set a
-@code{SqliteOpenHelperFactory} on the manager directly in a @code{static @{@}} block in your code.   
-
 @item  Once you have defined your database helper and are managing it correctly, you will need to use it in your @code{Activity}
 classes.  An easy way to use the @code{OpenHelperManager} is to extend @code{OrmLiteBaseActivity} for each of your
-activity classes -- there is also @code{OrmLiteBaseService} and @code{OrmLiteBaseTabActivity}.  These classes provide a
-@code{getHelper()} method to access the database helper whenever it is needed and will automatically release the helper
-in the @code{onDestroy()} method.  There is a sample @code{HelloAndroid} activity class in the the sample section of the tests 
-and on the web site along with a @code{SampleData} example class.  @xref{Android Examples}.
+activity classes -- there is also @code{OrmLiteBaseListActivity}, @code{OrmLiteBaseService}, and @code{OrmLiteBaseTabActivity}.
+These classes provide a @code{helper} protected field and a @code{getHelper()} method to access the database helper whenever it
+is needed and will automatically create the helper in the @code{onCreate()} method and release it in the @code{onDestroy()}
+method.  See the sample @code{HelloAndroid} activity class in the examples.  @xref{Android Examples}.
 
-@item If you do not want to extend the base classes then you will need to duplicate their basic functionality of calling
-@code{OpenHelperManager.getHelper(Context context)} at the start of your code, save the helper and use it as much as 
-you want, and then calling @code{OpenHelperManager.release()} when you are done with it.
+@item If you do not want to extend the @code{OrmLiteBaseActivity} and other base classes then you will need to duplicate their
+functionality.  You will need to call @code{OpenHelperManager.getHelper(Context context, Class openHelperClass)} at the start of
+your code, save the helper and use it as much as you want, and then call @code{OpenHelperManager.release()} when you are done with
+it.
+
+@item Another way to wire in the appropriate database helper class is to set the full class name of it in the the
+@code{open_helper_classname} value defined in @code{res/values/strings.xml}.  You can also set the class using the
+@code{OpenHelperManager.setOpenHelperClass(Class)} method in a @code{static @{@}} block in your code.
 
 @item The Android native SQLite database type is @code{SqliteAndroidDatabaseType} and is used by the base classes internally.
+
+@item @emph{WARNING:} You must make sure that any background threads call the @emph{OpenHelperManager.getHelper()} and
+@emph{release()} methods appropriately.
 
 @end enumerate
 
 Please see the example code documentation for more information.  @xref{Android Examples}.  Again, feedback on this is welcome.
 
 @c ----------------------------------------------------------------
-@node Advanced, Spring Configuration, Use With Android, Top
+@node Android Logging, Advanced, Android Basics, Use With Android
+@section Android Logging
+
+@cindex Android logging
+@cindex logging under Android
+@anchor{Android logging}
+
+The @code{ormlite-android.jar} classes define the @code{AndroidLog} class which is the Android specific version of ORMLite
+logging.  This class makes calls to the @code{Log.d}, @code{Log.i}, @dots{} methods in the Android API.  To see the log output,
+you will need to use the @code{adb} utility to view the log output:
+
+@example
+adb logcat
+@end example
+
+Since @code{INFO} is the default under Android, only message such as the following will be spit out by default:
+
+@example
+I/TableUtils(  254): creating table 'simpledata'
+I/TableUtils(  254): creating index 'simpledata_string_idx' for table
+   'simpledata
+I/TableUtils(  254): executed create table statement changed 1 rows:
+   CREATE TABLE `simpledata` (`date` VARCHAR, `id` INTEGER PRIMARY
+   KEY AUTOINCREMENT , `even` SMALLINT )
+I/TableUtils(  254): executed create table statement changed 1 rows:
+   CREATE INDEX `simpledata_string_idx` ON `simpledata` ( `string` )
+@end example
+
+To enable more debug information you will want to do something like the following to turn on logging for a particular class:
+
+@example
+adb shell setprop log.tag.BaseMappedStatement DEBUG
+@end example
+
+This enables messages such as:
+
+@example
+D/BaseMappedStatement(  465): create object using 'INSERT INTO `simpledata`
+   (`date` ,`string` ,`millis` ,`even` ) VALUES (?,?,?,?)' and 4 args,
+   changed 1 rows
+D/BaseMappedStatement(  465): assigned id '9' from keyholder to 'id' in
+   SimpleData object
+@end example
+
+To enable all debug messages for all ORMLite classes then use the following:
+
+@example
+adb shell setprop log.tag.ORMLite DEBUG
+@end example
+
+@c ----------------------------------------------------------------
+@node Advanced, Spring Configuration, Android Logging, Top
 @chapter Advanced Concepts
 
 @menu
-* Spring Configuration::       How to wire @value{package} in Spring.
+* Spring Configuration::       How to wire ORMLite in Spring.
 * Class Configuration::        Alternate ways to configure your classes.
 * Database Type Details::      Description of the database specific code.
 * DAO Methods::                What functionality is provided by the DAO.
-* Logging::                    How to log messages with @value{package}.
-* Dependencies::               External dependencies of @value{package}.
+* Logging::                    How to log messages with ORMLite.
+* Dependencies::               External dependencies of ORMLite.
 * Transactions::               Using database transactions.
-* Maven::                      Configure a maven project for @value{package}.
+* Maven::                      Configure a maven project for ORMLite.
 @end menu
 
 @c ----------------------------------------------------------------
@@ -2528,7 +2631,7 @@ Please see the example code documentation for more information.  @xref{Android E
 
 @cindex spring framework
 @cindex configuration with Spring
-@value{package} contains some classes which make it easy to configure the various database classes using
+ORMLite contains some classes which make it easy to configure the various database classes using
 the Spring framework.  For more information about the Spring Framework, see @uref{http://www.springsource.org/}.
 
 @table @code
@@ -2564,7 +2667,7 @@ Here's an example of a full Spring configuration.
     <constructor-arg index="0" value="jdbc:h2:mem:account" />
 </bean>
 
-<!-- datasource used by @value{package} to connect to the database -->
+<!-- datasource used by ORMLite to connect to the database -->
 <bean id="connectionSource"
     class="com.j256.ormlite.jdbc.JdbcConnectionSource"
     init-method="initialize">
@@ -2596,7 +2699,7 @@ You can also take a look at the spring example code.  @xref{spring example}.
 @node Class Configuration, Database Type Details, Spring Configuration, Advanced
 @section Class Configuration
 
-The simplest mechanism for configuring a class to be persisted by @value{package} is to use the @code{@@DatabaseTable}
+The simplest mechanism for configuring a class to be persisted by ORMLite is to use the @code{@@DatabaseTable}
 and @code{@@DatabaseField} annotations.  @xref{Local Annotations}.  However if you do not own the class you are
 persisting or there are permission problems with the class, you may want to configure the class using Java code instead.
 
@@ -2610,11 +2713,10 @@ you'd do something like the following:
 @example
 List<DatabaseFieldConfig> fieldConfigs =
     new ArrayList<DatabaseFieldConfig>();
-fieldConfigs.add(new DatabaseFieldConfig("name", null, DataType.UNKNOWN,
-    null, 0, false, false, true, null, false, null, false));
-fieldConfigs.add(new DatabaseFieldConfig("password", null,
-    DataType.UNKNOWN, null, 0, false, false, false, null, false, null,
-    false));
+DatabaseFieldConfig field1 = new DatabaseFieldConfig("name");
+field1.setGeneratedId(true);
+fieldConfigs.add(field1);
+fieldConfigs.add(new DatabaseFieldConfig("password"));
 DatabaseTableConfig<Account> accountTableConfig
     = new DatabaseTableConfig<Account>(Account.class, fieldConfigs);
 
@@ -2656,7 +2758,7 @@ You can also look at the field configuration example code.  @xref{field config e
 
 @cindex database type
 @cindex database specific code
-@value{package} uses an internal @code{DatabaseType} object which defines all of the per-database information necessary
+ORMLite uses an internal @code{DatabaseType} object which defines all of the per-database information necessary
 to support the various features on all of the different database types.  The @code{JdbcConnectionSource} uses the database
 URL to pick the correct @code{DatabaseType}.  If it picks an incorrect one then you may need to set the @code{DatabaseType}
 on the connection source @emph{directly}.  For example:
@@ -3003,10 +3105,10 @@ database and the size of the table, this could be expensive.
 
 @c ----------------------------------------------------------------
 @node Logging, Dependencies, DAO Methods, Advanced
-@section @value{package} Logging
+@section ORMLite Logging
 
 @cindex logging information
-@value{package} uses a log system which can plug into Apache commons logging, Log4j, Android Log, or its own internal
+ORMLite uses a log system which can plug into Apache commons logging, Log4j, Android Log, or its own internal
 log implementations.  The logger code first looks for the @code{android.util.Log} and if found will use the Android internal
 logger.  Next it looks for@code{org.apache.commons.logging.LogFactory} class in the class-path -- if found it will use Apache
 commons logging.  If that class is not found it then looks for @code{org.apache.log4j.Logger} and if found will use Log4j.
@@ -3049,14 +3151,16 @@ log4j.logger.com.j256.ormlite=DEBUG
 various SQL calls.  This may expose passwords or other sensitive information in the database so probably should
 only be used during debugging and should not be the default.
 
+For logging with Android, @xref{Android Logging}.
+
 @c ----------------------------------------------------------------
 @node Dependencies, Transactions, Logging, Advanced
 @section External Dependencies
 
-@value{package} does not have any direct dependencies.  It has logging classes that depend on Apache commons-logging
+ORMLite does not have any direct dependencies.  It has logging classes that depend on Apache commons-logging
 and Log4j but these classes will @emph{not} be referenced unless they exist in the class-path.
   
-If you want to get the @value{package} Junit tests to run, there are test dependencies on the following packages:
+If you want to get the ORMLite Junit tests to run, there are test dependencies on the following packages:
 
 @table @code
 
@@ -3103,7 +3207,7 @@ If you used a transaction then both changes would be saved to the database only 
 databases support transactions which are designed specifically with these sorts of scenarios in mind.
 
 @cindex TransactionManager
-@value{package} has basic support for transactions through the use of the @code{TransactionManager} class which wraps
+ORMLite has basic support for transactions through the use of the @code{TransactionManager} class which wraps
 databases operations in a transaction.  If those operations throw an exception, then the transaction is "rolled-back"
 and none of the operations are persisted to the database.  Once the operations are finished, if no exception is thrown,
 then the transaction is "committed" and the changes are written to the database.
@@ -3146,7 +3250,7 @@ inserts into a database, consider running them within a transaction.
 
 @cindex maven configuration
 
-To use @value{package} in your project if you are using maven, then you should add the following configuration stanza
+To use ORMLite in your project if you are using maven, then you should add the following configuration stanza
 to your @code{pom.xml} file.  As mentioned below, you will also need to add some database driver as well to your
 dependency list.  In this example we are using MySQL but any of the supported JDBC database drivers will do.
 
@@ -3231,15 +3335,15 @@ the following API code was altered:
 
 @itemize @bullet
 
-@item We significantly refactored the @code{RawResults} class which is now deprecated and replaced it with the @code{GenericRawResults}
-class.  See the @code{GenericRawResults} for more information.  @xref{Raw Queries}.  
+@item We significantly refactored the @code{RawResults} class which is now deprecated and replaced it with the
+@code{GenericRawResults} class.  See the @code{GenericRawResults} for more information.  @xref{Raw Queries}.  
 
-@item The @code{Dao} methods @code{queryForAllRaw()} and @code{iteratorRaw()} are now deprecated.  They are replaced with @code{queryRaw()}
-methods.  See the @code{Dao} class javadocs for more information. 
+@item The @code{Dao} methods @code{queryForAllRaw()} and @code{iteratorRaw()} are now deprecated.  They are replaced with
+@code{queryRaw()} methods.  See the @code{Dao} class javadocs for more information. 
 
-@item Before this release the -jdbc and -android versions of @value{package} contained the -core functionality.  In this release we split
-out the -core from the other packages so you will now need to install @emph{both} the core and android (or jdbc) packages to get the package
-to work.
+@item Before this release the -jdbc and -android versions of ORMLite contained the -core functionality.  In this release we split
+out the -core from the other packages so you will now need to install @emph{both} the core and android (or jdbc) packages to get the
+package to work.
 
 @end itemize
 
@@ -3247,10 +3351,10 @@ to work.
 @node 4.0, 3.2, 4.10, How to Upgrade
 @section Upgrade to Version 4.0
 
-No data formats were changed, however the following API code was altered.  Removed any outside usage of the @code{DatabaseType} since the
-@code{ConnectionSource} now provides it.  Also added features to be able to prepare update and delete statements.  To provide type safety,
-we've moved back to using @code{QueryBuilder} so we can have @code{UpdateBuilder} and @code{DeleteBuilder}.  And instead of a
-@code{PreparedStmt} there is @code{PreparedQuery}, @code{PreparedUpdate}, and @code{PreparedDelete}.  Here are the details:
+No data formats were changed, however the following API code was altered.  Removed any outside usage of the @code{DatabaseType} since
+the @code{ConnectionSource} now provides it.  Also added features to be able to prepare update and delete statements.  To provide
+type safety, we've moved back to using @code{QueryBuilder} so we can have @code{UpdateBuilder} and @code{DeleteBuilder}.  And instead
+of a @code{PreparedStmt} there is @code{PreparedQuery}, @code{PreparedUpdate}, and @code{PreparedDelete}.  Here are the details:
 
 @itemize @bullet
 
@@ -3335,7 +3439,7 @@ the lack of detail here.
 @section Upgrade to Version 2.4
 
 A bug was fixed in 2.4 with how we were handling Derby and Hsqldb.  Both of these databases seem to be capitalizing table and field
-names in certain situations which meant that customized queries of @value{package} generated tables were affected.  In version 2.4,
+names in certain situations which meant that customized queries of ORMLite generated tables were affected.  In version 2.4,
 all tables and field names are capitalized in the SQL generated for Derby and Hsqldb databases. This means that if you have data
 in these databases from a pre 2.4 version, the 2.4 version will not be able to find the tables and fields without renaming to be
 uppercase.
@@ -3346,7 +3450,7 @@ uppercase.
 
 @cindex examples of code
 @cindex code examples
-Here is some example code to help you get going with @value{package}.  I often find that code is the best documentation of how
+Here is some example code to help you get going with ORMLite.  I often find that code is the best documentation of how
 to get something working.  Please feel free to suggest additional example packages for inclusion here.  Source code submissions
 are welcome as long as you don't get piqued if we don't chose your's.
 
@@ -3376,7 +3480,8 @@ SVN: @uref{http://ormlite.com/docs/example-simple}.
 @anchor{foreign objects example}
 @item Foreign objects 
 
-This example shows how to use foreign objects.  @xref{Foreign Objects}.  See the source code in SVN: @uref{http://ormlite.com/docs/example-foreign}.
+This example shows how to use foreign objects.  @xref{Foreign Objects}.  See the source code in SVN:
+@uref{http://ormlite.com/docs/example-foreign}.
 
 @cindex foreign collections example
 @anchor{foreign collections example}
@@ -3389,8 +3494,8 @@ This example shows how to use foreign collections.  @xref{Foreign Collection}.  
 @anchor{field config example}
 @item Field configuration 
 
-This example shows how you can configure a class in @value{package} using Java code @emph{instead} of annotations.  @xref{Class Configuration}.
-See the source code in SVN: @uref{http://ormlite.com/docs/example-config}.
+This example shows how you can configure a class in ORMLite using Java code @emph{instead} of annotations.
+@xref{Class Configuration}.  See the source code in SVN: @uref{http://ormlite.com/docs/example-config}.
 
 @cindex many to many example
 @anchor{many to many example}
@@ -3404,7 +3509,7 @@ SVN: @uref{http://ormlite.com/docs/example-many}.
 @anchor{spring example}
 @item Spring wiring
 
-To demonstrate how to use Spring wiring with @value{package}, this little program includes classes and XML configuration files.
+To demonstrate how to use Spring wiring with ORMLite, this little program includes classes and XML configuration files.
 See source code in SVN: @uref{http://ormlite.com/docs/example-spring}.
 
 @end table
@@ -3426,20 +3531,20 @@ A basic Android application which does some database operations and then quits. 
 
 @item ClickCounter
 
-A nice little application written by Kevin G. that provides a counter type application using @value{package}.  See the source code in SVN:
+A nice little application written by Kevin G. that provides a counter type application using ORMLite.  See the source code in SVN:
 @uref{http://ormlite.com/docs/android-click}.
 
 @item NotifyService
 
-An example of a service application that uses @value{package} written by Kevin G.  See the source code in SVN:
+An example of a service application that uses ORMLite written by Kevin G.  See the source code in SVN:
 @uref{http://ormlite.com/docs/android-notify}.
 
 @item HelloAndroidH2
 
-This is similar to the HelloAndroid example but it is using JDBC and H2 instead of the build-in Android database calls.  This is more a
-proof of concept rather than a true example.  The wiring for the @code{onCreate} and @code{onUpdate} is a hack.   H2 is certainly fatter
-and slower than the native SQLite.  Also, JDBC under Android is @emph{not} completely sanctioned by Google and support for it may be removed in the
-future.  See the source code in SVN:  @uref{http://ormlite.com/docs/android-helloh2}.
+This is similar to the HelloAndroid example but it is using JDBC and H2 instead of the build-in Android database calls.  This is more
+a proof of concept rather than a true example.  The wiring for the @code{onCreate} and @code{onUpdate} is a hack.   H2 is certainly
+fatter and slower than the native SQLite.  Also, JDBC under Android is @emph{not} completely sanctioned by Google and support for it
+may be removed in the future.  See the source code in SVN:  @uref{http://ormlite.com/docs/android-helloh2}.
 
 @end table
 
@@ -3447,28 +3552,33 @@ future.  See the source code in SVN:  @uref{http://ormlite.com/docs/android-hell
 @node Contributions, License, Android Examples, Top
 @chapter Contributions
 
-There are a number of people who have helped with this project.  If I've forgotten you @emph{please} remind me so I can add you to this list.
-Let me know if you'd like to tune your name or add link to your home page here as well.
+There are a number of people who have helped with this project.  If I've forgotten you @emph{please} remind me so I can add you to
+this list.  Let me know if you'd like to tune your name or add link to your home page here as well.
 
 @itemize @bullet
 
 @item Kevin Galligan was the impetus and the author of a good bit of the Android compatible code.  He wrote the Android level support
-classes and did a ton of beta-testing of it.  He's also provided all of the Android examples.  Thanks much Kevin.  See @uref{http://www.kagii.com/}.
+classes and did a ton of beta-testing of it.  He's also provided all of the Android examples.  Thanks much Kevin.  See
+@uref{http://www.kagii.com/}.
 
 @item Nelson Erb  was our self-appointed documentation and testing volunteer for a year.  He did a great job summarizing sections of
-this document so we could create a better 'Getting Started' section.  He also fleshed out a bunch of unit tests to improve coverage in some areas.
+this document so we could create a better 'Getting Started' section.  He also fleshed out a bunch of unit tests to improve coverage in
+some areas.
 
-@item JC Romanda has been an excellent addition to the user base providing feedback, discovering and reporting bugs, providing patches for new
-features, testing new features before the release, and thinking a lot about how @value{package} can be extended and improved.
+@item JC Romanda has been an excellent addition to the user base providing feedback, discovering and reporting bugs, providing patches
+for new features, testing new features before the release, and thinking a lot about how ORMLite can be extended and improved.
 
-@item Jim Gloor was one of the Java gurus at a previous company.  Thanks much for his great object instincts and the JDBC code samples that
-started this effort.
+@item Jim Gloor was one of the Java gurus at a previous company.  Thanks much for his great object instincts and the JDBC code samples
+that started this effort.
 
-@item Robert Adamsky was a colleage of mine at a company where he laid out our entire DAO and hibernate class hierarchy.  The @code{DAO} interface
-and the @code{BaseDaoImpl} where in some part modeled after his code.  Thanks dude.
+@item Robert Adamsky was a colleage of mine at a company where he laid out our entire DAO and hibernate class hierarchy.  The
+@code{DAO} interface and the @code{BaseDaoImpl} where in some part modeled after his code.  Thanks dude.
 
 @c -----------------
 
+@item Chris Banes improved the Android support and provided feedback on the wiring.
+@item Adam Brown helped with the memory analysis to lower the GC overhead.
+@item Jaxelrod has submitted some excellent bug reports and provided feedback on the maven release mechanisms and missing javadocs.
 @item Stewert helped itentify a bug with using the UpdateBuilder with Date fields.
 @item Micael Dahlgren helped resolve a bad bug foreign field bug.
 @item Dale Asberry added the initial take on the generic ODBC database type.
@@ -3477,7 +3587,6 @@ and the @code{BaseDaoImpl} where in some part modeled after his code.  Thanks du
 @item Wayne Stidolph helped with Android usage feedback and help test some new features.
 @item Luke Meyer helped with Android functionality and the queryRaw features.
 @item Larry Hamel recommended index features and pointed out some bugs.
-@item Jaxelrod provided feedback on the maven release mechanisms and missing javadocs.
 
 @end itemize
 
@@ -3489,7 +3598,7 @@ Thanks much to them all.
 
 @cindex license
 @cindex open source license
-This document is part of the @value{package} project.
+This document is part of the ORMLite project.
 
 Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby
 granted, provided that the above copyright notice and this permission notice appear in all copies.
