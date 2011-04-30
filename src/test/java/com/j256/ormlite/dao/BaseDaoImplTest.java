@@ -1608,14 +1608,63 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		// can't create it twice with the same stuff which needs to be unique
 		unique = new DoubleUnique();
 		unique.stuff = stuff;
-		assertEquals(1, dao.create(unique));
+		try {
+			// either one field can't be unique
+			dao.create(unique);
+			fail("Should have thrown");
+		} catch (SQLException e) {
+			// expected
+		}
 		unique = new DoubleUnique();
 		unique.uniqueStuff = uniqueStuff;
-		assertEquals(1, dao.create(unique));
+		try {
+			// or the other field can't be unique
+			dao.create(unique);
+			fail("Should have thrown");
+		} catch (SQLException e) {
+			// expected
+		}
 		unique = new DoubleUnique();
 		unique.stuff = stuff;
 		unique.uniqueStuff = uniqueStuff;
 		try {
+			// nor _both_ fields can't be unique
+			dao.create(unique);
+			fail("Should have thrown");
+		} catch (SQLException e) {
+			// expected
+		}
+	}
+
+	@Test
+	public void testMultipleUniqueCreateDrop() throws Exception {
+		TableUtils.dropTable(connectionSource, DoubleUnique.class, true);
+		TableUtils.createTable(connectionSource, DoubleUnique.class);
+		TableUtils.dropTable(connectionSource, DoubleUnique.class, false);
+		TableUtils.createTable(connectionSource, DoubleUnique.class);
+		TableUtils.dropTable(connectionSource, DoubleUnique.class, false);
+	}
+
+	@Test
+	public void testMultipleUniqueCombo() throws Exception {
+		Dao<DoubleUniqueCombo, Long> dao = createDao(DoubleUniqueCombo.class, true);
+		String stuff = "this doesn't need to be unique";
+		String uniqueStuff = "this needs to be unique";
+		DoubleUniqueCombo unique = new DoubleUniqueCombo();
+		unique.stuff = stuff;
+		unique.uniqueStuff = uniqueStuff;
+		assertEquals(1, dao.create(unique));
+		unique = new DoubleUniqueCombo();
+		unique.stuff = stuff;
+		assertEquals(1, dao.create(unique));
+		unique = new DoubleUniqueCombo();
+		unique.uniqueStuff = uniqueStuff;
+		assertEquals(1, dao.create(unique));
+		unique = new DoubleUniqueCombo();
+		unique.stuff = stuff;
+		unique.uniqueStuff = uniqueStuff;
+		try {
+			// can't create it twice with both fields
 			dao.create(unique);
 			fail("Should have thrown");
 		} catch (SQLException e) {
@@ -1711,6 +1760,24 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		@DatabaseField(unique = true)
 		String stuff;
 		@DatabaseField(unique = true)
+		String uniqueStuff;
+	}
+
+	protected static class SingleUniqueCombo {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField
+		String stuff;
+		@DatabaseField(uniqueCombo = true)
+		String uniqueStuff;
+	}
+
+	protected static class DoubleUniqueCombo {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(uniqueCombo = true)
+		String stuff;
+		@DatabaseField(uniqueCombo = true)
 		String uniqueStuff;
 	}
 }

@@ -187,7 +187,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 				sb.append("NOT NULL ");
 			}
 			if (fieldType.isUnique()) {
-				appendUniqueAfterField(sb, fieldType, statementsAfter);
+				addSingleUnique(sb, fieldType, additionalArgs, statementsAfter);
 			}
 		}
 	}
@@ -393,11 +393,11 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		return true;
 	}
 
-	public void addUniqueSql(FieldType[] fieldTypes, List<String> additionalArgs, List<String> statementsBefore,
+	public void addUniqueComboSql(FieldType[] fieldTypes, List<String> additionalArgs, List<String> statementsBefore,
 			List<String> statementsAfter, List<String> queriesAfter) throws SQLException {
 		StringBuilder sb = null;
 		for (FieldType fieldType : fieldTypes) {
-			if (fieldType.isUnique()) {
+			if (fieldType.isUniqueCombo()) {
 				if (sb == null) {
 					sb = new StringBuilder(48);
 					sb.append("UNIQUE (");
@@ -528,10 +528,15 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	}
 
 	/**
-	 * If the fieldType is unique then added per-field unique qualifier.
+	 * Add SQL to handle a unique=true field. THis is not for uniqueCombo=true.
 	 */
-	protected void appendUniqueAfterField(StringBuilder sb, FieldType fieldType, List<String> statementsAfter) {
-		// noop because default is to add in the appendUniques
+	protected void addSingleUnique(StringBuilder sb, FieldType fieldType, List<String> additionalArgs,
+			List<String> statementsAfter) {
+		StringBuilder alterSb = new StringBuilder();
+		alterSb.append(" UNIQUE (");
+		appendEscapedEntityName(alterSb, fieldType.getDbColumnName());
+		alterSb.append(")");
+		additionalArgs.add(alterSb.toString());
 	}
 
 	/**

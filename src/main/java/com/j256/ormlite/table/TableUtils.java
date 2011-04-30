@@ -329,7 +329,7 @@ public class TableUtils {
 		databaseType.addPrimaryKeySql(tableInfo.getFieldTypes(), additionalArgs, statementsBefore, statementsAfter,
 				queriesAfter);
 		// add any sql that sets any unique fields
-		databaseType.addUniqueSql(tableInfo.getFieldTypes(), additionalArgs, statementsBefore, statementsAfter,
+		databaseType.addUniqueComboSql(tableInfo.getFieldTypes(), additionalArgs, statementsBefore, statementsAfter,
 				queriesAfter);
 		for (String arg : additionalArgs) {
 			// we will have spat out one argument already so we don't have to do the first dance

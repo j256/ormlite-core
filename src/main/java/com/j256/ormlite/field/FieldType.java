@@ -585,6 +585,10 @@ public class FieldType {
 		return fieldConfig.isUnique();
 	}
 
+	public boolean isUniqueCombo() {
+		return fieldConfig.isUniqueCombo();
+	}
+
 	public String getIndexName() {
 		return fieldConfig.getIndexName();
 	}

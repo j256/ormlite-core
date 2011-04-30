@@ -154,9 +154,19 @@ public @interface DatabaseField {
 
 	/**
 	 * Set this to be true (default false) to have the database insure that the column is unique to all rows in the
-	 * table. Use this when you wan a field to be unique even if it is not the identify field.
+	 * table. Use this when you wan a field to be unique even if it is not the identify field. For example, if you have
+	 * the firstName and lastName fields, both with unique=true and you have "Bob", "Smith" in the database, you cannot
+	 * insert either "Bob", "Jones" or "Kevin", "Smith".
 	 */
 	boolean unique() default false;
+
+	/**
+	 * Set this to be true (default false) to have the database insure that _all_ of the columns marked with this as
+	 * true will together be unique. For example, if you have the firstName and lastName fields, both with unique=true
+	 * and you have "Bob", "Smith" in the database, you cannot insert another "Bob", "Smith" but you can insert "Bob",
+	 * "Jones" and "Kevin", "Smith".
+	 */
+	boolean uniqueCombo() default false;
 
 	/**
 	 * Set this to be true (default false) to have the database add an index for this field. This will create an index

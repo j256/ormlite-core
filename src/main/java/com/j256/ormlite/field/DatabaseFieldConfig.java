@@ -32,6 +32,7 @@ public class DatabaseFieldConfig {
 	private boolean throwIfNull;
 	private String format;
 	private boolean unique;
+	private boolean uniqueCombo;
 	private String indexName;
 	private String uniqueIndexName;
 	private boolean foreignAutoRefresh;
@@ -237,6 +238,10 @@ public class DatabaseFieldConfig {
 		this.unique = unique;
 	}
 
+	public boolean isUniqueCombo() {
+		return uniqueCombo;
+	}
+
 	public String getIndexName() {
 		return indexName;
 	}
@@ -407,6 +412,7 @@ public class DatabaseFieldConfig {
 			config.format = null;
 		}
 		config.unique = databaseField.unique();
+		config.uniqueCombo = databaseField.uniqueCombo();
 
 		// add in the index information
 		config.indexName = findIndexName(tableName, databaseField.indexName(), databaseField.index(), config);

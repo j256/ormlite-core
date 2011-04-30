@@ -47,7 +47,7 @@ public interface DatabaseType {
 	/**
 	 * Appends information about unique field(s) to the additional-args or other lists.
 	 */
-	public void addUniqueSql(FieldType[] fieldTypes, List<String> additionalArgs, List<String> statementsBefore,
+	public void addUniqueComboSql(FieldType[] fieldTypes, List<String> additionalArgs, List<String> statementsBefore,
 			List<String> statementsAfter, List<String> queriesAfter) throws SQLException;
 
 	/**
