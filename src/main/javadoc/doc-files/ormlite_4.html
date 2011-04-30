@@ -126,8 +126,8 @@ it.
 
 </p><a name="IDX219"></a>
 <a name="IDX220"></a>
-<p><a name="ANC24"></a>
-</p></li><li><p> By default, if you are using <code>OrmLiteBaseActivity</code> and other base classes, the <code>OpenHelperManager</code> will detect the
+<p><a name="ANC25"></a>
+</p></li><li><p> By default, if you are using <code>OrmLiteBaseActivity</code> or other base classes, the <code>OpenHelperManager</code> will detect the
 database helper class through reflection.  Another way to wire in the appropriate database helper class is to set the full class
 name of it in the the <code>open_helper_classname</code> value defined in the <code>res/values/strings.xml</code> resource file .  You can also
 set the class using the <code>OpenHelperManager.setOpenHelperClass(Class)</code> method in a <code>static {}</code> block in your code.
@@ -163,7 +163,7 @@ get exceptions.
 </tr></table>
 <h2 class="section"> 4.2 Android Logging </h2>
 
-<p><a name="ANC25"></a>
+<p><a name="ANC26"></a>
 
 </p><p>The <code>ormlite-android.jar</code> classes define the <code>AndroidLog</code> class which is the Android specific version of ORMLite
 logging.  This class makes calls to the <code>Log.d</code>, <code>Log.i</code>, &hellip; methods in the Android API.  To see the log output,

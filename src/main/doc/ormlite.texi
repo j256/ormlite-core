@@ -473,6 +473,7 @@ types:
 
 @cindex unique constraint
 @cindex constraint, unique
+@anchor{unique constraints}
 @item unique
 
 Adds a constraint to the table so that this field that it has to be unique across all rows in the table.  For example, you
@@ -2548,8 +2549,8 @@ it.
 
 @cindex Android strings resources
 @cindex database open helper wiring
-@anchor{strings resource file}
-@item By default, if you are using @code{OrmLiteBaseActivity} and other base classes, the @code{OpenHelperManager} will detect the
+@anchor{database open helper wiring}
+@item By default, if you are using @code{OrmLiteBaseActivity} or other base classes, the @code{OpenHelperManager} will detect the
 database helper class through reflection.  Another way to wire in the appropriate database helper class is to set the full class
 name of it in the the @code{open_helper_classname} value defined in the @code{res/values/strings.xml} resource file .  You can also
 set the class using the @code{OpenHelperManager.setOpenHelperClass(Class)} method in a @code{static @{@}} block in your code.
@@ -3306,14 +3307,23 @@ and rarely the on-disk database formats.
 @node 4.20, 4.14, How to Upgrade, How to Upgrade
 @section Upgrade to Version 4.20
 
-In 4.20 we made a couple of changes that bear some extra noting.
+In 4.20 we made a couple of changes that bear some note.
 
 @itemize @bullet
 
 @item For Android developers, we significantly improved the mechanism for injecting the class of the database open helper.
-Setting the class name on the  
+Setting the class name in the @code{strings.xml} resource file is still supported although it is not necessary if you are using
+@code{OrmLiteBaseActivity} or the other base classes.  If you are extending those classes, ORMLite will detect the helper
+class automagically.  The @code{SqliteOpenHelperFactory} mechanism, although still supported, has been deprecated.
+@xref{database open helper wiring}.  
 
-The @code{SqliteOpenHelperFactory} mechanism although still supported has been deprecated.  
+@item We added the @code{uniqueCombo} setting for uniqueness across field combinations.  We also changed the SQL that was generated
+if you are using the @code{unique} setting.  The old SQL was correct but the new versions are more compatible with the SQL standard
+and the various database types.  @xref{unique constraints}.
+
+@item We did some memory audits of ORMLite and improved the way that we were using DAOs internally so that we use cached DAOs where
+possible.  We also improved the memory usage with foreign fields and some of the @code{TableUtil} methods.  Thanks much to various
+folks on the user list who significantly helped with this process.
 
 @end itemize
 

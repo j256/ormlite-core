@@ -162,7 +162,7 @@ has been set to true. It will also auto-drop any tables that were auto-created i
       value=&quot;com.j256.ormlite.examples.spring.Delivery&quot; /&gt;
 &lt;/bean&gt;
 </pre></td></tr></table>
-<p>You can also take a look at the spring example code.  See <a href="ormlite_7.html#ANC32">spring example</a>.
+<p>You can also take a look at the spring example code.  See <a href="ormlite_7.html#ANC33">spring example</a>.
 
 </p><hr size="6">
 <a name="NOD45"></a>
@@ -232,7 +232,7 @@ configuring a class using Spring wiring.  Here is the above example in Spring:
     &lt;/property&gt;
 &lt;/bean&gt;
 </pre></td></tr></table>
-<p>You can also look at the field configuration example code.  See <a href="ormlite_7.html#ANC30">field config example</a>.
+<p>You can also look at the field configuration example code.  See <a href="ormlite_7.html#ANC31">field config example</a>.
 
 </p><hr size="6">
 <a name="NOD46"></a>
@@ -502,13 +502,13 @@ are not the default value (null, false, 0, 0.0, etc.) are used as the matching p
 </dd>
 <dt><code> updateBuilder()</code></dt>
 <dd>
-<p>Create and return a new <code>UpdateBuilder</code> object which allows you to build a custom update statement.  See <a href="ormlite_3.html#ANC23">UpdateBuilder</a>.
+<p>Create and return a new <code>UpdateBuilder</code> object which allows you to build a custom update statement.  See <a href="ormlite_3.html#ANC24">UpdateBuilder</a>.
 
 </p><a name="IDX246"></a>
 </dd>
 <dt><code> deleteBuilder()</code></dt>
 <dd>
-<p>Create and return a new <code>DeleteBuilder</code> object which allows you to build a custom delete statement.  See <a href="ormlite_3.html#ANC22">DeleteBuilder</a>.
+<p>Create and return a new <code>DeleteBuilder</code> object which allows you to build a custom delete statement.  See <a href="ormlite_3.html#ANC23">DeleteBuilder</a>.
 
 </p><a name="IDX247"></a>
 </dd>
@@ -533,7 +533,7 @@ those changes to the database. You cannot use this method to update the id field
 should return 1 since 1 row was updated.
 
 </p><a name="IDX250"></a>
-<p><a name="ANC26"></a>
+<p><a name="ANC27"></a>
 </p></dd>
 <dt><code> updateId(T data, ID newId)</code></dt>
 <dd>
@@ -646,7 +646,7 @@ See section <a href="ormlite_2.html#SEC27">Issuing Raw Update Statements</a>.
 <a name="IDX265"></a>
 <a name="IDX266"></a>
 <a name="IDX267"></a>
-<p><a name="ANC27"></a>
+<p><a name="ANC28"></a>
 </p></dd>
 <dt><code> callBatchTasks(Callable callable)</code></dt>
 <dd>
@@ -849,7 +849,7 @@ can return an object from the callable so you could pass back the number of rows
 <a name="IDX276"></a>
 <p><em>NOTE:</em> Performing database operations within a transaction also has the side effect of better performance since
 a number of changes are written at once in a batch.  For those databases which do support auto-commit, the
-<code>Dao.callBatchTasks()</code> method should be used. See <a href="#ANC27">callBatchTasks</a>.  However, for those databases that do
+<code>Dao.callBatchTasks()</code> method should be used. See <a href="#ANC28">callBatchTasks</a>.  However, for those databases that do
 <em>not</em> support auto-commit but do support transactions (for example Android), running a number of operations within
 a transaction seems to give a significant performance improvement. For example, if you are a making a large number of
 inserts into a database, consider running them within a transaction.

@@ -172,7 +172,7 @@ each <code>Account</code> object will be persisted as a row in the <code>account
 was not specified, the <code>account</code> table would be used instead.
 
 </p><p>More advanced users may want to add a <code>daoClass</code> argument which specifies the class of the DAO object that will be
-operating on the class.  This is used by the DaoManager to instantiate the DAO internally.  See <a href="#ANC21">DaoManager</a>.
+operating on the class.  This is used by the DaoManager to instantiate the DAO internally.  See <a href="#ANC22">DaoManager</a>.
 
 </p><a name="IDX8"></a>
 <a name="IDX9"></a>
@@ -356,7 +356,8 @@ types:
 
 <a name="IDX43"></a>
 <a name="IDX44"></a>
-</dd>
+<p><a name="ANC4"></a>
+</p></dd>
 <dt><code> unique</code></dt>
 <dd>
 <p>Adds a constraint to the table so that this field that it has to be unique across all rows in the table.  For example, you
@@ -384,7 +385,7 @@ create an index for this field.
 </p><a name="IDX47"></a>
 <a name="IDX48"></a>
 <a name="IDX49"></a>
-<p><a name="ANC4"></a>
+<p><a name="ANC5"></a>
 </p></dd>
 <dt><code> index</code></dt>
 <dd>
@@ -416,7 +417,7 @@ that all of the values in the index are unique.  For example, this means that yo
 
 </p><a name="IDX53"></a>
 <a name="IDX54"></a>
-<p><a name="ANC5"></a>
+<p><a name="ANC6"></a>
 </p></dd>
 <dt><code> foreignAutoRefresh</code></dt>
 <dd>
@@ -559,7 +560,7 @@ existence of either of these annotations to indicate that it is a foreign object
 
 <p>If the <code>@Column</code> annotation is used on a field that has a unknown type then it is assumed to be a
 <code>Serializable</code> type field and the object should implement <code>java.io.Serializable</code>.
-See <a href="#ANC18">datatype serializable</a>.
+See <a href="#ANC19">datatype serializable</a>.
 
 </p><hr size="6">
 <a name="NOD11"></a>
@@ -639,7 +640,7 @@ See section <a href="ormlite_5.html#SEC45">Database Specific Code</a>.
 <dd>
 <a name="IDX75"></a>
 <a name="IDX76"></a>
-<p><a name="ANC6"></a>
+<p><a name="ANC7"></a>
 </p></dd>
 <dt><code> String (DataType.STRING)</code></dt>
 <dd>
@@ -666,7 +667,7 @@ characters, you may have to encode them as an array of bytes using this type.  B
 of this type may not be possible depending on the database type.
 
 </p><a name="IDX82"></a>
-<p><a name="ANC7"></a>
+<p><a name="ANC8"></a>
 </p></dd>
 <dt><code> boolean or Boolean (DataType.BOOLEAN or DataType.BOOLEAN_OBJ)</code></dt>
 <dd>
@@ -674,7 +675,7 @@ of this type may not be possible depending on the database type.
 
 </p><a name="IDX83"></a>
 <a name="IDX84"></a>
-<p><a name="ANC8"></a>
+<p><a name="ANC9"></a>
 </p></dd>
 <dt><code> java.util.Date (DataType.DATE)</code></dt>
 <dd>
@@ -687,7 +688,7 @@ format of it is unreliable to match the database format.  See section <a href="o
 </p><p><em>NOTE:</em> Certain databases only provide seconds resolution so the milliseconds will be 0.
 
 </p><a name="IDX85"></a>
-<p><a name="ANC9"></a>
+<p><a name="ANC10"></a>
 </p></dd>
 <dt><code> java.util.Date (DataType.DATE_LONG)</code></dt>
 <dd>
@@ -700,7 +701,7 @@ in which case the milliseconds value of the <code>Date</code> will be stored as 
 
 </p><a name="IDX86"></a>
 <a name="IDX87"></a>
-<p><a name="ANC10"></a>
+<p><a name="ANC11"></a>
 </p></dd>
 <dt><code> java.util.Date (DATE_STRING)</code></dt>
 <dd>
@@ -716,7 +717,7 @@ in which case the date will be stored as a string in <code>yyyy-MM-dd HH:mm:ss.S
 every time a <code>DATE_STRING</code> date is converted to/from the database.
 
 </p><a name="IDX88"></a>
-<p><a name="ANC11"></a>
+<p><a name="ANC12"></a>
 </p></dd>
 <dt><code> byte or Byte (DataType.BYTE or DataType.BYTE_OBJ)</code></dt>
 <dd>
@@ -724,7 +725,7 @@ every time a <code>DATE_STRING</code> date is converted to/from the database.
 
 </p><a name="IDX89"></a>
 <a name="IDX90"></a>
-<p><a name="ANC12"></a>
+<p><a name="ANC13"></a>
 </p></dd>
 <dt><code> byte array (DataType.BYTE_ARRAY)</code></dt>
 <dd>
@@ -745,35 +746,35 @@ See <a href="#ANC2">DatabaseField dataType</a>.
 not allowed.
 
 </p><a name="IDX92"></a>
-<p><a name="ANC13"></a>
+<p><a name="ANC14"></a>
 </p></dd>
 <dt><code> short or Short (DataType.SHORT or DataType.SHORT_OBJ)</code></dt>
 <dd>
 <p>Persisted as SQL type SMALLINT.
 
 </p><a name="IDX93"></a>
-<p><a name="ANC14"></a>
+<p><a name="ANC15"></a>
 </p></dd>
 <dt><code> int or Integer (DataType.INTEGER or DataType.INTEGER_OBJ)</code></dt>
 <dd>
 <p>Persisted as SQL type <code>INTEGER</code>.
 
 </p><a name="IDX94"></a>
-<p><a name="ANC15"></a>
+<p><a name="ANC16"></a>
 </p></dd>
 <dt><code> long or Long (DataType.LONG or DataType.LONG_OBJ)</code></dt>
 <dd>
 <p>Persisted as SQL type <code>BIGINT</code>.
 
 </p><a name="IDX95"></a>
-<p><a name="ANC16"></a>
+<p><a name="ANC17"></a>
 </p></dd>
 <dt><code> float or Float (DataType.FLOAT or DataType.FLOAT_OBJ)</code></dt>
 <dd>
 <p>Persisted as SQL type <code>FLOAT</code>.
 
 </p><a name="IDX96"></a>
-<p><a name="ANC17"></a>
+<p><a name="ANC18"></a>
 </p></dd>
 <dt><code> double or Double (DataType.DOUBLE or DataType.DOUBLE_OBJ)</code></dt>
 <dd>
@@ -781,7 +782,7 @@ not allowed.
 
 </p><a name="IDX97"></a>
 <a name="IDX98"></a>
-<p><a name="ANC18"></a>
+<p><a name="ANC19"></a>
 </p></dd>
 <dt><code> Serializable (DataType.SERIALIZABLE)</code></dt>
 <dd>
@@ -799,7 +800,7 @@ not be auto-detected.  See <a href="#ANC2">DatabaseField dataType</a>.
 
 </p><a name="IDX99"></a>
 <a name="IDX100"></a>
-<p><a name="ANC19"></a>
+<p><a name="ANC20"></a>
 </p></dd>
 <dt><code> enum or Enum (DataType.ENUM_STRING)</code></dt>
 <dd>
@@ -813,7 +814,7 @@ used if an unknown value is found in the database. See <a href="#ANC3">unknownEn
 
 </p><a name="IDX102"></a>
 <a name="IDX103"></a>
-<p><a name="ANC20"></a>
+<p><a name="ANC21"></a>
 </p></dd>
 <dt><code> enum or Enum (DataType.ENUM_INTEGER)</code></dt>
 <dd>
@@ -967,7 +968,7 @@ the class we are persisting with the DAO, and the class of the ID-column that wi
 your class does not have an ID field, you can put <code>Object</code> or <code>Void</code> as the 2nd argument.  For example, in the above
 <code>Account</code> class, the &quot;name&quot; field is the ID column (id = true) so the ID class is <code>String</code>.
 
-</p><p><a name="ANC21"></a>
+</p><p><a name="ANC22"></a>
 The simplest way to create your DAO is to use the <code>createDao</code> static method on the <code>DaoManager</code> class to create a
 DAO class.  For example:
 
@@ -1012,7 +1013,7 @@ implementations if there are specific operations that are needed and not provide
 More on how to use these DAOs later. See section <a href="#SEC23">DAO Usage</a>.
 
 </p><p><em>NOTE:</em> If you are using a custom DAO then be sure to add the <code>daoClass</code> argument to the <code>@DatabaseTable</code> annotaion
-which specifies the class of your custom DAO.  This is used by the DaoManager to instantiate the DAO internally.  See <a href="#ANC21">DaoManager</a>.
+which specifies the class of your custom DAO.  This is used by the DaoManager to instantiate the DAO internally.  See <a href="#ANC22">DaoManager</a>.
 
 </p><hr size="6">
 <a name="NOD15"></a>
@@ -1362,7 +1363,7 @@ creator.maybeCreateTables();
 // later, we may want to drop the tables that were created 
 creator.maybeDropTables();
 </pre></td></tr></table>
-<p>For a real life example of using <code>TableCreator</code> you can see <a href="ormlite_7.html#ANC32">spring example</a>.
+<p>For a real life example of using <code>TableCreator</code> you can see <a href="ormlite_7.html#ANC33">spring example</a>.
 
 </p><hr size="6">
 <a name="NOD20"></a>
@@ -1445,7 +1446,7 @@ if (account == null) {
 <a name="IDX147"></a>
 <p><em>NOTE:</em> If you need to change the value of an object's id field, you must use the <code>Dao.updateId()</code> method which
 takes the current object still with its <em>old</em> id value and the new value.  ORMLite has to first locate the object
-by its old id and then update it with the new id.  See <a href="ormlite_5.html#ANC26">updateId</a>.
+by its old id and then update it with the new id.  See <a href="ormlite_5.html#ANC27">updateId</a>.
 
 </p><hr size="6">
 <a name="NOD22"></a>
@@ -1679,7 +1680,7 @@ is important to point out that any field marked as an <code>id</code> field is a
 do not need to have additional indexes built and if they are specified, errors may result with certain database.
 
 </p><p>To add an index on a non-id field, all you need to do is add the <code>index = true</code> boolean field to the
-<code>@DatabaseField</code> annotation.  See <a href="#ANC4">index</a>.  This will create a non-unique index after the table is created 
+<code>@DatabaseField</code> annotation.  See <a href="#ANC5">index</a>.  This will create a non-unique index after the table is created 
 for the field and will drop the index if the table is then dropped.  Indexes help optimize queries and can
 significantly improve times on queries to medium to large sized tables.
 
@@ -1991,11 +1992,11 @@ accountDao.refresh(order.getAccount());
 System.out.println(&quot;Now the account fields will be set: &quot; +
    order.account.name);
 </pre></td></tr></table>
-<p>You can have the foreign objects automagically refreshed by using the <code>foreignAutoRefresh</code> setting. See <a href="#ANC5">foreignAutoRefresh</a>.
+<p>You can have the foreign objects automagically refreshed by using the <code>foreignAutoRefresh</code> setting. See <a href="#ANC6">foreignAutoRefresh</a>.
 
 </p><p><em>NOTE:</em> Because we use refresh, foreign objects are therefor <em>required</em> to have an id field.
 
-</p><p>There is example code to show how to use foreign objects.  See <a href="ormlite_7.html#ANC28">foreign objects example</a>.
+</p><p>There is example code to show how to use foreign objects.  See <a href="ormlite_7.html#ANC29">foreign objects example</a>.
 
 </p><hr size="6">
 <a name="NOD31"></a>
@@ -2053,7 +2054,7 @@ iterator or if you call <code>close()</code> on it.  Only the <code>ForeignColle
 from the internal list if the collection is eager, and DAO calls will be made to affect the order table as well for both eager and
 lazy collections.
 
-</p><p>There is example code to show how to use foreign collections.  See <a href="ormlite_7.html#ANC29">foreign collections example</a>.
+</p><p>There is example code to show how to use foreign collections.  See <a href="ormlite_7.html#ANC30">foreign collections example</a>.
 
 </p><hr size="6">
 <a name="NOD32"></a>
