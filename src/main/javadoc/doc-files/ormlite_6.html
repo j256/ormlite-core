@@ -47,14 +47,14 @@ ul.toc {list-style: none}
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite_5.html#SEC42" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_7.html#SEC57" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_7.html#SEC58" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC63" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h1 class="chapter"> 6. Upgrade From Old Versions </h1>
@@ -64,15 +64,17 @@ However, sometimes when a new version is released, changes are made that require
 and rarely the on-disk database formats. 
 
 </p><table class="menu" border="0" cellspacing="0">
-<tr><td align="left" valign="top"><a href="#SEC52">6.1 Upgrade to Version 4.14</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.14
+<tr><td align="left" valign="top"><a href="#SEC52">6.1 Upgrade to Version 4.20</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.20
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC53">6.2 Upgrade to Version 4.10</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.10
+<tr><td align="left" valign="top"><a href="#SEC53">6.2 Upgrade to Version 4.14</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.14
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC54">6.3 Upgrade to Version 4.0</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Upgrade to version 4.0
+<tr><td align="left" valign="top"><a href="#SEC54">6.3 Upgrade to Version 4.10</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.10
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC55">6.4 Upgrade to Version 3.2</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Upgrade to version 3.2
+<tr><td align="left" valign="top"><a href="#SEC55">6.4 Upgrade to Version 4.0</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Upgrade to version 4.0
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC56">6.5 Upgrade to Version 2.4</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Upgrade to version 2.4
+<tr><td align="left" valign="top"><a href="#SEC56">6.5 Upgrade to Version 3.2</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Upgrade to version 3.2
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC57">6.6 Upgrade to Version 2.4</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Upgrade to version 2.4
 </td></tr>
 </table>
 
@@ -85,17 +87,48 @@ and rarely the on-disk database formats.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC51" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC51" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_7.html#SEC57" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_7.html#SEC58" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC63" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 6.1 Upgrade to Version 4.14 </h2>
+<h2 class="section"> 6.1 Upgrade to Version 4.20 </h2>
+
+<p>In 4.20 we made a couple of changes that bear some extra noting.
+
+</p><ul>
+<li><p> For Android developers, we significantly improved the mechanism for injecting the class of the database open helper.
+Setting the class name on the  
+
+</p><p>The <code>SqliteOpenHelperFactory</code> mechanism although still supported has been deprecated.  
+
+</p></li></ul>
+
+<hr size="6">
+<a name="NOD54"></a>
+<a name="SEC53"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC52" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC54" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC51" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC51" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_7.html#SEC58" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC63" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 6.2 Upgrade to Version 4.14 </h2>
 
 <p>In 4.14 we added a <code>DatabaseType.BYTE_ARRAY</code> which stores <code>byte[]</code> directly.  See <a href="ormlite_2.html#ANC12">BYTE_ARRAY</a>.  In the past, this array
 would have been stored as a serialized array of bytes.  To not break backwards compatibility with the database, fields with the
@@ -120,25 +153,25 @@ be converted automatically.
 byte[] field;
 </pre></td></tr></table>
 <hr size="6">
-<a name="NOD54"></a>
-<a name="SEC53"></a>
+<a name="NOD55"></a>
+<a name="SEC54"></a>
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC52" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC54" title="Next section in reading order"> &gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="#SEC53" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC55" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC51" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC51" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_7.html#SEC57" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_7.html#SEC58" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC63" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 6.2 Upgrade to Version 4.10 </h2>
+<h2 class="section"> 6.3 Upgrade to Version 4.10 </h2>
 
 <p>4.10 was a reasonably large release containing some feature upgrades and some bug fixes.  No data formats were changed, however
 the following API code was altered:
@@ -157,25 +190,25 @@ package to work.
 </p></li></ul>
 
 <hr size="6">
-<a name="NOD55"></a>
-<a name="SEC54"></a>
+<a name="NOD56"></a>
+<a name="SEC55"></a>
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC53" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC55" title="Next section in reading order"> &gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="#SEC54" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC56" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC51" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC51" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_7.html#SEC57" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_7.html#SEC58" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC63" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 6.3 Upgrade to Version 4.0 </h2>
+<h2 class="section"> 6.4 Upgrade to Version 4.0 </h2>
 
 <p>No data formats were changed, however the following API code was altered.  Removed any outside usage of the <code>DatabaseType</code> since
 the <code>ConnectionSource</code> now provides it.  Also added features to be able to prepare update and delete statements.  To provide
@@ -222,25 +255,25 @@ configurations.
 </p></li></ul>
 
 <hr size="6">
-<a name="NOD56"></a>
-<a name="SEC55"></a>
+<a name="NOD57"></a>
+<a name="SEC56"></a>
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC54" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC56" title="Next section in reading order"> &gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="#SEC55" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC57" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC51" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC51" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_7.html#SEC57" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_7.html#SEC58" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC63" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 6.4 Upgrade to Version 3.2 </h2>
+<h2 class="section"> 6.5 Upgrade to Version 3.2 </h2>
 
 <p>The 3.2 release involved a <em>very</em> large code reorganization and migration.  There were no on-disk changes unless you somehow
 managed to get ORMLite working previously on Android.  The project was basically split into 3 pieces: core functionality, JDBC
@@ -276,25 +309,25 @@ JDBC before to do the data marshalling and now are doing it by hand, some of the
 the lack of detail here.
 
 </p><hr size="6">
-<a name="NOD57"></a>
-<a name="SEC56"></a>
+<a name="NOD58"></a>
+<a name="SEC57"></a>
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC55" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_7.html#SEC57" title="Next section in reading order"> &gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="#SEC56" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_7.html#SEC58" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC51" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC51" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_7.html#SEC57" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_7.html#SEC58" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC63" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 6.5 Upgrade to Version 2.4 </h2>
+<h2 class="section"> 6.6 Upgrade to Version 2.4 </h2>
 
 <p>A bug was fixed in 2.4 with how we were handling Derby and Hsqldb.  Both of these databases seem to be capitalizing table and field
 names in certain situations which meant that customized queries of ORMLite generated tables were affected.  In version 2.4,
@@ -305,7 +338,7 @@ uppercase.
 </p><hr size="6">
 <table cellpadding="1" cellspacing="1" border="0">
 <tr><td valign="middle" align="left">[<a href="#SEC51" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_7.html#SEC57" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_7.html#SEC58" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
@@ -313,7 +346,7 @@ uppercase.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC63" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>

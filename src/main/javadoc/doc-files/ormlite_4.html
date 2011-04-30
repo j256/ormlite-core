@@ -54,7 +54,7 @@ ul.toc {list-style: none}
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC63" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h1 class="chapter"> 4. Using With Android </h1>
@@ -83,7 +83,7 @@ ul.toc {list-style: none}
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC63" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 4.1 Android Basics </h2>
@@ -117,25 +117,30 @@ classes.  An easy way to use the <code>OpenHelperManager</code> is to extend <co
 activity classes - there is also <code>OrmLiteBaseListActivity</code>, <code>OrmLiteBaseService</code>, and <code>OrmLiteBaseTabActivity</code>.
 These classes provide a <code>helper</code> protected field and a <code>getHelper()</code> method to access the database helper whenever it
 is needed and will automatically create the helper in the <code>onCreate()</code> method and release it in the <code>onDestroy()</code>
-method.  See the sample <code>HelloAndroid</code> activity class in the examples.  See section <a href="ormlite_7.html#SEC59">Android Examples</a>.
+method.  See the sample <code>HelloAndroid</code> activity class in the examples.  See section <a href="ormlite_7.html#SEC60">Android Examples</a>.
 
 </p></li><li><p> If you do not want to extend the <code>OrmLiteBaseActivity</code> and other base classes then you will need to duplicate their
 functionality.  You will need to call <code>OpenHelperManager.getHelper(Context context, Class openHelperClass)</code> at the start of
 your code, save the helper and use it as much as you want, and then call <code>OpenHelperManager.release()</code> when you are done with
 it.
 
-</p></li><li><p> Another way to wire in the appropriate database helper class is to set the full class name of it in the the
-<code>open_helper_classname</code> value defined in <code>res/values/strings.xml</code>.  You can also set the class using the
-<code>OpenHelperManager.setOpenHelperClass(Class)</code> method in a <code>static {}</code> block in your code.
+</p><a name="IDX219"></a>
+<a name="IDX220"></a>
+<p><a name="ANC24"></a>
+</p></li><li><p> By default, if you are using <code>OrmLiteBaseActivity</code> and other base classes, the <code>OpenHelperManager</code> will detect the
+database helper class through reflection.  Another way to wire in the appropriate database helper class is to set the full class
+name of it in the the <code>open_helper_classname</code> value defined in the <code>res/values/strings.xml</code> resource file .  You can also
+set the class using the <code>OpenHelperManager.setOpenHelperClass(Class)</code> method in a <code>static {}</code> block in your code.
 
 </p></li><li><p> The Android native SQLite database type is <code>SqliteAndroidDatabaseType</code> and is used by the base classes internally.
 
 </p></li><li><p> <em>WARNING:</em> You must make sure that any background threads call the <em>OpenHelperManager.getHelper()</em> and
-<em>release()</em> methods appropriately.
+<em>release()</em> methods appropriately.  Otherwise, if they access the database before it is opened or after it is closed, you will
+get exceptions.
 
 </p></li></ol>
 
-<p>Please see the example code documentation for more information.  See section <a href="ormlite_7.html#SEC59">Android Examples</a>.  Again, feedback on this is welcome.
+<p>Please see the example code documentation for more information.  See section <a href="ormlite_7.html#SEC60">Android Examples</a>.  Again, feedback on this is welcome.
 
 </p><hr size="6">
 <a name="NOD42"></a>
@@ -153,12 +158,12 @@ it.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC63" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 4.2 Android Logging </h2>
 
-<p><a name="ANC24"></a>
+<p><a name="ANC25"></a>
 
 </p><p>The <code>ormlite-android.jar</code> classes define the <code>AndroidLog</code> class which is the Android specific version of ORMLite
 logging.  This class makes calls to the <code>Log.d</code>, <code>Log.i</code>, &hellip; methods in the Android API.  To see the log output,
@@ -204,7 +209,7 @@ D/BaseMappedStatement(  465): assigned id '9' from keyholder to 'id' in
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC62" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC63" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>

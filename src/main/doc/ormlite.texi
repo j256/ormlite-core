@@ -2546,14 +2546,19 @@ functionality.  You will need to call @code{OpenHelperManager.getHelper(Context 
 your code, save the helper and use it as much as you want, and then call @code{OpenHelperManager.release()} when you are done with
 it.
 
-@item Another way to wire in the appropriate database helper class is to set the full class name of it in the the
-@code{open_helper_classname} value defined in @code{res/values/strings.xml}.  You can also set the class using the
-@code{OpenHelperManager.setOpenHelperClass(Class)} method in a @code{static @{@}} block in your code.
+@cindex Android strings resources
+@cindex database open helper wiring
+@anchor{strings resource file}
+@item By default, if you are using @code{OrmLiteBaseActivity} and other base classes, the @code{OpenHelperManager} will detect the
+database helper class through reflection.  Another way to wire in the appropriate database helper class is to set the full class
+name of it in the the @code{open_helper_classname} value defined in the @code{res/values/strings.xml} resource file .  You can also
+set the class using the @code{OpenHelperManager.setOpenHelperClass(Class)} method in a @code{static @{@}} block in your code.
 
 @item The Android native SQLite database type is @code{SqliteAndroidDatabaseType} and is used by the base classes internally.
 
 @item @emph{WARNING:} You must make sure that any background threads call the @emph{OpenHelperManager.getHelper()} and
-@emph{release()} methods appropriately.
+@emph{release()} methods appropriately.  Otherwise, if they access the database before it is opened or after it is closed, you will
+get exceptions.
 
 @end enumerate
 
@@ -3281,7 +3286,7 @@ in automatically by maven.
 then just replace the @code{ormlite-jdbc} artifact name with @code{ormlite-android}.
 
 @c ----------------------------------------------------------------
-@node How to Upgrade, 4.14, Maven, Top
+@node How to Upgrade, 4.20, Maven, Top
 @chapter Upgrade From Old Versions
 
 We strive to maintain backwards compatibility and to provide deprecated versions of old classes and methods.
@@ -3289,6 +3294,7 @@ However, sometimes when a new version is released, changes are made that require
 and rarely the on-disk database formats. 
 
 @menu
+* 4.20::                Upgrade to version 4.20
 * 4.14::                Upgrade to version 4.14
 * 4.10::                Upgrade to version 4.10
 * 4.0::                 Upgrade to version 4.0
@@ -3297,7 +3303,22 @@ and rarely the on-disk database formats.
 @end menu
 
 @c ----------------------------------------------------------------
-@node 4.14, 4.10, How to Upgrade, How to Upgrade
+@node 4.20, 4.14, How to Upgrade, How to Upgrade
+@section Upgrade to Version 4.20
+
+In 4.20 we made a couple of changes that bear some extra noting.
+
+@itemize @bullet
+
+@item For Android developers, we significantly improved the mechanism for injecting the class of the database open helper.
+Setting the class name on the  
+
+The @code{SqliteOpenHelperFactory} mechanism although still supported has been deprecated.  
+
+@end itemize
+
+@c ----------------------------------------------------------------
+@node 4.14, 4.10, 4.20, How to Upgrade
 @section Upgrade to Version 4.14
 
 In 4.14 we added a @code{DatabaseType.BYTE_ARRAY} which stores @code{byte[]} directly.  @xref{BYTE_ARRAY}.  In the past, this array
