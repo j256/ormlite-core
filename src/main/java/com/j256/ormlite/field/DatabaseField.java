@@ -37,8 +37,17 @@ import com.j256.ormlite.db.DatabaseType;
 @Retention(RUNTIME)
 public @interface DatabaseField {
 
-	// this special string is used as a .equals check to see if no default was specified
+	/** this special string is used as a .equals check to see if no default was specified */
 	public static final String NO_DEFAULT = "__ormlite__ no default value string was specified";
+
+	/**
+	 * If you have two objects that both are {@link #foreign()} of each other and both have
+	 * {@link #foreignAutoRefresh()} set to true then if one is retrieved, it will go recursive. For example, you might
+	 * have a Answer with a foreign bestQuestion field and the Question with a foreign Answer. If you lookup an Answer,
+	 * it will lookup and auto-refresh the Question which will lookup and auto-refresh the Answer, etc.. This is the
+	 * maximum number of times it will go back and forth before stopping the auto-refresh.
+	 */
+	public static final int MAX_FOREIGN_LEVEL = 2;
 
 	/**
 	 * The name of the column in the database. If not set then the name is taken from the field name.
@@ -206,4 +215,18 @@ public @interface DatabaseField {
 	 * </p>
 	 */
 	boolean foreignAutoRefresh() default false;
+
+	/**
+	 * Set this to be the number of times to configure a foreign object's foreign object. If you query for A and it has
+	 * an foreign field B which has an foreign field C ..., then a lot of configuration information is being stored. If
+	 * each of these fields is auto-refreshed, then querying for A could get expensive. Setting this value to 1 will
+	 * mean that when you query for A, B will be auto-refreshed, but C will just have its id field set. This also works
+	 * if A has an auto-refresh field B which has an auto-refresh field A.
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> Increasing this value will result in more database transactions whenever you query for A, so use
+	 * carefully.
+	 * </p>
+	 */
+	int maxForeignLevel() default MAX_FOREIGN_LEVEL;
 }

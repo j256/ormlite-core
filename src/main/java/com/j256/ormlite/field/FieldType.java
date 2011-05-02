@@ -9,7 +9,6 @@ import java.lang.reflect.Type;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.BaseForeignCollection;
@@ -36,11 +35,8 @@ import com.j256.ormlite.table.TableInfo;
  */
 public class FieldType {
 
-	private static final AtomicInteger recursionProtection = new AtomicInteger();
-
 	/** default suffix added to fields that are id fields of foreign objects */
 	public static final String FOREIGN_ID_FIELD_SUFFIX = "_id";
-	public static final int MAX_FOREIGN_RECURSE_LEVEL = 10;
 
 	// default values
 	private static boolean DEFAULT_VALUE_BOOLEAN;
@@ -74,6 +70,8 @@ public class FieldType {
 	private final Method fieldGetMethod;
 	private final Method fieldSetMethod;
 
+	private static final ThreadLocal<MutableInteger> threadLevelCount = new ThreadLocal<MutableInteger>();
+
 	/**
 	 * You should use {@link FieldType#createFieldType} to instantiate one of these field if you have a {@link Field}.
 	 */
@@ -96,57 +94,57 @@ public class FieldType {
 			}
 		}
 		String defaultFieldName = field.getName();
-		if (fieldConfig.isForeignAutoRefresh()) {
-			if (recursionProtection.get() < MAX_FOREIGN_RECURSE_LEVEL) {
-				if (dataType.isPrimitive()) {
-					throw new IllegalArgumentException("Field " + this + " is a primitive class " + clazz
-							+ " but marked as foreign");
-				}
-				DatabaseTableConfig<?> tableConfig = fieldConfig.getForeignTableConfig();
-				recursionProtection.incrementAndGet();
-				try {
-					if (tableConfig == null) {
-						// NOTE: the cast is necessary for maven
-						this.foreignDao = (BaseDaoImpl<?, ?>) DaoManager.createDao(connectionSource, clazz);
-						this.foreignTableInfo = ((BaseDaoImpl<?, ?>) this.foreignDao).getTableInfo();
-					} else {
-						tableConfig.extractFieldTypes(connectionSource);
-						// NOTE: the cast is necessary for maven
-						this.foreignDao = (BaseDaoImpl<?, ?>) DaoManager.createDao(connectionSource, tableConfig);
-						this.foreignTableInfo = ((BaseDaoImpl<?, ?>) this.foreignDao).getTableInfo();
-					}
-				} finally {
-					recursionProtection.decrementAndGet();
-				}
-				if (this.foreignTableInfo.getIdField() == null) {
-					throw new IllegalArgumentException("Foreign field " + clazz + " does not have id field");
-				}
-				defaultFieldName = defaultFieldName + FOREIGN_ID_FIELD_SUFFIX;
-				this.foreignIdField = this.foreignTableInfo.getIdField();
-				// this field's data type is the foreign id's type
-				dataType = this.foreignIdField.getDataType();
-				@SuppressWarnings("unchecked")
-				MappedQueryForId<Object, Object> castMappedQueryForId =
-						(MappedQueryForId<Object, Object>) MappedQueryForId.build(databaseType, this.foreignTableInfo);
-				this.mappedQueryForId = castMappedQueryForId;
-				this.foreignConstructor = this.foreignTableInfo.getConstructor();
-			} else {
-				// act like it's not foreign
-				this.foreignTableInfo = null;
-				this.mappedQueryForId = null;
-				this.foreignIdField = null;
-				this.foreignConstructor = null;
-				this.foreignDao = null;
+		/*
+		 * See if we have an auto-refresh field first. If we are in too many levels then just fall back to just being a
+		 * foreign field.
+		 */
+		if (fieldConfig.isForeignAutoRefresh() && getLevel() < fieldConfig.getMaxForeignLevel()) {
+			if (dataType.isPrimitive()) {
+				throw new IllegalArgumentException("Field " + this + " is a primitive class " + clazz
+						+ " but marked as foreign");
 			}
+			DatabaseTableConfig<?> tableConfig = fieldConfig.getForeignTableConfig();
+			incrementLevel();
+			try {
+				if (tableConfig == null) {
+					// NOTE: the cast is necessary for maven
+					this.foreignDao = (BaseDaoImpl<?, ?>) DaoManager.createDao(connectionSource, clazz);
+					this.foreignTableInfo = ((BaseDaoImpl<?, ?>) this.foreignDao).getTableInfo();
+				} else {
+					tableConfig.extractFieldTypes(connectionSource);
+					// NOTE: the cast is necessary for maven
+					this.foreignDao = (BaseDaoImpl<?, ?>) DaoManager.createDao(connectionSource, tableConfig);
+					this.foreignTableInfo = ((BaseDaoImpl<?, ?>) this.foreignDao).getTableInfo();
+				}
+			} finally {
+				decrementLevel();
+			}
+			if (this.foreignTableInfo.getIdField() == null) {
+				throw new IllegalArgumentException("Foreign field " + clazz + " does not have id field");
+			}
+			defaultFieldName = defaultFieldName + FOREIGN_ID_FIELD_SUFFIX;
+			this.foreignIdField = this.foreignTableInfo.getIdField();
+			// this field's data type is the foreign id's type
+			dataType = this.foreignIdField.getDataType();
+			@SuppressWarnings("unchecked")
+			MappedQueryForId<Object, Object> castMappedQueryForId =
+					(MappedQueryForId<Object, Object>) MappedQueryForId.build(databaseType, this.foreignTableInfo);
+			this.mappedQueryForId = castMappedQueryForId;
+			this.foreignConstructor = this.foreignTableInfo.getConstructor();
 			this.foreignFieldType = null;
-		} else if (fieldConfig.isForeign()) {
-			if (recursionProtection.get() < MAX_FOREIGN_RECURSE_LEVEL) {
+		} else if (fieldConfig.isForeign() || fieldConfig.isForeignAutoRefresh()) {
+			defaultFieldName = defaultFieldName + FOREIGN_ID_FIELD_SUFFIX;
+			/*
+			 * If we are a foreign-field or if the foreign-auto-refresh was in too deep then we configure this as a
+			 * foreign field. This is <= instead of < because we go one more level than the foreign auto-refresh.
+			 */
+			if (getLevel() <= fieldConfig.getMaxForeignLevel()) {
 				if (dataType.isPrimitive()) {
 					throw new IllegalArgumentException("Field " + this + " is a primitive class " + clazz
 							+ " but marked as foreign");
 				}
 				DatabaseTableConfig<?> tableConfig = fieldConfig.getForeignTableConfig();
-				recursionProtection.incrementAndGet();
+				incrementLevel();
 				try {
 					if (tableConfig != null) {
 						tableConfig.extractFieldTypes(connectionSource);
@@ -170,12 +168,11 @@ public class FieldType {
 						this.foreignConstructor = DatabaseTableConfig.findNoArgConstructor(clazz);
 					}
 				} finally {
-					recursionProtection.decrementAndGet();
+					decrementLevel();
 				}
 				if (this.foreignIdField == null) {
 					throw new IllegalArgumentException("Foreign field " + clazz + " does not have id field");
 				}
-				defaultFieldName = defaultFieldName + FOREIGN_ID_FIELD_SUFFIX;
 				// this field's data type is the foreign id's type
 				dataType = this.foreignIdField.getDataType();
 				this.mappedQueryForId = null;
@@ -188,7 +185,7 @@ public class FieldType {
 				this.foreignDao = null;
 			}
 			this.foreignFieldType = null;
-		} else if (fieldConfig.isForeignCollection() && recursionProtection.get() == 0) {
+		} else if (fieldConfig.isForeignCollection() && getLevel() == 0) {
 			if (clazz != Collection.class && !ForeignCollection.class.isAssignableFrom(clazz)) {
 				throw new SQLException("Field class for '" + field.getName() + "' must be of class "
 						+ ForeignCollection.class.getSimpleName() + " or Collection.");
@@ -205,7 +202,7 @@ public class FieldType {
 			}
 			clazz = (Class<?>) genericArguments[0];
 			DatabaseTableConfig<?> tableConfig = fieldConfig.getForeignTableConfig();
-			recursionProtection.incrementAndGet();
+			incrementLevel();
 			try {
 				if (tableConfig == null) {
 					@SuppressWarnings("unchecked")
@@ -213,11 +210,12 @@ public class FieldType {
 					this.foreignDao = castDao;
 				} else {
 					@SuppressWarnings("unchecked")
-					Dao<Object, Object> castDao = (Dao<Object, Object>) DaoManager.createDao(connectionSource, tableConfig);
+					Dao<Object, Object> castDao =
+							(Dao<Object, Object>) DaoManager.createDao(connectionSource, tableConfig);
 					this.foreignDao = castDao;
 				}
 			} finally {
-				recursionProtection.decrementAndGet();
+				decrementLevel();
 			}
 
 			FieldType foreignFieldType = null;
@@ -751,5 +749,30 @@ public class FieldType {
 	public String toString() {
 		return getClass().getSimpleName() + ":name=" + field.getName() + ",class="
 				+ field.getDeclaringClass().getSimpleName();
+	}
+
+	private void incrementLevel() {
+		getMutableInteger().level++;
+	}
+
+	private void decrementLevel() {
+		getMutableInteger().level--;
+	}
+
+	private int getLevel() {
+		return getMutableInteger().level;
+	}
+
+	private MutableInteger getMutableInteger() {
+		MutableInteger mutableInteger = threadLevelCount.get();
+		if (mutableInteger == null) {
+			mutableInteger = new MutableInteger();
+			threadLevelCount.set(mutableInteger);
+		}
+		return mutableInteger;
+	}
+
+	private static class MutableInteger {
+		int level;
 	}
 }

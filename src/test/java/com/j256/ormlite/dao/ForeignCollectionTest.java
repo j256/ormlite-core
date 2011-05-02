@@ -67,6 +67,35 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertEquals(0, results.get(0).account.orders.size());
 	}
 
+	@Test
+	public void testQuestionAndAnswers() throws Exception {
+		createDao(Order.class, true);
+		Dao<Question, Object> questionDao = createDao(Question.class, true);
+		Dao<Answer, Object> answerDao = createDao(Answer.class, true);
+
+		Question question = new Question();
+		String name = "some question";
+		question.name = name;
+		assertEquals(1, questionDao.create(question));
+
+		Answer answer1 = new Answer();
+		int val1 = 1234313123;
+		answer1.val = val1;
+		answer1.question = question;
+		assertEquals(1, answerDao.create(answer1));
+
+		Answer answer2 = new Answer();
+		int val2 = 345543;
+		answer2.val = val2;
+		answer2.question = question;
+		assertEquals(1, answerDao.create(answer2));
+
+		assertEquals(1, questionDao.refresh(question));
+		assertNotNull(question.answers);
+		assertEquals(2, question.answers.size());
+		
+	}
+
 	private void testCollection(Dao<Account, Integer> accountDao, boolean eager) throws Exception {
 		Dao<Order, Integer> orderDao = createDao(Order.class, true);
 
@@ -329,6 +358,30 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		@Override
 		public int hashCode() {
 			return id;
+		}
+	}
+
+	protected static class Question {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField
+		String name;
+		@DatabaseField(foreign = true, foreignAutoRefresh = true)
+		Answer bestAnswer;
+		@ForeignCollectionField(eager = true)
+		ForeignCollection<Answer> answers;
+		protected Question() {
+		}
+	}
+
+	protected static class Answer {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(unique = true)
+		int val;
+		@DatabaseField(foreign = true, foreignAutoRefresh = true)
+		Question question;
+		protected Answer() {
 		}
 	}
 

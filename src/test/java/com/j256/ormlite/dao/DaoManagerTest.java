@@ -28,7 +28,7 @@ public class DaoManagerTest extends BaseCoreTest {
 		DatabaseTableConfig<Foo> tableConfig =
 				new DatabaseTableConfig<Foo>(Foo.class, Arrays.asList(new DatabaseFieldConfig("id", null,
 						DataType.UNKNOWN, null, 0, false, false, false, null, false, null, false, null, false, null,
-						false, null, null, false)));
+						false, null, null, false, 0)));
 		testTable(tableConfig);
 	}
 
@@ -38,7 +38,7 @@ public class DaoManagerTest extends BaseCoreTest {
 		DatabaseTableConfig<Bar> tableConfig =
 				new DatabaseTableConfig<Bar>(Bar.class, Arrays.asList(new DatabaseFieldConfig("foo", null,
 						DataType.UNKNOWN, null, 0, false, false, false, null, false, null, false, null, false, null,
-						false, null, null, false)));
+						false, null, null, false, 0)));
 		testTable(tableConfig);
 	}
 
@@ -48,7 +48,7 @@ public class DaoManagerTest extends BaseCoreTest {
 		DatabaseTableConfig<Baz> tableConfig =
 				new DatabaseTableConfig<Baz>(Baz.class, Arrays.asList(new DatabaseFieldConfig("foo", null,
 						DataType.UNKNOWN, null, 0, false, false, false, null, false, null, false, null, false, null,
-						false, null, null, false)));
+						false, null, null, false, 0)));
 		testTable(tableConfig);
 	}
 
@@ -63,7 +63,7 @@ public class DaoManagerTest extends BaseCoreTest {
 		DatabaseTableConfig<PrivateConstructor> tableConfig =
 				new DatabaseTableConfig<PrivateConstructor>(PrivateConstructor.class,
 						Arrays.asList(new DatabaseFieldConfig("foo", null, DataType.UNKNOWN, null, 0, false, false,
-								false, null, false, null, false, null, false, null, false, null, null, false)));
+								false, null, false, null, false, null, false, null, false, null, null, false, 0)));
 		try {
 			testTable(tableConfig);
 			fail("exception expected");
@@ -83,7 +83,7 @@ public class DaoManagerTest extends BaseCoreTest {
 		DatabaseTableConfig<ConstructorFail> tableConfig =
 				new DatabaseTableConfig<ConstructorFail>(ConstructorFail.class, Arrays.asList(new DatabaseFieldConfig(
 						"foo", null, DataType.UNKNOWN, null, 0, false, false, false, null, false, null, false, null,
-						false, null, false, null, null, false)));
+						false, null, false, null, null, false, 0)));
 		try {
 			testTable(tableConfig);
 			fail("exception expected");
@@ -98,7 +98,7 @@ public class DaoManagerTest extends BaseCoreTest {
 		DatabaseTableConfig<GenericBar> tableConfig =
 				new DatabaseTableConfig<GenericBar>(GenericBar.class, Arrays.asList(new DatabaseFieldConfig("foo",
 						null, DataType.UNKNOWN, null, 0, false, false, false, null, false, null, false, null, false,
-						null, false, null, null, false)));
+						null, false, null, null, false, 0)));
 		testTable(tableConfig);
 	}
 
@@ -108,7 +108,7 @@ public class DaoManagerTest extends BaseCoreTest {
 		DatabaseTableConfig<GenericBaz> tableConfig =
 				new DatabaseTableConfig<GenericBaz>(GenericBaz.class, Arrays.asList(new DatabaseFieldConfig("foo",
 						null, DataType.UNKNOWN, null, 0, false, false, false, null, false, null, false, null, false,
-						null, false, null, null, false)));
+						null, false, null, null, false, 0)));
 		testTable(tableConfig);
 	}
 
