@@ -65,4 +65,8 @@ public class H2ConnectionSource implements ConnectionSource {
 	public DatabaseConnection getSpecialConnection() {
 		return null;
 	}
+
+	public boolean isOpen() {
+		return connection != null;
+	}
 }

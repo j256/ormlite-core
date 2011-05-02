@@ -67,4 +67,9 @@ public interface ConnectionSource {
 	 * Return the DatabaseTypre associated with this connection.
 	 */
 	public DatabaseType getDatabaseType();
+
+	/**
+	 * Return true if the connection source is open. Once {@link #close()} has been called, this should return false.
+	 */
+	public boolean isOpen();
 }

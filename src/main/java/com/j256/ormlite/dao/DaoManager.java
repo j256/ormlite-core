@@ -34,6 +34,9 @@ public class DaoManager {
 	@SuppressWarnings("deprecation")
 	public synchronized static <D extends Dao<T, ?>, T> D createDao(ConnectionSource connectionSource, Class<T> clazz)
 			throws SQLException {
+		if (connectionSource == null) {
+			throw new IllegalArgumentException("connectionSource argument cannot be null");
+		}
 		if (classMap == null) {
 			classMap = new HashMap<ClazzConnectionSource, Dao<?, ?>>();
 		}
@@ -99,6 +102,9 @@ public class DaoManager {
 	@SuppressWarnings("deprecation")
 	public synchronized static <D extends Dao<T, ?>, T> D createDao(ConnectionSource connectionSource,
 			DatabaseTableConfig<T> tableConfig) throws SQLException {
+		if (connectionSource == null) {
+			throw new IllegalArgumentException("connectionSource argument cannot be null");
+		}
 		if (tableMap == null) {
 			tableMap = new HashMap<TableConfigConnectionSource, Dao<?, ?>>();
 		}
@@ -147,6 +153,9 @@ public class DaoManager {
 	 * </p>
 	 */
 	public static synchronized void registerDao(ConnectionSource connectionSource, Dao<?, ?> dao) {
+		if (connectionSource == null) {
+			throw new IllegalArgumentException("connectionSource argument cannot be null");
+		}
 		if (dao instanceof BaseDaoImpl) {
 			DatabaseTableConfig<?> tableConfig = ((BaseDaoImpl<?, ?>) dao).getTableConfig();
 			if (tableConfig != null) {

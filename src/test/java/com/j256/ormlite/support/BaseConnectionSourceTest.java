@@ -104,5 +104,9 @@ public class BaseConnectionSourceTest extends BaseCoreTest {
 		public DatabaseType getDatabaseType() {
 			return databaseType;
 		}
+
+		public boolean isOpen() {
+			return true;
+		}
 	}
 }
