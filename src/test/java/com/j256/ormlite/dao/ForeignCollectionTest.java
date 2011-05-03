@@ -93,7 +93,6 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertEquals(1, questionDao.refresh(question));
 		assertNotNull(question.answers);
 		assertEquals(2, question.answers.size());
-		
 	}
 
 	private void testCollection(Dao<Account, Integer> accountDao, boolean eager) throws Exception {

@@ -1,4 +1,10 @@
-4.20: 4/30/2011 (svn rYYYY)
+4.21: 5/XX/2011 (svn rYYYY)
+	* CORE: Added maxForeignLevel=1 type of setting to @DatabaseField to limit the foreign field recursive calls.
+	* CORE: Added a isOpen() to the ConnectionSource interface and implementations.
+	* CORE: Fixed a problem with the foreign auto-refresh loops and the last level.  Thanks to Xavier.  Fixes bug #3296400. 
+	* ANDROID: Added better logging and protection around use of the open-helper and AndroidConnectionSource after close. 
+
+4.20: 4/30/2011 (svn r1686)
 	* CORE: Refactored a couple of places to try and improve DAO creation with foreign fields.  Thanks to the user list.
 	* CORE: Improved the dao caching when creating/dropping tables.  Thanks to the user list.
 	* CORE: Refactored TableUtils.clearTable() and other methods to improve memory usage.
