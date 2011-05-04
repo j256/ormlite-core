@@ -327,6 +327,27 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		createDao(NoForeign.class, true);
 	}
 
+	@Test
+	public void testRecursiveReference() throws Exception {
+		Dao<RecursiveReference, Object> dao = createDao(RecursiveReference.class, true);
+		RecursiveReference rr1 = new RecursiveReference();
+		rr1.stuff = "fpeewihwhgwofjwe";
+		assertEquals(1, dao.create(rr1));
+		
+		RecursiveReference rr2 = new RecursiveReference();
+		rr2.parent = rr1;
+		rr2.stuff = "fpewofjwe";
+		assertEquals(1, dao.create(rr2));
+		
+		RecursiveReference result = dao.queryForId(rr1.id);
+		assertNotNull(result);
+		assertNotNull(result.related);
+		assertEquals(1, result.related.size());
+		CloseableIterator<RecursiveReference> iterator = result.related.iterator();
+		assertTrue(iterator.hasNext());
+		assertEquals(rr2.stuff, iterator.next().stuff);
+	}
+
 	protected static class Account {
 		@DatabaseField(generatedId = true)
 		int id;
@@ -418,6 +439,19 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		@DatabaseField(foreign = true, foreignAutoRefresh = true)
 		Account account;
 		protected ForeignAutoRefresh() {
+		}
+	}
+
+	protected static class RecursiveReference {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField
+		String stuff;
+		@DatabaseField(foreign = true)
+		RecursiveReference parent;
+		@ForeignCollectionField
+		ForeignCollection<RecursiveReference> related;
+		protected RecursiveReference() {
 		}
 	}
 }
