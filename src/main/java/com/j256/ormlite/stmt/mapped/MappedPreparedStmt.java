@@ -36,7 +36,7 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 	}
 
 	public CompiledStatement compile(DatabaseConnection databaseConnection) throws SQLException {
-		CompiledStatement stmt = databaseConnection.compileStatement(statement, type, argFieldTypes, resultsFieldTypes);
+		CompiledStatement stmt = databaseConnection.compileStatement(statement, type, argFieldTypes);
 		if (limit != null) {
 			// we use this if SQL statement LIMITs are not supported by this database type
 			stmt.setMaxRows(limit);

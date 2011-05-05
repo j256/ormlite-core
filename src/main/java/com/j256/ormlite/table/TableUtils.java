@@ -250,7 +250,7 @@ public class TableUtils {
 		logger.info("clearing table '{}' with '{}", tableName, statement);
 		try {
 			CompiledStatement stmt =
-					connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes, noFieldTypes);
+					connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes);
 			return stmt.runExecute();
 		} finally {
 			connectionSource.releaseConnection(connection);
@@ -437,7 +437,7 @@ public class TableUtils {
 			int rowC = 0;
 			CompiledStatement prepStmt = null;
 			try {
-				prepStmt = connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes, noFieldTypes);
+				prepStmt = connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes);
 				rowC = prepStmt.runUpdate();
 				logger.info("executed {} table statement changed {} rows: {}", label, rowC, statement);
 			} catch (SQLException e) {
@@ -471,7 +471,7 @@ public class TableUtils {
 			CompiledStatement prepStmt = null;
 			DatabaseResults results = null;
 			try {
-				prepStmt = connection.compileStatement(query, StatementType.EXECUTE, noFieldTypes, noFieldTypes);
+				prepStmt = connection.compileStatement(query, StatementType.EXECUTE, noFieldTypes);
 				results = prepStmt.runQuery();
 				int rowC = 0;
 				// count the results

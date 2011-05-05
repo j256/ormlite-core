@@ -270,7 +270,7 @@ public class DataTypeTest extends BaseCoreTest {
 		assertEquals(1, dao.create(foo));
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
-						StatementType.SELECT, noFieldTypes, noFieldTypes);
+						StatementType.SELECT, noFieldTypes);
 		DatabaseResults results = stmt.runQuery();
 		assertTrue(results.next());
 		int colNum = results.findColumn(STRING_COLUMN);
@@ -322,7 +322,7 @@ public class DataTypeTest extends BaseCoreTest {
 		assertEquals(1, dao.create(foo));
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
-						StatementType.SELECT, noFieldTypes, noFieldTypes);
+						StatementType.SELECT, noFieldTypes);
 		DatabaseResults results = stmt.runQuery();
 		assertTrue(results.next());
 		int colNum = results.findColumn(STRING_COLUMN);
@@ -786,7 +786,7 @@ public class DataTypeTest extends BaseCoreTest {
 		assertEquals(1, dao.create(foo));
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
-						StatementType.SELECT, noFieldTypes, noFieldTypes);
+						StatementType.SELECT, noFieldTypes);
 		DatabaseResults results = stmt.runQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
@@ -809,7 +809,7 @@ public class DataTypeTest extends BaseCoreTest {
 		assertEquals(1, dao.create(foo));
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
-						StatementType.SELECT, noFieldTypes, noFieldTypes);
+						StatementType.SELECT, noFieldTypes);
 		DatabaseResults results = stmt.runQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
@@ -851,7 +851,7 @@ public class DataTypeTest extends BaseCoreTest {
 		assertEquals(1, dao.create(foo));
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
-						StatementType.SELECT, noFieldTypes, noFieldTypes);
+						StatementType.SELECT, noFieldTypes);
 		DatabaseResults results = stmt.runQuery();
 		assertTrue(results.next());
 		assertEquals(val.toString(), DataType.ENUM_STRING.resultToJava(null, results, results.findColumn(ENUM_COLUMN)));
@@ -890,7 +890,7 @@ public class DataTypeTest extends BaseCoreTest {
 		assertEquals(1, dao.create(foo));
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
-						StatementType.SELECT, noFieldTypes, noFieldTypes);
+						StatementType.SELECT, noFieldTypes);
 		DatabaseResults results = stmt.runQuery();
 		assertTrue(results.next());
 		assertEquals(val.ordinal(), DataType.ENUM_INTEGER.resultToJava(null, results, results.findColumn(ENUM_COLUMN)));
@@ -973,7 +973,7 @@ public class DataTypeTest extends BaseCoreTest {
 			boolean isComparable, boolean isConvertableId) throws Exception {
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
-						StatementType.SELECT, noFieldTypes, noFieldTypes);
+						StatementType.SELECT, noFieldTypes);
 		DatabaseResults results = stmt.runQuery();
 		assertTrue(results.next());
 		int colNum = results.findColumn(columnName);

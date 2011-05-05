@@ -62,8 +62,7 @@ public interface DatabaseConnection {
 	/**
 	 * Compile and prepare the SQL statement for execution.
 	 */
-	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argfieldTypes,
-			FieldType[] resultfieldTypes) throws SQLException;
+	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argfieldTypes) throws SQLException;
 
 	/**
 	 * Perform a SQL insert with the associated SQL statement, arguments, and types.

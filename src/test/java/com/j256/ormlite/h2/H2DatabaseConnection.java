@@ -58,8 +58,7 @@ public class H2DatabaseConnection implements DatabaseConnection {
 		connection.rollback(savePoint);
 	}
 
-	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argFieldTypes,
-			FieldType[] resultfieldTypes) throws SQLException {
+	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argFieldTypes) throws SQLException {
 		return new H2CompiledStatement(connection.prepareStatement(statement, ResultSet.TYPE_FORWARD_ONLY,
 				ResultSet.CONCUR_READ_ONLY));
 	}
