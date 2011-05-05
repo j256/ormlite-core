@@ -181,8 +181,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
 		final CompiledStatement stmt = createMock(CompiledStatement.class);
 		expect(
-				conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class),
-						isA(FieldType[].class))).andAnswer(new IAnswer<CompiledStatement>() {
+				conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class))).andAnswer(new IAnswer<CompiledStatement>() {
 			private int stmtC = 0;
 			public CompiledStatement answer() throws Throwable {
 				Object[] args = EasyMock.getCurrentArguments();
@@ -220,8 +219,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
 		final CompiledStatement stmt = createMock(CompiledStatement.class);
 		expect(
-				conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class),
-						isA(FieldType[].class))).andAnswer(new IAnswer<CompiledStatement>() {
+				conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class))).andAnswer(new IAnswer<CompiledStatement>() {
 			private int stmtC = 0;
 			public CompiledStatement answer() throws Throwable {
 				Object[] args = EasyMock.getCurrentArguments();
@@ -396,18 +394,15 @@ public class TableUtilsTest extends BaseCoreTest {
 		final AtomicInteger rowC = new AtomicInteger(1);
 		if (throwExecute) {
 			expect(
-					conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class),
-							isA(FieldType[].class))).andThrow(new SQLException("you asked us to!!"));
+					conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class))).andThrow(new SQLException("you asked us to!!"));
 		} else {
 			expect(
-					conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class),
-							isA(FieldType[].class))).andReturn(stmt);
+					conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class))).andReturn(stmt);
 			expect(stmt.runUpdate()).andReturn(rowN);
 			stmt.close();
 			if (queryAfter != null) {
 				expect(
-						conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class),
-								isA(FieldType[].class))).andReturn(stmt);
+						conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class))).andReturn(stmt);
 				results = createMock(DatabaseResults.class);
 				expect(results.next()).andReturn(false);
 				expect(stmt.runQuery()).andReturn(results);
