@@ -33,24 +33,6 @@ public abstract class BaseMappedStatement<T, ID> {
 	}
 
 	/**
-	 * Insert the object into the database
-	 */
-	protected int insert(DatabaseConnection databaseConnection, T data) throws SQLException {
-		try {
-			Object[] args = getFieldObjects(data);
-			int rowC = databaseConnection.insert(statement, args, argFieldTypes);
-			logger.debug("insert data with statement '{}' and {} args, changed {} rows", statement, args.length, rowC);
-			if (args.length > 0) {
-				// need to do the (Object) cast to force args to be a single object
-				logger.trace("insert arguments: {}", (Object) args);
-			}
-			return rowC;
-		} catch (SQLException e) {
-			throw SqlExceptionUtil.create("Unable to run insert stmt on object " + data + ": " + statement, e);
-		}
-	}
-
-	/**
 	 * Update the object in the database.
 	 */
 	public int update(DatabaseConnection databaseConnection, T data) throws SQLException {

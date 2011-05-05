@@ -29,7 +29,6 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 	/**
 	 * Create an object in the database.
 	 */
-	@Override
 	public int insert(DatabaseConnection databaseConnection, T data) throws SQLException {
 		if (idField != null) {
 			if (idField.isSelfGeneratedId()) {
@@ -44,7 +43,19 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 				// the id should have been set by the caller already
 			}
 		}
-		return super.insert(databaseConnection, data);
+
+		try {
+			Object[] args = getFieldObjects(data);
+			int rowC = databaseConnection.insert(statement, args, argFieldTypes);
+			logger.debug("insert data with statement '{}' and {} args, changed {} rows", statement, args.length, rowC);
+			if (args.length > 0) {
+				// need to do the (Object) cast to force args to be a single object
+				logger.trace("insert arguments: {}", (Object) args);
+			}
+			return rowC;
+		} catch (SQLException e) {
+			throw SqlExceptionUtil.create("Unable to run insert stmt on object " + data + ": " + statement, e);
+		}
 	}
 
 	public static <T, ID> MappedCreate<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo) {
