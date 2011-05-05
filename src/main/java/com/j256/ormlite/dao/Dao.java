@@ -268,8 +268,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * 
 	 * <p>
 	 * <b>WARNING</b>: The underlying results object will only be closed if you page all the way to the end of the
-	 * iterator using the for() loop or if you call {@link SelectIterator#close()} directly. It is also closed when it
-	 * is garbage collected but this is considered bad form.
+	 * iterator using the for() loop or if you call {@link SelectIterator#close()} directly.
 	 * </p>
 	 * 
 	 * @return An iterator of the class that uses SQL to step across the database table.
