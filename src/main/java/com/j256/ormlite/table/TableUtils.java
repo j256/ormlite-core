@@ -248,11 +248,14 @@ public class TableUtils {
 		databaseType.appendEscapedEntityName(sb, tableName);
 		String statement = sb.toString();
 		logger.info("clearing table '{}' with '{}", tableName, statement);
+		CompiledStatement compiledStmt = null;
 		try {
-			CompiledStatement stmt =
-					connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes);
-			return stmt.runExecute();
+			compiledStmt = connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes);
+			return compiledStmt.runExecute();
 		} finally {
+			if (compiledStmt != null) {
+				compiledStmt.close();
+			}
 			connectionSource.releaseConnection(connection);
 		}
 	}
@@ -435,10 +438,10 @@ public class TableUtils {
 		int stmtC = 0;
 		for (String statement : statements) {
 			int rowC = 0;
-			CompiledStatement prepStmt = null;
+			CompiledStatement compiledStmt = null;
 			try {
-				prepStmt = connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes);
-				rowC = prepStmt.runUpdate();
+				compiledStmt = connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes);
+				rowC = compiledStmt.runUpdate();
 				logger.info("executed {} table statement changed {} rows: {}", label, rowC, statement);
 			} catch (SQLException e) {
 				if (ignoreErrors) {
@@ -447,8 +450,8 @@ public class TableUtils {
 					throw SqlExceptionUtil.create("SQL statement failed: " + statement, e);
 				}
 			} finally {
-				if (prepStmt != null) {
-					prepStmt.close();
+				if (compiledStmt != null) {
+					compiledStmt.close();
 				}
 			}
 			// sanity check
@@ -468,11 +471,10 @@ public class TableUtils {
 		int stmtC = 0;
 		// now execute any test queries which test the newly created table
 		for (String query : queriesAfter) {
-			CompiledStatement prepStmt = null;
-			DatabaseResults results = null;
+			CompiledStatement compiledStmt = null;
 			try {
-				prepStmt = connection.compileStatement(query, StatementType.EXECUTE, noFieldTypes);
-				results = prepStmt.runQuery();
+				compiledStmt = connection.compileStatement(query, StatementType.EXECUTE, noFieldTypes);
+				DatabaseResults results = compiledStmt.runQuery();
 				int rowC = 0;
 				// count the results
 				while (results.next()) {
@@ -484,8 +486,8 @@ public class TableUtils {
 				throw SqlExceptionUtil.create("executing create table after-query failed: " + query, e);
 			} finally {
 				// result set is closed by the statement being closed
-				if (prepStmt != null) {
-					prepStmt.close();
+				if (compiledStmt != null) {
+					compiledStmt.close();
 				}
 			}
 			stmtC++;

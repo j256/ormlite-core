@@ -37,31 +37,39 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 
 	public CompiledStatement compile(DatabaseConnection databaseConnection) throws SQLException {
 		CompiledStatement stmt = databaseConnection.compileStatement(statement, type, argFieldTypes);
-		if (limit != null) {
-			// we use this if SQL statement LIMITs are not supported by this database type
-			stmt.setMaxRows(limit);
-		}
-		// set any arguments if we are logging our object
-		Object[] argValues = null;
-		if (logger.isLevelEnabled(Level.TRACE) && argHolders.length > 0) {
-			argValues = new Object[argHolders.length];
-		}
-		for (int i = 0; i < argHolders.length; i++) {
-			Object argValue = argHolders[i].getSqlArgValue();
-			if (argValue == null) {
-				stmt.setNull(i, argFieldTypes[i].getSqlType());
-			} else {
-				stmt.setObject(i, argValue, argFieldTypes[i].getSqlType());
+		boolean ok = false;
+		try {
+			if (limit != null) {
+				// we use this if SQL statement LIMITs are not supported by this database type
+				stmt.setMaxRows(limit);
 			}
+			// set any arguments if we are logging our object
+			Object[] argValues = null;
+			if (logger.isLevelEnabled(Level.TRACE) && argHolders.length > 0) {
+				argValues = new Object[argHolders.length];
+			}
+			for (int i = 0; i < argHolders.length; i++) {
+				Object argValue = argHolders[i].getSqlArgValue();
+				if (argValue == null) {
+					stmt.setNull(i, argFieldTypes[i].getSqlType());
+				} else {
+					stmt.setObject(i, argValue, argFieldTypes[i].getSqlType());
+				}
+				if (argValues != null) {
+					argValues[i] = argValue;
+				}
+			}
+			logger.debug("prepared statement '{}' with {} args", statement, argHolders.length);
 			if (argValues != null) {
-				argValues[i] = argValue;
+				// need to do the (Object) cast to force args to be a single object
+				logger.trace("prepared statement arguments: {}", (Object) argValues);
+			}
+			ok = true;
+			return stmt;
+		} finally {
+			if (!ok) {
+				stmt.close();
 			}
 		}
-		logger.debug("prepared statement '{}' with {} args", statement, argHolders.length);
-		if (argValues != null) {
-			// need to do the (Object) cast to force args to be a single object
-			logger.trace("prepared statement arguments: {}", (Object) argValues);
-		}
-		return stmt;
 	}
 }
