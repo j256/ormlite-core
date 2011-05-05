@@ -186,7 +186,7 @@ public class TableUtilsTest extends BaseCoreTest {
 			public CompiledStatement answer() throws Throwable {
 				Object[] args = EasyMock.getCurrentArguments();
 				assertNotNull(args);
-				assertEquals(4, args.length);
+				assertEquals(3, args.length);
 				if (stmtC == 0) {
 					assertEquals("CREATE TABLE `index` (`stuff` VARCHAR(255) ) ", args[0]);
 				} else if (stmtC == 1) {
@@ -197,7 +197,6 @@ public class TableUtilsTest extends BaseCoreTest {
 				stmtC++;
 				assertEquals(StatementType.EXECUTE, args[1]);
 				assertEquals(0, ((FieldType[]) args[2]).length);
-				assertEquals(0, ((FieldType[]) args[3]).length);
 				return stmt;
 			}
 		}).anyTimes();
@@ -224,7 +223,7 @@ public class TableUtilsTest extends BaseCoreTest {
 			public CompiledStatement answer() throws Throwable {
 				Object[] args = EasyMock.getCurrentArguments();
 				assertNotNull(args);
-				assertEquals(4, args.length);
+				assertEquals(3, args.length);
 				if (stmtC == 0) {
 					assertEquals("CREATE TABLE `comboindex` (`stuff` VARCHAR(255) , `junk` BIGINT ) ", args[0]);
 				} else if (stmtC == 1) {
@@ -236,7 +235,6 @@ public class TableUtilsTest extends BaseCoreTest {
 				stmtC++;
 				assertEquals(StatementType.EXECUTE, args[1]);
 				assertEquals(0, ((FieldType[]) args[2]).length);
-				assertEquals(0, ((FieldType[]) args[3]).length);
 				return stmt;
 			}
 		}).anyTimes();
