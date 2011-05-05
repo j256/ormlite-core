@@ -152,7 +152,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	public RawResults queryForAllRawOld(ConnectionSource connectionSource, String query) throws SQLException {
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		CompiledStatement compiledStatement =
-				connection.compileStatement(query, StatementType.SELECT, noFieldTypes, tableInfo.getFieldTypes());
+				connection.compileStatement(query, StatementType.SELECT, noFieldTypes);
 		try {
 			String[] columnNames = extractColumnNames(compiledStatement);
 			RawResultsWrapper rawResults =
@@ -192,7 +192,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		logger.debug("executing raw results iterator for: {}", query);
 		CompiledStatement compiledStatement =
-				connection.compileStatement(query, StatementType.SELECT, noFieldTypes, tableInfo.getFieldTypes());
+				connection.compileStatement(query, StatementType.SELECT, noFieldTypes);
 		try {
 			String[] columnNames = extractColumnNames(compiledStatement);
 			RawResultsWrapper rawResults =
@@ -218,7 +218,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			logger.trace("query arguments: {}", (Object) arguments);
 		}
 		CompiledStatement compiledStatement =
-				connection.compileStatement(query, StatementType.SELECT, noFieldTypes, tableInfo.getFieldTypes());
+				connection.compileStatement(query, StatementType.SELECT, noFieldTypes);
 		try {
 			assignStatementArguments(compiledStatement, arguments);
 			String[] columnNames = extractColumnNames(compiledStatement);
@@ -246,7 +246,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			logger.trace("query arguments: {}", (Object) arguments);
 		}
 		CompiledStatement compiledStatement =
-				connection.compileStatement(query, StatementType.SELECT, noFieldTypes, tableInfo.getFieldTypes());
+				connection.compileStatement(query, StatementType.SELECT, noFieldTypes);
 		try {
 			assignStatementArguments(compiledStatement, arguments);
 			String[] columnNames = extractColumnNames(compiledStatement);
@@ -274,7 +274,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			logger.trace("query arguments: {}", (Object) arguments);
 		}
 		CompiledStatement compiledStatement =
-				connection.compileStatement(query, StatementType.SELECT, noFieldTypes, tableInfo.getFieldTypes());
+				connection.compileStatement(query, StatementType.SELECT, noFieldTypes);
 		try {
 			assignStatementArguments(compiledStatement, arguments);
 			String[] columnNames = extractColumnNames(compiledStatement);
@@ -301,7 +301,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			logger.trace("update arguments: {}", (Object) arguments);
 		}
 		CompiledStatement compiledStatement =
-				connection.compileStatement(statement, StatementType.UPDATE, noFieldTypes, tableInfo.getFieldTypes());
+				connection.compileStatement(statement, StatementType.UPDATE, noFieldTypes);
 		try {
 			assignStatementArguments(compiledStatement, arguments);
 			return compiledStatement.runUpdate();
@@ -323,7 +323,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			logger.trace("execute arguments: {}", (Object) arguments);
 		}
 		CompiledStatement compiledStatement =
-				connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes, tableInfo.getFieldTypes());
+				connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes);
 		try {
 			assignStatementArguments(compiledStatement, arguments);
 			return compiledStatement.runExecute();
@@ -434,21 +434,20 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 * Call batch tasks insude of a connection which may, or may not, have been "saved".
 	 */
 	public <CT> CT callBatchTasks(DatabaseConnection connection, boolean saved, Callable<CT> callable) throws Exception {
+		if (databaseType.isBatchUseTransaction()) {
+			return TransactionManager.callInTransaction(connection, saved, databaseType, callable);
+		}
 		boolean autoCommitAtStart = false;
 		try {
-			if (databaseType.isBatchUseTransaction()) {
-				return TransactionManager.callInTransaction(connection, saved, databaseType, callable);
-			} else {
-				if (connection.isAutoCommitSupported()) {
-					autoCommitAtStart = connection.getAutoCommit();
-					if (autoCommitAtStart) {
-						// disable auto-commit mode if supported and enabled at start
-						connection.setAutoCommit(false);
-						logger.debug("disabled auto-commit on table {} before batch tasks", tableInfo.getTableName());
-					}
+			if (connection.isAutoCommitSupported()) {
+				autoCommitAtStart = connection.getAutoCommit();
+				if (autoCommitAtStart) {
+					// disable auto-commit mode if supported and enabled at start
+					connection.setAutoCommit(false);
+					logger.debug("disabled auto-commit on table {} before batch tasks", tableInfo.getTableName());
 				}
-				return callable.call();
 			}
+			return callable.call();
 		} finally {
 			if (autoCommitAtStart) {
 				// try to restore if we are in auto-commit mode
