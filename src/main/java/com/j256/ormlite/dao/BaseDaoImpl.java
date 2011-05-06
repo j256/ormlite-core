@@ -313,7 +313,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	public int delete(Collection<T> datas) throws SQLException {
 		checkForInitialized();
 		// ignore deleting a null object
-		if (datas == null || datas.size() == 0) {
+		if (datas == null || datas.isEmpty()) {
 			return 0;
 		} else {
 			DatabaseConnection connection = connectionSource.getReadWriteConnection();
@@ -328,7 +328,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	public int deleteIds(Collection<ID> ids) throws SQLException {
 		checkForInitialized();
 		// ignore deleting a null object
-		if (ids == null || ids.size() == 0) {
+		if (ids == null || ids.isEmpty()) {
 			return 0;
 		} else {
 			DatabaseConnection connection = connectionSource.getReadWriteConnection();

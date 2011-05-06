@@ -222,7 +222,7 @@ public class DatabaseTableConfig<T> {
 				}
 			}
 		}
-		if (fieldTypes.size() == 0) {
+		if (fieldTypes.isEmpty()) {
 			throw new IllegalArgumentException("No fields have a " + DatabaseField.class.getSimpleName()
 					+ " annotation in " + clazz);
 		}
@@ -243,7 +243,7 @@ public class DatabaseTableConfig<T> {
 			FieldType fieldType = new FieldType(connectionSource, tableName, field, fieldConfig, dataClass);
 			fieldTypes.add(fieldType);
 		}
-		if (fieldTypes.size() == 0) {
+		if (fieldTypes.isEmpty()) {
 			throw new SQLException("No fields were configured for class " + dataClass);
 		}
 		return fieldTypes.toArray(new FieldType[fieldTypes.size()]);

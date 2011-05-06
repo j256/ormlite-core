@@ -317,7 +317,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	private void appendGroupBys(StringBuilder sb) {
-		if ((groupByList == null || groupByList.size() == 0) && groupByRaw == null) {
+		if ((groupByList == null || groupByList.isEmpty()) && groupByRaw == null) {
 			return;
 		}
 
@@ -339,7 +339,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	private void appendOrderBys(StringBuilder sb) throws SQLException {
-		if ((orderByList == null || orderByList.size() == 0) && orderByRaw == null) {
+		if ((orderByList == null || orderByList.isEmpty()) && orderByRaw == null) {
 			return;
 		}
 

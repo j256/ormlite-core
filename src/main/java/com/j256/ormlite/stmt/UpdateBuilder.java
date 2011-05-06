@@ -111,7 +111,7 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 
 	@Override
 	protected void appendStatementStart(StringBuilder sb, List<ArgumentHolder> argList) throws SQLException {
-		if (updateClauseList == null || updateClauseList.size() == 0) {
+		if (updateClauseList == null || updateClauseList.isEmpty()) {
 			throw new IllegalArgumentException("UPDATE statements must have at least one SET column");
 		}
 		sb.append("UPDATE ");
