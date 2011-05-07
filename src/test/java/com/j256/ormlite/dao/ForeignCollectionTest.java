@@ -333,12 +333,12 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		RecursiveReference rr1 = new RecursiveReference();
 		rr1.stuff = "fpeewihwhgwofjwe";
 		assertEquals(1, dao.create(rr1));
-		
+
 		RecursiveReference rr2 = new RecursiveReference();
 		rr2.parent = rr1;
 		rr2.stuff = "fpewofjwe";
 		assertEquals(1, dao.create(rr2));
-		
+
 		RecursiveReference result = dao.queryForId(rr1.id);
 		assertNotNull(result);
 		assertNotNull(result.related);
@@ -346,6 +346,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		CloseableIterator<RecursiveReference> iterator = result.related.iterator();
 		assertTrue(iterator.hasNext());
 		assertEquals(rr2.stuff, iterator.next().stuff);
+		iterator.close();
 	}
 
 	protected static class Account {

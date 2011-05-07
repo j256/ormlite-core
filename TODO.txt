@@ -32,6 +32,8 @@
 - test QueryBuilder.groupBy() in field and raw form
 	- org.h2.jdbc.JdbcSQLException: Column "FOO.ID" must be in the GROUP BY list; SQL statement:
 
+- add in a bulk insert which will compile the insert statement and just set args for each entry
+
 -----------------------------------------------------------------------------------------------------------------------------------
 
 - for objects that a user does not have control over, how about the ability of defining a Method to construct a particular class

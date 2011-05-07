@@ -15,6 +15,7 @@ import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.ArgumentHolder;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.CompiledStatement;
+import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.TableInfo;
@@ -35,14 +36,21 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 				new MappedPreparedStmt<LocalFoo, Integer>(tableInfo, null, new FieldType[0], tableInfo.getFieldTypes(),
 						new ArgumentHolder[0], null, StatementType.SELECT);
 
-		CompiledStatement stmt =
-				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
-						StatementType.SELECT, new FieldType[0]);
+		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
+		CompiledStatement stmt = null;
+		try {
+			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, new FieldType[0]);
 
-		DatabaseResults results = stmt.runQuery();
-		while (results.next()) {
-			LocalFoo foo2 = rowMapper.mapRow(results);
-			assertEquals(foo1.id, foo2.id);
+			DatabaseResults results = stmt.runQuery();
+			while (results.next()) {
+				LocalFoo foo2 = rowMapper.mapRow(results);
+				assertEquals(foo1.id, foo2.id);
+			}
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+			connectionSource.releaseConnection(conn);
 		}
 	}
 
@@ -74,9 +82,10 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 
 	private void checkResults(List<LocalFoo> foos, MappedPreparedStmt<LocalFoo, Integer> preparedQuery, int expectedNum)
 			throws SQLException {
+		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
 		CompiledStatement stmt = null;
 		try {
-			stmt = preparedQuery.compile(connectionSource.getReadOnlyConnection());
+			stmt = preparedQuery.compile(conn);
 			DatabaseResults results = stmt.runQuery();
 			int fooC = 0;
 			while (results.next()) {
@@ -89,6 +98,7 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 			if (stmt != null) {
 				stmt.close();
 			}
+			connectionSource.releaseConnection(conn);
 		}
 	}
 

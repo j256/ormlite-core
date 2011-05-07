@@ -32,6 +32,7 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableUtils;
@@ -78,8 +79,13 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		foo.equal = equal;
 		assertEquals(1, dao.create(foo));
 
-		connectionSource.getReadOnlyConnection().close();
-		dao.queryForId(id);
+		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		try {
+			conn.close();
+			dao.queryForId(id);
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test
@@ -138,8 +144,13 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Foo foo = new Foo();
 		foo.id = "stuff";
 		assertEquals(1, dao.create(foo));
-		connectionSource.getReadWriteConnection().close();
-		assertEquals(1, dao.update(foo));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		try {
+			conn.close();
+			assertEquals(1, dao.update(foo));
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test
@@ -173,8 +184,13 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Foo foo = new Foo();
 		foo.id = "stuff";
 		assertEquals(1, dao.create(foo));
-		connectionSource.getReadWriteConnection().close();
-		assertEquals(1, dao.updateId(foo, "new id"));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		try {
+			conn.close();
+			assertEquals(1, dao.updateId(foo, "new id"));
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test
@@ -226,10 +242,15 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Foo foo = new Foo();
 		foo.id = "stuff";
 		assertEquals(1, dao.create(foo));
-		connectionSource.getReadWriteConnection().close();
-		UpdateBuilder<Foo, String> ub = dao.updateBuilder();
-		ub.updateColumnValue(Foo.EQUAL_COLUMN_NAME, 1);
-		assertEquals(1, dao.update(ub.prepare()));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		try {
+			conn.close();
+			UpdateBuilder<Foo, String> ub = dao.updateBuilder();
+			ub.updateColumnValue(Foo.EQUAL_COLUMN_NAME, 1);
+			assertEquals(1, dao.update(ub.prepare()));
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test
@@ -251,8 +272,13 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Foo foo = new Foo();
 		foo.id = "stuff";
 		assertEquals(1, dao.create(foo));
-		connectionSource.getReadWriteConnection().close();
-		dao.delete(foo);
+		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		try {
+			conn.close();
+			dao.delete(foo);
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test
@@ -302,10 +328,15 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Foo foo = new Foo();
 		foo.id = "stuff";
 		assertEquals(1, dao.create(foo));
-		connectionSource.getReadWriteConnection().close();
-		List<Foo> foos = new ArrayList<Foo>();
-		foos.add(foo);
-		dao.delete(foos);
+		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		try {
+			conn.close();
+			List<Foo> foos = new ArrayList<Foo>();
+			foos.add(foo);
+			dao.delete(foos);
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test
@@ -367,10 +398,15 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Foo foo = new Foo();
 		foo.id = "stuff";
 		assertEquals(1, dao.create(foo));
-		connectionSource.getReadWriteConnection().close();
-		List<String> foos = new ArrayList<String>();
-		foos.add(foo.id);
-		dao.deleteIds(foos);
+		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		try {
+			conn.close();
+			List<String> foos = new ArrayList<String>();
+			foos.add(foo.id);
+			dao.deleteIds(foos);
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test
@@ -420,9 +456,15 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		String id = "stuff";
 		foo.id = id;
 		assertEquals(1, dao.create(foo));
-		connectionSource.getReadOnlyConnection().close();
-		dao.delete(dao.deleteBuilder().prepare());
+		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		try {
+			conn.close();
+			dao.delete(dao.deleteBuilder().prepare());
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
 	}
+
 	@Test
 	public void testRefresh() throws Exception {
 		Dao<Foo, String> dao = createDao(Foo.class, true);
@@ -452,8 +494,13 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Foo foo = new Foo();
 		foo.id = "stuff";
 		assertEquals(1, dao.create(foo));
-		connectionSource.getReadWriteConnection().close();
-		dao.refresh(foo);
+		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		try {
+			conn.close();
+			dao.refresh(foo);
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test
@@ -523,8 +570,13 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		foo.equal = equal;
 		assertEquals(1, dao.create(foo));
 
-		connectionSource.getReadOnlyConnection().close();
-		dao.queryForFirst(dao.queryBuilder().prepare());
+		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		try {
+			conn.close();
+			dao.queryForFirst(dao.queryBuilder().prepare());
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test
@@ -671,8 +723,13 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		String id = "stuff";
 		foo.id = id;
 		assertEquals(1, dao.create(foo));
-		connectionSource.getReadOnlyConnection().close();
-		dao.iterator();
+		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		try {
+			conn.close();
+			dao.iterator();
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test(expected = IllegalStateException.class)
@@ -715,8 +772,13 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		String id = "stuff";
 		foo.id = id;
 		assertEquals(1, dao.create(foo));
-		connectionSource.getReadOnlyConnection().close();
-		dao.iterator(dao.queryBuilder().prepare());
+		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		try {
+			conn.close();
+			dao.iterator(dao.queryBuilder().prepare());
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test(expected = IllegalStateException.class)
@@ -796,8 +858,13 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		foo.equal = equal;
 		assertEquals(1, dao.create(foo));
 
-		connectionSource.getReadOnlyConnection().close();
-		dao.iteratorRaw("SELECT * FROM FOO");
+		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		try {
+			conn.close();
+			dao.iteratorRaw("SELECT * FROM FOO");
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test
@@ -840,8 +907,13 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		String id = "stuff";
 		foo.id = id;
 		assertEquals(1, dao.create(foo));
-		connectionSource.getReadOnlyConnection().close();
-		dao.queryRaw("SELECT * FROM FOO");
+		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		try {
+			conn.close();
+			dao.queryRaw("SELECT * FROM FOO");
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test
@@ -921,8 +993,13 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		String id = "stuff";
 		foo.id = id;
 		assertEquals(1, dao.create(foo));
-		connectionSource.getReadOnlyConnection().close();
-		dao.queryRaw("SELECT * FROM FOO", new DataType[0]);
+		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		try {
+			conn.close();
+			dao.queryRaw("SELECT * FROM FOO", new DataType[0]);
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test
@@ -1001,12 +1078,17 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		String id = "stuff";
 		foo.id = id;
 		assertEquals(1, dao.create(foo));
-		connectionSource.getReadOnlyConnection().close();
-		dao.queryRaw("SELECT * FROM FOO", new RawRowMapper<Foo>() {
-			public Foo mapRow(String[] columnNames, String[] resultColumns) throws SQLException {
-				return null;
-			}
-		});
+		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		try {
+			conn.close();
+			dao.queryRaw("SELECT * FROM FOO", new RawRowMapper<Foo>() {
+				public Foo mapRow(String[] columnNames, String[] resultColumns) throws SQLException {
+					return null;
+				}
+			});
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test
@@ -1069,8 +1151,13 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		String id = "stuff";
 		foo.id = id;
 		assertEquals(1, dao.create(foo));
-		connectionSource.getReadOnlyConnection().close();
-		dao.isTableExists();
+		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		try {
+			conn.close();
+			dao.isTableExists();
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test(expected = IllegalStateException.class)
@@ -1125,8 +1212,13 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		String id = "stuff";
 		foo.id = id;
 		assertEquals(1, dao.create(foo));
-		connectionSource.getReadOnlyConnection().close();
-		dao.updateRaw("DELETE FROM FOO");
+		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		try {
+			conn.close();
+			dao.updateRaw("DELETE FROM FOO");
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test
@@ -1153,8 +1245,13 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		String id = "stuff";
 		foo.id = id;
 		assertEquals(1, dao.create(foo));
-		connectionSource.getReadOnlyConnection().close();
-		dao.executeRaw("TRUNCATE TABLE FOO");
+		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		try {
+			conn.close();
+			dao.executeRaw("TRUNCATE TABLE FOO");
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test

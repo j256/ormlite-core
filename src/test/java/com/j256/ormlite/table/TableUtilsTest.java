@@ -180,26 +180,26 @@ public class TableUtilsTest extends BaseCoreTest {
 		DatabaseConnection conn = createMock(DatabaseConnection.class);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
 		final CompiledStatement stmt = createMock(CompiledStatement.class);
-		expect(
-				conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class))).andAnswer(new IAnswer<CompiledStatement>() {
-			private int stmtC = 0;
-			public CompiledStatement answer() throws Throwable {
-				Object[] args = EasyMock.getCurrentArguments();
-				assertNotNull(args);
-				assertEquals(3, args.length);
-				if (stmtC == 0) {
-					assertEquals("CREATE TABLE `index` (`stuff` VARCHAR(255) ) ", args[0]);
-				} else if (stmtC == 1) {
-					assertEquals("CREATE INDEX `index_stuff_idx` ON `index` ( `stuff` )", args[0]);
-				} else {
-					fail("Should only be called twice");
-				}
-				stmtC++;
-				assertEquals(StatementType.EXECUTE, args[1]);
-				assertEquals(0, ((FieldType[]) args[2]).length);
-				return stmt;
-			}
-		}).anyTimes();
+		expect(conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class))).andAnswer(
+				new IAnswer<CompiledStatement>() {
+					private int stmtC = 0;
+					public CompiledStatement answer() throws Throwable {
+						Object[] args = EasyMock.getCurrentArguments();
+						assertNotNull(args);
+						assertEquals(3, args.length);
+						if (stmtC == 0) {
+							assertEquals("CREATE TABLE `index` (`stuff` VARCHAR(255) ) ", args[0]);
+						} else if (stmtC == 1) {
+							assertEquals("CREATE INDEX `index_stuff_idx` ON `index` ( `stuff` )", args[0]);
+						} else {
+							fail("Should only be called twice");
+						}
+						stmtC++;
+						assertEquals(StatementType.EXECUTE, args[1]);
+						assertEquals(0, ((FieldType[]) args[2]).length);
+						return stmt;
+					}
+				}).anyTimes();
 		expect(stmt.runUpdate()).andReturn(0).anyTimes();
 		connectionSource.releaseConnection(conn);
 		expectLastCall().anyTimes();
@@ -217,27 +217,28 @@ public class TableUtilsTest extends BaseCoreTest {
 		DatabaseConnection conn = createMock(DatabaseConnection.class);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
 		final CompiledStatement stmt = createMock(CompiledStatement.class);
-		expect(
-				conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class))).andAnswer(new IAnswer<CompiledStatement>() {
-			private int stmtC = 0;
-			public CompiledStatement answer() throws Throwable {
-				Object[] args = EasyMock.getCurrentArguments();
-				assertNotNull(args);
-				assertEquals(3, args.length);
-				if (stmtC == 0) {
-					assertEquals("CREATE TABLE `comboindex` (`stuff` VARCHAR(255) , `junk` BIGINT ) ", args[0]);
-				} else if (stmtC == 1) {
-					assertEquals("CREATE INDEX `" + ComboIndex.INDEX_NAME + "` ON `comboindex` ( `stuff`, `junk` )",
-							args[0]);
-				} else {
-					fail("Should only be called twice");
-				}
-				stmtC++;
-				assertEquals(StatementType.EXECUTE, args[1]);
-				assertEquals(0, ((FieldType[]) args[2]).length);
-				return stmt;
-			}
-		}).anyTimes();
+		expect(conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class))).andAnswer(
+				new IAnswer<CompiledStatement>() {
+					private int stmtC = 0;
+					public CompiledStatement answer() throws Throwable {
+						Object[] args = EasyMock.getCurrentArguments();
+						assertNotNull(args);
+						assertEquals(3, args.length);
+						if (stmtC == 0) {
+							assertEquals("CREATE TABLE `comboindex` (`stuff` VARCHAR(255) , `junk` BIGINT ) ", args[0]);
+						} else if (stmtC == 1) {
+							assertEquals("CREATE INDEX `" + ComboIndex.INDEX_NAME
+									+ "` ON `comboindex` ( `stuff`, `junk` )", args[0]);
+						} else {
+							fail("Should only be called twice");
+						}
+						stmtC++;
+						assertEquals(StatementType.EXECUTE, args[1]);
+						assertEquals(0, ((FieldType[]) args[2]).length);
+						return stmt;
+					}
+				})
+				.anyTimes();
 		expect(stmt.runUpdate()).andReturn(0).anyTimes();
 		connectionSource.releaseConnection(conn);
 		expectLastCall().anyTimes();
@@ -391,16 +392,16 @@ public class TableUtilsTest extends BaseCoreTest {
 		DatabaseResults results = null;
 		final AtomicInteger rowC = new AtomicInteger(1);
 		if (throwExecute) {
-			expect(
-					conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class))).andThrow(new SQLException("you asked us to!!"));
+			expect(conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class))).andThrow(
+					new SQLException("you asked us to!!"));
 		} else {
-			expect(
-					conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class))).andReturn(stmt);
+			expect(conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class))).andReturn(
+					stmt);
 			expect(stmt.runUpdate()).andReturn(rowN);
 			stmt.close();
 			if (queryAfter != null) {
-				expect(
-						conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class))).andReturn(stmt);
+				expect(conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class))).andReturn(
+						stmt);
 				results = createMock(DatabaseResults.class);
 				expect(results.next()).andReturn(false);
 				expect(stmt.runQuery()).andReturn(results);

@@ -4,10 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.sql.SQLException;
-import java.util.Iterator;
 
 import org.junit.Test;
 
+import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.stmt.BaseCoreStmtTest;
@@ -51,7 +51,7 @@ public class MappedQueryForIdTest extends BaseCoreStmtTest {
 			reserved.group = group;
 			reservedDao.update(reserved);
 		}
-		Iterator<ReservedField> reservedIterator = reservedDao.iterator();
+		CloseableIterator<ReservedField> reservedIterator = reservedDao.iterator();
 		while (reservedIterator.hasNext()) {
 			ReservedField reserved = reservedIterator.next();
 			assertEquals(from, reserved.from);
@@ -59,6 +59,7 @@ public class MappedQueryForIdTest extends BaseCoreStmtTest {
 			reservedIterator.remove();
 		}
 		assertEquals(0, reservedDao.queryForAll().size());
+		reservedIterator.close();
 	}
 
 	@Test

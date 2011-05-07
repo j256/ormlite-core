@@ -69,7 +69,11 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 	public void testIteratorRemoveNoNext() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
 		CloseableIterator<Foo> iterator = dao.iterator();
-		iterator.remove();
+		try {
+			iterator.remove();
+		} finally {
+			iterator.close();
+		}
 	}
 
 	@Test
@@ -92,6 +96,7 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 		assertNull(iterator.next());
 
 		assertEquals(0, dao.queryForAll().size());
+		iterator.close();
 	}
 
 	@Test
@@ -129,6 +134,7 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 		SelectIterator<Foo, String> iterator = (SelectIterator<Foo, String>) dao.iterator();
 		DatabaseResults results = iterator.getRawResults();
 		assertTrue(results.next());
+		iterator.close();
 	}
 
 	@Test(expected = IllegalStateException.class)
@@ -141,9 +147,12 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 
 		GenericRawResults<String[]> rawResults = dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + " FROM FOO");
 		CloseableIterator<String[]> iterator = rawResults.iterator();
-
-		assertTrue(iterator.hasNext());
-		iterator.next();
-		iterator.remove();
+		try {
+			assertTrue(iterator.hasNext());
+			iterator.next();
+			iterator.remove();
+		} finally {
+			iterator.close();
+		}
 	}
 }

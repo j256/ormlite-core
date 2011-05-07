@@ -151,17 +151,21 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 */
 	public RawResults queryForAllRawOld(ConnectionSource connectionSource, String query) throws SQLException {
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
-		CompiledStatement compiledStatement =
-				connection.compileStatement(query, StatementType.SELECT, noFieldTypes);
+		CompiledStatement compiledStatement = null;
 		try {
+			compiledStatement = connection.compileStatement(query, StatementType.SELECT, noFieldTypes);
 			String[] columnNames = extractColumnNames(compiledStatement);
 			RawResultsWrapper rawResults =
 					new RawResultsWrapper(connectionSource, connection, query, compiledStatement, columnNames, this);
 			compiledStatement = null;
+			connection = null;
 			return rawResults;
 		} finally {
 			if (compiledStatement != null) {
 				compiledStatement.close();
+			}
+			if (connection != null) {
+				connectionSource.releaseConnection(connection);
 			}
 		}
 	}
@@ -181,27 +185,46 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	public SelectIterator<T, ID> buildIterator(BaseDaoImpl<T, ID> classDao, ConnectionSource connectionSource,
 			PreparedStmt<T> preparedStmt) throws SQLException {
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
-		return new SelectIterator<T, ID>(tableInfo.getDataClass(), classDao, preparedStmt, connectionSource,
-				connection, preparedStmt.compile(connection), preparedStmt.getStatement());
+		CompiledStatement compiledStatement = null;
+		try {
+			compiledStatement = preparedStmt.compile(connection);
+			SelectIterator<T, ID> iterator =
+					new SelectIterator<T, ID>(tableInfo.getDataClass(), classDao, preparedStmt, connectionSource,
+							connection, compiledStatement, preparedStmt.getStatement());
+			connection = null;
+			compiledStatement = null;
+			return iterator;
+		} finally {
+			if (compiledStatement != null) {
+				compiledStatement.close();
+			}
+			if (connection != null) {
+				connectionSource.releaseConnection(connection);
+			}
+		}
 	}
 
 	/**
 	 * Return on old RawResults object associated with an internal iterator that matches the query argument.
 	 */
 	public RawResults buildOldIterator(ConnectionSource connectionSource, String query) throws SQLException {
-		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		logger.debug("executing raw results iterator for: {}", query);
-		CompiledStatement compiledStatement =
-				connection.compileStatement(query, StatementType.SELECT, noFieldTypes);
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		CompiledStatement compiledStatement = null;
 		try {
+			compiledStatement = connection.compileStatement(query, StatementType.SELECT, noFieldTypes);
 			String[] columnNames = extractColumnNames(compiledStatement);
 			RawResultsWrapper rawResults =
 					new RawResultsWrapper(connectionSource, connection, query, compiledStatement, columnNames, this);
 			compiledStatement = null;
+			connection = null;
 			return rawResults;
 		} finally {
 			if (compiledStatement != null) {
 				compiledStatement.close();
+			}
+			if (connection != null) {
+				connectionSource.releaseConnection(connection);
 			}
 		}
 	}
@@ -211,25 +234,29 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 */
 	public GenericRawResults<String[]> queryRaw(ConnectionSource connectionSource, String query, String[] arguments)
 			throws SQLException {
-		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		logger.debug("executing raw query for: {}", query);
 		if (arguments.length > 0) {
 			// need to do the (Object) cast to force args to be a single object
 			logger.trace("query arguments: {}", (Object) arguments);
 		}
-		CompiledStatement compiledStatement =
-				connection.compileStatement(query, StatementType.SELECT, noFieldTypes);
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		CompiledStatement compiledStatement = null;
 		try {
+			compiledStatement = connection.compileStatement(query, StatementType.SELECT, noFieldTypes);
 			assignStatementArguments(compiledStatement, arguments);
 			String[] columnNames = extractColumnNames(compiledStatement);
 			GenericRawResults<String[]> rawResults =
 					new RawResultsImpl<String[]>(connectionSource, connection, query, String[].class,
 							compiledStatement, columnNames, this);
 			compiledStatement = null;
+			connection = null;
 			return rawResults;
 		} finally {
 			if (compiledStatement != null) {
 				compiledStatement.close();
+			}
+			if (connection != null) {
+				connectionSource.releaseConnection(connection);
 			}
 		}
 	}
@@ -239,25 +266,29 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 */
 	public <UO> GenericRawResults<UO> queryRaw(ConnectionSource connectionSource, String query,
 			RawRowMapper<UO> rowMapper, String[] arguments) throws SQLException {
-		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		logger.debug("executing raw query for: {}", query);
 		if (arguments.length > 0) {
 			// need to do the (Object) cast to force args to be a single object
 			logger.trace("query arguments: {}", (Object) arguments);
 		}
-		CompiledStatement compiledStatement =
-				connection.compileStatement(query, StatementType.SELECT, noFieldTypes);
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		CompiledStatement compiledStatement = null;
 		try {
+			compiledStatement = connection.compileStatement(query, StatementType.SELECT, noFieldTypes);
 			assignStatementArguments(compiledStatement, arguments);
 			String[] columnNames = extractColumnNames(compiledStatement);
 			RawResultsImpl<UO> rawResults =
 					new RawResultsImpl<UO>(connectionSource, connection, query, String[].class, compiledStatement,
 							columnNames, new UserObjectRowMapper<UO>(rowMapper, columnNames, this));
 			compiledStatement = null;
+			connection = null;
 			return rawResults;
 		} finally {
 			if (compiledStatement != null) {
 				compiledStatement.close();
+			}
+			if (connection != null) {
+				connectionSource.releaseConnection(connection);
 			}
 		}
 	}
@@ -267,25 +298,29 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 */
 	public GenericRawResults<Object[]> queryRaw(ConnectionSource connectionSource, String query,
 			DataType[] columnTypes, String[] arguments) throws SQLException {
-		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		logger.debug("executing raw query for: {}", query);
 		if (arguments.length > 0) {
 			// need to do the (Object) cast to force args to be a single object
 			logger.trace("query arguments: {}", (Object) arguments);
 		}
-		CompiledStatement compiledStatement =
-				connection.compileStatement(query, StatementType.SELECT, noFieldTypes);
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		CompiledStatement compiledStatement = null;
 		try {
+			compiledStatement = connection.compileStatement(query, StatementType.SELECT, noFieldTypes);
 			assignStatementArguments(compiledStatement, arguments);
 			String[] columnNames = extractColumnNames(compiledStatement);
 			RawResultsImpl<Object[]> rawResults =
 					new RawResultsImpl<Object[]>(connectionSource, connection, query, Object[].class,
 							compiledStatement, columnNames, new ObjectArrayRowMapper(columnTypes));
 			compiledStatement = null;
+			connection = null;
 			return rawResults;
 		} finally {
 			if (compiledStatement != null) {
 				compiledStatement.close();
+			}
+			if (connection != null) {
+				connectionSource.releaseConnection(connection);
 			}
 		}
 	}
@@ -293,8 +328,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	/**
 	 * Return the number of rows affected.
 	 */
-	public int updateRaw(ConnectionSource connectionSource, String statement, String[] arguments) throws SQLException {
-		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+	public int updateRaw(DatabaseConnection connection, String statement, String[] arguments) throws SQLException {
 		logger.debug("running raw update statement: {}", statement);
 		if (arguments.length > 0) {
 			// need to do the (Object) cast to force args to be a single object
@@ -306,17 +340,14 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			assignStatementArguments(compiledStatement, arguments);
 			return compiledStatement.runUpdate();
 		} finally {
-			if (compiledStatement != null) {
-				compiledStatement.close();
-			}
+			compiledStatement.close();
 		}
 	}
 
 	/**
 	 * Return true if it worked else false.
 	 */
-	public int executeRaw(ConnectionSource connectionSource, String statement, String[] arguments) throws SQLException {
-		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+	public int executeRaw(DatabaseConnection connection, String statement, String[] arguments) throws SQLException {
 		logger.debug("running raw execute statement: {}", statement);
 		if (arguments.length > 0) {
 			// need to do the (Object) cast to force args to be a single object
@@ -328,9 +359,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			assignStatementArguments(compiledStatement, arguments);
 			return compiledStatement.runExecute();
 		} finally {
-			if (compiledStatement != null) {
-				compiledStatement.close();
-			}
+			compiledStatement.close();
 		}
 	}
 

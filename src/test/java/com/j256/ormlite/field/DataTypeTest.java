@@ -29,6 +29,7 @@ import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.CompiledStatement;
+import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -268,13 +269,20 @@ public class DataTypeTest extends BaseCoreTest {
 		LocalString foo = new LocalString();
 		foo.string = "not a date format";
 		assertEquals(1, dao.create(foo));
-		CompiledStatement stmt =
-				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
-						StatementType.SELECT, noFieldTypes);
-		DatabaseResults results = stmt.runQuery();
-		assertTrue(results.next());
-		int colNum = results.findColumn(STRING_COLUMN);
-		DataType.DATE_STRING.resultToJava(null, results, colNum);
+		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
+		CompiledStatement stmt = null;
+		try {
+			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes);
+			DatabaseResults results = stmt.runQuery();
+			assertTrue(results.next());
+			int colNum = results.findColumn(STRING_COLUMN);
+			DataType.DATE_STRING.resultToJava(null, results, colNum);
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test(expected = SQLException.class)
@@ -320,13 +328,20 @@ public class DataTypeTest extends BaseCoreTest {
 		LocalString foo = new LocalString();
 		foo.string = "not a date format";
 		assertEquals(1, dao.create(foo));
-		CompiledStatement stmt =
-				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
-						StatementType.SELECT, noFieldTypes);
-		DatabaseResults results = stmt.runQuery();
-		assertTrue(results.next());
-		int colNum = results.findColumn(STRING_COLUMN);
-		DataType.JAVA_DATE_STRING.resultToJava(null, results, colNum);
+		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
+		CompiledStatement stmt = null;
+		try {
+			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes);
+			DatabaseResults results = stmt.runQuery();
+			assertTrue(results.next());
+			int colNum = results.findColumn(STRING_COLUMN);
+			DataType.JAVA_DATE_STRING.resultToJava(null, results, colNum);
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@SuppressWarnings("deprecation")
@@ -784,15 +799,22 @@ public class DataTypeTest extends BaseCoreTest {
 		LocalSerializable foo = new LocalSerializable();
 		foo.serializable = null;
 		assertEquals(1, dao.create(foo));
-		CompiledStatement stmt =
-				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
-						StatementType.SELECT, noFieldTypes);
-		DatabaseResults results = stmt.runQuery();
-		assertTrue(results.next());
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, TABLE_NAME, clazz.getDeclaredField(SERIALIZABLE_COLUMN),
-						clazz);
-		assertNull(DataType.SERIALIZABLE.resultToJava(fieldType, results, results.findColumn(SERIALIZABLE_COLUMN)));
+		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
+		CompiledStatement stmt = null;
+		try {
+			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes);
+			DatabaseResults results = stmt.runQuery();
+			assertTrue(results.next());
+			FieldType fieldType =
+					FieldType.createFieldType(connectionSource, TABLE_NAME,
+							clazz.getDeclaredField(SERIALIZABLE_COLUMN), clazz);
+			assertNull(DataType.SERIALIZABLE.resultToJava(fieldType, results, results.findColumn(SERIALIZABLE_COLUMN)));
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test(expected = SQLException.class)
@@ -807,15 +829,22 @@ public class DataTypeTest extends BaseCoreTest {
 		LocalByteArray foo = new LocalByteArray();
 		foo.byteField = new byte[] { 1, 2, 3, 4, 5 };
 		assertEquals(1, dao.create(foo));
-		CompiledStatement stmt =
-				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
-						StatementType.SELECT, noFieldTypes);
-		DatabaseResults results = stmt.runQuery();
-		assertTrue(results.next());
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, TABLE_NAME,
-						LocalSerializable.class.getDeclaredField(SERIALIZABLE_COLUMN), LocalSerializable.class);
-		DataType.SERIALIZABLE.resultToJava(fieldType, results, results.findColumn(BYTE_COLUMN));
+		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
+		CompiledStatement stmt = null;
+		try {
+			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes);
+			DatabaseResults results = stmt.runQuery();
+			assertTrue(results.next());
+			FieldType fieldType =
+					FieldType.createFieldType(connectionSource, TABLE_NAME,
+							LocalSerializable.class.getDeclaredField(SERIALIZABLE_COLUMN), LocalSerializable.class);
+			DataType.SERIALIZABLE.resultToJava(fieldType, results, results.findColumn(BYTE_COLUMN));
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test
@@ -849,12 +878,20 @@ public class DataTypeTest extends BaseCoreTest {
 		LocalEnumString foo = new LocalEnumString();
 		foo.ourEnum = val;
 		assertEquals(1, dao.create(foo));
-		CompiledStatement stmt =
-				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
-						StatementType.SELECT, noFieldTypes);
-		DatabaseResults results = stmt.runQuery();
-		assertTrue(results.next());
-		assertEquals(val.toString(), DataType.ENUM_STRING.resultToJava(null, results, results.findColumn(ENUM_COLUMN)));
+		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
+		CompiledStatement stmt = null;
+		try {
+			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes);
+			DatabaseResults results = stmt.runQuery();
+			assertTrue(results.next());
+			assertEquals(val.toString(),
+					DataType.ENUM_STRING.resultToJava(null, results, results.findColumn(ENUM_COLUMN)));
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test
@@ -888,12 +925,20 @@ public class DataTypeTest extends BaseCoreTest {
 		LocalEnumInt foo = new LocalEnumInt();
 		foo.ourEnum = val;
 		assertEquals(1, dao.create(foo));
-		CompiledStatement stmt =
-				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
-						StatementType.SELECT, noFieldTypes);
-		DatabaseResults results = stmt.runQuery();
-		assertTrue(results.next());
-		assertEquals(val.ordinal(), DataType.ENUM_INTEGER.resultToJava(null, results, results.findColumn(ENUM_COLUMN)));
+		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
+		CompiledStatement stmt = null;
+		try {
+			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes);
+			DatabaseResults results = stmt.runQuery();
+			assertTrue(results.next());
+			assertEquals(val.ordinal(),
+					DataType.ENUM_INTEGER.resultToJava(null, results, results.findColumn(ENUM_COLUMN)));
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test
@@ -971,53 +1016,61 @@ public class DataTypeTest extends BaseCoreTest {
 			DataType dataType, String columnName, boolean isValidGeneratedType, boolean isAppropriateId,
 			boolean isEscapedValue, boolean isPrimitive, boolean isSelectArgRequired, boolean isStreamType,
 			boolean isComparable, boolean isConvertableId) throws Exception {
-		CompiledStatement stmt =
-				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
-						StatementType.SELECT, noFieldTypes);
-		DatabaseResults results = stmt.runQuery();
-		assertTrue(results.next());
-		int colNum = results.findColumn(columnName);
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, TABLE_NAME, clazz.getDeclaredField(columnName), clazz);
-		if (javaVal instanceof byte[]) {
-			assertTrue(Arrays.equals((byte[]) javaVal, (byte[]) dataType.resultToJava(fieldType, results, colNum)));
-		} else {
-			Map<String, Integer> colMap = new HashMap<String, Integer>();
-			colMap.put(columnName, colNum);
-			Object result = fieldType.resultToJava(results, colMap);
-			assertEquals(javaVal, result);
-		}
-		if (dataType == DataType.STRING_BYTES || dataType == DataType.BYTE_ARRAY || dataType == DataType.SERIALIZABLE) {
-			try {
-				dataType.parseDefaultString(fieldType, "");
-				fail("parseDefaultString should have thrown for " + dataType);
-			} catch (SQLException e) {
-				// expected
+		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
+		CompiledStatement stmt = null;
+		try {
+			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes);
+			DatabaseResults results = stmt.runQuery();
+			assertTrue(results.next());
+			int colNum = results.findColumn(columnName);
+			FieldType fieldType =
+					FieldType.createFieldType(connectionSource, TABLE_NAME, clazz.getDeclaredField(columnName), clazz);
+			if (javaVal instanceof byte[]) {
+				assertTrue(Arrays.equals((byte[]) javaVal, (byte[]) dataType.resultToJava(fieldType, results, colNum)));
+			} else {
+				Map<String, Integer> colMap = new HashMap<String, Integer>();
+				colMap.put(columnName, colNum);
+				Object result = fieldType.resultToJava(results, colMap);
+				assertEquals(javaVal, result);
 			}
-		} else if (defaultValStr != null) {
-			assertEquals(defaultSqlVal, dataType.parseDefaultString(fieldType, defaultValStr));
+			if (dataType == DataType.STRING_BYTES || dataType == DataType.BYTE_ARRAY
+					|| dataType == DataType.SERIALIZABLE) {
+				try {
+					dataType.parseDefaultString(fieldType, "");
+					fail("parseDefaultString should have thrown for " + dataType);
+				} catch (SQLException e) {
+					// expected
+				}
+			} else if (defaultValStr != null) {
+				assertEquals(defaultSqlVal, dataType.parseDefaultString(fieldType, defaultValStr));
+			}
+			if (sqlArg == null) {
+				// noop
+			} else if (sqlArg instanceof byte[]) {
+				assertTrue(Arrays.equals((byte[]) sqlArg, (byte[]) dataType.javaToSqlArg(fieldType, javaVal)));
+			} else {
+				assertEquals(sqlArg, dataType.javaToSqlArg(fieldType, javaVal));
+			}
+			assertEquals(isValidGeneratedType, dataType.isValidGeneratedType());
+			assertEquals(isAppropriateId, dataType.isAppropriateId());
+			assertEquals(isEscapedValue, dataType.isEscapedValue());
+			assertEquals(isEscapedValue, dataType.isEscapedDefaultValue());
+			assertEquals(isPrimitive, dataType.isPrimitive());
+			assertEquals(isSelectArgRequired, dataType.isSelectArgRequired());
+			assertEquals(isStreamType, dataType.isStreamType());
+			assertEquals(isComparable, dataType.isComparable());
+			if (isConvertableId) {
+				assertNotNull(dataType.convertIdNumber(10));
+			} else {
+				assertNull(dataType.convertIdNumber(10));
+			}
+			dataTypeSet.add(dataType);
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+			connectionSource.releaseConnection(conn);
 		}
-		if (sqlArg == null) {
-			// noop
-		} else if (sqlArg instanceof byte[]) {
-			assertTrue(Arrays.equals((byte[]) sqlArg, (byte[]) dataType.javaToSqlArg(fieldType, javaVal)));
-		} else {
-			assertEquals(sqlArg, dataType.javaToSqlArg(fieldType, javaVal));
-		}
-		assertEquals(isValidGeneratedType, dataType.isValidGeneratedType());
-		assertEquals(isAppropriateId, dataType.isAppropriateId());
-		assertEquals(isEscapedValue, dataType.isEscapedValue());
-		assertEquals(isEscapedValue, dataType.isEscapedDefaultValue());
-		assertEquals(isPrimitive, dataType.isPrimitive());
-		assertEquals(isSelectArgRequired, dataType.isSelectArgRequired());
-		assertEquals(isStreamType, dataType.isStreamType());
-		assertEquals(isComparable, dataType.isComparable());
-		if (isConvertableId) {
-			assertNotNull(dataType.convertIdNumber(10));
-		} else {
-			assertNull(dataType.convertIdNumber(10));
-		}
-		dataTypeSet.add(dataType);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

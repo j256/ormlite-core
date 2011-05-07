@@ -18,11 +18,11 @@ import com.j256.ormlite.table.TableUtils;
 public abstract class BaseCoreTest {
 
 	protected final DatabaseType databaseType = new H2DatabaseType();
-	protected H2ConnectionSource connectionSource;
+	protected WrappedConnectionSource connectionSource;
 
 	@Before
 	public void before() throws Exception {
-		connectionSource = new H2ConnectionSource();
+		connectionSource = new WrappedConnectionSource(new H2ConnectionSource());
 	}
 
 	@After

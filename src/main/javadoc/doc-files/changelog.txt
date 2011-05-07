@@ -1,4 +1,7 @@
-4.21: 5/5/2011 (svn rYYYY)
+4.22: 5/XX/2011 (svn rYYYY)
+	* CORE: Added better connection/statement testing code and fixed some additional missing closes.
+
+4.21: 5/5/2011 (svn r1721)
 	* CORE: Added maxForeignLevel=1 type of setting to @DatabaseField to limit the foreign field recursive calls.
 	* CORE: Added a isOpen() to the ConnectionSource interface and implementations.
 	* CORE: Fixed a problem with the foreign auto-refresh loops and the last level.  Thanks to Xavier.  Fixes bug #3296400.
