@@ -31,7 +31,6 @@ public class DaoManager {
 	 * Helper method to create a Dao object without having to define a class. This checks to see if the Dao has already
 	 * been created. If not then it is a call through to {@link BaseDaoImpl#createDao(ConnectionSource, Class)}.
 	 */
-	@SuppressWarnings("deprecation")
 	public synchronized static <D extends Dao<T, ?>, T> D createDao(ConnectionSource connectionSource, Class<T> clazz)
 			throws SQLException {
 		if (connectionSource == null) {
@@ -51,7 +50,9 @@ public class DaoManager {
 		DatabaseTable databaseTable = clazz.getAnnotation(DatabaseTable.class);
 		if (databaseTable == null || databaseTable.daoClass() == Void.class
 				|| databaseTable.daoClass() == BaseDaoImpl.class) {
-			dao = BaseDaoImpl.createDao(connectionSource, clazz);
+			@SuppressWarnings("deprecation")
+			Dao<T, ?> daoTmp = BaseDaoImpl.createDao(connectionSource, clazz);
+			dao = daoTmp;
 		} else {
 			Class<?> daoClass = databaseTable.daoClass();
 			Constructor<?> daoConstructor = null;
@@ -99,7 +100,6 @@ public class DaoManager {
 	 * been created. If not then it is a call through to
 	 * {@link BaseDaoImpl#createDao(ConnectionSource, DatabaseTableConfig)}.
 	 */
-	@SuppressWarnings("deprecation")
 	public synchronized static <D extends Dao<T, ?>, T> D createDao(ConnectionSource connectionSource,
 			DatabaseTableConfig<T> tableConfig) throws SQLException {
 		if (connectionSource == null) {
@@ -119,7 +119,9 @@ public class DaoManager {
 		DatabaseTable databaseTable = tableConfig.getDataClass().getAnnotation(DatabaseTable.class);
 		if (databaseTable == null || databaseTable.daoClass() == Void.class
 				|| databaseTable.daoClass() == BaseDaoImpl.class) {
-			dao = BaseDaoImpl.createDao(connectionSource, tableConfig);
+			@SuppressWarnings("deprecation")
+			Dao<T, ?> daoTmp = BaseDaoImpl.createDao(connectionSource, tableConfig);
+			dao = daoTmp;
 		} else {
 			Class<?> daoClass = databaseTable.daoClass();
 			Constructor<?> constructor;
