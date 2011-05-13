@@ -24,7 +24,7 @@ import com.j256.ormlite.field.DataType;
  * 
  * @author graywatson
  */
-public interface GenericRawResults<T> extends CloseableIterable<T> {
+public interface GenericRawResults<T> extends CloseableWrappedIterable<T> {
 
 	/**
 	 * Return the number of columns in each result row.
@@ -43,7 +43,7 @@ public interface GenericRawResults<T> extends CloseableIterable<T> {
 	public List<T> getResults() throws SQLException;
 
 	/**
-	 * Close any open database connections associated with the RawResults. This is only applicable if the
+	 * Close any open database connections associated with the RawResults. This is only necessary if the
 	 * {@link Dao#iteratorRaw(String)} or another iterator method was called.
 	 */
 	public void close() throws SQLException;

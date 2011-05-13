@@ -14,7 +14,6 @@ import com.j256.ormlite.stmt.PreparedDelete;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.PreparedUpdate;
 import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.stmt.SelectIterator;
 import com.j256.ormlite.stmt.UpdateBuilder;
 
 /**
@@ -75,9 +74,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public List<T> queryForEq(String fieldName, Object value) throws SQLException;
 
 	/**
-	 * You should be using {@link #queryRaw(String, String...)}
-	 * 
-	 * @deprecated
+	 * @deprecated You should be using {@link #queryRaw(String, String...)}
 	 */
 	@Deprecated
 	public RawResults queryForAllRaw(String query) throws SQLException;
@@ -262,13 +259,13 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * <p>
 	 * <b>WARNING</b>: because the {@link Iterator#hasNext()}, {@link Iterator#next()}, etc. methods can only throw
 	 * {@link RuntimeException}, the code has to wrap any {@link SQLException} with {@link IllegalStateException}. Make
-	 * sure to catch {@link IllegalStateException} and look for a {@link SQLException} cause. See the
-	 * {@link SelectIterator} source code for more details.
+	 * sure to catch {@link IllegalStateException} and look for a {@link SQLException} cause.
 	 * </p>
 	 * 
 	 * <p>
 	 * <b>WARNING</b>: The underlying results object will only be closed if you page all the way to the end of the
-	 * iterator using the for() loop or if you call {@link SelectIterator#close()} directly.
+	 * iterator using the for() loop or if you call {@link CloseableIterator#close()} directly. You can also call the
+	 * {@link #closeLastIterator()} if you are not iterating across this DAO in multiple threads.
 	 * </p>
 	 * 
 	 * @return An iterator of the class that uses SQL to step across the database table.
@@ -277,6 +274,44 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 *             When it encounters a SQLException or in other cases.
 	 */
 	public CloseableIterator<T> iterator();
+
+	/**
+	 * This makes a one time use iterable class that can be closed afterwards. The DAO itself is
+	 * {@link CloseableWrappedIterable} but multiple threads can each call this to get their own closeable iterable.
+	 * This allows you to do something like:
+	 * 
+	 * <blockquote>
+	 * 
+	 * <pre>
+	 * CloseableWrappedIterable<Foo> wrappedIterable = fooDao.getWrappedIterable();
+	 * try {
+	 *   for (Foo foo : wrappedIterable) {
+	 *       ...
+	 *   }
+	 * } finally {
+	 *   wrappedIterable.close();
+	 * }
+	 * </pre>
+	 * 
+	 * </blockquote>
+	 */
+	public CloseableWrappedIterable<T> getWrappedIterable();
+
+	/**
+	 * Same as {@link #getWrappedIterable()} but with a prepared query parameter. See {@link #queryBuilder} or
+	 * {@link #iterator(PreparedQuery)} for more information.
+	 */
+	public CloseableWrappedIterable<T> getWrappedIterable(PreparedQuery<T> preparedQuery);
+
+	/**
+	 * This will close the last iterator returned by the {@link #iterator()} method.
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> This is not reentrant. If multiple threads are getting iterators from this DAO then you should use
+	 * the {@link #getWrappedIterable()} method to get a wrapped iterable for each thread instead.
+	 * </p>
+	 */
+	public void closeLastIterator() throws SQLException;
 
 	/**
 	 * Same as {@link #iterator()} but with a prepared query parameter. See {@link #queryBuilder} for more information.
@@ -288,7 +323,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * <pre>
 	 * QueryBuilder&lt;Account, String&gt; qb = accountDao.queryBuilder();
 	 * ... custom query builder methods
-	 * SelectIterator&lt;Account&gt; iterator = partialDao.iterator(qb.prepare());
+	 * CloseableIterator&lt;Account&gt; iterator = partialDao.iterator(qb.prepare());
 	 * try {
 	 *     while (iterator.hasNext()) {
 	 *         Account account = iterator.next();
@@ -311,9 +346,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public CloseableIterator<T> iterator(PreparedQuery<T> preparedQuery) throws SQLException;
 
 	/**
-	 * You should be using {@link #queryRaw(String, String...)};
-	 * 
-	 * @deprecated
+	 * @deprecated You should be using {@link #queryRaw(String, String...)};
 	 */
 	@Deprecated
 	public RawResults iteratorRaw(String query) throws SQLException;

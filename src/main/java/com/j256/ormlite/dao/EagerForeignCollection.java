@@ -13,7 +13,8 @@ import com.j256.ormlite.field.ForeignCollectionField;
  * 
  * @author graywatson
  */
-public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> implements ForeignCollection<T> {
+public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> implements ForeignCollection<T>,
+		CloseableWrappedIterable<T> {
 
 	private final List<T> results;
 
@@ -28,9 +29,9 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 	}
 
 	public CloseableIterator<T> iteratorThrow() {
-		final Iterator<T> iterator = results.iterator();
 		// we have to wrap the iterator since we are returning the List's iterator
 		return new CloseableIterator<T>() {
+			private Iterator<T> iterator = results.iterator();
 			private T last = null;
 			public boolean hasNext() {
 				return iterator.hasNext();
@@ -52,6 +53,19 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 				// noop
 			}
 		};
+	}
+
+	public CloseableWrappedIterable<T> getWrappedIterable() {
+		// since the iterators don't have any connections, the collection can be a wrapped iterable
+		return this;
+	}
+
+	public void close() {
+		// noop since the iterators aren't holding open a connection
+	}
+
+	public void closeLastIterator() {
+		// noop since the iterators aren't holding open a connection
 	}
 
 	public int size() {

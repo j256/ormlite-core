@@ -56,6 +56,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	protected DatabaseTableConfig<T> tableConfig;
 	protected TableInfo<T, ID> tableInfo;
 	protected ConnectionSource connectionSource;
+	protected CloseableIterator<T> lastIterator;
 
 	/**
 	 * Construct our base DAO using Spring type wiring. The {@link ConnectionSource} must be set with the
@@ -350,21 +351,50 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
-	public SelectIterator<T, ID> iterator() {
+	public CloseableIterator<T> iterator() {
 		checkForInitialized();
 		try {
-			return statementExecutor.buildIterator(this, connectionSource);
+			SelectIterator<T, ID> iterator = statementExecutor.buildIterator(this, connectionSource);
+			lastIterator = iterator;
+			return iterator;
 		} catch (Exception e) {
 			throw new IllegalStateException("Could not build iterator for " + dataClass, e);
 		}
 	}
 
-	public SelectIterator<T, ID> iterator(PreparedQuery<T> preparedQuery) throws SQLException {
+	public CloseableWrappedIterable<T> getWrappedIterable() {
+		checkForInitialized();
+		return new CloseableWrappedIterableImpl<T>(this);
+	}
+
+	public CloseableWrappedIterable<T> getWrappedIterable(final PreparedQuery<T> preparedQuery) {
+		checkForInitialized();
+		return new CloseableWrappedIterableImpl<T>(new CloseableIterable<T>() {
+			public CloseableIterator<T> iterator() {
+				try {
+					return BaseDaoImpl.this.iterator(preparedQuery);
+				} catch (Exception e) {
+					throw new IllegalStateException("Could not build prepared-query iterator for " + dataClass, e);
+				}
+			}
+		});
+	}
+
+	public void closeLastIterator() throws SQLException {
+		if (lastIterator != null) {
+			lastIterator.close();
+			lastIterator = null;
+		}
+	}
+
+	public CloseableIterator<T> iterator(PreparedQuery<T> preparedQuery) throws SQLException {
 		checkForInitialized();
 		try {
-			return statementExecutor.buildIterator(this, connectionSource, preparedQuery);
+			SelectIterator<T, ID> iterator = statementExecutor.buildIterator(this, connectionSource, preparedQuery);
+			lastIterator = iterator;
+			return iterator;
 		} catch (SQLException e) {
-			throw SqlExceptionUtil.create("Could not build iterator for " + dataClass, e);
+			throw SqlExceptionUtil.create("Could not build prepared-query iterator for " + dataClass, e);
 		}
 	}
 

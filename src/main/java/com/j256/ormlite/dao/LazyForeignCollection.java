@@ -22,10 +22,18 @@ import com.j256.ormlite.field.ForeignCollectionField;
  */
 public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> implements ForeignCollection<T> {
 
+	private CloseableIterator<T> lastIterator;
+
 	public LazyForeignCollection(Dao<T, ID> dao, String fieldName, Object fieldValue) throws SQLException {
 		super(dao, fieldName, fieldValue);
 	}
 
+	/**
+	 * The iterator returned from a lazy collection keeps a connection open to the database as it iterates across the
+	 * collection. You will need to call {@link CloseableIterator#close()} or go all the way through the loop to ensure
+	 * that the connection has been closed. You can also call {@link #closeLastIterator()} on the collection itself
+	 * which will close the last iterator returned. See the reentrant warning.
+	 */
 	public CloseableIterator<T> iterator() {
 		try {
 			return iteratorThrow();
@@ -34,8 +42,23 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 		}
 	}
 
+	/**
+	 * This is the same as {@link #iterator()} except it throws.
+	 */
 	public CloseableIterator<T> iteratorThrow() throws SQLException {
-		return dao.iterator(preparedQuery);
+		lastIterator = dao.iterator(preparedQuery);
+		return lastIterator;
+	}
+
+	public CloseableWrappedIterable<T> getWrappedIterable() {
+		return new CloseableWrappedIterableImpl<T>(this);
+	}
+
+	public void closeLastIterator() throws SQLException {
+		if (lastIterator != null) {
+			lastIterator.close();
+			lastIterator = null;
+		}
 	}
 
 	public int size() {
@@ -87,24 +110,12 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 	}
 
 	public boolean containsAll(Collection<?> collection) {
+		/*
+		 * This is pretty inefficient (i.e. N^2) but I didn't want to suck all of the items into a Map because this
+		 * could swallow all memory. So user beware.
+		 */
 		for (Object obj : collection) {
-			boolean found = false;
-			CloseableIterator<T> iterator = iterator();
-			try {
-				while (iterator.hasNext()) {
-					if (iterator.next().equals(obj)) {
-						found = true;
-						break;
-					}
-				}
-			} finally {
-				try {
-					iterator.close();
-				} catch (SQLException e) {
-					// ignored
-				}
-			}
-			if (!found) {
+			if (!contains(obj)) {
 				return false;
 			}
 		}
