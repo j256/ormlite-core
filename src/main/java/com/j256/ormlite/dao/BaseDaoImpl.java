@@ -3,6 +3,7 @@ package com.j256.ormlite.dao;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -254,8 +255,12 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 				fieldC++;
 			}
 		}
-		where.and(fieldC);
-		return qb.query();
+		if (fieldC == 0) {
+			return Collections.emptyList();
+		} else {
+			where.and(fieldC);
+			return qb.query();
+		}
 	}
 
 	public List<T> queryForFieldValues(Map<String, Object> fieldValues) throws SQLException {
@@ -264,8 +269,12 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		for (Map.Entry<String, Object> entry : fieldValues.entrySet()) {
 			where.eq(entry.getKey(), entry.getValue());
 		}
-		where.and(fieldValues.size());
-		return qb.query();
+		if (fieldValues.size() == 0) {
+			return Collections.emptyList();
+		} else {
+			where.and(fieldValues.size());
+			return qb.query();
+		}
 	}
 
 	public int create(T data) throws SQLException {

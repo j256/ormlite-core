@@ -1610,6 +1610,22 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	}
 
 	@Test
+	public void testQueryForMatchingNoFields() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		assertEquals(0, dao.countOf());
+		Foo foo = new Foo();
+		String id = "1";
+		foo.id = id;
+		int val = 1231231;
+		foo.val = val;
+		assertEquals(1, dao.create(foo));
+
+		Foo match = new Foo();
+		List<Foo> results = dao.queryForMatching(match);
+		assertEquals(0, results.size());
+	}
+
+	@Test
 	public void testQueryForFieldValues() throws Exception {
 		Dao<Foo, String> dao = createDao(Foo.class, true);
 		assertEquals(0, dao.countOf());
@@ -1633,6 +1649,22 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		fieldValues.put(Foo.ID_COLUMN_NAME, notId);
 		fieldValues.put(Foo.VAL_COLUMN_NAME, val);
 		results = dao.queryForFieldValues(fieldValues);
+		assertEquals(0, results.size());
+	}
+
+	@Test
+	public void testQueryForFieldValuesEmpty() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		assertEquals(0, dao.countOf());
+		Foo foo = new Foo();
+		String id = "1";
+		foo.id = id;
+		int val = 1231231;
+		foo.val = val;
+		assertEquals(1, dao.create(foo));
+
+		Map<String, Object> fieldValues = new HashMap<String, Object>();
+		List<Foo> results = dao.queryForFieldValues(fieldValues);
 		assertEquals(0, results.size());
 	}
 

@@ -177,6 +177,9 @@ public class Where<T, ID> {
 	 * </p>
 	 */
 	public Where<T, ID> and(int numClauses) {
+		if (numClauses == 0) {
+			throw new IllegalArgumentException("Must have at least one clause in and(numClauses)");
+		}
 		Clause[] clauses = new Clause[numClauses];
 		for (int i = numClauses - 1; i >= 0; i--) {
 			clauses[i] = pop("AND");
@@ -379,6 +382,9 @@ public class Where<T, ID> {
 	 * </p>
 	 */
 	public Where<T, ID> or(int numClauses) {
+		if (numClauses == 0) {
+			throw new IllegalArgumentException("Must have at least one clause in or(numClauses)");
+		}
 		Clause[] clauses = new Clause[numClauses];
 		for (int i = numClauses - 1; i >= 0; i--) {
 			clauses[i] = pop("OR");
