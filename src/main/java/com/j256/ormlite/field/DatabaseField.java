@@ -41,11 +41,7 @@ public @interface DatabaseField {
 	public static final String NO_DEFAULT = "__ormlite__ no default value string was specified";
 
 	/**
-	 * If you have two objects that both are {@link #foreign()} of each other and both have
-	 * {@link #foreignAutoRefresh()} set to true then if one is retrieved, it will go recursive. For example, you might
-	 * have a Answer with a foreign bestQuestion field and the Question with a foreign Answer. If you lookup an Answer,
-	 * it will lookup and auto-refresh the Question which will lookup and auto-refresh the Answer, etc.. This is the
-	 * maximum number of times it will go back and forth before stopping the auto-refresh.
+	 * @see {@link #maxForeignLevel()}
 	 */
 	public static final int MAX_FOREIGN_LEVEL = 2;
 
