@@ -11,7 +11,6 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.misc.JavaxPersistence;
-import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.ConnectionSource;
 
 /**
@@ -233,14 +232,26 @@ public class DatabaseTableConfig<T> {
 			List<DatabaseFieldConfig> fieldConfigs) throws SQLException {
 		List<FieldType> fieldTypes = new ArrayList<FieldType>();
 		for (DatabaseFieldConfig fieldConfig : fieldConfigs) {
-			Field field;
-			try {
-				field = dataClass.getDeclaredField(fieldConfig.getFieldName());
-			} catch (Exception e) {
-				throw SqlExceptionUtil.create("Could not configure field with name '" + fieldConfig.getFieldName()
-						+ "' for " + dataClass, e);
+			FieldType fieldType = null;
+			// walk up the classes until we find the field
+			for (Class<?> classWalk = dataClass; classWalk != null; classWalk = classWalk.getSuperclass()) {
+				Field field;
+				try {
+					field = classWalk.getDeclaredField(fieldConfig.getFieldName());
+				} catch (NoSuchFieldException e) {
+					// we ignore this and just loop hopefully finding it in a upper class
+					continue;
+				}
+				if (field != null) {
+					fieldType = new FieldType(connectionSource, tableName, field, fieldConfig, dataClass);
+					break;
+				}
 			}
-			FieldType fieldType = new FieldType(connectionSource, tableName, field, fieldConfig, dataClass);
+
+			if (fieldType == null) {
+				throw new SQLException("Could not find declared field with name '" + fieldConfig.getFieldName()
+						+ "' for " + dataClass);
+			}
 			fieldTypes.add(fieldType);
 		}
 		if (fieldTypes.isEmpty()) {

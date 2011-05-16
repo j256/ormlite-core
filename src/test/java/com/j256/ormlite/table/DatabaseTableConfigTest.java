@@ -173,6 +173,34 @@ public class DatabaseTableConfigTest {
 		assertTrue(seeStuff);
 	}
 
+	@Test
+	public void testBaseClassHandlingWithoutAnno() throws Exception {
+		List<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
+		DatabaseFieldConfig fieldId = new DatabaseFieldConfig("id");
+		fieldId.setId(true);
+		fieldConfigs.add(fieldId);
+		fieldConfigs.add(new DatabaseFieldConfig("stuff"));
+
+		DatabaseTableConfig<SubWithoutAnno> dbTableConf =
+				new DatabaseTableConfig<SubWithoutAnno>(SubWithoutAnno.class, fieldConfigs);
+		dbTableConf.extractFieldTypes(connectionSource);
+
+		FieldType[] fieldTypes = dbTableConf.getFieldTypes(databaseType);
+		assertTrue(fieldTypes.length >= 2);
+		boolean seeId = false;
+		boolean seeStuff = false;
+		for (FieldType fieldType : fieldTypes) {
+			String fieldName = fieldType.getFieldName();
+			if (fieldName.equals("id")) {
+				seeId = true;
+			} else if (fieldType.getFieldName().equals("stuff")) {
+				seeStuff = true;
+			}
+		}
+		assertTrue(seeId);
+		assertTrue(seeStuff);
+	}
+
 	/* ======================================================================================= */
 
 	@DatabaseTable(tableName = TABLE_NAME)
@@ -221,4 +249,19 @@ public class DatabaseTableConfigTest {
 			// for ormlite
 		}
 	}
+
+	protected static class BaseWithoutAnno {
+		int id;
+		public BaseWithoutAnno() {
+			// for ormlite
+		}
+	}
+
+	protected static class SubWithoutAnno extends BaseWithoutAnno {
+		String stuff;
+		public SubWithoutAnno() {
+			// for ormlite
+		}
+	}
+
 }
