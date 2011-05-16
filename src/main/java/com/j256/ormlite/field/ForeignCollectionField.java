@@ -31,6 +31,11 @@ import com.j256.ormlite.dao.LazyForeignCollection;
 public @interface ForeignCollectionField {
 
 	/**
+	 * @see #maxForeignCollectionLevel()
+	 */
+	public static final int MAX_FOREIGN_COLLECTION_LEVEL = 0;
+
+	/**
 	 * Set to true if the collection is a an eager collection where all of the results should be retrieved when the
 	 * parent object is retrieved. Default is false (lazy) when the results will not be retrieved until you ask for the
 	 * iterator from the collection.
@@ -42,4 +47,13 @@ public @interface ForeignCollectionField {
 	 * </p>
 	 */
 	boolean eager() default false;
+
+	/**
+	 * Set this to be the number of times to configure a foreign collection's foreign collection. If you query for A and
+	 * it has an foreign-collection of field B which has an foreign-collection of field C ..., then a lot of
+	 * configuration information is being stored. If each of these fields is eager-fetched, then querying for A could
+	 * get expensive. By default this value is 0 meaning that it will only do the root collection and not a collection
+	 * of a collection. It should be increased if you know what you are doing.
+	 */
+	int maxForeignCollectionLevel() default MAX_FOREIGN_COLLECTION_LEVEL;
 }

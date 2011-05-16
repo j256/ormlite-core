@@ -126,7 +126,6 @@ public abstract class BaseCoreTest {
 		if (connectionSource == null) {
 			throw new SQLException("Connection source is null");
 		}
-		dao.setConnectionSource(connectionSource);
 		if (createTable) {
 			DatabaseTableConfig<T> tableConfig = dao.getTableConfig();
 			if (tableConfig == null) {
@@ -134,7 +133,6 @@ public abstract class BaseCoreTest {
 			}
 			createTable(tableConfig, true);
 		}
-		dao.initialize();
 		return dao;
 	}
 }

@@ -36,9 +36,10 @@ public class DatabaseFieldConfig {
 	private String indexName;
 	private String uniqueIndexName;
 	private boolean foreignAutoRefresh;
-	private int maxForeignLevel = DatabaseField.MAX_FOREIGN_LEVEL;
+	private int maxForeignAutoRefreshLevel = DatabaseField.MAX_FOREIGN_AUTO_REFRESH_LEVEL;
 	private boolean foreignCollection;
 	private boolean foreignCollectionEager;
+	private int maxForeignCollectionLevel = ForeignCollectionField.MAX_FOREIGN_COLLECTION_LEVEL;
 
 	public DatabaseFieldConfig() {
 		// for spring
@@ -52,7 +53,7 @@ public class DatabaseFieldConfig {
 			boolean canBeNull, boolean id, boolean generatedId, String generatedIdSequence, boolean foreign,
 			DatabaseTableConfig<?> foreignTableConfig, boolean useGetSet, Enum<?> unknownEnumValue,
 			boolean throwIfNull, String format, boolean unique, String indexName, String uniqueIndexName,
-			boolean autoRefresh, int maxForeignAutoRefreshLevel) {
+			boolean autoRefresh, int maxForeignAutoRefreshLevel, int maxForeignCollectionLevel) {
 		this.fieldName = fieldName;
 		this.columnName = columnName;
 		this.dataType = dataType;
@@ -72,7 +73,8 @@ public class DatabaseFieldConfig {
 		this.indexName = indexName;
 		this.uniqueIndexName = uniqueIndexName;
 		this.foreignAutoRefresh = autoRefresh;
-		this.maxForeignLevel = maxForeignAutoRefreshLevel;
+		this.maxForeignAutoRefreshLevel = maxForeignAutoRefreshLevel;
+		this.maxForeignCollectionLevel = maxForeignCollectionLevel;
 	}
 
 	/**
@@ -268,12 +270,20 @@ public class DatabaseFieldConfig {
 		return foreignAutoRefresh;
 	}
 
-	public int getMaxForeignLevel() {
-		return maxForeignLevel;
+	public int getMaxForeignAutoRefreshLevel() {
+		return maxForeignAutoRefreshLevel;
 	}
 
-	public void setMaxForeignLevel(int maxForeignLevel) {
-		this.maxForeignLevel = maxForeignLevel;
+	public void setMaxForeignAutoRefreshLevel(int maxForeignLevel) {
+		this.maxForeignAutoRefreshLevel = maxForeignLevel;
+	}
+
+	public int getMaxForeignCollectionLevel() {
+		return maxForeignCollectionLevel;
+	}
+
+	public void setMaxForeignCollectionLevel(int maxForeignCollectionLevel) {
+		this.maxForeignCollectionLevel = maxForeignCollectionLevel;
 	}
 
 	public void setForeignCollection(boolean foreignCollection) {
@@ -429,7 +439,7 @@ public class DatabaseFieldConfig {
 		config.uniqueIndexName =
 				findIndexName(tableName, databaseField.uniqueIndexName(), databaseField.uniqueIndex(), config);
 		config.foreignAutoRefresh = databaseField.foreignAutoRefresh();
-		config.maxForeignLevel = databaseField.maxForeignLevel();
+		config.maxForeignAutoRefreshLevel = databaseField.maxForeignAutoRefreshLevel();
 
 		return config;
 	}
@@ -440,6 +450,7 @@ public class DatabaseFieldConfig {
 		config.fieldName = field.getName();
 		config.foreignCollection = true;
 		config.foreignCollectionEager = foreignCollection.eager();
+		config.maxForeignCollectionLevel = foreignCollection.maxForeignCollectionLevel();
 		return config;
 	}
 

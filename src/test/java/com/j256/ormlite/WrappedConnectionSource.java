@@ -1,18 +1,12 @@
 package com.j256.ormlite;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.j256.ormlite.db.DatabaseType;
-import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 
@@ -24,10 +18,10 @@ import com.j256.ormlite.support.DatabaseConnection;
 public class WrappedConnectionSource implements ConnectionSource {
 
 	private AtomicInteger getReleaseCount = new AtomicInteger(0);
-	private static boolean nextForceOkay = false;
-	private ConnectionSource cs;
-	private final Map<DatabaseConnection, WrappedDatabaseConnection> wrappedConnections =
-			new HashMap<DatabaseConnection, WrappedDatabaseConnection>();
+	protected boolean nextForceOkay = false;
+	protected ConnectionSource cs;
+	private final Map<DatabaseConnection, WrappedConnection> wrappedConnections =
+			new HashMap<DatabaseConnection, WrappedConnection>();
 
 	public WrappedConnectionSource(ConnectionSource cs) throws SQLException {
 		this.cs = cs;
@@ -36,29 +30,38 @@ public class WrappedConnectionSource implements ConnectionSource {
 	public DatabaseConnection getReadOnlyConnection() throws SQLException {
 		DatabaseConnection connection = cs.getReadOnlyConnection();
 		getReleaseCount.incrementAndGet();
-		// System.out.println("get/release count is " + getReleaseCount);
-		WrappedDatabaseConnection wrapped = new WrappedDatabaseConnection(connection);
-		wrappedConnections.put(wrapped.getProxy(), wrapped);
-		return wrapped.getProxy();
+		WrappedConnection wrapped = wrapConnection(connection);
+		wrappedConnections.put(wrapped.getDatabaseConnectionProxy(), wrapped);
+		// System.err.println("got wrapped " + wrapped.hashCode() + ", count = " + getReleaseCount);
+		// new RuntimeException().printStackTrace();
+		return wrapped.getDatabaseConnectionProxy();
 	}
 
 	public DatabaseConnection getReadWriteConnection() throws SQLException {
 		DatabaseConnection connection = cs.getReadWriteConnection();
 		getReleaseCount.incrementAndGet();
-		// System.out.println("get/release count is " + getReleaseCount);
-		WrappedDatabaseConnection wrapped = new WrappedDatabaseConnection(connection);
-		wrappedConnections.put(wrapped.getProxy(), wrapped);
-		return wrapped.getProxy();
+		WrappedConnection wrapped = wrapConnection(connection);
+		connection = wrapped.getDatabaseConnectionProxy();
+		wrappedConnections.put(connection, wrapped);
+		// System.err.println("got wrapped " + wrapped.hashCode() + ", count = " + getReleaseCount);
+		// new RuntimeException().printStackTrace();
+		return connection;
 	}
 
 	public void releaseConnection(DatabaseConnection connection) throws SQLException {
-		WrappedDatabaseConnection wrapped = wrappedConnections.remove(connection);
+		WrappedConnection wrapped = wrappedConnections.remove(connection);
 		if (wrapped == null) {
-			throw new SQLException("Tried to release unknown connection");
+			if (nextForceOkay) {
+				return;
+			} else {
+				throw new SQLException("Tried to release unknown connection");
+			}
+		} else if (!wrapped.isOkay()) {
+			throw new SQLException("Wrapped connection was not okay when released");
 		}
-		cs.releaseConnection(wrapped.getProxy());
+		cs.releaseConnection(wrapped.getDatabaseConnectionProxy());
 		getReleaseCount.decrementAndGet();
-		// System.out.println("get/release count is " + getReleaseCount);
+		// System.err.println("released wrapped " + wrapped.hashCode() + ", count = " + getReleaseCount);
 	}
 
 	public void close() throws SQLException {
@@ -66,12 +69,21 @@ public class WrappedConnectionSource implements ConnectionSource {
 		if (!isOkay()) {
 			throw new SQLException("Wrapped connection was not okay on close");
 		}
+		for (WrappedConnection wrapped : wrappedConnections.values()) {
+			wrapped.close();
+		}
+		wrappedConnections.clear();
+	}
+
+	protected WrappedConnection wrapConnection(DatabaseConnection connection) {
+		WrappedDatabaseConnection wrapped = new WrappedDatabaseConnection(connection);
+		return wrapped;
 	}
 
 	/**
 	 * Used if we want to forcefully close a connection source
 	 */
-	public static void forceOkay() {
+	public void forceOkay() {
 		nextForceOkay = true;
 	}
 
@@ -80,10 +92,13 @@ public class WrappedConnectionSource implements ConnectionSource {
 			nextForceOkay = false;
 			return true;
 		} else if (getReleaseCount.get() != 0) {
-			System.err.println("get/release count is " + getReleaseCount.get());
+			System.err.println("isOkay, get/release count is " + getReleaseCount.get());
+			for (WrappedConnection wrapped : wrappedConnections.values()) {
+				System.err.println("  still have wrapped " + wrapped.hashCode());
+			}
 			return false;
 		} else {
-			for (WrappedDatabaseConnection wrapped : wrappedConnections.values()) {
+			for (WrappedConnection wrapped : wrappedConnections.values()) {
 				if (!wrapped.isOkay()) {
 					return false;
 				}
@@ -119,90 +134,6 @@ public class WrappedConnectionSource implements ConnectionSource {
 			method.invoke(cs, databaseType);
 		} catch (Exception e) {
 			throw new RuntimeException("Could not set database type", e);
-		}
-	}
-
-	private static class WrappedDatabaseConnection implements InvocationHandler {
-
-		private final Object connectionProxy;
-		private final DatabaseConnection connection;
-		private List<WrappedCompiledStatement> wrappedStatements = new ArrayList<WrappedCompiledStatement>();
-
-		public WrappedDatabaseConnection(DatabaseConnection connection) {
-			this.connection = connection;
-			this.connectionProxy =
-					Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] { DatabaseConnection.class },
-							this);
-		}
-
-		public DatabaseConnection getProxy() {
-			return (DatabaseConnection) connectionProxy;
-		}
-
-		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-			// System.err.println("Running method on Connection." + method.getName());
-			try {
-				Object obj = method.invoke(connection, args);
-				if (method.getName().equals("compileStatement") && obj instanceof CompiledStatement) {
-					WrappedCompiledStatement wrappedStatement = new WrappedCompiledStatement((CompiledStatement) obj);
-					wrappedStatements.add(wrappedStatement);
-					obj = wrappedStatement.getPreparedStatement();
-				}
-				return obj;
-			} catch (InvocationTargetException e) {
-				// pass on the exception
-				throw e.getCause();
-			}
-		}
-
-		public boolean isOkay() {
-			for (WrappedCompiledStatement wrappedStatement : wrappedStatements) {
-				if (!wrappedStatement.isOkay()) {
-					return false;
-				}
-			}
-			return true;
-		}
-	}
-
-	private static class WrappedCompiledStatement implements InvocationHandler {
-
-		private final Object statementProxy;
-		private final CompiledStatement compiledStatement;
-		private boolean closeCalled = false;
-
-		public WrappedCompiledStatement(CompiledStatement compiledStatement) {
-			this.compiledStatement = compiledStatement;
-			this.statementProxy =
-					Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] { CompiledStatement.class },
-							this);
-		}
-
-		public CompiledStatement getPreparedStatement() {
-			return (CompiledStatement) statementProxy;
-		}
-
-		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-			// System.err.println("Running method on CompiledStatement." + method.getName());
-			try {
-				Object obj = method.invoke(compiledStatement, args);
-				if (method.getName().equals("close")) {
-					closeCalled = true;
-				}
-				return obj;
-			} catch (InvocationTargetException e) {
-				// pass on the exception
-				throw e.getCause();
-			}
-		}
-
-		public boolean isOkay() {
-			if (closeCalled) {
-				return true;
-			} else {
-				System.err.println("PreparedStatement was not closed: " + compiledStatement.toString());
-				return false;
-			}
 		}
 	}
 }

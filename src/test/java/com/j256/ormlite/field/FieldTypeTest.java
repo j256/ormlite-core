@@ -210,6 +210,7 @@ public class FieldTypeTest extends BaseCoreTest {
 		fieldType =
 				FieldType.createFieldType(connectionSource, ForeignParent.class.getSimpleName(), bazField,
 						ForeignParent.class);
+		fieldType.configDaoInformation(connectionSource, ForeignParent.class);
 		assertEquals(bazField.getName() + FieldType.FOREIGN_ID_FIELD_SUFFIX, fieldType.getDbColumnName());
 		// this is the type of the foreign object's id
 		assertEquals(DataType.INTEGER, fieldType.getDataType());
@@ -230,7 +231,10 @@ public class FieldTypeTest extends BaseCoreTest {
 		Field[] fields = ForeignNoId.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
 		Field fooField = fields[0];
-		FieldType.createFieldType(connectionSource, ForeignNoId.class.getSimpleName(), fooField, ForeignNoId.class);
+		FieldType fieldType =
+				FieldType.createFieldType(connectionSource, ForeignNoId.class.getSimpleName(), fooField,
+						ForeignNoId.class);
+		fieldType.configDaoInformation(connectionSource, ForeignNoId.class);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -405,6 +409,7 @@ public class FieldTypeTest extends BaseCoreTest {
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, ForeignParent.class.getSimpleName(), field,
 						ForeignParent.class);
+		fieldType.configDaoInformation(connectionSource, ForeignParent.class);
 		assertTrue(fieldType.isForeign());
 		int id = 10;
 		ForeignParent parent = new ForeignParent();
@@ -522,6 +527,7 @@ public class FieldTypeTest extends BaseCoreTest {
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, ForeignAlsoSerializable.class.getSimpleName(), field,
 						ForeignAlsoSerializable.class);
+		fieldType.configDaoInformation(connectionSource, ForeignAlsoSerializable.class);
 		assertTrue(fieldType.isForeign());
 	}
 
@@ -561,6 +567,7 @@ public class FieldTypeTest extends BaseCoreTest {
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, ForeignAutoRefresh.class.getSimpleName(), field,
 						ForeignAutoRefresh.class);
+		fieldType.configDaoInformation(connectionSource, ForeignAutoRefresh.class);
 		assertNull(foreign.foreign);
 		fieldType.assignField(foreign, id);
 		assertNotNull(foreign.foreign);

@@ -1,6 +1,7 @@
 package com.j256.ormlite.dao;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +58,8 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	protected TableInfo<T, ID> tableInfo;
 	protected ConnectionSource connectionSource;
 	protected CloseableIterator<T> lastIterator;
+
+	private static final ThreadLocal<DaoConfigLevel> daoConfigLevelLocal = new ThreadLocal<DaoConfigLevel>();
 
 	/**
 	 * Construct our base DAO using Spring type wiring. The {@link ConnectionSource} must be set with the
@@ -118,6 +121,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			// just skip it if already initialized
 			return;
 		}
+
 		if (connectionSource == null) {
 			throw new IllegalStateException("connectionSource was never set on " + getClass().getSimpleName());
 		}
@@ -134,6 +138,53 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			tableInfo = new TableInfo<T, ID>(databaseType, this, tableConfig);
 		}
 		statementExecutor = new StatementExecutor<T, ID>(databaseType, tableInfo, this);
+
+		/*
+		 * This is a bit complex. Initially, when we were configuring the field types, external DAO information would be
+		 * configured for auto-refresh, foreign BaseDaoEnabled classes, and foreign-collections. This would cause the
+		 * system to go recursive and for class loops, a stack overflow.
+		 * 
+		 * Then we fixed this by putting a level counter in the FieldType constructor that would stop the configurations
+		 * when we reach some recursion level. But this created some bad problems because we were using the DaoManager
+		 * to cache the created DAOs that had been constructed already limited by the level.
+		 * 
+		 * What we do now is have a 2 phase initialization. The constructor initializes most of the fields but then we
+		 * go back and call FieldType.configDaoInformation() after we are done. So for every DAO that is initialized
+		 * here, we have to see if it is the top DAO. If not we save it for dao configuration later.
+		 */
+		DaoConfigLevel daoConfigLevel = getDaoConfigLevel();
+		daoConfigLevel.level++;
+		try {
+			if (daoConfigLevel.level > 1) {
+				// if we have recursed then we need to save the dao for later configuration
+				daoConfigLevel.addDao(this);
+			} else {
+				// configure the root dao _first_ which may start the recursion and fill the daoList
+				for (FieldType fieldType : tableInfo.getFieldTypes()) {
+					// this can cause recursion
+					fieldType.configDaoInformation(connectionSource, dataClass);
+				}
+				List<BaseDaoImpl<?, ?>> daoList = daoConfigLevel.daoList;
+				// configure any
+				if (daoList != null) {
+					/*
+					 * WARNING: We do _not_ use an iterator here because we may be adding to the list as we process it
+					 * and we'll get exceptions otherwise. This is an ArrayList so the get(i) should be efficient.
+					 */
+					for (int i = 0; i < daoList.size(); i++) {
+						BaseDaoImpl<?, ?> baseDaoImpl = daoList.get(i);
+						for (FieldType fieldType : baseDaoImpl.getTableInfo().getFieldTypes()) {
+							// this may cause recursion
+							fieldType.configDaoInformation(connectionSource, baseDaoImpl.dataClass);
+						}
+					}
+					daoList.clear();
+				}
+			}
+		} finally {
+			daoConfigLevel.level--;
+		}
+
 		initialized = true;
 	}
 
@@ -612,6 +663,26 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	protected void checkForInitialized() {
 		if (!initialized) {
 			throw new IllegalStateException("you must call initialize() before you can use the dao");
+		}
+	}
+
+	private DaoConfigLevel getDaoConfigLevel() {
+		DaoConfigLevel daoConfigLevel = daoConfigLevelLocal.get();
+		if (daoConfigLevel == null) {
+			daoConfigLevel = new DaoConfigLevel();
+			daoConfigLevelLocal.set(daoConfigLevel);
+		}
+		return daoConfigLevel;
+	}
+
+	private static class DaoConfigLevel {
+		int level;
+		List<BaseDaoImpl<?, ?>> daoList;
+		public void addDao(BaseDaoImpl<?, ?> dao) {
+			if (daoList == null) {
+				daoList = new ArrayList<BaseDaoImpl<?, ?>>();
+			}
+			daoList.add(dao);
 		}
 	}
 }

@@ -127,11 +127,11 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		order3.account = account2;
 		assertEquals(1, orderDao.create(order3));
 
-		Account account3 = accountDao.queryForId(account1.id);
-		assertEquals(name1, account3.name);
-		assertNotNull(account3.orders);
+		Account accountResult = accountDao.queryForId(account1.id);
+		assertEquals(name1, accountResult.name);
+		assertNotNull(accountResult.orders);
 		int orderC = 0;
-		for (Order order : account3.orders) {
+		for (Order order : accountResult.orders) {
 			orderC++;
 			switch (orderC) {
 				case 1 :
@@ -143,30 +143,30 @@ public class ForeignCollectionTest extends BaseCoreTest {
 			}
 		}
 		assertEquals(2, orderC);
-		assertFalse(account3.orders.isEmpty());
-		assertTrue(account3.orders.contains(order1));
-		assertTrue(account3.orders.containsAll(Arrays.asList(order1, order2)));
-		Object[] orders = account3.orders.toArray();
+		assertFalse(accountResult.orders.isEmpty());
+		assertTrue(accountResult.orders.contains(order1));
+		assertTrue(accountResult.orders.containsAll(Arrays.asList(order1, order2)));
+		Object[] objs = accountResult.orders.toArray();
+		assertNotNull(objs);
+		assertEquals(2, objs.length);
+		assertEquals(order1, objs[0]);
+		assertEquals(order2, objs[1]);
+		Order[] orders = accountResult.orders.toArray(new Order[0]);
 		assertNotNull(orders);
 		assertEquals(2, orders.length);
 		assertEquals(order1, orders[0]);
 		assertEquals(order2, orders[1]);
-		orders = account3.orders.toArray(new Order[0]);
+		orders = accountResult.orders.toArray(new Order[1]);
 		assertNotNull(orders);
 		assertEquals(2, orders.length);
 		assertEquals(order1, orders[0]);
 		assertEquals(order2, orders[1]);
-		orders = account3.orders.toArray(new Order[1]);
+		orders = accountResult.orders.toArray(new Order[2]);
 		assertNotNull(orders);
 		assertEquals(2, orders.length);
 		assertEquals(order1, orders[0]);
 		assertEquals(order2, orders[1]);
-		orders = account3.orders.toArray(new Order[2]);
-		assertNotNull(orders);
-		assertEquals(2, orders.length);
-		assertEquals(order1, orders[0]);
-		assertEquals(order2, orders[1]);
-		orders = account3.orders.toArray(new Order[3]);
+		orders = accountResult.orders.toArray(new Order[3]);
 		assertNotNull(orders);
 		assertEquals(3, orders.length);
 		assertEquals(order1, orders[0]);
@@ -178,9 +178,9 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		int val5 = 76557654;
 		order5.val = val5;
 		order5.account = account1;
-		account3.orders.add(order5);
+		accountResult.orders.add(order5);
 		// the size should change immediately
-		assertEquals(3, account3.orders.size());
+		assertEquals(3, accountResult.orders.size());
 
 		// now insert it behind the collections back
 		Order order6 = new Order();
@@ -190,18 +190,18 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertEquals(1, orderDao.create(order6));
 		if (eager) {
 			// account2's collection should not have changed
-			assertEquals(3, account3.orders.size());
+			assertEquals(3, accountResult.orders.size());
 		} else {
 			// lazy does another query
-			assertEquals(4, account3.orders.size());
+			assertEquals(4, accountResult.orders.size());
 		}
 
 		// now we refresh the collection
-		assertEquals(1, accountDao.refresh(account3));
-		assertEquals(name1, account3.name);
-		assertNotNull(account3.orders);
+		assertEquals(1, accountDao.refresh(accountResult));
+		assertEquals(name1, accountResult.name);
+		assertNotNull(accountResult.orders);
 		orderC = 0;
-		for (Order order : account3.orders) {
+		for (Order order : accountResult.orders) {
 			orderC++;
 			switch (orderC) {
 				case 1 :
@@ -220,13 +220,13 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		}
 		assertEquals(4, orderC);
 
-		assertTrue(account3.orders.remove(order5));
-		assertEquals(3, account3.orders.size());
-		assertTrue(account3.orders.removeAll(Arrays.asList(order5, order6)));
-		assertEquals(2, account3.orders.size());
-		assertEquals(1, accountDao.refresh(account3));
+		assertTrue(accountResult.orders.remove(order5));
+		assertEquals(3, accountResult.orders.size());
+		assertTrue(accountResult.orders.removeAll(Arrays.asList(order5, order6)));
+		assertEquals(2, accountResult.orders.size());
+		assertEquals(1, accountDao.refresh(accountResult));
 		orderC = 0;
-		for (Order order : account3.orders) {
+		for (Order order : accountResult.orders) {
 			orderC++;
 			switch (orderC) {
 				case 1 :
@@ -239,9 +239,9 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		}
 		assertEquals(2, orderC);
 
-		assertTrue(account3.orders.retainAll(Arrays.asList(order1)));
+		assertTrue(accountResult.orders.retainAll(Arrays.asList(order1)));
 		orderC = 0;
-		for (Order order : account3.orders) {
+		for (Order order : accountResult.orders) {
 			orderC++;
 			switch (orderC) {
 				case 1 :
@@ -251,18 +251,18 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		}
 		assertEquals(1, orderC);
 
-		CloseableIterator<Order> iterator = account3.orders.iterator();
+		CloseableIterator<Order> iterator = accountResult.orders.iterator();
 		assertTrue(iterator.hasNext());
 		assertEquals(order1, iterator.next());
 		iterator.remove();
 		assertFalse(iterator.hasNext());
 		iterator.close();
-		assertEquals(0, account3.orders.size());
+		assertEquals(0, accountResult.orders.size());
 
-		account3.orders.addAll(Arrays.asList(order1, order2, order5, order6));
+		accountResult.orders.addAll(Arrays.asList(order1, order2, order5, order6));
 
 		orderC = 0;
-		for (Order order : account3.orders) {
+		for (Order order : accountResult.orders) {
 			orderC++;
 			switch (orderC) {
 				case 1 :
@@ -281,35 +281,35 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		}
 		assertEquals(4, orderC);
 
-		account3.orders.clear();
-		assertEquals(0, account3.orders.size());
+		accountResult.orders.clear();
+		assertEquals(0, accountResult.orders.size());
 
-		orders = account3.orders.toArray(new Order[2]);
+		orders = accountResult.orders.toArray(new Order[2]);
 		assertNotNull(orders);
 		assertEquals(2, orders.length);
 		assertNull(orders[0]);
 		assertNull(orders[1]);
 
-		assertFalse(account3.orders.contains(order1));
-		assertFalse(account3.orders.containsAll(Arrays.asList(order1, order2, order5, order6)));
+		assertFalse(accountResult.orders.contains(order1));
+		assertFalse(accountResult.orders.containsAll(Arrays.asList(order1, order2, order5, order6)));
 
-		assertEquals(name1, account3.name);
+		assertEquals(name1, accountResult.name);
 		String name3 = "gjrogejroregjpo";
-		account3.name = name3;
-		assertEquals(1, accountDao.update(account3));
+		accountResult.name = name3;
+		assertEquals(1, accountDao.update(accountResult));
 
-		account3 = accountDao.queryForId(account1.id);
-		assertNotNull(account3);
-		assertEquals(name3, account3.name);
+		accountResult = accountDao.queryForId(account1.id);
+		assertNotNull(accountResult);
+		assertEquals(name3, accountResult.name);
 
 		int newId = account1.id + 100;
-		assertEquals(1, accountDao.updateId(account3, newId));
-		account3 = accountDao.queryForId(newId);
-		assertNotNull(account3);
+		assertEquals(1, accountDao.updateId(accountResult, newId));
+		accountResult = accountDao.queryForId(newId);
+		assertNotNull(accountResult);
 
-		assertEquals(1, accountDao.delete(account3));
-		account3 = accountDao.queryForId(newId);
-		assertNull(account3);
+		assertEquals(1, accountDao.delete(accountResult));
+		accountResult = accountDao.queryForId(newId);
+		assertNull(accountResult);
 	}
 
 	@Test(expected = SQLException.class)
@@ -348,6 +348,42 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertEquals(rr2.stuff, iterator.next().stuff);
 		iterator.close();
 	}
+
+	@Test
+	public void testCollectionsOfCollections() throws Exception {
+		Dao<CollectionWithCollection1, Object> dao1 = createDao(CollectionWithCollection1.class, true);
+		Dao<CollectionWithCollection2, Object> dao2 = createDao(CollectionWithCollection2.class, true);
+		Dao<CollectionWithCollection3, Object> dao3 = createDao(CollectionWithCollection3.class, true);
+
+		CollectionWithCollection1 coll1 = new CollectionWithCollection1();
+		assertEquals(1, dao1.create(coll1));
+
+		CollectionWithCollection2 coll2 = new CollectionWithCollection2();
+		coll2.collectionWithCollection1 = coll1;
+		assertEquals(1, dao2.create(coll2));
+
+		CollectionWithCollection3 coll3 = new CollectionWithCollection3();
+		coll3.collectionWithCollection2 = coll2;
+		assertEquals(1, dao3.create(coll3));
+
+		CollectionWithCollection1 collResult1 = dao1.queryForId(coll1.id);
+		assertNotNull(collResult1.related);
+		assertEquals(1, collResult1.related.size());
+		CloseableIterator<CollectionWithCollection2> iterator1 = collResult1.related.iterator();
+		assertTrue(iterator1.hasNext());
+		assertEquals(coll2.id, iterator1.next().id);
+		collResult1.related.closeLastIterator();
+		
+		CollectionWithCollection2 collResult2 = dao2.queryForId(coll2.id);
+		assertNotNull(collResult2.related);
+		assertEquals(1, collResult2.related.size());
+		CloseableIterator<CollectionWithCollection3> iterator2 = collResult2.related.iterator();
+		assertTrue(iterator2.hasNext());
+		assertEquals(coll3.id, iterator2.next().id);
+		collResult2.related.closeLastIterator();
+	}
+
+	/* =============================================================================================== */
 
 	protected static class Account {
 		@DatabaseField(generatedId = true)
@@ -453,6 +489,35 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		@ForeignCollectionField
 		ForeignCollection<RecursiveReference> related;
 		protected RecursiveReference() {
+		}
+	}
+
+	protected static class CollectionWithCollection1 {
+		@DatabaseField(generatedId = true)
+		int id;
+		@ForeignCollectionField
+		ForeignCollection<CollectionWithCollection2> related;
+		protected CollectionWithCollection1() {
+		}
+	}
+
+	protected static class CollectionWithCollection2 {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(foreign = true)
+		CollectionWithCollection1 collectionWithCollection1;
+		@ForeignCollectionField
+		ForeignCollection<CollectionWithCollection3> related;
+		protected CollectionWithCollection2() {
+		}
+	}
+
+	protected static class CollectionWithCollection3 {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(foreign = true)
+		CollectionWithCollection2 collectionWithCollection2;
+		protected CollectionWithCollection3() {
 		}
 	}
 }

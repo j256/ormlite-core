@@ -44,8 +44,8 @@ public class ForeignObjectTest extends BaseCoreTest {
 		assertNotNull(answerResult.question);
 		assertEquals(question.id, answerResult.question.id);
 		assertEquals(question.name, answerResult.question.name);
-		// this is expected since we don't auto-refresh foreign object foreign collection fields
-		assertNull(answerResult.question.answers);
+		assertNotNull(answerResult.question.answers);
+		assertEquals(2, answerResult.question.answers.size());
 
 		questionResult = questionDao.queryForId(question.id);
 		assertNotNull(questionResult.bestAnswer);
