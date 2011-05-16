@@ -48,6 +48,7 @@ import com.j256.ormlite.table.TableInfo;
 public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 
 	private static Logger logger = LoggerFactory.getLogger(StatementExecutor.class);
+	private static final FieldType[] noFieldTypes = new FieldType[0];
 
 	private final DatabaseType databaseType;
 	private final TableInfo<T, ID> tableInfo;
@@ -59,7 +60,6 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	private MappedUpdateId<T, ID> mappedUpdateId;
 	private MappedDelete<T, ID> mappedDelete;
 	private MappedRefresh<T, ID> mappedRefresh;
-	private final FieldType[] noFieldTypes = new FieldType[0];
 
 	/**
 	 * Provides statements for various SQL operations.
