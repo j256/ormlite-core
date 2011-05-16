@@ -36,11 +36,8 @@ public class DaoManager {
 		if (connectionSource == null) {
 			throw new IllegalArgumentException("connectionSource argument cannot be null");
 		}
-		if (classMap == null) {
-			classMap = new HashMap<ClazzConnectionSource, Dao<?, ?>>();
-		}
 		ClazzConnectionSource key = new ClazzConnectionSource(connectionSource, clazz);
-		Dao<?, ?> dao = classMap.get(key);
+		Dao<?, ?> dao = lookupDao(key);
 		if (dao != null) {
 			@SuppressWarnings("unchecked")
 			D castDao = (D) dao;
@@ -96,6 +93,25 @@ public class DaoManager {
 	}
 
 	/**
+	 * Helper method to lookup a Dao if it has already been associated with the class. Otherwise this returns null.
+	 */
+	public synchronized static <D extends Dao<T, ?>, T> D lookupDao(ConnectionSource connectionSource, Class<T> clazz)
+			throws SQLException {
+		if (connectionSource == null) {
+			throw new IllegalArgumentException("connectionSource argument cannot be null");
+		}
+		ClazzConnectionSource key = new ClazzConnectionSource(connectionSource, clazz);
+		Dao<?, ?> dao = lookupDao(key);
+		if (dao == null) {
+			return null;
+		} else {
+			@SuppressWarnings("unchecked")
+			D castDao = (D) dao;
+			return castDao;
+		}
+	}
+
+	/**
 	 * Helper method to create a Dao object without having to define a class. This checks to see if the Dao has already
 	 * been created. If not then it is a call through to
 	 * {@link BaseDaoImpl#createDao(ConnectionSource, DatabaseTableConfig)}.
@@ -146,6 +162,26 @@ public class DaoManager {
 	}
 
 	/**
+	 * Helper method to lookup a Dao if it has already been associated with the table-config. Otherwise this returns
+	 * null.
+	 */
+	public synchronized static <D extends Dao<T, ?>, T> D lookupDao(ConnectionSource connectionSource,
+			DatabaseTableConfig<T> tableConfig) throws SQLException {
+		if (connectionSource == null) {
+			throw new IllegalArgumentException("connectionSource argument cannot be null");
+		}
+		TableConfigConnectionSource key = new TableConfigConnectionSource(connectionSource, tableConfig);
+		Dao<?, ?> dao = lookupDao(key);
+		if (dao == null) {
+			return null;
+		} else {
+			@SuppressWarnings("unchecked")
+			D castDao = (D) dao;
+			return castDao;
+		}
+	}
+
+	/**
 	 * Register the dao with the cache inside of this class. This will allow folks to build a DAO externally and then
 	 * register so it can be used internally as necessary.
 	 * 
@@ -179,6 +215,30 @@ public class DaoManager {
 		if (tableMap != null) {
 			tableMap.clear();
 			tableMap = null;
+		}
+	}
+
+	private static <T> Dao<?, ?> lookupDao(ClazzConnectionSource key) {
+		if (classMap == null) {
+			classMap = new HashMap<ClazzConnectionSource, Dao<?, ?>>();
+		}
+		Dao<?, ?> dao = classMap.get(key);
+		if (dao == null) {
+			return null;
+		} else {
+			return dao;
+		}
+	}
+
+	private static <T> Dao<?, ?> lookupDao(TableConfigConnectionSource key) {
+		if (classMap == null) {
+			classMap = new HashMap<ClazzConnectionSource, Dao<?, ?>>();
+		}
+		Dao<?, ?> dao = tableMap.get(key);
+		if (dao == null) {
+			return null;
+		} else {
+			return dao;
 		}
 	}
 
