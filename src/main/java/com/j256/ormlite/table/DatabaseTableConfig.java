@@ -80,10 +80,10 @@ public class DatabaseTableConfig<T> {
 	}
 
 	/**
-	 * Set the table name which is turned into lowercase. If not specified then the name is gotten from the class name.
+	 * Set the table name. If not specified then the name is gotten from the class name.
 	 */
 	public void setTableName(String tableName) {
-		this.tableName = tableName.toLowerCase();
+		this.tableName = tableName;
 	}
 
 	public void setFieldConfigs(List<DatabaseFieldConfig> fieldConfigs) {

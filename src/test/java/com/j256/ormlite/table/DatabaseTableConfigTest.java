@@ -201,6 +201,24 @@ public class DatabaseTableConfigTest {
 		assertTrue(seeStuff);
 	}
 
+	@Test
+	public void testSetTableNameCase() throws Exception {
+		List<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
+		DatabaseFieldConfig fieldId = new DatabaseFieldConfig("id");
+		fieldId.setId(true);
+		fieldConfigs.add(fieldId);
+		fieldConfigs.add(new DatabaseFieldConfig("stuff"));
+
+		DatabaseTableConfig<SubWithoutAnno> tableConfig = new DatabaseTableConfig<SubWithoutAnno>();
+		tableConfig.setDataClass(SubWithoutAnno.class);
+		String tableName = "mixEDcaSE";
+		tableConfig.setTableName(tableName);
+		tableConfig.setFieldConfigs(fieldConfigs);
+		tableConfig.initialize();
+
+		assertEquals(tableName, tableConfig.getTableName());
+	}
+
 	/* ======================================================================================= */
 
 	@DatabaseTable(tableName = TABLE_NAME)
