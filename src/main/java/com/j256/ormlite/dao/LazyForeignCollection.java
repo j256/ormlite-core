@@ -174,9 +174,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 			}
 			return array;
 		} else {
-			@SuppressWarnings("unchecked")
-			E[] castArray = (E[]) items.toArray();
-			return castArray;
+			return items.toArray(array);
 		}
 	}
 
