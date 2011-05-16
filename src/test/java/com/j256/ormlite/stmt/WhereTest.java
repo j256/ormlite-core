@@ -652,6 +652,54 @@ public class WhereTest extends BaseCoreTest {
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void testOrManyZero() throws Exception {
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		where.or(0);
+	}
+
+	@Test
+	public void testOrManyOne() throws Exception {
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		where = new Where<Foo, String>(createTableInfo(), null);
+		int val1 = 1312313;
+		where.eq(Foo.VAL_COLUMN_NAME, val1);
+		where.or(1);
+		StringBuilder whereSb = new StringBuilder();
+		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		StringBuilder sb = new StringBuilder();
+		sb.append("(");
+		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
+		// NOTE: they are done in reverse order
+		sb.append(" = ").append(val1);
+		sb.append(" ) ");
+		assertEquals(sb.toString(), whereSb.toString());
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testAndManyZero() throws Exception {
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		where.and(0);
+	}
+
+	@Test
+	public void testAndManyOne() throws Exception {
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		where = new Where<Foo, String>(createTableInfo(), null);
+		int val1 = 1312313;
+		where.eq(Foo.VAL_COLUMN_NAME, val1);
+		where.and(1);
+		StringBuilder whereSb = new StringBuilder();
+		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		StringBuilder sb = new StringBuilder();
+		sb.append("(");
+		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
+		// NOTE: they are done in reverse order
+		sb.append(" = ").append(val1);
+		sb.append(" ) ");
+		assertEquals(sb.toString(), whereSb.toString());
+	}
+
 	private TableInfo<Foo, String> createTableInfo() throws SQLException {
 		return new TableInfo<Foo, String>(connectionSource, null, Foo.class);
 	}
