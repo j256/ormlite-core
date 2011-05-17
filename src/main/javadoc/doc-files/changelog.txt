@@ -1,4 +1,11 @@
 4.22: 5/XX/2011 (svn rYYYY)
+	* CORE: Fixed major problem with DAO loops and caching.  Thanks much to the user list.  Fixes bug #3301588.
+	* CORE: Fixed problem with queryForMatching() and queryForFieldValues() if no fields.  Fixes bug #3301253.
+	* CORE: Fixed problem with configuring fields in base class without annotations.  Thanks to JC and Rahan.  Fixed bug #3301698.
+	* CORE: Fixed problem with LazyForeignCollection.toArray(T[]).  Thanks to Skylar.  Fixes bug #3302924.
+	* CORE: Removed auto-downcasing of hand wired table name in DatabaseTableConfig.  Thanks to Tomas.  Fixes bug #3302976.
+	* CORE: Added the maxForeignCollectionLevel field to the @ForeignCollectionField annotation to limit recursion.
+	* CORE: Added the concept of closeLastIterator() to the DAO and CloseableWrappedIterable for reentrant usage.
 	* CORE: Added better connection/statement testing code and fixed some additional missing closes.
 
 4.21: 5/5/2011 (svn r1721)

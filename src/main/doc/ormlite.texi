@@ -6,7 +6,7 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.21
+@set ormlite_version 4.22
 @set ormlite_year 2011
 @set ormlite_date May @value{ormlite_year}
 @set package ORMLite
@@ -20,10 +20,10 @@
 @author Gray Watson
 
 @page
-Copyright 2010 to @value{ormlite_year} by Gray Watson.
+This manual is licensed by Gray Watson under the Creative Commons Attribution-Share Alike 3.0 License.
 
-Permission is granted to make and distribute verbatim copies of this manual provided the copyright notice
-and this permission notice are preserved on all copies.
+Permission is granted to make and distribute verbatim copies of this manual provided the previous license
+notice and this permission notice are preserved on all copies.
 @end titlepage
 
 @c ----------------------------------------------------------------
@@ -342,6 +342,7 @@ is used instead.
 @cindex field type
 @cindex jdbc type
 @cindex SQL type
+@cindex data type
 @anchor{DatabaseField dataType}
 @item dataType
 
@@ -454,6 +455,7 @@ Boolean that tells ORMLite to throw an exception if it sees a null value in a da
 it in a primitive field.  By default it is false.  If it is false and the database field is null, then the value of the
 primitive will be set to 0 (false, null, etc.).  This can only be used on a primitive field.
 
+@cindex persisted field
 @item persisted
 
 Set this to be false (default true) to not store this field in the database. This is useful if you want to have
@@ -487,6 +489,7 @@ use the @code{uniqueIndexName} to create an index for this field.
 
 @cindex multiple fields unique
 @cindex unique, multiple fields
+@cindex uniqueCombo
 @item uniqueCombo
 
 Adds a constraint to the table so that a combination of all fields that have @code{uniqueCombo} set to true has to be unique
@@ -513,12 +516,14 @@ columnName with a "_idx" suffix. To specify a specific name of the index or to i
 Boolean value (default false) to have the database add a unique index for this field. Same as index but this will ensure that all of
 the values in the index are unique.  If you just want to make sure of unique-ness then you can use the @code{unique} field instead.
 
+@cindex index name
 @cindex naming an index
 @item indexName
 
 String value (default none) to have the database add an index for this field with this name. You do not need to specify the index
 boolean as well. To index multiple fields together in one index, each of the fields should have the same indexName value.
 
+@cindex unique index name
 @cindex naming a unique index
 @item uniqueIndexName
 
@@ -528,6 +533,7 @@ that all of the values in the index are unique.  For example, this means that yo
 
 @cindex foreign object, auto refresh
 @cindex auto refresh foreign objects
+@cindex foreign auto refresh
 @anchor{foreignAutoRefresh}
 @item foreignAutoRefresh
 
@@ -544,10 +550,11 @@ a foreign collection, in both cases the resulting field will be set to null and 
 refresh on the field directly if you need it.
 
 @emph{NOTE:} If you have an auto-refreshed field that is an object that also has an auto-refreshed field, you may want to tune the
-@code{maxForeignLevel} value.  See below.
+@code{maxForeignAutoRefreshLevel} value.  See below.
 
-@cindex number auto-refresh levels
-@item maxForeignLevel
+@cindex max foreign auto-refresh level
+@cindex limiting foreign auto-refresh levels
+@item maxForeignAutoRefreshLevel
 
 This can be used to set the maximum number of levels to configure foreign objects.  For example, if you have a @code{Question} which
 has an foreign field of the best @code{Answer}, and the @code{Answer} has an foreign field to the corresponding question, then the
@@ -556,7 +563,7 @@ it could cause an infinite loop.  By default, ORMLite only goes through 2 levels
 it.  The higher the number the more database transactions happen when you load in your @code{Question}.
 
 In our example, the foreign fields in @code{Question} and @code{Answer} could be set to auto-refresh.  If this is true then with the
-@code{maxForeignLevel} set to 1, when you query for a @code{Question}, the @code{Answer} field will be auto-refreshed, but the
+@code{maxForeignAutoRefreshLevel} set to 1, when you query for a @code{Question}, the @code{Answer} field will be auto-refreshed, but the
 @code{Question} field on the answer will @emph{only} have its id field set.  It will not be auto-refreshed.
 
 @end table
@@ -1825,7 +1832,7 @@ There is example code to show how to use foreign objects.  @xref{foreign objects
 @cindex foreign collections
 @cindex eager load collections
 @cindex lazy load collections
-As of March 2011, one of the newest features of ORMLite is the concept of a "Foreign Collection".  In the above section of the
+As of March 2011, one of the newer features of ORMLite is the concept of a "Foreign Collection".  In the above section of the
 manual we gave the example of the @code{Order} class having a foreign object field to the @code{Account} table.  A foreign collection
 allows you to add a collection of orders on the account table.  Whenever an @code{Account} object is returned by a query or refreshed
 by the DAO, a @emph{separate} query is made over the order table and a collection of orders is set on the account.  All of the orders
@@ -1842,10 +1849,28 @@ public class Account @{
 
 In the above example, the @code{@@ForeignCollectionField} annotation marks that the @code{orders} field is a collection of the orders
 that match the account.  The field type of @code{orders} must be either @code{ForeignCollection<T>} or @code{Collection<T>} -- no
-other collections are supported.  There are two different types of foreign collections: eager or lazy.   If eager is set to true then
-the separate query is made immediately and the orders are stored as a list within the collection.  If eager is set to false (the
-default) then the collection is considered to be "lazy" and will iterate over the database using the @code{Dao.iterator()} only when
-a method is called on the collection.
+other collections are supported.  The @code{@@ForeignCollectionField} annotation supports the following fields:
+
+@table @code
+
+@cindex eager versus lazy collection
+@item eager
+
+There are two different types of foreign collections: eager or lazy.   If eager is set to true then the separate query is made immediately
+and the orders are stored as a list within the collection.  If eager is set to false (the default) then the collection is considered to be
+"lazy" and will iterate over the database using the @code{Dao.iterator()} only when a method is called on the collection.
+
+@cindex max eager foreign collection level
+@cindex limiting eager foreign collections
+@item maxEagerForeignCollectionLevel
+
+This can be set to the number of times to expand an eager foreign collection's foreign collection. If you query for A and it has an eager
+foreign-collection of field B which has an eager foreign-collection of field C (@dots{}), then a lot of database operations are going to
+happen whenever you query for A. By default this value is 1 meaning that if you query for A, the collection of B will be eager fetched but
+each of the B objects will have a lazy collection instead of an eager collection of C. It should be increased only if you know what you are
+doing.
+
+@end table
 
 Remember that when you have a @code{ForeignCollection} field, the class in the collection @emph{must} (in this example Order) must
 gave a foreign field for the class that has the collection (in this example Account).  If Account has a foreign collection of Orders,
@@ -2736,9 +2761,11 @@ you'd do something like the following:
 List<DatabaseFieldConfig> fieldConfigs =
     new ArrayList<DatabaseFieldConfig>();
 DatabaseFieldConfig field1 = new DatabaseFieldConfig("name");
-field1.setGeneratedId(true);
+field1.setId(true);
 fieldConfigs.add(field1);
-fieldConfigs.add(new DatabaseFieldConfig("password"));
+DatabaseFieldConfig field2 = new DatabaseFieldConfig("password");
+field2.setCanBeNull(false);
+fieldConfigs.add(field2);
 DatabaseTableConfig<Account> accountTableConfig
     = new DatabaseTableConfig<Account>(Account.class, fieldConfigs);
 
@@ -3622,6 +3649,7 @@ project.
 
 @c -----------------
 
+@item Skylar helped with recursive ForeignCollections with an excellent bug report with unit tests.
 @item Chris Banes improved the Android support and provided feedback on the wiring.
 @item Adam Brown helped with the memory analysis to lower the GC overhead.
 @item Jaxelrod has submitted some excellent bug reports and provided feedback on the maven release mechanisms and documentation.
@@ -3647,7 +3675,7 @@ Thanks much to them all.
 This document is part of the ORMLite project.
 
 Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby
-granted, provided that the above copyright notice and this permission notice appear in all copies.
+granted, provided that this permission notice appear in all copies.
 
 THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING
 ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL,

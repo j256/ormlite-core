@@ -53,7 +53,7 @@ public @interface ForeignCollectionField {
 	 * and it has an eager foreign-collection of field B which has an eager foreign-collection of field C ..., then a
 	 * lot of database operations are going to happen whenever you query for A. By default this value is 1 meaning that
 	 * if you query for A, the collection of B will be eager fetched but each of the B objects will have a lazy
-	 * collection instead of an eager collection of C. It should be increased if you know what you are doing.
+	 * collection instead of an eager collection of C. It should be increased only if you know what you are doing.
 	 */
 	int maxEagerForeignCollectionLevel() default MAX_EAGER_FOREIGN_COLLECTION_LEVEL;
 }

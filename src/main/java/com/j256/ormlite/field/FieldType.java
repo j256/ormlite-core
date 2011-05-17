@@ -184,7 +184,7 @@ public class FieldType {
 	 * Because we go recursive in a lot of situations if we construct DAOs inside of the FieldType constructor, we have
 	 * to do this 2nd pass initialization so we can better use the DAO caches.
 	 * 
-	 * @see {@link BaseDaoImpl#initialize()}.
+	 * @see BaseDaoImpl#initialize()
 	 */
 	public void configDaoInformation(ConnectionSource connectionSource, Class<?> parentClass) throws SQLException {
 		Class<?> clazz = field.getType();

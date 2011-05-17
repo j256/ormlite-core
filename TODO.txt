@@ -34,6 +34,15 @@
 
 - add in a bulk insert which will compile the insert statement and just set args for each entry
 
+- new methods in the DAO:
+	/* returns either the data parameter if it was inserted or a new data if it already existed */
+	T createIfNotExists(T data);
+	/* returns some sort of status object, maybe an object with the number of rows changed and whether an insert or update was performed */
+	Status createOrUpdate(T data);
+	// update only those fields that are not null
+	updateNonDefault()
+	createOrUpdateNonDefault()
+
 -----------------------------------------------------------------------------------------------------------------------------------
 
 - for objects that a user does not have control over, how about the ability of defining a Method to construct a particular class

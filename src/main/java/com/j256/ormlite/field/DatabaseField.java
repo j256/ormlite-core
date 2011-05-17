@@ -41,7 +41,9 @@ public @interface DatabaseField {
 	public static final String NO_DEFAULT = "__ormlite__ no default value string was specified";
 
 	/**
-	 * @see {@link #maxForeignAutoRefreshLevel()}
+	 * Default for the maxForeignAutoRefreshLevel.
+	 * 
+	 * @see #maxForeignAutoRefreshLevel()
 	 */
 	public static final int MAX_FOREIGN_AUTO_REFRESH_LEVEL = 2;
 
