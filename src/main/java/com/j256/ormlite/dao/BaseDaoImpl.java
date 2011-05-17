@@ -412,10 +412,18 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	public CloseableIterator<T> iterator() {
+		lastIterator = seperateIterator();
+		return lastIterator;
+	}
+
+	/**
+	 * Same as {@link #iterator()} except this doesn't set the last iterator which can be closed with the
+	 * {@link #closeLastIterator()}.
+	 */
+	public CloseableIterator<T> seperateIterator() {
 		checkForInitialized();
 		try {
 			SelectIterator<T, ID> iterator = statementExecutor.buildIterator(this, connectionSource);
-			lastIterator = iterator;
 			return iterator;
 		} catch (Exception e) {
 			throw new IllegalStateException("Could not build iterator for " + dataClass, e);
@@ -424,7 +432,15 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
 	public CloseableWrappedIterable<T> getWrappedIterable() {
 		checkForInitialized();
-		return new CloseableWrappedIterableImpl<T>(this);
+		return new CloseableWrappedIterableImpl<T>(new CloseableIterable<T>() {
+			public CloseableIterator<T> iterator() {
+				try {
+					return BaseDaoImpl.this.seperateIterator();
+				} catch (Exception e) {
+					throw new IllegalStateException("Could not build iterator for " + dataClass, e);
+				}
+			}
+		});
 	}
 
 	public CloseableWrappedIterable<T> getWrappedIterable(final PreparedQuery<T> preparedQuery) {
@@ -432,7 +448,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		return new CloseableWrappedIterableImpl<T>(new CloseableIterable<T>() {
 			public CloseableIterator<T> iterator() {
 				try {
-					return BaseDaoImpl.this.iterator(preparedQuery);
+					return BaseDaoImpl.this.seperateIterator(preparedQuery);
 				} catch (Exception e) {
 					throw new IllegalStateException("Could not build prepared-query iterator for " + dataClass, e);
 				}
@@ -448,6 +464,15 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	public CloseableIterator<T> iterator(PreparedQuery<T> preparedQuery) throws SQLException {
+		lastIterator = seperateIterator(preparedQuery);
+		return lastIterator;
+	}
+
+	/**
+	 * Same as {@link #iterator(PreparedQuery)} except this doesn't set the last iterator which can be closed with the
+	 * {@link #closeLastIterator()}.
+	 */
+	public CloseableIterator<T> seperateIterator(PreparedQuery<T> preparedQuery) throws SQLException {
 		checkForInitialized();
 		try {
 			SelectIterator<T, ID> iterator = statementExecutor.buildIterator(this, connectionSource, preparedQuery);

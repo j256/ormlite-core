@@ -24,8 +24,8 @@ import com.j256.ormlite.table.DatabaseTableConfig;
  */
 public class DaoManager {
 
-	private static Map<ClazzConnectionSource, Dao<?, ?>> classMap;
-	private static Map<TableConfigConnectionSource, Dao<?, ?>> tableMap;
+	private static Map<ClazzConnectionSource, Dao<?, ?>> classMap = null;
+	private static Map<TableConfigConnectionSource, Dao<?, ?>> tableMap = null;
 
 	/**
 	 * Helper method to create a Dao object without having to define a class. This checks to see if the Dao has already
@@ -121,11 +121,8 @@ public class DaoManager {
 		if (connectionSource == null) {
 			throw new IllegalArgumentException("connectionSource argument cannot be null");
 		}
-		if (tableMap == null) {
-			tableMap = new HashMap<TableConfigConnectionSource, Dao<?, ?>>();
-		}
 		TableConfigConnectionSource key = new TableConfigConnectionSource(connectionSource, tableConfig);
-		Dao<?, ?> dao = tableMap.get(key);
+		Dao<?, ?> dao = lookupDao(key);
 		if (dao != null) {
 			@SuppressWarnings("unchecked")
 			D castDao = (D) dao;
@@ -231,8 +228,8 @@ public class DaoManager {
 	}
 
 	private static <T> Dao<?, ?> lookupDao(TableConfigConnectionSource key) {
-		if (classMap == null) {
-			classMap = new HashMap<ClazzConnectionSource, Dao<?, ?>>();
+		if (tableMap == null) {
+			tableMap = new HashMap<TableConfigConnectionSource, Dao<?, ?>>();
 		}
 		Dao<?, ?> dao = tableMap.get(key);
 		if (dao == null) {

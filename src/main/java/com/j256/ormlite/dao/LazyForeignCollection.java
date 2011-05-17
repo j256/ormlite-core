@@ -38,7 +38,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 		try {
 			return iteratorThrow();
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+			throw new IllegalStateException("Could not build lazy iterator for " + dao.getDataClass(), e);
 		}
 	}
 
@@ -46,12 +46,28 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 	 * This is the same as {@link #iterator()} except it throws.
 	 */
 	public CloseableIterator<T> iteratorThrow() throws SQLException {
-		lastIterator = dao.iterator(preparedQuery);
+		lastIterator = seperateIteratorThrow();
 		return lastIterator;
 	}
 
+	/**
+	 * Same as {@link #iteratorThrow()} except this doesn't set the last iterator which can be closed with the
+	 * {@link #closeLastIterator()}.
+	 */
+	public CloseableIterator<T> seperateIteratorThrow() throws SQLException {
+		return dao.iterator(preparedQuery);
+	}
+
 	public CloseableWrappedIterable<T> getWrappedIterable() {
-		return new CloseableWrappedIterableImpl<T>(this);
+		return new CloseableWrappedIterableImpl<T>(new CloseableIterable<T>() {
+			public CloseableIterator<T> iterator() {
+				try {
+					return LazyForeignCollection.this.seperateIteratorThrow();
+				} catch (Exception e) {
+					throw new IllegalStateException("Could not build lazy iterator for " + dao.getDataClass(), e);
+				}
+			}
+		});
 	}
 
 	public void closeLastIterator() throws SQLException {

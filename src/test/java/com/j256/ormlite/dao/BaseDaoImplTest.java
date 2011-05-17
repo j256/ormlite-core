@@ -714,6 +714,41 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		foo3 = iterator.next();
 		assertEquals(id2, foo3.id);
 		assertFalse(iterator.hasNext());
+		iterator.close();
+	}
+
+	@Test
+	public void testIteratorLastClose() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		foo1.id = "stuff1";
+		assertEquals(1, dao.create(foo1));
+
+		CloseableIterator<Foo> iterator = dao.iterator();
+		assertTrue(iterator.hasNext());
+		Foo foo3 = iterator.next();
+		assertEquals(foo1.id, foo3.id);
+		assertFalse(iterator.hasNext());
+		dao.closeLastIterator();
+	}
+
+	@Test
+	public void testWrappedIterator() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		foo1.id = "stuff1";
+		assertEquals(1, dao.create(foo1));
+
+		CloseableWrappedIterable<Foo> wrapped = dao.getWrappedIterable();
+		CloseableIterator<Foo> iterator = wrapped.iterator();
+		// this shouldn't close anything
+		dao.closeLastIterator();
+
+		assertTrue(iterator.hasNext());
+		Foo foo3 = iterator.next();
+		assertEquals(foo1.id, foo3.id);
+		assertFalse(iterator.hasNext());
+		wrapped.close();
 	}
 
 	@Test(expected = IllegalStateException.class)

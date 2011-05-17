@@ -4,10 +4,12 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.junit.Test;
@@ -30,6 +32,68 @@ public class DaoManagerTest extends BaseCoreTest {
 						DataType.UNKNOWN, null, 0, false, false, false, null, false, null, false, null, false, null,
 						false, null, null, false, 0, 0)));
 		testTable(tableConfig);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testCreateDaoNull() throws Exception {
+		DaoManager.createDao(null, Foo.class);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testLookupDaoNull() throws Exception {
+		DaoManager.lookupDao(null, Foo.class);
+	}
+
+	@Test
+	public void testLookupDaoUnknown() throws Exception {
+		assertNull(DaoManager.lookupDao(connectionSource, getClass()));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testCreateDaoTableNull() throws Exception {
+		DaoManager.createDao(null, new DatabaseTableConfig<Foo>());
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testLookupDaoTableNull() throws Exception {
+		DaoManager.lookupDao(null, new DatabaseTableConfig<Foo>());
+	}
+
+	@SuppressWarnings("deprecation")
+	@Test
+	public void testRegisterDao() throws Exception {
+		Dao<RegisterClass, Void> dao = DaoManager.lookupDao(connectionSource, RegisterClass.class);
+		assertNull(dao);
+		Dao<? extends RegisterClass, Object> daoImpl = BaseDaoImpl.createDao(connectionSource, RegisterClass.class);
+		DaoManager.registerDao(connectionSource, daoImpl);
+		dao = DaoManager.lookupDao(connectionSource, RegisterClass.class);
+		assertSame(daoImpl, dao);
+	}
+
+	@SuppressWarnings("deprecation")
+	@Test
+	public void testRegisterDaoTable() throws Exception {
+		DatabaseTableConfig<Bar> tableConfig =
+				new DatabaseTableConfig<Bar>(Bar.class, Arrays.asList(new DatabaseFieldConfig("foo", null,
+						DataType.UNKNOWN, null, 0, false, false, false, null, false, null, false, null, false, null,
+						false, null, null, false, 0, 0)));
+		Dao<Bar, Void> dao = DaoManager.lookupDao(connectionSource, tableConfig);
+		assertNull(dao);
+		Dao<? extends Bar, Object> daoImpl = BaseDaoImpl.createDao(connectionSource, tableConfig);
+		DaoManager.registerDao(connectionSource, daoImpl);
+		dao = DaoManager.lookupDao(connectionSource, tableConfig);
+		assertSame(daoImpl, dao);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testRegisterNull() throws Exception {
+		DaoManager.registerDao(null, null);
+	}
+
+	@Test
+	public void testLookupTableDaoUnknown() throws Exception {
+		assertNull(DaoManager.lookupDao(connectionSource, new DatabaseTableConfig<DaoManagerTest>(DaoManagerTest.class,
+				new ArrayList<DatabaseFieldConfig>())));
 	}
 
 	@Test
@@ -125,26 +189,30 @@ public class DaoManagerTest extends BaseCoreTest {
 	private <T> void testClass(Class<T> clazz) throws Exception {
 		Dao<T, Void> dao1 = DaoManager.createDao(connectionSource, clazz);
 		Dao<T, Void> dao2 = DaoManager.createDao(connectionSource, clazz);
-		Dao<Foreign, Void> dao3 = DaoManager.createDao(connectionSource, Foreign.class);
+		Dao<T, ?> dao3 = DaoManager.lookupDao(connectionSource, clazz);
+		Dao<Foreign, Void> dao4 = DaoManager.createDao(connectionSource, Foreign.class);
 		ConnectionSource otherConnectionSource = createMock(ConnectionSource.class);
 		expect(otherConnectionSource.getDatabaseType()).andReturn(databaseType).anyTimes();
 		replay(otherConnectionSource);
-		Dao<T, Void> dao4 = DaoManager.createDao(otherConnectionSource, clazz);
+		Dao<T, Void> dao5 = DaoManager.createDao(otherConnectionSource, clazz);
 		assertSame(dao1, dao2);
-		assertNotSame(dao1, dao3);
+		assertSame(dao1, dao3);
 		assertNotSame(dao1, dao4);
+		assertNotSame(dao1, dao5);
 		DaoManager.clearCache();
 		dao2 = DaoManager.createDao(connectionSource, clazz);
 		assertNotSame(dao1, dao2);
 	}
 
 	private <T> void testTable(DatabaseTableConfig<T> config) throws Exception {
-		Dao<T, Void> dao = DaoManager.createDao(connectionSource, config);
+		Dao<T, Void> dao1 = DaoManager.createDao(connectionSource, config);
 		Dao<T, Void> dao2 = DaoManager.createDao(connectionSource, config);
-		assertSame(dao, dao2);
+		Dao<T, Void> dao3 = DaoManager.lookupDao(connectionSource, config);
+		assertSame(dao1, dao2);
+		assertSame(dao1, dao3);
 		DaoManager.clearCache();
-		dao2 = DaoManager.createDao(connectionSource, config);
-		assertNotSame(dao, dao2);
+		Dao<T, ?> dao4 = DaoManager.createDao(connectionSource, config);
+		assertNotSame(dao4, dao2);
 	}
 
 	/* ================================================================== */
@@ -196,6 +264,13 @@ public class DaoManagerTest extends BaseCoreTest {
 		@DatabaseField
 		String foo;
 		public GenericBaz() {
+		}
+	}
+
+	protected static class RegisterClass {
+		@DatabaseField
+		String foo;
+		public RegisterClass() {
 		}
 	}
 
