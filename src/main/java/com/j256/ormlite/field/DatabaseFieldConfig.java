@@ -39,7 +39,7 @@ public class DatabaseFieldConfig {
 	private int maxForeignAutoRefreshLevel = DatabaseField.MAX_FOREIGN_AUTO_REFRESH_LEVEL;
 	private boolean foreignCollection;
 	private boolean foreignCollectionEager;
-	private int maxForeignCollectionLevel = ForeignCollectionField.MAX_FOREIGN_COLLECTION_LEVEL;
+	private int maxEagerForeignCollectionLevel = ForeignCollectionField.MAX_EAGER_FOREIGN_COLLECTION_LEVEL;
 
 	public DatabaseFieldConfig() {
 		// for spring
@@ -74,7 +74,7 @@ public class DatabaseFieldConfig {
 		this.uniqueIndexName = uniqueIndexName;
 		this.foreignAutoRefresh = autoRefresh;
 		this.maxForeignAutoRefreshLevel = maxForeignAutoRefreshLevel;
-		this.maxForeignCollectionLevel = maxForeignCollectionLevel;
+		this.maxEagerForeignCollectionLevel = maxForeignCollectionLevel;
 	}
 
 	/**
@@ -278,12 +278,12 @@ public class DatabaseFieldConfig {
 		this.maxForeignAutoRefreshLevel = maxForeignLevel;
 	}
 
-	public int getMaxForeignCollectionLevel() {
-		return maxForeignCollectionLevel;
+	public int getMaxEagerForeignCollectionLevel() {
+		return maxEagerForeignCollectionLevel;
 	}
 
-	public void setMaxForeignCollectionLevel(int maxForeignCollectionLevel) {
-		this.maxForeignCollectionLevel = maxForeignCollectionLevel;
+	public void setMaxEagerForeignCollectionLevel(int maxEagerForeignCollectionLevel) {
+		this.maxEagerForeignCollectionLevel = maxEagerForeignCollectionLevel;
 	}
 
 	public void setForeignCollection(boolean foreignCollection) {
@@ -450,7 +450,7 @@ public class DatabaseFieldConfig {
 		config.fieldName = field.getName();
 		config.foreignCollection = true;
 		config.foreignCollectionEager = foreignCollection.eager();
-		config.maxForeignCollectionLevel = foreignCollection.maxForeignCollectionLevel();
+		config.maxEagerForeignCollectionLevel = foreignCollection.maxEagerForeignCollectionLevel();
 		return config;
 	}
 

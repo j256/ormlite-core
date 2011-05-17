@@ -331,22 +331,109 @@ public class ForeignCollectionTest extends BaseCoreTest {
 	public void testRecursiveReference() throws Exception {
 		Dao<RecursiveReference, Object> dao = createDao(RecursiveReference.class, true);
 		RecursiveReference rr1 = new RecursiveReference();
-		rr1.stuff = "fpeewihwhgwofjwe";
+		rr1.stuff = "fpeewihwjytjythgwofjwe";
 		assertEquals(1, dao.create(rr1));
-
-		RecursiveReference rr2 = new RecursiveReference();
-		rr2.parent = rr1;
-		rr2.stuff = "fpewofjwe";
-		assertEquals(1, dao.create(rr2));
+		rr1.parent = rr1;
+		assertEquals(1, dao.update(rr1));
 
 		RecursiveReference result = dao.queryForId(rr1.id);
 		assertNotNull(result);
 		assertNotNull(result.related);
+		assertFalse(result.related.isEager());
 		assertEquals(1, result.related.size());
-		CloseableIterator<RecursiveReference> iterator = result.related.iterator();
+		CloseableIterator<RecursiveReference> iterator;
+
+		// this would keep going forever since it is lazy
+		for (int i = 0; i < 10; i++) {
+			iterator = result.related.iterator();
+			assertTrue(iterator.hasNext());
+			result = iterator.next();
+			assertEquals(rr1.stuff, result.stuff);
+			// Nth level is not null and is lazy
+			assertNotNull(result.related);
+			assertFalse(result.related.isEager());
+			iterator.close();
+		}
+	}
+
+	@Test
+	public void testRecursiveReferenceEager() throws Exception {
+		Dao<RecursiveReferenceEager, Object> dao = createDao(RecursiveReferenceEager.class, true);
+		RecursiveReferenceEager rr1 = new RecursiveReferenceEager();
+		rr1.stuff = "fpeewihwh13132gwofjwe";
+		assertEquals(1, dao.create(rr1));
+		rr1.parent = rr1;
+		assertEquals(1, dao.update(rr1));
+
+		RecursiveReferenceEager result = dao.queryForId(rr1.id);
+		assertNotNull(result);
+		// 0th level is not null and is eager
+		assertNotNull(result.related);
+		assertTrue(result.related.isEager());
+		assertEquals(1, result.related.size());
+		CloseableIterator<RecursiveReferenceEager> iterator = result.related.iterator();
 		assertTrue(iterator.hasNext());
-		assertEquals(rr2.stuff, iterator.next().stuff);
+		RecursiveReferenceEager rrResult = iterator.next();
+		assertEquals(rr1.stuff, rrResult.stuff);
+		// 1st level is not null but is lazy
+		assertNotNull(rrResult.related);
+		assertFalse(rrResult.related.isEager());
+		assertFalse(iterator.hasNext());
 		iterator.close();
+	}
+
+	@Test
+	public void testRecursiveReferenceEagerTwo() throws Exception {
+		Dao<RecursiveReferenceEagerLevelTwo, Object> dao = createDao(RecursiveReferenceEagerLevelTwo.class, true);
+		RecursiveReferenceEagerLevelTwo rr1 = new RecursiveReferenceEagerLevelTwo();
+		rr1.stuff = "fpeewifwfwehwhgwofjwe";
+		assertEquals(1, dao.create(rr1));
+		rr1.parent = rr1;
+		assertEquals(1, dao.update(rr1));
+
+		RecursiveReferenceEagerLevelTwo result = dao.queryForId(rr1.id);
+		assertNotNull(result);
+		// 0th level is not null and is eager
+		assertNotNull(result.related);
+		assertTrue(result.related.isEager());
+		assertEquals(1, result.related.size());
+
+		CloseableIterator<RecursiveReferenceEagerLevelTwo> iterator = result.related.iterator();
+		assertTrue(iterator.hasNext());
+		RecursiveReferenceEagerLevelTwo rrResult = iterator.next();
+		assertEquals(rr1.stuff, rrResult.stuff);
+		// 1st level is not null and is eager
+		assertNotNull(rrResult.related);
+		assertTrue(rrResult.related.isEager());
+		assertFalse(iterator.hasNext());
+		iterator.close();
+		iterator = rrResult.related.iterator();
+		assertTrue(iterator.hasNext());
+		rrResult = iterator.next();
+		assertFalse(iterator.hasNext());
+		// but the 2nd level is not null but is lazy
+		assertNotNull(rrResult.related);
+		assertFalse(rrResult.related.isEager());
+		iterator.close();
+	}
+
+	@Test
+	public void testRecursiveReferenceEagerZero() throws Exception {
+		/*
+		 * No reason to do this in reality. You might as well say eager = false.
+		 */
+		Dao<RecursiveReferenceEagerLevelZero, Object> dao = createDao(RecursiveReferenceEagerLevelZero.class, true);
+		RecursiveReferenceEagerLevelZero rr1 = new RecursiveReferenceEagerLevelZero();
+		rr1.stuff = "fpeewifwfwehwhgwofjwe";
+		assertEquals(1, dao.create(rr1));
+		rr1.parent = rr1;
+		assertEquals(1, dao.update(rr1));
+
+		RecursiveReferenceEagerLevelZero result = dao.queryForId(rr1.id);
+		assertNotNull(result);
+		// 0th level is not null but is lazy
+		assertNotNull(result.related);
+		assertFalse(result.related.isEager());
 	}
 
 	@Test
@@ -373,7 +460,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertTrue(iterator1.hasNext());
 		assertEquals(coll2.id, iterator1.next().id);
 		collResult1.related.closeLastIterator();
-		
+
 		CollectionWithCollection2 collResult2 = dao2.queryForId(coll2.id);
 		assertNotNull(collResult2.related);
 		assertEquals(1, collResult2.related.size());
@@ -489,6 +576,45 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		@ForeignCollectionField
 		ForeignCollection<RecursiveReference> related;
 		protected RecursiveReference() {
+		}
+	}
+
+	protected static class RecursiveReferenceEager {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField
+		String stuff;
+		@DatabaseField(foreign = true)
+		RecursiveReferenceEager parent;
+		@ForeignCollectionField(eager = true)
+		ForeignCollection<RecursiveReferenceEager> related;
+		protected RecursiveReferenceEager() {
+		}
+	}
+
+	protected static class RecursiveReferenceEagerLevelTwo {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField
+		String stuff;
+		@DatabaseField(foreign = true)
+		RecursiveReferenceEagerLevelTwo parent;
+		@ForeignCollectionField(eager = true, maxEagerForeignCollectionLevel = 2)
+		ForeignCollection<RecursiveReferenceEagerLevelTwo> related;
+		protected RecursiveReferenceEagerLevelTwo() {
+		}
+	}
+
+	protected static class RecursiveReferenceEagerLevelZero {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField
+		String stuff;
+		@DatabaseField(foreign = true)
+		RecursiveReferenceEagerLevelZero parent;
+		@ForeignCollectionField(eager = true, maxEagerForeignCollectionLevel = 0)
+		ForeignCollection<RecursiveReferenceEagerLevelZero> related;
+		protected RecursiveReferenceEagerLevelZero() {
 		}
 	}
 

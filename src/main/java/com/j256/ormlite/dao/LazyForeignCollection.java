@@ -61,6 +61,10 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 		}
 	}
 
+	public boolean isEager() {
+		return false;
+	}
+
 	public int size() {
 		int sizeC = 0;
 		CloseableIterator<T> iterator = iterator();

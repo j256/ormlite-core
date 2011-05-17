@@ -68,6 +68,10 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 		// noop since the iterators aren't holding open a connection
 	}
 
+	public boolean isEager() {
+		return true;
+	}
+
 	public int size() {
 		return results.size();
 	}

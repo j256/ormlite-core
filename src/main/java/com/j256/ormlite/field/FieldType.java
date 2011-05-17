@@ -623,22 +623,22 @@ public class FieldType {
 		if (foreignFieldType == null) {
 			return null;
 		}
+		@SuppressWarnings("unchecked")
+		Dao<FT, FID> castDao = (Dao<FT, FID>) foreignDao;
+		if (!fieldConfig.isForeignCollectionEager()) {
+			// we know this won't go recursive so no need for the counters
+			return new LazyForeignCollection<FT, FID>(castDao, foreignFieldType.dbColumnName, id);
+		}
+
 		LevelCounters levelCounters = getLevelCounters();
-		// are we over our level limit
-		if (levelCounters.foreignCollectionLevel > fieldConfig.getMaxForeignCollectionLevel()) {
-			return null;
+		// are we over our level limit?
+		if (levelCounters.foreignCollectionLevel >= fieldConfig.getMaxEagerForeignCollectionLevel()) {
+			// then return a lazy collection instead
+			return new LazyForeignCollection<FT, FID>(castDao, foreignFieldType.dbColumnName, id);
 		}
 		levelCounters.foreignCollectionLevel++;
 		try {
-			BaseForeignCollection<FT, FID> collection;
-			@SuppressWarnings("unchecked")
-			Dao<FT, FID> castDao = (Dao<FT, FID>) foreignDao;
-			if (fieldConfig.isForeignCollectionEager()) {
-				collection = new EagerForeignCollection<FT, FID>(castDao, foreignFieldType.dbColumnName, id);
-			} else {
-				collection = new LazyForeignCollection<FT, FID>(castDao, foreignFieldType.dbColumnName, id);
-			}
-			return collection;
+			return new EagerForeignCollection<FT, FID>(castDao, foreignFieldType.dbColumnName, id);
 		} finally {
 			levelCounters.foreignCollectionLevel--;
 		}

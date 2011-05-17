@@ -59,4 +59,9 @@ public interface ForeignCollection<T> extends Collection<T>, CloseableIterable<T
 	 * </p>
 	 */
 	public void closeLastIterator() throws SQLException;
+
+	/**
+	 * Returns true if this an eager collection otherwise false.
+	 */
+	public boolean isEager();
 }
