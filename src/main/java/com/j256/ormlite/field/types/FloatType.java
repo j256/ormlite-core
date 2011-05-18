@@ -11,7 +11,7 @@ public class FloatType extends FloatObjectType {
 
 	private static final FloatType singleTon = new FloatType();
 
-	public static FloatType createType() {
+	public static FloatType getSingleton() {
 		return singleTon;
 	}
 

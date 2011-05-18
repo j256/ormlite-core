@@ -19,7 +19,7 @@ public class EnumStringType extends BaseEnumType {
 
 	private static final EnumStringType singleTon = new EnumStringType();
 
-	public static EnumStringType createType() {
+	public static EnumStringType getSingleton() {
 		return singleTon;
 	}
 

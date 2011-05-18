@@ -15,7 +15,7 @@ public class IntegerObjectType extends BaseDataType {
 
 	private static final IntegerObjectType singleTon = new IntegerObjectType();
 
-	public static IntegerObjectType createType() {
+	public static IntegerObjectType getSingleton() {
 		return singleTon;
 	}
 

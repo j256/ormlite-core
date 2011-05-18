@@ -38,23 +38,23 @@ public enum DataType {
 	/**
 	 * Persists the {@link String} Java class.
 	 */
-	STRING(StringType.createType()),
+	STRING(StringType.getSingleton()),
 	/**
 	 * Persists the {@link String} Java class.
 	 */
-	LONG_STRING(LongStringType.createType()),
+	LONG_STRING(LongStringType.getSingleton()),
 	/**
 	 * Persists the {@link String} Java class.
 	 */
-	STRING_BYTES(StringBytesType.createType()),
+	STRING_BYTES(StringBytesType.getSingleton()),
 	/**
 	 * Persists the boolean Java primitive.
 	 */
-	BOOLEAN(BooleanType.createType()),
+	BOOLEAN(BooleanType.getSingleton()),
 	/**
 	 * Persists the {@link Boolean} Java class.
 	 */
-	BOOLEAN_OBJ(BooleanObjectType.createType()),
+	BOOLEAN_OBJ(BooleanObjectType.getSingleton()),
 	/**
 	 * Persists the {@link java.util.Date} Java class.
 	 * 
@@ -62,7 +62,7 @@ public enum DataType {
 	 * NOTE: This is <i>not</i> the same as the {@link java.sql.Date} class.
 	 * </p>
 	 */
-	DATE(DateType.createType()),
+	DATE(DateType.getSingleton()),
 	/**
 	 * @deprecated You should use {@link DataType#DATE}
 	 */
@@ -76,7 +76,7 @@ public enum DataType {
 	 * NOTE: This is <i>not</i> the same as the {@link java.sql.Date} class.
 	 * </p>
 	 */
-	DATE_LONG(DateLongType.createType()),
+	DATE_LONG(DateLongType.getSingleton()),
 	/**
 	 * @deprecated You should use {@link DataType#DATE_LONG}
 	 */
@@ -94,7 +94,7 @@ public enum DataType {
 	 * data in/out unfortunately.
 	 * </p>
 	 */
-	DATE_STRING(DateStringType.createType()),
+	DATE_STRING(DateStringType.getSingleton()),
 	/**
 	 * @deprecated You should use {@link DataType#DATE_STRING}
 	 */
@@ -103,80 +103,80 @@ public enum DataType {
 	/**
 	 * Persists the char primitive.
 	 */
-	CHAR(CharType.createType()),
+	CHAR(CharType.getSingleton()),
 	/**
 	 * Persists the char primitive.
 	 */
-	CHAR_OBJ(CharacterObjectType.createType()),
+	CHAR_OBJ(CharacterObjectType.getSingleton()),
 	/**
 	 * Persists the byte primitive.
 	 */
-	BYTE(ByteType.createType()),
+	BYTE(ByteType.getSingleton()),
 	/**
 	 * Persists the byte[] array type.
 	 */
-	BYTE_ARRAY(ByteArrayType.createType()),
+	BYTE_ARRAY(ByteArrayType.getSingleton()),
 	/**
 	 * Persists the {@link Byte} Java class.
 	 */
-	BYTE_OBJ(ByteObjectType.createType()),
+	BYTE_OBJ(ByteObjectType.getSingleton()),
 	/**
 	 * Persists the short primitive.
 	 */
-	SHORT(ShortType.createType()),
+	SHORT(ShortType.getSingleton()),
 	/**
 	 * Persists the {@link Short} Java class.
 	 */
-	SHORT_OBJ(ShortObjectType.createType()),
+	SHORT_OBJ(ShortObjectType.getSingleton()),
 	/**
 	 * Persists the int primitive.
 	 */
-	INTEGER(IntType.createType()),
+	INTEGER(IntType.getSingleton()),
 	/**
 	 * Persists the {@link Integer} Java class.
 	 */
-	INTEGER_OBJ(IntegerObjectType.createType()),
+	INTEGER_OBJ(IntegerObjectType.getSingleton()),
 	/**
 	 * Persists the long primitive.
 	 */
-	LONG(LongType.createType()),
+	LONG(LongType.getSingleton()),
 	/**
 	 * Persists the {@link Long} Java class.
 	 */
-	LONG_OBJ(LongObjectType.createType()),
+	LONG_OBJ(LongObjectType.getSingleton()),
 	/**
 	 * Persists the float primitive.
 	 */
-	FLOAT(FloatType.createType()),
+	FLOAT(FloatType.getSingleton()),
 	/**
 	 * Persists the {@link Float} Java class.
 	 */
-	FLOAT_OBJ(FloatObjectType.createType()),
+	FLOAT_OBJ(FloatObjectType.getSingleton()),
 	/**
 	 * Persists the double primitive.
 	 */
-	DOUBLE(DoubleType.createType()),
+	DOUBLE(DoubleType.getSingleton()),
 	/**
 	 * Persists the {@link Double} Java class.
 	 */
-	DOUBLE_OBJ(DoubleObjectType.createType()),
+	DOUBLE_OBJ(DoubleObjectType.getSingleton()),
 	/**
 	 * Persists an unknown Java Object that is serializable.
 	 */
-	SERIALIZABLE(SerializableType.createType()),
+	SERIALIZABLE(SerializableType.getSingleton()),
 	/**
 	 * Persists an Enum Java class as its string value. You can also specify the {@link #ENUM_INTEGER} as the type.
 	 */
-	ENUM_STRING(EnumStringType.createType()),
+	ENUM_STRING(EnumStringType.getSingleton()),
 	/**
 	 * Persists an Enum Java class as its ordinal integer value. You can also specify the {@link #ENUM_STRING} as the
 	 * type.
 	 */
-	ENUM_INTEGER(EnumIntegerType.createType()),
+	ENUM_INTEGER(EnumIntegerType.getSingleton()),
 	/**
 	 * Persists the {@link java.util.UUID} Java class.
 	 */
-	UUID(UuidType.createType()),
+	UUID(UuidType.getSingleton()),
 	/**
 	 * Marker for fields that are unknown.
 	 */

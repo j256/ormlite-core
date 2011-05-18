@@ -26,7 +26,7 @@ public class DateType extends BaseDateType {
 
 	private static final DateType singleTon = new DateType();
 
-	public static DateType createType() {
+	public static DateType getSingleton() {
 		return singleTon;
 	}
 

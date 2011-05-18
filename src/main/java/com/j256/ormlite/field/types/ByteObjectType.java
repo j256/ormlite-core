@@ -15,7 +15,7 @@ public class ByteObjectType extends BaseDataType {
 
 	private static final ByteObjectType singleTon = new ByteObjectType();
 
-	public static ByteObjectType createType() {
+	public static ByteObjectType getSingleton() {
 		return singleTon;
 	}
 

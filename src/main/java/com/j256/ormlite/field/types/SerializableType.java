@@ -22,7 +22,7 @@ public class SerializableType extends BaseDataType {
 
 	private static final SerializableType singleTon = new SerializableType();
 
-	public static SerializableType createType() {
+	public static SerializableType getSingleton() {
 		return singleTon;
 	}
 

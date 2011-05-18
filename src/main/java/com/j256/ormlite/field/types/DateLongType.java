@@ -21,7 +21,7 @@ public class DateLongType extends BaseDataType {
 
 	private static final DateLongType singleTon = new DateLongType();
 
-	public static DateLongType createType() {
+	public static DateLongType getSingleton() {
 		return singleTon;
 	}
 

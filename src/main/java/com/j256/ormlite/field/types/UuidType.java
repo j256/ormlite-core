@@ -19,7 +19,7 @@ public class UuidType extends BaseDataType {
 
 	private static final UuidType singleTon = new UuidType();
 
-	public static UuidType createType() {
+	public static UuidType getSingleton() {
 		return singleTon;
 	}
 

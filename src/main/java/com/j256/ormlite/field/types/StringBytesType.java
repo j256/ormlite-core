@@ -19,7 +19,7 @@ public class StringBytesType extends BaseDataType {
 
 	private static final StringBytesType singleTon = new StringBytesType();
 
-	public static StringBytesType createType() {
+	public static StringBytesType getSingleton() {
 		return singleTon;
 	}
 

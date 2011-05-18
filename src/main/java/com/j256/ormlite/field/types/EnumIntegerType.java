@@ -18,7 +18,7 @@ public class EnumIntegerType extends BaseEnumType {
 
 	private static final EnumIntegerType singleTon = new EnumIntegerType();
 
-	public static EnumIntegerType createType() {
+	public static EnumIntegerType getSingleton() {
 		return singleTon;
 	}
 

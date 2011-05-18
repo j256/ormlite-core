@@ -15,7 +15,7 @@ public class FloatObjectType extends BaseDataType {
 
 	private static final FloatObjectType singleTon = new FloatObjectType();
 
-	public static FloatObjectType createType() {
+	public static FloatObjectType getSingleton() {
 		return singleTon;
 	}
 

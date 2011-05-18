@@ -17,7 +17,7 @@ public class StringType extends BaseDataType {
 
 	private static final StringType singleTon = new StringType();
 
-	public static StringType createType() {
+	public static StringType getSingleton() {
 		return singleTon;
 	}
 

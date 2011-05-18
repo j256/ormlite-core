@@ -11,7 +11,7 @@ public class ShortType extends ShortObjectType {
 
 	private static final ShortType singleTon = new ShortType();
 
-	public static ShortType createType() {
+	public static ShortType getSingleton() {
 		return singleTon;
 	}
 

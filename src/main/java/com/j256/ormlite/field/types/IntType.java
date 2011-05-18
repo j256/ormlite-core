@@ -11,7 +11,7 @@ public class IntType extends IntegerObjectType {
 
 	private static final IntType singleTon = new IntType();
 
-	public static IntType createType() {
+	public static IntType getSingleton() {
 		return singleTon;
 	}
 

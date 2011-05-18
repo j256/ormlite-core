@@ -15,7 +15,7 @@ public class ByteArrayType extends BaseDataType {
 
 	private static final ByteArrayType singleTon = new ByteArrayType();
 
-	public static ByteArrayType createType() {
+	public static ByteArrayType getSingleton() {
 		return singleTon;
 	}
 

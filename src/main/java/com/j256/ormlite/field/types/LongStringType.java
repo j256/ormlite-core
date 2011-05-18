@@ -11,7 +11,7 @@ public class LongStringType extends StringType {
 
 	private static final LongStringType singleTon = new LongStringType();
 
-	public static LongStringType createType() {
+	public static LongStringType getSingleton() {
 		return singleTon;
 	}
 

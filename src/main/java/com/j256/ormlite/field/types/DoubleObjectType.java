@@ -15,7 +15,7 @@ public class DoubleObjectType extends BaseDataType {
 
 	private static final DoubleObjectType singleTon = new DoubleObjectType();
 
-	public static DoubleObjectType createType() {
+	public static DoubleObjectType getSingleton() {
 		return singleTon;
 	}
 

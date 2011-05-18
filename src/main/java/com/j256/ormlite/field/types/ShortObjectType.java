@@ -15,7 +15,7 @@ public class ShortObjectType extends BaseDataType {
 
 	private static final ShortObjectType singleTon = new ShortObjectType();
 
-	public static ShortObjectType createType() {
+	public static ShortObjectType getSingleton() {
 		return singleTon;
 	}
 

@@ -20,7 +20,7 @@ public class DateStringType extends BaseDateType {
 
 	private static final DateStringType singleTon = new DateStringType();
 
-	public static DateStringType createType() {
+	public static DateStringType getSingleton() {
 		return singleTon;
 	}
 

@@ -15,7 +15,7 @@ public class LongObjectType extends BaseDataType {
 
 	private static final LongObjectType singleTon = new LongObjectType();
 
-	public static LongObjectType createType() {
+	public static LongObjectType getSingleton() {
 		return singleTon;
 	}
 

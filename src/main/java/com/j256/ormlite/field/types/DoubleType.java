@@ -11,7 +11,7 @@ public class DoubleType extends DoubleObjectType {
 
 	private static final DoubleType singleTon = new DoubleType();
 
-	public static DoubleType createType() {
+	public static DoubleType getSingleton() {
 		return singleTon;
 	}
 

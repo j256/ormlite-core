@@ -15,7 +15,7 @@ public class CharacterObjectType extends BaseDataType {
 
 	private static final CharacterObjectType singleTon = new CharacterObjectType();
 
-	public static CharacterObjectType createType() {
+	public static CharacterObjectType getSingleton() {
 		return singleTon;
 	}
 

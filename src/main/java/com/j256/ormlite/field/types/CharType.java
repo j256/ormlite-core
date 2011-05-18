@@ -14,7 +14,7 @@ public class CharType extends CharacterObjectType {
 
 	private static final CharType singleTon = new CharType();
 
-	public static CharType createType() {
+	public static CharType getSingleton() {
 		return singleTon;
 	}
 

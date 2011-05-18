@@ -15,7 +15,7 @@ public class BooleanObjectType extends BaseDataType {
 
 	private static final BooleanObjectType singleTon = new BooleanObjectType();
 
-	public static BooleanObjectType createType() {
+	public static BooleanObjectType getSingleton() {
 		return singleTon;
 	}
 
