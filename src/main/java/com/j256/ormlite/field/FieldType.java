@@ -757,10 +757,10 @@ public class FieldType {
 	 * {@link #configDaoInformation} method can set the data-type.
 	 */
 	private void assignDataType(DatabaseType databaseType, DataPersister dataPersister) throws SQLException {
+		this.dataPersister = dataPersister;
 		if (dataPersister == null) {
 			return;
 		}
-		this.dataPersister = dataPersister;
 		this.fieldConverter = databaseType.getFieldConverter(dataPersister);
 		if (this.isGeneratedId && !dataPersister.isValidGeneratedType()) {
 			StringBuilder sb = new StringBuilder();

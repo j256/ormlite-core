@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.j256.ormlite.field.types.EnumStringType;
+
 /**
  * Class used to manage the various data types used by the system. The bulk of the data types come from the
  * {@link DataType} enumerated fields although you can also register your own here using the
@@ -14,6 +16,7 @@ import java.util.Map;
  */
 public class DataPersisterManager {
 
+	private static final DataPersister ENUM_PERSISTER = EnumStringType.getSingleton();
 	private static Map<Class<?>, DataPersister> classMap = null;
 
 	/**
@@ -43,12 +46,13 @@ public class DataPersisterManager {
 	public static DataPersister lookupForClass(Class<?> dataClass) {
 
 		if (classMap == null) {
-			// this will create a new map
+			// create an array of persisters for our data-types
 			DataType[] dataTypes = DataType.values();
 			DataPersister[] dataPersisters = new DataPersister[dataTypes.length];
 			for (int i = 0; i < dataPersisters.length; i++) {
 				dataPersisters[i] = dataTypes[i].getDataPersister();
 			}
+			// this will create a new map
 			registerDataTypes(dataPersisters);
 		}
 
@@ -60,7 +64,7 @@ public class DataPersisterManager {
 
 		if (dataClass.isEnum()) {
 			// special handling of the Enum type
-			return DataType.ENUM_STRING.getDataPersister();
+			return ENUM_PERSISTER;
 		} else {
 			return null;
 		}
