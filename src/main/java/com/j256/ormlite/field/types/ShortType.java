@@ -19,10 +19,6 @@ public class ShortType extends ShortObjectType {
 		super(SqlType.SHORT, new Class<?>[] { short.class });
 	}
 
-	protected ShortType(SqlType sqlType, Class<?>[] classes) {
-		super(sqlType, classes);
-	}
-
 	@Override
 	public boolean isPrimitive() {
 		return true;
