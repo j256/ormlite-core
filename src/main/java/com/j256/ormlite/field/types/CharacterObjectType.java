@@ -35,8 +35,8 @@ public class CharacterObjectType extends BaseDataType {
 	@Override
 	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 		if (defaultStr.length() != 1) {
-			throw new SQLException("Problems with field " + fieldType + ", default string to long: '" + defaultStr
-					+ "'");
+			throw new SQLException("Problems with field " + fieldType + ", default string to long for Character: '"
+					+ defaultStr + "'");
 		}
 		return (Character) defaultStr.charAt(0);
 	}
