@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -1843,6 +1844,38 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		createDao(ForeignCollectionAutoRefresh.class, false);
 	}
 
+	@Test
+	public void testQueryRawMappedIterator() throws Exception {
+		Dao<Foo, Object> fooDao = createDao(Foo.class, true);
+		final Foo foo = new Foo();
+		String id = "zebra";
+		foo.id = id;
+		int val = 1313131;
+		foo.val = val;
+
+		String queryString = buildFooQueryAllString(fooDao);
+		Mapper mapper = new Mapper();
+		GenericRawResults<Foo> rawResults = fooDao.queryRaw(queryString, mapper);
+		assertEquals(0, rawResults.getResults().size());
+		assertEquals(1, fooDao.create(foo));
+		rawResults = fooDao.queryRaw(queryString, mapper);
+		Iterator<Foo> iterator = rawResults.iterator();
+		assertTrue(iterator.hasNext());
+		Foo foo2 = iterator.next();
+		assertEquals(foo.id, foo2.id);
+		assertEquals(foo.val, foo2.val);
+		assertEquals(foo.val, foo2.val);
+		assertFalse(iterator.hasNext());
+	}
+
+	private String buildFooQueryAllString(Dao<Foo, Object> fooDao) throws SQLException {
+		String queryString =
+				fooDao.queryBuilder()
+						.selectColumns(Foo.ID_COLUMN_NAME, Foo.EQUAL_COLUMN_NAME, Foo.VAL_COLUMN_NAME)
+						.prepareStatementString();
+		return queryString;
+	}
+
 	/* ============================================================================================== */
 
 	protected static class ForeignNotNull {
@@ -1943,5 +1976,19 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		String stuff;
 		@DatabaseField(uniqueCombo = true)
 		String uniqueStuff;
+	}
+
+	private static class Mapper implements RawRowMapper<Foo> {
+		public Foo mapRow(String[] columnNames, String[] resultColumns) {
+			Foo foo = new Foo();
+			for (int i = 0; i < columnNames.length; i++) {
+				if (columnNames[i].equalsIgnoreCase(Foo.ID_COLUMN_NAME)) {
+					foo.id = resultColumns[i];
+				} else if (columnNames[i].equalsIgnoreCase(Foo.VAL_COLUMN_NAME)) {
+					foo.val = Integer.parseInt(resultColumns[i]);
+				}
+			}
+			return foo;
+		}
 	}
 }
