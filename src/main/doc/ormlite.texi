@@ -359,7 +359,8 @@ String default value of the field when we are creating a new row in the table.  
 @cindex length of field
 @item width
 
-Integer width of string fields.  Some databases do not support this unfortunately.  Default for those that do is 255.
+Integer width of the field -- mostly used for string fields.  Default is 0 which means to take the data-type and database-specific
+default.  For strings that means 255 characters although some databases do not support this.
 
 @cindex can be null
 @cindex null value allowed

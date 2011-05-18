@@ -413,6 +413,7 @@ public class DatabaseFieldConfig {
 		return fieldSetMethod;
 	}
 
+	@SuppressWarnings("deprecation")
 	private static DatabaseFieldConfig fromDatabaseField(DatabaseType databaseType, String tableName, Field field,
 			DatabaseField databaseField) {
 		DatabaseFieldConfig config = new DatabaseFieldConfig();
@@ -466,7 +467,11 @@ public class DatabaseFieldConfig {
 		config.uniqueIndexName =
 				findIndexName(tableName, databaseField.uniqueIndexName(), databaseField.uniqueIndex(), config);
 		config.foreignAutoRefresh = databaseField.foreignAutoRefresh();
-		config.maxForeignAutoRefreshLevel = databaseField.maxForeignAutoRefreshLevel();
+		if (databaseField.maxForeignLevel() != DatabaseField.MAX_FOREIGN_AUTO_REFRESH_LEVEL) {
+			config.maxForeignAutoRefreshLevel = databaseField.maxForeignLevel();
+		} else {
+			config.maxForeignAutoRefreshLevel = databaseField.maxForeignAutoRefreshLevel();
+		}
 
 		return config;
 	}

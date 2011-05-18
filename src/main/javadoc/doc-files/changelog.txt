@@ -1,20 +1,22 @@
-4.22: 5/XX/2011 (svn rYYYY)
+4.22: 5/18/2011 (svn rYYYY)
 	* CORE: Fixed major problem with DAO loops and caching.  Thanks much to the user list.  Fixes bug #3301588.
 	* CORE: Fixed problem with queryForMatching() and queryForFieldValues() if no fields.  Thanks to JC.  Fixes bug #3301253.
 	* CORE: Fixed problem with configuring fields in base class without annotations.  Thanks to JC and Rahan.  Fixed bug #3301698.
 	* CORE: Fixed problem with LazyForeignCollection.toArray(T[]).  Thanks to Skylar.  Fixes bug #3302924.
+	* CORE: Major revamping of the DataType enumeration.  Added the ability to register external persisters.  Thanks to Craig Andrews.
 	* CORE: Removed auto-downcasing of hand wired table name in DatabaseTableConfig.  Thanks to Tomas.  Fixes bug #3302976.
 	* CORE: Added the maxEagerForeignCollectionLevel field to the @ForeignCollectionField annotation to limit recursion.
+	* CORE: Renamed the maxForeignLevel field in @DatabaseField to be maxForeignAutoRefreshLevel to make more sense.
 	* CORE: Added the concept of closeLastIterator() to the DAO and CloseableWrappedIterable for reentrant usage.
 	* CORE: Added better connection/statement testing code and fixed some additional missing closes.
-	* JDBC: Tweaked the HSQLdb database type to acknowledge that it seems to support inner transactions. 
+	* JDBC: Tweaked the HSQLdb database type to acknowledge that it seems to support inner transactions.
 
 4.21: 5/5/2011 (svn r1721)
 	* CORE: Added maxForeignLevel=1 type of setting to @DatabaseField to limit the foreign field recursive calls.
 	* CORE: Added a isOpen() to the ConnectionSource interface and implementations.
 	* CORE: Fixed a problem with the foreign auto-refresh loops and the last level.  Thanks to Xavier.  Fixes bug #3296400.
-	* JDBC: Fixed a _very_ bad, embarrassing problem with unclosed statements.  Thanks to MathieuLoutre.  Fixes bug #3298098.  
-	* ANDROID: Added better logging and protection around use of the open-helper and AndroidConnectionSource after close. 
+	* JDBC: Fixed a _very_ bad, embarrassing problem with unclosed statements.  Thanks to MathieuLoutre.  Fixes bug #3298098.
+	* ANDROID: Added better logging and protection around use of the open-helper and AndroidConnectionSource after close.
 
 4.20: 4/30/2011 (svn r1686)
 	* CORE: Refactored a couple of places to try and improve DAO creation with foreign fields.  Thanks to the user list.
@@ -55,7 +57,7 @@
 	* CORE: Fixed a couple of places were I was using Java 1.6 only methods.  Fixes bug #3260096.  Thanks to Javier and jc.
 	* CORE: Improved the reentrance during query and class configuration initialization.
 	* CORE: Improved the DaoManager handling of generic dao classes and a registerDao method.  Thanks to jc.
-	* ANDROID: Fixed Android v1.6 support by removing some Java 1.6 methods. 
+	* ANDROID: Fixed Android v1.6 support by removing some Java 1.6 methods.
 
 4.16: 3/23/2011 (svn r1553)
 	** WARNING: ** 4.16 was released with some Java 1.6 calls which broke a lot of people.  This was fixed in 4.17.
@@ -116,7 +118,7 @@
 	* CORE: Revamped the logging classes to use Levels.  Also added a JavaUtilLog implementation.
 	* CORE: Added support for the foreignAutoRefresh boolean in DatabaseField which automagically refreshes foreign fields.
 	* CORE: Significantly refactored the RawResults class (now deprecated) and created GenericRawResults.
-	* CORE: Dao.queryForAllRaw() and Dao.iteratorRaw() now deprecated.  Replaced with Dao.queryRaw() methods. 
+	* CORE: Dao.queryForAllRaw() and Dao.iteratorRaw() now deprecated.  Replaced with Dao.queryRaw() methods.
 	* CORE: Added the ability to get results as an array of Objects when you pass in the column-types.
 	* CORE: Found some unclosed statements in the update(PreparedUpdate) and delete(PreparedDelete) methods.  Fixes bug #3170021.
 	* ANDROID: Added missing OrmLiteBaseListActivity base class.
@@ -125,7 +127,7 @@
 	* ANDROID: Removed the deprecated AndroidTableUtils class.
 	* ANDROID: Better wrapping of android.database.SQLException with java.sql.SQLException.
 	* JDBC: Split out the -core from this package.  You now need to install BOTH the core and jdbc (or android) packages.
-	* ALL: Added LICENSE.txt file to all releases and documentation.  It is basically the ISC public domain license. 
+	* ALL: Added LICENSE.txt file to all releases and documentation.  It is basically the ISC public domain license.
 
 4.9: 1/26/2011 (svn r1286)
 	* CORE: Changed the generated index names to have a table-name prefix and always have a "_idx" suffix.
@@ -150,7 +152,7 @@
 
 4.5: 11/17/2010 (svn r1178)
 	* CORE: Fixes some problems with Dates and Enums being id types.
-	* CORE: Fixed a big problem with boolean value escaping for some database types.  Fixed bug #3110466. 
+	* CORE: Fixed a big problem with boolean value escaping for some database types.  Fixed bug #3110466.
 	* CORE: Added code to throw exceptions when Serializable fields are ids or part of SQL comparison.  Fixed bug #3110468.
 	* CORE: Added support for fields being required to be SelectArgs (Date for example).  Fixes bug #3110948.
 	* JDBC: Added better detection of database types from the URL.
@@ -332,10 +334,10 @@
 
 1.8: 5/2/2010 (svn r246)
 	* Starting initial work to support foreign objects.
-	* Some refactoring of the id field assignment. 
+	* Some refactoring of the id field assignment.
 
 1.7: 4/29/2010 (svn r236)
-	* Significant revamping of the junit tests. 
+	* Significant revamping of the junit tests.
 	* Initial take on a MS SQL Server port using the JTDS driver.  Kudos to the JTDS folks.
 	* Turns out that HSQLDB is a bit different from the rest (grrrr) so I had to add an appendLimitValue to the database type.
 	* Added LIMIT support to the package.  This caused a bunch of trickle down.
@@ -373,7 +375,7 @@
 	* Finally got the deploy to SF to work.	
 	* Added deleteIds for deleting a collection of ids.
 	* Major revamping of the build statement stuff.
-	* Collapsed the StatementBuilder class into each of the mapped statements.  Feels a lot tighter. 
+	* Collapsed the StatementBuilder class into each of the mapped statements.  Feels a lot tighter.
 
 ----------------------------------------------------------------------------------------------------------------------------
 
@@ -393,7 +395,7 @@
 0.9: 1/31/2010 (svn r99)
 	* Added better handling of classes with just an id field.
 	* Renamed StatementMapper to MappedStatement which is much better.
-	* Moved the select args to the statement mapper and got rid of the prepared query. 
+	* Moved the select args to the statement mapper and got rid of the prepared query.
 
 0.8: 1/27/2010 (svn r85)
 	* Lot of javadoc work.
@@ -406,9 +408,9 @@
 	* Fixed escaping in H2 and MySQL.
 
 0.6: 1/23/2010 (svn r55)
-	* Major reorganization after some good feedback from Chris.  I should be dealing with a DataSource.  
+	* Major reorganization after some good feedback from Chris.  I should be dealing with a DataSource.
 	* Renamed DatabaseConnection to DatabaseType.
-	* Added initial take on queryAll and interator ordering. 
+	* Added initial take on queryAll and interator ordering.
 
 0.5: 1/19/2010 (svn r39)
 	* Ouch, fixed bad bug with storing of null dates in the database.
@@ -433,7 +435,7 @@
 	* Starting to look stable-ish.
 	* Complete revamping of the query processing.
 	* Still fighting a bit with object hierarchy.
-	* Fixed a bunch of bugs in the state building escaping of reserved words. 
+	* Fixed a bunch of bugs in the state building escaping of reserved words.
 
 0.0: 1/7/2010 (svn r1)
 	* First check-in.
