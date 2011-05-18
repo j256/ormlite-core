@@ -28,6 +28,10 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 		return iteratorThrow();
 	}
 
+	public CloseableIterator<T> closeableIterator() {
+		return iteratorThrow();
+	}
+
 	public CloseableIterator<T> iteratorThrow() {
 		// we have to wrap the iterator since we are returning the List's iterator
 		return new CloseableIterator<T>() {

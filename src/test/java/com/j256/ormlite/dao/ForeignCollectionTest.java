@@ -251,7 +251,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		}
 		assertEquals(1, orderC);
 
-		CloseableIterator<Order> iterator = accountResult.orders.iterator();
+		CloseableIterator<Order> iterator = accountResult.orders.closeableIterator();
 		assertTrue(iterator.hasNext());
 		assertEquals(order1, iterator.next());
 		iterator.remove();
@@ -345,7 +345,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 
 		// this would keep going forever since it is lazy
 		for (int i = 0; i < 10; i++) {
-			iterator = result.related.iterator();
+			iterator = result.related.closeableIterator();
 			assertTrue(iterator.hasNext());
 			result = iterator.next();
 			assertEquals(rr1.stuff, result.stuff);
@@ -371,7 +371,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertNotNull(result.related);
 		assertTrue(result.related.isEager());
 		assertEquals(1, result.related.size());
-		CloseableIterator<RecursiveReferenceEager> iterator = result.related.iterator();
+		CloseableIterator<RecursiveReferenceEager> iterator = result.related.closeableIterator();
 		assertTrue(iterator.hasNext());
 		RecursiveReferenceEager rrResult = iterator.next();
 		assertEquals(rr1.stuff, rrResult.stuff);
@@ -398,7 +398,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertTrue(result.related.isEager());
 		assertEquals(1, result.related.size());
 
-		CloseableIterator<RecursiveReferenceEagerLevelTwo> iterator = result.related.iterator();
+		CloseableIterator<RecursiveReferenceEagerLevelTwo> iterator = result.related.closeableIterator();
 		assertTrue(iterator.hasNext());
 		RecursiveReferenceEagerLevelTwo rrResult = iterator.next();
 		assertEquals(rr1.stuff, rrResult.stuff);
@@ -407,7 +407,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertTrue(rrResult.related.isEager());
 		assertFalse(iterator.hasNext());
 		iterator.close();
-		iterator = rrResult.related.iterator();
+		iterator = rrResult.related.closeableIterator();
 		assertTrue(iterator.hasNext());
 		rrResult = iterator.next();
 		assertFalse(iterator.hasNext());
@@ -456,7 +456,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		CollectionWithCollection1 collResult1 = dao1.queryForId(coll1.id);
 		assertNotNull(collResult1.related);
 		assertEquals(1, collResult1.related.size());
-		CloseableIterator<CollectionWithCollection2> iterator1 = collResult1.related.iterator();
+		CloseableIterator<CollectionWithCollection2> iterator1 = collResult1.related.closeableIterator();
 		assertTrue(iterator1.hasNext());
 		assertEquals(coll2.id, iterator1.next().id);
 		collResult1.related.closeLastIterator();
@@ -464,7 +464,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		CollectionWithCollection2 collResult2 = dao2.queryForId(coll2.id);
 		assertNotNull(collResult2.related);
 		assertEquals(1, collResult2.related.size());
-		CloseableIterator<CollectionWithCollection3> iterator2 = collResult2.related.iterator();
+		CloseableIterator<CollectionWithCollection3> iterator2 = collResult2.related.closeableIterator();
 		assertTrue(iterator2.hasNext());
 		assertEquals(coll3.id, iterator2.next().id);
 		collResult2.related.closeLastIterator();

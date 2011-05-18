@@ -146,7 +146,7 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 		assertEquals(1, dao.create(foo1));
 
 		GenericRawResults<String[]> rawResults = dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + " FROM FOO");
-		CloseableIterator<String[]> iterator = rawResults.iterator();
+		CloseableIterator<String[]> iterator = rawResults.closeableIterator();
 		try {
 			assertTrue(iterator.hasNext());
 			iterator.next();

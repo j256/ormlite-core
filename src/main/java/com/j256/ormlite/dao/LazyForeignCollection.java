@@ -35,6 +35,10 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 	 * which will close the last iterator returned. See the reentrant warning.
 	 */
 	public CloseableIterator<T> iterator() {
+		return closeableIterator();
+	}
+
+	public CloseableIterator<T> closeableIterator() {
 		try {
 			return iteratorThrow();
 		} catch (SQLException e) {
@@ -61,6 +65,9 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 	public CloseableWrappedIterable<T> getWrappedIterable() {
 		return new CloseableWrappedIterableImpl<T>(new CloseableIterable<T>() {
 			public CloseableIterator<T> iterator() {
+				return closeableIterator();
+			}
+			public CloseableIterator<T> closeableIterator() {
 				try {
 					return LazyForeignCollection.this.seperateIteratorThrow();
 				} catch (Exception e) {

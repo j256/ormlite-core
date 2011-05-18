@@ -19,7 +19,11 @@ public class CloseableWrappedIterableImpl<T> implements CloseableWrappedIterable
 	}
 
 	public CloseableIterator<T> iterator() {
-		iterator = iterable.iterator();
+		return closeableIterator();
+	}
+
+	public CloseableIterator<T> closeableIterator() {
+		iterator = iterable.closeableIterator();
 		return iterator;
 	}
 

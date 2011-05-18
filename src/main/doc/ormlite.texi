@@ -1538,7 +1538,7 @@ You can also use the iterator directly if the for-loop is not optimal.
 
 @example
 // page through all of the accounts in the database
-CloseableIterator<Account> iterator = accountDao.iterator();
+CloseableIterator<Account> iterator = accountDao.closeableIterator();
 while (iterator.hasNext()) @{
     Account account = iterator.next();
     System.out.println(account.getName());

@@ -740,7 +740,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(1, dao.create(foo1));
 
 		CloseableWrappedIterable<Foo> wrapped = dao.getWrappedIterable();
-		CloseableIterator<Foo> iterator = wrapped.iterator();
+		CloseableIterator<Foo> iterator = wrapped.closeableIterator();
 		// this shouldn't close anything
 		dao.closeLastIterator();
 

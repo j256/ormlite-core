@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -412,6 +413,10 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	public CloseableIterator<T> iterator() {
+		return closeableIterator();
+	}
+
+	public CloseableIterator<T> closeableIterator() {
 		lastIterator = seperateIterator();
 		return lastIterator;
 	}
@@ -433,7 +438,10 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	public CloseableWrappedIterable<T> getWrappedIterable() {
 		checkForInitialized();
 		return new CloseableWrappedIterableImpl<T>(new CloseableIterable<T>() {
-			public CloseableIterator<T> iterator() {
+			public Iterator<T> iterator() {
+				return closeableIterator();
+			}
+			public CloseableIterator<T> closeableIterator() {
 				try {
 					return BaseDaoImpl.this.seperateIterator();
 				} catch (Exception e) {
@@ -446,7 +454,10 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	public CloseableWrappedIterable<T> getWrappedIterable(final PreparedQuery<T> preparedQuery) {
 		checkForInitialized();
 		return new CloseableWrappedIterableImpl<T>(new CloseableIterable<T>() {
-			public CloseableIterator<T> iterator() {
+			public Iterator<T> iterator() {
+				return closeableIterator();
+			}
+			public CloseableIterator<T> closeableIterator() {
 				try {
 					return BaseDaoImpl.this.seperateIterator(preparedQuery);
 				} catch (Exception e) {

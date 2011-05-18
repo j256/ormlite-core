@@ -52,6 +52,10 @@ public class RawResultsImpl<T> implements GenericRawResults<T> {
 	}
 
 	public CloseableIterator<T> iterator() {
+		return iterator();
+	}
+
+	public CloseableIterator<T> closeableIterator() {
 		return iterator;
 	}
 

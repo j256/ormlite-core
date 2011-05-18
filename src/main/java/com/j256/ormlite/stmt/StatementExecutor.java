@@ -605,7 +605,11 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		}
 
 		public CloseableIterator<String[]> iterator() {
-			return rawResults.iterator();
+			return closeableIterator();
+		}
+
+		public CloseableIterator<String[]> closeableIterator() {
+			return rawResults.closeableIterator();
 		}
 
 		public List<String[]> getResults() throws SQLException {
