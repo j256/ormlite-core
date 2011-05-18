@@ -553,7 +553,7 @@ public class FieldType {
 	}
 
 	/**
-	 * Call through to {@link DataType#isEscapedValue()}
+	 * Call through to {@link DataPersister#isEscapedValue()}
 	 */
 	public boolean isEscapedValue() {
 		return dataPersister.isEscapedValue();
@@ -587,21 +587,21 @@ public class FieldType {
 	}
 
 	/**
-	 * Call through to {@link DataType#isEscapedDefaultValue()}
+	 * Call through to {@link DataPersister#isEscapedDefaultValue()}
 	 */
 	public boolean isEscapedDefaultValue() {
 		return dataPersister.isEscapedDefaultValue();
 	}
 
 	/**
-	 * Call through to {@link DataType#isComparable()}
+	 * Call through to {@link DataPersister#isComparable()}
 	 */
 	public boolean isComparable() {
 		return dataPersister.isComparable();
 	}
 
 	/**
-	 * Call through to {@link DataType#isSelectArgRequired()}
+	 * Call through to {@link DataPersister#isSelectArgRequired()}
 	 */
 	public boolean isSelectArgRequired() {
 		return dataPersister.isSelectArgRequired();
@@ -668,14 +668,14 @@ public class FieldType {
 	}
 
 	/**
-	 * Call through to {@link DataType#isSelfGeneratedId()}
+	 * Call through to {@link DataPersister#isSelfGeneratedId()}
 	 */
 	public boolean isSelfGeneratedId() {
 		return dataPersister.isSelfGeneratedId();
 	}
 
 	/**
-	 * Call through to {@link DataType#generatedId()}
+	 * Call through to {@link DataPersister#generatedId()}
 	 */
 	public Object generatedId() {
 		return dataPersister.generatedId();
