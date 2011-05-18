@@ -64,7 +64,8 @@ public @interface DatabaseField {
 	String defaultValue() default NO_DEFAULT;
 
 	/**
-	 * Width of array fields (often for strings). Default is database-specific.
+	 * Width of array fields (often for strings). Default is 0 which means to take the data-type and database-specific
+	 * default. For strings that means 255 characters although some databases do not support this.
 	 */
 	int width() default 0;
 

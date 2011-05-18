@@ -60,7 +60,7 @@ public class FieldType {
 	private final Method fieldGetMethod;
 	private final Method fieldSetMethod;
 
-	private DataType dataType;
+	private DataPersister dataPersister;
 	private Object defaultValue;
 	private Object dataTypeConfigObj;
 
@@ -84,19 +84,19 @@ public class FieldType {
 		this.field = field;
 		this.fieldName = field.getName();
 		Class<?> clazz = field.getType();
-		DataType dataType;
-		if (fieldConfig.getDataType() == DataType.UNKNOWN) {
-			dataType = DataType.lookupClass(clazz);
+		DataPersister dataPersister;
+		if (fieldConfig.getDataPersister() == null) {
+			dataPersister = DataTypeManager.lookupForClass(clazz);
 		} else {
-			dataType = fieldConfig.getDataType();
-			if (!dataType.isValidForType(clazz)) {
+			dataPersister = fieldConfig.getDataPersister();
+			if (!dataPersister.isValidForType(clazz)) {
 				throw new IllegalArgumentException("Field class " + clazz + " for field " + this
-						+ " is not valid for data type " + dataType);
+						+ " is not valid for data type " + dataPersister);
 			}
 		}
 		String defaultFieldName = field.getName();
 		if (fieldConfig.isForeign() || fieldConfig.isForeignAutoRefresh()) {
-			if (dataType.isPrimitive()) {
+			if (dataPersister != null && dataPersister.isPrimitive()) {
 				throw new IllegalArgumentException("Field " + this + " is a primitive class " + clazz
 						+ " but marked as foreign");
 			}
@@ -116,7 +116,7 @@ public class FieldType {
 				throw new SQLException("Field class for '" + field.getName()
 						+ "' must be a parameterized Collection with at least 1 type.");
 			}
-		} else if (dataType == DataType.UNKNOWN && (!fieldConfig.isForeignCollection())) {
+		} else if (dataPersister == null && (!fieldConfig.isForeignCollection())) {
 			if (byte[].class.isAssignableFrom(clazz)) {
 				throw new SQLException("ORMLite can't store unknown class " + clazz + " for field '" + field.getName()
 						+ "'. byte[] fields must specify dataType=DataType.BYTE_ARRAY or SERIALIZABLE");
@@ -177,7 +177,7 @@ public class FieldType {
 			this.fieldGetMethod = null;
 			this.fieldSetMethod = null;
 		}
-		assignDataType(databaseType, dataType);
+		assignDataType(databaseType, dataPersister);
 	}
 
 	/**
@@ -223,7 +223,7 @@ public class FieldType {
 			 * If we are a foreign-field or if the foreign-auto-refresh was in too deep then we configure this as a
 			 * foreign field. This is <= instead of < because we go one more level than the foreign auto-refresh.
 			 */
-			if (this.dataType.isPrimitive()) {
+			if (this.dataPersister != null && this.dataPersister.isPrimitive()) {
 				throw new IllegalArgumentException("Field " + this + " is a primitive class " + clazz
 						+ " but marked as foreign");
 			}
@@ -317,7 +317,7 @@ public class FieldType {
 		this.foreignIdField = foreignIdField;
 
 		if (foreignIdField != null) {
-			assignDataType(databaseType, foreignIdField.getDataType());
+			assignDataType(databaseType, foreignIdField.getDataPersister());
 		}
 	}
 
@@ -337,8 +337,8 @@ public class FieldType {
 		return dbColumnName;
 	}
 
-	public DataType getDataType() {
-		return dataType;
+	public DataPersister getDataPersister() {
+		return dataPersister;
 	}
 
 	public Object getDataTypeConfigObj() {
@@ -473,9 +473,9 @@ public class FieldType {
 	 * Assign an ID value to this field.
 	 */
 	public Object assignIdValue(Object data, Number val) throws SQLException {
-		Object idVal = dataType.convertIdNumber(val);
+		Object idVal = dataPersister.convertIdNumber(val);
 		if (idVal == null) {
-			throw new SQLException("Invalid class " + dataType + " for sequence-id " + this);
+			throw new SQLException("Invalid class " + dataPersister + " for sequence-id " + this);
 		} else {
 			assignField(data, idVal);
 			return idVal;
@@ -556,17 +556,17 @@ public class FieldType {
 	 * Call through to {@link DataType#isEscapedValue()}
 	 */
 	public boolean isEscapedValue() {
-		return dataType.isEscapedValue();
+		return dataPersister.isEscapedValue();
 	}
 
-	Enum<?> getUnknownEnumVal() {
+	public Enum<?> getUnknownEnumVal() {
 		return fieldConfig.getUnknownEnumvalue();
 	}
 
 	/**
 	 * Return the format of the field.
 	 */
-	String getFormat() {
+	public String getFormat() {
 		return fieldConfig.getFormat();
 	}
 
@@ -590,21 +590,21 @@ public class FieldType {
 	 * Call through to {@link DataType#isEscapedDefaultValue()}
 	 */
 	public boolean isEscapedDefaultValue() {
-		return dataType.isEscapedDefaultValue();
+		return dataPersister.isEscapedDefaultValue();
 	}
 
 	/**
 	 * Call through to {@link DataType#isComparable()}
 	 */
 	public boolean isComparable() {
-		return dataType.isComparable();
+		return dataPersister.isComparable();
 	}
 
 	/**
 	 * Call through to {@link DataType#isSelectArgRequired()}
 	 */
 	public boolean isSelectArgRequired() {
-		return dataType.isSelectArgRequired();
+		return dataPersister.isSelectArgRequired();
 	}
 
 	/**
@@ -655,7 +655,7 @@ public class FieldType {
 		}
 		@SuppressWarnings("unchecked")
 		T converted = (T) fieldConverter.resultToJava(this, results, dbColumnPos);
-		if (dataType.isPrimitive()) {
+		if (dataPersister.isPrimitive()) {
 			if (fieldConfig.isThrowIfNull() && results.wasNull(dbColumnPos)) {
 				throw new SQLException("Results value for primitive field '" + fieldName
 						+ "' was an invalid null value");
@@ -671,14 +671,14 @@ public class FieldType {
 	 * Call through to {@link DataType#isSelfGeneratedId()}
 	 */
 	public boolean isSelfGeneratedId() {
-		return dataType.isSelfGeneratedId();
+		return dataPersister.isSelfGeneratedId();
 	}
 
 	/**
 	 * Call through to {@link DataType#generatedId()}
 	 */
 	public Object generatedId() {
-		return dataType.generatedId();
+		return dataPersister.generatedId();
 	}
 
 	/**
@@ -756,30 +756,33 @@ public class FieldType {
 	 * Configure our data type and any dependent fields. We have to do this here because both the constructor and
 	 * {@link #configDaoInformation} method can set the data-type.
 	 */
-	private void assignDataType(DatabaseType databaseType, DataType dataType) throws SQLException {
-		this.dataType = dataType;
-		this.fieldConverter = databaseType.getFieldConverter(dataType);
-		if (this.isGeneratedId && !dataType.isValidGeneratedType()) {
+	private void assignDataType(DatabaseType databaseType, DataPersister dataPersister) throws SQLException {
+		if (dataPersister == null) {
+			return;
+		}
+		this.dataPersister = dataPersister;
+		this.fieldConverter = databaseType.getFieldConverter(dataPersister);
+		if (this.isGeneratedId && !dataPersister.isValidGeneratedType()) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("Generated-id field '").append(field.getName());
 			sb.append("' in ").append(field.getDeclaringClass().getSimpleName());
-			sb.append(" can't be type ").append(this.dataType);
+			sb.append(" can't be type ").append(this.dataPersister.getSqlType());
 			sb.append(".  Must be one of: ");
-			for (DataType type : DataType.values()) {
+			for (DataPersister type : DataTypeManager.getDataPersisters()) {
 				if (type.isValidGeneratedType()) {
 					sb.append(type).append(' ');
 				}
 			}
 			throw new IllegalArgumentException(sb.toString());
 		}
-		if (fieldConfig.isThrowIfNull() && !dataType.isPrimitive()) {
+		if (fieldConfig.isThrowIfNull() && !dataPersister.isPrimitive()) {
 			throw new SQLException("Field " + field.getName() + " must be a primitive if set with throwIfNull");
 		}
-		if (this.isId && !dataType.isAppropriateId()) {
-			throw new SQLException("Field '" + field.getName() + "' is of data type " + dataType
+		if (this.isId && !dataPersister.isAppropriateId()) {
+			throw new SQLException("Field '" + field.getName() + "' is of data type " + dataPersister
 					+ " which cannot be the ID field");
 		}
-		this.dataTypeConfigObj = dataType.makeConfigObject(this);
+		this.dataTypeConfigObj = dataPersister.makeConfigObject(this);
 		String defaultStr = fieldConfig.getDefaultValue();
 		if (defaultStr == null || defaultStr.equals("")) {
 			this.defaultValue = null;

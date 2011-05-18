@@ -21,7 +21,7 @@ abstract class BaseComparison implements Comparison {
 
 	protected BaseComparison(String columnName, FieldType fieldType, Object value) throws SQLException {
 		if (fieldType != null && !fieldType.isComparable()) {
-			throw new SQLException("Field '" + columnName + "' is of data type " + fieldType.getDataType()
+			throw new SQLException("Field '" + columnName + "' is of data type " + fieldType.getDataPersister()
 					+ " which can be compared");
 		}
 		this.columnName = columnName;

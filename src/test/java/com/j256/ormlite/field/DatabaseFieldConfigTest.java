@@ -42,10 +42,10 @@ public class DatabaseFieldConfigTest {
 		config.setGeneratedIdSequence(str);
 		assertEquals(str, config.getGeneratedIdSequence());
 
-		assertEquals(DataType.UNKNOWN, config.getDataType());
-		DataType jdbcType = DataType.DOUBLE;
-		config.setDataType(jdbcType);
-		assertEquals(jdbcType, config.getDataType());
+		assertNull(config.getDataPersister());
+		DataPersister jdbcType = DataType.DOUBLE.getDataPersister();
+		config.setDataPersister(jdbcType);
+		assertEquals(jdbcType, config.getDataPersister());
 
 		assertEquals(0, config.getWidth());
 		int width = 21312312;
@@ -123,13 +123,13 @@ public class DatabaseFieldConfigTest {
 		config = DatabaseFieldConfig.fromField(databaseType, "foo", fields[5]);
 		assertNotNull(config);
 		assertTrue(config.isForeign());
-		assertEquals(DataType.UNKNOWN, config.getDataType());
+		assertNull(config.getDataPersister());
 		assertEquals(fields[5].getName(), config.getFieldName());
 
 		config = DatabaseFieldConfig.fromField(databaseType, "foo", fields[6]);
 		assertNotNull(config);
 		assertTrue(config.isForeign());
-		assertEquals(DataType.UNKNOWN, config.getDataType());
+		assertNull(config.getDataPersister());
 		assertEquals(fields[6].getName(), config.getFieldName());
 	}
 

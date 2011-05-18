@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.Test;
 
@@ -24,6 +25,10 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
+import com.j256.ormlite.field.types.DateStringType;
+import com.j256.ormlite.field.types.EnumStringType;
+import com.j256.ormlite.field.types.StringType;
+import com.j256.ormlite.field.types.UuidType;
 import com.j256.ormlite.support.DatabaseResults;
 
 public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
@@ -49,7 +54,7 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 
 	@Test
 	public void testAppendColumnString() throws Exception {
-		testFooColumn(databaseType, "string", "VARCHAR(" + BaseDatabaseType.DEFAULT_VARCHAR_WIDTH + ")");
+		testFooColumn(databaseType, "string", "VARCHAR(" + StringType.DEFAULT_WIDTH + ")");
 	}
 
 	@Test
@@ -79,7 +84,7 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 
 	@Test
 	public void testAppendColumnDateString() throws Exception {
-		testFooColumn(databaseType, "dateString", "VARCHAR(" + BaseDatabaseType.DEFAULT_DATE_STRING_WIDTH + ")");
+		testFooColumn(databaseType, "dateString", "VARCHAR(" + DateStringType.DEFAULT_WIDTH + ")");
 	}
 
 	@Test
@@ -124,7 +129,12 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 
 	@Test
 	public void testAppendColumnEnumString() throws Exception {
-		testFooColumn(databaseType, "enumString", "VARCHAR(" + BaseDatabaseType.DEFAULT_VARCHAR_WIDTH + ")");
+		testFooColumn(databaseType, "enumString", "VARCHAR(" + EnumStringType.DEFAULT_WIDTH + ")");
+	}
+
+	@Test
+	public void testAppendColumnUuidString() throws Exception {
+		testFooColumn(databaseType, "uuid", "VARCHAR(" + UuidType.DEFAULT_WIDTH + ")");
 	}
 
 	@Test
@@ -153,7 +163,7 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 	@Test
 	public void testAppendColumnDefaultValueString() throws Exception {
 		StringBuilder sb = new StringBuilder();
-		sb.append("VARCHAR(").append(BaseDatabaseType.DEFAULT_VARCHAR_WIDTH).append(") DEFAULT ");
+		sb.append("VARCHAR(").append(StringType.DEFAULT_WIDTH).append(") DEFAULT ");
 		databaseType.appendEscapedWord(sb, DEFAULT_VALUE_STRING);
 		testFooColumn(databaseType, "defaultValueString", sb.toString());
 	}
@@ -360,6 +370,8 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 		OurEnum enumInt;
 		@DatabaseField
 		OurEnum enumString;
+		@DatabaseField
+		UUID uuid;
 
 		@DatabaseField(id = true)
 		long id;

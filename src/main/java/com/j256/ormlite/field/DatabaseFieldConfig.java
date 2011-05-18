@@ -18,7 +18,7 @@ public class DatabaseFieldConfig {
 
 	private String fieldName;
 	private String columnName;
-	private DataType dataType = DataType.UNKNOWN;
+	private DataPersister dataPersister;
 	private String defaultValue;
 	private int width;
 	private boolean canBeNull;
@@ -54,9 +54,20 @@ public class DatabaseFieldConfig {
 			DatabaseTableConfig<?> foreignTableConfig, boolean useGetSet, Enum<?> unknownEnumValue,
 			boolean throwIfNull, String format, boolean unique, String indexName, String uniqueIndexName,
 			boolean autoRefresh, int maxForeignAutoRefreshLevel, int maxForeignCollectionLevel) {
+		this(fieldName, columnName, (dataType == null ? null : dataType.getDataPersister()), defaultValue, width,
+				canBeNull, id, generatedId, generatedIdSequence, foreign, foreignTableConfig, useGetSet,
+				unknownEnumValue, throwIfNull, format, unique, indexName, uniqueIndexName, autoRefresh,
+				maxForeignAutoRefreshLevel, maxForeignCollectionLevel);
+	}
+
+	public DatabaseFieldConfig(String fieldName, String columnName, DataPersister dataPersister, String defaultValue,
+			int width, boolean canBeNull, boolean id, boolean generatedId, String generatedIdSequence, boolean foreign,
+			DatabaseTableConfig<?> foreignTableConfig, boolean useGetSet, Enum<?> unknownEnumValue,
+			boolean throwIfNull, String format, boolean unique, String indexName, String uniqueIndexName,
+			boolean autoRefresh, int maxForeignAutoRefreshLevel, int maxForeignCollectionLevel) {
 		this.fieldName = fieldName;
 		this.columnName = columnName;
-		this.dataType = dataType;
+		this.dataPersister = dataPersister;
 		this.defaultValue = defaultValue;
 		this.width = width;
 		this.canBeNull = canBeNull;
@@ -100,14 +111,26 @@ public class DatabaseFieldConfig {
 	}
 
 	/**
-	 * @see DatabaseField#dataType()
+	 * The name is historical.
 	 */
-	public DataType getDataType() {
-		return dataType;
+	public void setDataType(DataType dataType) {
+		this.dataPersister = dataType.getDataPersister();
 	}
 
-	public void setDataType(DataType dataType) {
-		this.dataType = dataType;
+	/**
+	 * The name is historical.
+	 * 
+	 * @see DatabaseField#dataType()
+	 */
+	public DataPersister getDataPersister() {
+		return dataPersister;
+	}
+
+	/**
+	 * The name is historical.
+	 */
+	public void setDataPersister(DataPersister dataPersister) {
+		this.dataPersister = dataPersister;
 	}
 
 	/**
@@ -402,7 +425,11 @@ public class DatabaseFieldConfig {
 		} else {
 			config.columnName = null;
 		}
-		config.dataType = databaseField.dataType();
+		if (databaseField.dataType() == null) {
+			config.dataPersister = null;
+		} else {
+			config.dataPersister = databaseField.dataType().getDataPersister();
+		}
 		// NOTE: == did not work with the NO_DEFAULT string
 		if (databaseField.defaultValue().equals(DatabaseField.NO_DEFAULT)) {
 			config.defaultValue = null;

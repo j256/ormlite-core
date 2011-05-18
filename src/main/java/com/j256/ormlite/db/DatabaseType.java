@@ -4,7 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DataPersister;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 
@@ -91,7 +91,7 @@ public interface DatabaseType {
 	 * Return the FieldConverter to associate with the DataType. This allows the database instance to convert a field as
 	 * necessary before it goes to the database.
 	 */
-	public FieldConverter getFieldConverter(DataType dataType);
+	public FieldConverter getFieldConverter(DataPersister dataType);
 
 	/**
 	 * Return true if the database supports the width parameter on VARCHAR fields.

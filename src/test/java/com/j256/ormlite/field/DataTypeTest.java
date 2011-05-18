@@ -9,7 +9,6 @@ import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -199,7 +198,7 @@ public class DataTypeTest extends BaseCoreTest {
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, TABLE_NAME, LocalDate.class.getDeclaredField(DATE_COLUMN),
 						LocalDate.class);
-		DataType.DATE.parseDefaultString(fieldType, "not valid date string");
+		DataType.DATE.getDataPersister().parseDefaultString(fieldType, "not valid date string");
 	}
 
 	@SuppressWarnings("deprecation")
@@ -234,7 +233,7 @@ public class DataTypeTest extends BaseCoreTest {
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, TABLE_NAME, LocalDate.class.getDeclaredField(DATE_COLUMN),
 						LocalDate.class);
-		DataType.JAVA_DATE.parseDefaultString(fieldType, "not valid date string");
+		DataType.JAVA_DATE.getDataPersister().parseDefaultString(fieldType, "not valid date string");
 	}
 
 	@Test
@@ -276,7 +275,7 @@ public class DataTypeTest extends BaseCoreTest {
 			DatabaseResults results = stmt.runQuery();
 			assertTrue(results.next());
 			int colNum = results.findColumn(STRING_COLUMN);
-			DataType.DATE_STRING.resultToJava(null, results, colNum);
+			DataType.DATE_STRING.getDataPersister().resultToJava(null, results, colNum);
 		} finally {
 			if (stmt != null) {
 				stmt.close();
@@ -290,7 +289,7 @@ public class DataTypeTest extends BaseCoreTest {
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, TABLE_NAME,
 						LocalDateString.class.getDeclaredField(DATE_COLUMN), LocalDateString.class);
-		DataType.DATE_STRING.parseDefaultString(fieldType, "not valid date string");
+		DataType.DATE_STRING.getDataPersister().parseDefaultString(fieldType, "not valid date string");
 	}
 
 	@SuppressWarnings("deprecation")
@@ -335,7 +334,7 @@ public class DataTypeTest extends BaseCoreTest {
 			DatabaseResults results = stmt.runQuery();
 			assertTrue(results.next());
 			int colNum = results.findColumn(STRING_COLUMN);
-			DataType.JAVA_DATE_STRING.resultToJava(null, results, colNum);
+			DataType.JAVA_DATE_STRING.getDataPersister().resultToJava(null, results, colNum);
 		} finally {
 			if (stmt != null) {
 				stmt.close();
@@ -350,7 +349,7 @@ public class DataTypeTest extends BaseCoreTest {
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, TABLE_NAME,
 						LocalDateString.class.getDeclaredField(DATE_COLUMN), LocalDateString.class);
-		DataType.JAVA_DATE_STRING.parseDefaultString(fieldType, "not valid date string");
+		DataType.JAVA_DATE_STRING.getDataPersister().parseDefaultString(fieldType, "not valid date string");
 	}
 
 	@Test
@@ -381,7 +380,7 @@ public class DataTypeTest extends BaseCoreTest {
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, TABLE_NAME,
 						LocalDateLong.class.getDeclaredField(DATE_COLUMN), LocalDateLong.class);
-		DataType.DATE_LONG.parseDefaultString(fieldType, "not valid long number");
+		DataType.DATE_LONG.getDataPersister().parseDefaultString(fieldType, "not valid long number");
 	}
 
 	@SuppressWarnings("deprecation")
@@ -415,7 +414,7 @@ public class DataTypeTest extends BaseCoreTest {
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, TABLE_NAME,
 						LocalDateLong.class.getDeclaredField(DATE_COLUMN), LocalDateLong.class);
-		DataType.JAVA_DATE_LONG.parseDefaultString(fieldType, "not valid long number");
+		DataType.JAVA_DATE_LONG.getDataPersister().parseDefaultString(fieldType, "not valid long number");
 	}
 
 	@Test
@@ -515,7 +514,7 @@ public class DataTypeTest extends BaseCoreTest {
 
 	@Test(expected = SQLException.class)
 	public void testByteArrayParseDefault() throws Exception {
-		DataType.BYTE_ARRAY.parseDefaultString(null, null);
+		DataType.BYTE_ARRAY.getDataPersister().parseDefaultString(null, null);
 	}
 
 	@Test
@@ -616,7 +615,7 @@ public class DataTypeTest extends BaseCoreTest {
 	public void testIntConvertId() throws Exception {
 		int intId = 213123123;
 		long longId = new Long(intId);
-		assertEquals(intId, DataType.INTEGER.convertIdNumber(longId));
+		assertEquals(intId, DataType.INTEGER.getDataPersister().convertIdNumber(longId));
 	}
 
 	@Test
@@ -669,7 +668,7 @@ public class DataTypeTest extends BaseCoreTest {
 	@Test
 	public void testLongConvertId() throws Exception {
 		long longId = new Long(1312313123131L);
-		assertEquals(longId, DataType.LONG.convertIdNumber(longId));
+		assertEquals(longId, DataType.LONG.getDataPersister().convertIdNumber(longId));
 	}
 
 	@Test
@@ -808,7 +807,8 @@ public class DataTypeTest extends BaseCoreTest {
 			FieldType fieldType =
 					FieldType.createFieldType(connectionSource, TABLE_NAME,
 							clazz.getDeclaredField(SERIALIZABLE_COLUMN), clazz);
-			assertNull(DataType.SERIALIZABLE.resultToJava(fieldType, results, results.findColumn(SERIALIZABLE_COLUMN)));
+			assertNull(DataType.SERIALIZABLE.getDataPersister().resultToJava(fieldType, results,
+					results.findColumn(SERIALIZABLE_COLUMN)));
 		} finally {
 			if (stmt != null) {
 				stmt.close();
@@ -819,7 +819,7 @@ public class DataTypeTest extends BaseCoreTest {
 
 	@Test(expected = SQLException.class)
 	public void testSerializableParseDefault() throws Exception {
-		DataType.SERIALIZABLE.parseDefaultString(null, null);
+		DataType.SERIALIZABLE.getDataPersister().parseDefaultString(null, null);
 	}
 
 	@Test(expected = SQLException.class)
@@ -838,7 +838,7 @@ public class DataTypeTest extends BaseCoreTest {
 			FieldType fieldType =
 					FieldType.createFieldType(connectionSource, TABLE_NAME,
 							LocalSerializable.class.getDeclaredField(SERIALIZABLE_COLUMN), LocalSerializable.class);
-			DataType.SERIALIZABLE.resultToJava(fieldType, results, results.findColumn(BYTE_COLUMN));
+			DataType.SERIALIZABLE.getDataPersister().resultToJava(fieldType, results, results.findColumn(BYTE_COLUMN));
 		} finally {
 			if (stmt != null) {
 				stmt.close();
@@ -885,7 +885,8 @@ public class DataTypeTest extends BaseCoreTest {
 			DatabaseResults results = stmt.runQuery();
 			assertTrue(results.next());
 			assertEquals(val.toString(),
-					DataType.ENUM_STRING.resultToJava(null, results, results.findColumn(ENUM_COLUMN)));
+					DataType.ENUM_STRING.getDataPersister()
+							.resultToJava(null, results, results.findColumn(ENUM_COLUMN)));
 		} finally {
 			if (stmt != null) {
 				stmt.close();
@@ -931,8 +932,10 @@ public class DataTypeTest extends BaseCoreTest {
 			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes);
 			DatabaseResults results = stmt.runQuery();
 			assertTrue(results.next());
-			assertEquals(val.ordinal(),
-					DataType.ENUM_INTEGER.resultToJava(null, results, results.findColumn(ENUM_COLUMN)));
+			assertEquals(
+					val.ordinal(),
+					DataType.ENUM_INTEGER.getDataPersister().resultToJava(null, results,
+							results.findColumn(ENUM_COLUMN)));
 		} finally {
 			if (stmt != null) {
 				stmt.close();
@@ -957,35 +960,8 @@ public class DataTypeTest extends BaseCoreTest {
 	@Test
 	public void testUnknownGetResult() throws Exception {
 		DataType dataType = DataType.UNKNOWN;
-		assertNull(dataType.resultToJava(null, null, 0));
-		assertNull(dataType.parseDefaultString(null, null));
-		assertNull(dataType.javaToSqlArg(null, null));
-		assertNull(dataType.convertIdNumber(null));
-		assertFalse(dataType.isValidGeneratedType());
-		assertFalse(dataType.isAppropriateId());
-		assertFalse(dataType.isEscapedValue());
-		assertFalse(dataType.isEscapedDefaultValue());
-		assertFalse(dataType.isPrimitive());
-		assertFalse(dataType.isSelectArgRequired());
-		assertFalse(dataType.isStreamType());
-		assertFalse(dataType.isComparable());
-		assertNull(dataType.convertIdNumber(21312312L));
+		assertNull(dataType.getDataPersister());
 		dataTypeSet.add(dataType);
-	}
-
-	@Test
-	public void testUnknownClass() throws Exception {
-		assertEquals(DataType.UNKNOWN, DataType.lookupClass(getClass()));
-	}
-
-	@Test
-	public void testSerializableClass() throws Exception {
-		assertEquals(DataType.UNKNOWN, DataType.lookupClass(Serializable.class));
-	}
-
-	@Test
-	public void testClassLookupByteArray() throws Exception {
-		assertEquals(DataType.UNKNOWN, DataType.lookupClass(byte[].class));
 	}
 
 	@Test(expected = SQLException.class)
@@ -1016,6 +992,7 @@ public class DataTypeTest extends BaseCoreTest {
 			DataType dataType, String columnName, boolean isValidGeneratedType, boolean isAppropriateId,
 			boolean isEscapedValue, boolean isPrimitive, boolean isSelectArgRequired, boolean isStreamType,
 			boolean isComparable, boolean isConvertableId) throws Exception {
+		DataPersister dataPersister = dataType.getDataPersister();
 		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
 		CompiledStatement stmt = null;
 		try {
@@ -1026,7 +1003,8 @@ public class DataTypeTest extends BaseCoreTest {
 			FieldType fieldType =
 					FieldType.createFieldType(connectionSource, TABLE_NAME, clazz.getDeclaredField(columnName), clazz);
 			if (javaVal instanceof byte[]) {
-				assertTrue(Arrays.equals((byte[]) javaVal, (byte[]) dataType.resultToJava(fieldType, results, colNum)));
+				assertTrue(Arrays.equals((byte[]) javaVal,
+						(byte[]) dataPersister.resultToJava(fieldType, results, colNum)));
 			} else {
 				Map<String, Integer> colMap = new HashMap<String, Integer>();
 				colMap.put(columnName, colNum);
@@ -1036,33 +1014,33 @@ public class DataTypeTest extends BaseCoreTest {
 			if (dataType == DataType.STRING_BYTES || dataType == DataType.BYTE_ARRAY
 					|| dataType == DataType.SERIALIZABLE) {
 				try {
-					dataType.parseDefaultString(fieldType, "");
+					dataPersister.parseDefaultString(fieldType, "");
 					fail("parseDefaultString should have thrown for " + dataType);
 				} catch (SQLException e) {
 					// expected
 				}
 			} else if (defaultValStr != null) {
-				assertEquals(defaultSqlVal, dataType.parseDefaultString(fieldType, defaultValStr));
+				assertEquals(defaultSqlVal, dataPersister.parseDefaultString(fieldType, defaultValStr));
 			}
 			if (sqlArg == null) {
 				// noop
 			} else if (sqlArg instanceof byte[]) {
-				assertTrue(Arrays.equals((byte[]) sqlArg, (byte[]) dataType.javaToSqlArg(fieldType, javaVal)));
+				assertTrue(Arrays.equals((byte[]) sqlArg, (byte[]) dataPersister.javaToSqlArg(fieldType, javaVal)));
 			} else {
-				assertEquals(sqlArg, dataType.javaToSqlArg(fieldType, javaVal));
+				assertEquals(sqlArg, dataPersister.javaToSqlArg(fieldType, javaVal));
 			}
-			assertEquals(isValidGeneratedType, dataType.isValidGeneratedType());
-			assertEquals(isAppropriateId, dataType.isAppropriateId());
-			assertEquals(isEscapedValue, dataType.isEscapedValue());
-			assertEquals(isEscapedValue, dataType.isEscapedDefaultValue());
-			assertEquals(isPrimitive, dataType.isPrimitive());
-			assertEquals(isSelectArgRequired, dataType.isSelectArgRequired());
-			assertEquals(isStreamType, dataType.isStreamType());
-			assertEquals(isComparable, dataType.isComparable());
+			assertEquals(isValidGeneratedType, dataPersister.isValidGeneratedType());
+			assertEquals(isAppropriateId, dataPersister.isAppropriateId());
+			assertEquals(isEscapedValue, dataPersister.isEscapedValue());
+			assertEquals(isEscapedValue, dataPersister.isEscapedDefaultValue());
+			assertEquals(isPrimitive, dataPersister.isPrimitive());
+			assertEquals(isSelectArgRequired, dataPersister.isSelectArgRequired());
+			assertEquals(isStreamType, dataPersister.isStreamType());
+			assertEquals(isComparable, dataPersister.isComparable());
 			if (isConvertableId) {
-				assertNotNull(dataType.convertIdNumber(10));
+				assertNotNull(dataPersister.convertIdNumber(10));
 			} else {
-				assertNull(dataType.convertIdNumber(10));
+				assertNull(dataPersister.convertIdNumber(10));
 			}
 			dataTypeSet.add(dataType);
 		} finally {

@@ -7,6 +7,7 @@
 	* CORE: Added the maxEagerForeignCollectionLevel field to the @ForeignCollectionField annotation to limit recursion.
 	* CORE: Added the concept of closeLastIterator() to the DAO and CloseableWrappedIterable for reentrant usage.
 	* CORE: Added better connection/statement testing code and fixed some additional missing closes.
+	* JDBC: Tweaked the HSQLdb database type to acknowledge that it seems to support inner transactions. 
 
 4.21: 5/5/2011 (svn r1721)
 	* CORE: Added maxForeignLevel=1 type of setting to @DatabaseField to limit the foreign field recursive calls.

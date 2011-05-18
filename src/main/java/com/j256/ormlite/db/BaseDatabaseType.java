@@ -3,8 +3,7 @@ package com.j256.ormlite.db;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.j256.ormlite.field.DataType;
-import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.DataPersister;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
@@ -24,8 +23,6 @@ import com.j256.ormlite.support.DatabaseResults;
  */
 public abstract class BaseDatabaseType implements DatabaseType {
 
-	protected static int DEFAULT_VARCHAR_WIDTH = 255;
-	protected static int DEFAULT_DATE_STRING_WIDTH = 50;
 	protected static String DEFAULT_SEQUENCE_SUFFIX = "_id_seq";
 
 	/**
@@ -51,114 +48,75 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public void appendColumnArg(StringBuilder sb, FieldType fieldType, List<String> additionalArgs,
 			List<String> statementsBefore, List<String> statementsAfter, List<String> queriesAfter) throws SQLException {
 		appendEscapedEntityName(sb, fieldType.getDbColumnName());
 		sb.append(' ');
-		int fieldWidth;
-		switch (fieldType.getDataType()) {
+		DataPersister dataType = fieldType.getDataPersister();
+		// first try the per-field width
+		int fieldWidth = fieldType.getWidth();
+		if (fieldWidth == 0) {
+			// next try the per-data-type width
+			fieldWidth = dataType.getDefaultWidth();
+		}
+		switch (dataType.getSqlType()) {
 
 			case STRING :
-			case UUID :
-				fieldWidth = fieldType.getWidth();
-				if (fieldWidth == 0) {
-					fieldWidth = getDefaultVarcharWidth();
-				}
 				appendStringType(sb, fieldWidth);
 				break;
 
 			case LONG_STRING :
-				appendLongStringType(sb);
-				break;
-
-			case STRING_BYTES :
-				appendByteArrayType(sb);
+				appendLongStringType(sb, fieldWidth);
 				break;
 
 			case BOOLEAN :
-			case BOOLEAN_OBJ :
-				appendBooleanType(sb);
+				appendBooleanType(sb, fieldWidth);
 				break;
 
 			case DATE :
-			case JAVA_DATE :
-				fieldWidth = fieldType.getWidth();
-				if (fieldWidth == 0) {
-					fieldWidth = DEFAULT_DATE_STRING_WIDTH;
-				}
 				appendDateType(sb, fieldWidth);
 				break;
 
-			case DATE_LONG :
-			case JAVA_DATE_LONG :
-				appendDateLongType(sb);
-				break;
-
-			case DATE_STRING :
-			case JAVA_DATE_STRING :
-				fieldWidth = fieldType.getWidth();
-				if (fieldWidth == 0) {
-					fieldWidth = DEFAULT_DATE_STRING_WIDTH;
-				}
-				appendDateStringType(sb, fieldWidth);
-				break;
-
 			case CHAR :
-			case CHAR_OBJ :
-				appendCharType(sb);
+				appendCharType(sb, fieldWidth);
 				break;
 
 			case BYTE :
-			case BYTE_OBJ :
-				appendByteType(sb);
+				appendByteType(sb, fieldWidth);
 				break;
 
 			case BYTE_ARRAY :
-				appendByteArrayType(sb);
+				appendByteArrayType(sb, fieldWidth);
 				break;
 
 			case SHORT :
-			case SHORT_OBJ :
-				appendShortType(sb);
+				appendShortType(sb, fieldWidth);
 				break;
 
 			case INTEGER :
-			case INTEGER_OBJ :
-				appendIntegerType(sb);
+				appendIntegerType(sb, fieldWidth);
 				break;
 
 			case LONG :
-			case LONG_OBJ :
-				appendLongType(sb);
+				appendLongType(sb, fieldWidth);
 				break;
 
 			case FLOAT :
-			case FLOAT_OBJ :
-				appendFloatType(sb);
+				appendFloatType(sb, fieldWidth);
 				break;
 
 			case DOUBLE :
-			case DOUBLE_OBJ :
-				appendDoubleType(sb);
+				appendDoubleType(sb, fieldWidth);
 				break;
 
 			case SERIALIZABLE :
-				appendSerializableType(sb);
-				break;
-
-			case ENUM_STRING :
-				appendEnumStringType(sb, fieldType);
-				break;
-
-			case ENUM_INTEGER :
-				appendEnumIntType(sb, fieldType);
+				appendSerializableType(sb, fieldWidth);
 				break;
 
 			case UNKNOWN :
 			default :
 				// shouldn't be able to get here unless we have a missing case
-				throw new IllegalArgumentException("Unknown field type " + fieldType.getDataType());
+				throw new IllegalArgumentException("Unknown SQL-type " + dataType.getSqlType());
 		}
 		sb.append(' ');
 
@@ -206,7 +164,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	/**
 	 * Output the SQL type for a Java Long String.
 	 */
-	protected void appendLongStringType(StringBuilder sb) {
+	protected void appendLongStringType(StringBuilder sb, int fieldWidth) {
 		sb.append("TEXT");
 	}
 
@@ -218,107 +176,77 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	}
 
 	/**
-	 * Output the SQL type for a Java Date.
-	 */
-	protected void appendDateLongType(StringBuilder sb) {
-		appendLongType(sb);
-	}
-
-	/**
-	 * Output the SQL type for a Java Date as a string.
-	 */
-	protected void appendDateStringType(StringBuilder sb, int fieldWidth) {
-		appendStringType(sb, fieldWidth);
-	}
-
-	/**
 	 * Output the SQL type for a Java boolean.
 	 */
-	protected void appendBooleanType(StringBuilder sb) {
+	protected void appendBooleanType(StringBuilder sb, int fieldWidth) {
 		sb.append("BOOLEAN");
 	}
 
 	/**
 	 * Output the SQL type for a Java char.
 	 */
-	protected void appendCharType(StringBuilder sb) {
+	protected void appendCharType(StringBuilder sb, int fieldWidth) {
 		sb.append("CHAR");
 	}
 
 	/**
 	 * Output the SQL type for a Java byte.
 	 */
-	protected void appendByteType(StringBuilder sb) {
+	protected void appendByteType(StringBuilder sb, int fieldWidth) {
 		sb.append("TINYINT");
 	}
 
 	/**
 	 * Output the SQL type for a Java short.
 	 */
-	protected void appendShortType(StringBuilder sb) {
+	protected void appendShortType(StringBuilder sb, int fieldWidth) {
 		sb.append("SMALLINT");
 	}
 
 	/**
 	 * Output the SQL type for a Java integer.
 	 */
-	protected void appendIntegerType(StringBuilder sb) {
+	protected void appendIntegerType(StringBuilder sb, int fieldWidth) {
 		sb.append("INTEGER");
 	}
 
 	/**
 	 * Output the SQL type for a Java long.
 	 */
-	protected void appendLongType(StringBuilder sb) {
+	protected void appendLongType(StringBuilder sb, int fieldWidth) {
 		sb.append("BIGINT");
 	}
 
 	/**
 	 * Output the SQL type for a Java float.
 	 */
-	protected void appendFloatType(StringBuilder sb) {
+	protected void appendFloatType(StringBuilder sb, int fieldWidth) {
 		sb.append("FLOAT");
 	}
 
 	/**
 	 * Output the SQL type for a Java double.
 	 */
-	protected void appendDoubleType(StringBuilder sb) {
+	protected void appendDoubleType(StringBuilder sb, int fieldWidth) {
 		sb.append("DOUBLE PRECISION");
 	}
 
 	/**
 	 * Output the SQL type for either a serialized Java object or a byte[].
 	 */
-	protected void appendByteArrayType(StringBuilder sb) {
+	protected void appendByteArrayType(StringBuilder sb, int fieldWidth) {
 		sb.append("BLOB");
 	}
 
 	/**
 	 * Output the SQL type for a serialized Java object.
 	 */
-	protected void appendSerializableType(StringBuilder sb) {
+	protected void appendSerializableType(StringBuilder sb, int fieldWidth) {
 		sb.append("BLOB");
 	}
 
 	/**
-	 * Output the SQL type for a Enum object stored as String.
-	 */
-	protected void appendEnumStringType(StringBuilder sb, FieldType fieldType) {
-		// delegate to a string
-		appendStringType(sb, DEFAULT_VARCHAR_WIDTH);
-	}
-
-	/**
-	 * Output the SQL type for a Enum object stored as intg.
-	 */
-	protected void appendEnumIntType(StringBuilder sb, FieldType fieldType) {
-		// delegate to an integer
-		appendIntegerType(sb);
-	}
-
-	/**
-	 * Output the SQL type for a Java boolean default value.
+	 * Output the SQL type for the default value for the type.
 	 */
 	protected void appendDefaultValue(StringBuilder sb, FieldType fieldType, Object defaultValue) {
 		if (fieldType.isEscapedDefaultValue()) {
@@ -438,9 +366,9 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		return "-- ";
 	}
 
-	public FieldConverter getFieldConverter(DataType dataType) {
-		// default is to use the dataType itself
-		return dataType;
+	public FieldConverter getFieldConverter(DataPersister dataPersister) {
+		// default is to use the dataPersister itself
+		return dataPersister;
 	}
 
 	public boolean isIdSequenceNeeded() {
@@ -473,13 +401,6 @@ public abstract class BaseDatabaseType implements DatabaseType {
 
 	public void appendOffsetValue(StringBuilder sb, int offset) {
 		sb.append("OFFSET ").append(offset).append(' ');
-	}
-
-	/**
-	 * Return the default varchar width if not specified by {@link DatabaseField#width}.
-	 */
-	protected int getDefaultVarcharWidth() {
-		return DEFAULT_VARCHAR_WIDTH;
 	}
 
 	public void appendSelectNextValFromSequence(StringBuilder sb, String sequenceName) {

@@ -49,7 +49,8 @@ public class BaseSqliteDatabaseTypeTest extends BaseCoreTest {
 	@Test
 	public void testGetFieldConverter() throws Exception {
 		OurSqliteDatabaseType dbType = new OurSqliteDatabaseType();
-		assertEquals(new Byte((byte) 1), dbType.getFieldConverter(DataType.BOOLEAN).parseDefaultString(null, "true"));
+		assertEquals(new Byte((byte) 1), dbType.getFieldConverter(DataType.BOOLEAN.getDataPersister())
+				.parseDefaultString(null, "true"));
 	}
 
 	private static class OurSqliteDatabaseType extends BaseSqliteDatabaseType {

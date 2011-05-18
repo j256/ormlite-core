@@ -18,7 +18,6 @@ import javax.persistence.OneToOne;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
-import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
 import com.j256.ormlite.h2.H2DatabaseType;
@@ -51,21 +50,21 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 			} else if (field.getName().equals("unknown")) {
 				assertFalse(config.isId());
 				assertFalse(config.isGeneratedId());
-				assertEquals(DataType.UNKNOWN, config.getDataType());
+				assertNull(config.getDataPersister());
 				assertEquals(field.getName(), config.getFieldName());
 				assertNull(config.getColumnName());
 			} else if (field.getName().equals("foreignManyToOne")) {
 				assertFalse(config.isId());
 				assertFalse(config.isGeneratedId());
 				assertTrue(config.isForeign());
-				assertEquals(DataType.UNKNOWN, config.getDataType());
+				assertNull(config.getDataPersister());
 				assertEquals(field.getName(), config.getFieldName());
 				assertNull(config.getColumnName());
 			} else if (field.getName().equals("foreignOneToOne")) {
 				assertFalse(config.isId());
 				assertFalse(config.isGeneratedId());
 				assertTrue(config.isForeign());
-				assertEquals(DataType.UNKNOWN, config.getDataType());
+				assertNull(config.getDataPersister());
 				assertEquals(field.getName(), config.getFieldName());
 				assertNull(config.getColumnName());
 			} else {

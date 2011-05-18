@@ -2,9 +2,10 @@ package com.j256.ormlite.db;
 
 import java.util.List;
 
-import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DataPersister;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.field.SqlType;
 
 /**
  * Sqlite database type information used to create the tables, etc..
@@ -21,7 +22,7 @@ public abstract class BaseSqliteDatabaseType extends BaseDatabaseType implements
 	@Override
 	protected void configureGeneratedId(StringBuilder sb, FieldType fieldType, List<String> statementsBefore,
 			List<String> additionalArgs, List<String> queriesAfter) {
-		if (fieldType.getDataType() != DataType.INTEGER && fieldType.getDataType() != DataType.INTEGER_OBJ) {
+		if (fieldType.getSqlType() != SqlType.INTEGER) {
 			throw new IllegalArgumentException("Sqlite requires that auto-increment generated-id be integer types");
 		}
 		sb.append("PRIMARY KEY AUTOINCREMENT ");
@@ -45,14 +46,13 @@ public abstract class BaseSqliteDatabaseType extends BaseDatabaseType implements
 	}
 
 	@Override
-	public FieldConverter getFieldConverter(DataType dataType) {
+	public FieldConverter getFieldConverter(DataPersister dataPersister) {
 		// we are only overriding certain types
-		switch (dataType) {
+		switch (dataPersister.getSqlType()) {
 			case BOOLEAN :
-			case BOOLEAN_OBJ :
 				return booleanConverter;
 			default :
-				return super.getFieldConverter(dataType);
+				return super.getFieldConverter(dataPersister);
 		}
 	}
 }

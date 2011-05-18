@@ -52,26 +52,26 @@ public class FieldTypeTest extends BaseCoreTest {
 				FieldType.createFieldType(connectionSource, Foo.class.getSimpleName(), nameField, Foo.class);
 		assertEquals(nameField.getName(), fieldType.getFieldName());
 		assertEquals(nameField.getName(), fieldType.getDbColumnName());
-		assertEquals(DataType.STRING, fieldType.getDataType());
+		assertEquals(DataType.STRING.getDataPersister(), fieldType.getDataPersister());
 		assertEquals(0, fieldType.getWidth());
 		assertTrue(fieldType.toString().contains("Foo"));
 		assertTrue(fieldType.toString().contains(nameField.getName()));
 
 		fieldType = FieldType.createFieldType(connectionSource, Foo.class.getSimpleName(), rankField, Foo.class);
 		assertEquals(RANK_DB_COLUMN_NAME, fieldType.getDbColumnName());
-		assertEquals(DataType.STRING, fieldType.getDataType());
+		assertEquals(DataType.STRING.getDataPersister(), fieldType.getDataPersister());
 		assertEquals(RANK_WIDTH, fieldType.getWidth());
 
 		fieldType = FieldType.createFieldType(connectionSource, Foo.class.getSimpleName(), serialField, Foo.class);
 		assertEquals(serialField.getName(), fieldType.getDbColumnName());
-		assertEquals(DataType.INTEGER_OBJ, fieldType.getDataType());
+		assertEquals(DataType.INTEGER_OBJ.getDataPersister(), fieldType.getDataPersister());
 		assertEquals(Integer.parseInt(SERIAL_DEFAULT_VALUE), fieldType.getDefaultValue());
 
 		String tableName = Foo.class.getSimpleName();
 		fieldType = FieldType.createFieldType(connectionSource, tableName, intLongField, Foo.class);
 		assertEquals(intLongField.getName(), fieldType.getDbColumnName());
 		assertFalse(fieldType.isGeneratedId());
-		assertEquals(DataType.LONG, fieldType.getDataType());
+		assertEquals(DataType.LONG.getDataPersister(), fieldType.getDataPersister());
 		assertSame(tableName, fieldType.getTableName());
 	}
 
@@ -151,25 +151,24 @@ public class FieldTypeTest extends BaseCoreTest {
 		final SqlType sqlType = SqlType.DATE;
 		final String nameArg = "zippy buzz";
 		final String nameResult = "blabber bling";
-		expect(databaseType.getFieldConverter(DataType.lookupClass(nameField.getType()))).andReturn(
-				new FieldConverter() {
-					public SqlType getSqlType() {
-						return sqlType;
-					}
-					public Object parseDefaultString(FieldType fieldType, String defaultStr) {
-						return defaultStr;
-					}
-					public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
-						return nameArg;
-					}
-					public Object resultToJava(FieldType fieldType, DatabaseResults resultSet, int columnPos)
-							throws SQLException {
-						return nameResult;
-					}
-					public boolean isStreamType() {
-						return false;
-					}
-				});
+		expect(databaseType.getFieldConverter(DataType.STRING.getDataPersister())).andReturn(new FieldConverter() {
+			public SqlType getSqlType() {
+				return sqlType;
+			}
+			public Object parseDefaultString(FieldType fieldType, String defaultStr) {
+				return defaultStr;
+			}
+			public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
+				return nameArg;
+			}
+			public Object resultToJava(FieldType fieldType, DatabaseResults resultSet, int columnPos)
+					throws SQLException {
+				return nameResult;
+			}
+			public boolean isStreamType() {
+				return false;
+			}
+		});
 		expect(databaseType.isEntityNamesMustBeUpCase()).andReturn(false);
 		replay(databaseType);
 		connectionSource.setDatabaseType(databaseType);
@@ -203,7 +202,7 @@ public class FieldTypeTest extends BaseCoreTest {
 				FieldType.createFieldType(connectionSource, ForeignParent.class.getSimpleName(), nameField,
 						ForeignParent.class);
 		assertEquals(nameField.getName(), fieldType.getDbColumnName());
-		assertEquals(DataType.STRING, fieldType.getDataType());
+		assertEquals(DataType.STRING.getDataPersister(), fieldType.getDataPersister());
 		assertFalse(fieldType.isForeign());
 		assertEquals(0, fieldType.getWidth());
 
@@ -213,7 +212,7 @@ public class FieldTypeTest extends BaseCoreTest {
 		fieldType.configDaoInformation(connectionSource, ForeignParent.class);
 		assertEquals(bazField.getName() + FieldType.FOREIGN_ID_FIELD_SUFFIX, fieldType.getDbColumnName());
 		// this is the type of the foreign object's id
-		assertEquals(DataType.INTEGER, fieldType.getDataType());
+		assertEquals(DataType.INTEGER.getDataPersister(), fieldType.getDataPersister());
 		assertTrue(fieldType.isForeign());
 	}
 

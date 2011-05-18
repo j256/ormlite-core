@@ -557,11 +557,13 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			int columnN = results.getColumnCount();
 			Object[] result = new Object[columnN];
 			for (int colC = 0; colC < columnN; colC++) {
+				DataType dataType;
 				if (colC >= columnTypes.length) {
-					result[colC] = DataType.STRING.resultToJava(null, results, colC);
+					dataType = DataType.STRING;
 				} else {
-					result[colC] = columnTypes[colC].resultToJava(null, results, colC);
+					dataType = columnTypes[colC];
 				}
+				result[colC] = dataType.getDataPersister().resultToJava(null, results, colC);
 			}
 			return result;
 		}
