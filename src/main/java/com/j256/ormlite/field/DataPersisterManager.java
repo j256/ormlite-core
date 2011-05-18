@@ -12,7 +12,7 @@ import java.util.Map;
  * 
  * @author graywatson
  */
-public class DataTypeManager {
+public class DataPersisterManager {
 
 	private static Map<Class<?>, DataPersister> classMap = null;
 

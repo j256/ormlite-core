@@ -86,7 +86,7 @@ public class FieldType {
 		Class<?> clazz = field.getType();
 		DataPersister dataPersister;
 		if (fieldConfig.getDataPersister() == null) {
-			dataPersister = DataTypeManager.lookupForClass(clazz);
+			dataPersister = DataPersisterManager.lookupForClass(clazz);
 		} else {
 			dataPersister = fieldConfig.getDataPersister();
 			if (!dataPersister.isValidForType(clazz)) {
@@ -768,7 +768,7 @@ public class FieldType {
 			sb.append("' in ").append(field.getDeclaringClass().getSimpleName());
 			sb.append(" can't be type ").append(this.dataPersister.getSqlType());
 			sb.append(".  Must be one of: ");
-			for (DataPersister type : DataTypeManager.getDataPersisters()) {
+			for (DataPersister type : DataPersisterManager.getDataPersisters()) {
 				if (type.isValidGeneratedType()) {
 					sb.append(type).append(' ');
 				}

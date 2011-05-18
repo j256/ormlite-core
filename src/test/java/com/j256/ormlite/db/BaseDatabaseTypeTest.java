@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
-import com.j256.ormlite.field.DataTypeManager;
+import com.j256.ormlite.field.DataPersisterManager;
 
 public class BaseDatabaseTypeTest extends BaseCoreTest {
 
@@ -35,17 +35,17 @@ public class BaseDatabaseTypeTest extends BaseCoreTest {
 
 	@Test
 	public void testUnknownClass() throws Exception {
-		assertNull(DataTypeManager.lookupForClass(getClass()));
+		assertNull(DataPersisterManager.lookupForClass(getClass()));
 	}
 
 	@Test
 	public void testSerializableClass() throws Exception {
-		assertNull(DataTypeManager.lookupForClass(Serializable.class));
+		assertNull(DataPersisterManager.lookupForClass(Serializable.class));
 	}
 
 	@Test
 	public void testClassLookupByteArray() throws Exception {
-		assertNull(DataTypeManager.lookupForClass(byte[].class));
+		assertNull(DataPersisterManager.lookupForClass(byte[].class));
 	}
 
 	private static class TestDatabaseType extends BaseDatabaseType implements DatabaseType {
