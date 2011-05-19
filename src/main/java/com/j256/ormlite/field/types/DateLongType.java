@@ -30,11 +30,6 @@ public class DateLongType extends BaseDataType {
 	}
 
 	@Override
-	public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-		return new Date(results.getLong(columnPos));
-	}
-
-	@Override
 	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 		try {
 			return Long.parseLong(defaultStr);
@@ -45,9 +40,20 @@ public class DateLongType extends BaseDataType {
 	}
 
 	@Override
+	public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+		return new Date(results.getLong(columnPos));
+	}
+
+	@Override
 	public Object javaToSqlArg(FieldType fieldType, Object obj) {
 		Date date = (Date) obj;
 		return (Long) date.getTime();
+	}
+
+	@Override
+	public boolean isValidForType(Class<?> fieldClass) {
+		// by default this is a noop
+		return true;
 	}
 
 	@Override

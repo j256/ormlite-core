@@ -29,6 +29,18 @@ public class DateStringType extends BaseDateType {
 	}
 
 	@Override
+	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+		DateStringFormatConfig formatConfig = convertDateStringConfig(fieldType);
+		try {
+			// we parse to make sure it works and then format it again
+			return normalizeDateString(formatConfig, defaultStr);
+		} catch (ParseException e) {
+			throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing default date-string '"
+					+ defaultStr + "' using '" + formatConfig + "'", e);
+		}
+	}
+
+	@Override
 	public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 		String dateStr = results.getString(columnPos);
 		if (dateStr == null) {
@@ -44,21 +56,15 @@ public class DateStringType extends BaseDateType {
 	}
 
 	@Override
-	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
-		DateStringFormatConfig formatConfig = convertDateStringConfig(fieldType);
-		try {
-			// we parse to make sure it works and then format it again
-			return normalizeDateString(formatConfig, defaultStr);
-		} catch (ParseException e) {
-			throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing default date-string '"
-					+ defaultStr + "' using '" + formatConfig + "'", e);
-		}
-	}
-
-	@Override
 	public Object javaToSqlArg(FieldType fieldType, Object obj) {
 		Date date = (Date) obj;
 		return formatDate(convertDateStringConfig(fieldType), date);
+	}
+
+	@Override
+	public boolean isValidForType(Class<?> fieldClass) {
+		// by default this is a noop
+		return true;
 	}
 
 	@Override

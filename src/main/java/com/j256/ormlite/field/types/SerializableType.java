@@ -27,7 +27,16 @@ public class SerializableType extends BaseDataType {
 	}
 
 	private SerializableType() {
+		/*
+		 * NOTE: Serializable class should _not_ be in the list because _everything_ is serializable and we want to
+		 * force folks to use DataType.SERIALIZABLE -- especially for forwards compatibility.
+		 */
 		super(SqlType.SERIALIZABLE, new Class<?>[0]);
+	}
+
+	@Override
+	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+		throw new SQLException("Default values for serializable types are not supported");
 	}
 
 	@Override
@@ -44,11 +53,6 @@ public class SerializableType extends BaseDataType {
 			throw SqlExceptionUtil.create("Could not read serialized object from byte array: " + Arrays.toString(bytes)
 					+ "(len " + bytes.length + ")", e);
 		}
-	}
-
-	@Override
-	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
-		throw new SQLException("Default values for serializable types are not supported");
 	}
 
 	@Override

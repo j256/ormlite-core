@@ -28,16 +28,28 @@ public class CharacterObjectType extends BaseDataType {
 	}
 
 	@Override
-	public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-		return (Character) results.getChar(columnPos);
-	}
-
-	@Override
 	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 		if (defaultStr.length() != 1) {
 			throw new SQLException("Problems with field " + fieldType + ", default string to long for Character: '"
 					+ defaultStr + "'");
 		}
 		return (Character) defaultStr.charAt(0);
+	}
+
+	@Override
+	public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+		return (Character) results.getChar(columnPos);
+	}
+
+	@Override
+	public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {
+		// noop pass-thru
+		return javaObject;
+	}
+
+	@Override
+	public boolean isValidForType(Class<?> fieldClass) {
+		// by default this is a noop
+		return true;
 	}
 }

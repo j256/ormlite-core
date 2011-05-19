@@ -28,13 +28,25 @@ public class LongObjectType extends BaseDataType {
 	}
 
 	@Override
+	public Object parseDefaultString(FieldType fieldType, String defaultStr) {
+		return Long.parseLong(defaultStr);
+	}
+
+	@Override
 	public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 		return (Long) results.getLong(columnPos);
 	}
 
 	@Override
-	public Object parseDefaultString(FieldType fieldType, String defaultStr) {
-		return Long.parseLong(defaultStr);
+	public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {
+		// noop pass-thru
+		return javaObject;
+	}
+
+	@Override
+	public boolean isValidForType(Class<?> fieldClass) {
+		// by default this is a noop
+		return true;
 	}
 
 	@Override

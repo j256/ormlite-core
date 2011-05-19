@@ -23,7 +23,12 @@ public class EnumIntegerType extends BaseEnumType {
 	}
 
 	private EnumIntegerType() {
-		super(SqlType.INTEGER, new Class<?>[] { Enum.class });
+		super(SqlType.INTEGER, new Class<?>[0]);
+	}
+
+	@Override
+	public Object parseDefaultString(FieldType fieldType, String defaultStr) {
+		return Integer.parseInt(defaultStr);
 	}
 
 	@Override
@@ -41,11 +46,6 @@ public class EnumIntegerType extends BaseEnumType {
 		} else {
 			return enumVal(fieldType, valInteger, enumIntMap.get(valInteger), fieldType.getUnknownEnumVal());
 		}
-	}
-
-	@Override
-	public Object parseDefaultString(FieldType fieldType, String defaultStr) {
-		return Integer.parseInt(defaultStr);
 	}
 
 	@Override

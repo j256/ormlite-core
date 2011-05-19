@@ -28,6 +28,11 @@ public class StringBytesType extends BaseDataType {
 	}
 
 	@Override
+	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+		throw new SQLException("String bytes type cannot have default values");
+	}
+
+	@Override
 	public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 		byte[] bytes = results.getBytes(columnPos);
 		if (bytes == null) {
@@ -43,11 +48,6 @@ public class StringBytesType extends BaseDataType {
 	}
 
 	@Override
-	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
-		throw new SQLException("String bytes type cannot have default values");
-	}
-
-	@Override
 	public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {
 		String string = (String) javaObject;
 		String charsetName = getCharsetName(fieldType);
@@ -57,6 +57,12 @@ public class StringBytesType extends BaseDataType {
 		} catch (UnsupportedEncodingException e) {
 			throw SqlExceptionUtil.create("Could not convert string with charset name: " + charsetName, e);
 		}
+	}
+
+	@Override
+	public boolean isValidForType(Class<?> fieldClass) {
+		// by default this is a noop
+		return true;
 	}
 
 	@Override

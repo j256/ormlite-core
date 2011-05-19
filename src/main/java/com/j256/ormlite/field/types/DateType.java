@@ -35,16 +35,6 @@ public class DateType extends BaseDateType {
 	}
 
 	@Override
-	public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-		Timestamp timeStamp = results.getTimestamp(columnPos);
-		if (timeStamp == null) {
-			return null;
-		} else {
-			return new Date(timeStamp.getTime());
-		}
-	}
-
-	@Override
 	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 		DateStringFormatConfig dateFormatConfig = convertDateStringConfig(fieldType);
 		try {
@@ -56,9 +46,25 @@ public class DateType extends BaseDateType {
 	}
 
 	@Override
+	public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+		Timestamp timeStamp = results.getTimestamp(columnPos);
+		if (timeStamp == null) {
+			return null;
+		} else {
+			return new Date(timeStamp.getTime());
+		}
+	}
+
+	@Override
 	public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
 		Date date = (Date) javaObject;
 		return new Timestamp(date.getTime());
+	}
+
+	@Override
+	public boolean isValidForType(Class<?> fieldClass) {
+		// by default this is a noop
+		return true;
 	}
 
 	@Override

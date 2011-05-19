@@ -26,4 +26,9 @@ public abstract class BaseEnumType extends BaseDataType {
 			return unknownEnumVal;
 		}
 	}
+
+	@Override
+	public boolean isValidForType(Class<?> fieldClass) {
+		return fieldClass.isEnum();
+	}
 }

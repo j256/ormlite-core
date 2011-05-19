@@ -28,6 +28,16 @@ public class UuidType extends BaseDataType {
 	}
 
 	@Override
+	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+		try {
+			return java.util.UUID.fromString(defaultStr);
+		} catch (IllegalArgumentException e) {
+			throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing default UUID-string '"
+					+ defaultStr + "'", e);
+		}
+	}
+
+	@Override
 	public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 		String uuidStr = results.getString(columnPos);
 		if (uuidStr == null) {
@@ -42,19 +52,15 @@ public class UuidType extends BaseDataType {
 	}
 
 	@Override
-	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
-		try {
-			return java.util.UUID.fromString(defaultStr);
-		} catch (IllegalArgumentException e) {
-			throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing default UUID-string '"
-					+ defaultStr + "'", e);
-		}
-	}
-
-	@Override
 	public Object javaToSqlArg(FieldType fieldType, Object obj) {
 		UUID uuid = (UUID) obj;
 		return uuid.toString();
+	}
+
+	@Override
+	public boolean isValidForType(Class<?> fieldClass) {
+		// by default this is a noop
+		return true;
 	}
 
 	@Override

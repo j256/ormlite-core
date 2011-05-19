@@ -27,15 +27,14 @@ public abstract class BaseDataType implements DataPersister {
 		this.classes = classes;
 	}
 
+	public abstract Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException;
+
 	public abstract Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos)
 			throws SQLException;
 
-	public abstract Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException;
+	public abstract Object javaToSqlArg(FieldType fieldType, Object obj) throws SQLException;
 
-	public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {
-		// noop pass-thru is the default
-		return javaObject;
-	}
+	public abstract boolean isValidForType(Class<?> fieldClass);
 
 	public Object makeConfigObject(FieldType fieldType) throws SQLException {
 		return null;
@@ -60,11 +59,6 @@ public abstract class BaseDataType implements DataPersister {
 
 	public boolean isValidGeneratedType() {
 		return false;
-	}
-
-	public boolean isValidForType(Class<?> fieldClass) {
-		// by default this is a noop
-		return true;
 	}
 
 	public boolean isEscapedDefaultValue() {
