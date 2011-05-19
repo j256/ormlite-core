@@ -89,7 +89,7 @@ public class FieldType {
 		DataPersister dataPersister;
 		if (fieldConfig.getDataPersister() == null) {
 			Class<? extends DataPersister> persisterClass = fieldConfig.getPersisterClass();
-			if (persisterClass == VoidType.class) {
+			if (persisterClass == null || persisterClass == VoidType.class) {
 				dataPersister = DataPersisterManager.lookupForField(field);
 			} else {
 				Method method;
