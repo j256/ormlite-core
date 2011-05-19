@@ -9,6 +9,7 @@ import java.util.concurrent.Callable;
 
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.PreparedDelete;
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -458,4 +459,27 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * the database type, this may be expensive and take a while.
 	 */
 	public long countOf() throws SQLException;
+
+	/**
+	 * Returns an empty collection that can be assigned to a collection field. This allows you to add things to the
+	 * collection from the start.
+	 * 
+	 * For example let's say you have an Account which has the field:
+	 * 
+	 * <pre>
+	 * &#064;ForeignCollectionField(columnName = &quot;orders&quot;)
+	 * Collection&lt;Order&gt; orders;
+	 * </pre>
+	 * 
+	 * You would then call:
+	 * 
+	 * <pre>
+	 * account.orders = accoundDao.getEmptyForeignCollection(&quot;orders&quot;);
+	 * </pre>
+	 * 
+	 * @param fieldName
+	 *            parameter is the field name of the foreign collection field -- you might consider using the
+	 *            {@link ForeignCollectionField#columnName()} to set the name to a static name.
+	 */
+	public <FT> ForeignCollection<FT> getEmptyForeignCollection(String fieldName) throws SQLException;
 }

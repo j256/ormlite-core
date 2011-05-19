@@ -1,6 +1,7 @@
 package com.j256.ormlite.dao;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -20,8 +21,16 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 
 	public EagerForeignCollection(Dao<T, ID> dao, String fieldName, Object fieldValue) throws SQLException {
 		super(dao, fieldName, fieldValue);
-		// go ahead and do the query if eager
-		results = dao.query(preparedQuery);
+		if (fieldValue == null) {
+			/*
+			 * If we have no field value then just create an empty list. This is for when we need to create an empty
+			 * eager collection.
+			 */
+			results = new ArrayList<T>();
+		} else {
+			// go ahead and do the query if eager
+			results = dao.query(getPreparedQuery());
+		}
 	}
 
 	public CloseableIterator<T> iterator() {

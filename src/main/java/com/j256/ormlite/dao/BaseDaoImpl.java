@@ -645,6 +645,15 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	public <FT> ForeignCollection<FT> getEmptyForeignCollection(String fieldName) throws SQLException {
+		for (FieldType fieldType : tableInfo.getFieldTypes()) {
+			if (fieldType.getDbColumnName().equals(fieldName)) {
+				return fieldType.buildForeignCollection(null, true);
+			}
+		}
+		throw new IllegalArgumentException("Could not find a field named " + fieldName);
+	}
+
 	/**
 	 * Returns the table configuration information associated with the Dao's class or null if none.
 	 */

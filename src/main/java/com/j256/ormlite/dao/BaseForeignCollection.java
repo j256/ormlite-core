@@ -21,13 +21,14 @@ import com.j256.ormlite.stmt.SelectArg;
 public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<T> {
 
 	protected final Dao<T, ID> dao;
-	protected PreparedQuery<T> preparedQuery;
+	private final String fieldName;
+	private final Object fieldValue;
+	private PreparedQuery<T> preparedQuery;
 
-	public BaseForeignCollection(Dao<T, ID> dao, String fieldName, Object fieldValue) throws SQLException {
+	public BaseForeignCollection(Dao<T, ID> dao, String fieldName, Object fieldValue) {
 		this.dao = dao;
-		SelectArg fieldArg = new SelectArg();
-		fieldArg.setValue(fieldValue);
-		preparedQuery = dao.queryBuilder().where().eq(fieldName, fieldArg).prepare();
+		this.fieldName = fieldName;
+		this.fieldValue = fieldValue;
 	}
 
 	public boolean add(T data) {
@@ -118,5 +119,14 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 				// ignored
 			}
 		}
+	}
+
+	protected PreparedQuery<T> getPreparedQuery() throws SQLException {
+		if (preparedQuery == null) {
+			SelectArg fieldArg = new SelectArg();
+			fieldArg.setValue(fieldValue);
+			preparedQuery = dao.queryBuilder().where().eq(fieldName, fieldArg).prepare();
+		}
+		return preparedQuery;
 	}
 }

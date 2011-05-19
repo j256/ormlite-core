@@ -24,7 +24,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 
 	private CloseableIterator<T> lastIterator;
 
-	public LazyForeignCollection(Dao<T, ID> dao, String fieldName, Object fieldValue) throws SQLException {
+	public LazyForeignCollection(Dao<T, ID> dao, String fieldName, Object fieldValue) {
 		super(dao, fieldName, fieldValue);
 	}
 
@@ -59,7 +59,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 	 * {@link #closeLastIterator()}.
 	 */
 	public CloseableIterator<T> seperateIteratorThrow() throws SQLException {
-		return dao.iterator(preparedQuery);
+		return dao.iterator(getPreparedQuery());
 	}
 
 	public CloseableWrappedIterable<T> getWrappedIterable() {
