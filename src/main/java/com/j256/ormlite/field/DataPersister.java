@@ -3,8 +3,15 @@ package com.j256.ormlite.field;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 
+import com.j256.ormlite.field.types.BaseDataType;
+
 /**
  * Data type that provide Java class to/from database mapping.
+ * 
+ * <p>
+ * If you are defining your own custom persister, then chances are you should extend {@link BaseDataType}. See
+ * {@link DatabaseField#persisterClass()}.
+ * </p>
  * 
  * @author graywatson
  */

@@ -40,6 +40,7 @@ public class DatabaseFieldConfig {
 	private boolean foreignCollection;
 	private boolean foreignCollectionEager;
 	private int maxEagerForeignCollectionLevel = ForeignCollectionField.MAX_EAGER_FOREIGN_COLLECTION_LEVEL;
+	private Class<? extends DataPersister> persisterClass;
 
 	public DatabaseFieldConfig() {
 		// for spring
@@ -325,6 +326,10 @@ public class DatabaseFieldConfig {
 		return foreignCollectionEager;
 	}
 
+	public Class<? extends DataPersister> getPersisterClass() {
+		return persisterClass;
+	}
+
 	/**
 	 * Create and return a config converted from a {@link Field} that may have either a {@link DatabaseField} annotation
 	 * or the javax.persistence annotations.
@@ -472,6 +477,7 @@ public class DatabaseFieldConfig {
 		} else {
 			config.maxForeignAutoRefreshLevel = databaseField.maxForeignAutoRefreshLevel();
 		}
+		config.persisterClass = databaseField.persisterClass();
 
 		return config;
 	}

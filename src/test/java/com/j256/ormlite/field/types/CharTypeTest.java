@@ -8,7 +8,6 @@ import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 
-
 public class CharTypeTest extends BaseCoreTest {
 
 	@Test

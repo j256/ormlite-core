@@ -3,6 +3,7 @@ package com.j256.ormlite.field;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -18,6 +19,7 @@ import com.j256.ormlite.dao.EagerForeignCollection;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.dao.LazyForeignCollection;
 import com.j256.ormlite.db.DatabaseType;
+import com.j256.ormlite.field.types.VoidType;
 import com.j256.ormlite.misc.BaseDaoEnabled;
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.stmt.mapped.MappedQueryForId;
@@ -86,7 +88,38 @@ public class FieldType {
 		Class<?> clazz = field.getType();
 		DataPersister dataPersister;
 		if (fieldConfig.getDataPersister() == null) {
-			dataPersister = DataPersisterManager.lookupForField(field);
+			Class<? extends DataPersister> persisterClass = fieldConfig.getPersisterClass();
+			if (persisterClass == VoidType.class) {
+				dataPersister = DataPersisterManager.lookupForField(field);
+			} else {
+				Method method;
+				try {
+					method = persisterClass.getDeclaredMethod("getSingleton");
+				} catch (Exception e) {
+					throw SqlExceptionUtil.create("Could not find getSingleton static method on class "
+							+ persisterClass, e);
+				}
+				Object result;
+				try {
+					result = (DataPersister) method.invoke(null);
+				} catch (InvocationTargetException e) {
+					throw SqlExceptionUtil.create("Could not run getSingleton method on class " + persisterClass,
+							e.getTargetException());
+				} catch (Exception e) {
+					throw SqlExceptionUtil.create("Could not run getSingleton method on class " + persisterClass, e);
+				}
+				if (result == null) {
+					throw new SQLException("Static getSingleton method should not return null on class "
+							+ persisterClass);
+				}
+				try {
+					dataPersister = (DataPersister) result;
+				} catch (Exception e) {
+					throw new SQLException(
+							"Could not cast result of static getSingleton method to DataPersister from class "
+									+ persisterClass);
+				}
+			}
 		} else {
 			dataPersister = fieldConfig.getDataPersister();
 			if (!dataPersister.isValidForField(field)) {

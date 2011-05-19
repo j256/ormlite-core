@@ -20,25 +20,43 @@ public class DataPersisterManagerTest extends BaseCoreTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testCustomTypeNoPersister() throws Exception {
-		createDao(PersistedStoredWrapper.class, true);
+		createDao(PersistedStored.class, true);
 	}
 
 	@Test
 	public void testCustomType() throws Exception {
 		DataPersisterManager.registerDataPersisters(new StoredClassPersister());
 		try {
-			Dao<PersistedStoredWrapper, Object> dao = createDao(PersistedStoredWrapper.class, true);
-			PersistedStoredWrapper wrapper = new PersistedStoredWrapper();
+			Dao<PersistedStored, Object> dao = createDao(PersistedStored.class, true);
+			PersistedStored wrapper = new PersistedStored();
 			String stuff = "pfjwpfjww";
 			wrapper.storedClass = new StoredClass(stuff);
 			assertEquals(1, dao.create(wrapper));
 
-			PersistedStoredWrapper wrapperResult = dao.queryForId(wrapper.id);
+			PersistedStored wrapperResult = dao.queryForId(wrapper.id);
 			assertNotNull(wrapperResult.storedClass);
 			assertEquals(stuff, wrapperResult.storedClass.stuff);
 		} finally {
 			DataPersisterManager.clear();
 		}
+	}
+
+	@Test
+	public void testCustomTypePersister() throws Exception {
+		Dao<PersistedStoredPersister, Object> dao = createDao(PersistedStoredPersister.class, true);
+		PersistedStoredPersister wrapper = new PersistedStoredPersister();
+		String stuff = "pfjwpfjww";
+		wrapper.storedClass = new StoredClass(stuff);
+		assertEquals(1, dao.create(wrapper));
+
+		PersistedStoredPersister wrapperResult = dao.queryForId(wrapper.id);
+		assertNotNull(wrapperResult.storedClass);
+		assertEquals(stuff, wrapperResult.storedClass.stuff);
+	}
+
+	@Test(expected = SQLException.class)
+	public void testCustomTypeBadPersister() throws Exception {
+		createDao(PersistedStoredBadPersister.class, true);
 	}
 
 	@Test
@@ -59,12 +77,30 @@ public class DataPersisterManagerTest extends BaseCoreTest {
 		}
 	}
 
-	protected static class PersistedStoredWrapper {
+	protected static class PersistedStored {
 		@DatabaseField(generatedId = true)
 		int id;
 		@DatabaseField
 		StoredClass storedClass;
-		PersistedStoredWrapper() {
+		PersistedStored() {
+		}
+	}
+
+	protected static class PersistedStoredPersister {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(persisterClass = StoredClassPersister.class)
+		StoredClass storedClass;
+		PersistedStoredPersister() {
+		}
+	}
+
+	protected static class PersistedStoredBadPersister {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(persisterClass = NoGetSingletonPersister.class)
+		StoredClass storedClass;
+		PersistedStoredBadPersister() {
 		}
 	}
 
@@ -75,23 +111,46 @@ public class DataPersisterManagerTest extends BaseCoreTest {
 		}
 	}
 
-	private class StoredClassPersister extends BaseDataType {
+	private static class NoGetSingletonPersister extends BaseDataType {
+		private NoGetSingletonPersister() {
+			super(null, new Class[] { StoredClass.class });
+		}
+		@Override
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+			return null;
+		}
+		@Override
+		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+			return null;
+		}
+		@Override
+		public Object javaToSqlArg(FieldType fieldType, Object obj) throws SQLException {
+			return null;
+		}
+		@Override
+		public boolean isValidForField(Field field) {
+			return false;
+		}
+	}
 
+	private static class StoredClassPersister extends BaseDataType {
+		private static final StoredClassPersister singleton = new StoredClassPersister();
+		@SuppressWarnings("unused")
+		public static StoredClassPersister getSingleton() {
+			return singleton;
+		}
 		public StoredClassPersister() {
 			super(null, new Class[] { StoredClass.class });
 		}
-
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			String value = results.getString(columnPos);
 			return new StoredClass(value);
 		}
-
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 			throw new SQLException("Default string doesn't work");
 		}
-
 		@Override
 		public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {
 			if (javaObject == null) {
@@ -100,12 +159,10 @@ public class DataPersisterManagerTest extends BaseCoreTest {
 				return ((StoredClass) javaObject).stuff;
 			}
 		}
-
 		@Override
 		public boolean isValidForField(Field field) {
 			return field.getType() == StoredClass.class;
 		}
-
 		@Override
 		public SqlType getSqlType() {
 			return SqlType.STRING;
@@ -125,17 +182,14 @@ public class DataPersisterManagerTest extends BaseCoreTest {
 		public EnumConstantPersister() {
 			super(null, new Class[] {});
 		}
-
 		@Override
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			return SqlType.BLOB;
 		}
-
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 			throw new SQLException("Default string doesn't work");
 		}
-
 		@Override
 		public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {
 			if (javaObject == null) {
@@ -144,13 +198,11 @@ public class DataPersisterManagerTest extends BaseCoreTest {
 				return javaObject.toString();
 			}
 		}
-
 		@Override
 		public boolean isValidForField(Field field) {
 			// this matches all enums
 			return field.getType().isEnum();
 		}
-
 		@Override
 		public SqlType getSqlType() {
 			return SqlType.STRING;

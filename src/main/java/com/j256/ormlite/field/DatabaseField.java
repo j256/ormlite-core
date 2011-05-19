@@ -7,6 +7,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import com.j256.ormlite.db.DatabaseType;
+import com.j256.ormlite.field.types.VoidType;
 
 /**
  * Annotation that identifies a field in a class that corresponds to a column in the database and will be persisted.
@@ -234,4 +235,13 @@ public @interface DatabaseField {
 	 * </p>
 	 */
 	int maxForeignAutoRefreshLevel() default MAX_FOREIGN_AUTO_REFRESH_LEVEL;
+
+	/**
+	 * Allows you to set a custom persister class to handle this field. This class must have a getSingleton() static
+	 * method defined which will return the singleton persister.
+	 * 
+	 * @see DataPersister
+	 */
+	Class<? extends DataPersister> persisterClass() default VoidType.class;
+
 }
