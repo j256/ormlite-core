@@ -1,5 +1,6 @@
 package com.j256.ormlite.field;
 
+import java.lang.reflect.Field;
 import java.sql.SQLException;
 
 /**
@@ -31,9 +32,9 @@ public interface DataPersister extends FieldConverter {
 	public boolean isValidGeneratedType();
 
 	/**
-	 * Return true if the fieldClass is appropriate for this enum.
+	 * Return true if the field is appropriate for this persister.
 	 */
-	public boolean isValidForType(Class<?> fieldClass);
+	public boolean isValidForField(Field field);
 
 	/**
 	 * Return whether this field's default value should be escaped in SQL.

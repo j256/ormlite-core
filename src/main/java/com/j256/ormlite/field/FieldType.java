@@ -86,12 +86,12 @@ public class FieldType {
 		Class<?> clazz = field.getType();
 		DataPersister dataPersister;
 		if (fieldConfig.getDataPersister() == null) {
-			dataPersister = DataPersisterManager.lookupForClass(clazz);
+			dataPersister = DataPersisterManager.lookupForField(field);
 		} else {
 			dataPersister = fieldConfig.getDataPersister();
-			if (!dataPersister.isValidForType(clazz)) {
+			if (!dataPersister.isValidForField(field)) {
 				throw new IllegalArgumentException("Field class " + clazz + " for field " + this
-						+ " is not valid for data type " + dataPersister);
+						+ " is not valid for data persister " + dataPersister);
 			}
 		}
 		String defaultFieldName = field.getName();
@@ -760,7 +760,7 @@ public class FieldType {
 	}
 
 	/**
-	 * Configure our data type and any dependent fields. We have to do this here because both the constructor and
+	 * Configure our data persister and any dependent fields. We have to do this here because both the constructor and
 	 * {@link #configDaoInformation} method can set the data-type.
 	 */
 	private void assignDataType(DatabaseType databaseType, DataPersister dataPersister) throws SQLException {

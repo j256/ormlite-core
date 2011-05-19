@@ -1,5 +1,6 @@
 package com.j256.ormlite.field.types;
 
+import java.lang.reflect.Field;
 import java.sql.SQLException;
 
 import com.j256.ormlite.field.DataPersister;
@@ -34,7 +35,7 @@ public abstract class BaseDataType implements DataPersister {
 
 	public abstract Object javaToSqlArg(FieldType fieldType, Object obj) throws SQLException;
 
-	public abstract boolean isValidForType(Class<?> fieldClass);
+	public abstract boolean isValidForField(Field field);
 
 	public Object makeConfigObject(FieldType fieldType) throws SQLException {
 		return null;

@@ -35,17 +35,17 @@ public class BaseDatabaseTypeTest extends BaseCoreTest {
 
 	@Test
 	public void testUnknownClass() throws Exception {
-		assertNull(DataPersisterManager.lookupForClass(getClass()));
+		assertNull(DataPersisterManager.lookupForField(SomeFields.class.getDeclaredField("someFields")));
 	}
 
 	@Test
 	public void testSerializableClass() throws Exception {
-		assertNull(DataPersisterManager.lookupForClass(Serializable.class));
+		assertNull(DataPersisterManager.lookupForField(SomeFields.class.getDeclaredField("serializable")));
 	}
 
 	@Test
 	public void testClassLookupByteArray() throws Exception {
-		assertNull(DataPersisterManager.lookupForClass(byte[].class));
+		assertNull(DataPersisterManager.lookupForField(SomeFields.class.getDeclaredField("byteArray")));
 	}
 
 	private static class TestDatabaseType extends BaseDatabaseType implements DatabaseType {
@@ -63,5 +63,11 @@ public class BaseDatabaseTypeTest extends BaseCoreTest {
 		protected String getDatabaseName() {
 			return "foo";
 		}
+	}
+
+	protected static class SomeFields {
+		SomeFields someFields;
+		Serializable serializable;
+		byte[] byteArray;
 	}
 }

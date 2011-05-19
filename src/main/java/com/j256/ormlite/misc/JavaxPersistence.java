@@ -83,7 +83,7 @@ public class JavaxPersistence {
 		}
 		// foreign values are always ones we can't map as primitives (or Strings)
 		config.setForeign(oneToOneAnnotation != null || manyToOneAnnotation != null);
-		config.setDataPersister(DataPersisterManager.lookupForClass(field.getType()));
+		config.setDataPersister(DataPersisterManager.lookupForField(field));
 		config.setUseGetSet(DatabaseFieldConfig.findGetMethod(field, false) != null
 				&& DatabaseFieldConfig.findSetMethod(field, false) != null);
 		return config;

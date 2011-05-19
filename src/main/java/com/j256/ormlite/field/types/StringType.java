@@ -1,5 +1,6 @@
 package com.j256.ormlite.field.types;
 
+import java.lang.reflect.Field;
 import java.sql.SQLException;
 
 import com.j256.ormlite.field.FieldType;
@@ -46,7 +47,7 @@ public class StringType extends BaseDataType {
 	}
 
 	@Override
-	public boolean isValidForType(Class<?> fieldClass) {
+	public boolean isValidForField(Field field) {
 		// by default this is a noop
 		return true;
 	}

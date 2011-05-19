@@ -1,5 +1,6 @@
 package com.j256.ormlite.field.types;
 
+import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -62,7 +63,7 @@ public class DateType extends BaseDateType {
 	}
 
 	@Override
-	public boolean isValidForType(Class<?> fieldClass) {
+	public boolean isValidForField(Field field) {
 		// by default this is a noop
 		return true;
 	}

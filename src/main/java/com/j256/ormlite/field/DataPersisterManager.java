@@ -1,5 +1,6 @@
 package com.j256.ormlite.field;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +49,7 @@ public class DataPersisterManager {
 	 * 
 	 * @return The associated data-type interface or null if none found.
 	 */
-	public static DataPersister lookupForClass(Class<?> dataClass) {
+	public static DataPersister lookupForField(Field field) {
 
 		if (classMap == null) {
 			// add our built-in persisters the first time around
@@ -60,7 +61,7 @@ public class DataPersisterManager {
 		}
 
 		// first look it up in our map
-		DataPersister dataPersister = classMap.get(dataClass);
+		DataPersister dataPersister = classMap.get(field.getType());
 		if (dataPersister != null) {
 			return dataPersister;
 		}
@@ -68,7 +69,7 @@ public class DataPersisterManager {
 		// see if the any of the registered persisters are valid
 		if (registeredPersisters != null) {
 			for (DataPersister persister : registeredPersisters) {
-				if (persister.isValidForType(dataClass)) {
+				if (persister.isValidForField(field)) {
 					return persister;
 				}
 			}
@@ -78,7 +79,7 @@ public class DataPersisterManager {
 		 * Special case for enum types. We can't put this in the registered persisters because we want people to be able
 		 * to override it.
 		 */
-		if (dataClass.isEnum()) {
+		if (field.getType().isEnum()) {
 			return DEFAULT_ENUM_PERSISTER;
 		} else {
 			/*
