@@ -19,7 +19,7 @@ public class DataPersisterManager {
 
 	private static final DataPersister DEFAULT_ENUM_PERSISTER = EnumStringType.getSingleton();
 
-	private static Map<Class<?>, DataPersister> classMap = null;
+	private static Map<Class<?>, DataPersister> builtInMap = null;
 	private static List<DataPersister> registeredPersisters = null;
 
 	/**
@@ -51,28 +51,33 @@ public class DataPersisterManager {
 	 */
 	public static DataPersister lookupForField(Field field) {
 
-		if (classMap == null) {
-			// add our built-in persisters the first time around
-			HashMap<Class<?>, DataPersister> newMap = new HashMap<Class<?>, DataPersister>();
-			for (DataType dataType : DataType.values()) {
-				addPersisterToMap(newMap, dataType.getDataPersister());
-			}
-			classMap = newMap;
-		}
-
-		// first look it up in our map
-		DataPersister dataPersister = classMap.get(field.getType());
-		if (dataPersister != null) {
-			return dataPersister;
-		}
-
-		// see if the any of the registered persisters are valid
+		// see if the any of the registered persisters are valid first
 		if (registeredPersisters != null) {
 			for (DataPersister persister : registeredPersisters) {
 				if (persister.isValidForField(field)) {
 					return persister;
 				}
 			}
+		}
+
+		if (builtInMap == null) {
+			// add our built-in persisters the first time around if necessary
+			HashMap<Class<?>, DataPersister> newMap = new HashMap<Class<?>, DataPersister>();
+			for (DataType dataType : DataType.values()) {
+				DataPersister persister = dataType.getDataPersister();
+				if (persister != null) {
+					for (Class<?> clazz : persister.getAssociatedClasses()) {
+						newMap.put(clazz, persister);
+					}
+				}
+			}
+			builtInMap = newMap;
+		}
+
+		// look it up in our built-in map by class
+		DataPersister dataPersister = builtInMap.get(field.getType());
+		if (dataPersister != null) {
+			return dataPersister;
 		}
 
 		/*
@@ -87,14 +92,6 @@ public class DataPersisterManager {
 			 * forwards compatibility with future field types that happen to be Serializable.
 			 */
 			return null;
-		}
-	}
-
-	private static void addPersisterToMap(HashMap<Class<?>, DataPersister> newMap, DataPersister persister) {
-		if (persister != null) {
-			for (Class<?> clazz : persister.getAssociatedClasses()) {
-				newMap.put(clazz, persister);
-			}
 		}
 	}
 }
