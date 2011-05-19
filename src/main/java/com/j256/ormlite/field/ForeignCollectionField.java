@@ -6,6 +6,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.dao.LazyForeignCollection;
 
@@ -56,4 +57,10 @@ public @interface ForeignCollectionField {
 	 * collection instead of an eager collection of C. It should be increased only if you know what you are doing.
 	 */
 	int maxEagerForeignCollectionLevel() default MAX_EAGER_FOREIGN_COLLECTION_LEVEL;
+
+	/**
+	 * The name of the column. This is only used when you want to match the string passed to
+	 * {@link Dao#getEmptyForeignCollection(String)}.
+	 */
+	String columnName() default "";
 }

@@ -480,6 +480,11 @@ public class DatabaseFieldConfig {
 			ForeignCollectionField foreignCollection) {
 		DatabaseFieldConfig config = new DatabaseFieldConfig();
 		config.fieldName = field.getName();
+		if (foreignCollection.columnName().length() > 0) {
+			config.columnName = foreignCollection.columnName();
+		} else {
+			config.columnName = field.getName();
+		}
 		config.foreignCollection = true;
 		config.foreignCollectionEager = foreignCollection.eager();
 		config.maxEagerForeignCollectionLevel = foreignCollection.maxEagerForeignCollectionLevel();

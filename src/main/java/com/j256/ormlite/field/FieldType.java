@@ -617,15 +617,22 @@ public class FieldType {
 	/**
 	 * Build and return a foreign collection based on the field settings that matches the id argument. This can return
 	 * null in certain circumstances.
+	 * 
+	 * @param id
+	 *            The id of the foreign object we will look for. This can be null if we are creating an empty
+	 *            collection.
+	 * @param forceEager
+	 *            Set to true to force this to be an eager collection.
 	 */
-	public <FT, FID> BaseForeignCollection<FT, FID> buildForeignCollection(Object id) throws SQLException {
+	public <FT, FID> BaseForeignCollection<FT, FID> buildForeignCollection(Object id, boolean forceEager)
+			throws SQLException {
 		// this can happen if we have a foreign-auto-refresh scenario
 		if (foreignFieldType == null) {
 			return null;
 		}
 		@SuppressWarnings("unchecked")
 		Dao<FT, FID> castDao = (Dao<FT, FID>) foreignDao;
-		if (!fieldConfig.isForeignCollectionEager()) {
+		if (!fieldConfig.isForeignCollectionEager() && !forceEager) {
 			// we know this won't go recursive so no need for the counters
 			return new LazyForeignCollection<FT, FID>(castDao, foreignFieldType.dbColumnName, id);
 		}
@@ -768,9 +775,10 @@ public class FieldType {
 			sb.append("' in ").append(field.getDeclaringClass().getSimpleName());
 			sb.append(" can't be type ").append(this.dataPersister.getSqlType());
 			sb.append(".  Must be one of: ");
-			for (DataPersister type : DataPersisterManager.getDataPersisters()) {
-				if (type.isValidGeneratedType()) {
-					sb.append(type).append(' ');
+			for (DataType dataType : DataType.values()) {
+				DataPersister persister = dataType.getDataPersister();
+				if (persister != null && persister.isValidGeneratedType()) {
+					sb.append(dataType).append(' ');
 				}
 			}
 			throw new IllegalArgumentException(sb.toString());
