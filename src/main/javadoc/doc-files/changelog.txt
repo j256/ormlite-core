@@ -3,10 +3,11 @@
 	* CORE: Fixed problem with queryForMatching() and queryForFieldValues() if no fields.  Thanks to JC.  Fixes bug #3301253.
 	* CORE: Fixed problem with configuring fields in base class without annotations.  Thanks to JC and Rahan.  Fixed bug #3301698.
 	* CORE: Fixed problem with LazyForeignCollection.toArray(T[]).  Thanks to Skylar.  Fixes bug #3302924.
-	* CORE: Major revamping of the DataType enumeration.  Added the ability to register external persisters.  Thanks to Craig Andrews.
+	* CORE: Major revamping of the DataType enumeration.  Added the ability to register external persisters.  Thanks to Craig.
 	* CORE: Removed auto-downcasing of hand wired table name in DatabaseTableConfig.  Thanks to Tomas.  Fixes bug #3302976.
 	* CORE: Added the maxEagerForeignCollectionLevel field to the @ForeignCollectionField annotation to limit recursion.
 	* CORE: Renamed the maxForeignLevel field in @DatabaseField to be maxForeignAutoRefreshLevel to make more sense.
+	* CORE: Added support for creating an empty foreign collection field so you can use add() on it when creating.  THanks to Craig.
 	* CORE: Added the concept of closeLastIterator() to the DAO and CloseableWrappedIterable for reentrant usage.
 	* CORE: Added better connection/statement testing code and fixed some additional missing closes.
 	* JDBC: Tweaked the HSQLdb database type to acknowledge that it seems to support inner transactions.

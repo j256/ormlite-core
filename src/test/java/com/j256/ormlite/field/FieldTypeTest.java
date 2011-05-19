@@ -530,7 +530,7 @@ public class FieldTypeTest extends BaseCoreTest {
 		assertTrue(fieldType.isForeign());
 	}
 
-	@Test(expected = SQLException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidEnumField() throws Exception {
 		Field field = InvalidEnumType.class.getDeclaredField("stuff");
 		FieldType.createFieldType(connectionSource, InvalidEnumType.class.getSimpleName(), field, InvalidEnumType.class);

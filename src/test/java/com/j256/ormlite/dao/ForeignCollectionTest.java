@@ -118,7 +118,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		// insert some other stuff just to confuse matters
 		Account account2 = new Account();
 		String name2 = "another name";
-		account1.name = name2;
+		account2.name = name2;
 		assertEquals(1, accountDao.create(account2));
 
 		Order order3 = new Order();
@@ -470,14 +470,45 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		collResult2.related.closeLastIterator();
 	}
 
+	@Test
+	public void testEmptyCollection() throws Exception {
+		Dao<Account, Object> accountDao = createDao(Account.class, true);
+		createTable(Order.class, true);
+
+		Account account = new Account();
+		String name = "another name";
+		account.name = name;
+		account.orders = accountDao.getEmptyForeignCollection(Account.ORDERS_FIELD_NAME);
+		assertEquals(1, accountDao.create(account));
+
+		Order order = new Order();
+		int val3 = 17097;
+		order.val = val3;
+		order.account = account;
+		account.orders.add(order);
+		assertEquals(1, account.orders.size());
+
+		Account accountResult = accountDao.queryForId(account.id);
+		assertNotNull(accountResult.orders);
+		assertEquals(1, accountResult.orders.size());
+		CloseableIterator<Order> iterator = accountResult.orders.closeableIterator();
+		assertTrue(iterator.hasNext());
+		Order orderResult = iterator.next();
+		assertNotNull(orderResult);
+		assertEquals(order.id, orderResult.id);
+		assertFalse(iterator.hasNext());
+		iterator.close();
+	}
+
 	/* =============================================================================================== */
 
 	protected static class Account {
+		public static final String ORDERS_FIELD_NAME = "orders123";
 		@DatabaseField(generatedId = true)
 		int id;
 		@DatabaseField
 		String name;
-		@ForeignCollectionField(eager = true)
+		@ForeignCollectionField(eager = true, columnName = ORDERS_FIELD_NAME)
 		ForeignCollection<Order> orders;
 		protected Account() {
 		}
