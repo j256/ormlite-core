@@ -358,6 +358,10 @@ public class FieldType {
 		return tableName;
 	}
 
+	public Field getField() {
+		return field;
+	}
+
 	public String getFieldName() {
 		return fieldName;
 	}
