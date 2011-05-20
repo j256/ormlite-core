@@ -1,5 +1,6 @@
 package com.j256.ormlite.db;
 
+import java.sql.Driver;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import com.j256.ormlite.support.DatabaseResults;
 public abstract class BaseDatabaseType implements DatabaseType {
 
 	protected static String DEFAULT_SEQUENCE_SUFFIX = "_id_seq";
+	protected Driver driver;
 
 	/**
 	 * Return the name of the driver class associated with this database type.
@@ -46,6 +48,10 @@ public abstract class BaseDatabaseType implements DatabaseType {
 						+ " database.  Missing jar with class " + className + ".", e);
 			}
 		}
+	}
+
+	public void setDriver(Driver driver) {
+		this.driver = driver;
 	}
 
 	public void appendColumnArg(StringBuilder sb, FieldType fieldType, List<String> additionalArgs,
@@ -436,6 +442,10 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	}
 
 	public boolean isCreateIfNotExistsSupported() {
+		return false;
+	}
+
+	public boolean isSelectSequenceBeforeInsert() {
 		return false;
 	}
 

@@ -1,5 +1,6 @@
 package com.j256.ormlite.db;
 
+import java.sql.Driver;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
@@ -28,6 +29,11 @@ public interface DatabaseType {
 	 *             If the driver class is not available in the classpath.
 	 */
 	public void loadDriver() throws SQLException;
+
+	/**
+	 * Set the driver instance on the database type.
+	 */
+	public void setDriver(Driver driver);
 
 	/**
 	 * Takes a {@link FieldType} and appends the SQL necessary to create the field to the string builder. The field may
@@ -187,4 +193,9 @@ public interface DatabaseType {
 	 * Returns true if the table creation IF NOT EXISTS syntax is supported.
 	 */
 	public boolean isCreateIfNotExistsSupported();
+
+	/**
+	 * Returns true if we have to select the value of the sequence before we insert a new data row.
+	 */
+	public boolean isSelectSequenceBeforeInsert();
 }
