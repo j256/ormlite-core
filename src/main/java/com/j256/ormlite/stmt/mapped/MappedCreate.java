@@ -29,11 +29,11 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 	/**
 	 * Create an object in the database.
 	 */
-	public int insert(DatabaseConnection databaseConnection, T data) throws SQLException {
+	public int insert(DatabaseType databaseType, DatabaseConnection databaseConnection, T data) throws SQLException {
 		if (idField != null) {
 			if (idField.isSelfGeneratedId()) {
 				idField.assignField(data, idField.generatedId());
-			} else if (idField.isGeneratedIdSequence()) {
+			} else if (idField.isGeneratedIdSequence() && databaseType.isSelectSequenceBeforeInsert()) {
 				assignSequenceId(databaseConnection, data);
 				// fall down to do the update below
 			} else if (idField.isGeneratedId()) {
@@ -108,7 +108,7 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 		if (fieldType.isForeignCollection()) {
 			// skip foreign collections
 			return false;
-		} else if (databaseType.isIdSequenceNeeded()) {
+		} else if (databaseType.isIdSequenceNeeded() && databaseType.isSelectSequenceBeforeInsert()) {
 			// we need to query for the next value from the sequence and the idField is inserted afterwards
 			return true;
 		} else if (fieldType.isGeneratedId() && !fieldType.isSelfGeneratedId()) {

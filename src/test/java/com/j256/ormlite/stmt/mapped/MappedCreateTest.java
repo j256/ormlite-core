@@ -99,7 +99,7 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 		MappedCreate<GeneratedIdSequence, Integer> mappedCreate =
 				MappedCreate.build(databaseType, new TableInfo<GeneratedIdSequence, Integer>(connectionSource, null,
 						GeneratedIdSequence.class));
-		mappedCreate.insert(databaseConnection, new GeneratedIdSequence());
+		mappedCreate.insert(databaseType, databaseConnection, new GeneratedIdSequence());
 		verify(databaseConnection);
 	}
 

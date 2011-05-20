@@ -370,7 +370,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		if (mappedInsert == null) {
 			mappedInsert = MappedCreate.build(databaseType, tableInfo);
 		}
-		return mappedInsert.insert(databaseConnection, data);
+		return mappedInsert.insert(databaseType, databaseConnection, data);
 	}
 
 	/**
