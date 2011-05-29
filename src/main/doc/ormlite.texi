@@ -1824,6 +1824,27 @@ You can have the foreign objects automagically refreshed by using the @code{fore
 
 @emph{NOTE:} Because we use refresh, foreign objects are therefor @emph{required} to have an id field.
 
+@cindex querying for foreign fields
+@cindex foreign field querying
+You can query for foreign fields in a couple of different ways.  The following examples show code which queries for all orders that
+match a certain account field.  Since the id field is the name field, you can query by the name field of the account:
+
+@example
+// query for all orders that match a certain account
+List<Order> results =
+  orderDao.queryBuilder().where().
+    eq("account_id", account.getName()).query();
+@end example
+
+Or you can just let ORMLite extract the id field from the account itself.  This will perform an equivalent query to the above:
+
+@example
+// ORMLite will extract and use the id field internally
+List<Order> results =
+  orderDao.queryBuilder().where().
+    eq("account_id", account).query();
+@end example
+
 There is example code to show how to use foreign objects.  @xref{foreign objects example}.
 
 @c ----------------------------------------------------------------
