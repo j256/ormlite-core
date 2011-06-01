@@ -72,7 +72,6 @@ public class FieldTypeTest extends BaseCoreTest {
 		assertEquals(intLongField.getName(), fieldType.getDbColumnName());
 		assertFalse(fieldType.isGeneratedId());
 		assertEquals(DataType.LONG.getDataPersister(), fieldType.getDataPersister());
-		assertSame(tableName, fieldType.getTableName());
 	}
 
 	@Test(expected = IllegalArgumentException.class)

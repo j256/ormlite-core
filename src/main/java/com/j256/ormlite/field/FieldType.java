@@ -51,9 +51,7 @@ public class FieldType {
 	private static double DEFAULT_VALUE_DOUBLE;
 
 	private final ConnectionSource connectionSource;
-	private final String tableName;
 	private final Field field;
-	private final String fieldName;
 	private final String dbColumnName;
 	private final DatabaseFieldConfig fieldConfig;
 	private final boolean isId;
@@ -82,9 +80,7 @@ public class FieldType {
 			Class<?> parentClass) throws SQLException {
 		this.connectionSource = connectionSource;
 		DatabaseType databaseType = connectionSource.getDatabaseType();
-		this.tableName = tableName;
 		this.field = field;
-		this.fieldName = field.getName();
 		Class<?> clazz = field.getType();
 		DataPersister dataPersister;
 		if (fieldConfig.getDataPersister() == null) {
@@ -354,18 +350,17 @@ public class FieldType {
 		}
 	}
 
-	public String getTableName() {
-		return tableName;
-	}
-
 	public Field getField() {
 		return field;
 	}
 
 	public String getFieldName() {
-		return fieldName;
+		return field.getName();
 	}
 
+	/**
+	 * Return the class of the field associated with this field type. 
+	 */
 	public Class<?> getFieldType() {
 		return field.getType();
 	}
@@ -701,7 +696,7 @@ public class FieldType {
 		T converted = (T) fieldConverter.resultToJava(this, results, dbColumnPos);
 		if (dataPersister.isPrimitive()) {
 			if (fieldConfig.isThrowIfNull() && results.wasNull(dbColumnPos)) {
-				throw new SQLException("Results value for primitive field '" + fieldName
+				throw new SQLException("Results value for primitive field '" + field.getName()
 						+ "' was an invalid null value");
 			}
 		} else if (!fieldConverter.isStreamType() && results.wasNull(dbColumnPos)) {
