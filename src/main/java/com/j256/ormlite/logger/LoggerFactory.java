@@ -2,6 +2,8 @@ package com.j256.ormlite.logger;
 
 import java.lang.reflect.Constructor;
 
+import com.j256.ormlite.logger.Log.Level;
+
 /**
  * Factory that creates {@link Logger} instances.
  */
@@ -57,60 +59,51 @@ public class LoggerFactory {
 
 	private enum LogType {
 		/**
-		 * WARNING: This should be _before_ commons logging since Android provides commons logging but logging messages
-		 * are ignored that are sent there. Grrrrr.
+		 * WARNING: Android log must be _before_ commons logging since Android provides commons logging but logging
+		 * messages are ignored that are sent there. Grrrrr.
 		 */
-		ANDROID("android.util.Log") {
-			@Override
-			public Log createLog(String classLabel) {
-				try {
-					Class<?> clazz = Class.forName("com.j256.ormlite.android.AndroidLog");
-					@SuppressWarnings("unchecked")
-					Constructor<Log> constructor = (Constructor<Log>) clazz.getConstructor(String.class);
-					return constructor.newInstance(classLabel);
-				} catch (Exception e) {
-					// oh well, fallback to the local log
-					return LOCAL.createLog(classLabel);
-				}
-			}
-		},
-		COMMONS_LOGGING("org.apache.commons.logging.LogFactory") {
-			@Override
-			public Log createLog(String classLabel) {
-				return new CommonsLoggingLog(classLabel);
-			}
-
-		},
-		LOG4J("org.apache.log4j.Logger") {
-			@Override
-			public Log createLog(String classLabel) {
-				return new Log4jLog(classLabel);
-			}
-		},
-		LOCAL("com.j256.ormlite.logger.LocalLog") {
+		ANDROID("android.util.Log", "com.j256.ormlite.android.AndroidLog"),
+		COMMONS_LOGGING("org.apache.commons.logging.LogFactory", "com.j256.ormlite.logger.CommonsLoggingLog"),
+		LOG4J("org.apache.log4j.Logger", "com.j256.ormlite.logger.Log4jLog"),
+		LOCAL("com.j256.ormlite.logger.LocalLog", "com.j256.ormlite.logger.LocalLog") {
 			@Override
 			public Log createLog(String classLabel) {
 				return new LocalLog(classLabel);
 			}
 			@Override
 			public boolean isAvailable() {
-				// it's always available
+				// always available
 				return true;
 			}
 		},
 		// end
 		;
 
-		private String detectClassName;
+		private final String detectClassName;
+		private final String logClassName;
 
-		private LogType(String detectClassName) {
+		private LogType(String detectClassName, String logClassName) {
 			this.detectClassName = detectClassName;
+			this.logClassName = logClassName;
 		}
 
 		/**
 		 * Create and return a Log class for this type.
 		 */
-		public abstract Log createLog(String classLabel);
+		public Log createLog(String classLabel) {
+			try {
+				Class<?> clazz = Class.forName(logClassName);
+				@SuppressWarnings("unchecked")
+				Constructor<Log> constructor = (Constructor<Log>) clazz.getConstructor(String.class);
+				return constructor.newInstance(classLabel);
+			} catch (Exception e) {
+				// oh well, fallback to the local log
+				Log log = new LocalLog(classLabel);
+				log.log(Level.WARNING, "Unable to call constructor for class " + logClassName
+						+ ", so had to use local log", e);
+				return log;
+			}
+		}
 
 		/**
 		 * Return true if the log class is available.
