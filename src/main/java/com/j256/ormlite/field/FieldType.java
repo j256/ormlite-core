@@ -359,7 +359,7 @@ public class FieldType {
 	}
 
 	/**
-	 * Return the class of the field associated with this field type. 
+	 * Return the class of the field associated with this field type.
 	 */
 	public Class<?> getFieldType() {
 		return field.getType();
@@ -666,18 +666,21 @@ public class FieldType {
 		Dao<FT, FID> castDao = (Dao<FT, FID>) foreignDao;
 		if (!fieldConfig.isForeignCollectionEager() && !forceEager) {
 			// we know this won't go recursive so no need for the counters
-			return new LazyForeignCollection<FT, FID>(castDao, foreignFieldType.dbColumnName, id);
+			return new LazyForeignCollection<FT, FID>(castDao, foreignFieldType.dbColumnName, id,
+					fieldConfig.getForeignCollectionOrderColumn());
 		}
 
 		LevelCounters levelCounters = getLevelCounters();
 		// are we over our level limit?
 		if (levelCounters.foreignCollectionLevel >= fieldConfig.getMaxEagerForeignCollectionLevel()) {
 			// then return a lazy collection instead
-			return new LazyForeignCollection<FT, FID>(castDao, foreignFieldType.dbColumnName, id);
+			return new LazyForeignCollection<FT, FID>(castDao, foreignFieldType.dbColumnName, id,
+					fieldConfig.getForeignCollectionOrderColumn());
 		}
 		levelCounters.foreignCollectionLevel++;
 		try {
-			return new EagerForeignCollection<FT, FID>(castDao, foreignFieldType.dbColumnName, id);
+			return new EagerForeignCollection<FT, FID>(castDao, foreignFieldType.dbColumnName, id,
+					fieldConfig.getForeignCollectionOrderColumn());
 		} finally {
 			levelCounters.foreignCollectionLevel--;
 		}

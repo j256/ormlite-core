@@ -332,6 +332,31 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(foo1.id, results.get(1).id);
 	}
 
+	@Test
+	public void testQueryForForeign() throws Exception {
+		Dao<Foo, Object> fooDao = createDao(Foo.class, true);
+		Dao<Foreign, Object> foreignDao = createDao(Foreign.class, true);
+
+		Foo foo = new Foo();
+		foo.id = "id1";
+		foo.val = 1231;
+		assertEquals(1, fooDao.create(foo));
+
+		Foreign foreign = new Foreign();
+		foreign.foo = foo;
+		assertEquals(1, foreignDao.create(foreign));
+
+		// use the auto-extract method to extract by id
+		List<Foreign> results = foreignDao.queryBuilder().where().eq(Foreign.FOREIGN_COLUMN_NAME, foo).query();
+		assertEquals(1, results.size());
+		assertEquals(foreign.id, results.get(0).id);
+
+		// query for the id directly
+		List<Foreign> results2 = foreignDao.queryBuilder().where().eq(Foreign.FOREIGN_COLUMN_NAME, foo.id).query();
+		assertEquals(1, results2.size());
+		assertEquals(foreign.id, results2.get(0).id);
+	}
+
 	private static class LimitInline extends BaseDatabaseType {
 		public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 			return true;

@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.SelectArg;
 
 /**
@@ -24,11 +25,13 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 	private final String fieldName;
 	private final Object fieldValue;
 	private PreparedQuery<T> preparedQuery;
+	private final String orderColumn;
 
-	public BaseForeignCollection(Dao<T, ID> dao, String fieldName, Object fieldValue) {
+	public BaseForeignCollection(Dao<T, ID> dao, String fieldName, Object fieldValue, String orderColumn) {
 		this.dao = dao;
 		this.fieldName = fieldName;
 		this.fieldValue = fieldValue;
+		this.orderColumn = orderColumn;
 	}
 
 	public boolean add(T data) {
@@ -125,7 +128,11 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 		if (preparedQuery == null) {
 			SelectArg fieldArg = new SelectArg();
 			fieldArg.setValue(fieldValue);
-			preparedQuery = dao.queryBuilder().where().eq(fieldName, fieldArg).prepare();
+			QueryBuilder<T, ID> qb = dao.queryBuilder();
+			if (orderColumn != null) {
+				qb.orderBy(orderColumn, true);
+			}
+			preparedQuery = qb.where().eq(fieldName, fieldArg).prepare();
 		}
 		return preparedQuery;
 	}

@@ -95,6 +95,54 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertEquals(2, question.answers.size());
 	}
 
+	@Test
+	public void testFieldOrder() throws Exception {
+		Dao<AccountOrdered, Integer> accountDao = createDao(AccountOrdered.class, true);
+		Dao<OrderOrdered, Integer> orderDao = createDao(OrderOrdered.class, true);
+
+		AccountOrdered account1 = new AccountOrdered();
+		String name1 = "fwepfjewfew";
+		account1.name = name1;
+		assertEquals(1, accountDao.create(account1));
+
+		OrderOrdered order1 = new OrderOrdered();
+		int val1 = 3;
+		order1.val = val1;
+		order1.account = account1;
+		assertEquals(1, orderDao.create(order1));
+
+		OrderOrdered order2 = new OrderOrdered();
+		int val2 = 1;
+		order2.val = val2;
+		order2.account = account1;
+		assertEquals(1, orderDao.create(order2));
+
+		OrderOrdered order3 = new OrderOrdered();
+		int val3 = 2;
+		order3.val = val3;
+		order3.account = account1;
+		assertEquals(1, orderDao.create(order3));
+
+		AccountOrdered accountResult = accountDao.queryForId(account1.id);
+		assertEquals(name1, accountResult.name);
+		assertNotNull(accountResult.orders);
+		int orderC = 0;
+		for (OrderOrdered order : accountResult.orders) {
+			orderC++;
+			switch (orderC) {
+				case 1 :
+					assertEquals(val2, order.val);
+					break;
+				case 2 :
+					assertEquals(val3, order.val);
+					break;
+				case 3 :
+					assertEquals(val1, order.val);
+					break;
+			}
+		}
+	}
+
 	private void testCollection(Dao<Account, Integer> accountDao, boolean eager) throws Exception {
 		Dao<Order, Integer> orderDao = createDao(Order.class, true);
 
@@ -675,6 +723,30 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		@DatabaseField(foreign = true)
 		CollectionWithCollection2 collectionWithCollection2;
 		protected CollectionWithCollection3() {
+		}
+	}
+
+	protected static class AccountOrdered {
+		public static final String ORDERS_FIELD_NAME = "orders123";
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField
+		String name;
+		@ForeignCollectionField(eager = true, columnName = ORDERS_FIELD_NAME, orderColumnName = OrderOrdered.VAL_FIELD_NAME)
+		ForeignCollection<OrderOrdered> orders;
+		protected AccountOrdered() {
+		}
+	}
+
+	protected static class OrderOrdered {
+		public final static String VAL_FIELD_NAME = "val";
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(unique = true, columnName = VAL_FIELD_NAME)
+		int val;
+		@DatabaseField(foreign = true)
+		AccountOrdered account;
+		protected OrderOrdered() {
 		}
 	}
 }

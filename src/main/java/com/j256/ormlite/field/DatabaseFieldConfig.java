@@ -39,6 +39,7 @@ public class DatabaseFieldConfig {
 	private int maxForeignAutoRefreshLevel = DatabaseField.MAX_FOREIGN_AUTO_REFRESH_LEVEL;
 	private boolean foreignCollection;
 	private boolean foreignCollectionEager;
+	private String foreignCollectionOrderColumn;
 	private int maxEagerForeignCollectionLevel = ForeignCollectionField.MAX_EAGER_FOREIGN_COLLECTION_LEVEL;
 	private Class<? extends DataPersister> persisterClass;
 
@@ -326,6 +327,14 @@ public class DatabaseFieldConfig {
 		return foreignCollectionEager;
 	}
 
+	public void setForeignCollectionOrderColumn(String foreignCollectionOrderColumn) {
+		this.foreignCollectionOrderColumn = foreignCollectionOrderColumn;
+	}
+
+	public String getForeignCollectionOrderColumn() {
+		return foreignCollectionOrderColumn;
+	}
+
 	public Class<? extends DataPersister> getPersisterClass() {
 		return persisterClass;
 	}
@@ -494,6 +503,11 @@ public class DatabaseFieldConfig {
 		config.foreignCollection = true;
 		config.foreignCollectionEager = foreignCollection.eager();
 		config.maxEagerForeignCollectionLevel = foreignCollection.maxEagerForeignCollectionLevel();
+		if (foreignCollection.orderColumnName().length() > 0) {
+			config.foreignCollectionOrderColumn = foreignCollection.orderColumnName();
+		} else {
+			config.foreignCollectionOrderColumn = null;
+		}
 		return config;
 	}
 

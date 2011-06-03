@@ -96,10 +96,11 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 		DatabaseConnection databaseConnection = createMock(DatabaseConnection.class);
 		expect(databaseConnection.queryForLong(isA(String.class))).andReturn(0L);
 		replay(databaseConnection);
+		NeedsSequenceDatabaseType needsSequence = new NeedsSequenceDatabaseType();;
 		MappedCreate<GeneratedIdSequence, Integer> mappedCreate =
-				MappedCreate.build(databaseType, new TableInfo<GeneratedIdSequence, Integer>(connectionSource, null,
+				MappedCreate.build(needsSequence, new TableInfo<GeneratedIdSequence, Integer>(connectionSource, null,
 						GeneratedIdSequence.class));
-		mappedCreate.insert(databaseType, databaseConnection, new GeneratedIdSequence());
+		mappedCreate.insert(needsSequence, databaseConnection, new GeneratedIdSequence());
 		verify(databaseConnection);
 	}
 
@@ -222,6 +223,10 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 		}
 		@Override
 		public boolean isIdSequenceNeeded() {
+			return true;
+		}
+		@Override
+		public boolean isSelectSequenceBeforeInsert() {
 			return true;
 		}
 	}

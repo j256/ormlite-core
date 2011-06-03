@@ -63,4 +63,9 @@ public @interface ForeignCollectionField {
 	 * {@link Dao#getEmptyForeignCollection(String)}.
 	 */
 	String columnName() default "";
+
+	/**
+	 * The name of the column in the object that we should order by.
+	 */
+	String orderColumnName() default "";
 }
