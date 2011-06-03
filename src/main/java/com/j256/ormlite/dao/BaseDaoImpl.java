@@ -246,6 +246,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	public List<T> queryForMatching(T matchObj) throws SQLException {
+		checkForInitialized();
 		QueryBuilder<T, ID> qb = queryBuilder();
 		Where<T, ID> where = qb.where();
 		int fieldC = 0;
@@ -265,6 +266,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	public List<T> queryForFieldValues(Map<String, Object> fieldValues) throws SQLException {
+		checkForInitialized();
 		QueryBuilder<T, ID> qb = queryBuilder();
 		Where<T, ID> where = qb.where();
 		for (Map.Entry<String, Object> entry : fieldValues.entrySet()) {
@@ -276,6 +278,15 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			where.and(fieldValues.size());
 			return qb.query();
 		}
+	}
+
+	public T queryForSameId(T data) throws SQLException {
+		checkForInitialized();
+		if (data == null) {
+			return null;
+		}
+		ID id = extractId(data);
+		return queryForId(id);
 	}
 
 	public int create(T data) throws SQLException {
@@ -295,6 +306,33 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			} finally {
 				connectionSource.releaseConnection(connection);
 			}
+		}
+	}
+
+	public T createIfNotExists(T data) throws SQLException {
+		if (data == null) {
+			return null;
+		}
+		T existing = queryForSameId(data);
+		if (existing == null) {
+			create(data);
+			return data;
+		} else {
+			return existing;
+		}
+	}
+
+	public CreateOrUpdateStatus createOrUpdate(T data) throws SQLException {
+		if (data == null) {
+			return new CreateOrUpdateStatus(false, false, 0);
+		}
+		T existing = queryForSameId(data);
+		if (existing == null) {
+			int numRows = create(data);
+			return new CreateOrUpdateStatus(true, false, numRows);
+		} else {
+			int numRows = update(data);
+			return new CreateOrUpdateStatus(false, true, numRows);
 		}
 	}
 

@@ -92,6 +92,11 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public List<T> queryForFieldValues(Map<String, Object> fieldValues) throws SQLException;
 
 	/**
+	 * Query for a data item in the table that has the same ID as the data parameter.
+	 */
+	public T queryForSameId(T data) throws SQLException;
+
+	/**
 	 * Create and return a new query builder object which allows you to build a custom SELECT statement. You call
 	 * methods on the builder to construct your statement and then call {@link QueryBuilder#prepare()} once you are
 	 * ready to build. This returns a {@link PreparedQuery} object which gets passed to {@link #query(PreparedQuery)} or
@@ -136,6 +141,23 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * @return The number of rows updated in the database. This should be 1.
 	 */
 	public int create(T data) throws SQLException;
+
+	/**
+	 * This is a convenience method to creating a data item but only if the ID does not already exist in the table. This
+	 * extracts the ID from the data parameter, does a {@link #queryForId(Object)} on it, returning the data if it
+	 * exists. If it does not exist {@link #create(Object)} will be called with the parameter.
+	 * 
+	 * @return Either the data parameter if it was inserted or the data that existed already in the database.
+	 */
+	public T createIfNotExists(T data) throws SQLException;
+
+	/**
+	 * This is a convenience method for creating an item in the database if it does not exist. If it does exist then all
+	 * of the fields will be updated from the fields in the parameter object.
+	 * 
+	 * @return Status object with the number of rows changed and whether an insert or update was performed.
+	 */
+	public CreateOrUpdateStatus createOrUpdate(T data) throws SQLException;
 
 	/**
 	 * Save the fields from an object to the database. If you have made changes to an object, this is how you persist
@@ -482,4 +504,18 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 *            {@link ForeignCollectionField#columnName()} to set the name to a static name.
 	 */
 	public <FT> ForeignCollection<FT> getEmptyForeignCollection(String fieldName) throws SQLException;
+
+	/**
+	 * Little return class for the {@link Dao#createOrUpdate(Object)} method.
+	 */
+	public class CreateOrUpdateStatus {
+		boolean created;
+		boolean updated;
+		int numLinesChanged;
+		public CreateOrUpdateStatus(boolean created, boolean updated, int numberLinesChanged) {
+			this.created = created;
+			this.updated = updated;
+			this.numLinesChanged = numberLinesChanged;
+		}
+	}
 }

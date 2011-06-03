@@ -3020,6 +3020,11 @@ are not the default value (null, false, 0, 0.0, etc.) are used as the matching p
 
 Query for the rows in the database that matches all of the field to value entries from the map passed in.
 
+@cindex queryForSameId
+@item queryForSameId(T data)
+
+Query for a data item in the table that has the same ID as the data parameter.
+
 @cindex query builder
 @cindex statement builder
 @item queryBuilder()
@@ -3047,6 +3052,20 @@ should consider using the @code{iterator} method instead.
 @item create(T data)
 
 Create a new entry in the database from an object.  Should return 1 indicating 1 row was inserted.
+
+@cindex create if not exists
+@item createIfNotExists(T data)
+
+This is a convenience method to creating a data item but only if the ID does not already exist in the table. This extracts the id from
+the data parameter, does a query for on it, returning the data if it exists.  If it does not exist then create is callled with the data
+parameter.
+
+@cindex create or update
+@item createOrUpdate(T data)
+
+This is a convenience method for creating an item in the database if it does not exist. If it does exist then all of the fields will be
+updated from the fields in the parameter object.  It returns a status object with the number of rows changed and whether an insert or
+update was performed.
 
 @cindex updating an object
 @item update(T data)

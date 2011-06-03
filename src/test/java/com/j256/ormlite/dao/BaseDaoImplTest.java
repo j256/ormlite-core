@@ -4,6 +4,7 @@ import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -23,6 +24,7 @@ import org.h2.api.Trigger;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
+import com.j256.ormlite.dao.Dao.CreateOrUpdateStatus;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
@@ -1866,6 +1868,57 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(foo.val, foo2.val);
 		assertEquals(foo.val, foo2.val);
 		assertFalse(iterator.hasNext());
+	}
+
+	@Test
+	public void testCreateOrUpdate() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		foo1.id = "stuff";
+		int equal1 = 21313;
+		foo1.equal = equal1;
+		assertEquals(1, dao.create(foo1));
+
+		int equal2 = 4134132;
+		foo1.equal = equal2;
+		CreateOrUpdateStatus status = dao.createOrUpdate(foo1);
+		assertFalse(status.created);
+		assertTrue(status.updated);
+		assertEquals(1, status.numLinesChanged);
+
+		Foo fooResult = dao.queryForId(foo1.id);
+		assertEquals(equal2, fooResult.equal);
+	}
+
+	@Test
+	public void testQueryForSameId() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		foo1.id = "stuff";
+		foo1.equal = 198412893;
+		assertEquals(1, dao.create(foo1));
+
+		Foo fooResult = dao.queryForSameId(foo1);
+		assertEquals(foo1.id, fooResult.id);
+		assertEquals(foo1.equal, fooResult.equal);
+	}
+
+	@Test
+	public void testCreateIfNotExists() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		foo1.id = "stuff";
+		foo1.equal = 198412893;
+
+		Foo fooResult = dao.createIfNotExists(foo1);
+		assertSame(foo1, fooResult);
+
+		// now if we do it again, we should get the database copy of foo
+		fooResult = dao.createIfNotExists(foo1);
+		assertNotSame(foo1, fooResult);
+
+		assertEquals(foo1.id, fooResult.id);
+		assertEquals(foo1.equal, fooResult.equal);
 	}
 
 	private String buildFooQueryAllString(Dao<Foo, Object> fooDao) throws SQLException {

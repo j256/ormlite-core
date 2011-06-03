@@ -35,13 +35,19 @@
 - add in a bulk insert which will compile the insert statement and just set args for each entry
 
 - new methods in the DAO:
-	/* returns either the data parameter if it was inserted or a new data if it already existed */
-	T createIfNotExists(T data);
-	/* returns some sort of status object, maybe an object with the number of rows changed and whether an insert or update was performed */
-	Status createOrUpdate(T data);
-	// update only those fields that are not null
-	updateNonDefault()
-	createOrUpdateNonDefault()
+	- updateNonDefault()
+		- update only those fields that are not null
+	- createOrUpdateNonDefault()
+
+- need to document the custom persister stuff:
+	- DataPersiterManager
+	- DatabaseField.persisterClass
+
+- need to add a Foreign field section under the query builder section
+	- needs to explain how to do queries for foreign fields
+	- need to explain that we can't query for a foreign collection
+
+- need to better document the internal logger in case you aren't using log4j 
 
 -----------------------------------------------------------------------------------------------------------------------------------
 
