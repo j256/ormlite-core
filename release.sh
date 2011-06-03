@@ -70,7 +70,7 @@ rm -f $tmp*
 
 echo ""
 echo "------------------------------------------------------- "
-echo "Releasing version '$release' with pass-phrase '$gpgpass'"
+echo "Releasing version '$release'"
 sleep 3
 
 #############################################################
