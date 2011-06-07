@@ -20,6 +20,7 @@ import com.j256.ormlite.stmt.PreparedDelete;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.PreparedUpdate;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.SelectIterator;
 import com.j256.ormlite.stmt.StatementExecutor;
 import com.j256.ormlite.stmt.UpdateBuilder;
@@ -246,38 +247,19 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	public List<T> queryForMatching(T matchObj) throws SQLException {
-		checkForInitialized();
-		QueryBuilder<T, ID> qb = queryBuilder();
-		Where<T, ID> where = qb.where();
-		int fieldC = 0;
-		for (FieldType fieldType : tableInfo.getFieldTypes()) {
-			Object fieldValue = fieldType.getFieldValueIfNotDefault(matchObj);
-			if (fieldValue != null) {
-				where.eq(fieldType.getDbColumnName(), fieldValue);
-				fieldC++;
-			}
-		}
-		if (fieldC == 0) {
-			return Collections.emptyList();
-		} else {
-			where.and(fieldC);
-			return qb.query();
-		}
+		return queryForMatching(matchObj, false);
+	}
+
+	public List<T> queryForMatchingArgs(T matchObj) throws SQLException {
+		return queryForMatching(matchObj, true);
 	}
 
 	public List<T> queryForFieldValues(Map<String, Object> fieldValues) throws SQLException {
-		checkForInitialized();
-		QueryBuilder<T, ID> qb = queryBuilder();
-		Where<T, ID> where = qb.where();
-		for (Map.Entry<String, Object> entry : fieldValues.entrySet()) {
-			where.eq(entry.getKey(), entry.getValue());
-		}
-		if (fieldValues.size() == 0) {
-			return Collections.emptyList();
-		} else {
-			where.and(fieldValues.size());
-			return qb.query();
-		}
+		return queryForFieldValues(fieldValues, false);
+	}
+
+	public List<T> queryForFieldValuesArgs(Map<String, Object> fieldValues) throws SQLException {
+		return queryForFieldValues(fieldValues, true);
 	}
 
 	public T queryForSameId(T data) throws SQLException {
@@ -765,6 +747,52 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			daoConfigLevelLocal.set(daoConfigLevel);
 		}
 		return daoConfigLevel;
+	}
+
+	private List<T> queryForMatching(T matchObj, boolean useArgs) throws SQLException {
+		checkForInitialized();
+		QueryBuilder<T, ID> qb = queryBuilder();
+		Where<T, ID> where = qb.where();
+		int fieldC = 0;
+		for (FieldType fieldType : tableInfo.getFieldTypes()) {
+			Object fieldValue = fieldType.getFieldValueIfNotDefault(matchObj);
+			if (fieldValue != null) {
+				if (useArgs) {
+					SelectArg arg = new SelectArg();
+					arg.setValue(fieldValue);
+					fieldValue = arg;
+				}
+				where.eq(fieldType.getDbColumnName(), fieldValue);
+				fieldC++;
+			}
+		}
+		if (fieldC == 0) {
+			return Collections.emptyList();
+		} else {
+			where.and(fieldC);
+			return qb.query();
+		}
+	}
+
+	private List<T> queryForFieldValues(Map<String, Object> fieldValues, boolean useArgs) throws SQLException {
+		checkForInitialized();
+		QueryBuilder<T, ID> qb = queryBuilder();
+		Where<T, ID> where = qb.where();
+		for (Map.Entry<String, Object> entry : fieldValues.entrySet()) {
+			Object fieldValue = entry.getValue();
+			if (useArgs) {
+				SelectArg arg = new SelectArg();
+				arg.setValue(fieldValue);
+				fieldValue = arg;
+			}
+			where.eq(entry.getKey(), fieldValue);
+		}
+		if (fieldValues.size() == 0) {
+			return Collections.emptyList();
+		} else {
+			where.and(fieldValues.size());
+			return qb.query();
+		}
 	}
 
 	private static class DaoConfigLevel {

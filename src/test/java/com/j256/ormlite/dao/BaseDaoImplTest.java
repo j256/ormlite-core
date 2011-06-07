@@ -1647,6 +1647,47 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(0, results.size());
 	}
 
+	@Test(expected = SQLException.class)
+	public void testQueryForMatchingQuotes() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		assertEquals(0, dao.countOf());
+		Foo foo = new Foo();
+		String id = "1";
+		foo.id = id;
+		int val = 1231231;
+		foo.val = val;
+		assertEquals(1, dao.create(foo));
+		String notId = "not " + id;
+		foo.id = notId;
+		foo.val = val + 1;
+		assertEquals(1, dao.create(foo));
+
+		Foo match = new Foo();
+		match.id = "this id has a quote '";
+		dao.queryForMatching(match);
+	}
+
+	@Test
+	public void testQueryForMatchingArgs() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		assertEquals(0, dao.countOf());
+		Foo foo = new Foo();
+		String id = "1";
+		foo.id = id;
+		int val = 1231231;
+		foo.val = val;
+		assertEquals(1, dao.create(foo));
+		String notId = "not " + id;
+		foo.id = notId;
+		foo.val = val + 1;
+		assertEquals(1, dao.create(foo));
+
+		Foo match = new Foo();
+		match.id = "this id has a quote '";
+		List<Foo> results = dao.queryForMatchingArgs(match);
+		assertEquals(0, results.size());
+	}
+
 	@Test
 	public void testQueryForMatchingNoFields() throws Exception {
 		Dao<Foo, String> dao = createDao(Foo.class, true);
@@ -1688,6 +1729,46 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		fieldValues.put(Foo.VAL_COLUMN_NAME, val);
 		results = dao.queryForFieldValues(fieldValues);
 		assertEquals(0, results.size());
+	}
+
+	@Test(expected = SQLException.class)
+	public void testQueryForFieldValuesQuotes() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		assertEquals(0, dao.countOf());
+		Foo foo = new Foo();
+		String id = "1";
+		foo.id = id;
+		int val = 1231231;
+		foo.val = val;
+		assertEquals(1, dao.create(foo));
+		String notId = "not " + id;
+		foo.id = notId;
+		foo.val = val + 1;
+		assertEquals(1, dao.create(foo));
+
+		Map<String, Object> fieldValues = new HashMap<String, Object>();
+		fieldValues.put(Foo.ID_COLUMN_NAME, "this id has a quote '");
+		dao.queryForFieldValues(fieldValues);
+	}
+
+	@Test
+	public void testQueryForFieldValuesArgs() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		assertEquals(0, dao.countOf());
+		Foo foo = new Foo();
+		String id = "1";
+		foo.id = id;
+		int val = 1231231;
+		foo.val = val;
+		assertEquals(1, dao.create(foo));
+		String notId = "not " + id;
+		foo.id = notId;
+		foo.val = val + 1;
+		assertEquals(1, dao.create(foo));
+
+		Map<String, Object> fieldValues = new HashMap<String, Object>();
+		fieldValues.put(Foo.ID_COLUMN_NAME, "this id has a quote '");
+		dao.queryForFieldValuesArgs(fieldValues);
 	}
 
 	@Test

@@ -15,6 +15,7 @@ import com.j256.ormlite.stmt.PreparedDelete;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.PreparedUpdate;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.UpdateBuilder;
 
 /**
@@ -83,13 +84,27 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	/**
 	 * Query for the rows in the database that match the object passed in as an argument. Any fields in the matching
 	 * object that are not the default value (null, false, 0, 0.0, etc.) are used as the matching parameters with AND.
+	 * If you are worried about SQL quote escaping, you should use {@link #queryForMatchingArgs(Object)}.
 	 */
 	public List<T> queryForMatching(T matchObj) throws SQLException;
 
 	/**
-	 * Query for the rows in the database that matches all of the field to value entries from the map passed in.
+	 * Same as {@link #queryForMatching(Object)} but this uses {@link SelectArg} and SQL ? arguments. This is slightly
+	 * more expensive but you don't have to worry about SQL quote escaping.
+	 */
+	public List<T> queryForMatchingArgs(T matchObj) throws SQLException;
+
+	/**
+	 * Query for the rows in the database that matches all of the field to value entries from the map passed in. If you
+	 * are worried about SQL quote escaping, you should use {@link #queryForFieldValuesArgs(Object)}.
 	 */
 	public List<T> queryForFieldValues(Map<String, Object> fieldValues) throws SQLException;
+
+	/**
+	 * Same as {@link #queryForFieldValues(Map)} but this uses {@link SelectArg} and SQL ? arguments. This is slightly
+	 * more expensive but you don't have to worry about SQL quote escaping.
+	 */
+	public List<T> queryForFieldValuesArgs(Map<String, Object> fieldValues) throws SQLException;
 
 	/**
 	 * Query for a data item in the table that has the same ID as the data parameter.

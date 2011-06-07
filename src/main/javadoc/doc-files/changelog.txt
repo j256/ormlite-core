@@ -1,4 +1,7 @@
-4.23: 6/XX/2011 (svn rYYYY)
+4.24: 6/XX/2011 (svn rYYYY)
+	* CORE: Added Dao.queryForMatchingArgs() and queryForFieldValuesArgs() to avoid SQL escaping issues.  Thanks to coder sam.
+
+4.23: 6/3/2011 (svn r1805)
 	* CORE: Allow the user to be able to override the persister for the built-in types as well.
 	* CORE: Added a orderColumnName field to the ForeignCollectionField to order collections based on a column.
 	* CORE: Moved the external log classes over to the JDBC package to make core a bit smaller.

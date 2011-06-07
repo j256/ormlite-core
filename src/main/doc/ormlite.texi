@@ -3012,13 +3012,28 @@ is a convenience method for calling @code{queryBuilder().where().eq(fieldName, v
 @item queryForMatching(T matchObj)
 
 Query for the rows in the database that match the object passed in as an argument. Any fields in the matching object that
-are not the default value (null, false, 0, 0.0, etc.) are used as the matching parameters with @code{AND}.
+are not the default value (null, false, 0, 0.0, etc.) are used as the matching parameters with @code{AND}.  If you are worried
+about SQL quote escaping, you should use @code{queryForMatchingArgs}.
+
+@cindex queryForMatchingArgs
+@cindex query for matching object
+@cindex matching object
+@item queryForMatchingArgs(T matchObj)
+
+Same as @code{queryForMatching} but this uses SQL ? arguments. This is slightly more expensive but you don't have to worry about
+SQL quote escaping.
 
 @cindex queryForFieldValues
 @cindex query for field value map
 @item queryForFieldValues(Map<String, Object> fieldValues)
 
 Query for the rows in the database that matches all of the field to value entries from the map passed in.
+
+@cindex queryForFieldValuesArgs
+@item queryForFieldValuesArgs(Map<String, Object> fieldValues)
+
+Same as @code{queryForFieldValues} but this uses SQL ? arguments. This is slightly more expensive but you don't have to worry
+about SQL quote escaping.
 
 @cindex queryForSameId
 @item queryForSameId(T data)
