@@ -206,49 +206,12 @@
 		<persistence-api-version>1.0</persistence-api-version>
 		<easymock-version>2.3</easymock-version>
 		<h2-version>1.2.128</h2-version>
-		<commons-logging-version>1.1.1</commons-logging-version>
 		<junit-version>4.8.1</junit-version>
-		<log4j-version>1.2.15</log4j-version>
 	</properties>
 	<dependencies>
 		<!-- =================================================================== -->
 		<!-- main dependencies -->
 		<!-- =================================================================== -->
-		<!-- test dependencies -->
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>${commons-logging-version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>${log4j-version}</version>
-			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>com.sun.jmx</groupId>
-					<artifactId>jmxri</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.sun.jdmk</groupId>
-					<artifactId>jmxtools</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>javax.activation</groupId>
-					<artifactId>activation</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>javax.jms</groupId>
-					<artifactId>jms</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>javax.mail</groupId>
-					<artifactId>mail</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 		<dependency>
 			<groupId>javax.persistence</groupId>
 			<artifactId>persistence-api</artifactId>
