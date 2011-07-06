@@ -622,6 +622,9 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	public ID extractId(T data) throws SQLException {
 		checkForInitialized();
 		FieldType idField = tableInfo.getIdField();
+		if (idField == null) {
+			throw new SQLException("Class " + dataClass + " does not have an id field");
+		}
 		@SuppressWarnings("unchecked")
 		ID id = (ID) idField.extractJavaFieldValue(data);
 		return id;
