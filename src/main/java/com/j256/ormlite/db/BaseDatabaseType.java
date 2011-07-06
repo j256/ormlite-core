@@ -58,14 +58,14 @@ public abstract class BaseDatabaseType implements DatabaseType {
 			List<String> statementsBefore, List<String> statementsAfter, List<String> queriesAfter) throws SQLException {
 		appendEscapedEntityName(sb, fieldType.getDbColumnName());
 		sb.append(' ');
-		DataPersister dataType = fieldType.getDataPersister();
+		DataPersister dataPersister = fieldType.getDataPersister();
 		// first try the per-field width
 		int fieldWidth = fieldType.getWidth();
 		if (fieldWidth == 0) {
 			// next try the per-data-type width
-			fieldWidth = dataType.getDefaultWidth();
+			fieldWidth = dataPersister.getDefaultWidth();
 		}
-		switch (dataType.getSqlType()) {
+		switch (dataPersister.getSqlType()) {
 
 			case STRING :
 				appendStringType(sb, fieldWidth);
@@ -122,7 +122,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 			case UNKNOWN :
 			default :
 				// shouldn't be able to get here unless we have a missing case
-				throw new IllegalArgumentException("Unknown SQL-type " + dataType.getSqlType());
+				throw new IllegalArgumentException("Unknown SQL-type " + dataPersister.getSqlType());
 		}
 		sb.append(' ');
 
