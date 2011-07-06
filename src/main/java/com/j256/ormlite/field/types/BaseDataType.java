@@ -92,7 +92,7 @@ public abstract class BaseDataType implements DataPersister {
 	}
 
 	public Object generatedId() {
-		return null;
+		throw new IllegalStateException("Should not have tried to generate this type");
 	}
 
 	public int getDefaultWidth() {
