@@ -20,6 +20,14 @@ public class SelectArg extends BaseSelectArg implements ArgumentHolder {
 	private boolean hasBeenSet = false;
 	private Object value = null;
 
+	public SelectArg() {
+		// value set later
+	}
+
+	public SelectArg(Object value) {
+		setValue(value);
+	}
+
 	@Override
 	protected Object getValue() {
 		return value;

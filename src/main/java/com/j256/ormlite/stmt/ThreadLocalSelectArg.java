@@ -10,6 +10,14 @@ public class ThreadLocalSelectArg extends BaseSelectArg implements ArgumentHolde
 
 	private ThreadLocal<ValueWrapper> threadValue = new ThreadLocal<ValueWrapper>();
 
+	public ThreadLocalSelectArg() {
+		// value set later
+	}
+
+	public ThreadLocalSelectArg(Object value) {
+		setValue(value);
+	}
+
 	@Override
 	protected Object getValue() {
 		ValueWrapper wrapper = threadValue.get();
