@@ -176,7 +176,7 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 		SelectArg arg = new SelectArg();
 		arg.setValue(null);
 		ub.updateColumnValue(Foo.NULL_COLUMN_NAME, arg);
-		dao.update(ub.prepare());
+		assertEquals(1, dao.update(ub.prepare()));
 
 		result = dao.queryForId(id);
 		assertNotNull(result);
@@ -185,7 +185,7 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 		// now back to value
 		ub = dao.updateBuilder();
 		ub.updateColumnValue(Foo.NULL_COLUMN_NAME, nullField);
-		dao.update(ub.prepare());
+		assertEquals(1, dao.update(ub.prepare()));
 
 		result = dao.queryForId(id);
 		assertNotNull(result);
@@ -194,7 +194,7 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 		// now back to null
 		ub = dao.updateBuilder();
 		ub.updateColumnExpression(Foo.NULL_COLUMN_NAME, "null");
-		dao.update(ub.prepare());
+		assertEquals(1, dao.update(ub.prepare()));
 
 		result = dao.queryForId(id);
 		assertNotNull(result);
@@ -203,7 +203,7 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 		// now back to value
 		ub = dao.updateBuilder();
 		ub.updateColumnValue(Foo.NULL_COLUMN_NAME, nullField);
-		dao.update(ub.prepare());
+		assertEquals(1, dao.update(ub.prepare()));
 
 		result = dao.queryForId(id);
 		assertNotNull(result);
@@ -212,7 +212,7 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 		// now back to null
 		ub = dao.updateBuilder();
 		ub.updateColumnValue(Foo.NULL_COLUMN_NAME, null);
-		dao.update(ub.prepare());
+		assertEquals(1, dao.update(ub.prepare()));
 
 		result = dao.queryForId(id);
 		assertNotNull(result);
