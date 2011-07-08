@@ -3,6 +3,7 @@ package com.j256.ormlite.stmt.query;
 import java.sql.SQLException;
 
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.StatementBuilder;
 
 /**
@@ -17,8 +18,14 @@ import com.j256.ormlite.stmt.StatementBuilder;
  */
 public class SetValue extends BaseComparison {
 
+	/**
+	 * Special value in case we are trying to set a field to null. We can't just use the null value because it looks
+	 * like the argument has not been set in the base class.
+	 */
+	private static final SelectArg nullValue = new SelectArg(null);
+
 	public SetValue(String columnName, FieldType fieldType, Object value) throws SQLException {
-		super(columnName, fieldType, value);
+		super(columnName, fieldType, (value == null ? nullValue : value));
 	}
 
 	@Override

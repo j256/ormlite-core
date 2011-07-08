@@ -2,6 +2,7 @@ package com.j256.ormlite.stmt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.sql.SQLException;
 import java.util.Date;
@@ -154,6 +155,68 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 		UpdateDate updateDate2 = dao.queryForId(updateDate.id);
 		assertNotNull(updateDate2);
 		assertEquals(newDate, updateDate2.date);
+	}
+
+	@Test
+	public void testUpdateNull() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		String id = "ewopfjewfwe";
+		foo.id = id;
+		String nullField = "not really that null";
+		foo.nullField = nullField;
+		assertEquals(dao.create(foo), 1);
+
+		Foo result = dao.queryForId(id);
+		assertNotNull(result);
+		assertEquals(nullField, result.nullField);
+
+		// try setting to null
+		UpdateBuilder<Foo, String> ub = dao.updateBuilder();
+		SelectArg arg = new SelectArg();
+		arg.setValue(null);
+		ub.updateColumnValue(Foo.NULL_COLUMN_NAME, arg);
+		dao.update(ub.prepare());
+
+		result = dao.queryForId(id);
+		assertNotNull(result);
+		assertNull(result.nullField);
+
+		// now back to value
+		ub = dao.updateBuilder();
+		ub.updateColumnValue(Foo.NULL_COLUMN_NAME, nullField);
+		dao.update(ub.prepare());
+
+		result = dao.queryForId(id);
+		assertNotNull(result);
+		assertEquals(nullField, result.nullField);
+
+		// now back to null
+		ub = dao.updateBuilder();
+		ub.updateColumnExpression(Foo.NULL_COLUMN_NAME, "null");
+		dao.update(ub.prepare());
+
+		result = dao.queryForId(id);
+		assertNotNull(result);
+		assertNull(result.nullField);
+		
+		// now back to value
+		ub = dao.updateBuilder();
+		ub.updateColumnValue(Foo.NULL_COLUMN_NAME, nullField);
+		dao.update(ub.prepare());
+
+		result = dao.queryForId(id);
+		assertNotNull(result);
+		assertEquals(nullField, result.nullField);
+
+		// now back to null
+		ub = dao.updateBuilder();
+		ub.updateColumnValue(Foo.NULL_COLUMN_NAME, null);
+		dao.update(ub.prepare());
+
+		result = dao.queryForId(id);
+		assertNotNull(result);
+		assertNull(result.nullField);
 	}
 
 	protected static class OurForeignCollection {
