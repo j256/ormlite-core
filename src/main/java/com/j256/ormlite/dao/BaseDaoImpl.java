@@ -669,6 +669,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	public <FT> ForeignCollection<FT> getEmptyForeignCollection(String fieldName) throws SQLException {
+		checkForInitialized();
 		for (FieldType fieldType : tableInfo.getFieldTypes()) {
 			if (fieldType.getDbColumnName().equals(fieldName)) {
 				return fieldType.buildForeignCollection(null, true);
