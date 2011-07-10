@@ -3,7 +3,9 @@ package com.j256.ormlite.dao;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.j256.ormlite.field.ForeignCollectionField;
 
@@ -95,6 +97,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 			while (iterator.hasNext()) {
 				sizeC++;
 			}
+			return sizeC;
 		} finally {
 			try {
 				iterator.close();
@@ -102,7 +105,6 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 				// ignored
 			}
 		}
-		return sizeC;
 	}
 
 	public boolean isEmpty() {
@@ -137,16 +139,61 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 	}
 
 	public boolean containsAll(Collection<?> collection) {
-		/*
-		 * This is pretty inefficient (i.e. N^2) but I didn't want to suck all of the items into a Map because this
-		 * could swallow all memory. So user beware.
-		 */
-		for (Object obj : collection) {
-			if (!contains(obj)) {
-				return false;
+		Set<Object> leftOvers = new HashSet<Object>(collection);
+		CloseableIterator<T> iterator = iterator();
+		try {
+			while (iterator.hasNext()) {
+				leftOvers.remove(iterator.next());
+			}
+			return leftOvers.isEmpty();
+		} finally {
+			try {
+				iterator.close();
+			} catch (SQLException e) {
+				// ignored
 			}
 		}
-		return true;
+	}
+
+	@Override
+	public boolean remove(Object data) {
+		CloseableIterator<T> iterator = iterator();
+		try {
+			while (iterator.hasNext()) {
+				if (iterator.next().equals(data)) {
+					iterator.remove();
+					return true;
+				}
+			}
+			return false;
+		} finally {
+			try {
+				iterator.close();
+			} catch (SQLException e) {
+				// ignored
+			}
+		}
+	}
+
+	@Override
+	public boolean removeAll(Collection<?> collection) {
+		boolean changed = false;
+		CloseableIterator<T> iterator = iterator();
+		try {
+			while (iterator.hasNext()) {
+				if (collection.contains(iterator.next())) {
+					iterator.remove();
+					changed = true;
+				}
+			}
+			return changed;
+		} finally {
+			try {
+				iterator.close();
+			} catch (SQLException e) {
+				// ignored
+			}
+		}
 	}
 
 	public Object[] toArray() {
@@ -156,6 +203,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 			while (iterator.hasNext()) {
 				items.add(iterator.next());
 			}
+			return items.toArray();
 		} finally {
 			try {
 				iterator.close();
@@ -163,7 +211,6 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 				// ignored
 			}
 		}
-		return items.toArray();
 	}
 
 	public <E> E[] toArray(E[] array) {

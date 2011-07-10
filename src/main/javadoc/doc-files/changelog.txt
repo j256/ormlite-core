@@ -1,5 +1,8 @@
-4.24: 6/XX/2011 (svn rYYYY)
+4.24: 7/XX/2011 (svn rYYYY)
 	* CORE: Added Dao.queryForMatchingArgs() and queryForFieldValuesArgs() to avoid SQL escaping issues.  Thanks to coder sam.
+	* CORE: Fixed a problem with updating a field's value to be null using the UpdateBuilder.  Thanks to Jeremy mcjunkin. Fixes bug #3359086.
+	* CORE: Fixed foreign collection bugs where clear, remove, ... affected the whole table.  Thanks to Patras Vlad.  Fixes bug #3313003.
+	* ANDROID: Added a OrmLiteBaseActivityGroup to the various base classes.  Thanks to zachawilson.
 
 4.23: 6/3/2011 (svn r1805)
 	* CORE: Allow the user to be able to override the persister for the built-in types as well.

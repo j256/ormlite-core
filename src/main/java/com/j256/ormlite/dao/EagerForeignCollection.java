@@ -19,7 +19,8 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 
 	private final List<T> results;
 
-	public EagerForeignCollection(Dao<T, ID> dao, String fieldName, Object fieldValue, String orderColumn) throws SQLException {
+	public EagerForeignCollection(Dao<T, ID> dao, String fieldName, Object fieldValue, String orderColumn)
+			throws SQLException {
 		super(dao, fieldName, fieldValue, orderColumn);
 		if (fieldValue == null) {
 			/*
@@ -111,31 +112,51 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 
 	@Override
 	public boolean add(T data) {
-		results.add(data);
-		return super.add(data);
+		if (results.add(data)) {
+			return super.add(data);
+		} else {
+			return false;
+		}
 	}
 
 	@Override
 	public boolean addAll(Collection<? extends T> collection) {
-		results.addAll(collection);
-		return super.addAll(collection);
+		if (results.addAll(collection)) {
+			return super.addAll(collection);
+		} else {
+			return false;
+		}
 	}
 
 	@Override
 	public boolean remove(Object data) {
-		results.remove(data);
-		return super.remove(data);
+		if (!results.remove(data)) {
+			return false;
+		}
+
+		@SuppressWarnings("unchecked")
+		T castData = (T) data;
+		try {
+			return (dao.delete(castData) == 1);
+		} catch (SQLException e) {
+			throw new IllegalStateException("Could not delete data element from dao", e);
+		}
 	}
 
 	@Override
 	public boolean removeAll(Collection<?> collection) {
-		results.removeAll(collection);
-		return super.removeAll(collection);
+		boolean changed = false;
+		for (Object data : collection) {
+			if (remove(data)) {
+				changed = true;
+			}
+		}
+		return changed;
 	}
 
 	@Override
 	public boolean retainAll(Collection<?> collection) {
-		results.retainAll(collection);
+		// delete from the iterate removes from the eager list and dao
 		return super.retainAll(collection);
 	}
 

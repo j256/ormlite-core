@@ -3247,6 +3247,7 @@ log4j.logger.com.j256.ormlite=DEBUG
 # to enable logging of arguments to all of the SQL calls
 # uncomment the following lines
 #log4j.logger.com.j256.ormlite.stmt.mapped.BaseMappedStatement=TRACE
+#log4j.logger.com.j256.ormlite.stmt.mapped.MappedCreate=TRACE
 #log4j.logger.com.j256.ormlite.stmt.StatementExecutor=TRACE
 @end example
 

@@ -199,7 +199,7 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 		result = dao.queryForId(id);
 		assertNotNull(result);
 		assertNull(result.nullField);
-		
+
 		// now back to value
 		ub = dao.updateBuilder();
 		ub.updateColumnValue(Foo.NULL_COLUMN_NAME, nullField);

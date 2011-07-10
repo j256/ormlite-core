@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import java.util.Collection;
 
 import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.PreparedDelete;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.SelectArg;
@@ -22,9 +24,10 @@ import com.j256.ormlite.stmt.SelectArg;
 public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<T> {
 
 	protected final Dao<T, ID> dao;
-	private final String fieldName;
-	private final Object fieldValue;
+	protected final String fieldName;
+	protected final Object fieldValue;
 	private PreparedQuery<T> preparedQuery;
+	private PreparedDelete<T> preparedDelete;
 	private final String orderColumn;
 
 	public BaseForeignCollection(Dao<T, ID> dao, String fieldName, Object fieldValue, String orderColumn) {
@@ -34,6 +37,11 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 		this.orderColumn = orderColumn;
 	}
 
+	/**
+	 * Add an element to the collection. This will also add the item to the associated database table.
+	 * 
+	 * @return Returns true if the item did not already exist in the collection otherwise false.
+	 */
 	public boolean add(T data) {
 		try {
 			dao.create(data);
@@ -43,6 +51,11 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 		}
 	}
 
+	/**
+	 * Add the collection of elements to this collection. This will also them to the associated database table.
+	 * 
+	 * @return Returns true if the item did not already exist in the collection otherwise false.
+	 */
 	public boolean addAll(Collection<? extends T> collection) {
 		for (T data : collection) {
 			try {
@@ -54,38 +67,33 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 		return true;
 	}
 
-	public boolean remove(Object data) {
-		@SuppressWarnings("unchecked")
-		T castData = (T) data;
-		try {
-			return (dao.delete(castData) == 1);
-		} catch (SQLException e) {
-			throw new IllegalStateException("Could not delete data element from dao", e);
-		}
-	}
-
-	public boolean removeAll(Collection<?> collection) {
-		boolean changed = false;
-		for (Object data : collection) {
-			@SuppressWarnings("unchecked")
-			T castData = (T) data;
-			try {
-				if (dao.delete(castData) > 0) {
-					changed = true;
-				}
-			} catch (SQLException e) {
-				throw new IllegalStateException("Could not create data elements in dao", e);
-			}
-		}
-		return changed;
-	}
+	/**
+	 * Remove the item from the collection and the associated database table.
+	 * 
+	 * NOTE: we can't just do a dao.delete(data) because it has to be in the collection.
+	 * 
+	 * @return True if the item was found in the collection otherwise false.
+	 */
+	public abstract boolean remove(Object data);
 
 	/**
-	 * Uses the iterator to run through the dao and retain only the items that are in the passed in collection.
+	 * Remove the items in the collection argument from the foreign collection and the associated database table.
+	 * 
+	 * NOTE: we can't just do a for (...) dao.delete(item) because the items have to be in the collection.
+	 * 
+	 * @return True if the item was found in the collection otherwise false.
+	 */
+	public abstract boolean removeAll(Collection<?> collection);
+
+	/**
+	 * Uses the iterator to run through the dao and retain only the items that are in the passed in collection. This
+	 * will remove the items from the associated database table as well.
+	 * 
+	 * @return Returns true of the collection was changed at all otherwise false.
 	 */
 	public boolean retainAll(Collection<?> collection) {
 		boolean changed = false;
-		CloseableIterator<T> iterator = dao.iterator();
+		CloseableIterator<T> iterator = closeableIterator();
 		try {
 			while (iterator.hasNext()) {
 				T data = iterator.next();
@@ -94,6 +102,7 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 					changed = true;
 				}
 			}
+			return changed;
 		} finally {
 			try {
 				iterator.close();
@@ -101,15 +110,15 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 				// ignored
 			}
 		}
-		return changed;
 	}
 
 	/**
-	 * Uses the iterator to run through the dao and delete all of the items. This is different from removing all of the
-	 * elements in the table since this iterator is across just one item's foreign objects.
+	 * Clears the collection and uses the iterator to run through the dao and delete all of the items in the collection
+	 * from the associated database table. This is different from removing all of the elements in the table since this
+	 * iterator is across just one item's foreign objects.
 	 */
 	public void clear() {
-		CloseableIterator<T> iterator = dao.iterator();
+		CloseableIterator<T> iterator = closeableIterator();
 		try {
 			while (iterator.hasNext()) {
 				iterator.next();
@@ -135,5 +144,16 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 			preparedQuery = qb.where().eq(fieldName, fieldArg).prepare();
 		}
 		return preparedQuery;
+	}
+
+	protected PreparedDelete<T> getPreparedDelete() throws SQLException {
+		if (preparedDelete == null) {
+			SelectArg fieldArg = new SelectArg();
+			fieldArg.setValue(fieldValue);
+			DeleteBuilder<T, ID> db = dao.deleteBuilder();
+			db.where().eq(fieldName, fieldArg);
+			preparedDelete = db.prepare();
+		}
+		return preparedDelete;
 	}
 }

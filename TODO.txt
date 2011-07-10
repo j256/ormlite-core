@@ -6,6 +6,10 @@
 	- take all of the fields as if they were fields in this class
 	- embedded keys are going to be _hard_, maybe punt them
 
+- be able to do your own query with a select * and get back a T.
+	- could do a select * from ___ and then allow the person to specify the rest
+	- could allow the query builder to append anything like the where raw
+
 - more support for more constraints (other than primary and unique):
 	- maybe a check="> 10" type of addition to DatabaseField so we can add a check constraint
 	- foreign key constraint can be in addition to (or required for) the foreign=true
