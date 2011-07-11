@@ -21,6 +21,16 @@ public interface ArgumentHolder {
 	/**
 	 * Used internally by the package to set the column-name associated with this argument.
 	 */
+	public void setMetaInfo(String columnName);
+
+	/**
+	 * Used internally by the package to set the fieldType associated with this argument.
+	 */
+	public void setMetaInfo(FieldType fieldType);
+
+	/**
+	 * Used internally by the package to set the column-name and fieldType associated with this argument.
+	 */
 	public void setMetaInfo(String columnName, FieldType fieldType);
 
 	/**

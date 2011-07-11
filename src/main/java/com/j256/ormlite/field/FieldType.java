@@ -635,7 +635,7 @@ public class FieldType {
 	/**
 	 * Call through to {@link DataPersister#isSelectArgRequired()}
 	 */
-	public boolean isSelectArgRequired() {
+	public boolean isArgumentHolderRequired() {
 		return dataPersister.isSelectArgRequired();
 	}
 

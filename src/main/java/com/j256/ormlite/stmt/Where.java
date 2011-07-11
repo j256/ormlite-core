@@ -420,9 +420,30 @@ public class Where<T, ID> {
 	 * Add a raw statement as part of the where that can be anything that the database supports. Using more structured
 	 * methods is recommended but this gives more control over the query and allows you to utilize database specific
 	 * features.
+	 * 
+	 * @param rawStatement
+	 *            The statement that we should insert into the WHERE.
+	 * 
+	 * @param args
+	 *            Optional arguments that correspond to any ? specified in the rawStatement. Each of the arguments must
+	 *            have the corresponding columnName set.
 	 */
-	public Where<T, ID> raw(String rawStatement) {
-		addClause(new Raw(rawStatement));
+	public Where<T, ID> raw(String rawStatement, ArgumentHolder... args) throws SQLException {
+		for (ArgumentHolder arg : args) {
+			// this will throw if the column-name is not set
+			String columnName = arg.getColumnName();
+			arg.setMetaInfo(findColumnFieldType(columnName));
+		}
+		addClause(new Raw(rawStatement, args));
+		return this;
+	}
+
+	/**
+	 * Make a comparison where the operator is specified by the caller. It is up to the caller to specify an appropriate
+	 * operator for the database and that it be formatted correctly.
+	 */
+	public Where<T, ID> rawComparison(String columnName, String rawOperator, Object value) throws SQLException {
+		addClause(new SimpleComparison(columnName, findColumnFieldType(columnName), value, rawOperator));
 		return this;
 	}
 

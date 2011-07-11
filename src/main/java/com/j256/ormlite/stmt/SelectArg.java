@@ -21,7 +21,13 @@ public class SelectArg extends BaseSelectArg implements ArgumentHolder {
 	private Object value = null;
 
 	public SelectArg() {
+		super();
 		// value set later
+	}
+
+	public SelectArg(String columnName, Object value) {
+		super(columnName);
+		setValue(value);
 	}
 
 	public SelectArg(Object value) {

@@ -14,14 +14,19 @@ public abstract class BaseSelectArg implements ArgumentHolder {
 	private String columnName = null;
 	private FieldType fieldType = null;
 
+	public BaseSelectArg() {
+		// no args
+	}
+
+	public BaseSelectArg(String columName) {
+		this.columnName = columName;
+	}
+
 	/**
 	 * Return the stored value.
 	 */
 	protected abstract Object getValue();
 
-	/**
-	 * Store the value.
-	 */
 	public abstract void setValue(Object value);
 
 	/**
@@ -29,9 +34,6 @@ public abstract class BaseSelectArg implements ArgumentHolder {
 	 */
 	protected abstract boolean isValueSet();
 
-	/**
-	 * Return the column-name associated with this argument. The name is set by the package internally.
-	 */
 	public String getColumnName() {
 		if (columnName == null) {
 			throw new IllegalArgumentException("Column name has not been set");
@@ -40,10 +42,7 @@ public abstract class BaseSelectArg implements ArgumentHolder {
 		}
 	}
 
-	/**
-	 * Used internally by the package to set the column-name associated with this argument.
-	 */
-	public void setMetaInfo(String columnName, FieldType fieldType) {
+	public void setMetaInfo(String columnName) {
 		if (this.columnName == null) {
 			// not set yet
 		} else if (this.columnName.equals(columnName)) {
@@ -52,6 +51,10 @@ public abstract class BaseSelectArg implements ArgumentHolder {
 			throw new IllegalArgumentException("Column name cannot be set twice from " + this.columnName + " to "
 					+ columnName);
 		}
+		this.columnName = columnName;
+	}
+
+	public void setMetaInfo(FieldType fieldType) {
 		if (this.fieldType == null) {
 			// not set yet
 		} else if (this.fieldType == fieldType) {
@@ -60,13 +63,14 @@ public abstract class BaseSelectArg implements ArgumentHolder {
 			throw new IllegalArgumentException("FieldType name cannot be set twice from " + this.fieldType + " to "
 					+ fieldType);
 		}
-		this.columnName = columnName;
 		this.fieldType = fieldType;
 	}
 
-	/**
-	 * Return the value associated with this argument. The value should be set by the user before it is consumed.
-	 */
+	public void setMetaInfo(String columnName, FieldType fieldType) {
+		setMetaInfo(columnName);
+		setMetaInfo(fieldType);
+	}
+
 	public Object getSqlArgValue() throws SQLException {
 		if (!isValueSet()) {
 			throw new SQLException("Column value has not been set for " + columnName);
