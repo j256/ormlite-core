@@ -976,7 +976,8 @@ public class FieldTypeTest extends BaseCoreTest {
 	}
 
 	private static class NeedsUppercaseSequenceDatabaseType extends NeedsSequenceDatabaseType {
-		public NeedsUppercaseSequenceDatabaseType() {
+		public NeedsUppercaseSequenceDatabaseType() throws SQLException {
+			super();
 		}
 		@Override
 		public boolean isEntityNamesMustBeUpCase() {
@@ -985,7 +986,8 @@ public class FieldTypeTest extends BaseCoreTest {
 	}
 
 	private static class NeedsSequenceDatabaseType extends H2DatabaseType {
-		public NeedsSequenceDatabaseType() {
+		public NeedsSequenceDatabaseType() throws SQLException {
+			super();
 		}
 		@Override
 		public boolean isIdSequenceNeeded() {

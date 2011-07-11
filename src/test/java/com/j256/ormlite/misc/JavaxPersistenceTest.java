@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.sql.SQLException;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -134,6 +135,10 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 	}
 
 	private static class UpperCaseFieldDatabaseType extends H2DatabaseType {
+		public UpperCaseFieldDatabaseType() throws SQLException {
+			super();
+		}
+
 		@Override
 		public boolean isEntityNamesMustBeUpCase() {
 			return true;

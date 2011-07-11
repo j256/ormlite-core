@@ -1,5 +1,7 @@
 package com.j256.ormlite.h2;
 
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.List;
 
 import com.j256.ormlite.db.BaseDatabaseType;
@@ -12,6 +14,12 @@ import com.j256.ormlite.field.FieldType;
  * @author graywatson
  */
 public class H2DatabaseType extends BaseDatabaseType implements DatabaseType {
+
+	public static final String DATABASE_URL = "jdbc:h2:mem:h2testdatabase";
+
+	public H2DatabaseType() throws SQLException {
+		setDriver(DriverManager.getDriver(DATABASE_URL));
+	}
 
 	public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 		return dbTypePart.equals("h2");

@@ -14,9 +14,7 @@ import com.j256.ormlite.support.DatabaseConnection;
  */
 public class H2ConnectionSource implements ConnectionSource {
 
-	protected static final String DATABASE_URL = "jdbc:h2:mem:h2testdatabase";
-
-	private DatabaseType databaseType = new H2DatabaseType();
+	public DatabaseType databaseType = new H2DatabaseType();
 	private DatabaseConnection connection = null;
 
 	public H2ConnectionSource() throws SQLException {
@@ -36,7 +34,7 @@ public class H2ConnectionSource implements ConnectionSource {
 
 	public DatabaseConnection getReadWriteConnection() throws SQLException {
 		if (connection == null) {
-			connection = new H2DatabaseConnection(DriverManager.getConnection(DATABASE_URL));
+			connection = new H2DatabaseConnection(DriverManager.getConnection(H2DatabaseType.DATABASE_URL));
 		}
 		return connection;
 	}
