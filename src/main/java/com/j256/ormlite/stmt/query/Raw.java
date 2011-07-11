@@ -14,14 +14,19 @@ import com.j256.ormlite.stmt.ArgumentHolder;
 public class Raw implements Clause {
 
 	private final String statement;
+	private final ArgumentHolder[] args;
 
-	public Raw(String statement) {
+	public Raw(String statement, ArgumentHolder[] args) {
 		this.statement = statement;
+		this.args = args;
 	}
 
 	public void appendSql(DatabaseType databaseType, StringBuilder sb, List<ArgumentHolder> argList)
 			throws SQLException {
 		sb.append(statement);
 		sb.append(' ');
+		for (ArgumentHolder arg : args) {
+			argList.add(arg);
+		}
 	}
 }

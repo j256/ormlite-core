@@ -20,7 +20,7 @@ public class InSubQuery extends BaseComparison {
 
 	public InSubQuery(String columnName, FieldType fieldType, InternalQueryBuilderWrapper subQueryBuilder)
 			throws SQLException {
-		super(columnName, fieldType, null);
+		super(columnName, fieldType, null, true);
 		this.subQueryBuilder = subQueryBuilder;
 	}
 

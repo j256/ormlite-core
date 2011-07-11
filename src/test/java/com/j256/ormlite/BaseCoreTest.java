@@ -17,12 +17,13 @@ import com.j256.ormlite.table.TableUtils;
 
 public abstract class BaseCoreTest {
 
-	protected final DatabaseType databaseType = new H2DatabaseType();
+	protected DatabaseType databaseType;
 	protected WrappedConnectionSource connectionSource;
 
 	@Before
 	public void before() throws Exception {
 		connectionSource = new WrappedConnectionSource(new H2ConnectionSource());
+		databaseType = connectionSource.getDatabaseType();
 	}
 
 	@After
@@ -32,7 +33,8 @@ public abstract class BaseCoreTest {
 	}
 
 	protected static class LimitAfterSelectDatabaseType extends H2DatabaseType {
-		public LimitAfterSelectDatabaseType() {
+		public LimitAfterSelectDatabaseType() throws SQLException {
+			super();
 		}
 		@Override
 		public boolean isLimitAfterSelect() {

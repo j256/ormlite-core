@@ -25,7 +25,7 @@ public class SetValue extends BaseComparison {
 	private static final SelectArg nullValue = new SelectArg(null);
 
 	public SetValue(String columnName, FieldType fieldType, Object value) throws SQLException {
-		super(columnName, fieldType, (value == null ? nullValue : value));
+		super(columnName, fieldType, (value == null ? nullValue : value), false);
 	}
 
 	@Override

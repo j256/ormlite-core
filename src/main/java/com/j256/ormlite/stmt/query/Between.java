@@ -19,7 +19,7 @@ public class Between extends BaseComparison {
 	private Object high;
 
 	public Between(String columnName, FieldType fieldType, Object low, Object high) throws SQLException {
-		super(columnName, fieldType, null);
+		super(columnName, fieldType, null, true);
 		this.low = low;
 		this.high = high;
 	}

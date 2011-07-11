@@ -21,7 +21,7 @@ import com.j256.ormlite.stmt.StatementBuilder;
 public class SetExpression extends BaseComparison {
 
 	public SetExpression(String columnName, FieldType fieldType, String string) throws SQLException {
-		super(columnName, fieldType, string);
+		super(columnName, fieldType, string, true);
 	}
 
 	@Override

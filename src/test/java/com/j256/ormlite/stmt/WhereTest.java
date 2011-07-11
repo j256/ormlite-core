@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.query.SimpleComparison;
@@ -516,6 +517,48 @@ public class WhereTest extends BaseCoreTest {
 		sb.append(" = ").append(val);
 		sb.append(" AND ").append(raw).append(" ) ");
 		assertEquals(sb.toString(), whereSb.toString());
+	}
+
+	@Test
+	public void testRawComparison() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		String id = "ewpfjew";
+		foo.id = id;
+		int val = 63465365;
+		foo.val = val;
+		assertEquals(1, dao.create(foo));
+
+		QueryBuilder<Foo, String> qb = dao.queryBuilder();
+		qb.where().rawComparison("id", "=", new SelectArg(id));
+		List<Foo> results = qb.query();
+		assertNotNull(results);
+		assertEquals(1, results.size());
+		assertEquals(val, results.get(0).val);
+	}
+
+	@Test
+	public void testRawArgs() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		String id = "ewpfjew";
+		foo.id = id;
+		int val = 63465365;
+		foo.val = val;
+		assertEquals(1, dao.create(foo));
+
+		QueryBuilder<Foo, String> qb = dao.queryBuilder();
+		qb.where().raw(Foo.ID_COLUMN_NAME + " = ?", new SelectArg(Foo.ID_COLUMN_NAME, id));
+		List<Foo> results = qb.query();
+		assertNotNull(results);
+		assertEquals(1, results.size());
+		assertEquals(val, results.get(0).val);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testRawArgsNoColumnName() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		dao.queryBuilder().where().raw("id = ?", new SelectArg(7));
 	}
 
 	@Test

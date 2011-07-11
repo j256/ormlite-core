@@ -19,10 +19,11 @@ abstract class BaseComparison implements Comparison {
 	protected final FieldType fieldType;
 	private final Object value;
 
-	protected BaseComparison(String columnName, FieldType fieldType, Object value) throws SQLException {
-		if (fieldType != null && !fieldType.isComparable()) {
+	protected BaseComparison(String columnName, FieldType fieldType, Object value, boolean isComparison)
+			throws SQLException {
+		if (isComparison && fieldType != null && !fieldType.isComparable()) {
 			throw new SQLException("Field '" + columnName + "' is of data type " + fieldType.getDataPersister()
-					+ " which can be compared");
+					+ " which can not be compared");
 		}
 		this.columnName = columnName;
 		this.fieldType = fieldType;
@@ -59,16 +60,16 @@ abstract class BaseComparison implements Comparison {
 			throw new SQLException("argument to comparison of '" + fieldType.getFieldName() + "' is null");
 		} else if (argOrValue instanceof ArgumentHolder) {
 			sb.append('?');
-			ArgumentHolder selectArg = (ArgumentHolder) argOrValue;
-			selectArg.setMetaInfo(columnName, fieldType);
-			argList.add(selectArg);
-		} else if (fieldType.isSelectArgRequired()) {
+			ArgumentHolder argHolder = (ArgumentHolder) argOrValue;
+			argHolder.setMetaInfo(columnName, fieldType);
+			argList.add(argHolder);
+		} else if (fieldType.isArgumentHolderRequired()) {
 			sb.append('?');
-			ArgumentHolder selectArg = new SelectArg();
-			selectArg.setMetaInfo(columnName, fieldType);
+			ArgumentHolder argHolder = new SelectArg();
+			argHolder.setMetaInfo(columnName, fieldType);
 			// conversion is done when the getValue() is called
-			selectArg.setValue(argOrValue);
-			argList.add(selectArg);
+			argHolder.setValue(argOrValue);
+			argList.add(argHolder);
 		} else if (fieldType.isForeign() && fieldType.getFieldType() == argOrValue.getClass()) {
 			/*
 			 * If we have a foreign field and our argument is an instance of the foreign object (i.e. not its id), then

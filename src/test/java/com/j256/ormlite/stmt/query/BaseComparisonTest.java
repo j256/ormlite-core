@@ -28,19 +28,19 @@ public class BaseComparisonTest extends BaseCoreStmtTest {
 
 	{
 		try {
-			cmpInt = new BaseComparison(INT_COLUMN_NAME, numberFieldType, 10L) {
+			cmpInt = new BaseComparison(INT_COLUMN_NAME, numberFieldType, 10L, true) {
 				@Override
 				public void appendOperation(StringBuilder sb) {
 					sb.append("op");
 				}
 			};
-			cmpString = new BaseComparison(STRING_COLUMN_NAME, stringFieldType, 10L) {
+			cmpString = new BaseComparison(STRING_COLUMN_NAME, stringFieldType, 10L, true) {
 				@Override
 				public void appendOperation(StringBuilder sb) {
 					sb.append("op");
 				}
 			};
-			cmpForeign = new BaseComparison(INT_COLUMN_NAME, foreignFieldType, 10L) {
+			cmpForeign = new BaseComparison(INT_COLUMN_NAME, foreignFieldType, 10L, true) {
 				@Override
 				public void appendOperation(StringBuilder sb) {
 					sb.append("op");
