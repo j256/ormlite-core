@@ -240,12 +240,6 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		return statementExecutor.query(connectionSource, preparedQuery);
 	}
 
-	@SuppressWarnings("deprecation")
-	public RawResults queryForAllRaw(String queryString) throws SQLException {
-		checkForInitialized();
-		return statementExecutor.queryForAllRawOld(connectionSource, queryString);
-	}
-
 	public List<T> queryForMatching(T matchObj) throws SQLException {
 		return queryForMatching(matchObj, false);
 	}
@@ -511,19 +505,6 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			return iterator;
 		} catch (SQLException e) {
 			throw SqlExceptionUtil.create("Could not build prepared-query iterator for " + dataClass, e);
-		}
-	}
-
-	/*
-	 * When this gets removed, I should rename the GenericRawResults one to this name and deprecate it.
-	 */
-	@SuppressWarnings("deprecation")
-	public RawResults iteratorRaw(String query) throws SQLException {
-		checkForInitialized();
-		try {
-			return statementExecutor.buildOldIterator(connectionSource, query);
-		} catch (SQLException e) {
-			throw SqlExceptionUtil.create("Could not build iterator for " + query, e);
 		}
 	}
 

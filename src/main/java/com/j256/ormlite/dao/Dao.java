@@ -76,12 +76,6 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public List<T> queryForEq(String fieldName, Object value) throws SQLException;
 
 	/**
-	 * @deprecated You should be using {@link #queryRaw(String, String...)}
-	 */
-	@Deprecated
-	public RawResults queryForAllRaw(String query) throws SQLException;
-
-	/**
 	 * Query for the rows in the database that match the object passed in as an argument. Any fields in the matching
 	 * object that are not the default value (null, false, 0, 0.0, etc.) are used as the matching parameters with AND.
 	 * If you are worried about SQL quote escaping, you should use {@link #queryForMatchingArgs(Object)}.
@@ -382,12 +376,6 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 *             on any SQL problems.
 	 */
 	public CloseableIterator<T> iterator(PreparedQuery<T> preparedQuery) throws SQLException;
-
-	/**
-	 * @deprecated You should be using {@link #queryRaw(String, String...)};
-	 */
-	@Deprecated
-	public RawResults iteratorRaw(String query) throws SQLException;
 
 	/**
 	 * Similar to the {@link #iterator(PreparedQuery)} except it returns a RawResults object associated with the SQL

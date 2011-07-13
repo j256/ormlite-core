@@ -609,44 +609,6 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		dao.query((PreparedQuery<Foo>) null);
 	}
 
-	@SuppressWarnings("deprecation")
-	@Test
-	public void testQueryForAllRaw() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
-		Foo foo1 = new Foo();
-		String id1 = "stuff1";
-		int equal1 = 1231231232;
-		foo1.id = id1;
-		foo1.equal = equal1;
-		assertEquals(1, dao.create(foo1));
-		Foo foo2 = new Foo();
-		int equal2 = 1231232;
-		String id2 = "stuff2";
-		foo2.id = id2;
-		foo2.equal = equal2;
-		assertEquals(1, dao.create(foo2));
-
-		RawResults rawResults =
-				dao.queryForAllRaw("SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME + " FROM FOO");
-		List<String[]> resultList = rawResults.getResults();
-		assertEquals(2, resultList.size());
-		String[] row = resultList.get(0);
-		assertEquals(2, row.length);
-		assertEquals(foo1.id, row[0]);
-		assertEquals(foo1.equal, Integer.parseInt(row[1]));
-		row = resultList.get(1);
-		assertEquals(2, row.length);
-		assertEquals(foo2.id, row[0]);
-		assertEquals(foo2.equal, Integer.parseInt(row[1]));
-	}
-
-	@Test(expected = IllegalStateException.class)
-	public void testQueryForRawNoInit() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(Foo.class) {
-		};
-		dao.queryForAllRaw("select * from foo");
-	}
-
 	@Test
 	public void testObjectToString() throws Exception {
 		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(connectionSource, Foo.class) {
@@ -826,13 +788,6 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		dao.iterator((PreparedQuery<Foo>) null);
 	}
 
-	@Test(expected = IllegalStateException.class)
-	public void testIteratorRawNoInit() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(Foo.class) {
-		};
-		dao.iteratorRaw("select * from foo");
-	}
-
 	@Test
 	public void testTableConfig() throws Exception {
 		DatabaseTableConfig<Foo> config = DatabaseTableConfig.fromClass(connectionSource, Foo.class);
@@ -849,60 +804,6 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		dao.setTableConfig(config);
 		dao.setConnectionSource(connectionSource);
 		assertSame(config, dao.getTableConfig());
-	}
-
-	@Test
-	@SuppressWarnings("deprecation")
-	public void testIteratorRaw() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
-		Foo foo1 = new Foo();
-		String id1 = "stuff1";
-		int equal1 = 1231231232;
-		foo1.id = id1;
-		foo1.equal = equal1;
-		assertEquals(1, dao.create(foo1));
-		Foo foo2 = new Foo();
-		int equal2 = 1231232;
-		String id2 = "stuff2";
-		foo2.id = id2;
-		foo2.equal = equal2;
-		assertEquals(1, dao.create(foo2));
-
-		QueryBuilder<Foo, String> queryBuilder = dao.queryBuilder();
-		queryBuilder.where().eq(Foo.ID_COLUMN_NAME, id1);
-
-		RawResults iterator =
-				dao.iteratorRaw("SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME + " FROM FOO");
-		List<String[]> resultList = iterator.getResults();
-		assertEquals(2, resultList.size());
-		String[] row = resultList.get(0);
-		assertEquals(2, row.length);
-		assertEquals(foo1.id, row[0]);
-		assertEquals(foo1.equal, Integer.parseInt(row[1]));
-		row = resultList.get(1);
-		assertEquals(2, row.length);
-		assertEquals(foo2.id, row[0]);
-		assertEquals(foo2.equal, Integer.parseInt(row[1]));
-	}
-
-	@SuppressWarnings("deprecation")
-	@Test(expected = SQLException.class)
-	public void testIteratorRawThrow() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
-		Foo foo = new Foo();
-		String id = "stuff";
-		foo.id = id;
-		int equal = 21313;
-		foo.equal = equal;
-		assertEquals(1, dao.create(foo));
-
-		DatabaseConnection conn = connectionSource.getReadWriteConnection();
-		try {
-			conn.close();
-			dao.iteratorRaw("SELECT * FROM FOO");
-		} finally {
-			connectionSource.releaseConnection(conn);
-		}
 	}
 
 	@Test
