@@ -63,11 +63,6 @@ public enum DataType {
 	 * </p>
 	 */
 	DATE(DateType.getSingleton()),
-	/**
-	 * @deprecated You should use {@link DataType#DATE}
-	 */
-	@Deprecated
-	JAVA_DATE(DATE.dataPersister),
 
 	/**
 	 * Persists the {@link java.util.Date} Java class as long milliseconds since epoch.
@@ -77,11 +72,6 @@ public enum DataType {
 	 * </p>
 	 */
 	DATE_LONG(DateLongType.getSingleton()),
-	/**
-	 * @deprecated You should use {@link DataType#DATE_LONG}
-	 */
-	@Deprecated
-	JAVA_DATE_LONG(DATE_LONG.dataPersister),
 	/**
 	 * Persists the {@link java.util.Date} Java class as a string of a format.
 	 * 
@@ -95,11 +85,6 @@ public enum DataType {
 	 * </p>
 	 */
 	DATE_STRING(DateStringType.getSingleton()),
-	/**
-	 * @deprecated You should use {@link DataType#DATE_STRING}
-	 */
-	@Deprecated
-	JAVA_DATE_STRING(DATE_STRING.dataPersister),
 	/**
 	 * Persists the char primitive.
 	 */

@@ -201,41 +201,6 @@ public class DataTypeTest extends BaseCoreTest {
 		DataType.DATE.getDataPersister().parseDefaultString(fieldType, "not valid date string");
 	}
 
-	@SuppressWarnings("deprecation")
-	@Test
-	public void testJavaDate() throws Exception {
-		Class<LocalDate> clazz = LocalDate.class;
-		Dao<LocalDate, Object> dao = createDao(clazz, true);
-		Date val = new Date();
-		String format = "yyyy-MM-dd HH:mm:ss.SSSSSS";
-		DateFormat dateFormat = new SimpleDateFormat(format);
-		String valStr = dateFormat.format(val);
-		LocalDate foo = new LocalDate();
-		foo.date = val;
-		assertEquals(1, dao.create(foo));
-		testType(clazz, val, val, val, valStr, DataType.JAVA_DATE, DATE_COLUMN, false, true, true, false, true, false,
-				true, false);
-	}
-
-	@SuppressWarnings("deprecation")
-	@Test
-	public void testJavaDateNull() throws Exception {
-		Class<LocalDate> clazz = LocalDate.class;
-		Dao<LocalDate, Object> dao = createDao(clazz, true);
-		assertEquals(1, dao.create(new LocalDate()));
-		testType(clazz, null, null, null, null, DataType.JAVA_DATE, DATE_COLUMN, false, true, true, false, true, false,
-				true, false);
-	}
-
-	@SuppressWarnings("deprecation")
-	@Test(expected = SQLException.class)
-	public void testJavaDateParseInvalid() throws Exception {
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, TABLE_NAME, LocalDate.class.getDeclaredField(DATE_COLUMN),
-						LocalDate.class);
-		DataType.JAVA_DATE.getDataPersister().parseDefaultString(fieldType, "not valid date string");
-	}
-
 	@Test
 	public void testDateString() throws Exception {
 		Class<LocalDateString> clazz = LocalDateString.class;
@@ -292,66 +257,6 @@ public class DataTypeTest extends BaseCoreTest {
 		DataType.DATE_STRING.getDataPersister().parseDefaultString(fieldType, "not valid date string");
 	}
 
-	@SuppressWarnings("deprecation")
-	@Test
-	public void testJavaDateString() throws Exception {
-		Class<LocalDateString> clazz = LocalDateString.class;
-		Dao<LocalDateString, Object> dao = createDao(LocalDateString.class, true);
-		Date val = new Date();
-		String format = "yyyy-MM-dd HH:mm:ss.SSSSSS";
-		DateFormat dateFormat = new SimpleDateFormat(format);
-		String valStr = dateFormat.format(val);
-		String sqlVal = valStr;
-		LocalDateString foo = new LocalDateString();
-		foo.date = val;
-		assertEquals(1, dao.create(foo));
-		testType(clazz, val, sqlVal, sqlVal, valStr, DataType.JAVA_DATE_STRING, DATE_COLUMN, false, true, true, false,
-				false, false, true, false);
-	}
-
-	@SuppressWarnings("deprecation")
-	@Test
-	public void testJavaDateStringNull() throws Exception {
-		Class<LocalDateString> clazz = LocalDateString.class;
-		Dao<LocalDateString, Object> dao = createDao(clazz, true);
-		assertEquals(1, dao.create(new LocalDateString()));
-		testType(clazz, null, null, null, null, DataType.JAVA_DATE_STRING, DATE_COLUMN, false, true, true, false,
-				false, false, true, false);
-	}
-
-	@SuppressWarnings("deprecation")
-	@Test(expected = SQLException.class)
-	public void testJavaDateStringResultInvalid() throws Exception {
-		Class<LocalString> clazz = LocalString.class;
-		Dao<LocalString, Object> dao = createDao(clazz, true);
-		LocalString foo = new LocalString();
-		foo.string = "not a date format";
-		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
-		CompiledStatement stmt = null;
-		try {
-			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes);
-			DatabaseResults results = stmt.runQuery();
-			assertTrue(results.next());
-			int colNum = results.findColumn(STRING_COLUMN);
-			DataType.JAVA_DATE_STRING.getDataPersister().resultToJava(null, results, colNum);
-		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
-			connectionSource.releaseConnection(conn);
-		}
-	}
-
-	@SuppressWarnings("deprecation")
-	@Test(expected = SQLException.class)
-	public void testJavaDateStringParseInvalid() throws Exception {
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, TABLE_NAME,
-						LocalDateString.class.getDeclaredField(DATE_COLUMN), LocalDateString.class);
-		DataType.JAVA_DATE_STRING.getDataPersister().parseDefaultString(fieldType, "not valid date string");
-	}
-
 	@Test
 	public void testDateLong() throws Exception {
 		Class<LocalDateLong> clazz = LocalDateLong.class;
@@ -381,40 +286,6 @@ public class DataTypeTest extends BaseCoreTest {
 				FieldType.createFieldType(connectionSource, TABLE_NAME,
 						LocalDateLong.class.getDeclaredField(DATE_COLUMN), LocalDateLong.class);
 		DataType.DATE_LONG.getDataPersister().parseDefaultString(fieldType, "not valid long number");
-	}
-
-	@SuppressWarnings("deprecation")
-	@Test
-	public void testJavaDateLong() throws Exception {
-		Class<LocalDateLong> clazz = LocalDateLong.class;
-		Dao<LocalDateLong, Object> dao = createDao(clazz, true);
-		Date val = new Date();
-		long sqlVal = val.getTime();
-		String valStr = Long.toString(val.getTime());
-		LocalDateLong foo = new LocalDateLong();
-		foo.date = val;
-		assertEquals(1, dao.create(foo));
-		testType(clazz, val, sqlVal, sqlVal, valStr, DataType.JAVA_DATE_LONG, DATE_COLUMN, false, true, false, false,
-				false, false, true, false);
-	}
-
-	@SuppressWarnings("deprecation")
-	@Test
-	public void testJavaDateLongNull() throws Exception {
-		Class<LocalDateLong> clazz = LocalDateLong.class;
-		Dao<LocalDateLong, Object> dao = createDao(clazz, true);
-		assertEquals(1, dao.create(new LocalDateLong()));
-		testType(clazz, null, null, null, null, DataType.JAVA_DATE_LONG, DATE_COLUMN, false, true, false, false, false,
-				false, true, false);
-	}
-
-	@SuppressWarnings("deprecation")
-	@Test(expected = SQLException.class)
-	public void testJavaDateLongParseInvalid() throws Exception {
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, TABLE_NAME,
-						LocalDateLong.class.getDeclaredField(DATE_COLUMN), LocalDateLong.class);
-		DataType.JAVA_DATE_LONG.getDataPersister().parseDefaultString(fieldType, "not valid long number");
 	}
 
 	@Test
