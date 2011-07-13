@@ -1301,6 +1301,15 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(id1, dao.extractId(foo1));
 	}
 
+	@Test(expected = SQLException.class)
+	public void testExtractIdBadClass() throws Exception {
+		Dao<NoId, Void> dao = createDao(NoId.class, true);
+		NoId foo = new NoId();
+		String stuff = "stuff1";
+		foo.stuff = stuff;
+		dao.extractId(foo);
+	}
+
 	@Test
 	public void testFindForeign() throws Exception {
 		Dao<Foreign, String> dao = createDao(Foreign.class, false);
@@ -1958,17 +1967,29 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		foo1.id = "stuff";
 		int equal1 = 21313;
 		foo1.equal = equal1;
-		assertEquals(1, dao.create(foo1));
+		CreateOrUpdateStatus status = dao.createOrUpdate(foo1);
+		assertTrue(status.created);
+		assertFalse(status.updated);
+		assertEquals(1, status.numLinesChanged);
 
 		int equal2 = 4134132;
 		foo1.equal = equal2;
-		CreateOrUpdateStatus status = dao.createOrUpdate(foo1);
+		status = dao.createOrUpdate(foo1);
 		assertFalse(status.created);
 		assertTrue(status.updated);
 		assertEquals(1, status.numLinesChanged);
 
 		Foo fooResult = dao.queryForId(foo1.id);
 		assertEquals(equal2, fooResult.equal);
+	}
+
+	@Test
+	public void testCreateOrUpdateNull() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		CreateOrUpdateStatus status = dao.createOrUpdate(null);
+		assertFalse(status.created);
+		assertFalse(status.updated);
+		assertEquals(0, status.numLinesChanged);
 	}
 
 	@Test
@@ -1982,6 +2003,12 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Foo fooResult = dao.queryForSameId(foo1);
 		assertEquals(foo1.id, fooResult.id);
 		assertEquals(foo1.equal, fooResult.equal);
+	}
+
+	@Test
+	public void testQueryForSameIdNull() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		assertNull(dao.queryForSameId(null));
 	}
 
 	@Test
@@ -2000,6 +2027,12 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 		assertEquals(foo1.id, fooResult.id);
 		assertEquals(foo1.equal, fooResult.equal);
+	}
+
+	@Test
+	public void testCreateIfNotExistsNull() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		assertNull(dao.createIfNotExists(null));
 	}
 
 	private String buildFooQueryAllString(Dao<Foo, Object> fooDao) throws SQLException {
@@ -2110,6 +2143,11 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		String stuff;
 		@DatabaseField(uniqueCombo = true)
 		String uniqueStuff;
+	}
+
+	protected static class NoId {
+		@DatabaseField
+		String stuff;
 	}
 
 	private static class Mapper implements RawRowMapper<Foo> {

@@ -321,6 +321,12 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		iterator.close();
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void testUnknownEmptyCollection() throws Exception {
+		Dao<Account, Object> dao = createDao(Account.class, true);
+		dao.getEmptyForeignCollection("unknown field name");
+	}
+
 	@Test
 	public void testLazyContainsAll() throws Exception {
 		Dao<Account, Integer> accountDao = createLazyOrderDao();

@@ -33,12 +33,6 @@ public class SelectArgTest extends BaseCoreStmtTest {
 		assertSame(val, selectArg.getSqlArgValue());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testGetColumnName() {
-		SelectArg selectArg = new SelectArg();
-		selectArg.getColumnName();
-	}
-
 	@Test
 	public void testGetColumnNameOk() {
 		SelectArg selectArg = new SelectArg();

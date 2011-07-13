@@ -96,12 +96,6 @@ public class BaseComparisonTest extends BaseCoreStmtTest {
 		SelectArg value = new SelectArg();
 		StringBuilder sb = new StringBuilder();
 		List<ArgumentHolder> argList = new ArrayList<ArgumentHolder>();
-		try {
-			value.getColumnName();
-			fail("Should have thrown");
-		} catch (IllegalArgumentException e) {
-			// expected
-		}
 		cmpInt.appendArgOrValue(null, numberFieldType, sb, argList, value);
 		assertEquals(1, argList.size());
 		assertEquals(INT_COLUMN_NAME, value.getColumnName());

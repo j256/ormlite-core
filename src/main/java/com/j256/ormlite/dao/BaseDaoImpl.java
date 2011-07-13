@@ -762,9 +762,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			Object fieldValue = fieldType.getFieldValueIfNotDefault(matchObj);
 			if (fieldValue != null) {
 				if (useArgs) {
-					SelectArg arg = new SelectArg();
-					arg.setValue(fieldValue);
-					fieldValue = arg;
+					fieldValue = new SelectArg(fieldValue);
 				}
 				where.eq(fieldType.getDbColumnName(), fieldValue);
 				fieldC++;
@@ -785,9 +783,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		for (Map.Entry<String, Object> entry : fieldValues.entrySet()) {
 			Object fieldValue = entry.getValue();
 			if (useArgs) {
-				SelectArg arg = new SelectArg();
-				arg.setValue(fieldValue);
-				fieldValue = arg;
+				fieldValue = new SelectArg(fieldValue);
 			}
 			where.eq(entry.getKey(), fieldValue);
 		}
