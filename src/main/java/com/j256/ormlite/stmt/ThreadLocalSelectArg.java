@@ -1,5 +1,7 @@
 package com.j256.ormlite.stmt;
 
+import com.j256.ormlite.field.SqlType;
+
 /**
  * Like {@link SelectArg} but using a {@link ThreadLocal} internally to improve reentrance so that multiple threads can
  * use the same compiled statement.
@@ -12,6 +14,16 @@ public class ThreadLocalSelectArg extends BaseSelectArg implements ArgumentHolde
 
 	public ThreadLocalSelectArg() {
 		// value set later
+	}
+
+	public ThreadLocalSelectArg(String columnName, Object value) {
+		super(columnName);
+		setValue(value);
+	}
+
+	public ThreadLocalSelectArg(SqlType sqlType, Object value) {
+		super(sqlType);
+		setValue(value);
 	}
 
 	public ThreadLocalSelectArg(Object value) {
