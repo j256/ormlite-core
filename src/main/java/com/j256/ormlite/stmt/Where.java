@@ -426,13 +426,18 @@ public class Where<T, ID> {
 	 * 
 	 * @param args
 	 *            Optional arguments that correspond to any ? specified in the rawStatement. Each of the arguments must
-	 *            have the corresponding columnName set.
+	 *            have either the corresponding columnName or the sql-type set.
 	 */
 	public Where<T, ID> raw(String rawStatement, ArgumentHolder... args) throws SQLException {
 		for (ArgumentHolder arg : args) {
-			// this will throw if the column-name is not set
 			String columnName = arg.getColumnName();
-			arg.setMetaInfo(findColumnFieldType(columnName));
+			if (columnName == null) {
+				if (arg.getSqlType() == null) {
+					throw new IllegalArgumentException("Either the column name or SqlType must be set on each argument");
+				}
+			} else {
+				arg.setMetaInfo(findColumnFieldType(columnName));
+			}
 		}
 		addClause(new Raw(rawStatement, args));
 		return this;

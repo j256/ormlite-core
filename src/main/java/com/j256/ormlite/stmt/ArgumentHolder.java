@@ -3,6 +3,7 @@ package com.j256.ormlite.stmt;
 import java.sql.SQLException;
 
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.field.SqlType;
 
 /**
  * An argument to a select SQL statement. After the query is constructed, the caller can set the value on this argument
@@ -46,7 +47,13 @@ public interface ArgumentHolder {
 	public Object getSqlArgValue() throws SQLException;
 
 	/**
-	 * Return the field type associated with this class.
+	 * Return the SQL type associated with this class. Either this or the field-type must be available.
+	 */
+	public SqlType getSqlType();
+
+	/**
+	 * Return the field type associated with this class. Either this or the sql-type must be available. The field-type
+	 * is available if there is a corresponding column-name set on the holder.
 	 */
 	public FieldType getFieldType();
 }

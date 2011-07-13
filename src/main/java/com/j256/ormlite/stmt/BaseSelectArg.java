@@ -3,6 +3,7 @@ package com.j256.ormlite.stmt;
 import java.sql.SQLException;
 
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.field.SqlType;
 
 /**
  * Base class for other select argument classes.
@@ -13,6 +14,7 @@ public abstract class BaseSelectArg implements ArgumentHolder {
 
 	private String columnName = null;
 	private FieldType fieldType = null;
+	private SqlType sqlType = null;
 
 	public BaseSelectArg() {
 		// no args
@@ -20,6 +22,10 @@ public abstract class BaseSelectArg implements ArgumentHolder {
 
 	public BaseSelectArg(String columName) {
 		this.columnName = columName;
+	}
+
+	public BaseSelectArg(SqlType sqlType) {
+		this.sqlType = sqlType;
 	}
 
 	/**
@@ -35,11 +41,7 @@ public abstract class BaseSelectArg implements ArgumentHolder {
 	protected abstract boolean isValueSet();
 
 	public String getColumnName() {
-		if (columnName == null) {
-			throw new IllegalArgumentException("Column name has not been set");
-		} else {
-			return columnName;
-		}
+		return columnName;
 	}
 
 	public void setMetaInfo(String columnName) {
@@ -90,6 +92,10 @@ public abstract class BaseSelectArg implements ArgumentHolder {
 
 	public FieldType getFieldType() {
 		return fieldType;
+	}
+
+	public SqlType getSqlType() {
+		return sqlType;
 	}
 
 	@Override

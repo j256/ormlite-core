@@ -3,6 +3,7 @@ package com.j256.ormlite.stmt.mapped;
 import java.sql.SQLException;
 
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.logger.Log.Level;
 import com.j256.ormlite.stmt.ArgumentHolder;
 import com.j256.ormlite.stmt.PreparedDelete;
@@ -50,10 +51,17 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 			}
 			for (int i = 0; i < argHolders.length; i++) {
 				Object argValue = argHolders[i].getSqlArgValue();
-				if (argValue == null) {
-					stmt.setNull(i, argFieldTypes[i].getSqlType());
+				FieldType fieldType = argFieldTypes[i];
+				SqlType sqlType;
+				if (fieldType == null) {
+					sqlType = argHolders[i].getSqlType();
 				} else {
-					stmt.setObject(i, argValue, argFieldTypes[i].getSqlType());
+					sqlType = fieldType.getSqlType();
+				}
+				if (argValue == null) {
+					stmt.setNull(i, sqlType);
+				} else {
+					stmt.setObject(i, argValue, sqlType);
 				}
 				if (argValues != null) {
 					argValues[i] = argValue;
