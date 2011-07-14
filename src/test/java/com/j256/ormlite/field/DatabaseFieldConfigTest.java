@@ -219,9 +219,95 @@ public class DatabaseFieldConfigTest {
 		assertNull(fieldConfig.getDefaultValue());
 	}
 
+	@Test
+	public void testFooSetGet() throws Exception {
+		DatabaseType databaseType = new StubDatabaseType();
+		DatabaseFieldConfig fieldConfig =
+				DatabaseFieldConfig.fromField(databaseType, "foo", Foo.class.getDeclaredField("field"));
+
+		assertNull(fieldConfig.getIndexName());
+		String indexName = "hello";
+		fieldConfig.setIndexName(indexName);
+		assertEquals(indexName, fieldConfig.getIndexName());
+
+		assertNull(fieldConfig.getUniqueIndexName());
+		String uniqueIndex = "fpwoejfwf";
+		fieldConfig.setUniqueIndexName(uniqueIndex);
+		assertEquals(uniqueIndex, fieldConfig.getUniqueIndexName());
+
+		assertNull(fieldConfig.getFormat());
+		String format = "fewjfwe";
+		fieldConfig.setFormat(format);
+		assertEquals(format, fieldConfig.getFormat());
+
+		assertFalse(fieldConfig.isThrowIfNull());
+		boolean throwIfNull = true;
+		fieldConfig.setThrowIfNull(throwIfNull);
+		assertTrue(fieldConfig.isThrowIfNull());
+
+		assertEquals(1, fieldConfig.getMaxEagerForeignCollectionLevel());
+		int maxLevel = 123123;
+		fieldConfig.setMaxEagerForeignCollectionLevel(maxLevel);
+		assertEquals(maxLevel, fieldConfig.getMaxEagerForeignCollectionLevel());
+
+		assertEquals(DatabaseField.MAX_FOREIGN_AUTO_REFRESH_LEVEL, fieldConfig.getMaxForeignAutoRefreshLevel());
+		int maxRefresh = 1432323;
+		fieldConfig.setMaxForeignAutoRefreshLevel(maxRefresh);
+		assertEquals(maxRefresh, fieldConfig.getMaxForeignAutoRefreshLevel());
+
+		assertFalse(fieldConfig.isForeignCollection());
+		boolean foreignCollection = true;
+		fieldConfig.setForeignCollection(foreignCollection);
+		assertTrue(fieldConfig.isForeignCollection());
+
+		assertFalse(fieldConfig.isForeignAutoRefresh());
+		boolean foreignAutoRefresh = true;
+		fieldConfig.setForeignAutoRefresh(foreignAutoRefresh);
+		assertTrue(fieldConfig.isForeignAutoRefresh());
+
+		assertNull(fieldConfig.getForeignCollectionOrderColumn());
+		String columnName = "wpofjewfpeff";
+		fieldConfig.setForeignCollectionOrderColumn(columnName);
+		assertEquals(columnName, fieldConfig.getForeignCollectionOrderColumn());
+	}
+
+	@Test
+	public void testNotPersisted() throws Exception {
+		DatabaseType databaseType = new StubDatabaseType();
+		DatabaseFieldConfig fieldConfig =
+				DatabaseFieldConfig.fromField(databaseType, "foo", NotPersisted.class.getDeclaredField("field"));
+		assertNull(fieldConfig);
+	}
+
+	@Test
+	public void testIndexNames() throws Exception {
+		DatabaseType databaseType = new StubDatabaseType();
+		String tableName = "table1";
+		DatabaseFieldConfig fieldConfig =
+				DatabaseFieldConfig.fromField(databaseType, tableName, IndexName.class.getDeclaredField("field1"));
+		assertEquals(tableName + "_" + IndexName.INDEX_COLUMN_NAME + "_idx", fieldConfig.getIndexName());
+		fieldConfig =
+				DatabaseFieldConfig.fromField(databaseType, tableName, IndexName.class.getDeclaredField("field2"));
+		assertEquals(tableName + "_" + IndexName.UNIQUE_INDEX_COLUMN_NAME + "_idx", fieldConfig.getUniqueIndexName());
+	}
+
 	protected class Foo {
 		@DatabaseField(canBeNull = true)
 		String field;
+	}
+
+	protected class NotPersisted {
+		@DatabaseField(persisted = false)
+		String field;
+	}
+
+	protected class IndexName {
+		public static final String INDEX_COLUMN_NAME = "index";
+		public static final String UNIQUE_INDEX_COLUMN_NAME = "unique";
+		@DatabaseField(index = true, columnName = INDEX_COLUMN_NAME)
+		String field1;
+		@DatabaseField(uniqueIndex = true, columnName = UNIQUE_INDEX_COLUMN_NAME)
+		String field2;
 	}
 
 	protected class Serial implements Serializable {

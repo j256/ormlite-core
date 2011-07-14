@@ -4,8 +4,6 @@ import java.sql.SQLException;
 import java.util.Collection;
 
 import com.j256.ormlite.field.ForeignCollectionField;
-import com.j256.ormlite.stmt.DeleteBuilder;
-import com.j256.ormlite.stmt.PreparedDelete;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.SelectArg;
@@ -27,7 +25,6 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 	protected final String fieldName;
 	protected final Object fieldValue;
 	private PreparedQuery<T> preparedQuery;
-	private PreparedDelete<T> preparedDelete;
 	private final String orderColumn;
 
 	public BaseForeignCollection(Dao<T, ID> dao, String fieldName, Object fieldValue, String orderColumn) {
@@ -144,16 +141,5 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 			preparedQuery = qb.where().eq(fieldName, fieldArg).prepare();
 		}
 		return preparedQuery;
-	}
-
-	protected PreparedDelete<T> getPreparedDelete() throws SQLException {
-		if (preparedDelete == null) {
-			SelectArg fieldArg = new SelectArg();
-			fieldArg.setValue(fieldValue);
-			DeleteBuilder<T, ID> db = dao.deleteBuilder();
-			db.where().eq(fieldName, fieldArg);
-			preparedDelete = db.prepare();
-		}
-		return preparedDelete;
 	}
 }
