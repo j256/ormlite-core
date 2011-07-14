@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on June, 3 2011 by texi2html 1.70 -->
+<!-- Created on July, 13 2011 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -484,41 +484,58 @@ is a convenience method for calling <code>queryBuilder().where().eq(fieldName, v
 <dt><code> queryForMatching(T matchObj)</code></dt>
 <dd>
 <p>Query for the rows in the database that match the object passed in as an argument. Any fields in the matching object that
-are not the default value (null, false, 0, 0.0, etc.) are used as the matching parameters with <code>AND</code>.
+are not the default value (null, false, 0, 0.0, etc.) are used as the matching parameters with <code>AND</code>.  If you are worried
+about SQL quote escaping, you should use <code>queryForMatchingArgs</code>.
 
 </p><a name="IDX254"></a>
 <a name="IDX255"></a>
+<a name="IDX256"></a>
+</dd>
+<dt><code> queryForMatchingArgs(T matchObj)</code></dt>
+<dd>
+<p>Same as <code>queryForMatching</code> but this uses SQL ? arguments. This is slightly more expensive but you don't have to worry about
+SQL quote escaping.
+
+</p><a name="IDX257"></a>
+<a name="IDX258"></a>
 </dd>
 <dt><code> queryForFieldValues(Map&lt;String, Object&gt; fieldValues)</code></dt>
 <dd>
 <p>Query for the rows in the database that matches all of the field to value entries from the map passed in.
 
-</p><a name="IDX256"></a>
+</p><a name="IDX259"></a>
+</dd>
+<dt><code> queryForFieldValuesArgs(Map&lt;String, Object&gt; fieldValues)</code></dt>
+<dd>
+<p>Same as <code>queryForFieldValues</code> but this uses SQL ? arguments. This is slightly more expensive but you don't have to worry
+about SQL quote escaping.
+
+</p><a name="IDX260"></a>
 </dd>
 <dt><code> queryForSameId(T data)</code></dt>
 <dd>
 <p>Query for a data item in the table that has the same ID as the data parameter.
 
-</p><a name="IDX257"></a>
-<a name="IDX258"></a>
+</p><a name="IDX261"></a>
+<a name="IDX262"></a>
 </dd>
 <dt><code> queryBuilder()</code></dt>
 <dd>
 <p>Create and return a new <code>QueryBuilder</code> object which allows you to build a custom query.  See section <a href="ormlite_3.html#SEC33">Query Builder Basics</a>.
 
-</p><a name="IDX259"></a>
+</p><a name="IDX263"></a>
 </dd>
 <dt><code> updateBuilder()</code></dt>
 <dd>
 <p>Create and return a new <code>UpdateBuilder</code> object which allows you to build a custom update statement.  See <a href="ormlite_3.html#ANC24">UpdateBuilder</a>.
 
-</p><a name="IDX260"></a>
+</p><a name="IDX264"></a>
 </dd>
 <dt><code> deleteBuilder()</code></dt>
 <dd>
 <p>Create and return a new <code>DeleteBuilder</code> object which allows you to build a custom delete statement.  See <a href="ormlite_3.html#ANC23">DeleteBuilder</a>.
 
-</p><a name="IDX261"></a>
+</p><a name="IDX265"></a>
 </dd>
 <dt><code> query(PreparedQuery&lt;T&gt; preparedQuery)</code></dt>
 <dd>
@@ -526,13 +543,13 @@ are not the default value (null, false, 0, 0.0, etc.) are used as the matching p
 list of matching objects. For medium sized or large tables, this may load a lot of objects into memory so you
 should consider using the <code>iterator</code> method instead.  
 
-</p><a name="IDX262"></a>
+</p><a name="IDX266"></a>
 </dd>
 <dt><code> create(T data)</code></dt>
 <dd>
 <p>Create a new entry in the database from an object.  Should return 1 indicating 1 row was inserted.
 
-</p><a name="IDX263"></a>
+</p><a name="IDX267"></a>
 </dd>
 <dt><code> createIfNotExists(T data)</code></dt>
 <dd>
@@ -540,7 +557,7 @@ should consider using the <code>iterator</code> method instead.
 the data parameter, does a query for on it, returning the data if it exists.  If it does not exist then create is callled with the data
 parameter.
 
-</p><a name="IDX264"></a>
+</p><a name="IDX268"></a>
 </dd>
 <dt><code> createOrUpdate(T data)</code></dt>
 <dd>
@@ -548,7 +565,7 @@ parameter.
 updated from the fields in the parameter object.  It returns a status object with the number of rows changed and whether an insert or
 update was performed.
 
-</p><a name="IDX265"></a>
+</p><a name="IDX269"></a>
 </dd>
 <dt><code> update(T data)</code></dt>
 <dd>
@@ -556,7 +573,7 @@ update was performed.
 those changes to the database. You cannot use this method to update the id field - see <code>updateId()</code>.  This
 should return 1 since 1 row was updated.
 
-</p><a name="IDX266"></a>
+</p><a name="IDX270"></a>
 <p><a name="ANC27"></a>
 </p></dd>
 <dt><code> updateId(T data, ID newId)</code></dt>
@@ -565,14 +582,14 @@ should return 1 since 1 row was updated.
 the new-id is passed in as an argument.  After the id has been updated in the database, the id field of the data
 object will also be changed.  This should return 1 since 1 row was updated.
 
-</p><a name="IDX267"></a>
-<a name="IDX268"></a>
+</p><a name="IDX271"></a>
+<a name="IDX272"></a>
 </dd>
 <dt><code> update(PreparedUpdate&lt;T&gt; preparedUpdate)</code></dt>
 <dd>
 <p>Update objects that match a custom update statement.
 
-</p><a name="IDX269"></a>
+</p><a name="IDX273"></a>
 </dd>
 <dt><code> refresh(T data, ID newId)</code></dt>
 <dd>
@@ -580,34 +597,34 @@ object will also be changed.  This should return 1 since 1 row was updated.
 parameter. Any local object changes to persisted fields will be overwritten.  If the database has been updated
 this brings your local object up-to-date.  This should return 1 since 1 row was retrieved.
 
-</p><a name="IDX270"></a>
+</p><a name="IDX274"></a>
 </dd>
 <dt><code> delete(T data)</code></dt>
 <dd>
 <p>Delete an object from the database.  This should return 1 since 1 row was removed.
 
-</p><a name="IDX271"></a>
+</p><a name="IDX275"></a>
 </dd>
 <dt><code> delete (Collection&lt;T&gt; datas)</code></dt>
 <dd>
 <p>Delete a collection of objects from the database using an IN SQL clause.  This returns the number of rows that
 were deleted.
 
-</p><a name="IDX272"></a>
+</p><a name="IDX276"></a>
 </dd>
 <dt><code> deleteIds(Collection&lt;ID&gt; ids)</code></dt>
 <dd>
 <p>Delete the objects that match the collection of ids from the database using an IN SQL clause.   This returns the
 number of rows that were deleted.  
 
-</p><a name="IDX273"></a>
-<a name="IDX274"></a>
+</p><a name="IDX277"></a>
+<a name="IDX278"></a>
 </dd>
 <dt><code> delete(PreparedDelete&lt;T&gt; preparedDelete)</code></dt>
 <dd>
 <p>Delete objects that match a custom delete statement.
 
-</p><a name="IDX275"></a>
+</p><a name="IDX279"></a>
 </dd>
 <dt><code> iterator</code></dt>
 <dd>
@@ -631,9 +648,9 @@ of the <code>queryForAllRaw</code> method.  Although you should use the <code>it
 allows you to do special queries that aren't supported otherwise.  Like the above iterator methods, you must call close
 on the <code>GenericRawResults</code> object returned by the method once you are done with it. 
 
-</p><a name="IDX276"></a>
-<a name="IDX277"></a>
-<a name="IDX278"></a>
+</p><a name="IDX280"></a>
+<a name="IDX281"></a>
+<a name="IDX282"></a>
 </dd>
 <dt><code> queryRaw(String query)</code></dt>
 <dd>
@@ -665,11 +682,11 @@ row being returned as an array of strings, they are returned as an array of obje
 <p>Run a raw update SQL statement (<code>INSERT</code>, <code>DELETE</code>, or <code>UPDATE</code> against the database.
 See section <a href="ormlite_2.html#SEC27">Issuing Raw Update Statements</a>.
 
-</p><a name="IDX279"></a>
-<a name="IDX280"></a>
-<a name="IDX281"></a>
-<a name="IDX282"></a>
-<a name="IDX283"></a>
+</p><a name="IDX283"></a>
+<a name="IDX284"></a>
+<a name="IDX285"></a>
+<a name="IDX286"></a>
+<a name="IDX287"></a>
 <p><a name="ANC28"></a>
 </p></dd>
 <dt><code> callBatchTasks(Callable callable)</code></dt>
@@ -680,8 +697,8 @@ number of database operations at once - maybe loading data from a file. This wil
 
 </p><p><em>NOTE:</em> If neither auto-commit nor transactions are supported by the database type then this may do nothing.
 
-</p><a name="IDX284"></a>
-<a name="IDX285"></a>
+</p><a name="IDX288"></a>
+<a name="IDX289"></a>
 </dd>
 <dt><code> countOf()</code></dt>
 <dd>
@@ -728,7 +745,7 @@ logger.debug(&quot;built statement {}&quot;, statement);
 <p>If you are using log4j (through Apache commons logging or directly), you can use something
 like the following as your log4j.properties file to see details about the SQL calls.
 
-</p><a name="IDX286"></a>
+</p><a name="IDX290"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">log4j.rootLogger=INFO, stdout
 
 log4j.appender.stdout=org.apache.log4j.ConsoleAppender
@@ -743,10 +760,11 @@ log4j.logger.com.j256.ormlite=DEBUG
 # to enable logging of arguments to all of the SQL calls
 # uncomment the following lines
 #log4j.logger.com.j256.ormlite.stmt.mapped.BaseMappedStatement=TRACE
+#log4j.logger.com.j256.ormlite.stmt.mapped.MappedCreate=TRACE
 #log4j.logger.com.j256.ormlite.stmt.StatementExecutor=TRACE
 </pre></td></tr></table>
-<a name="IDX287"></a>
-<a name="IDX288"></a>
+<a name="IDX291"></a>
+<a name="IDX292"></a>
 <p><em>Notice</em> that you can uncomment the last lines in the above log4j.properties file to log the arguments to the
 various SQL calls.  This may expose passwords or other sensitive information in the database so probably should
 only be used during debugging and should not be the default.
@@ -781,7 +799,7 @@ and Log4j but these classes will <em>not</em> be referenced unless they exist in
 
 </p><dl compact="compact">
 <dd>
-<a name="IDX289"></a>
+<a name="IDX293"></a>
 </dd>
 <dt><code> javax.persistence</code></dt>
 <dd>
@@ -842,7 +860,7 @@ Order was inserted but then a disk error stopped the Account from being updated,
 If you used a transaction then both changes would be saved to the database only when the transaction was closed.  Most (not all)
 databases support transactions which are designed specifically with these sorts of scenarios in mind.
 
-</p><a name="IDX290"></a>
+</p><a name="IDX294"></a>
 <p>ORMLite has basic support for transactions through the use of the <code>TransactionManager</code> class which wraps
 databases operations in a transaction.  If those operations throw an exception, then the transaction is &quot;rolled-back&quot;
 and none of the operations are persisted to the database.  Once the operations are finished, if no exception is thrown,
@@ -869,8 +887,8 @@ TransactionManager.callInTransaction(connectionSource,
 the database.  Transactions allow you to make multiple operations while still ensuring data integrity.  Notice that you
 can return an object from the callable so you could pass back the number of rows affected or other information.
 
-</p><a name="IDX291"></a>
-<a name="IDX292"></a>
+</p><a name="IDX295"></a>
+<a name="IDX296"></a>
 <p><em>NOTE:</em> Performing database operations within a transaction also has the side effect of better performance since
 a number of changes are written at once in a batch.  The <code>Dao.callBatchTasks()</code> method should always be used if
 you are looking for performance of a large number of operations. See <a href="#ANC28">callBatchTasks</a>.  For databases that do not 
@@ -908,7 +926,7 @@ dependency list.  In this example we are using MySQL but any of the supported JD
         &lt;dependency&gt;
             &lt;groupId&gt;com.j256.ormlite&lt;/groupId&gt;
             &lt;artifactId&gt;ormlite-jdbc&lt;/artifactId&gt;
-            &lt;version&gt;4.23&lt;/version&gt;
+            &lt;version&gt;4.24&lt;/version&gt;
         &lt;/dependency&gt;
         &lt;!-- You will need to add some sort of database driver too.
              In this example we've used MySQL. --&gt;
@@ -942,7 +960,7 @@ then just replace the <code>ormlite-jdbc</code> artifact name with <code>ormlite
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>June, 3 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>July, 13 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 
