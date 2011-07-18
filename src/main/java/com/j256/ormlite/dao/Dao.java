@@ -90,7 +90,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 
 	/**
 	 * Query for the rows in the database that matches all of the field to value entries from the map passed in. If you
-	 * are worried about SQL quote escaping, you should use {@link #queryForFieldValuesArgs(Object)}.
+	 * are worried about SQL quote escaping, you should use {@link #queryForFieldValuesArgs(Map)}.
 	 */
 	public List<T> queryForFieldValues(Map<String, Object> fieldValues) throws SQLException;
 
