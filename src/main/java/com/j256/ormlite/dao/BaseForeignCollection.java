@@ -7,6 +7,7 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.SelectArg;
+import com.j256.ormlite.stmt.mapped.MappedPreparedStmt;
 
 /**
  * Base collection that is set on a field that as been marked with the {@link ForeignCollectionField} annotation when an
@@ -26,12 +27,14 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 	protected final Object fieldValue;
 	private PreparedQuery<T> preparedQuery;
 	private final String orderColumn;
+	private final Object parent;
 
-	public BaseForeignCollection(Dao<T, ID> dao, String fieldName, Object fieldValue, String orderColumn) {
+	public BaseForeignCollection(Dao<T, ID> dao, String fieldName, Object fieldValue, String orderColumn, Object parent) {
 		this.dao = dao;
 		this.fieldName = fieldName;
 		this.fieldValue = fieldValue;
 		this.orderColumn = orderColumn;
+		this.parent = parent;
 	}
 
 	/**
@@ -139,6 +142,11 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 				qb.orderBy(orderColumn, true);
 			}
 			preparedQuery = qb.where().eq(fieldName, fieldArg).prepare();
+			if (preparedQuery instanceof MappedPreparedStmt) {
+				@SuppressWarnings("unchecked")
+				MappedPreparedStmt<T, Object> mappedStmt = ((MappedPreparedStmt<T, Object>) preparedQuery);
+				mappedStmt.setParentObject(parent);
+			}
 		}
 		return preparedQuery;
 	}

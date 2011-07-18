@@ -34,7 +34,7 @@ public class MappedRefresh<T, ID> extends MappedQueryForId<T, ID> {
 			// copy each field from the result into the passed in object
 			for (FieldType fieldType : resultsFieldTypes) {
 				if (fieldType != idField) {
-					fieldType.assignField(data, fieldType.extractJavaFieldValue(result));
+					fieldType.assignField(data, fieldType.extractJavaFieldValue(result), false);
 				}
 			}
 			return 1;

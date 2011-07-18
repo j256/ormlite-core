@@ -316,7 +316,7 @@ public class FieldTypeTest extends BaseCoreTest {
 		getSet.id = id;
 		assertEquals(id, fieldType.extractJavaFieldToSqlArgValue(getSet));
 		int id2 = 869544;
-		fieldType.assignField(getSet, id2);
+		fieldType.assignField(getSet, id2, false);
 		assertEquals(id2, fieldType.extractJavaFieldToSqlArgValue(getSet));
 	}
 
@@ -337,7 +337,7 @@ public class FieldTypeTest extends BaseCoreTest {
 		Field idField = fields[0];
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, GetSet.class.getSimpleName(), idField, GetSet.class);
-		fieldType.assignField(new Object(), 10);
+		fieldType.assignField(new Object(), 10, false);
 	}
 
 	@Test
@@ -358,7 +358,7 @@ public class FieldTypeTest extends BaseCoreTest {
 				FieldType.createFieldType(connectionSource, Foo.class.getSimpleName(), nameField, Foo.class);
 		Foo foo = new Foo();
 		String name1 = "wfwef";
-		fieldType.assignField(foo, name1);
+		fieldType.assignField(foo, name1, false);
 		assertEquals(name1, foo.name);
 	}
 
@@ -413,19 +413,19 @@ public class FieldTypeTest extends BaseCoreTest {
 		ForeignParent parent = new ForeignParent();
 		assertNull(parent.foreign);
 		// we assign the id, not the object
-		fieldType.assignField(parent, id);
+		fieldType.assignField(parent, id, false);
 		ForeignForeign foreign = parent.foreign;
 		assertNotNull(foreign);
 		assertEquals(id, foreign.id);
 
 		// not try assigning it again
-		fieldType.assignField(parent, id);
+		fieldType.assignField(parent, id, false);
 		// foreign field should not have been changed
 		assertSame(foreign, parent.foreign);
 
 		// now assign a different id
 		int newId = id + 1;
-		fieldType.assignField(parent, newId);
+		fieldType.assignField(parent, newId, false);
 		assertNotSame(foreign, parent.foreign);
 		assertEquals(newId, parent.foreign.id);
 	}
@@ -567,7 +567,7 @@ public class FieldTypeTest extends BaseCoreTest {
 						ForeignAutoRefresh.class);
 		fieldType.configDaoInformation(connectionSource, ForeignAutoRefresh.class);
 		assertNull(foreign.foreign);
-		fieldType.assignField(foreign, id);
+		fieldType.assignField(foreign, id, false);
 		assertNotNull(foreign.foreign);
 		assertEquals(id, foreign.foreign.id);
 		assertEquals(stuff, foreign.foreign.stuff);

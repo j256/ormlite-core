@@ -653,7 +653,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		checkForInitialized();
 		for (FieldType fieldType : tableInfo.getFieldTypes()) {
 			if (fieldType.getDbColumnName().equals(fieldName)) {
-				return fieldType.buildForeignCollection(null, true);
+				return fieldType.buildForeignCollection(null, null, true);
 			}
 		}
 		throw new IllegalArgumentException("Could not find a field named " + fieldName);

@@ -32,7 +32,7 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 	public int insert(DatabaseType databaseType, DatabaseConnection databaseConnection, T data) throws SQLException {
 		if (idField != null) {
 			if (idField.isSelfGeneratedId()) {
-				idField.assignField(data, idField.generatedId());
+				idField.assignField(data, idField.generatedId(), false);
 			} else if (idField.isGeneratedIdSequence() && databaseType.isSelectSequenceBeforeInsert()) {
 				assignSequenceId(databaseConnection, data);
 				// fall down to do the update below

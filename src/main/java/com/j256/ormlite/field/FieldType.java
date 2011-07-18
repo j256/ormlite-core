@@ -433,7 +433,7 @@ public class FieldType {
 	/**
 	 * Assign to the data object the val corresponding to the fieldType.
 	 */
-	public void assignField(Object data, Object val) throws SQLException {
+	public void assignField(Object data, Object val, boolean parentObject) throws SQLException {
 		// if this is a foreign object then val is the foreign object's id val
 		if (foreignIdField != null && val != null) {
 			// get the current field value which is the foreign-id
@@ -446,33 +446,35 @@ public class FieldType {
 			if (foreignId != null && foreignId.equals(val)) {
 				return;
 			}
-			Object foreignObject;
-			/*
-			 * If we don't have a mappedQueryForId or if we have recursed the proper number of times, just return a
-			 * shell with the id set.
-			 */
-			LevelCounters levelCounters = getLevelCounters();
-			if (mappedQueryForId == null
-					|| levelCounters.autoRefreshlevel >= fieldConfig.getMaxForeignAutoRefreshLevel()) {
-				// create a shell and assign its id field
-				foreignObject = TableInfo.createObject(foreignConstructor, foreignDao);
-				foreignIdField.assignField(foreignObject, val);
-			} else {
-				levelCounters.autoRefreshlevel++;
-				try {
-					// do we need to auto-refresh the field?
-					DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection();
+			if (!parentObject) {
+				Object foreignObject;
+				/*
+				 * If we don't have a mappedQueryForId or if we have recursed the proper number of times, just return a
+				 * shell with the id set.
+				 */
+				LevelCounters levelCounters = getLevelCounters();
+				if (mappedQueryForId == null
+						|| levelCounters.autoRefreshlevel >= fieldConfig.getMaxForeignAutoRefreshLevel()) {
+					// create a shell and assign its id field
+					foreignObject = TableInfo.createObject(foreignConstructor, foreignDao);
+					foreignIdField.assignField(foreignObject, val, false);
+				} else {
+					levelCounters.autoRefreshlevel++;
 					try {
-						foreignObject = mappedQueryForId.execute(databaseConnection, val);
+						// do we need to auto-refresh the field?
+						DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection();
+						try {
+							foreignObject = mappedQueryForId.execute(databaseConnection, val);
+						} finally {
+							connectionSource.releaseConnection(databaseConnection);
+						}
 					} finally {
-						connectionSource.releaseConnection(databaseConnection);
+						levelCounters.autoRefreshlevel--;
 					}
-				} finally {
-					levelCounters.autoRefreshlevel--;
 				}
+				// the value we are to assign to our field is now the foreign object itself
+				val = foreignObject;
 			}
-			// the value we are to assign to our field is now the foreign object itself
-			val = foreignObject;
 		}
 
 		if (fieldSetMethod == null) {
@@ -501,6 +503,7 @@ public class FieldType {
 			}
 		}
 	}
+
 	/**
 	 * Assign an ID value to this field.
 	 */
@@ -509,7 +512,7 @@ public class FieldType {
 		if (idVal == null) {
 			throw new SQLException("Invalid class " + dataPersister + " for sequence-id " + this);
 		} else {
-			assignField(data, idVal);
+			assignField(data, idVal, false);
 			return idVal;
 		}
 	}
@@ -650,13 +653,15 @@ public class FieldType {
 	 * Build and return a foreign collection based on the field settings that matches the id argument. This can return
 	 * null in certain circumstances.
 	 * 
+	 * @param parent
+	 *            The parent object that we will set on each item in the collection.
 	 * @param id
 	 *            The id of the foreign object we will look for. This can be null if we are creating an empty
 	 *            collection.
 	 * @param forceEager
 	 *            Set to true to force this to be an eager collection.
 	 */
-	public <FT, FID> BaseForeignCollection<FT, FID> buildForeignCollection(Object id, boolean forceEager)
+	public <FT, FID> BaseForeignCollection<FT, FID> buildForeignCollection(FT parent, Object id, boolean forceEager)
 			throws SQLException {
 		// this can happen if we have a foreign-auto-refresh scenario
 		if (foreignFieldType == null) {
@@ -667,7 +672,7 @@ public class FieldType {
 		if (!fieldConfig.isForeignCollectionEager() && !forceEager) {
 			// we know this won't go recursive so no need for the counters
 			return new LazyForeignCollection<FT, FID>(castDao, foreignFieldType.dbColumnName, id,
-					fieldConfig.getForeignCollectionOrderColumn());
+					fieldConfig.getForeignCollectionOrderColumn(), parent);
 		}
 
 		LevelCounters levelCounters = getLevelCounters();
@@ -675,11 +680,11 @@ public class FieldType {
 		if (levelCounters.foreignCollectionLevel >= fieldConfig.getMaxEagerForeignCollectionLevel()) {
 			// then return a lazy collection instead
 			return new LazyForeignCollection<FT, FID>(castDao, foreignFieldType.dbColumnName, id,
-					fieldConfig.getForeignCollectionOrderColumn());
+					fieldConfig.getForeignCollectionOrderColumn(), parent);
 		}
 		levelCounters.foreignCollectionLevel++;
 		try {
-			return new EagerForeignCollection<FT, FID>(castDao, foreignFieldType.dbColumnName, id,
+			return new EagerForeignCollection<FT, FID>(castDao, parent, foreignFieldType, id,
 					fieldConfig.getForeignCollectionOrderColumn());
 		} finally {
 			levelCounters.foreignCollectionLevel--;

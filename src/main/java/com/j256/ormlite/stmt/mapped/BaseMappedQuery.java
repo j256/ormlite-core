@@ -20,6 +20,7 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 	protected final FieldType[] resultsFieldTypes;
 	// cache of column names to results position
 	private Map<String, Integer> columnPositions = null;
+	private Object parent = null;
 
 	protected BaseMappedQuery(TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes,
 			FieldType[] resultsFieldTypes) {
@@ -44,7 +45,11 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 				foreignCollections = true;
 			} else {
 				Object val = fieldType.resultToJava(results, colPosMap);
-				fieldType.assignField(instance, val);
+				if (parent != null && fieldType.getField().getType() == parent.getClass()) {
+					fieldType.assignField(instance, parent, true);
+				} else {
+					fieldType.assignField(instance, val, false);
+				}
 				if (fieldType == idField) {
 					id = val;
 				}
@@ -54,9 +59,9 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 			// go back and initialize any foreign collections
 			for (FieldType fieldType : resultsFieldTypes) {
 				if (fieldType.isForeignCollection()) {
-					BaseForeignCollection<?, ?> collection = fieldType.buildForeignCollection(id, false);
+					BaseForeignCollection<?, ?> collection = fieldType.buildForeignCollection(instance, id, false);
 					if (collection != null) {
-						fieldType.assignField(instance, collection);
+						fieldType.assignField(instance, collection, false);
 					}
 				}
 			}
@@ -69,5 +74,12 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 
 	public FieldType[] getResultsFieldTypes() {
 		return resultsFieldTypes;
+	}
+
+	/**
+	 * If we have a foreign collection object then this sets the value on the foreign object in the class.
+	 */
+	public void setParentObject(Object parent) {
+		this.parent = parent;
 	}
 }
