@@ -1,4 +1,6 @@
-4.24: 7/XX/2011 (svn rYYYY)
+4.25: 8/XX/2011 (svn rYYYY)
+
+4.24: 7/18/2011 (svn r1840)
 	* CORE: Fixed problem with updating a field's value to be null using UpdateBuilder. Thanks to Jeremy Mcjunkin. Fixes bug #3359086.
 	* CORE: Fixed foreign collection bugs where clear, remove, ... affected the whole table. Thanks to Patras Vlad. Fixes bug #3313003.
 	* CORE: Fixed bug with the setting of the value of serializable types.  Thanks to kyle lampert.  Fixes #3363423.
