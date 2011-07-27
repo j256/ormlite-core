@@ -1,3 +1,7 @@
+=============================================================================
+This is documentation is only for the maintainers who need to release ORMLite
+=============================================================================
+
 To release ORMLite:
 
 1) Run all tests -- home and work if possible.
