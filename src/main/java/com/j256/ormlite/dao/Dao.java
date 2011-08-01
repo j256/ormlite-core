@@ -509,16 +509,25 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public <FT> ForeignCollection<FT> getEmptyForeignCollection(String fieldName) throws SQLException;
 
 	/**
-	 * Little return class for the {@link Dao#createOrUpdate(Object)} method.
+	 * Return class for the {@link Dao#createOrUpdate(Object)} method.
 	 */
 	public class CreateOrUpdateStatus {
-		boolean created;
-		boolean updated;
-		int numLinesChanged;
+		private boolean created;
+		private boolean updated;
+		private int numLinesChanged;
 		public CreateOrUpdateStatus(boolean created, boolean updated, int numberLinesChanged) {
 			this.created = created;
 			this.updated = updated;
 			this.numLinesChanged = numberLinesChanged;
+		}
+		public boolean isCreated() {
+			return created;
+		}
+		public boolean isUpdated() {
+			return updated;
+		}
+		public int getNumLinesChanged() {
+			return numLinesChanged;
 		}
 	}
 }

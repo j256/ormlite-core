@@ -1869,16 +1869,16 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		int equal1 = 21313;
 		foo1.equal = equal1;
 		CreateOrUpdateStatus status = dao.createOrUpdate(foo1);
-		assertTrue(status.created);
-		assertFalse(status.updated);
-		assertEquals(1, status.numLinesChanged);
+		assertTrue(status.isCreated());
+		assertFalse(status.isUpdated());
+		assertEquals(1, status.getNumLinesChanged());
 
 		int equal2 = 4134132;
 		foo1.equal = equal2;
 		status = dao.createOrUpdate(foo1);
-		assertFalse(status.created);
-		assertTrue(status.updated);
-		assertEquals(1, status.numLinesChanged);
+		assertFalse(status.isCreated());
+		assertTrue(status.isUpdated());
+		assertEquals(1, status.getNumLinesChanged());
 
 		Foo fooResult = dao.queryForId(foo1.id);
 		assertEquals(equal2, fooResult.equal);
@@ -1888,9 +1888,9 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	public void testCreateOrUpdateNull() throws Exception {
 		Dao<Foo, String> dao = createDao(Foo.class, true);
 		CreateOrUpdateStatus status = dao.createOrUpdate(null);
-		assertFalse(status.created);
-		assertFalse(status.updated);
-		assertEquals(0, status.numLinesChanged);
+		assertFalse(status.isCreated());
+		assertFalse(status.isUpdated());
+		assertEquals(0, status.getNumLinesChanged());
 	}
 
 	@Test
