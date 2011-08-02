@@ -13,6 +13,7 @@ public class ThreadLocalSelectArg extends BaseSelectArg implements ArgumentHolde
 	private ThreadLocal<ValueWrapper> threadValue = new ThreadLocal<ValueWrapper>();
 
 	public ThreadLocalSelectArg() {
+		super();
 		// value set later
 	}
 
@@ -51,7 +52,8 @@ public class ThreadLocalSelectArg extends BaseSelectArg implements ArgumentHolde
 	}
 
 	/**
-	 * Value wrapper so we can differentiate between a null value and no value.
+	 * Value wrapper so we can differentiate between a null value and no value. Since we need to do this on a per thread
+	 * basis, this can't be a volatile field or something.
 	 */
 	private static class ValueWrapper {
 		Object value;

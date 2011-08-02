@@ -1,4 +1,5 @@
 4.25: 8/XX/2011 (svn rYYYY)
+	* Exposed the fields in CreateOrUpdateStatus that were package protected (fail!).  Thanks to steffen.  Fixes bug #3383768.
 
 4.24: 7/18/2011 (svn r1840)
 	* CORE: Fixed problem with updating a field's value to be null using UpdateBuilder. Thanks to Jeremy Mcjunkin. Fixes bug #3359086.
