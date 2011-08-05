@@ -430,6 +430,10 @@ public class FieldType {
 		return fieldConfig.isForeign();
 	}
 
+	public FieldType getForeignFieldType() {
+		return foreignFieldType;
+	}
+
 	/**
 	 * Assign to the data object the val corresponding to the fieldType.
 	 */
