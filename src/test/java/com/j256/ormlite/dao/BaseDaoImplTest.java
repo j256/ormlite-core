@@ -1377,6 +1377,21 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	}
 
 	@Test
+	public void testUuidIdInsert() throws Exception {
+		Dao<UuidId, UUID> dao = createDao(UuidId.class, true);
+		UuidId uuid = new UuidId();
+		UUID id = UUID.randomUUID();
+		uuid.id = id;
+		String stuff = "fopewfjefjwgw";
+		uuid.stuff = stuff;
+		assertEquals(1, dao.create(uuid));
+		UuidId uuid2 = dao.queryForId(uuid.id);
+		assertNotNull(uuid2);
+		assertEquals(id, uuid2.id);
+		assertEquals(stuff, uuid2.stuff);
+	}
+
+	@Test
 	public void testCountOf() throws Exception {
 		Dao<Foo, String> dao = createDao(Foo.class, true);
 		assertEquals(0, dao.countOf());
@@ -1981,6 +1996,15 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		@DatabaseField
 		public String stuff;
 		public UuidGeneratedId() {
+		}
+	}
+
+	protected static class UuidId {
+		@DatabaseField(id = true)
+		public UUID id;
+		@DatabaseField
+		public String stuff;
+		public UuidId() {
 		}
 	}
 

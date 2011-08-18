@@ -31,7 +31,7 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 	 */
 	public int insert(DatabaseType databaseType, DatabaseConnection databaseConnection, T data) throws SQLException {
 		if (idField != null) {
-			if (idField.isSelfGeneratedId()) {
+			if (idField.isSelfGeneratedId() && idField.isGeneratedId()) {
 				idField.assignField(data, idField.generatedId(), false);
 			} else if (idField.isGeneratedIdSequence() && databaseType.isSelectSequenceBeforeInsert()) {
 				assignSequenceId(databaseConnection, data);
