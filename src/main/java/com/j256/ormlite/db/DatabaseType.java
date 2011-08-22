@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.j256.ormlite.field.DataPersister;
+import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 
@@ -41,7 +42,7 @@ public interface DatabaseType {
 	 * executed before or afterwards depending on the configurations. The database can also add to the list of queries
 	 * that will be performed afterward to test portions of the config.
 	 */
-	public void appendColumnArg(StringBuilder sb, FieldType fieldType, List<String> additionalArgs,
+	public void appendColumnArg(String tableName, StringBuilder sb, FieldType fieldType, List<String> additionalArgs,
 			List<String> statementsBefore, List<String> statementsAfter, List<String> queriesAfter) throws SQLException;
 
 	/**
@@ -198,4 +199,15 @@ public interface DatabaseType {
 	 * Returns true if we have to select the value of the sequence before we insert a new data row.
 	 */
 	public boolean isSelectSequenceBeforeInsert();
+
+	/**
+	 * Does the database support the {@link DatabaseField#allowGeneratedIdInsert()} setting which allows people to
+	 * insert values into generated-id columns.
+	 */
+	public boolean isAllowGeneratedIdInsertSupported();
+
+	/**
+	 * Return the name of the database for logging purposes.
+	 */
+	public String getDatabaseName();
 }

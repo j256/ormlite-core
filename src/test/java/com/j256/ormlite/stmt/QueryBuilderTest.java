@@ -365,8 +365,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		protected String getDriverClassName() {
 			return "foo.bar.baz";
 		}
-		@Override
-		protected String getDatabaseName() {
+		public String getDatabaseName() {
 			return "zipper";
 		}
 	}

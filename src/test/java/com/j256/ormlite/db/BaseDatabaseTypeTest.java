@@ -22,7 +22,7 @@ public class BaseDatabaseTypeTest extends BaseCoreTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testConfigureGeneratedId() throws SQLException {
-		new TestDatabaseType().configureGeneratedId(new StringBuilder(), null, new ArrayList<String>(),
+		new TestDatabaseType().configureGeneratedId(null, new StringBuilder(), null, new ArrayList<String>(), null,
 				new ArrayList<String>(), new ArrayList<String>());
 	}
 
@@ -59,8 +59,7 @@ public class BaseDatabaseTypeTest extends BaseCoreTest {
 			return "com.class.that.doesnt.exist";
 		}
 
-		@Override
-		protected String getDatabaseName() {
+		public String getDatabaseName() {
 			return "foo";
 		}
 	}

@@ -20,8 +20,9 @@ public abstract class BaseSqliteDatabaseType extends BaseDatabaseType implements
 	private final static FieldConverter booleanConverter = new BooleanNumberFieldConverter();
 
 	@Override
-	protected void configureGeneratedId(StringBuilder sb, FieldType fieldType, List<String> statementsBefore,
-			List<String> additionalArgs, List<String> queriesAfter) {
+	protected void configureGeneratedId(String tableName, StringBuilder sb, FieldType fieldType,
+			List<String> statementsBefore, List<String> statementsAfter, List<String> additionalArgs,
+			List<String> queriesAfter) {
 		if (fieldType.getSqlType() != SqlType.INTEGER) {
 			throw new IllegalArgumentException("Sqlite requires that auto-increment generated-id be integer types");
 		}

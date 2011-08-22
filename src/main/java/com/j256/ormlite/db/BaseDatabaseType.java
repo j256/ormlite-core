@@ -32,11 +32,6 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	 */
 	protected abstract String getDriverClassName();
 
-	/**
-	 * Return the name of the database for logging purposes.
-	 */
-	protected abstract String getDatabaseName();
-
 	public void loadDriver() throws SQLException {
 		String className = getDriverClassName();
 		if (className != null) {
@@ -54,7 +49,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		this.driver = driver;
 	}
 
-	public void appendColumnArg(StringBuilder sb, FieldType fieldType, List<String> additionalArgs,
+	public void appendColumnArg(String tableName, StringBuilder sb, FieldType fieldType, List<String> additionalArgs,
 			List<String> statementsBefore, List<String> statementsAfter, List<String> queriesAfter) throws SQLException {
 		appendEscapedEntityName(sb, fieldType.getDbColumnName());
 		sb.append(' ');
@@ -133,7 +128,8 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		if (fieldType.isGeneratedIdSequence() && !fieldType.isSelfGeneratedId()) {
 			configureGeneratedIdSequence(sb, fieldType, statementsBefore, additionalArgs, queriesAfter);
 		} else if (fieldType.isGeneratedId() && !fieldType.isSelfGeneratedId()) {
-			configureGeneratedId(sb, fieldType, statementsBefore, additionalArgs, queriesAfter);
+			configureGeneratedId(tableName, sb, fieldType, statementsBefore, statementsAfter, additionalArgs,
+					queriesAfter);
 		} else if (fieldType.isId()) {
 			configureId(sb, fieldType, statementsBefore, additionalArgs, queriesAfter);
 		}
@@ -280,8 +276,9 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	 * 
 	 * NOTE: Only one of configureGeneratedIdSequence, configureGeneratedId, or configureId will be called.
 	 */
-	protected void configureGeneratedId(StringBuilder sb, FieldType fieldType, List<String> statementsBefore,
-			List<String> additionalArgs, List<String> queriesAfter) {
+	protected void configureGeneratedId(String tableName, StringBuilder sb, FieldType fieldType,
+			List<String> statementsBefore, List<String> statementsAfter, List<String> additionalArgs,
+			List<String> queriesAfter) {
 		throw new IllegalStateException("GeneratedId is not supported by database " + getDatabaseName() + " for field "
 				+ fieldType);
 	}
@@ -447,6 +444,10 @@ public abstract class BaseDatabaseType implements DatabaseType {
 
 	public boolean isSelectSequenceBeforeInsert() {
 		return false;
+	}
+
+	public boolean isAllowGeneratedIdInsertSupported() {
+		return true;
 	}
 
 	/**

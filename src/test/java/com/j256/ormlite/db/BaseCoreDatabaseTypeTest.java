@@ -290,7 +290,7 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, "foo", ManyFields.class.getDeclaredField(fieldName),
 						ManyFields.class);
-		databaseType.appendColumnArg(sb, fieldType, additionalArgs, stmtsBefore, stmtsAfter, queriesAfter);
+		databaseType.appendColumnArg(null, sb, fieldType, additionalArgs, stmtsBefore, stmtsAfter, queriesAfter);
 		StringBuilder expectedSb = new StringBuilder();
 		databaseType.appendEscapedEntityName(expectedSb, fieldName);
 		expectedSb.append(' ').append(expected).append(' ');
@@ -302,7 +302,6 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 		public String getDriverClassName() {
 			return "driver.class";
 		}
-		@Override
 		public String getDatabaseName() {
 			return "fake";
 		}
@@ -328,8 +327,9 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 	private static class OurDbTypeGeneratedId extends OurDbType {
 		FieldType fieldType;
 		@Override
-		protected void configureGeneratedId(StringBuilder sb, FieldType fieldType, List<String> statementsBefore,
-				List<String> additionalArgs, List<String> queriesAfter) {
+		protected void configureGeneratedId(String tableName, StringBuilder sb, FieldType fieldType,
+				List<String> statementsBefore, List<String> statementsAfter, List<String> additionalArgs,
+				List<String> queriesAfter) {
 			this.fieldType = fieldType;
 		}
 		@Override

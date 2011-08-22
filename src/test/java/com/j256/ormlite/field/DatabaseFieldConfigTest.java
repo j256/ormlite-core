@@ -373,7 +373,6 @@ public class DatabaseFieldConfigTest {
 		public String getDriverClassName() {
 			return "foo.bar.baz";
 		}
-		@Override
 		public String getDatabaseName() {
 			return "fake";
 		}

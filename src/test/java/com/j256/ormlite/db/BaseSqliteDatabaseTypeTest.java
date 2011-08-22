@@ -21,7 +21,7 @@ public class BaseSqliteDatabaseTypeTest extends BaseCoreTest {
 		FieldType fieldType = FieldType.createFieldType(connectionSource, "foo", field, Foo.class);
 		OurSqliteDatabaseType dbType = new OurSqliteDatabaseType();
 		StringBuilder sb = new StringBuilder();
-		dbType.configureGeneratedId(sb, fieldType, new ArrayList<String>(), new ArrayList<String>(),
+		dbType.configureGeneratedId(null, sb, fieldType, new ArrayList<String>(), null, new ArrayList<String>(),
 				new ArrayList<String>());
 	}
 
@@ -31,7 +31,7 @@ public class BaseSqliteDatabaseTypeTest extends BaseCoreTest {
 		FieldType fieldType = FieldType.createFieldType(connectionSource, "foo", field, Foo.class);
 		OurSqliteDatabaseType dbType = new OurSqliteDatabaseType();
 		StringBuilder sb = new StringBuilder();
-		dbType.configureGeneratedId(sb, fieldType, new ArrayList<String>(), new ArrayList<String>(),
+		dbType.configureGeneratedId(null, sb, fieldType, new ArrayList<String>(), null, new ArrayList<String>(),
 				new ArrayList<String>());
 		assertTrue(sb.toString().contains("PRIMARY KEY AUTOINCREMENT"));
 	}
@@ -61,7 +61,6 @@ public class BaseSqliteDatabaseTypeTest extends BaseCoreTest {
 		protected String getDriverClassName() {
 			return null;
 		}
-		@Override
 		public String getDatabaseName() {
 			return "fake";
 		}

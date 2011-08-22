@@ -326,7 +326,8 @@ public class TableUtils {
 				sb.append(", ");
 			}
 			// we have to call back to the database type for the specific create syntax
-			databaseType.appendColumnArg(sb, fieldType, additionalArgs, statementsBefore, statementsAfter, queriesAfter);
+			databaseType.appendColumnArg(tableInfo.getTableName(), sb, fieldType, additionalArgs, statementsBefore,
+					statementsAfter, queriesAfter);
 		}
 		// add any sql that sets any primary key fields
 		databaseType.addPrimaryKeySql(tableInfo.getFieldTypes(), additionalArgs, statementsBefore, statementsAfter,
