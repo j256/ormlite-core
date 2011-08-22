@@ -110,7 +110,7 @@ echo ""
 echo ""
 echo -n "Should we release -core to sonatype [y]: "
 read cont
-if [ "$cont" = "" ]; then
+if [ "$cont" = "" || "$cont" = "y" ]; then
     cd $CORE_DIR
     svn -m cp delete https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-core/tags/ormlite-core-$release
     mvn -P st release:clean || exit 1
@@ -123,7 +123,7 @@ fi
 
 echo -n "Should we install -core locally [y]: "
 read cont
-if [ "$cont" = "" ]; then
+if [ "$cont" = "" || "$cont" = "y" ]; then
     cd target/checkout
     mvn $GPG_ARGS install || exit 1
 fi
@@ -135,7 +135,7 @@ echo ""
 echo ""
 echo -n "Should we release -jdbc to sonatype [y]: "
 read cont
-if [ "$cont" = "" ]; then
+if [ "$cont" = "" || "$cont" = "y" ]; then
     cd $JDBC_DIR
     svn -m cp delete https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-jdbc/tags/ormlite-jdbc-$release
     mvn -P st release:clean || exit 1
@@ -150,7 +150,7 @@ echo ""
 echo ""
 echo -n "Should we release -android to sonatype [y]: "
 read cont
-if [ "$cont" = "" ]; then
+if [ "$cont" = "" || "$cont" = "y" ]; then
     cd $ANDROID_DIR
     svn -m cp delete https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-jdbc/tags/ormlite-android-$release
     mvn -P st release:clean || exit 1
@@ -165,7 +165,7 @@ echo ""
 echo ""
 echo -n "Should we release -core to sourceforge [y]: "
 read cont
-if [ "$cont" = "" ]; then
+if [ "$cont" = "" || "$cont" = "y" ]; then
     cd $CORE_DIR/target/checkout
     mvn $GPG_ARGS -P sf deploy
 fi
@@ -174,7 +174,7 @@ echo ""
 echo ""
 echo -n "Should we release -jdbc to sourceforge [y]: "
 read cont
-if [ "$cont" = "" ]; then
+if [ "$cont" = "" || "$cont" = "y" ]; then
     cd $JDBC_DIR/target/checkout
     mvn $GPG_ARGS -P sf deploy
 fi
@@ -183,7 +183,7 @@ echo ""
 echo ""
 echo -n "Should we release -android to sourceforge [y]: "
 read cont
-if [ "$cont" = "" ]; then
+if [ "$cont" = "" || "$cont" = "y" ]; then
     cd $ANDROID_DIR/target/checkout
     mvn $GPG_ARGS -P sf deploy
 fi
