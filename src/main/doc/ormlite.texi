@@ -6,9 +6,9 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.24
+@set ormlite_version 4.25
 @set ormlite_year 2011
-@set ormlite_date July @value{ormlite_year}
+@set ormlite_date August @value{ormlite_year}
 @set package ORMLite
 @c ----------------------------------------------------------------
 
@@ -567,6 +567,14 @@ In our example, the foreign fields in @code{Question} and @code{Answer} could be
 @code{maxForeignAutoRefreshLevel} set to 1, when you query for a @code{Question}, the @code{Answer} field will be auto-refreshed, but the
 @code{Question} field on the answer will @emph{only} have its id field set.  It will not be auto-refreshed.
 
+@cindex optional generated-id
+@cindex generated-id optional
+@item allowGeneratedIdInsert
+
+If this is set to true (default is false) then inserting an object with the ID field already set will not override it with a generated-id.
+This is useful when you have a table where items sometimes have IDs and sometimes need them generated. This only works if the database
+supports this behavior and if @code{generatedId} is also true for the field.
+
 @end table
 
 @c ----------------------------------------------------------------
@@ -743,12 +751,13 @@ Persisted as SQL type @code{VARCHAR}.
 Persisted as SQL type @code{LONGVARCHAR} which handles longer strings.  
 
 @cindex string byte array
+@cindex  byte array string
 @cindex STRING_BYTES
 @cindex unicode strings, storing
 @cindex accented strings, storing
 @item String (DataType.STRING_BYTES)
 
-A Java String persisted as an array of bytes (byte[]) with the SQL type @code{VARBINARY}.  Many databases are
+A Java String persisted as an array of bytes (@code{byte[]}) with the SQL type @code{VARBINARY}.  Many databases are
 Unicode compliant (MySQL/Postgres) but some are not (SQLite).  To store strings with accents or other special
 characters, you may have to encode them as an array of bytes using this type.  By default the @code{Unicode}
 @code{Charset} is used to convert the string to bytes and back again.  You can use the @code{format} field in
@@ -819,6 +828,11 @@ serializes an object as an array of bytes.
 @code{DataType.BYTE_ARRAY} or @code{DataType.SERIALIZABLE} using the @code{dataType} field and will not be auto-detected.
 @xref{DatabaseField dataType}.
 
+@example
+@@DatabaseField(dataType = DataType.BYTE_ARRAY)
+byte[] imageBytes;
+@end example
+
 @cindex char
 @item char or Character (DataType.CHAR or DataType.CHAR_OBJ)
 
@@ -873,6 +887,12 @@ Select Argument to query for this type.  @xref{Select Arguments}.
 
 @emph{NOTE:} To use this type, you @emph{must} specify @code{DataType.SERIALIZABLE} using the @code{dataType} field.  It will
 not be auto-detected.  @xref{DatabaseField dataType}.
+
+@example
+// image is an object that implements Serializable
+@@DatabaseField(dataType = DataType.SERIALIZABLE)
+Image image;
+@end example
 
 @cindex Enum string
 @cindex enumerated types
@@ -1530,21 +1550,43 @@ for (Account account : accountDao) @{
 
 @cindex closing an iterator 
 @emph{NOTE:} you must page through @emph{all} items for the iterator to close the underlying SQL object.   If you don't
-go all of the way, the garbage collector will close the SQL statement some time later which is considered bad form.
+go all of the way, the garbage collector will close the SQL statement some time later which is considered bad form.  See
+the wrapped iterable below.
 
 @item use the iterator directly
 
 You can also use the iterator directly if the for-loop is not optimal.
 
 @example
-// page through all of the accounts in the database
 CloseableIterator<Account> iterator = accountDao.closeableIterator();
-while (iterator.hasNext()) @{
-    Account account = iterator.next();
-    System.out.println(account.getName());
+try @{
+    while (iterator.hasNext()) @{
+        Account account = iterator.next();
+        System.out.println(account.getName());
+    @}
+@} finally @{
+    // close it at the end to close underlying SQL statement
+    iterator.close();
 @}
-// close it at the end to close underlying SQL statement
-iterator.close();
+@end example
+
+@cindex wrapped iterable
+@cindex CloseableWrappedIterable
+@item get a "wrapped iterable"
+
+You can also use the "wrapped iterable" which allows you to do the close in the finally with for
+each loops.
+
+@example
+CloseableWrappedIterable<Account> wrappedIterable =
+    accountDao.getWrappedIterable();
+try @{
+    for (Account account : wrappedIterable) @{
+        @dots{}
+    @}
+@} finally @{
+    wrappedIterable.close();
+@}
 @end example
 
 @end table
@@ -3148,6 +3190,29 @@ for (Account account : accountDao) @{ @dots{} @}
 @item iterator(PreparedQuery<T> preparedQuery)
 
 Same is the @code{iterator} method but with a prepared statement parameter. @xref{Statement Builder}.
+
+@cindex wrapped iterable
+@cindex CloseableWrappedIterable
+@item getWrappedIterable()
+
+This returns a one time use iterable class that can be closed afterwards. The DAO itself is
+@code{CloseableWrappedIterable} but multiple threads can each call this to get their own closeable iterable.
+This allows you to do something like:
+
+@example
+CloseableWrappedIterable<Foo> wrappedIterable = fooDao.getWrappedIterable();
+try @{
+    for (Foo foo : wrappedIterable) @{
+        @dots{}
+    @}
+@} finally @{
+    wrappedIterable.close();
+@}
+@end example
+
+@item getWrappedIterable(PreparedQuery<T> preparedQuery)
+
+Same as @code{getWrappedIterable()} but with a prepared query parameter.
 
 @item iteratorRaw(String query)
 
