@@ -1,11 +1,18 @@
 package com.j256.ormlite.logger;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Class which implements our {@link Log} interface so we can bypass external logging classes if they are not available.
@@ -16,37 +23,79 @@ import java.util.Date;
  * System.setProperty(LocalLog.LOCAL_LOG_FILE_PROPERTY, "log.out"). Otherwise, log output will go to stdout.
  * </p>
  * 
+ * <p>
+ * It also supports a file ormliteLocalLog.properties file which contains lines such as:
+ * 
+ * <pre>
+ * # regex-pattern = Level
+ * log4j\.logger\.com\.j256\.ormlite.*=DEBUG
+ * log4j\.logger\.com\.j256\.ormlite\.stmt\.mapped.BaseMappedStatement=TRACE
+ * log4j\.logger\.com\.j256\.ormlite\.stmt\.mapped.MappedCreate=TRACE
+ * log4j\.logger\.com\.j256\.ormlite\.stmt\.StatementExecutor=TRACE
+ * </pre>
+ * 
+ * </p>
+ * 
  * @author graywatson
  */
 public class LocalLog implements Log {
 
 	public final static String LOCAL_LOG_LEVEL_PROPERTY = "com.j256.ormlite.logger.level";
 	public final static String LOCAL_LOG_FILE_PROPERTY = "com.j256.ormlite.logger.file";
+	public final static String LOCAL_LOG_PROPERTIES_FILE = "/ormliteLocalLog.properties";
 
 	private final static Level DEFAULT_LEVEL = Level.DEBUG;
 	private static ThreadLocal<DateFormat> dateFormatThreadLocal = new ThreadLocal<DateFormat>();
+	private static List<PatternLevel> classLevels;
 
 	private final String className;
 	private final Level level;
 	private final PrintStream printStream;
 
+	static {
+		InputStream stream = LocalLog.class.getResourceAsStream(LOCAL_LOG_PROPERTIES_FILE);
+		if (stream != null) {
+			try {
+				classLevels = configureClassLevels(stream);
+			} catch (IOException e) {
+				System.err.println("IO exception reading the log properties file '" + LOCAL_LOG_PROPERTIES_FILE + "': "
+						+ e);
+			}
+		}
+	}
+
 	public LocalLog(String className) {
 		// get the last part of the class name
 		this.className = LoggerFactory.getSimpleClassName(className);
 
-		// see if we have a level set
-		String levelName = System.getProperty(LOCAL_LOG_LEVEL_PROPERTY);
-		if (levelName == null) {
-			this.level = DEFAULT_LEVEL;
-		} else {
-			Level matchedLevel;
-			try {
-				matchedLevel = Level.valueOf(levelName.toUpperCase());
-			} catch (IllegalArgumentException e) {
-				throw new IllegalArgumentException("Level '" + levelName + "' was not found", e);
+		Level level = null;
+		if (classLevels != null) {
+			for (PatternLevel patternLevel : classLevels) {
+				if (patternLevel.pattern.matcher(className).matches()) {
+					// if level has not been set or the level is lower...
+					if (level == null || patternLevel.level.ordinal() < level.ordinal()) {
+						level = patternLevel.level;
+					}
+				}
 			}
-			this.level = matchedLevel;
 		}
+
+		if (level == null) {
+			// see if we have a level set
+			String levelName = System.getProperty(LOCAL_LOG_LEVEL_PROPERTY);
+			if (levelName == null) {
+				level = DEFAULT_LEVEL;
+			} else {
+				Level matchedLevel;
+				try {
+					matchedLevel = Level.valueOf(levelName.toUpperCase());
+				} catch (IllegalArgumentException e) {
+					throw new IllegalArgumentException("Level '" + levelName + "' was not found", e);
+				}
+				level = matchedLevel;
+			}
+		}
+		this.level = level;
 
 		// see if stuff goes to stdout or a file
 		String logPath = System.getProperty(LOCAL_LOG_FILE_PROPERTY);
@@ -80,6 +129,36 @@ public class LocalLog implements Log {
 		printStream.flush();
 	}
 
+	private static List<PatternLevel> configureClassLevels(InputStream stream) throws IOException {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+		List<PatternLevel> list = new ArrayList<PatternLevel>();
+		while (true) {
+			String line = reader.readLine();
+			if (line == null) {
+				break;
+			}
+			// skip empty lines or comments
+			if (line.length() == 0 || line.charAt(0) == '#') {
+				continue;
+			}
+			String[] parts = line.split("=");
+			if (parts.length != 2) {
+				System.err.println("Line is not in the format of 'pattern = level': " + line);
+				continue;
+			}
+			Pattern pattern = Pattern.compile(parts[0].trim());
+			Level level;
+			try {
+				level = Level.valueOf(parts[1].trim());
+			} catch (IllegalArgumentException e) {
+				System.err.println("Level '" + parts[1] + "' was not found");
+				continue;
+			}
+			list.add(new PatternLevel(pattern, level));
+		}
+		return list;
+	}
+
 	private void printMessage(Level level, String message, Throwable throwable) {
 		if (!isLevelEnabled(level)) {
 			return;
@@ -97,6 +176,15 @@ public class LocalLog implements Log {
 		printStream.println(sb.toString());
 		if (throwable != null) {
 			throwable.printStackTrace(printStream);
+		}
+	}
+
+	private static class PatternLevel {
+		Pattern pattern;
+		Level level;
+		public PatternLevel(Pattern pattern, Level level) {
+			this.pattern = pattern;
+			this.level = level;
 		}
 	}
 }
