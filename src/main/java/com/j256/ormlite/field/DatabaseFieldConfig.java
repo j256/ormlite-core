@@ -42,6 +42,7 @@ public class DatabaseFieldConfig {
 	private String foreignCollectionOrderColumn;
 	private int maxEagerForeignCollectionLevel = ForeignCollectionField.MAX_EAGER_FOREIGN_COLLECTION_LEVEL;
 	private Class<? extends DataPersister> persisterClass;
+	private boolean allowGeneratedIdInsert;
 
 	public DatabaseFieldConfig() {
 		// for spring
@@ -339,6 +340,18 @@ public class DatabaseFieldConfig {
 		return persisterClass;
 	}
 
+	public void setPersisterClass(Class<? extends DataPersister> persisterClass) {
+		this.persisterClass = persisterClass;
+	}
+
+	public boolean isAllowGeneratedIdInsert() {
+		return allowGeneratedIdInsert;
+	}
+
+	public void setAllowGeneratedIdInsert(boolean allowGeneratedIdInsert) {
+		this.allowGeneratedIdInsert = allowGeneratedIdInsert;
+	}
+
 	/**
 	 * Create and return a config converted from a {@link Field} that may have either a {@link DatabaseField} annotation
 	 * or the javax.persistence annotations.
@@ -487,6 +500,7 @@ public class DatabaseFieldConfig {
 			config.maxForeignAutoRefreshLevel = databaseField.maxForeignAutoRefreshLevel();
 		}
 		config.persisterClass = databaseField.persisterClass();
+		config.allowGeneratedIdInsert = databaseField.allowGeneratedIdInsert();
 
 		return config;
 	}

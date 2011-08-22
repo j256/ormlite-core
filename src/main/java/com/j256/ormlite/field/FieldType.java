@@ -40,7 +40,11 @@ public class FieldType {
 	/** default suffix added to fields that are id fields of foreign objects */
 	public static final String FOREIGN_ID_FIELD_SUFFIX = "_id";
 
-	// default values
+	/*
+	 * Default values.
+	 * 
+	 * NOTE: These don't get any values so the compiler assigns them to the default values for the type. Ahhhh. Smart.
+	 */
 	private static boolean DEFAULT_VALUE_BOOLEAN;
 	private static byte DEFAULT_VALUE_BYTE;
 	private static char DEFAULT_VALUE_CHAR;
@@ -205,6 +209,10 @@ public class FieldType {
 		} else {
 			this.fieldGetMethod = null;
 			this.fieldSetMethod = null;
+		}
+		if (fieldConfig.isAllowGeneratedIdInsert() && !fieldConfig.isGeneratedId()) {
+			throw new IllegalArgumentException("Field " + field.getName()
+					+ " must be a generated-id if allowGeneratedIdInsert = true");
 		}
 		assignDataType(databaseType, dataPersister);
 	}
@@ -381,6 +389,9 @@ public class FieldType {
 		return fieldConverter.getSqlType();
 	}
 
+	/**
+	 * Return the default value as parsed from the {@link DatabaseFieldConfig#getDefaultValue()}.
+	 */
 	public Object getDefaultValue() {
 		return defaultValue;
 	}
@@ -726,6 +737,13 @@ public class FieldType {
 	}
 
 	/**
+	 * Call through to {@link DatabaseFieldConfig#isAllowGeneratedIdInsert()}
+	 */
+	public boolean isAllowGeneratedIdInsert() {
+		return fieldConfig.isAllowGeneratedIdInsert();
+	}
+
+	/**
 	 * Call through to {@link DataPersister#generatedId()}
 	 */
 	public Object generatedId() {
@@ -739,33 +757,47 @@ public class FieldType {
 	public <FV> FV getFieldValueIfNotDefault(Object object) throws SQLException {
 		@SuppressWarnings("unchecked")
 		FV fieldValue = (FV) extractJavaFieldValue(object);
-		if (fieldValue == null) {
-			return null;
-		}
-		boolean isDefault;
-		if (field.getType() == boolean.class) {
-			isDefault = fieldValue.equals(DEFAULT_VALUE_BOOLEAN);
-		} else if (field.getType() == byte.class || field.getType() == Byte.class) {
-			isDefault = fieldValue.equals(DEFAULT_VALUE_BYTE);
-		} else if (field.getType() == char.class || field.getType() == Character.class) {
-			isDefault = fieldValue.equals(DEFAULT_VALUE_CHAR);
-		} else if (field.getType() == short.class || field.getType() == Short.class) {
-			isDefault = fieldValue.equals(DEFAULT_VALUE_SHORT);
-		} else if (field.getType() == int.class || field.getType() == Integer.class) {
-			isDefault = fieldValue.equals(DEFAULT_VALUE_INT);
-		} else if (field.getType() == long.class || field.getType() == Long.class) {
-			isDefault = fieldValue.equals(DEFAULT_VALUE_LONG);
-		} else if (field.getType() == float.class || field.getType() == Float.class) {
-			isDefault = fieldValue.equals(DEFAULT_VALUE_FLOAT);
-		} else if (field.getType() == double.class || field.getType() == Double.class) {
-			isDefault = fieldValue.equals(DEFAULT_VALUE_DOUBLE);
-		} else {
-			isDefault = false;
-		}
-		if (isDefault) {
+		if (isFieldValueDefault(fieldValue)) {
 			return null;
 		} else {
 			return fieldValue;
+		}
+	}
+
+	/**
+	 * Return whether or not the data object has a default value passed for this field of this type.
+	 */
+	public boolean isObjectsFieldValueDefault(Object object) throws SQLException {
+		Object fieldValue = extractJavaFieldValue(object);
+		return isFieldValueDefault(fieldValue);
+	}
+
+	/**
+	 * Return whether or not the field value passed in is the default value for the type of the field. Null will return
+	 * true.
+	 */
+	public boolean isFieldValueDefault(Object fieldValue) {
+		if (fieldValue == null) {
+			return true;
+		}
+		if (field.getType() == boolean.class) {
+			return fieldValue.equals(DEFAULT_VALUE_BOOLEAN);
+		} else if (field.getType() == byte.class || field.getType() == Byte.class) {
+			return fieldValue.equals(DEFAULT_VALUE_BYTE);
+		} else if (field.getType() == char.class || field.getType() == Character.class) {
+			return fieldValue.equals(DEFAULT_VALUE_CHAR);
+		} else if (field.getType() == short.class || field.getType() == Short.class) {
+			return fieldValue.equals(DEFAULT_VALUE_SHORT);
+		} else if (field.getType() == int.class || field.getType() == Integer.class) {
+			return fieldValue.equals(DEFAULT_VALUE_INT);
+		} else if (field.getType() == long.class || field.getType() == Long.class) {
+			return fieldValue.equals(DEFAULT_VALUE_LONG);
+		} else if (field.getType() == float.class || field.getType() == Float.class) {
+			return fieldValue.equals(DEFAULT_VALUE_FLOAT);
+		} else if (field.getType() == double.class || field.getType() == Double.class) {
+			return fieldValue.equals(DEFAULT_VALUE_DOUBLE);
+		} else {
+			return false;
 		}
 	}
 

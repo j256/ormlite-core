@@ -31,14 +31,29 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 	 */
 	public int insert(DatabaseType databaseType, DatabaseConnection databaseConnection, T data) throws SQLException {
 		if (idField != null) {
+			boolean assignId;
+			if (idField.isAllowGeneratedIdInsert() && !idField.isObjectsFieldValueDefault(data)) {
+				assignId = false;
+			} else {
+				assignId = true;
+			}
 			if (idField.isSelfGeneratedId() && idField.isGeneratedId()) {
-				idField.assignField(data, idField.generatedId(), false);
+				if (assignId) {
+					idField.assignField(data, idField.generatedId(), false);
+				}
+				// fall down to do the update below
 			} else if (idField.isGeneratedIdSequence() && databaseType.isSelectSequenceBeforeInsert()) {
-				assignSequenceId(databaseConnection, data);
+				if (assignId) {
+					assignSequenceId(databaseConnection, data);
+				}
 				// fall down to do the update below
 			} else if (idField.isGeneratedId()) {
-				// this has to do the update first then get the generated-id from callback
-				return createWithGeneratedId(databaseConnection, data);
+				if (assignId) {
+					// this has to do the update first then get the generated-id from callback
+					return createWithGeneratedId(databaseConnection, data);
+				} else {
+					// fall down to do the update below
+				}
 			} else {
 				// the id should have been set by the caller already
 			}
@@ -111,7 +126,7 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 		} else if (databaseType.isIdSequenceNeeded() && databaseType.isSelectSequenceBeforeInsert()) {
 			// we need to query for the next value from the sequence and the idField is inserted afterwards
 			return true;
-		} else if (fieldType.isGeneratedId() && !fieldType.isSelfGeneratedId()) {
+		} else if (fieldType.isGeneratedId() && !fieldType.isSelfGeneratedId() && !fieldType.isAllowGeneratedIdInsert()) {
 			// skip generated-id fields because they will be auto-inserted
 			return false;
 		} else {

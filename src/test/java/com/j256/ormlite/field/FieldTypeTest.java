@@ -29,7 +29,6 @@ import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseResults;
-import com.j256.ormlite.table.DatabaseTable;
 
 public class FieldTypeTest extends BaseCoreTest {
 
@@ -708,6 +707,13 @@ public class FieldTypeTest extends BaseCoreTest {
 		assertEquals(fieldType3.hashCode(), fieldType4.hashCode());
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void testAllowGeneratedIdInsertPrimitive() throws Exception {
+		Field field = AllowGeneratedIdNotGeneratedId.class.getDeclaredField("stuff");
+		FieldType.createFieldType(connectionSource, AllowGeneratedIdNotGeneratedId.class.getSimpleName(), field,
+				AllowGeneratedIdNotGeneratedId.class);
+	}
+
 	/* ========================================================================================================= */
 
 	protected static class Foo {
@@ -918,7 +924,6 @@ public class FieldTypeTest extends BaseCoreTest {
 		String stuff;
 	}
 
-	@DatabaseTable
 	protected static class Recursive {
 		@DatabaseField(generatedId = true)
 		int id;
@@ -928,19 +933,16 @@ public class FieldTypeTest extends BaseCoreTest {
 		}
 	}
 
-	@DatabaseTable
 	protected static class SerializableNoDataType {
 		@DatabaseField
 		Serializable serial;
 	}
 
-	@DatabaseTable
 	protected static class ByteArrayNoDataType {
 		@DatabaseField
 		byte[] bytes;
 	}
 
-	@DatabaseTable
 	protected static class ForeignCollectionNoGeneric {
 		@DatabaseField
 		int id;
@@ -949,13 +951,11 @@ public class FieldTypeTest extends BaseCoreTest {
 		ForeignCollection foreignStuff;
 	}
 
-	@DatabaseTable
 	protected static class ImproperIdType {
 		@DatabaseField(id = true, dataType = DataType.SERIALIZABLE)
 		Serializable id;
 	}
 
-	@DatabaseTable
 	protected static class DefaultTypes {
 		@DatabaseField
 		boolean booleanField;
@@ -973,6 +973,14 @@ public class FieldTypeTest extends BaseCoreTest {
 		float floatField;
 		@DatabaseField
 		double doubleField;
+	}
+
+	protected static class AllowGeneratedIdNotGeneratedId {
+		@DatabaseField(generatedId = true)
+		int id;
+
+		@DatabaseField(allowGeneratedIdInsert = true)
+		String stuff;
 	}
 
 	private static class NeedsUppercaseSequenceDatabaseType extends NeedsSequenceDatabaseType {

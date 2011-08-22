@@ -7,6 +7,8 @@ import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.sql.SQLException;
@@ -106,42 +108,42 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testCreateReserverdFields() throws Exception {
-		Dao<ReservedField, Object> reservedDao = createDao(ReservedField.class, true);
+		Dao<ReservedField, Object> dao = createDao(ReservedField.class, true);
 		String from = "from-string";
 		ReservedField res = new ReservedField();
 		res.from = from;
-		reservedDao.create(res);
+		dao.create(res);
 		int id = res.select;
-		ReservedField res2 = reservedDao.queryForId(id);
+		ReservedField res2 = dao.queryForId(id);
 		assertEquals(id, res2.select);
 		String group = "group-string";
-		for (ReservedField reserved : reservedDao) {
+		for (ReservedField reserved : dao) {
 			assertEquals(from, reserved.from);
 			reserved.group = group;
-			reservedDao.update(reserved);
+			dao.update(reserved);
 		}
-		CloseableIterator<ReservedField> reservedIterator = reservedDao.iterator();
+		CloseableIterator<ReservedField> reservedIterator = dao.iterator();
 		while (reservedIterator.hasNext()) {
 			ReservedField reserved = reservedIterator.next();
 			assertEquals(from, reserved.from);
 			assertEquals(group, reserved.group);
 			reservedIterator.remove();
 		}
-		assertEquals(0, reservedDao.queryForAll().size());
+		assertEquals(0, dao.queryForAll().size());
 		reservedIterator.close();
 	}
 
 	@Test
 	public void testCreateReserverdTable() throws Exception {
-		Dao<Where, String> whereDao = createDao(Where.class, true);
+		Dao<Where, String> dao = createDao(Where.class, true);
 		String id = "from-string";
 		Where where = new Where();
 		where.id = id;
-		whereDao.create(where);
-		Where where2 = whereDao.queryForId(id);
+		dao.create(where);
+		Where where2 = dao.queryForId(id);
 		assertEquals(id, where2.id);
-		assertEquals(1, whereDao.delete(where2));
-		assertNull(whereDao.queryForId(id));
+		assertEquals(1, dao.delete(where2));
+		assertNull(dao.queryForId(id));
 	}
 
 	@Test(expected = SQLException.class)
@@ -151,11 +153,63 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testCreateWithJustGeneratedId() throws Exception {
-		Dao<GeneratedId, Integer> generatedIdDao = createDao(GeneratedId.class, true);
+		Dao<GeneratedId, Integer> dao = createDao(GeneratedId.class, true);
 		GeneratedId genId = new GeneratedId();
-		generatedIdDao.create(genId);
-		GeneratedId genId2 = generatedIdDao.queryForId(genId.genId);
+		dao.create(genId);
+		GeneratedId genId2 = dao.queryForId(genId.genId);
 		assertEquals(genId.genId, genId2.genId);
+	}
+
+	@Test
+	public void testCreateWithAllowGeneratedIdInsert() throws Exception {
+		Dao<AllowGeneratedIdInsert, Integer> dao = createDao(AllowGeneratedIdInsert.class, true);
+		AllowGeneratedIdInsert foo = new AllowGeneratedIdInsert();
+		assertEquals(1, dao.create(foo));
+		AllowGeneratedIdInsert result = dao.queryForId(foo.id);
+		assertNotNull(result);
+		assertEquals(foo.id, result.id);
+
+		AllowGeneratedIdInsert foo2 = new AllowGeneratedIdInsert();
+		assertEquals(1, dao.create(foo2));
+		result = dao.queryForId(foo2.id);
+		assertNotNull(result);
+		assertEquals(foo2.id, result.id);
+		assertFalse(foo2.id == foo.id);
+
+		AllowGeneratedIdInsert foo3 = new AllowGeneratedIdInsert();
+		foo3.id = 10002;
+		assertEquals(1, dao.create(foo3));
+		result = dao.queryForId(foo3.id);
+		assertNotNull(result);
+		assertEquals(foo3.id, result.id);
+		assertFalse(foo3.id == foo.id);
+		assertFalse(foo3.id == foo2.id);
+	}
+
+	@Test
+	public void testCreateWithAllowGeneratedIdInsertObject() throws Exception {
+		Dao<AllowGeneratedIdInsertObject, Integer> dao = createDao(AllowGeneratedIdInsertObject.class, true);
+		AllowGeneratedIdInsertObject foo = new AllowGeneratedIdInsertObject();
+		assertEquals(1, dao.create(foo));
+		AllowGeneratedIdInsertObject result = dao.queryForId(foo.id);
+		assertNotNull(result);
+		assertEquals(foo.id, result.id);
+
+		AllowGeneratedIdInsertObject foo2 = new AllowGeneratedIdInsertObject();
+		assertEquals(1, dao.create(foo2));
+		result = dao.queryForId(foo2.id);
+		assertNotNull(result);
+		assertEquals(foo2.id, result.id);
+		assertFalse(foo2.id == foo.id);
+
+		AllowGeneratedIdInsertObject foo3 = new AllowGeneratedIdInsertObject();
+		foo3.id = 10002;
+		assertEquals(1, dao.create(foo3));
+		result = dao.queryForId(foo3.id);
+		assertNotNull(result);
+		assertEquals(foo3.id, result.id);
+		assertFalse(foo3.id == foo.id);
+		assertFalse(foo3.id == foo2.id);
 	}
 
 	private static class GeneratedId {
@@ -193,6 +247,22 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 	protected static class JustId {
 		@DatabaseField(generatedId = true)
 		int id;
+	}
+
+	protected static class AllowGeneratedIdInsert {
+		@DatabaseField(generatedId = true, allowGeneratedIdInsert = true)
+		int id;
+
+		@DatabaseField
+		String stuff;
+	}
+
+	protected static class AllowGeneratedIdInsertObject {
+		@DatabaseField(generatedId = true, allowGeneratedIdInsert = true)
+		Integer id;
+
+		@DatabaseField
+		String stuff;
 	}
 
 	protected static class GeneratedIdLong {

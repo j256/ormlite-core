@@ -79,7 +79,11 @@ public abstract class BaseMappedStatement<T, ID> {
 		Object[] objects = new Object[argFieldTypes.length];
 		for (int i = 0; i < argFieldTypes.length; i++) {
 			FieldType fieldType = argFieldTypes[i];
-			objects[i] = fieldType.extractJavaFieldToSqlArgValue(data);
+			if (fieldType.isAllowGeneratedIdInsert()) {
+				objects[i] = fieldType.getFieldValueIfNotDefault(data);
+			} else {
+				objects[i] = fieldType.extractJavaFieldToSqlArgValue(data);
+			}
 			if (objects[i] == null && fieldType.getDefaultValue() != null) {
 				objects[i] = fieldType.getDefaultValue();
 			}
