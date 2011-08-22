@@ -62,8 +62,12 @@ read gpgpass
 GPG_ARGS="-Darguments=-Dgpg.passphrase=$gpgpass -Dgpg.passphrase=$gpgpass"
 
 tmp="/tmp/release.sh.$$.t"
-touch $tmp 
-gpg --passphrase $gpgpass -s -u D3412AC1 $tmp > /dev/null 2>&1 || exit 1 
+touch $tmp
+gpg --passphrase $gpgpass -s -u D3412AC1 $tmp > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "Passphrase incorrect"
+    exit 1
+fi
 rm -f $tmp*
 
 #############################################################
