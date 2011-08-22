@@ -976,9 +976,9 @@ JdbcPooledConnectionSource connectionSource =
 connectionSource.setMaxConnectionAgeMillis(5 * 60 * 1000);
 @end example
 
-Recently (2/2011), we added a keep-alive thread which pings each of the dormant pooled connections every so often to make
-sure they are valid -- closing the ones that are no long good.  You can also enable the testing of the connection right before
-you get a connection from the pool.  See the javadocs for more information.
+@code{JdbcPooledConnectionSource} also has a keep-alive thread which pings each of the dormant pooled connections every so often
+to make sure they are valid -- closing the ones that are no long good.  You can also enable the testing of the connection right
+before you get a connection from the pool.  See the javadocs for more information.
 
 @example
 // change the check-every milliseconds from 30 seconds to 60
@@ -1151,7 +1151,7 @@ No special instructions.
 @cindex Netezza database
 @item Netezza
 
-As of March 2011, the driver should be considered alpha and possibly with bugs.  I do not currently have access to a server running a
+As of August 2011, the driver should be considered alpha and possibly with bugs.  I do not currently have access to a server running a
 Netezza database. We will try to keep this driver up to date with the help of contributors.  Thanks to Richard Kooijman for the
 driver. Please contact us if you want to help with development of this driver.
   
@@ -1159,7 +1159,7 @@ driver. Please contact us if you want to help with development of this driver.
 @cindex Microsoft ODBC database
 @item ODBC
 
-As of March 2011, the driver should be considered alpha and possibly with bugs.  I do not have access to a server running Microsoft's
+As of August 2011, the driver should be considered alpha and possibly with bugs.  I do not have access to a server running Microsoft's
 Open Database Connectivity.  We will try to keep this driver up to date with the help of contributors.  Thanks to Dale Asberry for
 the driver.  Please contact us if you want to help with development of this driver.
 
@@ -1896,11 +1896,10 @@ There is example code to show how to use foreign objects.  @xref{foreign objects
 @cindex foreign collections
 @cindex eager load collections
 @cindex lazy load collections
-As of March 2011, one of the newer features of ORMLite is the concept of a "Foreign Collection".  In the above section of the
-manual we gave the example of the @code{Order} class having a foreign object field to the @code{Account} table.  A foreign collection
-allows you to add a collection of orders on the account table.  Whenever an @code{Account} object is returned by a query or refreshed
-by the DAO, a @emph{separate} query is made over the order table and a collection of orders is set on the account.  All of the orders
-in the collection have a corresponding foreign object that matches the account.  For example:
+In the above section of the manual we gave the example of the @code{Order} class having a foreign object field to the @code{Account}
+table.  A foreign collection allows you to add a collection of orders on the account table.  Whenever an @code{Account} object is
+returned by a query or refreshed by the DAO, a @emph{separate} query is made over the order table and a collection of orders is set
+on the account.  All of the orders in the collection have a corresponding foreign object that matches the account.  For example:
 
 @example
 public class Account @{
@@ -1962,8 +1961,7 @@ Another ORM pattern is to have the objects perform the database operations on th
 Database Access Object (DAO).  For example, given a data object @code{foo},  you would call @code{foo.refresh()}
 instead of @code{fooDao.refresh(foo)}.  The default pattern is to use the Dao classes which allow your data
 classes to have their own hierarchy and it isolates the database code in the Daos. However, you are free to use
-the @code{BaseDaoEnabled} class if you prefer this pattern.  As of March 2011, it is one of the newer parts of
-ORMLite so feedback and bug reports are welcome.
+the @code{BaseDaoEnabled} class if you prefer this pattern.
 
 @cindex BaseDaoEnabled
 All classes that are able to refresh (update, delete, etc.) themselves should extend the @code{BaseDaoEnabled} 

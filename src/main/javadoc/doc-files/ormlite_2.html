@@ -939,9 +939,9 @@ JdbcPooledConnectionSource connectionSource =
 // only keep the connections open for 5 minutes
 connectionSource.setMaxConnectionAgeMillis(5 * 60 * 1000);
 </pre></td></tr></table>
-<p>Recently (2/2011), we added a keep-alive thread which pings each of the dormant pooled connections every so often to make
-sure they are valid - closing the ones that are no long good.  You can also enable the testing of the connection right before
-you get a connection from the pool.  See the javadocs for more information.
+<p><code>JdbcPooledConnectionSource</code> also has a keep-alive thread which pings each of the dormant pooled connections every so often
+to make sure they are valid - closing the ones that are no long good.  You can also enable the testing of the connection right
+before you get a connection from the pool.  See the javadocs for more information.
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">// change the check-every milliseconds from 30 seconds to 60
 connectionSource.setCheckConnectionsEveryMillis(60 * 1000);
@@ -1143,7 +1143,7 @@ may have to set the right database type on your ConnectionSource directly if it 
 </dd>
 <dt> Netezza</dt>
 <dd>
-<p>As of March 2011, the driver should be considered alpha and possibly with bugs.  I do not currently have access to a server running a
+<p>As of August 2011, the driver should be considered alpha and possibly with bugs.  I do not currently have access to a server running a
 Netezza database. We will try to keep this driver up to date with the help of contributors.  Thanks to Richard Kooijman for the
 driver. Please contact us if you want to help with development of this driver.
   
@@ -1152,7 +1152,7 @@ driver. Please contact us if you want to help with development of this driver.
 </dd>
 <dt> ODBC</dt>
 <dd>
-<p>As of March 2011, the driver should be considered alpha and possibly with bugs.  I do not have access to a server running Microsoft's
+<p>As of August 2011, the driver should be considered alpha and possibly with bugs.  I do not have access to a server running Microsoft's
 Open Database Connectivity.  We will try to keep this driver up to date with the help of contributors.  Thanks to Dale Asberry for
 the driver.  Please contact us if you want to help with development of this driver.
 
@@ -2099,11 +2099,10 @@ List&lt;Order&gt; results =
 </tr></table>
 <h2 class="section"> 2.13 Foreign Collections </h2>
 
-<p>As of March 2011, one of the newer features of ORMLite is the concept of a &quot;Foreign Collection&quot;.  In the above section of the
-manual we gave the example of the <code>Order</code> class having a foreign object field to the <code>Account</code> table.  A foreign collection
-allows you to add a collection of orders on the account table.  Whenever an <code>Account</code> object is returned by a query or refreshed
-by the DAO, a <em>separate</em> query is made over the order table and a collection of orders is set on the account.  All of the orders
-in the collection have a corresponding foreign object that matches the account.  For example:
+<p>In the above section of the manual we gave the example of the <code>Order</code> class having a foreign object field to the <code>Account</code>
+table.  A foreign collection allows you to add a collection of orders on the account table.  Whenever an <code>Account</code> object is
+returned by a query or refreshed by the DAO, a <em>separate</em> query is made over the order table and a collection of orders is set
+on the account.  All of the orders in the collection have a corresponding foreign object that matches the account.  For example:
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">public class Account {
     &hellip;
@@ -2182,8 +2181,7 @@ lazy collections.
 Database Access Object (DAO).  For example, given a data object <code>foo</code>,  you would call <code>foo.refresh()</code>
 instead of <code>fooDao.refresh(foo)</code>.  The default pattern is to use the Dao classes which allow your data
 classes to have their own hierarchy and it isolates the database code in the Daos. However, you are free to use
-the <code>BaseDaoEnabled</code> class if you prefer this pattern.  As of March 2011, it is one of the newer parts of
-ORMLite so feedback and bug reports are welcome.
+the <code>BaseDaoEnabled</code> class if you prefer this pattern.
 
 </p><a name="IDX181"></a>
 <p>All classes that are able to refresh (update, delete, etc.) themselves should extend the <code>BaseDaoEnabled</code> 
