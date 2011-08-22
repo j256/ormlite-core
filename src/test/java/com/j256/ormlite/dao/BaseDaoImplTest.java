@@ -1910,14 +1910,26 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testCreateOrUpdateNullId() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
-		Foo foo1 = new Foo();
-		int equal1 = 21313;
-		foo1.equal = equal1;
-		CreateOrUpdateStatus status = dao.createOrUpdate(foo1);
+		Dao<CreateOrUpdateObjectId, Integer> dao = createDao(CreateOrUpdateObjectId.class, true);
+		CreateOrUpdateObjectId foo = new CreateOrUpdateObjectId();
+		String stuff = "21313";
+		foo.stuff = stuff;
+		CreateOrUpdateStatus status = dao.createOrUpdate(foo);
 		assertTrue(status.isCreated());
 		assertFalse(status.isUpdated());
 		assertEquals(1, status.getNumLinesChanged());
+
+		CreateOrUpdateObjectId result = dao.queryForId(foo.id);
+		assertNotNull(result);
+		assertEquals(stuff, result.stuff);
+
+		String stuff2 = "pwojgfwe";
+		foo.stuff = stuff2;
+		dao.createOrUpdate(foo);
+
+		result = dao.queryForId(foo.id);
+		assertNotNull(result);
+		assertEquals(stuff2, result.stuff);
 	}
 
 	@Test
@@ -2085,6 +2097,15 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	protected static class NoId {
 		@DatabaseField
 		String stuff;
+	}
+
+	protected static class CreateOrUpdateObjectId {
+		@DatabaseField(generatedId = true)
+		public Integer id;
+		@DatabaseField
+		public String stuff;
+		public CreateOrUpdateObjectId() {
+		}
 	}
 
 	private static class Mapper implements RawRowMapper<Foo> {

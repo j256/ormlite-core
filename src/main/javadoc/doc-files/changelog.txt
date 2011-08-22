@@ -3,7 +3,8 @@
 	* Exposed the fields in CreateOrUpdateStatus that were package protected (fail!).  Thanks to steffen.  Fixes bug #3383768.
 	* Added to FieldType getter for foreign field type.  Resolves feature request #3386969.  Thanks to Jean-Maxime Pelletier.
 	* Added allowGeneratedIdInsert feature to allow optional generated-id fields.  Thanks to Craig Andrews.
-	* Fixed problem with null ids an createOrUpdate.  Thanks to Jo‹o Bosco.  Fixes bug #3390169.  
+	* Fixed problem with null ids an createOrUpdate.  Thanks to Jo‹o Bosco.  Fixes bug #3390169.
+	* Fixed multi-threaded race condition with field and constructor accessibility.  Thanks to Jeroen Rakhorst.  Fixes bug #3381083.
 
 4.24: 7/18/2011 (svn r1840)
 	* CORE: Fixed problem with updating a field's value to be null using UpdateBuilder. Thanks to Jeremy Mcjunkin. Fixes bug #3359086.

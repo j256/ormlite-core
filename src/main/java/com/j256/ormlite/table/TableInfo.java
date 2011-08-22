@@ -161,11 +161,7 @@ public class TableInfo<T, ID> {
 	 * Create and return an object of this type using our reflection constructor.
 	 */
 	public static <T, ID> T createObject(Constructor<?> constructor, Dao<T, ID> dao) throws SQLException {
-		boolean accessible = constructor.isAccessible();
 		try {
-			if (!accessible) {
-				constructor.setAccessible(true);
-			}
 			// create our instance
 			@SuppressWarnings("unchecked")
 			T instance = (T) constructor.newInstance();
@@ -177,10 +173,6 @@ public class TableInfo<T, ID> {
 			return instance;
 		} catch (Exception e) {
 			throw SqlExceptionUtil.create("Could not create object for " + constructor.getDeclaringClass(), e);
-		} finally {
-			if (!accessible) {
-				constructor.setAccessible(false);
-			}
 		}
 	}
 

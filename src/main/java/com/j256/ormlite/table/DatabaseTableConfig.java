@@ -199,6 +199,13 @@ public class DatabaseTableConfig<T> {
 		}
 		for (Constructor<T> con : constructors) {
 			if (con.getParameterTypes().length == 0) {
+				if (!con.isAccessible()) {
+					try {
+						con.setAccessible(true);
+					} catch (SecurityException e) {
+						throw new IllegalArgumentException("Could not open access to constructor for " + dataClass);
+					}
+				}
 				return con;
 			}
 		}

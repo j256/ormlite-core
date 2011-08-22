@@ -207,6 +207,14 @@ public class FieldType {
 			this.fieldGetMethod = DatabaseFieldConfig.findGetMethod(field, true);
 			this.fieldSetMethod = DatabaseFieldConfig.findSetMethod(field, true);
 		} else {
+			if (!field.isAccessible()) {
+				try {
+					this.field.setAccessible(true);
+				} catch (SecurityException e) {
+					throw new IllegalArgumentException("Could not open access to field " + field.getName()
+							+ ".  You may have to set useGetSet=true to fix.");
+				}
+			}
 			this.fieldGetMethod = null;
 			this.fieldSetMethod = null;
 		}
@@ -493,21 +501,12 @@ public class FieldType {
 		}
 
 		if (fieldSetMethod == null) {
-			boolean accessible = field.isAccessible();
-			if (!accessible) {
-				field.setAccessible(true);
-			}
 			try {
 				field.set(data, val);
 			} catch (IllegalArgumentException e) {
 				throw SqlExceptionUtil.create("Could not assign object '" + val + "' to field " + this, e);
 			} catch (IllegalAccessException e) {
 				throw SqlExceptionUtil.create("Could not assign object '" + val + "' to field " + this, e);
-			} finally {
-				if (!accessible) {
-					// restore the accessibility of the field
-					field.setAccessible(false);
-				}
 			}
 		} else {
 			try {
@@ -538,19 +537,11 @@ public class FieldType {
 	public <FV> FV extractJavaFieldValue(Object object) throws SQLException {
 		Object val;
 		if (fieldGetMethod == null) {
-			boolean accessible = field.isAccessible();
 			try {
-				if (!accessible) {
-					field.setAccessible(true);
-				}
 				// field object may not be a T yet
 				val = field.get(object);
 			} catch (Exception e) {
 				throw SqlExceptionUtil.create("Could not get field value for " + this, e);
-			} finally {
-				if (!accessible) {
-					field.setAccessible(false);
-				}
 			}
 		} else {
 			try {
