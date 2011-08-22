@@ -1909,6 +1909,18 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	}
 
 	@Test
+	public void testCreateOrUpdateNullId() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		int equal1 = 21313;
+		foo1.equal = equal1;
+		CreateOrUpdateStatus status = dao.createOrUpdate(foo1);
+		assertTrue(status.isCreated());
+		assertFalse(status.isUpdated());
+		assertEquals(1, status.getNumLinesChanged());
+	}
+
+	@Test
 	public void testQueryForSameId() throws Exception {
 		Dao<Foo, String> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();

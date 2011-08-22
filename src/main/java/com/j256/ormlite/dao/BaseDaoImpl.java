@@ -262,7 +262,11 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			return null;
 		}
 		ID id = extractId(data);
-		return queryForId(id);
+		if (id == null) {
+			return null;
+		} else {
+			return queryForId(id);
+		}
 	}
 
 	public int create(T data) throws SQLException {
