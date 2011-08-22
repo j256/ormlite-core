@@ -1,5 +1,8 @@
 4.25: 8/XX/2011 (svn rYYYY)
+	* Fixed problem with id=true with UUID fields not working.  Thanks to Evan Grim.  Fixed bug 3392691.
 	* Exposed the fields in CreateOrUpdateStatus that were package protected (fail!).  Thanks to steffen.  Fixes bug #3383768.
+	* Added to FieldType getter for foreign field type.  Resolves feature request #3386969.  Thanks to Jean-Maxime Pelletier.
+	* Added allowGeneratedIdInsert feature to allow optional generated-id fields.  Thanks to Craig Andrews.
 
 4.24: 7/18/2011 (svn r1840)
 	* CORE: Fixed problem with updating a field's value to be null using UpdateBuilder. Thanks to Jeremy Mcjunkin. Fixes bug #3359086.

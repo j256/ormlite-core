@@ -2,7 +2,7 @@
 	- maybe also JDO?
 
 - support for embedded objects
-	- look to see if the unknown class has a DatabaseTable(embedded = true or javax annotation
+	- look to see if the unknown class has a DatabaseTable(embedded = true) or javax annotation
 	- take all of the fields as if they were fields in this class
 	- embedded keys are going to be _hard_, maybe punt them
 
