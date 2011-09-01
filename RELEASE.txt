@@ -86,8 +86,12 @@ To release ORMLite:
 	- show changelog
 	- tell them where they can get it
 
-16) Change the pom.xml ormlite-version to X.X-SNAPSHOT in ormlitetest
+16) Update the wikipedia page on ORMLite with new version and date:
 
-17) Check in new jars into the Android example projects
+	http://en.wikipedia.org/w/index.php?title=ORMLite&action=edit
 
-18) Watch to make sure the central repository was updated.  http://repo1.maven.org/maven2/com/j256/ormlite/
+17) Change the pom.xml ormlite-version to X.X-SNAPSHOT in ormlitetest
+
+18) Check in new jars into the Android example projects
+
+19) Watch to make sure the central repository was updated.  http://repo1.maven.org/maven2/com/j256/ormlite/

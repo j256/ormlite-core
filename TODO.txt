@@ -30,6 +30,9 @@
 	- maybe you could see if the id was set or something?
 	- maybe just require someone to use the other DAO
 
+- remove the restriction on classes with just the ID
+	- just handle the case of update and make it a no-op
+
 - JPA:
 	- @Enumerated(EnumType.STRING)
 
