@@ -13,6 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
@@ -26,6 +27,7 @@ import com.j256.ormlite.h2.H2DatabaseType;
 public class JavaxPersistenceTest extends BaseCoreTest {
 
 	private static final String STUFF_FIELD_NAME = "notstuff";
+	private static final String JOIN_FIELD_NAME = "notjoinfield";
 	private static final String JAVAX_ENTITY_NAME = "notjavax";
 
 	@Test
@@ -68,6 +70,13 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 				assertNull(config.getDataPersister());
 				assertEquals(field.getName(), config.getFieldName());
 				assertNull(config.getColumnName());
+			} else if (field.getName().equals("joinFieldName")) {
+				assertFalse(config.isId());
+				assertFalse(config.isGeneratedId());
+				assertTrue(config.isForeign());
+				assertNull(config.getDataPersister());
+				assertEquals(field.getName(), config.getFieldName());
+				assertEquals(JOIN_FIELD_NAME, config.getColumnName());
 			} else {
 				System.err.println("\n\n\nUnknown field: " + field.getName());
 			}
@@ -112,6 +121,9 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 		Foreign foreignManyToOne;
 		@OneToOne
 		Foreign foreignOneToOne;
+		@ManyToOne
+		@JoinColumn(name = JOIN_FIELD_NAME)
+		Foreign joinFieldName;
 		public Javax() {
 		}
 	}

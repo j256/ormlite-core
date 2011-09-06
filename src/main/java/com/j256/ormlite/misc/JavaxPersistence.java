@@ -27,19 +27,27 @@ public class JavaxPersistence {
 		Annotation generatedValueAnnotation = null;
 		Annotation oneToOneAnnotation = null;
 		Annotation manyToOneAnnotation = null;
+		Annotation joinColumnAnnotation = null;
 
 		for (Annotation annotation : field.getAnnotations()) {
 			Class<?> annotationClass = annotation.annotationType();
 			if (annotationClass.getName().equals("javax.persistence.Column")) {
 				columnAnnotation = annotation;
-			} else if (annotationClass.getName().equals("javax.persistence.Id")) {
+			}
+			if (annotationClass.getName().equals("javax.persistence.Id")) {
 				idAnnotation = annotation;
-			} else if (annotationClass.getName().equals("javax.persistence.GeneratedValue")) {
+			}
+			if (annotationClass.getName().equals("javax.persistence.GeneratedValue")) {
 				generatedValueAnnotation = annotation;
-			} else if (annotationClass.getName().equals("javax.persistence.OneToOne")) {
+			}
+			if (annotationClass.getName().equals("javax.persistence.OneToOne")) {
 				oneToOneAnnotation = annotation;
-			} else if (annotationClass.getName().equals("javax.persistence.ManyToOne")) {
+			}
+			if (annotationClass.getName().equals("javax.persistence.ManyToOne")) {
 				manyToOneAnnotation = annotation;
+			}
+			if (annotationClass.getName().equals("javax.persistence.JoinColumn")) {
+				joinColumnAnnotation = annotation;
 			}
 		}
 
@@ -69,7 +77,7 @@ public class JavaxPersistence {
 				method = columnAnnotation.getClass().getMethod("unique");
 				config.setUnique((Boolean) method.invoke(columnAnnotation));
 			} catch (Exception e) {
-				throw SqlExceptionUtil.create("Problem accessing fields from the Column annotation for field " + field,
+				throw SqlExceptionUtil.create("Problem accessing fields from the @Column annotation for field " + field,
 						e);
 			}
 		}
@@ -81,8 +89,21 @@ public class JavaxPersistence {
 				config.setGeneratedId(true);
 			}
 		}
-		// foreign values are always ones we can't map as primitives (or Strings)
-		config.setForeign(oneToOneAnnotation != null || manyToOneAnnotation != null);
+		if (oneToOneAnnotation != null || manyToOneAnnotation != null) {
+			config.setForeign(true);
+			if (joinColumnAnnotation != null) {
+				try {
+					Method method = joinColumnAnnotation.getClass().getMethod("name");
+					String name = (String) method.invoke(joinColumnAnnotation);
+					if (name != null && name.length() > 0) {
+						config.setColumnName(name);
+					}
+				} catch (Exception e) {
+					throw SqlExceptionUtil.create("Problem accessing fields from the @JoinColumn annotation for field " + field,
+							e);
+				}
+			}
+		}
 		config.setDataPersister(DataPersisterManager.lookupForField(field));
 		config.setUseGetSet(DatabaseFieldConfig.findGetMethod(field, false) != null
 				&& DatabaseFieldConfig.findSetMethod(field, false) != null);
