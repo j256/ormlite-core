@@ -63,6 +63,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	protected CloseableIterator<T> lastIterator;
 
 	private static final ThreadLocal<DaoConfigLevel> daoConfigLevelLocal = new ThreadLocal<DaoConfigLevel>();
+	private ObjectCache objectCache = null;
 
 	/**
 	 * Construct our base DAO using Spring type wiring. The {@link ConnectionSource} must be set with the
@@ -195,7 +196,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		checkForInitialized();
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		try {
-			return statementExecutor.queryForId(connection, id);
+			return statementExecutor.queryForId(connection, id, objectCache);
 		} finally {
 			connectionSource.releaseConnection(connection);
 		}
@@ -205,7 +206,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		checkForInitialized();
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		try {
-			return statementExecutor.queryForFirst(connection, preparedQuery);
+			return statementExecutor.queryForFirst(connection, preparedQuery, objectCache);
 		} finally {
 			connectionSource.releaseConnection(connection);
 		}
@@ -213,7 +214,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
 	public List<T> queryForAll() throws SQLException {
 		checkForInitialized();
-		return statementExecutor.queryForAll(connectionSource);
+		return statementExecutor.queryForAll(connectionSource, objectCache);
 	}
 
 	public List<T> queryForEq(String fieldName, Object value) throws SQLException {
@@ -237,7 +238,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
 	public List<T> query(PreparedQuery<T> preparedQuery) throws SQLException {
 		checkForInitialized();
-		return statementExecutor.query(connectionSource, preparedQuery);
+		return statementExecutor.query(connectionSource, preparedQuery, objectCache);
 	}
 
 	public List<T> queryForMatching(T matchObj) throws SQLException {
@@ -282,7 +283,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			}
 			DatabaseConnection connection = connectionSource.getReadWriteConnection();
 			try {
-				return statementExecutor.create(connection, data);
+				return statementExecutor.create(connection, data, objectCache);
 			} finally {
 				connectionSource.releaseConnection(connection);
 			}
@@ -324,7 +325,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		} else {
 			DatabaseConnection connection = connectionSource.getReadWriteConnection();
 			try {
-				return statementExecutor.update(connection, data);
+				return statementExecutor.update(connection, data, objectCache);
 			} finally {
 				connectionSource.releaseConnection(connection);
 			}
@@ -339,7 +340,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		} else {
 			DatabaseConnection connection = connectionSource.getReadWriteConnection();
 			try {
-				return statementExecutor.updateId(connection, data, newId);
+				return statementExecutor.updateId(connection, data, newId, objectCache);
 			} finally {
 				connectionSource.releaseConnection(connection);
 			}
@@ -369,7 +370,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			}
 			DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 			try {
-				return statementExecutor.refresh(connection, data);
+				return statementExecutor.refresh(connection, data, objectCache);
 			} finally {
 				connectionSource.releaseConnection(connection);
 			}
@@ -384,7 +385,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		} else {
 			DatabaseConnection connection = connectionSource.getReadWriteConnection();
 			try {
-				return statementExecutor.delete(connection, data);
+				return statementExecutor.delete(connection, data, objectCache);
 			} finally {
 				connectionSource.releaseConnection(connection);
 			}
@@ -398,7 +399,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		} else {
 			DatabaseConnection connection = connectionSource.getReadWriteConnection();
 			try {
-				return statementExecutor.deleteObjects(connection, datas);
+				return statementExecutor.deleteObjects(connection, datas, objectCache);
 			} finally {
 				connectionSource.releaseConnection(connection);
 			}
@@ -413,7 +414,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		} else {
 			DatabaseConnection connection = connectionSource.getReadWriteConnection();
 			try {
-				return statementExecutor.deleteIds(connection, ids);
+				return statementExecutor.deleteIds(connection, ids, objectCache);
 			} finally {
 				connectionSource.releaseConnection(connection);
 			}
@@ -446,7 +447,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	public CloseableIterator<T> seperateIterator() {
 		checkForInitialized();
 		try {
-			SelectIterator<T, ID> iterator = statementExecutor.buildIterator(this, connectionSource);
+			SelectIterator<T, ID> iterator = statementExecutor.buildIterator(this, connectionSource, objectCache);
 			return iterator;
 		} catch (Exception e) {
 			throw new IllegalStateException("Could not build iterator for " + dataClass, e);
@@ -504,7 +505,8 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	public CloseableIterator<T> seperateIterator(PreparedQuery<T> preparedQuery) throws SQLException {
 		checkForInitialized();
 		try {
-			SelectIterator<T, ID> iterator = statementExecutor.buildIterator(this, connectionSource, preparedQuery);
+			SelectIterator<T, ID> iterator =
+					statementExecutor.buildIterator(this, connectionSource, preparedQuery, objectCache);
 			lastIterator = iterator;
 			return iterator;
 		} catch (SQLException e) {
@@ -515,7 +517,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	public GenericRawResults<String[]> queryRaw(String query, String... arguments) throws SQLException {
 		checkForInitialized();
 		try {
-			return statementExecutor.queryRaw(connectionSource, query, arguments);
+			return statementExecutor.queryRaw(connectionSource, query, arguments, objectCache);
 		} catch (SQLException e) {
 			throw SqlExceptionUtil.create("Could not build iterator for " + query, e);
 		}
@@ -525,7 +527,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			throws SQLException {
 		checkForInitialized();
 		try {
-			return statementExecutor.queryRaw(connectionSource, query, mapper, arguments);
+			return statementExecutor.queryRaw(connectionSource, query, mapper, arguments, objectCache);
 		} catch (SQLException e) {
 			throw SqlExceptionUtil.create("Could not build iterator for " + query, e);
 		}
@@ -535,7 +537,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			throws SQLException {
 		checkForInitialized();
 		try {
-			return statementExecutor.queryRaw(connectionSource, query, columnTypes, arguments);
+			return statementExecutor.queryRaw(connectionSource, query, columnTypes, arguments, objectCache);
 		} catch (SQLException e) {
 			throw SqlExceptionUtil.create("Could not build iterator for " + query, e);
 		}
@@ -661,6 +663,41 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			}
 		}
 		throw new IllegalArgumentException("Could not find a field named " + fieldName);
+	}
+
+	public void enableObjectCache(boolean enabled) {
+		if (enabled) {
+			if (objectCache == null) {
+				objectCache = ReferenceObjectCache.makeWeakCache();
+			}
+		} else {
+			if (objectCache != null) {
+				objectCache.clear();
+				objectCache = null;
+			}
+		}
+	}
+
+	public void enableObjectCache(ObjectCache objectCache) {
+		if (objectCache == null) {
+			if (this.objectCache != null) {
+				// help with GC-ing
+				this.objectCache.clear();
+				this.objectCache = null;
+			}
+		} else {
+			if (this.objectCache != null && this.objectCache != objectCache) {
+				// help with GC-ing
+				this.objectCache.clear();
+			}
+			this.objectCache = objectCache;
+		}
+	}
+
+	public void clearObjectCache() {
+		if (objectCache != null) {
+			objectCache.clear();
+		}
 	}
 
 	/**

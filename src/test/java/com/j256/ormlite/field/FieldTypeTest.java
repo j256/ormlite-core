@@ -3,6 +3,7 @@ package com.j256.ormlite.field;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
+import static org.easymock.EasyMock.isNull;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
@@ -23,6 +24,7 @@ import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.ForeignCollection;
+import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.h2.H2DatabaseType;
 import com.j256.ormlite.stmt.GenericRowMapper;
@@ -315,7 +317,7 @@ public class FieldTypeTest extends BaseCoreTest {
 		getSet.id = id;
 		assertEquals(id, fieldType.extractJavaFieldToSqlArgValue(getSet));
 		int id2 = 869544;
-		fieldType.assignField(getSet, id2, false);
+		fieldType.assignField(getSet, id2, false, null);
 		assertEquals(id2, fieldType.extractJavaFieldToSqlArgValue(getSet));
 	}
 
@@ -336,7 +338,7 @@ public class FieldTypeTest extends BaseCoreTest {
 		Field idField = fields[0];
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, GetSet.class.getSimpleName(), idField, GetSet.class);
-		fieldType.assignField(new Object(), 10, false);
+		fieldType.assignField(new Object(), 10, false, null);
 	}
 
 	@Test
@@ -357,7 +359,7 @@ public class FieldTypeTest extends BaseCoreTest {
 				FieldType.createFieldType(connectionSource, Foo.class.getSimpleName(), nameField, Foo.class);
 		Foo foo = new Foo();
 		String name1 = "wfwef";
-		fieldType.assignField(foo, name1, false);
+		fieldType.assignField(foo, name1, false, null);
 		assertEquals(name1, foo.name);
 	}
 
@@ -370,7 +372,7 @@ public class FieldTypeTest extends BaseCoreTest {
 				FieldType.createFieldType(connectionSource, NumberId.class.getSimpleName(), nameField, NumberId.class);
 		NumberId foo = new NumberId();
 		int id = 10;
-		fieldType.assignIdValue(foo, id);
+		fieldType.assignIdValue(foo, id, null);
 		assertEquals(id, foo.id);
 	}
 
@@ -381,7 +383,7 @@ public class FieldTypeTest extends BaseCoreTest {
 		Field nameField = fields[0];
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, Foo.class.getSimpleName(), nameField, Foo.class);
-		fieldType.assignIdValue(new Foo(), 10);
+		fieldType.assignIdValue(new Foo(), 10, null);
 	}
 
 	@Test
@@ -412,19 +414,19 @@ public class FieldTypeTest extends BaseCoreTest {
 		ForeignParent parent = new ForeignParent();
 		assertNull(parent.foreign);
 		// we assign the id, not the object
-		fieldType.assignField(parent, id, false);
+		fieldType.assignField(parent, id, false, null);
 		ForeignForeign foreign = parent.foreign;
 		assertNotNull(foreign);
 		assertEquals(id, foreign.id);
 
 		// not try assigning it again
-		fieldType.assignField(parent, id, false);
+		fieldType.assignField(parent, id, false, null);
 		// foreign field should not have been changed
 		assertSame(foreign, parent.foreign);
 
 		// now assign a different id
 		int newId = id + 1;
-		fieldType.assignField(parent, newId, false);
+		fieldType.assignField(parent, newId, false, null);
 		assertNotSame(foreign, parent.foreign);
 		assertEquals(newId, parent.foreign.id);
 	}
@@ -556,7 +558,7 @@ public class FieldTypeTest extends BaseCoreTest {
 		foreignForeign.stuff = stuff;
 		expect(
 				connection.queryForOne(isA(String.class), isA(Object[].class), isA(FieldType[].class),
-						isA(GenericRowMapper.class))).andReturn(foreignForeign);
+						isA(GenericRowMapper.class), (ObjectCache) isNull())).andReturn(foreignForeign);
 		connectionSource.releaseConnection(connection);
 		DatabaseResults results = createMock(DatabaseResults.class);
 		ForeignAutoRefresh foreign = new ForeignAutoRefresh();
@@ -566,7 +568,7 @@ public class FieldTypeTest extends BaseCoreTest {
 						ForeignAutoRefresh.class);
 		fieldType.configDaoInformation(connectionSource, ForeignAutoRefresh.class);
 		assertNull(foreign.foreign);
-		fieldType.assignField(foreign, id, false);
+		fieldType.assignField(foreign, id, false, null);
 		assertNotNull(foreign.foreign);
 		assertEquals(id, foreign.foreign.id);
 		assertEquals(stuff, foreign.foreign.stuff);

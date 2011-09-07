@@ -33,7 +33,7 @@ public class MappedUpdateTest {
 						NoId.class), null);
 		NoId noId = new NoId();
 		noId.id = "1";
-		se.update(null, noId);
+		se.update(null, noId, null);
 	}
 
 	@Test(expected = SQLException.class)
@@ -43,7 +43,7 @@ public class MappedUpdateTest {
 						null, JustId.class), null);
 		JustId justId = new JustId();
 		justId.id = 1;
-		se.update(null, justId);
+		se.update(null, justId, null);
 	}
 
 	@Test(expected = SQLException.class)

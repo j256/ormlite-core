@@ -1,5 +1,6 @@
 package com.j256.ormlite.dao;
 
+import java.lang.ref.WeakReference;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
@@ -378,11 +379,11 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public CloseableIterator<T> iterator(PreparedQuery<T> preparedQuery) throws SQLException;
 
 	/**
-	 * Similar to the {@link #iterator(PreparedQuery)} except it returns a RawResults object associated with the SQL
-	 * select query argument. Although you should use the {@link #iterator()} for most queries, this method allows you
-	 * to do special queries that aren't supported otherwise. Like the above iterator methods, you must call close on
-	 * the returned RawResults object once you are done with it. The arguments are optional but can be set with strings
-	 * to expand ? type of SQL.
+	 * Similar to the {@link #iterator(PreparedQuery)} except it returns a GenericRawResults object associated with the
+	 * SQL select query argument. Although you should use the {@link #iterator()} for most queries, this method allows
+	 * you to do special queries that aren't supported otherwise. Like the above iterator methods, you must call close
+	 * on the returned RawResults object once you are done with it. The arguments are optional but can be set with
+	 * strings to expand ? type of SQL.
 	 */
 	public GenericRawResults<String[]> queryRaw(String query, String... arguments) throws SQLException;
 
@@ -507,6 +508,25 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 *            {@link ForeignCollectionField#columnName()} to set the name to a static name.
 	 */
 	public <FT> ForeignCollection<FT> getEmptyForeignCollection(String fieldName) throws SQLException;
+
+	/**
+	 * Call this with true to enable an object cache for the DAO. Set to false to disable any caching. It is (as of
+	 * 9/2011) one of the newer features of ORMLite. It keeps a {@link ReferenceObjectCache} of the objects (using
+	 * {@link WeakReference}) referenced by the DAO. No support for objects returned by the {@link #queryRaw} methods.
+	 */
+	public void enableObjectCache(boolean enabled);
+
+	/**
+	 * Same as {@link #enableObjectCache(boolean)} except you specify the actual cache instance to use for the DAO. Call
+	 * it with null to disable the cache.
+	 */
+	public void enableObjectCache(ObjectCache objectCache);
+
+	/**
+	 * Flush the object cache if it has been enabled. This will remove an objects that are in the cache to reclaim
+	 * memory. Any future queries will re-request them from the database.
+	 */
+	public void clearObjectCache();
 
 	/**
 	 * Return class for the {@link Dao#createOrUpdate(Object)} method.

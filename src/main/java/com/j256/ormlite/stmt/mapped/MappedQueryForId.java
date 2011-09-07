@@ -2,6 +2,7 @@ package com.j256.ormlite.stmt.mapped;
 
 import java.sql.SQLException;
 
+import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.support.DatabaseConnection;
@@ -25,10 +26,16 @@ public class MappedQueryForId<T, ID> extends BaseMappedQuery<T, ID> {
 	/**
 	 * Query for an object in the database which matches the id argument.
 	 */
-	public T execute(DatabaseConnection databaseConnection, ID id) throws SQLException {
+	public T execute(DatabaseConnection databaseConnection, ID id, ObjectCache objectCache) throws SQLException {
+		if (objectCache != null) {
+			T result = objectCache.get(clazz, id);
+			if (result != null) {
+				return result;
+			}
+		}
 		Object[] args = new Object[] { convertIdToFieldObject(id) };
 		// @SuppressWarnings("unchecked")
-		Object result = databaseConnection.queryForOne(statement, args, new FieldType[] { idField }, this);
+		Object result = databaseConnection.queryForOne(statement, args, new FieldType[] { idField }, this, objectCache);
 		if (result == null) {
 			logger.debug("{} using '{}' and {} args, got no results", label, statement, args.length);
 		} else if (result == DatabaseConnection.MORE_THAN_ONE) {
@@ -39,9 +46,16 @@ public class MappedQueryForId<T, ID> extends BaseMappedQuery<T, ID> {
 			logger.debug("{} using '{}' and {} args, got 1 result", label, statement, args.length);
 		}
 		logArgs(args);
-		@SuppressWarnings("unchecked")
-		T castResult = (T) result;
-		return castResult;
+		if (result == null) {
+			return null;
+		} else {
+			@SuppressWarnings("unchecked")
+			T castResult = (T) result;
+			if (objectCache != null) {
+				objectCache.put(clazz, id, castResult);
+			}
+			return castResult;
+		}
 	}
 
 	public static <T, ID> MappedQueryForId<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo)

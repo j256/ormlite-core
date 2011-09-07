@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.support.CompiledStatement;
@@ -42,14 +43,14 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 	 */
 	public SelectIterator(Class<?> dataClass, Dao<T, ID> classDao, GenericRowMapper<T> rowMapper,
 			ConnectionSource connectionSource, DatabaseConnection connection, CompiledStatement compiledStmt,
-			String statement) throws SQLException {
+			String statement, ObjectCache objectCache) throws SQLException {
 		this.dataClass = dataClass;
 		this.classDao = classDao;
 		this.rowMapper = rowMapper;
 		this.connectionSource = connectionSource;
 		this.connection = connection;
 		this.compiledStmt = compiledStmt;
-		this.results = compiledStmt.runQuery();
+		this.results = compiledStmt.runQuery(objectCache);
 		this.statement = statement;
 		if (statement != null) {
 			logger.debug("starting iterator @{} for '{}'", hashCode(), statement);

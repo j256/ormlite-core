@@ -461,6 +461,26 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertEquals(order2, orders[1]);
 		assertNull(orders[2]);
 
+		CloseableWrappedIterable<Order> wrapped = accountResult.orders.getWrappedIterable();
+		try {
+			orderC = 0;
+			for (Order order : wrapped) {
+				orderC++;
+				switch (orderC) {
+					case 1 :
+						assertEquals(val1, order.val);
+						break;
+					case 2 :
+						assertEquals(val2, order.val);
+						break;
+				}
+				assertSame(accountResult, order.account);
+			}
+			assertEquals(2, orderC);
+		} finally {
+			wrapped.close();
+		}
+		
 		// insert it via the collection
 		Order order5 = new Order();
 		int val5 = 76557654;

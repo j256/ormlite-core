@@ -2,6 +2,7 @@ package com.j256.ormlite.stmt.mapped;
 
 import java.sql.SQLException;
 
+import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.misc.SqlExceptionUtil;
@@ -22,14 +23,23 @@ public class MappedUpdateId<T, ID> extends BaseMappedStatement<T, ID> {
 	/**
 	 * Update the id field of the object in the database.
 	 */
-	public int execute(DatabaseConnection databaseConnection, T data, ID newId) throws SQLException {
+	public int execute(DatabaseConnection databaseConnection, T data, ID newId, ObjectCache objectCache)
+			throws SQLException {
 		try {
 			// the arguments are the new-id and old-id
 			Object[] args = new Object[] { convertIdToFieldObject(newId), extractIdToFieldObject(data) };
 			int rowC = databaseConnection.update(statement, args, argFieldTypes);
-			if (rowC == 1) {
+			if (rowC > 0) {
+				if (objectCache != null) {
+					Object oldId = idField.extractJavaFieldValue(data);
+					T obj = objectCache.updateId(clazz, oldId, newId);
+					if (obj != null && obj != data) {
+						// if our cached value is not the data that will be updated then we need to update it specially
+						idField.assignField(obj, newId, false, objectCache);
+					}
+				}
 				// adjust the object to assign the new id
-				idField.assignField(data, newId, false);
+				idField.assignField(data, newId, false, objectCache);
 			}
 			logger.debug("updating-id with statement '{}' and {} args, changed {} rows", statement, args.length, rowC);
 			if (args.length > 0) {

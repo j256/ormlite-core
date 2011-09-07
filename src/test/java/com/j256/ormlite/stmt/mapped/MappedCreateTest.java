@@ -49,7 +49,7 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 		});
 		replay(databaseConnection);
 		GeneratedId genIdSeq = new GeneratedId();
-		se.create(databaseConnection, genIdSeq);
+		se.create(databaseConnection, genIdSeq, null);
 		verify(databaseConnection);
 	}
 
@@ -67,7 +67,7 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 
 		replay(databaseConnection);
 		GeneratedId genIdSeq = new GeneratedId();
-		se.create(databaseConnection, genIdSeq);
+		se.create(databaseConnection, genIdSeq, null);
 		verify(databaseConnection);
 	}
 
@@ -84,7 +84,7 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 
 		replay(databaseConnection);
 		GeneratedIdLong genIdSeq = new GeneratedIdLong();
-		se.create(databaseConnection, genIdSeq);
+		se.create(databaseConnection, genIdSeq, null);
 		verify(databaseConnection);
 	}
 
@@ -102,7 +102,7 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 		MappedCreate<GeneratedIdSequence, Integer> mappedCreate =
 				MappedCreate.build(needsSequence, new TableInfo<GeneratedIdSequence, Integer>(connectionSource, null,
 						GeneratedIdSequence.class));
-		mappedCreate.insert(needsSequence, databaseConnection, new GeneratedIdSequence());
+		mappedCreate.insert(needsSequence, databaseConnection, new GeneratedIdSequence(), null);
 		verify(databaseConnection);
 	}
 

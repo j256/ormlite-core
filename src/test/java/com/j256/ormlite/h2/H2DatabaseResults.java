@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
@@ -15,10 +16,12 @@ import com.j256.ormlite.support.DatabaseResults;
  */
 public class H2DatabaseResults implements DatabaseResults {
 
-	private ResultSet resultSet;
+	private final ResultSet resultSet;
+	private final ObjectCache objectCache;
 
-	public H2DatabaseResults(ResultSet resultSet) {
+	public H2DatabaseResults(ResultSet resultSet, ObjectCache objectCache) {
 		this.resultSet = resultSet;
+		this.objectCache = objectCache;
 	}
 
 	public int getColumnCount() throws SQLException {
@@ -95,5 +98,9 @@ public class H2DatabaseResults implements DatabaseResults {
 
 	public boolean wasNull(int columnIndex) throws SQLException {
 		return resultSet.wasNull();
+	}
+
+	public ObjectCache getObjectCache() {
+		return objectCache;
 	}
 }

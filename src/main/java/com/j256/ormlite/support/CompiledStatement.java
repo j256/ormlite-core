@@ -2,6 +2,7 @@ package com.j256.ormlite.support;
 
 import java.sql.SQLException;
 
+import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.field.SqlType;
 
 /**
@@ -29,17 +30,12 @@ public interface CompiledStatement {
 	/**
 	 * Run the prepared query statement returning the results.
 	 */
-	public DatabaseResults runQuery() throws SQLException;
+	public DatabaseResults runQuery(ObjectCache objectCache) throws SQLException;
 
 	/**
 	 * Run the prepared execute statement returning the number of rows affected.
 	 */
 	public int runExecute() throws SQLException;
-
-	/**
-	 * Get the generated key results.
-	 */
-	public DatabaseResults getGeneratedKeys() throws SQLException;
 
 	/**
 	 * Close the statement.

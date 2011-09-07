@@ -475,7 +475,8 @@ public class TableUtils {
 			CompiledStatement compiledStmt = null;
 			try {
 				compiledStmt = connection.compileStatement(query, StatementType.EXECUTE, noFieldTypes);
-				DatabaseResults results = compiledStmt.runQuery();
+				// we don't care about an object cache here
+				DatabaseResults results = compiledStmt.runQuery(null);
 				int rowC = 0;
 				// count the results
 				while (results.next()) {

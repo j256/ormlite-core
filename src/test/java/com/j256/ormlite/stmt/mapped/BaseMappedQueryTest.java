@@ -29,6 +29,7 @@ public class BaseMappedQueryTest extends BaseCoreStmtTest {
 				};
 		DatabaseResults results = createMock(DatabaseResults.class);
 		int colN = 1;
+		expect(results.getObjectCache()).andReturn(null);
 		expect(results.findColumn(Foo.ID_COLUMN_NAME)).andReturn(colN);
 		String idString = "deopdjed";
 		expect(results.getString(colN)).andReturn(idString);

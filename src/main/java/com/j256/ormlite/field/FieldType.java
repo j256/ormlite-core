@@ -18,6 +18,7 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.dao.EagerForeignCollection;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.dao.LazyForeignCollection;
+import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.types.VoidType;
 import com.j256.ormlite.misc.BaseDaoEnabled;
@@ -456,7 +457,7 @@ public class FieldType {
 	/**
 	 * Assign to the data object the val corresponding to the fieldType.
 	 */
-	public void assignField(Object data, Object val, boolean parentObject) throws SQLException {
+	public void assignField(Object data, Object val, boolean parentObject, ObjectCache objectCache) throws SQLException {
 		// if this is a foreign object then val is the foreign object's id val
 		if (foreignIdField != null && val != null) {
 			// get the current field value which is the foreign-id
@@ -480,14 +481,13 @@ public class FieldType {
 						|| levelCounters.autoRefreshlevel >= fieldConfig.getMaxForeignAutoRefreshLevel()) {
 					// create a shell and assign its id field
 					foreignObject = TableInfo.createObject(foreignConstructor, foreignDao);
-					foreignIdField.assignField(foreignObject, val, false);
+					foreignIdField.assignField(foreignObject, val, false, objectCache);
 				} else {
 					levelCounters.autoRefreshlevel++;
 					try {
-						// do we need to auto-refresh the field?
 						DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection();
 						try {
-							foreignObject = mappedQueryForId.execute(databaseConnection, val);
+							foreignObject = mappedQueryForId.execute(databaseConnection, val, objectCache);
 						} finally {
 							connectionSource.releaseConnection(databaseConnection);
 						}
@@ -521,12 +521,12 @@ public class FieldType {
 	/**
 	 * Assign an ID value to this field.
 	 */
-	public Object assignIdValue(Object data, Number val) throws SQLException {
+	public Object assignIdValue(Object data, Number val, ObjectCache objectCache) throws SQLException {
 		Object idVal = dataPersister.convertIdNumber(val);
 		if (idVal == null) {
 			throw new SQLException("Invalid class " + dataPersister + " for sequence-id " + this);
 		} else {
-			assignField(data, idVal, false);
+			assignField(data, idVal, false, objectCache);
 			return idVal;
 		}
 	}

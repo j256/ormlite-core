@@ -1,4 +1,10 @@
-4.25: 8/22/2011 (svn rYYYY)
+4.26: 9/XX/2011 (svn rYYYY)
+	* Improved the javax.persistence annotation handling to support @JoinColumn(name="xxx").  Thanks to Andrew Sleeman.
+	* Added the first take on a level1 object cache.  Thanks to the dev list for suggestions.
+	* Removed the deprecated RawResults class that was replaced in 4.10.
+	* Added a RuntimeExceptionDao for wrapping Dao operations in RuntimeExceptions.  Thanks to the Android list.
+
+4.25: 8/22/2011 (svn r1897)
 	* Fixed problem with id=true with UUID fields not working.  Thanks to Evan Grim.  Fixed bug #3392691.
 	* Exposed the fields in CreateOrUpdateStatus that were package protected (fail!).  Thanks to steffen.  Fixes bug #3383768.
 	* Added to FieldType getter for foreign field type.  Resolves feature request #3386969.  Thanks to Jean-Maxime Pelletier.

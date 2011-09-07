@@ -41,7 +41,7 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 		try {
 			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, new FieldType[0]);
 
-			DatabaseResults results = stmt.runQuery();
+			DatabaseResults results = stmt.runQuery(null);
 			while (results.next()) {
 				LocalFoo foo2 = rowMapper.mapRow(results);
 				assertEquals(foo1.id, foo2.id);
@@ -86,7 +86,7 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 		CompiledStatement stmt = null;
 		try {
 			stmt = preparedQuery.compile(conn);
-			DatabaseResults results = stmt.runQuery();
+			DatabaseResults results = stmt.runQuery(null);
 			int fooC = 0;
 			while (results.next()) {
 				LocalFoo foo2 = preparedQuery.mapRow(results);

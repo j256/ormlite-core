@@ -9,6 +9,7 @@ import java.util.concurrent.Callable;
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.GenericRawResults;
+import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.dao.RawRowMapper;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DataType;
@@ -71,20 +72,21 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 * Return the object associated with the id or null if none. This does a SQL
 	 * <tt>select col1,col2,... from ... where ... = id</tt> type query.
 	 */
-	public T queryForId(DatabaseConnection databaseConnection, ID id) throws SQLException {
+	public T queryForId(DatabaseConnection databaseConnection, ID id, ObjectCache objectCache) throws SQLException {
 		if (mappedQueryForId == null) {
 			mappedQueryForId = MappedQueryForId.build(databaseType, tableInfo);
 		}
-		return mappedQueryForId.execute(databaseConnection, id);
+		return mappedQueryForId.execute(databaseConnection, id, objectCache);
 	}
 
 	/**
 	 * Return the first object that matches the {@link PreparedStmt} or null if none.
 	 */
-	public T queryForFirst(DatabaseConnection databaseConnection, PreparedStmt<T> preparedStmt) throws SQLException {
+	public T queryForFirst(DatabaseConnection databaseConnection, PreparedStmt<T> preparedStmt, ObjectCache objectCache)
+			throws SQLException {
 		CompiledStatement stmt = preparedStmt.compile(databaseConnection);
 		try {
-			DatabaseResults results = stmt.runQuery();
+			DatabaseResults results = stmt.runQuery(objectCache);
 			if (results.next()) {
 				logger.debug("query-for-first of '{}' returned at least 1 result", preparedStmt.getStatement());
 				return preparedStmt.mapRow(results);
@@ -103,9 +105,9 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 * Return a list of all of the data in the table. Should be used carefully if the table is large. Consider using the
 	 * {@link Dao#iterator} if this is the case.
 	 */
-	public List<T> queryForAll(ConnectionSource connectionSource) throws SQLException {
+	public List<T> queryForAll(ConnectionSource connectionSource, ObjectCache objectCache) throws SQLException {
 		prepareQueryForAll();
-		return query(connectionSource, preparedQueryForAll);
+		return query(connectionSource, preparedQueryForAll, objectCache);
 	}
 
 	/**
@@ -125,10 +127,13 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 * Return a list of all of the data in the table that matches the {@link PreparedStmt}. Should be used carefully if
 	 * the table is large. Consider using the {@link Dao#iterator} if this is the case.
 	 */
-	public List<T> query(ConnectionSource connectionSource, PreparedStmt<T> preparedStmt) throws SQLException {
+	public List<T> query(ConnectionSource connectionSource, PreparedStmt<T> preparedStmt, ObjectCache objectCache)
+			throws SQLException {
 		SelectIterator<T, ID> iterator = null;
 		try {
-			iterator = buildIterator(/* no dao specified because no removes */null, connectionSource, preparedStmt);
+			iterator =
+					buildIterator(/* no dao specified because no removes */null, connectionSource, preparedStmt,
+							objectCache);
 			List<T> results = new ArrayList<T>();
 			while (iterator.hasNextThrow()) {
 				results.add(iterator.nextThrow());
@@ -145,24 +150,24 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	/**
 	 * Create and return a SelectIterator for the class using the default mapped query for all statement.
 	 */
-	public SelectIterator<T, ID> buildIterator(BaseDaoImpl<T, ID> classDao, ConnectionSource connectionSource)
-			throws SQLException {
+	public SelectIterator<T, ID> buildIterator(BaseDaoImpl<T, ID> classDao, ConnectionSource connectionSource,
+			ObjectCache objectCache) throws SQLException {
 		prepareQueryForAll();
-		return buildIterator(classDao, connectionSource, preparedQueryForAll);
+		return buildIterator(classDao, connectionSource, preparedQueryForAll, objectCache);
 	}
 
 	/**
 	 * Create and return an {@link SelectIterator} for the class using a prepared statement.
 	 */
 	public SelectIterator<T, ID> buildIterator(BaseDaoImpl<T, ID> classDao, ConnectionSource connectionSource,
-			PreparedStmt<T> preparedStmt) throws SQLException {
+			PreparedStmt<T> preparedStmt, ObjectCache objectCache) throws SQLException {
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		CompiledStatement compiledStatement = null;
 		try {
 			compiledStatement = preparedStmt.compile(connection);
 			SelectIterator<T, ID> iterator =
 					new SelectIterator<T, ID>(tableInfo.getDataClass(), classDao, preparedStmt, connectionSource,
-							connection, compiledStatement, preparedStmt.getStatement());
+							connection, compiledStatement, preparedStmt.getStatement(), objectCache);
 			connection = null;
 			compiledStatement = null;
 			return iterator;
@@ -179,8 +184,8 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	/**
 	 * Return a results object associated with an internal iterator that returns String[] results.
 	 */
-	public GenericRawResults<String[]> queryRaw(ConnectionSource connectionSource, String query, String[] arguments)
-			throws SQLException {
+	public GenericRawResults<String[]> queryRaw(ConnectionSource connectionSource, String query, String[] arguments,
+			ObjectCache objectCache) throws SQLException {
 		logger.debug("executing raw query for: {}", query);
 		if (arguments.length > 0) {
 			// need to do the (Object) cast to force args to be a single object
@@ -194,7 +199,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			String[] columnNames = extractColumnNames(compiledStatement);
 			GenericRawResults<String[]> rawResults =
 					new RawResultsImpl<String[]>(connectionSource, connection, query, String[].class,
-							compiledStatement, columnNames, this);
+							compiledStatement, columnNames, this, objectCache);
 			compiledStatement = null;
 			connection = null;
 			return rawResults;
@@ -212,7 +217,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 * Return a results object associated with an internal iterator is mapped by the user's rowMapper.
 	 */
 	public <UO> GenericRawResults<UO> queryRaw(ConnectionSource connectionSource, String query,
-			RawRowMapper<UO> rowMapper, String[] arguments) throws SQLException {
+			RawRowMapper<UO> rowMapper, String[] arguments, ObjectCache objectCache) throws SQLException {
 		logger.debug("executing raw query for: {}", query);
 		if (arguments.length > 0) {
 			// need to do the (Object) cast to force args to be a single object
@@ -226,7 +231,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			String[] columnNames = extractColumnNames(compiledStatement);
 			RawResultsImpl<UO> rawResults =
 					new RawResultsImpl<UO>(connectionSource, connection, query, String[].class, compiledStatement,
-							columnNames, new UserObjectRowMapper<UO>(rowMapper, columnNames, this));
+							columnNames, new UserObjectRowMapper<UO>(rowMapper, columnNames, this), objectCache);
 			compiledStatement = null;
 			connection = null;
 			return rawResults;
@@ -244,7 +249,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 * Return a results object associated with an internal iterator that returns Object[] results.
 	 */
 	public GenericRawResults<Object[]> queryRaw(ConnectionSource connectionSource, String query,
-			DataType[] columnTypes, String[] arguments) throws SQLException {
+			DataType[] columnTypes, String[] arguments, ObjectCache objectCache) throws SQLException {
 		logger.debug("executing raw query for: {}", query);
 		if (arguments.length > 0) {
 			// need to do the (Object) cast to force args to be a single object
@@ -258,7 +263,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			String[] columnNames = extractColumnNames(compiledStatement);
 			RawResultsImpl<Object[]> rawResults =
 					new RawResultsImpl<Object[]>(connectionSource, connection, query, Object[].class,
-							compiledStatement, columnNames, new ObjectArrayRowMapper(columnTypes));
+							compiledStatement, columnNames, new ObjectArrayRowMapper(columnTypes), objectCache);
 			compiledStatement = null;
 			connection = null;
 			return rawResults;
@@ -313,31 +318,32 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	/**
 	 * Create a new entry in the database from an object.
 	 */
-	public int create(DatabaseConnection databaseConnection, T data) throws SQLException {
+	public int create(DatabaseConnection databaseConnection, T data, ObjectCache objectCache) throws SQLException {
 		if (mappedInsert == null) {
 			mappedInsert = MappedCreate.build(databaseType, tableInfo);
 		}
-		return mappedInsert.insert(databaseType, databaseConnection, data);
+		return mappedInsert.insert(databaseType, databaseConnection, data, objectCache);
 	}
 
 	/**
 	 * Update an object in the database.
 	 */
-	public int update(DatabaseConnection databaseConnection, T data) throws SQLException {
+	public int update(DatabaseConnection databaseConnection, T data, ObjectCache objectCache) throws SQLException {
 		if (mappedUpdate == null) {
 			mappedUpdate = MappedUpdate.build(databaseType, tableInfo);
 		}
-		return mappedUpdate.update(databaseConnection, data);
+		return mappedUpdate.update(databaseConnection, data, objectCache);
 	}
 
 	/**
 	 * Update an object in the database to change its id to the newId parameter.
 	 */
-	public int updateId(DatabaseConnection databaseConnection, T data, ID newId) throws SQLException {
+	public int updateId(DatabaseConnection databaseConnection, T data, ID newId, ObjectCache objectCache)
+			throws SQLException {
 		if (mappedUpdateId == null) {
 			mappedUpdateId = MappedUpdateId.build(databaseType, tableInfo);
 		}
-		return mappedUpdateId.execute(databaseConnection, data, newId);
+		return mappedUpdateId.execute(databaseConnection, data, newId, objectCache);
 	}
 
 	/**
@@ -358,38 +364,39 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 * Does a query for the object's Id and copies in each of the field values from the database to refresh the data
 	 * parameter.
 	 */
-	public int refresh(DatabaseConnection databaseConnection, T data) throws SQLException {
+	public int refresh(DatabaseConnection databaseConnection, T data, ObjectCache objectCache) throws SQLException {
 		if (mappedRefresh == null) {
 			mappedRefresh = MappedRefresh.build(databaseType, tableInfo);
 		}
-		return mappedRefresh.executeRefresh(databaseConnection, data);
+		return mappedRefresh.executeRefresh(databaseConnection, data, objectCache);
 	}
 
 	/**
 	 * Delete an object from the database.
 	 */
-	public int delete(DatabaseConnection databaseConnection, T data) throws SQLException {
+	public int delete(DatabaseConnection databaseConnection, T data, ObjectCache objectCache) throws SQLException {
 		if (mappedDelete == null) {
 			mappedDelete = MappedDelete.build(databaseType, tableInfo);
 		}
-		return mappedDelete.delete(databaseConnection, data);
-
+		return mappedDelete.delete(databaseConnection, data, objectCache);
 	}
 
 	/**
 	 * Delete a collection of objects from the database.
 	 */
-	public int deleteObjects(DatabaseConnection databaseConnection, Collection<T> datas) throws SQLException {
+	public int deleteObjects(DatabaseConnection databaseConnection, Collection<T> datas, ObjectCache objectCache)
+			throws SQLException {
 		// have to build this on the fly because the collection has variable number of args
-		return MappedDeleteCollection.deleteObjects(databaseType, tableInfo, databaseConnection, datas);
+		return MappedDeleteCollection.deleteObjects(databaseType, tableInfo, databaseConnection, datas, objectCache);
 	}
 
 	/**
 	 * Delete a collection of objects from the database.
 	 */
-	public int deleteIds(DatabaseConnection databaseConnection, Collection<ID> ids) throws SQLException {
+	public int deleteIds(DatabaseConnection databaseConnection, Collection<ID> ids, ObjectCache objectCache)
+			throws SQLException {
 		// have to build this on the fly because the collection has variable number of args
-		return MappedDeleteCollection.deleteIds(databaseType, tableInfo, databaseConnection, ids);
+		return MappedDeleteCollection.deleteIds(databaseType, tableInfo, databaseConnection, ids, objectCache);
 	}
 
 	/**

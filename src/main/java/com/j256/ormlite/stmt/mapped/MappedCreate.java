@@ -2,6 +2,7 @@ package com.j256.ormlite.stmt.mapped;
 
 import java.sql.SQLException;
 
+import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.misc.SqlExceptionUtil;
@@ -29,7 +30,7 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 	/**
 	 * Create an object in the database.
 	 */
-	public int insert(DatabaseType databaseType, DatabaseConnection databaseConnection, T data) throws SQLException {
+	public int insert(DatabaseType databaseType, DatabaseConnection databaseConnection, T data, ObjectCache objectCache) throws SQLException {
 		if (idField != null) {
 			boolean assignId;
 			if (idField.isAllowGeneratedIdInsert() && !idField.isObjectsFieldValueDefault(data)) {
@@ -39,18 +40,18 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 			}
 			if (idField.isSelfGeneratedId() && idField.isGeneratedId()) {
 				if (assignId) {
-					idField.assignField(data, idField.generatedId(), false);
+					idField.assignField(data, idField.generatedId(), false, objectCache);
 				}
 				// fall down to do the update below
 			} else if (idField.isGeneratedIdSequence() && databaseType.isSelectSequenceBeforeInsert()) {
 				if (assignId) {
-					assignSequenceId(databaseConnection, data);
+					assignSequenceId(databaseConnection, data, objectCache);
 				}
 				// fall down to do the update below
 			} else if (idField.isGeneratedId()) {
 				if (assignId) {
 					// this has to do the update first then get the generated-id from callback
-					return createWithGeneratedId(databaseConnection, data);
+					return createWithGeneratedId(databaseConnection, data, objectCache);
 				} else {
 					// fall down to do the update below
 				}
@@ -62,6 +63,10 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 		try {
 			Object[] args = getFieldObjects(data);
 			int rowC = databaseConnection.insert(statement, args, argFieldTypes);
+			if (rowC > 0 && objectCache != null) {
+				Object id = idField.extractJavaFieldValue(data);
+				objectCache.put(clazz, id, data);
+			}
 			logger.debug("insert data with statement '{}' and {} args, changed {} rows", statement, args.length, rowC);
 			if (args.length > 0) {
 				// need to do the (Object) cast to force args to be a single object
@@ -148,7 +153,7 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 		}
 	}
 
-	private void assignSequenceId(DatabaseConnection databaseConnection, T data) throws SQLException {
+	private void assignSequenceId(DatabaseConnection databaseConnection, T data, ObjectCache objectCache) throws SQLException {
 		// call the query-next-sequence stmt to increment the sequence
 		long seqVal = databaseConnection.queryForLong(queryNextSequenceStmt);
 		logger.debug("queried for sequence {} using stmt: {}", seqVal, queryNextSequenceStmt);
@@ -156,10 +161,10 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 			// sanity check that it is working
 			throw new SQLException("Should not have returned 0 for stmt: " + queryNextSequenceStmt);
 		}
-		assignIdValue(data, seqVal, "sequence");
+		assignIdValue(data, seqVal, "sequence", objectCache);
 	}
 
-	private int createWithGeneratedId(DatabaseConnection databaseConnection, T data) throws SQLException {
+	private int createWithGeneratedId(DatabaseConnection databaseConnection, T data, ObjectCache objectCache) throws SQLException {
 		Object[] args = getFieldObjects(data);
 		try {
 			KeyHolder keyHolder = new KeyHolder();
@@ -182,7 +187,7 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 					// sanity check because the generated-key returned is 0 by default, may never happen
 					throw new SQLException("generated-id key must not be 0 value");
 				}
-				assignIdValue(data, key, "keyholder");
+				assignIdValue(data, key, "keyholder", objectCache);
 			}
 			return retVal;
 		} catch (SQLException e) {
@@ -195,9 +200,9 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 		}
 	}
 
-	private void assignIdValue(T data, Number val, String label) throws SQLException {
+	private void assignIdValue(T data, Number val, String label, ObjectCache objectCache) throws SQLException {
 		// better to do this in one please with consistent logging
-		idField.assignIdValue(data, val);
+		idField.assignIdValue(data, val, objectCache);
 		logger.debug("assigned id '{}' from {} to '{}' in {} object", val, label, idField.getFieldName(), dataClassName);
 	}
 

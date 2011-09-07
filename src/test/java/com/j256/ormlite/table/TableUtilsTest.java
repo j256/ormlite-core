@@ -405,7 +405,7 @@ public class TableUtilsTest extends BaseCoreTest {
 						stmt);
 				results = createMock(DatabaseResults.class);
 				expect(results.next()).andReturn(false);
-				expect(stmt.runQuery()).andReturn(results);
+				expect(stmt.runQuery(null)).andReturn(results);
 				stmt.close();
 				replay(results);
 				rowC.incrementAndGet();

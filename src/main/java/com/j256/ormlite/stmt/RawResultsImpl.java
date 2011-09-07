@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.GenericRawResults;
+import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
@@ -23,11 +24,12 @@ public class RawResultsImpl<T> implements GenericRawResults<T> {
 	protected final String[] columnNames;
 
 	public RawResultsImpl(ConnectionSource connectionSource, DatabaseConnection connection, String query,
-			Class<?> clazz, CompiledStatement compiledStmt, String[] columnNames, GenericRowMapper<T> rowMapper)
-			throws SQLException {
+			Class<?> clazz, CompiledStatement compiledStmt, String[] columnNames, GenericRowMapper<T> rowMapper,
+			ObjectCache objectCache) throws SQLException {
 		this.rowMapper = rowMapper;
 		iterator =
-				new SelectIterator<T, Void>(clazz, null, rowMapper, connectionSource, connection, compiledStmt, query);
+				new SelectIterator<T, Void>(clazz, null, rowMapper, connectionSource, connection, compiledStmt, query,
+						objectCache);
 		this.columnNames = columnNames;
 	}
 

@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
 
+import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.DatabaseResults;
@@ -33,17 +34,13 @@ public class H2CompiledStatement implements CompiledStatement {
 		return preparedStatement.executeUpdate();
 	}
 
-	public DatabaseResults runQuery() throws SQLException {
-		return new H2DatabaseResults(preparedStatement.executeQuery());
+	public DatabaseResults runQuery(ObjectCache objectCache) throws SQLException {
+		return new H2DatabaseResults(preparedStatement.executeQuery(), objectCache);
 	}
 
 	public int runExecute() throws SQLException {
 		preparedStatement.execute();
 		return preparedStatement.getUpdateCount();
-	}
-
-	public DatabaseResults getGeneratedKeys() throws SQLException {
-		return new H2DatabaseResults(preparedStatement.getGeneratedKeys());
 	}
 
 	public void close() throws SQLException {

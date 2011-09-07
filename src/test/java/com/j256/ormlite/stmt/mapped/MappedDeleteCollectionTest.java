@@ -28,7 +28,7 @@ public class MappedDeleteCollectionTest {
 		replay(connectionSource);
 		MappedDeleteCollection.deleteObjects(databaseType,
 				new TableInfo<NoId, Void>(connectionSource, null, NoId.class), databaseConnection,
-				new ArrayList<NoId>());
+				new ArrayList<NoId>(), null);
 	}
 
 	protected static class NoId {

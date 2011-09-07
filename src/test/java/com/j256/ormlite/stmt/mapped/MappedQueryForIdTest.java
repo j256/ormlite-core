@@ -22,7 +22,7 @@ public class MappedQueryForIdTest extends BaseCoreStmtTest {
 		StatementExecutor<NoId, String> se =
 				new StatementExecutor<NoId, String>(databaseType, new TableInfo<NoId, String>(connectionSource, null,
 						NoId.class), null);
-		se.queryForId(null, "1");
+		se.queryForId(null, "1", null);
 	}
 
 	@Test(expected = SQLException.class)

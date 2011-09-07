@@ -3,6 +3,7 @@ package com.j256.ormlite.stmt.mapped;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.logger.Logger;
@@ -21,12 +22,14 @@ public abstract class BaseMappedStatement<T, ID> {
 	protected static Logger logger = LoggerFactory.getLogger(BaseMappedStatement.class);
 
 	protected final TableInfo<T, ID> tableInfo;
+	protected final Class<T> clazz;
 	protected final FieldType idField;
 	protected final String statement;
 	protected final FieldType[] argFieldTypes;
 
 	protected BaseMappedStatement(TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes) {
 		this.tableInfo = tableInfo;
+		this.clazz = tableInfo.getDataClass();
 		this.idField = tableInfo.getIdField();
 		this.statement = statement;
 		this.argFieldTypes = argFieldTypes;
@@ -35,10 +38,23 @@ public abstract class BaseMappedStatement<T, ID> {
 	/**
 	 * Update the object in the database.
 	 */
-	public int update(DatabaseConnection databaseConnection, T data) throws SQLException {
+	public int update(DatabaseConnection databaseConnection, T data, ObjectCache objectCache) throws SQLException {
 		try {
 			Object[] args = getFieldObjects(data);
 			int rowC = databaseConnection.update(statement, args, argFieldTypes);
+			if (rowC > 0 && objectCache != null) {
+				// if we've changed something then see if we need to update our cache
+				Object id = idField.extractJavaFieldValue(data);
+				T cachedData = objectCache.get(clazz, id);
+				if (cachedData != null && cachedData != data) {
+					// copy each field from the updated data into the cached object
+					for (FieldType fieldType : tableInfo.getFieldTypes()) {
+						if (fieldType != idField) {
+							fieldType.assignField(cachedData, fieldType.extractJavaFieldValue(data), false, objectCache);
+						}
+					}
+				}
+			}
 			logger.debug("update data with statement '{}' and {} args, changed {} rows", statement, args.length, rowC);
 			if (args.length > 0) {
 				// need to do the (Object) cast to force args to be a single object
@@ -53,7 +69,7 @@ public abstract class BaseMappedStatement<T, ID> {
 	/**
 	 * Delete the object from the database.
 	 */
-	public int delete(DatabaseConnection databaseConnection, T data) throws SQLException {
+	public int delete(DatabaseConnection databaseConnection, T data, ObjectCache objectCache) throws SQLException {
 		try {
 			Object[] args = getFieldObjects(data);
 			int rowC = databaseConnection.delete(statement, args, argFieldTypes);
@@ -61,6 +77,10 @@ public abstract class BaseMappedStatement<T, ID> {
 			if (args.length > 0) {
 				// need to do the (Object) cast to force args to be a single object
 				logger.trace("delete arguments: {}", (Object) args);
+			}
+			if (rowC > 0 && objectCache != null) {
+				Object id = idField.extractJavaFieldToSqlArgValue(data);
+				objectCache.remove(clazz, id);
 			}
 			return rowC;
 		} catch (SQLException e) {

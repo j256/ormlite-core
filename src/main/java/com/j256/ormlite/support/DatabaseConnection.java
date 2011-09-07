@@ -3,6 +3,7 @@ package com.j256.ormlite.support;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 
+import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
@@ -131,11 +132,13 @@ public interface DatabaseConnection {
 	 *            Field types of the arguments.
 	 * @param rowMapper
 	 *            The mapper to use to convert the row into the returned object.
+	 * @param objectCache
+	 *            Any object cache associated with the query or null if none.
 	 * @return The first data item returned by the query which can be cast to <T>, null if none, the object
 	 *         {@link #MORE_THAN_ONE} if more than one result was found.
 	 */
 	public <T> Object queryForOne(String statement, Object[] args, FieldType[] argfieldTypes,
-			GenericRowMapper<T> rowMapper) throws SQLException;
+			GenericRowMapper<T> rowMapper, ObjectCache objectCache) throws SQLException;
 
 	/**
 	 * Perform a query whose result should be a single long-integer value.

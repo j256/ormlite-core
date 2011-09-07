@@ -32,6 +32,7 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
@@ -714,6 +715,95 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(foo1.id, foo3.id);
 		assertFalse(iterator.hasNext());
 		wrapped.close();
+	}
+
+	@Test
+	public void testWrappedIterableFor() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		foo1.id = "stuff1";
+		assertEquals(1, dao.create(foo1));
+
+		CloseableWrappedIterable<Foo> wrapped = dao.getWrappedIterable();
+		try {
+			int fooC = 0;
+			for (Foo foo : wrapped) {
+				assertEquals(foo1.id, foo.id);
+				fooC++;
+			}
+			assertEquals(1, fooC);
+		} finally {
+			wrapped.close();
+		}
+	}
+
+	@Test
+	public void testWrappedIterableForThrow() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		foo1.id = "stuff1";
+		assertEquals(1, dao.create(foo1));
+
+		CloseableWrappedIterable<Foo> wrapped = dao.getWrappedIterable();
+		dropTable(Foo.class, true);
+		try {
+			wrapped.iterator();
+			fail("Should have thrown");
+		} catch (IllegalStateException e) {
+			// expected
+		} finally {
+			wrapped.close();
+		}
+	}
+
+	@Test
+	public void testWrappedIterablePreparedQueryFor() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+
+		Foo foo1 = new Foo();
+		foo1.id = "stuff1";
+		assertEquals(1, dao.create(foo1));
+
+		Foo foo2 = new Foo();
+		foo2.id = "not stuff1";
+		assertEquals(1, dao.create(foo2));
+
+		CloseableWrappedIterable<Foo> wrapped =
+				dao.getWrappedIterable(dao.queryBuilder().where().eq(Foo.ID_COLUMN_NAME, foo1.id).prepare());
+		try {
+			int fooC = 0;
+			for (Foo foo : wrapped) {
+				assertEquals(foo1.id, foo.id);
+				fooC++;
+			}
+			assertEquals(1, fooC);
+		} finally {
+			wrapped.close();
+		}
+	}
+
+	@Test
+	public void testWrappedIterableInvalidPreparedQueryFor() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+
+		Foo foo1 = new Foo();
+		foo1.id = "stuff1";
+		assertEquals(1, dao.create(foo1));
+
+		Foo foo2 = new Foo();
+		foo2.id = "not stuff1";
+		assertEquals(1, dao.create(foo2));
+
+		CloseableWrappedIterable<Foo> wrapped =
+				dao.getWrappedIterable(dao.queryBuilder().where().eq(Foo.ID_COLUMN_NAME, new SelectArg()).prepare());
+		try {
+			wrapped.iterator();
+			fail("Should have thrown");
+		} catch (IllegalStateException e) {
+			// expected
+		} finally {
+			wrapped.close();
+		}
 	}
 
 	@Test(expected = IllegalStateException.class)
@@ -1974,6 +2064,33 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Dao<Foo, String> dao = createDao(Foo.class, true);
 		assertNull(dao.createIfNotExists(null));
 	}
+
+	@Test
+	public void testReplaceCache() throws Exception {
+		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		ReferenceObjectCache cache1 = new ReferenceObjectCache(true);
+		dao.enableObjectCache(cache1);
+
+		Foo foo = new Foo();
+		String id = "hello";
+		foo.id = id;
+		int val = 12312321;
+		foo.val = val;
+
+		assertEquals(1, dao.create(foo));
+
+		Foo result = dao.queryForId(id);
+		assertSame(foo, result);
+
+		// enable a new cache
+		dao.enableObjectCache(new ReferenceObjectCache(true));
+		assertEquals(0, cache1.size());
+
+		result = dao.queryForId(id);
+		assertNotSame(foo, result);
+	}
+
+	/* ============================================================================================== */
 
 	private String buildFooQueryAllString(Dao<Foo, Object> fooDao) throws SQLException {
 		String queryString =

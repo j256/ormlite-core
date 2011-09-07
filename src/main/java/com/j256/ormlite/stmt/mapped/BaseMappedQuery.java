@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.j256.ormlite.dao.BaseForeignCollection;
+import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.support.DatabaseResults;
@@ -35,6 +36,17 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 		} else {
 			colPosMap = columnPositions;
 		}
+
+		ObjectCache objectCache = results.getObjectCache();
+		if (objectCache != null) {
+			Object id = idField.resultToJava(results, colPosMap);
+			T cachedInstance = objectCache.get(clazz, id);
+			if (cachedInstance != null) {
+				// if we have a cached instance for this id then return it
+				return cachedInstance;
+			}
+		}
+
 		// create our instance
 		T instance = tableInfo.createObject();
 		// populate its fields
@@ -46,9 +58,9 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 			} else {
 				Object val = fieldType.resultToJava(results, colPosMap);
 				if (parent != null && fieldType.getField().getType() == parent.getClass()) {
-					fieldType.assignField(instance, parent, true);
+					fieldType.assignField(instance, parent, true, objectCache);
 				} else {
-					fieldType.assignField(instance, val, false);
+					fieldType.assignField(instance, val, false, objectCache);
 				}
 				if (fieldType == idField) {
 					id = val;
@@ -61,7 +73,7 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 				if (fieldType.isForeignCollection()) {
 					BaseForeignCollection<?, ?> collection = fieldType.buildForeignCollection(instance, id, false);
 					if (collection != null) {
-						fieldType.assignField(instance, collection, false);
+						fieldType.assignField(instance, collection, false, objectCache);
 					}
 				}
 			}

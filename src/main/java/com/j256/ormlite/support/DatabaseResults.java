@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+import com.j256.ormlite.dao.ObjectCache;
+
 /**
  * A reduction of the SQL ResultSet so we can implement it outside of JDBC.
  * 
@@ -99,4 +101,9 @@ public interface DatabaseResults {
 	 * Returns true if the last object returned with the column index is null.
 	 */
 	public boolean wasNull(int columnIndex) throws SQLException;
+
+	/**
+	 * Return any object cache that is associated with these results or null if none. 
+	 */
+	public ObjectCache getObjectCache();
 }
