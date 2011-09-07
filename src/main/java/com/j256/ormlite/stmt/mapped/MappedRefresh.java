@@ -25,7 +25,8 @@ public class MappedRefresh<T, ID> extends MappedQueryForId<T, ID> {
 	 * 
 	 * @return 1 if we found the object in the table by id or 0 if not.
 	 */
-	public int executeRefresh(DatabaseConnection databaseConnection, T data, ObjectCache objectCache) throws SQLException {
+	public int executeRefresh(DatabaseConnection databaseConnection, T data, ObjectCache objectCache)
+			throws SQLException {
 		@SuppressWarnings("unchecked")
 		ID id = (ID) idField.extractJavaFieldValue(data);
 		// we don't care about the cache here

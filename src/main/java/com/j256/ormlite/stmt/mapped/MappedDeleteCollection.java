@@ -94,6 +94,7 @@ public class MappedDeleteCollection<T, ID> extends BaseMappedStatement<T, ID> {
 			throw SqlExceptionUtil.create("Unable to run delete collection stmt: " + deleteCollection.statement, e);
 		}
 	}
+
 	private static void appendWhereIds(DatabaseType databaseType, FieldType idField, StringBuilder sb, int numDatas,
 			FieldType[] fieldTypes) {
 		sb.append("WHERE ");

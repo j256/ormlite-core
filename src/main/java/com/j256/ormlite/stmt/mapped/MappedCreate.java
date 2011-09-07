@@ -30,7 +30,9 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 	/**
 	 * Create an object in the database.
 	 */
-	public int insert(DatabaseType databaseType, DatabaseConnection databaseConnection, T data, ObjectCache objectCache) throws SQLException {
+	public int insert(DatabaseType databaseType, DatabaseConnection databaseConnection, T data, ObjectCache objectCache)
+			throws SQLException {
+		KeyHolder keyHolder = null;
 		if (idField != null) {
 			boolean assignId;
 			if (idField.isAllowGeneratedIdInsert() && !idField.isObjectsFieldValueDefault(data)) {
@@ -50,8 +52,7 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 				// fall down to do the update below
 			} else if (idField.isGeneratedId()) {
 				if (assignId) {
-					// this has to do the update first then get the generated-id from callback
-					return createWithGeneratedId(databaseConnection, data, objectCache);
+					keyHolder = new KeyHolder();
 				} else {
 					// fall down to do the update below
 				}
@@ -62,10 +63,26 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 
 		try {
 			Object[] args = getFieldObjects(data);
-			int rowC = databaseConnection.insert(statement, args, argFieldTypes);
-			if (rowC > 0 && objectCache != null) {
-				Object id = idField.extractJavaFieldValue(data);
-				objectCache.put(clazz, id, data);
+			int rowC = databaseConnection.insert(statement, args, argFieldTypes, keyHolder);
+			if (rowC > 0) {
+				if (keyHolder != null) {
+					// assign the key returned by the database to the object's id field after it was inserted
+					Number key = keyHolder.getKey();
+					if (key == null) {
+						// may never happen but let's be careful out there
+						throw new SQLException("generated-id key was not set by the update call");
+					}
+					if (key.longValue() == 0L) {
+						// sanity check because the generated-key returned is 0 by default, may never happen
+						throw new SQLException("generated-id key must not be 0 value");
+					}
+					assignIdValue(data, key, "keyholder", objectCache);
+					logger.debug("assigned key {} from insert statement to object", key);
+				}
+				if (objectCache != null) {
+					Object id = idField.extractJavaFieldValue(data);
+					objectCache.put(clazz, id, data);
+				}
 			}
 			logger.debug("insert data with statement '{}' and {} args, changed {} rows", statement, args.length, rowC);
 			if (args.length > 0) {
@@ -153,7 +170,8 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 		}
 	}
 
-	private void assignSequenceId(DatabaseConnection databaseConnection, T data, ObjectCache objectCache) throws SQLException {
+	private void assignSequenceId(DatabaseConnection databaseConnection, T data, ObjectCache objectCache)
+			throws SQLException {
 		// call the query-next-sequence stmt to increment the sequence
 		long seqVal = databaseConnection.queryForLong(queryNextSequenceStmt);
 		logger.debug("queried for sequence {} using stmt: {}", seqVal, queryNextSequenceStmt);
@@ -162,42 +180,6 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 			throw new SQLException("Should not have returned 0 for stmt: " + queryNextSequenceStmt);
 		}
 		assignIdValue(data, seqVal, "sequence", objectCache);
-	}
-
-	private int createWithGeneratedId(DatabaseConnection databaseConnection, T data, ObjectCache objectCache) throws SQLException {
-		Object[] args = getFieldObjects(data);
-		try {
-			KeyHolder keyHolder = new KeyHolder();
-			// do the insert first
-			int retVal = databaseConnection.insert(statement, args, argFieldTypes, keyHolder);
-			logger.debug("create object using '{}' and {} args, changed {} rows", statement, args.length, retVal);
-			if (args.length > 0) {
-				// need to do the (Object) cast to force args to be a single object
-				logger.trace("create arguments: {}", (Object) args);
-			}
-			// if we created 1 row, assign the id field
-			if (retVal == 1) {
-				// assign the key returned by the database to the object's id field after it was inserted
-				Number key = keyHolder.getKey();
-				if (key == null) {
-					// may never happen but let's be careful out there
-					throw new SQLException("generated-id key was not set by the update call");
-				}
-				if (key.longValue() == 0L) {
-					// sanity check because the generated-key returned is 0 by default, may never happen
-					throw new SQLException("generated-id key must not be 0 value");
-				}
-				assignIdValue(data, key, "keyholder", objectCache);
-			}
-			return retVal;
-		} catch (SQLException e) {
-			logger.error("create object using '{}' and {} args, threw exception: {}", statement, args.length, e);
-			if (args.length > 0) {
-				// need to do the (Object) cast to force args to be a single object
-				logger.trace("create arguments: {}", (Object) args);
-			}
-			throw SqlExceptionUtil.create("Unable to run stmt on object " + data + ": " + statement, e);
-		}
 	}
 
 	private void assignIdValue(T data, Number val, String label, ObjectCache objectCache) throws SQLException {

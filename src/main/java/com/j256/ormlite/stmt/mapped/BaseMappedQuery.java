@@ -84,10 +84,6 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 		return instance;
 	}
 
-	public FieldType[] getResultsFieldTypes() {
-		return resultsFieldTypes;
-	}
-
 	/**
 	 * If we have a foreign collection object then this sets the value on the foreign object in the class.
 	 */

@@ -67,4 +67,11 @@ public class MappedUpdateId<T, ID> extends BaseMappedStatement<T, ID> {
 		appendWhereId(databaseType, idField, sb, null);
 		return new MappedUpdateId<T, ID>(tableInfo, sb.toString(), new FieldType[] { idField, idField });
 	}
+
+	/**
+	 * Return a field-object for the id extracted from the data.
+	 */
+	private Object extractIdToFieldObject(T data) throws SQLException {
+		return idField.extractJavaFieldToSqlArgValue(data);
+	}
 }
