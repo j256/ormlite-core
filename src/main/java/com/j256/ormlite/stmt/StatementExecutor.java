@@ -382,6 +382,16 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	}
 
 	/**
+	 * Delete an object from the database by id.
+	 */
+	public int deleteById(DatabaseConnection databaseConnection, ID id, ObjectCache objectCache) throws SQLException {
+		if (mappedDelete == null) {
+			mappedDelete = MappedDelete.build(databaseType, tableInfo);
+		}
+		return mappedDelete.deleteById(databaseConnection, id, objectCache);
+	}
+
+	/**
 	 * Delete a collection of objects from the database.
 	 */
 	public int deleteObjects(DatabaseConnection databaseConnection, Collection<T> datas, ObjectCache objectCache)

@@ -275,18 +275,17 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		// ignore creating a null object
 		if (data == null) {
 			return 0;
-		} else {
-			if (data instanceof BaseDaoEnabled) {
-				@SuppressWarnings("unchecked")
-				BaseDaoEnabled<T, ID> daoEnabled = (BaseDaoEnabled<T, ID>) data;
-				daoEnabled.setDao(this);
-			}
-			DatabaseConnection connection = connectionSource.getReadWriteConnection();
-			try {
-				return statementExecutor.create(connection, data, objectCache);
-			} finally {
-				connectionSource.releaseConnection(connection);
-			}
+		}
+		if (data instanceof BaseDaoEnabled) {
+			@SuppressWarnings("unchecked")
+			BaseDaoEnabled<T, ID> daoEnabled = (BaseDaoEnabled<T, ID>) data;
+			daoEnabled.setDao(this);
+		}
+		DatabaseConnection connection = connectionSource.getReadWriteConnection();
+		try {
+			return statementExecutor.create(connection, data, objectCache);
+		} finally {
+			connectionSource.releaseConnection(connection);
 		}
 	}
 
@@ -391,6 +390,22 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			}
 		}
 	}
+
+	public int deleteById(ID id) throws SQLException {
+		checkForInitialized();
+		// ignore deleting a null id
+		if (id == null) {
+			return 0;
+		} else {
+			DatabaseConnection connection = connectionSource.getReadWriteConnection();
+			try {
+				return statementExecutor.deleteById(connection, id, objectCache);
+			} finally {
+				connectionSource.releaseConnection(connection);
+			}
+		}
+	}
+
 	public int delete(Collection<T> datas) throws SQLException {
 		checkForInitialized();
 		// ignore deleting a null object

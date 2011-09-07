@@ -259,6 +259,17 @@ public class RuntimeExceptionDao<T, ID> {
 	}
 
 	/**
+	 * @see Dao#deleteById(Object)
+	 */
+	public int deleteById(ID id) {
+		try {
+			return dao.deleteById(id);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
 	 * @see Dao#delete(Collection)
 	 */
 	public int delete(Collection<T> datas) {

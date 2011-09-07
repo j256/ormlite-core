@@ -243,6 +243,17 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public int delete(T data) throws SQLException;
 
 	/**
+	 * Delete an object from the database that has an id.
+	 * 
+	 * @param id
+	 *            The id of the item that we are deleting from the database.
+	 * @return The number of rows updated in the database. This should be 1.
+	 * @throws SQLException
+	 *             on any SQL problems.
+	 */
+	public int deleteById(ID id) throws SQLException;
+
+	/**
 	 * Delete a collection of objects from the database using an IN SQL clause.
 	 * 
 	 * @param datas
