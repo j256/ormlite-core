@@ -65,23 +65,26 @@ public class H2DatabaseConnection implements DatabaseConnection {
 				ResultSet.CONCUR_READ_ONLY));
 	}
 
-	public int insert(String statement, Object[] args, FieldType[] argFieldTypes) throws SQLException {
-		return update(statement, args, argFieldTypes);
-	}
-
 	public int insert(String statement, Object[] args, FieldType[] argFieldTypes, GeneratedKeyHolder keyHolder)
 			throws SQLException {
-		PreparedStatement stmt = connection.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+		PreparedStatement stmt;
+		if (keyHolder == null) {
+			stmt = connection.prepareStatement(statement);
+		} else {
+			stmt = connection.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+		}
 		statementSetArgs(stmt, args, argFieldTypes);
 		int rowN = stmt.executeUpdate();
-		ResultSet resultSet = stmt.getGeneratedKeys();
-		ResultSetMetaData metaData = resultSet.getMetaData();
-		int colN = metaData.getColumnCount();
-		while (resultSet.next()) {
-			for (int colC = 1; colC <= colN; colC++) {
-				// get the id column data so we can pass it back to the caller thru the keyHolder
-				Number id = getIdColumnData(resultSet, metaData, colC);
-				keyHolder.addKey(id);
+		if (keyHolder != null) {
+			ResultSet resultSet = stmt.getGeneratedKeys();
+			ResultSetMetaData metaData = resultSet.getMetaData();
+			int colN = metaData.getColumnCount();
+			while (resultSet.next()) {
+				for (int colC = 1; colC <= colN; colC++) {
+					// get the id column data so we can pass it back to the caller thru the keyHolder
+					Number id = getIdColumnData(resultSet, metaData, colC);
+					keyHolder.addKey(id);
+				}
 			}
 		}
 		return rowN;

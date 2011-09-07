@@ -103,7 +103,7 @@ public interface DatabaseResults {
 	public boolean wasNull(int columnIndex) throws SQLException;
 
 	/**
-	 * Return any object cache that is associated with these results or null if none. 
+	 * Return any object cache that is associated with these results or null if none.
 	 */
 	public ObjectCache getObjectCache();
 }

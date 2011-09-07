@@ -4,6 +4,7 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
+import static org.easymock.EasyMock.isNull;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
@@ -63,7 +64,9 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 				new StatementExecutor<GeneratedId, Integer>(databaseType, tableInfo, null);
 		DatabaseConnection databaseConnection = createMock(DatabaseConnection.class);
 		expect(databaseConnection.queryForLong(isA(String.class))).andReturn(1L);
-		expect(databaseConnection.insert(isA(String.class), isA(Object[].class), isA(FieldType[].class))).andReturn(1);
+		expect(
+				databaseConnection.insert(isA(String.class), isA(Object[].class), isA(FieldType[].class),
+						(GeneratedKeyHolder) isNull())).andReturn(1);
 
 		replay(databaseConnection);
 		GeneratedId genIdSeq = new GeneratedId();
@@ -80,7 +83,9 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 						connectionSource, null, GeneratedIdLong.class), null);
 		DatabaseConnection databaseConnection = createMock(DatabaseConnection.class);
 		expect(databaseConnection.queryForLong(isA(String.class))).andReturn(1L);
-		expect(databaseConnection.insert(isA(String.class), isA(Object[].class), isA(FieldType[].class))).andReturn(1);
+		expect(
+				databaseConnection.insert(isA(String.class), isA(Object[].class), isA(FieldType[].class),
+						(GeneratedKeyHolder) isNull())).andReturn(1);
 
 		replay(databaseConnection);
 		GeneratedIdLong genIdSeq = new GeneratedIdLong();

@@ -67,19 +67,6 @@ public interface DatabaseConnection {
 			throws SQLException;
 
 	/**
-	 * Perform a SQL insert with the associated SQL statement, arguments, and types.
-	 * 
-	 * @param statement
-	 *            SQL statement to use for inserting.
-	 * @param args
-	 *            Object arguments for the SQL '?'s.
-	 * @param argfieldTypes
-	 *            Field types of the arguments.
-	 * @return The number of rows affected by the update. With some database types, this value may be invalid.
-	 */
-	public int insert(String statement, Object[] args, FieldType[] argfieldTypes) throws SQLException;
-
-	/**
 	 * Perform a SQL update while returning generated keys with the associated SQL statement, arguments, and types.
 	 * 
 	 * @param statement
@@ -89,7 +76,7 @@ public interface DatabaseConnection {
 	 * @param argfieldTypes
 	 *            Field types of the arguments.
 	 * @param keyHolder
-	 *            The holder that gets set with the generated key value.
+	 *            The holder that gets set with the generated key value which may be null.
 	 * @return The number of rows affected by the update. With some database types, this value may be invalid.
 	 */
 	public int insert(String statement, Object[] args, FieldType[] argfieldTypes, GeneratedKeyHolder keyHolder)
