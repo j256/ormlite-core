@@ -82,7 +82,7 @@ public interface DataPersister extends FieldConverter {
 	/**
 	 * Return a generated id if appropriate or null if none.
 	 */
-	public Object generatedId();
+	public Object generateId();
 
 	/**
 	 * Return the default width associated with this type or 0 if none.

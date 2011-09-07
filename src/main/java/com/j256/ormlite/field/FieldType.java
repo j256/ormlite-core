@@ -735,10 +735,10 @@ public class FieldType {
 	}
 
 	/**
-	 * Call through to {@link DataPersister#generatedId()}
+	 * Call through to {@link DataPersister#generateId()}
 	 */
-	public Object generatedId() {
-		return dataPersister.generatedId();
+	public Object generateId() {
+		return dataPersister.generateId();
 	}
 
 	/**

@@ -42,19 +42,16 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 			}
 			if (idField.isSelfGeneratedId() && idField.isGeneratedId()) {
 				if (assignId) {
-					idField.assignField(data, idField.generatedId(), false, objectCache);
+					idField.assignField(data, idField.generateId(), false, objectCache);
 				}
-				// fall down to do the update below
 			} else if (idField.isGeneratedIdSequence() && databaseType.isSelectSequenceBeforeInsert()) {
 				if (assignId) {
 					assignSequenceId(databaseConnection, data, objectCache);
 				}
-				// fall down to do the update below
 			} else if (idField.isGeneratedId()) {
 				if (assignId) {
+					// get the id back from the database
 					keyHolder = new KeyHolder();
-				} else {
-					// fall down to do the update below
 				}
 			} else {
 				// the id should have been set by the caller already
@@ -77,7 +74,6 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 						throw new SQLException("generated-id key must not be 0 value");
 					}
 					assignIdValue(data, key, "keyholder", objectCache);
-					logger.debug("assigned key {} from insert statement to object", key);
 				}
 				if (objectCache != null) {
 					Object id = idField.extractJavaFieldValue(data);

@@ -67,7 +67,8 @@ public interface DatabaseConnection {
 			throws SQLException;
 
 	/**
-	 * Perform a SQL update while returning generated keys with the associated SQL statement, arguments, and types.
+	 * Perform a SQL update while with the associated SQL statement, arguments, and types. This will possibly return
+	 * generated keys if kyeHolder is not null.
 	 * 
 	 * @param statement
 	 *            SQL statement to use for inserting.

@@ -91,7 +91,7 @@ public abstract class BaseDataType implements DataPersister {
 		return false;
 	}
 
-	public Object generatedId() {
+	public Object generateId() {
 		throw new IllegalStateException("Should not have tried to generate this type");
 	}
 

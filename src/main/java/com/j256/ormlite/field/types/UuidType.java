@@ -75,7 +75,7 @@ public class UuidType extends BaseDataType {
 	}
 
 	@Override
-	public Object generatedId() {
+	public Object generateId() {
 		return java.util.UUID.randomUUID();
 	}
 
