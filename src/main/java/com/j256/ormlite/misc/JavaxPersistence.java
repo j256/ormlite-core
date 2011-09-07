@@ -77,8 +77,8 @@ public class JavaxPersistence {
 				method = columnAnnotation.getClass().getMethod("unique");
 				config.setUnique((Boolean) method.invoke(columnAnnotation));
 			} catch (Exception e) {
-				throw SqlExceptionUtil.create("Problem accessing fields from the @Column annotation for field " + field,
-						e);
+				throw SqlExceptionUtil.create(
+						"Problem accessing fields from the @Column annotation for field " + field, e);
 			}
 		}
 		if (idAnnotation != null) {
@@ -99,8 +99,8 @@ public class JavaxPersistence {
 						config.setColumnName(name);
 					}
 				} catch (Exception e) {
-					throw SqlExceptionUtil.create("Problem accessing fields from the @JoinColumn annotation for field " + field,
-							e);
+					throw SqlExceptionUtil.create("Problem accessing fields from the @JoinColumn annotation for field "
+							+ field, e);
 				}
 			}
 		}
