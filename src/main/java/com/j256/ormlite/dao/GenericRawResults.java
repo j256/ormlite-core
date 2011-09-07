@@ -43,7 +43,7 @@ public interface GenericRawResults<T> extends CloseableWrappedIterable<T> {
 	public List<T> getResults() throws SQLException;
 
 	/**
-	 * Close any open database connections associated with the RawResults. This is only necessary if the
+	 * Close any open database connections associated with the GenericRawResults. This is only necessary if the
 	 * {@link Dao#iterator()} or another iterator method was called.
 	 */
 	public void close() throws SQLException;

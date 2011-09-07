@@ -3,7 +3,7 @@ package com.j256.ormlite.dao;
 import java.sql.SQLException;
 
 /**
- * Parameterized row mapper that takes output from the {@link RawResults} and returns a T. Is used in the
+ * Parameterized row mapper that takes output from the {@link GenericRawResults} and returns a T. Is used in the
  * {@link Dao#queryRaw(String, RawRowMapper, String...)} method.
  * 
  * <p>
