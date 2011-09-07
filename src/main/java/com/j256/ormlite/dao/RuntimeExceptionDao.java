@@ -18,7 +18,7 @@ import com.j256.ormlite.stmt.UpdateBuilder;
 
 /**
  * Proxy to a {@link Dao} that wraps each Exception and rethrows it as RuntimeException. You can use this if your usage
- * pattern is to ignore all exceptions. That's not me so its not the default.
+ * pattern is to ignore all exceptions. That's not a pattern that I like so it's not the default.
  * 
  * <p>
  * 
@@ -483,14 +483,23 @@ public class RuntimeExceptionDao<T, ID> {
 		}
 	}
 
+	/**
+	 * @see Dao#enableObjectCache(boolean)
+	 */
 	public void enableObjectCache(boolean enabled) {
 		dao.enableObjectCache(enabled);
 	}
 
+	/**
+	 * @see Dao#enableObjectCache(ObjectCache)
+	 */
 	public void enableObjectCache(ObjectCache objectCache) {
 		dao.enableObjectCache(objectCache);
 	}
 
+	/**
+	 * @see Dao#clearObjectCache()
+	 */
 	public void clearObjectCache() {
 		dao.clearObjectCache();
 	}
