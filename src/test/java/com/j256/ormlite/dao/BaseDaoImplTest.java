@@ -121,7 +121,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	@Test
 	public void testCreateNull() throws Exception {
 		Dao<Foo, String> dao = createDao(Foo.class, true);
-		assertEquals(0, dao.create((Foo)null));
+		assertEquals(0, dao.create((Foo) null));
 	}
 
 	@Test(expected = IllegalStateException.class)
@@ -129,7 +129,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(Foo.class) {
 		};
 		dao.setConnectionSource(connectionSource);
-		assertEquals(0, dao.create((Foo)null));
+		assertEquals(0, dao.create((Foo) null));
 	}
 
 	@Test
@@ -270,19 +270,6 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(0, dao.queryForAll().size());
 	}
 
-	@Test
-	public void testDeleteById() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
-		Foo foo = new Foo();
-		String id = "stuff1";
-		foo.id = id;
-		assertEquals(1, dao.create(foo));
-		assertNotNull(dao.queryForId(id));
-		assertEquals(1, dao.deleteById(id));
-		assertNull(dao.queryForId(id));
-		assertEquals(0, dao.queryForAll().size());
-	}
-
 	@Test(expected = SQLException.class)
 	public void testDeleteThrow() throws Exception {
 		Dao<Foo, String> dao = createDao(Foo.class, true);
@@ -312,6 +299,41 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		};
 		dao.setConnectionSource(connectionSource);
 		assertEquals(0, dao.delete((Foo) null));
+	}
+
+	@Test
+	public void testDeleteById() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		String id = "stuff1";
+		foo.id = id;
+		assertEquals(1, dao.create(foo));
+		assertNotNull(dao.queryForId(id));
+		assertEquals(1, dao.deleteById(id));
+		assertNull(dao.queryForId(id));
+		assertEquals(0, dao.queryForAll().size());
+	}
+
+	@Test
+	public void testDeleteByIdThrow() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		String id = "stuff1";
+		foo.id = id;
+		assertEquals(1, dao.create(foo));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		try {
+			conn.close();
+			dao.deleteById(id);
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
+	}
+
+	@Test
+	public void testDeleteByIdNull() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		assertEquals(0, dao.deleteById(null));
 	}
 
 	@Test
@@ -2081,7 +2103,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	@Test
 	public void testReplaceCache() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
-		ReferenceObjectCache cache1 = new ReferenceObjectCache(true);
+		ReferenceObjectCache cache1 = new ReferenceObjectCache(Foo.class, true);
 		dao.enableObjectCache(cache1);
 
 		Foo foo = new Foo();
@@ -2096,7 +2118,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertSame(foo, result);
 
 		// enable a new cache
-		dao.enableObjectCache(new ReferenceObjectCache(true));
+		dao.enableObjectCache(new ReferenceObjectCache(Foo.class, true));
 		assertEquals(0, cache1.size());
 
 		result = dao.queryForId(id);

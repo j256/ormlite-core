@@ -11,7 +11,7 @@ public class LruObjectCacheTest extends BaseObjectCacheTest {
 	@Test
 	public void testStuff() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
-		LruObjectCache cache = new LruObjectCache(2);
+		LruObjectCache cache = new LruObjectCache(Foo.class, 2);
 		dao.enableObjectCache(cache);
 
 		Foo foo1 = new Foo();
@@ -71,7 +71,7 @@ public class LruObjectCacheTest extends BaseObjectCacheTest {
 	@Test
 	public void testClear() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
-		LruObjectCache cache = new LruObjectCache(2);
+		LruObjectCache cache = new LruObjectCache(Foo.class, 2);
 		dao.enableObjectCache(cache);
 
 		Foo foo = new Foo();
@@ -91,8 +91,8 @@ public class LruObjectCacheTest extends BaseObjectCacheTest {
 	}
 
 	@Override
-	protected ObjectCache enableCache(Dao<?, ?> dao) {
-		LruObjectCache cache = new LruObjectCache(10);
+	protected ObjectCache enableCache(Class<?> clazz, Dao<?, ?> dao) throws Exception {
+		LruObjectCache cache = new LruObjectCache(Foo.class, 10);
 		dao.enableObjectCache(cache);
 		return cache;
 	}

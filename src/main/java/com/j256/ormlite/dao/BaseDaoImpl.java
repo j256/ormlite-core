@@ -680,10 +680,13 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		throw new IllegalArgumentException("Could not find a field named " + fieldName);
 	}
 
-	public void enableObjectCache(boolean enabled) {
+	public void enableObjectCache(boolean enabled) throws SQLException {
 		if (enabled) {
 			if (objectCache == null) {
-				objectCache = ReferenceObjectCache.makeWeakCache();
+				if (tableInfo.getIdField() == null) {
+					throw new SQLException("Class " + dataClass + " must have an id field to enable the object cache");
+				}
+				objectCache = ReferenceObjectCache.makeWeakCache(dataClass);
 			}
 		} else {
 			if (objectCache != null) {
@@ -693,7 +696,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
-	public void enableObjectCache(ObjectCache objectCache) {
+	public void enableObjectCache(ObjectCache objectCache) throws SQLException {
 		if (objectCache == null) {
 			if (this.objectCache != null) {
 				// help with GC-ing
@@ -704,6 +707,9 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			if (this.objectCache != null && this.objectCache != objectCache) {
 				// help with GC-ing
 				this.objectCache.clear();
+			}
+			if (tableInfo.getIdField() == null) {
+				throw new SQLException("Class " + dataClass + " must have an id field to enable the object cache");
 			}
 			this.objectCache = objectCache;
 		}

@@ -1,26 +1,32 @@
 package com.j256.ormlite.dao;
 
-import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * Default cache for ORMLite which uses {@link WeakReference} around the value in the cache to store objects. When there
- * are GCs, any object that does not have a hard external reference will be set to null and cleared out of the cache.
+ * Cache for ORMLite which stores a certain number of items. Inserting an object into the cache once it is full will
+ * cause the least-recently-used object to be ejected. This cache only stores objects of a single Class. They can be injected
+ * into a dao with the {@link Dao#enableObjectCache(ObjectCache)}.
  * 
  * @author graywatson
  */
 public class LruObjectCache implements ObjectCache {
 
+	private final Class<?> clazz;
 	private final Map<Object, Object> objectMap;
 
-	public LruObjectCache(int capacity) {
+	public LruObjectCache(Class<?> clazz, int capacity) {
+		this.clazz = clazz;
 		this.objectMap = Collections.synchronizedMap(new LimitedLinkedHashMap<Object, Object>(capacity));
 	}
 
 	public <T, ID> T get(Class<T> clazz, ID id) {
+		if (this.clazz != clazz) {
+			throw new IllegalArgumentException("This cache only supports cacheing of " + this.clazz + " objects, not "
+					+ clazz);
+		}
 		Object obj = objectMap.get(id);
 		@SuppressWarnings("unchecked")
 		T castObj = (T) obj;
@@ -28,6 +34,10 @@ public class LruObjectCache implements ObjectCache {
 	}
 
 	public <T, ID> void put(Class<T> clazz, ID id, T data) {
+		if (this.clazz != clazz) {
+			throw new IllegalArgumentException("This cache only supports cacheing of " + this.clazz + " objects, not "
+					+ clazz);
+		}
 		objectMap.put(id, data);
 	}
 
@@ -36,10 +46,18 @@ public class LruObjectCache implements ObjectCache {
 	}
 
 	public <T, ID> void remove(Class<T> clazz, ID id) {
+		if (this.clazz != clazz) {
+			throw new IllegalArgumentException("This cache only supports cacheing of " + this.clazz + " objects, not "
+					+ clazz);
+		}
 		objectMap.remove(id);
 	}
 
 	public <T, ID> T updateId(Class<T> clazz, ID oldId, ID newId) {
+		if (this.clazz != clazz) {
+			throw new IllegalArgumentException("This cache only supports cacheing of " + this.clazz + " objects, not "
+					+ clazz);
+		}
 		Object obj = objectMap.remove(oldId);
 		if (obj == null) {
 			return null;
