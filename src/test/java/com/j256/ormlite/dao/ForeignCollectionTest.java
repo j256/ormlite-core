@@ -480,7 +480,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		} finally {
 			wrapped.close();
 		}
-		
+
 		// insert it via the collection
 		Order order5 = new Order();
 		int val5 = 76557654;
