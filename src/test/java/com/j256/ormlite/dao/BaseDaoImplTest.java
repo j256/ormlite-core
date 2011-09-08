@@ -2103,7 +2103,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	@Test
 	public void testReplaceCache() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
-		ReferenceObjectCache cache1 = new ReferenceObjectCache(Foo.class, true);
+		ReferenceObjectCache cache1 = new ReferenceObjectCache(true);
 		dao.setObjectCache(cache1);
 
 		Foo foo = new Foo();
@@ -2118,8 +2118,8 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertSame(foo, result);
 
 		// enable a new cache
-		dao.setObjectCache(new ReferenceObjectCache(Foo.class, true));
-		assertEquals(0, cache1.size());
+		dao.setObjectCache(new ReferenceObjectCache(true));
+		assertEquals(0, cache1.size(Foo.class));
 
 		result = dao.queryForId(id);
 		assertNotSame(foo, result);

@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Cache for ORMLite which stores a certain number of items. Inserting an object into the cache once it is full will
@@ -14,19 +15,16 @@ import java.util.Map.Entry;
  */
 public class LruObjectCache implements ObjectCache {
 
-	private final Class<?> clazz;
-	private final Map<Object, Object> objectMap;
+	private final int capacity;
+	private final ConcurrentHashMap<Class<?>, Map<Object, Object>> classMaps =
+			new ConcurrentHashMap<Class<?>, Map<Object, Object>>();
 
-	public LruObjectCache(Class<?> clazz, int capacity) {
-		this.clazz = clazz;
-		this.objectMap = Collections.synchronizedMap(new LimitedLinkedHashMap<Object, Object>(capacity));
+	public LruObjectCache(int capacity) {
+		this.capacity = capacity;
 	}
 
 	public <T, ID> T get(Class<T> clazz, ID id) {
-		if (this.clazz != clazz) {
-			throw new IllegalArgumentException("This cache only supports cacheing of " + this.clazz + " objects, not "
-					+ clazz);
-		}
+		Map<Object, Object> objectMap = getMapForClass(clazz);
 		Object obj = objectMap.get(id);
 		@SuppressWarnings("unchecked")
 		T castObj = (T) obj;
@@ -34,30 +32,28 @@ public class LruObjectCache implements ObjectCache {
 	}
 
 	public <T, ID> void put(Class<T> clazz, ID id, T data) {
-		if (this.clazz != clazz) {
-			throw new IllegalArgumentException("This cache only supports cacheing of " + this.clazz + " objects, not "
-					+ clazz);
-		}
+		Map<Object, Object> objectMap = getMapForClass(clazz);
 		objectMap.put(id, data);
 	}
 
-	public void clear() {
+	public <T> void clear(Class<T> clazz) {
+		Map<Object, Object> objectMap = getMapForClass(clazz);
 		objectMap.clear();
 	}
 
-	public <T, ID> void remove(Class<T> clazz, ID id) {
-		if (this.clazz != clazz) {
-			throw new IllegalArgumentException("This cache only supports cacheing of " + this.clazz + " objects, not "
-					+ clazz);
+	public void clearAll() {
+		for (Map<Object, Object> objectMap : classMaps.values()) {
+			objectMap.clear();
 		}
+	}
+
+	public <T, ID> void remove(Class<T> clazz, ID id) {
+		Map<Object, Object> objectMap = getMapForClass(clazz);
 		objectMap.remove(id);
 	}
 
 	public <T, ID> T updateId(Class<T> clazz, ID oldId, ID newId) {
-		if (this.clazz != clazz) {
-			throw new IllegalArgumentException("This cache only supports cacheing of " + this.clazz + " objects, not "
-					+ clazz);
-		}
+		Map<Object, Object> objectMap = getMapForClass(clazz);
 		Object obj = objectMap.remove(oldId);
 		if (obj == null) {
 			return null;
@@ -68,8 +64,18 @@ public class LruObjectCache implements ObjectCache {
 		return castObj;
 	}
 
-	public int size() {
+	public <T> int size(Class<T> clazz) {
+		Map<Object, Object> objectMap = getMapForClass(clazz);
 		return objectMap.size();
+	}
+
+	private Map<Object, Object> getMapForClass(Class<?> clazz) {
+		Map<Object, Object> objectMap = classMaps.get(clazz);
+		if (objectMap == null) {
+			objectMap = Collections.synchronizedMap(new LimitedLinkedHashMap<Object, Object>(capacity));
+			classMaps.put(clazz, objectMap);
+		}
+		return objectMap;
 	}
 
 	/**

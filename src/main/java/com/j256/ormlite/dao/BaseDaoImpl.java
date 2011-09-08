@@ -686,11 +686,11 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 				if (tableInfo.getIdField() == null) {
 					throw new SQLException("Class " + dataClass + " must have an id field to enable the object cache");
 				}
-				objectCache = ReferenceObjectCache.makeWeakCache(dataClass);
+				objectCache = ReferenceObjectCache.makeWeakCache();
 			}
 		} else {
 			if (objectCache != null) {
-				objectCache.clear();
+				objectCache.clear(dataClass);
 				objectCache = null;
 			}
 		}
@@ -700,13 +700,13 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		if (objectCache == null) {
 			if (this.objectCache != null) {
 				// help with GC-ing
-				this.objectCache.clear();
+				this.objectCache.clear(dataClass);
 				this.objectCache = null;
 			}
 		} else {
 			if (this.objectCache != null && this.objectCache != objectCache) {
 				// help with GC-ing
-				this.objectCache.clear();
+				this.objectCache.clear(dataClass);
 			}
 			if (tableInfo.getIdField() == null) {
 				throw new SQLException("Class " + dataClass + " must have an id field to enable the object cache");
@@ -717,7 +717,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
 	public void clearObjectCache() {
 		if (objectCache != null) {
-			objectCache.clear();
+			objectCache.clear(dataClass);
 		}
 	}
 

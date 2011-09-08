@@ -30,12 +30,17 @@ public interface ObjectCache {
 	public <T, ID> T updateId(Class<T> clazz, ID oldId, ID newId);
 
 	/**
-	 * Remove all entries from the cache.
+	 * Remove all entries from the cache of a certain class.
 	 */
-	public void clear();
+	public <T> void clear(Class<T> clazz);
+
+	/**
+	 * Remove all entries from the cache of all classes.
+	 */
+	public void clearAll();
 
 	/**
 	 * Return the number of elements in the cache.
 	 */
-	public int size();
+	public <T> int size(Class<T> clazz);
 }

@@ -11,7 +11,7 @@ public class LruObjectCacheTest extends BaseObjectCacheTest {
 	@Test
 	public void testStuff() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
-		LruObjectCache cache = new LruObjectCache(Foo.class, 2);
+		LruObjectCache cache = new LruObjectCache(2);
 		dao.setObjectCache(cache);
 
 		Foo foo1 = new Foo();
@@ -20,7 +20,7 @@ public class LruObjectCacheTest extends BaseObjectCacheTest {
 		int val = 12312321;
 		foo1.val = val;
 		assertEquals(1, dao.create(foo1));
-		assertEquals(1, cache.size());
+		assertEquals(1, cache.size(Foo.class));
 
 		Foo result = dao.queryForId(id);
 		assertSame(foo1, result);
@@ -31,7 +31,7 @@ public class LruObjectCacheTest extends BaseObjectCacheTest {
 		int val2 = 21234761;
 		foo2.val = val2;
 		assertEquals(1, dao.create(foo2));
-		assertEquals(2, cache.size());
+		assertEquals(2, cache.size(Foo.class));
 
 		result = dao.queryForId(id2);
 		assertSame(foo2, result);
@@ -45,7 +45,7 @@ public class LruObjectCacheTest extends BaseObjectCacheTest {
 		int val3 = 79834761;
 		foo3.val = val3;
 		assertEquals(1, dao.create(foo3));
-		assertEquals(2, cache.size());
+		assertEquals(2, cache.size(Foo.class));
 
 		result = dao.queryForId(id);
 		// it is not the same
@@ -71,7 +71,7 @@ public class LruObjectCacheTest extends BaseObjectCacheTest {
 	@Test
 	public void testClear() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
-		LruObjectCache cache = new LruObjectCache(Foo.class, 2);
+		LruObjectCache cache = new LruObjectCache(2);
 		dao.setObjectCache(cache);
 
 		Foo foo = new Foo();
@@ -80,7 +80,7 @@ public class LruObjectCacheTest extends BaseObjectCacheTest {
 		int val = 12312321;
 		foo.val = val;
 		assertEquals(1, dao.create(foo));
-		assertEquals(1, cache.size());
+		assertEquals(1, cache.size(Foo.class));
 
 		Foo result = dao.queryForId(id);
 		assertSame(foo, result);
@@ -92,7 +92,7 @@ public class LruObjectCacheTest extends BaseObjectCacheTest {
 
 	@Override
 	protected ObjectCache enableCache(Class<?> clazz, Dao<?, ?> dao) throws Exception {
-		LruObjectCache cache = new LruObjectCache(Foo.class, 10);
+		LruObjectCache cache = new LruObjectCache(10);
 		dao.setObjectCache(cache);
 		return cache;
 	}

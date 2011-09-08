@@ -44,7 +44,7 @@ public class ReferenceObjectCacheTest extends BaseObjectCacheTest {
 	@Test
 	public void testWeakGcClean() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
-		ReferenceObjectCache cache = ReferenceObjectCache.makeWeakCache(Foo.class);
+		ReferenceObjectCache cache = ReferenceObjectCache.makeWeakCache();
 		dao.setObjectCache(cache);
 
 		Foo foo = new Foo();
@@ -53,27 +53,27 @@ public class ReferenceObjectCacheTest extends BaseObjectCacheTest {
 		int val = 12312321;
 		foo.val = val;
 		assertEquals(1, dao.create(foo));
-		assertEquals(1, cache.size());
+		assertEquals(1, cache.size(Foo.class));
 		Foo result = dao.queryForId(id);
 		assertSame(foo, result);
 
 		System.gc();
-		cache.cleanNullReferences();
-		assertEquals(1, cache.size());
+		cache.cleanNullReferences(Foo.class);
+		assertEquals(1, cache.size(Foo.class));
 		System.out.println("Foo = " + foo);
 
 		foo = null;
 		result = null;
 		System.gc();
-		assertEquals(1, cache.size());
-		cache.cleanNullReferences();
-		assertEquals(0, cache.size());
+		assertEquals(1, cache.size(Foo.class));
+		cache.cleanNullReferences(Foo.class);
+		assertEquals(0, cache.size(Foo.class));
 	}
 
 	@Test
 	public void testWeakGc() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
-		ReferenceObjectCache cache = ReferenceObjectCache.makeWeakCache(Foo.class);
+		ReferenceObjectCache cache = ReferenceObjectCache.makeWeakCache();
 		dao.setObjectCache(cache);
 
 		Foo foo = new Foo();
@@ -82,30 +82,30 @@ public class ReferenceObjectCacheTest extends BaseObjectCacheTest {
 		int val = 12312321;
 		foo.val = val;
 		assertEquals(1, dao.create(foo));
-		assertEquals(1, cache.size());
+		assertEquals(1, cache.size(Foo.class));
 		Foo result = dao.queryForId(id);
 		assertSame(foo, result);
 
 		System.gc();
-		cache.cleanNullReferences();
-		assertEquals(1, cache.size());
+		cache.cleanNullReferences(Foo.class);
+		assertEquals(1, cache.size(Foo.class));
 		System.out.println("Foo = " + foo);
 
 		foo = null;
 		result = null;
 		System.gc();
-		assertEquals(1, cache.size());
+		assertEquals(1, cache.size(Foo.class));
 
 		// this will cause a cache miss because of a null reference
 		result = dao.queryForId(id);
 		assertNotSame(foo, result);
-		assertEquals(1, cache.size());
+		assertEquals(1, cache.size(Foo.class));
 	}
 
 	@Test
-	public void testSoftGc() throws Exception {
+	public void testWeakCleanNullAll() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
-		ReferenceObjectCache cache = ReferenceObjectCache.makeSoftCache(Foo.class);
+		ReferenceObjectCache cache = ReferenceObjectCache.makeWeakCache();
 		dao.setObjectCache(cache);
 
 		Foo foo = new Foo();
@@ -114,23 +114,55 @@ public class ReferenceObjectCacheTest extends BaseObjectCacheTest {
 		int val = 12312321;
 		foo.val = val;
 		assertEquals(1, dao.create(foo));
-		assertEquals(1, cache.size());
+		assertEquals(1, cache.size(Foo.class));
+		Foo result = dao.queryForId(id);
+		assertSame(foo, result);
 
 		System.gc();
-		cache.cleanNullReferences();
-		assertEquals(1, cache.size());
+		cache.cleanNullReferencesAll();
+		assertEquals(1, cache.size(Foo.class));
+		System.out.println("Foo = " + foo);
+
+		foo = null;
+		result = null;
+		System.gc();
+		assertEquals(1, cache.size(Foo.class));
+
+		// this will cause a cache miss because of a null reference
+		result = dao.queryForId(id);
+		assertNotSame(foo, result);
+		assertEquals(1, cache.size(Foo.class));
+	}
+
+	@Test
+	public void testSoftGc() throws Exception {
+		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		ReferenceObjectCache cache = ReferenceObjectCache.makeSoftCache();
+		dao.setObjectCache(cache);
+
+		Foo foo = new Foo();
+		String id = "hello";
+		foo.id = id;
+		int val = 12312321;
+		foo.val = val;
+		assertEquals(1, dao.create(foo));
+		assertEquals(1, cache.size(Foo.class));
+
+		System.gc();
+		cache.cleanNullReferences(Foo.class);
+		assertEquals(1, cache.size(Foo.class));
 		System.out.println("Foo = " + foo);
 
 		foo = null;
 		System.gc();
-		cache.cleanNullReferences();
+		cache.cleanNullReferences(Foo.class);
 		// still there...
-		assertEquals(1, cache.size());
+		assertEquals(1, cache.size(Foo.class));
 	}
 
 	@Override
 	protected ObjectCache enableCache(Class<?> clazz, Dao<?, ?> dao) throws Exception {
-		ReferenceObjectCache cache = ReferenceObjectCache.makeWeakCache(clazz);
+		ReferenceObjectCache cache = ReferenceObjectCache.makeWeakCache();
 		dao.setObjectCache(cache);
 		return cache;
 	}

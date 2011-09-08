@@ -3,7 +3,6 @@ package com.j256.ormlite.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -130,7 +129,7 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 		// and the id should be the old one and not the new one
 		assertEquals(id, foo.id);
 
-		assertEquals(0, cache.size());
+		assertEquals(0, cache.size(Foo.class));
 	}
 
 	@Test
@@ -152,74 +151,32 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 		Foo foo2 = new Foo();
 		foo2.id = id;
 
-		assertEquals(1, cache.size());
+		assertEquals(1, cache.size(Foo.class));
 		assertEquals(1, dao.delete(foo2));
 		// foo still exists
 
-		assertEquals(0, cache.size());
+		assertEquals(0, cache.size(Foo.class));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testMultipleClassCache() throws Exception {
-		Dao<Foo, String> dao1 = createDao(Foo.class, true);
-		ObjectCache cache = enableCache(Foo.class, dao1);
+	@Test
+	public void testClearAll() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		ObjectCache cache = enableCache(Foo.class, dao);
 
 		Foo foo = new Foo();
 		String id = "hello";
 		foo.id = id;
 		int val = 12312321;
 		foo.val = val;
-		assertEquals(1, dao1.create(foo));
+		assertEquals(1, dao.create(foo));
 
-		Dao<WithId, Integer> dao2 = createDao(WithId.class, true);
-		dao2.setObjectCache(cache);
+		Foo result = dao.queryForId(id);
+		assertSame(foo, result);
 
-		WithId withId = new WithId();
-		String stuff = "1414312321";
-		withId.stuff = stuff;
-		assertEquals(1, dao2.create(withId));
-	}
+		cache.clearAll();
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testMultipleClassCacheGet() throws Exception {
-		Dao<Foo, String> dao1 = createDao(Foo.class, true);
-		ObjectCache cache = enableCache(Foo.class, dao1);
-
-		Dao<WithId, Integer> dao2 = createDao(WithId.class, true);
-		WithId withId = new WithId();
-		assertEquals(1, dao2.create(withId));
-		dao2.setObjectCache(cache);
-
-		dao2.queryForId(withId.id);
-		fail("Should have thrown");
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testMultipleClassCacheDelete() throws Exception {
-		Dao<Foo, String> dao1 = createDao(Foo.class, true);
-		ObjectCache cache = enableCache(Foo.class, dao1);
-
-		Dao<WithId, Integer> dao2 = createDao(WithId.class, true);
-		WithId withId = new WithId();
-		assertEquals(1, dao2.create(withId));
-		dao2.setObjectCache(cache);
-
-		dao2.delete(withId);
-		fail("Should have thrown");
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testMultipleClassCacheUpdateId() throws Exception {
-		Dao<Foo, String> dao1 = createDao(Foo.class, true);
-		ObjectCache cache = enableCache(Foo.class, dao1);
-
-		Dao<WithId, Integer> dao2 = createDao(WithId.class, true);
-		WithId withId = new WithId();
-		assertEquals(1, dao2.create(withId));
-		dao2.setObjectCache(cache);
-
-		dao2.updateId(withId, 12);
-		fail("Should have thrown");
+		result = dao.queryForId(id);
+		assertNotSame(foo, result);
 	}
 
 	@Test(expected = SQLException.class)

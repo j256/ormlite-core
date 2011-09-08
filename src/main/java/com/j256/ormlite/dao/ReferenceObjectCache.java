@@ -4,6 +4,7 @@ import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,9 +17,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ReferenceObjectCache implements ObjectCache {
 
-	private final ConcurrentHashMap<Object, Reference<Object>> objectMap =
-			new ConcurrentHashMap<Object, Reference<Object>>();
-	private final Class<?> clazz;
+	private final ConcurrentHashMap<Class<?>, Map<Object, Reference<Object>>> classMaps =
+			new ConcurrentHashMap<Class<?>, Map<Object, Reference<Object>>>();
 	private final boolean useWeak;
 
 	/**
@@ -26,30 +26,26 @@ public class ReferenceObjectCache implements ObjectCache {
 	 *            Set to true if you want the cache to use {@link WeakReference}. If false then the cache will use
 	 *            {@link SoftReference}.
 	 */
-	public ReferenceObjectCache(Class<?> clazz, boolean useWeak) {
-		this.clazz = clazz;
+	public ReferenceObjectCache(boolean useWeak) {
 		this.useWeak = useWeak;
 	}
 
 	/**
 	 * Create and return an object cache using {@link WeakReference}.
 	 */
-	public static ReferenceObjectCache makeWeakCache(Class<?> clazz) {
-		return new ReferenceObjectCache(clazz, true);
+	public static ReferenceObjectCache makeWeakCache() {
+		return new ReferenceObjectCache(true);
 	}
 
 	/**
 	 * Create and return an object cache using {@link SoftReference}.
 	 */
-	public static ReferenceObjectCache makeSoftCache(Class<?> clazz) {
-		return new ReferenceObjectCache(clazz, false);
+	public static ReferenceObjectCache makeSoftCache() {
+		return new ReferenceObjectCache(false);
 	}
 
 	public <T, ID> T get(Class<T> clazz, ID id) {
-		if (this.clazz != clazz) {
-			throw new IllegalArgumentException("This cache only supports cacheing of " + this.clazz + " objects, not "
-					+ clazz);
-		}
+		Map<Object, Reference<Object>> objectMap = getMapForClass(clazz);
 		Reference<Object> ref = objectMap.get(id);
 		if (ref == null) {
 			return null;
@@ -66,10 +62,7 @@ public class ReferenceObjectCache implements ObjectCache {
 	}
 
 	public <T, ID> void put(Class<T> clazz, ID id, T data) {
-		if (this.clazz != clazz) {
-			throw new IllegalArgumentException("This cache only supports cacheing of " + this.clazz + " objects, not "
-					+ clazz);
-		}
+		Map<Object, Reference<Object>> objectMap = getMapForClass(clazz);
 		if (useWeak) {
 			objectMap.put(id, new WeakReference<Object>(data));
 		} else {
@@ -77,23 +70,24 @@ public class ReferenceObjectCache implements ObjectCache {
 		}
 	}
 
-	public void clear() {
+	public <T> void clear(Class<T> clazz) {
+		Map<Object, Reference<Object>> objectMap = getMapForClass(clazz);
 		objectMap.clear();
 	}
 
-	public <T, ID> void remove(Class<T> clazz, ID id) {
-		if (this.clazz != clazz) {
-			throw new IllegalArgumentException("This cache only supports cacheing of " + this.clazz + " objects, not "
-					+ clazz);
+	public void clearAll() {
+		for (Map<Object, Reference<Object>> objectMap : classMaps.values()) {
+			objectMap.clear();
 		}
+	}
+
+	public <T, ID> void remove(Class<T> clazz, ID id) {
+		Map<Object, Reference<Object>> objectMap = getMapForClass(clazz);
 		objectMap.remove(id);
 	}
 
 	public <T, ID> T updateId(Class<T> clazz, ID oldId, ID newId) {
-		if (this.clazz != clazz) {
-			throw new IllegalArgumentException("This cache only supports cacheing of " + this.clazz + " objects, not "
-					+ clazz);
-		}
+		Map<Object, Reference<Object>> objectMap = getMapForClass(clazz);
 		Reference<Object> ref = objectMap.remove(oldId);
 		if (ref == null) {
 			return null;
@@ -104,19 +98,43 @@ public class ReferenceObjectCache implements ObjectCache {
 		return castObj;
 	}
 
-	public int size() {
+	public <T> int size(Class<T> clazz) {
+		Map<Object, Reference<Object>> objectMap = getMapForClass(clazz);
 		return objectMap.size();
 	}
 
 	/**
 	 * Run through the map and remove any references that have been null'd out by the GC.
 	 */
-	public void cleanNullReferences() {
+	public <T> void cleanNullReferences(Class<T> clazz) {
+		Map<Object, Reference<Object>> objectMap = getMapForClass(clazz);
+		cleanMap(objectMap);
+	}
+
+	/**
+	 * Run through all maps and remove any references that have been null'd out by the GC.
+	 */
+	public <T> void cleanNullReferencesAll() {
+		for (Map<Object, Reference<Object>> objectMap : classMaps.values()) {
+			cleanMap(objectMap);
+		}
+	}
+
+	private void cleanMap(Map<Object, Reference<Object>> objectMap) {
 		Iterator<Entry<Object, Reference<Object>>> iterator = objectMap.entrySet().iterator();
 		while (iterator.hasNext()) {
 			if (iterator.next().getValue().get() == null) {
 				iterator.remove();
 			}
 		}
+	}
+
+	private Map<Object, Reference<Object>> getMapForClass(Class<?> clazz) {
+		Map<Object, Reference<Object>> objectMap = classMaps.get(clazz);
+		if (objectMap == null) {
+			objectMap = new ConcurrentHashMap<Object, Reference<Object>>();
+			classMaps.put(clazz, objectMap);
+		}
+		return objectMap;
 	}
 }
