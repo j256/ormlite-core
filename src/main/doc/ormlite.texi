@@ -6,9 +6,9 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.25
+@set ormlite_version 4.26
 @set ormlite_year 2011
-@set ormlite_date August @value{ormlite_year}
+@set ormlite_date September @value{ormlite_year}
 @set package ORMLite
 @c ----------------------------------------------------------------
 
@@ -569,11 +569,12 @@ In our example, the foreign fields in @code{Question} and @code{Answer} could be
 
 @cindex optional generated-id
 @cindex generated-id optional
+@anchor{allowGeneratedIdInsert}
 @item allowGeneratedIdInsert
 
 If this is set to true (default is false) then inserting an object with the ID field already set will not override it with a generated-id.
-This is useful when you have a table where items sometimes have IDs and sometimes need them generated. This only works if the database
-supports this behavior and if @code{generatedId} is also true for the field.
+This is useful when you have a table where you are inserting items that sometimes have IDs and sometimes need them generated. This only works
+if the database supports this behavior and if @code{generatedId} is also true for the field.
 
 @end table
 
@@ -651,7 +652,7 @@ certain database types.  Default for those that do is 255.   Same as the @code{w
 @cindex null value allowed
 @item nullable
 
-Set to true to have a field not be able to be inserted into the database with a null value.  Same as the
+Set to true to have a field be able to be inserted into the database with a null value.  Same as the
 @code{canBeNull} field in the @code{@@DatabaseField} annotation.
 
 @cindex unique constraint
@@ -922,6 +923,7 @@ old data will be un-persisted incorrectly.
 You can also also specify an @emph{unknownEnumName} name with the @code{@@DatabaseField} annotation which will be
 used if an unknown value is found in the database. @xref{unknownEnumName}. 
 
+@anchor{UUID}
 @cindex UUID type
 @item UUID (DataType.UUID)
 
@@ -1437,6 +1439,11 @@ In the above code example, an order is constructed with name and amount (for exa
 @code{create} method, the id field has not been set.  After it has been saved to the database, the generated-id will
 be set on the id field by ORMLite and will be available when @code{getId()} is called on the order after the
 @code{create} method returns.
+
+@emph{NOTE:} Other special field types such as @code{UUID} can also be generated.  @xref{UUID}.
+
+@emph{NOTE:} You can use the @code{allowGeneratedIdInsert} field setting to allow insert objects into a table with or without
+an id already set.  @xref{allowGeneratedIdInsert}.
 
 @emph{NOTE:} Depending on the database type, you may not be able to change the value of an auto-generated id field.
 
@@ -2731,6 +2738,7 @@ adb shell setprop log.tag.ORMLite DEBUG
 * Logging::                    How to log messages with ORMLite.
 * Dependencies::               External dependencies of ORMLite.
 * Transactions::               Using database transactions.
+* Caches::                     How to cache objects handled by ORMLite.
 * Maven::                      Configure a maven project for ORMLite.
 @end menu
 
@@ -3155,6 +3163,11 @@ this brings your local object up-to-date.  This should return 1 since 1 row was 
 
 Delete an object from the database.  This should return 1 since 1 row was removed.
 
+@cindex deleting by ID
+@item deleteById(ID id)
+
+Delete an object from the database if you have its id.  This should return 1 since 1 row was removed.
+
 @cindex delete multiple objects
 @item delete (Collection<T> datas)
 
@@ -3269,6 +3282,22 @@ number of database operations at once -- maybe loading data from a file. This wi
 Returns the value returned from a @code{SELECT COUNT(*)} query which is the number of rows in the table.  Depending on the
 database and the size of the table, this could be expensive. 
 
+@cindex enable object cache
+@item setObjectCache(boolean enabled);
+
+Call this with true to enable an object cache for the DAO. Set to false to disable any caching.  @xref{Caches}.
+
+@item setObjectCache(ObjectCache objectCache);
+	
+Same as @code{setObjectCache(boolean)} except you specify the actual cache instance to use for the DAO.  This allows
+you to inject your own cache classes.  Call it with null to disable the cache.  @xref{Caches}.
+
+@cindex clear object cache
+@item clearObjectCache();
+
+Flush the object cache if it has been enabled. This will remove an objects that are in the cache to reclaim
+memory. Any future queries will re-request them from the database.
+
 @end table
 
 @c ----------------------------------------------------------------
@@ -3361,7 +3390,7 @@ dependencies: @code{com.sun.jmx.jmxri}, @code{com.sun.jdmk.jmxtools}, @code{java
 @end table
 
 @c ----------------------------------------------------------------
-@node Transactions, Maven, Dependencies, Advanced
+@node Transactions, Caches, Dependencies, Advanced
 @section Using Database Transactions
 
 @cindex database transactions
@@ -3412,7 +3441,93 @@ you are looking for performance of a large number of operations. @xref{callBatch
 support disabling of auto-commit, a transaction may be used under the covers.
 
 @c ----------------------------------------------------------------
-@node Maven, How to Upgrade, Transactions, Advanced
+@node Caches, Maven, Transactions, Advanced
+@section Object Cache
+
+@cindex caching objects
+@cindex object cache
+@cindex level 1 cache
+@cindex weak reference cache
+
+As of Sepember 2011, one of the newer features in ORMLite is the ability to enable an object cache for ORMLite.  The object
+cache keeps an internal collection of objects that have been created or queried and will return a reference to the same
+object if it is queried for in the future.  
+
+For example:
+
+@example
+Dao<Account, String> accountDao =
+    DaoManager.createDao(connectionSource, Account.class);
+// enable the default object cache for this dao
+accountDao.setObjectCache(true);
+
+Account account = new Account("Jim Coakley");
+accountDao.create(account);
+// this will create the account object and add it to cache
+
+Account result = dao.queryForId("Jim Coakley");
+// this result will be the same object as account above
+assertSame(account, result);
+@end example
+
+@emph{NOTE:} For an object cache to work, the class being stored must have an ID field.  If you try to enable the object cache for
+a class without an ID field, an exception will be thrown.  The following operations are supported by the object cache:
+
+@itemize @bullet
+
+@item If you create an object using the DAO, it will be added to the cache.
+
+@item When you query for an object using the standard query methods using the DAO, if the object is in the cache it will be returned.  If
+it is not in the cache then it will be added to the cache.  This does @emph{not} apply to the @code{queryRaw()} methods.
+
+@item If you update an object with the database using the DAO, if it exists in the cache it will be updated as well. 
+
+@item If you refresh an object from the database using the DAO, if it exists in the cache it will be refreshed as well. 
+
+@item If you delete the object using the DAO, the object will be deleted from the cache.  All delete methods are supported.
+
+@end itemize
+
+@cindex soft reference cache
+@cindex ReferenceObjectCache
+By default the cache that is used internally by ORMLite if you enable the cache with @code{true} will be a "weak-reference" cache.  This
+means that if no other code has a strong reference to the object, it will be removed from the cache during the next garbage collection
+cycle. ORMLite also has a "soft-reference" cache which will use more memory to hold objects if available.  You can enable it using:
+
+@example
+Dao<Account, String> accountDao =
+    DaoManager.createDao(connectionSource, Account.class);
+// enable a soft-reference cache
+accountDao.setObjectCache(
+    ReferenceObjectCache.makeSoftCache());
+@end example
+
+@cindex LRU cache
+@cindex LruObjectCache
+There is also a Least Recently Used (LRU) cache that will store a certain number of objects based on a capacity value.  Each class gets
+the same capacity value so if the same cache is used in 5 different daos, then 500 objects will be held in the @code{LruObjectCache} if
+the capacity is 100.
+
+@example
+Dao<Account, String> accountDao =
+  DaoManager.createDao(connectionSource, Account.class);
+// enable least-recently-used cache with max 100 items per class
+accountDao.setObjectCache(new LruObjectCache(100));
+@end example
+
+You can also implement your own cache as long as it implements the @code{ObjectCache} interface.  You can clear the cache if you want to
+free up memory and you can also disable the cache from the DAO if necessary.
+
+@example
+// clear all Account items from the cache
+accountDao.clearObjectCache();
+@dots{}
+// disable the cache
+accountDao.setObjectCache(false);
+@end example
+
+@c ----------------------------------------------------------------
+@node Maven, How to Upgrade, Caches, Advanced
 @section Configuring a Maven Project
 
 @cindex maven configuration
