@@ -103,6 +103,14 @@ public class ReferenceObjectCache implements ObjectCache {
 		return objectMap.size();
 	}
 
+	public int sizeAll() {
+		int size = 0;
+		for (Map<Object, Reference<Object>> objectMap : classMaps.values()) {
+			size += objectMap.size();
+		}
+		return size;
+	}
+
 	/**
 	 * Run through the map and remove any references that have been null'd out by the GC.
 	 */

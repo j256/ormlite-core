@@ -178,6 +178,10 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 		WithId withIdResult = withIdDao.queryForId(withId.id);
 		assertSame(withId, withIdResult);
 
+		assertEquals(1, cache.size(Foo.class));
+		assertEquals(1, cache.size(WithId.class));
+		assertEquals(2, cache.sizeAll());
+
 		cache.clear(Foo.class);
 
 		fooResult = fooDao.queryForId(foo.id);

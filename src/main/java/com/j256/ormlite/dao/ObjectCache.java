@@ -3,6 +3,11 @@ package com.j256.ormlite.dao;
 /**
  * Definition of an object cache that can be injected into the Dao with the {@link Dao#setObjectCache(ObjectCache)}.
  * 
+ * <p>
+ * <b>NOTE:</b> Most of the below methods take a Class argument but your cache can be for a single cache. If this is the
+ * case then you should protect against storing different classes in the cache.
+ * </p>
+ * 
  * @author graywatson
  */
 public interface ObjectCache {
@@ -43,4 +48,9 @@ public interface ObjectCache {
 	 * Return the number of elements in the cache.
 	 */
 	public <T> int size(Class<T> clazz);
+
+	/**
+	 * Return the number of elements in all of the caches.
+	 */
+	public int sizeAll();
 }

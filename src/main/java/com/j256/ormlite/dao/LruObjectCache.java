@@ -69,6 +69,14 @@ public class LruObjectCache implements ObjectCache {
 		return objectMap.size();
 	}
 
+	public int sizeAll() {
+		int size = 0;
+		for (Map<Object, Object> objectMap : classMaps.values()) {
+			size += objectMap.size();
+		}
+		return size;
+	}
+
 	private Map<Object, Object> getMapForClass(Class<?> clazz) {
 		Map<Object, Object> objectMap = classMaps.get(clazz);
 		if (objectMap == null) {
