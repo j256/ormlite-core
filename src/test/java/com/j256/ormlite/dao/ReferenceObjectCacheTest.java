@@ -11,7 +11,7 @@ public class ReferenceObjectCacheTest extends BaseObjectCacheTest {
 	@Test
 	public void testEnableBoolean() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
-		dao.enableObjectCache(true);
+		dao.setObjectCache(true);
 
 		Foo foo = new Foo();
 		String id = "hello";
@@ -22,13 +22,13 @@ public class ReferenceObjectCacheTest extends BaseObjectCacheTest {
 
 		Foo result = dao.queryForId(id);
 		assertSame(foo, result);
-		dao.enableObjectCache(false);
+		dao.setObjectCache(false);
 	}
 
 	@Test
 	public void testDisableAlreadyDisabled() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
-		dao.enableObjectCache(false);
+		dao.setObjectCache(false);
 
 		Foo foo = new Foo();
 		String id = "hello";
@@ -45,7 +45,7 @@ public class ReferenceObjectCacheTest extends BaseObjectCacheTest {
 	public void testWeakGcClean() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
 		ReferenceObjectCache cache = ReferenceObjectCache.makeWeakCache(Foo.class);
-		dao.enableObjectCache(cache);
+		dao.setObjectCache(cache);
 
 		Foo foo = new Foo();
 		String id = "hello";
@@ -74,7 +74,7 @@ public class ReferenceObjectCacheTest extends BaseObjectCacheTest {
 	public void testWeakGc() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
 		ReferenceObjectCache cache = ReferenceObjectCache.makeWeakCache(Foo.class);
-		dao.enableObjectCache(cache);
+		dao.setObjectCache(cache);
 
 		Foo foo = new Foo();
 		String id = "hello";
@@ -106,7 +106,7 @@ public class ReferenceObjectCacheTest extends BaseObjectCacheTest {
 	public void testSoftGc() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
 		ReferenceObjectCache cache = ReferenceObjectCache.makeSoftCache(Foo.class);
-		dao.enableObjectCache(cache);
+		dao.setObjectCache(cache);
 
 		Foo foo = new Foo();
 		String id = "hello";
@@ -131,7 +131,7 @@ public class ReferenceObjectCacheTest extends BaseObjectCacheTest {
 	@Override
 	protected ObjectCache enableCache(Class<?> clazz, Dao<?, ?> dao) throws Exception {
 		ReferenceObjectCache cache = ReferenceObjectCache.makeWeakCache(clazz);
-		dao.enableObjectCache(cache);
+		dao.setObjectCache(cache);
 		return cache;
 	}
 }

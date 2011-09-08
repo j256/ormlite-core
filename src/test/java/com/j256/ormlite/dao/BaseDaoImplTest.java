@@ -314,7 +314,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(0, dao.queryForAll().size());
 	}
 
-	@Test
+	@Test(expected = SQLException.class)
 	public void testDeleteByIdThrow() throws Exception {
 		Dao<Foo, String> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -2104,7 +2104,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	public void testReplaceCache() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
 		ReferenceObjectCache cache1 = new ReferenceObjectCache(Foo.class, true);
-		dao.enableObjectCache(cache1);
+		dao.setObjectCache(cache1);
 
 		Foo foo = new Foo();
 		String id = "hello";
@@ -2118,7 +2118,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertSame(foo, result);
 
 		// enable a new cache
-		dao.enableObjectCache(new ReferenceObjectCache(Foo.class, true));
+		dao.setObjectCache(new ReferenceObjectCache(Foo.class, true));
 		assertEquals(0, cache1.size());
 
 		result = dao.queryForId(id);

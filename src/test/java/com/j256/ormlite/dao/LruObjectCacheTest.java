@@ -12,7 +12,7 @@ public class LruObjectCacheTest extends BaseObjectCacheTest {
 	public void testStuff() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
 		LruObjectCache cache = new LruObjectCache(Foo.class, 2);
-		dao.enableObjectCache(cache);
+		dao.setObjectCache(cache);
 
 		Foo foo1 = new Foo();
 		String id = "hello";
@@ -72,7 +72,7 @@ public class LruObjectCacheTest extends BaseObjectCacheTest {
 	public void testClear() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
 		LruObjectCache cache = new LruObjectCache(Foo.class, 2);
-		dao.enableObjectCache(cache);
+		dao.setObjectCache(cache);
 
 		Foo foo = new Foo();
 		String id = "hello";
@@ -93,7 +93,7 @@ public class LruObjectCacheTest extends BaseObjectCacheTest {
 	@Override
 	protected ObjectCache enableCache(Class<?> clazz, Dao<?, ?> dao) throws Exception {
 		LruObjectCache cache = new LruObjectCache(Foo.class, 10);
-		dao.enableObjectCache(cache);
+		dao.setObjectCache(cache);
 		return cache;
 	}
 }

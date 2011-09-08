@@ -1,7 +1,7 @@
 package com.j256.ormlite.dao;
 
 /**
- * Definition of an object cache that can be injected into the Dao with the {@link Dao#enableObjectCache(boolean)}.
+ * Definition of an object cache that can be injected into the Dao with the {@link Dao#setObjectCache(ObjectCache)}.
  * 
  * @author graywatson
  */

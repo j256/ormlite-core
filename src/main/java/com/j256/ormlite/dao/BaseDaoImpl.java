@@ -680,7 +680,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		throw new IllegalArgumentException("Could not find a field named " + fieldName);
 	}
 
-	public void enableObjectCache(boolean enabled) throws SQLException {
+	public void setObjectCache(boolean enabled) throws SQLException {
 		if (enabled) {
 			if (objectCache == null) {
 				if (tableInfo.getIdField() == null) {
@@ -696,7 +696,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
-	public void enableObjectCache(ObjectCache objectCache) throws SQLException {
+	public void setObjectCache(ObjectCache objectCache) throws SQLException {
 		if (objectCache == null) {
 			if (this.objectCache != null) {
 				// help with GC-ing

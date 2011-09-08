@@ -38,7 +38,7 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 		assertSame(result, results.get(0));
 
 		// disable cache
-		dao.enableObjectCache(null);
+		dao.setObjectCache(null);
 
 		result = dao.queryForId(id);
 		assertNotSame(foo, result);
@@ -172,7 +172,7 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 		assertEquals(1, dao1.create(foo));
 
 		Dao<WithId, Integer> dao2 = createDao(WithId.class, true);
-		dao2.enableObjectCache(cache);
+		dao2.setObjectCache(cache);
 
 		WithId withId = new WithId();
 		String stuff = "1414312321";
@@ -188,7 +188,7 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 		Dao<WithId, Integer> dao2 = createDao(WithId.class, true);
 		WithId withId = new WithId();
 		assertEquals(1, dao2.create(withId));
-		dao2.enableObjectCache(cache);
+		dao2.setObjectCache(cache);
 
 		dao2.queryForId(withId.id);
 		fail("Should have thrown");
@@ -202,7 +202,7 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 		Dao<WithId, Integer> dao2 = createDao(WithId.class, true);
 		WithId withId = new WithId();
 		assertEquals(1, dao2.create(withId));
-		dao2.enableObjectCache(cache);
+		dao2.setObjectCache(cache);
 
 		dao2.delete(withId);
 		fail("Should have thrown");
@@ -216,7 +216,7 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 		Dao<WithId, Integer> dao2 = createDao(WithId.class, true);
 		WithId withId = new WithId();
 		assertEquals(1, dao2.create(withId));
-		dao2.enableObjectCache(cache);
+		dao2.setObjectCache(cache);
 
 		dao2.updateId(withId, 12);
 		fail("Should have thrown");

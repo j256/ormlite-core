@@ -495,17 +495,17 @@ public class RuntimeExceptionDao<T, ID> {
 	}
 
 	/**
-	 * @see Dao#enableObjectCache(boolean)
+	 * @see Dao#setObjectCache(boolean)
 	 */
-	public void enableObjectCache(boolean enabled) throws SQLException{
-		dao.enableObjectCache(enabled);
+	public void setObjectCache(boolean enabled) throws SQLException {
+		dao.setObjectCache(enabled);
 	}
 
 	/**
-	 * @see Dao#enableObjectCache(ObjectCache)
+	 * @see Dao#setObjectCache(ObjectCache)
 	 */
-	public void enableObjectCache(ObjectCache objectCache) throws SQLException {
-		dao.enableObjectCache(objectCache);
+	public void setObjectCache(ObjectCache objectCache) throws SQLException {
+		dao.setObjectCache(objectCache);
 	}
 
 	/**

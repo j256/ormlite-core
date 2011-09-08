@@ -528,16 +528,16 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * @throws SQLException
 	 *             If the DAO's class does not have an id field which is required by the {@link ObjectCache}.
 	 */
-	public void enableObjectCache(boolean enabled) throws SQLException;
+	public void setObjectCache(boolean enabled) throws SQLException;
 
 	/**
-	 * Same as {@link #enableObjectCache(boolean)} except you specify the actual cache instance to use for the DAO. This
+	 * Same as {@link #setObjectCache(boolean)} except you specify the actual cache instance to use for the DAO. This
 	 * allows you to inject your own cache classes. Call it with null to disable the cache.
 	 * 
 	 * @throws SQLException
 	 *             If the DAO's class does not have an id field which is required by the {@link ObjectCache}.
 	 */
-	public void enableObjectCache(ObjectCache objectCache) throws SQLException;
+	public void setObjectCache(ObjectCache objectCache) throws SQLException;
 
 	/**
 	 * Flush the object cache if it has been enabled. This will remove an objects that are in the cache to reclaim

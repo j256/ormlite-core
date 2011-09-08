@@ -7,8 +7,8 @@ import java.util.Map.Entry;
 
 /**
  * Cache for ORMLite which stores a certain number of items. Inserting an object into the cache once it is full will
- * cause the least-recently-used object to be ejected. This cache only stores objects of a single Class. They can be injected
- * into a dao with the {@link Dao#enableObjectCache(ObjectCache)}.
+ * cause the least-recently-used object to be ejected. This cache only stores objects of a single Class. They can be
+ * injected into a dao with the {@link Dao#setObjectCache(ObjectCache)}.
  * 
  * @author graywatson
  */
