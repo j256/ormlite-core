@@ -14,12 +14,12 @@ import com.j256.ormlite.field.DatabaseField;
 
 public abstract class BaseObjectCacheTest extends BaseCoreTest {
 
-	protected abstract ObjectCache enableCache(Class<?> clazz, Dao<?, ?> dao) throws Exception;
+	protected abstract ObjectCache enableCache(Dao<?, ?> dao) throws Exception;
 
 	@Test
 	public void testBasic() throws Exception {
 		Dao<Foo, String> dao = createDao(Foo.class, true);
-		enableCache(Foo.class, dao);
+		enableCache(dao);
 
 		Foo foo = new Foo();
 		String id = "hello";
@@ -46,7 +46,7 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 	@Test
 	public void testUpdate() throws Exception {
 		Dao<Foo, String> dao = createDao(Foo.class, true);
-		enableCache(Foo.class, dao);
+		enableCache(dao);
 
 		Foo foo = new Foo();
 		String id = "hello";
@@ -73,7 +73,7 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 	@Test
 	public void testUpdateId() throws Exception {
 		Dao<Foo, String> dao = createDao(Foo.class, true);
-		enableCache(Foo.class, dao);
+		enableCache(dao);
 
 		Foo foo = new Foo();
 		String id = "hello";
@@ -114,7 +114,7 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 		assertNotSame(foo, result);
 
 		// we enable the cache _after_ Foo was created
-		ObjectCache cache = enableCache(Foo.class, dao);
+		ObjectCache cache = enableCache(dao);
 
 		// updateId behind the back
 		Foo foo2 = new Foo();
@@ -135,7 +135,7 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 	@Test
 	public void testDelete() throws Exception {
 		Dao<Foo, String> dao = createDao(Foo.class, true);
-		ObjectCache cache = enableCache(Foo.class, dao);
+		ObjectCache cache = enableCache(dao);
 
 		Foo foo = new Foo();
 		String id = "hello";
@@ -159,30 +159,45 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 	}
 
 	@Test
-	public void testClearAll() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
-		ObjectCache cache = enableCache(Foo.class, dao);
+	public void testClearEachClass() throws Exception {
+		Dao<Foo, String> fooDao = createDao(Foo.class, true);
+		Dao<WithId, Integer> withIdDao = createDao(WithId.class, true);
+		ObjectCache cache = enableCache(fooDao);
+		withIdDao.setObjectCache(cache);
 
 		Foo foo = new Foo();
-		String id = "hello";
-		foo.id = id;
-		int val = 12312321;
-		foo.val = val;
-		assertEquals(1, dao.create(foo));
+		foo.id = "hello";
+		assertEquals(1, fooDao.create(foo));
 
-		Foo result = dao.queryForId(id);
-		assertSame(foo, result);
+		Foo fooResult = fooDao.queryForId(foo.id);
+		assertSame(foo, fooResult);
+
+		WithId withId = new WithId();
+		assertEquals(1, withIdDao.create(withId));
+
+		WithId withIdResult = withIdDao.queryForId(withId.id);
+		assertSame(withId, withIdResult);
+
+		cache.clear(Foo.class);
+
+		fooResult = fooDao.queryForId(foo.id);
+		assertNotSame(foo, fooResult);
+
+		withIdResult = withIdDao.queryForId(withId.id);
+		// still the same
+		assertSame(withId, withIdResult);
 
 		cache.clearAll();
 
-		result = dao.queryForId(id);
-		assertNotSame(foo, result);
+		withIdResult = withIdDao.queryForId(withId.id);
+		// not the same now
+		assertNotSame(withId, withIdResult);
 	}
 
 	@Test(expected = SQLException.class)
 	public void testNoIdClass() throws Exception {
 		Dao<NoId, Void> dao = createDao(NoId.class, true);
-		enableCache(WithId.class, dao);
+		enableCache(dao);
 	}
 
 	protected static class NoId {

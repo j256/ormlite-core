@@ -91,7 +91,7 @@ public class LruObjectCacheTest extends BaseObjectCacheTest {
 	}
 
 	@Override
-	protected ObjectCache enableCache(Class<?> clazz, Dao<?, ?> dao) throws Exception {
+	protected ObjectCache enableCache(Dao<?, ?> dao) throws Exception {
 		LruObjectCache cache = new LruObjectCache(10);
 		dao.setObjectCache(cache);
 		return cache;

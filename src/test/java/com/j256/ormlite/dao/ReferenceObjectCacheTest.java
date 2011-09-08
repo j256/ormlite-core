@@ -161,7 +161,7 @@ public class ReferenceObjectCacheTest extends BaseObjectCacheTest {
 	}
 
 	@Override
-	protected ObjectCache enableCache(Class<?> clazz, Dao<?, ?> dao) throws Exception {
+	protected ObjectCache enableCache(Dao<?, ?> dao) throws Exception {
 		ReferenceObjectCache cache = ReferenceObjectCache.makeWeakCache();
 		dao.setObjectCache(cache);
 		return cache;

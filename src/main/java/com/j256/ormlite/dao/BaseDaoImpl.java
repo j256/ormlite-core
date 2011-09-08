@@ -63,6 +63,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	protected CloseableIterator<T> lastIterator;
 
 	private static final ThreadLocal<DaoConfigLevel> daoConfigLevelLocal = new ThreadLocal<DaoConfigLevel>();
+	private static ReferenceObjectCache defaultObjectCache;
 	private ObjectCache objectCache = null;
 
 	/**
@@ -686,7 +687,11 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 				if (tableInfo.getIdField() == null) {
 					throw new SQLException("Class " + dataClass + " must have an id field to enable the object cache");
 				}
-				objectCache = ReferenceObjectCache.makeWeakCache();
+				if (defaultObjectCache == null) {
+					// only make one
+					defaultObjectCache = ReferenceObjectCache.makeWeakCache();
+				}
+				objectCache = defaultObjectCache;
 			}
 		} else {
 			if (objectCache != null) {
