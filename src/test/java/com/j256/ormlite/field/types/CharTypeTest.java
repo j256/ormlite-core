@@ -4,11 +4,27 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
-public class CharTypeTest extends BaseCoreTest {
+public class CharTypeTest extends BaseTypeTest {
+
+	private static final String CHAR_COLUMN = "charField";
+
+	@Test
+	public void testChar() throws Exception {
+		Class<LocalChar> clazz = LocalChar.class;
+		Dao<LocalChar, Object> dao = createDao(clazz, true);
+		char val = 'w';
+		String valStr = Character.toString(val);
+		LocalChar foo = new LocalChar();
+		foo.charField = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, val, val, valStr, DataType.CHAR, CHAR_COLUMN, false, true, true, true, false, false, true,
+				false);
+	}
 
 	@Test
 	public void testPostgresChar() throws Exception {
@@ -18,10 +34,17 @@ public class CharTypeTest extends BaseCoreTest {
 		assertEquals(1, dao.create(nullChar));
 	}
 
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalChar {
+		@DatabaseField(columnName = CHAR_COLUMN)
+		char charField;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class PostgresCharNull {
 		@DatabaseField(generatedId = true)
 		int id;
-		@DatabaseField
+		@DatabaseField(columnName = CHAR_COLUMN)
 		char charField;
 		PostgresCharNull() {
 		}

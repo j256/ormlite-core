@@ -9,15 +9,30 @@ import java.util.UUID;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-public class UuidTypeTest extends BaseCoreTest {
+public class UuidTypeTest extends BaseTypeTest {
+
+	private static final String UUID_COLUMN = "uuid";
 
 	@Test
 	public void testUuid() throws Exception {
+		Class<LocalUuid> clazz = LocalUuid.class;
+		Dao<LocalUuid, Object> dao = createDao(clazz, true);
+		LocalUuid foo = new LocalUuid();
+		UUID val = UUID.randomUUID();
+		foo.uuid = val;
+		assertEquals(1, dao.create(foo));
+		String valStr = val.toString();
+		testType(clazz, val, val, valStr, valStr, DataType.UUID, UUID_COLUMN, true, true, true, false, false, false,
+				true, false);
+	}
+
+	@Test
+	public void testUuidDao() throws Exception {
 		Dao<UuidClass, Integer> dao = createDao(UuidClass.class, true);
 		UuidClass uuid = new UuidClass();
 		uuid.uuid = null;
@@ -46,6 +61,12 @@ public class UuidTypeTest extends BaseCoreTest {
 
 	private static final String UUID_FILE_NAME = "uuid";
 	private static final String UUID_TABLE_NAME = "uuidandstring";
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalUuid {
+		@DatabaseField(columnName = UUID_COLUMN)
+		UUID uuid;
+	}
 
 	@DatabaseTable(tableName = UUID_TABLE_NAME)
 	protected static class UuidClass {
