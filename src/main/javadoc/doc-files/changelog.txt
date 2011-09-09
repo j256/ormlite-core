@@ -1,20 +1,23 @@
 4.26: 9/XX/2011 (svn rYYYY)
-	* Improved the javax.persistence annotation handling to support @JoinColumn(name="xxx").  Thanks to Andrew Sleeman.
-	* Added the first take on a level1 object cache.  Thanks to the dev list for suggestions.
-	* Removed the deprecated RawResults class that was replaced in 4.10.
-	* Added a RuntimeExceptionDao for wrapping Dao operations in RuntimeExceptions.  Thanks to the Android list.
+	* CORE: Added the first take on a level1 object cache.  Thanks to the dev list for suggestions.
+	* CORE: Improved the javax.persistence annotation handling to support @JoinColumn(name="xxx").  Thanks to Andrew Sleeman.
+	* CORE: Added a RuntimeExceptionDao for wrapping Dao operations in RuntimeExceptions.  Thanks to the Android list.
+	* CORE: Added a Dao.deleteById() method for removing an instance if you just have the id.
+	* CORE: Removed the deprecated RawResults class that was replaced in 4.10.
+	* CORE: Fixed problem with self-generated id fields not being marked as primary.  Thanks to Craig Andrews.  Fixes bug #3406600.
+	* ANDROID: Added SQLiteDatabase constructor to AndroidConnectionSource for external SQLite databases.  Thanks to Michael.
 
 4.25: 8/22/2011 (svn r1897)
-	* Fixed problem with id=true with UUID fields not working.  Thanks to Evan Grim.  Fixed bug #3392691.
-	* Exposed the fields in CreateOrUpdateStatus that were package protected (fail!).  Thanks to steffen.  Fixes bug #3383768.
-	* Added to FieldType getter for foreign field type.  Resolves feature request #3386969.  Thanks to Jean-Maxime Pelletier.
-	* Added allowGeneratedIdInsert feature to allow optional generated-id fields.  Thanks to Craig Andrews.
-	* Fixed problem with null ids an createOrUpdate.  Thanks to Jo‹o Bosco.  Fixes bug #3390169.
-	* Fixed multi-threaded race condition with field and constructor accessibility.  Thanks to Jeroen Rakhorst.  Fixes bug #3381083.
+	* CORE: Fixed problem with id=true with UUID fields not working.  Thanks to Evan Grim.  Fixed bug #3392691.
+	* CORE: Exposed the fields in CreateOrUpdateStatus that were package protected.  Thanks to steffen.  Fixes bug #3383768.
+	* CORE: Added to FieldType getter for foreign field type.  Resolves feature #3386969.  Thanks to Jean-Maxime Pelletier.
+	* CORE: Added allowGeneratedIdInsert feature to allow optional generated-id fields.  Thanks to Craig Andrews.
+	* CORE: Fixed problem with null ids an createOrUpdate.  Thanks to Jo‹o Bosco.  Fixes bug #3390169.
+	* CORE: Fixed race condition with field and constructor accessibility.  Thanks to Jeroen Rakhorst.  Fixes bug #3381083.
 
 4.24: 7/18/2011 (svn r1840)
 	* CORE: Fixed problem with updating a field's value to be null using UpdateBuilder. Thanks to Jeremy Mcjunkin. Fixes bug #3359086.
-	* CORE: Fixed foreign collection bugs where clear, remove, ... affected the whole table. Thanks to Patras Vlad. Fixes bug #3313003.
+	* CORE: Fixed foreign collection bug where clear, remove, ... affected the whole table. Thanks to Patras Vlad. Fixes bug #3313003.
 	* CORE: Fixed bug with the setting of the value of serializable types.  Thanks to kyle lampert.  Fixes #3363423.
 	* CORE: Added feature where foreign collections now contain objects whose foreign fields are set with the parent object.
 	* CORE: Added Dao.queryForMatchingArgs() and queryForFieldValuesArgs() to avoid SQL escaping issues.  Thanks to coder sam.
@@ -72,7 +75,7 @@
 	* CORE: Added support for storing char fields with ORMLite.  Derby, of course, was the most painful to get working.
 	* CORE: Added convenience query() and iterator() methods to the QueryBuilder and Where objects.
 	* CORE: Added a countOf() call to the Dao to return the select count(*) result for the table.
-	* CORE: Added s clearTable() method to TableUtils.  It will do a TRUNCATE if supported otherwise a DELETE.
+	* CORE: Added a clearTable() method to TableUtils.  It will do a TRUNCATE if supported otherwise a DELETE.
 	* CORE: Added a convenience queryForEq() method to the Dao which matches on a single field value.
 	* CORE: Added support for CREATE TABLE IF NOT EXISTS for those databases which support it: H2, MySQL, SQLite.
 	* CORE: Added handling of >2 arguments to Where.and() and or() which can now string together many clauses with AND/OR.
