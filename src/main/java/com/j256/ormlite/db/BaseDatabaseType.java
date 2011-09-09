@@ -298,7 +298,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 			List<String> statementsAfter, List<String> queriesAfter) throws SQLException {
 		StringBuilder sb = null;
 		for (FieldType fieldType : fieldTypes) {
-			if (fieldType.isGeneratedId() && (!generatedIdSqlAtEnd())) {
+			if (fieldType.isGeneratedId() && !generatedIdSqlAtEnd() && !fieldType.isSelfGeneratedId()) {
 				// don't add anything
 			} else if (fieldType.isId()) {
 				if (sb == null) {
