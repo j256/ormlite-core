@@ -369,6 +369,22 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertFalse(result.orders.containsAll(Arrays.asList(order3, order1, order2)));
 	}
 
+	@Test
+	public void testNullForeign() throws Exception {
+		Dao<OrderOrdered, Integer> orderDao = createDao(OrderOrdered.class, true);
+
+		int numOrders = 10;
+		for (int orderC = 0; orderC < numOrders; orderC++) {
+			OrderOrdered order = new OrderOrdered();
+			order.val = orderC;
+			assertEquals(1, orderDao.create(order));
+		}
+		
+		List<OrderOrdered> results = orderDao.queryBuilder().where().isNull(Order.ACCOUNT_FIELD_NAME).query();
+		assertNotNull(results);
+		assertEquals(numOrders, results.size());
+	}
+
 	/* =============================================================================================== */
 
 	private void testCollection(Dao<Account, Integer> accountDao, boolean eager) throws Exception {
@@ -674,11 +690,12 @@ public class ForeignCollectionTest extends BaseCoreTest {
 	}
 
 	protected static class Order {
+		public static final String ACCOUNT_FIELD_NAME = "account_id";
 		@DatabaseField(generatedId = true)
 		int id;
 		@DatabaseField(unique = true)
 		int val;
-		@DatabaseField(foreign = true)
+		@DatabaseField(foreign = true, columnName = ACCOUNT_FIELD_NAME)
 		Account account;
 		protected Order() {
 		}
@@ -850,12 +867,13 @@ public class ForeignCollectionTest extends BaseCoreTest {
 	}
 
 	protected static class OrderOrdered {
+		public static final String ACCOUNT_FIELD_NAME = "account_id";
 		public final static String VAL_FIELD_NAME = "val";
 		@DatabaseField(generatedId = true)
 		int id;
 		@DatabaseField(unique = true, columnName = VAL_FIELD_NAME)
 		int val;
-		@DatabaseField(foreign = true)
+		@DatabaseField(foreign = true, columnName = ACCOUNT_FIELD_NAME)
 		AccountOrdered account;
 		protected OrderOrdered() {
 		}

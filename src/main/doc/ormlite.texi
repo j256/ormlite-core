@@ -2738,7 +2738,7 @@ adb shell setprop log.tag.ORMLite DEBUG
 * Logging::                    How to log messages with ORMLite.
 * Dependencies::               External dependencies of ORMLite.
 * Transactions::               Using database transactions.
-* Caches::                     How to cache objects handled by ORMLite.
+* Object Caches::              How to cache objects handled by ORMLite.
 * Maven::                      Configure a maven project for ORMLite.
 @end menu
 
@@ -3283,16 +3283,18 @@ Returns the value returned from a @code{SELECT COUNT(*)} query which is the numb
 database and the size of the table, this could be expensive. 
 
 @cindex enable object cache
+@cindex object cache, enable
 @item setObjectCache(boolean enabled);
 
-Call this with true to enable an object cache for the DAO. Set to false to disable any caching.  @xref{Caches}.
+Call this with true to enable an object cache for the DAO. Set to false to disable any caching.  @xref{Object Caches}.
 
 @item setObjectCache(ObjectCache objectCache);
 	
 Same as @code{setObjectCache(boolean)} except you specify the actual cache instance to use for the DAO.  This allows
-you to inject your own cache classes.  Call it with null to disable the cache.  @xref{Caches}.
+you to inject your own cache classes.  Call it with null to disable the cache.  @xref{Object Caches}.
 
 @cindex clear object cache
+@cindex object cache, clear
 @item clearObjectCache();
 
 Flush the object cache if it has been enabled. This will remove an objects that are in the cache to reclaim
@@ -3390,7 +3392,7 @@ dependencies: @code{com.sun.jmx.jmxri}, @code{com.sun.jdmk.jmxtools}, @code{java
 @end table
 
 @c ----------------------------------------------------------------
-@node Transactions, Caches, Dependencies, Advanced
+@node Transactions, Object Caches, Dependencies, Advanced
 @section Using Database Transactions
 
 @cindex database transactions
@@ -3441,17 +3443,17 @@ you are looking for performance of a large number of operations. @xref{callBatch
 support disabling of auto-commit, a transaction may be used under the covers.
 
 @c ----------------------------------------------------------------
-@node Caches, Maven, Transactions, Advanced
-@section Object Cache
+@node Object Caches, Maven, Transactions, Advanced
+@section Object Caches
 
 @cindex caching objects
 @cindex object cache
 @cindex level 1 cache
 @cindex weak reference cache
 
-As of Sepember 2011, one of the newer features in ORMLite is the ability to enable an object cache for ORMLite.  The object
+As of Sepember 2011, one of the newer features in ORMLite is the ability to enable an object cache for a DAO.  The object
 cache keeps an internal collection of objects that have been created or queried and will return a reference to the same
-object if it is queried for in the future.  
+object if it is handled in the future.  
 
 For example:
 
@@ -3527,7 +3529,7 @@ accountDao.setObjectCache(false);
 @end example
 
 @c ----------------------------------------------------------------
-@node Maven, How to Upgrade, Caches, Advanced
+@node Maven, How to Upgrade, Object Caches, Advanced
 @section Configuring a Maven Project
 
 @cindex maven configuration

@@ -7,9 +7,14 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Cache for ORMLite which stores a certain number of items. Inserting an object into the cache once it is full will
- * cause the least-recently-used object to be ejected. This cache only stores objects of a single Class. They can be
- * injected into a dao with the {@link Dao#setObjectCache(ObjectCache)}.
+ * Cache for ORMLite which stores a certain number of items for each Class. Inserting an object into the cache once it
+ * is full will cause the least-recently-used object to be ejected. They can be injected into a dao with the
+ * {@link Dao#setObjectCache(ObjectCache)}.
+ * 
+ * <p>
+ * <b>NOTE:</b> If you set the capacity to be 100 then each <i>Class</i> will allow 100 items in the cache. If you have
+ * 5 classes then the cache will hold 500 objects.
+ * </p>
  * 
  * @author graywatson
  */

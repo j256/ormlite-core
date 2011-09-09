@@ -17,12 +17,23 @@
 - look into a prepared query which keeps the connection open to the database
 	- needs to have a lot of warnings on it
 
+- add a createTable call to the DAO instead of using tableUtils
+
 - flesh out the SimpleDB version of the library:
 	- get all tests passing
 	- think about batch operations
 	- maybe add a insert(Collection)?
 
 - backend for HBase (Hadoop's bigtable) 
+
+- look into storing the underlying compiled statement somewhere
+	- maybe cacheing it per connection?
+	- maybe each connection has a setQueryForId(), etc. type of call on it
+	- it prolly needs to be a thread local so we can set args on it
+	- some sort of boolean to turn this on
+	
+- support batch inserts that we can compile a statement and then directly set the args on it for each data object from a collection
+	- maybe get rid of the Object[] arguments and set the arguments directly from the data
 
 - consider allowing auto foreign object creation with internal doa's
 	- ANSWER: could be confusing and misleading, no easy way to see if the id field is set

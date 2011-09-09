@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Cache for ORMLite which stores objects with a {@link WeakReference} or {@link SoftReference} to them. Java Garbage
  * Collection can then free these objects if no one has a "strong" reference to the object (weak) or if it runs out of
- * memory (soft). This This cache only stores objects of a single Class.
+ * memory (soft).
  * 
  * @author graywatson
  */
