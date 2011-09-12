@@ -720,6 +720,10 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	public ObjectCache getObjectCache() {
+		return objectCache;
+	}
+
 	public void clearObjectCache() {
 		if (objectCache != null) {
 			objectCache.clear(dataClass);

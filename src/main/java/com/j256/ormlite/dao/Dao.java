@@ -540,6 +540,11 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public void setObjectCache(ObjectCache objectCache) throws SQLException;
 
 	/**
+	 * Returns the current object-cache being used by the DAO or null if none.
+	 */
+	public ObjectCache getObjectCache();
+
+	/**
 	 * Flush the object cache if it has been enabled. This will remove an objects that are in the cache to reclaim
 	 * memory. Any future queries will re-request them from the database.
 	 */
