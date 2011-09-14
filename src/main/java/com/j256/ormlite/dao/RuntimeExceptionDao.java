@@ -502,6 +502,13 @@ public class RuntimeExceptionDao<T, ID> {
 	}
 
 	/**
+	 * @see Dao#getObjectCache(ObjectCache)
+	 */
+	public ObjectCache getObjectCache() {
+		return dao.getObjectCache();
+	}
+
+	/**
 	 * @see Dao#setObjectCache(ObjectCache)
 	 */
 	public void setObjectCache(ObjectCache objectCache) throws SQLException {
