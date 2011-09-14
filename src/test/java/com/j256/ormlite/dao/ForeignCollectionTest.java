@@ -379,7 +379,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 			order.val = orderC;
 			assertEquals(1, orderDao.create(order));
 		}
-		
+
 		List<OrderOrdered> results = orderDao.queryBuilder().where().isNull(Order.ACCOUNT_FIELD_NAME).query();
 		assertNotNull(results);
 		assertEquals(numOrders, results.size());
