@@ -214,13 +214,13 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 
 		assertTrue(dao.objectsEqual(foo, foo));
 		assertTrue(dao.objectToString(foo).contains("val=" + val));
-		
+
 		assertEquals(id2, dao.extractId(foo));
 		assertEquals(Foo.class, dao.getDataClass());
 		assertTrue(dao.isTableExists());
 		assertTrue(dao.isUpdatable());
 		assertEquals(1, dao.countOf());
-		
+
 		dao.setObjectCache(false);
 		dao.setObjectCache(null);
 		dao.clearObjectCache();

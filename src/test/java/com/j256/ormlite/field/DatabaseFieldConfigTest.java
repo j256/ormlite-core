@@ -27,6 +27,11 @@ public class DatabaseFieldConfigTest {
 		DatabaseFieldConfig config = new DatabaseFieldConfig();
 		String str;
 
+		assertNull(config.getFieldName());
+		str = "field";
+		config.setFieldName(str);
+		assertEquals(str, config.getFieldName());
+
 		assertNull(config.getColumnName());
 		str = "name";
 		config.setColumnName(str);
