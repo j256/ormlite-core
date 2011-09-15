@@ -54,15 +54,16 @@ public class DaoManager {
 
 		// if we have a config map
 		if (configMap != null) {
-			DatabaseTableConfig<?> config = configMap.get(clazz);
+			@SuppressWarnings("unchecked")
+			DatabaseTableConfig<T> config = (DatabaseTableConfig<T>) configMap.get(clazz);
 			// if we have config information cached
 			if (config != null) {
 				// create a dao using it
-				dao = createDao(connectionSource, config);
+				Dao<T, ?> configedDao = createDao(connectionSource, config);
 				// we put it into the DAO map even though it came from a config
-				classMap.put(key, dao);
+				classMap.put(key, configedDao);
 				@SuppressWarnings("unchecked")
-				D castDao = (D) dao;
+				D castDao = (D) configedDao;
 				return castDao;
 			}
 		}
@@ -252,7 +253,7 @@ public class DaoManager {
 				break;
 			}
 			newMap.put(config.getDataClass(), config);
-			logger.info("Loaded configuration for class {}", config.getDataClass());
+			logger.info("Loaded configuration for {}", config.getDataClass());
 		}
 		configMap = newMap;
 	}
