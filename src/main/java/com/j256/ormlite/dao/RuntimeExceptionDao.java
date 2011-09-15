@@ -502,7 +502,7 @@ public class RuntimeExceptionDao<T, ID> {
 	}
 
 	/**
-	 * @see Dao#getObjectCache(ObjectCache)
+	 * @see Dao#getObjectCache()
 	 */
 	public ObjectCache getObjectCache() {
 		return dao.getObjectCache();
