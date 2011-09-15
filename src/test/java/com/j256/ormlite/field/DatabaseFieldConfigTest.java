@@ -6,7 +6,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.Serializable;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.lang.reflect.Field;
 
 import javax.persistence.Column;
@@ -15,12 +19,15 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
 import org.junit.Test;
 
 import com.j256.ormlite.db.BaseDatabaseType;
 import com.j256.ormlite.db.DatabaseType;
 
 public class DatabaseFieldConfigTest {
+
+	private DatabaseType databaseType = new StubDatabaseType();
 
 	@Test
 	public void testGetSet() {
@@ -37,25 +44,29 @@ public class DatabaseFieldConfigTest {
 		config.setColumnName(str);
 		assertEquals(str, config.getColumnName());
 
-		assertNull(config.getDefaultValue());
-		str = "default";
-		config.setDefaultValue(str);
-		assertEquals(str, config.getDefaultValue());
-
-		assertNull(config.getGeneratedIdSequence());
-		str = "seq";
-		config.setGeneratedIdSequence(str);
-		assertEquals(str, config.getGeneratedIdSequence());
-
 		assertNull(config.getDataPersister());
 		DataPersister jdbcType = DataType.DOUBLE.getDataPersister();
 		config.setDataPersister(jdbcType);
 		assertEquals(jdbcType, config.getDataPersister());
 
+		assertNull(config.getDefaultValue());
+		str = "default";
+		config.setDefaultValue(str);
+		assertEquals(str, config.getDefaultValue());
+
 		assertEquals(0, config.getWidth());
 		int width = 21312312;
 		config.setWidth(width);
 		assertEquals(width, config.getWidth());
+
+		assertFalse(config.isId());
+		config.setId(true);
+		assertTrue(config.isId());
+
+		assertNull(config.getGeneratedIdSequence());
+		str = "seq";
+		config.setGeneratedIdSequence(str);
+		assertEquals(str, config.getGeneratedIdSequence());
 
 		assertFalse(config.isCanBeNull());
 		config.setCanBeNull(true);
@@ -69,10 +80,6 @@ public class DatabaseFieldConfigTest {
 		config.setGeneratedId(true);
 		assertTrue(config.isGeneratedId());
 
-		assertFalse(config.isId());
-		config.setId(true);
-		assertTrue(config.isId());
-
 		assertFalse(config.isUseGetSet());
 		config.setUseGetSet(true);
 		assertTrue(config.isUseGetSet());
@@ -81,7 +88,6 @@ public class DatabaseFieldConfigTest {
 	@Test
 	public void testFromDbField() throws Exception {
 		Field[] fields = Foo.class.getDeclaredFields();
-		DatabaseType databaseType = new StubDatabaseType();
 		assertTrue(fields.length >= 1);
 		DatabaseFieldConfig config = DatabaseFieldConfig.fromField(databaseType, "foo", fields[0]);
 		assertNotNull(config);
@@ -94,7 +100,6 @@ public class DatabaseFieldConfigTest {
 
 	@Test
 	public void testJavaxAnnotations() throws Exception {
-		DatabaseType databaseType = new StubDatabaseType();
 		Field[] fields = JavaxAnno.class.getDeclaredFields();
 		assertTrue(fields.length >= 8);
 
@@ -140,7 +145,6 @@ public class DatabaseFieldConfigTest {
 
 	@Test
 	public void testJavaxJustId() throws Exception {
-		DatabaseType databaseType = new StubDatabaseType();
 		Field[] fields = JavaxAnnoJustId.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
 
@@ -154,7 +158,6 @@ public class DatabaseFieldConfigTest {
 
 	@Test
 	public void testJavaxGetSet() throws Exception {
-		DatabaseType databaseType = new StubDatabaseType();
 		Field[] fields = JavaxGetSet.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
 
@@ -166,7 +169,6 @@ public class DatabaseFieldConfigTest {
 
 	@Test
 	public void testJavaxUnique() throws Exception {
-		DatabaseType databaseType = new StubDatabaseType();
 		Field[] fields = JavaxUnique.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
 
@@ -178,7 +180,6 @@ public class DatabaseFieldConfigTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testUnknownEnumVal() throws Exception {
-		DatabaseType databaseType = new StubDatabaseType();
 		Field[] fields = BadUnknownVal.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
 		DatabaseFieldConfig.fromField(databaseType, "foo", fields[0]);
@@ -186,7 +187,6 @@ public class DatabaseFieldConfigTest {
 
 	@Test
 	public void testIndex() throws Exception {
-		DatabaseType databaseType = new StubDatabaseType();
 		Field[] fields = Index.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
 		String tableName = "foo";
@@ -196,7 +196,6 @@ public class DatabaseFieldConfigTest {
 
 	@Test
 	public void testComboIndex() throws Exception {
-		DatabaseType databaseType = new StubDatabaseType();
 		Field[] fields = ComboIndex.class.getDeclaredFields();
 		assertTrue(fields.length >= 2);
 		DatabaseFieldConfig fieldConfig = DatabaseFieldConfig.fromField(databaseType, "foo", fields[0]);
@@ -207,7 +206,6 @@ public class DatabaseFieldConfigTest {
 
 	@Test
 	public void testDefaultValue() throws Exception {
-		DatabaseType databaseType = new StubDatabaseType();
 		DatabaseFieldConfig fieldConfig =
 				DatabaseFieldConfig.fromField(databaseType, "defaultstring",
 						DefaultString.class.getDeclaredField("stuff"));
@@ -226,7 +224,6 @@ public class DatabaseFieldConfigTest {
 
 	@Test
 	public void testFooSetGet() throws Exception {
-		DatabaseType databaseType = new StubDatabaseType();
 		DatabaseFieldConfig fieldConfig =
 				DatabaseFieldConfig.fromField(databaseType, "foo", Foo.class.getDeclaredField("field"));
 
@@ -278,7 +275,6 @@ public class DatabaseFieldConfigTest {
 
 	@Test
 	public void testNotPersisted() throws Exception {
-		DatabaseType databaseType = new StubDatabaseType();
 		DatabaseFieldConfig fieldConfig =
 				DatabaseFieldConfig.fromField(databaseType, "foo", NotPersisted.class.getDeclaredField("field"));
 		assertNull(fieldConfig);
@@ -286,7 +282,6 @@ public class DatabaseFieldConfigTest {
 
 	@Test
 	public void testIndexNames() throws Exception {
-		DatabaseType databaseType = new StubDatabaseType();
 		String tableName = "table1";
 		DatabaseFieldConfig fieldConfig =
 				DatabaseFieldConfig.fromField(databaseType, tableName, IndexName.class.getDeclaredField("field1"));
@@ -294,6 +289,165 @@ public class DatabaseFieldConfigTest {
 		fieldConfig =
 				DatabaseFieldConfig.fromField(databaseType, tableName, IndexName.class.getDeclaredField("field2"));
 		assertEquals(tableName + "_" + IndexName.UNIQUE_INDEX_COLUMN_NAME + "_idx", fieldConfig.getUniqueIndexName());
+	}
+
+	private final static String FIELD_START = "# --field-start--\n";
+	private final static String FIELD_END = "# --field-end--\n";
+	private final static String MAX_FOREIGN_CONSTANT = "maxForeignAutoRefreshLevel=2\n";
+	private final static String MAX_EAGER_CONSTANT = "maxEagerForeignCollectionLevel=1\n";
+
+	@Test
+	public void testConfigFile() throws Exception {
+		DatabaseFieldConfig config = new DatabaseFieldConfig();
+		StringBuilder body = new StringBuilder();
+		StringWriter writer = new StringWriter();
+		BufferedWriter buffer = new BufferedWriter(writer);
+
+		String fieldName = "pwojfpweofjwefw";
+		config.setFieldName(fieldName);
+		body.append("fieldName=").append(fieldName).append("\n");
+		checkConfigOutput(config, body, true, true, writer, buffer);
+
+		String columnName = "pwefw";
+		config.setColumnName(columnName);
+		body.append("columnName=").append(columnName).append("\n");
+		checkConfigOutput(config, body, true, true, writer, buffer);
+
+		DataPersister dataPersister = DataType.BYTE_OBJ.getDataPersister();
+		config.setDataPersister(dataPersister);
+		body.append("dataPersister=").append(DataType.BYTE_OBJ).append("\n");
+		checkConfigOutput(config, body, true, true, writer, buffer);
+
+		String defaultValue = "pwefw";
+		config.setDefaultValue(defaultValue);
+		body.append("defaultValue=").append(defaultValue).append("\n");
+		checkConfigOutput(config, body, true, true, writer, buffer);
+
+		int width = 13212;
+		config.setWidth(width);
+		body.append("width=").append(width).append("\n");
+		checkConfigOutput(config, body, true, true, writer, buffer);
+
+		config.setCanBeNull(false);
+		checkConfigOutput(config, body, true, true, writer, buffer);
+		config.setCanBeNull(true);
+		body.append("canBeNull=true").append("\n");
+
+		config.setId(false);
+		checkConfigOutput(config, body, true, true, writer, buffer);
+		config.setId(true);
+		body.append("id=true").append("\n");
+		checkConfigOutput(config, body, true, true, writer, buffer);
+
+		config.setGeneratedId(false);
+		checkConfigOutput(config, body, true, true, writer, buffer);
+		config.setGeneratedId(true);
+		body.append("generatedId=true").append("\n");
+		checkConfigOutput(config, body, true, true, writer, buffer);
+
+		String generatedIdSequence = "24332423";
+		config.setGeneratedIdSequence(generatedIdSequence);
+		body.append("generatedIdSequence=").append(generatedIdSequence).append("\n");
+		checkConfigOutput(config, body, true, true, writer, buffer);
+
+		config.setForeign(false);
+		checkConfigOutput(config, body, true, true, writer, buffer);
+		config.setForeign(true);
+		body.append("foreign=true").append("\n");
+		checkConfigOutput(config, body, true, true, writer, buffer);
+
+		config.setUseGetSet(false);
+		checkConfigOutput(config, body, true, true, writer, buffer);
+		config.setUseGetSet(true);
+		body.append("useGetSet=true").append("\n");
+		checkConfigOutput(config, body, true, true, writer, buffer);
+
+		Enum<?> enumValue = OurEnum.FIRST;
+		config.setUnknownEnumValue(enumValue);
+		body.append("unknownEnumValue=")
+				.append(enumValue.getClass().getName())
+				.append('#')
+				.append(enumValue)
+				.append("\n");
+		checkConfigOutput(config, body, true, true, writer, buffer);
+
+		config.setThrowIfNull(false);
+		checkConfigOutput(config, body, true, true, writer, buffer);
+		config.setThrowIfNull(true);
+		body.append("throwIfNull=true").append("\n");
+		checkConfigOutput(config, body, true, true, writer, buffer);
+
+		String format = "wpgjogwjpogwjp";
+		config.setFormat(format);
+		body.append("format=").append(format).append("\n");
+		checkConfigOutput(config, body, true, true, writer, buffer);
+
+		config.setUnique(false);
+		checkConfigOutput(config, body, true, true, writer, buffer);
+		config.setUnique(true);
+		body.append("unique=true").append("\n");
+		checkConfigOutput(config, body, true, true, writer, buffer);
+
+		config.setUniqueCombo(false);
+		checkConfigOutput(config, body, true, true, writer, buffer);
+		config.setUniqueCombo(true);
+		body.append("uniqueCombo=true").append("\n");
+		checkConfigOutput(config, body, true, true, writer, buffer);
+
+		String indexName = "wfewjpwepjjp";
+		config.setIndexName(indexName);
+		body.append("indexName=").append(indexName).append("\n");
+		checkConfigOutput(config, body, true, true, writer, buffer);
+
+		String uniqueIndexName = "w2254423fewjpwepjjp";
+		config.setUniqueIndexName(uniqueIndexName);
+		body.append("uniqueIndexName=").append(uniqueIndexName).append("\n");
+		checkConfigOutput(config, body, true, true, writer, buffer);
+
+		config.setForeignAutoRefresh(false);
+		checkConfigOutput(config, body, true, true, writer, buffer);
+		config.setForeignAutoRefresh(true);
+		body.append("foreignAutoRefresh=true").append("\n");
+		checkConfigOutput(config, body, true, true, writer, buffer);
+
+		int maxForeign = 2112;
+		config.setMaxForeignAutoRefreshLevel(maxForeign);
+		body.append("maxForeignAutoRefreshLevel=").append(maxForeign).append("\n");
+		checkConfigOutput(config, body, false, true, writer, buffer);
+
+		config.setForeignCollection(false);
+		checkConfigOutput(config, body, false, true, writer, buffer);
+		config.setForeignCollection(true);
+		body.append("foreignCollection=true").append("\n");
+		checkConfigOutput(config, body, false, true, writer, buffer);
+
+		config.setForeignCollectionEager(false);
+		checkConfigOutput(config, body, false, true, writer, buffer);
+		config.setForeignCollectionEager(true);
+		body.append("foreignCollectionEager=true").append("\n");
+		checkConfigOutput(config, body, false, true, writer, buffer);
+
+		String foreignOrderColumn = "w225fwhi4jp";
+		config.setForeignCollectionOrderColumn(foreignOrderColumn);
+		body.append("foreignCollectionOrderColumn=").append(foreignOrderColumn).append("\n");
+		checkConfigOutput(config, body, false, true, writer, buffer);
+
+		int maxEager = 341;
+		config.setMaxEagerForeignCollectionLevel(maxEager);
+		body.append("maxEagerForeignCollectionLevel=").append(maxEager).append("\n");
+		checkConfigOutput(config, body, false, false, writer, buffer);
+
+		@SuppressWarnings("unchecked")
+		Class<DataPersister> clazz = (Class<DataPersister>) DataType.CHAR.getDataPersister().getClass();
+		config.setPersisterClass(clazz);
+		body.append("persisterClass=").append(clazz.getName()).append("\n");
+		checkConfigOutput(config, body, false, false, writer, buffer);
+
+		config.setAllowGeneratedIdInsert(false);
+		checkConfigOutput(config, body, false, false, writer, buffer);
+		config.setAllowGeneratedIdInsert(true);
+		body.append("allowGeneratedIdInsert=true").append("\n");
+		checkConfigOutput(config, body, false, false, writer, buffer);
 	}
 
 	protected class Foo {
@@ -414,5 +568,57 @@ public class DatabaseFieldConfigTest {
 		String none;
 		public DefaultString() {
 		}
+	}
+
+	private void checkConfigOutput(DatabaseFieldConfig config, StringBuilder body, boolean addMaxForeign,
+			boolean addMaxEager, StringWriter writer, BufferedWriter buffer) throws Exception {
+		config.write(buffer);
+		buffer.flush();
+		StringBuilder output = new StringBuilder();
+		output.append(FIELD_START).append(body);
+		if (addMaxForeign) {
+			output.append(MAX_FOREIGN_CONSTANT);
+		}
+		if (addMaxEager) {
+			output.append(MAX_EAGER_CONSTANT);
+		}
+		output.append(FIELD_END);
+		assertEquals(output.toString(), writer.toString());
+		StringReader reader = new StringReader(writer.toString());
+		DatabaseFieldConfig configCopy = DatabaseFieldConfig.fromReader(new BufferedReader(reader));
+		assertTrue(isSame(config, configCopy));
+		writer.getBuffer().setLength(0);
+	}
+
+	private boolean isSame(DatabaseFieldConfig config1, DatabaseFieldConfig config2) {
+		EqualsBuilder eb = new EqualsBuilder();
+		eb.append(config1.getFieldName(), config2.getFieldName());
+		eb.append(config1.getColumnName(), config2.getColumnName());
+		eb.append(config1.getDataPersister(), config2.getDataPersister());
+		eb.append(config1.getDefaultValue(), config2.getDefaultValue());
+		eb.append(config1.getWidth(), config2.getWidth());
+		eb.append(config1.isCanBeNull(), config2.isCanBeNull());
+		eb.append(config1.isId(), config2.isId());
+		eb.append(config1.isGeneratedId(), config2.isGeneratedId());
+		eb.append(config1.getGeneratedIdSequence(), config2.getGeneratedIdSequence());
+		eb.append(config1.isForeign(), config2.isForeign());
+		eb.append(config1.getForeignTableConfig(), config2.getForeignTableConfig());
+		eb.append(config1.isUseGetSet(), config2.isUseGetSet());
+		eb.append(config1.getUnknownEnumValue(), config2.getUnknownEnumValue());
+		eb.append(config1.isThrowIfNull(), config2.isThrowIfNull());
+		eb.append(config1.getFormat(), config2.getFormat());
+		eb.append(config1.isUnique(), config2.isUnique());
+		eb.append(config1.isUniqueCombo(), config2.isUniqueCombo());
+		eb.append(config1.getIndexName(), config2.getIndexName());
+		eb.append(config1.getUniqueIndexName(), config2.getUniqueIndexName());
+		eb.append(config1.isForeignAutoRefresh(), config2.isForeignAutoRefresh());
+		eb.append(config1.getMaxForeignAutoRefreshLevel(), config2.getMaxForeignAutoRefreshLevel());
+		eb.append(config1.isForeignCollection(), config2.isForeignCollection());
+		eb.append(config1.isForeignCollectionEager(), config2.isForeignCollectionEager());
+		eb.append(config1.getForeignCollectionOrderColumn(), config2.getForeignCollectionOrderColumn());
+		eb.append(config1.getMaxEagerForeignCollectionLevel(), config2.getMaxEagerForeignCollectionLevel());
+		eb.append(config1.getPersisterClass(), config2.getPersisterClass());
+		eb.append(config1.isAllowGeneratedIdInsert(), config2.isAllowGeneratedIdInsert());
+		return eb.isEquals();
 	}
 }

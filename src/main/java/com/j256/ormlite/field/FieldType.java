@@ -601,7 +601,7 @@ public class FieldType {
 	}
 
 	public Enum<?> getUnknownEnumVal() {
-		return fieldConfig.getUnknownEnumvalue();
+		return fieldConfig.getUnknownEnumValue();
 	}
 
 	/**

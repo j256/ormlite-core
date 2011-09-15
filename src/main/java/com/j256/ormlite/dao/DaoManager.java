@@ -1,10 +1,15 @@
 package com.j256.ormlite.dao;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.j256.ormlite.logger.Logger;
+import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.DatabaseTable;
@@ -24,8 +29,11 @@ import com.j256.ormlite.table.DatabaseTableConfig;
  */
 public class DaoManager {
 
+	private static Map<Class<?>, DatabaseTableConfig<?>> configMap = null;
 	private static Map<ClazzConnectionSource, Dao<?, ?>> classMap = null;
 	private static Map<TableConfigConnectionSource, Dao<?, ?>> tableMap = null;
+
+	private static Logger logger = LoggerFactory.getLogger(DaoManager.class);
 
 	/**
 	 * Helper method to create a Dao object without having to define a class. This checks to see if the Dao has already
@@ -42,6 +50,21 @@ public class DaoManager {
 			@SuppressWarnings("unchecked")
 			D castDao = (D) dao;
 			return castDao;
+		}
+
+		// if we have a config map
+		if (configMap != null) {
+			DatabaseTableConfig<?> config = configMap.get(clazz);
+			// if we have config information cached
+			if (config != null) {
+				// create a dao using it
+				dao = createDao(connectionSource, config);
+				// we put it into the DAO map even though it came from a config
+				classMap.put(key, dao);
+				@SuppressWarnings("unchecked")
+				D castDao = (D) dao;
+				return castDao;
+			}
 		}
 
 		DatabaseTable databaseTable = clazz.getAnnotation(DatabaseTable.class);
@@ -213,6 +236,25 @@ public class DaoManager {
 			tableMap.clear();
 			tableMap = null;
 		}
+	}
+
+	public static void loadDatabaseConfigFromStream(InputStream stream) throws SQLException {
+		Map<Class<?>, DatabaseTableConfig<?>> newMap;
+		if (configMap == null) {
+			newMap = new HashMap<Class<?>, DatabaseTableConfig<?>>();
+		} else {
+			newMap = new HashMap<Class<?>, DatabaseTableConfig<?>>(configMap);
+		}
+		BufferedReader reader = new BufferedReader(new InputStreamReader(stream), 4096);
+		while (true) {
+			DatabaseTableConfig<?> config = DatabaseTableConfig.fromReader(reader);
+			if (config == null) {
+				break;
+			}
+			newMap.put(config.getDataClass(), config);
+			logger.info("Loaded configuration for class {}", config.getDataClass());
+		}
+		configMap = newMap;
 	}
 
 	private static <T> Dao<?, ?> lookupDao(ClazzConnectionSource key) {

@@ -1,11 +1,15 @@
 package com.j256.ormlite.field;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.misc.JavaxPersistence;
+import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.table.DatabaseTableConfig;
 
 /**
@@ -15,6 +19,9 @@ import com.j256.ormlite.table.DatabaseTableConfig;
  * @author graywatson
  */
 public class DatabaseFieldConfig {
+
+	private static final String CONFIG_FILE_START_MARKER = "# --field-start--";
+	private static final String CONFIG_FILE_END_MARKER = "# --field-end--";
 
 	private String fieldName;
 	private String columnName;
@@ -28,7 +35,7 @@ public class DatabaseFieldConfig {
 	private boolean foreign;
 	private DatabaseTableConfig<?> foreignTableConfig;
 	private boolean useGetSet;
-	private Enum<?> unknownEnumvalue;
+	private Enum<?> unknownEnumValue;
 	private boolean throwIfNull;
 	private String format;
 	private boolean unique;
@@ -80,7 +87,7 @@ public class DatabaseFieldConfig {
 		this.foreign = foreign;
 		this.foreignTableConfig = foreignTableConfig;
 		this.useGetSet = useGetSet;
-		this.unknownEnumvalue = unknownEnumValue;
+		this.unknownEnumValue = unknownEnumValue;
 		this.throwIfNull = throwIfNull;
 		this.format = format;
 		this.unique = unique;
@@ -236,12 +243,20 @@ public class DatabaseFieldConfig {
 		this.useGetSet = useGetSet;
 	}
 
+	/**
+	 * @deprecated Switch to {@link #getUnknownEnumValue()}.
+	 */
+	@Deprecated
 	public Enum<?> getUnknownEnumvalue() {
-		return unknownEnumvalue;
+		return unknownEnumValue;
 	}
 
-	public void setUnknownEnumvalue(Enum<?> unknownEnumvalue) {
-		this.unknownEnumvalue = unknownEnumvalue;
+	public Enum<?> getUnknownEnumValue() {
+		return unknownEnumValue;
+	}
+
+	public void setUnknownEnumValue(Enum<?> unknownEnumValue) {
+		this.unknownEnumValue = unknownEnumValue;
 	}
 
 	public boolean isThrowIfNull() {
@@ -270,6 +285,10 @@ public class DatabaseFieldConfig {
 
 	public boolean isUniqueCombo() {
 		return uniqueCombo;
+	}
+
+	public void setUniqueCombo(boolean uniqueCombo) {
+		this.uniqueCombo = uniqueCombo;
 	}
 
 	public String getIndexName() {
@@ -368,6 +387,14 @@ public class DatabaseFieldConfig {
 			}
 		}
 
+		// first we lookup the DatabaseField annotation
+		DatabaseFieldSimple databaseFieldSimple = field.getAnnotation(DatabaseFieldSimple.class);
+		if (databaseFieldSimple != null) {
+			return fromDatabaseFieldAnnotations(databaseType, tableName, field, databaseFieldSimple,
+					field.getAnnotation(DatabaseFieldId.class), field.getAnnotation(DatabaseFieldForeign.class),
+					field.getAnnotation(DatabaseFieldIndex.class), field.getAnnotation(DatabaseFieldOther.class));
+		}
+
 		ForeignCollectionField foreignCollection = field.getAnnotation(ForeignCollectionField.class);
 		if (foreignCollection != null) {
 			return fromForeignCollection(databaseType, tableName, field, foreignCollection);
@@ -382,6 +409,59 @@ public class DatabaseFieldConfig {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Load a configuration in from a text file.
+	 * 
+	 * @return A config if any of the fields were set otherwise null on EOF.
+	 */
+	public static DatabaseFieldConfig fromReader(BufferedReader reader) throws SQLException {
+		DatabaseFieldConfig config = new DatabaseFieldConfig();
+		boolean anything = false;
+		while (true) {
+			String line;
+			try {
+				line = reader.readLine();
+			} catch (IOException e) {
+				throw SqlExceptionUtil.create("Could not read DatabaseFieldConfig from stream", e);
+			}
+			if (line == null) {
+				break;
+			}
+			// we do this so we can support multiple class configs per file
+			if (line.equals(CONFIG_FILE_END_MARKER)) {
+				break;
+			}
+			// skip empty lines or comments
+			if (line.length() == 0 || line.startsWith("#")) {
+				continue;
+			}
+			String[] parts = line.split("=", -2);
+			if (parts.length != 2) {
+				throw new SQLException("DatabaseFieldConfig reading from stream cannot parse line: " + line);
+			}
+			readField(config, parts[0], parts[1]);
+			anything = true;
+		}
+		// if we got any config lines then we return the config
+		if (anything) {
+			return config;
+		} else {
+			// otherwise we return null for none
+			return null;
+		}
+	}
+
+	/**
+	 * Write the configuration to a buffered writer.
+	 */
+	public void write(BufferedWriter writer) throws SQLException {
+		try {
+			writeConfig(writer);
+		} catch (IOException e) {
+			throw SqlExceptionUtil.create("Could not write config to writer", e);
+		}
 	}
 
 	/**
@@ -440,49 +520,54 @@ public class DatabaseFieldConfig {
 		return fieldSetMethod;
 	}
 
-	@SuppressWarnings("deprecation")
-	private static DatabaseFieldConfig fromDatabaseField(DatabaseType databaseType, String tableName, Field field,
+	public static DatabaseFieldConfig fromDatabaseField(DatabaseType databaseType, String tableName, Field field,
 			DatabaseField databaseField) {
 		DatabaseFieldConfig config = new DatabaseFieldConfig();
 		config.fieldName = field.getName();
 		if (databaseType.isEntityNamesMustBeUpCase()) {
 			config.fieldName = config.fieldName.toUpperCase();
 		}
-		if (databaseField.columnName().length() > 0) {
-			config.columnName = databaseField.columnName();
+		String columnName = databaseField.columnName();
+		if (columnName.length() > 0) {
+			config.columnName = columnName;
 		} else {
 			config.columnName = null;
 		}
-		if (databaseField.dataType() == null) {
+		DataType dataType = databaseField.dataType();
+		if (dataType == null) {
 			config.dataPersister = null;
 		} else {
-			config.dataPersister = databaseField.dataType().getDataPersister();
+			config.dataPersister = dataType.getDataPersister();
 		}
 		// NOTE: == did not work with the NO_DEFAULT string
-		if (databaseField.defaultValue().equals(DatabaseField.NO_DEFAULT)) {
+		String defaultValue = databaseField.defaultValue();
+		if (defaultValue.equals(DatabaseField.NO_DEFAULT)) {
 			config.defaultValue = null;
 		} else {
-			config.defaultValue = databaseField.defaultValue();
+			config.defaultValue = defaultValue;
 		}
 		config.width = databaseField.width();
 		config.canBeNull = databaseField.canBeNull();
 		config.id = databaseField.id();
 		config.generatedId = databaseField.generatedId();
-		if (databaseField.generatedIdSequence().length() > 0) {
-			config.generatedIdSequence = databaseField.generatedIdSequence();
+		String generatedIdSequence = databaseField.generatedIdSequence();
+		if (generatedIdSequence.length() > 0) {
+			config.generatedIdSequence = generatedIdSequence;
 		} else {
 			config.generatedIdSequence = null;
 		}
 		config.foreign = databaseField.foreign();
 		config.useGetSet = databaseField.useGetSet();
-		if (databaseField.unknownEnumName().length() > 0) {
-			config.unknownEnumvalue = findMatchingEnumVal(field, databaseField.unknownEnumName());
+		String unknownEnumName = databaseField.unknownEnumName();
+		if (unknownEnumName.length() > 0) {
+			config.unknownEnumValue = findMatchingEnumVal(field, unknownEnumName);
 		} else {
-			config.unknownEnumvalue = null;
+			config.unknownEnumValue = null;
 		}
 		config.throwIfNull = databaseField.throwIfNull();
-		if (databaseField.format().length() > 0) {
-			config.format = databaseField.format();
+		String format = databaseField.format();
+		if (format.length() > 0) {
+			config.format = format;
 		} else {
 			config.format = null;
 		}
@@ -494,13 +579,75 @@ public class DatabaseFieldConfig {
 		config.uniqueIndexName =
 				findIndexName(tableName, databaseField.uniqueIndexName(), databaseField.uniqueIndex(), config);
 		config.foreignAutoRefresh = databaseField.foreignAutoRefresh();
-		if (databaseField.maxForeignLevel() != DatabaseField.MAX_FOREIGN_AUTO_REFRESH_LEVEL) {
-			config.maxForeignAutoRefreshLevel = databaseField.maxForeignLevel();
-		} else {
-			config.maxForeignAutoRefreshLevel = databaseField.maxForeignAutoRefreshLevel();
-		}
+		config.maxForeignAutoRefreshLevel = databaseField.maxForeignAutoRefreshLevel();
 		config.persisterClass = databaseField.persisterClass();
 		config.allowGeneratedIdInsert = databaseField.allowGeneratedIdInsert();
+
+		return config;
+	}
+
+	public static DatabaseFieldConfig fromDatabaseFieldAnnotations(DatabaseType databaseType, String tableName,
+			Field field, DatabaseFieldSimple simpleAnno, DatabaseFieldId idAnno, DatabaseFieldForeign foreignAnno,
+			DatabaseFieldIndex indexAnno, DatabaseFieldOther otherAnno) {
+		DatabaseFieldConfig config = new DatabaseFieldConfig();
+		config.fieldName = field.getName();
+		if (databaseType.isEntityNamesMustBeUpCase()) {
+			config.fieldName = config.fieldName.toUpperCase();
+		}
+		String columnName = simpleAnno.columnName();
+		if (columnName.length() > 0) {
+			config.columnName = columnName;
+		} else {
+			config.columnName = null;
+		}
+		DataType dataType = otherAnno.dataType();
+		if (dataType == null) {
+			config.dataPersister = null;
+		} else {
+			config.dataPersister = dataType.getDataPersister();
+		}
+		// NOTE: == did not work with the NO_DEFAULT string
+		String defaultValue = simpleAnno.defaultValue();
+		if (defaultValue.equals(DatabaseField.NO_DEFAULT)) {
+			config.defaultValue = null;
+		} else {
+			config.defaultValue = defaultValue;
+		}
+		config.width = simpleAnno.width();
+		config.canBeNull = simpleAnno.canBeNull();
+		config.id = idAnno.id();
+		config.generatedId = idAnno.generatedId();
+		String generatedIdSequence = idAnno.generatedIdSequence();
+		if (generatedIdSequence.length() > 0) {
+			config.generatedIdSequence = generatedIdSequence;
+		} else {
+			config.generatedIdSequence = null;
+		}
+		config.foreign = foreignAnno.foreign();
+		config.useGetSet = otherAnno.useGetSet();
+		String unknownEnumName = otherAnno.unknownEnumName();
+		if (unknownEnumName.length() > 0) {
+			config.unknownEnumValue = findMatchingEnumVal(field, unknownEnumName);
+		} else {
+			config.unknownEnumValue = null;
+		}
+		config.throwIfNull = otherAnno.throwIfNull();
+		String format = otherAnno.format();
+		if (format.length() > 0) {
+			config.format = format;
+		} else {
+			config.format = null;
+		}
+		config.unique = indexAnno.unique();
+		config.uniqueCombo = indexAnno.uniqueCombo();
+
+		// add in the index information
+		config.indexName = findIndexName(tableName, indexAnno.indexName(), indexAnno.index(), config);
+		config.uniqueIndexName = findIndexName(tableName, indexAnno.uniqueIndexName(), indexAnno.uniqueIndex(), config);
+		config.foreignAutoRefresh = foreignAnno.foreignAutoRefresh();
+		config.maxForeignAutoRefreshLevel = foreignAnno.maxForeignAutoRefreshLevel();
+		config.persisterClass = otherAnno.persisterClass();
+		config.allowGeneratedIdInsert = idAnno.allowGeneratedIdInsert();
 
 		return config;
 	}
@@ -550,5 +697,255 @@ public class DatabaseFieldConfig {
 			}
 		}
 		throw new IllegalArgumentException("Unknwown enum unknown name " + unknownEnumName + " for field " + field);
+	}
+
+	private static final String FIELD_NAME_FIELD_NAME = "fieldName";
+	private static final String FIELD_NAME_COLUMN_NAME = "columnName";
+	private static final String FIELD_NAME_DATA_PERSISTER = "dataPersister";
+	private static final String FIELD_NAME_DEFAULT_VALUE = "defaultValue";
+	private static final String FIELD_NAME_WIDTH = "width";
+	private static final String FIELD_NAME_CAN_BE_NULL = "canBeNull";
+	private static final String FIELD_NAME_ID = "id";
+	private static final String FIELD_NAME_GENERATED_ID = "generatedId";
+	private static final String FIELD_NAME_GENERATED_ID_SEQUENCE = "generatedIdSequence";
+	private static final String FIELD_NAME_FOREIGN = "foreign";
+	private static final String FIELD_NAME_USE_GET_SET = "useGetSet";
+	private static final String FIELD_NAME_UNKNOWN_ENUM_VALUE = "unknownEnumValue";
+	private static final String FIELD_NAME_THROW_IF_NULL = "throwIfNull";
+	private static final String FIELD_NAME_FORMAT = "format";
+	private static final String FIELD_NAME_UNIQUE = "unique";
+	private static final String FIELD_NAME_UNIQUE_COMBO = "uniqueCombo";
+	private static final String FIELD_NAME_INDEX_NAME = "indexName";
+	private static final String FIELD_NAME_UNIQUE_INDEX_NAME = "uniqueIndexName";
+	private static final String FIELD_NAME_FOREIGN_AUTO_REFRESH = "foreignAutoRefresh";
+	private static final String FIELD_NAME_MAX_FOREIGN_AUTO_REFRESH_LEVEL = "maxForeignAutoRefreshLevel";
+	private static final String FIELD_NAME_FOREIGN_COLLECTION = "foreignCollection";
+	private static final String FIELD_NAME_FOREIGN_COLLECTION_EAGER = "foreignCollectionEager";
+	private static final String FIELD_NAME_FOREIGN_COLLECTION_ORDER_COLUMN = "foreignCollectionOrderColumn";
+	private static final String FIELD_NAME_MAX_EAGER_FOREIGN_COLLECTION_LEVEL = "maxEagerForeignCollectionLevel";
+	private static final String FIELD_NAME_PERSISTER_CLASS = "persisterClass";
+	private static final String FIELD_NAME_ALLOW_GENERATED_ID_INSERT = "allowGeneratedIdInsert";
+
+	/**
+	 * Print the config to the writer.
+	 */
+	private void writeConfig(BufferedWriter writer) throws IOException {
+		writer.append(CONFIG_FILE_START_MARKER);
+		writer.newLine();
+		if (fieldName != null) {
+			writer.append(FIELD_NAME_FIELD_NAME).append('=').append(fieldName);
+			writer.newLine();
+		}
+		if (columnName != null) {
+			writer.append(FIELD_NAME_COLUMN_NAME).append('=').append(columnName);
+			writer.newLine();
+		}
+		if (dataPersister != null) {
+			boolean found = false;
+			for (DataType dataType : DataType.values()) {
+				if (dataType.getDataPersister() == dataPersister) {
+					writer.append(FIELD_NAME_DATA_PERSISTER).append('=').append(dataType.name());
+					writer.newLine();
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				throw new IllegalArgumentException("Unknown data persister field: " + dataPersister);
+			}
+		}
+		if (defaultValue != null) {
+			writer.append(FIELD_NAME_DEFAULT_VALUE).append('=').append(defaultValue);
+			writer.newLine();
+		}
+		if (width != 0) {
+			writer.append(FIELD_NAME_WIDTH).append('=').append(Integer.toString(width));
+			writer.newLine();
+		}
+		if (canBeNull) {
+			writer.append(FIELD_NAME_CAN_BE_NULL).append('=').append("true");
+			writer.newLine();
+		}
+		if (id) {
+			writer.append(FIELD_NAME_ID).append('=').append("true");
+			writer.newLine();
+		}
+		if (generatedId) {
+			writer.append(FIELD_NAME_GENERATED_ID).append('=').append("true");
+			writer.newLine();
+		}
+		if (generatedIdSequence != null) {
+			writer.append(FIELD_NAME_GENERATED_ID_SEQUENCE).append('=').append(generatedIdSequence);
+			writer.newLine();
+		}
+		if (foreign) {
+			writer.append(FIELD_NAME_FOREIGN).append('=').append("true");
+			writer.newLine();
+		}
+		if (useGetSet) {
+			writer.append(FIELD_NAME_USE_GET_SET).append('=').append("true");
+			writer.newLine();
+		}
+		if (unknownEnumValue != null) {
+			writer.append(FIELD_NAME_UNKNOWN_ENUM_VALUE)
+					.append('=')
+					.append(unknownEnumValue.getClass().getName())
+					.append("#")
+					.append(unknownEnumValue.name());
+			writer.newLine();
+		}
+		if (throwIfNull) {
+			writer.append(FIELD_NAME_THROW_IF_NULL).append('=').append("true");
+			writer.newLine();
+		}
+		if (format != null) {
+			writer.append(FIELD_NAME_FORMAT).append('=').append(format);
+			writer.newLine();
+		}
+		if (unique) {
+			writer.append(FIELD_NAME_UNIQUE).append('=').append("true");
+			writer.newLine();
+		}
+		if (uniqueCombo) {
+			writer.append(FIELD_NAME_UNIQUE_COMBO).append('=').append("true");
+			writer.newLine();
+		}
+		if (indexName != null) {
+			writer.append(FIELD_NAME_INDEX_NAME).append('=').append(indexName);
+			writer.newLine();
+		}
+		if (uniqueIndexName != null) {
+			writer.append(FIELD_NAME_UNIQUE_INDEX_NAME).append('=').append(uniqueIndexName);
+			writer.newLine();
+		}
+		if (foreignAutoRefresh) {
+			writer.append(FIELD_NAME_FOREIGN_AUTO_REFRESH).append('=').append("true");
+			writer.newLine();
+		}
+		if (maxForeignAutoRefreshLevel != 0) {
+			writer.append(FIELD_NAME_MAX_FOREIGN_AUTO_REFRESH_LEVEL)
+					.append('=')
+					.append(Integer.toString(maxForeignAutoRefreshLevel));
+			writer.newLine();
+		}
+		if (foreignCollection) {
+			writer.append(FIELD_NAME_FOREIGN_COLLECTION).append('=').append("true");
+			writer.newLine();
+		}
+		if (foreignCollectionEager) {
+			writer.append(FIELD_NAME_FOREIGN_COLLECTION_EAGER).append('=').append("true");
+			writer.newLine();
+		}
+		if (foreignCollectionOrderColumn != null) {
+			writer.append(FIELD_NAME_FOREIGN_COLLECTION_ORDER_COLUMN).append('=').append(foreignCollectionOrderColumn);
+			writer.newLine();
+		}
+		if (maxEagerForeignCollectionLevel != 0) {
+			writer.append(FIELD_NAME_MAX_EAGER_FOREIGN_COLLECTION_LEVEL)
+					.append('=')
+					.append(Integer.toString(maxEagerForeignCollectionLevel));
+			writer.newLine();
+		}
+		if (persisterClass != null) {
+			writer.append(FIELD_NAME_PERSISTER_CLASS).append('=').append(persisterClass.getName());
+			writer.newLine();
+		}
+		if (allowGeneratedIdInsert) {
+			writer.append(FIELD_NAME_ALLOW_GENERATED_ID_INSERT).append('=').append("true");
+			writer.newLine();
+		}
+		writer.append(CONFIG_FILE_END_MARKER);
+		writer.newLine();
+	}
+
+	/**
+	 * Set the configuration information for this field=value line.
+	 */
+	private static void readField(DatabaseFieldConfig config, String field, String value) {
+		if (field.equals(FIELD_NAME_FIELD_NAME)) {
+			config.fieldName = value;
+		} else if (field.equals(FIELD_NAME_COLUMN_NAME)) {
+			config.columnName = value;
+		} else if (field.equals(FIELD_NAME_DATA_PERSISTER)) {
+			config.dataPersister = DataType.valueOf(value).getDataPersister();
+		} else if (field.equals(FIELD_NAME_DEFAULT_VALUE)) {
+			config.defaultValue = value;
+		} else if (field.equals(FIELD_NAME_WIDTH)) {
+			config.width = Integer.parseInt(value);
+		} else if (field.equals(FIELD_NAME_CAN_BE_NULL)) {
+			config.canBeNull = Boolean.parseBoolean(value);
+		} else if (field.equals(FIELD_NAME_ID)) {
+			config.id = Boolean.parseBoolean(value);
+		} else if (field.equals(FIELD_NAME_GENERATED_ID)) {
+			config.generatedId = Boolean.parseBoolean(value);
+		} else if (field.equals(FIELD_NAME_GENERATED_ID_SEQUENCE)) {
+			config.generatedIdSequence = value;
+		} else if (field.equals(FIELD_NAME_FOREIGN)) {
+			config.foreign = Boolean.parseBoolean(value);
+		} else if (field.equals(FIELD_NAME_USE_GET_SET)) {
+			config.useGetSet = Boolean.parseBoolean(value);
+		} else if (field.equals(FIELD_NAME_UNKNOWN_ENUM_VALUE)) {
+			String[] parts = value.split("#", -2);
+			if (parts.length != 2) {
+				throw new IllegalArgumentException(
+						"Invalid value for unknownEnumvalue which should be in class#name format: " + value);
+			}
+			Class<?> enumClass;
+			try {
+				enumClass = Class.forName(parts[0]);
+			} catch (ClassNotFoundException e) {
+				throw new IllegalArgumentException("Unknown class specified for unknownEnumvalue: " + value);
+			}
+			Object[] consts = enumClass.getEnumConstants();
+			if (consts == null) {
+				throw new IllegalArgumentException("Invalid class is not an Enum for unknownEnumvalue: " + value);
+			}
+			@SuppressWarnings("rawtypes")
+			Enum[] enumConstants = (Enum[]) consts;
+			boolean found = false;
+			for (Enum<?> enumInstance : enumConstants) {
+				if (enumInstance.name().equals(parts[1])) {
+					config.unknownEnumValue = enumInstance;
+					found = true;
+				}
+			}
+			if (!found) {
+				throw new IllegalArgumentException("Invalid enum value name for unknownEnumvalue: " + value);
+			}
+		} else if (field.equals(FIELD_NAME_THROW_IF_NULL)) {
+			config.throwIfNull = Boolean.parseBoolean(value);
+		} else if (field.equals(FIELD_NAME_FORMAT)) {
+			config.format = value;
+		} else if (field.equals(FIELD_NAME_UNIQUE)) {
+			config.unique = Boolean.parseBoolean(value);
+		} else if (field.equals(FIELD_NAME_UNIQUE_COMBO)) {
+			config.uniqueCombo = Boolean.parseBoolean(value);
+		} else if (field.equals(FIELD_NAME_INDEX_NAME)) {
+			config.indexName = value;
+		} else if (field.equals(FIELD_NAME_UNIQUE_INDEX_NAME)) {
+			config.uniqueIndexName = value;
+		} else if (field.equals(FIELD_NAME_FOREIGN_AUTO_REFRESH)) {
+			config.foreignAutoRefresh = Boolean.parseBoolean(value);
+		} else if (field.equals(FIELD_NAME_MAX_FOREIGN_AUTO_REFRESH_LEVEL)) {
+			config.maxForeignAutoRefreshLevel = Integer.parseInt(value);
+		} else if (field.equals(FIELD_NAME_FOREIGN_COLLECTION)) {
+			config.foreignCollection = Boolean.parseBoolean(value);
+		} else if (field.equals(FIELD_NAME_FOREIGN_COLLECTION_EAGER)) {
+			config.foreignCollectionEager = Boolean.parseBoolean(value);
+		} else if (field.equals(FIELD_NAME_FOREIGN_COLLECTION_ORDER_COLUMN)) {
+			config.foreignCollectionOrderColumn = value;
+		} else if (field.equals(FIELD_NAME_MAX_EAGER_FOREIGN_COLLECTION_LEVEL)) {
+			config.maxEagerForeignCollectionLevel = Integer.parseInt(value);
+		} else if (field.equals(FIELD_NAME_PERSISTER_CLASS)) {
+			try {
+				@SuppressWarnings("unchecked")
+				Class<? extends DataPersister> clazz = (Class<? extends DataPersister>) Class.forName(value);
+				config.persisterClass = clazz;
+			} catch (ClassNotFoundException e) {
+				throw new IllegalArgumentException("Could not find persisterClass: " + value);
+			}
+		} else if (field.equals(FIELD_NAME_ALLOW_GENERATED_ID_INSERT)) {
+			config.allowGeneratedIdInsert = Boolean.parseBoolean(value);
+		}
 	}
 }
