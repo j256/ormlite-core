@@ -336,11 +336,11 @@ public class DatabaseTableConfigTest {
 		assertEquals(output.toString(), writer.toString());
 		StringReader reader = new StringReader(writer.toString());
 		DatabaseTableConfig<?> configCopy = DatabaseTableConfig.fromReader(new BufferedReader(reader));
-		assertTrue(isSame(config, configCopy));
+		assertTrue(isConfigEquals(config, configCopy));
 		writer.getBuffer().setLength(0);
 	}
 
-	private boolean isSame(DatabaseTableConfig<?> config1, DatabaseTableConfig<?> config2) {
+	private boolean isConfigEquals(DatabaseTableConfig<?> config1, DatabaseTableConfig<?> config2) {
 		EqualsBuilder eb = new EqualsBuilder();
 		eb.append(config1.getDataClass(), config2.getDataClass());
 		eb.append(config1.getTableName(), config2.getTableName());

@@ -8,6 +8,7 @@ import java.lang.reflect.Method;
 import java.sql.SQLException;
 
 import com.j256.ormlite.db.DatabaseType;
+import com.j256.ormlite.field.types.VoidType;
 import com.j256.ormlite.misc.JavaxPersistence;
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.table.DatabaseTableConfig;
@@ -23,9 +24,15 @@ public class DatabaseFieldConfig {
 	private static final String CONFIG_FILE_START_MARKER = "# --field-start--";
 	private static final String CONFIG_FILE_END_MARKER = "# --field-end--";
 
+	private static final int DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL = DatabaseField.MAX_FOREIGN_AUTO_REFRESH_LEVEL;
+	private static final int DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL =
+			ForeignCollectionField.MAX_EAGER_FOREIGN_COLLECTION_LEVEL;
+	private static final Class<? extends DataPersister> DEFAULT_PERSISTER_CLASS = VoidType.class;
+	private static final DataPersister DEFAULT_DATA_PERSISTER = DataType.UNKNOWN.getDataPersister();
+
 	private String fieldName;
 	private String columnName;
-	private DataPersister dataPersister;
+	private DataPersister dataPersister = DEFAULT_DATA_PERSISTER;
 	private String defaultValue;
 	private int width;
 	private boolean canBeNull;
@@ -43,12 +50,12 @@ public class DatabaseFieldConfig {
 	private String indexName;
 	private String uniqueIndexName;
 	private boolean foreignAutoRefresh;
-	private int maxForeignAutoRefreshLevel = DatabaseField.MAX_FOREIGN_AUTO_REFRESH_LEVEL;
+	private int maxForeignAutoRefreshLevel = DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL;
 	private boolean foreignCollection;
 	private boolean foreignCollectionEager;
 	private String foreignCollectionOrderColumn;
-	private int maxEagerForeignCollectionLevel = ForeignCollectionField.MAX_EAGER_FOREIGN_COLLECTION_LEVEL;
-	private Class<? extends DataPersister> persisterClass;
+	private int maxEagerForeignCollectionLevel = DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL;
+	private Class<? extends DataPersister> persisterClass = DEFAULT_PERSISTER_CLASS;
 	private boolean allowGeneratedIdInsert;
 
 	public DatabaseFieldConfig() {
@@ -740,7 +747,7 @@ public class DatabaseFieldConfig {
 			writer.append(FIELD_NAME_COLUMN_NAME).append('=').append(columnName);
 			writer.newLine();
 		}
-		if (dataPersister != null) {
+		if (dataPersister != DEFAULT_DATA_PERSISTER) {
 			boolean found = false;
 			for (DataType dataType : DataType.values()) {
 				if (dataType.getDataPersister() == dataPersister) {
@@ -822,7 +829,7 @@ public class DatabaseFieldConfig {
 			writer.append(FIELD_NAME_FOREIGN_AUTO_REFRESH).append('=').append("true");
 			writer.newLine();
 		}
-		if (maxForeignAutoRefreshLevel != 0) {
+		if (maxForeignAutoRefreshLevel != DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL) {
 			writer.append(FIELD_NAME_MAX_FOREIGN_AUTO_REFRESH_LEVEL)
 					.append('=')
 					.append(Integer.toString(maxForeignAutoRefreshLevel));
@@ -840,13 +847,13 @@ public class DatabaseFieldConfig {
 			writer.append(FIELD_NAME_FOREIGN_COLLECTION_ORDER_COLUMN).append('=').append(foreignCollectionOrderColumn);
 			writer.newLine();
 		}
-		if (maxEagerForeignCollectionLevel != 0) {
+		if (maxEagerForeignCollectionLevel != DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL) {
 			writer.append(FIELD_NAME_MAX_EAGER_FOREIGN_COLLECTION_LEVEL)
 					.append('=')
 					.append(Integer.toString(maxEagerForeignCollectionLevel));
 			writer.newLine();
 		}
-		if (persisterClass != null) {
+		if (persisterClass != DEFAULT_PERSISTER_CLASS) {
 			writer.append(FIELD_NAME_PERSISTER_CLASS).append('=').append(persisterClass.getName());
 			writer.newLine();
 		}
