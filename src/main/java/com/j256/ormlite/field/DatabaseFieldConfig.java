@@ -537,20 +537,14 @@ public class DatabaseFieldConfig {
 		String columnName = databaseField.columnName();
 		if (columnName.length() > 0) {
 			config.columnName = columnName;
-		} else {
-			config.columnName = null;
 		}
 		DataType dataType = databaseField.dataType();
-		if (dataType == null) {
-			config.dataPersister = null;
-		} else {
+		if (dataType != null) {
 			config.dataPersister = dataType.getDataPersister();
 		}
 		// NOTE: == did not work with the NO_DEFAULT string
 		String defaultValue = databaseField.defaultValue();
-		if (defaultValue.equals(DatabaseField.NO_DEFAULT)) {
-			config.defaultValue = null;
-		} else {
+		if (!defaultValue.equals(DatabaseField.NO_DEFAULT)) {
 			config.defaultValue = defaultValue;
 		}
 		config.width = databaseField.width();
@@ -560,23 +554,17 @@ public class DatabaseFieldConfig {
 		String generatedIdSequence = databaseField.generatedIdSequence();
 		if (generatedIdSequence.length() > 0) {
 			config.generatedIdSequence = generatedIdSequence;
-		} else {
-			config.generatedIdSequence = null;
 		}
 		config.foreign = databaseField.foreign();
 		config.useGetSet = databaseField.useGetSet();
 		String unknownEnumName = databaseField.unknownEnumName();
 		if (unknownEnumName.length() > 0) {
 			config.unknownEnumValue = findMatchingEnumVal(field, unknownEnumName);
-		} else {
-			config.unknownEnumValue = null;
 		}
 		config.throwIfNull = databaseField.throwIfNull();
 		String format = databaseField.format();
 		if (format.length() > 0) {
 			config.format = format;
-		} else {
-			config.format = null;
 		}
 		config.unique = databaseField.unique();
 		config.uniqueCombo = databaseField.uniqueCombo();
@@ -604,57 +592,60 @@ public class DatabaseFieldConfig {
 		String columnName = simpleAnno.columnName();
 		if (columnName.length() > 0) {
 			config.columnName = columnName;
-		} else {
-			config.columnName = null;
 		}
-		DataType dataType = otherAnno.dataType();
-		if (dataType == null) {
-			config.dataPersister = null;
-		} else {
-			config.dataPersister = dataType.getDataPersister();
+		if (otherAnno != null) {
+			DataType dataType = otherAnno.dataType();
+			if (dataType != null) {
+				config.dataPersister = dataType.getDataPersister();
+			}
 		}
 		// NOTE: == did not work with the NO_DEFAULT string
 		String defaultValue = simpleAnno.defaultValue();
-		if (defaultValue.equals(DatabaseField.NO_DEFAULT)) {
-			config.defaultValue = null;
-		} else {
+		if (!defaultValue.equals(DatabaseField.NO_DEFAULT)) {
 			config.defaultValue = defaultValue;
 		}
 		config.width = simpleAnno.width();
 		config.canBeNull = simpleAnno.canBeNull();
-		config.id = idAnno.id();
-		config.generatedId = idAnno.generatedId();
-		String generatedIdSequence = idAnno.generatedIdSequence();
-		if (generatedIdSequence.length() > 0) {
-			config.generatedIdSequence = generatedIdSequence;
-		} else {
-			config.generatedIdSequence = null;
+		if (idAnno != null) {
+			config.id = idAnno.id();
+			config.generatedId = idAnno.generatedId();
+			String generatedIdSequence = idAnno.generatedIdSequence();
+			if (generatedIdSequence.length() > 0) {
+				config.generatedIdSequence = generatedIdSequence;
+			}
 		}
-		config.foreign = foreignAnno.foreign();
-		config.useGetSet = otherAnno.useGetSet();
-		String unknownEnumName = otherAnno.unknownEnumName();
-		if (unknownEnumName.length() > 0) {
-			config.unknownEnumValue = findMatchingEnumVal(field, unknownEnumName);
-		} else {
-			config.unknownEnumValue = null;
+		if (foreignAnno != null) {
+			config.foreign = foreignAnno.foreign();
 		}
-		config.throwIfNull = otherAnno.throwIfNull();
-		String format = otherAnno.format();
-		if (format.length() > 0) {
-			config.format = format;
-		} else {
-			config.format = null;
+		if (otherAnno != null) {
+			config.useGetSet = otherAnno.useGetSet();
+			String unknownEnumName = otherAnno.unknownEnumName();
+			if (unknownEnumName.length() > 0) {
+				config.unknownEnumValue = findMatchingEnumVal(field, unknownEnumName);
+			}
+			config.throwIfNull = otherAnno.throwIfNull();
+			String format = otherAnno.format();
+			if (format.length() > 0) {
+				config.format = format;
+			}
 		}
-		config.unique = indexAnno.unique();
-		config.uniqueCombo = indexAnno.uniqueCombo();
-
-		// add in the index information
-		config.indexName = findIndexName(tableName, indexAnno.indexName(), indexAnno.index(), config);
-		config.uniqueIndexName = findIndexName(tableName, indexAnno.uniqueIndexName(), indexAnno.uniqueIndex(), config);
-		config.foreignAutoRefresh = foreignAnno.foreignAutoRefresh();
-		config.maxForeignAutoRefreshLevel = foreignAnno.maxForeignAutoRefreshLevel();
-		config.persisterClass = otherAnno.persisterClass();
-		config.allowGeneratedIdInsert = idAnno.allowGeneratedIdInsert();
+		if (indexAnno != null) {
+			config.unique = indexAnno.unique();
+			config.uniqueCombo = indexAnno.uniqueCombo();
+			// add in the index information
+			config.indexName = findIndexName(tableName, indexAnno.indexName(), indexAnno.index(), config);
+			config.uniqueIndexName = findIndexName(tableName, indexAnno.uniqueIndexName(), indexAnno.uniqueIndex(), config);
+		}
+		if (foreignAnno != null) {
+			config.foreignAutoRefresh = foreignAnno.foreignAutoRefresh();
+			config.maxForeignAutoRefreshLevel = foreignAnno.maxForeignAutoRefreshLevel();
+		}
+		if (otherAnno != null) {
+			config.persisterClass = otherAnno.persisterClass();
+		}
+		if (idAnno != null) {
+			config.allowGeneratedIdInsert = idAnno.allowGeneratedIdInsert();
+		}
 
 		return config;
 	}
