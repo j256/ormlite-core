@@ -35,7 +35,7 @@ public class DatabaseFieldConfig {
 	private DataPersister dataPersister = DEFAULT_DATA_PERSISTER;
 	private String defaultValue;
 	private int width;
-	private boolean canBeNull;
+	private boolean canBeNull = true;
 	private boolean id;
 	private boolean generatedId;
 	private String generatedIdSequence;
@@ -441,7 +441,7 @@ public class DatabaseFieldConfig {
 				break;
 			}
 			// skip empty lines or comments
-			if (line.length() == 0 || line.startsWith("#")) {
+			if (line.length() == 0 || line.startsWith("#") || line.equals(CONFIG_FILE_START_MARKER)) {
 				continue;
 			}
 			String[] parts = line.split("=", -2);
