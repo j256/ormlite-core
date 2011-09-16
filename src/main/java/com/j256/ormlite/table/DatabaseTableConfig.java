@@ -100,9 +100,10 @@ public class DatabaseTableConfig<T> {
 			// we do this so we can support multiple class configs per file
 			if (line.equals(CONFIG_FILE_FIELDS_START)) {
 				readFields(reader, config);
+				continue;
 			}
 			// skip empty lines or comments
-			if (line.length() == 0 || line.startsWith("#")) {
+			if (line.length() == 0 || line.startsWith("#") || line.equals(CONFIG_FILE_START_MARKER)) {
 				continue;
 			}
 			String[] parts = line.split("=", -2);
