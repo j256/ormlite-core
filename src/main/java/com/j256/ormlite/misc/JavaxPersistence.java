@@ -98,6 +98,11 @@ public class JavaxPersistence {
 					if (name != null && name.length() > 0) {
 						config.setColumnName(name);
 					}
+					method = joinColumnAnnotation.getClass().getMethod("nullable");
+					Boolean nullable = (Boolean) method.invoke(joinColumnAnnotation);
+					if (nullable != null) {
+						config.setCanBeNull(nullable);
+					}
 				} catch (Exception e) {
 					throw SqlExceptionUtil.create("Problem accessing fields from the @JoinColumn annotation for field "
 							+ field, e);
