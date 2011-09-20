@@ -1,5 +1,6 @@
 package com.j256.ormlite.dao;
 
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Collection;
 
@@ -20,14 +21,16 @@ import com.j256.ormlite.stmt.mapped.MappedPreparedStmt;
  * 
  * @author graywatson
  */
-public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<T> {
+public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<T>, Serializable {
 
-	protected final Dao<T, ID> dao;
-	protected final String fieldName;
-	protected final Object fieldValue;
-	private PreparedQuery<T> preparedQuery;
-	private final String orderColumn;
-	private final Object parent;
+	private static final long serialVersionUID = -5158840898186237589L;
+
+	protected transient final Dao<T, ID> dao;
+	protected transient final String fieldName;
+	protected transient final Object fieldValue;
+	private transient PreparedQuery<T> preparedQuery;
+	private transient final String orderColumn;
+	private transient final Object parent;
 
 	public BaseForeignCollection(Dao<T, ID> dao, String fieldName, Object fieldValue, String orderColumn, Object parent) {
 		this.dao = dao;
@@ -43,6 +46,9 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 	 * @return Returns true if the item did not already exist in the collection otherwise false.
 	 */
 	public boolean add(T data) {
+		if (dao == null) {
+			return false;
+		}
 		try {
 			dao.create(data);
 			return true;
@@ -57,14 +63,19 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 	 * @return Returns true if the item did not already exist in the collection otherwise false.
 	 */
 	public boolean addAll(Collection<? extends T> collection) {
+		if (dao == null) {
+			return false;
+		}
+		boolean changed = false;
 		for (T data : collection) {
 			try {
 				dao.create(data);
+				changed = true;
 			} catch (SQLException e) {
 				throw new IllegalStateException("Could not create data elements in dao", e);
 			}
 		}
-		return true;
+		return changed;
 	}
 
 	/**
@@ -92,6 +103,9 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 	 * @return Returns true of the collection was changed at all otherwise false.
 	 */
 	public boolean retainAll(Collection<?> collection) {
+		if (dao == null) {
+			return false;
+		}
 		boolean changed = false;
 		CloseableIterator<T> iterator = closeableIterator();
 		try {
@@ -118,6 +132,9 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 	 * iterator is across just one item's foreign objects.
 	 */
 	public void clear() {
+		if (dao == null) {
+			return;
+		}
 		CloseableIterator<T> iterator = closeableIterator();
 		try {
 			while (iterator.hasNext()) {
@@ -134,6 +151,9 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 	}
 
 	protected PreparedQuery<T> getPreparedQuery() throws SQLException {
+		if (dao == null) {
+			return null;
+		}
 		if (preparedQuery == null) {
 			SelectArg fieldArg = new SelectArg();
 			fieldArg.setValue(fieldValue);

@@ -1,5 +1,6 @@
 package com.j256.ormlite.dao;
 
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,7 +17,9 @@ import com.j256.ormlite.field.ForeignCollectionField;
  * @author graywatson
  */
 public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> implements ForeignCollection<T>,
-		CloseableWrappedIterable<T> {
+		CloseableWrappedIterable<T>, Serializable {
+
+	private static final long serialVersionUID = -2523335606983317721L;
 
 	private final List<T> results;
 
@@ -57,11 +60,13 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 			}
 			public void remove() {
 				iterator.remove();
-				try {
-					dao.delete(last);
-				} catch (SQLException e) {
-					// have to demote this to be runtime
-					throw new RuntimeException(e);
+				if (dao != null) {
+					try {
+						dao.delete(last);
+					} catch (SQLException e) {
+						// have to demote this to be runtime
+						throw new RuntimeException(e);
+					}
 				}
 			}
 			public void close() {
@@ -131,7 +136,7 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 
 	@Override
 	public boolean remove(Object data) {
-		if (!results.remove(data)) {
+		if (!results.remove(data) || dao == null) {
 			return false;
 		}
 

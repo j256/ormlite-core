@@ -24,6 +24,8 @@ import com.j256.ormlite.field.ForeignCollectionField;
  */
 public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> implements ForeignCollection<T> {
 
+	private static final long serialVersionUID = -5460708106909626233L;
+
 	private CloseableIterator<T> lastIterator;
 
 	public LazyForeignCollection(Dao<T, ID> dao, String fieldName, Object fieldValue, String orderColumn, Object parent) {
