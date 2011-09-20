@@ -1,10 +1,8 @@
 package com.j256.ormlite.dao;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -242,19 +240,18 @@ public class DaoManager {
 		}
 	}
 
-	public static void loadDatabaseConfigFromStream(InputStream stream) throws SQLException {
+	/**
+	 * This adds database table configurations to the internal cache which can be used to speed up DAO construction.
+	 * This is especially true of Android and other mobile platforms.
+	 */
+	public static void addCachedDatabaseConfigs(Collection<DatabaseTableConfig<?>> configs) throws SQLException {
 		Map<Class<?>, DatabaseTableConfig<?>> newMap;
 		if (configMap == null) {
 			newMap = new HashMap<Class<?>, DatabaseTableConfig<?>>();
 		} else {
 			newMap = new HashMap<Class<?>, DatabaseTableConfig<?>>(configMap);
 		}
-		BufferedReader reader = new BufferedReader(new InputStreamReader(stream), 4096);
-		while (true) {
-			DatabaseTableConfig<?> config = DatabaseTableConfig.fromReader(reader);
-			if (config == null) {
-				break;
-			}
+		for (DatabaseTableConfig<?> config : configs) {
 			newMap.put(config.getDataClass(), config);
 			logger.info("Loaded configuration for {}", config.getDataClass());
 		}
