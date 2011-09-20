@@ -325,9 +325,16 @@ public class TableUtils {
 			} else {
 				sb.append(", ");
 			}
-			// we have to call back to the database type for the specific create syntax
-			databaseType.appendColumnArg(tableInfo.getTableName(), sb, fieldType, additionalArgs, statementsBefore,
-					statementsAfter, queriesAfter);
+			String columnDefinition = fieldType.getColumnDefinition();
+			if (columnDefinition == null) {
+				// we have to call back to the database type for the specific create syntax
+				databaseType.appendColumnArg(tableInfo.getTableName(), sb, fieldType, additionalArgs, statementsBefore,
+						statementsAfter, queriesAfter);
+			} else {
+				// hand defined field
+				databaseType.appendEscapedEntityName(sb, fieldType.getDbColumnName());
+				sb.append(' ').append(columnDefinition).append(' ');
+			}
 		}
 		// add any sql that sets any primary key fields
 		databaseType.addPrimaryKeySql(tableInfo.getFieldTypes(), additionalArgs, statementsBefore, statementsAfter,

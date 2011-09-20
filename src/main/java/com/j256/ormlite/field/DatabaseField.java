@@ -245,4 +245,10 @@ public @interface DatabaseField {
 	 * the field.
 	 */
 	boolean allowGeneratedIdInsert() default false;
+
+	/**
+	 * Specify the SQL necessary to create this field in the database. This can be used if you need to tune the schema
+	 * to enable some per-database feature or to override the default SQL generated.
+	 */
+	String columnDefinition() default NO_DEFAULT;
 }

@@ -57,6 +57,7 @@ public class DatabaseFieldConfig {
 	private int maxEagerForeignCollectionLevel = DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL;
 	private Class<? extends DataPersister> persisterClass = DEFAULT_PERSISTER_CLASS;
 	private boolean allowGeneratedIdInsert;
+	private String columnDefinition;
 
 	public DatabaseFieldConfig() {
 		// for spring
@@ -378,6 +379,14 @@ public class DatabaseFieldConfig {
 		this.allowGeneratedIdInsert = allowGeneratedIdInsert;
 	}
 
+	public String getColumnDefinition() {
+		return columnDefinition;
+	}
+
+	public void setColumnDefinition(String columnDefinition) {
+		this.columnDefinition = columnDefinition;
+	}
+
 	/**
 	 * Create and return a config converted from a {@link Field} that may have either a {@link DatabaseField} annotation
 	 * or the javax.persistence annotations.
@@ -577,6 +586,10 @@ public class DatabaseFieldConfig {
 		config.maxForeignAutoRefreshLevel = databaseField.maxForeignAutoRefreshLevel();
 		config.persisterClass = databaseField.persisterClass();
 		config.allowGeneratedIdInsert = databaseField.allowGeneratedIdInsert();
+		String columnDefinition = databaseField.columnDefinition();
+		if (!columnDefinition.equals(DatabaseField.NO_DEFAULT)) {
+			config.columnDefinition = columnDefinition;
+		}
 
 		return config;
 	}
@@ -634,7 +647,8 @@ public class DatabaseFieldConfig {
 			config.uniqueCombo = indexAnno.uniqueCombo();
 			// add in the index information
 			config.indexName = findIndexName(tableName, indexAnno.indexName(), indexAnno.index(), config);
-			config.uniqueIndexName = findIndexName(tableName, indexAnno.uniqueIndexName(), indexAnno.uniqueIndex(), config);
+			config.uniqueIndexName =
+					findIndexName(tableName, indexAnno.uniqueIndexName(), indexAnno.uniqueIndex(), config);
 		}
 		if (foreignAnno != null) {
 			config.foreignAutoRefresh = foreignAnno.foreignAutoRefresh();
@@ -645,6 +659,9 @@ public class DatabaseFieldConfig {
 		}
 		if (idAnno != null) {
 			config.allowGeneratedIdInsert = idAnno.allowGeneratedIdInsert();
+		}
+		if (otherAnno != null) {
+			config.columnDefinition = otherAnno.columnDefinition();
 		}
 
 		return config;
@@ -723,6 +740,7 @@ public class DatabaseFieldConfig {
 	private static final String FIELD_NAME_MAX_EAGER_FOREIGN_COLLECTION_LEVEL = "maxEagerForeignCollectionLevel";
 	private static final String FIELD_NAME_PERSISTER_CLASS = "persisterClass";
 	private static final String FIELD_NAME_ALLOW_GENERATED_ID_INSERT = "allowGeneratedIdInsert";
+	private static final String FIELD_NAME_COLUMN_DEFINITION = "columnDefinition";
 
 	/**
 	 * Print the config to the writer.
@@ -852,6 +870,10 @@ public class DatabaseFieldConfig {
 			writer.append(FIELD_NAME_ALLOW_GENERATED_ID_INSERT).append('=').append("true");
 			writer.newLine();
 		}
+		if (columnDefinition != null) {
+			writer.append(FIELD_NAME_COLUMN_DEFINITION).append('=').append(columnDefinition);
+			writer.newLine();
+		}
 		writer.append(CONFIG_FILE_END_MARKER);
 		writer.newLine();
 	}
@@ -944,6 +966,8 @@ public class DatabaseFieldConfig {
 			}
 		} else if (field.equals(FIELD_NAME_ALLOW_GENERATED_ID_INSERT)) {
 			config.allowGeneratedIdInsert = Boolean.parseBoolean(value);
+		} else if (field.equals(FIELD_NAME_COLUMN_DEFINITION)) {
+			config.columnDefinition = value;
 		}
 	}
 }

@@ -47,4 +47,9 @@ public @interface DatabaseFieldOther {
 	 * @see DatabaseField#useGetSet()
 	 */
 	boolean useGetSet() default false;
+
+	/**
+	 * @see DatabaseField#columnDefinition()
+	 */
+	String columnDefinition() default DatabaseField.NO_DEFAULT;
 }

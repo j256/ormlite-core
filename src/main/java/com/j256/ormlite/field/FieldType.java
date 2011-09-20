@@ -735,6 +735,13 @@ public class FieldType {
 	}
 
 	/**
+	 * Call through to {@link DatabaseFieldConfig#getColumnDefinition()}
+	 */
+	public String getColumnDefinition() {
+		return fieldConfig.getColumnDefinition();
+	}
+
+	/**
 	 * Call through to {@link DataPersister#generateId()}
 	 */
 	public Object generateId() {

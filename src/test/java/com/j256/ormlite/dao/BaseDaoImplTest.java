@@ -2125,6 +2125,20 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertNotSame(foo, result);
 	}
 
+	@Test
+	public void testColumnDefinition() throws Exception {
+		Dao<ColumnDefinition, Integer> dao = createDao(ColumnDefinition.class, true);
+
+		ColumnDefinition foo = new ColumnDefinition();
+		String stuff = "hfejpowello";
+		foo.stuff = stuff;
+		assertEquals(1, dao.create(foo));
+
+		ColumnDefinition result = dao.queryForId(foo.id);
+		assertNotNull(result);
+		assertEquals(stuff, foo.stuff);
+	}
+
 	/* ============================================================================================== */
 
 	private String buildFooQueryAllString(Dao<Foo, Object> fooDao) throws SQLException {
@@ -2257,6 +2271,15 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		@DatabaseField
 		public String stuff;
 		public CreateOrUpdateObjectId() {
+		}
+	}
+
+	protected static class ColumnDefinition {
+		@DatabaseField(generatedId = true)
+		public int id;
+		@DatabaseField(columnDefinition = "VARCHAR(200)")
+		public String stuff;
+		public ColumnDefinition() {
 		}
 	}
 
