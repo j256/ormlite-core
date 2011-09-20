@@ -68,9 +68,9 @@ public class DatabaseFieldConfigTest {
 		config.setGeneratedIdSequence(str);
 		assertEquals(str, config.getGeneratedIdSequence());
 
-		assertFalse(config.isCanBeNull());
-		config.setCanBeNull(true);
 		assertTrue(config.isCanBeNull());
+		config.setCanBeNull(false);
+		assertFalse(config.isCanBeNull());
 
 		assertFalse(config.isForeign());
 		config.setForeign(true);
@@ -252,7 +252,7 @@ public class DatabaseFieldConfigTest {
 		fieldConfig.setMaxEagerForeignCollectionLevel(maxLevel);
 		assertEquals(maxLevel, fieldConfig.getMaxEagerForeignCollectionLevel());
 
-		assertEquals(DatabaseField.MAX_FOREIGN_AUTO_REFRESH_LEVEL, fieldConfig.getMaxForeignAutoRefreshLevel());
+		assertEquals(DatabaseField.DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL, fieldConfig.getMaxForeignAutoRefreshLevel());
 		int maxRefresh = 1432323;
 		fieldConfig.setMaxForeignAutoRefreshLevel(maxRefresh);
 		assertEquals(maxRefresh, fieldConfig.getMaxForeignAutoRefreshLevel());
@@ -326,10 +326,11 @@ public class DatabaseFieldConfigTest {
 		body.append("width=").append(width).append("\n");
 		checkConfigOutput(config, body, writer, buffer);
 
-		config.setCanBeNull(false);
-		checkConfigOutput(config, body, writer, buffer);
 		config.setCanBeNull(true);
-		body.append("canBeNull=true").append("\n");
+		checkConfigOutput(config, body, writer, buffer);
+		config.setCanBeNull(false);
+		body.append("canBeNull=false").append("\n");
+		checkConfigOutput(config, body, writer, buffer);
 
 		config.setId(false);
 		checkConfigOutput(config, body, writer, buffer);

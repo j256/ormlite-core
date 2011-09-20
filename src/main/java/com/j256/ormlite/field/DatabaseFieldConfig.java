@@ -24,18 +24,20 @@ public class DatabaseFieldConfig {
 	private static final String CONFIG_FILE_START_MARKER = "# --field-start--";
 	private static final String CONFIG_FILE_END_MARKER = "# --field-end--";
 
-	private static final int DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL = DatabaseField.MAX_FOREIGN_AUTO_REFRESH_LEVEL;
+	private static final int DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL =
+			DatabaseField.DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL;
 	private static final int DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL =
 			ForeignCollectionField.MAX_EAGER_FOREIGN_COLLECTION_LEVEL;
 	private static final Class<? extends DataPersister> DEFAULT_PERSISTER_CLASS = VoidType.class;
 	private static final DataPersister DEFAULT_DATA_PERSISTER = DataType.UNKNOWN.getDataPersister();
+	private static final boolean DEFAULT_CAN_BE_NULL = true;
 
 	private String fieldName;
 	private String columnName;
 	private DataPersister dataPersister = DEFAULT_DATA_PERSISTER;
 	private String defaultValue;
 	private int width;
-	private boolean canBeNull = true;
+	private boolean canBeNull = DEFAULT_CAN_BE_NULL;
 	private boolean id;
 	private boolean generatedId;
 	private String generatedIdSequence;
@@ -553,7 +555,7 @@ public class DatabaseFieldConfig {
 		}
 		// NOTE: == did not work with the NO_DEFAULT string
 		String defaultValue = databaseField.defaultValue();
-		if (!defaultValue.equals(DatabaseField.NO_DEFAULT)) {
+		if (!defaultValue.equals(DatabaseField.DEFAULT_STRING)) {
 			config.defaultValue = defaultValue;
 		}
 		config.width = databaseField.width();
@@ -587,7 +589,7 @@ public class DatabaseFieldConfig {
 		config.persisterClass = databaseField.persisterClass();
 		config.allowGeneratedIdInsert = databaseField.allowGeneratedIdInsert();
 		String columnDefinition = databaseField.columnDefinition();
-		if (!columnDefinition.equals(DatabaseField.NO_DEFAULT)) {
+		if (!columnDefinition.equals(DatabaseField.DEFAULT_STRING)) {
 			config.columnDefinition = columnDefinition;
 		}
 
@@ -614,7 +616,7 @@ public class DatabaseFieldConfig {
 		}
 		// NOTE: == did not work with the NO_DEFAULT string
 		String defaultValue = simpleAnno.defaultValue();
-		if (!defaultValue.equals(DatabaseField.NO_DEFAULT)) {
+		if (!defaultValue.equals(DatabaseField.DEFAULT_STRING)) {
 			config.defaultValue = defaultValue;
 		}
 		config.width = simpleAnno.width();
@@ -778,8 +780,8 @@ public class DatabaseFieldConfig {
 			writer.append(FIELD_NAME_WIDTH).append('=').append(Integer.toString(width));
 			writer.newLine();
 		}
-		if (canBeNull) {
-			writer.append(FIELD_NAME_CAN_BE_NULL).append('=').append("true");
+		if (canBeNull != DEFAULT_CAN_BE_NULL) {
+			writer.append(FIELD_NAME_CAN_BE_NULL).append('=').append(Boolean.toString(canBeNull));
 			writer.newLine();
 		}
 		if (id) {

@@ -24,7 +24,7 @@ public @interface DatabaseFieldSimple {
 	/**
 	 * @see DatabaseField#defaultValue()
 	 */
-	String defaultValue() default DatabaseField.NO_DEFAULT;
+	String defaultValue() default DatabaseField.DEFAULT_STRING;
 
 	/**
 	 * @see DatabaseField#width()

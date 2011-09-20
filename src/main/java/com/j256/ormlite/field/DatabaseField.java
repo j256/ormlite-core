@@ -39,14 +39,14 @@ import com.j256.ormlite.field.types.VoidType;
 public @interface DatabaseField {
 
 	/** this special string is used as a .equals check to see if no default was specified */
-	public static final String NO_DEFAULT = "__ormlite__ no default value string was specified";
+	public static final String DEFAULT_STRING = "__ormlite__ no default value string was specified";
 
 	/**
 	 * Default for the maxForeignAutoRefreshLevel.
 	 * 
 	 * @see #maxForeignAutoRefreshLevel()
 	 */
-	public static final int MAX_FOREIGN_AUTO_REFRESH_LEVEL = 2;
+	public static final int DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL = 2;
 
 	/**
 	 * The name of the column in the database. If not set then the name is taken from the field name.
@@ -62,7 +62,7 @@ public @interface DatabaseField {
 	/**
 	 * The default value of the field for creating the table. Default is none.
 	 */
-	String defaultValue() default NO_DEFAULT;
+	String defaultValue() default DEFAULT_STRING;
 
 	/**
 	 * Width of array fields (often for strings). Default is 0 which means to take the data-type and database-specific
@@ -228,7 +228,7 @@ public @interface DatabaseField {
 	 * carefully.
 	 * </p>
 	 */
-	int maxForeignAutoRefreshLevel() default MAX_FOREIGN_AUTO_REFRESH_LEVEL;
+	int maxForeignAutoRefreshLevel() default DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL;
 
 	/**
 	 * Allows you to set a custom persister class to handle this field. This class must have a getSingleton() static
@@ -250,5 +250,5 @@ public @interface DatabaseField {
 	 * Specify the SQL necessary to create this field in the database. This can be used if you need to tune the schema
 	 * to enable some per-database feature or to override the default SQL generated.
 	 */
-	String columnDefinition() default NO_DEFAULT;
+	String columnDefinition() default DEFAULT_STRING;
 }

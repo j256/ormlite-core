@@ -29,5 +29,5 @@ public @interface DatabaseFieldForeign {
 	/**
 	 * @see DatabaseField#maxForeignAutoRefreshLevel()
 	 */
-	int maxForeignAutoRefreshLevel() default DatabaseField.MAX_FOREIGN_AUTO_REFRESH_LEVEL;
+	int maxForeignAutoRefreshLevel() default DatabaseField.DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL;
 }
