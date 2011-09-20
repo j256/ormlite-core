@@ -70,12 +70,23 @@ public class JavaxPersistence {
 				if (name != null && name.length() > 0) {
 					config.setColumnName(name);
 				}
+				method = columnAnnotation.getClass().getMethod("columnDefinition");
+				String columnDefinition = (String) method.invoke(columnAnnotation);
+				if (columnDefinition != null && columnDefinition.length() > 0) {
+					config.setColumnDefinition(columnDefinition);
+				}
 				method = columnAnnotation.getClass().getMethod("length");
 				config.setWidth((Integer) method.invoke(columnAnnotation));
 				method = columnAnnotation.getClass().getMethod("nullable");
-				config.setCanBeNull((Boolean) method.invoke(columnAnnotation));
+				Boolean nullable = (Boolean) method.invoke(columnAnnotation);
+				if (nullable != null) {
+					config.setCanBeNull(nullable);
+				}
 				method = columnAnnotation.getClass().getMethod("unique");
-				config.setUnique((Boolean) method.invoke(columnAnnotation));
+				Boolean unique = (Boolean) method.invoke(columnAnnotation);
+				if (unique != null) {
+					config.setUnique(unique);
+				}
 			} catch (Exception e) {
 				throw SqlExceptionUtil.create(
 						"Problem accessing fields from the @Column annotation for field " + field, e);
@@ -102,6 +113,11 @@ public class JavaxPersistence {
 					Boolean nullable = (Boolean) method.invoke(joinColumnAnnotation);
 					if (nullable != null) {
 						config.setCanBeNull(nullable);
+					}
+					method = joinColumnAnnotation.getClass().getMethod("unique");
+					Boolean unique = (Boolean) method.invoke(joinColumnAnnotation);
+					if (unique != null) {
+						config.setUnique(unique);
 					}
 				} catch (Exception e) {
 					throw SqlExceptionUtil.create("Problem accessing fields from the @JoinColumn annotation for field "
