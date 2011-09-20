@@ -102,7 +102,7 @@ public class FieldType {
 				}
 				Object result;
 				try {
-					result = (DataPersister) method.invoke(null);
+					result = method.invoke(null);
 				} catch (InvocationTargetException e) {
 					throw SqlExceptionUtil.create("Could not run getSingleton method on class " + persisterClass,
 							e.getTargetException());
@@ -116,9 +116,9 @@ public class FieldType {
 				try {
 					dataPersister = (DataPersister) result;
 				} catch (Exception e) {
-					throw new SQLException(
+					throw SqlExceptionUtil.create(
 							"Could not cast result of static getSingleton method to DataPersister from class "
-									+ persisterClass);
+									+ persisterClass, e);
 				}
 			}
 		} else {
