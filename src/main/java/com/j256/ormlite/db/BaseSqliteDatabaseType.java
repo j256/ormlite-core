@@ -47,6 +47,11 @@ public abstract class BaseSqliteDatabaseType extends BaseDatabaseType implements
 	}
 
 	@Override
+	public boolean isCreateIfNotExistsSupported() {
+		return true;
+	}
+
+	@Override
 	public FieldConverter getFieldConverter(DataPersister dataPersister) {
 		// we are only overriding certain types
 		switch (dataPersister.getSqlType()) {
