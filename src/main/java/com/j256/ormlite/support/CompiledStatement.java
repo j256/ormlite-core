@@ -28,6 +28,12 @@ public interface CompiledStatement {
 	public int runUpdate() throws SQLException;
 
 	/**
+	 * @deprecated Here for internal backwards compatibility.
+	 */
+	@Deprecated
+	public DatabaseResults runQuery() throws SQLException;
+
+	/**
 	 * Run the prepared query statement returning the results.
 	 */
 	public DatabaseResults runQuery(ObjectCache objectCache) throws SQLException;

@@ -34,6 +34,10 @@ public class H2CompiledStatement implements CompiledStatement {
 		return preparedStatement.executeUpdate();
 	}
 
+	public DatabaseResults runQuery() throws SQLException {
+		return runQuery(null);
+	}
+
 	public DatabaseResults runQuery(ObjectCache objectCache) throws SQLException {
 		return new H2DatabaseResults(preparedStatement.executeQuery(), objectCache);
 	}
