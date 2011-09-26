@@ -1,5 +1,5 @@
 4.26: 9/XX/2011 (svn rYYYY)
-	* CORE: Added the first take on a level1 object cache.  Thanks to the dev list for suggestions.
+	* CORE: Added the first take on a object cache.  Thanks to the dev list for suggestions.
 	* CORE: Improved the javax.persistence annotation handling to support @JoinColumn(name="xxx").  Thanks to Andrew Sleeman.
 	* CORE: Added a RuntimeExceptionDao for wrapping Dao operations in RuntimeExceptions.  Thanks to the Android list.
 	* CORE: Added a Dao.deleteById() method for removing an instance if you just have the id.
@@ -14,6 +14,7 @@
 	* ANDROID: Added SQLiteDatabase constructor to AndroidConnectionSource for external SQLite databases.  Thanks to Michael.
 	* ANDROID: Removed the SqliteOpenHelperFactory class that was deprecated in 4.20.
 	* ANDROID: Fixed issue that was not properly supporting CREATE IF NOT EXISTS.  Thanks to birbird.  Fixes bug #3412135.
+	* ANDROID: Added RuntimeExceptionDao for shielding applications from _some_ of the SQLException handling.
 
 4.25: 8/22/2011 (svn r1897)
 	* CORE: Fixed problem with id=true with UUID fields not working.  Thanks to Evan Grim.  Fixed bug #3392691.
@@ -22,6 +23,7 @@
 	* CORE: Added allowGeneratedIdInsert feature to allow optional generated-id fields.  Thanks to Craig Andrews.
 	* CORE: Fixed problem with null ids an createOrUpdate.  Thanks to Jo‹o Bosco.  Fixes bug #3390169.
 	* CORE: Fixed race condition with field and constructor accessibility.  Thanks to Jeroen Rakhorst.  Fixes bug #3381083.
+	* CORE: Added config file to the LocalLog so we can specify which classes get which log levels.
 
 4.24: 7/18/2011 (svn r1840)
 	* CORE: Fixed problem with updating a field's value to be null using UpdateBuilder. Thanks to Jeremy Mcjunkin. Fixes bug #3359086.
