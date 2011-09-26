@@ -466,7 +466,7 @@ the annotation on all of your fields but turn off the writing of some of them to
 @cindex format, field
 @item format
 
-This allows you to specify format information of a particular field.  Right now this is only appplicable for the following
+This allows you to specify format information of a particular field.  Right now this is only applicable for the following
 types:
 
 @itemize @bullet
@@ -576,6 +576,13 @@ If this is set to true (default is false) then inserting an object with the ID f
 This is useful when you have a table where you are inserting items that sometimes have IDs and sometimes need them generated. This only works
 if the database supports this behavior and if @code{generatedId} is also true for the field.
 
+@cindex column definition, custom
+@cindex custom column definition
+@item columnDefinition
+
+If this is set with a string then it will be used to define the field in the @code{CREATE TABLE} statement.  By default the database type is
+used to auto-generate the SQL necessary to create the table.
+
 @end table
 
 @c ----------------------------------------------------------------
@@ -610,7 +617,8 @@ specified, the class name with normalized case is used by default.
 @cindex @@ManyToOne
 @cindex ManyToOne annotation
 Instead of using the @code{@@DatabaseField} annotation on each of the fields, you can use the @code{javax.persistence}
-annotations: @code{@@Column}, @code{@@Id}, @code{@@GeneratedValue}, @code{@@OneToOne}, and @code{@@ManyToOne}. For example:
+annotations: @code{@@Column}, @code{@@Id}, @code{@@GeneratedValue}, @code{@@OneToOne}, @code{@@ManyToOne}, and
+@code{@@JoinColumn}. For example:
 
 @example
 @@Entity(name = "accounts")
@@ -683,6 +691,20 @@ Fields with these annotations are assumed to be foreign fields.  @xref{Foreign O
 @emph{not} enforce the many or one relationship nor does it use any of the annotation fields.  It just uses the
 existence of either of these annotations to indicate that it is a foreign object.
 
+@item @@JoinColumn
+
+@table @code
+
+@item name
+
+Sets the column name of the field.  Same as @code{@@Column@{name=...@}}.
+
+@item nullable
+
+Set to true to have a field be able to be inserted into the database with a null value.  Same as
+@code{@@Column@{nullable=...@}}.
+
+@end table
 @end table
 
 If the @code{@@Column} annotation is used on a field that has a unknown type then it is assumed to be a
@@ -1090,7 +1112,7 @@ That's all you need to define your DAO classes.  You are free to add more method
 implementations if there are specific operations that are needed and not provided by the Dao base classes.
 More on how to use these DAOs later. @xref{DAO Usage}.
 
-@emph{NOTE:} If you are using a custom DAO then be sure to add the @code{daoClass} argument to the @code{@@DatabaseTable} annotaion
+@emph{NOTE:} If you are using a custom DAO then be sure to add the @code{daoClass} argument to the @code{@@DatabaseTable} annotation
 which specifies the class of your custom DAO.  This is used by the DaoManager to instantiate the DAO internally.  @xref{DaoManager}.
 
 @c ----------------------------------------------------------------
@@ -1653,6 +1675,8 @@ create unique indexes that ensure that no two row has the same value(s) for the 
 @node Raw Statements, Raw Queries, Creating Indexes, Using
 @section Issuing Raw SQL Statements
 
+@cindex raw SQL statements
+@cindex SQL statements, raw
 In a number of instances, using the defined DAO functionality may not be enough to change your database.  For this
 reason, ORMLite has calls which allow you to issue raw query, update, and execute statements to the database.
 
@@ -2307,7 +2331,7 @@ specified since the offset is an argument of the limit.
 @item orderBy(String columnName, boolean ascending)
 
 Add "ORDER BY" clause to the SQL query statement to order the results by the specified column name.  Use the ascending
-boolean to get a ascending or decending order.  This can be called multiple times to group by multiple columns.
+boolean to get a ascending or descending order.  This can be called multiple times to group by multiple columns.
 
 @cindex order by raw SQL
 @item orderByRaw(String sql)
@@ -2492,6 +2516,7 @@ Add a '<' clause which makes sure the column is less-than the value.
 Add a LIKE clause which makes sure the column match the value using '%' patterns.
 
 @cindex <>, SQL
+@cindex !=, SQL
 @cindex not equal to, SQL
 @cindex ne
 @item ne(String columnName, Object value)
@@ -2612,11 +2637,13 @@ new object if you want to use a @code{SelectArg} with another column.
 
 @menu
 * Android Basics::            How to use ORMLite on Android OS.
+* Config Optimization::       Use a table config file to speed up startup.
 * Android Logging::           How to log messages under Android.
+* RuntimeExceptionDao::       Runtime versus SQL exceptions.
 @end menu
 
 @c ----------------------------------------------------------------
-@node Android Basics, Android Logging, Use With Android, Use With Android
+@node Android Basics, Config Optimization, Use With Android, Use With Android
 @section Android Basics
 
 @cindex Android basics
@@ -2676,7 +2703,133 @@ get exceptions.
 Please see the example code documentation for more information.  @xref{Android Examples}.  Again, feedback on this is welcome.
 
 @c ----------------------------------------------------------------
-@node Android Logging, Advanced, Android Basics, Use With Android
+@node Config Optimization, Android Logging, Android Basics, Use With Android
+@section Using Table Config File
+
+@cindex garbage collection
+@cindex startup optimization
+@cindex table config file
+@cindex android performance
+For some time we have been struggling with DAO startup issues under Android that we thought were due to ORMLite object bandwidth.
+Although improvements and DAO cacheing has been made, creating a couple of DAOs when your application starts can still take too long and
+generate far too much garbage collection activity.  Turns out that one of the major culprits is some ugly code down in the Android OS --
+especially in @code{Method.equals()}.  Because annotations use this method, looking up annotation values is @emph{extremely} expensive,
+often garbage collecting thousands of objects and megabytes of space.  Android knows about the issues and a fix has been made but we have
+no idea when these performance improvements will make it into an Android release.
+
+@cindex @@DatabaseFieldSimple
+@cindex DatabaseFieldSimple annotation
+We have made a couple of changes in ORMLite version 4.26 to help work around this issue.  Firstly, we have copied the @code{@@DatabaseField}
+annotation and split it into a set of annotations, each with fewer methods.  See @code{@@DatabaseFieldSimple} and related annotations.  Using them
+should give a performance boost by significantly reducing the number of annotation method calls.  An 50% or better improvement can be seen here.
+
+However, with a little bit of work (and some caveats), you can remove all annotation work from your application and make DAO creation
+an extremely fast operation.  In ORMLite versions 4.26 and above, data configurations can be loaded from a text configuration file.
+When a DAO is created, these configurations will be used, removing the need for any annotation method calls.
+
+@enumerate
+
+@item We've added a @code{OrmLiteConfigUtil} utility class that helps write a @code{ormlite_config.txt} configuration file in the raw resource
+folder @code{res/raw/ormlite_config.txt}.  You will need to extend this class into your own project along side your @code{DatabaseHelper}
+class.  It should look something like:
+
+@example
+public class DatabaseConfigUtil extends OrmLiteConfigUtil @{
+  public static void main(String[] args) throws Exception @{
+    writeConfigFile("ormlite_config.txt");
+  @}
+@}
+@end example
+
+@item You will need to run this utility locally on your development box (not in an Android device), whenever you make a change to one of
+your data classes.  This means that right now, this @emph{must} be done by hand to keep the configuration file in sync with your database
+classes.  To run the utility you will need to use the local Java runtime environment (JRE).  Under eclipse, edit the "Run Configuration" for
+the utility, select the JRE tab, and select an alternative JRE (1.5 or 1.6).  Your project's JRE should be undefined since it is an Android
+application.
+
+@item By default this utility will look in the current directory and below in files ending in @code{.java} for the existence of one of the
+@code{@@DatabaseTable}, @code{DatabaseField}, or @code{DatabaseFieldSimple} annotations.  These classes will be investigated and written into
+the database configuration file.  You can also list the classes to be processed:
+
+@example
+public class DatabaseConfigUtil extends OrmLiteConfigUtil @{
+  private static final Class<?>[] classes = new Class[] @{
+    SimpleData.class,
+  @};
+  public static void main(String[] args) throws Exception @{
+    writeConfigFile("ormlite_config.txt", classes);
+  @}
+@}
+@end example
+
+@item When the utility is run it should create the @code{ormlite_config.txt} configuration file in the raw resource folder.  This folder must
+exist before the utility is run.  Afterwards, if you refresh your project your should see the file appear.  In the Eclipse console, you
+should see something like the following outputted by the utility:
+
+@example
+Writing configurations to /Documents/Svn/HelloAndroid/./res/raw/ormlite_config.txt
+Wrote config for class com.example.helloandroid.SimpleData
+Done.
+@end example
+
+The config file generated should look something like:
+
+@example
+#
+# generated on 2011/09/15 01:42:02
+#
+# --table-start--
+dataClass=com.example.helloandroid.SimpleData
+tableName=simpledata
+# --table-fields-start--
+# --field-start--
+fieldName=id
+canBeNull=true
+generatedId=true
+@dots{}
+@end example
+
+@item The first time you create the config file in the resource folder, the Android build plugin should add it to the @code{R.java} file inside of
+the @code{gen} folder.  This defines a unique integer value so that the application can open this resource by file-id number.  The file should contain
+something like:
+
+@example
+public final class R @{
+  @dots{}
+  public static final class raw @{
+    public static final int ormlite_config=0x7f040000;
+  @}
+  @dots{}
+@}
+@end example 
+
+@item After the @code{R.java} file entry has been generated, you will need to enable the reading of the file at runtime.  Inside of your @code{DatabaseHelper}
+class, you will need to change the constructor to add the integer file-id.  The constructor will look something like the following:
+
+@example
+public DatabaseHelper(Context context) @{
+  super(context, DATABASE_NAME, null, DATABASE_VERSION, R.raw.ormlite_config);
+@}
+@end example
+
+Notice the @code{R.raw.ormlite_config} entry at the end that passes the file-id to the super class so it can be read in.  You can also pass in a file-name or
+a Java @code{File} if you want to load in the config file from another location.
+
+@item When you build and run your application, you will know that the database configuration file is being loaded if you see log entries like the
+following:
+
+@example
+I/DaoManager(  999): Loaded configuration for class com.example.helloandroid.SimpleData
+@end example
+
+Oh, and if it is working you should notice a significant lack of GC messages during DAO startup.
+
+@end enumerate
+
+As of 9/2011, this is one of the newest parts of ORMLite so we most likely will be improving it.  Feedback is welcome.
+
+@c ----------------------------------------------------------------
+@node Android Logging, RuntimeExceptionDao, Config Optimization, Use With Android
 @section Android Logging
 
 @cindex Android logging
@@ -2707,7 +2860,9 @@ I/TableUtils(  254): executed create table statement changed 1 rows:
 To enable more debug information you will want to do something like the following to turn on logging for a particular class:
 
 @example
-adb shell setprop log.tag.BaseMappedStatement DEBUG
+adb shell setprop log.tag.StatementExecutor VERBOSE
+adb shell setprop log.tag.BaseMappedStatement VERBOSE
+adb shell setprop log.tag.MappedCreate VERBOSE
 @end example
 
 This enables messages such as:
@@ -2727,7 +2882,36 @@ adb shell setprop log.tag.ORMLite DEBUG
 @end example
 
 @c ----------------------------------------------------------------
-@node Advanced, Spring Configuration, Android Logging, Top
+@node RuntimeExceptionDao, Advanced, Android Logging, Use With Android
+@section Runtime Versus SQL Exceptions
+
+@cindex RuntimeExceptionDao
+@cindex SQLExceptionDao
+@cindex exceptions, runtime
+By default, most of the DAO methods throw @code{SQLException} which is the default internal exception for most JDBC and other
+SQL calls.  But in Android-land, especially, most of the exceptions extend @code{RuntimeException} so having to put a lot of 
+ignored @code{try ... catch} stanzas is inconvenient.  For this reason we've added a @code{RuntimeExceptionDao} which wraps all
+calls to the underlying DAO to rethrow the SQL exceptions as runtime exceptons.  To get one, you can wrap your own down in it:
+
+@example
+Dao<Account, String> dao =
+  DaoManager.createDao(connectionSource, Account.class);
+RuntimeExceptionDao<Account, String> accountDao =
+  new RuntimeExceptionDao<Account, String>(dao);
+@end example
+
+Or you can call the @code{createDao} helper methods on @code{RuntimeExceptionDao}:
+
+@example
+RuntimeExceptionDao<Account, String> accountDao =
+  RuntimeExceptionDao.createDao(connectionSource, Account.class);
+@end example
+
+Other classes such as @code{TableUtils} and @code{QueryBuilder} still throw @code{SQLException} but the hope is that
+@code{RuntimeExceptionDao} helps a little bit at least.
+
+@c ----------------------------------------------------------------
+@node Advanced, Spring Configuration, RuntimeExceptionDao, Top
 @chapter Advanced Concepts
 
 @menu
@@ -3120,7 +3304,7 @@ Create a new entry in the database from an object.  Should return 1 indicating 1
 @item createIfNotExists(T data)
 
 This is a convenience method to creating a data item but only if the ID does not already exist in the table. This extracts the id from
-the data parameter, does a query for on it, returning the data if it exists.  If it does not exist then create is callled with the data
+the data parameter, does a query for on it, returning the data if it exists.  If it does not exist then create is called with the data
 parameter.
 
 @cindex create or update
@@ -3451,7 +3635,7 @@ support disabling of auto-commit, a transaction may be used under the covers.
 @cindex level 1 cache
 @cindex weak reference cache
 
-As of Sepember 2011, one of the newer features in ORMLite is the ability to enable an object cache for a DAO.  The object
+As of September 2011, one of the newer features in ORMLite is the ability to enable an object cache for a DAO.  The object
 cache keeps an internal collection of objects that have been created or queried and will return a reference to the same
 object if it is handled in the future.  
 
@@ -3740,7 +3924,7 @@ set on the DAO instead.
 @end itemize
 
 Again, there were no on-disk changes unless you somehow managed to get ORMLite working previously on Android.  Since we were using
-JDBC before to do the data marshalling and now are doing it by hand, some of the data representations may have changed.  Sorry for
+JDBC before to do the data marshaling and now are doing it by hand, some of the data representations may have changed.  Sorry for
 the lack of detail here.
 
 @c ----------------------------------------------------------------
@@ -3881,7 +4065,7 @@ for new features, testing new features before the release, and thinking a lot ab
 @item Jim Gloor was one of the Java gurus at a previous company.  His great object instincts and the JDBC code samples helped start this
 project.
 
-@item Robert Adamsky was a colleage of mine at a company where he laid out our entire DAO and hibernate class hierarchy.  The
+@item Robert Adamsky was a colleague of mine at a company where he laid out our entire DAO and hibernate class hierarchy.  The
 @code{DAO} interface and the @code{BaseDaoImpl} where in some part modeled after his code.
 
 @c -----------------
@@ -3890,7 +4074,7 @@ project.
 @item Chris Banes improved the Android support and provided feedback on the wiring.
 @item Adam Brown helped with the memory analysis to lower the GC overhead.
 @item Jaxelrod has submitted some excellent bug reports and provided feedback on the maven release mechanisms and documentation.
-@item Stewert helped itentify a bug with using the UpdateBuilder with Date fields.
+@item Stewert helped identify a bug with using the UpdateBuilder with Date fields.
 @item Micael Dahlgren helped resolve a bad bug foreign field bug.
 @item Dale Asberry added the initial take on the generic ODBC database type.
 @item Richard Kooijman added the initial take on the Netezza database type.

@@ -3,9 +3,17 @@
 	* CORE: Improved the javax.persistence annotation handling to support @JoinColumn(name="xxx").  Thanks to Andrew Sleeman.
 	* CORE: Added a RuntimeExceptionDao for wrapping Dao operations in RuntimeExceptions.  Thanks to the Android list.
 	* CORE: Added a Dao.deleteById() method for removing an instance if you just have the id.
+	* CORE: Added @DatabaseField(columnDefiniton = "...") for hand-defining the field SQL.
 	* CORE: Removed the deprecated RawResults class that was replaced in 4.10.
 	* CORE: Fixed problem with self-generated id fields not being marked as primary.  Thanks to Craig Andrews.  Fixes bug #3406600.
+	* CORE: Fixed a problem where default was canBeNull=false with javax persistence macros.  Thanks to A.  Fixes bug #3410640.
+	* CORE: Removed the maxForeignLevel() field from @DatabaseField which was deprecated in 4.22.
+	* CORE: Added table and field configuration file reading and writing. 
+	* ANDROID: Added field configuration utility for avoiding Dao creation performance problems with annotations.  Thanks to Ian Dees.
+	* ANDROID: Added @DatabaseFieldSimple and other smaller annotations for speeding up Android configuration.
 	* ANDROID: Added SQLiteDatabase constructor to AndroidConnectionSource for external SQLite databases.  Thanks to Michael.
+	* ANDROID: Removed the SqliteOpenHelperFactory class that was deprecated in 4.20.
+	* ANDROID: Fixed issue that was not properly supporting CREATE IF NOT EXISTS.  Thanks to birbird.  Fixes bug #3412135.
 
 4.25: 8/22/2011 (svn r1897)
 	* CORE: Fixed problem with id=true with UUID fields not working.  Thanks to Evan Grim.  Fixed bug #3392691.
