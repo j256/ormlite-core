@@ -1,4 +1,4 @@
-4.26: 9/XX/2011 (svn rYYYY)
+4.26: 9/26/2011 (svn rYYYY)
 	* CORE: Added the first take on a object cache.  Thanks to the dev list for suggestions.
 	* CORE: Improved the javax.persistence annotation handling to support @JoinColumn(name="xxx").  Thanks to Andrew Sleeman.
 	* CORE: Added a RuntimeExceptionDao for wrapping Dao operations in RuntimeExceptions.  Thanks to the Android list.
