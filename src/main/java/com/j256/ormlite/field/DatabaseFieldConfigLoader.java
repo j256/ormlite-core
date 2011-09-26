@@ -3,8 +3,6 @@ package com.j256.ormlite.field;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.sql.SQLException;
 
 import com.j256.ormlite.field.types.VoidType;
@@ -79,38 +77,6 @@ public class DatabaseFieldConfigLoader {
 		} catch (IOException e) {
 			throw SqlExceptionUtil.create("Could not write config to writer", e);
 		}
-	}
-
-	/**
-	 * Find and return the appropriate getter method for field.
-	 * 
-	 * @return Get method or null if none found.
-	 */
-	public static Method findGetMethod(Field field, boolean throwExceptions) {
-		String methodName = methodFromField(field, "get");
-		Method fieldGetMethod;
-		try {
-			fieldGetMethod = field.getDeclaringClass().getMethod(methodName);
-		} catch (Exception e) {
-			if (throwExceptions) {
-				throw new IllegalArgumentException("Could not find appropriate get method for " + field);
-			} else {
-				return null;
-			}
-		}
-		if (fieldGetMethod.getReturnType() != field.getType()) {
-			if (throwExceptions) {
-				throw new IllegalArgumentException("Return type of get method " + methodName + " does not return "
-						+ field.getType());
-			} else {
-				return null;
-			}
-		}
-		return fieldGetMethod;
-	}
-
-	private static String methodFromField(Field field, String prefix) {
-		return prefix + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
 	}
 
 	private static final String FIELD_NAME_FIELD_NAME = "fieldName";
