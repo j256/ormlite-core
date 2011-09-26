@@ -41,7 +41,7 @@ public class RuntimeExceptionDao<T, ID> {
 	}
 
 	/**
-	 * Same as {@link DaoManager#createDao(ConnectionSource, Class)} except the returned DAO is wrapped in a
+	 * Call through to {@link DaoManager#createDao(ConnectionSource, Class)} with the returned DAO wrapped in a
 	 * RuntimeExceptionDao.
 	 */
 	public static <T, ID> RuntimeExceptionDao<T, ID> createDao(ConnectionSource connectionSource, Class<T> clazz)
@@ -52,8 +52,8 @@ public class RuntimeExceptionDao<T, ID> {
 	}
 
 	/**
-	 * Same as {@link DaoManager#createDao(ConnectionSource, DatabaseTableConfig)} except the returned DAO is wrapped in
-	 * a RuntimeExceptionDao.
+	 * Call through to {@link DaoManager#createDao(ConnectionSource, DatabaseTableConfig)} with the returned DAO wrapped
+	 * in a RuntimeExceptionDao.
 	 */
 	public static <T, ID> RuntimeExceptionDao<T, ID> createDao(ConnectionSource connectionSource,
 			DatabaseTableConfig<T> tableConfig) throws SQLException {
