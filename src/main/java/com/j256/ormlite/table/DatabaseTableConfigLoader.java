@@ -3,11 +3,8 @@ package com.j256.ormlite.table;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import com.j256.ormlite.field.DatabaseFieldConfig;
@@ -27,12 +24,10 @@ public class DatabaseTableConfigLoader {
 	private static final String CONFIG_FILE_FIELDS_END = "# --table-fields-end--";
 
 	/**
-	 * Load in a number of database configuration entries from an input stream.
+	 * Load in a number of database configuration entries from a buffered reader.
 	 */
-	public static Collection<DatabaseTableConfig<?>> loadDatabaseConfigFromStream(InputStream stream)
-			throws SQLException {
+	public static List<DatabaseTableConfig<?>> loadDatabaseConfigFromReader(BufferedReader reader) throws SQLException {
 		List<DatabaseTableConfig<?>> list = new ArrayList<DatabaseTableConfig<?>>();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(stream), 4096);
 		while (true) {
 			DatabaseTableConfig<?> config = DatabaseTableConfigLoader.fromReader(reader);
 			if (config == null) {
