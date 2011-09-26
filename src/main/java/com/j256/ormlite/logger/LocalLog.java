@@ -60,6 +60,12 @@ public class LocalLog implements Log {
 			} catch (IOException e) {
 				System.err.println("IO exception reading the log properties file '" + LOCAL_LOG_PROPERTIES_FILE + "': "
 						+ e);
+			} finally {
+				try {
+					stream.close();
+				} catch (IOException e) {
+					// ignore close exception
+				}
 			}
 		}
 	}
