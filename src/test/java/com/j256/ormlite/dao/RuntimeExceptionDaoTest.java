@@ -38,6 +38,7 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 			Method daoMethod = daoIterator.next();
 			boolean found = false;
 
+			// coverage magic
 			if (daoMethod.getName().equals("$VRi")) {
 				continue;
 			}
@@ -64,7 +65,12 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 
 		// now see if we have any extra methods left over in RuntimeExceptionDao
 		for (Method runtimeMethod : runtimeMethods) {
+			// coverage magic
 			if (runtimeMethod.getName().equals("$VRi")) {
+				continue;
+			}
+			// skip these
+			if (runtimeMethod.getName().equals("createDao")) {
 				continue;
 			}
 			System.err.println("Unknown RuntimeExceptionDao method: " + runtimeMethod);
