@@ -15,6 +15,8 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.PreparedUpdate;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
+import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.DatabaseTableConfig;
 
 /**
  * Proxy to a {@link Dao} that wraps each Exception and rethrows it as RuntimeException. You can use this if your usage
@@ -23,8 +25,7 @@ import com.j256.ormlite.stmt.UpdateBuilder;
  * <p>
  * 
  * <pre>
- * RuntimeExceptionDao&lt;Account, String&gt; accountDao = new RuntimeExceptionDao(DaoManager.createDao(connectionSource,
- * 		Account.class));
+ * RuntimeExceptionDao&lt;Account, String&gt; accountDao = RuntimeExceptionDao.createDao(connectionSource, Account.class);
  * </pre>
  * 
  * </p>
@@ -37,6 +38,28 @@ public class RuntimeExceptionDao<T, ID> {
 
 	public RuntimeExceptionDao(Dao<T, ID> dao) {
 		this.dao = dao;
+	}
+
+	/**
+	 * Same as {@link DaoManager#createDao(ConnectionSource, Class)} except the returned DAO is wrapped in a
+	 * RuntimeExceptionDao.
+	 */
+	public static <T, ID> RuntimeExceptionDao<T, ID> createDao(ConnectionSource connectionSource, Class<T> clazz)
+			throws SQLException {
+		@SuppressWarnings("unchecked")
+		Dao<T, ID> castDao = (Dao<T, ID>) DaoManager.createDao(connectionSource, clazz);
+		return new RuntimeExceptionDao<T, ID>(castDao);
+	}
+
+	/**
+	 * Same as {@link DaoManager#createDao(ConnectionSource, DatabaseTableConfig)} except the returned DAO is wrapped in
+	 * a RuntimeExceptionDao.
+	 */
+	public static <T, ID> RuntimeExceptionDao<T, ID> createDao(ConnectionSource connectionSource,
+			DatabaseTableConfig<T> tableConfig) throws SQLException {
+		@SuppressWarnings("unchecked")
+		Dao<T, ID> castDao = (Dao<T, ID>) DaoManager.createDao(connectionSource, tableConfig);
+		return new RuntimeExceptionDao<T, ID>(castDao);
 	}
 
 	/**
