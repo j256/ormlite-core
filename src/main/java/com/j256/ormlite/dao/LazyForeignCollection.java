@@ -256,6 +256,11 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 
 	/**
 	 * This is just a call to {@link Object#equals(Object)}.
+	 * 
+	 * <p>
+	 * NOTE: This method is here for documentation purposes because {@link EagerForeignCollection#equals(Object)} is
+	 * defined.
+	 * </p>
 	 */
 	@Override
 	public boolean equals(Object other) {
@@ -264,6 +269,11 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 
 	/**
 	 * This is just a call to {@link Object#hashCode()}.
+	 * 
+	 * <p>
+	 * NOTE: This method is here for documentation purposes because {@link EagerForeignCollection#equals(Object)} is
+	 * defined.
+	 * </p>
 	 */
 	@Override
 	public int hashCode() {

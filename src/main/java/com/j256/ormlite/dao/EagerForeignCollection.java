@@ -172,11 +172,17 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 		super.clear();
 	}
 
+	/**
+	 * This is just a call to the equals method of the internal results list.
+	 */
 	@Override
 	public boolean equals(Object other) {
 		return results.equals(other);
 	}
 
+	/**
+	 * This is just a call to the hashcode method of the internal results list.
+	 */
 	@Override
 	public int hashCode() {
 		return results.hashCode();
