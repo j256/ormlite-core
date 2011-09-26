@@ -286,6 +286,36 @@ public class DatabaseFieldConfigTest {
 		assertEquals(tableName + "_" + IndexName.UNIQUE_INDEX_COLUMN_NAME + "_idx", fieldConfig.getUniqueIndexName());
 	}
 
+	@Test
+	public void testAltAnnotations() throws Exception {
+		Field field = AltAnno.class.getDeclaredField("id");
+		DatabaseFieldConfig fieldConfig = DatabaseFieldConfig.fromField(databaseType, "table-name", field);
+		assertTrue(fieldConfig.isGeneratedId());
+		field = AltAnno.class.getDeclaredField("id2");
+		fieldConfig = DatabaseFieldConfig.fromField(databaseType, "table-name", field);
+		assertEquals(AltAnno.GENERATED_ID_SEQ_NAME, fieldConfig.getGeneratedIdSequence());
+		field = AltAnno.class.getDeclaredField("stuff");
+		fieldConfig = DatabaseFieldConfig.fromField(databaseType, "table-name", field);
+		assertTrue(fieldConfig.isCanBeNull());
+		assertEquals(AltAnno.STUFF_FIELD_NAME, fieldConfig.getColumnName());
+		field = AltAnno.class.getDeclaredField("junk");
+		fieldConfig = DatabaseFieldConfig.fromField(databaseType, "table-name", field);
+		assertNotNull(fieldConfig.getIndexName());
+		field = AltAnno.class.getDeclaredField("ourEnum");
+		fieldConfig = DatabaseFieldConfig.fromField(databaseType, "table-name", field);
+		assertEquals(OurEnum.FIRST, fieldConfig.getUnknownEnumValue());
+		field = AltAnno.class.getDeclaredField("foreign");
+		fieldConfig = DatabaseFieldConfig.fromField(databaseType, "table-name", field);
+		assertTrue(fieldConfig.isForeign());
+		field = AltAnno.class.getDeclaredField("format");
+		fieldConfig = DatabaseFieldConfig.fromField(databaseType, "table-name", field);
+		assertEquals(AltAnno.FORMAT_FORMAT, fieldConfig.getFormat());
+		assertNull(fieldConfig.getDefaultValue());
+		field = AltAnno.class.getDeclaredField("defaultValue");
+		fieldConfig = DatabaseFieldConfig.fromField(databaseType, "table-name", field);
+		assertEquals(AltAnno.DEFAULT_DEFAULT_VALUE, fieldConfig.getDefaultValue());
+	}
+
 	protected class Foo {
 		@DatabaseField(canBeNull = true)
 		String field;
@@ -403,6 +433,37 @@ public class DatabaseFieldConfigTest {
 		@DatabaseField
 		String none;
 		public DefaultString() {
+		}
+	}
+
+	protected static class AltAnno {
+		public static final String STUFF_FIELD_NAME = "zipper";
+		public static final String FORMAT_FORMAT = "you know format";
+		public static final String DEFAULT_DEFAULT_VALUE = "some value";
+		public static final String GENERATED_ID_SEQ_NAME = "some seq";
+		@DatabaseFieldSimple
+		@DatabaseFieldId(generatedId = true)
+		int id;
+		@DatabaseFieldSimple
+		@DatabaseFieldId(generatedIdSequence = GENERATED_ID_SEQ_NAME)
+		int id2;
+		@DatabaseFieldSimple(columnName = STUFF_FIELD_NAME)
+		String stuff;
+		@DatabaseFieldSimple
+		@DatabaseFieldIndex(index = true)
+		String junk;
+		@DatabaseFieldSimple
+		@DatabaseFieldOther(unknownEnumName = "FIRST")
+		OurEnum ourEnum;
+		@DatabaseFieldSimple
+		@DatabaseFieldOther(format = FORMAT_FORMAT)
+		String format;
+		@DatabaseFieldSimple
+		@DatabaseFieldForeign(foreign = true)
+		Object foreign;
+		@DatabaseFieldSimple(defaultValue = DEFAULT_DEFAULT_VALUE)
+		String defaultValue;
+		public AltAnno() {
 		}
 	}
 }

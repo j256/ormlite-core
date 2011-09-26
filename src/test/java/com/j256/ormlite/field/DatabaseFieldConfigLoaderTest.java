@@ -1,12 +1,14 @@
 package com.j256.ormlite.field;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.sql.SQLException;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.junit.Test;
@@ -169,6 +171,60 @@ public class DatabaseFieldConfigLoaderTest {
 		config.setAllowGeneratedIdInsert(true);
 		body.append("allowGeneratedIdInsert=true").append("\n");
 		checkConfigOutput(config, body, writer, buffer);
+	}
+
+	@Test
+	public void testEmptyFile() throws Exception {
+		String value = "";
+		assertNull(DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value))));
+	}
+
+	@Test(expected = SQLException.class)
+	public void testBadLine() throws Exception {
+		String value = "not a good line";
+		DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value)));
+	}
+
+	@Test
+	public void testBlankLine() throws Exception {
+		String value = "\n";
+		assertNull(DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value))));
+	}
+
+	@Test
+	public void testComment() throws Exception {
+		String value = "# some comment\n";
+		assertNull(DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value))));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testBadPersisterClass() throws Exception {
+		String value = "persisterClass=unknown class name\n";
+		DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value)));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testBadEnumValue() throws Exception {
+		String value = "unknownEnumValue=notvalidclass\n";
+		DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value)));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testBadEnumClass() throws Exception {
+		String value = "unknownEnumValue=notvalidclass#somevalue\n";
+		DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value)));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testBadEnumClassNotAnEnum() throws Exception {
+		String value = "unknownEnumValue=java.lang.Object#somevalue\n";
+		DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value)));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testBadEnumClassInvalidEnumValue() throws Exception {
+		String value = "unknownEnumValue=" + OurEnum.class.getName() + "#notvalid\n";
+		DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value)));
 	}
 
 	private enum OurEnum {

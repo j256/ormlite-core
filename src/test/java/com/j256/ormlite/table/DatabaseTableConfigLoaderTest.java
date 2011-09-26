@@ -8,6 +8,7 @@ import java.io.BufferedWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.junit.Test;
@@ -53,6 +54,34 @@ public class DatabaseTableConfigLoaderTest {
 		checkConfigOutput(config, body, writer, buffer, true);
 	}
 
+	@Test
+	public void testConfigEntriesFromStream() throws Exception {
+		StringBuilder value = new StringBuilder();
+		value.append(TABLE_START);
+		value.append("dataClass=" + Foo.class.getName() + "\n");
+		String tableName = "fprwojfgopwejfw";
+		value.append("tableName=" + tableName + "\n");
+		value.append("# --table-fields-start--\n");
+		value.append("# --field-start--\n");
+		String fieldName = "weopjfwefjw";
+		value.append("fieldName=" + fieldName + "\n");
+		value.append("canBeNull=true\n");
+		value.append("generatedId=true\n");
+		value.append("# --field-end--\n");
+		value.append("# --table-fields-end--\n");
+		value.append("# --table-end--\n");
+		value.append(TABLE_END);
+		List<DatabaseTableConfig<?>> tables =
+				DatabaseTableConfigLoader.loadDatabaseConfigFromReader(new BufferedReader(new StringReader(
+						value.toString())));
+		assertEquals(1, tables.size());
+		assertEquals(tableName, tables.get(0).getTableName());
+		DatabaseTableConfig<?> config = tables.get(0);
+		List<DatabaseFieldConfig> fields = config.getFieldConfigs();
+		assertEquals(1, fields.size());
+		assertEquals(fieldName, fields.get(0).getFieldName());
+	}
+
 	/* ======================================================================================= */
 
 	private void checkConfigOutput(DatabaseTableConfig<?> config, StringBuilder body, StringWriter writer,
@@ -78,5 +107,11 @@ public class DatabaseTableConfigLoaderTest {
 		eb.append(config1.getDataClass(), config2.getDataClass());
 		eb.append(config1.getTableName(), config2.getTableName());
 		return eb.isEquals();
+	}
+
+	protected static class Foo {
+		int id;
+		public Foo() {
+		}
 	}
 }
