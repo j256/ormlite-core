@@ -22,17 +22,18 @@ public class CharObjectTypeTest extends BaseTypeTest {
 		LocalCharObj foo = new LocalCharObj();
 		foo.charField = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, val, val, valStr, DataType.CHAR_OBJ, CHAR_COLUMN, false, true, true, false, false, false,
-				true, false);
+		testType(dao, foo, clazz, val, val, val, valStr, DataType.CHAR_OBJ, CHAR_COLUMN, false, true, true, false,
+				false, false, true, false);
 	}
 
 	@Test
 	public void testCharObjNull() throws Exception {
 		Class<LocalCharObj> clazz = LocalCharObj.class;
 		Dao<LocalCharObj, Object> dao = createDao(clazz, true);
+		LocalCharObj foo = new LocalCharObj();
 		assertEquals(1, dao.create(new LocalCharObj()));
-		testType(clazz, null, null, null, null, DataType.CHAR_OBJ, CHAR_COLUMN, false, true, true, false, false, false,
-				true, false);
+		testType(dao, foo, clazz, null, null, null, null, DataType.CHAR_OBJ, CHAR_COLUMN, false, true, true, false,
+				false, false, true, false);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

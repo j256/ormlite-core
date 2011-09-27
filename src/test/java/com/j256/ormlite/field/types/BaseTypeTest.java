@@ -9,9 +9,11 @@ import static org.junit.Assert.fail;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.j256.ormlite.BaseCoreTest;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataPersister;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.FieldType;
@@ -25,10 +27,10 @@ public abstract class BaseTypeTest extends BaseCoreTest {
 	protected static final String TABLE_NAME = "foo";
 	protected static final FieldType[] noFieldTypes = new FieldType[0];
 
-	protected void testType(Class<?> clazz, Object javaVal, Object defaultSqlVal, Object sqlArg, String defaultValStr,
-			DataType dataType, String columnName, boolean isValidGeneratedType, boolean isAppropriateId,
-			boolean isEscapedValue, boolean isPrimitive, boolean isSelectArgRequired, boolean isStreamType,
-			boolean isComparable, boolean isConvertableId) throws Exception {
+	protected <T, ID> void testType(Dao<T, ID> dao, T foo, Class<T> clazz, Object javaVal, Object defaultSqlVal,
+			Object sqlArg, String defaultValStr, DataType dataType, String columnName, boolean isValidGeneratedType,
+			boolean isAppropriateId, boolean isEscapedValue, boolean isPrimitive, boolean isSelectArgRequired,
+			boolean isStreamType, boolean isComparable, boolean isConvertableId) throws Exception {
 		DataPersister dataPersister = dataType.getDataPersister();
 		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
 		CompiledStatement stmt = null;
@@ -78,6 +80,21 @@ public abstract class BaseTypeTest extends BaseCoreTest {
 				assertNotNull(dataPersister.convertIdNumber(10));
 			} else {
 				assertNull(dataPersister.convertIdNumber(10));
+			}
+			List<T> list = dao.queryForAll();
+			assertEquals(1, list.size());
+			assertTrue(dao.objectsEqual(foo, list.get(0)));
+			// if we have a value then look for it, floats don't find any results because of rounding issues
+			if (javaVal != null && dataPersister.isComparable() && dataType != DataType.FLOAT
+					&& dataType != DataType.FLOAT_OBJ) {
+				// test for inline arguments
+				list = dao.queryForMatching(foo);
+				assertEquals(1, list.size());
+				assertTrue(dao.objectsEqual(foo, list.get(0)));
+				// test for SelectArg arguments
+				list = dao.queryForMatchingArgs(foo);
+				assertEquals(1, list.size());
+				assertTrue(dao.objectsEqual(foo, list.get(0)));
 			}
 		} finally {
 			if (stmt != null) {

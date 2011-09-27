@@ -38,17 +38,18 @@ public class SerializableTypeTest extends BaseTypeTest {
 		LocalSerializable foo = new LocalSerializable();
 		foo.serializable = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, val, sqlArg, valStr, DataType.SERIALIZABLE, SERIALIZABLE_COLUMN, false, false, true,
-				false, true, true, false, false);
+		testType(dao, foo, clazz, val, val, sqlArg, valStr, DataType.SERIALIZABLE, SERIALIZABLE_COLUMN, false,
+				false, true, false, true, true, false, false);
 	}
 
 	@Test
 	public void testSerializableNull() throws Exception {
 		Class<LocalSerializable> clazz = LocalSerializable.class;
 		Dao<LocalSerializable, Object> dao = createDao(clazz, true);
-		assertEquals(1, dao.create(new LocalSerializable()));
-		testType(clazz, null, null, null, null, DataType.SERIALIZABLE, SERIALIZABLE_COLUMN, false, false, true, false,
-				true, true, false, false);
+		LocalSerializable foo = new LocalSerializable();
+		assertEquals(1, dao.create(foo));
+		testType(dao, foo, clazz, null, null, null, null, DataType.SERIALIZABLE, SERIALIZABLE_COLUMN, false, false,
+				true, false, true, true, false, false);
 	}
 
 	@Test

@@ -24,8 +24,8 @@ public class LongTypeTest extends BaseTypeTest {
 		LocalLong foo = new LocalLong();
 		foo.longField = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, val, val, valStr, DataType.LONG, LONG_COLUMN, true, true, false, true, false, false, true,
-				true);
+		testType(dao, foo, clazz, val, val, val, valStr, DataType.LONG, LONG_COLUMN, true, true, false, true, false,
+				false, true, true);
 	}
 
 	@Test

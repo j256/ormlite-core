@@ -24,8 +24,8 @@ public class FloatTypeTest extends BaseTypeTest {
 		LocalFloat foo = new LocalFloat();
 		foo.floatField = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, val, val, valStr, DataType.FLOAT, FLOAT_COLUMN, false, true, false, true, false, false,
-				true, false);
+		testType(dao, foo, clazz, val, val, val, valStr, DataType.FLOAT, FLOAT_COLUMN, false, true, false, true,
+				false, false, true, false);
 	}
 
 	@Test

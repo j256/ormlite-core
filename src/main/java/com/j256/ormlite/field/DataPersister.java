@@ -49,7 +49,8 @@ public interface DataPersister extends FieldConverter {
 	public boolean isEscapedDefaultValue();
 
 	/**
-	 * Return whether this field is a number.
+	 * Return whether we need to escape this value in SQL expressions. Numbers _must_ not be escaped but most other
+	 * values should be.
 	 */
 	public boolean isEscapedValue();
 
@@ -88,4 +89,9 @@ public interface DataPersister extends FieldConverter {
 	 * Return the default width associated with this type or 0 if none.
 	 */
 	public int getDefaultWidth();
+
+	/**
+	 * Compare two fields of this type returning true if equals else false.
+	 */
+	public boolean dataIsEqual(Object obj1, Object obj2);
 }

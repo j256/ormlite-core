@@ -22,8 +22,8 @@ public class StringBytesTypeTest extends BaseTypeTest {
 		foo.string = val;
 		assertEquals(1, dao.create(foo));
 		byte[] valBytes = val.getBytes("Unicode");
-		testType(clazz, val, val, valBytes, val, DataType.STRING_BYTES, STRING_COLUMN, false, false, true, false, true,
-				false, true, false);
+		testType(dao, foo, clazz, val, val, valBytes, val, DataType.STRING_BYTES, STRING_COLUMN, false, false, true,
+				false, true, false, true, false);
 	}
 
 	@Test
@@ -34,17 +34,18 @@ public class StringBytesTypeTest extends BaseTypeTest {
 		LocalStringBytesUtf8 foo = new LocalStringBytesUtf8();
 		foo.string = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, val, val.getBytes("UTF-8"), val, DataType.STRING_BYTES, STRING_COLUMN, false, false, true,
-				false, true, false, true, false);
+		testType(dao, foo, clazz, val, val, val.getBytes("UTF-8"), val, DataType.STRING_BYTES, STRING_COLUMN, false,
+				false, true, false, true, false, true, false);
 	}
 
 	@Test
 	public void testStringBytesNull() throws Exception {
 		Class<LocalStringBytes> clazz = LocalStringBytes.class;
 		Dao<LocalStringBytes, Object> dao = createDao(clazz, true);
-		assertEquals(1, dao.create(new LocalStringBytes()));
-		testType(clazz, null, null, null, null, DataType.STRING_BYTES, STRING_COLUMN, false, false, true, false, true,
-				false, true, false);
+		LocalStringBytes foo = new LocalStringBytes();
+		assertEquals(1, dao.create(foo));
+		testType(dao, foo, clazz, null, null, null, null, DataType.STRING_BYTES, STRING_COLUMN, false, false, true,
+				false, true, false, true, false);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

@@ -27,8 +27,8 @@ public class UuidTypeTest extends BaseTypeTest {
 		foo.uuid = val;
 		assertEquals(1, dao.create(foo));
 		String valStr = val.toString();
-		testType(clazz, val, val, valStr, valStr, DataType.UUID, UUID_COLUMN, true, true, true, false, false, false,
-				true, false);
+		testType(dao, foo, clazz, val, val, valStr, valStr, DataType.UUID, UUID_COLUMN, true, true, true, false,
+				false, false, true, false);
 	}
 
 	@Test

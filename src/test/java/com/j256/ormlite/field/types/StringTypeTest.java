@@ -22,8 +22,8 @@ public class StringTypeTest extends BaseTypeTest {
 		LocalString foo = new LocalString();
 		foo.string = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, val, val, valStr, DataType.STRING, STRING_COLUMN, false, true, true, false, false, false,
-				true, false);
+		testType(dao, foo, clazz, val, val, val, valStr, DataType.STRING, STRING_COLUMN, false, true, true, false,
+				false, false, true, false);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

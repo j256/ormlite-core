@@ -22,17 +22,18 @@ public class LongObjectTypeTest extends BaseTypeTest {
 		LocalLongObj foo = new LocalLongObj();
 		foo.longField = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, val, val, valStr, DataType.LONG_OBJ, LONG_COLUMN, true, true, false, false, false, false,
-				true, true);
+		testType(dao, foo, clazz, val, val, val, valStr, DataType.LONG_OBJ, LONG_COLUMN, true, true, false, false,
+				false, false, true, true);
 	}
 
 	@Test
 	public void testLongObjNull() throws Exception {
 		Class<LocalLongObj> clazz = LocalLongObj.class;
 		Dao<LocalLongObj, Object> dao = createDao(clazz, true);
-		assertEquals(1, dao.create(new LocalLongObj()));
-		testType(clazz, null, null, null, null, DataType.LONG_OBJ, LONG_COLUMN, true, true, false, false, false, false,
-				true, true);
+		LocalLongObj foo = new LocalLongObj();
+		assertEquals(1, dao.create(foo));
+		testType(dao, foo, clazz, null, null, null, null, DataType.LONG_OBJ, LONG_COLUMN, true, true, false, false,
+				false, false, true, true);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

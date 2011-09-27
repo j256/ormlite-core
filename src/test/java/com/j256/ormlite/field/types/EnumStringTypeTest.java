@@ -31,17 +31,18 @@ public class EnumStringTypeTest extends BaseTypeTest {
 		LocalEnumString foo = new LocalEnumString();
 		foo.ourEnum = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, sqlVal, sqlVal, valStr, DataType.ENUM_STRING, ENUM_COLUMN, false, true, true, false,
-				false, false, true, false);
+		testType(dao, foo, clazz, val, sqlVal, sqlVal, valStr, DataType.ENUM_STRING, ENUM_COLUMN, false, true,
+				true, false, false, false, true, false);
 	}
 
 	@Test
 	public void testEnumStringNull() throws Exception {
 		Class<LocalEnumString> clazz = LocalEnumString.class;
 		Dao<LocalEnumString, Object> dao = createDao(clazz, true);
-		assertEquals(1, dao.create(new LocalEnumString()));
-		testType(clazz, null, null, null, null, DataType.ENUM_STRING, ENUM_COLUMN, false, true, true, false, false,
-				false, true, false);
+		LocalEnumString foo = new LocalEnumString();
+		assertEquals(1, dao.create(foo));
+		testType(dao, foo, clazz, null, null, null, null, DataType.ENUM_STRING, ENUM_COLUMN, false, true, true,
+				false, false, false, true, false);
 	}
 
 	@Test

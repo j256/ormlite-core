@@ -98,4 +98,14 @@ public abstract class BaseDataType implements DataPersister {
 	public int getDefaultWidth() {
 		return 0;
 	}
+
+	public boolean dataIsEqual(Object fieldObj1, Object fieldObj2) {
+		if (fieldObj1 == null) {
+			return (fieldObj2 == null);
+		} else if (fieldObj2 == null) {
+			return false;
+		} else {
+			return fieldObj1.equals(fieldObj2);
+		}
+	}
 }

@@ -22,8 +22,8 @@ public class LongStringTypeTest extends BaseTypeTest {
 		LocalLongString foo = new LocalLongString();
 		foo.string = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, val, val, valStr, DataType.LONG_STRING, STRING_COLUMN, false, false, true, false, false,
-				false, true, false);
+		testType(dao, foo, clazz, val, val, val, valStr, DataType.LONG_STRING, STRING_COLUMN, false, false, true,
+				false, false, false, true, false);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

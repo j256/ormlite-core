@@ -2,6 +2,7 @@ package com.j256.ormlite.field.types;
 
 import java.lang.reflect.Field;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
@@ -54,5 +55,16 @@ public class ByteArrayType extends BaseDataType {
 	@Override
 	public boolean isSelectArgRequired() {
 		return true;
+	}
+
+	@Override
+	public boolean dataIsEqual(Object fieldObj1, Object fieldObj2) {
+		if (fieldObj1 == null) {
+			return (fieldObj2 == null);
+		} else if (fieldObj2 == null) {
+			return false;
+		} else {
+			return Arrays.equals((byte[]) fieldObj1, (byte[]) fieldObj2);
+		}
 	}
 }

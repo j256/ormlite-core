@@ -30,17 +30,18 @@ public class DateTypeTest extends BaseTypeTest {
 		LocalDate foo = new LocalDate();
 		foo.date = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, val, val, valStr, DataType.DATE, DATE_COLUMN, false, true, true, false, true, false, true,
-				false);
+		testType(dao, foo, clazz, val, val, val, valStr, DataType.DATE, DATE_COLUMN, false, true, true, false, true,
+				false, true, false);
 	}
 
 	@Test
 	public void testDateNull() throws Exception {
 		Class<LocalDate> clazz = LocalDate.class;
 		Dao<LocalDate, Object> dao = createDao(clazz, true);
-		assertEquals(1, dao.create(new LocalDate()));
-		testType(clazz, null, null, null, null, DataType.DATE, DATE_COLUMN, false, true, true, false, true, false,
-				true, false);
+		LocalDate foo = new LocalDate();
+		assertEquals(1, dao.create(foo));
+		testType(dao, foo, clazz, null, null, null, null, DataType.DATE, DATE_COLUMN, false, true, true, false,
+				true, false, true, false);
 	}
 
 	@Test(expected = SQLException.class)

@@ -22,8 +22,8 @@ public class CharTypeTest extends BaseTypeTest {
 		LocalChar foo = new LocalChar();
 		foo.charField = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, val, val, valStr, DataType.CHAR, CHAR_COLUMN, false, true, true, true, false, false, true,
-				false);
+		testType(dao, foo, clazz, val, val, val, valStr, DataType.CHAR, CHAR_COLUMN, false, true, true, true, false,
+				false, true, false);
 	}
 
 	@Test

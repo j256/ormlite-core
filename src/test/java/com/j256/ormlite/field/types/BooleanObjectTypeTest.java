@@ -22,17 +22,18 @@ public class BooleanObjectTypeTest extends BaseTypeTest {
 		LocalBooleanObj foo = new LocalBooleanObj();
 		foo.bool = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, val, val, valStr, DataType.BOOLEAN_OBJ, BOOLEAN_COLUMN, false, false, false, false, false,
-				false, true, false);
+		testType(dao, foo, clazz, val, val, val, valStr, DataType.BOOLEAN_OBJ, BOOLEAN_COLUMN, false, false, false,
+				false, false, false, true, false);
 	}
 
 	@Test
 	public void testBooleanObjNull() throws Exception {
 		Class<LocalBooleanObj> clazz = LocalBooleanObj.class;
 		Dao<LocalBooleanObj, Object> dao = createDao(clazz, true);
-		assertEquals(1, dao.create(new LocalBooleanObj()));
-		testType(clazz, null, null, null, null, DataType.BOOLEAN_OBJ, BOOLEAN_COLUMN, false, false, false, false,
-				false, false, true, false);
+		LocalBooleanObj foo = new LocalBooleanObj();
+		assertEquals(1, dao.create(foo));
+		testType(dao, foo, clazz, null, null, null, null, DataType.BOOLEAN_OBJ, BOOLEAN_COLUMN, false, false, false,
+				false, false, false, true, false);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

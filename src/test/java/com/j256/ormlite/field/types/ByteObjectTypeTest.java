@@ -22,17 +22,18 @@ public class ByteObjectTypeTest extends BaseTypeTest {
 		LocalByteObj foo = new LocalByteObj();
 		foo.byteField = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, val, val, valStr, DataType.BYTE_OBJ, BYTE_COLUMN, false, true, false, false, false, false,
-				true, false);
+		testType(dao, foo, clazz, val, val, val, valStr, DataType.BYTE_OBJ, BYTE_COLUMN, false, true, false, false,
+				false, false, true, false);
 	}
 
 	@Test
 	public void testByteObjNull() throws Exception {
 		Class<LocalByteObj> clazz = LocalByteObj.class;
 		Dao<LocalByteObj, Object> dao = createDao(clazz, true);
+		LocalByteObj foo = new LocalByteObj();
 		assertEquals(1, dao.create(new LocalByteObj()));
-		testType(clazz, null, null, null, null, DataType.BYTE_OBJ, BYTE_COLUMN, false, true, false, false, false,
-				false, true, false);
+		testType(dao, foo, clazz, null, null, null, null, DataType.BYTE_OBJ, BYTE_COLUMN, false, true, false, false,
+				false, false, true, false);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

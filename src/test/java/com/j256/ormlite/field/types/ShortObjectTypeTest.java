@@ -22,17 +22,18 @@ public class ShortObjectTypeTest extends BaseTypeTest {
 		LocalShortObj foo = new LocalShortObj();
 		foo.shortField = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, val, val, valStr, DataType.SHORT_OBJ, SHORT_COLUMN, false, true, false, false, false,
-				false, true, false);
+		testType(dao, foo, clazz, val, val, val, valStr, DataType.SHORT_OBJ, SHORT_COLUMN, false, true, false,
+				false, false, false, true, false);
 	}
 
 	@Test
 	public void testShortObjNull() throws Exception {
 		Class<LocalShortObj> clazz = LocalShortObj.class;
 		Dao<LocalShortObj, Object> dao = createDao(clazz, true);
-		assertEquals(1, dao.create(new LocalShortObj()));
-		testType(clazz, null, null, null, null, DataType.SHORT_OBJ, SHORT_COLUMN, false, true, false, false, false,
-				false, true, false);
+		LocalShortObj foo = new LocalShortObj();
+		assertEquals(1, dao.create(foo));
+		testType(dao, foo, clazz, null, null, null, null, DataType.SHORT_OBJ, SHORT_COLUMN, false, true, false,
+				false, false, false, true, false);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

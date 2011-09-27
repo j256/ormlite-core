@@ -25,8 +25,8 @@ public class BooleanTypeTest extends BaseTypeTest {
 		LocalBoolean foo = new LocalBoolean();
 		foo.bool = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, val, val, valStr, DataType.BOOLEAN, BOOLEAN_COLUMN, false, false, false, true, false,
-				false, true, false);
+		testType(dao, foo, clazz, val, val, val, valStr, DataType.BOOLEAN, BOOLEAN_COLUMN, false, false, false,
+				true, false, false, true, false);
 	}
 
 	@Test

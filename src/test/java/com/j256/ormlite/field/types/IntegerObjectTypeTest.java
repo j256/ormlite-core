@@ -22,17 +22,18 @@ public class IntegerObjectTypeTest extends BaseTypeTest {
 		LocalIntObj foo = new LocalIntObj();
 		foo.intField = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, val, val, valStr, DataType.INTEGER_OBJ, INT_COLUMN, true, true, false, false, false,
-				false, true, true);
+		testType(dao, foo, clazz, val, val, val, valStr, DataType.INTEGER_OBJ, INT_COLUMN, true, true, false,
+				false, false, false, true, true);
 	}
 
 	@Test
 	public void testIntObjNull() throws Exception {
 		Class<LocalIntObj> clazz = LocalIntObj.class;
 		Dao<LocalIntObj, Object> dao = createDao(clazz, true);
-		assertEquals(1, dao.create(new LocalIntObj()));
-		testType(clazz, null, null, null, null, DataType.INTEGER_OBJ, INT_COLUMN, true, true, false, false, false,
-				false, true, true);
+		LocalIntObj foo = new LocalIntObj();
+		assertEquals(1, dao.create(foo));
+		testType(dao, foo, clazz, null, null, null, null, DataType.INTEGER_OBJ, INT_COLUMN, true, true, false,
+				false, false, false, true, true);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
