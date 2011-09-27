@@ -954,6 +954,18 @@ The @code{java.util.UUID} class persisted as a @code{VARCHAR} type.  It saves it
 in which case whenever it is inserted, @code{java.util.UUID.randomUUID()} is called and set on the field.
 @xref{GeneratedId Column}.
 
+@cindex BigIteger type
+@item BigInteger (DataType.BIGINTEGER)
+
+The @code{java.math.BigInteger} class persisted as a @code{VARCHAR} type.  It is saved using the @code{bigInteger.toString()}
+and uses the string constructor to convert it back again.
+
+@cindex BigDecimal type
+@item BigDecimal (DataType.BIGDECIMAL)
+
+The @code{java.math.BigDecimal} class persisted as a @code{VARCHAR} type.  It is saved using the @code{bigDecimal.toString()}
+and uses the string constructor to convert it back again.
+
 @end table
 
 @emph{NOTE:} ORMLite also supports the concept of foreign objects where the id of another object is
@@ -3498,7 +3510,7 @@ memory. Any future queries will re-request them from the database.
 @cindex logging information
 ORMLite uses a log system which can plug into Apache commons logging, Log4j, Android Log, or its own internal
 log implementations.  The logger code first looks for the @code{android.util.Log} and if found will use the Android internal
-logger.  Next it looks for@code{org.apache.commons.logging.LogFactory} class in the class-path -- if found it will use Apache
+logger.  Next it looks for @code{org.apache.commons.logging.LogFactory} class in the class-path -- if found it will use Apache
 commons logging.  If that class is not found it then looks for @code{org.apache.log4j.Logger} and if found will use Log4j.
 If none of these classes are available it will use an internal logger -- see @code{LocalLog}.  The logger code also provides
 simple @{@} argument expansion like @code{slf4j} which means that you can save on @code{toString()} calls and
@@ -3539,6 +3551,19 @@ log4j.logger.com.j256.ormlite=DEBUG
 @emph{Notice} that you can uncomment the last lines in the above log4j.properties file to log the arguments to the
 various SQL calls.  This may expose passwords or other sensitive information in the database so probably should
 only be used during debugging and should not be the default.
+
+If you are using the @code{LocalLog} logger (which is helpful for testing at least) then you can configure it using
+a @code{ormliteLocalLog.properties} file.  The file configures the log output of the ORMLite LocalLog class.
+Lines in the file have the format @code{class-regex-pattern = Level}.  For example:
+
+@example
+com\.j256\.ormlite.* = DEBUG
+com\.j256\.ormlite\.stmt\.mapped\.BaseMappedStatement = TRACE
+com\.j256\.ormlite\.stmt\.mapped\.MappedCreate = TRACE
+com\.j256\.ormlite\.stmt\.StatementExecutor = TRACE
+@end example
+
+@emph{NOTE:} You should escape any period characters with a single backslash unless they are part of a regex match.
 
 For logging with Android, @xref{Android Logging}.
 
@@ -3668,7 +3693,7 @@ a class without an ID field, an exception will be thrown.  The following operati
 
 @item If you create an object using the DAO, it will be added to the cache.
 
-@item When you query for an object using the standard query methods using the DAO, if the object is in the cache it will be returned.  If
+@item When you query for an object using the standard query methods from the DAO, if the object is in the cache it will be returned.  If
 it is not in the cache then it will be added to the cache.  This does @emph{not} apply to the @code{queryRaw()} methods.
 
 @item If you update an object with the database using the DAO, if it exists in the cache it will be updated as well. 
@@ -3683,7 +3708,8 @@ it is not in the cache then it will be added to the cache.  This does @emph{not}
 @cindex ReferenceObjectCache
 By default the cache that is used internally by ORMLite if you enable the cache with @code{true} will be a "weak-reference" cache.  This
 means that if no other code has a strong reference to the object, it will be removed from the cache during the next garbage collection
-cycle. ORMLite also has a "soft-reference" cache which will use more memory to hold objects if available.  You can enable it using:
+cycle. ORMLite also has a "soft-reference" cache which will use more memory to hold objects if available and supported by your OS.  You
+can enable it using:
 
 @example
 Dao<Account, String> accountDao =
@@ -3692,6 +3718,10 @@ Dao<Account, String> accountDao =
 accountDao.setObjectCache(
     ReferenceObjectCache.makeSoftCache());
 @end example
+
+The reference caches store a small object that refers to the cached object.  These small objects only get cleaned up when the object is
+accessed.  You should consider calling the @code{cleanNullReferencesAll()} method on your cache to remove these objects and free up
+their associated memory on occasion.
 
 @cindex LRU cache
 @cindex LruObjectCache
@@ -3706,8 +3736,9 @@ Dao<Account, String> accountDao =
 accountDao.setObjectCache(new LruObjectCache(100));
 @end example
 
-You can also implement your own cache as long as it implements the @code{ObjectCache} interface.  You can clear the cache if you want to
-free up memory and you can also disable the cache from the DAO if necessary.
+You can also implement your own cache class that implements the @code{ObjectCache} interface.
+
+All of the caches can be cleared if you want to free up memory and you can also disable the cache from the DAO if necessary.
 
 @example
 // clear all Account items from the cache

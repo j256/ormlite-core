@@ -1,5 +1,10 @@
 package com.j256.ormlite.field;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
+import com.j256.ormlite.field.types.BigDecimalType;
+import com.j256.ormlite.field.types.BigIntegerType;
 import com.j256.ormlite.field.types.BooleanObjectType;
 import com.j256.ormlite.field.types.BooleanType;
 import com.j256.ormlite.field.types.ByteArrayType;
@@ -162,6 +167,14 @@ public enum DataType {
 	 * Persists the {@link java.util.UUID} Java class.
 	 */
 	UUID(UuidType.getSingleton()),
+	/**
+	 * Persists the {@link BigInteger} Java class.
+	 */
+	BIGINTEGER(BigIntegerType.getSingleton()),
+	/**
+	 * Persists the {@link BigDecimal} Java class.
+	 */
+	BIGDECIMAL(BigDecimalType.getSingleton()),
 	/**
 	 * Marker for fields that are unknown.
 	 */
