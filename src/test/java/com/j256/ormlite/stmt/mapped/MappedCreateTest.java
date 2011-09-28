@@ -239,12 +239,13 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 		assertEquals(1, results.size());
 		assertEquals(foreign.id, results.get(0).id);
 
-		// now we see if the foreign type already has an id set
+		// now we create it when the foreign field already has an id set
 		ForeignAutoCreate foo2 = new ForeignAutoCreate();
 		foo2.foreign = foreign;
 		assertEquals(1, foreignAutoCreateDao.create(foo1));
 
 		results = foreignAutoCreateForeignDao.queryForAll();
+		// no additional results should be found
 		assertEquals(1, results.size());
 		assertEquals(foreign.id, results.get(0).id);
 	}
