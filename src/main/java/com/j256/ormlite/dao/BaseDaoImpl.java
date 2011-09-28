@@ -609,13 +609,8 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		for (FieldType fieldType : tableInfo.getFieldTypes()) {
 			Object fieldObj1 = fieldType.extractJavaFieldValue(data1);
 			Object fieldObj2 = fieldType.extractJavaFieldValue(data2);
-			if (fieldObj1 == null) {
-				if (fieldObj2 != null) {
-					return false;
-				}
-			} else if (fieldObj2 == null) {
-				return false;
-			} else if (!fieldObj1.equals(fieldObj2)) {
+			// we can't just do fieldObj1.equals(fieldObj2) because of byte[].equals()
+			if (!fieldType.getDataPersister().dataIsEqual(fieldObj1, fieldObj2)) {
 				return false;
 			}
 		}
