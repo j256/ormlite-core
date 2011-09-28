@@ -53,6 +53,7 @@ public class DatabaseFieldConfig {
 	private Class<? extends DataPersister> persisterClass = DEFAULT_PERSISTER_CLASS;
 	private boolean allowGeneratedIdInsert;
 	private String columnDefinition;
+	private boolean foreignAutoCreate;
 
 	public DatabaseFieldConfig() {
 		// for spring
@@ -382,6 +383,14 @@ public class DatabaseFieldConfig {
 		this.columnDefinition = columnDefinition;
 	}
 
+	public boolean isForeignAutoCreate() {
+		return foreignAutoCreate;
+	}
+
+	public void setForeignAutoCreate(boolean foreignAutoCreate) {
+		this.foreignAutoCreate = foreignAutoCreate;
+	}
+
 	/**
 	 * Create and return a config converted from a {@link Field} that may have either a {@link DatabaseField} annotation
 	 * or the javax.persistence annotations.
@@ -532,6 +541,7 @@ public class DatabaseFieldConfig {
 		if (!columnDefinition.equals(DatabaseField.DEFAULT_STRING)) {
 			config.columnDefinition = columnDefinition;
 		}
+		config.foreignAutoCreate = databaseField.foreignAutoCreate();
 
 		return config;
 	}
@@ -604,6 +614,9 @@ public class DatabaseFieldConfig {
 		}
 		if (otherAnno != null) {
 			config.columnDefinition = otherAnno.columnDefinition();
+		}
+		if (foreignAnno != null) {
+			config.foreignAutoCreate = foreignAnno.foreignAutoCreate();
 		}
 
 		return config;

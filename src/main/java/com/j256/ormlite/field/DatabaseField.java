@@ -209,10 +209,6 @@ public @interface DatabaseField {
 	 * This will _not_ automagically create the foreign object but when the object is queried, a separate database call
 	 * will be made to load of the fields of the foreign object via an internal DAO. The default is to just have the ID
 	 * field in the object retrieved and for the caller to call refresh on the correct DAO.
-	 * 
-	 * <p>
-	 * <b>NOTE:</b> This will create another DAO object so that low memory devices may want to call refresh by hand.
-	 * </p>
 	 */
 	boolean foreignAutoRefresh() default false;
 
@@ -251,4 +247,24 @@ public @interface DatabaseField {
 	 * to enable some per-database feature or to override the default SQL generated.
 	 */
 	String columnDefinition() default DEFAULT_STRING;
+
+	/**
+	 * Set this to be true (default false) to have the foreign field will be automagically created using its internal
+	 * DAO if the ID field is not set in it. So when you call dao.create() on the parent object, any field with this set
+	 * to true will possibly be created via an internal DAO. By default you have to create the object using its DAO
+	 * directly.
+	 * 
+	 * <p>
+	 * 
+	 * <pre>
+	 * Order order1 = new Order();
+	 * // account1 has not been created in the db yet
+	 * order1.account = account1;
+	 * // this will create order1 _and_ pass order1.account to the internal account dao.create().
+	 * orderDao.create(order1);
+	 * </pre>
+	 * 
+	 * </p>
+	 */
+	boolean foreignAutoCreate() default false;
 }

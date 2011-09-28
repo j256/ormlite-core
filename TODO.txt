@@ -39,12 +39,6 @@
 - support batch inserts that we can compile a statement and then directly set the args on it for each data object from a collection
 	- maybe get rid of the Object[] arguments and set the arguments directly from the data
 
-- consider allowing auto foreign object creation with internal doa's
-	- ANSWER: could be confusing and misleading, no easy way to see if the id field is set
-	- need to be careful of recursion
-	- maybe you could see if the id was set or something?
-	- maybe just require someone to use the other DAO
-
 - remove the restriction on classes with just the ID
 	- just handle the case of update and make it a no-op
 

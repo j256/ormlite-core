@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
+import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.misc.BaseDaoEnabled;
 import com.j256.ormlite.misc.SqlExceptionUtil;
@@ -27,6 +28,7 @@ public class TableInfo<T, ID> {
 	private final FieldType[] fieldTypes;
 	private final FieldType idField;
 	private final Constructor<T> constructor;
+	private final boolean foreignAutoCreate;
 	private Map<String, FieldType> fieldNameMap;
 
 	/**
@@ -56,6 +58,7 @@ public class TableInfo<T, ID> {
 		this.fieldTypes = tableConfig.getFieldTypes(databaseType);
 		// find the id field
 		FieldType findIdFieldType = null;
+		boolean foreignAutoCreate = false;
 		for (FieldType fieldType : fieldTypes) {
 			if (fieldType.isId() || fieldType.isGeneratedId() || fieldType.isGeneratedIdSequence()) {
 				if (findIdFieldType != null) {
@@ -63,6 +66,9 @@ public class TableInfo<T, ID> {
 							+ findIdFieldType + "," + fieldType + ")");
 				}
 				findIdFieldType = fieldType;
+			}
+			if (fieldType.isForeignAutoCreate()) {
+				foreignAutoCreate = true;
 			}
 		}
 		// if we just have 1 field and it is a generated-id then inserts will be blank which is not allowed.
@@ -72,6 +78,7 @@ public class TableInfo<T, ID> {
 		// can be null if there is no id field
 		this.idField = findIdFieldType;
 		this.constructor = tableConfig.getConstructor();
+		this.foreignAutoCreate = foreignAutoCreate;
 	}
 
 	/**
@@ -182,5 +189,12 @@ public class TableInfo<T, ID> {
 	public boolean isUpdatable() {
 		// to update we must have an id field and there must be more than just the id field
 		return (idField != null && fieldTypes.length > 1);
+	}
+
+	/**
+	 * Return true if one of the fields has {@link DatabaseField#foreignAutoCreate()} enabled.
+	 */
+	public boolean isForeignAutoCreate() {
+		return foreignAutoCreate;
 	}
 }

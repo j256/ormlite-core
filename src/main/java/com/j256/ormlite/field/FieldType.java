@@ -223,6 +223,14 @@ public class FieldType {
 			throw new IllegalArgumentException("Field " + field.getName()
 					+ " must be a generated-id if allowGeneratedIdInsert = true");
 		}
+		if (fieldConfig.isForeignAutoRefresh() && !fieldConfig.isForeign()) {
+			throw new IllegalArgumentException("Field " + field.getName()
+					+ " must have foreign = true if foreignAutoRefresh = true");
+		}
+		if (fieldConfig.isForeignAutoCreate() && !fieldConfig.isForeign()) {
+			throw new IllegalArgumentException("Field " + field.getName()
+					+ " must have foreign = true if foreignAutoCreate = true");
+		}
 		assignDataType(databaseType, dataPersister);
 	}
 
@@ -265,10 +273,6 @@ public class FieldType {
 			foreignConstructor = foreignTableInfo.getConstructor();
 			foreignFieldType = null;
 		} else if (fieldConfig.isForeign()) {
-			/*
-			 * If we are a foreign-field or if the foreign-auto-refresh was in too deep then we configure this as a
-			 * foreign field. This is <= instead of < because we go one more level than the foreign auto-refresh.
-			 */
 			if (this.dataPersister != null && this.dataPersister.isPrimitive()) {
 				throw new IllegalArgumentException("Field " + this + " is a primitive class " + clazz
 						+ " but marked as foreign");
@@ -281,7 +285,7 @@ public class FieldType {
 				foreignTableInfo = ((BaseDaoImpl<?, ?>) foreignDao).getTableInfo();
 				foreignIdField = foreignTableInfo.getIdField();
 				foreignConstructor = foreignTableInfo.getConstructor();
-			} else if (BaseDaoEnabled.class.isAssignableFrom(clazz)) {
+			} else if (BaseDaoEnabled.class.isAssignableFrom(clazz) || fieldConfig.isForeignAutoCreate()) {
 				// NOTE: the cast is necessary for maven
 				foreignDao = (BaseDaoImpl<?, ?>) DaoManager.createDao(connectionSource, clazz);
 				foreignTableInfo = ((BaseDaoImpl<?, ?>) foreignDao).getTableInfo();
@@ -534,7 +538,7 @@ public class FieldType {
 	/**
 	 * Return the value from the field in the object that is defined by this FieldType.
 	 */
-	public <FV> FV extractJavaFieldValue(Object object) throws SQLException {
+	public <FV> FV extractRawJavaFieldValue(Object object) throws SQLException {
 		Object val;
 		if (fieldGetMethod == null) {
 			try {
@@ -551,13 +555,22 @@ public class FieldType {
 			}
 		}
 
-		if (val == null) {
-			return null;
-		}
+		@SuppressWarnings("unchecked")
+		FV converted = (FV) val;
+		return converted;
+	}
+
+	/**
+	 * Return the value from the field in the object that is defined by this FieldType. If the field is a foreign object
+	 * then the ID of the field is returned instead.
+	 */
+	public <FV> FV extractJavaFieldValue(Object object) throws SQLException {
+
+		Object val = extractRawJavaFieldValue(object);
 
 		// if this is a foreign object then we want its id field
-		if (foreignIdField != null) {
-			val = foreignIdField.extractJavaFieldValue(val);
+		if (foreignIdField != null && val != null) {
+			val = foreignIdField.extractRawJavaFieldValue(val);
 		}
 
 		@SuppressWarnings("unchecked")
@@ -742,6 +755,13 @@ public class FieldType {
 	}
 
 	/**
+	 * Call through to {@link DatabaseFieldConfig#isForeignAutoCreate()}
+	 */
+	public boolean isForeignAutoCreate() {
+		return fieldConfig.isForeignAutoCreate();
+	}
+
+	/**
 	 * Call through to {@link DataPersister#generateId()}
 	 */
 	public Object generateId() {
@@ -797,6 +817,15 @@ public class FieldType {
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * Pass the foreign data argument to the foreign {@link Dao#create(Object)} method.
+	 */
+	public <T> int createWithForeignDao(T foreignData) throws SQLException {
+		@SuppressWarnings("unchecked")
+		Dao<T, ?> castDao = (Dao<T, ?>) foreignDao;
+		return castDao.create(foreignData);
 	}
 
 	/**

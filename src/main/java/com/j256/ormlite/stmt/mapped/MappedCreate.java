@@ -85,6 +85,21 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 				// need to do the (Object) cast to force args to be a single object
 				logger.trace("insert arguments: {}", (Object) args);
 			}
+
+			// implement {@link DatabaseField#foreignAutoCreate()}
+			if (tableInfo.isForeignAutoCreate()) {
+				for (FieldType fieldType : tableInfo.getFieldTypes()) {
+					if (!fieldType.isForeignAutoCreate()) {
+						continue;
+					}
+					// get the field value
+					Object foreignObj = fieldType.extractRawJavaFieldValue(data);
+					if (foreignObj != null && fieldType.getForeignIdField().isObjectsFieldValueDefault(foreignObj)) {
+						fieldType.createWithForeignDao(foreignObj);
+					}
+				}
+			}
+
 			return rowC;
 		} catch (SQLException e) {
 			throw SqlExceptionUtil.create("Unable to run insert stmt on object " + data + ": " + statement, e);

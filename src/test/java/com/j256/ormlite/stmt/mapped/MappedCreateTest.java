@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import org.easymock.IAnswer;
 import org.easymock.internal.LastControl;
@@ -217,6 +218,37 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 		assertFalse(foo3.id == foo2.id);
 	}
 
+	@Test
+	public void testForeignAutoCreate() throws Exception {
+		Dao<ForeignAutoCreate, Long> foreignAutoCreateDao = createDao(ForeignAutoCreate.class, true);
+		Dao<ForeignAutoCreateForeign, Long> foreignAutoCreateForeignDao =
+				createDao(ForeignAutoCreateForeign.class, true);
+
+		List<ForeignAutoCreateForeign> results = foreignAutoCreateForeignDao.queryForAll();
+		assertEquals(0, results.size());
+
+		ForeignAutoCreateForeign foreign = new ForeignAutoCreateForeign();
+		String stuff = "fopewjfpwejfpwjfw";
+		foreign.stuff = stuff;
+
+		ForeignAutoCreate foo1 = new ForeignAutoCreate();
+		foo1.foreign = foreign;
+		assertEquals(1, foreignAutoCreateDao.create(foo1));
+
+		results = foreignAutoCreateForeignDao.queryForAll();
+		assertEquals(1, results.size());
+		assertEquals(foreign.id, results.get(0).id);
+
+		// now we see if the foreign type already has an id set
+		ForeignAutoCreate foo2 = new ForeignAutoCreate();
+		foo2.foreign = foreign;
+		assertEquals(1, foreignAutoCreateDao.create(foo1));
+
+		results = foreignAutoCreateForeignDao.queryForAll();
+		assertEquals(1, results.size());
+		assertEquals(foreign.id, results.get(0).id);
+	}
+
 	private static class GeneratedId {
 		@DatabaseField(generatedId = true)
 		public int genId;
@@ -282,6 +314,20 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 		int id;
 		@DatabaseField
 		public String stuff;
+	}
+
+	protected static class ForeignAutoCreate {
+		@DatabaseField(generatedId = true)
+		long id;
+		@DatabaseField(foreign = true, foreignAutoCreate = true)
+		public ForeignAutoCreateForeign foreign;
+	}
+
+	protected static class ForeignAutoCreateForeign {
+		@DatabaseField(generatedId = true)
+		long id;
+		@DatabaseField
+		String stuff;
 	}
 
 	private static class NeedsSequenceDatabaseType extends BaseDatabaseType {
