@@ -152,9 +152,13 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 		assertNull(dao.queryForId(id));
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testJustIdInsert() throws Exception {
-		createDao(JustId.class, true);
+		Dao<JustId, Object> dao = createDao(JustId.class, true);
+		JustId foo = new JustId();
+		assertEquals(1, dao.create(foo));
+		assertEquals(1, dao.refresh(foo));
+		assertEquals(0, dao.update(foo));
 	}
 
 	@Test

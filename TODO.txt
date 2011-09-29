@@ -39,9 +39,6 @@
 - support batch inserts that we can compile a statement and then directly set the args on it for each data object from a collection
 	- maybe get rid of the Object[] arguments and set the arguments directly from the data
 
-- remove the restriction on classes with just the ID
-	- just handle the case of update and make it a no-op
-
 - JPA:
 	- @Enumerated(EnumType.STRING)
 

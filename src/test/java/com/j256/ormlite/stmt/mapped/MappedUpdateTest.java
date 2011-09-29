@@ -3,6 +3,7 @@ package com.j256.ormlite.stmt.mapped;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
+import static org.junit.Assert.assertEquals;
 
 import java.sql.SQLException;
 
@@ -36,14 +37,14 @@ public class MappedUpdateTest {
 		se.update(null, noId, null);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testUpdateJustId() throws Exception {
 		StatementExecutor<JustId, Integer> se =
 				new StatementExecutor<JustId, Integer>(databaseType, new TableInfo<JustId, Integer>(connectionSource,
 						null, JustId.class), null);
 		JustId justId = new JustId();
 		justId.id = 1;
-		se.update(null, justId, null);
+		assertEquals(0, se.update(null, justId, null));
 	}
 
 	@Test(expected = SQLException.class)

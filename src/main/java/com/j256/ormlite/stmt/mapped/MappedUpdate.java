@@ -26,10 +26,6 @@ public class MappedUpdate<T, ID> extends BaseMappedStatement<T, ID> {
 		if (idField == null) {
 			throw new SQLException("Cannot update " + tableInfo.getDataClass() + " because it doesn't have an id field");
 		}
-		if (tableInfo.getFieldTypes().length == 1) {
-			throw new SQLException("Cannot update " + tableInfo.getDataClass()
-					+ " with only the id field.  You should use updateId().");
-		}
 		StringBuilder sb = new StringBuilder(64);
 		appendTableName(databaseType, sb, "UPDATE ", tableInfo.getTableName());
 		boolean first = true;
@@ -69,6 +65,10 @@ public class MappedUpdate<T, ID> extends BaseMappedStatement<T, ID> {
 	 */
 	public int update(DatabaseConnection databaseConnection, T data, ObjectCache objectCache) throws SQLException {
 		try {
+			// there is always and id field as an argument so just return 0 lines updated
+			if (argFieldTypes.length <= 1) {
+				return 0;
+			}
 			Object[] args = getFieldObjects(data);
 			int rowC = databaseConnection.update(statement, args, argFieldTypes);
 			if (rowC > 0 && objectCache != null) {

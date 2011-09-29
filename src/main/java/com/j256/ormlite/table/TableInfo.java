@@ -71,10 +71,6 @@ public class TableInfo<T, ID> {
 				foreignAutoCreate = true;
 			}
 		}
-		// if we just have 1 field and it is a generated-id then inserts will be blank which is not allowed.
-		if (fieldTypes.length == 1 && findIdFieldType != null && findIdFieldType.isGeneratedId()) {
-			throw new SQLException("Must have more than a single field which is a generated-id for class " + dataClass);
-		}
 		// can be null if there is no id field
 		this.idField = findIdFieldType;
 		this.constructor = tableConfig.getConstructor();

@@ -78,11 +78,6 @@ public class TableInfoTest extends BaseCoreTest {
 		new TableInfo<NoTableNameAnnotation, Void>(databaseType, null, tableConfig);
 	}
 
-	@Test(expected = SQLException.class)
-	public void testJustGeneratedId() throws Exception {
-		new TableInfo<JustGeneratedId, Integer>(connectionSource, null, JustGeneratedId.class);
-	}
-
 	@Test
 	public void testConstruct() throws Exception {
 		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
@@ -150,13 +145,6 @@ public class TableInfoTest extends BaseCoreTest {
 	protected static class NoTableNameAnnotation {
 		@DatabaseField
 		String id;
-	}
-
-	protected static class JustGeneratedId {
-		@DatabaseField(generatedId = true)
-		public int id;
-		public JustGeneratedId() {
-		}
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
