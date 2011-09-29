@@ -112,7 +112,7 @@ public abstract class BaseSelectArg implements ArgumentHolder {
 				return val.toString();
 			}
 		} catch (SQLException e) {
-			return "[could not get value: " + e.getMessage() + "]";
+			return "[could not get value: " + e + "]";
 		}
 	}
 }

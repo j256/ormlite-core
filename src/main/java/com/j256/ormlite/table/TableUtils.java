@@ -453,7 +453,7 @@ public class TableUtils {
 				logger.info("executed {} table statement changed {} rows: {}", label, rowC, statement);
 			} catch (SQLException e) {
 				if (ignoreErrors) {
-					logger.info("ignoring {} error '{}' for statement: {}", label, e.getMessage(), statement);
+					logger.info("ignoring {} error '{}' for statement: {}", label, e, statement);
 				} else {
 					throw SqlExceptionUtil.create("SQL statement failed: " + statement, e);
 				}
