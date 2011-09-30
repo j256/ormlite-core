@@ -15,14 +15,15 @@
 	- foreign key constraint can be in addition to (or required for) the foreign=true
 	- is this handled by the columnDefinition?
 
-- add a createTable call to the DAO instead of using tableUtils
+- need to document the custom persister stuff:
+	- DataPersiterManager
+	- DatabaseField.persisterClass
 
-- flesh out the SimpleDB version of the library:
-	- get all tests passing
-	- think about batch operations
-	- maybe add a insert(Collection)?
+- need to add a Foreign field section under the query builder section
+	- needs to explain how to do queries for foreign fields
+	- need to explain that we can't query for a foreign collection
 
-- backend for HBase (Hadoop's bigtable) 
+- need to better document the internal logger in case you aren't using log4j 
 
 - look into storing the underlying compiled statement somewhere
 	- maybe cacheing it per connection?
@@ -39,8 +40,12 @@
 - support batch inserts that we can compile a statement and then directly set the args on it for each data object from a collection
 	- maybe get rid of the Object[] arguments and set the arguments directly from the data
 
-- JPA:
-	- @Enumerated(EnumType.STRING)
+- flesh out the SimpleDB version of the library:
+	- get all tests passing
+	- think about batch operations
+	- maybe add a insert(Collection)?
+
+- backend for HBase (Hadoop's bigtable) 
 
 - test QueryBuilder.groupBy() in field and raw form
 	- org.h2.jdbc.JdbcSQLException: Column "FOO.ID" must be in the GROUP BY list; SQL statement:
@@ -52,17 +57,10 @@
 		- update only those fields that are not null
 	- createOrUpdateNonDefault()
 
-- need to document the custom persister stuff:
-	- DataPersiterManager
-	- DatabaseField.persisterClass
-
-- need to add a Foreign field section under the query builder section
-	- needs to explain how to do queries for foreign fields
-	- need to explain that we can't query for a foreign collection
-
-- need to better document the internal logger in case you aren't using log4j 
-
 -----------------------------------------------------------------------------------------------------------------------------------
+
+- add a createTable call to the DAO instead of using tableUtils
+	- ANSWER: adding a createTable() would also add a dropTable().  These are constructive enough to not but on the DAO.
 
 - for objects that a user does not have control over, how about the ability of defining a Method to construct a particular class
 	- ANSWER: not good cost/benefit
@@ -126,3 +124,4 @@
  	- DatabaseMetaData metaData = connection.getMetaData();
 	- metaData.supportsGetGeneratedKeys() -- not exactly what we need
 	- supportsMultipleTransactions() -- in different connections so not relevant
+	

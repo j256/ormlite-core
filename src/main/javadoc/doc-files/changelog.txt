@@ -1,6 +1,8 @@
 4.27: 10/XX/2011 (svn rYYYY)
-	* CORE: Added support for @DatabaseField(foreignAutoCreate=true) for creating foreign fields using internal DAO.
+	* CORE: Added @DatabaseField(foreignAutoCreate=true) for auto-creating foreign fields with blank IDs using the internal DAO.
 	* CORE: Added support for storing BigDecimal and BigInteger fields.  Thanks to Pedro Velasco.  Resolves feature #3414432.
+	* CORE: Added support for the javax.persistence.Enumerated annotation for setting @Enumerated(ORDINAL) or @Enumerated(STRING).
+	* ANDROID: Better handling of errors during java auto-detection around the new table configuration code.  Thanks to Ming Lin.
 
 4.26: 9/26/2011 (svn r1978)
 	* CORE: Added the first take on a object cache.  Thanks to the dev list for suggestions.
@@ -12,7 +14,8 @@
 	* CORE: Fixed problem with self-generated id fields not being marked as primary.  Thanks to Craig Andrews.  Fixes bug #3406600.
 	* CORE: Fixed a problem where default was canBeNull=false with javax persistence macros.  Thanks to A.  Fixes bug #3410640.
 	* CORE: Removed the maxForeignLevel() field from @DatabaseField which was deprecated in 4.22.
-	* CORE: Added table and field configuration file reading and writing. 
+	* CORE: Added table and field configuration file reading and writing.
+	* CORE: Added implements Serializable to the foreign collection objects.  Thanks to Mari‡k K‡lm‡n.  Fixes bug #3411227. 
 	* ANDROID: Added field configuration utility for avoiding Dao creation performance problems with annotations.  Thanks to Ian Dees.
 	* ANDROID: Added @DatabaseFieldSimple and other smaller annotations for speeding up Android configuration.
 	* ANDROID: Added SQLiteDatabase constructor to AndroidConnectionSource for external SQLite databases.  Thanks to Michael.

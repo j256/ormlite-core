@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DataPersisterManager;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseFieldConfig;
 
 /**
@@ -28,6 +29,7 @@ public class JavaxPersistence {
 		Annotation oneToOneAnnotation = null;
 		Annotation manyToOneAnnotation = null;
 		Annotation joinColumnAnnotation = null;
+		Annotation enumeratedAnnotation = null;
 
 		for (Annotation annotation : field.getAnnotations()) {
 			Class<?> annotationClass = annotation.annotationType();
@@ -49,10 +51,13 @@ public class JavaxPersistence {
 			if (annotationClass.getName().equals("javax.persistence.JoinColumn")) {
 				joinColumnAnnotation = annotation;
 			}
+			if (annotationClass.getName().equals("javax.persistence.Enumerated")) {
+				enumeratedAnnotation = annotation;
+			}
 		}
 
 		if (columnAnnotation == null && idAnnotation == null && oneToOneAnnotation == null
-				&& manyToOneAnnotation == null) {
+				&& manyToOneAnnotation == null && enumeratedAnnotation == null) {
 			return null;
 		}
 
@@ -125,7 +130,23 @@ public class JavaxPersistence {
 				}
 			}
 		}
-		config.setDataPersister(DataPersisterManager.lookupForField(field));
+		if (enumeratedAnnotation != null) {
+			try {
+				Method method = enumeratedAnnotation.getClass().getMethod("value");
+				Object typeValue = method.invoke(enumeratedAnnotation);
+				if (typeValue != null && typeValue.toString().equals("STRING")) {
+					config.setDataType(DataType.ENUM_STRING);
+				} else {
+					config.setDataType(DataType.ENUM_INTEGER);
+				}
+			} catch (Exception e) {
+				throw SqlExceptionUtil.create("Problem accessing fields from the @Enumerated annotation for field "
+						+ field, e);
+			}
+		}
+		if (config.getDataPersister() == null) {
+			config.setDataPersister(DataPersisterManager.lookupForField(field));
+		}
 		config.setUseGetSet(DatabaseFieldConfig.findGetMethod(field, false) != null
 				&& DatabaseFieldConfig.findSetMethod(field, false) != null);
 		return config;

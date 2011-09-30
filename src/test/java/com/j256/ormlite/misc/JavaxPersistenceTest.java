@@ -11,6 +11,8 @@ import java.sql.SQLException;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -21,6 +23,8 @@ import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.field.DatabaseFieldConfig;
+import com.j256.ormlite.field.types.EnumIntegerType;
+import com.j256.ormlite.field.types.EnumStringType;
 import com.j256.ormlite.h2.H2DatabaseType;
 
 public class JavaxPersistenceTest extends BaseCoreTest {
@@ -137,6 +141,24 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 				assertFalse(config.isCanBeNull());
 				assertNull(config.getColumnName());
 				assertNull(config.getColumnDefinition());
+			} else if (field.getName().equals("ourEnumOrdinal")) {
+				assertFalse(config.isId());
+				assertFalse(config.isGeneratedId());
+				assertFalse(config.isForeign());
+				assertFalse(config.isUnique());
+				assertTrue(config.isCanBeNull());
+				assertNull(config.getColumnName());
+				assertNull(config.getColumnDefinition());
+				assertTrue(config.getDataPersister() instanceof EnumIntegerType);
+			} else if (field.getName().equals("ourEnumString")) {
+				assertFalse(config.isId());
+				assertFalse(config.isGeneratedId());
+				assertFalse(config.isForeign());
+				assertFalse(config.isUnique());
+				assertTrue(config.isCanBeNull());
+				assertNull(config.getColumnName());
+				assertNull(config.getColumnDefinition());
+				assertTrue(config.getDataPersister() instanceof EnumStringType);
 			} else {
 				System.err.println("\n\n\nUnknown field: " + field.getName());
 			}
@@ -196,6 +218,10 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 		@ManyToOne
 		@JoinColumn(nullable = false)
 		String nullableJoinColumn;
+		@Enumerated
+		OurEnum ourEnumOrdinal;
+		@Enumerated(EnumType.STRING)
+		OurEnum ourEnumString;
 		public Javax() {
 		}
 	}
@@ -217,6 +243,13 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 		int id;
 		@Column
 		String stuff;
+	}
+
+	private enum OurEnum {
+		ONE,
+		TWO,
+		// end
+		;
 	}
 
 	private static class UpperCaseFieldDatabaseType extends H2DatabaseType {
