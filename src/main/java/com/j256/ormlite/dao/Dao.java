@@ -1,5 +1,6 @@
 package com.j256.ormlite.dao;
 
+import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -532,7 +533,8 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 
 	/**
 	 * Same as {@link #setObjectCache(boolean)} except you specify the actual cache instance to use for the DAO. This
-	 * allows you to inject your own cache classes. Call it with null to disable the cache.
+	 * allows you to use a {@link ReferenceObjectCache} with {@link SoftReference} setting, the {@link LruObjectCache},
+	 * or inject your own cache implementation. Call it with null to disable the cache.
 	 * 
 	 * @throws SQLException
 	 *             If the DAO's class does not have an id field which is required by the {@link ObjectCache}.
