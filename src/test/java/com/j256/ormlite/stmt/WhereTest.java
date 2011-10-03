@@ -765,6 +765,15 @@ public class WhereTest extends BaseCoreTest {
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void testInnerQuerySubQuery() throws Exception {
+		Dao<Foo, Object> fooDao = createDao(Foo.class, true);
+
+		fooDao.queryBuilder().where().in(Foo.ID_COLUMN_NAME,
+		// this is a problem because eq() returns a Where not a QueryBuilder
+				fooDao.queryBuilder().selectColumns(Foo.ID_COLUMN_NAME).where().eq(Foo.ID_COLUMN_NAME, 1)).query();
+	}
+
 	private TableInfo<Foo, String> createTableInfo() throws SQLException {
 		return new TableInfo<Foo, String>(connectionSource, null, Foo.class);
 	}

@@ -235,8 +235,14 @@ public class Where<T, ID> {
 	 * Add a IN clause so the column must be equal-to one of the objects passed in.
 	 */
 	public Where<T, ID> in(String columnName, Object... objects) throws SQLException {
-		if (objects.length == 1 && objects[0].getClass().isArray()) {
-			throw new IllegalArgumentException("in(Object... objects) seems to be an array within an array");
+		if (objects.length == 1) {
+			if (objects[0].getClass().isArray()) {
+				throw new IllegalArgumentException("Object argument to IN seems to be an array within an array");
+			}
+			if (objects[0].getClass() == Where.class) {
+				throw new IllegalArgumentException(
+						"Object argument to IN seems to be a Where.class instead of a QueryBuilder.class");
+			}
 		}
 		addClause(new In(columnName, findColumnFieldType(columnName), objects));
 		return this;
