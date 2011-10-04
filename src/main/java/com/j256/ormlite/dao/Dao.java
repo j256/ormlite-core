@@ -321,44 +321,6 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public CloseableIterator<T> iterator();
 
 	/**
-	 * This makes a one time use iterable class that can be closed afterwards. The DAO itself is
-	 * {@link CloseableWrappedIterable} but multiple threads can each call this to get their own closeable iterable.
-	 * This allows you to do something like:
-	 * 
-	 * <blockquote>
-	 * 
-	 * <pre>
-	 * CloseableWrappedIterable<Foo> wrappedIterable = fooDao.getWrappedIterable();
-	 * try {
-	 *   for (Foo foo : wrappedIterable) {
-	 *       ...
-	 *   }
-	 * } finally {
-	 *   wrappedIterable.close();
-	 * }
-	 * </pre>
-	 * 
-	 * </blockquote>
-	 */
-	public CloseableWrappedIterable<T> getWrappedIterable();
-
-	/**
-	 * Same as {@link #getWrappedIterable()} but with a prepared query parameter. See {@link #queryBuilder} or
-	 * {@link #iterator(PreparedQuery)} for more information.
-	 */
-	public CloseableWrappedIterable<T> getWrappedIterable(PreparedQuery<T> preparedQuery);
-
-	/**
-	 * This will close the last iterator returned by the {@link #iterator()} method.
-	 * 
-	 * <p>
-	 * <b>NOTE:</b> This is not reentrant. If multiple threads are getting iterators from this DAO then you should use
-	 * the {@link #getWrappedIterable()} method to get a wrapped iterable for each thread instead.
-	 * </p>
-	 */
-	public void closeLastIterator() throws SQLException;
-
-	/**
 	 * Same as {@link #iterator()} but with a prepared query parameter. See {@link #queryBuilder} for more information.
 	 * You use it like the following:
 	 * 
@@ -389,6 +351,44 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 *             on any SQL problems.
 	 */
 	public CloseableIterator<T> iterator(PreparedQuery<T> preparedQuery) throws SQLException;
+
+	/**
+	 * This makes a one time use iterable class that can be closed afterwards. The DAO itself is
+	 * {@link CloseableWrappedIterable} but multiple threads can each call this to get their own closeable iterable.
+	 * This allows you to do something like:
+	 * 
+	 * <blockquote>
+	 * 
+	 * <pre>
+	 * CloseableWrappedIterable<Foo> wrappedIterable = fooDao.getWrappedIterable();
+	 * try {
+	 *   for (Foo foo : wrappedIterable) {
+	 *       ...
+	 *   }
+	 * } finally {
+	 *   wrappedIterable.close();
+	 * }
+	 * </pre>
+	 * 
+	 * </blockquote>
+	 */
+	public CloseableWrappedIterable<T> getWrappedIterable();
+
+	/**
+	 * Same as {@link #getWrappedIterable()} but with a prepared query parameter. See {@link #queryBuilder} or
+	 * {@link #iterator(PreparedQuery)} for more information.
+	 */
+	public CloseableWrappedIterable<T> getWrappedIterable(PreparedQuery<T> preparedQuery);
+
+	/**
+	 * This closes the last iterator returned by the {@link #iterator()} method.
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> This is not reentrant. If multiple threads are getting iterators from this DAO then you should use
+	 * the {@link #getWrappedIterable()} method to get a wrapped iterable for each thread instead.
+	 * </p>
+	 */
+	public void closeLastIterator() throws SQLException;
 
 	/**
 	 * Similar to the {@link #iterator(PreparedQuery)} except it returns a GenericRawResults object associated with the
@@ -513,6 +513,8 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * 
 	 * <pre>
 	 * account.orders = accoundDao.getEmptyForeignCollection(&quot;orders&quot;);
+	 * // this would add it the collection and the internal DAO
+	 * account.orders.add(order1);
 	 * </pre>
 	 * 
 	 * @param fieldName
