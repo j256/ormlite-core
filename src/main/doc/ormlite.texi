@@ -580,24 +580,25 @@ if the database supports this behavior and if @code{generatedId} is also true fo
 @cindex custom column definition
 @item columnDefinition
 
-If this is set with a string then it will be used to define the field in the @code{CREATE TABLE} statement.  By default the database type is
-used to auto-generate the SQL necessary to create the table.
+If this is set with a string then it will be used to define the column in the @code{CREATE TABLE} statement.  By default the database type is
+used to auto-generate the SQL necessary to create the column.
 
 @cindex foreignAutoCreate
 @cindex foreign object, auto create
 @cindex auto create foreign objects
 @item foreignAutoCreate
 
-Set this to be true (default false) to have the foreign field will be automagically created using its internal DAO if the ID field is not set
-in it. So when you call @code{dao.create()} on the parent object, any field with this set to true will possibly be created via an internal DAO.
-By default you have to create the object using its DAO directly.
+Set this to be true (default false) to have the foreign field automatically created using an internal DAO if its ID field is not set. So when
+you call @code{dao.create()} on the parent object, any foreign field that has this set to true will possibly generate an additonal create call
+via an internal DAO.  By default you have to create the object using its DAO directly.
 
 @example
+// the account field in Order has foreignAutoCreate=true
 Order order1 = new Order();
-// account1 has not been created in the db yet
+// account1 has not been created in the db yet, its id field is null
 order1.account = account1;
 // this will create order1 in the order table _and_
-// pass order1.account to the internal account dao.create().
+// pass order1.account to the internal accountDao.create().
 orderDao.create(order1);
 @end example
 
@@ -1617,7 +1618,8 @@ the wrapped iterable below.
 You can also use the iterator directly if the for-loop is not optimal.
 
 @example
-CloseableIterator<Account> iterator = accountDao.closeableIterator();
+CloseableIterator<Account> iterator =
+    accountDao.closeableIterator();
 try @{
     while (iterator.hasNext()) @{
         Account account = iterator.next();
@@ -1993,6 +1995,18 @@ foreign-collection of field B which has an eager foreign-collection of field C (
 happen whenever you query for A. By default this value is 1 meaning that if you query for A, the collection of B will be eager fetched but
 each of the B objects will have a lazy collection instead of an eager collection of C. It should be increased only if you know what you are
 doing.
+
+@cindex foreign collection column name
+@cindex empty foreign collection
+@item columnName
+
+The name of the column.  This is only used if you want to match the string passed to @code{Dao#getEmptyForeignCollection(String)}.
+
+@cindex ordered foreign collection
+@cindex foreign collection, ordered
+@item orderColumnName
+
+The name of the column in the foreign object that we should order the collection by.
 
 @end table
 
@@ -2448,9 +2462,6 @@ previous clauses so the programmer has to count precisely.
 
 @emph{NOTE:} There is no guarantee of the order of the clauses that are generated in the final query.
 
- an @code{Iterable} instead of variable arguments.  Usually this is a
-@code{Collection}.
-
 @cindex BETWEEN, SQL
 @item between(String columnName, Object low, Object high)
 
@@ -2495,8 +2506,8 @@ Add a clause where the ID is extracted from an existing object.
 @cindex IN, SQL
 @item in(String columnName, Iterable<?> objects)
 
-Add a IN clause which makes sure the column is equal-to one of the objects from the Iterable (probably collection)
-passed in.
+Add a IN clause which makes sure the column is equal-to one of the objects from the @code{Iterable} passed in.  Most likely the
+@code{Iterable} should probably be on of the @code{Collection} classes such as a @code{List} or @code{Set}.
 
 @cindex IN, SQL
 @item in(String columnName, Object... objects)
@@ -2802,7 +2813,7 @@ exist before the utility is run.  Afterwards, if you refresh your project your s
 should see something like the following outputted by the utility:
 
 @example
-Writing configurations to /Documents/Svn/HelloAndroid/./res/raw/ormlite_config.txt
+Writing configurations to /HelloAndroid/./res/raw/ormlite_config.txt
 Wrote config for class com.example.helloandroid.SimpleData
 Done.
 @end example
@@ -2843,7 +2854,8 @@ class, you will need to change the constructor to add the integer file-id.  The 
 
 @example
 public DatabaseHelper(Context context) @{
-  super(context, DATABASE_NAME, null, DATABASE_VERSION, R.raw.ormlite_config);
+  super(context, DATABASE_NAME, null, DATABASE_VERSION,
+    R.raw.ormlite_config);
 @}
 @end example
 
@@ -2854,7 +2866,7 @@ a Java @code{File} if you want to load in the config file from another location.
 following:
 
 @example
-I/DaoManager(  999): Loaded configuration for class com.example.helloandroid.SimpleData
+I/DaoManager(  999): Loaded configuration for class ...SimpleData
 @end example
 
 Oh, and if it is working you should notice a significant lack of GC messages during DAO startup.
@@ -3022,7 +3034,8 @@ Here's an example of a full Spring configuration.
 <bean id="accountDao"
     class="com.j256.ormlite.examples.common.AccountDaoImpl"
     parent="baseDao" />
-<bean id="deliveryDao" class="com.j256.ormlite.spring.DaoFactory" factory-method="createDao">
+<bean id="deliveryDao" class="com.j256.ormlite.spring.DaoFactory"
+  factory-method="createDao">
     <constructor-arg index="0" ref="connectionSource" />
     <constructor-arg index="1"
       value="com.j256.ormlite.examples.spring.Delivery" />
@@ -3388,7 +3401,7 @@ Delete an object from the database.  This should return 1 since 1 row was remove
 Delete an object from the database if you have its id.  This should return 1 since 1 row was removed.
 
 @cindex delete multiple objects
-@item delete (Collection<T> datas)
+@item delete(Collection<T> datas)
 
 Delete a collection of objects from the database using an IN SQL clause.  This returns the number of rows that
 were deleted.
@@ -3406,7 +3419,7 @@ number of rows that were deleted.
 Delete objects that match a custom delete statement.
 
 @cindex iterator
-@item iterator
+@item iterator()
 
 This method satisfies the @code{Iterable} Java interface for the class and allows you to iterate through the objects
 in the table using SQL.  This method allows you to do something like:
@@ -3430,9 +3443,10 @@ This returns a one time use iterable class that can be closed afterwards. The DA
 This allows you to do something like:
 
 @example
-CloseableWrappedIterable<Foo> wrappedIterable = fooDao.getWrappedIterable();
+CloseableWrappedIterable<Account> wrappedIterable =
+    accountDao.getWrappedIterable();
 try @{
-    for (Foo foo : wrappedIterable) @{
+    for (Account account : wrappedIterable) @{
         @dots{}
     @}
 @} finally @{
@@ -3444,12 +3458,13 @@ try @{
 
 Same as @code{getWrappedIterable()} but with a prepared query parameter.
 
-@item iteratorRaw(String query)
+@cindex close last iterator
+@item closeLastIterator()
 
-Same as the prepared statement iterator except it takes a raw SQL select statement argument.  This is the iterator version
-of the @code{queryForAllRaw} method.  Although you should use the @code{iterator} method for most queries, this method
-allows you to do special queries that aren't supported otherwise.  Like the above iterator methods, you must call close
-on the @code{GenericRawResults} object returned by the method once you are done with it. 
+This closes the last iterator returned by the @code{iterator()} method.
+
+@emph{NOTE:} This is not reentrant. If multiple threads are getting iterators from this DAO then you should use
+@code{getWrappedIterable()} method.
 
 @cindex query for all raw
 @cindex raw select statements
@@ -3500,6 +3515,19 @@ number of database operations at once -- maybe loading data from a file. This wi
 
 Returns the value returned from a @code{SELECT COUNT(*)} query which is the number of rows in the table.  Depending on the
 database and the size of the table, this could be expensive. 
+
+@cindex empty foreign collection
+@cindex foreign collection, empty
+@item getEmptyForeignCollection(String fieldName)
+
+Returns an empty collection that can be assigned to a collection field. This allows you to add things to the
+collection from the start.  This allows you to do something like:
+
+@example
+account.orders = accoundDao.getEmptyForeignCollection("orders");
+// this would add it the collection and the internal DAO
+account.orders.add(order1);
+@end example
 
 @cindex enable object cache
 @cindex object cache, enable
