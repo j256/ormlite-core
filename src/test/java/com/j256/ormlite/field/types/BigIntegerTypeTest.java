@@ -1,8 +1,11 @@
 package com.j256.ormlite.field.types;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.math.BigInteger;
+import java.sql.SQLException;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -16,7 +19,7 @@ public class BigIntegerTypeTest extends BaseTypeTest {
 	private final static String BIGINTEGER_COLUMN = "bigInteger";
 
 	@Test
-	public void testBigDecimal() throws Exception {
+	public void testBigInteger() throws Exception {
 		Class<LocalBigInteger> clazz = LocalBigInteger.class;
 		Dao<LocalBigInteger, Object> dao = createDao(clazz, true);
 		BigInteger val =
@@ -30,9 +33,48 @@ public class BigIntegerTypeTest extends BaseTypeTest {
 				false, true, false, false, false, true, false);
 	}
 
+	@Test(expected = SQLException.class)
+	public void testBigIntegerBadDefault() throws Exception {
+		createDao(BigIntegerBadDefault.class, true);
+	}
+
+	@Test
+	public void testBigIntegerNull() throws Exception {
+		Dao<LocalBigInteger, Object> dao = createDao(LocalBigInteger.class, true);
+		LocalBigInteger foo = new LocalBigInteger();
+		assertEquals(1, dao.create(foo));
+
+		List<LocalBigInteger> results = dao.queryForAll();
+		assertEquals(1, results.size());
+		assertNull(results.get(0).bigInteger);
+	}
+
+	@Test(expected = SQLException.class)
+	public void testBigIntegerInvalidDbValue() throws Exception {
+		Dao<LocalBigInteger, Object> dao = createDao(LocalBigInteger.class, true);
+		Dao<NotBigInteger, Object> notDao = createDao(NotBigInteger.class, false);
+
+		NotBigInteger notFoo = new NotBigInteger();
+		notFoo.bigInteger = "not valid form";
+		assertEquals(1, notDao.create(notFoo));
+
+		dao.queryForAll();
+	}
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalBigInteger {
 		@DatabaseField(columnName = BIGINTEGER_COLUMN)
 		BigInteger bigInteger;
+	}
+
+	protected static class BigIntegerBadDefault {
+		@DatabaseField(defaultValue = "not valid form")
+		BigInteger bigInteger;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class NotBigInteger {
+		@DatabaseField(columnName = BIGINTEGER_COLUMN)
+		String bigInteger;
 	}
 }

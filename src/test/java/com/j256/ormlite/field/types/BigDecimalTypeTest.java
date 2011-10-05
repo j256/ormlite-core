@@ -1,8 +1,11 @@
 package com.j256.ormlite.field.types;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -28,9 +31,48 @@ public class BigDecimalTypeTest extends BaseTypeTest {
 				false, true, false, false, false, true, false);
 	}
 
+	@Test(expected = SQLException.class)
+	public void testBigDecimalBadDefault() throws Exception {
+		createDao(BigDecimalBadDefault.class, true);
+	}
+
+	@Test
+	public void testBigDecimalNull() throws Exception {
+		Dao<LocalBigDecimal, Object> dao = createDao(LocalBigDecimal.class, true);
+		LocalBigDecimal foo = new LocalBigDecimal();
+		assertEquals(1, dao.create(foo));
+
+		List<LocalBigDecimal> results = dao.queryForAll();
+		assertEquals(1, results.size());
+		assertNull(results.get(0).bigDecimal);
+	}
+
+	@Test(expected = SQLException.class)
+	public void testBigDecimalInvalidDbValue() throws Exception {
+		Dao<LocalBigDecimal, Object> dao = createDao(LocalBigDecimal.class, true);
+		Dao<NotBigDecimal, Object> notDao = createDao(NotBigDecimal.class, false);
+
+		NotBigDecimal notFoo = new NotBigDecimal();
+		notFoo.bigDecimal = "not valid form";
+		assertEquals(1, notDao.create(notFoo));
+
+		dao.queryForAll();
+	}
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalBigDecimal {
 		@DatabaseField(columnName = BIGDECIMAL_COLUMN)
 		BigDecimal bigDecimal;
+	}
+
+	protected static class BigDecimalBadDefault {
+		@DatabaseField(defaultValue = "not valid form")
+		BigDecimal bigDecimal;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class NotBigDecimal {
+		@DatabaseField(columnName = BIGDECIMAL_COLUMN)
+		String bigDecimal;
 	}
 }

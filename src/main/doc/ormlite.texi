@@ -581,7 +581,12 @@ if the database supports this behavior and if @code{generatedId} is also true fo
 @item columnDefinition
 
 If this is set with a string then it will be used to define the column in the @code{CREATE TABLE} statement.  By default the database type is
-used to auto-generate the SQL necessary to create the column.
+used to auto-generate the SQL necessary to create the column.  The column name is provided by ORMLite.  For example:
+
+@example
+@@DatabaseField(columnDefinition = "LONGBLOB not null", dataType = DataType.BYTE_ARRAY)
+public byte[] bigBunchOfBytes;
+@end example
 
 @cindex foreignAutoCreate
 @cindex foreign object, auto create
@@ -2723,7 +2728,28 @@ method.  See the sample @code{HelloAndroid} activity class in the examples.  @xr
 @item If you do not want to extend the @code{OrmLiteBaseActivity} and other base classes then you will need to duplicate their
 functionality.  You will need to call @code{OpenHelperManager.getHelper(Context context, Class openHelperClass)} at the start of
 your code, save the helper and use it as much as you want, and then call @code{OpenHelperManager.release()} when you are done with
-it.
+it.  You will probably want to have something like the following in your classes:
+
+@example
+private DatabaseHelper databaseHelper = null;
+
+@@Override
+protected void onDestroy() @{
+    super.onDestroy();
+    if (databaseHelper != null) @{
+        OpenHelperManager.releaseHelper();
+        databaseHelper = null;
+    @}
+@}
+
+private DBHelper getHelper() @{
+    if (databaseHelper == null) @{
+        databaseHelper =
+            OpenHelperManager.getHelper(this, DatabaseHelper.class);
+    @}
+    return databaseHelper;
+@}
+@end example
 
 @cindex Android strings resources
 @cindex database open helper wiring
