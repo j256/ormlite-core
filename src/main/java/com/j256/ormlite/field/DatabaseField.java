@@ -246,7 +246,7 @@ public @interface DatabaseField {
 	 * Specify the SQL necessary to create this field in the database. This can be used if you need to tune the schema
 	 * to enable some per-database feature or to override the default SQL generated.
 	 */
-	String columnDefinition() default DEFAULT_STRING;
+	String columnDefinition() default "";
 
 	/**
 	 * Set this to be true (default false) to have the foreign field will be automagically created using its internal

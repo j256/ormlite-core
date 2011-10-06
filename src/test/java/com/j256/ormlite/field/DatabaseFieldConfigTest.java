@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -17,10 +18,12 @@ import javax.persistence.OneToOne;
 
 import org.junit.Test;
 
+import com.j256.ormlite.BaseCoreTest;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.BaseDatabaseType;
 import com.j256.ormlite.db.DatabaseType;
 
-public class DatabaseFieldConfigTest {
+public class DatabaseFieldConfigTest extends BaseCoreTest {
 
 	private DatabaseType databaseType = new StubDatabaseType();
 
@@ -316,6 +319,17 @@ public class DatabaseFieldConfigTest {
 		assertEquals(AltAnno.DEFAULT_DEFAULT_VALUE, fieldConfig.getDefaultValue());
 	}
 
+	@Test
+	public void testDatabaseFieldOther() throws Exception {
+		// we had a problem where the columnDefinition was not being handled right
+		Dao<CommunicationData, Object> dao = createDao(CommunicationData.class, true);
+		CommunicationData data = new CommunicationData();
+		assertEquals(1, dao.create(data));
+		List<CommunicationData> unknowns = dao.queryForAll();
+		assertEquals(1, unknowns.size());
+		assertEquals(OurEnum.SECOND, unknowns.get(0).communicationMedium);
+	}
+
 	protected class Foo {
 		@DatabaseField(canBeNull = true)
 		String field;
@@ -386,6 +400,16 @@ public class DatabaseFieldConfigTest {
 		// not a valid enum name
 		@DatabaseField(unknownEnumName = "THIRD")
 		OurEnum ourEnum;
+	}
+
+	protected static class CommunicationData {
+
+		@DatabaseFieldSimple(defaultValue = "SECOND")
+		@DatabaseFieldOther(dataType = DataType.ENUM_STRING)
+		OurEnum communicationMedium;
+
+		public CommunicationData() {
+		}
 	}
 
 	private enum OurEnum {

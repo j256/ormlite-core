@@ -3,6 +3,8 @@ package com.j256.ormlite.field.types;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
 import org.junit.Test;
 
 import com.j256.ormlite.dao.Dao;
@@ -28,8 +30,8 @@ public class EnumIntTypeTest extends BaseTypeTest {
 		LocalEnumInt foo = new LocalEnumInt();
 		foo.ourEnum = val;
 		assertEquals(1, dao.create(foo));
-		testType(dao, foo, clazz, val, sqlVal, sqlVal, valStr, DataType.ENUM_INTEGER, ENUM_COLUMN, false, true,
-				false, false, false, false, true, false);
+		testType(dao, foo, clazz, val, sqlVal, sqlVal, valStr, DataType.ENUM_INTEGER, ENUM_COLUMN, false, true, false,
+				false, false, false, true, false);
 	}
 
 	@Test
@@ -68,6 +70,16 @@ public class EnumIntTypeTest extends BaseTypeTest {
 		}
 	}
 
+	@Test
+	public void testDefaultValue() throws Exception {
+		Dao<EnumDefault, Object> dao = createDao(EnumDefault.class, true);
+		EnumDefault enumDefault = new EnumDefault();
+		assertEquals(1, dao.create(enumDefault));
+		List<EnumDefault> unknowns = dao.queryForAll();
+		assertEquals(1, unknowns.size());
+		assertEquals(OurEnum.SECOND, unknowns.get(0).ourEnum);
+	}
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalEnumInt {
 		@DatabaseField(columnName = ENUM_COLUMN, dataType = DataType.ENUM_INTEGER)
@@ -77,5 +89,10 @@ public class EnumIntTypeTest extends BaseTypeTest {
 	private enum OurEnum {
 		FIRST,
 		SECOND, ;
+	}
+
+	protected static class EnumDefault {
+		@DatabaseField(defaultValue = "SECOND")
+		OurEnum ourEnum;
 	}
 }

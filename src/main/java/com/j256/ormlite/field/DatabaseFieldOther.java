@@ -51,5 +51,5 @@ public @interface DatabaseFieldOther {
 	/**
 	 * @see DatabaseField#columnDefinition()
 	 */
-	String columnDefinition() default DatabaseField.DEFAULT_STRING;
+	String columnDefinition() default "";
 }

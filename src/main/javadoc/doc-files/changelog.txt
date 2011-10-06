@@ -2,6 +2,7 @@
 	* CORE: Added @DatabaseField(foreignAutoCreate=true) for auto-creating foreign fields with blank IDs using the internal DAO.
 	* CORE: Added support for storing BigDecimal and BigInteger fields.  Thanks to Pedro Velasco.  Resolves feature #3414432.
 	* CORE: Added support for the javax.persistence.Enumerated annotation for setting @Enumerated(ORDINAL) or @Enumerated(STRING).
+	* CORE: Fixed problem with the columnDefinition field handling in @DatabaseFieldOther.  Thanks to Flo.  Fixes bug #3419779.
 	* ANDROID: Better handling of errors during java auto-detection around the new table configuration code.  Thanks to Ming Lin.
 
 4.26: 9/26/2011 (svn r1978)

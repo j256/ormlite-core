@@ -31,8 +31,8 @@ public class EnumStringTypeTest extends BaseTypeTest {
 		LocalEnumString foo = new LocalEnumString();
 		foo.ourEnum = val;
 		assertEquals(1, dao.create(foo));
-		testType(dao, foo, clazz, val, sqlVal, sqlVal, valStr, DataType.ENUM_STRING, ENUM_COLUMN, false, true,
-				true, false, false, false, true, false);
+		testType(dao, foo, clazz, val, sqlVal, sqlVal, valStr, DataType.ENUM_STRING, ENUM_COLUMN, false, true, true,
+				false, false, false, true, false);
 	}
 
 	@Test
@@ -41,14 +41,13 @@ public class EnumStringTypeTest extends BaseTypeTest {
 		Dao<LocalEnumString, Object> dao = createDao(clazz, true);
 		LocalEnumString foo = new LocalEnumString();
 		assertEquals(1, dao.create(foo));
-		testType(dao, foo, clazz, null, null, null, null, DataType.ENUM_STRING, ENUM_COLUMN, false, true, true,
-				false, false, false, true, false);
+		testType(dao, foo, clazz, null, null, null, null, DataType.ENUM_STRING, ENUM_COLUMN, false, true, true, false,
+				false, false, true, false);
 	}
 
 	@Test
 	public void testEnumStringResultsNoFieldType() throws Exception {
-		Class<LocalEnumString> clazz = LocalEnumString.class;
-		Dao<LocalEnumString, Object> dao = createDao(clazz, true);
+		Dao<LocalEnumString, Object> dao = createDao(LocalEnumString.class, true);
 		OurEnum val = OurEnum.SECOND;
 		LocalEnumString foo = new LocalEnumString();
 		foo.ourEnum = val;
@@ -72,8 +71,7 @@ public class EnumStringTypeTest extends BaseTypeTest {
 
 	@Test(expected = SQLException.class)
 	public void testUnknownEnumValue() throws Exception {
-		Class<LocalEnumString> clazz = LocalEnumString.class;
-		Dao<LocalEnumString, Object> dao = createDao(clazz, true);
+		Dao<LocalEnumString, Object> dao = createDao(LocalEnumString.class, true);
 		LocalEnumString localEnumString = new LocalEnumString();
 		localEnumString.ourEnum = OurEnum.FIRST;
 		assertEquals(1, dao.create(localEnumString));
@@ -83,8 +81,7 @@ public class EnumStringTypeTest extends BaseTypeTest {
 
 	@Test
 	public void testUnknownValueAnnotation() throws Exception {
-		Class<LocalUnknownEnum> clazz = LocalUnknownEnum.class;
-		Dao<LocalUnknownEnum, Object> dao = createDao(clazz, true);
+		Dao<LocalUnknownEnum, Object> dao = createDao(LocalUnknownEnum.class, true);
 		LocalUnknownEnum localUnknownEnum = new LocalUnknownEnum();
 		localUnknownEnum.ourEnum = OurEnum.SECOND;
 		assertEquals(1, dao.create(localUnknownEnum));
@@ -92,6 +89,16 @@ public class EnumStringTypeTest extends BaseTypeTest {
 		List<LocalUnknownEnum> unknowns = dao.queryForAll();
 		assertEquals(1, unknowns.size());
 		assertEquals(OurEnum.FIRST, unknowns.get(0).ourEnum);
+	}
+
+	@Test
+	public void testDefaultValue() throws Exception {
+		Dao<EnumDefault, Object> dao = createDao(EnumDefault.class, true);
+		EnumDefault enumDefault = new EnumDefault();
+		assertEquals(1, dao.create(enumDefault));
+		List<EnumDefault> unknowns = dao.queryForAll();
+		assertEquals(1, unknowns.size());
+		assertEquals(OurEnum.SECOND, unknowns.get(0).ourEnum);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
@@ -103,6 +110,11 @@ public class EnumStringTypeTest extends BaseTypeTest {
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalUnknownEnum {
 		@DatabaseField(columnName = ENUM_COLUMN, unknownEnumName = "FIRST")
+		OurEnum ourEnum;
+	}
+
+	protected static class EnumDefault {
+		@DatabaseField(defaultValue = "SECOND")
 		OurEnum ourEnum;
 	}
 

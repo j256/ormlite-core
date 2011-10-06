@@ -538,7 +538,7 @@ public class DatabaseFieldConfig {
 		config.persisterClass = databaseField.persisterClass();
 		config.allowGeneratedIdInsert = databaseField.allowGeneratedIdInsert();
 		String columnDefinition = databaseField.columnDefinition();
-		if (!columnDefinition.equals(DatabaseField.DEFAULT_STRING)) {
+		if (columnDefinition.length() > 0) {
 			config.columnDefinition = columnDefinition;
 		}
 		config.foreignAutoCreate = databaseField.foreignAutoCreate();
@@ -613,7 +613,10 @@ public class DatabaseFieldConfig {
 			config.allowGeneratedIdInsert = idAnno.allowGeneratedIdInsert();
 		}
 		if (otherAnno != null) {
-			config.columnDefinition = otherAnno.columnDefinition();
+			String columnDefinition = otherAnno.columnDefinition();
+			if (columnDefinition.length() > 0) {
+				config.columnDefinition = columnDefinition;
+			}
 		}
 		if (foreignAnno != null) {
 			config.foreignAutoCreate = foreignAnno.foreignAutoCreate();
