@@ -19,6 +19,8 @@
 	- DataPersiterManager
 	- DatabaseField.persisterClass
 
+- add foreign key constraints to better support the foreign=true stuff
+
 - need to add a Foreign field section under the query builder section
 	- needs to explain how to do queries for foreign fields
 	- need to explain that we can't query for a foreign collection
