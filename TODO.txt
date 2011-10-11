@@ -23,8 +23,6 @@
 	- needs to explain how to do queries for foreign fields
 	- need to explain that we can't query for a foreign collection
 
-- need to better document the internal logger in case you aren't using log4j 
-
 - look into storing the underlying compiled statement somewhere
 	- maybe cacheing it per connection?
 	- maybe each connection has a setQueryForId(), etc. type of call on it
@@ -39,6 +37,7 @@
 
 - support batch inserts that we can compile a statement and then directly set the args on it for each data object from a collection
 	- maybe get rid of the Object[] arguments and set the arguments directly from the data
+	- add in a bulk insert which will compile the insert statement and just set args for each entry
 
 - flesh out the SimpleDB version of the library:
 	- get all tests passing
@@ -49,8 +48,6 @@
 
 - test QueryBuilder.groupBy() in field and raw form
 	- org.h2.jdbc.JdbcSQLException: Column "FOO.ID" must be in the GROUP BY list; SQL statement:
-
-- add in a bulk insert which will compile the insert statement and just set args for each entry
 
 - new methods in the DAO:
 	- updateNonDefault()

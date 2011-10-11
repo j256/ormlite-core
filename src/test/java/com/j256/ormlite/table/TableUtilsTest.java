@@ -250,10 +250,15 @@ public class TableUtilsTest extends BaseCoreTest {
 		verify(connectionSource, conn, stmt);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testMissingCreate() throws Exception {
 		Dao<LocalFoo, Integer> fooDao = createDao(LocalFoo.class, false);
-		fooDao.queryForAll();
+		try {
+			fooDao.queryForAll();
+			fail("Should have thrown");
+		} catch (SQLException e) {
+			// expected
+		}
 	}
 
 	@Test
@@ -277,30 +282,40 @@ public class TableUtilsTest extends BaseCoreTest {
 		dropTable(LocalFoo.class, true);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testDropThenQuery() throws Exception {
 		Dao<LocalFoo, Integer> fooDao = createDao(LocalFoo.class, true);
 		assertEquals(0, fooDao.queryForAll().size());
 		dropTable(LocalFoo.class, true);
-		fooDao.queryForAll();
+		try {
+			fooDao.queryForAll();
+			fail("Should have thrown");
+		} catch (SQLException e) {
+			// expected
+		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testRawExecuteDropThenQuery() throws Exception {
 		Dao<LocalFoo, Integer> fooDao = createDao(LocalFoo.class, true);
 		StringBuilder sb = new StringBuilder();
 		sb.append("DROP TABLE ");
 		if (databaseType.isEntityNamesMustBeUpCase()) {
-			databaseType.appendEscapedEntityName(sb, "FOO");
+			databaseType.appendEscapedEntityName(sb, "LOCALFOO");
 		} else {
-			databaseType.appendEscapedEntityName(sb, "foo");
+			databaseType.appendEscapedEntityName(sb, "LocalFoo");
 		}
 		// can't check the return value because of sql-server
 		fooDao.executeRaw(sb.toString());
-		fooDao.queryForAll();
+		try {
+			fooDao.queryForAll();
+			fail("Should have thrown");
+		} catch (SQLException e) {
+			// expected
+		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testDoubleDrop() throws Exception {
 		Dao<LocalFoo, Integer> fooDao = createDao(LocalFoo.class, false);
 		// first we create the table
@@ -309,8 +324,13 @@ public class TableUtilsTest extends BaseCoreTest {
 		assertEquals(0, fooDao.queryForAll().size());
 		// now we drop it
 		dropTable(LocalFoo.class, true);
-		// this should fail
-		dropTable(LocalFoo.class, false);
+		try {
+			// this should fail
+			dropTable(LocalFoo.class, false);
+			fail("Should have thrown");
+		} catch (SQLException e) {
+			// expected
+		}
 	}
 
 	@Test
@@ -326,6 +346,7 @@ public class TableUtilsTest extends BaseCoreTest {
 
 	@Test
 	public void testCreateTableIfNotExists() throws Exception {
+		dropTable(LocalFoo.class, true);
 		Dao<LocalFoo, Integer> fooDao = createDao(LocalFoo.class, false);
 		try {
 			fooDao.countOf();
@@ -342,6 +363,7 @@ public class TableUtilsTest extends BaseCoreTest {
 
 	@Test
 	public void testCreateTableConfigIfNotExists() throws Exception {
+		dropTable(LocalFoo.class, true);
 		Dao<LocalFoo, Integer> fooDao = createDao(LocalFoo.class, false);
 		try {
 			fooDao.countOf();
