@@ -29,7 +29,7 @@ public class BigIntegerTypeTest extends BaseTypeTest {
 		LocalBigInteger foo = new LocalBigInteger();
 		foo.bigInteger = val;
 		assertEquals(1, dao.create(foo));
-		testType(dao, foo, clazz, val, val, val.toString(), valStr, DataType.BIGINTEGER, BIGINTEGER_COLUMN, false,
+		testType(dao, foo, clazz, val, val, val.toString(), valStr, DataType.BIG_INTEGER, BIGINTEGER_COLUMN, false,
 				false, true, false, false, false, true, false);
 	}
 

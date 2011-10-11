@@ -170,11 +170,11 @@ public enum DataType {
 	/**
 	 * Persists the {@link BigInteger} Java class.
 	 */
-	BIGINTEGER(BigIntegerType.getSingleton()),
+	BIG_INTEGER(BigIntegerType.getSingleton()),
 	/**
 	 * Persists the {@link BigDecimal} Java class.
 	 */
-	BIGDECIMAL(BigDecimalType.getSingleton()),
+	BIG_DECIMAL(BigDecimalType.getSingleton()),
 	/**
 	 * Marker for fields that are unknown.
 	 */

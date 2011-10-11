@@ -27,7 +27,7 @@ public class BigDecimalTypeTest extends BaseTypeTest {
 		LocalBigDecimal foo = new LocalBigDecimal();
 		foo.bigDecimal = val;
 		assertEquals(1, dao.create(foo));
-		testType(dao, foo, clazz, val, val, val.toString(), valStr, DataType.BIGDECIMAL, BIGDECIMAL_COLUMN, false,
+		testType(dao, foo, clazz, val, val, val.toString(), valStr, DataType.BIG_DECIMAL, BIGDECIMAL_COLUMN, false,
 				false, true, false, false, false, true, false);
 	}
 
