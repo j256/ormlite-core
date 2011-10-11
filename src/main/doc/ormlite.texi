@@ -6,9 +6,9 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.26
+@set ormlite_version 4.27
 @set ormlite_year 2011
-@set ormlite_date September @value{ormlite_year}
+@set ormlite_date October @value{ormlite_year}
 @set package ORMLite
 @c ----------------------------------------------------------------
 
@@ -45,8 +45,8 @@ Version @value{ormlite_version} -- @value{ormlite_date}
 @cindex object relational mapping
 @cindex hibernate
 @cindex ibatis
-ORMLite provides a lightweight Object Relational Mapping between Java classes and SQL databases -- see
-@uref{http://en.wikipedia.org/wiki/Object-relational_mapping}.  There are certainly more mature ORMs which
+ORMLite provides a lightweight @uref{http://en.wikipedia.org/wiki/Object-relational_mapping, Object Relational Mapping}
+between Java classes and SQL databases.  There are certainly more mature ORMs which
 provide this functionality including Hibernate and iBatis.  However, the author wanted a simple yet powerful
 wrapper around the JDBC functions, and Hibernate and iBatis are significantly more complicated with many
 dependencies.
@@ -61,10 +61,10 @@ an instance of each of these databases to tune the support.  Contact the author 
 To get started quickly with ORMLite, @pxref{Getting Started}.  You can also take a look at the  the examples
 section of the document which has various working code packages and Android applications.  @xref{Examples}.
 @ifhtml
-There is also a PDF version of this documentation -- see @uref{http://ormlite.com/docs/ormlite.pdf}.
+There is also a @uref{http://ormlite.com/docs/ormlite.pdf, PDF version of this documentation}.
 @end ifhtml
 @iftex
-There is also a HTML version of this documentation -- see @uref{http://ormlite.com/docs/ormlite.html}.
+There is also a @uref{http://ormlite.com/docs/ormlite.html, HTML version of this documentation}.
 @end iftex
 
 Gray Watson @uref{http://256.com/gray/}
@@ -97,9 +97,9 @@ Gray Watson @uref{http://256.com/gray/}
 @node Downloading, Starting Class, Getting Started, Getting Started
 @section Downloading ORMLite Jar
 
-To get started with ORMLite, you will need to download the jar files.  They are available on the central maven repository
-(@uref{http://repo1.maven.org/maven2/com/j256/ormlite/}) or from Sourceforge (@uref{http://sourceforge.net/projects/ormlite/files/}).
-See the @uref{http://ormlite.com/} home page for the most up-to-date repositories. 
+To get started with ORMLite, you will need to download the jar files.  They are available on the @uref{http://repo1.maven.org/maven2/com/j256/ormlite/,
+central maven repository} or from @uref{http://sourceforge.net/projects/ormlite/files/, Sourceforge}.
+See the @uref{http://ormlite.com/, ORMLite home page} for the most up-to-date repositories. 
 
 Users that are connecting to SQL databases via JDBC connections will need to download the @code{ormlite-jdbc-@value{ormlite_version}.jar}
 and @code{ormlite-core-@value{ormlite_version}.jar} files.  For use with Android applications, you should download the
@@ -173,7 +173,7 @@ More information about setting up the DAOs is available later in the manual. @xr
 
 The code in this section demonstrates how to use the concepts presented in the previous sections. The code uses the native Java H2 database to
 create an in-memory test database. You will need to download and add the H2 jar file to your classpath if you want to run the example as-is.  See
-the H2 home page: @uref{http://www.h2database.com/html/download.html}.  @emph{NOTE:} Android users should see the Android specific documentation
+the @uref{http://www.h2database.com/html/download.html, H2 home page}.  @emph{NOTE:} Android users should see the Android specific documentation
 later in the manual. @xref{Use With Android}.  There are also complete code examples that can be used.  @xref{Examples}.
 
 The code performs the following steps.
@@ -979,13 +979,13 @@ in which case whenever it is inserted, @code{java.util.UUID.randomUUID()} is cal
 @xref{GeneratedId Column}.
 
 @cindex BigIteger type
-@item BigInteger (DataType.BIGINTEGER)
+@item BigInteger (DataType.BIG_INTEGER)
 
 The @code{java.math.BigInteger} class persisted as a @code{VARCHAR} type.  It is saved using the @code{bigInteger.toString()}
 and uses the string constructor to convert it back again.
 
 @cindex BigDecimal type
-@item BigDecimal (DataType.BIGDECIMAL)
+@item BigDecimal (DataType.BIG_DECIMAL)
 
 The @code{java.math.BigDecimal} class persisted as a @code{VARCHAR} type.  It is saved using the @code{bigDecimal.toString()}
 and uses the string constructor to convert it back again.
@@ -1182,9 +1182,8 @@ No special instructions.  We use this database for all of our internal testing w
 @cindex SQLite database
 @item SQLite
 
-There are multiple SQLite drivers out there.  Make sure you use the Xerial one
-(@uref{http://www.xerial.org/trac/Xerial/wiki/SQLiteJDBC}) and not the Zentus one
-(@uref{http://www.zentus.com/sqlitejdbc/}) which does not support generated ids.
+There are multiple SQLite drivers out there.  Make sure you use the @uref{http://www.xerial.org/trac/Xerial/wiki/SQLiteJDBC, Xerial driver}
+and not the @uref{http://www.zentus.com/sqlitejdbc/, Zentus driver} which does not support generated ids.
 
 @cindex Android SQLite database
 @item Android SQLite
@@ -1247,8 +1246,8 @@ Please contact the author if your database is not supported.
 @cindex usage example
 So you have annotated the objects to be persisted, added the no-argument constructor, created your @code{ConnectionSource}, and
 defined your DAO classes.  You are ready to start persisting and querying your database objects.  You will need to download and add
-the H2 jar file to your class-path if you want to run the example as-is.  See the H2 home page:
-@uref{http://www.h2database.com/html/download.html}.   
+the H2 jar file to your class-path if you want to run the example as-is.  See the @uref{http://www.h2database.com/html/download.html,
+H2 home page}.
 
 The following code ties it all together:
 
@@ -2272,7 +2271,7 @@ SELECT * FROM account
 The @code{QueryBuilder} also allows you to set what specific select columns you want returned, specify the 'ORDER BY'
 and 'GROUP BY' fields, and various other SQL features (LIKE, IN, >, >=, <, <=, <>, IS NULL, DISTINCT, @dots{}).
 @xref{Where Capabilities}. You can also see the javadocs on @code{QueryBuilder} and @code{Where} classes for more
-information.  A good SQL reference site can be found at @uref{http://www.w3schools.com/Sql/}.
+information.  Here's a @uref{http://www.w3schools.com/Sql/, good SQL reference site}.
 
 @c ----------------------------------------------------------------
 @node Building Statements, QueryBuilder Capabilities, Building Queries, Statement Builder
@@ -2334,7 +2333,7 @@ select, delete, and update statements.  See the Javadocs for the @code{QueryBuil
 information about the available methods.  Most of these methods return the @code{QueryBuilder} object so they can
 be chained.
 
-For a good tutorial of SQL commands, here's a good site: @uref{http://www.w3schools.com/sql/sql_select.asp}.
+Here's a good @uref{http://www.w3schools.com/sql/sql_select.asp, tutorial of SQL commands}.
 
 @table @code
 
@@ -2438,7 +2437,7 @@ The following are some details about the various method calls for adding @code{W
 select, delete, and update statements.  See the Javadocs for the @code{Where} class for the most up-to-date information
 about the available methods.  All of the methods return the @code{Where} object so you can chain them together.
 
-For a good tutorial of SQL commands, here's a good site: @uref{http://www.w3schools.com/sql/sql_where.asp}.
+Here's a good @uref{http://www.w3schools.com/sql/sql_where.asp, tutorial of SQL commands}.
 
 @table @code
 
@@ -2686,6 +2685,7 @@ new object if you want to use a @code{SelectArg} with another column.
 * Config Optimization::       Use a table config file to speed up startup.
 * Android Logging::           How to log messages under Android.
 * RuntimeExceptionDao::       Runtime versus SQL exceptions.
+* Upgrading Schema::          How to upgrade your SQLite schema.
 @end menu
 
 @c ----------------------------------------------------------------
@@ -2711,7 +2711,7 @@ used by your other classes.  Your helper class must implement the methods
 @code{onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion)}.
 @code{onCreate} creates the database when your app is first installed while @code{onUpgrade} handles the upgrading
 of the database tables when you upgrade your app to a new version.  There is a sample @code{DatabaseHelper} class as well as
-examples projects online: @uref{http://ormlite.com/android/examples/}. 
+@uref{http://ormlite.com/android/examples/, example projects online}. 
 
 @item The helper can be kept open across all activities in your app with the same SQLite database connection reused by
 all threads.  If you open multiple connections to the same database, stale data and unexpected results may occur.
@@ -2955,7 +2955,7 @@ adb shell setprop log.tag.ORMLite DEBUG
 @end example
 
 @c ----------------------------------------------------------------
-@node RuntimeExceptionDao, Advanced, Android Logging, Use With Android
+@node RuntimeExceptionDao, Upgrading Schema, Android Logging, Use With Android
 @section Runtime Versus SQL Exceptions
 
 @cindex RuntimeExceptionDao
@@ -2984,7 +2984,60 @@ Other classes such as @code{TableUtils} and @code{QueryBuilder} still throw @cod
 @code{RuntimeExceptionDao} helps a little bit at least.
 
 @c ----------------------------------------------------------------
-@node Advanced, Spring Configuration, RuntimeExceptionDao, Top
+@node Upgrading Schema, Advanced, RuntimeExceptionDao, Use With Android
+@section Upgrading Your Schema
+
+@cindex updating database schema
+@cindex upgrading database schema
+@cindex schema upgrade
+@cindex database schema upgrade
+When you upgrade your application, you may have to add columns or make other changes to the data that was stored by previous
+versions of your application.  If you are on Android then in your @code{DatabaseHelper}, there should be an @code{onUpgrade()} method
+that extends the following method from the @code{OrmLiteSqliteOpenHelper}.
+
+@example
+abstract void onUpgrade(SQLiteDatabase database,
+  ConnectionSource connectionSource, int oldVersion, int newVersion)
+@end example 
+
+In that method you can use your DAO to perform any tweaks to the schema:
+
+@example
+Dao<Account, Integer> dao = getHelper().getAccountDao();
+// change the table to add a new column named "age" 
+dao.executeRaw("ALTER TABLE `account` ADD COLUMN age INTEGER;");
+@end example
+
+@cindex sqlite alter table
+Here's more information about @uref{http://www.sqlite.org/lang_altertable.html, SQLite's ALTER TABLE}.
+In SQLite, all you can do is rename a table name and add a new column.  You can't rename or remove a column or change the constraints.
+Remember that SQLite is typeless so changing the type of a column doesn't matter.
+
+Most likely, you should make your schema changes conditional to the version you are upgrading from:
+
+@example
+if (oldVersion == 1) @{
+  // we added the age column in version 2
+  dao.executeRaw("ALTER TABLE `account` ADD COLUMN age INTEGER;");
+@}
+if (oldVersion < 2) @{
+  // we added the weight column in version 3
+  dao.executeRaw("ALTER TABLE `account` ADD COLUMN weight INTEGER;");
+@}
+@end example
+
+You can also modify data in the tables using something like the following:
+
+@example
+dao.executeRaw("ALTER TABLE `account` ADD COLUMN hasDog BOOLEAN DEFAULT 0;");
+dao.updateRaw("UPDATE `account` SET hasDog = 1 WHERE dogCount > 0;");
+@end example
+
+If you are using some other database over JDBC then the above commands will work but you will have to handle the versioning of your application
+manually.
+
+@c ----------------------------------------------------------------
+@node Advanced, Spring Configuration, Upgrading Schema, Top
 @chapter Advanced Concepts
 
 @menu
@@ -3006,7 +3059,7 @@ Other classes such as @code{TableUtils} and @code{QueryBuilder} still throw @cod
 @cindex spring framework
 @cindex configuration with Spring
 ORMLite contains some classes which make it easy to configure the various database classes using
-the Spring framework.  For more information about the Spring Framework, see @uref{http://www.springsource.org/}.
+the @uref{http://www.springsource.org/, Spring Framework}.
 
 @table @code
 
@@ -3661,7 +3714,7 @@ We use Junit for our unit tasks.
 
 @item org.easymock.easymock
 
-We use, and are in love with, EasyMock.  @uref{http://easymock.org/}.  It allows us to mock out dependencies so we can
+We use, and are in love with, @uref{http://easymock.org/, EasyMock}.  It allows us to mock out dependencies so we can
 concentrate on testing a particular class instead of the whole package. 
 
 @item com.h2database
@@ -4066,52 +4119,52 @@ are welcome as long as you don't get piqued if we don't chose your's.
 
 @cindex JDBC examples
 @cindex H2 examples
-All of the JDBC examples below depend on the H2 database which is a native Java SQL implementation.  You can download
-the latest jar from the website: @uref{http://www.h2database.com/html/download.html}.
+All of the JDBC examples below depend on the H2 database which is a native Java SQL implementation.  You can 
+@uref{http://www.h2database.com/html/download.html, download the latest jar} from the website.
 
 @table @asis
 
 @cindex simple example
 @item Simple, basic
 
-This is a simple application which performs database operations on a single class/table.  See source code in
-SVN: @uref{http://ormlite.com/docs/example-simple}.
+This is a simple application which performs database operations on a single class/table.  See the
+@uref{http://ormlite.com/docs/example-simple, source code in SVN}.
 
 @cindex foreign objects example
 @anchor{foreign objects example}
 @item Foreign objects 
 
-This example shows how to use foreign objects.  @xref{Foreign Objects}.  See the source code in SVN:
-@uref{http://ormlite.com/docs/example-foreign}.
+This example shows how to use foreign objects.  @xref{Foreign Objects}.  See the 
+@uref{http://ormlite.com/docs/example-foreign, source code in SVN}.
 
 @cindex foreign collections example
 @anchor{foreign collections example}
 @item Foreign collections 
 
-This example shows how to use foreign collections.  @xref{Foreign Collection}.  See the source code in SVN:
-@uref{http://ormlite.com/docs/example-foreign-collection}.
+This example shows how to use foreign collections.  @xref{Foreign Collection}.  See the
+@uref{http://ormlite.com/docs/example-foreign-collection, source code in SVN}.
 
 @cindex field configuration example
 @anchor{field config example}
 @item Field configuration 
 
 This example shows how you can configure a class in ORMLite using Java code @emph{instead} of annotations.
-@xref{Class Configuration}.  See the source code in SVN: @uref{http://ormlite.com/docs/example-config}.
+@xref{Class Configuration}.  See the @uref{http://ormlite.com/docs/example-config, source code in SVN}.
 
 @cindex many to many example
 @anchor{many to many example}
 @item Many to many 
 
 This example is a bit more complicated with multiple tables and is designed for folks trying to model a many-to-many relationship.
-It has a join-table, foreign fields, and also utilizes inner queries.   See the source code in
-SVN: @uref{http://ormlite.com/docs/example-many}.
+It has a join-table, foreign fields, and also utilizes inner queries.   See the @uref{http://ormlite.com/docs/example-many,
+source code in SVN}.
 
 @cindex spring example
 @anchor{spring example}
 @item Spring wiring
 
 To demonstrate how to use Spring wiring with ORMLite, this little program includes classes and XML configuration files.
-See source code in SVN: @uref{http://ormlite.com/docs/example-spring}.
+See the @uref{http://ormlite.com/docs/example-spring, source code in SVN}.
 
 @end table
 
@@ -4121,31 +4174,31 @@ See source code in SVN: @uref{http://ormlite.com/docs/example-spring}.
 
 @cindex Android examples
 For Android developers, here some complete example application projects to help you get started with that operating system.
-Tarballs of all of the packages are available here: @uref{http://ormlite.com/android/examples/}.
+See here for @uref{http://ormlite.com/android/examples/, tarballs of all of the packages}.
 
 @table @asis
 
 @item HelloAndroid
 
-A basic Android application which does some database operations and then quits.  See the source code in SVN:
-@uref{http://ormlite.com/docs/android-hello}.
+A basic Android application which does some database operations and then quits.  See the @uref{http://ormlite.com/docs/android-hello,
+source code in SVN}.
 
 @item ClickCounter
 
-A nice little application written by Kevin G. that provides a counter type application using ORMLite.  See the source code in SVN:
-@uref{http://ormlite.com/docs/android-click}.
+A nice little application written by Kevin G. that provides a counter type application using ORMLite.  See the
+@uref{http://ormlite.com/docs/android-click, source code in SVN}.
 
 @item NotifyService
 
-An example of a service application that uses ORMLite written by Kevin G.  See the source code in SVN:
-@uref{http://ormlite.com/docs/android-notify}.
+An example of a service application that uses ORMLite written by Kevin G.  See the @uref{http://ormlite.com/docs/android-notify,
+source code in SVN}.
 
 @item HelloAndroidH2
 
 This is similar to the HelloAndroid example but it is using JDBC and H2 instead of the build-in Android database calls.  This is more
 a proof of concept rather than a true example.  The wiring for the @code{onCreate} and @code{onUpdate} is a hack.   H2 is certainly
 larger, has tons more features, but is slower than the native SQLite.  Also, JDBC under Android is @emph{not} completely sanctioned by
-Google and support for it may be removed in the future.  See the source code in SVN:  @uref{http://ormlite.com/docs/android-helloh2}.
+Google and support for it may be removed in the future.  See the @uref{http://ormlite.com/docs/android-helloh2, source code in SVN}.
 
 @end table
 
