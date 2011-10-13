@@ -38,6 +38,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	private boolean isInnerQuery = false;
 	private final Dao<T, ID> dao;
 	private FieldType[] resultFieldTypes;
+	private boolean countOf = false;
 
 	public QueryBuilder(DatabaseType databaseType, TableInfo<T, ID> tableInfo, Dao<T, ID> dao) {
 		super(databaseType, tableInfo, StatementType.SELECT);
@@ -197,6 +198,14 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	/**
+	 * Set whether or not we should only return the count of the results.
+	 */
+	public QueryBuilder<T, ID> setCountOf(boolean countOf) {
+		this.countOf = countOf;
+		return this;
+	}
+
+	/**
 	 * A short cut for Dao.query(prepare()). {@link Dao#query(PreparedQuery)}.
 	 */
 	public List<T> query() throws SQLException {
@@ -219,7 +228,13 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		if (distinct) {
 			sb.append("DISTINCT ");
 		}
-		appendColumns(sb);
+		if (countOf) {
+			type = StatementType.SELECT_LONG;
+			sb.append("COUNT(*) ");
+		} else {
+			type = StatementType.SELECT;
+			appendColumns(sb);
+		}
 		sb.append("FROM ");
 		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
 		sb.append(' ');

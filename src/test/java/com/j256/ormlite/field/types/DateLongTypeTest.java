@@ -37,8 +37,8 @@ public class DateLongTypeTest extends BaseTypeTest {
 		Dao<LocalDateLong, Object> dao = createDao(clazz, true);
 		LocalDateLong foo = new LocalDateLong();
 		assertEquals(1, dao.create(foo));
-		testType(dao, foo, clazz, null, null, null, null, DataType.DATE_LONG, DATE_COLUMN, false, true, false,
-				false, false, false, true, false);
+		testType(dao, foo, clazz, null, null, null, null, DataType.DATE_LONG, DATE_COLUMN, false, true, false, false,
+				false, false, true, false);
 	}
 
 	@Test(expected = SQLException.class)

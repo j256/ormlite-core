@@ -499,6 +499,12 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public long countOf() throws SQLException;
 
 	/**
+	 * Returns the number of rows in the table associated with the prepared query passed in. Depending on the size of
+	 * the table and the database type, this may be expensive and take a while.
+	 */
+	public long countOf(PreparedQuery<T> preparedQuery) throws SQLException;
+
+	/**
 	 * Returns an empty collection that can be assigned to a collection field. This allows you to add things to the
 	 * collection from the start.
 	 * 

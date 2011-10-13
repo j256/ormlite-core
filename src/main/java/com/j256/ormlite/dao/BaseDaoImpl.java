@@ -22,6 +22,7 @@ import com.j256.ormlite.stmt.PreparedUpdate;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.SelectIterator;
+import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.stmt.StatementExecutor;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.stmt.Where;
@@ -661,6 +662,20 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		try {
 			return statementExecutor.queryForCountStar(connection);
+		} finally {
+			connectionSource.releaseConnection(connection);
+		}
+	}
+
+	public long countOf(PreparedQuery<T> preparedQuery) throws SQLException {
+		checkForInitialized();
+		if (preparedQuery.getType() != StatementType.SELECT_LONG) {
+			throw new IllegalArgumentException("Prepared query is not of type " + StatementType.SELECT_LONG
+					+ ", did you call QueryBuilder.setCountOf(true)?");
+		}
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		try {
+			return statementExecutor.queryForCountStar(connection, preparedQuery);
 		} finally {
 			connectionSource.releaseConnection(connection);
 		}

@@ -27,7 +27,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testToString() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		assertTrue(where.toString().contains("empty where clause"));
 		String value = "bar";
 		FieldType numberFieldType =
@@ -41,7 +41,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testAlreadyNeedsClause() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		where.eq(Foo.VAL_COLUMN_NAME, "bar");
 		where.and();
 		where.and();
@@ -49,38 +49,38 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testNoClauses() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
-		where.appendSql(databaseType, new StringBuilder(), new ArrayList<ArgumentHolder>());
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
+		where.appendSql(new StringBuilder(), new ArrayList<ArgumentHolder>());
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testMissingAndOr() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int val = 1;
 		where.eq(Foo.VAL_COLUMN_NAME, val);
 		where.eq(Foo.VAL_COLUMN_NAME, val);
-		where.appendSql(databaseType, new StringBuilder(), new ArrayList<ArgumentHolder>());
+		where.appendSql(new StringBuilder(), new ArrayList<ArgumentHolder>());
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testMissingClause() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int val = 1;
 		where.and();
 		where.eq(Foo.VAL_COLUMN_NAME, val);
-		where.appendSql(databaseType, new StringBuilder(), new ArrayList<ArgumentHolder>());
+		where.appendSql(new StringBuilder(), new ArrayList<ArgumentHolder>());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testComparisonUnknownField() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int val = 1;
 		where.eq("unknown-field", val);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testComparisonFieldNameNotColumnName() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		assertNotNull(Foo.class.getDeclaredField(Foo.ID_COLUMN_NAME));
 		int val = 1;
 		where.eq("string", val);
@@ -88,13 +88,13 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testAndInline() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int val = 1;
 		where.eq(Foo.VAL_COLUMN_NAME, val);
 		where.and();
 		where.eq(Foo.VAL_COLUMN_NAME, val);
 		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
 		sb.append('(');
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
@@ -109,11 +109,11 @@ public class WhereTest extends BaseCoreTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testAndRemoveClauses() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int val = 1;
 		where.and(where.eq(Foo.VAL_COLUMN_NAME, val), where.eq(Foo.VAL_COLUMN_NAME, val));
 		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
 		sb.append('(');
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
@@ -127,12 +127,12 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testBetween() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int low = 1;
 		int high = 1;
 		where.between(Foo.VAL_COLUMN_NAME, low, high);
 		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" BETWEEN ").append(low);
@@ -143,7 +143,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testEq() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int val = 112;
 		where.eq(Foo.VAL_COLUMN_NAME, val);
 		testOperation(where, Foo.VAL_COLUMN_NAME, "=", val);
@@ -151,7 +151,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testGe() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int val = 112;
 		where.ge(Foo.VAL_COLUMN_NAME, val);
 		testOperation(where, Foo.VAL_COLUMN_NAME, ">=", val);
@@ -159,7 +159,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testGt() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int val = 112;
 		where.gt(Foo.VAL_COLUMN_NAME, val);
 		testOperation(where, Foo.VAL_COLUMN_NAME, ">", val);
@@ -167,7 +167,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testLt() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int val = 112;
 		where.lt(Foo.VAL_COLUMN_NAME, val);
 		testOperation(where, Foo.VAL_COLUMN_NAME, "<", val);
@@ -175,7 +175,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testLe() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int val = 112;
 		where.le(Foo.VAL_COLUMN_NAME, val);
 		testOperation(where, Foo.VAL_COLUMN_NAME, "<=", val);
@@ -183,7 +183,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testNe() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int val = 112;
 		where.ne(Foo.VAL_COLUMN_NAME, val);
 		testOperation(where, Foo.VAL_COLUMN_NAME, "<>", val);
@@ -191,11 +191,11 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testIn() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int val = 112;
 		where.in(Foo.VAL_COLUMN_NAME, val);
 		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" IN (");
@@ -205,12 +205,12 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testInMany() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int[] vals = new int[] { 112, 123, 61 };
 		// NOTE: we can't pass in vals here
 		where.in(Foo.VAL_COLUMN_NAME, vals[0], vals[1], vals[2]);
 		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" IN (");
@@ -226,7 +226,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testInManyist() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		List<Integer> vals = new ArrayList<Integer>();
 		vals.add(112);
 		vals.add(123);
@@ -234,7 +234,7 @@ public class WhereTest extends BaseCoreTest {
 		// NOTE: we can't pass in vals here
 		where.in(Foo.VAL_COLUMN_NAME, vals);
 		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" IN (");
@@ -250,10 +250,10 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testIsNull() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		where.isNull(Foo.VAL_COLUMN_NAME);
 		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" IS NULL ");
@@ -262,10 +262,10 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testIsNotNull() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		where.isNotNull(Foo.VAL_COLUMN_NAME);
 		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" IS NOT NULL ");
@@ -274,18 +274,18 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testInArrayWithinArray() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		// NOTE: we can't pass in vals here
 		where.in(Foo.VAL_COLUMN_NAME, new int[] { 112 });
 	}
 
 	@Test
 	public void testLike() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int val = 112;
 		where.like(Foo.VAL_COLUMN_NAME, val);
 		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" LIKE ");
@@ -295,12 +295,12 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testNotFuture() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int val = 112;
 		where.not();
 		where.like(Foo.VAL_COLUMN_NAME, val);
 		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
 		sb.append("(NOT ");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
@@ -311,12 +311,12 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testNotAbsorb() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int val = 112;
 		where.like(Foo.VAL_COLUMN_NAME, val);
 		where.not(where);
 		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
 		sb.append("(NOT ");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
@@ -327,13 +327,13 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testAndFuture() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int val = 112;
 		where.eq(Foo.VAL_COLUMN_NAME, val);
 		where.and();
 		where.eq(Foo.VAL_COLUMN_NAME, val);
 		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
 		sb.append("(");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
@@ -347,13 +347,13 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testOrFuture() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int val = 112;
 		where.eq(Foo.VAL_COLUMN_NAME, val);
 		where.or();
 		where.eq(Foo.VAL_COLUMN_NAME, val);
 		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
 		sb.append("(");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
@@ -368,11 +368,11 @@ public class WhereTest extends BaseCoreTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testOrAbsorb() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int val = 112;
 		where.or(where.eq(Foo.VAL_COLUMN_NAME, val), where.eq(Foo.VAL_COLUMN_NAME, val));
 		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
 		sb.append("(");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
@@ -387,7 +387,7 @@ public class WhereTest extends BaseCoreTest {
 	private void testOperation(Where<Foo, String> where, String columnName, String operation, Object value)
 			throws Exception {
 		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
 		databaseType.appendEscapedEntityName(sb, columnName);
 		sb.append(' ').append(operation).append(' ');
@@ -398,11 +398,12 @@ public class WhereTest extends BaseCoreTest {
 	@Test
 	public void testIdEq() throws Exception {
 		Where<FooId, Integer> where =
-				new Where<FooId, Integer>(new TableInfo<FooId, Integer>(connectionSource, null, FooId.class), null);
+				new Where<FooId, Integer>(new TableInfo<FooId, Integer>(connectionSource, null, FooId.class), null,
+						databaseType);
 		int val = 112;
 		where.idEq(val);
 		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
 		databaseType.appendEscapedEntityName(sb, ID_COLUMN_NAME);
 		sb.append(" = ").append(val);
@@ -412,7 +413,8 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test(expected = SQLException.class)
 	public void testIdEqNoId() throws Exception {
-		new Where<FooNoId, Integer>(new TableInfo<FooNoId, Integer>(connectionSource, null, FooNoId.class), null).idEq(100);
+		new Where<FooNoId, Integer>(new TableInfo<FooNoId, Integer>(connectionSource, null, FooNoId.class), null,
+				databaseType).idEq(100);
 	}
 
 	@Test
@@ -421,12 +423,13 @@ public class WhereTest extends BaseCoreTest {
 		int id = 112132;
 		foo.id = id;
 		Where<FooId, Integer> where =
-				new Where<FooId, Integer>(new TableInfo<FooId, Integer>(connectionSource, null, FooId.class), null);
+				new Where<FooId, Integer>(new TableInfo<FooId, Integer>(connectionSource, null, FooId.class), null,
+						databaseType);
 		BaseDaoImpl<FooId, Integer> fooDao = new BaseDaoImpl<FooId, Integer>(connectionSource, FooId.class) {
 		};
 		where.idEq(fooDao, foo);
 		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
 		databaseType.appendEscapedEntityName(sb, ID_COLUMN_NAME);
 		sb.append(" = ").append(id);
@@ -436,16 +439,16 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test(expected = SQLException.class)
 	public void testIdEqObjectIdNoId() throws Exception {
-		new Where<FooNoId, Integer>(new TableInfo<FooNoId, Integer>(connectionSource, null, FooNoId.class), null).idEq(
-				new BaseDaoImpl<FooNoId, Integer>(connectionSource, FooNoId.class) {
-				}, new FooNoId());
+		new Where<FooNoId, Integer>(new TableInfo<FooNoId, Integer>(connectionSource, null, FooNoId.class), null,
+				databaseType).idEq(new BaseDaoImpl<FooNoId, Integer>(connectionSource, FooNoId.class) {
+		}, new FooNoId());
 	}
 
 	@Test
 	public void testInSubQuery() throws Exception {
 		TableInfo<ForeignFoo, Integer> tableInfo =
 				new TableInfo<ForeignFoo, Integer>(connectionSource, null, ForeignFoo.class);
-		Where<ForeignFoo, Integer> where = new Where<ForeignFoo, Integer>(tableInfo, null);
+		Where<ForeignFoo, Integer> where = new Where<ForeignFoo, Integer>(tableInfo, null, databaseType);
 		BaseDaoImpl<ForeignFoo, Integer> foreignDao =
 				new BaseDaoImpl<ForeignFoo, Integer>(connectionSource, ForeignFoo.class) {
 				};
@@ -453,7 +456,7 @@ public class WhereTest extends BaseCoreTest {
 		qb.selectColumns(ID_COLUMN_NAME);
 		where.in(ID_COLUMN_NAME, qb);
 		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
 		databaseType.appendEscapedEntityName(sb, ID_COLUMN_NAME);
 		sb.append(" IN (");
@@ -469,14 +472,14 @@ public class WhereTest extends BaseCoreTest {
 	public void testExistsSubQuery() throws Exception {
 		TableInfo<ForeignFoo, Integer> tableInfo =
 				new TableInfo<ForeignFoo, Integer>(connectionSource, null, ForeignFoo.class);
-		Where<ForeignFoo, Integer> where = new Where<ForeignFoo, Integer>(tableInfo, null);
+		Where<ForeignFoo, Integer> where = new Where<ForeignFoo, Integer>(tableInfo, null, databaseType);
 		BaseDaoImpl<ForeignFoo, Integer> foreignDao =
 				new BaseDaoImpl<ForeignFoo, Integer>(connectionSource, ForeignFoo.class) {
 				};
 		QueryBuilder<ForeignFoo, Integer> qb = foreignDao.queryBuilder();
 		where.exists(qb);
 		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
 		sb.append("EXISTS (");
 		sb.append("SELECT * FROM ");
@@ -489,14 +492,14 @@ public class WhereTest extends BaseCoreTest {
 	public void testNotExistsSubQuery() throws Exception {
 		TableInfo<ForeignFoo, Integer> tableInfo =
 				new TableInfo<ForeignFoo, Integer>(connectionSource, null, ForeignFoo.class);
-		Where<ForeignFoo, Integer> where = new Where<ForeignFoo, Integer>(tableInfo, null);
+		Where<ForeignFoo, Integer> where = new Where<ForeignFoo, Integer>(tableInfo, null, databaseType);
 		BaseDaoImpl<ForeignFoo, Integer> foreignDao =
 				new BaseDaoImpl<ForeignFoo, Integer>(connectionSource, ForeignFoo.class) {
 				};
 		QueryBuilder<ForeignFoo, Integer> qb = foreignDao.queryBuilder();
 		where.not().exists(qb);
 		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
 		sb.append("(NOT EXISTS (");
 		sb.append("SELECT * FROM ");
@@ -508,12 +511,12 @@ public class WhereTest extends BaseCoreTest {
 	@Test
 	public void testRaw() throws Exception {
 		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
-		Where<Foo, String> where = new Where<Foo, String>(tableInfo, null);
+		Where<Foo, String> where = new Where<Foo, String>(tableInfo, null, databaseType);
 		String raw = "VAL = 1";
 		int val = 17;
 		where.eq(Foo.VAL_COLUMN_NAME, val).and().raw(raw);
 		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
 		sb.append("(");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
@@ -585,11 +588,11 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testClear() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int val = 112;
 		where.eq(Foo.VAL_COLUMN_NAME, val);
 		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" = ");
@@ -599,7 +602,7 @@ public class WhereTest extends BaseCoreTest {
 		where.clear();
 		whereSb.setLength(0);
 		where.eq(Foo.VAL_COLUMN_NAME, val + 1);
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		sb.setLength(0);
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" = ");
@@ -614,11 +617,11 @@ public class WhereTest extends BaseCoreTest {
 		int val2 = 112;
 		int val3 = 113;
 		int val4 = 114;
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		where.and(where.eq(Foo.VAL_COLUMN_NAME, val1), where.eq(Foo.VAL_COLUMN_NAME, val2),
 				where.eq(Foo.VAL_COLUMN_NAME, val3), where.eq(Foo.VAL_COLUMN_NAME, val4));
 		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
 		sb.append("(");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
@@ -643,7 +646,7 @@ public class WhereTest extends BaseCoreTest {
 		where.eq(Foo.VAL_COLUMN_NAME, val4);
 		where.and(4);
 		whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		sb = new StringBuilder();
 		sb.append("(");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
@@ -665,7 +668,7 @@ public class WhereTest extends BaseCoreTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testOrMany() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int val1 = 111;
 		int val2 = 112;
 		int val3 = 113;
@@ -673,7 +676,7 @@ public class WhereTest extends BaseCoreTest {
 		where.or(where.eq(Foo.VAL_COLUMN_NAME, val1), where.eq(Foo.VAL_COLUMN_NAME, val2),
 				where.eq(Foo.VAL_COLUMN_NAME, val3), where.eq(Foo.VAL_COLUMN_NAME, val4));
 		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
 		sb.append("(");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
@@ -691,14 +694,14 @@ public class WhereTest extends BaseCoreTest {
 		sb.append(" ) ");
 		assertEquals(sb.toString(), whereSb.toString());
 
-		where = new Where<Foo, String>(createTableInfo(), null);
+		where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		where.eq(Foo.VAL_COLUMN_NAME, val1);
 		where.eq(Foo.VAL_COLUMN_NAME, val2);
 		where.eq(Foo.VAL_COLUMN_NAME, val3);
 		where.eq(Foo.VAL_COLUMN_NAME, val4);
 		where.or(4);
 		whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		sb = new StringBuilder();
 		sb.append("(");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
@@ -719,19 +722,19 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testOrManyZero() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		where.or(0);
 	}
 
 	@Test
 	public void testOrManyOne() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
-		where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
+		where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int val1 = 1312313;
 		where.eq(Foo.VAL_COLUMN_NAME, val1);
 		where.or(1);
 		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
 		sb.append("(");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
@@ -743,19 +746,19 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testAndManyZero() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		where.and(0);
 	}
 
 	@Test
 	public void testAndManyOne() throws Exception {
-		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null);
-		where = new Where<Foo, String>(createTableInfo(), null);
+		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
+		where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int val1 = 1312313;
 		where.eq(Foo.VAL_COLUMN_NAME, val1);
 		where.and(1);
 		StringBuilder whereSb = new StringBuilder();
-		where.appendSql(databaseType, whereSb, new ArrayList<ArgumentHolder>());
+		where.appendSql(whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
 		sb.append("(");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);

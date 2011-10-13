@@ -1530,6 +1530,30 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	}
 
 	@Test
+	public void testCountOfPrepared() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		assertEquals(0, dao.countOf());
+		Foo foo = new Foo();
+		String id1 = "1";
+		foo.id = id1;
+		assertEquals(1, dao.create(foo));
+		foo.id = "2";
+		assertEquals(1, dao.create(foo));
+		assertEquals(2, dao.countOf());
+
+		QueryBuilder<Foo, String> qb = dao.queryBuilder();
+		qb.setCountOf(true).where().eq(Foo.ID_COLUMN_NAME, id1);
+		assertEquals(1, dao.countOf(qb.prepare()));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testCountOfPreparedNoCountOf() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		QueryBuilder<Foo, String> qb = dao.queryBuilder();
+		dao.countOf(qb.prepare());
+	}
+
+	@Test
 	public void testQueryForEq() throws Exception {
 		Dao<Foo, String> dao = createDao(Foo.class, true);
 		assertEquals(0, dao.countOf());

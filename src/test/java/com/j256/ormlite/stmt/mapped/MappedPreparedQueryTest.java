@@ -85,7 +85,7 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
 		CompiledStatement stmt = null;
 		try {
-			stmt = preparedQuery.compile(conn);
+			stmt = preparedQuery.compile(conn, StatementType.SELECT);
 			DatabaseResults results = stmt.runQuery(null);
 			int fooC = 0;
 			while (results.next()) {

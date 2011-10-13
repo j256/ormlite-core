@@ -22,8 +22,8 @@ public class FloatObjectTypeTest extends BaseTypeTest {
 		LocalFloatObj foo = new LocalFloatObj();
 		foo.floatField = val;
 		assertEquals(1, dao.create(foo));
-		testType(dao, foo, clazz, val, val, val, valStr, DataType.FLOAT_OBJ, FLOAT_COLUMN, false, true, false,
-				false, false, false, true, false);
+		testType(dao, foo, clazz, val, val, val, valStr, DataType.FLOAT_OBJ, FLOAT_COLUMN, false, true, false, false,
+				false, false, true, false);
 	}
 
 	@Test
@@ -32,8 +32,8 @@ public class FloatObjectTypeTest extends BaseTypeTest {
 		Dao<LocalFloatObj, Object> dao = createDao(clazz, true);
 		LocalFloatObj foo = new LocalFloatObj();
 		assertEquals(1, dao.create(foo));
-		testType(dao, foo, clazz, null, null, null, null, DataType.FLOAT_OBJ, FLOAT_COLUMN, false, true, false,
-				false, false, false, true, false);
+		testType(dao, foo, clazz, null, null, null, null, DataType.FLOAT_OBJ, FLOAT_COLUMN, false, true, false, false,
+				false, false, true, false);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

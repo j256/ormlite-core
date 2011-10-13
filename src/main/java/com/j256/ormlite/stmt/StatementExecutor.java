@@ -84,7 +84,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 */
 	public T queryForFirst(DatabaseConnection databaseConnection, PreparedStmt<T> preparedStmt, ObjectCache objectCache)
 			throws SQLException {
-		CompiledStatement stmt = preparedStmt.compile(databaseConnection);
+		CompiledStatement stmt = preparedStmt.compile(databaseConnection, StatementType.SELECT);
 		try {
 			DatabaseResults results = stmt.runQuery(objectCache);
 			if (results.next()) {
@@ -95,9 +95,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 				return null;
 			}
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			stmt.close();
 		}
 	}
 
@@ -121,6 +119,24 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		long count = databaseConnection.queryForLong(statement);
 		logger.debug("query of '{}' returned {}", statement, count);
 		return count;
+	}
+
+	/**
+	 * Return a long value which is the number of rows in the table.
+	 */
+	public long queryForCountStar(DatabaseConnection databaseConnection, PreparedStmt<T> preparedStmt)
+			throws SQLException {
+		CompiledStatement stmt = preparedStmt.compile(databaseConnection, StatementType.SELECT_LONG);
+		try {
+			DatabaseResults results = stmt.runQuery(null);
+			if (results.next()) {
+				return results.getLong(0);
+			} else {
+				return 0;
+			}
+		} finally {
+			stmt.close();
+		}
 	}
 
 	/**
@@ -164,7 +180,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		CompiledStatement compiledStatement = null;
 		try {
-			compiledStatement = preparedStmt.compile(connection);
+			compiledStatement = preparedStmt.compile(connection, StatementType.SELECT);
 			SelectIterator<T, ID> iterator =
 					new SelectIterator<T, ID>(tableInfo.getDataClass(), classDao, preparedStmt, connectionSource,
 							connection, compiledStatement, preparedStmt.getStatement(), objectCache);
@@ -350,13 +366,11 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 * Update rows in the database.
 	 */
 	public int update(DatabaseConnection databaseConnection, PreparedUpdate<T> preparedUpdate) throws SQLException {
-		CompiledStatement stmt = preparedUpdate.compile(databaseConnection);
+		CompiledStatement stmt = preparedUpdate.compile(databaseConnection, StatementType.UPDATE);
 		try {
 			return stmt.runUpdate();
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			stmt.close();
 		}
 	}
 
@@ -413,13 +427,11 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 * Delete rows that match the prepared statement.
 	 */
 	public int delete(DatabaseConnection databaseConnection, PreparedDelete<T> preparedDelete) throws SQLException {
-		CompiledStatement stmt = preparedDelete.compile(databaseConnection);
+		CompiledStatement stmt = preparedDelete.compile(databaseConnection, StatementType.DELETE);
 		try {
 			return stmt.runUpdate();
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			stmt.close();
 		}
 	}
 

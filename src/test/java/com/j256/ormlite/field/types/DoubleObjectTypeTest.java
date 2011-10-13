@@ -22,8 +22,8 @@ public class DoubleObjectTypeTest extends BaseTypeTest {
 		LocalDoubleObj foo = new LocalDoubleObj();
 		foo.doubleField = val;
 		assertEquals(1, dao.create(foo));
-		testType(dao, foo, clazz, val, val, val, valStr, DataType.DOUBLE_OBJ, DOUBLE_COLUMN, false, true, false,
-				false, false, false, true, false);
+		testType(dao, foo, clazz, val, val, val, valStr, DataType.DOUBLE_OBJ, DOUBLE_COLUMN, false, true, false, false,
+				false, false, true, false);
 	}
 
 	@Test

@@ -24,8 +24,8 @@ public class IntTypeTest extends BaseTypeTest {
 		LocalInt foo = new LocalInt();
 		foo.intField = val;
 		assertEquals(1, dao.create(foo));
-		testType(dao, foo, clazz, val, val, val, valStr, DataType.INTEGER, INT_COLUMN, true, true, false, true,
-				false, false, true, true);
+		testType(dao, foo, clazz, val, val, val, valStr, DataType.INTEGER, INT_COLUMN, true, true, false, true, false,
+				false, true, true);
 	}
 
 	@Test

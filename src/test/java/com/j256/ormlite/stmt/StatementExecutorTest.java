@@ -17,6 +17,7 @@ import org.junit.Test;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableInfo;
@@ -30,7 +31,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		@SuppressWarnings("unchecked")
 		PreparedUpdate<Foo> update = createMock(PreparedUpdate.class);
 		CompiledStatement compiledStmt = createMock(CompiledStatement.class);
-		expect(update.compile(connection)).andReturn(compiledStmt);
+		expect(update.compile(connection, StatementType.UPDATE)).andReturn(compiledStmt);
 		expect(compiledStmt.runUpdate()).andThrow(new SQLException("expected"));
 		compiledStmt.close();
 		StatementExecutor<Foo, String> statementExec =
@@ -52,7 +53,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		@SuppressWarnings("unchecked")
 		PreparedDelete<Foo> delete = createMock(PreparedDelete.class);
 		CompiledStatement compiledStmt = createMock(CompiledStatement.class);
-		expect(delete.compile(connection)).andReturn(compiledStmt);
+		expect(delete.compile(connection, StatementType.DELETE)).andReturn(compiledStmt);
 		expect(compiledStmt.runUpdate()).andThrow(new SQLException("expected"));
 		compiledStmt.close();
 		StatementExecutor<Foo, String> statementExec =

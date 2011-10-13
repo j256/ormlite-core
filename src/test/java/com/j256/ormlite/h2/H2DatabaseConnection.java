@@ -29,7 +29,7 @@ public class H2DatabaseConnection implements DatabaseConnection {
 	private static final String JDBC_META_TABLE_NAME_COLUMN = "TABLE_NAME";
 
 	private Connection connection;
-	private static GenericRowMapper<Long> longWrapper = new OneLongWrapper();
+	private static final GenericRowMapper<Long> longWrapper = new OneLongWrapper();
 
 	public H2DatabaseConnection(Connection connection) {
 		this.connection = connection;
@@ -104,7 +104,9 @@ public class H2DatabaseConnection implements DatabaseConnection {
 			GenericRowMapper<T> rowMapper, ObjectCache objectCache) throws SQLException {
 		PreparedStatement stmt =
 				connection.prepareStatement(statement, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-		statementSetArgs(stmt, args, argFieldTypes);
+		if (args != null) {
+			statementSetArgs(stmt, args, argFieldTypes);
+		}
 		DatabaseResults results = new H2DatabaseResults(stmt.executeQuery(), objectCache);
 		if (!results.next()) {
 			// no results at all

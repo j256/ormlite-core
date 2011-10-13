@@ -507,6 +507,17 @@ public class RuntimeExceptionDao<T, ID> {
 	}
 
 	/**
+	 * @see Dao#countOf(PreparedQuery))
+	 */
+	public long countOf(PreparedQuery<T> preparedQuery) {
+		try {
+			return dao.countOf(preparedQuery);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
 	 * @see Dao#getEmptyForeignCollection(String)
 	 */
 	public <FT> ForeignCollection<FT> getEmptyForeignCollection(String fieldName) {
