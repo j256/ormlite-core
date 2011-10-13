@@ -100,6 +100,7 @@ public class LruObjectCache implements ObjectCache {
 		private final int capacity;
 
 		public LimitedLinkedHashMap(int capacity) {
+			super(capacity, 0.75F, true);
 			this.capacity = capacity;
 		}
 
