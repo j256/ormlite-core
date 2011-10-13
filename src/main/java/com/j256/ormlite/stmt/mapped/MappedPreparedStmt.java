@@ -36,7 +36,10 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 		this.type = type;
 	}
 
-	public CompiledStatement compile(DatabaseConnection databaseConnection) throws SQLException {
+	public CompiledStatement compile(DatabaseConnection databaseConnection, StatementType type) throws SQLException {
+		if (this.type != type) {
+			throw new SQLException("Prepared statement is a " + this.type + " but the call is expecting a " + type);
+		}
 		CompiledStatement stmt = databaseConnection.compileStatement(statement, type, argFieldTypes);
 		boolean ok = false;
 		try {
@@ -83,5 +86,9 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 
 	public String getStatement() {
 		return statement;
+	}
+
+	public StatementType getType() {
+		return type;
 	}
 }

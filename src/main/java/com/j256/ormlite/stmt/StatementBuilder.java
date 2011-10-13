@@ -27,7 +27,7 @@ public abstract class StatementBuilder<T, ID> {
 
 	protected final TableInfo<T, ID> tableInfo;
 	protected final DatabaseType databaseType;
-	private final StatementType type;
+	protected StatementType type;
 
 	private Where<T, ID> where = null;
 	protected Integer limit = null;
@@ -47,7 +47,7 @@ public abstract class StatementBuilder<T, ID> {
 		this.databaseType = databaseType;
 		this.tableInfo = tableInfo;
 		this.type = type;
-		if (type != StatementType.SELECT && type != StatementType.UPDATE && type != StatementType.DELETE) {
+		if (!type.isOkForStatementBuilder()) {
 			throw new IllegalStateException("Building a statement from a " + type + " statement is not allowed");
 		}
 	}
@@ -57,7 +57,7 @@ public abstract class StatementBuilder<T, ID> {
 	 * reset the where object so you can use the same query builder with a different where statement.
 	 */
 	public Where<T, ID> where() {
-		where = new Where<T, ID>(tableInfo, this);
+		where = new Where<T, ID>(tableInfo, this, databaseType);
 		return where;
 	}
 
@@ -79,6 +79,9 @@ public abstract class StatementBuilder<T, ID> {
 		FieldType[] argFieldTypes = new FieldType[argList.size()];;
 		for (int selectC = 0; selectC < selectArgs.length; selectC++) {
 			argFieldTypes[selectC] = selectArgs[selectC].getFieldType();
+		}
+		if (!type.isOkForStatementBuilder()) {
+			throw new IllegalStateException("Building a statement from a " + type + " statement is not allowed");
 		}
 		return new MappedPreparedStmt<T, ID>(tableInfo, statement, argFieldTypes, resultFieldTypes, selectArgs,
 				(databaseType.isLimitSqlSupported() ? null : limit), type);
@@ -118,7 +121,7 @@ public abstract class StatementBuilder<T, ID> {
 		appendStatementStart(sb, argList);
 		if (where != null) {
 			sb.append("WHERE ");
-			where.appendSql(databaseType, sb, argList);
+			where.appendSql(sb, argList);
 		}
 		appendStatementEnd(sb);
 	}
@@ -162,17 +165,27 @@ public abstract class StatementBuilder<T, ID> {
 	 * Types of statements that we are building.
 	 */
 	public static enum StatementType {
-		/** SQL statement in the form of INSERT ... FROM table ... */
-		INSERT,
-		/** SQL statement in the form of SELECT ... FROM table ... */
-		SELECT,
-		/** SQL statement in the form of UPDATE table SET ... */
-		UPDATE,
-		/** SQL statement in the form of DELETE FROM table ... */
-		DELETE,
+		/** SQL statement in the form of SELECT ... */
+		SELECT(true),
+		/** SQL statement in the form of SELECT COUNT(*)... or something */
+		SELECT_LONG(true),
+		/** SQL statement in the form of UPDATE ... */
+		UPDATE(true),
+		/** SQL statement in the form of DELETE ... */
+		DELETE(true),
 		/** SQL statement in the form of CREATE TABLE, ALTER TABLE, or something returning the number of rows affected */
-		EXECUTE,
+		EXECUTE(false),
 		// end
 		;
+
+		private final boolean okForStatementBuilder;
+
+		private StatementType(boolean okForStatementBuilder) {
+			this.okForStatementBuilder = okForStatementBuilder;
+		}
+
+		public boolean isOkForStatementBuilder() {
+			return okForStatementBuilder;
+		}
 	}
 }
