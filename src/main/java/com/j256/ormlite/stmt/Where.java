@@ -1,6 +1,7 @@
 package com.j256.ormlite.stmt;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.j256.ormlite.dao.CloseableIterator;
@@ -124,12 +125,13 @@ public class Where<T, ID> {
 	private final StatementBuilder<T, ID> statementBuilder;
 	private final FieldType idFieldType;
 	private final String idColumnName;
+	private final DatabaseType databaseType;
 
 	private Clause[] clauseStack = new Clause[START_CLAUSE_SIZE];
 	private int clauseStackLevel = 0;
 	private NeedsFutureClause needsFuture = null;
 
-	Where(TableInfo<T, ID> tableInfo, StatementBuilder<T, ID> statementBuilder) {
+	Where(TableInfo<T, ID> tableInfo, StatementBuilder<T, ID> statementBuilder, DatabaseType databaseType) {
 		// limit the constructor scope
 		this.tableInfo = tableInfo;
 		this.statementBuilder = statementBuilder;
@@ -139,6 +141,7 @@ public class Where<T, ID> {
 		} else {
 			this.idColumnName = idFieldType.getDbColumnName();
 		}
+		this.databaseType = databaseType;
 	}
 
 	/**
@@ -499,9 +502,18 @@ public class Where<T, ID> {
 	}
 
 	/**
+	 * Returns the associated SQL WHERE statement.
+	 */
+	public String getStatement() throws SQLException {
+		StringBuilder sb = new StringBuilder();
+		appendSql(sb, new ArrayList<ArgumentHolder>());
+		return sb.toString();
+	}
+
+	/**
 	 * Used by the internal classes to add the where SQL to the {@link StringBuilder}.
 	 */
-	void appendSql(DatabaseType databaseType, StringBuilder sb, List<ArgumentHolder> columnArgList) throws SQLException {
+	void appendSql(StringBuilder sb, List<ArgumentHolder> columnArgList) throws SQLException {
 		if (clauseStackLevel == 0) {
 			throw new IllegalStateException("No where clauses defined.  Did you miss a where operation?");
 		}
