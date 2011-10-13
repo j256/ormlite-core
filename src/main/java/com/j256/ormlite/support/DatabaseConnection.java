@@ -110,13 +110,6 @@ public interface DatabaseConnection {
 	public int delete(String statement, Object[] args, FieldType[] argfieldTypes) throws SQLException;
 
 	/**
-	 * @deprecated Here for internal backwards compatibility.
-	 */
-	@Deprecated
-	public <T> Object queryForOne(String statement, Object[] args, FieldType[] argfieldTypes,
-			GenericRowMapper<T> rowMapper) throws SQLException;
-
-	/**
 	 * Perform a SQL query with the associated SQL statement, arguments, and types and returns a single result.
 	 * 
 	 * @param statement

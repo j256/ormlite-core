@@ -101,11 +101,6 @@ public class H2DatabaseConnection implements DatabaseConnection {
 	}
 
 	public <T> Object queryForOne(String statement, Object[] args, FieldType[] argFieldTypes,
-			GenericRowMapper<T> rowMapper) throws SQLException {
-		return queryForOne(statement, args, argFieldTypes, rowMapper, null);
-	}
-
-	public <T> Object queryForOne(String statement, Object[] args, FieldType[] argFieldTypes,
 			GenericRowMapper<T> rowMapper, ObjectCache objectCache) throws SQLException {
 		PreparedStatement stmt =
 				connection.prepareStatement(statement, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
