@@ -92,20 +92,6 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * Add raw columns or aggregate functions (COUNT, MAX, ...) to the query. This will turn the query into something
-	 * only suitable for the {@link Dao#queryRaw(String, String...)} type of statement.
-	 */
-	public QueryBuilder<T, ID> selectRaw(String... columns) {
-		if (selectRawList == null) {
-			selectRawList = new ArrayList<String>();
-		}
-		for (String column : columns) {
-			selectRawList.add(column);
-		}
-		return this;
-	}
-
-	/**
 	 * Add columns to be returned by the SELECT query. If no columns are selected then all columns are returned by
 	 * default. For classes with id columns, the id column is added to the select list automagically.
 	 */
@@ -115,6 +101,20 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		}
 		for (String column : columns) {
 			addSelectColumnToList(column);
+		}
+		return this;
+	}
+
+	/**
+	 * Add raw columns or aggregate functions (COUNT, MAX, ...) to the query. This will turn the query into something
+	 * only suitable for the {@link Dao#queryRaw(String, String...)} type of statement.
+	 */
+	public QueryBuilder<T, ID> selectRaw(String... columns) {
+		if (selectRawList == null) {
+			selectRawList = new ArrayList<String>();
+		}
+		for (String column : columns) {
+			selectRawList.add(column);
 		}
 		return this;
 	}
