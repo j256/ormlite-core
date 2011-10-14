@@ -1754,6 +1754,27 @@ String[] resultArray = results.get(0);
 System.out.println("Account-id 10 has " + resultArray[0] + " orders");
 @end example
 
+@cindex raw query using QueryBuilder
+@cindex QueryBuilder, raw queries
+You can even use the @code{QueryBuilder} to build the raw queries for you if you'd lile using the @code{prepareStatementString()}
+method.  @xref{QueryBuilder Basics}.
+
+@example
+QueryBuilder<Account, Integer> qb = accountDao.queryBuilder();
+qb.where().ge("orderCount", 10);
+results = accountDao.queryRaw(qb.prepareStatementString());
+@end example
+
+If you want to use the @code{QueryBuilder} with arguments to the raw query then you should do something like:
+
+@example
+QueryBuilder<Account, Integer> qb = accountDao.queryBuilder();
+// we specify a SelectArg here to generate a ? in the statement string below
+qb.where().ge("orderCount", new SelectArg());
+// the 10 at the end is an optional argument to fulfill the SelectArg above
+results = accountDao.queryRaw(qb.prepareStatementString(), rawRowMapper, 10);
+@end example
+
 For large numbers of results, you should consider using the @code{iterator()} method on the @code{GenericRawResults} object
 which uses database paging.  For example:
 
@@ -4199,6 +4220,13 @@ This is similar to the HelloAndroid example but it is using JDBC and H2 instead 
 a proof of concept rather than a true example.  The wiring for the @code{onCreate} and @code{onUpdate} is a hack.   H2 is certainly
 larger, has tons more features, but is slower than the native SQLite.  Also, JDBC under Android is @emph{not} completely sanctioned by
 Google and support for it may be removed in the future.  See the @uref{http://ormlite.com/docs/android-helloh2, source code in SVN}.
+
+@item HelloAndroidNoBase
+
+This is similar to the HelloAndroid example but its activity does not extend the @code{OrmLiteBaseActivity} but instead manages the
+helpers itself.  Certain programmers may want to manage the database connections using their own code to better share between
+activities and services or to use ORMLite when it is not possible to extend the base classes.  See the
+@uref{http://ormlite.com/docs/android-hello-no-base, source code in SVN}.
 
 @end table
 

@@ -396,6 +396,35 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * you to do special queries that aren't supported otherwise. Like the above iterator methods, you must call close
 	 * on the returned RawResults object once you are done with it. The arguments are optional but can be set with
 	 * strings to expand ? type of SQL.
+	 * 
+	 * <p>
+	 * You can use the {@link QueryBuilder#prepareStatementString()} method here if you want to build the query using
+	 * the structure of the QueryBuilder.
+	 * </p>
+	 * 
+	 * <p>
+	 * 
+	 * <pre>
+	 * QueryBuilder&lt;Account, Integer&gt; qb = accountDao.queryBuilder();
+	 * qb.where().ge(&quot;orderCount&quot;, 10);
+	 * results = accountDao.queryRaw(qb.prepareStatementString());
+	 * </pre>
+	 * 
+	 * </p>
+	 * 
+	 * If you want to use the QueryBuilder with arguments to the raw query then you should do something like:
+	 * 
+	 * <p>
+	 * 
+	 * <pre>
+	 * QueryBuilder&lt;Account, Integer&gt; qb = accountDao.queryBuilder();
+	 * // we specify a SelectArg here to generate a ? in the statement string below
+	 * qb.where().ge(&quot;orderCount&quot;, new SelectArg());
+	 * // the 10 at the end is an optional argument to fulfill the SelectArg above
+	 * results = accountDao.queryRaw(qb.prepareStatementString(), rawRowMapper, 10);
+	 * </pre>
+	 * 
+	 * </p>
 	 */
 	public GenericRawResults<String[]> queryRaw(String query, String... arguments) throws SQLException;
 

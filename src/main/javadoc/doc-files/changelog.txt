@@ -1,4 +1,7 @@
-4.27: 10/11/2011 (svn rYYYY)
+4.28: 10/XX/2011 (svn rYYYY)
+	* CORE: Added support for the countOf(PreparedQuery) in the Dao and the QueryBuilder.setCountOf(true).  Thanks to Pedro Velasco.
+
+4.27: 10/11/2011 (svn r2019)
 	* CORE: Added @DatabaseField(foreignAutoCreate=true) for auto-creating foreign fields with blank IDs using the internal DAO.
 	* CORE: Added support for storing BigDecimal and BigInteger fields.  Thanks to Pedro Velasco.  Resolves feature #3414432.
 	* CORE: Added support for the javax.persistence.Enumerated annotation for setting @Enumerated(ORDINAL) or @Enumerated(STRING).

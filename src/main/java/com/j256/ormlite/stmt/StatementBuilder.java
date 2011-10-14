@@ -90,10 +90,6 @@ public abstract class StatementBuilder<T, ID> {
 	/**
 	 * Build and return a string version of the query. If you change the where or make other calls you will need to
 	 * re-call this method to re-prepare the query for execution.
-	 * 
-	 * <p>
-	 * This is mostly used for debugging or logging cases.
-	 * </p>
 	 */
 	public String prepareStatementString() throws SQLException {
 		List<ArgumentHolder> argList = new ArrayList<ArgumentHolder>();

@@ -11,6 +11,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.db.BaseDatabaseType;
 
 public class QueryBuilderTest extends BaseCoreStmtTest {
@@ -355,6 +356,30 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		List<Foreign> results2 = foreignDao.queryBuilder().where().eq(Foreign.FOREIGN_COLUMN_NAME, foo.id).query();
 		assertEquals(1, results2.size());
 		assertEquals(foreign.id, results2.get(0).id);
+	}
+
+	@Test
+	public void testQueryBuilderQueryRaw() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		foo.id = "stuff1";
+		foo.val = 1;
+		foo.equal = 10;
+		assertEquals(1, dao.create(foo));
+		QueryBuilder<Foo, String> qb = dao.queryBuilder();
+		qb.where().eq(Foo.VAL_COLUMN_NAME, new SelectArg());
+		GenericRawResults<String[]> rawResults = dao.queryRaw(qb.prepareStatementString(), Integer.toString(foo.val));
+		List<String[]> results = rawResults.getResults();
+		assertEquals(1, results.size());
+		boolean found = false;
+		String[] columnNames = rawResults.getColumnNames();
+		for (int i = 0; i < rawResults.getNumberColumns(); i++) {
+			if (columnNames[i].equalsIgnoreCase(Foo.ID_COLUMN_NAME)) {
+				assertEquals(foo.id, results.get(0)[0]);
+				found = true;
+			}
+		}
+		assertTrue(found);
 	}
 
 	private static class LimitInline extends BaseDatabaseType {
