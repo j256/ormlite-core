@@ -165,6 +165,8 @@ public abstract class StatementBuilder<T, ID> {
 		SELECT(true),
 		/** SQL statement in the form of SELECT COUNT(*)... or something */
 		SELECT_LONG(true),
+		/** SQL statement in the form of SELECT... with aggregate functions or something */
+		SELECT_RAW(true),
 		/** SQL statement in the form of UPDATE ... */
 		UPDATE(true),
 		/** SQL statement in the form of DELETE ... */

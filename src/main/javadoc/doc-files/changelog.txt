@@ -1,5 +1,6 @@
 4.28: 10/XX/2011 (svn rYYYY)
-	* CORE: Added support for the countOf(PreparedQuery) in the Dao and the QueryBuilder.setCountOf(true).  Thanks to Pedro Velasco.
+	* CORE: Added Dao.countOf(PreparedQuery) and QueryBuilder.setCountOf(true).  Thanks to Pedro Velasco.
+	* CORE: Added QueryBuilder.rawColumns(String... columns) to better support aggregates.  Thanks to Pedro Velasco.
 
 4.27: 10/11/2011 (svn r2019)
 	* CORE: Added @DatabaseField(foreignAutoCreate=true) for auto-creating foreign fields with blank IDs using the internal DAO.

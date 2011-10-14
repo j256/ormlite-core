@@ -2433,6 +2433,15 @@ want to access.  To get all of the fields on the object later, you can either do
 
 Same as the above but with an iterable (such as a collection) instead of a variable list of column names.
 
+@cindex query raw columns
+@cindex raw columns, query
+@cindex aggregate functions, query
+@cindex query for aggregate functions
+@item rawColumns(String... columns)
+
+Add raw columns or aggregate functions (COUNT, MAX, ...) to the query. This will turn the query into something
+only suitable for using as a raw query.  @xref{Raw Queries}.
+
 @cindex where method
 @item where()
 
@@ -3615,6 +3624,11 @@ number of database operations at once -- maybe loading data from a file. This wi
 
 Returns the value returned from a @code{SELECT COUNT(*)} query which is the number of rows in the table.  Depending on the
 database and the size of the table, this could be expensive. 
+
+@item countOf(PreparedQuery<T> preparedQuery)
+
+Returns the number of rows in the table associated with the prepared query passed in. Depending on the size of
+the table and the database type, this may be expensive and take a while.
 
 @cindex empty foreign collection
 @cindex foreign collection, empty

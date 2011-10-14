@@ -31,6 +31,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	private boolean selectIdColumn = true;
 	private final FieldType idField;
 	private List<String> selectColumnList = null;
+	private List<String> selectRawList = null;
 	private List<OrderBy> orderByList = null;
 	private String orderByRaw = null;
 	private List<String> groupByList = null;
@@ -86,6 +87,20 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		}
 		for (String column : columns) {
 			addSelectColumnToList(column);
+		}
+		return this;
+	}
+
+	/**
+	 * Add raw columns or aggregate functions (COUNT, MAX, ...) to the query. This will turn the query into something
+	 * only suitable for the {@link Dao#queryRaw(String, String...)} type of statement.
+	 */
+	public QueryBuilder<T, ID> selectRaw(String... columns) {
+		if (selectRawList == null) {
+			selectRawList = new ArrayList<String>();
+		}
+		for (String column : columns) {
+			selectRawList.add(column);
 		}
 		return this;
 	}
@@ -231,6 +246,9 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		if (countOf) {
 			type = StatementType.SELECT_LONG;
 			sb.append("COUNT(*) ");
+		} else if (selectRawList != null && !selectRawList.isEmpty()) {
+			type = StatementType.SELECT_RAW;
+			appendRawColumns(sb);
 		} else {
 			type = StatementType.SELECT;
 			appendColumns(sb);
@@ -262,6 +280,19 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			throw new IllegalArgumentException("Can't select from foreign colletion field: " + columnName);
 		}
 		selectColumnList.add(columnName);
+	}
+
+	private void appendRawColumns(StringBuilder sb) throws SQLException {
+		boolean first = true;
+		for (String column : selectRawList) {
+			if (first) {
+				first = false;
+			} else {
+				sb.append(", ");
+			}
+			sb.append(column);
+		}
+		sb.append(' ');
 	}
 
 	private void appendColumns(StringBuilder sb) throws SQLException {

@@ -38,7 +38,9 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 
 	public CompiledStatement compile(DatabaseConnection databaseConnection, StatementType type) throws SQLException {
 		if (this.type != type) {
-			throw new SQLException("Prepared statement is a " + this.type + " but the call is expecting a " + type);
+			throw new SQLException("Could not compile this " + this.type
+					+ " statement since the caller is expecting a " + type
+					+ " statement.  Check your QueryBuilder methods.");
 		}
 		CompiledStatement stmt = databaseConnection.compileStatement(statement, type, argFieldTypes);
 		boolean ok = false;
