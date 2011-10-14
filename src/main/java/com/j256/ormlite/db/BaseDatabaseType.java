@@ -352,8 +352,8 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		sb.append('\'').append(word).append('\'');
 	}
 
-	public void appendEscapedEntityName(StringBuilder sb, String word) {
-		sb.append('`').append(word).append('`');
+	public void appendEscapedEntityName(StringBuilder sb, String name) {
+		sb.append('`').append(name).append('`');
 	}
 
 	public String generateIdSequenceName(String tableName, FieldType idFieldType) {
