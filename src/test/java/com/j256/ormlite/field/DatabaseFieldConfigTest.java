@@ -349,13 +349,13 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 		String field2;
 	}
 
-	protected class Serial implements Serializable {
+	protected static class Serial implements Serializable {
 		private static final long serialVersionUID = 6826474171714263950L;
 		@DatabaseField(canBeNull = true)
 		String field;
 	}
 
-	protected class JavaxAnno {
+	protected static class JavaxAnno {
 		// no annotations so is not a configured column
 		int notColumn;
 		@Column

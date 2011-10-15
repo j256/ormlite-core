@@ -62,7 +62,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	/**
 	 * Provides statements for various SQL operations.
 	 */
-	public StatementExecutor(DatabaseType databaseType, TableInfo<T, ID> tableInfo, Dao<T, ID> dao) throws SQLException {
+	public StatementExecutor(DatabaseType databaseType, TableInfo<T, ID> tableInfo, Dao<T, ID> dao) {
 		this.databaseType = databaseType;
 		this.tableInfo = tableInfo;
 		this.dao = dao;

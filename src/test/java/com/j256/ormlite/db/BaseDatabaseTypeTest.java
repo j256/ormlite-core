@@ -21,7 +21,7 @@ public class BaseDatabaseTypeTest extends BaseCoreTest {
 	}
 
 	@Test(expected = IllegalStateException.class)
-	public void testConfigureGeneratedId() throws SQLException {
+	public void testConfigureGeneratedId() {
 		new TestDatabaseType().configureGeneratedId(null, new StringBuilder(), null, new ArrayList<String>(), null,
 				new ArrayList<String>(), new ArrayList<String>());
 	}

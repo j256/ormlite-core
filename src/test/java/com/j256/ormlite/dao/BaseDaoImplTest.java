@@ -2368,15 +2368,6 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		String uniqueStuff;
 	}
 
-	protected static class SingleUniqueCombo {
-		@DatabaseField(generatedId = true)
-		int id;
-		@DatabaseField
-		String stuff;
-		@DatabaseField(uniqueCombo = true)
-		String uniqueStuff;
-	}
-
 	protected static class DoubleUniqueCombo {
 		@DatabaseField(generatedId = true)
 		int id;

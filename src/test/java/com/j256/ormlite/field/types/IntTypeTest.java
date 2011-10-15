@@ -44,8 +44,7 @@ public class IntTypeTest extends BaseTypeTest {
 	@Test
 	public void testIntConvertId() throws Exception {
 		int intId = 213123123;
-		long longId = new Long(intId);
-		assertEquals(intId, DataType.INTEGER.getDataPersister().convertIdNumber(longId));
+		assertEquals(intId, DataType.INTEGER.getDataPersister().convertIdNumber((long) intId));
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

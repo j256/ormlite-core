@@ -188,8 +188,8 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, "foo", ManyFields.class.getDeclaredField("bool"),
 						ManyFields.class);
-		assertEquals(new Byte((byte) 1), booleanFieldConverter.javaToSqlArg(fieldType, Boolean.TRUE));
-		assertEquals(new Byte((byte) 0), booleanFieldConverter.javaToSqlArg(fieldType, Boolean.FALSE));
+		assertEquals(Byte.valueOf((byte) 1), booleanFieldConverter.javaToSqlArg(fieldType, Boolean.TRUE));
+		assertEquals(Byte.valueOf((byte) 0), booleanFieldConverter.javaToSqlArg(fieldType, Boolean.FALSE));
 	}
 
 	@Test
@@ -213,8 +213,10 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, "foo", ManyFields.class.getDeclaredField("bool"),
 						ManyFields.class);
-		assertEquals(new Byte((byte) 1), booleanFieldConverter.parseDefaultString(fieldType, Boolean.TRUE.toString()));
-		assertEquals(new Byte((byte) 0), booleanFieldConverter.parseDefaultString(fieldType, Boolean.FALSE.toString()));
+		assertEquals(Byte.valueOf((byte) 1),
+				booleanFieldConverter.parseDefaultString(fieldType, Boolean.TRUE.toString()));
+		assertEquals(Byte.valueOf((byte) 0),
+				booleanFieldConverter.parseDefaultString(fieldType, Boolean.FALSE.toString()));
 	}
 
 	@Test
@@ -251,8 +253,8 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 	@Test
 	public void testGenerateIdSequenceNameUppercaseEntities() throws Exception {
 		String table = "foo";
-		assertEquals(new String(table + BaseDatabaseType.DEFAULT_SEQUENCE_SUFFIX).toUpperCase(),
-				new OurDbTypeUppercaseEntities().generateIdSequenceName(table, null));
+		String name = table + BaseDatabaseType.DEFAULT_SEQUENCE_SUFFIX;
+		assertEquals(name.toUpperCase(), new OurDbTypeUppercaseEntities().generateIdSequenceName(table, null));
 	}
 
 	@Test

@@ -415,7 +415,7 @@ public class RuntimeExceptionDao<T, ID> {
 	/**
 	 * @see Dao#updateRaw(String, String...)
 	 */
-	public int updateRaw(String statement, String... arguments) throws SQLException {
+	public int updateRaw(String statement, String... arguments) {
 		try {
 			return dao.updateRaw(statement, arguments);
 		} catch (SQLException e) {

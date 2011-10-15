@@ -26,7 +26,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 
 	private static final long serialVersionUID = -5460708106909626233L;
 
-	private CloseableIterator<T> lastIterator;
+	private transient CloseableIterator<T> lastIterator;
 
 	public LazyForeignCollection(Dao<T, ID> dao, String fieldName, Object fieldValue, String orderColumn, Object parent) {
 		super(dao, fieldName, fieldValue, orderColumn, parent);

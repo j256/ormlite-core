@@ -623,7 +623,7 @@ public class FieldType {
 	/**
 	 * Return the id field associated with the foreign object or null if none.
 	 */
-	public FieldType getForeignIdField() throws SQLException {
+	public FieldType getForeignIdField() {
 		return foreignIdField;
 	}
 

@@ -53,7 +53,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * field _must_ be set otherwise you can't do a refresh() or update(). But internal queries must have 1 select
 	 * column set so we can't add the ID.
 	 */
-	void enableInnerQuery() throws SQLException {
+	void enableInnerQuery() {
 		this.isInnerQuery = true;
 	}
 
@@ -259,7 +259,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	@Override
-	protected FieldType[] getResultFieldTypes() throws SQLException {
+	protected FieldType[] getResultFieldTypes() {
 		return resultFieldTypes;
 	}
 
@@ -282,7 +282,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		selectColumnList.add(columnName);
 	}
 
-	private void appendRawColumns(StringBuilder sb) throws SQLException {
+	private void appendRawColumns(StringBuilder sb) {
 		boolean first = true;
 		for (String column : selectRawList) {
 			if (first) {
@@ -295,7 +295,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		sb.append(' ');
 	}
 
-	private void appendColumns(StringBuilder sb) throws SQLException {
+	private void appendColumns(StringBuilder sb) {
 		// if no columns were specified then * is the default
 		if (selectColumnList == null) {
 			sb.append("* ");
@@ -384,7 +384,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		sb.append(' ');
 	}
 
-	private void appendOrderBys(StringBuilder sb) throws SQLException {
+	private void appendOrderBys(StringBuilder sb) {
 		if ((orderByList == null || orderByList.isEmpty()) && orderByRaw == null) {
 			return;
 		}
@@ -427,7 +427,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			queryBuilder.appendStatementString(sb, argList);
 		}
 
-		public FieldType[] getResultFieldTypes() throws SQLException {
+		public FieldType[] getResultFieldTypes() {
 			return queryBuilder.resultFieldTypes;
 		}
 	}

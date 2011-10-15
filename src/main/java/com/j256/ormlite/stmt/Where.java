@@ -280,7 +280,7 @@ public class Where<T, ID> {
 	 * <b>NOTE:</b> The sub-query will be prepared at the same time that the outside query is.
 	 * </p>
 	 */
-	public Where<T, ID> exists(QueryBuilder<?, ?> subQueryBuilder) throws SQLException {
+	public Where<T, ID> exists(QueryBuilder<?, ?> subQueryBuilder) {
 		// we do this to turn off the automatic addition of the ID column in the select column list
 		subQueryBuilder.enableInnerQuery();
 		addClause(new Exists(new InternalQueryBuilderWrapper(subQueryBuilder)));
@@ -437,7 +437,7 @@ public class Where<T, ID> {
 	 *            Optional arguments that correspond to any ? specified in the rawStatement. Each of the arguments must
 	 *            have either the corresponding columnName or the sql-type set.
 	 */
-	public Where<T, ID> raw(String rawStatement, ArgumentHolder... args) throws SQLException {
+	public Where<T, ID> raw(String rawStatement, ArgumentHolder... args) {
 		for (ArgumentHolder arg : args) {
 			String columnName = arg.getColumnName();
 			if (columnName == null) {
@@ -569,7 +569,7 @@ public class Where<T, ID> {
 		}
 	}
 
-	private FieldType findColumnFieldType(String columnName) throws SQLException {
+	private FieldType findColumnFieldType(String columnName) {
 		return tableInfo.getFieldTypeByColumnName(columnName);
 	}
 

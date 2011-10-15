@@ -120,8 +120,7 @@ public class DaoManager {
 	/**
 	 * Helper method to lookup a Dao if it has already been associated with the class. Otherwise this returns null.
 	 */
-	public synchronized static <D extends Dao<T, ?>, T> D lookupDao(ConnectionSource connectionSource, Class<T> clazz)
-			throws SQLException {
+	public synchronized static <D extends Dao<T, ?>, T> D lookupDao(ConnectionSource connectionSource, Class<T> clazz) {
 		if (connectionSource == null) {
 			throw new IllegalArgumentException("connectionSource argument cannot be null");
 		}
@@ -188,7 +187,7 @@ public class DaoManager {
 	 * null.
 	 */
 	public synchronized static <D extends Dao<T, ?>, T> D lookupDao(ConnectionSource connectionSource,
-			DatabaseTableConfig<T> tableConfig) throws SQLException {
+			DatabaseTableConfig<T> tableConfig) {
 		if (connectionSource == null) {
 			throw new IllegalArgumentException("connectionSource argument cannot be null");
 		}
@@ -244,7 +243,7 @@ public class DaoManager {
 	 * This adds database table configurations to the internal cache which can be used to speed up DAO construction.
 	 * This is especially true of Android and other mobile platforms.
 	 */
-	public static void addCachedDatabaseConfigs(Collection<DatabaseTableConfig<?>> configs) throws SQLException {
+	public static void addCachedDatabaseConfigs(Collection<DatabaseTableConfig<?>> configs) {
 		Map<Class<?>, DatabaseTableConfig<?>> newMap;
 		if (configMap == null) {
 			newMap = new HashMap<Class<?>, DatabaseTableConfig<?>>();

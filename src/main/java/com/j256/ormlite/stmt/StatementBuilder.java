@@ -131,7 +131,7 @@ public abstract class StatementBuilder<T, ID> {
 	 * Get the result array from our statement after the {@link #appendStatementStart(StringBuilder, List)} was called.
 	 * This will be null except for the QueryBuilder.
 	 */
-	protected FieldType[] getResultFieldTypes() throws SQLException {
+	protected FieldType[] getResultFieldTypes() {
 		return null;
 	}
 

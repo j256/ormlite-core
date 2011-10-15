@@ -729,7 +729,6 @@ public class WhereTest extends BaseCoreTest {
 	@Test
 	public void testOrManyOne() throws Exception {
 		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
-		where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int val1 = 1312313;
 		where.eq(Foo.VAL_COLUMN_NAME, val1);
 		where.or(1);
@@ -753,7 +752,6 @@ public class WhereTest extends BaseCoreTest {
 	@Test
 	public void testAndManyOne() throws Exception {
 		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
-		where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int val1 = 1312313;
 		where.eq(Foo.VAL_COLUMN_NAME, val1);
 		where.and(1);

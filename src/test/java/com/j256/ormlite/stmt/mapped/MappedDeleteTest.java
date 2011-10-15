@@ -33,7 +33,7 @@ public class MappedDeleteTest {
 						NoId.class), null);
 		NoId noId = new NoId();
 		noId.stuff = "1";
-		se.delete(null, noId, null);
+		se.delete(connectionSource.getReadOnlyConnection(), noId, null);
 	}
 
 	@Test(expected = SQLException.class)

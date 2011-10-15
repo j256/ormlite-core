@@ -23,7 +23,7 @@ public class WrappedConnectionSource implements ConnectionSource {
 	private final Map<DatabaseConnection, WrappedConnection> wrappedConnections =
 			new HashMap<DatabaseConnection, WrappedConnection>();
 
-	public WrappedConnectionSource(ConnectionSource cs) throws SQLException {
+	public WrappedConnectionSource(ConnectionSource cs) {
 		this.cs = cs;
 	}
 

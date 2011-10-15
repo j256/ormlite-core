@@ -719,6 +719,13 @@ public class FieldTypeTest extends BaseCoreTest {
 				AllowGeneratedIdNotGeneratedId.class);
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void testVersionFieldWrongType() throws Exception {
+		Field field = VersionFieldWrongType.class.getDeclaredField("version");
+		FieldType.createFieldType(connectionSource, AllowGeneratedIdNotGeneratedId.class.getSimpleName(), field,
+				AllowGeneratedIdNotGeneratedId.class);
+	}
+
 	/* ========================================================================================================= */
 
 	protected static class Foo {
@@ -733,11 +740,6 @@ public class FieldTypeTest extends BaseCoreTest {
 	}
 
 	protected static class DateDefaultBad {
-		@DatabaseField(defaultValue = "bad value")
-		Date date;
-	}
-
-	protected static class SerializableDefault {
 		@DatabaseField(defaultValue = "bad value")
 		Date date;
 	}
@@ -986,6 +988,14 @@ public class FieldTypeTest extends BaseCoreTest {
 
 		@DatabaseField(allowGeneratedIdInsert = true)
 		String stuff;
+	}
+
+	protected static class VersionFieldWrongType {
+		@DatabaseField(generatedId = true)
+		int id;
+
+		@DatabaseField(version = true)
+		String version;
 	}
 
 	private static class NeedsUppercaseSequenceDatabaseType extends NeedsSequenceDatabaseType {

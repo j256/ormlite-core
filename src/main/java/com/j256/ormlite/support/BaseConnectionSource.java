@@ -21,7 +21,7 @@ public abstract class BaseConnectionSource implements ConnectionSource {
 	/**
 	 * Returns the connection that has been saved or null if none.
 	 */
-	protected DatabaseConnection getSavedConnection() throws SQLException {
+	protected DatabaseConnection getSavedConnection() {
 		if (!usedSpecialConnection) {
 			return null;
 		}
@@ -36,7 +36,7 @@ public abstract class BaseConnectionSource implements ConnectionSource {
 	/**
 	 * Return true if the connection being released is the one that has been saved.
 	 */
-	protected boolean isSavedConnection(DatabaseConnection connection) throws SQLException {
+	protected boolean isSavedConnection(DatabaseConnection connection) {
 		if (!usedSpecialConnection) {
 			return false;
 		}
