@@ -32,7 +32,8 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 	private transient final String orderColumn;
 	private transient final Object parent;
 
-	protected BaseForeignCollection(Dao<T, ID> dao, String fieldName, Object fieldValue, String orderColumn, Object parent) {
+	protected BaseForeignCollection(Dao<T, ID> dao, String fieldName, Object fieldValue, String orderColumn,
+			Object parent) {
 		this.dao = dao;
 		this.fieldName = fieldName;
 		this.fieldValue = fieldValue;
