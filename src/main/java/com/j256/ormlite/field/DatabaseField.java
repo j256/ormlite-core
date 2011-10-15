@@ -267,4 +267,20 @@ public @interface DatabaseField {
 	 * </p>
 	 */
 	boolean foreignAutoCreate() default false;
+
+	/**
+	 * Set this to be true (default false) to have this field to be a version field similar to
+	 * javax.persistence.Version. When an update is done on a row the following happens:
+	 * 
+	 * <ul>
+	 * <li>The update statement is augmented with a "WHERE version = current-value"</li>
+	 * <li>The new value being updated is the current-value + 1 or the current Date</li>
+	 * <li>If the row has been updated by another entity then the update will not change the row and 0 rows changed will
+	 * be returned.</li>
+	 * <li>If a row was changed then the object is changed so the version field gets the new value</li>
+	 * </ul>
+	 * 
+	 * The field should be a short, integer, long, Date, Date-string, or Date-long type.
+	 */
+	boolean version() default false;
 }

@@ -36,6 +36,14 @@ public interface FieldConverter {
 	public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException;
 
 	/**
+	 * Return the object converted from the SQL arg to java.
+	 * 
+	 * @param fieldType
+	 *            Associated FieldType which may be null.
+	 */
+	public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException;
+
+	/**
 	 * Return the SQL type that is stored in the database for this argument.
 	 */
 	public SqlType getSqlType();

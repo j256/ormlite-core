@@ -13,6 +13,7 @@ import static org.junit.Assert.fail;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -2163,6 +2164,107 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(stuff, foo.stuff);
 	}
 
+	@Test
+	public void testVersionField() throws Exception {
+		Dao<VersionField, Integer> dao = createDao(VersionField.class, true);
+
+		VersionField foo1 = new VersionField();
+		assertEquals(1, dao.create(foo1));
+
+		assertEquals(1, foo1.id);
+		assertEquals(0, foo1.version);
+
+		assertEquals(1, dao.update(foo1));
+		assertEquals(1, foo1.version);
+
+		assertEquals(1, dao.update(foo1));
+		assertEquals(2, foo1.version);
+
+		VersionField foo2 = dao.queryForId(foo1.id);
+		// we update this one to a new version number
+		assertEquals(1, dao.update(foo2));
+		assertEquals(3, foo2.version);
+
+		// the old one doesn't change
+		assertEquals(2, foo1.version);
+		// but when we try to update the earlier foo, the version doesn't match
+		assertEquals(0, dao.update(foo1));
+	}
+
+	@Test
+	public void testVersionFieldNonDefault() throws Exception {
+		Dao<VersionField, Integer> dao = createDao(VersionField.class, true);
+
+		VersionField foo1 = new VersionField();
+		foo1.version = 10;
+		assertEquals(1, dao.create(foo1));
+
+		VersionField foo2 = dao.queryForId(foo1.id);
+		// we update this one to a new version number
+		assertEquals(1, dao.update(foo2));
+		assertEquals(foo1.version + 1, foo2.version);
+
+		assertEquals(1, dao.update(foo2));
+		assertEquals(foo1.version + 2, foo2.version);
+	}
+
+	@Test
+	public void testVersionFieldDate() throws Exception {
+		Dao<VersionFieldDate, Integer> dao = createDao(VersionFieldDate.class, true);
+
+		VersionFieldDate foo1 = new VersionFieldDate();
+		long before1 = System.currentTimeMillis();
+		assertEquals(1, dao.create(foo1));
+		long after = System.currentTimeMillis();
+		assertNotNull(foo1.version);
+		assertTrue(foo1.version.getTime() >= before1 && foo1.version.getTime() <= after);
+
+		long before2 = System.currentTimeMillis();
+		assertEquals(1, dao.update(foo1));
+		after = System.currentTimeMillis();
+		assertTrue(before2 >= before1);
+		// we do after+1 here because if previous time == now then we do a + 1
+		assertTrue(foo1.version.getTime() >= before2 && foo1.version.getTime() <= after + 1);
+	}
+
+	@Test
+	public void testVersionFieldDateLong() throws Exception {
+		Dao<VersionFieldDateLong, Integer> dao = createDao(VersionFieldDateLong.class, true);
+
+		VersionFieldDateLong foo1 = new VersionFieldDateLong();
+		long before1 = System.currentTimeMillis();
+		assertEquals(1, dao.create(foo1));
+		long after = System.currentTimeMillis();
+		assertNotNull(foo1.version);
+		assertTrue(foo1.version.getTime() >= before1 && foo1.version.getTime() <= after);
+
+		long before2 = System.currentTimeMillis();
+		assertEquals(1, dao.update(foo1));
+		after = System.currentTimeMillis();
+		assertTrue(before2 >= before1);
+		// we do after+1 here because if previous time == now then we do a + 1
+		assertTrue(foo1.version.getTime() >= before2 && foo1.version.getTime() <= after + 1);
+	}
+
+	@Test
+	public void testVersionFieldDateString() throws Exception {
+		Dao<VersionFieldDateString, Integer> dao = createDao(VersionFieldDateString.class, true);
+
+		VersionFieldDateString foo1 = new VersionFieldDateString();
+		long before1 = System.currentTimeMillis();
+		assertEquals(1, dao.create(foo1));
+		long after = System.currentTimeMillis();
+		assertNotNull(foo1.version);
+		assertTrue(foo1.version.getTime() >= before1 && foo1.version.getTime() <= after);
+
+		long before2 = System.currentTimeMillis();
+		assertEquals(1, dao.update(foo1));
+		after = System.currentTimeMillis();
+		assertTrue(before2 >= before1);
+		// we do after+1 here because if previous time == now then we do a + 1
+		assertTrue(foo1.version.getTime() >= before2 && foo1.version.getTime() <= after + 1);
+	}
+
 	/* ============================================================================================== */
 
 	private String buildFooQueryAllString(Dao<Foo, Object> fooDao) throws SQLException {
@@ -2304,6 +2406,58 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		@DatabaseField(columnDefinition = "VARCHAR(200)")
 		public String stuff;
 		public ColumnDefinition() {
+		}
+	}
+
+	protected static class VersionField {
+		@DatabaseField(generatedId = true)
+		public int id;
+		@DatabaseField
+		String stuff1;
+		@DatabaseField(version = true)
+		public int version;
+		@DatabaseField
+		String stuff2;
+		public VersionField() {
+		}
+	}
+
+	protected static class VersionFieldDate {
+		@DatabaseField(generatedId = true)
+		public int id;
+		@DatabaseField
+		String stuff1;
+		@DatabaseField(version = true)
+		public Date version;
+		@DatabaseField
+		String stuff2;
+		public VersionFieldDate() {
+		}
+	}
+
+	protected static class VersionFieldDateLong {
+		@DatabaseField(generatedId = true)
+		public int id;
+		@DatabaseField
+		String stuff1;
+		@DatabaseField(version = true, dataType = DataType.DATE_LONG)
+		public Date version;
+		@DatabaseField
+		String stuff2;
+		public VersionFieldDateLong() {
+		}
+	}
+
+	protected static class VersionFieldDateString {
+		@DatabaseField(generatedId = true)
+		public int id;
+		@DatabaseField
+		String stuff1;
+		@DatabaseField(version = true, dataType = DataType.DATE_STRING)
+		public Date version;
+		@DatabaseField
+		String stuff2;
+		public VersionFieldDateString() {
 		}
 	}
 

@@ -158,12 +158,15 @@ public class FieldTypeTest extends BaseCoreTest {
 			public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 				return defaultStr;
 			}
-			public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
-				return nameArg;
-			}
 			public Object resultToJava(FieldType fieldType, DatabaseResults resultSet, int columnPos)
 					throws SQLException {
+				return sqlArgToJava(fieldType, null, columnPos);
+			}
+			public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
 				return nameResult;
+			}
+			public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
+				return nameArg;
 			}
 			public boolean isStreamType() {
 				return false;

@@ -46,11 +46,6 @@ public abstract class BaseDateType extends BaseDataType {
 		return dateFormat.format(date);
 	}
 
-	protected static String formatDate(DateStringFormatConfig formatConfig, Date date) {
-		DateFormat dateFormat = formatConfig.getDateFormat();
-		return dateFormat.format(date);
-	}
-
 	protected static class DateStringFormatConfig {
 		private final ThreadLocal<DateFormat> threadLocal = new ThreadLocal<DateFormat>();
 		final String dateFormatStr;
@@ -68,6 +63,23 @@ public abstract class BaseDateType extends BaseDataType {
 		@Override
 		public String toString() {
 			return dateFormatStr;
+		}
+	}
+
+	@Override
+	public boolean isValidForVersion() {
+		return true;
+	}
+
+	@Override
+	public Object moveToNextValue(Object currentValue) {
+		long newVal = System.currentTimeMillis();
+		if (currentValue == null) {
+			return new Date(newVal);
+		} else if (newVal == ((Date) currentValue).getTime()) {
+			return new Date(newVal + 1L);
+		} else {
+			return new Date(newVal);
 		}
 	}
 }

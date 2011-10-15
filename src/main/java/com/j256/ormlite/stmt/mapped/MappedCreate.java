@@ -19,12 +19,14 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 
 	private final String queryNextSequenceStmt;
 	private String dataClassName;
+	private int versionFieldTypeIndex;
 
 	private MappedCreate(TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes,
-			String queryNextSequenceStmt) {
+			String queryNextSequenceStmt, int versionFieldTypeIndex) {
 		super(tableInfo, statement, argFieldTypes);
 		this.dataClassName = tableInfo.getDataClass().getSimpleName();
 		this.queryNextSequenceStmt = queryNextSequenceStmt;
+		this.versionFieldTypeIndex = versionFieldTypeIndex;
 	}
 
 	/**
@@ -60,8 +62,18 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 
 		try {
 			Object[] args = getFieldObjects(data);
+			Object versionDefaultValue = null;
+			if (versionFieldTypeIndex >= 0 && args[versionFieldTypeIndex] == null) {
+				// if the version is null then we need to initialize it before create
+				FieldType versionFieldType = argFieldTypes[versionFieldTypeIndex];
+				versionDefaultValue = versionFieldType.moveToNextValue(null);
+				args[versionFieldTypeIndex] = versionFieldType.convertJavaFieldToSqlArgValue(versionDefaultValue);
+			}
 			int rowC = databaseConnection.insert(statement, args, argFieldTypes, keyHolder);
 			if (rowC > 0) {
+				if (versionDefaultValue != null) {
+					argFieldTypes[versionFieldTypeIndex].assignField(data, versionDefaultValue, false, null);
+				}
 				if (keyHolder != null) {
 					// assign the key returned by the database to the object's id field after it was inserted
 					Number key = keyHolder.getKey();
@@ -111,9 +123,13 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 		appendTableName(databaseType, sb, "INSERT INTO ", tableInfo.getTableName());
 		sb.append('(');
 		int argFieldC = 0;
+		int versionFieldTypeIndex = -1;
 		// first we count up how many arguments we are going to have
 		for (FieldType fieldType : tableInfo.getFieldTypes()) {
 			if (isFieldCreatable(databaseType, fieldType)) {
+				if (fieldType.isVersion()) {
+					versionFieldTypeIndex = argFieldC;
+				}
 				argFieldC++;
 			}
 		}
@@ -148,7 +164,7 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 		sb.append(")");
 		FieldType idField = tableInfo.getIdField();
 		String queryNext = buildQueryNextSequence(databaseType, idField);
-		return new MappedCreate<T, ID>(tableInfo, sb.toString(), argFieldTypes, queryNext);
+		return new MappedCreate<T, ID>(tableInfo, sb.toString(), argFieldTypes, queryNext, versionFieldTypeIndex);
 	}
 
 	private static boolean isFieldCreatable(DatabaseType databaseType, FieldType fieldType) {

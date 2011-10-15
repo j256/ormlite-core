@@ -607,6 +607,26 @@ order1.account = account1;
 orderDao.create(order1);
 @end example
 
+@item version
+
+@cindex version
+@anchor{versionAnnotation}
+@item @@Version
+
+Set this to true (default false) to have this field be a version field for the row.  Version fields help by adding
+restrictions when an object is updated to the datbase.
+
+@enumerate
+@item The update statement is augmented with a @code{"WHERE version = current-value"}
+@item The new value being updated is changed by ORMLite to be the current-value + 1 or the current @code{java.util.Date}
+@item If the row has been updated by another entity then the update will not change the row since the current value
+will not match the database and 0 rows changed will be returned by the @code{update} method
+@item If the current value @emph{does} match the database then object's version field will be set by ORMLite to the
+new value
+@end enumerate
+
+Only the following field types are appropriate for version fields: short, integer, long, and Date fields.
+
 @end table
 
 @c ----------------------------------------------------------------
@@ -640,9 +660,11 @@ specified, the class name with normalized case is used by default.
 @cindex OneToOne annotation
 @cindex @@ManyToOne
 @cindex ManyToOne annotation
+@cindex @@Version
+@cindex Version annotation
 Instead of using the @code{@@DatabaseField} annotation on each of the fields, you can use the @code{javax.persistence}
-annotations: @code{@@Column}, @code{@@Id}, @code{@@GeneratedValue}, @code{@@OneToOne}, @code{@@ManyToOne}, and
-@code{@@JoinColumn}. For example:
+annotations: @code{@@Column}, @code{@@Id}, @code{@@GeneratedValue}, @code{@@OneToOne}, @code{@@ManyToOne}, 
+@code{@@JoinColumn}, and @code{@@Version}. For example:
 
 @example
 @@Entity(name = "accounts")
@@ -729,6 +751,11 @@ Set to true to have a field be able to be inserted into the database with a null
 @code{@@Column@{nullable=...@}}.
 
 @end table
+
+@item @@Version
+
+Use this annotation will turn short, integer, long, and Date fields into a version field.  @xref{versionAnnotation}.
+
 @end table
 
 If the @code{@@Column} annotation is used on a field that has a unknown type then it is assumed to be a
@@ -1726,7 +1753,7 @@ reason, ORMLite has calls which allow you to issue raw query, update, and execut
 @node Raw Queries, Raw Updates, Raw Statements, Raw Statements
 @subsection Issuing Raw Queries
 
-@cindex aggregation queries
+@cindex aggregate, raw queries
 @cindex SUM, using
 @cindex COUNT, using
 @cindex AVG, using
@@ -1738,8 +1765,8 @@ The built-in methods available in the @code{Dao} interface and the @code{QueryBu
 the ability to handle all types of queries.  For example, aggregation queries (sum, count, avg, etc.) cannot be handled
 as an object since every query has a different result list.  To handle these queries, you can issue raw database queries
 using the @code{queryRaw} methods on DAO.  These methods return a @code{GenericRawResults} object which represents a
-result as an array of strings, array of objects, or user objects.  See the documentation on the @code{GenericRawResults}
-object for more details on how to use it, or take a look at the following examples.
+result as an array of strings, array of objects, or user mapped objects.  See the documentation on the
+@code{GenericRawResults} object for more details on how to use it, or take a look at the following examples.
 
 @example
 // find out how many orders account-id #10 has
@@ -1756,8 +1783,8 @@ System.out.println("Account-id 10 has " + resultArray[0] + " orders");
 
 @cindex raw query using QueryBuilder
 @cindex QueryBuilder, raw queries
-You can even use the @code{QueryBuilder} to build the raw queries for you if you'd lile using the @code{prepareStatementString()}
-method.  @xref{QueryBuilder Basics}.
+You can even use the @code{QueryBuilder} to build the raw queries for you if you'd lile using the
+@code{prepareStatementString()} method.  @xref{QueryBuilder Basics}.
 
 @example
 QueryBuilder<Account, Integer> qb = accountDao.queryBuilder();
@@ -1772,7 +1799,17 @@ QueryBuilder<Account, Integer> qb = accountDao.queryBuilder();
 // we specify a SelectArg here to generate a ? in the statement string below
 qb.where().ge("orderCount", new SelectArg());
 // the 10 at the end is an optional argument to fulfill the SelectArg above
-results = accountDao.queryRaw(qb.prepareStatementString(), rawRowMapper, 10);
+results = accountDao.queryRaw(qb.prepareStatementString(), 10);
+@end example
+
+If you want to use the @code{QueryBuilder} with aggregate or other raw/custom arguments do something like:
+
+@example
+QueryBuilder<Account, Integer> qb = accountDao.queryBuilder();
+// select 2 aggregate functions as the return
+qb.selectRaw("MIN(orderCount)", "MAX(orderCount)");
+// the results will contain 2 string values for the min and max
+results = accountDao.queryRaw(qb.prepareStatementString());
 @end example
 
 For large numbers of results, you should consider using the @code{iterator()} method on the @code{GenericRawResults} object

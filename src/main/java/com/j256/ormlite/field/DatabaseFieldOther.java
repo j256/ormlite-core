@@ -52,4 +52,9 @@ public @interface DatabaseFieldOther {
 	 * @see DatabaseField#columnDefinition()
 	 */
 	String columnDefinition() default "";
+
+	/**
+	 * @see DatabaseField#version()
+	 */
+	boolean version() default false;
 }

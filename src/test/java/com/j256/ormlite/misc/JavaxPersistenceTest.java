@@ -18,6 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Version;
 
 import org.junit.Test;
 
@@ -44,6 +45,7 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 				assertTrue(config.isGeneratedId());
 				assertFalse(config.isUnique());
 				assertTrue(config.isCanBeNull());
+				assertFalse(config.isVersion());
 				assertEquals(field.getName(), config.getFieldName());
 				assertNull(config.getColumnName());
 				assertNull(config.getColumnDefinition());
@@ -52,6 +54,7 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 				assertFalse(config.isGeneratedId());
 				assertFalse(config.isUnique());
 				assertTrue(config.isCanBeNull());
+				assertFalse(config.isVersion());
 				assertEquals(field.getName(), config.getFieldName());
 				assertNull(config.getColumnName());
 				assertNull(config.getColumnDefinition());
@@ -60,6 +63,7 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 				assertFalse(config.isGeneratedId());
 				assertFalse(config.isUnique());
 				assertTrue(config.isCanBeNull());
+				assertFalse(config.isVersion());
 				assertEquals(field.getName(), config.getFieldName());
 				assertEquals(STUFF_FIELD_NAME, config.getColumnName());
 				assertNull(config.getColumnDefinition());
@@ -68,6 +72,7 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 				assertFalse(config.isGeneratedId());
 				assertFalse(config.isUnique());
 				assertTrue(config.isCanBeNull());
+				assertFalse(config.isVersion());
 				assertNull(config.getDataPersister());
 				assertEquals(field.getName(), config.getFieldName());
 				assertNull(config.getColumnName());
@@ -78,6 +83,7 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 				assertTrue(config.isForeign());
 				assertFalse(config.isUnique());
 				assertTrue(config.isCanBeNull());
+				assertFalse(config.isVersion());
 				assertNull(config.getDataPersister());
 				assertEquals(field.getName(), config.getFieldName());
 				assertNull(config.getColumnName());
@@ -88,6 +94,7 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 				assertTrue(config.isForeign());
 				assertFalse(config.isUnique());
 				assertTrue(config.isCanBeNull());
+				assertFalse(config.isVersion());
 				assertNull(config.getDataPersister());
 				assertEquals(field.getName(), config.getFieldName());
 				assertNull(config.getColumnName());
@@ -98,6 +105,7 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 				assertTrue(config.isForeign());
 				assertFalse(config.isUnique());
 				assertTrue(config.isCanBeNull());
+				assertFalse(config.isVersion());
 				assertNull(config.getDataPersister());
 				assertEquals(field.getName(), config.getFieldName());
 				assertEquals(JOIN_FIELD_NAME, config.getColumnName());
@@ -107,6 +115,7 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 				assertFalse(config.isGeneratedId());
 				assertFalse(config.isForeign());
 				assertFalse(config.isUnique());
+				assertFalse(config.isVersion());
 				assertTrue(config.isCanBeNull());
 				assertEquals(COLUMN_DEFINITION, config.getColumnDefinition());
 			} else if (field.getName().equals("uniqueColumn")) {
@@ -115,6 +124,7 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 				assertFalse(config.isForeign());
 				assertTrue(config.isUnique());
 				assertTrue(config.isCanBeNull());
+				assertFalse(config.isVersion());
 				assertNull(config.getColumnName());
 				assertNull(config.getColumnDefinition());
 			} else if (field.getName().equals("nullableColumn")) {
@@ -123,6 +133,7 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 				assertFalse(config.isForeign());
 				assertFalse(config.isUnique());
 				assertFalse(config.isCanBeNull());
+				assertFalse(config.isVersion());
 				assertNull(config.getColumnName());
 				assertNull(config.getColumnDefinition());
 			} else if (field.getName().equals("uniqueJoinColumn")) {
@@ -131,6 +142,7 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 				assertTrue(config.isForeign());
 				assertTrue(config.isUnique());
 				assertTrue(config.isCanBeNull());
+				assertFalse(config.isVersion());
 				assertNull(config.getColumnName());
 				assertNull(config.getColumnDefinition());
 			} else if (field.getName().equals("nullableJoinColumn")) {
@@ -139,6 +151,7 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 				assertTrue(config.isForeign());
 				assertFalse(config.isUnique());
 				assertFalse(config.isCanBeNull());
+				assertFalse(config.isVersion());
 				assertNull(config.getColumnName());
 				assertNull(config.getColumnDefinition());
 			} else if (field.getName().equals("ourEnumOrdinal")) {
@@ -146,6 +159,7 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 				assertFalse(config.isGeneratedId());
 				assertFalse(config.isForeign());
 				assertFalse(config.isUnique());
+				assertFalse(config.isVersion());
 				assertTrue(config.isCanBeNull());
 				assertNull(config.getColumnName());
 				assertNull(config.getColumnDefinition());
@@ -155,10 +169,20 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 				assertFalse(config.isGeneratedId());
 				assertFalse(config.isForeign());
 				assertFalse(config.isUnique());
+				assertFalse(config.isVersion());
 				assertTrue(config.isCanBeNull());
 				assertNull(config.getColumnName());
 				assertNull(config.getColumnDefinition());
 				assertTrue(config.getDataPersister() instanceof EnumStringType);
+			} else if (field.getName().equals("version")) {
+				assertFalse(config.isId());
+				assertFalse(config.isGeneratedId());
+				assertFalse(config.isForeign());
+				assertFalse(config.isUnique());
+				assertTrue(config.isCanBeNull());
+				assertTrue(config.isVersion());
+				assertNull(config.getColumnName());
+				assertNull(config.getColumnDefinition());
 			} else {
 				System.err.println("\n\n\nUnknown field: " + field.getName());
 			}
@@ -222,6 +246,8 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 		OurEnum ourEnumOrdinal;
 		@Enumerated(EnumType.STRING)
 		OurEnum ourEnumString;
+		@Version
+		int version;
 		public Javax() {
 		}
 	}

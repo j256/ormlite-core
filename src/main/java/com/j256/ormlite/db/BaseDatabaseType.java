@@ -478,17 +478,21 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		public SqlType getSqlType() {
 			return SqlType.BOOLEAN;
 		}
-		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			boolean bool = (boolean) Boolean.parseBoolean(defaultStr);
 			return (bool ? Byte.valueOf((byte) 1) : Byte.valueOf((byte) 0));
 		}
-		public Object javaToSqlArg(FieldType fieldType, Object obj) throws SQLException {
+		public Object javaToSqlArg(FieldType fieldType, Object obj) {
 			Boolean bool = (Boolean) obj;
 			return (bool ? Byte.valueOf((byte) 1) : Byte.valueOf((byte) 0));
 		}
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-			byte result = results.getByte(columnPos);
-			return (result == 1 ? (Boolean) true : (Boolean) false);
+			Byte result = results.getByte(columnPos);
+			return sqlArgToJava(fieldType, result, columnPos);
+		}
+		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
+			byte arg = (Byte) sqlArg;
+			return (arg == 1 ? (Boolean) true : (Boolean) false);
 		}
 		public boolean isStreamType() {
 			return false;

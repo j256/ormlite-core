@@ -231,6 +231,10 @@ public class FieldType {
 			throw new IllegalArgumentException("Field " + field.getName()
 					+ " must have foreign = true if foreignAutoCreate = true");
 		}
+		if (fieldConfig.isVersion() && (dataPersister == null || !dataPersister.isValidForVersion())) {
+			throw new IllegalArgumentException("Field " + field.getName()
+					+ " is not a valid type to be a version field");
+		}
 		assignDataType(databaseType, dataPersister);
 	}
 
@@ -564,7 +568,7 @@ public class FieldType {
 	 * Return the value from the field in the object that is defined by this FieldType. If the field is a foreign object
 	 * then the ID of the field is returned instead.
 	 */
-	public <FV> FV extractJavaFieldValue(Object object) throws SQLException {
+	public Object extractJavaFieldValue(Object object) throws SQLException {
 
 		Object val = extractRawJavaFieldValue(object);
 
@@ -573,9 +577,7 @@ public class FieldType {
 			val = foreignIdField.extractRawJavaFieldValue(val);
 		}
 
-		@SuppressWarnings("unchecked")
-		FV converted = (FV) val;
-		return converted;
+		return val;
 	}
 
 	/**
@@ -588,14 +590,33 @@ public class FieldType {
 	/**
 	 * Convert a field value to something suitable to be stored in the database.
 	 */
-	public <FV> FV convertJavaFieldToSqlArgValue(Object fieldVal) throws SQLException {
+	public Object convertJavaFieldToSqlArgValue(Object fieldVal) throws SQLException {
 		if (fieldVal == null) {
 			return null;
 		} else {
-			fieldVal = fieldConverter.javaToSqlArg(this, fieldVal);
-			@SuppressWarnings("unchecked")
-			FV converted = (FV) fieldVal;
-			return converted;
+			return fieldConverter.javaToSqlArg(this, fieldVal);
+		}
+	}
+
+	/**
+	 * Convert a SQL argument back into the java value.
+	 */
+	public Object convertSqlArgValueToJavaField(Object sqlArg) throws SQLException {
+		if (sqlArg == null) {
+			return null;
+		} else {
+			return fieldConverter.sqlArgToJava(this, sqlArg, 0);
+		}
+	}
+
+	/**
+	 * Move the SQL value to the next one for version processing.
+	 */
+	public Object moveToNextValue(Object val) {
+		if (dataPersister == null) {
+			return null;
+		} else {
+			return dataPersister.moveToNextValue(val);
 		}
 	}
 
@@ -762,6 +783,13 @@ public class FieldType {
 	}
 
 	/**
+	 * Call through to {@link DatabaseFieldConfig#isVersion()}
+	 */
+	public boolean isVersion() {
+		return fieldConfig.isVersion();
+	}
+
+	/**
 	 * Call through to {@link DataPersister#generateId()}
 	 */
 	public Object generateId() {
@@ -794,28 +822,37 @@ public class FieldType {
 	 * Return whether or not the field value passed in is the default value for the type of the field. Null will return
 	 * true.
 	 */
+	public Object getJavaDefaultValueDefault() {
+		if (field.getType() == boolean.class) {
+			return DEFAULT_VALUE_BOOLEAN;
+		} else if (field.getType() == byte.class || field.getType() == Byte.class) {
+			return DEFAULT_VALUE_BYTE;
+		} else if (field.getType() == char.class || field.getType() == Character.class) {
+			return DEFAULT_VALUE_CHAR;
+		} else if (field.getType() == short.class || field.getType() == Short.class) {
+			return DEFAULT_VALUE_SHORT;
+		} else if (field.getType() == int.class || field.getType() == Integer.class) {
+			return DEFAULT_VALUE_INT;
+		} else if (field.getType() == long.class || field.getType() == Long.class) {
+			return DEFAULT_VALUE_LONG;
+		} else if (field.getType() == float.class || field.getType() == Float.class) {
+			return DEFAULT_VALUE_FLOAT;
+		} else if (field.getType() == double.class || field.getType() == Double.class) {
+			return DEFAULT_VALUE_DOUBLE;
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * Return whether or not the field value passed in is the default value for the type of the field. Null will return
+	 * true.
+	 */
 	public boolean isFieldValueDefault(Object fieldValue) {
 		if (fieldValue == null) {
 			return true;
-		}
-		if (field.getType() == boolean.class) {
-			return fieldValue.equals(DEFAULT_VALUE_BOOLEAN);
-		} else if (field.getType() == byte.class || field.getType() == Byte.class) {
-			return fieldValue.equals(DEFAULT_VALUE_BYTE);
-		} else if (field.getType() == char.class || field.getType() == Character.class) {
-			return fieldValue.equals(DEFAULT_VALUE_CHAR);
-		} else if (field.getType() == short.class || field.getType() == Short.class) {
-			return fieldValue.equals(DEFAULT_VALUE_SHORT);
-		} else if (field.getType() == int.class || field.getType() == Integer.class) {
-			return fieldValue.equals(DEFAULT_VALUE_INT);
-		} else if (field.getType() == long.class || field.getType() == Long.class) {
-			return fieldValue.equals(DEFAULT_VALUE_LONG);
-		} else if (field.getType() == float.class || field.getType() == Float.class) {
-			return fieldValue.equals(DEFAULT_VALUE_FLOAT);
-		} else if (field.getType() == double.class || field.getType() == Double.class) {
-			return fieldValue.equals(DEFAULT_VALUE_DOUBLE);
 		} else {
-			return false;
+			return fieldValue.equals(getJavaDefaultValueDefault());
 		}
 	}
 

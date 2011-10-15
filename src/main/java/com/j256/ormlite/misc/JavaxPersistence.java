@@ -30,6 +30,7 @@ public class JavaxPersistence {
 		Annotation manyToOneAnnotation = null;
 		Annotation joinColumnAnnotation = null;
 		Annotation enumeratedAnnotation = null;
+		Annotation versionAnnotation = null;
 
 		for (Annotation annotation : field.getAnnotations()) {
 			Class<?> annotationClass = annotation.annotationType();
@@ -54,10 +55,13 @@ public class JavaxPersistence {
 			if (annotationClass.getName().equals("javax.persistence.Enumerated")) {
 				enumeratedAnnotation = annotation;
 			}
+			if (annotationClass.getName().equals("javax.persistence.Version")) {
+				versionAnnotation = annotation;
+			}
 		}
 
 		if (columnAnnotation == null && idAnnotation == null && oneToOneAnnotation == null
-				&& manyToOneAnnotation == null && enumeratedAnnotation == null) {
+				&& manyToOneAnnotation == null && enumeratedAnnotation == null && versionAnnotation == null) {
 			return null;
 		}
 
@@ -143,6 +147,10 @@ public class JavaxPersistence {
 				throw SqlExceptionUtil.create("Problem accessing fields from the @Enumerated annotation for field "
 						+ field, e);
 			}
+		}
+		if (versionAnnotation != null) {
+			// just the presence of the version...
+			config.setVersion(true);
 		}
 		if (config.getDataPersister() == null) {
 			config.setDataPersister(DataPersisterManager.lookupForField(field));

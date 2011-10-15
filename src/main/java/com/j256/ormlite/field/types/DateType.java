@@ -78,21 +78,4 @@ public class DateType extends BaseDateType {
 	public boolean isSelectArgRequired() {
 		return true;
 	}
-
-	@Override
-	public boolean isValidForVersion() {
-		return true;
-	}
-
-	@Override
-	public Object moveToNextValue(Object currentValue) {
-		long newVal = System.currentTimeMillis();
-		if (currentValue == null) {
-			return new Date(newVal);
-		} else if (newVal == (Long) currentValue) {
-			return new Date(newVal + 1L);
-		} else {
-			return new Date(newVal);
-		}
-	}
 }

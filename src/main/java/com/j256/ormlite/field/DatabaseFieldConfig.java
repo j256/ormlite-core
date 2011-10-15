@@ -54,6 +54,7 @@ public class DatabaseFieldConfig {
 	private boolean allowGeneratedIdInsert;
 	private String columnDefinition;
 	private boolean foreignAutoCreate;
+	private boolean version;
 
 	public DatabaseFieldConfig() {
 		// for spring
@@ -391,6 +392,14 @@ public class DatabaseFieldConfig {
 		this.foreignAutoCreate = foreignAutoCreate;
 	}
 
+	public boolean isVersion() {
+		return version;
+	}
+
+	public void setVersion(boolean version) {
+		this.version = version;
+	}
+
 	/**
 	 * Create and return a config converted from a {@link Field} that may have either a {@link DatabaseField} annotation
 	 * or the javax.persistence annotations.
@@ -542,6 +551,7 @@ public class DatabaseFieldConfig {
 			config.columnDefinition = columnDefinition;
 		}
 		config.foreignAutoCreate = databaseField.foreignAutoCreate();
+		config.version = databaseField.version();
 
 		return config;
 	}
@@ -620,6 +630,9 @@ public class DatabaseFieldConfig {
 		}
 		if (foreignAnno != null) {
 			config.foreignAutoCreate = foreignAnno.foreignAutoCreate();
+		}
+		if (otherAnno != null) {
+			config.version = otherAnno.version();
 		}
 
 		return config;

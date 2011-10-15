@@ -18,7 +18,7 @@ import com.j256.ormlite.support.DatabaseResults;
  * 
  * @author graywatson
  */
-public class DateLongType extends BaseDataType {
+public class DateLongType extends BaseDateType {
 
 	private static final DateLongType singleTon = new DateLongType();
 
@@ -70,22 +70,5 @@ public class DateLongType extends BaseDataType {
 	@Override
 	public boolean isEscapedValue() {
 		return false;
-	}
-
-	@Override
-	public boolean isValidForVersion() {
-		return true;
-	}
-
-	@Override
-	public Object moveToNextValue(Object currentValue) {
-		long newVal = System.currentTimeMillis();
-		if (currentValue == null) {
-			return new Date(newVal);
-		} else if (newVal == (Long) currentValue) {
-			return new Date(newVal + 1L);
-		} else {
-			return new Date(newVal);
-		}
 	}
 }

@@ -16,8 +16,14 @@ import com.j256.ormlite.table.TableInfo;
  */
 public class MappedUpdate<T, ID> extends BaseMappedStatement<T, ID> {
 
-	private MappedUpdate(TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes) {
+	private final FieldType versionFieldType;
+	private final int versionFieldTypeIndex;
+
+	private MappedUpdate(TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes,
+			FieldType versionFieldType, int versionFieldTypeIndex) {
 		super(tableInfo, statement, argFieldTypes);
+		this.versionFieldType = versionFieldType;
+		this.versionFieldTypeIndex = versionFieldTypeIndex;
 	}
 
 	public static <T, ID> MappedUpdate<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo)
@@ -30,14 +36,24 @@ public class MappedUpdate<T, ID> extends BaseMappedStatement<T, ID> {
 		appendTableName(databaseType, sb, "UPDATE ", tableInfo.getTableName());
 		boolean first = true;
 		int argFieldC = 0;
+		FieldType versionFieldType = null;
+		int versionFieldTypeIndex = -1;
 		// first we count up how many arguments we are going to have
 		for (FieldType fieldType : tableInfo.getFieldTypes()) {
 			if (isFieldUpdatable(fieldType, idField)) {
+				if (fieldType.isVersion()) {
+					versionFieldType = fieldType;
+					versionFieldTypeIndex = argFieldC;
+				}
 				argFieldC++;
 			}
 		}
 		// one more for where id = ?
 		argFieldC++;
+		if (versionFieldType != null) {
+			// one more for the AND version = ?
+			argFieldC++;
+		}
 		FieldType[] argFieldTypes = new FieldType[argFieldC];
 		argFieldC = 0;
 		for (FieldType fieldType : tableInfo.getFieldTypes()) {
@@ -57,7 +73,13 @@ public class MappedUpdate<T, ID> extends BaseMappedStatement<T, ID> {
 		sb.append(' ');
 		appendWhereId(databaseType, idField, sb, null);
 		argFieldTypes[argFieldC++] = idField;
-		return new MappedUpdate<T, ID>(tableInfo, sb.toString(), argFieldTypes);
+		if (versionFieldType != null) {
+			sb.append(" AND ");
+			appendFieldColumnName(databaseType, sb, versionFieldType, null);
+			sb.append("= ?");
+			argFieldTypes[argFieldC++] = versionFieldType;
+		}
+		return new MappedUpdate<T, ID>(tableInfo, sb.toString(), argFieldTypes, versionFieldType, versionFieldTypeIndex);
 	}
 
 	/**
@@ -70,16 +92,29 @@ public class MappedUpdate<T, ID> extends BaseMappedStatement<T, ID> {
 				return 0;
 			}
 			Object[] args = getFieldObjects(data);
+			Object newVersion = null;
+			if (versionFieldType != null) {
+				newVersion = versionFieldType.extractJavaFieldValue(data);
+				newVersion = versionFieldType.moveToNextValue(newVersion);
+				args[versionFieldTypeIndex] = versionFieldType.convertJavaFieldToSqlArgValue(newVersion);
+			}
 			int rowC = databaseConnection.update(statement, args, argFieldTypes);
-			if (rowC > 0 && objectCache != null) {
-				// if we've changed something then see if we need to update our cache
-				Object id = idField.extractJavaFieldValue(data);
-				T cachedData = objectCache.get(clazz, id);
-				if (cachedData != null && cachedData != data) {
-					// copy each field from the updated data into the cached object
-					for (FieldType fieldType : tableInfo.getFieldTypes()) {
-						if (fieldType != idField) {
-							fieldType.assignField(cachedData, fieldType.extractJavaFieldValue(data), false, objectCache);
+			if (rowC > 0) {
+				if (newVersion != null) {
+					// if we have updated a row then update the version field in our object to the new value
+					versionFieldType.assignField(data, newVersion, false, null);
+				}
+				if (objectCache != null) {
+					// if we've changed something then see if we need to update our cache
+					Object id = idField.extractJavaFieldValue(data);
+					T cachedData = objectCache.get(clazz, id);
+					if (cachedData != null && cachedData != data) {
+						// copy each field from the updated data into the cached object
+						for (FieldType fieldType : tableInfo.getFieldTypes()) {
+							if (fieldType != idField) {
+								fieldType.assignField(cachedData, fieldType.extractJavaFieldValue(data), false,
+										objectCache);
+							}
 						}
 					}
 				}
