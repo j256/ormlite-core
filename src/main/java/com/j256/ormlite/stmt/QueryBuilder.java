@@ -419,7 +419,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 
 		private final QueryBuilder<?, ?> queryBuilder;
 
-		public InternalQueryBuilderWrapper(QueryBuilder<?, ?> queryBuilder) {
+		InternalQueryBuilderWrapper(QueryBuilder<?, ?> queryBuilder) {
 			this.queryBuilder = queryBuilder;
 		}
 

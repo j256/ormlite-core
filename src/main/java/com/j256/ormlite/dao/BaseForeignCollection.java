@@ -26,13 +26,13 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 	private static final long serialVersionUID = -5158840898186237589L;
 
 	protected transient final Dao<T, ID> dao;
-	protected transient final String fieldName;
-	protected transient final Object fieldValue;
+	private transient final String fieldName;
+	private transient final Object fieldValue;
 	private transient PreparedQuery<T> preparedQuery;
 	private transient final String orderColumn;
 	private transient final Object parent;
 
-	public BaseForeignCollection(Dao<T, ID> dao, String fieldName, Object fieldValue, String orderColumn, Object parent) {
+	protected BaseForeignCollection(Dao<T, ID> dao, String fieldName, Object fieldValue, String orderColumn, Object parent) {
 		this.dao = dao;
 		this.fieldName = fieldName;
 		this.fieldValue = fieldValue;

@@ -19,14 +19,12 @@ import com.j256.ormlite.support.DatabaseConnection;
  */
 public class RawResultsImpl<T> implements GenericRawResults<T> {
 
-	protected final GenericRowMapper<T> rowMapper;
-	protected SelectIterator<T, Void> iterator;
-	protected final String[] columnNames;
+	private SelectIterator<T, Void> iterator;
+	private final String[] columnNames;
 
 	public RawResultsImpl(ConnectionSource connectionSource, DatabaseConnection connection, String query,
 			Class<?> clazz, CompiledStatement compiledStmt, String[] columnNames, GenericRowMapper<T> rowMapper,
 			ObjectCache objectCache) throws SQLException {
-		this.rowMapper = rowMapper;
 		iterator =
 				new SelectIterator<T, Void>(clazz, null, rowMapper, connectionSource, connection, compiledStmt, query,
 						objectCache);

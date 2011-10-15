@@ -208,7 +208,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	/**
 	 * Output the SQL type for a Java integer.
 	 */
-	protected void appendIntegerType(StringBuilder sb, int fieldWidth) {
+	private void appendIntegerType(StringBuilder sb, int fieldWidth) {
 		sb.append("INTEGER");
 	}
 
@@ -222,14 +222,14 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	/**
 	 * Output the SQL type for a Java float.
 	 */
-	protected void appendFloatType(StringBuilder sb, int fieldWidth) {
+	private void appendFloatType(StringBuilder sb, int fieldWidth) {
 		sb.append("FLOAT");
 	}
 
 	/**
 	 * Output the SQL type for a Java double.
 	 */
-	protected void appendDoubleType(StringBuilder sb, int fieldWidth) {
+	private void appendDoubleType(StringBuilder sb, int fieldWidth) {
 		sb.append("DOUBLE PRECISION");
 	}
 
@@ -250,7 +250,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	/**
 	 * Output the SQL type for the default value for the type.
 	 */
-	protected void appendDefaultValue(StringBuilder sb, FieldType fieldType, Object defaultValue) {
+	private void appendDefaultValue(StringBuilder sb, FieldType fieldType, Object defaultValue) {
 		if (fieldType.isEscapedDefaultValue()) {
 			appendEscapedWord(sb, defaultValue.toString());
 		} else {
@@ -455,14 +455,14 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	 * noop. This is necessary because MySQL has a auto default value for the TIMESTAMP type that required a default
 	 * value otherwise it would stick in the current date automagically.
 	 */
-	protected void appendCanBeNull(StringBuilder sb, FieldType fieldType) {
+	private void appendCanBeNull(StringBuilder sb, FieldType fieldType) {
 		// default is a noop
 	}
 
 	/**
 	 * Add SQL to handle a unique=true field. THis is not for uniqueCombo=true.
 	 */
-	protected void addSingleUnique(StringBuilder sb, FieldType fieldType, List<String> additionalArgs,
+	private void addSingleUnique(StringBuilder sb, FieldType fieldType, List<String> additionalArgs,
 			List<String> statementsAfter) {
 		StringBuilder alterSb = new StringBuilder();
 		alterSb.append(" UNIQUE (");

@@ -599,17 +599,6 @@ public class FieldType {
 	}
 
 	/**
-	 * Convert a SQL argument back into the java value.
-	 */
-	public Object convertSqlArgValueToJavaField(Object sqlArg) throws SQLException {
-		if (sqlArg == null) {
-			return null;
-		} else {
-			return fieldConverter.sqlArgToJava(this, sqlArg, 0);
-		}
-	}
-
-	/**
 	 * Move the SQL value to the next one for version processing.
 	 */
 	public Object moveToNextValue(Object val) {
@@ -848,7 +837,7 @@ public class FieldType {
 	 * Return whether or not the field value passed in is the default value for the type of the field. Null will return
 	 * true.
 	 */
-	public boolean isFieldValueDefault(Object fieldValue) {
+	private boolean isFieldValueDefault(Object fieldValue) {
 		if (fieldValue == null) {
 			return true;
 		} else {
