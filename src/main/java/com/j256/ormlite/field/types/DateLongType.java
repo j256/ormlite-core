@@ -42,7 +42,17 @@ public class DateLongType extends BaseDataType {
 
 	@Override
 	public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-		return new Date(results.getLong(columnPos));
+		Long value = results.getLong(columnPos);
+		if (value == null) {
+			return null;
+		} else {
+			return sqlArgToJava(fieldType, value, columnPos);
+		}
+	}
+
+	@Override
+	public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
+		return new Date((Long) sqlArg);
 	}
 
 	@Override
@@ -60,5 +70,22 @@ public class DateLongType extends BaseDataType {
 	@Override
 	public boolean isEscapedValue() {
 		return false;
+	}
+
+	@Override
+	public boolean isValidForVersion() {
+		return true;
+	}
+
+	@Override
+	public Object moveToNextValue(Object currentValue) {
+		long newVal = System.currentTimeMillis();
+		if (currentValue == null) {
+			return new Date(newVal);
+		} else if (newVal == (Long) currentValue) {
+			return new Date(newVal + 1L);
+		} else {
+			return new Date(newVal);
+		}
 	}
 }

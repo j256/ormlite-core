@@ -46,12 +46,19 @@ public class DateStringType extends BaseDateType {
 		String dateStr = results.getString(columnPos);
 		if (dateStr == null) {
 			return null;
+		} else {
+			return sqlArgToJava(fieldType, dateStr, columnPos);
 		}
+	}
+
+	@Override
+	public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
+		String value = (String) sqlArg;
 		DateStringFormatConfig formatConfig = convertDateStringConfig(fieldType);
 		try {
-			return parseDateString(formatConfig, dateStr);
+			return parseDateString(formatConfig, value);
 		} catch (ParseException e) {
-			throw SqlExceptionUtil.create("Problems with column " + columnPos + " parsing date-string '" + dateStr
+			throw SqlExceptionUtil.create("Problems with column " + columnPos + " parsing date-string '" + value
 					+ "' using '" + formatConfig + "'", e);
 		}
 	}

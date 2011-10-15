@@ -29,18 +29,25 @@ public class EnumStringType extends BaseEnumType {
 
 	@Override
 	public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-		String val = results.getString(columnPos);
+		String value = results.getString(columnPos);
 		if (fieldType == null) {
-			return val;
-		} else if (val == null) {
+			return value;
+		} else if (value == null) {
 			return null;
+		} else {
+			return sqlArgToJava(fieldType, value, columnPos);
 		}
+	}
+
+	@Override
+	public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
+		String value = (String) sqlArg;
 		@SuppressWarnings("unchecked")
 		Map<String, Enum<?>> enumStringMap = (Map<String, Enum<?>>) fieldType.getDataTypeConfigObj();
 		if (enumStringMap == null) {
-			return enumVal(fieldType, val, null, fieldType.getUnknownEnumVal());
+			return enumVal(fieldType, value, null, fieldType.getUnknownEnumVal());
 		} else {
-			return enumVal(fieldType, val, enumStringMap.get(val), fieldType.getUnknownEnumVal());
+			return enumVal(fieldType, value, enumStringMap.get(value), fieldType.getUnknownEnumVal());
 		}
 	}
 

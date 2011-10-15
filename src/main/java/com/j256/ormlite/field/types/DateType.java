@@ -52,8 +52,14 @@ public class DateType extends BaseDateType {
 		if (timeStamp == null) {
 			return null;
 		} else {
-			return new Date(timeStamp.getTime());
+			return sqlArgToJava(fieldType, timeStamp, columnPos);
 		}
+	}
+
+	@Override
+	public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
+		Timestamp value = (Timestamp) sqlArg;
+		return new Date(value.getTime());
 	}
 
 	@Override
@@ -71,5 +77,22 @@ public class DateType extends BaseDateType {
 	@Override
 	public boolean isSelectArgRequired() {
 		return true;
+	}
+
+	@Override
+	public boolean isValidForVersion() {
+		return true;
+	}
+
+	@Override
+	public Object moveToNextValue(Object currentValue) {
+		long newVal = System.currentTimeMillis();
+		if (currentValue == null) {
+			return new Date(newVal);
+		} else if (newVal == (Long) currentValue) {
+			return new Date(newVal + 1L);
+		} else {
+			return new Date(newVal);
+		}
 	}
 }

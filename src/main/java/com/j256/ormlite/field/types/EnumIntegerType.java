@@ -33,12 +33,18 @@ public class EnumIntegerType extends BaseEnumType {
 
 	@Override
 	public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-		int val = results.getInt(columnPos);
+		int value = results.getInt(columnPos);
 		if (fieldType == null) {
-			return val;
+			return value;
+		} else {
+			return sqlArgToJava(fieldType, value, columnPos);
 		}
+	}
+
+	@Override
+	public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
 		// do this once
-		Integer valInteger = val;
+		Integer valInteger = (Integer) sqlArg;
 		@SuppressWarnings("unchecked")
 		Map<Integer, Enum<?>> enumIntMap = (Map<Integer, Enum<?>>) fieldType.getDataTypeConfigObj();
 		if (enumIntMap == null) {

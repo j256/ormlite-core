@@ -39,12 +39,6 @@ public class BooleanObjectType extends BaseDataType {
 	}
 
 	@Override
-	public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {
-		// noop pass-thru
-		return javaObject;
-	}
-
-	@Override
 	public boolean isValidForField(Field field) {
 		// this is a noop
 		return true;

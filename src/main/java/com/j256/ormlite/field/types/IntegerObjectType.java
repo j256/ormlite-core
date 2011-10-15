@@ -39,12 +39,6 @@ public class IntegerObjectType extends BaseDataType {
 	}
 
 	@Override
-	public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {
-		// noop pass-thru
-		return javaObject;
-	}
-
-	@Override
 	public boolean isValidForField(Field field) {
 		// by default this is a noop
 		return true;
@@ -63,5 +57,19 @@ public class IntegerObjectType extends BaseDataType {
 	@Override
 	public boolean isValidGeneratedType() {
 		return true;
+	}
+
+	@Override
+	public boolean isValidForVersion() {
+		return true;
+	}
+
+	@Override
+	public Object moveToNextValue(Object currentValue) {
+		if (currentValue == null) {
+			return (Integer) 1;
+		} else {
+			return ((Integer) currentValue) + 1;
+		}
 	}
 }

@@ -39,12 +39,6 @@ public class ShortObjectType extends BaseDataType {
 	}
 
 	@Override
-	public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {
-		// noop pass-thru
-		return javaObject;
-	}
-
-	@Override
 	public boolean isValidForField(Field field) {
 		// by default this is a noop
 		return true;
@@ -53,5 +47,19 @@ public class ShortObjectType extends BaseDataType {
 	@Override
 	public boolean isEscapedValue() {
 		return false;
+	}
+
+	@Override
+	public boolean isValidForVersion() {
+		return true;
+	}
+
+	@Override
+	public Object moveToNextValue(Object currentValue) {
+		if (currentValue == null) {
+			return (short) 1;
+		} else {
+			return (short) (((Short) currentValue) + 1);
+		}
 	}
 }

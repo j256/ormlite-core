@@ -38,7 +38,14 @@ public class StringBytesType extends BaseDataType {
 		byte[] bytes = results.getBytes(columnPos);
 		if (bytes == null) {
 			return null;
+		} else {
+			return sqlArgToJava(fieldType, bytes, columnPos);
 		}
+	}
+
+	@Override
+	public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
+		byte[] bytes = (byte[]) sqlArg;
 		String charsetName = getCharsetName(fieldType);
 		try {
 			// NOTE: I can't use new String(bytes, Charset) because it was introduced in 1.6.

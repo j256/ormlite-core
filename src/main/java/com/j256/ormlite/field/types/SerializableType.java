@@ -46,7 +46,14 @@ public class SerializableType extends BaseDataType {
 		// need to do this check because we are a stream type
 		if (bytes == null) {
 			return null;
+		} else {
+			return sqlArgToJava(fieldType, bytes, columnPos);
 		}
+	}
+
+	@Override
+	public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
+		byte[] bytes = (byte[]) sqlArg;
 		try {
 			ObjectInputStream objInStream = new ObjectInputStream(new ByteArrayInputStream(bytes));
 			return objInStream.readObject();

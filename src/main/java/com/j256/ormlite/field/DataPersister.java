@@ -94,4 +94,14 @@ public interface DataPersister extends FieldConverter {
 	 * Compare two fields of this type returning true if equals else false.
 	 */
 	public boolean dataIsEqual(Object obj1, Object obj2);
+
+	/**
+	 * Return true if this is a valid field for the {@link DatabaseField#version()}.
+	 */
+	public boolean isValidForVersion();
+
+	/**
+	 * Move the current-value to the next value. Used for the version field.
+	 */
+	public Object moveToNextValue(Object currentValue);
 }

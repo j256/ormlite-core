@@ -33,7 +33,15 @@ public abstract class BaseDataType implements DataPersister {
 	public abstract Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos)
 			throws SQLException;
 
-	public abstract Object javaToSqlArg(FieldType fieldType, Object obj) throws SQLException;
+	public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
+		// noop pass-thru
+		return sqlArg;
+	}
+
+	public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {
+		// noop pass-thru
+		return javaObject;
+	}
 
 	public abstract boolean isValidForField(Field field);
 
@@ -107,5 +115,13 @@ public abstract class BaseDataType implements DataPersister {
 		} else {
 			return fieldObj1.equals(fieldObj2);
 		}
+	}
+
+	public boolean isValidForVersion() {
+		return false;
+	}
+
+	public Object moveToNextValue(Object currentValue) {
+		return null;
 	}
 }

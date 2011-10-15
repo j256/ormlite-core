@@ -43,11 +43,17 @@ public class BigIntegerType extends BaseDataType {
 		String value = results.getString(columnPos);
 		if (value == null) {
 			return null;
+		} else {
+			return sqlArgToJava(fieldType, value, columnPos);
 		}
+	}
+
+	@Override
+	public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
 		try {
-			return new BigInteger(value);
+			return new BigInteger((String) sqlArg);
 		} catch (IllegalArgumentException e) {
-			throw SqlExceptionUtil.create("Problems with column " + columnPos + " parsing BigInteger string '" + value
+			throw SqlExceptionUtil.create("Problems with column " + columnPos + " parsing BigInteger string '" + sqlArg
 					+ "'", e);
 		}
 	}

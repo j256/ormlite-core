@@ -28,11 +28,6 @@ public class VoidType extends BaseDataType {
 	}
 
 	@Override
-	public Object javaToSqlArg(FieldType fieldType, Object obj) {
-		return null;
-	}
-
-	@Override
 	public boolean isValidForField(Field field) {
 		return false;
 	}
