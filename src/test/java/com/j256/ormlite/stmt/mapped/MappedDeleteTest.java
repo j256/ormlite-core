@@ -33,6 +33,9 @@ public class MappedDeleteTest {
 						NoId.class), null);
 		NoId noId = new NoId();
 		noId.stuff = "1";
+		ConnectionSource connectionSource = createMock(ConnectionSource.class);
+		expect(connectionSource.getReadOnlyConnection()).andReturn(null);
+		replay(connectionSource);
 		se.delete(connectionSource.getReadOnlyConnection(), noId, null);
 	}
 

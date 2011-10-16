@@ -99,7 +99,7 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 	@Test
 	public void testJavaxAnnotations() throws Exception {
 		Field[] fields = JavaxAnno.class.getDeclaredFields();
-		assertTrue(fields.length >= 8);
+		assertTrue(fields.length >= 7);
 
 		// not a column
 		assertNull(DatabaseFieldConfig.fromField(databaseType, "foo", fields[0]));

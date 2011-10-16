@@ -192,8 +192,12 @@ public class TableUtilsTest extends BaseCoreTest {
 							assertEquals("CREATE TABLE `index` (`stuff` VARCHAR(255) ) ", args[0]);
 						} else if (stmtC == 1) {
 							assertEquals("CREATE INDEX `index_stuff_idx` ON `index` ( `stuff` )", args[0]);
+						} else if (stmtC == 2) {
+							assertEquals("DROP INDEX `index_stuff_idx`", args[0]);
+						} else if (stmtC == 3) {
+							assertEquals("DROP TABLE `index` ", args[0]);
 						} else {
-							fail("Should only be called twice");
+							fail("Should only be called 4 times");
 						}
 						stmtC++;
 						assertEquals(StatementType.EXECUTE, args[1]);
@@ -203,11 +207,14 @@ public class TableUtilsTest extends BaseCoreTest {
 				}).anyTimes();
 		expect(stmt.runUpdate()).andReturn(0).anyTimes();
 		connectionSource.releaseConnection(conn);
+		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
+		connectionSource.releaseConnection(conn);
 		expectLastCall().anyTimes();
 		stmt.close();
 		expectLastCall().anyTimes();
 		replay(connectionSource, conn, stmt);
 		TableUtils.createTable(connectionSource, Index.class);
+		TableUtils.dropTable(connectionSource, Index.class, true);
 		verify(connectionSource, conn, stmt);
 	}
 
@@ -230,8 +237,12 @@ public class TableUtilsTest extends BaseCoreTest {
 						} else if (stmtC == 1) {
 							assertEquals("CREATE INDEX `" + ComboIndex.INDEX_NAME
 									+ "` ON `comboindex` ( `stuff`, `junk` )", args[0]);
+						} else if (stmtC == 2) {
+							assertEquals("DROP INDEX `" + ComboIndex.INDEX_NAME + "`", args[0]);
+						} else if (stmtC == 3) {
+							assertEquals("DROP TABLE `comboindex` ", args[0]);
 						} else {
-							fail("Should only be called twice");
+							fail("Should only be called 4 times");
 						}
 						stmtC++;
 						assertEquals(StatementType.EXECUTE, args[1]);
@@ -242,11 +253,59 @@ public class TableUtilsTest extends BaseCoreTest {
 				.anyTimes();
 		expect(stmt.runUpdate()).andReturn(0).anyTimes();
 		connectionSource.releaseConnection(conn);
+		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
+		connectionSource.releaseConnection(conn);
 		expectLastCall().anyTimes();
 		stmt.close();
 		expectLastCall().anyTimes();
 		replay(connectionSource, conn, stmt);
 		TableUtils.createTable(connectionSource, ComboIndex.class);
+		TableUtils.dropTable(connectionSource, ComboIndex.class, false);
+		verify(connectionSource, conn, stmt);
+	}
+
+	@Test
+	public void testUniqueIndex() throws Exception {
+		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
+		expect(connectionSource.getDatabaseType()).andReturn(databaseType).anyTimes();
+		DatabaseConnection conn = createMock(DatabaseConnection.class);
+		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
+		final CompiledStatement stmt = createMock(CompiledStatement.class);
+		expect(conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class))).andAnswer(
+				new IAnswer<CompiledStatement>() {
+					private int stmtC = 0;
+					public CompiledStatement answer() throws Throwable {
+						Object[] args = EasyMock.getCurrentArguments();
+						assertNotNull(args);
+						assertEquals(3, args.length);
+						if (stmtC == 0) {
+							assertEquals("CREATE TABLE `uniqueindex` (`stuff` VARCHAR(255) ) ", args[0]);
+						} else if (stmtC == 1) {
+							assertEquals("CREATE UNIQUE INDEX `uniqueindex_stuff_idx` ON `uniqueindex` ( `stuff` )",
+									args[0]);
+						} else if (stmtC == 2) {
+							assertEquals("DROP INDEX `uniqueindex_stuff_idx`", args[0]);
+						} else if (stmtC == 3) {
+							assertEquals("DROP TABLE `uniqueindex` ", args[0]);
+						} else {
+							fail("Should only be called 4 times");
+						}
+						stmtC++;
+						assertEquals(StatementType.EXECUTE, args[1]);
+						assertEquals(0, ((FieldType[]) args[2]).length);
+						return stmt;
+					}
+				}).anyTimes();
+		expect(stmt.runUpdate()).andReturn(0).anyTimes();
+		connectionSource.releaseConnection(conn);
+		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
+		connectionSource.releaseConnection(conn);
+		expectLastCall().anyTimes();
+		stmt.close();
+		expectLastCall().anyTimes();
+		replay(connectionSource, conn, stmt);
+		TableUtils.createTable(connectionSource, UniqueIndex.class);
+		TableUtils.dropTable(connectionSource, UniqueIndex.class, false);
 		verify(connectionSource, conn, stmt);
 	}
 
@@ -469,5 +528,12 @@ public class TableUtilsTest extends BaseCoreTest {
 		public ComboIndex() {
 		}
 		public static final String INDEX_NAME = "stuffjunk";
+	}
+
+	protected static class UniqueIndex {
+		@DatabaseField(uniqueIndex = true)
+		String stuff;
+		public UniqueIndex() {
+		}
 	}
 }

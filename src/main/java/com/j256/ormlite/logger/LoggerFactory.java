@@ -37,7 +37,7 @@ public class LoggerFactory {
 	public static String getSimpleClassName(String className) {
 		// get the last part of the class name
 		String[] parts = className.split("\\.");
-		if (parts.length == 0) {
+		if (parts.length <= 1) {
 			return className;
 		} else {
 			return parts[parts.length - 1];
@@ -53,11 +53,14 @@ public class LoggerFactory {
 				return logType;
 			}
 		}
-		// fall back is always LOCAL
+		// fall back is always LOCAL, never reached
 		return LogType.LOCAL;
 	}
 
-	private enum LogType {
+	/**
+	 * Type of internal logs supported. This is package permissions for testing.
+	 */
+	enum LogType {
 		/**
 		 * WARNING: Android log must be _before_ commons logging since Android provides commons logging but logging
 		 * messages are ignored that are sent there. Grrrrr.
@@ -65,6 +68,7 @@ public class LoggerFactory {
 		ANDROID("android.util.Log", "com.j256.ormlite.android.AndroidLog"),
 		COMMONS_LOGGING("org.apache.commons.logging.LogFactory", "com.j256.ormlite.logger.CommonsLoggingLog"),
 		LOG4J("org.apache.log4j.Logger", "com.j256.ormlite.logger.Log4jLog"),
+		// this should always be at the end
 		LOCAL("com.j256.ormlite.logger.LocalLog", "com.j256.ormlite.logger.LocalLog") {
 			@Override
 			public Log createLog(String classLabel) {
@@ -91,6 +95,13 @@ public class LoggerFactory {
 		 * Create and return a Log class for this type.
 		 */
 		public Log createLog(String classLabel) {
+			return createLogFromClassName(classLabel);
+		}
+
+		/**
+		 * We do this for testing purposes.
+		 */
+		Log createLogFromClassName(String classLabel) {
 			try {
 				Class<?> clazz = Class.forName(logClassName);
 				@SuppressWarnings("unchecked")
@@ -109,6 +120,13 @@ public class LoggerFactory {
 		 * Return true if the log class is available.
 		 */
 		public boolean isAvailable() {
+			return isAvailableTestClass();
+		}
+
+		/**
+		 * We do this for testing purposes.
+		 */
+		boolean isAvailableTestClass() {
 			try {
 				Class.forName(detectClassName);
 				return true;

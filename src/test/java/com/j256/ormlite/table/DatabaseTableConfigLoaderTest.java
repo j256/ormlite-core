@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -58,6 +59,9 @@ public class DatabaseTableConfigLoaderTest {
 	public void testConfigEntriesFromStream() throws Exception {
 		StringBuilder value = new StringBuilder();
 		value.append(TABLE_START);
+		value.append("# random comment\n");
+		// blank line
+		value.append("\n");
 		value.append("dataClass=" + Foo.class.getName() + "\n");
 		String tableName = "fprwojfgopwejfw";
 		value.append("tableName=" + tableName + "\n");
@@ -69,7 +73,6 @@ public class DatabaseTableConfigLoaderTest {
 		value.append("generatedId=true\n");
 		value.append("# --field-end--\n");
 		value.append("# --table-fields-end--\n");
-		value.append("# --table-end--\n");
 		value.append(TABLE_END);
 		List<DatabaseTableConfig<?>> tables =
 				DatabaseTableConfigLoader.loadDatabaseConfigFromReader(new BufferedReader(new StringReader(
@@ -80,6 +83,47 @@ public class DatabaseTableConfigLoaderTest {
 		List<DatabaseFieldConfig> fields = config.getFieldConfigs();
 		assertEquals(1, fields.size());
 		assertEquals(fieldName, fields.get(0).getFieldName());
+	}
+
+	@Test(expected = SQLException.class)
+	public void testConfigInvalidLine() throws Exception {
+		StringBuilder value = new StringBuilder();
+		value.append(TABLE_START);
+		value.append("dataClass\n");
+		DatabaseTableConfigLoader.loadDatabaseConfigFromReader(new BufferedReader(new StringReader(value.toString())));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testConfigUnknownClass() throws Exception {
+		StringBuilder value = new StringBuilder();
+		value.append(TABLE_START);
+		value.append("dataClass=unknown.class.name.okay\n");
+		value.append("# --table-fields-start--\n");
+		value.append("# --field-start--\n");
+		value.append("fieldName=xxx\n");
+		value.append("# --field-end--\n");
+		value.append("# --table-fields-end--\n");
+		value.append(TABLE_END);
+		DatabaseTableConfigLoader.loadDatabaseConfigFromReader(new BufferedReader(new StringReader(value.toString())));
+	}
+
+	@Test
+	public void testQuickEndOfConfig() throws Exception {
+		StringBuilder value = new StringBuilder();
+		value.append(TABLE_START);
+		value.append("dataClass=" + Foo.class.getName() + "\n");
+		value.append("# --table-fields-start--\n");
+		value.append("# --field-start--\n");
+		value.append("fieldName=xxx\n");
+		value.append("# --field-end--\n");
+		value.append("# --field-start--\n");
+		List<DatabaseTableConfig<?>> tables =
+				DatabaseTableConfigLoader.loadDatabaseConfigFromReader(new BufferedReader(new StringReader(
+						value.toString())));
+		assertEquals(1, tables.size());
+		DatabaseTableConfig<?> config = tables.get(0);
+		List<DatabaseFieldConfig> fields = config.getFieldConfigs();
+		assertEquals(1, fields.size());
 	}
 
 	/* ======================================================================================= */
