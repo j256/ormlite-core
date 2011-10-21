@@ -1,6 +1,10 @@
 4.28: 10/XX/2011 (svn rYYYY)
 	* CORE: Added Dao.countOf(PreparedQuery) and QueryBuilder.setCountOf(true).  Thanks to Pedro Velasco.
 	* CORE: Added QueryBuilder.rawColumns(String... columns) to better support aggregates.  Thanks to Pedro Velasco.
+	* CORE: Added support for @DatabaseField(version=true) and row version field for numbers and Date's.  Cool.
+	* CORE: Fixed a field that was missing transient, making LazyForeignCollection not serializable. Fixes bug #3426884.
+	* ANDROID: Added OrmLiteSqliteOpenHelper.getRuntimeExceptionDao(). Thanks to Jo‹o Bosco. Resolves feature #3425272.
+	* JDBC: Fixed a spin loop in the JdbcPooledConnectionSource.  Thanks to Ali Aksakarya.  Fixes bug #3426903.
 
 4.27: 10/11/2011 (svn r2019)
 	* CORE: Added @DatabaseField(foreignAutoCreate=true) for auto-creating foreign fields with blank IDs using the internal DAO.
@@ -17,12 +21,12 @@
 	* CORE: Added a Dao.deleteById() method for removing an instance if you just have the id.
 	* CORE: Added @DatabaseField(columnDefiniton = "...") for hand-defining the field SQL.
 	* CORE: Removed the deprecated RawResults class that was replaced in 4.10.
-	* CORE: Fixed problem with self-generated id fields not being marked as primary.  Thanks to Craig Andrews.  Fixes bug #3406600.
+	* CORE: Fixed problem with self-generated id fields not being marked as primary. Thanks to Craig Andrews. Fixes bug #3406600.
 	* CORE: Fixed a problem where default was canBeNull=false with javax persistence macros.  Thanks to A.  Fixes bug #3410640.
 	* CORE: Removed the maxForeignLevel() field from @DatabaseField which was deprecated in 4.22.
 	* CORE: Added table and field configuration file reading and writing.
 	* CORE: Added implements Serializable to the foreign collection objects.  Thanks to Mari‡k K‡lm‡n.  Fixes bug #3411227. 
-	* ANDROID: Added field configuration utility for avoiding Dao creation performance problems with annotations.  Thanks to Ian Dees.
+	* ANDROID: Added field configuration utility to avoid Dao creation performance problems with annotations.  Thanks to Ian Dees.
 	* ANDROID: Added @DatabaseFieldSimple and other smaller annotations for speeding up Android configuration.
 	* ANDROID: Added SQLiteDatabase constructor to AndroidConnectionSource for external SQLite databases.  Thanks to Michael.
 	* ANDROID: Removed the SqliteOpenHelperFactory class that was deprecated in 4.20.
@@ -39,13 +43,13 @@
 	* CORE: Added config file to the LocalLog so we can specify which classes get which log levels.
 
 4.24: 7/18/2011 (svn r1840)
-	* CORE: Fixed problem with updating a field's value to be null using UpdateBuilder. Thanks to Jeremy Mcjunkin. Fixes bug #3359086.
-	* CORE: Fixed foreign collection bug where clear, remove, ... affected the whole table. Thanks to Patras Vlad. Fixes bug #3313003.
+	* CORE: Fixed problem with updating a field's value to null using UpdateBuilder. Thanks to Jeremy Mcjunkin. Fixes bug #3359086.
+	* CORE: Fixed foreign collection bug where clear, remove, ... affected whole table. Thanks to Patras Vlad. Fixes bug #3313003.
 	* CORE: Fixed bug with the setting of the value of serializable types.  Thanks to kyle lampert.  Fixes #3363423.
 	* CORE: Added feature where foreign collections now contain objects whose foreign fields are set with the parent object.
 	* CORE: Added Dao.queryForMatchingArgs() and queryForFieldValuesArgs() to avoid SQL escaping issues.  Thanks to coder sam.
 	* CORE: Added support for CREATE TABLE IF NOT EXISTS for Postgres > 9.1  Thanks to Daniel Colchete.
-	* CORE: Added arguments to Where.raw() and added Where.rawComparison() to better handle escaped args.  Thanks to Daniel Colchete.
+	* CORE: Added arguments to Where.raw() and added Where.rawComparison() to better handle escaped args. Thanks to Daniel Colchete.
 	* CORE: Removed deprecated raw results methods that were replaced in 4.10.
 	* CORE: Removed deprecated JAVA_DATE* types that were replaced in 4.12.
 	* ANDROID: Added a OrmLiteBaseActivityGroup to the various base classes.  Thanks to zachawilson.
@@ -58,14 +62,14 @@
 
 4.22: 5/19/2011 (svn r1777)
 	* CORE: Fixed major problem with DAO loops and caching.  Thanks much to the user list.  Fixes bug #3301588.
-	* CORE: Fixed problem with queryForMatching() and queryForFieldValues() if no fields.  Thanks to JC.  Fixes bug #3301253.
-	* CORE: Fixed problem with configuring fields in base class without annotations.  Thanks to JC and Rahan.  Fixed bug #3301698.
+	* CORE: Fixed problem with queryForMatching() and queryForFieldValues() if no fields. Thanks to JC. Fixes bug #3301253.
+	* CORE: Fixed problem with configuring fields in base class without annotations. Thanks to JC, Rahan. Fixed bug #3301698.
 	* CORE: Fixed problem with LazyForeignCollection.toArray(T[]).  Thanks to Skylar.  Fixes bug #3302924.
-	* CORE: Added initial support for defining external DataPersister classes for persisting non-built-in types.  Thanks to Craig.
+	* CORE: Added initial support for defining external DataPersister classes for persisting non-built-in types. Thanks to Craig.
 	* CORE: Removed auto-downcasing of hand wired table name in DatabaseTableConfig.  Thanks to Tomas.  Fixes bug #3302976.
 	* CORE: Added the maxEagerForeignCollectionLevel field to the @ForeignCollectionField annotation to limit recursion.
 	* CORE: Renamed the maxForeignLevel field in @DatabaseField to be maxForeignAutoRefreshLevel to make more sense.
-	* CORE: Added support for creating an empty foreign collection field so you can use add() on it when creating.  Thanks to Craig.
+	* CORE: Added support for creating empty foreign collection field so you can use add() on it when creating. Thanks to Craig.
 	* CORE: Added the concept of closeLastIterator() to the DAO and CloseableWrappedIterable for reentrant usage.
 	* CORE: Added better connection/statement testing code and fixed some additional missing closes.
 	* JDBC: Tweaked the HSQLdb database type to acknowledge that it seems to support inner transactions.
@@ -107,7 +111,7 @@
 	* CORE: Tightened up some of the allocations done internally when building statements.
 
 4.18: 3/30/2011 (svn r1593)
-	* CORE: Fixed bug with lazy foreign collections are not properly limiting the iterator.  Fixes bug #3260099. Thanks to Brady.
+	* CORE: Fixed bug with lazy foreign collections are not properly limiting iterator. Fixes bug #3260099. Thanks to Brady.
 	* CORE: Fixed bug with updating of foreign collections.  Fixes bug #3260103. Thanks to ede.
 	* CORE: Added better support for batch tasks by using a database transaction if auto-commit isn't supported.
 	* ANDROID: You can now use the callBatchTask method on the DAO which will use a transaction.
@@ -120,23 +124,23 @@
 
 4.16: 3/23/2011 (svn r1553)
 	** WARNING: ** 4.16 was released with some Java 1.6 calls which broke a lot of people.  This was fixed in 4.17.
-	* CORE: Added support for @@ForeignCollectionField annotation which supports eager and lazy loaded collections of foreign objects.
+	* CORE: Added support for @@ForeignCollectionField which supports eager, lazy loaded collections of foreign objects.
 	* CORE: Added a DaoManager which caches DAOs that are constructed so we only do it once per class.  Thanks to jc.
-	* CORE: Added the BaseDaoEnabled class for supporting data objects which can self refresh/update/etc..  Good bit of refactoring.
-	* CORE: Added the UUID DataType for supporting the storing UUID fields.  Auto-generation of UUID ids also works.  Thanks to jc.
-	* CORE: Added the STRING_BYTES DataType for supporting the storing of Unicode strings as byte[] blobs in the database.
-	* CORE: Fixed problem with SQLite (JDBC and Android) was not handling nested transactions correctly.  Fixed bug #3208074.
+	* CORE: Added BaseDaoEnabled class for supporting data objects which can self refresh/update/etc..  Some refactoring.
+	* CORE: Added UUID DataType for supporting the storing UUID fields.  Auto-generation of UUID ids also works.  Thanks to jc.
+	* CORE: Added STRING_BYTES DataType for supporting the storing of Unicode strings as byte[] blobs in the database.
+	* CORE: Fixed problem with SQLite (JDBC, Android) was not handling nested transactions correctly.  Fixed bug #3208074.
 	* Android: Users should consider using the new DaoManager instead of making DAOs by calling BaseDaoImpl directly.
 	* Android: Fixed problem with SQLite nested transactions correctly.  They are not supported under Android.
 	* Android: Added the STRING_BYTES DataType so you can store Unicode strings in SQLite appropriately.
 
 4.15: 3/7/2011 (svn r1513)
 	* CORE: Fixed a problem where Integer and Long fields could not be id fields.  Fixes bug #3202117.
-	* CORE: Resolved bad problem with querying for objects with null foreign field values.  Fixes bug #3199649.  Thanks to Micael.
+	* CORE: Resolved bad bug with querying for objects with null foreign field values. Fixes bug #3199649. Thanks to Micael.
 	* CORE: Removed the confusing Where().foreignIdEq() and foreignIdIn() methods.  Little extra value and loads of confusion.
-	* CORE: Refactored the +1/-1 dance that core was doing to access and set SQL arguments.  Now everything is 0 based in -CORE.
+	* CORE: Refactored +1/-1 dance that core was doing to access and set SQL arguments.  Now everything is 0 based in -CORE.
 	* JDBC: Changed TableCreator to take a list of Dao instead of BaseDaoImpl.
-	* JDBC: Added alpha version of a generic ODBC database type.  Had to refactor null detection.  Thanks much to Dale Asberry.
+	* JDBC: Added alpha version of a generic ODBC database type. Had to refactor null detection. Thanks much to Dale Asberry.
 	* JDBC: Added alpha version of a Netezza database type.  Thanks much to Richard Kooijman.
 
 4.14: 2/28/2011 (svn r1474)
@@ -170,7 +174,7 @@
 	* CORE: Made some fields and methods in BaseDaoImpl protected for folks extending this the base dao.  Thanks to jc.
 	* CORE: Replaced NPE with better SQLException if trying to update just the id.  Fixes bug #3178360.  Thanks to jc.
 	* CORE: Added Where.idEq(), Where.foreignIdEq(), and Where.foreignIdIn methods to expand query functionality.
-	* CORE: Added better handling of nulls returned by the RawRowMapper.  It also now throws SQLException.  Thanks to Larry.
+	* CORE: Added better handling of nulls returned by RawRowMapper.  It also now throws SQLException.  Thanks to Larry.
 	* ANDROID: Exposed the cursor from the iterator and android database results.
 
 4.10: 2/2/2011 (svn r1339)
@@ -179,10 +183,10 @@
 	* CORE: Significantly refactored the RawResults class (now deprecated) and created GenericRawResults.
 	* CORE: Dao.queryForAllRaw() and Dao.iteratorRaw() now deprecated.  Replaced with Dao.queryRaw() methods.
 	* CORE: Added the ability to get results as an array of Objects when you pass in the column-types.
-	* CORE: Found some unclosed statements in the update(PreparedUpdate) and delete(PreparedDelete) methods.  Fixes bug #3170021.
+	* CORE: Found some unclosed statements in update(PreparedUpdate), delete(PreparedDelete) methods.  Fixes bug #3170021.
 	* ANDROID: Added missing OrmLiteBaseListActivity base class.
 	* ANDROID: Reordered the log class detection to put Android Log before commons logging.  Fixes bug #3167100.
-	* ANDROID: Split out the -core from this package.  You now need to install BOTH the core and android (or jdbc) packages.
+	* ANDROID: Split out the -core from this package.  You now need to install BOTH core and android (or jdbc) packages.
 	* ANDROID: Removed the deprecated AndroidTableUtils class.
 	* ANDROID: Better wrapping of android.database.SQLException with java.sql.SQLException.
 	* JDBC: Split out the -core from this package.  You now need to install BOTH the core and jdbc (or android) packages.
@@ -205,9 +209,9 @@
 
 4.6: 12/15/2010 (svn r1217)
 	* CORE: Fixed issues with infinite recursion if there is a foreign object loop.  Fixes bug #3137579.
-	* CORE: Revamped a lot of the call structure internally to make way for the SimpleDB backend.  Exposed the FieldType array more.
+	* CORE: Revamped the call structure internally to make way for the SimpleDB backend.  Exposed FieldType array more.
 	* CORE: Removed some old deprecated methods from QueryBuilder and TableUtils.
-	* ANDROID: Added protection in case the subclass onCreate is called so another connection is not saved.  Fixes bug #3117883.
+	* ANDROID: Added protection in case subclass onCreate is called so another connection isn't saved.  Fixes bug #3117883.
 
 4.5: 11/17/2010 (svn r1178)
 	* CORE: Fixes some problems with Dates and Enums being id types.
@@ -259,7 +263,7 @@
 	* JDBC: DataSourceConnectionSource now needs the database URL as well as the DataSource.
 	* ANDROID: Made changes to OrmLiteSqliteOpenHelper to remove the DatabaseType references.
 
-----------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
 
 3.5: 9/28/2010 (svn r948)
 	* CORE: Revamped the StatementBuilder to allow foreign fields to be queried from the object as opposed to just its id.
@@ -270,8 +274,8 @@
 3.4: 9/24/2010 (svn r916)
 	* CORE: Revamped the log factory to use the internal LogType enum better and to construct the logs using reflection.
 	* CORE: Added javax unique=true handling which should have been in 3.3.
-	* ANDROID: Moved the AndroidLog implementation over to the Android package and reworked it to make direct calls to the android.util.Log.
-	* ANDROID: Fixed problem with Android cursor were the field-name escape characters were in the column map.  Fixes bug #3074249.
+	* ANDROID: Moved AndroidLog over to the Android package and reworked it to make direct calls to the android.util.Log.
+	* ANDROID: Fixed problem with Android cursor were field-name escape characters were in column map.  Fixes bug #3074249.
 
 3.3: 9/22/2010 (svn r883)
 	* CORE: Added UNIQUE constraint handling for ensuring fields are unique in all rows of the table.
@@ -296,7 +300,7 @@
 3.0: 8/17/2010 (svn r561)
 	* Not ready for prime time
 
-----------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
 
 2.12: 8/16/2010 (svn r548)
 	* Added a logger which should detect and delegate to the internal Android logger.
@@ -361,7 +365,7 @@
 2.0: 6/12/2010 (svn r344)
 	* Finally took the plunge and removed the Spring dependency.  Down to 2 dependencies.
 
-----------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
 
 1.13: 6/11/2010 (svn r332)
 	* Fixed Postgres mixed case problem with fields and sequence numbers.
@@ -376,13 +380,13 @@
 1.11: 5/21/2010 (svn r298)
 	* Revamped the DatabaseTableConfig wiring.  Better.
 	* Found a problem with long sequence names in Postgres.
-	* Added new DatabaseFieldConfig wiring for hand or Spring wiring a class' details if you don't want to use annotations.
+	* Added new DatabaseFieldConfig wiring for hand or Spring wiring a class' details if you don't use annotations.
 	* Fixed problem when a class just has a generatedId field which cannot be inserted or updated.
 	* Found/fixed an interesting bug with generated-id and canBeNull = false.
 	* Added queryForFirst method to the DAO hierarchy.
 
 1.10: 5/15/2010 (svn r281)
-	* Revamped the TableInfo constructors to support taking in a list of FieldType for external object configuration.  Bit messy.
+	* Revamped TableInfo constructors to support taking in a list of FieldType for external object config.  Bit messy.
 	* Made the InnoDB engine the default for tables created the the MySQL DatabaseType.
 
 1.9: 5/14/2010 (svn r269)
@@ -398,7 +402,7 @@
 1.7: 4/29/2010 (svn r236)
 	* Significant revamping of the junit tests.
 	* Initial take on a MS SQL Server port using the JTDS driver.  Kudos to the JTDS folks.
-	* Turns out that HSQLDB is a bit different from the rest (grrrr) so I had to add an appendLimitValue to the database type.
+	* Turns out that HSQLDB is a bit different from the rest (grrrr).   I added an appendLimitValue to database type.
 	* Added LIMIT support to the package.  This caused a bunch of trickle down.
 	* Renamed some of the is fields in the DatabaseType.  Added isLimitSupported because of Derby.  Grrrrrr.
 	* Added an initial take on an Oracle database type.  No access to an Oracle db so some guesses.
@@ -436,7 +440,7 @@
 	* Major revamping of the build statement stuff.
 	* Collapsed the StatementBuilder class into each of the mapped statements.  Feels a lot tighter.
 
-----------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
 
 0.12: 2/1/2010 (svn r119)
 	* Major revamping of the MappedStatement class to pair it down and get a class hierarchy going.
