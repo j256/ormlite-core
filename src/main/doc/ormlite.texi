@@ -6,7 +6,7 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.27
+@set ormlite_version 4.28
 @set ormlite_year 2011
 @set ormlite_date October @value{ormlite_year}
 @set package ORMLite
@@ -607,22 +607,25 @@ order1.account = account1;
 orderDao.create(order1);
 @end example
 
+@cindex version field
+@cindex row versioning
+@anchor{version feature}
 @item version
 
-@cindex version
-@anchor{versionAnnotation}
-@item @@Version
-
-Set this to true (default false) to have this field be a version field for the row.  Version fields help by adding
-restrictions when an object is updated to the datbase.
+Set this to true (default false) to have this field be a version for the row.  Version field add restrictions when an
+object is updated to the datbase that protect against data corruption when multiple entites may be updating the row at
+the same time.  This is very useful in distributed database scenarios if (for example) a utility process is updating
+an @code{Account} and you don't want to protect against overwriting a user update from the web-server.
 
 @enumerate
+@item The current-value of the version field is read from the object 
 @item The update statement is augmented with a @code{"WHERE version = current-value"}
-@item The new value being updated is changed by ORMLite to be the current-value + 1 or the current @code{java.util.Date}
-@item If the row has been updated by another entity then the update will not change the row since the current value
-will not match the database and 0 rows changed will be returned by the @code{update} method
-@item If the current value @emph{does} match the database then object's version field will be set by ORMLite to the
-new value
+@item The new-value being updated in the database is changed by ORMLite to be the current-value + 1 or the current
+@code{java.util.Date}
+@item If the row has been updated by another entity then the update will not change the database since the current-value
+will not match the version column in the database and 0 rows changed will be returned by the @code{update} method
+@item However, if the current-value @emph{does} match the version field in the database then the row will be updated,
+the object's version field will be set by ORMLite to the new-value, 1 will be returned from @code{update}
 @end enumerate
 
 Only the following field types are appropriate for version fields: short, integer, long, and Date fields.
@@ -635,8 +638,6 @@ Only the following field types are appropriate for version fields: short, intege
 
 @cindex JPA
 @cindex javax.persistence
-@cindex @@Entity
-@cindex Entity annotation
 Instead of using the ORMLite annotations (@pxref{Local Annotations}), you can use the more standard
 JPA annotations from the @code{javax.persistence} package.  In place of the @code{@@DatabaseTable} annotation, you can
 use the @code{javax.persistence} @code{@@Entity} annotation.  For example:
@@ -650,18 +651,6 @@ public class Account @{
 The @code{@@Entity} annotations can have an optional @code{name} argument which specifies the table name.   If not
 specified, the class name with normalized case is used by default.
 
-@cindex @@Column
-@cindex @@Id
-@cindex @@GeneratedValue
-@cindex Column annotation
-@cindex Id annotation
-@cindex GeneratedValue annotation
-@cindex @@OneToOne
-@cindex OneToOne annotation
-@cindex @@ManyToOne
-@cindex ManyToOne annotation
-@cindex @@Version
-@cindex Version annotation
 Instead of using the @code{@@DatabaseField} annotation on each of the fields, you can use the @code{javax.persistence}
 annotations: @code{@@Column}, @code{@@Id}, @code{@@GeneratedValue}, @code{@@OneToOne}, @code{@@ManyToOne}, 
 @code{@@JoinColumn}, and @code{@@Version}. For example:
@@ -682,6 +671,22 @@ The following @code{javax.persistence} annotations and fields are supported:
 
 @table @code
 
+@cindex @@Entity
+@cindex Entity annotation
+@item @@Entity
+
+Specifies that the class is stored in the database. 
+
+@table @code
+
+@item name
+
+Used to specify the name of the associated database table.  If not provided then the class name is used.
+
+@end table
+
+@cindex @@Column
+@cindex Column annotation
 @item @@Column
 
 Specifies the field to be persisted to the database.  You can also just specify the @code{@@Id} annotation.  The
@@ -718,6 +723,8 @@ Adds a constraint to the field that it has to be unique across all rows in the t
 
 @end table
 
+@cindex @@Id
+@cindex Id annotation
 @cindex id field
 @cindex key field
 @cindex primary key field
@@ -726,17 +733,25 @@ Adds a constraint to the field that it has to be unique across all rows in the t
 Used to specify a field to be persisted to the database as a primary row-id.  If you want to have the id be
 auto-generated, you will need to also specify the @code{@@GeneratedValue} annotation.
 
+@cindex @@GeneratedValue
+@cindex GeneratedValue annotation
 @item @@GeneratedValue
 
 Used to define an id field as having a auto-generated value.  This is only used in addition to the @code{@@Id}
 annotation.  See the @code{generatedId} field in the @code{@@DatabaseField} annotation for more details.
 
+@cindex @@ManyToOne
+@cindex ManyToOne annotation
+@cindex @@OneToOne
+@cindex OneToOne annotation
 @item @@OneToOne or @@ManyToOne
 
 Fields with these annotations are assumed to be foreign fields.  @xref{Foreign Objects}.  ORMLite does
 @emph{not} enforce the many or one relationship nor does it use any of the annotation fields.  It just uses the
 existence of either of these annotations to indicate that it is a foreign object.
 
+@cindex @@JoinColumn
+@cindex JoinColumn annotation
 @item @@JoinColumn
 
 @table @code
@@ -752,9 +767,11 @@ Set to true to have a field be able to be inserted into the database with a null
 
 @end table
 
+@cindex @@Version
+@cindex Version annotation
 @item @@Version
 
-Use this annotation will turn short, integer, long, and Date fields into a version field.  @xref{versionAnnotation}.
+Using this annotation will turn short, integer, long, and Date fields into a version field.  @xref{version feature}.
 
 @end table
 
@@ -2884,7 +2901,7 @@ public class DatabaseConfigUtil extends OrmLiteConfigUtil @{
 your data classes.  This means that right now, this @emph{must} be done by hand to keep the configuration file in sync with your database
 classes.  To run the utility you will need to use the local Java runtime environment (JRE).  Under eclipse, edit the "Run Configuration" for
 the utility, select the JRE tab, and select an alternative JRE (1.5 or 1.6).  Your project's JRE should be undefined since it is an Android
-application.
+application.  You'll also need to remove the Android bootstrap entry from the Classpath tab.
 
 @item By default this utility will look in the current directory and below in files ending in @code{.java} for the existence of one of the
 @code{@@DatabaseTable}, @code{DatabaseField}, or @code{DatabaseFieldSimple} annotations.  These classes will be investigated and written into
