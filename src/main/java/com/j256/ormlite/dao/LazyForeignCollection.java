@@ -1,5 +1,6 @@
 package com.j256.ormlite.dao;
 
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,7 +23,8 @@ import com.j256.ormlite.field.ForeignCollectionField;
  * 
  * @author graywatson
  */
-public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> implements ForeignCollection<T> {
+public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> implements ForeignCollection<T>,
+		Serializable {
 
 	private static final long serialVersionUID = -5460708106909626233L;
 
@@ -63,7 +65,13 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 	 * {@link #closeLastIterator()}.
 	 */
 	public CloseableIterator<T> seperateIteratorThrow() throws SQLException {
-		return dao.iterator(getPreparedQuery());
+		// check state to make sure we have a DAO in case we have a deserialized collection
+		if (dao == null) {
+			throw new IllegalStateException(
+					"Internal DAO object is null.  Lazy collections cannot be used if they have been deserialized.");
+		} else {
+			return dao.iterator(getPreparedQuery());
+		}
 	}
 
 	public CloseableWrappedIterable<T> getWrappedIterable() {
