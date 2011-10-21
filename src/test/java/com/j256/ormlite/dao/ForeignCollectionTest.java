@@ -8,6 +8,11 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -657,6 +662,26 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertEquals(valOther, iterator.next().val);
 		assertFalse(iterator.hasNext());
 		iterator.close();
+
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		ObjectOutputStream objectOut = new ObjectOutputStream(outputStream);
+		objectOut.writeUnshared(result);
+		objectOut.close();
+
+		ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+		ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+		result = (Account) objectInputStream.readObject();
+
+		if (eager) {
+			assertEquals(1, result.orders.size());
+		} else {
+			try {
+				result.orders.size();
+				fail("This should have thrown");
+			} catch (IllegalStateException e) {
+				// expected
+			}
+		}
 	}
 
 	private Dao<Account, Integer> createLazyOrderDao() throws SQLException, Exception {
@@ -677,7 +702,8 @@ public class ForeignCollectionTest extends BaseCoreTest {
 
 	/* =============================================================================================== */
 
-	protected static class Account {
+	protected static class Account implements Serializable {
+		private static final long serialVersionUID = 6635908110232002380L;
 		public static final String ORDERS_FIELD_NAME = "orders123";
 		@DatabaseField(generatedId = true)
 		int id;
@@ -689,7 +715,8 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		}
 	}
 
-	protected static class Order {
+	protected static class Order implements Serializable {
+		private static final long serialVersionUID = 4917817147937431643L;
 		public static final String ACCOUNT_FIELD_NAME = "account_id";
 		@DatabaseField(generatedId = true)
 		int id;
