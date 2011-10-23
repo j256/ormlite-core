@@ -89,7 +89,7 @@ public class MappedQueryForIdTest extends BaseCoreStmtTest {
 		foo.stuff = stuff;
 		assertEquals(1, fooDao.create(foo));
 
-		// don't do this at home kiddies -- creates a different doa looking at the Foo table
+		// don't do this at home kiddies -- creates a different dao looking at the Foo table
 		// it doesn't create the new table
 		Dao<FakeFoo, String> fakeFooDao = createDao(FakeFoo.class, false);
 		// this fails because >1 item is returned from an id search -- baaaaad

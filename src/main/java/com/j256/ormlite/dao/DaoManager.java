@@ -58,7 +58,7 @@ public class DaoManager {
 			if (config != null) {
 				// create a dao using it
 				Dao<T, ?> configedDao = createDao(connectionSource, config);
-				logger.debug("created doa for class {} from loaded config", clazz);
+				logger.debug("created dao for class {} from loaded config", clazz);
 				// we put it into the DAO map even though it came from a config
 				classMap.put(key, configedDao);
 				@SuppressWarnings("unchecked")
@@ -73,7 +73,7 @@ public class DaoManager {
 			@SuppressWarnings("deprecation")
 			Dao<T, ?> daoTmp = BaseDaoImpl.createDao(connectionSource, clazz);
 			dao = daoTmp;
-			logger.debug("created doa for class {} with reflection", clazz);
+			logger.debug("created dao for class {} with reflection", clazz);
 		} else {
 			Class<?> daoClass = databaseTable.daoClass();
 			Constructor<?> daoConstructor = null;
@@ -105,7 +105,7 @@ public class DaoManager {
 			}
 			try {
 				dao = (Dao<?, ?>) daoConstructor.newInstance(arguments);
-				logger.debug("created doa for class {} from constructor", clazz);
+				logger.debug("created dao for class {} from constructor", clazz);
 			} catch (Exception e) {
 				throw SqlExceptionUtil.create("Could not call the constructor in class " + daoClass, e);
 			}

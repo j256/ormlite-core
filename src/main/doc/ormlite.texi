@@ -4296,6 +4296,12 @@ helpers itself.  Certain programmers may want to manage the database connections
 activities and services or to use ORMLite when it is not possible to extend the base classes.  See the
 @uref{http://ormlite.com/docs/android-hello-no-base, source code in SVN}.
 
+@item HelloAndroidTwoDbs
+
+This is similar to the HelloAndroid example but it uses two separate databases, manages the helpers itself, and does not
+use the @code{OpenHelperManager} to manage the helpers at all.  This is one way that you can deal with two different databases.
+@uref{http://ormlite.com/docs/android-hello-two-databases, source code in SVN}.
+
 @end table
 
 @c ----------------------------------------------------------------
