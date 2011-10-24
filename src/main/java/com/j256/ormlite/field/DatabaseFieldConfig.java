@@ -401,12 +401,13 @@ public class DatabaseFieldConfig {
 	}
 
 	/**
-	 * Create and return a config converted from a {@link Field} that may have either a {@link DatabaseField} annotation
-	 * or the javax.persistence annotations.
+	 * Create and return a config converted from a {@link Field} that may have one of the following annotations:
+	 * {@link DatabaseField}, {@link DatabaseFieldSimple}, {@link ForeignCollectionField}, or javax.persistence...
 	 */
 	public static DatabaseFieldConfig fromField(DatabaseType databaseType, String tableName, Field field)
 			throws SQLException {
-		// first we lookup the DatabaseField annotation
+
+		// first we lookup the @DatabaseField annotation
 		DatabaseField databaseField = field.getAnnotation(DatabaseField.class);
 		if (databaseField != null) {
 			if (databaseField.persisted()) {
@@ -416,7 +417,7 @@ public class DatabaseFieldConfig {
 			}
 		}
 
-		// first we lookup the DatabaseField annotation
+		// next we lookup @DatabaseFieldSimple and friends
 		DatabaseFieldSimple databaseFieldSimple = field.getAnnotation(DatabaseFieldSimple.class);
 		if (databaseFieldSimple != null) {
 			return fromDatabaseFieldAnnotations(databaseType, tableName, field, databaseFieldSimple,
@@ -424,6 +425,7 @@ public class DatabaseFieldConfig {
 					field.getAnnotation(DatabaseFieldIndex.class), field.getAnnotation(DatabaseFieldOther.class));
 		}
 
+		// lastly we check for @ForeignCollectionField
 		ForeignCollectionField foreignCollection = field.getAnnotation(ForeignCollectionField.class);
 		if (foreignCollection != null) {
 			return fromForeignCollection(databaseType, tableName, field, foreignCollection);
@@ -433,11 +435,9 @@ public class DatabaseFieldConfig {
 		 * NOTE: to remove javax.persistence usage, comment the following lines out
 		 */
 		DatabaseFieldConfig config = JavaxPersistence.createFieldConfig(databaseType, field);
-		if (config != null) {
-			return config;
-		}
 
-		return null;
+		// this can be null
+		return config;
 	}
 
 	/**

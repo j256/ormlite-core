@@ -7,8 +7,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Similar to {@link DatabaseField} but with fewer fields. Other fields can be specified with the other @DatabaseField*
- * annotations.
+ * This can be used <i>instead of</i> {@link DatabaseField}. It has fewer fields which can give a performance boost on
+ * some architectures -- namely Android. Other fields can be specified with the other @DatabaseField... annotations.
+ * 
+ * <p>
+ * <b>NOTE:</b> If you use @DatabaseField then you should not use this @DatabaseFieldSimple annotation or any of the
+ * other @DatabaseField... annotations. They will be ignored.
+ * </p>
  * 
  * @author graywatson
  */

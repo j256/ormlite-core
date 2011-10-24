@@ -9,8 +9,8 @@ import java.lang.annotation.Target;
 import com.j256.ormlite.field.types.VoidType;
 
 /**
- * Additions to the {@link DatabaseFieldSimple} annotations which _must_ be specified for this annotation to be
- * detected.
+ * This can be used instead of {@link DatabaseField}. This adds fields to the {@link DatabaseFieldSimple} annotations
+ * which _must_ also be specified for this annotation to be detected.
  * 
  * @author graywatson
  */

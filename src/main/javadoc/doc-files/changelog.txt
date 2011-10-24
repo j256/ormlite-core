@@ -1,4 +1,4 @@
-4.28: 10/23/2011 (svn rYYYY)
+4.28: 10/23/2011 (svn r2074)
 	* CORE: Added Dao.countOf(PreparedQuery) and QueryBuilder.setCountOf(true).  Thanks to Pedro Velasco.
 	* CORE: Added QueryBuilder.rawColumns(String... columns) to better support aggregates.  Thanks to Pedro Velasco.
 	* CORE: Added support for @DatabaseField(version=true) and row version field for numbers and Date's.  Cool.
