@@ -507,7 +507,7 @@ public class RuntimeExceptionDao<T, ID> {
 	}
 
 	/**
-	 * @see Dao#countOf(PreparedQuery))
+	 * @see Dao#countOf(PreparedQuery)
 	 */
 	public long countOf(PreparedQuery<T> preparedQuery) {
 		try {
