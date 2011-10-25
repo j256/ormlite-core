@@ -4272,8 +4272,8 @@ See the @uref{http://ormlite.com/docs/example-spring, source code in SVN}.
 @section Android Examples
 
 @cindex Android examples
-For Android developers, here some complete example application projects to help you get started with that operating system.
-See here for @uref{http://ormlite.com/android/examples/, tarballs of all of the packages}.
+For Android developers, here some complete example application projects to help you get started.  See here for
+@uref{http://ormlite.com/android/examples/, tarballs of all of the packages} as well as svn links.
 
 @table @asis
 
@@ -4284,33 +4284,29 @@ source code in SVN}.
 
 @item ClickCounter
 
-A nice little application written by Kevin G. that provides a counter type application using ORMLite.  See the
-@uref{http://ormlite.com/docs/android-click, source code in SVN}.
+A nice little application written by Kevin G. that provides a counter type application using ORMLite.
 
 @item NotifyService
 
-An example of a service application that uses ORMLite written by Kevin G.  See the @uref{http://ormlite.com/docs/android-notify,
-source code in SVN}.
+An example of a service application that uses ORMLite written by Kevin G.
 
 @item HelloAndroidH2
 
 This is similar to the HelloAndroid example but it is using JDBC and H2 instead of the build-in Android database calls.  This is more
 a proof of concept rather than a true example.  The wiring for the @code{onCreate} and @code{onUpdate} is a hack.   H2 is certainly
 larger, has tons more features, but is slower than the native SQLite.  Also, JDBC under Android is @emph{not} completely sanctioned by
-Google and support for it may be removed in the future.  See the @uref{http://ormlite.com/docs/android-helloh2, source code in SVN}.
+Google and support for it may be removed in the future.
 
 @item HelloAndroidNoBase
 
 This is similar to the HelloAndroid example but its activity does not extend the @code{OrmLiteBaseActivity} but instead manages the
 helpers itself.  Certain programmers may want to manage the database connections using their own code to better share between
-activities and services or to use ORMLite when it is not possible to extend the base classes.  See the
-@uref{http://ormlite.com/docs/android-hello-no-base, source code in SVN}.
+activities and services or to use ORMLite when it is not possible to extend the base classes.
 
 @item HelloAndroidTwoDbs
 
 This is similar to the HelloAndroid example but it uses two separate databases, manages the helpers itself, and does not
 use the @code{OpenHelperManager} to manage the helpers at all.  This is one way that you can deal with two different databases.
-@uref{http://ormlite.com/docs/android-hello-two-databases, source code in SVN}.
 
 @end table
 
