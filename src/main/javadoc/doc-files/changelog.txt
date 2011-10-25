@@ -1,3 +1,6 @@
+4.29: 10/25/2011 (svn r????)
+	* ANDROID: Fixed a casting bug in OrmLiteSqliteOpenHelper from 4.28.  Thanks to Craig Andrews.  Fixes bug #3428429. 
+
 4.28: 10/23/2011 (svn r2074)
 	* CORE: Added Dao.countOf(PreparedQuery) and QueryBuilder.setCountOf(true).  Thanks to Pedro Velasco.
 	* CORE: Added QueryBuilder.rawColumns(String... columns) to better support aggregates.  Thanks to Pedro Velasco.
