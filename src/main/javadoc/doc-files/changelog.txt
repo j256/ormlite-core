@@ -1,4 +1,4 @@
-4.29: 10/25/2011 (svn r????)
+4.29: 10/25/2011 (svn r2101)
 	* ANDROID: Fixed a casting bug in OrmLiteSqliteOpenHelper from 4.28.  Thanks to Craig Andrews.  Fixes bug #3428429. 
 
 4.28: 10/23/2011 (svn r2074)
