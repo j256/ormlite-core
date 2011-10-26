@@ -1,3 +1,6 @@
+4.30: 11/??/2011 (svn r????)
+	* CORE: Added ability to specify ForeignCollection columns in selectColumns(). Thanks to @Timo. Fixes bug #3428751.
+
 4.29: 10/25/2011 (svn r2101)
 	* ANDROID: Fixed a casting bug in OrmLiteSqliteOpenHelper from 4.28.  Thanks to Craig Andrews.  Fixes bug #3428429. 
 

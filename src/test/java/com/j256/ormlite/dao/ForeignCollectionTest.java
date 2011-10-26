@@ -390,6 +390,49 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertEquals(numOrders, results.size());
 	}
 
+	@Test
+	public void testSelectColumnsNullForeign() throws Exception {
+		Dao<Account, Integer> accountDao = createDao(Account.class, true);
+		Dao<Order, Integer> orderDao = createDao(Order.class, true);
+
+		Account account = new Account();
+		account.name = "fwejpojfpofewjo";
+		assertEquals(1, accountDao.create(account));
+
+		Order order = new Order();
+		order.val = 1321312;
+		order.account = account;
+		assertEquals(1, orderDao.create(order));
+
+		List<Account> results = accountDao.queryBuilder().where().eq(Account.ID_FIELD_NAME, account.id).query();
+		assertEquals(1, results.size());
+		assertEquals(account.name, results.get(0).name);
+		assertNotNull(results.get(0).orders);
+		assertEquals(1, results.get(0).orders.size());
+
+		results =
+				accountDao.queryBuilder()
+						.selectColumns(Account.ID_FIELD_NAME, Account.NAME_FIELD_NAME)
+						.where()
+						.eq(Account.ID_FIELD_NAME, account.id)
+						.query();
+		assertEquals(1, results.size());
+		assertEquals(account.name, results.get(0).name);
+		// null because the orders are not in the select columns
+		assertNull(results.get(0).orders);
+
+		results =
+				accountDao.queryBuilder()
+						.selectColumns(Account.ID_FIELD_NAME, Account.NAME_FIELD_NAME, Account.ORDERS_FIELD_NAME)
+						.where()
+						.eq(Account.ID_FIELD_NAME, account.id)
+						.query();
+		assertEquals(1, results.size());
+		assertEquals(account.name, results.get(0).name);
+		assertNotNull(results.get(0).orders);
+		assertEquals(1, results.get(0).orders.size());
+	}
+
 	/* =============================================================================================== */
 
 	private void testCollection(Dao<Account, Integer> accountDao, boolean eager) throws Exception {
@@ -704,10 +747,12 @@ public class ForeignCollectionTest extends BaseCoreTest {
 
 	protected static class Account implements Serializable {
 		private static final long serialVersionUID = 6635908110232002380L;
+		public static final String ID_FIELD_NAME = "id";
+		public static final String NAME_FIELD_NAME = "name";
 		public static final String ORDERS_FIELD_NAME = "orders123";
-		@DatabaseField(generatedId = true)
+		@DatabaseField(generatedId = true, columnName = ID_FIELD_NAME)
 		int id;
-		@DatabaseField
+		@DatabaseField(columnName = NAME_FIELD_NAME)
 		String name;
 		@ForeignCollectionField(eager = true, columnName = ORDERS_FIELD_NAME)
 		ForeignCollection<Order> orders;

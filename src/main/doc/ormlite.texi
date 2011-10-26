@@ -2052,6 +2052,7 @@ public class Account @{
 @}
 @end example
 
+@anchor{ForeignCollectionField}
 In the above example, the @code{@@ForeignCollectionField} annotation marks that the @code{orders} field is a collection of the orders
 that match the account.  The field type of @code{orders} must be either @code{ForeignCollection<T>} or @code{Collection<T>} -- no
 other collections are supported.  The @code{@@ForeignCollectionField} annotation supports the following fields:
@@ -2079,7 +2080,8 @@ doing.
 @cindex empty foreign collection
 @item columnName
 
-The name of the column.  This is only used if you want to match the string passed to @code{Dao#getEmptyForeignCollection(String)}.
+The name of the column.  This is only used if you want to match the string passed to @code{Dao#getEmptyForeignCollection(String)} or to
+specify that you want the collection returned when you specify @code{queryBuilder.selectColumns(...)}.  @xref{selectColumns}.
 
 @cindex ordered foreign collection
 @cindex foreign collection, ordered
@@ -2469,6 +2471,7 @@ Build and return a prepared query that can be used by @code{Dao.query(PreparedQu
 @code{Dao.iterator(PreparedQuery)} methods. If you change the where or make other calls you will need
 to re-call this method to re-prepare the statement for execution.
 
+@anchor{selectColumns}
 @cindex select columns
 @item selectColumns(String... columns)
 
@@ -2482,6 +2485,9 @@ This allows you to in effect have lazy loaded fields.  You can specify exactly w
 resulting objects. This is especially helpful if you have large fields in a table that you don't always
 want to access.  To get all of the fields on the object later, you can either do another query or call
 @code{refresh()} with the object.
+
+@emph{WARNING:} If you specify any columns to return, then any foreign-collection fields will be returned as null
+@emph{unless} their @code{ForeignCollectionField.columnName} is also in the list.  @xref{ForeignCollectionField}.
 
 @item selectColumns(Iterable<String> columns)
 
@@ -4279,8 +4285,7 @@ For Android developers, here some complete example application projects to help 
 
 @item HelloAndroid
 
-A basic Android application which does some database operations and then quits.  See the @uref{http://ormlite.com/docs/android-hello,
-source code in SVN}.
+A basic Android application which does some database operations and then quits.
 
 @item ClickCounter
 

@@ -2,12 +2,14 @@ package com.j256.ormlite.stmt;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.stmt.query.OrderBy;
 import com.j256.ormlite.table.TableInfo;
 
@@ -80,6 +82,11 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	/**
 	 * Add columns to be returned by the SELECT query. If no columns are selected then all columns are returned by
 	 * default. For classes with id columns, the id column is added to the select list automagically.
+	 * 
+	 * <p>
+	 * <b>WARNING:</b> If you specify any columns to return, then any foreign-collection fields will be returned as null
+	 * <i>unless</i> their {@link ForeignCollectionField#columnName()} is also in the list.
+	 * </p>
 	 */
 	public QueryBuilder<T, ID> selectColumns(String... columns) {
 		if (selectColumnList == null) {
@@ -92,8 +99,8 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * Add columns to be returned by the SELECT query. If no columns are selected then all columns are returned by
-	 * default. For classes with id columns, the id column is added to the select list automagically.
+	 * Same as {@link #selectColumns(String...)} except the columns are specified as an iterable -- probably will be a
+	 * {@link Collection}.
 	 */
 	public QueryBuilder<T, ID> selectColumns(Iterable<String> columns) {
 		if (selectColumnList == null) {
@@ -275,10 +282,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	private void addSelectColumnToList(String columnName) {
-		FieldType fieldType = verifyColumnName(columnName);
-		if (fieldType.isForeignCollection()) {
-			throw new IllegalArgumentException("Can't select from foreign colletion field: " + columnName);
-		}
+		verifyColumnName(columnName);
 		selectColumnList.add(columnName);
 	}
 
@@ -312,12 +316,20 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		}
 		List<FieldType> fieldTypeList = new ArrayList<FieldType>(selectColumnList.size() + 1);
 		for (String columnName : selectColumnList) {
+			FieldType fieldType = tableInfo.getFieldTypeByColumnName(columnName);
+			/*
+			 * If this is a foreign-collection then we add it to our field-list but _not_ to the select list because
+			 * foreign collections don't have a column in the database.
+			 */
+			if (fieldType.isForeignCollection()) {
+				fieldTypeList.add(fieldType);
+				continue;
+			}
 			if (first) {
 				first = false;
 			} else {
 				sb.append(',');
 			}
-			FieldType fieldType = tableInfo.getFieldTypeByColumnName(columnName);
 			appendFieldColumnName(sb, fieldType, fieldTypeList);
 			if (fieldType == idField) {
 				hasId = true;

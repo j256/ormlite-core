@@ -9,6 +9,7 @@ import java.lang.annotation.Target;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.dao.LazyForeignCollection;
+import com.j256.ormlite.stmt.QueryBuilder;
 
 /**
  * Annotation that identifies a {@link ForeignCollection} field in a class that corresponds to objects in a foreign
@@ -60,7 +61,8 @@ public @interface ForeignCollectionField {
 
 	/**
 	 * The name of the column. This is only used when you want to match the string passed to
-	 * {@link Dao#getEmptyForeignCollection(String)}.
+	 * {@link Dao#getEmptyForeignCollection(String)} or when you want to specify it in
+	 * {@link QueryBuilder#selectColumns(String...)}.
 	 */
 	String columnName() default "";
 
