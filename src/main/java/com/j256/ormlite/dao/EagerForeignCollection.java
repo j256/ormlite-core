@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.support.DatabaseResults;
 
 /**
  * Collection that is set on a field that as been marked with the {@link ForeignCollectionField} annotation when an
@@ -71,6 +72,10 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 			}
 			public void close() {
 				// noop
+			}
+			public DatabaseResults getRawResults() {
+				// no results object
+				return null;
 			}
 		};
 	}

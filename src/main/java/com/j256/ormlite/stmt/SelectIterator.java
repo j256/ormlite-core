@@ -176,9 +176,6 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 		}
 	}
 
-	/**
-	 * Close the underlying statement.
-	 */
 	public void close() throws SQLException {
 		if (!closed) {
 			compiledStmt.close();
@@ -191,10 +188,6 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 		}
 	}
 
-	/**
-	 * Return the internal raw results object that was created by this iterator. This should not be used unless you know
-	 * what you are doing.
-	 */
 	public DatabaseResults getRawResults() {
 		return results;
 	}
