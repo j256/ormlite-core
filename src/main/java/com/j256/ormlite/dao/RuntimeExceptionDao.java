@@ -10,12 +10,14 @@ import com.j256.ormlite.dao.Dao.CreateOrUpdateStatus;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.stmt.PreparedDelete;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.PreparedUpdate;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTableConfig;
 
 /**
@@ -554,5 +556,27 @@ public class RuntimeExceptionDao<T, ID> {
 	 */
 	public void clearObjectCache() {
 		dao.clearObjectCache();
+	}
+
+	/**
+	 * @see Dao#mapSelectStarRow(DatabaseResults)
+	 */
+	public T mapSelectStarRow(DatabaseResults results) {
+		try {
+			return dao.mapSelectStarRow(results);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * @see Dao#getSelectStarRowMapper()
+	 */
+	public GenericRowMapper<T> getSelectStarRowMapper() {
+		try {
+			return dao.getSelectStarRowMapper();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
