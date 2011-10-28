@@ -13,12 +13,14 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.stmt.PreparedDelete;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.PreparedUpdate;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.UpdateBuilder;
+import com.j256.ormlite.support.DatabaseResults;
 
 /**
  * The definition of the Database Access Objects that handle the reading and writing a class from the database. Kudos to
@@ -588,6 +590,16 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * memory. Any future queries will re-request them from the database.
 	 */
 	public void clearObjectCache();
+
+	/**
+	 * Return the latest row from the database results from a query to select * (star).
+	 */
+	public T mapSelectStarRow(DatabaseResults results) throws SQLException;
+
+	/**
+	 * Return a row mapper that is suitable for mapping results from a query to select * (star).
+	 */
+	public GenericRowMapper<T> getSelectStarRowMapper() throws SQLException;
 
 	/**
 	 * Return class for the {@link Dao#createOrUpdate(Object)} method.

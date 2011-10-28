@@ -16,6 +16,7 @@ import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.misc.BaseDaoEnabled;
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.stmt.PreparedDelete;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.PreparedUpdate;
@@ -28,6 +29,7 @@ import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
+import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableInfo;
 
@@ -738,6 +740,14 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		if (objectCache != null) {
 			objectCache.clear(dataClass);
 		}
+	}
+
+	public T mapSelectStarRow(DatabaseResults results) throws SQLException {
+		return statementExecutor.getSelectStarRowMapper().mapRow(results);
+	}
+
+	public GenericRowMapper<T> getSelectStarRowMapper() throws SQLException {
+		return statementExecutor.getSelectStarRowMapper();
 	}
 
 	/**

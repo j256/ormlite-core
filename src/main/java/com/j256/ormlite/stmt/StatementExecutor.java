@@ -173,6 +173,14 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	}
 
 	/**
+	 * Return a row mapper suitable for mapping 'select *' queries.
+	 */
+	public GenericRowMapper<T> getSelectStarRowMapper() throws SQLException {
+		prepareQueryForAll();
+		return preparedQueryForAll;
+	}
+
+	/**
 	 * Create and return an {@link SelectIterator} for the class using a prepared statement.
 	 */
 	public SelectIterator<T, ID> buildIterator(BaseDaoImpl<T, ID> classDao, ConnectionSource connectionSource,
