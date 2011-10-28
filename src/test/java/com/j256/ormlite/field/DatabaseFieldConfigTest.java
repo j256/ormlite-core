@@ -402,6 +402,7 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 		OurEnum ourEnum;
 	}
 
+	@SuppressWarnings("deprecation")
 	protected static class CommunicationData {
 
 		@DatabaseFieldSimple(defaultValue = "SECOND")
@@ -460,6 +461,7 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	protected static class AltAnno {
 		public static final String STUFF_FIELD_NAME = "zipper";
 		public static final String FORMAT_FORMAT = "you know format";

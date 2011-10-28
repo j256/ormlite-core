@@ -7,18 +7,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * This can be used <i>instead of</i> {@link DatabaseField}. It has fewer fields which can give a performance boost on
- * some architectures -- namely Android. Other fields can be specified with the other @DatabaseField... annotations.
- * 
- * <p>
- * <b>NOTE:</b> If you use @DatabaseField then you should not use this @DatabaseFieldSimple annotation or any of the
- * other @DatabaseField... annotations. They will be ignored.
- * </p>
- * 
- * @author graywatson
+ * @deprecated Please use just the {@link DatabaseField} annotation. This annotation was created when we found
+ *             performance problems in the Android annotations. We have a work around for these annotations now that
+ *             makes them adequately fast. These are causing confusion so we've decided to pull them. Sorry.
  */
 @Target(FIELD)
 @Retention(RUNTIME)
+@Deprecated
 public @interface DatabaseFieldSimple {
 
 	/**
