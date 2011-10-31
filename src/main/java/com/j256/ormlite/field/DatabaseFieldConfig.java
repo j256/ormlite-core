@@ -25,6 +25,7 @@ public class DatabaseFieldConfig {
 	private static final DataPersister DEFAULT_DATA_PERSISTER = DataType.UNKNOWN.getDataPersister();
 	private static final boolean DEFAULT_CAN_BE_NULL = true;
 
+	private String tableName;
 	private String fieldName;
 	private String columnName;
 	private DataPersister dataPersister = DEFAULT_DATA_PERSISTER;
@@ -39,10 +40,13 @@ public class DatabaseFieldConfig {
 	private boolean useGetSet;
 	private Enum<?> unknownEnumValue;
 	private boolean throwIfNull;
+	private boolean persisted = true;
 	private String format;
 	private boolean unique;
 	private boolean uniqueCombo;
+	private boolean index;
 	private String indexName;
+	private boolean uniqueIndex;
 	private String uniqueIndexName;
 	private boolean foreignAutoRefresh;
 	private int maxForeignAutoRefreshLevel = DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL;
@@ -101,6 +105,10 @@ public class DatabaseFieldConfig {
 		this.foreignAutoRefresh = autoRefresh;
 		this.maxForeignAutoRefreshLevel = maxForeignAutoRefreshLevel;
 		this.maxEagerForeignCollectionLevel = maxForeignCollectionLevel;
+	}
+
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
 	}
 
 	/**
@@ -272,6 +280,14 @@ public class DatabaseFieldConfig {
 		this.throwIfNull = throwIfNull;
 	}
 
+	public boolean isPersisted() {
+		return persisted;
+	}
+
+	public void setPersisted(boolean persisted) {
+		this.persisted = persisted;
+	}
+
 	public String getFormat() {
 		return format;
 	}
@@ -296,7 +312,14 @@ public class DatabaseFieldConfig {
 		this.uniqueCombo = uniqueCombo;
 	}
 
+	public void setIndex(boolean index) {
+		this.index = index;
+	}
+
 	public String getIndexName() {
+		if (index && indexName == null) {
+			indexName = findIndexName();
+		}
 		return indexName;
 	}
 
@@ -304,7 +327,14 @@ public class DatabaseFieldConfig {
 		this.indexName = indexName;
 	}
 
+	public void setUniqueIndex(boolean uniqueIndex) {
+		this.uniqueIndex = uniqueIndex;
+	}
+
 	public String getUniqueIndexName() {
+		if (uniqueIndex && uniqueIndexName == null) {
+			uniqueIndexName = findIndexName();
+		}
 		return uniqueIndexName;
 	}
 
@@ -404,6 +434,7 @@ public class DatabaseFieldConfig {
 	 * Create and return a config converted from a {@link Field} that may have one of the following annotations:
 	 * {@link DatabaseField}, {@link DatabaseFieldSimple}, {@link ForeignCollectionField}, or javax.persistence...
 	 */
+	@SuppressWarnings("deprecation")
 	public static DatabaseFieldConfig fromField(DatabaseType databaseType, String tableName, Field field)
 			throws SQLException {
 
@@ -499,14 +530,12 @@ public class DatabaseFieldConfig {
 	public static DatabaseFieldConfig fromDatabaseField(DatabaseType databaseType, String tableName, Field field,
 			DatabaseField databaseField) {
 		DatabaseFieldConfig config = new DatabaseFieldConfig();
+		config.tableName = tableName;
 		config.fieldName = field.getName();
 		if (databaseType.isEntityNamesMustBeUpCase()) {
 			config.fieldName = config.fieldName.toUpperCase();
 		}
-		String columnName = databaseField.columnName();
-		if (columnName.length() > 0) {
-			config.columnName = columnName;
-		}
+		config.columnName = valueIfNotBlank(databaseField.columnName());
 		DataType dataType = databaseField.dataType();
 		if (dataType != null) {
 			config.dataPersister = dataType.getDataPersister();
@@ -520,54 +549,42 @@ public class DatabaseFieldConfig {
 		config.canBeNull = databaseField.canBeNull();
 		config.id = databaseField.id();
 		config.generatedId = databaseField.generatedId();
-		String generatedIdSequence = databaseField.generatedIdSequence();
-		if (generatedIdSequence.length() > 0) {
-			config.generatedIdSequence = generatedIdSequence;
-		}
+		config.generatedIdSequence = valueIfNotBlank(databaseField.generatedIdSequence());
 		config.foreign = databaseField.foreign();
 		config.useGetSet = databaseField.useGetSet();
-		String unknownEnumName = databaseField.unknownEnumName();
-		if (unknownEnumName.length() > 0) {
-			config.unknownEnumValue = findMatchingEnumVal(field, unknownEnumName);
-		}
+		config.unknownEnumValue = findMatchingEnumVal(field, databaseField.unknownEnumName());
 		config.throwIfNull = databaseField.throwIfNull();
-		String format = databaseField.format();
-		if (format.length() > 0) {
-			config.format = format;
-		}
+		config.format = valueIfNotBlank(databaseField.format());
 		config.unique = databaseField.unique();
 		config.uniqueCombo = databaseField.uniqueCombo();
 
 		// add in the index information
-		config.indexName = findIndexName(tableName, databaseField.indexName(), databaseField.index(), config);
-		config.uniqueIndexName =
-				findIndexName(tableName, databaseField.uniqueIndexName(), databaseField.uniqueIndex(), config);
+		config.index = databaseField.index();
+		config.indexName = valueIfNotBlank(databaseField.indexName());
+		config.uniqueIndex = databaseField.uniqueIndex();
+		config.uniqueIndexName = valueIfNotBlank(databaseField.uniqueIndexName());
 		config.foreignAutoRefresh = databaseField.foreignAutoRefresh();
 		config.maxForeignAutoRefreshLevel = databaseField.maxForeignAutoRefreshLevel();
 		config.persisterClass = databaseField.persisterClass();
 		config.allowGeneratedIdInsert = databaseField.allowGeneratedIdInsert();
-		String columnDefinition = databaseField.columnDefinition();
-		if (columnDefinition.length() > 0) {
-			config.columnDefinition = columnDefinition;
-		}
+		config.columnDefinition = valueIfNotBlank(databaseField.columnDefinition());
 		config.foreignAutoCreate = databaseField.foreignAutoCreate();
 		config.version = databaseField.version();
 
 		return config;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static DatabaseFieldConfig fromDatabaseFieldAnnotations(DatabaseType databaseType, String tableName,
 			Field field, DatabaseFieldSimple simpleAnno, DatabaseFieldId idAnno, DatabaseFieldForeign foreignAnno,
 			DatabaseFieldIndex indexAnno, DatabaseFieldOther otherAnno) {
 		DatabaseFieldConfig config = new DatabaseFieldConfig();
+		config.tableName = tableName;
 		config.fieldName = field.getName();
 		if (databaseType.isEntityNamesMustBeUpCase()) {
 			config.fieldName = config.fieldName.toUpperCase();
 		}
-		String columnName = simpleAnno.columnName();
-		if (columnName.length() > 0) {
-			config.columnName = columnName;
-		}
+		config.columnName = valueIfNotBlank(simpleAnno.columnName());
 		if (otherAnno != null) {
 			DataType dataType = otherAnno.dataType();
 			if (dataType != null) {
@@ -584,33 +601,25 @@ public class DatabaseFieldConfig {
 		if (idAnno != null) {
 			config.id = idAnno.id();
 			config.generatedId = idAnno.generatedId();
-			String generatedIdSequence = idAnno.generatedIdSequence();
-			if (generatedIdSequence.length() > 0) {
-				config.generatedIdSequence = generatedIdSequence;
-			}
+			config.generatedIdSequence = valueIfNotBlank(idAnno.generatedIdSequence());
 		}
 		if (foreignAnno != null) {
 			config.foreign = foreignAnno.foreign();
 		}
 		if (otherAnno != null) {
 			config.useGetSet = otherAnno.useGetSet();
-			String unknownEnumName = otherAnno.unknownEnumName();
-			if (unknownEnumName.length() > 0) {
-				config.unknownEnumValue = findMatchingEnumVal(field, unknownEnumName);
-			}
+			config.unknownEnumValue = findMatchingEnumVal(field, otherAnno.unknownEnumName());
 			config.throwIfNull = otherAnno.throwIfNull();
-			String format = otherAnno.format();
-			if (format.length() > 0) {
-				config.format = format;
-			}
+			config.format = valueIfNotBlank(otherAnno.format());
 		}
 		if (indexAnno != null) {
 			config.unique = indexAnno.unique();
 			config.uniqueCombo = indexAnno.uniqueCombo();
 			// add in the index information
-			config.indexName = findIndexName(tableName, indexAnno.indexName(), indexAnno.index(), config);
-			config.uniqueIndexName =
-					findIndexName(tableName, indexAnno.uniqueIndexName(), indexAnno.uniqueIndex(), config);
+			config.index = indexAnno.index();
+			config.indexName = valueIfNotBlank(indexAnno.indexName());
+			config.uniqueIndex = indexAnno.uniqueIndex();
+			config.uniqueIndexName = valueIfNotBlank(indexAnno.uniqueIndexName());
 		}
 		if (foreignAnno != null) {
 			config.foreignAutoRefresh = foreignAnno.foreignAutoRefresh();
@@ -623,10 +632,7 @@ public class DatabaseFieldConfig {
 			config.allowGeneratedIdInsert = idAnno.allowGeneratedIdInsert();
 		}
 		if (otherAnno != null) {
-			String columnDefinition = otherAnno.columnDefinition();
-			if (columnDefinition.length() > 0) {
-				config.columnDefinition = columnDefinition;
-			}
+			config.columnDefinition = valueIfNotBlank(otherAnno.columnDefinition());
 		}
 		if (foreignAnno != null) {
 			config.foreignAutoCreate = foreignAnno.foreignAutoCreate();
@@ -636,6 +642,25 @@ public class DatabaseFieldConfig {
 		}
 
 		return config;
+	}
+
+	/**
+	 * Internal method that finds the matching enum for a configured field that has the name argument.
+	 * 
+	 * @return The matching enum value or null if blank enum name.
+	 * @throws IllegalArgumentException
+	 *             If the enum name is not known.
+	 */
+	public static Enum<?> findMatchingEnumVal(Field field, String unknownEnumName) {
+		if (unknownEnumName == null || unknownEnumName.length() == 0) {
+			return null;
+		}
+		for (Enum<?> enumVal : (Enum<?>[]) field.getType().getEnumConstants()) {
+			if (enumVal.name().equals(unknownEnumName)) {
+				return enumVal;
+			}
+		}
+		throw new IllegalArgumentException("Unknwown enum unknown name " + unknownEnumName + " for field " + field);
 	}
 
 	private static DatabaseFieldConfig fromForeignCollection(DatabaseType databaseType, String tableName, Field field,
@@ -650,38 +675,27 @@ public class DatabaseFieldConfig {
 		config.foreignCollection = true;
 		config.foreignCollectionEager = foreignCollection.eager();
 		config.maxEagerForeignCollectionLevel = foreignCollection.maxEagerForeignCollectionLevel();
-		if (foreignCollection.orderColumnName().length() > 0) {
-			config.foreignCollectionOrderColumn = foreignCollection.orderColumnName();
-		} else {
-			config.foreignCollectionOrderColumn = null;
-		}
+		config.foreignCollectionOrderColumn = valueIfNotBlank(foreignCollection.orderColumnName());
 		return config;
 	}
 
-	private static String findIndexName(String tableName, String indexName, boolean index, DatabaseFieldConfig config) {
-		if (indexName.length() > 0) {
-			return indexName;
-		} else if (index) {
-			if (config.columnName == null) {
-				return tableName + "_" + config.fieldName + "_idx";
-			} else {
-				return tableName + "_" + config.columnName + "_idx";
-			}
+	private String findIndexName() {
+		if (columnName == null) {
+			return tableName + "_" + fieldName + "_idx";
 		} else {
+			return tableName + "_" + columnName + "_idx";
+		}
+	}
+
+	private static String valueIfNotBlank(String newValue) {
+		if (newValue == null || newValue.length() == 0) {
 			return null;
+		} else {
+			return newValue;
 		}
 	}
 
 	private static String methodFromField(Field field, String prefix) {
 		return prefix + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
-	}
-
-	private static Enum<?> findMatchingEnumVal(Field field, String unknownEnumName) {
-		for (Enum<?> enumVal : (Enum<?>[]) field.getType().getEnumConstants()) {
-			if (enumVal.name().equals(unknownEnumName)) {
-				return enumVal;
-			}
-		}
-		throw new IllegalArgumentException("Unknwown enum unknown name " + unknownEnumName + " for field " + field);
 	}
 }

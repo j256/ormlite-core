@@ -43,28 +43,11 @@ public class DaoManager {
 			throw new IllegalArgumentException("connectionSource argument cannot be null");
 		}
 		ClazzConnectionSource key = new ClazzConnectionSource(connectionSource, clazz);
-		Dao<?, ?> dao = lookupDao(key);
+		Dao<?, ?> dao = lookupDao(key, connectionSource, clazz);
 		if (dao != null) {
 			@SuppressWarnings("unchecked")
 			D castDao = (D) dao;
 			return castDao;
-		}
-
-		// if we have a config map
-		if (configMap != null) {
-			@SuppressWarnings("unchecked")
-			DatabaseTableConfig<T> config = (DatabaseTableConfig<T>) configMap.get(clazz);
-			// if we have config information cached
-			if (config != null) {
-				// create a dao using it
-				Dao<T, ?> configedDao = createDao(connectionSource, config);
-				logger.debug("created dao for class {} from loaded config", clazz);
-				// we put it into the DAO map even though it came from a config
-				classMap.put(key, configedDao);
-				@SuppressWarnings("unchecked")
-				D castDao = (D) configedDao;
-				return castDao;
-			}
 		}
 
 		DatabaseTable databaseTable = clazz.getAnnotation(DatabaseTable.class);
@@ -118,21 +101,46 @@ public class DaoManager {
 	}
 
 	/**
-	 * Helper method to lookup a Dao if it has already been associated with the class. Otherwise this returns null.
+	 * Helper method to lookup a Dao if it has already been associated with the class. Otherwise this returns null. If
+	 * this DAO has been configured with database configs then it will be built, added to the cache, and returned.
 	 */
-	public synchronized static <D extends Dao<T, ?>, T> D lookupDao(ConnectionSource connectionSource, Class<T> clazz) {
+	public synchronized static <D extends Dao<T, ?>, T> D lookupDao(ConnectionSource connectionSource, Class<T> clazz)
+			throws SQLException {
 		if (connectionSource == null) {
 			throw new IllegalArgumentException("connectionSource argument cannot be null");
 		}
 		ClazzConnectionSource key = new ClazzConnectionSource(connectionSource, clazz);
+		return lookupDao(key, connectionSource, clazz);
+	}
+
+	private static <D, T> D lookupDao(ClazzConnectionSource key, ConnectionSource connectionSource, Class<T> clazz)
+			throws SQLException {
+
 		Dao<?, ?> dao = lookupDao(key);
-		if (dao == null) {
-			return null;
-		} else {
+		if (dao != null) {
 			@SuppressWarnings("unchecked")
 			D castDao = (D) dao;
 			return castDao;
 		}
+
+		// if we have a config map
+		if (configMap != null) {
+			@SuppressWarnings("unchecked")
+			DatabaseTableConfig<T> config = (DatabaseTableConfig<T>) configMap.get(clazz);
+			// if we have config information cached
+			if (config != null) {
+				// create a dao using it
+				Dao<T, ?> configedDao = createDao(connectionSource, config);
+				logger.debug("created dao for class {} from loaded config", clazz);
+				// we put it into the DAO map even though it came from a config
+				classMap.put(key, configedDao);
+				@SuppressWarnings("unchecked")
+				D castDao = (D) configedDao;
+				return castDao;
+			}
+		}
+
+		return null;
 	}
 
 	/**
