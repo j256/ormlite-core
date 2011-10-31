@@ -25,7 +25,6 @@ public class DatabaseFieldConfig {
 	private static final DataPersister DEFAULT_DATA_PERSISTER = DataType.UNKNOWN.getDataPersister();
 	private static final boolean DEFAULT_CAN_BE_NULL = true;
 
-	private String tableName;
 	private String fieldName;
 	private String columnName;
 	private DataPersister dataPersister = DEFAULT_DATA_PERSISTER;
@@ -105,10 +104,6 @@ public class DatabaseFieldConfig {
 		this.foreignAutoRefresh = autoRefresh;
 		this.maxForeignAutoRefreshLevel = maxForeignAutoRefreshLevel;
 		this.maxEagerForeignCollectionLevel = maxForeignCollectionLevel;
-	}
-
-	public void setTableName(String tableName) {
-		this.tableName = tableName;
 	}
 
 	/**
@@ -316,9 +311,9 @@ public class DatabaseFieldConfig {
 		this.index = index;
 	}
 
-	public String getIndexName() {
+	public String getIndexName(String tableName) {
 		if (index && indexName == null) {
-			indexName = findIndexName();
+			indexName = findIndexName(tableName);
 		}
 		return indexName;
 	}
@@ -331,9 +326,9 @@ public class DatabaseFieldConfig {
 		this.uniqueIndex = uniqueIndex;
 	}
 
-	public String getUniqueIndexName() {
+	public String getUniqueIndexName(String tableName) {
 		if (uniqueIndex && uniqueIndexName == null) {
-			uniqueIndexName = findIndexName();
+			uniqueIndexName = findIndexName(tableName);
 		}
 		return uniqueIndexName;
 	}
@@ -459,7 +454,7 @@ public class DatabaseFieldConfig {
 		// lastly we check for @ForeignCollectionField
 		ForeignCollectionField foreignCollection = field.getAnnotation(ForeignCollectionField.class);
 		if (foreignCollection != null) {
-			return fromForeignCollection(databaseType, tableName, field, foreignCollection);
+			return fromForeignCollection(databaseType, field, foreignCollection);
 		}
 
 		/*
@@ -530,7 +525,6 @@ public class DatabaseFieldConfig {
 	public static DatabaseFieldConfig fromDatabaseField(DatabaseType databaseType, String tableName, Field field,
 			DatabaseField databaseField) {
 		DatabaseFieldConfig config = new DatabaseFieldConfig();
-		config.tableName = tableName;
 		config.fieldName = field.getName();
 		if (databaseType.isEntityNamesMustBeUpCase()) {
 			config.fieldName = config.fieldName.toUpperCase();
@@ -579,7 +573,6 @@ public class DatabaseFieldConfig {
 			Field field, DatabaseFieldSimple simpleAnno, DatabaseFieldId idAnno, DatabaseFieldForeign foreignAnno,
 			DatabaseFieldIndex indexAnno, DatabaseFieldOther otherAnno) {
 		DatabaseFieldConfig config = new DatabaseFieldConfig();
-		config.tableName = tableName;
 		config.fieldName = field.getName();
 		if (databaseType.isEntityNamesMustBeUpCase()) {
 			config.fieldName = config.fieldName.toUpperCase();
@@ -663,7 +656,7 @@ public class DatabaseFieldConfig {
 		throw new IllegalArgumentException("Unknwown enum unknown name " + unknownEnumName + " for field " + field);
 	}
 
-	private static DatabaseFieldConfig fromForeignCollection(DatabaseType databaseType, String tableName, Field field,
+	private static DatabaseFieldConfig fromForeignCollection(DatabaseType databaseType, Field field,
 			ForeignCollectionField foreignCollection) {
 		DatabaseFieldConfig config = new DatabaseFieldConfig();
 		config.fieldName = field.getName();
@@ -679,7 +672,7 @@ public class DatabaseFieldConfig {
 		return config;
 	}
 
-	private String findIndexName() {
+	private String findIndexName(String tableName) {
 		if (columnName == null) {
 			return tableName + "_" + fieldName + "_idx";
 		} else {

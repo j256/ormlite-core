@@ -189,7 +189,7 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 		assertTrue(fields.length >= 1);
 		String tableName = "foo";
 		DatabaseFieldConfig fieldConfig = DatabaseFieldConfig.fromField(databaseType, tableName, fields[0]);
-		assertEquals(tableName + "_" + fields[0].getName() + "_idx", fieldConfig.getIndexName());
+		assertEquals(tableName + "_" + fields[0].getName() + "_idx", fieldConfig.getIndexName(tableName));
 	}
 
 	@Test
@@ -197,11 +197,11 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 		Field[] fields = ComboIndex.class.getDeclaredFields();
 		assertTrue(fields.length >= 2);
 		DatabaseFieldConfig fieldConfig = DatabaseFieldConfig.fromField(databaseType, "foo", fields[0]);
-		assertEquals(ComboIndex.INDEX_NAME, fieldConfig.getIndexName());
-		fieldConfig = DatabaseFieldConfig.fromField(databaseType, "foo", fields[1]);
-		assertEquals(ComboIndex.INDEX_NAME, fieldConfig.getIndexName());
+		String tableName = "foo";
+		assertEquals(ComboIndex.INDEX_NAME, fieldConfig.getIndexName(tableName));
+		fieldConfig = DatabaseFieldConfig.fromField(databaseType, tableName, fields[1]);
+		assertEquals(ComboIndex.INDEX_NAME, fieldConfig.getIndexName(tableName));
 	}
-
 	@Test
 	public void testDefaultValue() throws Exception {
 		DatabaseFieldConfig fieldConfig =
@@ -222,18 +222,19 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 
 	@Test
 	public void testFooSetGet() throws Exception {
+		String tableName = "foo";
 		DatabaseFieldConfig fieldConfig =
-				DatabaseFieldConfig.fromField(databaseType, "foo", Foo.class.getDeclaredField("field"));
+				DatabaseFieldConfig.fromField(databaseType, tableName, Foo.class.getDeclaredField("field"));
 
-		assertNull(fieldConfig.getIndexName());
+		assertNull(fieldConfig.getIndexName(tableName));
 		String indexName = "hello";
 		fieldConfig.setIndexName(indexName);
-		assertEquals(indexName, fieldConfig.getIndexName());
+		assertEquals(indexName, fieldConfig.getIndexName(tableName));
 
-		assertNull(fieldConfig.getUniqueIndexName());
+		assertNull(fieldConfig.getUniqueIndexName(tableName));
 		String uniqueIndex = "fpwoejfwf";
 		fieldConfig.setUniqueIndexName(uniqueIndex);
-		assertEquals(uniqueIndex, fieldConfig.getUniqueIndexName());
+		assertEquals(uniqueIndex, fieldConfig.getUniqueIndexName(tableName));
 
 		assertNull(fieldConfig.getFormat());
 		String format = "fewjfwe";
@@ -270,7 +271,6 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 		fieldConfig.setForeignCollectionOrderColumn(columnName);
 		assertEquals(columnName, fieldConfig.getForeignCollectionOrderColumn());
 	}
-
 	@Test
 	public void testNotPersisted() throws Exception {
 		DatabaseFieldConfig fieldConfig =
@@ -283,16 +283,18 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 		String tableName = "table1";
 		DatabaseFieldConfig fieldConfig =
 				DatabaseFieldConfig.fromField(databaseType, tableName, IndexName.class.getDeclaredField("field1"));
-		assertEquals(tableName + "_" + IndexName.INDEX_COLUMN_NAME + "_idx", fieldConfig.getIndexName());
+		assertEquals(tableName + "_" + IndexName.INDEX_COLUMN_NAME + "_idx", fieldConfig.getIndexName(tableName));
 		fieldConfig =
 				DatabaseFieldConfig.fromField(databaseType, tableName, IndexName.class.getDeclaredField("field2"));
-		assertEquals(tableName + "_" + IndexName.UNIQUE_INDEX_COLUMN_NAME + "_idx", fieldConfig.getUniqueIndexName());
+		assertEquals(tableName + "_" + IndexName.UNIQUE_INDEX_COLUMN_NAME + "_idx",
+				fieldConfig.getUniqueIndexName(tableName));
 	}
 
 	@Test
 	public void testAltAnnotations() throws Exception {
 		Field field = AltAnno.class.getDeclaredField("id");
-		DatabaseFieldConfig fieldConfig = DatabaseFieldConfig.fromField(databaseType, "table-name", field);
+		String tableName = "table-name";
+		DatabaseFieldConfig fieldConfig = DatabaseFieldConfig.fromField(databaseType, tableName, field);
 		assertTrue(fieldConfig.isGeneratedId());
 		field = AltAnno.class.getDeclaredField("id2");
 		fieldConfig = DatabaseFieldConfig.fromField(databaseType, "table-name", field);
@@ -303,7 +305,7 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 		assertEquals(AltAnno.STUFF_FIELD_NAME, fieldConfig.getColumnName());
 		field = AltAnno.class.getDeclaredField("junk");
 		fieldConfig = DatabaseFieldConfig.fromField(databaseType, "table-name", field);
-		assertNotNull(fieldConfig.getIndexName());
+		assertNotNull(fieldConfig.getIndexName(tableName));
 		field = AltAnno.class.getDeclaredField("ourEnum");
 		fieldConfig = DatabaseFieldConfig.fromField(databaseType, "table-name", field);
 		assertEquals(OurEnum.FIRST, fieldConfig.getUnknownEnumValue());

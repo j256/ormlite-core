@@ -232,9 +232,11 @@ public class DatabaseFieldConfigLoaderTest {
 		SECOND, ;
 	}
 
+	private static final String TABLE_NAME = "footable";
+
 	private void checkConfigOutput(DatabaseFieldConfig config, StringBuilder body, StringWriter writer,
 			BufferedWriter buffer) throws Exception {
-		DatabaseFieldConfigLoader.write(buffer, config);
+		DatabaseFieldConfigLoader.write(buffer, config, TABLE_NAME);
 		buffer.flush();
 		StringBuilder output = new StringBuilder();
 		output.append(FIELD_START).append(body).append(FIELD_END);
@@ -264,8 +266,8 @@ public class DatabaseFieldConfigLoaderTest {
 		eb.append(config1.getFormat(), config2.getFormat());
 		eb.append(config1.isUnique(), config2.isUnique());
 		eb.append(config1.isUniqueCombo(), config2.isUniqueCombo());
-		eb.append(config1.getIndexName(), config2.getIndexName());
-		eb.append(config1.getUniqueIndexName(), config2.getUniqueIndexName());
+		eb.append(config1.getIndexName(TABLE_NAME), config2.getIndexName(TABLE_NAME));
+		eb.append(config1.getUniqueIndexName(TABLE_NAME), config2.getUniqueIndexName(TABLE_NAME));
 		eb.append(config1.isForeignAutoRefresh(), config2.isForeignAutoRefresh());
 		eb.append(config1.getMaxForeignAutoRefreshLevel(), config2.getMaxForeignAutoRefreshLevel());
 		eb.append(config1.isForeignCollection(), config2.isForeignCollection());

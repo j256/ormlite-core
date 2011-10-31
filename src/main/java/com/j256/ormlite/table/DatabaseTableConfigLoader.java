@@ -119,7 +119,7 @@ public class DatabaseTableConfigLoader {
 		writer.newLine();
 		if (config.getFieldConfigs() != null) {
 			for (DatabaseFieldConfig field : config.getFieldConfigs()) {
-				DatabaseFieldConfigLoader.write(writer, field);
+				DatabaseFieldConfigLoader.write(writer, field, config.getTableName());
 			}
 		}
 		writer.append(CONFIG_FILE_FIELDS_END);

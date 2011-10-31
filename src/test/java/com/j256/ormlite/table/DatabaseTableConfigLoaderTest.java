@@ -48,7 +48,7 @@ public class DatabaseTableConfigLoaderTest {
 		config.setFieldConfigs(Arrays.asList(field1));
 		StringWriter fieldWriter = new StringWriter();
 		BufferedWriter fieldBuffer = new BufferedWriter(fieldWriter);
-		DatabaseFieldConfigLoader.write(fieldBuffer, field1);
+		DatabaseFieldConfigLoader.write(fieldBuffer, field1, tableName);
 		fieldBuffer.flush();
 		body.append("# --table-fields-start--\n");
 		body.append(fieldWriter.toString());

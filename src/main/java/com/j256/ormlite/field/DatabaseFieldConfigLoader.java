@@ -71,9 +71,9 @@ public class DatabaseFieldConfigLoader {
 	/**
 	 * Write the configuration to a buffered writer.
 	 */
-	public static void write(BufferedWriter writer, DatabaseFieldConfig config) throws SQLException {
+	public static void write(BufferedWriter writer, DatabaseFieldConfig config, String tableName) throws SQLException {
 		try {
-			writeConfig(writer, config);
+			writeConfig(writer, config, tableName);
 		} catch (IOException e) {
 			throw SqlExceptionUtil.create("Could not write config to writer", e);
 		}
@@ -110,7 +110,8 @@ public class DatabaseFieldConfigLoader {
 	/**
 	 * Print the config to the writer.
 	 */
-	public static void writeConfig(BufferedWriter writer, DatabaseFieldConfig config) throws IOException {
+	public static void writeConfig(BufferedWriter writer, DatabaseFieldConfig config, String tableName)
+			throws IOException {
 		writer.append(CONFIG_FILE_START_MARKER);
 		writer.newLine();
 		if (config.getFieldName() != null) {
@@ -191,12 +192,14 @@ public class DatabaseFieldConfigLoader {
 			writer.append(FIELD_NAME_UNIQUE_COMBO).append('=').append("true");
 			writer.newLine();
 		}
-		if (config.getIndexName() != null) {
-			writer.append(FIELD_NAME_INDEX_NAME).append('=').append(config.getIndexName());
+		String indexName = config.getIndexName(tableName);
+		if (indexName != null) {
+			writer.append(FIELD_NAME_INDEX_NAME).append('=').append(indexName);
 			writer.newLine();
 		}
-		if (config.getUniqueIndexName() != null) {
-			writer.append(FIELD_NAME_UNIQUE_INDEX_NAME).append('=').append(config.getUniqueIndexName());
+		String uniqueIndexName = config.getUniqueIndexName(tableName);
+		if (uniqueIndexName != null) {
+			writer.append(FIELD_NAME_UNIQUE_INDEX_NAME).append('=').append(uniqueIndexName);
 			writer.newLine();
 		}
 		if (config.isForeignAutoRefresh()) {

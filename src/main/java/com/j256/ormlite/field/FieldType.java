@@ -56,6 +56,7 @@ public class FieldType {
 	private static double DEFAULT_VALUE_DOUBLE;
 
 	private final ConnectionSource connectionSource;
+	private final String tableName;
 	private final Field field;
 	private final String dbColumnName;
 	private final DatabaseFieldConfig fieldConfig;
@@ -84,6 +85,7 @@ public class FieldType {
 	public FieldType(ConnectionSource connectionSource, String tableName, Field field, DatabaseFieldConfig fieldConfig,
 			Class<?> parentClass) throws SQLException {
 		this.connectionSource = connectionSource;
+		this.tableName = tableName;
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		this.field = field;
 		Class<?> clazz = field.getType();
@@ -643,11 +645,11 @@ public class FieldType {
 	}
 
 	public String getIndexName() {
-		return fieldConfig.getIndexName();
+		return fieldConfig.getIndexName(tableName);
 	}
 
 	public String getUniqueIndexName() {
-		return fieldConfig.getUniqueIndexName();
+		return fieldConfig.getUniqueIndexName(tableName);
 	}
 
 	/**
