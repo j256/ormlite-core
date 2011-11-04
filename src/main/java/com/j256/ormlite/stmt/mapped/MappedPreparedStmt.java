@@ -24,11 +24,11 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 		PreparedUpdate<T> {
 
 	private final ArgumentHolder[] argHolders;
-	private final Integer limit;
+	private final Long limit;
 	private final StatementType type;
 
 	public MappedPreparedStmt(TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes,
-			FieldType[] resultFieldTypes, ArgumentHolder[] argHolders, Integer limit, StatementType type) {
+			FieldType[] resultFieldTypes, ArgumentHolder[] argHolders, Long limit, StatementType type) {
 		super(tableInfo, statement, argFieldTypes, resultFieldTypes);
 		this.argHolders = argHolders;
 		// this is an Integer because it may be null
@@ -47,7 +47,7 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 		try {
 			if (limit != null) {
 				// we use this if SQL statement LIMITs are not supported by this database type
-				stmt.setMaxRows(limit);
+				stmt.setMaxRows(limit.intValue());
 			}
 			// set any arguments if we are logging our object
 			Object[] argValues = null;

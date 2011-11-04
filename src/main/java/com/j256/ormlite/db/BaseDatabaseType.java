@@ -398,11 +398,11 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		return false;
 	}
 
-	public void appendLimitValue(StringBuilder sb, int limit, Integer offset) {
+	public void appendLimitValue(StringBuilder sb, long limit, Long offset) {
 		sb.append("LIMIT ").append(limit).append(' ');
 	}
 
-	public void appendOffsetValue(StringBuilder sb, int offset) {
+	public void appendOffsetValue(StringBuilder sb, long offset) {
 		sb.append("OFFSET ").append(offset).append(' ');
 	}
 

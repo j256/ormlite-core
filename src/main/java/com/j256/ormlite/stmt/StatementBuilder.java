@@ -30,8 +30,8 @@ public abstract class StatementBuilder<T, ID> {
 	protected StatementType type;
 
 	private Where<T, ID> where = null;
-	protected Integer limit = null;
-	protected Integer offset = null;
+	protected Long limit = null;
+	protected Long offset = null;
 
 	/**
 	 * Provides statements for various SQL operations.

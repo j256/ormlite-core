@@ -121,7 +121,7 @@ public interface DatabaseType {
 	 * types, the offset is an argument to the LIMIT so the offset value (which could be null or not) is passed in. The
 	 * database type can choose to ignore it.
 	 */
-	public void appendLimitValue(StringBuilder sb, int limit, Integer offset);
+	public void appendLimitValue(StringBuilder sb, long limit, Long offset);
 
 	/**
 	 * Return true if the database supports the OFFSET SQL command in some form.
@@ -137,7 +137,7 @@ public interface DatabaseType {
 	/**
 	 * Append to the string builder the necessary SQL to start the results at a certain row number.
 	 */
-	public void appendOffsetValue(StringBuilder sb, int offset);
+	public void appendOffsetValue(StringBuilder sb, long offset);
 
 	/**
 	 * Append the SQL necessary to get the next-value from a sequence. This is only necessary if

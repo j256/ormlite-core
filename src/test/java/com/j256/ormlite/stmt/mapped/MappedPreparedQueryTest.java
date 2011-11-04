@@ -71,7 +71,7 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 				new TableInfo<LocalFoo, Integer>(connectionSource, null, LocalFoo.class);
 		MappedPreparedStmt<LocalFoo, Integer> preparedQuery =
 				new MappedPreparedStmt<LocalFoo, Integer>(tableInfo, "select * from " + TABLE_NAME, new FieldType[0],
-						tableInfo.getFieldTypes(), new ArgumentHolder[0], 1, StatementType.SELECT);
+						tableInfo.getFieldTypes(), new ArgumentHolder[0], 1L, StatementType.SELECT);
 
 		checkResults(foos, preparedQuery, 1);
 		preparedQuery =

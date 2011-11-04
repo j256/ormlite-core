@@ -195,7 +195,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	/**
 	 * Limit the output to maxRows maximum number of rows. Set to null for no limit (the default).
 	 */
-	public QueryBuilder<T, ID> limit(Integer maxRows) {
+	public QueryBuilder<T, ID> limit(Long maxRows) {
 		limit = maxRows;
 		return this;
 	}
@@ -210,7 +210,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * specified since the offset is an argument of the limit.
 	 * </p>
 	 */
-	public QueryBuilder<T, ID> offset(Integer startRow) throws SQLException {
+	public QueryBuilder<T, ID> offset(Long startRow) throws SQLException {
 		if (databaseType.isOffsetSqlSupported()) {
 			offset = startRow;
 			return this;

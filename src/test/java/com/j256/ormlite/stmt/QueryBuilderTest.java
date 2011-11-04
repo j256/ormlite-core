@@ -156,7 +156,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 	@Test
 	public void testLimit() throws Exception {
 		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo, null);
-		int limit = 103;
+		long limit = 103;
 		qb.limit(limit);
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT * FROM ");
@@ -168,8 +168,8 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 	@Test
 	public void testOffset() throws Exception {
 		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo, null);
-		int offset = 1;
-		int limit = 2;
+		long offset = 1;
+		long limit = 2;
 		qb.offset(offset);
 		qb.limit(limit);
 		StringBuilder sb = new StringBuilder();
@@ -192,8 +192,8 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(2, dao.queryForAll().size());
 
 		QueryBuilder<Foo, Object> qb = dao.queryBuilder();
-		int offset = 1;
-		int limit = 2;
+		long offset = 1;
+		long limit = 2;
 		qb.offset(offset);
 		qb.limit(limit);
 		List<Foo> results = dao.query(qb.prepare());
@@ -205,7 +205,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 	public void testLimitAfterSelect() throws Exception {
 		QueryBuilder<Foo, String> qb =
 				new QueryBuilder<Foo, String>(new LimitAfterSelectDatabaseType(), baseFooTableInfo, null);
-		int limit = 103;
+		long limit = 103;
 		qb.limit(limit);
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT LIMIT ").append(limit);
@@ -266,7 +266,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 	@Test
 	public void testLimitInline() throws Exception {
 		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(new LimitInline(), baseFooTableInfo, null);
-		int limit = 213;
+		long limit = 213;
 		qb.limit(limit);
 		PreparedQuery<Foo> stmt = qb.prepare();
 		stmt.getStatement();
@@ -280,8 +280,8 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 	@Test
 	public void testOffsetAndLimit() throws Exception {
 		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(new LimitInline(), baseFooTableInfo, null);
-		int offset = 200;
-		int limit = 213;
+		long offset = 200;
+		long limit = 213;
 		qb.offset(offset);
 		qb.limit(limit);
 		PreparedQuery<Foo> stmt = qb.prepare();

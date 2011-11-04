@@ -40,7 +40,7 @@ public class H2DatabaseType extends BaseDatabaseType implements DatabaseType {
 	}
 
 	@Override
-	public void appendLimitValue(StringBuilder sb, int limit, Integer offset) {
+	public void appendLimitValue(StringBuilder sb, long limit, Long offset) {
 		sb.append("LIMIT ");
 		if (offset != null) {
 			sb.append(offset).append(',');
@@ -49,7 +49,7 @@ public class H2DatabaseType extends BaseDatabaseType implements DatabaseType {
 	}
 
 	@Override
-	public void appendOffsetValue(StringBuilder sb, int offset) {
+	public void appendOffsetValue(StringBuilder sb, long offset) {
 		throw new IllegalStateException("Offset is part of the LIMIT in database type " + getClass());
 	}
 
