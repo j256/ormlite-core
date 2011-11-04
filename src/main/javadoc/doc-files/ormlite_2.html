@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on October, 25 2011 by texi2html 1.70 -->
+<!-- Created on November, 4 2011 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -485,9 +485,10 @@ public byte[] bigBunchOfBytes;
 </dd>
 <dt><code> foreignAutoCreate</code></dt>
 <dd>
-<p>Set this to be true (default false) to have the foreign field automatically created using an internal DAO if its ID field is not set. So when
-you call <code>dao.create()</code> on the parent object, any foreign field that has this set to true will possibly generate an additonal create call
-via an internal DAO.  By default you have to create the object using its DAO directly.
+<p>Set this to be true (default false) to have the foreign field automatically created using an internal DAO if its ID field is not set (null or 0).
+So when you call <code>dao.create()</code> on the parent object, any foreign field that has this set to true will possibly generate an additonal
+create call via an internal DAO.  By default you have to create the object using its DAO directly.  By default you have to create the object
+using its DAO directly. This only works if <code>generatedId</code> is also set to true.
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">// the account field in Order has foreignAutoCreate=true
 Order order1 = new Order();
@@ -1516,7 +1517,7 @@ creator.maybeCreateTables();
 // later, we may want to drop the tables that were created 
 creator.maybeDropTables();
 </pre></td></tr></table>
-<p>For a real life example of using <code>TableCreator</code> you can see <a href="ormlite_7.html#ANC36">spring example</a>.
+<p>For a real life example of using <code>TableCreator</code> you can see <a href="ormlite_7.html#ANC38">spring example</a>.
 
 </p><hr size="6">
 <a name="NOD20"></a>
@@ -1599,7 +1600,7 @@ if (account == null) {
 <a name="IDX173"></a>
 <p><em>NOTE:</em> If you need to change the value of an object's id field, you must use the <code>Dao.updateId()</code> method which
 takes the current object still with its <em>old</em> id value and the new value.  ORMLite has to first locate the object
-by its old id and then update it with the new id.  See <a href="ormlite_5.html#ANC30">updateId</a>.
+by its old id and then update it with the new id.  See <a href="ormlite_5.html#ANC32">updateId</a>.
 
 </p><hr size="6">
 <a name="NOD22"></a>
@@ -2218,7 +2219,7 @@ List&lt;Order&gt; results =
   orderDao.queryBuilder().where().
     eq(&quot;account_id&quot;, account).query();
 </pre></td></tr></table>
-<p>There is example code to show how to use foreign objects.  See <a href="ormlite_7.html#ANC32">foreign objects example</a>.
+<p>There is example code to show how to use foreign objects.  See <a href="ormlite_7.html#ANC34">foreign objects example</a>.
 
 </p><hr size="6">
 <a name="NOD31"></a>
@@ -2253,7 +2254,8 @@ on the account.  All of the orders in the collection have a corresponding foreig
     &hellip;
 }
 </pre></td></tr></table>
-<p>In the above example, the <code>@ForeignCollectionField</code> annotation marks that the <code>orders</code> field is a collection of the orders
+<p><a name="ANC26"></a>
+In the above example, the <code>@ForeignCollectionField</code> annotation marks that the <code>orders</code> field is a collection of the orders
 that match the account.  The field type of <code>orders</code> must be either <code>ForeignCollection&lt;T&gt;</code> or <code>Collection&lt;T&gt;</code> - no
 other collections are supported.  The <code>@ForeignCollectionField</code> annotation supports the following fields:
 
@@ -2283,7 +2285,8 @@ doing.
 </dd>
 <dt><code> columnName</code></dt>
 <dd>
-<p>The name of the column.  This is only used if you want to match the string passed to <code>Dao#getEmptyForeignCollection(String)</code>.
+<p>The name of the column.  This is only used if you want to match the string passed to <code>Dao#getEmptyForeignCollection(String)</code> or to
+specify that you want the collection returned when you specify <code>queryBuilder.selectColumns(...)</code>.  See <a href="ormlite_3.html#ANC29">selectColumns</a>.
 
 </p><a name="IDX200"></a>
 <a name="IDX201"></a>
@@ -2310,7 +2313,7 @@ iterator or if you call <code>close()</code> on it.  Only the <code>ForeignColle
 from the internal list if the collection is eager, and DAO calls will be made to affect the order table as well for both eager and
 lazy collections.
 
-</p><p>There is example code to show how to use foreign collections.  See <a href="ormlite_7.html#ANC33">foreign collections example</a>.
+</p><p>There is example code to show how to use foreign collections.  See <a href="ormlite_7.html#ANC35">foreign collections example</a>.
 
 </p><hr size="6">
 <a name="NOD32"></a>
@@ -2422,7 +2425,7 @@ then call the update method because then the object will not be found.
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>October, 25 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>November, 4 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 

@@ -6,9 +6,9 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.29
+@set ormlite_version 4.30
 @set ormlite_year 2011
-@set ormlite_date October @value{ormlite_year}
+@set ormlite_date November @value{ormlite_year}
 @set package ORMLite
 @c ----------------------------------------------------------------
 
@@ -593,9 +593,10 @@ public byte[] bigBunchOfBytes;
 @cindex auto create foreign objects
 @item foreignAutoCreate
 
-Set this to be true (default false) to have the foreign field automatically created using an internal DAO if its ID field is not set. So when
-you call @code{dao.create()} on the parent object, any foreign field that has this set to true will possibly generate an additonal create call
-via an internal DAO.  By default you have to create the object using its DAO directly.
+Set this to be true (default false) to have the foreign field automatically created using an internal DAO if its ID field is not set (null or 0).
+So when you call @code{dao.create()} on the parent object, any foreign field that has this set to true will possibly generate an additonal
+create call via an internal DAO.  By default you have to create the object using its DAO directly.  By default you have to create the object
+using its DAO directly. This only works if @code{generatedId} is also set to true.
 
 @example
 // the account field in Order has foreignAutoCreate=true

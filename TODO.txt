@@ -56,6 +56,28 @@
 		- update only those fields that are not null
 	- createOrUpdateNonDefault()
 
+- better detection of whether a table exists or not:
+   static boolean tableExists(JdbcConnectionSource connSource, final String tableName) throws SQLException {
+       JdbcDatabaseConnection c = (JdbcDatabaseConnection) connSource.getReadOnlyConnection();
+       DatabaseMetaData metaData = c.getInternalConnection().getMetaData();
+       ResultSet rs = metaData.getTables(null, null, null, new String[]{ "TABLE" });
+       try {
+           while (rs.next()) {
+               int numColumns = rs.getMetaData().getColumnCount();
+               for (int i = 1; i < numColumns; i++) {
+                   if (tableName.equalsIgnoreCase(rs.getString(i))) {
+                       return true;
+                   }
+               }
+           }
+       } finally {
+           if (rs != null) {
+               rs.close();
+           }
+       }
+       return false;
+   }
+
 -----------------------------------------------------------------------------------------------------------------------------------
 
 - add a createTable call to the DAO instead of using tableUtils

@@ -214,26 +214,6 @@ public class DatabaseFieldConfigLoader {
 					.append(Integer.toString(config.getMaxForeignAutoRefreshLevel()));
 			writer.newLine();
 		}
-		if (config.isForeignCollection()) {
-			writer.append(FIELD_NAME_FOREIGN_COLLECTION).append('=').append("true");
-			writer.newLine();
-		}
-		if (config.isForeignCollectionEager()) {
-			writer.append(FIELD_NAME_FOREIGN_COLLECTION_EAGER).append('=').append("true");
-			writer.newLine();
-		}
-		if (config.getForeignCollectionOrderColumn() != null) {
-			writer.append(FIELD_NAME_FOREIGN_COLLECTION_ORDER_COLUMN)
-					.append('=')
-					.append(config.getForeignCollectionOrderColumn());
-			writer.newLine();
-		}
-		if (config.getMaxEagerForeignCollectionLevel() != DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL) {
-			writer.append(FIELD_NAME_MAX_EAGER_FOREIGN_COLLECTION_LEVEL)
-					.append('=')
-					.append(Integer.toString(config.getMaxEagerForeignCollectionLevel()));
-			writer.newLine();
-		}
 		if (config.getPersisterClass() != DEFAULT_PERSISTER_CLASS) {
 			writer.append(FIELD_NAME_PERSISTER_CLASS).append('=').append(config.getPersisterClass().getName());
 			writer.newLine();
@@ -254,6 +234,31 @@ public class DatabaseFieldConfigLoader {
 			writer.append(FIELD_NAME_VERSION).append('=').append("true");
 			writer.newLine();
 		}
+
+		/*
+		 * Foreign collection settings:
+		 */
+		if (config.isForeignCollection()) {
+			writer.append(FIELD_NAME_FOREIGN_COLLECTION).append('=').append("true");
+			writer.newLine();
+		}
+		if (config.isForeignCollectionEager()) {
+			writer.append(FIELD_NAME_FOREIGN_COLLECTION_EAGER).append('=').append("true");
+			writer.newLine();
+		}
+		if (config.getForeignCollectionOrderColumn() != null) {
+			writer.append(FIELD_NAME_FOREIGN_COLLECTION_ORDER_COLUMN)
+					.append('=')
+					.append(config.getForeignCollectionOrderColumn());
+			writer.newLine();
+		}
+		if (config.getMaxEagerForeignCollectionLevel() != DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL) {
+			writer.append(FIELD_NAME_MAX_EAGER_FOREIGN_COLLECTION_LEVEL)
+					.append('=')
+					.append(Integer.toString(config.getMaxEagerForeignCollectionLevel()));
+			writer.newLine();
+		}
+
 		writer.append(CONFIG_FILE_END_MARKER);
 		writer.newLine();
 	}
