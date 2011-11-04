@@ -28,7 +28,7 @@ import com.j256.ormlite.table.DatabaseTableConfig;
 public class DaoManager {
 
 	private static Map<Class<?>, DatabaseTableConfig<?>> configMap = null;
-	private static Map<ClazzConnectionSource, Dao<?, ?>> classMap = null;
+	private static Map<ClassConnectionSource, Dao<?, ?>> classMap = null;
 	private static Map<TableConfigConnectionSource, Dao<?, ?>> tableMap = null;
 
 	private static Logger logger = LoggerFactory.getLogger(DaoManager.class);
@@ -42,7 +42,7 @@ public class DaoManager {
 		if (connectionSource == null) {
 			throw new IllegalArgumentException("connectionSource argument cannot be null");
 		}
-		ClazzConnectionSource key = new ClazzConnectionSource(connectionSource, clazz);
+		ClassConnectionSource key = new ClassConnectionSource(connectionSource, clazz);
 		Dao<?, ?> dao = lookupDao(key, connectionSource, clazz);
 		if (dao != null) {
 			@SuppressWarnings("unchecked")
@@ -59,32 +59,18 @@ public class DaoManager {
 			logger.debug("created dao for class {} with reflection", clazz);
 		} else {
 			Class<?> daoClass = databaseTable.daoClass();
-			Constructor<?> daoConstructor = null;
-			Object[] arguments = null;
-			Constructor<?>[] constructors = daoClass.getConstructors();
+			Object[] arguments = new Object[] { connectionSource, clazz };
 			// look first for the constructor with a class parameter in case it is a generic dao
-			for (Constructor<?> constructor : constructors) {
-				Class<?>[] params = constructor.getParameterTypes();
-				if (params.length == 2 && params[0] == ConnectionSource.class && params[1] == Class.class) {
-					daoConstructor = constructor;
-					arguments = new Object[] { connectionSource, clazz };
-					break;
-				}
-			}
-			// then look first for the constructor with just the ConnectionSource
+			Constructor<?> daoConstructor = findConstructor(daoClass, arguments);
 			if (daoConstructor == null) {
-				for (Constructor<?> constructor : constructors) {
-					Class<?>[] params = constructor.getParameterTypes();
-					if (params.length == 1 && params[0] == ConnectionSource.class) {
-						daoConstructor = constructor;
-						arguments = new Object[] { connectionSource };
-						break;
-					}
+				// then look for the constructor with just the ConnectionSource
+				arguments = new Object[] { connectionSource };
+				daoConstructor = findConstructor(daoClass, arguments);
+				if (daoConstructor == null) {
+					throw new SQLException(
+							"Could not find public constructor with ConnectionSource and optional Class parameters "
+									+ daoClass);
 				}
-			}
-			if (daoConstructor == null) {
-				throw new SQLException("Could not find public constructor with ConnectionSource parameter in class "
-						+ daoClass);
 			}
 			try {
 				dao = (Dao<?, ?>) daoConstructor.newInstance(arguments);
@@ -94,7 +80,7 @@ public class DaoManager {
 			}
 		}
 
-		classMap.put(key, dao);
+		registerDao(connectionSource, dao);
 		@SuppressWarnings("unchecked")
 		D castDao = (D) dao;
 		return castDao;
@@ -109,11 +95,11 @@ public class DaoManager {
 		if (connectionSource == null) {
 			throw new IllegalArgumentException("connectionSource argument cannot be null");
 		}
-		ClazzConnectionSource key = new ClazzConnectionSource(connectionSource, clazz);
+		ClassConnectionSource key = new ClassConnectionSource(connectionSource, clazz);
 		return lookupDao(key, connectionSource, clazz);
 	}
 
-	private static <D, T> D lookupDao(ClazzConnectionSource key, ConnectionSource connectionSource, Class<T> clazz)
+	private static <D, T> D lookupDao(ClassConnectionSource key, ConnectionSource connectionSource, Class<T> clazz)
 			throws SQLException {
 
 		Dao<?, ?> dao = lookupDao(key);
@@ -132,8 +118,7 @@ public class DaoManager {
 				// create a dao using it
 				Dao<T, ?> configedDao = createDao(connectionSource, config);
 				logger.debug("created dao for class {} from loaded config", clazz);
-				// we put it into the DAO map even though it came from a config
-				classMap.put(key, configedDao);
+				registerDao(connectionSource, configedDao);
 				@SuppressWarnings("unchecked")
 				D castDao = (D) configedDao;
 				return castDao;
@@ -161,6 +146,16 @@ public class DaoManager {
 			return castDao;
 		}
 
+		// now look it up in the class map
+		ClassConnectionSource key2 = new ClassConnectionSource(connectionSource, tableConfig.getDataClass());
+		dao = lookupDao(key2);
+		if (dao != null) {
+			tableMap.put(key, dao);
+			@SuppressWarnings("unchecked")
+			D castDao = (D) dao;
+			return castDao;
+		}
+
 		DatabaseTable databaseTable = tableConfig.getDataClass().getAnnotation(DatabaseTable.class);
 		if (databaseTable == null || databaseTable.daoClass() == Void.class
 				|| databaseTable.daoClass() == BaseDaoImpl.class) {
@@ -169,22 +164,27 @@ public class DaoManager {
 			dao = daoTmp;
 		} else {
 			Class<?> daoClass = databaseTable.daoClass();
-			Constructor<?> constructor;
-			try {
-				constructor = daoClass.getConstructor(ConnectionSource.class, DatabaseTableConfig.class);
-			} catch (Exception e) {
-				throw SqlExceptionUtil.create(
+			Object[] arguments = new Object[] { connectionSource, tableConfig };
+			Constructor<?> constructor = findConstructor(daoClass, arguments);
+			if (constructor == null) {
+				throw new SQLException(
 						"Could not find public constructor with ConnectionSource, DatabaseTableConfig parameters in class "
-								+ daoClass, e);
+								+ daoClass);
 			}
 			try {
-				dao = (Dao<?, ?>) constructor.newInstance(connectionSource, tableConfig);
+				dao = (Dao<?, ?>) constructor.newInstance(arguments);
 			} catch (Exception e) {
 				throw SqlExceptionUtil.create("Could not call the constructor in class " + daoClass, e);
 			}
 		}
 
 		tableMap.put(key, dao);
+
+		// if it is not in the class config either then add it
+		if (lookupDao(key2) == null) {
+			classMap.put(key2, dao);
+		}
+
 		@SuppressWarnings("unchecked")
 		D castDao = (D) dao;
 		return castDao;
@@ -230,7 +230,7 @@ public class DaoManager {
 				return;
 			}
 		}
-		classMap.put(new ClazzConnectionSource(connectionSource, dao.getDataClass()), dao);
+		classMap.put(new ClassConnectionSource(connectionSource, dao.getDataClass()), dao);
 	}
 
 	/**
@@ -265,9 +265,9 @@ public class DaoManager {
 		configMap = newMap;
 	}
 
-	private static <T> Dao<?, ?> lookupDao(ClazzConnectionSource key) {
+	private static <T> Dao<?, ?> lookupDao(ClassConnectionSource key) {
 		if (classMap == null) {
-			classMap = new HashMap<ClazzConnectionSource, Dao<?, ?>>();
+			classMap = new HashMap<ClassConnectionSource, Dao<?, ?>>();
 		}
 		Dao<?, ?> dao = classMap.get(key);
 		if (dao == null) {
@@ -289,13 +289,32 @@ public class DaoManager {
 		}
 	}
 
+	private static Constructor<?> findConstructor(Class<?> daoClass, Object[] params) {
+		for (Constructor<?> constructor : daoClass.getConstructors()) {
+			Class<?>[] paramsTypes = constructor.getParameterTypes();
+			if (paramsTypes.length == params.length) {
+				boolean match = true;
+				for (int i = 0; i < paramsTypes.length; i++) {
+					if (!paramsTypes[i].isAssignableFrom(params[i].getClass())) {
+						match = false;
+						break;
+					}
+				}
+				if (match) {
+					return constructor;
+				}
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Key for our class DAO map.
 	 */
-	private static class ClazzConnectionSource {
+	private static class ClassConnectionSource {
 		ConnectionSource connectionSource;
 		Class<?> clazz;
-		public ClazzConnectionSource(ConnectionSource connectionSource, Class<?> clazz) {
+		public ClassConnectionSource(ConnectionSource connectionSource, Class<?> clazz) {
 			this.connectionSource = connectionSource;
 			this.clazz = clazz;
 		}
@@ -311,7 +330,7 @@ public class DaoManager {
 			if (obj == null || getClass() != obj.getClass()) {
 				return false;
 			}
-			ClazzConnectionSource other = (ClazzConnectionSource) obj;
+			ClassConnectionSource other = (ClassConnectionSource) obj;
 			if (!clazz.equals(other.clazz)) {
 				return false;
 			} else if (!connectionSource.equals(other.connectionSource)) {
