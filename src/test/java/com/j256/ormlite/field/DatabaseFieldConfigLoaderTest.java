@@ -100,6 +100,10 @@ public class DatabaseFieldConfigLoaderTest {
 		body.append("throwIfNull=true\n");
 		checkConfigOutput(config, body, writer, buffer);
 
+		/**
+		 * persisted is skipped
+		 */
+
 		String format = "wpgjogwjpogwjp";
 		config.setFormat(format);
 		body.append("format=").append(format).append("\n");
@@ -138,28 +142,6 @@ public class DatabaseFieldConfigLoaderTest {
 		body.append("maxForeignAutoRefreshLevel=").append(maxForeign).append("\n");
 		checkConfigOutput(config, body, writer, buffer);
 
-		config.setForeignCollection(false);
-		checkConfigOutput(config, body, writer, buffer);
-		config.setForeignCollection(true);
-		body.append("foreignCollection=true\n");
-		checkConfigOutput(config, body, writer, buffer);
-
-		config.setForeignCollectionEager(false);
-		checkConfigOutput(config, body, writer, buffer);
-		config.setForeignCollectionEager(true);
-		body.append("foreignCollectionEager=true\n");
-		checkConfigOutput(config, body, writer, buffer);
-
-		String foreignOrderColumn = "w225fwhi4jp";
-		config.setForeignCollectionOrderColumn(foreignOrderColumn);
-		body.append("foreignCollectionOrderColumn=").append(foreignOrderColumn).append("\n");
-		checkConfigOutput(config, body, writer, buffer);
-
-		int maxEager = 341;
-		config.setMaxEagerForeignCollectionLevel(maxEager);
-		body.append("maxEagerForeignCollectionLevel=").append(maxEager).append("\n");
-		checkConfigOutput(config, body, writer, buffer);
-
 		@SuppressWarnings("unchecked")
 		Class<DataPersister> clazz = (Class<DataPersister>) DataType.CHAR.getDataPersister().getClass();
 		config.setPersisterClass(clazz);
@@ -188,6 +170,33 @@ public class DatabaseFieldConfigLoaderTest {
 		config.setVersion(true);
 		body.append("version=true\n");
 		checkConfigOutput(config, body, writer, buffer);
+
+		/*
+		 * Test foreign collection
+		 */
+
+		config.setForeignCollection(false);
+		checkConfigOutput(config, body, writer, buffer);
+		config.setForeignCollection(true);
+		body.append("foreignCollection=true\n");
+		checkConfigOutput(config, body, writer, buffer);
+
+		config.setForeignCollectionEager(false);
+		checkConfigOutput(config, body, writer, buffer);
+		config.setForeignCollectionEager(true);
+		body.append("foreignCollectionEager=true\n");
+		checkConfigOutput(config, body, writer, buffer);
+
+		String foreignOrderColumn = "w225fwhi4jp";
+		config.setForeignCollectionOrderColumn(foreignOrderColumn);
+		body.append("foreignCollectionOrderColumn=").append(foreignOrderColumn).append("\n");
+		checkConfigOutput(config, body, writer, buffer);
+
+		int maxEager = 341;
+		config.setMaxEagerForeignCollectionLevel(maxEager);
+		body.append("maxEagerForeignCollectionLevel=").append(maxEager).append("\n");
+		checkConfigOutput(config, body, writer, buffer);
+
 	}
 
 	@Test
@@ -280,6 +289,7 @@ public class DatabaseFieldConfigLoaderTest {
 		eb.append(config1.isUseGetSet(), config2.isUseGetSet());
 		eb.append(config1.getUnknownEnumValue(), config2.getUnknownEnumValue());
 		eb.append(config1.isThrowIfNull(), config2.isThrowIfNull());
+		eb.append(config1.isPersisted(), config2.isPersisted());
 		eb.append(config1.getFormat(), config2.getFormat());
 		eb.append(config1.isUnique(), config2.isUnique());
 		eb.append(config1.isUniqueCombo(), config2.isUniqueCombo());
@@ -287,12 +297,16 @@ public class DatabaseFieldConfigLoaderTest {
 		eb.append(config1.getUniqueIndexName(TABLE_NAME), config2.getUniqueIndexName(TABLE_NAME));
 		eb.append(config1.isForeignAutoRefresh(), config2.isForeignAutoRefresh());
 		eb.append(config1.getMaxForeignAutoRefreshLevel(), config2.getMaxForeignAutoRefreshLevel());
+		eb.append(config1.getPersisterClass(), config2.getPersisterClass());
+		eb.append(config1.isAllowGeneratedIdInsert(), config2.isAllowGeneratedIdInsert());
+		eb.append(config1.getColumnDefinition(), config2.getColumnDefinition());
+		eb.append(config1.isForeignAutoCreate(), config2.isForeignAutoCreate());
+		eb.append(config1.isVersion(), config2.isVersion());
+		// foreign collections
 		eb.append(config1.isForeignCollection(), config2.isForeignCollection());
 		eb.append(config1.isForeignCollectionEager(), config2.isForeignCollectionEager());
 		eb.append(config1.getForeignCollectionOrderColumn(), config2.getForeignCollectionOrderColumn());
 		eb.append(config1.getMaxEagerForeignCollectionLevel(), config2.getMaxEagerForeignCollectionLevel());
-		eb.append(config1.getPersisterClass(), config2.getPersisterClass());
-		eb.append(config1.isAllowGeneratedIdInsert(), config2.isAllowGeneratedIdInsert());
 		return eb.isEquals();
 	}
 }
