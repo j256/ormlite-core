@@ -307,6 +307,11 @@ public class FieldType {
 			if (foreignIdField == null) {
 				throw new IllegalArgumentException("Foreign field " + clazz + " does not have id field");
 			}
+			if (isForeignAutoCreate() && !foreignIdField.isGeneratedId()) {
+				throw new IllegalArgumentException("Field " + field.getName()
+						+ ", if foreignAutoCreate = true then class " + clazz.getSimpleName()
+						+ " must have id field with generatedId = true");
+			}
 			foreignFieldType = null;
 			mappedQueryForId = null;
 		} else if (fieldConfig.isForeignCollection()) {

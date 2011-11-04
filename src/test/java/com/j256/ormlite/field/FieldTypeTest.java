@@ -726,6 +726,16 @@ public class FieldTypeTest extends BaseCoreTest {
 				AllowGeneratedIdNotGeneratedId.class);
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void testForeignAutoCreateNotForeign() throws Exception {
+		createDao(ForeignAutoCreateNoForeign.class, true);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testForeignAutoCreateNotGeneratedId() throws Exception {
+		createDao(ForeignAutoCreateNoGeneratedId.class, true);
+	}
+
 	/* ========================================================================================================= */
 
 	protected static class Foo {
@@ -996,6 +1006,27 @@ public class FieldTypeTest extends BaseCoreTest {
 
 		@DatabaseField(version = true)
 		String version;
+	}
+
+	protected static class ForeignAutoCreateNoForeign {
+		@DatabaseField(generatedId = true)
+		long id;
+		@DatabaseField(foreignAutoCreate = true)
+		public long foreign;
+	}
+
+	protected static class ForeignAutoCreateNoGeneratedId {
+		@DatabaseField(generatedId = true)
+		long id;
+		@DatabaseField(foreign = true, foreignAutoCreate = true)
+		public ForeignAutoCreateForeignNotGeneratedId foreign;
+	}
+
+	protected static class ForeignAutoCreateForeignNotGeneratedId {
+		@DatabaseField(id = true)
+		long id;
+		@DatabaseField
+		String stuff;
 	}
 
 	private static class NeedsUppercaseSequenceDatabaseType extends NeedsSequenceDatabaseType {
