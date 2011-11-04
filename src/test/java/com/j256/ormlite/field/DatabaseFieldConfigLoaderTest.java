@@ -53,19 +53,19 @@ public class DatabaseFieldConfigLoaderTest {
 		config.setCanBeNull(true);
 		checkConfigOutput(config, body, writer, buffer);
 		config.setCanBeNull(false);
-		body.append("canBeNull=false").append("\n");
+		body.append("canBeNull=false\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		config.setId(false);
 		checkConfigOutput(config, body, writer, buffer);
 		config.setId(true);
-		body.append("id=true").append("\n");
+		body.append("id=true\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		config.setGeneratedId(false);
 		checkConfigOutput(config, body, writer, buffer);
 		config.setGeneratedId(true);
-		body.append("generatedId=true").append("\n");
+		body.append("generatedId=true\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		String generatedIdSequence = "24332423";
@@ -76,13 +76,13 @@ public class DatabaseFieldConfigLoaderTest {
 		config.setForeign(false);
 		checkConfigOutput(config, body, writer, buffer);
 		config.setForeign(true);
-		body.append("foreign=true").append("\n");
+		body.append("foreign=true\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		config.setUseGetSet(false);
 		checkConfigOutput(config, body, writer, buffer);
 		config.setUseGetSet(true);
-		body.append("useGetSet=true").append("\n");
+		body.append("useGetSet=true\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		Enum<?> enumValue = OurEnum.FIRST;
@@ -97,7 +97,7 @@ public class DatabaseFieldConfigLoaderTest {
 		config.setThrowIfNull(false);
 		checkConfigOutput(config, body, writer, buffer);
 		config.setThrowIfNull(true);
-		body.append("throwIfNull=true").append("\n");
+		body.append("throwIfNull=true\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		String format = "wpgjogwjpogwjp";
@@ -108,13 +108,13 @@ public class DatabaseFieldConfigLoaderTest {
 		config.setUnique(false);
 		checkConfigOutput(config, body, writer, buffer);
 		config.setUnique(true);
-		body.append("unique=true").append("\n");
+		body.append("unique=true\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		config.setUniqueCombo(false);
 		checkConfigOutput(config, body, writer, buffer);
 		config.setUniqueCombo(true);
-		body.append("uniqueCombo=true").append("\n");
+		body.append("uniqueCombo=true\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		String indexName = "wfewjpwepjjp";
@@ -130,7 +130,7 @@ public class DatabaseFieldConfigLoaderTest {
 		config.setForeignAutoRefresh(false);
 		checkConfigOutput(config, body, writer, buffer);
 		config.setForeignAutoRefresh(true);
-		body.append("foreignAutoRefresh=true").append("\n");
+		body.append("foreignAutoRefresh=true\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		int maxForeign = 2112;
@@ -141,13 +141,13 @@ public class DatabaseFieldConfigLoaderTest {
 		config.setForeignCollection(false);
 		checkConfigOutput(config, body, writer, buffer);
 		config.setForeignCollection(true);
-		body.append("foreignCollection=true").append("\n");
+		body.append("foreignCollection=true\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		config.setForeignCollectionEager(false);
 		checkConfigOutput(config, body, writer, buffer);
 		config.setForeignCollectionEager(true);
-		body.append("foreignCollectionEager=true").append("\n");
+		body.append("foreignCollectionEager=true\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		String foreignOrderColumn = "w225fwhi4jp";
@@ -169,7 +169,24 @@ public class DatabaseFieldConfigLoaderTest {
 		config.setAllowGeneratedIdInsert(false);
 		checkConfigOutput(config, body, writer, buffer);
 		config.setAllowGeneratedIdInsert(true);
-		body.append("allowGeneratedIdInsert=true").append("\n");
+		body.append("allowGeneratedIdInsert=true\n");
+		checkConfigOutput(config, body, writer, buffer);
+
+		String columnDefinition = "columnDef";
+		config.setColumnDefinition(columnDefinition);
+		body.append("columnDefinition=").append(columnDefinition).append("\n");
+		checkConfigOutput(config, body, writer, buffer);
+
+		config.setForeignAutoCreate(false);
+		checkConfigOutput(config, body, writer, buffer);
+		config.setForeignAutoCreate(true);
+		body.append("foreignAutoCreate=true\n");
+		checkConfigOutput(config, body, writer, buffer);
+
+		config.setVersion(false);
+		checkConfigOutput(config, body, writer, buffer);
+		config.setVersion(true);
+		body.append("version=true\n");
 		checkConfigOutput(config, body, writer, buffer);
 	}
 

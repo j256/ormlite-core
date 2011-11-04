@@ -250,15 +250,15 @@ public @interface DatabaseField {
 
 	/**
 	 * Set this to be true (default false) to have the foreign field will be automagically created using its internal
-	 * DAO if the ID field is not set in it. So when you call dao.create() on the parent object, any field with this set
-	 * to true will possibly be created via an internal DAO. By default you have to create the object using its DAO
-	 * directly.
+	 * DAO if the ID field is not set (null or 0). So when you call dao.create() on the parent object, any field with
+	 * this set to true will possibly be created via an internal DAO. By default you have to create the object using its
+	 * DAO directly. This only works if {@link #generatedId()} is also set to true.
 	 * 
 	 * <p>
 	 * 
 	 * <pre>
 	 * Order order1 = new Order();
-	 * // account1 has not been created in the db yet
+	 * // account1 has not been created in the db yet and it's id == null
 	 * order1.account = account1;
 	 * // this will create order1 _and_ pass order1.account to the internal account dao.create().
 	 * orderDao.create(order1);
@@ -283,4 +283,9 @@ public @interface DatabaseField {
 	 * The field should be a short, integer, long, Date, Date-string, or Date-long type.
 	 */
 	boolean version() default false;
+
+	/*
+	 * NOTE: if you add fields here you have to add them to the DatabaseFieldConfigLoader and
+	 * DatabaseFieldConfigLoaderTest
+	 */
 }

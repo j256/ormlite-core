@@ -106,6 +106,8 @@ public class DatabaseFieldConfigLoader {
 	private static final String FIELD_NAME_PERSISTER_CLASS = "persisterClass";
 	private static final String FIELD_NAME_ALLOW_GENERATED_ID_INSERT = "allowGeneratedIdInsert";
 	private static final String FIELD_NAME_COLUMN_DEFINITION = "columnDefinition";
+	private static final String FIELD_NAME_FOREIGN_AUTO_CREATE = "foreignAutoCreate";
+	private static final String FIELD_NAME_VERSION = "version";
 
 	/**
 	 * Print the config to the writer.
@@ -244,6 +246,14 @@ public class DatabaseFieldConfigLoader {
 			writer.append(FIELD_NAME_COLUMN_DEFINITION).append('=').append(config.getColumnDefinition());
 			writer.newLine();
 		}
+		if (config.isForeignAutoCreate()) {
+			writer.append(FIELD_NAME_FOREIGN_AUTO_CREATE).append('=').append("true");
+			writer.newLine();
+		}
+		if (config.isVersion()) {
+			writer.append(FIELD_NAME_VERSION).append('=').append("true");
+			writer.newLine();
+		}
 		writer.append(CONFIG_FILE_END_MARKER);
 		writer.newLine();
 	}
@@ -338,6 +348,10 @@ public class DatabaseFieldConfigLoader {
 			config.setAllowGeneratedIdInsert(Boolean.parseBoolean(value));
 		} else if (field.equals(FIELD_NAME_COLUMN_DEFINITION)) {
 			config.setColumnDefinition(value);
+		} else if (field.equals(FIELD_NAME_FOREIGN_AUTO_CREATE)) {
+			config.setForeignAutoCreate(Boolean.parseBoolean(value));
+		} else if (field.equals(FIELD_NAME_VERSION)) {
+			config.setVersion(Boolean.parseBoolean(value));
 		}
 	}
 }
