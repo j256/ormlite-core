@@ -97,11 +97,11 @@ public class TableUtils {
 	public static <T, ID> List<String> getCreateTableStatements(ConnectionSource connectionSource, Class<T> dataClass)
 			throws SQLException {
 		Dao<T, ID> dao = DaoManager.createDao(connectionSource, dataClass);
-		if (!(dao instanceof BaseDaoImpl<?, ?>)) {
+		if (dao instanceof BaseDaoImpl<?, ?>) {
+			return addCreateTableStatements(connectionSource, ((BaseDaoImpl<?, ?>) dao).getTableInfo(), false);
+		} else {
 			TableInfo<T, ID> tableInfo = new TableInfo<T, ID>(connectionSource, null, dataClass);
 			return addCreateTableStatements(connectionSource, tableInfo, false);
-		} else {
-			return addCreateTableStatements(connectionSource, ((BaseDaoImpl<?, ?>) dao).getTableInfo(), false);
 		}
 	}
 
@@ -119,12 +119,12 @@ public class TableUtils {
 	public static <T, ID> List<String> getCreateTableStatements(ConnectionSource connectionSource,
 			DatabaseTableConfig<T> tableConfig) throws SQLException {
 		Dao<T, ID> dao = DaoManager.createDao(connectionSource, tableConfig);
-		if (!(dao instanceof BaseDaoImpl<?, ?>)) {
+		if (dao instanceof BaseDaoImpl<?, ?>) {
+			return addCreateTableStatements(connectionSource, ((BaseDaoImpl<?, ?>) dao).getTableInfo(), false);
+		} else {
 			tableConfig.extractFieldTypes(connectionSource);
 			TableInfo<T, ID> tableInfo = new TableInfo<T, ID>(connectionSource.getDatabaseType(), null, tableConfig);
 			return addCreateTableStatements(connectionSource, tableInfo, false);
-		} else {
-			return addCreateTableStatements(connectionSource, ((BaseDaoImpl<?, ?>) dao).getTableInfo(), false);
 		}
 	}
 
@@ -147,11 +147,11 @@ public class TableUtils {
 			throws SQLException {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		Dao<T, ID> dao = DaoManager.createDao(connectionSource, dataClass);
-		if (!(dao instanceof BaseDaoImpl<?, ?>)) {
+		if (dao instanceof BaseDaoImpl<?, ?>) {
+			return doDropTable(databaseType, connectionSource, ((BaseDaoImpl<?, ?>) dao).getTableInfo(), ignoreErrors);
+		} else {
 			TableInfo<T, ID> tableInfo = new TableInfo<T, ID>(connectionSource, null, dataClass);
 			return doDropTable(databaseType, connectionSource, tableInfo, ignoreErrors);
-		} else {
-			return doDropTable(databaseType, connectionSource, ((BaseDaoImpl<?, ?>) dao).getTableInfo(), ignoreErrors);
 		}
 	}
 
@@ -175,12 +175,12 @@ public class TableUtils {
 			boolean ignoreErrors) throws SQLException {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		Dao<T, ID> dao = DaoManager.createDao(connectionSource, tableConfig);
-		if (!(dao instanceof BaseDaoImpl<?, ?>)) {
+		if (dao instanceof BaseDaoImpl<?, ?>) {
+			return doDropTable(databaseType, connectionSource, ((BaseDaoImpl<?, ?>) dao).getTableInfo(), ignoreErrors);
+		} else {
 			tableConfig.extractFieldTypes(connectionSource);
 			TableInfo<T, ID> tableInfo = new TableInfo<T, ID>(databaseType, null, tableConfig);
 			return doDropTable(databaseType, connectionSource, tableInfo, ignoreErrors);
-		} else {
-			return doDropTable(databaseType, connectionSource, ((BaseDaoImpl<?, ?>) dao).getTableInfo(), ignoreErrors);
 		}
 	}
 
@@ -216,23 +216,23 @@ public class TableUtils {
 	private static <T, ID> int createTable(ConnectionSource connectionSource, Class<T> dataClass, boolean ifNotExists)
 			throws SQLException {
 		Dao<T, ID> dao = DaoManager.createDao(connectionSource, dataClass);
-		if (!(dao instanceof BaseDaoImpl<?, ?>)) {
+		if (dao instanceof BaseDaoImpl<?, ?>) {
+			return doCreateTable(connectionSource, ((BaseDaoImpl<?, ?>) dao).getTableInfo(), ifNotExists);
+		} else {
 			TableInfo<T, ID> tableInfo = new TableInfo<T, ID>(connectionSource, null, dataClass);
 			return doCreateTable(connectionSource, tableInfo, ifNotExists);
-		} else {
-			return doCreateTable(connectionSource, ((BaseDaoImpl<?, ?>) dao).getTableInfo(), ifNotExists);
 		}
 	}
 
 	private static <T, ID> int createTable(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig,
 			boolean ifNotExists) throws SQLException {
 		Dao<T, ID> dao = DaoManager.createDao(connectionSource, tableConfig);
-		if (!(dao instanceof BaseDaoImpl<?, ?>)) {
+		if (dao instanceof BaseDaoImpl<?, ?>) {
+			return doCreateTable(connectionSource, ((BaseDaoImpl<?, ?>) dao).getTableInfo(), ifNotExists);
+		} else {
 			tableConfig.extractFieldTypes(connectionSource);
 			TableInfo<T, ID> tableInfo = new TableInfo<T, ID>(connectionSource.getDatabaseType(), null, tableConfig);
 			return doCreateTable(connectionSource, tableInfo, ifNotExists);
-		} else {
-			return doCreateTable(connectionSource, ((BaseDaoImpl<?, ?>) dao).getTableInfo(), ifNotExists);
 		}
 	}
 
