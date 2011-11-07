@@ -58,6 +58,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	private MappedUpdateId<T, ID> mappedUpdateId;
 	private MappedDelete<T, ID> mappedDelete;
 	private MappedRefresh<T, ID> mappedRefresh;
+	private String countStarQuery = null;
 
 	/**
 	 * Provides statements for various SQL operations.
@@ -112,12 +113,14 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 * Return a long value which is the number of rows in the table.
 	 */
 	public long queryForCountStar(DatabaseConnection databaseConnection) throws SQLException {
-		StringBuilder sb = new StringBuilder(64);
-		sb.append("SELECT COUNT(*) FROM ");
-		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
-		String statement = sb.toString();
-		long count = databaseConnection.queryForLong(statement);
-		logger.debug("query of '{}' returned {}", statement, count);
+		if (countStarQuery == null) {
+			StringBuilder sb = new StringBuilder(64);
+			sb.append("SELECT COUNT(*) FROM ");
+			databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
+			countStarQuery = sb.toString();
+		}
+		long count = databaseConnection.queryForLong(countStarQuery);
+		logger.debug("query of '{}' returned {}", countStarQuery, count);
 		return count;
 	}
 
@@ -145,11 +148,9 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 */
 	public List<T> query(ConnectionSource connectionSource, PreparedStmt<T> preparedStmt, ObjectCache objectCache)
 			throws SQLException {
-		SelectIterator<T, ID> iterator = null;
+		SelectIterator<T, ID> iterator =
+				buildIterator(/* no dao specified because no removes */null, connectionSource, preparedStmt, objectCache);
 		try {
-			iterator =
-					buildIterator(/* no dao specified because no removes */null, connectionSource, preparedStmt,
-							objectCache);
 			List<T> results = new ArrayList<T>();
 			while (iterator.hasNextThrow()) {
 				results.add(iterator.nextThrow());
@@ -157,9 +158,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			logger.debug("query of '{}' returned {} results", preparedStmt.getStatement(), results.size());
 			return results;
 		} finally {
-			if (iterator != null) {
-				iterator.close();
-			}
+			iterator.close();
 		}
 	}
 
@@ -481,11 +480,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 
 	private void assignStatementArguments(CompiledStatement compiledStatement, String[] arguments) throws SQLException {
 		for (int i = 0; i < arguments.length; i++) {
-			if (arguments[i] == null) {
-				compiledStatement.setNull(i, SqlType.STRING);
-			} else {
-				compiledStatement.setObject(i, arguments[i], SqlType.STRING);
-			}
+			compiledStatement.setObject(i, arguments[i], SqlType.STRING);
 		}
 	}
 

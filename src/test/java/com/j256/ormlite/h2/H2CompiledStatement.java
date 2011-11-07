@@ -47,12 +47,12 @@ public class H2CompiledStatement implements CompiledStatement {
 		preparedStatement.close();
 	}
 
-	public void setNull(int parameterIndex, SqlType sqlType) throws SQLException {
-		preparedStatement.setNull(parameterIndex + 1, sqlTypeToJdbcInt(sqlType));
-	}
-
 	public void setObject(int parameterIndex, Object obj, SqlType sqlType) throws SQLException {
-		preparedStatement.setObject(parameterIndex + 1, obj, sqlTypeToJdbcInt(sqlType));
+		if (obj == null) {
+			preparedStatement.setNull(parameterIndex + 1, sqlTypeToJdbcInt(sqlType));
+		} else {
+			preparedStatement.setObject(parameterIndex + 1, obj, sqlTypeToJdbcInt(sqlType));
+		}
 	}
 
 	public void setMaxRows(int max) throws SQLException {

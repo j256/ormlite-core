@@ -43,22 +43,12 @@ public interface CompiledStatement {
 	public void close() throws SQLException;
 
 	/**
-	 * Set the parameter specified by the index and type to be null.
-	 * 
-	 * @param parameterIndex
-	 *            Index of the parameter with 0 being the first parameter, etc..
-	 * @param sqlType
-	 *            SQL type of the parameter.
-	 */
-	public void setNull(int parameterIndex, SqlType sqlType) throws SQLException;
-
-	/**
 	 * Set the parameter specified by the index and type to be an object.
 	 * 
 	 * @param parameterIndex
 	 *            Index of the parameter with 0 being the first parameter, etc..
 	 * @param obj
-	 *            Object that we are setting.
+	 *            Object that we are setting. Can be null.
 	 * @param sqlType
 	 *            SQL type of the parameter.
 	 */

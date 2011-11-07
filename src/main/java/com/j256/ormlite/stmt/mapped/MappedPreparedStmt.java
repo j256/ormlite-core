@@ -63,11 +63,7 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 				} else {
 					sqlType = fieldType.getSqlType();
 				}
-				if (argValue == null) {
-					stmt.setNull(i, sqlType);
-				} else {
-					stmt.setObject(i, argValue, sqlType);
-				}
+				stmt.setObject(i, argValue, sqlType);
 				if (argValues != null) {
 					argValues[i] = argValue;
 				}
