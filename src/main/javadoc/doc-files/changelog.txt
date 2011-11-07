@@ -2,7 +2,8 @@
 	* CORE: Added ability to specify ForeignCollection columns in selectColumns(). Thanks to @Timo. Fixes bug #3428751.
 	* CORE: Added two new Dao methods: mapSelectStarRow and getSelectStarRowMapper for easier mapping of results.
 	* CORE: Deprecated the @DatabaseFieldSimple and other smaller annotations that were causing confusion.  Sorry.
-	* CORE: Fixed config loader support for foreignAutoCreate and version fields. Thanks to Chase.  Fixes bug #3433599.
+	* CORE: Fixed config loader support for foreignAutoCreate and version fields.  Thanks to Chase.  Fixes bug #3433599.
+	* CORE: Fixed foreignAutoCreate bug where parent object didn't get foreign id.  Thanks to Chase. Fixes bug #3434550.
 	* ANDROID: Added some reflection fu to make reading Annotations ~20 times faster.  Thanks a ton to Josh Guilfoyle.
 	* ANDROID: Fixed problems with countOf() dao method.  Thanks to Pedro Velasco.  Fixes bug #3434508.
 	* JDBC: Added support for better escaping of "schema"."table" in Postgres.  Thanks to Johny Jugianto.

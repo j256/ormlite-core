@@ -61,14 +61,30 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 		}
 
 		try {
+			// implement {@link DatabaseField#foreignAutoCreate()}, need to do this _before_ getFieldObjects() below
+			if (tableInfo.isForeignAutoCreate()) {
+				for (FieldType fieldType : tableInfo.getFieldTypes()) {
+					if (!fieldType.isForeignAutoCreate()) {
+						continue;
+					}
+					// get the field value
+					Object foreignObj = fieldType.extractRawJavaFieldValue(data);
+					if (foreignObj != null && fieldType.getForeignIdField().isObjectsFieldValueDefault(foreignObj)) {
+						fieldType.createWithForeignDao(foreignObj);
+					}
+				}
+			}
+
 			Object[] args = getFieldObjects(data);
 			Object versionDefaultValue = null;
+			// implement {@link DatabaseField#version()}
 			if (versionFieldTypeIndex >= 0 && args[versionFieldTypeIndex] == null) {
 				// if the version is null then we need to initialize it before create
 				FieldType versionFieldType = argFieldTypes[versionFieldTypeIndex];
 				versionDefaultValue = versionFieldType.moveToNextValue(null);
 				args[versionFieldTypeIndex] = versionFieldType.convertJavaFieldToSqlArgValue(versionDefaultValue);
 			}
+
 			int rowC = databaseConnection.insert(statement, args, argFieldTypes, keyHolder);
 			if (rowC > 0) {
 				if (versionDefaultValue != null) {
@@ -96,20 +112,6 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 			if (args.length > 0) {
 				// need to do the (Object) cast to force args to be a single object
 				logger.trace("insert arguments: {}", (Object) args);
-			}
-
-			// implement {@link DatabaseField#foreignAutoCreate()}
-			if (tableInfo.isForeignAutoCreate()) {
-				for (FieldType fieldType : tableInfo.getFieldTypes()) {
-					if (!fieldType.isForeignAutoCreate()) {
-						continue;
-					}
-					// get the field value
-					Object foreignObj = fieldType.extractRawJavaFieldValue(data);
-					if (foreignObj != null && fieldType.getForeignIdField().isObjectsFieldValueDefault(foreignObj)) {
-						fieldType.createWithForeignDao(foreignObj);
-					}
-				}
 			}
 
 			return rowC;

@@ -239,9 +239,17 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 		foo1.foreign = foreign;
 		assertEquals(1, foreignAutoCreateDao.create(foo1));
 
+		// we should not get something from the other dao
 		results = foreignAutoCreateForeignDao.queryForAll();
 		assertEquals(1, results.size());
 		assertEquals(foreign.id, results.get(0).id);
+
+		// if we get foo back, we should see the foreign-id
+		List<ForeignAutoCreate> foreignAutoCreateResults = foreignAutoCreateDao.queryForAll();
+		assertEquals(1, foreignAutoCreateResults.size());
+		assertEquals(foo1.id, foreignAutoCreateResults.get(0).id);
+		assertNotNull(foreignAutoCreateResults.get(0).foreign);
+		assertEquals(foo1.foreign.id, foreignAutoCreateResults.get(0).foreign.id);
 
 		// now we create it when the foreign field already has an id set
 		ForeignAutoCreate foo2 = new ForeignAutoCreate();
@@ -323,14 +331,14 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 
 	protected static class ForeignAutoCreate {
 		@DatabaseField(generatedId = true)
-		long id;
+		int id;
 		@DatabaseField(foreign = true, foreignAutoCreate = true)
 		public ForeignAutoCreateForeign foreign;
 	}
 
 	protected static class ForeignAutoCreateForeign {
 		@DatabaseField(generatedId = true)
-		long id;
+		int id;
 		@DatabaseField
 		String stuff;
 	}
