@@ -1881,6 +1881,33 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(2, ExampleH2Trigger.callC);
 	}
 
+	@Test
+	public void testSelectRaw() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		foo.id = "1";
+		assertEquals(1, dao.create(foo));
+		QueryBuilder<Foo, String> qb = dao.queryBuilder();
+		qb.selectRaw("COUNT(*)");
+		GenericRawResults<String[]> results = dao.queryRaw(qb.prepareStatementString());
+		List<String[]> list = results.getResults();
+		assertEquals(1, list.size());
+		String[] array = list.get(0);
+		assertEquals(1, array.length);
+		assertEquals("1", array[0]);
+	}
+
+	@Test(expected = SQLException.class)
+	public void testSelectRawNotQuery() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		foo.id = "1";
+		assertEquals(1, dao.create(foo));
+		QueryBuilder<Foo, String> qb = dao.queryBuilder();
+		qb.selectRaw("COUNTOF(*)");
+		qb.query();
+	}
+
 	/**
 	 * Example of a H2 trigger.
 	 */

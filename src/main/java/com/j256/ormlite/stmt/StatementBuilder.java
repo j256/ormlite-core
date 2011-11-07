@@ -162,28 +162,47 @@ public abstract class StatementBuilder<T, ID> {
 	 */
 	public static enum StatementType {
 		/** SQL statement in the form of SELECT ... */
-		SELECT(true),
+		SELECT(true, true, false, false),
 		/** SQL statement in the form of SELECT COUNT(*)... or something */
-		SELECT_LONG(true),
+		SELECT_LONG(true, true, false, false),
 		/** SQL statement in the form of SELECT... with aggregate functions or something */
-		SELECT_RAW(true),
+		SELECT_RAW(true, true, false, false),
 		/** SQL statement in the form of UPDATE ... */
-		UPDATE(true),
+		UPDATE(true, false, true, false),
 		/** SQL statement in the form of DELETE ... */
-		DELETE(true),
+		DELETE(true, false, true, false),
 		/** SQL statement in the form of CREATE TABLE, ALTER TABLE, or something returning the number of rows affected */
-		EXECUTE(false),
+		EXECUTE(false, false, false, true),
 		// end
 		;
 
 		private final boolean okForStatementBuilder;
+		private final boolean okForQuery;
+		private final boolean okForUpdate;
+		private final boolean okForExecute;
 
-		private StatementType(boolean okForStatementBuilder) {
+		private StatementType(boolean okForStatementBuilder, boolean okForQuery, boolean okForUpdate,
+				boolean okForExecute) {
 			this.okForStatementBuilder = okForStatementBuilder;
+			this.okForQuery = okForQuery;
+			this.okForUpdate = okForUpdate;
+			this.okForExecute = okForExecute;
 		}
 
 		public boolean isOkForStatementBuilder() {
 			return okForStatementBuilder;
+		}
+
+		public boolean isOkForQuery() {
+			return okForQuery;
+		}
+
+		public boolean isOkForUpdate() {
+			return okForUpdate;
+		}
+
+		public boolean isOkForExecute() {
+			return okForExecute;
 		}
 	}
 }

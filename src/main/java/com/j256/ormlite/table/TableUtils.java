@@ -449,7 +449,7 @@ public class TableUtils {
 			CompiledStatement compiledStmt = null;
 			try {
 				compiledStmt = connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes);
-				rowC = compiledStmt.runUpdate();
+				rowC = compiledStmt.runExecute();
 				logger.info("executed {} table statement changed {} rows: {}", label, rowC, statement);
 			} catch (SQLException e) {
 				if (ignoreErrors) {
@@ -481,7 +481,7 @@ public class TableUtils {
 		for (String query : queriesAfter) {
 			CompiledStatement compiledStmt = null;
 			try {
-				compiledStmt = connection.compileStatement(query, StatementType.EXECUTE, noFieldTypes);
+				compiledStmt = connection.compileStatement(query, StatementType.SELECT, noFieldTypes);
 				// we don't care about an object cache here
 				DatabaseResults results = compiledStmt.runQuery(null);
 				int rowC = 0;

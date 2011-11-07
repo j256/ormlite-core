@@ -4,6 +4,7 @@
 	* CORE: Deprecated the @DatabaseFieldSimple and other smaller annotations that were causing confusion.  Sorry.
 	* CORE: Fixed config loader support for foreignAutoCreate and version fields. Thanks to Chase.  Fixes bug #3433599.
 	* ANDROID: Added some reflection fu to make reading Annotations ~20 times faster.  Thanks a ton to Josh Guilfoyle.
+	* ANDROID: Fixed problems with countOf() dao method.  Thanks to Pedro Velasco.  Fixes bug #3434508.
 	* JDBC: Added support for better escaping of "schema"."table" in Postgres.  Thanks to Johny Jugianto.
 
 4.29: 10/25/2011 (svn r2101)

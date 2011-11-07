@@ -205,7 +205,7 @@ public class TableUtilsTest extends BaseCoreTest {
 						return stmt;
 					}
 				}).anyTimes();
-		expect(stmt.runUpdate()).andReturn(0).anyTimes();
+		expect(stmt.runExecute()).andReturn(0).anyTimes();
 		connectionSource.releaseConnection(conn);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
 		connectionSource.releaseConnection(conn);
@@ -251,7 +251,7 @@ public class TableUtilsTest extends BaseCoreTest {
 					}
 				})
 				.anyTimes();
-		expect(stmt.runUpdate()).andReturn(0).anyTimes();
+		expect(stmt.runExecute()).andReturn(0).anyTimes();
 		connectionSource.releaseConnection(conn);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
 		connectionSource.releaseConnection(conn);
@@ -296,7 +296,7 @@ public class TableUtilsTest extends BaseCoreTest {
 						return stmt;
 					}
 				}).anyTimes();
-		expect(stmt.runUpdate()).andReturn(0).anyTimes();
+		expect(stmt.runExecute()).andReturn(0).anyTimes();
 		connectionSource.releaseConnection(conn);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
 		connectionSource.releaseConnection(conn);
@@ -479,7 +479,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		} else {
 			expect(conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class))).andReturn(
 					stmt);
-			expect(stmt.runUpdate()).andReturn(rowN);
+			expect(stmt.runExecute()).andReturn(rowN);
 			stmt.close();
 			if (queryAfter != null) {
 				expect(conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class))).andReturn(
