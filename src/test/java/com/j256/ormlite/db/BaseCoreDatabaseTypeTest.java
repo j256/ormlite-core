@@ -276,7 +276,7 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 	@Test
 	public void testAppendLimitValue() throws Exception {
 		StringBuilder sb = new StringBuilder();
-		int limit = 122;
+		long limit = 122;
 		databaseType.appendLimitValue(sb, limit, null);
 		assertEquals("LIMIT " + limit + " ", sb.toString());
 	}
