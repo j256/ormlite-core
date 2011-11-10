@@ -579,4 +579,15 @@ public class RuntimeExceptionDao<T, ID> {
 			throw new RuntimeException(e);
 		}
 	}
+
+	/**
+	 * @see Dao#idExists(Object)
+	 */
+	public boolean idExists(ID id) {
+		try {
+			return dao.idExists(id);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }
