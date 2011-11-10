@@ -171,10 +171,10 @@ More information about setting up the DAOs is available later in the manual. @xr
 @node Starting Code, Using, Starting DAO, Getting Started
 @section Code Example
 
-The code in this section demonstrates how to use the concepts presented in the previous sections. The code uses the native Java H2 database to
-create an in-memory test database. You will need to download and add the H2 jar file to your classpath if you want to run the example as-is.  See
-the @uref{http://www.h2database.com/html/download.html, H2 home page}.  @emph{NOTE:} Android users should see the Android specific documentation
-later in the manual. @xref{Use With Android}.  There are also complete code examples that can be used.  @xref{Examples}.
+This example uses the native Java H2 database to create an in-memory test database. You will need to download and add the H2 jar file to your
+classpath if you want to run the example as-is.  See the @uref{http://www.h2database.com/html/download.html, H2 home page}.  @emph{NOTE:}
+Android users should see the Android specific documentation later in the manual. @xref{Use With Android}.  There are also complete code
+examples that can be used.  @xref{Examples}.
 
 The code performs the following steps.
 
@@ -203,7 +203,7 @@ public class AccountApp @{
         TableUtils.createTable(connectionSource, Account.class);
 @end example
 
-Once we have configured our database objects, we can use them to create an Account, persist it to the database, and query for it from
+Once we have configured our database objects, we can use them to persist an Account to the database and query for it from
 the database by its ID:
 
 @example
@@ -613,10 +613,10 @@ orderDao.create(order1);
 @anchor{version feature}
 @item version
 
-Set this to true (default false) to have this field be a version for the row.  Version field add restrictions when an
-object is updated to the datbase that protect against data corruption when multiple entites may be updating the row at
-the same time.  This is very useful in distributed database scenarios if (for example) a utility process is updating
-an @code{Account} and you don't want to protect against overwriting a user update from the web-server.
+Set this to true (default false) to have this field be a version for the row.  A version field adds restrictions when an
+object is updated to the datbase that protects against data corruption when multiple entites are updating the row at the
+same time.  This is very useful in distributed database scenarios if (for example) a utility process is updating an
+@code{Account} and you don't want to protect against overwriting a user update from the web-server.
 
 @enumerate
 @item The current-value of the version field is read from the object 
@@ -2242,7 +2242,7 @@ QueryBuilder<Account, String> queryBuilder =
 queryBuilder.where().eq(Account.PASSWORD_FIELD_NAME, "qwerty");
 // prepare our sql statement
 PreparedQuery<Account> preparedQuery = queryBuilder.prepare();
-// query for all accounts that have that password
+// query for all accounts that have "qwerty" as a password
 List<Account> accountList = accountDao.query(preparedQuery);
 @end example
 
@@ -3810,12 +3810,6 @@ concentrate on testing a particular class instead of the whole package.
 As a test database implementation, H2 is very fast and simple to use.  However, we recommend MySQL or Postgres for
 multi-threaded, high-performance, production databases.
 
-@item org.apache.log4j
-
-For logging to files using the @code{log4j.properties} config.  In the log4j package, you can exclude the following
-dependencies: @code{com.sun.jmx.jmxri}, @code{com.sun.jdmk.jmxtools}, @code{javax.activation.activation},
-@code{javax.jms.jms}, @code{javax.mail.mail}.
-
 @end table
 
 @c ----------------------------------------------------------------
@@ -4310,11 +4304,12 @@ Thanks much to them all.
 @itemize @bullet
 
 @item Kevin Galligan was the impetus and the author of a good bit of the Android compatible code.  He wrote the Android level support
-classes and did a ton of beta-testing of it.  He's also provided all of the Android examples.  See @uref{http://www.kagii.com/}.
+classes and did a ton of beta-testing of it.  He's also provided the initial Android examples.  See @uref{http://www.kagii.com/}.
 
-@item Nelson Erb  was our self-appointed documentation and testing volunteer for a year.  He did a great job summarizing sections of
-this document so we could create a better 'Getting Started' section.  He also fleshed out a bunch of unit tests to improve coverage in
-some areas.
+@item Nelson Erb was our self-appointed documentation and testing volunteer for a year.  He did a great job summarizing sections of
+this document so we could create a better 'Getting Started' section.  He also fleshed out a bunch of unit tests to improve coverage.
+
+@item Craig Andrews and Pedro Velasco has been very quick with feedback, bug reports, feature requests and other help.
 
 @item JC Romanda has been an excellent addition to the user base providing feedback, discovering and reporting bugs, providing patches
 for new features, testing new features before the release, and thinking a lot about how ORMLite can be extended and improved.
@@ -4327,18 +4322,45 @@ project.
 
 @c -----------------
 
-@item Skylar helped with recursive ForeignCollections with an excellent bug report with unit tests.
-@item Chris Banes improved the Android support and provided feedback on the wiring.
-@item Adam Brown helped with the memory analysis to lower the GC overhead.
-@item Jaxelrod has submitted some excellent bug reports and provided feedback on the maven release mechanisms and documentation.
-@item Stewert helped identify a bug with using the UpdateBuilder with Date fields.
-@item Micael Dahlgren helped resolve a bad bug foreign field bug.
-@item Dale Asberry added the initial take on the generic ODBC database type.
-@item Richard Kooijman added the initial take on the Netezza database type.
-@item Markus Wiederkehr provided feedback on Android initialization and class hierarchies.
-@item Wayne Stidolph helped with Android usage feedback and help test some new features.
-@item Luke Meyer helped with Android functionality and the queryRaw features.
-@item Larry Hamel recommended index features and pointed out some bugs.
+@item Thanks much to the following folks for their bug reports, unit test submissions, memory analysis, code samples, feature requests,
+improvements, and general feedback:
+Adam Brown,
+Ali Aksakarya,
+Andrew Sleeman,
+Chase,
+Chris Banes,
+Dale Asberry,
+Daniel Colchete,
+Evan Grim.
+Flo,
+Ian Dees,
+Jaxelrod,
+Jean-Maxime Pelletier,
+Jeremy Mcjunkin,
+Jeroen Rakhorst,
+Johny Jugianto,
+Josh Guilfoyle,
+Joao Bosco,
+Larry Hamel,
+Luke Meyer,
+Mariak Kalman,
+Markus Wiederkehr,
+Micael Dahlgren,
+Michael,
+Ming Lin,
+Patras Vlad,
+Rahan,
+Richard Kooijman,
+Skylar,
+Stewert,
+Timo,
+Wayne Stidolph,
+birbird,
+coder sam,
+kyle lampert,
+steffen,
+zachawilson
+.
 
 @end itemize
 
