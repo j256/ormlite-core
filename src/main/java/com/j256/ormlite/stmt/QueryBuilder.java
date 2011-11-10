@@ -196,12 +196,8 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * @deprecated Should use {@link #limit(Long)}
 	 */
 	@Deprecated
-	public QueryBuilder<T, ID> limit(Integer maxRows) {
-		if (maxRows == null) {
-			return limit((Long) null);
-		} else {
-			return limit(maxRows.longValue());
-		}
+	public QueryBuilder<T, ID> limit(int maxRows) {
+		return limit((long) maxRows);
 	}
 
 	/**
@@ -216,12 +212,8 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * @deprecated Should use {@link #offset(Long)}
 	 */
 	@Deprecated
-	public QueryBuilder<T, ID> offset(Integer startRow) throws SQLException {
-		if (startRow == null) {
-			return offset((Long) null);
-		} else {
-			return offset(startRow.longValue());
-		}
+	public QueryBuilder<T, ID> offset(int startRow) throws SQLException {
+		return offset((long) startRow);
 	}
 
 	/**
