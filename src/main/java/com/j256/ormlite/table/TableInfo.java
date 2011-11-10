@@ -194,6 +194,10 @@ public class TableInfo<T, ID> {
 		return foreignAutoCreate;
 	}
 
+	/**
+	 * Return true if this table information has a field with this columnName as set by
+	 * {@link DatabaseField#columnName()} or the field name if not set.
+	 */
 	public boolean hasColumnName(String columnName) {
 		for (FieldType fieldType : fieldTypes) {
 			if (fieldType.getColumnName().equals(columnName)) {
