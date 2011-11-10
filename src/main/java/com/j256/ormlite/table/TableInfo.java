@@ -106,7 +106,7 @@ public class TableInfo<T, ID> {
 			// build our alias map if we need it
 			Map<String, FieldType> map = new HashMap<String, FieldType>();
 			for (FieldType fieldType : fieldTypes) {
-				map.put(fieldType.getDbColumnName(), fieldType);
+				map.put(fieldType.getColumnName(), fieldType);
 			}
 			fieldNameMap = map;
 		}
@@ -116,7 +116,7 @@ public class TableInfo<T, ID> {
 			// look to see if someone is using the field-name instead of column-name
 			for (FieldType fieldType2 : fieldTypes) {
 				if (fieldType2.getFieldName().equals(columnName)) {
-					throw new IllegalArgumentException("You should use columnName '" + fieldType2.getDbColumnName()
+					throw new IllegalArgumentException("You should use columnName '" + fieldType2.getColumnName()
 							+ "' for table " + tableName + " instead of fieldName '" + columnName + "'");
 				}
 			}
@@ -143,7 +143,7 @@ public class TableInfo<T, ID> {
 		StringBuilder sb = new StringBuilder(64);
 		sb.append(object.getClass().getSimpleName());
 		for (FieldType fieldType : fieldTypes) {
-			sb.append(' ').append(fieldType.getDbColumnName()).append("=");
+			sb.append(' ').append(fieldType.getColumnName()).append("=");
 			try {
 				sb.append(fieldType.extractJavaFieldValue(object));
 			} catch (Exception e) {
@@ -192,5 +192,14 @@ public class TableInfo<T, ID> {
 	 */
 	public boolean isForeignAutoCreate() {
 		return foreignAutoCreate;
+	}
+
+	public boolean hasColumnName(String columnName) {
+		for (FieldType fieldType : fieldTypes) {
+			if (fieldType.getColumnName().equals(columnName)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

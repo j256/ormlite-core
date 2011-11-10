@@ -139,7 +139,7 @@ public class Where<T, ID> {
 		if (idFieldType == null) {
 			this.idColumnName = null;
 		} else {
-			this.idColumnName = idFieldType.getDbColumnName();
+			this.idColumnName = idFieldType.getColumnName();
 		}
 		this.databaseType = databaseType;
 	}

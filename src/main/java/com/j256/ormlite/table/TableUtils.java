@@ -332,7 +332,7 @@ public class TableUtils {
 						statementsAfter, queriesAfter);
 			} else {
 				// hand defined field
-				databaseType.appendEscapedEntityName(sb, fieldType.getDbColumnName());
+				databaseType.appendEscapedEntityName(sb, fieldType.getColumnName());
 				sb.append(' ').append(columnDefinition).append(' ');
 			}
 		}
@@ -375,7 +375,7 @@ public class TableUtils {
 				columnList = new ArrayList<String>();
 				indexMap.put(indexName, columnList);
 			}
-			columnList.add(fieldType.getDbColumnName());
+			columnList.add(fieldType.getColumnName());
 		}
 
 		StringBuilder sb = new StringBuilder(128);

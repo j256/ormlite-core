@@ -58,7 +58,7 @@ public class FieldType {
 	private final ConnectionSource connectionSource;
 	private final String tableName;
 	private final Field field;
-	private final String dbColumnName;
+	private final String columnName;
 	private final DatabaseFieldConfig fieldConfig;
 	private final boolean isId;
 	private final boolean isGeneratedId;
@@ -165,9 +165,9 @@ public class FieldType {
 			}
 		}
 		if (fieldConfig.getColumnName() == null) {
-			this.dbColumnName = defaultFieldName;
+			this.columnName = defaultFieldName;
 		} else {
-			this.dbColumnName = fieldConfig.getColumnName();
+			this.columnName = fieldConfig.getColumnName();
 		}
 		this.fieldConfig = fieldConfig;
 		if (fieldConfig.isId()) {
@@ -397,8 +397,8 @@ public class FieldType {
 		return field.getType();
 	}
 
-	public String getDbColumnName() {
-		return dbColumnName;
+	public String getColumnName() {
+		return columnName;
 	}
 
 	public DataPersister getDataPersister() {
@@ -707,7 +707,7 @@ public class FieldType {
 		Dao<FT, FID> castDao = (Dao<FT, FID>) foreignDao;
 		if (!fieldConfig.isForeignCollectionEager() && !forceEager) {
 			// we know this won't go recursive so no need for the counters
-			return new LazyForeignCollection<FT, FID>(castDao, foreignFieldType.dbColumnName, id,
+			return new LazyForeignCollection<FT, FID>(castDao, foreignFieldType.columnName, id,
 					fieldConfig.getForeignCollectionOrderColumn(), parent);
 		}
 
@@ -715,7 +715,7 @@ public class FieldType {
 		// are we over our level limit?
 		if (levelCounters.foreignCollectionLevel >= fieldConfig.getMaxEagerForeignCollectionLevel()) {
 			// then return a lazy collection instead
-			return new LazyForeignCollection<FT, FID>(castDao, foreignFieldType.dbColumnName, id,
+			return new LazyForeignCollection<FT, FID>(castDao, foreignFieldType.columnName, id,
 					fieldConfig.getForeignCollectionOrderColumn(), parent);
 		}
 		levelCounters.foreignCollectionLevel++;
@@ -731,10 +731,10 @@ public class FieldType {
 	 * Get the result object from the results. A call through to {@link FieldConverter#resultToJava}.
 	 */
 	public <T> T resultToJava(DatabaseResults results, Map<String, Integer> columnPositions) throws SQLException {
-		Integer dbColumnPos = columnPositions.get(dbColumnName);
+		Integer dbColumnPos = columnPositions.get(columnName);
 		if (dbColumnPos == null) {
-			dbColumnPos = results.findColumn(dbColumnName);
-			columnPositions.put(dbColumnName, dbColumnPos);
+			dbColumnPos = results.findColumn(columnName);
+			columnPositions.put(columnName, dbColumnPos);
 		}
 		@SuppressWarnings("unchecked")
 		T converted = (T) fieldConverter.resultToJava(this, results, dbColumnPos);

@@ -349,7 +349,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	private void appendFieldColumnName(StringBuilder sb, FieldType fieldType, List<FieldType> fieldTypeList) {
-		databaseType.appendEscapedEntityName(sb, fieldType.getDbColumnName());
+		databaseType.appendEscapedEntityName(sb, fieldType.getColumnName());
 		if (fieldTypeList != null) {
 			fieldTypeList.add(fieldType);
 		}

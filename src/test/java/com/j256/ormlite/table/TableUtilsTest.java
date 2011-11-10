@@ -69,7 +69,7 @@ public class TableUtilsTest extends BaseCoreTest {
 					List<String> queriesAfter) throws SQLException {
 				super.appendColumnArg(tableName, sb, fieldType, additionalArgs, statementsBefore, statementsAfter,
 						queriesAfter);
-				if (fieldType.getDbColumnName().equals(LocalFoo.ID_FIELD_NAME)) {
+				if (fieldType.getColumnName().equals(LocalFoo.ID_FIELD_NAME)) {
 					queriesAfter.add(queryAfter);
 				}
 			}

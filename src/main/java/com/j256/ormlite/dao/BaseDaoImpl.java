@@ -686,7 +686,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	public <FT> ForeignCollection<FT> getEmptyForeignCollection(String fieldName) throws SQLException {
 		checkForInitialized();
 		for (FieldType fieldType : tableInfo.getFieldTypes()) {
-			if (fieldType.getDbColumnName().equals(fieldName)) {
+			if (fieldType.getColumnName().equals(fieldName)) {
 				return fieldType.buildForeignCollection(null, null, true);
 			}
 		}
@@ -836,7 +836,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 				if (useArgs) {
 					fieldValue = new SelectArg(fieldValue);
 				}
-				where.eq(fieldType.getDbColumnName(), fieldValue);
+				where.eq(fieldType.getColumnName(), fieldValue);
 				fieldC++;
 			}
 		}

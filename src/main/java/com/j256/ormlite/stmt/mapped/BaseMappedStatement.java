@@ -75,7 +75,7 @@ public abstract class BaseMappedStatement<T, ID> {
 
 	static void appendFieldColumnName(DatabaseType databaseType, StringBuilder sb, FieldType fieldType,
 			List<FieldType> fieldTypeList) {
-		databaseType.appendEscapedEntityName(sb, fieldType.getDbColumnName());
+		databaseType.appendEscapedEntityName(sb, fieldType.getColumnName());
 		if (fieldTypeList != null) {
 			fieldTypeList.add(fieldType);
 		}

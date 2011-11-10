@@ -51,7 +51,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 
 	public void appendColumnArg(String tableName, StringBuilder sb, FieldType fieldType, List<String> additionalArgs,
 			List<String> statementsBefore, List<String> statementsAfter, List<String> queriesAfter) throws SQLException {
-		appendEscapedEntityName(sb, fieldType.getDbColumnName());
+		appendEscapedEntityName(sb, fieldType.getColumnName());
 		sb.append(' ');
 		DataPersister dataPersister = fieldType.getDataPersister();
 		// first try the per-field width
@@ -307,7 +307,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 				} else {
 					sb.append(',');
 				}
-				appendEscapedEntityName(sb, fieldType.getDbColumnName());
+				appendEscapedEntityName(sb, fieldType.getColumnName());
 			}
 		}
 		if (sb != null) {
@@ -335,7 +335,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 				} else {
 					sb.append(',');
 				}
-				appendEscapedEntityName(sb, fieldType.getDbColumnName());
+				appendEscapedEntityName(sb, fieldType.getColumnName());
 			}
 		}
 		if (sb != null) {
@@ -466,7 +466,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 			List<String> statementsAfter) {
 		StringBuilder alterSb = new StringBuilder();
 		alterSb.append(" UNIQUE (");
-		appendEscapedEntityName(alterSb, fieldType.getDbColumnName());
+		appendEscapedEntityName(alterSb, fieldType.getColumnName());
 		alterSb.append(")");
 		additionalArgs.add(alterSb.toString());
 	}

@@ -98,7 +98,7 @@ public class MappedDeleteCollection<T, ID> extends BaseMappedStatement<T, ID> {
 	private static void appendWhereIds(DatabaseType databaseType, FieldType idField, StringBuilder sb, int numDatas,
 			FieldType[] fieldTypes) {
 		sb.append("WHERE ");
-		databaseType.appendEscapedEntityName(sb, idField.getDbColumnName());
+		databaseType.appendEscapedEntityName(sb, idField.getColumnName());
 		sb.append(" IN (");
 		boolean first = true;
 		for (int i = 0; i < numDatas; i++) {

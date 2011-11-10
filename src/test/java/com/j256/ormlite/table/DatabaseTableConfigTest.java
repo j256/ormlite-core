@@ -44,7 +44,7 @@ public class DatabaseTableConfigTest {
 		dbTableConf.extractFieldTypes(connectionSource);
 		FieldType[] fieldTypes = dbTableConf.getFieldTypes(databaseType);
 		assertEquals(1, fieldTypes.length);
-		assertEquals("stuff", fieldTypes[0].getDbColumnName());
+		assertEquals("stuff", fieldTypes[0].getColumnName());
 	}
 
 	@Test
@@ -65,7 +65,7 @@ public class DatabaseTableConfigTest {
 		dbTableConf.extractFieldTypes(connectionSource);
 		FieldType[] fieldTypes = dbTableConf.getFieldTypes(databaseType);
 		assertEquals(1, fieldTypes.length);
-		assertEquals("stuff", fieldTypes[0].getDbColumnName());
+		assertEquals("stuff", fieldTypes[0].getColumnName());
 	}
 
 	@Test
@@ -89,7 +89,7 @@ public class DatabaseTableConfigTest {
 		dbTableConf.extractFieldTypes(connectionSource);
 		FieldType[] fieldTypes = dbTableConf.getFieldTypes(databaseType);
 		assertEquals(1, fieldTypes.length);
-		assertEquals("stuff", fieldTypes[0].getDbColumnName());
+		assertEquals("stuff", fieldTypes[0].getColumnName());
 	}
 
 	@Test
@@ -107,7 +107,7 @@ public class DatabaseTableConfigTest {
 		dbTableConf.extractFieldTypes(connectionSource);
 		FieldType[] fieldTypes = dbTableConf.getFieldTypes(databaseType);
 		assertEquals(1, fieldTypes.length);
-		assertEquals("stuff", fieldTypes[0].getDbColumnName());
+		assertEquals("stuff", fieldTypes[0].getColumnName());
 	}
 
 	@Test(expected = SQLException.class)

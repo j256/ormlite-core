@@ -46,10 +46,10 @@ public class TableInfoTest extends BaseCoreTest {
 		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
 		assertEquals(Foo.class, tableInfo.getDataClass());
 		assertEquals(TABLE_NAME, tableInfo.getTableName());
-		assertEquals(COLUMN_NAME, tableInfo.getIdField().getDbColumnName());
+		assertEquals(COLUMN_NAME, tableInfo.getIdField().getColumnName());
 		assertEquals(1, tableInfo.getFieldTypes().length);
 		assertSame(tableInfo.getIdField(), tableInfo.getFieldTypes()[0]);
-		assertEquals(COLUMN_NAME, tableInfo.getFieldTypeByColumnName(COLUMN_NAME).getDbColumnName());
+		assertEquals(COLUMN_NAME, tableInfo.getFieldTypeByColumnName(COLUMN_NAME).getColumnName());
 	}
 
 	@Test

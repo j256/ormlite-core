@@ -2,6 +2,7 @@ package com.j256.ormlite.db;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
@@ -47,10 +48,26 @@ public class BaseSqliteDatabaseTypeTest extends BaseCoreTest {
 	}
 
 	@Test
+	public void testGeneratedIdSqlAtEnd() {
+		assertFalse(new OurSqliteDatabaseType().generatedIdSqlAtEnd());
+	}
+
+	@Test
+	public void testIsCreateIfNotExistsSupported() {
+		assertTrue(new OurSqliteDatabaseType().isCreateIfNotExistsSupported());
+	}
+
+	@Test
 	public void testGetFieldConverter() throws Exception {
 		OurSqliteDatabaseType dbType = new OurSqliteDatabaseType();
 		assertEquals(Byte.valueOf((byte) 1), dbType.getFieldConverter(DataType.BOOLEAN.getDataPersister())
 				.parseDefaultString(null, "true"));
+	}
+
+	@Test
+	public void testDefaultFieldConverter() throws Exception {
+		OurSqliteDatabaseType dbType = new OurSqliteDatabaseType();
+		assertSame(DataType.STRING.getDataPersister(), dbType.getFieldConverter(DataType.STRING.getDataPersister()));
 	}
 
 	private static class OurSqliteDatabaseType extends BaseSqliteDatabaseType {
@@ -63,6 +80,14 @@ public class BaseSqliteDatabaseTypeTest extends BaseCoreTest {
 		}
 		public String getDatabaseName() {
 			return "fake";
+		}
+		@Override
+		public boolean generatedIdSqlAtEnd() {
+			return super.generatedIdSqlAtEnd();
+		}
+		@Override
+		public boolean isCreateIfNotExistsSupported() {
+			return super.isCreateIfNotExistsSupported();
 		}
 	}
 }
