@@ -2292,6 +2292,20 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertTrue(foo1.version.getTime() >= before2 && foo1.version.getTime() <= after + 1);
 	}
 
+	@Test
+	public void testIfExists() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+
+		Foo foo = new Foo();
+		String id = "fewojfewf";
+		foo.id = id;
+
+		assertFalse(dao.idExists(id));
+		assertEquals(1, dao.create(foo));
+		assertTrue(dao.idExists(id));
+		assertFalse(dao.idExists(id + "1"));
+	}
+
 	/* ============================================================================================== */
 
 	private String buildFooQueryAllString(Dao<Foo, Object> fooDao) throws SQLException {

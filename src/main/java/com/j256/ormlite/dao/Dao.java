@@ -602,6 +602,11 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public GenericRowMapper<T> getSelectStarRowMapper() throws SQLException;
 
 	/**
+	 * Returns true if an object exists that matches this ID otherwise false.
+	 */
+	public boolean idExists(ID id) throws SQLException;
+
+	/**
 	 * Return class for the {@link Dao#createOrUpdate(Object)} method.
 	 */
 	public class CreateOrUpdateStatus {

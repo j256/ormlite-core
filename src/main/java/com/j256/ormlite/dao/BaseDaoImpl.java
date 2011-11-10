@@ -750,6 +750,15 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		return statementExecutor.getSelectStarRowMapper();
 	}
 
+	public boolean idExists(ID id) throws SQLException {
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		try {
+			return statementExecutor.ifExists(connection, id);
+		} finally {
+			connectionSource.releaseConnection(connection);
+		}
+	}
+
 	/**
 	 * Returns the table configuration information associated with the Dao's class or null if none.
 	 */

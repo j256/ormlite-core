@@ -121,7 +121,12 @@ public class H2DatabaseConnection implements DatabaseConnection {
 	}
 
 	public long queryForLong(String statement) throws SQLException {
-		Object result = queryForOne(statement, new Object[0], new FieldType[0], longWrapper, null);
+		return queryForLong(statement, new Object[0], new FieldType[0]);
+	}
+
+	public long queryForLong(String statement, Object[] args, FieldType[] argFieldTypes) throws SQLException {
+		// don't care about the object cache here
+		Object result = queryForOne(statement, args, argFieldTypes, longWrapper, null);
 		if (result == null) {
 			throw new SQLException("No results returned in query-for-long: " + statement);
 		} else if (result == MORE_THAN_ONE) {

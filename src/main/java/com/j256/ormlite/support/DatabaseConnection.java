@@ -137,6 +137,18 @@ public interface DatabaseConnection {
 	public long queryForLong(String statement) throws SQLException;
 
 	/**
+	 * Perform a query whose result should be a single long-integer value.
+	 * 
+	 * @param statement
+	 *            SQL statement to use for the query.
+	 * @param args
+	 *            Arguments to pass into the query.
+	 * @param argFieldTypes
+	 *            Field types that correspond to the args.
+	 */
+	public long queryForLong(String statement, Object[] args, FieldType[] argFieldTypes) throws SQLException;
+
+	/**
 	 * Close the connection to the database.
 	 */
 	public void close() throws SQLException;

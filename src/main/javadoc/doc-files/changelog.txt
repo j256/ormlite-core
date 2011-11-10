@@ -4,6 +4,8 @@
 	* CORE: Deprecated the @DatabaseFieldSimple and other smaller annotations that were causing confusion.  Sorry.
 	* CORE: Fixed config loader support for foreignAutoCreate and version fields.  Thanks to Chase.  Fixes bug #3433599.
 	* CORE: Fixed foreignAutoCreate bug where parent object didn't get foreign id.  Thanks to Chase. Fixes bug #3434550.
+	* CORE: Added hasColumnName() method to TableInfo.  Thanks to JC.  Resolves feature #3435754.
+	* CORE: Added Dao.idExists(ID id) to see if row with id exists. Thanks to Craig Andrews. Resolves feature #3300688.
 	* ANDROID: Added some reflection fu to make reading Annotations ~20 times faster.  Thanks a ton to Josh Guilfoyle.
 	* ANDROID: Fixed problems with countOf() dao method.  Thanks to Pedro Velasco.  Fixes bug #3434508.
 	* JDBC: Added support for better escaping of "schema"."table" in Postgres.  Thanks to Johny Jugianto.

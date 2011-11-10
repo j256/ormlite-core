@@ -1,6 +1,7 @@
 package com.j256.ormlite.table;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
+import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
@@ -111,6 +113,14 @@ public class TableInfoTest extends BaseCoreTest {
 		PrivateConstructor pack2 = packConstDao.queryForId(id);
 		// and the id should match
 		assertEquals(id, pack2.id);
+	}
+
+	@Test
+	public void testHasColumnName() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		TableInfo<Foo, String> tableInfo = ((BaseDaoImpl<Foo, String>) dao).getTableInfo();
+		assertTrue(tableInfo.hasColumnName(COLUMN_NAME));
+		assertFalse(tableInfo.hasColumnName("not this name"));
 	}
 
 	/* ================================================================================================================ */

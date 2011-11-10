@@ -59,6 +59,8 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	private MappedDelete<T, ID> mappedDelete;
 	private MappedRefresh<T, ID> mappedRefresh;
 	private String countStarQuery = null;
+	private String ifExistsQuery = null;
+	private FieldType[] ifExistsFieldTypes = null;
 
 	/**
 	 * Provides statements for various SQL operations.
@@ -476,6 +478,19 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			result[colC] = results.getString(colC);
 		}
 		return result;
+	}
+
+	public boolean ifExists(DatabaseConnection connection, ID id) throws SQLException {
+		if (ifExistsQuery == null) {
+			QueryBuilder<T, ID> qb = new QueryBuilder<T, ID>(databaseType, tableInfo, dao);
+			qb.selectRaw("COUNT(*)");
+			qb.where().eq(tableInfo.getIdField().getColumnName(), new SelectArg());
+			ifExistsQuery = qb.prepareStatementString();
+			ifExistsFieldTypes = new FieldType[] { tableInfo.getIdField() };
+		}
+		long count = connection.queryForLong(ifExistsQuery, new Object[] { id }, ifExistsFieldTypes);
+		logger.debug("query of '{}' returned {}", ifExistsQuery, count);
+		return (count != 0);
 	}
 
 	private void assignStatementArguments(CompiledStatement compiledStatement, String[] arguments) throws SQLException {
