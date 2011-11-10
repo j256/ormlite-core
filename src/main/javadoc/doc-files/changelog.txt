@@ -1,4 +1,4 @@
-4.30: 11/??/2011 (svn r????)
+4.30: 11/10/2011 (svn r????)
 	* CORE: Added ability to specify ForeignCollection columns in selectColumns(). Thanks to @Timo. Fixes bug #3428751.
 	* CORE: Added two new Dao methods: mapSelectStarRow and getSelectStarRowMapper for easier mapping of results.
 	* CORE: Deprecated the @DatabaseFieldSimple and other smaller annotations that were causing confusion.  Sorry.

@@ -3714,6 +3714,24 @@ you to inject your own cache classes.  Call it with null to disable the cache.  
 Flush the object cache if it has been enabled. This will remove an objects that are in the cache to reclaim
 memory. Any future queries will re-request them from the database.
 
+@cindex map select starquery
+@cindex object mapping for select star
+@cindex row mapping for select star
+@item mapSelectStarRow(DatabaseResults results)
+
+Return the latest row from the database results from a query to @code{select *} (star).  This allows you to remap the
+results.  It is particularly useful if you are repositioning a database cursor externally. 
+
+@item getSelectStarRowMapper()
+
+Return a row mapper that is suitable for mapping results from a query to @code{select *} (star).
+
+@item if id exists
+@item does id exist already
+@item idExists(ID id)
+
+Returns true if an object exists that matches this ID otherwise false.
+
 @end table
 
 @c ----------------------------------------------------------------

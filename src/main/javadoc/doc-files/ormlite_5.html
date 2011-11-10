@@ -778,6 +778,27 @@ you to inject your own cache classes.  Call it with null to disable the cache.  
 <p>Flush the object cache if it has been enabled. This will remove an objects that are in the cache to reclaim
 memory. Any future queries will re-request them from the database.
 
+</p><a name="IDX332"></a>
+<a name="IDX333"></a>
+<a name="IDX334"></a>
+</dd>
+<dt><code> mapSelectStarRow(DatabaseResults results)</code></dt>
+<dd>
+<p>Return the latest row from the database results from a query to <code>select *</code> (star).  This allows you to remap the
+results.  It is particularly useful if you are repositioning a database cursor externally. 
+
+</p></dd>
+<dt><code> getSelectStarRowMapper()</code></dt>
+<dd>
+<p>Return a row mapper that is suitable for mapping results from a query to <code>select *</code> (star).
+
+</p></dd>
+<dt><code> if id exists</code></dt>
+<dt><code> does id exist already</code></dt>
+<dt><code> idExists(ID id)</code></dt>
+<dd>
+<p>Returns true if an object exists that matches this ID otherwise false.
+
 </p></dd>
 </dl>
 
@@ -818,7 +839,7 @@ logger.debug(&quot;built statement {}&quot;, statement);
 <p>If you are using log4j (through Apache commons logging or directly), you can use something
 like the following as your log4j.properties file to see details about the SQL calls.
 
-</p><a name="IDX332"></a>
+</p><a name="IDX335"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">log4j.rootLogger=INFO, stdout
 
 log4j.appender.stdout=org.apache.log4j.ConsoleAppender
@@ -836,8 +857,8 @@ log4j.logger.com.j256.ormlite=DEBUG
 #log4j.logger.com.j256.ormlite.stmt.mapped.MappedCreate=TRACE
 #log4j.logger.com.j256.ormlite.stmt.StatementExecutor=TRACE
 </pre></td></tr></table>
-<a name="IDX333"></a>
-<a name="IDX334"></a>
+<a name="IDX336"></a>
+<a name="IDX337"></a>
 <p><em>Notice</em> that you can uncomment the last lines in the above log4j.properties file to log the arguments to the
 various SQL calls.  This may expose passwords or other sensitive information in the database so probably should
 only be used during debugging and should not be the default.
@@ -883,7 +904,7 @@ and Log4j but these classes will <em>not</em> be referenced unless they exist in
 
 </p><dl compact="compact">
 <dd>
-<a name="IDX335"></a>
+<a name="IDX338"></a>
 </dd>
 <dt><code> javax.persistence</code></dt>
 <dd>
@@ -937,7 +958,7 @@ Order was inserted but then a disk error stopped the Account from being updated,
 If you used a transaction then both changes would be saved to the database only when the transaction was closed.  Most (not all)
 databases support transactions which are designed specifically with these sorts of scenarios in mind.
 
-</p><a name="IDX336"></a>
+</p><a name="IDX339"></a>
 <p>ORMLite has basic support for transactions through the use of the <code>TransactionManager</code> class which wraps
 databases operations in a transaction.  If those operations throw an exception, then the transaction is &quot;rolled-back&quot;
 and none of the operations are persisted to the database.  Once the operations are finished, if no exception is thrown,
@@ -964,8 +985,8 @@ TransactionManager.callInTransaction(connectionSource,
 the database.  Transactions allow you to make multiple operations while still ensuring data integrity.  Notice that you
 can return an object from the callable so you could pass back the number of rows affected or other information.
 
-</p><a name="IDX337"></a>
-<a name="IDX338"></a>
+</p><a name="IDX340"></a>
+<a name="IDX341"></a>
 <p><em>NOTE:</em> Performing database operations within a transaction also has the side effect of better performance since
 a number of changes are written at once in a batch.  The <code>Dao.callBatchTasks()</code> method should always be used if
 you are looking for performance of a large number of operations. See <a href="#ANC33">callBatchTasks</a>.  For databases that do not 
@@ -1029,8 +1050,8 @@ it is not in the cache then it will be added to the cache.  This does <em>not</e
 
 </p></li></ul>
 
-<a name="IDX339"></a>
-<a name="IDX340"></a>
+<a name="IDX342"></a>
+<a name="IDX343"></a>
 <p>By default the cache that is used internally by ORMLite if you enable the cache with <code>true</code> will be a &quot;weak-reference&quot; cache.  This
 means that if no other code has a strong reference to the object, it will be removed from the cache during the next garbage collection
 cycle. ORMLite also has a &quot;soft-reference&quot; cache which will use more memory to hold objects if available and supported by your OS.  You
@@ -1046,8 +1067,8 @@ accountDao.setObjectCache(
 accessed.  You should consider calling the <code>cleanNullReferencesAll()</code> method on your cache to remove these objects and free up
 their associated memory on occasion.
 
-</p><a name="IDX341"></a>
-<a name="IDX342"></a>
+</p><a name="IDX344"></a>
+<a name="IDX345"></a>
 <p>There is also a Least Recently Used (LRU) cache that will store a certain number of objects based on a capacity value.  Each class gets
 the same capacity value so if the same cache is used in 5 different daos, then 500 objects will be held in the <code>LruObjectCache</code> if
 the capacity is 100.
