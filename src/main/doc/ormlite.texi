@@ -4010,7 +4010,7 @@ in automatically by maven.
 then just replace the @code{ormlite-jdbc} artifact name with @code{ormlite-android}.
 
 @c ----------------------------------------------------------------
-@node How to Upgrade, 4.20, Maven, Top
+@node How to Upgrade, 4.30, Maven, Top
 @chapter Upgrade From Old Versions
 
 We strive to maintain backwards compatibility and to provide deprecated versions of old classes and methods.
@@ -4018,6 +4018,7 @@ However, sometimes when a new version is released, changes are made that require
 and rarely the on-disk database formats. 
 
 @menu
+* 4.30::                Upgrade to version 4.30
 * 4.20::                Upgrade to version 4.20
 * 4.14::                Upgrade to version 4.14
 * 4.10::                Upgrade to version 4.10
@@ -4027,7 +4028,42 @@ and rarely the on-disk database formats.
 @end menu
 
 @c ----------------------------------------------------------------
-@node 4.20, 4.14, How to Upgrade, How to Upgrade
+@node 4.30, 4.20, How to Upgrade, How to Upgrade
+@section Upgrade to Version 4.30
+
+For Android users, in 4.30 we added some reflection hacks to make the processing of the @code{@@DatabaseField} annotations
+a lot faster.  For this reason the following changes must be made:
+
+@itemize @bullet
+
+@item Instead of calling the annotation methods directly which causes tons of unnecessary GC objects, we use reflection and
+build a @code{DatabaseTableConfig} instead.  This means that if you have defined custom Dao classes, you will need to add
+a new constructor:
+
+@example
+public class AccountDaoImpl extends BaseDaoImpl<Account, String>
+  implements AccountDao @{
+    public AccountDaoImpl(ConnectionSource connectionSource)
+      throws SQLException @{
+        super(connectionSource, Account.class);
+    @}
+    // NOTE: this constructor is needed under Android in 4.30
+    public AccountDaoImpl(ConnectionSource connectionSource,
+        DatabaseTableConfig<Account> tableConfig)
+      throws SQLException @{
+        super(connectionSource, tableConfig);
+    @}
+@}
+@end example
+
+@item Because we had to write specific code to reflect on the @code{@@DatabaseField} annotation we have deprecated the
+@code{@@DatabaseFieldSimple} and other annotations that were added in version 4.26.  Sorry for the reversal on this but
+they were also causing confusion.
+
+@end itemize
+
+@c ----------------------------------------------------------------
+@node 4.20, 4.14, 4.30, How to Upgrade
 @section Upgrade to Version 4.20
 
 In 4.20 we made a couple of changes that bear some note.
