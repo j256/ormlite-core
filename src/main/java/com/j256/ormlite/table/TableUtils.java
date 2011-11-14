@@ -351,12 +351,12 @@ public class TableUtils {
 		statements.addAll(statementsBefore);
 		statements.add(sb.toString());
 		statements.addAll(statementsAfter);
-		addCreateIndexStatements(databaseType, tableInfo, statements, false);
-		addCreateIndexStatements(databaseType, tableInfo, statements, true);
+		addCreateIndexStatements(databaseType, tableInfo, statements, ifNotExists, false);
+		addCreateIndexStatements(databaseType, tableInfo, statements, ifNotExists, true);
 	}
 
 	private static <T, ID> void addCreateIndexStatements(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
-			List<String> statements, boolean unique) {
+			List<String> statements, boolean ifNotExists, boolean unique) {
 		// run through and look for index annotations
 		Map<String, List<String>> indexMap = new HashMap<String, List<String>>();
 		for (FieldType fieldType : tableInfo.getFieldTypes()) {
@@ -386,6 +386,9 @@ public class TableUtils {
 				sb.append("UNIQUE ");
 			}
 			sb.append("INDEX ");
+			if (ifNotExists && databaseType.isCreateIfNotExistsSupported()) {
+				sb.append("IF NOT EXISTS ");
+			}
 			databaseType.appendEscapedEntityName(sb, indexEntry.getKey());
 			sb.append(" ON ");
 			databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
