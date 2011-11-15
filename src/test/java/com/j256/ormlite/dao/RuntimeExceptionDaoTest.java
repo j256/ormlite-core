@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.junit.Test;
 
@@ -30,10 +31,16 @@ import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.Dao.CreateOrUpdateStatus;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.stmt.PreparedDelete;
+import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.PreparedUpdate;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.stmt.UpdateBuilder;
+import com.j256.ormlite.support.CompiledStatement;
+import com.j256.ormlite.support.DatabaseConnection;
+import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTableConfig;
 
 public class RuntimeExceptionDaoTest extends BaseCoreTest {
@@ -241,6 +248,7 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 
 		dao.setObjectCache(false);
 		dao.setObjectCache(null);
+		assertNull(dao.getObjectCache());
 		dao.clearObjectCache();
 	}
 
@@ -275,6 +283,70 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		DeleteBuilder<Foo, String> db = dao.deleteBuilder();
 		dao.delete(db.prepare());
 		assertNull(dao.queryForId(id));
+	}
+
+	@Test
+	public void testCoverage3() throws Exception {
+		Dao<Foo, String> exceptionDao = createDao(Foo.class, true);
+		RuntimeExceptionDao<Foo, String> dao = new RuntimeExceptionDao<Foo, String>(exceptionDao);
+
+		Foo foo = new Foo();
+		String id = "gjerpjpoegr";
+		foo.id = id;
+		int val = 1232131321;
+		foo.val = val;
+		assertEquals(1, dao.create(foo));
+
+		GenericRawResults<String[]> rawResults = dao.queryRaw("select * from foo");
+		assertEquals(1, rawResults.getResults().size());
+		GenericRawResults<Foo> mappedResults = dao.queryRaw("select * from foo", new RawRowMapper<Foo>() {
+			public Foo mapRow(String[] columnNames, String[] resultColumns) throws SQLException {
+				Foo fooResult = new Foo();
+				for (int i = 0; i < resultColumns.length; i++) {
+					if (columnNames[i].equals(Foo.ID_COLUMN_NAME)) {
+						fooResult.id = resultColumns[i];
+					}
+				}
+				return fooResult;
+			}
+		});
+		assertEquals(1, mappedResults.getResults().size());
+		GenericRawResults<Object[]> dataResults =
+				dao.queryRaw("select id,val from foo", new DataType[] { DataType.STRING, DataType.INTEGER });
+		assertEquals(1, dataResults.getResults().size());
+		assertEquals(0, dao.executeRaw("delete from foo where id = ?", id + 1));
+		assertEquals(0, dao.updateRaw("update foo set val = 100 where id = ?", id + 1));
+		final String someVal = "fpowejfpjfwe";
+		assertEquals(someVal, dao.callBatchTasks(new Callable<String>() {
+			public String call() throws Exception {
+				return someVal;
+			}
+		}));
+		assertNull(dao.findForeignFieldType(Void.class));
+		assertEquals(1, dao.countOf());
+		assertEquals(1, dao.countOf(dao.queryBuilder().setCountOf(true).prepare()));
+		PreparedQuery<Foo> prepared = dao.queryBuilder().prepare();
+		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
+		CompiledStatement compiled = null;
+		try {
+			compiled = prepared.compile(conn, StatementType.SELECT);
+			DatabaseResults results = compiled.runQuery(null);
+			assertTrue(results.next());
+			Foo result = dao.mapSelectStarRow(results);
+			assertEquals(foo.id, result.id);
+			GenericRowMapper<Foo> mapper = dao.getSelectStarRowMapper();
+			result = mapper.mapRow(results);
+			assertEquals(foo.id, result.id);
+		} finally {
+			if (compiled != null) {
+				compiled.close();
+			}
+			connectionSource.releaseConnection(conn);
+		}
+		assertTrue(dao.idExists(id));
+		Foo result = dao.queryForFirst(prepared);
+		assertEquals(foo.id, result.id);
+		assertNull(dao.getEmptyForeignCollection(Foo.ID_COLUMN_NAME));
 	}
 
 	@Test
@@ -669,6 +741,19 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 	}
 
 	@Test(expected = RuntimeException.class)
+	public void testCountOfPreparedThrow() throws Exception {
+		@SuppressWarnings("unchecked")
+		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
+		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
+		@SuppressWarnings("unchecked")
+		PreparedQuery<Foo> prepared = (PreparedQuery<Foo>) createMock(PreparedQuery.class);
+		expect(dao.countOf(prepared)).andThrow(new SQLException("Testing catch"));
+		replay(dao);
+		rtDao.countOf(prepared);
+		verify(dao);
+	}
+
+	@Test(expected = RuntimeException.class)
 	public void testGetEmptyForeignCollectionThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
@@ -676,6 +761,41 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		expect(dao.getEmptyForeignCollection(null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
 		rtDao.getEmptyForeignCollection(null);
+		verify(dao);
+	}
+
+	@Test(expected = RuntimeException.class)
+	public void testMapSelectStarRowThrow() throws Exception {
+		@SuppressWarnings("unchecked")
+		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
+		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
+		DatabaseResults results = createMock(DatabaseResults.class);
+		expect(dao.mapSelectStarRow(results)).andThrow(new SQLException("Testing catch"));
+		replay(dao);
+		rtDao.mapSelectStarRow(results);
+		verify(dao);
+	}
+
+	@Test(expected = RuntimeException.class)
+	public void testGetSelectStarRowMapperThrow() throws Exception {
+		@SuppressWarnings("unchecked")
+		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
+		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
+		expect(dao.getSelectStarRowMapper()).andThrow(new SQLException("Testing catch"));
+		replay(dao);
+		rtDao.getSelectStarRowMapper();
+		verify(dao);
+	}
+
+	@Test(expected = RuntimeException.class)
+	public void testIdExists() throws Exception {
+		@SuppressWarnings("unchecked")
+		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
+		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
+		String id = "eopwjfpwejf";
+		expect(dao.idExists(id)).andThrow(new SQLException("Testing catch"));
+		replay(dao);
+		rtDao.idExists(id);
 		verify(dao);
 	}
 }

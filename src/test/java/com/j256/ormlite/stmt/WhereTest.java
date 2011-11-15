@@ -468,6 +468,19 @@ public class WhereTest extends BaseCoreTest {
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
+	@Test(expected = SQLException.class)
+	public void testInSubQueryToManySubColumns() throws Exception {
+		TableInfo<ForeignFoo, Integer> tableInfo =
+				new TableInfo<ForeignFoo, Integer>(connectionSource, null, ForeignFoo.class);
+		Where<ForeignFoo, Integer> where = new Where<ForeignFoo, Integer>(tableInfo, null, databaseType);
+		BaseDaoImpl<ForeignFoo, Integer> foreignDao =
+				new BaseDaoImpl<ForeignFoo, Integer>(connectionSource, ForeignFoo.class) {
+				};
+		QueryBuilder<ForeignFoo, Integer> qb = foreignDao.queryBuilder();
+		qb.selectColumns(ID_COLUMN_NAME, FOREIGN_COLUMN_NAME);
+		where.in(ID_COLUMN_NAME, qb);
+	}
+
 	@Test
 	public void testExistsSubQuery() throws Exception {
 		TableInfo<ForeignFoo, Integer> tableInfo =
