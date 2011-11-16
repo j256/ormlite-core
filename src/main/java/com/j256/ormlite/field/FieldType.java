@@ -137,6 +137,10 @@ public class FieldType {
 						+ " but marked as foreign");
 			}
 			defaultFieldName = defaultFieldName + FOREIGN_ID_FIELD_SUFFIX;
+			if (ForeignCollection.class.isAssignableFrom(clazz)) {
+				throw new SQLException("Field '" + field.getName() + "' in class " + clazz + "' should use the @"
+						+ ForeignCollectionField.class.getSimpleName() + " annotation not foreign=true");
+			}
 		} else if (fieldConfig.isForeignCollection()) {
 			if (clazz != Collection.class && !ForeignCollection.class.isAssignableFrom(clazz)) {
 				throw new SQLException("Field class for '" + field.getName() + "' must be of class "

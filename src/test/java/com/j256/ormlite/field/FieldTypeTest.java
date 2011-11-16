@@ -736,6 +736,11 @@ public class FieldTypeTest extends BaseCoreTest {
 		createDao(ForeignAutoCreateNoGeneratedId.class, true);
 	}
 
+	@Test(expected = SQLException.class)
+	public void testForeignCollectionForeign() throws Exception {
+		createDao(ForeignCollectionForeign.class, true);
+	}
+
 	/* ========================================================================================================= */
 
 	protected static class Foo {
@@ -1027,6 +1032,13 @@ public class FieldTypeTest extends BaseCoreTest {
 		long id;
 		@DatabaseField
 		String stuff;
+	}
+
+	protected static class ForeignCollectionForeign {
+		@DatabaseField(id = true)
+		long id;
+		@DatabaseField(foreign = true)
+		ForeignCollection<String> collection;
 	}
 
 	private static class NeedsUppercaseSequenceDatabaseType extends NeedsSequenceDatabaseType {
