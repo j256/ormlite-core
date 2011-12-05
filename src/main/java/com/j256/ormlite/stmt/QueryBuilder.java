@@ -258,7 +258,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	@Override
-	protected void appendStatementStart(StringBuilder sb, List<ArgumentHolder> argList) throws SQLException {
+	protected void appendStatementStart(StringBuilder sb, List<ArgumentHolder> argList) {
 		sb.append("SELECT ");
 		if (databaseType.isLimitAfterSelect()) {
 			appendLimit(sb);

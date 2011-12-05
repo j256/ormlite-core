@@ -48,7 +48,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testAddBadColumn() throws Exception {
+	public void testAddBadColumn() {
 		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, baseFooTableInfo, null);
 		qb.selectColumns("unknown-column");
 	}

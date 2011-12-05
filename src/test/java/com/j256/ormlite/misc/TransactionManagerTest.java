@@ -40,7 +40,7 @@ public class TransactionManagerTest extends BaseCoreTest {
 		replay(connectionSource, conn, savePoint);
 		TransactionManager tm = new TransactionManager(connectionSource);
 		tm.callInTransaction(new Callable<Void>() {
-			public Void call() throws Exception {
+			public Void call() {
 				return null;
 			}
 		});
@@ -62,7 +62,7 @@ public class TransactionManagerTest extends BaseCoreTest {
 		replay(connectionSource, conn);
 		TransactionManager tm = new TransactionManager(connectionSource);
 		tm.callInTransaction(new Callable<Void>() {
-			public Void call() throws Exception {
+			public Void call() {
 				return null;
 			}
 		});
@@ -172,7 +172,7 @@ public class TransactionManagerTest extends BaseCoreTest {
 		replay(connectionSource, conn, savePoint);
 		TransactionManager tm = new TransactionManager(connectionSource);
 		tm.callInTransaction(new Callable<Void>() {
-			public Void call() throws Exception {
+			public Void call() {
 				return null;
 			}
 		});
@@ -199,7 +199,7 @@ public class TransactionManagerTest extends BaseCoreTest {
 		replay(connectionSource, conn, savePoint);
 		TransactionManager tm = new TransactionManager(connectionSource);
 		tm.callInTransaction(new Callable<Void>() {
-			public Void call() throws Exception {
+			public Void call() {
 				return null;
 			}
 		});

@@ -56,7 +56,7 @@ public class SelectArgTest extends BaseCoreStmtTest {
 	}
 
 	@Test
-	public void testForeignValue() throws Exception {
+	public void testForeignValue() {
 		SelectArg selectArg = new SelectArg();
 		assertTrue(selectArg.toString().contains("[unset]"));
 		Foo value = new Foo();
@@ -68,7 +68,7 @@ public class SelectArgTest extends BaseCoreStmtTest {
 	}
 
 	@Test
-	public void testToString() throws Exception {
+	public void testToString() {
 		SelectArg selectArg = new SelectArg();
 		assertTrue(selectArg.toString().contains("[unset]"));
 		selectArg.setValue(null);
@@ -79,7 +79,7 @@ public class SelectArgTest extends BaseCoreStmtTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testDoubleSet() throws Exception {
+	public void testDoubleSet() {
 		SelectArg selectArg = new SelectArg();
 		selectArg.setMetaInfo("id", numberFieldType);
 		selectArg.setMetaInfo("id", stringFieldType);

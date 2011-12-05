@@ -57,7 +57,7 @@ public class BaseConnectionSourceTest extends BaseCoreTest {
 	}
 
 	@Test
-	public void testClearNone() throws Exception {
+	public void testClearNone() {
 		OurConnectionSource cs = new OurConnectionSource();
 		cs.clearSpecialConnection(createMock(DatabaseConnection.class));
 	}
@@ -72,11 +72,11 @@ public class BaseConnectionSourceTest extends BaseCoreTest {
 
 	private class OurConnectionSource extends BaseConnectionSource {
 
-		public DatabaseConnection getReadOnlyConnection() throws SQLException {
+		public DatabaseConnection getReadOnlyConnection() {
 			return getReadWriteConnection();
 		}
 
-		public DatabaseConnection getReadWriteConnection() throws SQLException {
+		public DatabaseConnection getReadWriteConnection() {
 			DatabaseConnection conn = getSavedConnection();
 			if (conn == null) {
 				return conn;
@@ -85,7 +85,7 @@ public class BaseConnectionSourceTest extends BaseCoreTest {
 			}
 		}
 
-		public void releaseConnection(DatabaseConnection connection) throws SQLException {
+		public void releaseConnection(DatabaseConnection connection) {
 			// noop
 		}
 
@@ -97,7 +97,7 @@ public class BaseConnectionSourceTest extends BaseCoreTest {
 			clearSpecial(connection, logger);
 		}
 
-		public void close() throws SQLException {
+		public void close() {
 			// noop
 		}
 

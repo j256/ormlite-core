@@ -295,7 +295,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	}
 
 	public void addPrimaryKeySql(FieldType[] fieldTypes, List<String> additionalArgs, List<String> statementsBefore,
-			List<String> statementsAfter, List<String> queriesAfter) throws SQLException {
+			List<String> statementsAfter, List<String> queriesAfter) {
 		StringBuilder sb = null;
 		for (FieldType fieldType : fieldTypes) {
 			if (fieldType.isGeneratedId() && !generatedIdSqlAtEnd() && !fieldType.isSelfGeneratedId()) {
@@ -325,7 +325,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	}
 
 	public void addUniqueComboSql(FieldType[] fieldTypes, List<String> additionalArgs, List<String> statementsBefore,
-			List<String> statementsAfter, List<String> queriesAfter) throws SQLException {
+			List<String> statementsAfter, List<String> queriesAfter) {
 		StringBuilder sb = null;
 		for (FieldType fieldType : fieldTypes) {
 			if (fieldType.isUniqueCombo()) {

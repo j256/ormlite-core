@@ -42,7 +42,7 @@ public class IntTypeTest extends BaseTypeTest {
 	}
 
 	@Test
-	public void testIntConvertId() throws Exception {
+	public void testIntConvertId() {
 		int intId = 213123123;
 		assertEquals(intId, DataType.INTEGER.getDataPersister().convertIdNumber((long) intId));
 	}

@@ -184,7 +184,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		expect(conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class))).andAnswer(
 				new IAnswer<CompiledStatement>() {
 					private int stmtC = 0;
-					public CompiledStatement answer() throws Throwable {
+					public CompiledStatement answer() {
 						Object[] args = EasyMock.getCurrentArguments();
 						assertNotNull(args);
 						assertEquals(3, args.length);
@@ -228,7 +228,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		expect(conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class))).andAnswer(
 				new IAnswer<CompiledStatement>() {
 					private int stmtC = 0;
-					public CompiledStatement answer() throws Throwable {
+					public CompiledStatement answer() {
 						Object[] args = EasyMock.getCurrentArguments();
 						assertNotNull(args);
 						assertEquals(3, args.length);
@@ -274,7 +274,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		expect(conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class))).andAnswer(
 				new IAnswer<CompiledStatement>() {
 					private int stmtC = 0;
-					public CompiledStatement answer() throws Throwable {
+					public CompiledStatement answer() {
 						Object[] args = EasyMock.getCurrentArguments();
 						assertNotNull(args);
 						assertEquals(3, args.length);

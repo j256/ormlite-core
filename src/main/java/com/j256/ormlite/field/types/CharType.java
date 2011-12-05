@@ -1,7 +1,5 @@
 package com.j256.ormlite.field.types;
 
-import java.sql.SQLException;
-
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 
@@ -23,7 +21,7 @@ public class CharType extends CharacterObjectType {
 	}
 
 	@Override
-	public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {
+	public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
 		Character character = (Character) javaObject;
 		// this is required because otherwise we try to store \0 in the database
 		if (character == null || character == 0) {

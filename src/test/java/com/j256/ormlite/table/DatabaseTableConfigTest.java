@@ -202,7 +202,7 @@ public class DatabaseTableConfigTest {
 	}
 
 	@Test
-	public void testSetTableNameCase() throws Exception {
+	public void testSetTableNameCase() {
 		List<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
 		DatabaseFieldConfig fieldId = new DatabaseFieldConfig("id");
 		fieldId.setId(true);

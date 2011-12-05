@@ -1,6 +1,5 @@
 package com.j256.ormlite.stmt.query;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import com.j256.ormlite.db.DatabaseType;
@@ -21,8 +20,7 @@ public class Raw implements Clause {
 		this.args = args;
 	}
 
-	public void appendSql(DatabaseType databaseType, StringBuilder sb, List<ArgumentHolder> argList)
-			throws SQLException {
+	public void appendSql(DatabaseType databaseType, StringBuilder sb, List<ArgumentHolder> argList) {
 		sb.append(statement);
 		sb.append(' ');
 		for (ArgumentHolder arg : args) {

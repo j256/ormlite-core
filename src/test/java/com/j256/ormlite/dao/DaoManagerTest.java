@@ -55,7 +55,7 @@ public class DaoManagerTest extends BaseCoreTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testLookupDaoTableNull() throws Exception {
+	public void testLookupDaoTableNull() {
 		DaoManager.lookupDao(null, new DatabaseTableConfig<Foo>());
 	}
 
@@ -86,12 +86,12 @@ public class DaoManagerTest extends BaseCoreTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testRegisterNull() throws Exception {
+	public void testRegisterNull() {
 		DaoManager.registerDao(null, null);
 	}
 
 	@Test
-	public void testLookupTableDaoUnknown() throws Exception {
+	public void testLookupTableDaoUnknown() {
 		assertNull(DaoManager.lookupDao(connectionSource, new DatabaseTableConfig<DaoManagerTest>(DaoManagerTest.class,
 				new ArrayList<DatabaseFieldConfig>())));
 	}

@@ -78,7 +78,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		replay(connection);
 		final AtomicBoolean called = new AtomicBoolean(false);
 		statementExec.callBatchTasks(connection, false, new Callable<Void>() {
-			public Void call() throws Exception {
+			public Void call() {
 				called.set(true);
 				return null;
 			}
@@ -98,7 +98,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		replay(connection);
 		final AtomicBoolean called = new AtomicBoolean(false);
 		statementExec.callBatchTasks(connection, false, new Callable<Void>() {
-			public Void call() throws Exception {
+			public Void call() {
 				called.set(true);
 				return null;
 			}
@@ -120,7 +120,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		replay(connection);
 		final AtomicBoolean called = new AtomicBoolean(false);
 		statementExec.callBatchTasks(connection, false, new Callable<Void>() {
-			public Void call() throws Exception {
+			public Void call() {
 				called.set(true);
 				return null;
 			}

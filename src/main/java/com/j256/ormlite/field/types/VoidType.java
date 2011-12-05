@@ -1,7 +1,6 @@
 package com.j256.ormlite.field.types;
 
 import java.lang.reflect.Field;
-import java.sql.SQLException;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.support.DatabaseResults;
@@ -18,12 +17,12 @@ public class VoidType extends BaseDataType {
 	}
 
 	@Override
-	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+	public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 		return null;
 	}
 
 	@Override
-	public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+	public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) {
 		return null;
 	}
 

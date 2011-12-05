@@ -36,7 +36,7 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 	private FieldConverter booleanFieldConverter = new BooleanNumberFieldConverter();
 
 	@Test
-	public void testBaseDatabaseType() throws Exception {
+	public void testBaseDatabaseType() {
 		assertEquals("-- ", databaseType.getCommentLinePrefix());
 		String word = "word";
 		assertEquals("'" + word + "'", TestUtils.appendEscapedWord(databaseType, word));
@@ -220,38 +220,38 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 	}
 
 	@Test
-	public void testBooleanConverterIsStreamType() throws Exception {
+	public void testBooleanConverterIsStreamType() {
 		assertFalse(booleanFieldConverter.isStreamType());
 	}
 
 	@Test
-	public void testBooleanConverterGetSqlType() throws Exception {
+	public void testBooleanConverterGetSqlType() {
 		assertEquals(SqlType.BOOLEAN, booleanFieldConverter.getSqlType());
 	}
 
 	@Test
-	public void testDropColumnNoop() throws Exception {
+	public void testDropColumnNoop() {
 		databaseType.dropColumnArg(null, null, null);
 	}
 
 	@Test
-	public void testAppendSelectNextValFromSequence() throws Exception {
+	public void testAppendSelectNextValFromSequence() {
 		databaseType.appendSelectNextValFromSequence(null, null);
 	}
 
 	@Test
-	public void testAppendCreateTableSuffix() throws Exception {
+	public void testAppendCreateTableSuffix() {
 		databaseType.appendCreateTableSuffix(null);
 	}
 
 	@Test
-	public void testGenerateIdSequenceName() throws Exception {
+	public void testGenerateIdSequenceName() {
 		String table = "foo";
 		assertEquals(table + BaseDatabaseType.DEFAULT_SEQUENCE_SUFFIX, databaseType.generateIdSequenceName(table, null));
 	}
 
 	@Test
-	public void testGenerateIdSequenceNameUppercaseEntities() throws Exception {
+	public void testGenerateIdSequenceNameUppercaseEntities() {
 		String table = "foo";
 		String name = table + BaseDatabaseType.DEFAULT_SEQUENCE_SUFFIX;
 		assertEquals(name.toUpperCase(), new OurDbTypeUppercaseEntities().generateIdSequenceName(table, null));
@@ -274,7 +274,7 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 	}
 
 	@Test
-	public void testAppendLimitValue() throws Exception {
+	public void testAppendLimitValue() {
 		StringBuilder sb = new StringBuilder();
 		long limit = 122;
 		databaseType.appendLimitValue(sb, limit, null);

@@ -158,11 +158,10 @@ public class FieldTypeTest extends BaseCoreTest {
 			public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 				return defaultStr;
 			}
-			public Object resultToJava(FieldType fieldType, DatabaseResults resultSet, int columnPos)
-					throws SQLException {
+			public Object resultToJava(FieldType fieldType, DatabaseResults resultSet, int columnPos) {
 				return sqlArgToJava(fieldType, null, columnPos);
 			}
-			public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
+			public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
 				return nameResult;
 			}
 			public Object javaToSqlArg(FieldType fieldType, Object javaObject) {

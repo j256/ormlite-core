@@ -190,7 +190,7 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 	}
 
 	@Test
-	public void testTableName() throws Exception {
+	public void testTableName() {
 		assertEquals(JAVAX_ENTITY_NAME, JavaxPersistence.getEntityName(Javax.class));
 		assertNull(JavaxPersistence.getEntityName(EntityNoName.class));
 	}

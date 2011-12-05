@@ -65,7 +65,7 @@ public class BaseSqliteDatabaseTypeTest extends BaseCoreTest {
 	}
 
 	@Test
-	public void testDefaultFieldConverter() throws Exception {
+	public void testDefaultFieldConverter() {
 		OurSqliteDatabaseType dbType = new OurSqliteDatabaseType();
 		assertSame(DataType.STRING.getDataPersister(), dbType.getFieldConverter(DataType.STRING.getDataPersister()));
 	}

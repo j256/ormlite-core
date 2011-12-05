@@ -96,7 +96,7 @@ public class BaseDaoEnabledTest extends BaseCoreTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testObjectEqualsNoDao() throws Exception {
+	public void testObjectEqualsNoDao() {
 		One one = new One();
 		String stuff1 = "fewpfjewfew";
 		one.stuff = stuff1;

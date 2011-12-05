@@ -116,19 +116,19 @@ public class DataPersisterManagerTest extends BaseCoreTest {
 			super(null, new Class[] { StoredClass.class });
 		}
 		@Override
-		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return null;
 		}
 		@Override
-		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) {
 			return null;
 		}
 		@Override
-		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
+		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
 			return null;
 		}
 		@Override
-		public Object javaToSqlArg(FieldType fieldType, Object obj) throws SQLException {
+		public Object javaToSqlArg(FieldType fieldType, Object obj) {
 			return null;
 		}
 		@Override
@@ -156,12 +156,12 @@ public class DataPersisterManagerTest extends BaseCoreTest {
 			return sqlArgToJava(fieldType, value, columnPos);
 		}
 		@Override
-		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
+		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
 			String value = (String) sqlArg;
 			return new StoredClass(value);
 		}
 		@Override
-		public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {
+		public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
 			if (javaObject == null) {
 				return null;
 			} else {
@@ -196,16 +196,16 @@ public class DataPersisterManagerTest extends BaseCoreTest {
 			throw new SQLException("Default string doesn't work");
 		}
 		@Override
-		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) {
 			return sqlArgToJava(fieldType, null, columnPos);
 		}
 		@Override
-		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
+		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
 			// constant for testing
 			return SqlType.BLOB;
 		}
 		@Override
-		public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {
+		public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
 			if (javaObject == null) {
 				return null;
 			} else {

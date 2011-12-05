@@ -41,7 +41,7 @@ public class LongTypeTest extends BaseTypeTest {
 	}
 
 	@Test
-	public void testLongConvertId() throws Exception {
+	public void testLongConvertId() {
 		long longId = 1312313123131L;
 		assertEquals(longId, DataType.LONG.getDataPersister().convertIdNumber(longId));
 	}

@@ -1119,7 +1119,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		GenericRawResults<Foo> results =
 				dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME + " FROM FOO",
 						new RawRowMapper<Foo>() {
-							public Foo mapRow(String[] columnNames, String[] resultColumns) throws SQLException {
+							public Foo mapRow(String[] columnNames, String[] resultColumns) {
 								assertEquals(2, columnNames.length);
 								assertEquals(2, resultColumns.length);
 								Foo foo = new Foo();
@@ -1147,7 +1147,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		try {
 			conn.close();
 			dao.queryRaw("SELECT * FROM FOO", new RawRowMapper<Foo>() {
-				public Foo mapRow(String[] columnNames, String[] resultColumns) throws SQLException {
+				public Foo mapRow(String[] columnNames, String[] resultColumns) {
 					return null;
 				}
 			});
@@ -1178,7 +1178,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		GenericRawResults<Foo> results =
 				dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME + " FROM FOO WHERE "
 						+ Foo.ID_COLUMN_NAME + " = ?", new RawRowMapper<Foo>() {
-					public Foo mapRow(String[] columnNames, String[] resultColumns) throws SQLException {
+					public Foo mapRow(String[] columnNames, String[] resultColumns) {
 						assertEquals(2, columnNames.length);
 						assertEquals(2, resultColumns.length);
 						Foo foo = new Foo();
@@ -1917,7 +1917,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 				int type) {
 			// noop
 		}
-		public void fire(Connection conn, Object[] oldRow, Object[] newRow) throws SQLException {
+		public void fire(Connection conn, Object[] oldRow, Object[] newRow) {
 			callC++;
 		}
 	}

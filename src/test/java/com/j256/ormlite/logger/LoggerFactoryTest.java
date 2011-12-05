@@ -31,7 +31,7 @@ public class LoggerFactoryTest {
 	}
 
 	@Test
-	public void testLogTypeIsAvailable() throws Exception {
+	public void testLogTypeIsAvailable() {
 		assertFalse(LoggerFactory.LogType.ANDROID.isAvailable());
 		assertFalse(LoggerFactory.LogType.COMMONS_LOGGING.isAvailable());
 		assertFalse(LoggerFactory.LogType.LOG4J.isAvailable());
@@ -40,7 +40,7 @@ public class LoggerFactoryTest {
 	}
 
 	@Test
-	public void testLogTypeUnknownLog() throws Exception {
+	public void testLogTypeUnknownLog() {
 		Log log = LoggerFactory.LogType.ANDROID.createLog(getClass().getName());
 		assertTrue(log instanceof LocalLog);
 		log = LoggerFactory.LogType.ANDROID.createLogFromClassName(getClass().getName());
@@ -60,13 +60,13 @@ public class LoggerFactoryTest {
 	}
 
 	@Test
-	public void testLogTypeKnownLog() throws Exception {
+	public void testLogTypeKnownLog() {
 		Log log = LoggerFactory.LogType.LOCAL.createLog(getClass().getName());
 		assertTrue(log instanceof LocalLog);
 	}
 
 	@Test
-	public void testGetSimpleClassName() throws Exception {
+	public void testGetSimpleClassName() {
 		String first = "foo";
 		String name = LoggerFactory.getSimpleClassName(first);
 		assertEquals(first, name);

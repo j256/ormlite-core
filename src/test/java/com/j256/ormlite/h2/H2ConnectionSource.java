@@ -39,11 +39,11 @@ public class H2ConnectionSource implements ConnectionSource {
 		return connection;
 	}
 
-	public void releaseConnection(DatabaseConnection connection) throws SQLException {
+	public void releaseConnection(DatabaseConnection connection) {
 		// noop right now
 	}
 
-	public boolean saveSpecialConnection(DatabaseConnection connection) throws SQLException {
+	public boolean saveSpecialConnection(DatabaseConnection connection) {
 		// noop since this is a single connection source
 		return true;
 	}

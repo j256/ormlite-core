@@ -35,7 +35,7 @@ public class H2DatabaseConnection implements DatabaseConnection {
 		this.connection = connection;
 	}
 
-	public boolean isAutoCommitSupported() throws SQLException {
+	public boolean isAutoCommitSupported() {
 		return true;
 	}
 
