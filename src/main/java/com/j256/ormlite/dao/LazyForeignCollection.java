@@ -101,11 +101,12 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 	}
 
 	public int size() {
-		int sizeC = 0;
 		CloseableIterator<T> iterator = iterator();
 		try {
-			while (iterator.hasNext()) {
-				sizeC++;
+			int sizeC;
+			for (sizeC = 0; iterator.hasNext(); sizeC++) {
+				// move to next without constructing the object
+				iterator.moveToNext();
 			}
 			return sizeC;
 		} finally {

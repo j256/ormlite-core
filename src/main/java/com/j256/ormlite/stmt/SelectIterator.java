@@ -35,6 +35,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 	private final GenericRowMapper<T> rowMapper;
 	private final String statement;
 	private boolean closed = false;
+	private Boolean hasNext = null;
 	private T last = null;
 	private int rowC = 0;
 
@@ -64,9 +65,13 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 	 *             If there was a problem getting more results via SQL.
 	 */
 	public boolean hasNextThrow() throws SQLException {
-		if (closed) {
+		if (hasNext != null) {
+			// we do this so multiple hasNext() calls can be made
+			return hasNext;
+		} else if (closed) {
 			return false;
 		} else if (results.next()) {
+			hasNext = true;
 			return true;
 		} else {
 			close();
@@ -102,6 +107,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 	 *             If there was a problem extracting the object from SQL.
 	 */
 	public T nextThrow() throws SQLException {
+		hasNext = null;
 		if (closed) {
 			return null;
 		}
@@ -180,6 +186,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 		if (!closed) {
 			compiledStmt.close();
 			closed = true;
+			hasNext = false;
 			last = null;
 			if (statement != null) {
 				logger.debug("closed iterator @{} after {} rows", hashCode(), rowC);
@@ -190,5 +197,10 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 
 	public DatabaseResults getRawResults() {
 		return results;
+	}
+
+	public void moveToNext() {
+		hasNext = null;
+		last = null;
 	}
 }

@@ -27,4 +27,9 @@ public interface CloseableIterator<T> extends Iterator<T> {
 	 * what you are doing.
 	 */
 	public DatabaseResults getRawResults();
+
+	/**
+	 * Move to the next item in the iterator without calling {@link #next()}.
+	 */
+	public void moveToNext();
 }

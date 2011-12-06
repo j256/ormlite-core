@@ -77,6 +77,9 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 				// no results object
 				return null;
 			}
+			public void moveToNext() {
+				last = iterator.next();
+			}
 		};
 	}
 

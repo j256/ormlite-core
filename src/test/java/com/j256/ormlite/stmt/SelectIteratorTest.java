@@ -155,4 +155,20 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 			iterator.close();
 		}
 	}
+	
+	@Test
+	public void testMultipleHasNext() throws Exception {
+		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		String id1 = "id1";
+		foo1.id = id1;
+		assertEquals(1, dao.create(foo1));
+
+		CloseableIterator<Foo> iterator = dao.iterator();
+		assertTrue(iterator.hasNext());
+		assertTrue(iterator.hasNext());
+		assertTrue(iterator.hasNext());
+		iterator.moveToNext();
+		assertFalse(iterator.hasNext());
+	}
 }
