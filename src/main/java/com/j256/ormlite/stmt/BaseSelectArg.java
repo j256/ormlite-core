@@ -51,7 +51,7 @@ public abstract class BaseSelectArg implements ArgumentHolder {
 			// set to the same value as before
 		} else {
 			throw new IllegalArgumentException("Column name cannot be set twice from " + this.columnName + " to "
-					+ columnName);
+					+ columnName + ".  Using a SelectArg twice in query with different columns?");
 		}
 		this.columnName = columnName;
 	}
@@ -63,7 +63,7 @@ public abstract class BaseSelectArg implements ArgumentHolder {
 			// set to the same value as before
 		} else {
 			throw new IllegalArgumentException("FieldType name cannot be set twice from " + this.fieldType + " to "
-					+ fieldType);
+					+ fieldType + ".  Using a SelectArg twice in query with different columns?");
 		}
 		this.fieldType = fieldType;
 	}
