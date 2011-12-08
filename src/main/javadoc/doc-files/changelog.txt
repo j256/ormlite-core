@@ -1,4 +1,4 @@
-4.31: 11/XX/2011 (svn rXXXX)
+4.31: 12/8/2011 (svn r2198)
 	* CORE: Added missing IF NOT EXISTS handling to index creation.  Thanks to mjomble.  Fixed bug #3437795.
 	* CORE: Fixed problem with hasNext() always moving cursor forward. Thanks to Tom Tantisalidchai. Fixes bug #3449877.
 	* CORE: Fixed bad bug which stopped field being updated with null. Thanks to Javier Hinmel. Fixed bug #3454723.
