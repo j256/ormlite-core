@@ -8,7 +8,7 @@
 @c ----------------------------------------------------------------
 @set ormlite_version 4.31
 @set ormlite_year 2011
-@set ormlite_date November @value{ormlite_year}
+@set ormlite_date December @value{ormlite_year}
 @set package ORMLite
 @c ----------------------------------------------------------------
 
@@ -101,9 +101,9 @@ Gray Watson @uref{http://256.com/gray/}
 
 @cindex how to download the jars
 @cindex where to get new jars
-To get started with ORMLite, you will need to download the jar files.  They are available on the @uref{http://repo1.maven.org/maven2/com/j256/ormlite/,
-central maven repository} or from @uref{http://sourceforge.net/projects/ormlite/files/, Sourceforge}.
-See the @uref{http://ormlite.com/, ORMLite home page} for the most up-to-date repositories. 
+To get started with ORMLite, you will need to download the jar files.  The @uref{http://ormlite.com/releases/, ORMLite release page}
+is the default repository but the jars are also available from the @uref{http://repo1.maven.org/maven2/com/j256/ormlite/,
+central maven repository} and from @uref{http://sourceforge.net/projects/ormlite/files/, Sourceforge}.
 
 Users that are connecting to SQL databases via JDBC connections will need to download the @code{ormlite-jdbc-@value{ormlite_version}.jar}
 and @code{ormlite-core-@value{ormlite_version}.jar} files.  For use with Android applications, you should download the
@@ -599,6 +599,7 @@ used to auto-generate the SQL necessary to create the column.  The column name i
 public byte[] bigBunchOfBytes;
 @end example
 
+@anchor{foreignAutoCreate}
 @cindex foreignAutoCreate
 @cindex foreign object, auto create
 @cindex auto create foreign objects
@@ -1169,7 +1170,7 @@ Dao<Order, Integer> orderDao =
 
 @cindex DaoManager
 @cindex reusing DAOs
-@emph{NOTE:} You should use the @code{DaoManager#createDao} methods to create your DAO classes so if they are needed by internal
+@emph{NOTE:} You should use the @code{DaoManager.createDao()} method to create your DAO classes so if they are needed by internal
 ORMLite functionality, they can be reused and not regenerated.  Building a DAO can be an expensive operation and for devices with
 limited resources (like mobile apps), DAOs should be reused if at all possible.
 
@@ -2000,6 +2001,8 @@ order.setAccount(account);
 orderDao.create(order);
 @end example
 
+If you want some level of auto creation, then you can use the @code{foreignAutoCreate} setting. @xref{foreignAutoCreate}.
+
 @cindex refreshing foreign objects
 @cindex foreign object refreshing
 When you query for an order, you will get an @code{Order} object with an account field object that @emph{only} has its id
@@ -2055,6 +2058,8 @@ There is example code to show how to use foreign objects.  @xref{foreign objects
 @cindex foreign collections
 @cindex eager load collections
 @cindex lazy load collections
+@cindex collections of objects
+@cindex list of objects
 In the above section of the manual we gave the example of the @code{Order} class having a foreign object field to the @code{Account}
 table.  A foreign collection allows you to add a collection of orders on the account table.  Whenever an @code{Account} object is
 returned by a query or refreshed by the DAO, a @emph{separate} query is made over the order table and a collection of orders is set
@@ -2072,7 +2077,8 @@ public class Account @{
 @anchor{ForeignCollectionField}
 In the above example, the @code{@@ForeignCollectionField} annotation marks that the @code{orders} field is a collection of the orders
 that match the account.  The field type of @code{orders} must be either @code{ForeignCollection<T>} or @code{Collection<T>} -- no
-other collections are supported.  The @code{@@ForeignCollectionField} annotation supports the following fields:
+other collections are supported because they are much heavier with many methods to support.  The @code{@@ForeignCollectionField}
+annotation supports the following fields:
 
 @table @code
 
@@ -2097,7 +2103,7 @@ doing.
 @cindex empty foreign collection
 @item columnName
 
-The name of the column.  This is only used if you want to match the string passed to @code{Dao#getEmptyForeignCollection(String)} or to
+The name of the column.  This is only used if you want to match the string passed to @code{Dao.getEmptyForeignCollection(String)} or to
 specify that you want the collection returned when you specify @code{queryBuilder.selectColumns(...)}.  @xref{selectColumns}.
 
 @cindex ordered foreign collection
@@ -2211,13 +2217,12 @@ Feedback on this is welcome.
 @node Statement Builder, QueryBuilder Basics, DAO Enabled Objects, Top
 @chapter Custom Statement Builder
 
-@cindex query builder
-@cindex custom query builder
+@cindex statement builder
 @cindex custom statement builder
-The DAOs have methods to query for an object that matches an id field (@code{queryForId}) as well as query for all
-objects (@code{queryForAll}) and iterating through all of the objects in a table (@code{iterator}).  However, for more
-specified queries, there is the @code{queryBuilder()} method which returns a @code{QueryBuilder} object for the DAO
-with which you can construct custom queries to return a sub-set of the table.
+The DAOs have methods to query for an object that matches an id field (@code{queryForId}), query for all objects
+(@code{queryForAll}), iterating through all of the objects in a table (@code{iterator}), and some other simple martching
+methods.  However, for more custom queries, there is the @code{queryBuilder()} method which returns a @code{QueryBuilder}
+object for the DAO with which you can construct custom queries to return a sub-set of your tables.
 
 @menu
 * QueryBuilder Basics::         How to start using the query builder.
@@ -2232,6 +2237,7 @@ with which you can construct custom queries to return a sub-set of the table.
 @node QueryBuilder Basics, Building Queries, Statement Builder, Statement Builder
 @section Query Builder Basics
 
+@cindex custom query builder
 @cindex query builder basics
 @cindex how to use the query builder
 Here's how you use the query builder to construct custom queries.  First, it is a good pattern to
@@ -2265,12 +2271,11 @@ List<Account> accountList = accountDao.query(preparedQuery);
 @end example
 
 @cindex prepared statement
-You get a @code{QueryBuilder} object from the @code{Dao.queryBuilder} method, call methods on it to build your custom
+You get a @code{QueryBuilder} object from the @code{Dao.queryBuilder()} method, call methods on it to build your custom
 query, call @code{queryBuilder.prepare()} which returns a @code{PreparedQuery} object, and then pass the @code{PreparedQuery}
 to the DAO's @code{query} or @code{iterator} methods.
 
-As a short cut, you can also call the @code{prepare()} method on the @code{Where} object to do something like the
-following: 
+As a short cut, you can also call the @code{prepare()} method on the @code{Where} object to do something like the following: 
 
 @example
 // query for all accounts that have that password
@@ -2773,13 +2778,16 @@ accounts = accountDao.query(preparedQuery);
 
 @cindex quotes in queries
 @cindex string quoting in queries
-Certain data types use an internal @code{SelectArg} object because the string value of the object does not reliably match the
-database form of the object.  @code{java.util.Date} is one example of such a type.  Also, in places where strings may have
-quote characters inside them that clash with the database escaping quotes, a @code{SelectArg} may be required for queries to
-be formatted correctly.
+@cindex escaping arguments
+@cindex SQL injection bugs
+It is a common problem for people to try to build queries or other statements with arguments that contain quote characters.
+These quotes can clash with the auto-generated SQL and result in syntax errors.  In these cases a @code{SelectArg} is required.
+In addition, if you are passing in arguments from user-input, you can use @code{SelectArg} to protect yourself from SQL
+injection security problems.  Lastly, certain data types use an internal @code{SelectArg} object because the string value
+of the object does not reliably match the database form of the object -- @code{java.util.Date} is one example of such a type.
 
-@emph{NOTE:} @code{SelectArg} objects have protection against being used in more than one column name.  You must instantiate a
-new object if you want to use a @code{SelectArg} with another column.
+@emph{NOTE:} @code{SelectArg} objects have protection against being used in more than one column name.  You must instantiate
+a new object if you want to use a @code{SelectArg} with another column.
 
 @c ----------------------------------------------------------------
 @node Use With Android, Android Basics, Select Arguments, Top
@@ -2802,7 +2810,7 @@ new object if you want to use a @code{SelectArg} with another column.
 @section Android Basics
 
 @cindex Android basics
-Because of the lack of support for JDBC in Android OS, ORMLite makes direct calls to the Android database APIs
+Because of the lack of official support for JDBC in Android OS, ORMLite makes direct calls to the Android database APIs
 to access SQLite databases.  You should make sure that you have downloaded and are depending on the @code{ormlite-core.jar}
 and @code{ormlite-android.jar} files, but @emph{not} the @code{ormlite-jdbc.jar} version.  Although a number of developers
 are using the package in their projects, we continue to improve how ORMLite integrates with the Android classes.

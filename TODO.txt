@@ -19,6 +19,15 @@
 	- DataPersiterManager
 	- DatabaseField.persisterClass
 
+- TableUtils from JC:
+	- TableUtils.alterTableAddColumns(connectionSource, dataClass, String... columnOrFieldNames);
+	- TableUtils.alterTableDropColumns(connectionSource, dataClass, String... columnOrFieldNames);
+
+- add an autoCreate=true feature to the @ForeignCollectionField
+	- after an object is created, if it has a foreign collection that is auto-create an eager collection is created
+		and set on the field if it is null
+	- do we have to do the query in case an object is created which already has entries in the collection?	
+
 - add foreign key constraints to better support the foreign=true stuff
 
 - need to add a Foreign field section under the query builder section

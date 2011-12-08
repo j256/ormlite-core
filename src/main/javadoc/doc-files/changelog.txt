@@ -1,14 +1,21 @@
-4.30: 11/10/2011 (svn r????)
+4.31: 11/XX/2011 (svn rXXXX)
+	* CORE: Added missing IF NOT EXISTS handling to index creation.  Thanks to mjomble.  Fixed bug #3437795.
+	* CORE: Fixed problem with hasNext() always moving cursor forward. Thanks to Tom Tantisalidchai. Fixes bug #3449877.
+	* CORE: Fixed bad bug which stopped field being updated with null. Thanks to Javier Hinmel. Fixed bug #3454723.
+	* ANDROID: Added better SQL logging to Android connections.
+	* JDBC: Added better SQL logging to JDBC connections.
+
+4.30: 11/10/2011 (svn r2156)
 	* CORE: Added ability to specify ForeignCollection columns in selectColumns(). Thanks to @Timo. Fixes bug #3428751.
 	* CORE: Added two new Dao methods: mapSelectStarRow and getSelectStarRowMapper for easier mapping of results.
 	* CORE: Deprecated the @DatabaseFieldSimple and other smaller annotations that were causing confusion.  Sorry.
 	* CORE: Fixed config loader support for foreignAutoCreate and version fields.  Thanks to Chase.  Fixes bug #3433599.
 	* CORE: Fixed foreignAutoCreate bug where parent object didn't get foreign id.  Thanks to Chase. Fixes bug #3434550.
-	* CORE: Added hasColumnName() method to TableInfo.  Thanks to JC.  Resolves feature #3435754.
+	* CORE: Added TableInfo.hasColumnName() method.  Thanks to JC.  Resolves feature #3435754.
 	* CORE: Added Dao.idExists(ID id) to see if row with id exists. Thanks to Craig Andrews. Resolves feature #3300688.
-	* CORE: Moved limit() and offset() to take long parameters to be more consistent.  Possible deprecation warings. 
+	* CORE: Moved limit() and offset() to take long parameters to be more consistent.  Possible deprecation warnings. 
 	* ANDROID: Added some reflection fu to make reading Annotations ~20 times faster.  Thanks a ton to Josh Guilfoyle.
-	* ANDROID: Fixed problems with countOf() dao method.  Thanks to Pedro Velasco.  Fixes bug #3434508.
+	* ANDROID: Fixed problems with Dao.countOf() method.  Thanks to Pedro Velasco.  Fixes bug #3434508.
 	* JDBC: Added support for better escaping of "schema"."table" in Postgres.  Thanks to Johny Jugianto.
 
 4.29: 10/25/2011 (svn r2101)

@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on November, 10 2011 by texi2html 1.70 -->
+<!-- Created on December, 8 2011 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -54,7 +54,7 @@ ul.toc {list-style: none}
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC67" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC68" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h1 class="chapter"> 4. Using With Android </h1>
@@ -89,12 +89,12 @@ ul.toc {list-style: none}
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC67" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC68" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 4.1 Android Basics </h2>
 
-<p>Because of the lack of support for JDBC in Android OS, ORMLite makes direct calls to the Android database APIs
+<p>Because of the lack of official support for JDBC in Android OS, ORMLite makes direct calls to the Android database APIs
 to access SQLite databases.  You should make sure that you have downloaded and are depending on the <code>ormlite-core.jar</code>
 and <code>ormlite-android.jar</code> files, but <em>not</em> the <code>ormlite-jdbc.jar</code> version.  Although a number of developers
 are using the package in their projects, we continue to improve how ORMLite integrates with the Android classes.
@@ -123,7 +123,7 @@ classes.  An easy way to use the <code>OpenHelperManager</code> is to extend <co
 activity classes - there is also <code>OrmLiteBaseListActivity</code>, <code>OrmLiteBaseService</code>, and <code>OrmLiteBaseTabActivity</code>.
 These classes provide a <code>helper</code> protected field and a <code>getHelper()</code> method to access the database helper whenever it
 is needed and will automatically create the helper in the <code>onCreate()</code> method and release it in the <code>onDestroy()</code>
-method.  See the sample <code>HelloAndroid</code> activity class in the examples.  See section <a href="ormlite_7.html#SEC64">Android Examples</a>.
+method.  See the sample <code>HelloAndroid</code> activity class in the examples.  See section <a href="ormlite_7.html#SEC65">Android Examples</a>.
 
 </p></li><li><p> If you do not want to extend the <code>OrmLiteBaseActivity</code> and other base classes then you will need to duplicate their
 functionality.  You will need to call <code>OpenHelperManager.getHelper(Context context, Class openHelperClass)</code> at the start of
@@ -149,9 +149,9 @@ private DBHelper getHelper() {
     return databaseHelper;
 }
 </pre></td></tr></table>
-<a name="IDX263"></a>
-<a name="IDX264"></a>
-<p><a name="ANC30"></a>
+<a name="IDX265"></a>
+<a name="IDX266"></a>
+<p><a name="ANC31"></a>
 </p></li><li><p> By default, if you are using <code>OrmLiteBaseActivity</code> or other base classes, the <code>OpenHelperManager</code> will detect the
 database helper class through reflection.  Another way to wire in the appropriate database helper class is to set the full class
 name of it in the the <code>open_helper_classname</code> value defined in the <code>res/values/strings.xml</code> resource file .  You can also
@@ -165,7 +165,7 @@ get exceptions.
 
 </p></li></ol>
 
-<p>Please see the example code documentation for more information.  See section <a href="ormlite_7.html#SEC64">Android Examples</a>.  Again, feedback on this is welcome.
+<p>Please see the example code documentation for more information.  See section <a href="ormlite_7.html#SEC65">Android Examples</a>.  Again, feedback on this is welcome.
 
 </p><hr size="6">
 <a name="NOD42"></a>
@@ -183,7 +183,7 @@ get exceptions.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC67" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC68" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 4.2 Using Table Config File </h2>
@@ -272,11 +272,11 @@ class, you will need to change the constructor to add the integer file-id.  The 
     R.raw.ormlite_config);
 }
 </pre></td></tr></table>
-<p>Notice the <code>R.raw.ormlite_config</code> entry at the end that passes the file-id to the super class so it can be read in.  You can also pass in a file-name or
-a Java <code>File</code> if you want to load in the config file from another location.
+<p>Notice the <code>R.raw.ormlite_config</code> entry at the end that passes the file-id to the super class so it can be read in.
+You can also pass in a file-name or a Java <code>File</code> if you want to load in the config file from another location.
 
-</p></li><li><p> When you build and run your application, you will know that the database configuration file is being loaded if you see log entries like the
-following:
+</p></li><li><p> When you build and run your application, you will know that the database configuration file is being loaded if you
+see log entries like the following:
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">I/DaoManager(  999): Loaded configuration for class ...SimpleData
 </pre></td></tr></table>
@@ -302,12 +302,12 @@ following:
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC67" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC68" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 4.3 Android Logging </h2>
 
-<p><a name="ANC31"></a>
+<p><a name="ANC32"></a>
 
 </p><p>The <code>ormlite-android.jar</code> classes define the <code>AndroidLog</code> class which is the Android specific version of ORMLite
 logging.  This class makes calls to the <code>Log.d</code>, <code>Log.i</code>, &hellip; methods in the Android API.  To see the log output,
@@ -360,7 +360,7 @@ D/BaseMappedStatement(  465): assigned id '9' from keyholder to 'id' in
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC67" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC68" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 4.4 Runtime Versus SQL Exceptions </h2>
@@ -399,7 +399,7 @@ RuntimeExceptionDao&lt;Account, String&gt; accountDao =
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC67" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC68" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 4.5 Upgrading Your Schema </h2>
@@ -418,7 +418,7 @@ that extends the following method from the <code>OrmLiteSqliteOpenHelper</code>.
 // change the table to add a new column named &quot;age&quot; 
 dao.executeRaw(&quot;ALTER TABLE `account` ADD COLUMN age INTEGER;&quot;);
 </pre></td></tr></table>
-<a name="IDX265"></a>
+<a name="IDX267"></a>
 <p>Here's more information about <a href="http://www.sqlite.org/lang_altertable.html">SQLite's ALTER TABLE</a>.
 In SQLite, all you can do is rename a table name and add a new column.  You can't rename or remove a column or change the constraints.
 Remember that SQLite is typeless so changing the type of a column doesn't matter.
@@ -453,12 +453,12 @@ manually.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC67" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC68" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>November, 10 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>December, 8 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 

@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on November, 10 2011 by texi2html 1.70 -->
+<!-- Created on December, 8 2011 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -54,15 +54,15 @@ ul.toc {list-style: none}
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC67" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC68" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h1 class="chapter"> 3. Custom Statement Builder </h1>
 
-<p>The DAOs have methods to query for an object that matches an id field (<code>queryForId</code>) as well as query for all
-objects (<code>queryForAll</code>) and iterating through all of the objects in a table (<code>iterator</code>).  However, for more
-specified queries, there is the <code>queryBuilder()</code> method which returns a <code>QueryBuilder</code> object for the DAO
-with which you can construct custom queries to return a sub-set of the table.
+<p>The DAOs have methods to query for an object that matches an id field (<code>queryForId</code>), query for all objects
+(<code>queryForAll</code>), iterating through all of the objects in a table (<code>iterator</code>), and some other simple martching
+methods.  However, for more custom queries, there is the <code>queryBuilder()</code> method which returns a <code>QueryBuilder</code>
+object for the DAO with which you can construct custom queries to return a sub-set of your tables.
 
 </p><table class="menu" border="0" cellspacing="0">
 <tr><td align="left" valign="top"><a href="#SEC33">3.1 Query Builder Basics</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">         How to start using the query builder.
@@ -95,7 +95,7 @@ with which you can construct custom queries to return a sub-set of the table.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC67" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC68" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.1 Query Builder Basics </h2>
@@ -127,12 +127,11 @@ PreparedQuery&lt;Account&gt; preparedQuery = queryBuilder.prepare();
 List&lt;Account&gt; accountList = accountDao.query(preparedQuery);
 </pre></td></tr></table>
 <a name="IDX204"></a>
-<p>You get a <code>QueryBuilder</code> object from the <code>Dao.queryBuilder</code> method, call methods on it to build your custom
+<p>You get a <code>QueryBuilder</code> object from the <code>Dao.queryBuilder()</code> method, call methods on it to build your custom
 query, call <code>queryBuilder.prepare()</code> which returns a <code>PreparedQuery</code> object, and then pass the <code>PreparedQuery</code>
 to the DAO's <code>query</code> or <code>iterator</code> methods.
 
-</p><p>As a short cut, you can also call the <code>prepare()</code> method on the <code>Where</code> object to do something like the
-following: 
+</p><p>As a short cut, you can also call the <code>prepare()</code> method on the <code>Where</code> object to do something like the following: 
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">// query for all accounts that have that password
 List&lt;Account&gt; accountList =
@@ -166,7 +165,7 @@ List&lt;Account&gt; accountList =
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC67" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC68" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.2 Building Queries </h2>
@@ -247,13 +246,13 @@ information.  Here's a <a href="http://www.w3schools.com/Sql/">good SQL referenc
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC67" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC68" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.3 Building Statements </h2>
 
-<p><a name="ANC27"></a>
-<a name="ANC28"></a>
+<p><a name="ANC28"></a>
+<a name="ANC29"></a>
 The DAO can also be used to construct custom <code>UPDATE</code> and <code>DELETE</code> statements.  Update statements
 are used to change certain fields in rows from the table that match the <code>WHERE</code> pattern - or update <em>all</em>
 rows if no <code>where()</code>. Delete statements are used to delete rows from the table that match the <code>WHERE</code>
@@ -304,7 +303,7 @@ accountDao.delete(deleteBuilder.prepare());
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC67" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC68" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.4 QueryBuilder Capabilities </h2>
@@ -383,7 +382,7 @@ but can include calculations.  The SQL argument should not include the &quot;ORD
 <code>Dao.iterator(PreparedQuery)</code> methods. If you change the where or make other calls you will need
 to re-call this method to re-prepare the statement for execution.
 
-</p><p><a name="ANC29"></a>
+</p><p><a name="ANC30"></a>
 <a name="IDX217"></a>
 </p></dd>
 <dt><code> selectColumns(String... columns)</code></dt>
@@ -400,7 +399,7 @@ want to access.  To get all of the fields on the object later, you can either do
 <code>refresh()</code> with the object.
 
 </p><p><em>WARNING:</em> If you specify any columns to return, then any foreign-collection fields will be returned as null
-<em>unless</em> their <code>ForeignCollectionField.columnName</code> is also in the list.  See <a href="ormlite_2.html#ANC26">ForeignCollectionField</a>.
+<em>unless</em> their <code>ForeignCollectionField.columnName</code> is also in the list.  See <a href="ormlite_2.html#ANC27">ForeignCollectionField</a>.
 
 </p></dd>
 <dt><code> selectColumns(Iterable&lt;String&gt; columns)</code></dt>
@@ -453,7 +452,7 @@ See section <a href="#SEC37">Where Capabilities</a>.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC67" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC68" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.5 Where Capabilities </h2>
@@ -700,7 +699,7 @@ database specific features.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC67" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC68" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.6 Using Select Arguments </h2>
@@ -730,13 +729,16 @@ accounts = accountDao.query(preparedQuery);
 </pre></td></tr></table>
 <a name="IDX261"></a>
 <a name="IDX262"></a>
-<p>Certain data types use an internal <code>SelectArg</code> object because the string value of the object does not reliably match the
-database form of the object.  <code>java.util.Date</code> is one example of such a type.  Also, in places where strings may have
-quote characters inside them that clash with the database escaping quotes, a <code>SelectArg</code> may be required for queries to
-be formatted correctly.
+<a name="IDX263"></a>
+<a name="IDX264"></a>
+<p>It is a common problem for people to try to build queries or other statements with arguments that contain quote characters.
+These quotes can clash with the auto-generated SQL and result in syntax errors.  In these cases a <code>SelectArg</code> is required.
+In addition, if you are passing in arguments from user-input, you can use <code>SelectArg</code> to protect yourself from SQL
+injection security problems.  Lastly, certain data types use an internal <code>SelectArg</code> object because the string value
+of the object does not reliably match the database form of the object - <code>java.util.Date</code> is one example of such a type.
 
-</p><p><em>NOTE:</em> <code>SelectArg</code> objects have protection against being used in more than one column name.  You must instantiate a
-new object if you want to use a <code>SelectArg</code> with another column.
+</p><p><em>NOTE:</em> <code>SelectArg</code> objects have protection against being used in more than one column name.  You must instantiate
+a new object if you want to use a <code>SelectArg</code> with another column.
 
 </p><hr size="6">
 <table cellpadding="1" cellspacing="1" border="0">
@@ -749,12 +751,12 @@ new object if you want to use a <code>SelectArg</code> with another column.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC67" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC68" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>November, 10 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>December, 8 2011</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 
