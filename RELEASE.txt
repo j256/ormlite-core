@@ -63,7 +63,7 @@ To release ORMLite:
 
 11) Update the ormite.com website:
 
-	- cd /var/www/ormlite.com/release
+	- cd /var/www/ormlite.com/releases
 	- sh get_release.sh  [enter release number]
 	- cd ..
 	- sh explode_javadocs.sh
