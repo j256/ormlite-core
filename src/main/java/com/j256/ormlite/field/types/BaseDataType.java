@@ -103,7 +103,7 @@ public abstract class BaseDataType implements DataPersister {
 		return true;
 	}
 
-	public boolean isSelectArgRequired() {
+	public boolean isArgumentHolderRequired() {
 		return false;
 	}
 

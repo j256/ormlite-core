@@ -676,10 +676,10 @@ public class FieldType {
 	}
 
 	/**
-	 * Call through to {@link DataPersister#isSelectArgRequired()}
+	 * Call through to {@link DataPersister#isArgumentHolderRequired()}
 	 */
 	public boolean isArgumentHolderRequired() {
-		return dataPersister.isSelectArgRequired();
+		return dataPersister.isArgumentHolderRequired();
 	}
 
 	/**

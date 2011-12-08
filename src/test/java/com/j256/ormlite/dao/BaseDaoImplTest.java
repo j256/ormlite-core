@@ -2306,6 +2306,25 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertFalse(dao.idExists(id + "1"));
 	}
 
+	@Test
+	public void testUpdateTwoDates() throws Exception {
+		Dao<TwoDates, Integer> dao = createDao(TwoDates.class, true);
+
+		TwoDates foo = new TwoDates();
+		long now = System.currentTimeMillis();
+		Date date1 = new Date(now);
+		Date date2 = new Date(now + 1000);
+		foo.date1 = date1;
+		foo.date2 = date2;
+
+		assertEquals(1, dao.create(foo));
+
+		UpdateBuilder<TwoDates, Integer> ub = dao.updateBuilder();
+		ub.updateColumnValue(TwoDates.FIELD_NAME_DATE1, date2);
+		ub.updateColumnValue(TwoDates.FIELD_NAME_DATE2, date1);
+		dao.update(ub.prepare());
+	}
+
 	/* ============================================================================================== */
 
 	private String buildFooQueryAllString(Dao<Foo, Object> fooDao) throws SQLException {
@@ -2490,6 +2509,19 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		@DatabaseField
 		String stuff2;
 		public VersionFieldDateString() {
+		}
+	}
+
+	protected static class TwoDates {
+		public static final String FIELD_NAME_DATE1 = "date1";
+		public static final String FIELD_NAME_DATE2 = "date2";
+		@DatabaseField(generatedId = true)
+		public int id;
+		@DatabaseField(columnName = FIELD_NAME_DATE1)
+		public Date date1;
+		@DatabaseField(columnName = FIELD_NAME_DATE2)
+		public Date date2;
+		public TwoDates() {
 		}
 	}
 

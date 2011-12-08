@@ -97,7 +97,7 @@ public class SerializableType extends BaseDataType {
 	}
 
 	@Override
-	public boolean isSelectArgRequired() {
+	public boolean isArgumentHolderRequired() {
 		return true;
 	}
 }

@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.sql.SQLException;
 
 import com.j256.ormlite.field.types.BaseDataType;
+import com.j256.ormlite.stmt.ArgumentHolder;
 
 /**
  * Data type that provide Java class to/from database mapping.
@@ -71,9 +72,9 @@ public interface DataPersister extends FieldConverter {
 	public boolean isAppropriateId();
 
 	/**
-	 * Must use SelectArg when querying for values of this type.
+	 * Must use {@link ArgumentHolder} when querying for values of this type.
 	 */
-	public boolean isSelectArgRequired();
+	public boolean isArgumentHolderRequired();
 
 	/**
 	 * Return true if this type creates its own generated ids else false to have the database do it.

@@ -75,7 +75,7 @@ public class DateType extends BaseDateType {
 	}
 
 	@Override
-	public boolean isSelectArgRequired() {
+	public boolean isArgumentHolderRequired() {
 		return true;
 	}
 }

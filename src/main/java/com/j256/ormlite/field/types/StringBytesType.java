@@ -79,7 +79,7 @@ public class StringBytesType extends BaseDataType {
 	}
 
 	@Override
-	public boolean isSelectArgRequired() {
+	public boolean isArgumentHolderRequired() {
 		return true;
 	}
 
