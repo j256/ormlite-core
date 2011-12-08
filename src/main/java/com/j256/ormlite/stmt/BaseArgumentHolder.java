@@ -10,21 +10,21 @@ import com.j256.ormlite.field.SqlType;
  * 
  * @author graywatson
  */
-public abstract class BaseSelectArg implements ArgumentHolder {
+public abstract class BaseArgumentHolder implements ArgumentHolder {
 
 	private String columnName = null;
 	private FieldType fieldType = null;
 	private SqlType sqlType = null;
 
-	public BaseSelectArg() {
+	public BaseArgumentHolder() {
 		// no args
 	}
 
-	public BaseSelectArg(String columName) {
+	public BaseArgumentHolder(String columName) {
 		this.columnName = columName;
 	}
 
-	public BaseSelectArg(SqlType sqlType) {
+	public BaseArgumentHolder(SqlType sqlType) {
 		this.sqlType = sqlType;
 	}
 
