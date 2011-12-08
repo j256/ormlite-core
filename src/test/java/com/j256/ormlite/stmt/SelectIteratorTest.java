@@ -155,7 +155,7 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 			iterator.close();
 		}
 	}
-	
+
 	@Test
 	public void testMultipleHasNext() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
