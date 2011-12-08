@@ -57,7 +57,7 @@ abstract class BaseComparison implements Comparison {
 			List<ArgumentHolder> argList, Object argOrValue) throws SQLException {
 		boolean appendSpace = true;
 		if (argOrValue == null) {
-			throw new SQLException("argument to comparison of '" + fieldType.getFieldName() + "' is null");
+			throw new SQLException("argument for '" + fieldType.getFieldName() + "' is null");
 		} else if (argOrValue instanceof ArgumentHolder) {
 			sb.append('?');
 			ArgumentHolder argHolder = (ArgumentHolder) argOrValue;

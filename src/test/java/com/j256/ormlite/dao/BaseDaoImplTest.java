@@ -2325,6 +2325,26 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		dao.update(ub.prepare());
 	}
 
+	@Test
+	public void testUpdateTwoNulls() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		UpdateBuilder<Foo, String> ub = dao.updateBuilder();
+		ub.updateColumnValue(Foo.NULL_COLUMN_NAME, null);
+		ub.updateColumnValue(Foo.EQUAL_COLUMN_NAME, null);
+		dao.update(ub.prepare());
+	}
+
+	@Test
+	public void testUpdateTwoNullsInSeperateStatements() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		UpdateBuilder<Foo, String> ub = dao.updateBuilder();
+		ub.updateColumnValue(Foo.NULL_COLUMN_NAME, null);
+		dao.update(ub.prepare());
+		ub = dao.updateBuilder();
+		ub.updateColumnValue(Foo.EQUAL_COLUMN_NAME, null);
+		dao.update(ub.prepare());
+	}
+
 	/* ============================================================================================== */
 
 	private String buildFooQueryAllString(Dao<Foo, Object> fooDao) throws SQLException {
