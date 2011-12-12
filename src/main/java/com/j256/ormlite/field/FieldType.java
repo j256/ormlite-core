@@ -742,7 +742,16 @@ public class FieldType {
 		}
 		@SuppressWarnings("unchecked")
 		T converted = (T) fieldConverter.resultToJava(this, results, dbColumnPos);
-		if (dataPersister.isPrimitive()) {
+		if (fieldConfig.isForeign()) {
+			/*
+			 * Subtle problem here. If your foreign field is a primitive and the value was null then this would return 0
+			 * from getInt(). We have to specifically test to see if we have a foreign field so if it is null we return
+			 * a null value to not create the sub-object.
+			 */
+			if (results.wasNull(dbColumnPos)) {
+				return null;
+			}
+		} else if (dataPersister.isPrimitive()) {
 			if (fieldConfig.isThrowIfNull() && results.wasNull(dbColumnPos)) {
 				throw new SQLException("Results value for primitive field '" + field.getName()
 						+ "' was an invalid null value");

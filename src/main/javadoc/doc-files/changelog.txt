@@ -1,3 +1,6 @@
+4.32: 12/10/2011 (svn rYYYY)
+	* CORE: Fixed bad bug where foreign objects cannot have primitive ids.  Thanks to Vladimir.  Fixed bug #3456339.
+
 4.31: 12/8/2011 (svn r2198)
 	* CORE: Added missing IF NOT EXISTS handling to index creation.  Thanks to mjomble.  Fixed bug #3437795.
 	* CORE: Fixed problem with hasNext() always moving cursor forward. Thanks to Tom Tantisalidchai. Fixes bug #3449877.

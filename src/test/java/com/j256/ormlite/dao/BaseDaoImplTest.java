@@ -1396,6 +1396,17 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	}
 
 	@Test
+	public void testForeignIntIdNull() throws Exception {
+		Dao<ForeignIntId, Integer> dao = createDao(ForeignIntId.class, true);
+		ForeignIntId foreign = new ForeignIntId();
+		foreign.foo = null;
+		assertEquals(1, dao.create(foreign));
+		ForeignIntId foreign2 = dao.queryForId(foreign.id);
+		assertNotNull(foreign2);
+		assertNull(foreign2.foo);
+	}
+
+	@Test
 	public void testForeign() throws Exception {
 		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		Dao<Foreign, Integer> foreignDao = createDao(Foreign.class, true);
@@ -2542,6 +2553,15 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		@DatabaseField(columnName = FIELD_NAME_DATE2)
 		public Date date2;
 		public TwoDates() {
+		}
+	}
+
+	protected static class ForeignIntId {
+		@DatabaseField(generatedId = true)
+		public int id;
+		@DatabaseField(foreign = true)
+		public One foo;
+		public ForeignIntId() {
 		}
 	}
 
