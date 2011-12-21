@@ -24,6 +24,22 @@
 		and set on the field if it is null
 	- do we have to do the query in case an object is created which already has entries in the collection?	
 
+- how to support encryption in the databases
+	- custom field persisters?
+	- some sort of converter between the DatabaseConnection and the database
+		- override the update() method to encrypt the args
+		- override the get* methods to decrypt the database values
+	- some sort of Dao converter at a higher level
+		- inject a DataConverter or some sort which would be handled by the Dao like the object cache
+	- some sort of @DatabaseField(encrypted = true) setting?
+		- how would it inject it?
+		- how would it change the schema?
+	- maybe some sort of DataPersister proxy?
+	- How does this effects the schema?  Every SQL native field would turn into a String which is some encrypted
+		representation of the value?  Would you define something to be a long but if the DataConverter is in place it
+		would turn into a String and do a DatabaseResults.getString(1) but then return a long once it has been
+		decrypted?
+
 - add foreign key constraints to better support the foreign=true stuff
 
 - need to add a Foreign field section under the query builder section
