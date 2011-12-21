@@ -1,8 +1,10 @@
 package com.j256.ormlite.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -88,6 +90,25 @@ public class LruObjectCacheTest extends BaseObjectCacheTest {
 		dao.clearObjectCache();
 		result = dao.queryForId(id);
 		assertNotSame(foo, result);
+	}
+
+	@Test
+	public void testQueryForId() throws Exception {
+		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		String id = "hello";
+		foo.id = id;
+		int val = 12312321;
+		foo.val = val;
+		assertEquals(1, dao.create(foo));
+
+		LruObjectCache cache = new LruObjectCache(1024);
+		dao.setObjectCache(cache);
+
+		Foo foo2 = dao.queryForId(id);
+		assertFalse(foo == foo2);
+		Foo foo3 = dao.queryForId(id);
+		assertTrue(foo2 == foo3);
 	}
 
 	@Override
