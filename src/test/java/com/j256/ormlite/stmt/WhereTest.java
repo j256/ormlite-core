@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
@@ -13,6 +14,7 @@ import org.junit.Test;
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
@@ -788,6 +790,32 @@ public class WhereTest extends BaseCoreTest {
 				fooDao.queryBuilder().selectColumns(Foo.ID_COLUMN_NAME).where().eq(Foo.ID_COLUMN_NAME, 1)).query();
 	}
 
+	@Test
+	public void testDateBetween() throws Exception {
+		Dao<DateBetween, Object> dao = createDao(DateBetween.class, true);
+
+		DateBetween dateBetween = new DateBetween();
+		long now = System.currentTimeMillis();
+		Date date = new Date(now);
+		dateBetween.date = date;
+		assertEquals(1, dao.create(dateBetween));
+
+		QueryBuilder<DateBetween, Object> qb = dao.queryBuilder();
+		qb.where().between(DateBetween.DATE_COLUMN_NAME, new Date(now - 1), new Date(now + 1));
+		List<DateBetween> results = qb.query();
+		assertEquals(1, results.size());
+
+		qb.where().clear();
+		qb.where().between(DateBetween.DATE_COLUMN_NAME, new Date(now), new Date(now + 1));
+		results = qb.query();
+		assertEquals(1, results.size());
+
+		qb.where().clear();
+		qb.where().between(DateBetween.DATE_COLUMN_NAME, new Date(now), new Date(now));
+		results = qb.query();
+		assertEquals(1, results.size());
+	}
+
 	private TableInfo<Foo, String> createTableInfo() throws SQLException {
 		return new TableInfo<Foo, String>(connectionSource, null, Foo.class);
 	}
@@ -814,6 +842,16 @@ public class WhereTest extends BaseCoreTest {
 		@DatabaseField(foreign = true, columnName = FOREIGN_COLUMN_NAME)
 		FooId foo;
 		ForeignFoo() {
+		}
+	}
+
+	protected static class DateBetween {
+		public static final String DATE_COLUMN_NAME = "date";
+		@DatabaseField(id = true, columnName = ID_COLUMN_NAME)
+		int id;
+		@DatabaseField(columnName = DATE_COLUMN_NAME, dataType = DataType.DATE_LONG)
+		Date date;
+		DateBetween() {
 		}
 	}
 }
