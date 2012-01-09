@@ -433,6 +433,43 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertEquals(1, results.get(0).orders.size());
 	}
 
+	@Test
+	public void testMultipleForeign() throws Exception {
+		Dao<MultiForeign, Integer> multipleDao = createDao(MultiForeign.class, true);
+		Dao<MultiForeignForeign, Integer> foreignDao = createDao(MultiForeignForeign.class, true);
+
+		MultiForeignForeign foreign1 = new MultiForeignForeign();
+		assertEquals(1, foreignDao.create(foreign1));
+		MultiForeignForeign foreign2 = new MultiForeignForeign();
+		assertEquals(1, foreignDao.create(foreign2));
+
+		MultiForeign multiple1 = new MultiForeign();
+		multiple1.from = foreign1;
+		multiple1.to = foreign2;
+		assertEquals(1, multipleDao.create(multiple1));
+		MultiForeign multiple2 = new MultiForeign();
+		multiple2.from = foreign2;
+		multiple2.to = foreign1;
+		assertEquals(1, multipleDao.create(multiple2));
+
+		MultiForeignForeign result = foreignDao.queryForId(foreign1.id);
+		assertEquals(1, result.froms.size());
+		assertTrue(result.froms.contains(multiple1));
+		assertEquals(1, result.tos.size());
+		assertTrue(result.tos.contains(multiple2));
+
+		result = foreignDao.queryForId(foreign2.id);
+		assertEquals(1, result.froms.size());
+		assertTrue(result.froms.contains(multiple2));
+		assertEquals(1, result.tos.size());
+		assertTrue(result.tos.contains(multiple1));
+	}
+
+	@Test //(expected = SQLException.class)
+	public void testMultipleForeignUnknownField() throws Exception {
+		createDao(InvalidColumnNameForeign.class, true);
+	}
+
 	/* =============================================================================================== */
 
 	private void testCollection(Dao<Account, Integer> accountDao, boolean eager) throws Exception {
@@ -948,6 +985,61 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		@DatabaseField(foreign = true, columnName = ACCOUNT_FIELD_NAME)
 		AccountOrdered account;
 		protected OrderOrdered() {
+		}
+	}
+
+	protected static class MultiForeignForeign {
+		@DatabaseField(generatedId = true)
+		int id;
+		@ForeignCollectionField(eager = true, foreignColumnName = "from")
+		ForeignCollection<MultiForeign> froms;
+		@ForeignCollectionField(eager = true, foreignColumnName = "to")
+		ForeignCollection<MultiForeign> tos;
+		public MultiForeignForeign() {
+		}
+	}
+
+	protected static class MultiForeign {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(foreign = true)
+		MultiForeignForeign from;
+		@DatabaseField(foreign = true)
+		MultiForeignForeign to;
+		public MultiForeign() {
+		}
+		@Override
+		public int hashCode() {
+			return id;
+		}
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null || getClass() != obj.getClass()) {
+				return false;
+			}
+			return id == ((MultiForeign) obj).id;
+		}
+		@Override
+		public String toString() {
+			return getClass().getSimpleName() + " #" + id;
+		}
+	}
+	
+	protected static class InvalidColumnNameForeign {
+		@DatabaseField(generatedId = true)
+		int id;
+		@ForeignCollectionField(eager = true, columnName = "unknowncolumn")
+		ForeignCollection<InvalidColumnName> froms;
+		public InvalidColumnNameForeign() {
+		}
+	}
+
+	protected static class InvalidColumnName {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(foreign = true)
+		InvalidColumnNameForeign foreign;
+		public InvalidColumnName() {
 		}
 	}
 }

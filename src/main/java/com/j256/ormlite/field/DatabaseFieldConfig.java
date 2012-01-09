@@ -52,6 +52,7 @@ public class DatabaseFieldConfig {
 	private boolean foreignCollection;
 	private boolean foreignCollectionEager;
 	private String foreignCollectionOrderColumn;
+	private String foreignCollectionColumn;
 	private int maxEagerForeignCollectionLevel = DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL;
 	private Class<? extends DataPersister> persisterClass = DEFAULT_PERSISTER_CLASS;
 	private boolean allowGeneratedIdInsert;
@@ -385,6 +386,14 @@ public class DatabaseFieldConfig {
 		return foreignCollectionOrderColumn;
 	}
 
+	public void setForeignCollectionColumn(String foreignCollectionColumn) {
+		this.foreignCollectionColumn = foreignCollectionColumn;
+	}
+
+	public String getForeignCollectionColumn() {
+		return foreignCollectionColumn;
+	}
+
 	public Class<? extends DataPersister> getPersisterClass() {
 		return persisterClass;
 	}
@@ -667,6 +676,7 @@ public class DatabaseFieldConfig {
 		config.foreignCollectionEager = foreignCollection.eager();
 		config.maxEagerForeignCollectionLevel = foreignCollection.maxEagerForeignCollectionLevel();
 		config.foreignCollectionOrderColumn = valueIfNotBlank(foreignCollection.orderColumnName());
+		config.foreignCollectionColumn = valueIfNotBlank(foreignCollection.foreignColumnName());
 		return config;
 	}
 

@@ -346,15 +346,18 @@ public class FieldType {
 				foundDao = castDao;
 			}
 			FieldType findForeignFieldType = null;
+			String foreignColumn = fieldConfig.getForeignCollectionColumn();
 			for (FieldType fieldType : ((BaseDaoImpl<?, ?>) foundDao).getTableInfo().getFieldTypes()) {
-				if (fieldType.getFieldType() == parentClass) {
+				if (fieldType.getFieldType() == parentClass
+						&& (foreignColumn == null || fieldType.getField().getName().equals(foreignColumn))) {
 					findForeignFieldType = fieldType;
 					break;
 				}
 			}
 			if (findForeignFieldType == null) {
 				throw new SQLException("Foreign collection object " + clazz + " for field '" + field.getName()
-						+ "' does not contain a foreign field of class " + parentClass);
+						+ "' column-name does not contain a foreign field "
+						+ (foreignColumn == null ? "" : " named '" + foreignColumn + "'") + " of class " + parentClass);
 			}
 			if (!findForeignFieldType.fieldConfig.isForeign()
 					&& !findForeignFieldType.fieldConfig.isForeignAutoRefresh()) {
@@ -724,8 +727,8 @@ public class FieldType {
 		}
 		levelCounters.foreignCollectionLevel++;
 		try {
-			return new EagerForeignCollection<FT, FID>(castDao, parent, foreignFieldType, id,
-					fieldConfig.getForeignCollectionOrderColumn());
+			return new EagerForeignCollection<FT, FID>(castDao, foreignFieldType.columnName, id,
+					fieldConfig.getForeignCollectionOrderColumn(), parent);
 		} finally {
 			levelCounters.foreignCollectionLevel--;
 		}

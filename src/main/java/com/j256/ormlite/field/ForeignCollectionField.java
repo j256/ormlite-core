@@ -70,4 +70,11 @@ public @interface ForeignCollectionField {
 	 * The name of the column in the object that we should order by.
 	 */
 	String orderColumnName() default "";
+
+	/**
+	 * Name of the column in the class that the collection is holding that corresponds to the collection. This is needed
+	 * if there are two foreign fields in the class in the collection (such as a tree structure) and you want to
+	 * identify which column you want in this collection.
+	 */
+	String foreignColumnName() default "";
 }
