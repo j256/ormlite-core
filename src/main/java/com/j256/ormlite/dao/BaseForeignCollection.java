@@ -26,16 +26,16 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 	private static final long serialVersionUID = -5158840898186237589L;
 
 	protected transient final Dao<T, ID> dao;
-	private transient final String fieldName;
+	private transient final String columnName;
 	private transient final Object fieldValue;
 	private transient PreparedQuery<T> preparedQuery;
 	private transient final String orderColumn;
 	private transient final Object parent;
 
-	protected BaseForeignCollection(Dao<T, ID> dao, String fieldName, Object fieldValue, String orderColumn,
+	protected BaseForeignCollection(Dao<T, ID> dao, String columnName, Object fieldValue, String orderColumn,
 			Object parent) {
 		this.dao = dao;
-		this.fieldName = fieldName;
+		this.columnName = columnName;
 		this.fieldValue = fieldValue;
 		this.orderColumn = orderColumn;
 		this.parent = parent;
@@ -162,7 +162,7 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 			if (orderColumn != null) {
 				qb.orderBy(orderColumn, true);
 			}
-			preparedQuery = qb.where().eq(fieldName, fieldArg).prepare();
+			preparedQuery = qb.where().eq(columnName, fieldArg).prepare();
 			if (preparedQuery instanceof MappedPreparedStmt) {
 				@SuppressWarnings("unchecked")
 				MappedPreparedStmt<T, Object> mappedStmt = ((MappedPreparedStmt<T, Object>) preparedQuery);
