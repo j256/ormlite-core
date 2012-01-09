@@ -1052,7 +1052,7 @@ and uses the string constructor to convert it back again.
 
 You specify the @code{dataType} field (from the @code{@@DatabaseField} annotation) as a @code{DataType.BIG_DECIMAL_NUMERIC}
 in which case a @code{java.math.BigDecimal} field will be persisted as a @code{NUMERIC} type.  This is only supported by some
-database types and with various default precision settings. Android should use @code{DataType.BIG_DECIMAL}.
+database types and with various default precision settings.  Android should use the default @code{DataType.BIG_DECIMAL}.
 
 @end table
 
