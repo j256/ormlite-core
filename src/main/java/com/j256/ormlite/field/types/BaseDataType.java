@@ -20,6 +20,10 @@ import com.j256.ormlite.support.DatabaseResults;
  */
 public abstract class BaseDataType implements DataPersister {
 
+	/**
+	 * Type of the data as it is persisted in SQL-land. For example, if you are storing a DateTime, you might consider
+	 * this to be a {@link SqlType#LONG} if you are storing it as epoche milliseconds.
+	 */
 	private final SqlType sqlType;
 	private final Class<?>[] classes;
 
