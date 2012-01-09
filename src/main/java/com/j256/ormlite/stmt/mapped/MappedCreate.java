@@ -86,6 +86,11 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 			}
 
 			int rowC = databaseConnection.insert(statement, args, argFieldTypes, keyHolder);
+			logger.debug("insert data with statement '{}' and {} args, changed {} rows", statement, args.length, rowC);
+			if (args.length > 0) {
+				// need to do the (Object) cast to force args to be a single object
+				logger.trace("insert arguments: {}", (Object) args);
+			}
 			if (rowC > 0) {
 				if (versionDefaultValue != null) {
 					argFieldTypes[versionFieldTypeIndex].assignField(data, versionDefaultValue, false, null);
@@ -107,11 +112,6 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 					Object id = idField.extractJavaFieldValue(data);
 					objectCache.put(clazz, id, data);
 				}
-			}
-			logger.debug("insert data with statement '{}' and {} args, changed {} rows", statement, args.length, rowC);
-			if (args.length > 0) {
-				// need to do the (Object) cast to force args to be a single object
-				logger.trace("insert arguments: {}", (Object) args);
 			}
 
 			return rowC;
