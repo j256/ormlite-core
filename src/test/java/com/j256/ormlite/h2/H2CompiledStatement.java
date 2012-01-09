@@ -90,6 +90,8 @@ public class H2CompiledStatement implements CompiledStatement {
 				return Types.VARBINARY;
 			case BLOB :
 				return Types.BLOB;
+			case BIG_DECIMAL :
+				return Types.NUMERIC;
 			default :
 				throw new IllegalArgumentException("No JDBC mapping for unknown SqlType " + sqlType);
 		}

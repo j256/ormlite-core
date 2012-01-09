@@ -26,6 +26,7 @@ public enum SqlType {
 	DOUBLE,
 	SERIALIZABLE,
 	BLOB,
+	BIG_DECIMAL,
 	UNKNOWN,
 	// end
 	;

@@ -7,8 +7,8 @@
 
 @c ----------------------------------------------------------------
 @set ormlite_version 4.32
-@set ormlite_year 2011
-@set ormlite_date December @value{ormlite_year}
+@set ormlite_year 2012
+@set ormlite_date January @value{ormlite_year}
 @set package ORMLite
 @c ----------------------------------------------------------------
 
@@ -1047,6 +1047,13 @@ and uses the string constructor to convert it back again.
 The @code{java.math.BigDecimal} class persisted as a @code{VARCHAR} type.  It is saved using the @code{bigDecimal.toString()}
 and uses the string constructor to convert it back again.
 
+@cindex BigDecimal Numeric type
+@item BigDecimal (DataType.BIG_DECIMAL_NUMERIC)
+
+You specify the @code{dataType} field (from the @code{@@DatabaseField} annotation) as a @code{DataType.BIG_DECIMAL_NUMERIC}
+in which case a @code{java.math.BigDecimal} field will be persisted as a @code{NUMERIC} type.  This is only supported by some
+database types and with various default precision settings. Android should use @code{DataType.BIG_DECIMAL}.
+
 @end table
 
 @emph{NOTE:} ORMLite also supports the concept of foreign objects where the id of another object is
@@ -1788,6 +1795,7 @@ reason, ORMLite has calls which allow you to issue raw query, update, and execut
 @node Raw Queries, Raw Updates, Raw Statements, Raw Statements
 @subsection Issuing Raw Queries
 
+@cindex raw queries
 @cindex aggregate, raw queries
 @cindex SUM, using
 @cindex COUNT, using
@@ -2111,6 +2119,12 @@ specify that you want the collection returned when you specify @code{queryBuilde
 @item orderColumnName
 
 The name of the column in the foreign object that we should order the collection by.
+
+@item foreignColumnName
+
+Name of the column in the class that the collection is holding that corresponds to this particular collection.  This is needed if
+there are two foreign fields in the class (such as a tree structure) and you want to identify which specific column you want in this
+collection.
 
 @end table
 

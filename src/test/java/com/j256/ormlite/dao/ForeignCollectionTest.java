@@ -465,7 +465,8 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertTrue(result.tos.contains(multiple1));
 	}
 
-	@Test //(expected = SQLException.class)
+	@Test
+	// (expected = SQLException.class)
 	public void testMultipleForeignUnknownField() throws Exception {
 		createDao(InvalidColumnNameForeign.class, true);
 	}
@@ -1024,7 +1025,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 			return getClass().getSimpleName() + " #" + id;
 		}
 	}
-	
+
 	protected static class InvalidColumnNameForeign {
 		@DatabaseField(generatedId = true)
 		int id;

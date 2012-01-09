@@ -6,6 +6,7 @@ import com.j256.ormlite.field.DataPersister;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
+import com.j256.ormlite.field.types.BigDecimalStringType;
 
 /**
  * Sqlite database type information used to create the tables, etc..
@@ -57,6 +58,8 @@ public abstract class BaseSqliteDatabaseType extends BaseDatabaseType implements
 		switch (dataPersister.getSqlType()) {
 			case BOOLEAN :
 				return booleanConverter;
+			case BIG_DECIMAL :
+				return BigDecimalStringType.getSingleton();
 			default :
 				return super.getFieldConverter(dataPersister);
 		}

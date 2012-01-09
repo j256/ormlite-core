@@ -1,6 +1,7 @@
 package com.j256.ormlite.h2;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -81,6 +82,10 @@ public class H2DatabaseResults implements DatabaseResults {
 
 	public double getDouble(int columnIndex) throws SQLException {
 		return resultSet.getDouble(columnIndex + 1);
+	}
+
+	public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
+		return resultSet.getBigDecimal(columnIndex + 1);
 	}
 
 	public Timestamp getTimestamp(int columnIndex) throws SQLException {

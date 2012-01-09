@@ -3,7 +3,8 @@ package com.j256.ormlite.field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import com.j256.ormlite.field.types.BigDecimalType;
+import com.j256.ormlite.field.types.BigDecimalNumericType;
+import com.j256.ormlite.field.types.BigDecimalStringType;
 import com.j256.ormlite.field.types.BigIntegerType;
 import com.j256.ormlite.field.types.BooleanObjectType;
 import com.j256.ormlite.field.types.BooleanType;
@@ -172,9 +173,13 @@ public enum DataType {
 	 */
 	BIG_INTEGER(BigIntegerType.getSingleton()),
 	/**
-	 * Persists the {@link BigDecimal} Java class.
+	 * Persists the {@link BigDecimal} Java class as a String.
 	 */
-	BIG_DECIMAL(BigDecimalType.getSingleton()),
+	BIG_DECIMAL(BigDecimalStringType.getSingleton()),
+	/**
+	 * Persists the {@link BigDecimal} Java class as a SQL NUMERIC.
+	 */
+	BIG_DECIMAL_NUMERIC(BigDecimalNumericType.getSingleton()),
 	/**
 	 * Marker for fields that are unknown.
 	 */

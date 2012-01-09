@@ -15,17 +15,17 @@ import com.j256.ormlite.support.DatabaseResults;
  * 
  * @author graywatson
  */
-public class BigDecimalType extends BaseDataType {
+public class BigDecimalStringType extends BaseDataType {
 
 	public static int DEFAULT_WIDTH = 255;
 
-	private static final BigDecimalType singleTon = new BigDecimalType();
+	private static final BigDecimalStringType singleTon = new BigDecimalStringType();
 
-	public static BigDecimalType getSingleton() {
+	public static BigDecimalStringType getSingleton() {
 		return singleTon;
 	}
 
-	private BigDecimalType() {
+	private BigDecimalStringType() {
 		super(SqlType.STRING, new Class<?>[] { BigDecimal.class });
 	}
 

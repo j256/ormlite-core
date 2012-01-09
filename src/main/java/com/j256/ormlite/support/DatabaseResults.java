@@ -1,6 +1,7 @@
 package com.j256.ormlite.support;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
@@ -96,6 +97,11 @@ public interface DatabaseResults {
 	 * Returns an input stream for a blob value from the results at the column index.
 	 */
 	public InputStream getBlobStream(int columnIndex) throws SQLException;
+
+	/**
+	 * Returns the SQL big decimal value from the results at the column index.
+	 */
+	public BigDecimal getBigDecimal(int columnIndex) throws SQLException;
 
 	/**
 	 * Returns true if the last object returned with the column index is null.

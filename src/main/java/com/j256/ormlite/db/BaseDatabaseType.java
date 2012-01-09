@@ -114,6 +114,10 @@ public abstract class BaseDatabaseType implements DatabaseType {
 				appendSerializableType(sb, fieldWidth);
 				break;
 
+			case BIG_DECIMAL :
+				appendBigDecimalNumericType(sb, fieldWidth);
+				break;
+
 			case UNKNOWN :
 			default :
 				// shouldn't be able to get here unless we have a missing case
@@ -245,6 +249,13 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	 */
 	protected void appendSerializableType(StringBuilder sb, int fieldWidth) {
 		sb.append("BLOB");
+	}
+
+	/**
+	 * Output the SQL type for a BigDecimal object.
+	 */
+	protected void appendBigDecimalNumericType(StringBuilder sb, int fieldWidth) {
+		sb.append("NUMERIC");
 	}
 
 	/**
