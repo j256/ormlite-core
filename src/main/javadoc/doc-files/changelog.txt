@@ -1,4 +1,4 @@
-4.32: 12/10/2011 (svn rYYYY)
+4.32: 1/9/2012 (svn rYYYY)
 	* CORE: Fixed bad bug where foreign objects cannot have primitive ids.  Thanks to Vladimir.  Fixed bug #3456339.
 	* CORE: Fixed bug where foreign collections couldn't handle two foreign fields. Thanks to André. Fixed bug #3471320.
 	* CORE: Added support for a BIG_DECIMAL_NUMERIC to support existing NUMERIC database fields.
