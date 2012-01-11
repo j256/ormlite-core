@@ -2,6 +2,7 @@
 	* CORE: Fixed bad bug where foreign objects cannot have primitive ids.  Thanks to Vladimir.  Fixed bug #3456339.
 	* CORE: Fixed bug where foreign collections couldn't handle two foreign fields. Thanks to André. Fixed bug #3471320.
 	* CORE: Added support for a BIG_DECIMAL_NUMERIC to support existing NUMERIC database fields.
+	* JDBC: Fixed bug where SQLite class warning is spit out for other databases.  Thanks to Kaan.  Fixed bug #3472476. 
 
 4.31: 12/8/2011 (svn r2198)
 	* CORE: Added missing IF NOT EXISTS handling to index creation.  Thanks to mjomble.  Fixed bug #3437795.
