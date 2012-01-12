@@ -18,6 +18,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Test;
@@ -439,30 +440,56 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		Dao<MultiForeignForeign, Integer> foreignDao = createDao(MultiForeignForeign.class, true);
 
 		MultiForeignForeign foreign1 = new MultiForeignForeign();
+		String stuff1 = "fpowjfwfw";
+		foreign1.stuff = stuff1;
 		assertEquals(1, foreignDao.create(foreign1));
 		MultiForeignForeign foreign2 = new MultiForeignForeign();
+		String stuff2 = "fpofwjpowjfwfw";
+		foreign2.stuff = stuff2;
 		assertEquals(1, foreignDao.create(foreign2));
 
 		MultiForeign multiple1 = new MultiForeign();
+		String stuff3 = "fpoffewjwjpowjfwfw";
 		multiple1.from = foreign1;
 		multiple1.to = foreign2;
+		multiple1.stuff = stuff3;
 		assertEquals(1, multipleDao.create(multiple1));
 		MultiForeign multiple2 = new MultiForeign();
+		String stuff4 = "fpoffewjwjpowjfwfjpfeww";
 		multiple2.from = foreign2;
 		multiple2.to = foreign1;
+		multiple2.stuff = stuff4;
 		assertEquals(1, multipleDao.create(multiple2));
 
 		MultiForeignForeign result = foreignDao.queryForId(foreign1.id);
+		assertEquals(foreign1.stuff, result.stuff);
 		assertEquals(1, result.froms.size());
-		assertTrue(result.froms.contains(multiple1));
+		Iterator<MultiForeign> iterator = result.froms.iterator();
+		assertTrue(iterator.hasNext());
+		MultiForeign multipleResult = iterator.next();
+		assertEquals(multiple1, multipleResult);
+		assertEquals(multiple1.stuff, multipleResult.stuff);
 		assertEquals(1, result.tos.size());
-		assertTrue(result.tos.contains(multiple2));
+		iterator = result.tos.iterator();
+		assertTrue(iterator.hasNext());
+		multipleResult = iterator.next();
+		assertEquals(multiple2, multipleResult);
+		assertEquals(multiple2.stuff, multipleResult.stuff);
 
 		result = foreignDao.queryForId(foreign2.id);
+		assertEquals(foreign2.stuff, result.stuff);
 		assertEquals(1, result.froms.size());
-		assertTrue(result.froms.contains(multiple2));
+		iterator = result.froms.iterator();
+		assertTrue(iterator.hasNext());
+		multipleResult = iterator.next();
+		assertEquals(multiple2, multipleResult);
+		assertEquals(multiple2.stuff, multipleResult.stuff);
 		assertEquals(1, result.tos.size());
-		assertTrue(result.tos.contains(multiple1));
+		iterator = result.tos.iterator();
+		assertTrue(iterator.hasNext());
+		multipleResult = iterator.next();
+		assertEquals(multiple1, multipleResult);
+		assertEquals(multiple1.stuff, multipleResult.stuff);
 	}
 
 	@Test
@@ -992,6 +1019,8 @@ public class ForeignCollectionTest extends BaseCoreTest {
 	protected static class MultiForeignForeign {
 		@DatabaseField(generatedId = true)
 		int id;
+		@DatabaseField
+		String stuff;
 		@ForeignCollectionField(eager = true, foreignColumnName = "from")
 		ForeignCollection<MultiForeign> froms;
 		@ForeignCollectionField(eager = true, foreignColumnName = "to")
@@ -1003,6 +1032,8 @@ public class ForeignCollectionTest extends BaseCoreTest {
 	protected static class MultiForeign {
 		@DatabaseField(generatedId = true)
 		int id;
+		@DatabaseField
+		String stuff;
 		@DatabaseField(foreign = true)
 		MultiForeignForeign from;
 		@DatabaseField(foreign = true)
