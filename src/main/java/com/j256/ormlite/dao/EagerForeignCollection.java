@@ -183,8 +183,13 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 	 * This is just a call to the equals method of the internal results list.
 	 */
 	@Override
-	public boolean equals(Object other) {
-		return results.equals(other);
+	public boolean equals(Object obj) {
+		if (!(obj instanceof EagerForeignCollection)) {
+			return false;
+		}
+		@SuppressWarnings("rawtypes")
+		EagerForeignCollection other = (EagerForeignCollection)obj;
+		return results.equals(other.results);
 	}
 
 	/**
