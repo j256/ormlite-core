@@ -18,7 +18,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Test;
@@ -435,80 +434,224 @@ public class ForeignCollectionTest extends BaseCoreTest {
 	}
 
 	@Test
-	public void testMultipleForeign() throws Exception {
-		Dao<MultiForeign, Integer> multipleDao = createDao(MultiForeign.class, true);
-		Dao<MultiForeignForeign, Integer> foreignDao = createDao(MultiForeignForeign.class, true);
+	public void testMultipleForeignEager() throws Exception {
+		Dao<EagerConnection, Integer> connectionDao = createDao(EagerConnection.class, true);
+		Dao<EagerNode, Integer> nodeDao = createDao(EagerNode.class, true);
 
-		MultiForeignForeign foreign1 = new MultiForeignForeign();
+		EagerNode node1 = new EagerNode();
 		String stuff1 = "fpowjfwfw";
-		foreign1.stuff = stuff1;
-		assertEquals(1, foreignDao.create(foreign1));
-		MultiForeignForeign foreign2 = new MultiForeignForeign();
+		node1.stuff = stuff1;
+		assertEquals(1, nodeDao.create(node1));
+		EagerNode node2 = new EagerNode();
 		String stuff2 = "fpofwjpowjfwfw";
-		foreign2.stuff = stuff2;
+		node2.stuff = stuff2;
+		assertEquals(1, nodeDao.create(node2));
+
+		EagerConnection conn1 = new EagerConnection();
+		String stuff3 = "fpoffewjwjpowjfwfw";
+		conn1.from = node1;
+		conn1.to = node2;
+		conn1.stuff = stuff3;
+		assertEquals(1, connectionDao.create(conn1));
+		EagerConnection conn2 = new EagerConnection();
+		String stuff4 = "fpoffewjwjpowjfwfjpfeww";
+		conn2.from = node2;
+		conn2.to = node1;
+		conn2.stuff = stuff4;
+		assertEquals(1, connectionDao.create(conn2));
+
+		boolean found1 = false;
+		boolean found2 = false;
+		for (EagerNode node : nodeDao.queryForAll()) {
+			if (node.id == node1.id) {
+				assertEquals(node1.stuff, node.stuff);
+				EagerConnection[] connections = node.froms.toArray(new EagerConnection[0]);
+				assertEquals(1, connections.length);
+				assertEquals(conn1, connections[0]);
+				assertEquals(conn1.stuff, connections[0].stuff);
+				assertEquals(node1, connections[0].from);
+				assertEquals(node2, connections[0].to);
+				connections = node.tos.toArray(new EagerConnection[0]);
+				assertEquals(1, connections.length);
+				assertEquals(conn2, connections[0]);
+				assertEquals(conn2.stuff, connections[0].stuff);
+				assertEquals(node2, connections[0].from);
+				assertEquals(node1, connections[0].to);
+				found1 = true;
+			} else if (node.id == node2.id) {
+				assertEquals(node2.stuff, node.stuff);
+				EagerConnection[] connections = node.froms.toArray(new EagerConnection[0]);
+				assertEquals(1, connections.length);
+				assertEquals(conn2, connections[0]);
+				assertEquals(conn2.stuff, connections[0].stuff);
+				assertEquals(node2, connections[0].from);
+				assertEquals(node1, connections[0].to);
+				connections = node.tos.toArray(new EagerConnection[0]);
+				assertEquals(1, connections.length);
+				assertEquals(conn1, connections[0]);
+				assertEquals(conn1.stuff, connections[0].stuff);
+				assertEquals(node1, connections[0].from);
+				assertEquals(node2, connections[0].to);
+				found2 = true;
+			} else {
+				fail("Unknown Node " + node.id);
+			}
+		}
+		assertTrue(found1);
+		assertTrue(found2);
+
+		found1 = false;
+		found2 = false;
+		for (EagerConnection result : connectionDao.queryForAll()) {
+			if (result.id == conn1.id) {
+				assertEquals(conn1.stuff, result.stuff);
+				assertEquals(node1, result.from);
+				assertEquals(node2, result.to);
+				found1 = true;
+			} else if (result.id == conn2.id) {
+				assertEquals(conn2.stuff, result.stuff);
+				assertEquals(node2, result.from);
+				assertEquals(node1, result.to);
+				found2 = true;
+			} else {
+				fail("Unknown Connection " + result.id);
+			}
+		}
+		assertTrue(found1);
+		assertTrue(found2);
+	}
+
+	@Test
+	public void testMultipleForeignLazy() throws Exception {
+		Dao<LazyConnection, Integer> connectionDao = createDao(LazyConnection.class, true);
+		Dao<LazyNode, Integer> nodeDao = createDao(LazyNode.class, true);
+
+		LazyNode node1 = new LazyNode();
+		String stuff1 = "fpowjfwfw";
+		node1.stuff = stuff1;
+		assertEquals(1, nodeDao.create(node1));
+		LazyNode node2 = new LazyNode();
+		String stuff2 = "fpofwjpowjfwfw";
+		node2.stuff = stuff2;
+		assertEquals(1, nodeDao.create(node2));
+
+		LazyConnection conn1 = new LazyConnection();
+		String stuff3 = "fpoffewjwjpowjfwfw";
+		conn1.from = node1;
+		conn1.to = node2;
+		conn1.stuff = stuff3;
+		assertEquals(1, connectionDao.create(conn1));
+		LazyConnection conn2 = new LazyConnection();
+		String stuff4 = "fpoffewjwjpowjfwfjpfeww";
+		conn2.from = node2;
+		conn2.to = node1;
+		conn2.stuff = stuff4;
+		assertEquals(1, connectionDao.create(conn2));
+
+		boolean found1 = false;
+		boolean found2 = false;
+		for (LazyNode node : nodeDao.queryForAll()) {
+			if (node.id == node1.id) {
+				assertEquals(node1.stuff, node.stuff);
+				LazyConnection[] connections = node.froms.toArray(new LazyConnection[0]);
+				assertEquals(1, connections.length);
+				assertEquals(conn1, connections[0]);
+				assertEquals(conn1.stuff, connections[0].stuff);
+				assertEquals(node1, connections[0].from);
+				assertEquals(node2, connections[0].to);
+				connections = node.tos.toArray(new LazyConnection[0]);
+				assertEquals(1, connections.length);
+				assertEquals(conn2, connections[0]);
+				assertEquals(conn2.stuff, connections[0].stuff);
+				assertEquals(node2, connections[0].from);
+				assertEquals(node1, connections[0].to);
+				found1 = true;
+			} else if (node.id == node2.id) {
+				assertEquals(node2.stuff, node.stuff);
+				LazyConnection[] connections = node.froms.toArray(new LazyConnection[0]);
+				assertEquals(1, connections.length);
+				assertEquals(conn2, connections[0]);
+				assertEquals(conn2.stuff, connections[0].stuff);
+				assertEquals(node2, connections[0].from);
+				assertEquals(node1, connections[0].to);
+				connections = node.tos.toArray(new LazyConnection[0]);
+				assertEquals(1, connections.length);
+				assertEquals(conn1, connections[0]);
+				assertEquals(conn1.stuff, connections[0].stuff);
+				assertEquals(node1, connections[0].from);
+				assertEquals(node2, connections[0].to);
+				found2 = true;
+			} else {
+				fail("Unknown Node " + node.id);
+			}
+		}
+		assertTrue(found1);
+		assertTrue(found2);
+
+		found1 = false;
+		found2 = false;
+		for (LazyConnection result : connectionDao.queryForAll()) {
+			if (result.id == conn1.id) {
+				assertEquals(conn1.stuff, result.stuff);
+				assertEquals(node1, result.from);
+				assertEquals(node2, result.to);
+				found1 = true;
+			} else if (result.id == conn2.id) {
+				assertEquals(conn2.stuff, result.stuff);
+				assertEquals(node2, result.from);
+				assertEquals(node1, result.to);
+				found2 = true;
+			} else {
+				fail("Unknown Connection " + result.id);
+			}
+		}
+		assertTrue(found1);
+		assertTrue(found2);
+	}
+
+	@Test
+	public void testForeignLinkage() throws Exception {
+		Dao<EagerConnection, Integer> multipleDao = createDao(EagerConnection.class, true);
+		Dao<EagerNode, Integer> foreignDao = createDao(EagerNode.class, true);
+
+		EagerNode foreign1 = new EagerNode();
+		assertEquals(1, foreignDao.create(foreign1));
+		EagerNode foreign2 = new EagerNode();
 		assertEquals(1, foreignDao.create(foreign2));
 
-		MultiForeign multiple1 = new MultiForeign();
-		String stuff3 = "fpoffewjwjpowjfwfw";
+		EagerConnection multiple1 = new EagerConnection();
 		multiple1.from = foreign1;
 		multiple1.to = foreign2;
-		multiple1.stuff = stuff3;
 		assertEquals(1, multipleDao.create(multiple1));
-		MultiForeign multiple2 = new MultiForeign();
-		String stuff4 = "fpoffewjwjpowjfwfjpfeww";
-		multiple2.from = foreign2;
-		multiple2.to = foreign1;
-		multiple2.stuff = stuff4;
-		assertEquals(1, multipleDao.create(multiple2));
 
-		MultiForeignForeign result = foreignDao.queryForId(foreign1.id);
-		assertEquals(foreign1.stuff, result.stuff);
-		assertEquals(1, result.froms.size());
-		Iterator<MultiForeign> iterator = result.froms.iterator();
-		assertTrue(iterator.hasNext());
-		MultiForeign multipleResult = iterator.next();
-		assertEquals(multiple1, multipleResult);
-		assertEquals(multiple1.stuff, multipleResult.stuff);
-		assertEquals(1, result.tos.size());
-		iterator = result.tos.iterator();
-		assertTrue(iterator.hasNext());
-		multipleResult = iterator.next();
-		assertEquals(multiple2, multipleResult);
-		assertEquals(multiple2.stuff, multipleResult.stuff);
+		EagerNode result = foreignDao.queryForId(foreign1.id);
+		EagerConnection[] array = result.froms.toArray(new EagerConnection[result.froms.size()]);
+		assertEquals(1, array.length);
+		assertSame(foreign1, array[0].from);
+	}
 
-		result = foreignDao.queryForId(foreign2.id);
-		assertEquals(foreign2.stuff, result.stuff);
-		assertEquals(1, result.froms.size());
-		iterator = result.froms.iterator();
-		assertTrue(iterator.hasNext());
-		multipleResult = iterator.next();
-		assertEquals(multiple2, multipleResult);
-		assertEquals(multiple2.stuff, multipleResult.stuff);
-		assertEquals(1, result.tos.size());
-		iterator = result.tos.iterator();
-		assertTrue(iterator.hasNext());
-		multipleResult = iterator.next();
-		assertEquals(multiple1, multipleResult);
-		assertEquals(multiple1.stuff, multipleResult.stuff);
-		
-		for (MultiForeign m : multipleDao) {
-			if (m.id == multiple1.id) {
-				assertEquals(multiple1.stuff, m.stuff);
-			} else if (m.id == multiple2.id) {
-				assertEquals(multiple2.stuff, m.stuff);
-			} else {
-				fail("unknown MultiForeign with id " + m.id);
-			}
-		}
-		for (MultiForeignForeign f : foreignDao) {
-			if (f.id == foreign1.id) {
-				assertEquals(foreign1.stuff, f.stuff);
-			} else if (f.id == foreign2.id) {
-				assertEquals(foreign2.stuff, f.stuff);
-			} else {
-				fail("unknown MultiForeign with id " + f.id);
-			}
-		}
+	@Test
+	public void testForeignLinkageWithCache() throws Exception {
+		Dao<EagerConnection, Integer> multipleDao = createDao(EagerConnection.class, true);
+		multipleDao.setObjectCache(true);
+		Dao<EagerNode, Integer> foreignDao = createDao(EagerNode.class, true);
+		foreignDao.setObjectCache(true);
+
+		EagerNode foreign1 = new EagerNode();
+		assertEquals(1, foreignDao.create(foreign1));
+		EagerNode foreign2 = new EagerNode();
+		assertEquals(1, foreignDao.create(foreign2));
+
+		EagerConnection multiple1 = new EagerConnection();
+		multiple1.from = foreign1;
+		multiple1.to = foreign2;
+		assertEquals(1, multipleDao.create(multiple1));
+
+		EagerNode result = foreignDao.queryForId(foreign1.id);
+		assertNotNull(result.froms);
+		EagerConnection[] array = result.froms.toArray(new EagerConnection[result.froms.size()]);
+		assertEquals(1, array.length);
+		assertSame(foreign1, array[0].from);
 	}
 
 	@Test
@@ -1035,29 +1178,16 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		}
 	}
 
-	protected static class MultiForeignForeign {
+	protected static class EagerNode {
 		@DatabaseField(generatedId = true)
 		int id;
 		@DatabaseField
 		String stuff;
 		@ForeignCollectionField(eager = true, foreignColumnName = "from")
-		ForeignCollection<MultiForeign> froms;
+		ForeignCollection<EagerConnection> froms;
 		@ForeignCollectionField(eager = true, foreignColumnName = "to")
-		ForeignCollection<MultiForeign> tos;
-		public MultiForeignForeign() {
-		}
-	}
-
-	protected static class MultiForeign {
-		@DatabaseField(generatedId = true)
-		int id;
-		@DatabaseField
-		String stuff;
-		@DatabaseField(foreign = true)
-		MultiForeignForeign from;
-		@DatabaseField(foreign = true)
-		MultiForeignForeign to;
-		public MultiForeign() {
+		ForeignCollection<EagerConnection> tos;
+		public EagerNode() {
 		}
 		@Override
 		public int hashCode() {
@@ -1068,7 +1198,91 @@ public class ForeignCollectionTest extends BaseCoreTest {
 			if (obj == null || getClass() != obj.getClass()) {
 				return false;
 			}
-			return id == ((MultiForeign) obj).id;
+			return id == ((EagerNode) obj).id;
+		}
+		@Override
+		public String toString() {
+			return getClass().getSimpleName() + " #" + id;
+		}
+	}
+
+	protected static class EagerConnection {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField
+		String stuff;
+		@DatabaseField(foreign = true)
+		EagerNode from;
+		@DatabaseField(foreign = true)
+		EagerNode to;
+		public EagerConnection() {
+		}
+		@Override
+		public int hashCode() {
+			return id;
+		}
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null || getClass() != obj.getClass()) {
+				return false;
+			}
+			return id == ((EagerConnection) obj).id;
+		}
+		@Override
+		public String toString() {
+			return getClass().getSimpleName() + " #" + id;
+		}
+	}
+
+	protected static class LazyNode {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField
+		String stuff;
+		@ForeignCollectionField(eager = false, foreignColumnName = "from")
+		ForeignCollection<LazyConnection> froms;
+		@ForeignCollectionField(eager = false, foreignColumnName = "to")
+		ForeignCollection<LazyConnection> tos;
+		public LazyNode() {
+		}
+		@Override
+		public int hashCode() {
+			return id;
+		}
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null || getClass() != obj.getClass()) {
+				return false;
+			}
+			return id == ((LazyNode) obj).id;
+		}
+		@Override
+		public String toString() {
+			return getClass().getSimpleName() + " #" + id;
+		}
+	}
+
+	protected static class LazyConnection {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField
+		String stuff;
+		@DatabaseField(foreign = true)
+		LazyNode from;
+		@DatabaseField(foreign = true)
+		LazyNode to;
+		public LazyConnection() {
+		}
+		@Override
+		public int hashCode() {
+			return id;
+		}
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null || getClass() != obj.getClass()) {
+				return false;
+			}
+			return id == ((LazyConnection) obj).id;
 		}
 		@Override
 		public String toString() {

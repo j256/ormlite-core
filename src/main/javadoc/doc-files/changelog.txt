@@ -1,4 +1,8 @@
-4.32: 1/11/2012 (svn rYYYY)
+4.33: 1/12/2012 (svn r????)
+	* Fixed a find-bugs result from the eager collection equals method that would always return false.
+	* Fixed [another] problem with foreign collections and multiple foreign fields. Thanks to André. Fixes bug 3473078.
+
+4.32: 1/11/2012 (svn r2229)
 	* CORE: Fixed bad bug where foreign objects cannot have primitive ids.  Thanks to Vladimir.  Fixes bug #3456339.
 	* CORE: Fixed bug where foreign collections couldn't handle two foreign fields. Thanks to André. Fixes bug #3471320.
 	* CORE: Added support for a BIG_DECIMAL_NUMERIC to support existing NUMERIC database fields.

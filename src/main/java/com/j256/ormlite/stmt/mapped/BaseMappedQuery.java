@@ -22,6 +22,7 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 	// cache of column names to results position
 	private Map<String, Integer> columnPositions = null;
 	private Object parent = null;
+	private Object parentId = null;
 
 	protected BaseMappedQuery(TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes,
 			FieldType[] resultsFieldTypes) {
@@ -57,7 +58,14 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 				foreignCollections = true;
 			} else {
 				Object val = fieldType.resultToJava(results, colPosMap);
-				if (parent != null && fieldType.getField().getType() == parent.getClass()) {
+				/*
+				 * This is pretty subtle. We introduced multiple foreign fields to the same type which use the {@link
+				 * ForeignCollectionField} foreignColumnName field. The bug that was created was that all the fields
+				 * were then set with the parent class. Only the fields that have a matching id value should be set to
+				 * the parent.  We had to add the val.equals logic.
+				 */
+				if (val != null && parent != null && fieldType.getField().getType() == parent.getClass()
+						&& val.equals(parentId)) {
 					fieldType.assignField(instance, parent, true, objectCache);
 				} else {
 					fieldType.assignField(instance, val, false, objectCache);
@@ -87,7 +95,8 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 	/**
 	 * If we have a foreign collection object then this sets the value on the foreign object in the class.
 	 */
-	public void setParentObject(Object parent) {
+	public void setParentInformation(Object parent, Object parentId) {
 		this.parent = parent;
+		this.parentId = parentId;
 	}
 }
