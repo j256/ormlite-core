@@ -490,6 +490,25 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		multipleResult = iterator.next();
 		assertEquals(multiple1, multipleResult);
 		assertEquals(multiple1.stuff, multipleResult.stuff);
+		
+		for (MultiForeign m : multipleDao) {
+			if (m.id == multiple1.id) {
+				assertEquals(multiple1.stuff, m.stuff);
+			} else if (m.id == multiple2.id) {
+				assertEquals(multiple2.stuff, m.stuff);
+			} else {
+				fail("unknown MultiForeign with id " + m.id);
+			}
+		}
+		for (MultiForeignForeign f : foreignDao) {
+			if (f.id == foreign1.id) {
+				assertEquals(foreign1.stuff, f.stuff);
+			} else if (f.id == foreign2.id) {
+				assertEquals(foreign2.stuff, f.stuff);
+			} else {
+				fail("unknown MultiForeign with id " + f.id);
+			}
+		}
 	}
 
 	@Test
