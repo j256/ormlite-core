@@ -638,7 +638,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	public FieldType findForeignFieldType(Class<?> clazz) {
 		checkForInitialized();
 		for (FieldType fieldType : tableInfo.getFieldTypes()) {
-			if (fieldType.getFieldType() == clazz) {
+			if (fieldType.getType() == clazz) {
 				return fieldType;
 			}
 		}

@@ -65,7 +65,7 @@ public class EnumStringType extends BaseEnumType {
 	@Override
 	public Object makeConfigObject(FieldType fieldType) throws SQLException {
 		Map<String, Enum<?>> enumStringMap = new HashMap<String, Enum<?>>();
-		Enum<?>[] constants = (Enum<?>[]) fieldType.getFieldType().getEnumConstants();
+		Enum<?>[] constants = (Enum<?>[]) fieldType.getType().getEnumConstants();
 		if (constants == null) {
 			throw new SQLException("Field " + fieldType + " improperly configured as type " + this);
 		}

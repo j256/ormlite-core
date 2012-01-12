@@ -70,7 +70,7 @@ abstract class BaseComparison implements Comparison {
 			// conversion is done when the getValue() is called
 			argHolder.setValue(argOrValue);
 			argList.add(argHolder);
-		} else if (fieldType.isForeign() && fieldType.getFieldType() == argOrValue.getClass()) {
+		} else if (fieldType.isForeign() && fieldType.getType() == argOrValue.getClass()) {
 			/*
 			 * If we have a foreign field and our argument is an instance of the foreign object (i.e. not its id), then
 			 * we need to extract the id.
