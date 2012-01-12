@@ -386,7 +386,7 @@ public class TableUtils {
 				sb.append("UNIQUE ");
 			}
 			sb.append("INDEX ");
-			if (ifNotExists && databaseType.isCreateIfNotExistsSupported()) {
+			if (ifNotExists && databaseType.isCreateIndexIfNotExistsSupported()) {
 				sb.append("IF NOT EXISTS ");
 			}
 			databaseType.appendEscapedEntityName(sb, indexEntry.getKey());

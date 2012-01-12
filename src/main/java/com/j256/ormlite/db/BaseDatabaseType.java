@@ -453,6 +453,10 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		return false;
 	}
 
+	public boolean isCreateIndexIfNotExistsSupported() {
+		return isCreateIfNotExistsSupported();
+	}
+
 	public boolean isSelectSequenceBeforeInsert() {
 		return false;
 	}

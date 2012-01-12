@@ -196,6 +196,12 @@ public interface DatabaseType {
 	public boolean isCreateIfNotExistsSupported();
 
 	/**
+	 * Does the database support the "CREATE INDEX IF NOT EXISTS" SQL construct. By default this just calls
+	 * {@link #isCreateIfNotExistsSupported()}.
+	 */
+	public boolean isCreateIndexIfNotExistsSupported();
+
+	/**
 	 * Returns true if we have to select the value of the sequence before we insert a new data row.
 	 */
 	public boolean isSelectSequenceBeforeInsert();
