@@ -58,10 +58,10 @@ public abstract class BaseMappedStatement<T, ID> {
 		return idField.convertJavaFieldToSqlArgValue(id);
 	}
 
-	static void appendWhereId(DatabaseType databaseType, FieldType idField, StringBuilder sb,
+	static void appendWhereFieldEq(DatabaseType databaseType, FieldType fieldType, StringBuilder sb,
 			List<FieldType> fieldTypeList) {
 		sb.append("WHERE ");
-		appendFieldColumnName(databaseType, sb, idField, fieldTypeList);
+		appendFieldColumnName(databaseType, sb, fieldType, fieldTypeList);
 		sb.append("= ?");
 	}
 

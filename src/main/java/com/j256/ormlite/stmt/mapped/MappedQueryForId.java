@@ -35,7 +35,7 @@ public class MappedQueryForId<T, ID> extends BaseMappedQuery<T, ID> {
 		}
 		Object[] args = new Object[] { convertIdToFieldObject(id) };
 		// @SuppressWarnings("unchecked")
-		Object result = databaseConnection.queryForOne(statement, args, new FieldType[] { idField }, this, objectCache);
+		Object result = databaseConnection.queryForOne(statement, args, argFieldTypes, this, objectCache);
 		if (result == null) {
 			logger.debug("{} using '{}' and {} args, got no results", label, statement, args.length);
 		} else if (result == DatabaseConnection.MORE_THAN_ONE) {
@@ -75,7 +75,7 @@ public class MappedQueryForId<T, ID> extends BaseMappedQuery<T, ID> {
 		// build the select statement by hand
 		StringBuilder sb = new StringBuilder(64);
 		appendTableName(databaseType, sb, "SELECT * FROM ", tableInfo.getTableName());
-		appendWhereId(databaseType, idField, sb, null);
+		appendWhereFieldEq(databaseType, idField, sb, null);
 		return sb.toString();
 	}
 

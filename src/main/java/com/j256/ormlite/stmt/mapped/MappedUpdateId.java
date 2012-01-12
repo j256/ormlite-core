@@ -64,7 +64,7 @@ public class MappedUpdateId<T, ID> extends BaseMappedStatement<T, ID> {
 		sb.append("SET ");
 		appendFieldColumnName(databaseType, sb, idField, null);
 		sb.append("= ? ");
-		appendWhereId(databaseType, idField, sb, null);
+		appendWhereFieldEq(databaseType, idField, sb, null);
 		return new MappedUpdateId<T, ID>(tableInfo, sb.toString(), new FieldType[] { idField, idField });
 	}
 

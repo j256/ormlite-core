@@ -71,7 +71,7 @@ public class MappedUpdate<T, ID> extends BaseMappedStatement<T, ID> {
 			sb.append("= ?");
 		}
 		sb.append(' ');
-		appendWhereId(databaseType, idField, sb, null);
+		appendWhereFieldEq(databaseType, idField, sb, null);
 		argFieldTypes[argFieldC++] = idField;
 		if (versionFieldType != null) {
 			sb.append(" AND ");
