@@ -23,10 +23,10 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 
 	private final List<T> results;
 
-	public EagerForeignCollection(Dao<T, ID> dao, String columnName, Object fieldValue, String orderColumn,
-			Object parent) throws SQLException {
-		super(dao, columnName, fieldValue, orderColumn, parent);
-		if (fieldValue == null) {
+	public EagerForeignCollection(Dao<T, ID> dao, Object parent, Object parentId, String columnName,
+			String orderColumn) throws SQLException {
+		super(dao, parent, parentId, columnName, orderColumn);
+		if (parentId == null) {
 			/*
 			 * If we have no field value then just create an empty list. This is for when we need to create an empty
 			 * eager collection.

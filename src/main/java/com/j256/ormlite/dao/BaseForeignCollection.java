@@ -27,16 +27,16 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 
 	protected transient final Dao<T, ID> dao;
 	private transient final String columnName;
-	private transient final Object fieldValue;
+	private transient final Object parentId;
 	private transient PreparedQuery<T> preparedQuery;
 	private transient final String orderColumn;
 	private transient final Object parent;
 
-	protected BaseForeignCollection(Dao<T, ID> dao, String columnName, Object fieldValue, String orderColumn,
-			Object parent) {
+	protected BaseForeignCollection(Dao<T, ID> dao, Object parent, Object parentId, String columnName,
+			String orderColumn) {
 		this.dao = dao;
 		this.columnName = columnName;
-		this.fieldValue = fieldValue;
+		this.parentId = parentId;
 		this.orderColumn = orderColumn;
 		this.parent = parent;
 	}
@@ -157,7 +157,7 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 		}
 		if (preparedQuery == null) {
 			SelectArg fieldArg = new SelectArg();
-			fieldArg.setValue(fieldValue);
+			fieldArg.setValue(parentId);
 			QueryBuilder<T, ID> qb = dao.queryBuilder();
 			if (orderColumn != null) {
 				qb.orderBy(orderColumn, true);
@@ -166,7 +166,7 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 			if (preparedQuery instanceof MappedPreparedStmt) {
 				@SuppressWarnings("unchecked")
 				MappedPreparedStmt<T, Object> mappedStmt = ((MappedPreparedStmt<T, Object>) preparedQuery);
-				mappedStmt.setParentObject(parent);
+				mappedStmt.setParentInformation(parent, parentId);
 			}
 		}
 		return preparedQuery;
