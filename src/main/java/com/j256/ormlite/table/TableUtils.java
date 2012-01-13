@@ -268,7 +268,8 @@ public class TableUtils {
 		addDropTableStatements(databaseType, tableInfo, statements);
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		try {
-			return doStatements(connection, "drop", statements, ignoreErrors, false);
+			return doStatements(connection, "drop", statements, ignoreErrors,
+					databaseType.isCreateTableReturnsNegative(), false);
 		} finally {
 			connectionSource.releaseConnection(connection);
 		}
@@ -436,7 +437,9 @@ public class TableUtils {
 		addCreateTableStatements(databaseType, tableInfo, statements, queriesAfter, ifNotExists);
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		try {
-			int stmtC = doStatements(connection, "create", statements, false, databaseType.isCreateTableReturnsZero());
+			int stmtC =
+					doStatements(connection, "create", statements, false, databaseType.isCreateTableReturnsNegative(),
+							databaseType.isCreateTableReturnsZero());
 			stmtC += doCreateTestQueries(connection, databaseType, queriesAfter);
 			return stmtC;
 		} finally {
@@ -445,7 +448,7 @@ public class TableUtils {
 	}
 
 	private static int doStatements(DatabaseConnection connection, String label, Collection<String> statements,
-			boolean ignoreErrors, boolean expectingZero) throws SQLException {
+			boolean ignoreErrors, boolean returnsNegative, boolean expectingZero) throws SQLException {
 		int stmtC = 0;
 		for (String statement : statements) {
 			int rowC = 0;
@@ -467,8 +470,10 @@ public class TableUtils {
 			}
 			// sanity check
 			if (rowC < 0) {
-				throw new SQLException("SQL statement " + statement + " updated " + rowC
-						+ " rows, we were expecting >= 0");
+				if (!returnsNegative) {
+					throw new SQLException("SQL statement " + statement + " updated " + rowC
+							+ " rows, we were expecting >= 0");
+				}
 			} else if (rowC > 0 && expectingZero) {
 				throw new SQLException("SQL statement updated " + rowC + " rows, we were expecting == 0: " + statement);
 			}

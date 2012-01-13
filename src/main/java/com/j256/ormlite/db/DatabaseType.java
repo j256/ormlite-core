@@ -156,6 +156,11 @@ public interface DatabaseType {
 	public boolean isCreateTableReturnsZero();
 
 	/**
+	 * Returns true if CREATE and DROP TABLE statements can return < 0 and still have worked. Gross!
+	 */
+	public boolean isCreateTableReturnsNegative();
+
+	/**
 	 * Returns true if table and field names should be made uppercase.
 	 * 
 	 * <p>

@@ -429,6 +429,10 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		return true;
 	}
 
+	public boolean isCreateTableReturnsNegative() {
+		return false;
+	}
+
 	public boolean isEntityNamesMustBeUpCase() {
 		return false;
 	}
