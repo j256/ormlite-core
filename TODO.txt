@@ -15,6 +15,8 @@
 	- DataPersiterManager
 	- DatabaseField.persisterClass
 
+- fix ignored tests inside of ForeignCollectionTest
+
 - TableUtils from JC:
 	- TableUtils.alterTableAddColumns(connectionSource, dataClass, String... columnOrFieldNames);
 	- TableUtils.alterTableDropColumns(connectionSource, dataClass, String... columnOrFieldNames);
