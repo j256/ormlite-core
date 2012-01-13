@@ -2,6 +2,8 @@ package com.j256.ormlite.field.types;
 
 import static org.junit.Assert.assertEquals;
 
+import java.sql.SQLException;
+
 import org.junit.Test;
 
 import com.j256.ormlite.dao.Dao;
@@ -36,10 +38,20 @@ public class CharObjectTypeTest extends BaseTypeTest {
 				false, false, true, false);
 	}
 
+	@Test(expected = SQLException.class)
+	public void testInvalidDefault() throws Exception {
+		createDao(InvalidDefault.class, true);
+	}
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalCharObj {
 		@DatabaseField(columnName = CHAR_COLUMN)
 		Character charField;
 	}
 
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class InvalidDefault {
+		@DatabaseField(columnName = CHAR_COLUMN, defaultValue = "not one char")
+		Character charField;
+	}
 }

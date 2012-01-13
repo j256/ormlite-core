@@ -12,7 +12,7 @@ import com.j256.ormlite.support.DatabaseResults;
  */
 public class VoidType extends BaseDataType {
 
-	private VoidType() {
+	VoidType() {
 		super(null, new Class<?>[] {});
 	}
 

@@ -1,6 +1,7 @@
 package com.j256.ormlite.field.types;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
@@ -36,9 +37,27 @@ public class LongObjectTypeTest extends BaseTypeTest {
 				false, false, true, true);
 	}
 
+	@Test
+	public void testVersion() throws Exception {
+		Dao<LongVersion, Integer> dao = createDao(LongVersion.class, true);
+		LongVersion foo = new LongVersion();
+		assertNull(foo.version);
+		assertEquals(1, dao.create(foo));
+		assertEquals(Long.valueOf(1), foo.version);
+		assertEquals(1, dao.update(foo));
+		assertEquals(Long.valueOf(2), foo.version);
+	}
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalLongObj {
 		@DatabaseField(columnName = LONG_COLUMN)
 		Long longField;
+	}
+
+	protected static class LongVersion {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(version = true)
+		Long version;
 	}
 }

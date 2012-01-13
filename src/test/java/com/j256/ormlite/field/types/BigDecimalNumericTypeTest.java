@@ -20,11 +20,11 @@ public class BigDecimalNumericTypeTest extends BaseTypeTest {
 
 	@Test
 	public void testBigDecimal() throws Exception {
-		Class<LocalBigDecimal> clazz = LocalBigDecimal.class;
-		Dao<LocalBigDecimal, Object> dao = createDao(clazz, true);
+		Class<LocalBigDecimalNumeric> clazz = LocalBigDecimalNumeric.class;
+		Dao<LocalBigDecimalNumeric, Object> dao = createDao(clazz, true);
 		BigDecimal val = new BigDecimal("1.345345435345345345345345345345345345345345346356524234234");
 		String valStr = val.toString();
-		LocalBigDecimal foo = new LocalBigDecimal();
+		LocalBigDecimalNumeric foo = new LocalBigDecimalNumeric();
 		foo.bigDecimal = val;
 		assertEquals(1, dao.create(foo));
 		testType(dao, foo, clazz, val, val, val, valStr, DataType.BIG_DECIMAL_NUMERIC, BIGDECIMAL_COLUMN, false, false,
@@ -33,26 +33,26 @@ public class BigDecimalNumericTypeTest extends BaseTypeTest {
 
 	@Test(expected = SQLException.class)
 	public void testBigDecimalBadDefault() throws Exception {
-		createDao(BigDecimalBadDefault.class, true);
+		createDao(BigDecimalNumericBadDefault.class, true);
 	}
 
 	@Test
 	public void testBigDecimalNull() throws Exception {
-		Dao<LocalBigDecimal, Object> dao = createDao(LocalBigDecimal.class, true);
-		LocalBigDecimal foo = new LocalBigDecimal();
+		Dao<LocalBigDecimalNumeric, Object> dao = createDao(LocalBigDecimalNumeric.class, true);
+		LocalBigDecimalNumeric foo = new LocalBigDecimalNumeric();
 		assertEquals(1, dao.create(foo));
 
-		List<LocalBigDecimal> results = dao.queryForAll();
+		List<LocalBigDecimalNumeric> results = dao.queryForAll();
 		assertEquals(1, results.size());
 		assertNull(results.get(0).bigDecimal);
 	}
 
 	@Test(expected = SQLException.class)
 	public void testBigDecimalInvalidDbValue() throws Exception {
-		Dao<LocalBigDecimal, Object> dao = createDao(LocalBigDecimal.class, true);
-		Dao<NotBigDecimal, Object> notDao = createDao(NotBigDecimal.class, false);
+		Dao<LocalBigDecimalNumeric, Object> dao = createDao(LocalBigDecimalNumeric.class, true);
+		Dao<NotBigDecimalNumeric, Object> notDao = createDao(NotBigDecimalNumeric.class, false);
 
-		NotBigDecimal notFoo = new NotBigDecimal();
+		NotBigDecimalNumeric notFoo = new NotBigDecimalNumeric();
 		notFoo.bigDecimal = "not valid form";
 		assertEquals(1, notDao.create(notFoo));
 
@@ -60,18 +60,18 @@ public class BigDecimalNumericTypeTest extends BaseTypeTest {
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
-	protected static class LocalBigDecimal {
-		@DatabaseField(columnName = BIGDECIMAL_COLUMN)
+	protected static class LocalBigDecimalNumeric {
+		@DatabaseField(columnName = BIGDECIMAL_COLUMN, dataType = DataType.BIG_DECIMAL_NUMERIC)
 		BigDecimal bigDecimal;
 	}
 
-	protected static class BigDecimalBadDefault {
-		@DatabaseField(defaultValue = "not valid form")
+	protected static class BigDecimalNumericBadDefault {
+		@DatabaseField(defaultValue = "not valid form", dataType = DataType.BIG_DECIMAL_NUMERIC)
 		BigDecimal bigDecimal;
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
-	protected static class NotBigDecimal {
+	protected static class NotBigDecimalNumeric {
 		@DatabaseField(columnName = BIGDECIMAL_COLUMN, dataType = DataType.BIG_DECIMAL_NUMERIC)
 		String bigDecimal;
 	}

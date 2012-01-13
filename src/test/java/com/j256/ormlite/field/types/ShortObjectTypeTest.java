@@ -1,6 +1,7 @@
 package com.j256.ormlite.field.types;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
@@ -36,9 +37,27 @@ public class ShortObjectTypeTest extends BaseTypeTest {
 				false, false, true, false);
 	}
 
+	@Test
+	public void testVersion() throws Exception {
+		Dao<ShortVersion, Integer> dao = createDao(ShortVersion.class, true);
+		ShortVersion foo = new ShortVersion();
+		assertNull(foo.version);
+		assertEquals(1, dao.create(foo));
+		assertEquals(Short.valueOf((short) 1), foo.version);
+		assertEquals(1, dao.update(foo));
+		assertEquals(Short.valueOf((short) 2), foo.version);
+	}
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalShortObj {
 		@DatabaseField(columnName = SHORT_COLUMN)
 		Short shortField;
+	}
+
+	protected static class ShortVersion {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(version = true)
+		Short version;
 	}
 }
