@@ -3,6 +3,7 @@ package com.j256.ormlite.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -657,10 +658,43 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertSame(foreign1, array[0].from);
 	}
 
-	@Test
-	// (expected = SQLException.class)
+	@Test(expected = SQLException.class)
 	public void testMultipleForeignUnknownField() throws Exception {
 		createDao(InvalidColumnNameForeign.class, true);
+	}
+
+	@Test
+	public void testForeignCollectionCache() throws Exception {
+		Dao<Account, Integer> accountDao = createDao(Account.class, true);
+		Dao<Order, Integer> orderDao = createDao(Order.class, true);
+
+		Account account = new Account();
+		account.name = "fwejpojfpofewjo";
+		assertEquals(1, accountDao.create(account));
+
+		Order order = new Order();
+		order.val = 1321312;
+		order.account = account;
+		assertEquals(1, orderDao.create(order));
+
+		// turn on the cache afterwards
+		orderDao.setObjectCache(true);
+
+		Account result = accountDao.queryForId(account.id);
+		assertNotSame(account, result);
+		Order[] orders = result.orders.toArray(new Order[0]);
+		assertEquals(1, orders.length);
+		// inserted order is not in the cache
+		assertNotSame(order, orders[0]);
+
+		Account result2 = accountDao.queryForId(account.id);
+		assertNotSame(result, result2);
+		Order[] orders2 = result.orders.toArray(new Order[0]);
+		assertEquals(1, orders.length);
+		// inserted order is not in the cache
+		assertNotSame(order, orders2[0]);
+		// but the order from the collection is now in the cache
+		assertSame(orders[0], orders2[0]);
 	}
 
 	/* =============================================================================================== */
@@ -1296,7 +1330,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 	protected static class InvalidColumnNameForeign {
 		@DatabaseField(generatedId = true)
 		int id;
-		@ForeignCollectionField(eager = true, columnName = "unknowncolumn")
+		@ForeignCollectionField(eager = true, foreignColumnName = "unknowncolumn")
 		ForeignCollection<InvalidColumnName> froms;
 		public InvalidColumnNameForeign() {
 		}
