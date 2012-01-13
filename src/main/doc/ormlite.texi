@@ -6,7 +6,7 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.32
+@set ormlite_version 4.33
 @set ormlite_year 2012
 @set ormlite_date January @value{ormlite_year}
 @set package ORMLite
@@ -549,10 +549,10 @@ that all of the values in the index are unique.  For example, this means that yo
 @anchor{foreignAutoRefresh}
 @item foreignAutoRefresh
 
-Set this to be true (default false) to have a foreign field automagically refreshed when an object is queried.  This will @emph{not}
-automagically create the foreign object but when the object is queried, a separate database call will be made to load of the fields
-of the foreign object via an internal DAO. The default is to just have the ID field in the object retrieved and for the caller to
-call refresh on the correct DAO.
+Set this to be true (default false) to have a foreign field automagically refreshed when an object is queried.  The default is to just
+have the ID field in the object retrieved and for the caller to call refresh on the correct DAO.  If this is set to true then, when the
+object is queried, a separate database call will be made to load of the fields of the foreign object via an internal DAO.  @emph{NOTE:}
+this will @emph{not} automagically create the foreign object if you create an object that has this field set. 
 
 @emph{NOTE:} This will create another DAO object internally so low memory devices may want to call refresh by hand.
 
