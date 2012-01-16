@@ -1,6 +1,9 @@
-4.33: 1/12/2012 (svn r????)
+4.34: 1/??/2012 (svn r????)
+	* Android: Fixed restriction on auto-incremented SQLite ids not Long-s. Thanks to John Kristian. Fixes bug #3474479.
+
+4.33: 1/12/2012 (svn r2249)
 	* Fixed a find-bugs result from the eager collection equals method that would always return false.
-	* Fixed [another] problem with foreign collections and multiple foreign fields. Thanks to André. Fixes bug 3473078.
+	* Fixed [another] problem with foreign collections and multiple foreign fields. Thanks to André. Fixes bug #3473078.
 	* Fixed a problem with SqlServer or JTDS driver returning -1 for some statements.  Fixes bug 3463333.
 
 4.32: 1/11/2012 (svn r2229)

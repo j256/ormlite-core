@@ -99,7 +99,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 				break;
 
 			case LONG :
-				appendLongType(sb, fieldWidth);
+				appendLongType(fieldType, sb, fieldWidth);
 				break;
 
 			case FLOAT :
@@ -219,7 +219,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	/**
 	 * Output the SQL type for a Java long.
 	 */
-	protected void appendLongType(StringBuilder sb, int fieldWidth) {
+	protected void appendLongType(FieldType fieldType, StringBuilder sb, int fieldWidth) {
 		sb.append("BIGINT");
 	}
 
