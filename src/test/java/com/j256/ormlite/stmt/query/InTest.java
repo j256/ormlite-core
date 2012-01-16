@@ -17,7 +17,7 @@ public class InTest extends BaseCoreStmtTest {
 	public void testAppendValueNull() throws Exception {
 		List<Object> objList = new ArrayList<Object>();
 		objList.add(null);
-		In in = new In("foo", numberFieldType, objList);
+		In in = new In("foo", numberFieldType, objList, true);
 		in.appendValue(null, new StringBuilder(), null);
 	}
 
@@ -29,7 +29,7 @@ public class InTest extends BaseCoreStmtTest {
 		for (int i = 0; i < numArgs; i++) {
 			objList.add((Integer) random.nextInt());
 		}
-		In in = new In("foo", numberFieldType, objList);
+		In in = new In("foo", numberFieldType, objList, true);
 		StringBuilder sb = new StringBuilder();
 		in.appendValue(null, sb, new ArrayList<ArgumentHolder>());
 		String[] args = sb.toString().split(",");

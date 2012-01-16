@@ -1,4 +1,5 @@
 4.34: 1/??/2012 (svn r????)
+	* CORE: Added support to where() for sql NOT IN clause.  Thanks to Marvin Jomble.  Fixes feature #3474550.
 	* CORE: Fixed restriction on auto-incremented SQLite ids not Long-s. Thanks to John Kristian. Fixes bug #3474479.
 	* ANDROID: Fixed missing exception handling in AndroidConnectionSource.  Thanks to Roger Keays.  Fixed bug #3474501.
 

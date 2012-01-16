@@ -17,11 +17,22 @@ import com.j256.ormlite.stmt.Where;
 public class InSubQuery extends BaseComparison {
 
 	private final InternalQueryBuilderWrapper subQueryBuilder;
+	private final boolean in;
 
-	public InSubQuery(String columnName, FieldType fieldType, InternalQueryBuilderWrapper subQueryBuilder)
+	public InSubQuery(String columnName, FieldType fieldType, InternalQueryBuilderWrapper subQueryBuilder, boolean in)
 			throws SQLException {
 		super(columnName, fieldType, null, true);
 		this.subQueryBuilder = subQueryBuilder;
+		this.in = in;
+	}
+
+	@Override
+	public void appendOperation(StringBuilder sb) {
+		if (in) {
+			sb.append("IN ");
+		} else {
+			sb.append("NOT IN ");
+		}
 	}
 
 	@Override
@@ -39,10 +50,5 @@ public class InSubQuery extends BaseComparison {
 					+ resultFieldTypes[0]);
 		}
 		sb.append(") ");
-	}
-
-	@Override
-	public void appendOperation(StringBuilder sb) {
-		sb.append("IN ");
 	}
 }

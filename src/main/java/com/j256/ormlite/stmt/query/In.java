@@ -17,21 +17,28 @@ import com.j256.ormlite.stmt.Where;
 public class In extends BaseComparison {
 
 	private Iterable<?> objects;
+	private final boolean in;
 
-	public In(String columnName, FieldType fieldType, Iterable<?> objects) throws SQLException {
+	public In(String columnName, FieldType fieldType, Iterable<?> objects, boolean in) throws SQLException {
 		super(columnName, fieldType, null, true);
 		this.objects = objects;
+		this.in = in;
 	}
 
-	public In(String columnName, FieldType fieldType, Object[] objects) throws SQLException {
+	public In(String columnName, FieldType fieldType, Object[] objects, boolean in) throws SQLException {
 		super(columnName, fieldType, null, true);
 		// grrrr, Object[] should be Iterable
 		this.objects = Arrays.asList(objects);
+		this.in = in;
 	}
 
 	@Override
 	public void appendOperation(StringBuilder sb) {
-		sb.append("IN ");
+		if (in) {
+			sb.append("IN ");
+		} else {
+			sb.append("NOT IN ");
+		}
 	}
 
 	@Override

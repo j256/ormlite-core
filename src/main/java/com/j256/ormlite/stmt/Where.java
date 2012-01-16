@@ -230,7 +230,15 @@ public class Where<T, ID> {
 	 * Add a IN clause so the column must be equal-to one of the objects from the list passed in.
 	 */
 	public Where<T, ID> in(String columnName, Iterable<?> objects) throws SQLException {
-		addClause(new In(columnName, findColumnFieldType(columnName), objects));
+		addClause(new In(columnName, findColumnFieldType(columnName), objects, true));
+		return this;
+	}
+
+	/**
+	 * Same as {@link #in(String, Iterable)} except with a NOT IN clause.
+	 */
+	public Where<T, ID> notIn(String columnName, Iterable<?> objects) throws SQLException {
+		addClause(new In(columnName, findColumnFieldType(columnName), objects, false));
 		return this;
 	}
 
@@ -238,17 +246,14 @@ public class Where<T, ID> {
 	 * Add a IN clause so the column must be equal-to one of the objects passed in.
 	 */
 	public Where<T, ID> in(String columnName, Object... objects) throws SQLException {
-		if (objects.length == 1) {
-			if (objects[0].getClass().isArray()) {
-				throw new IllegalArgumentException("Object argument to IN seems to be an array within an array");
-			}
-			if (objects[0].getClass() == Where.class) {
-				throw new IllegalArgumentException(
-						"Object argument to IN seems to be a Where.class instead of a QueryBuilder.class");
-			}
-		}
-		addClause(new In(columnName, findColumnFieldType(columnName), objects));
-		return this;
+		return in(true, columnName, objects);
+	}
+
+	/**
+	 * Same as {@link #in(String, Object...)} except with a NOT IN clause.
+	 */
+	public Where<T, ID> notIn(String columnName, Object... objects) throws SQLException {
+		return in(false, columnName, objects);
 	}
 
 	/**
@@ -262,15 +267,14 @@ public class Where<T, ID> {
 	 * </p>
 	 */
 	public Where<T, ID> in(String columnName, QueryBuilder<?, ?> subQueryBuilder) throws SQLException {
-		if (subQueryBuilder.getSelectColumnCount() != 1) {
-			throw new SQLException("Inner query must have only 1 select column specified instead of "
-					+ subQueryBuilder.getSelectColumnCount());
-		}
-		// we do this to turn off the automatic addition of the ID column in the select column list
-		subQueryBuilder.enableInnerQuery();
-		addClause(new InSubQuery(columnName, findColumnFieldType(columnName), new InternalQueryBuilderWrapper(
-				subQueryBuilder)));
-		return this;
+		return in(true, columnName, subQueryBuilder);
+	}
+
+	/**
+	 * Same as {@link #in(String, QueryBuilder)} except with a NOT IN clause.
+	 */
+	public Where<T, ID> notIn(String columnName, QueryBuilder<?, ?> subQueryBuilder) throws SQLException {
+		return in(false, columnName, subQueryBuilder);
 	}
 
 	/**
@@ -526,6 +530,42 @@ public class Where<T, ID> {
 		peek().appendSql(databaseType, sb, columnArgList);
 	}
 
+	@Override
+	public String toString() {
+		if (clauseStackLevel == 0) {
+			return "empty where clause";
+		} else {
+			Clause clause = peek();
+			return "where clause: " + clause;
+		}
+	}
+
+	private Where<T, ID> in(boolean in, String columnName, Object... objects) throws SQLException {
+		if (objects.length == 1) {
+			if (objects[0].getClass().isArray()) {
+				throw new IllegalArgumentException("Object argument to IN seems to be an array within an array");
+			}
+			if (objects[0].getClass() == Where.class) {
+				throw new IllegalArgumentException(
+						"Object argument to IN seems to be a Where.class instead of a QueryBuilder.class");
+			}
+		}
+		addClause(new In(columnName, findColumnFieldType(columnName), objects, in));
+		return this;
+	}
+
+	private Where<T, ID> in(boolean in, String columnName, QueryBuilder<?, ?> subQueryBuilder) throws SQLException {
+		if (subQueryBuilder.getSelectColumnCount() != 1) {
+			throw new SQLException("Inner query must have only 1 select column specified instead of "
+					+ subQueryBuilder.getSelectColumnCount());
+		}
+		// we do this to turn off the automatic addition of the ID column in the select column list
+		subQueryBuilder.enableInnerQuery();
+		addClause(new InSubQuery(columnName, findColumnFieldType(columnName), new InternalQueryBuilderWrapper(
+				subQueryBuilder), in));
+		return this;
+	}
+
 	private Clause[] buildClauseArray(Where<T, ID>[] others, String label) {
 		Clause[] clauses;
 		if (others.length == 0) {
@@ -556,16 +596,6 @@ public class Where<T, ID> {
 			// we have a binary statement which was called before the right clause was defined
 			needsFuture.setMissingClause(clause);
 			needsFuture = null;
-		}
-	}
-
-	@Override
-	public String toString() {
-		if (clauseStackLevel == 0) {
-			return "empty where clause";
-		} else {
-			Clause clause = peek();
-			return "where clause: " + clause;
 		}
 	}
 

@@ -206,6 +206,34 @@ public class WhereTest extends BaseCoreTest {
 	}
 
 	@Test
+	public void testNotIn() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		foo1.id = "ewpfjew";
+		foo1.val = 63465365;
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		foo2 = new Foo();
+		foo2.id = "ewpewffewfjew";
+		foo2.val = 163123;
+		assertEquals(1, dao.create(foo2));
+
+		List<Foo> results = dao.queryBuilder().where().in(Foo.ID_COLUMN_NAME, foo2.id).query();
+		assertEquals(1, results.size());
+		assertEquals(foo2.val, results.get(0).val);
+
+		// support not with in
+		results = dao.queryBuilder().where().not().in(Foo.ID_COLUMN_NAME, foo2.id).query();
+		assertEquals(1, results.size());
+		assertEquals(foo1.val, results.get(0).val);
+
+		// support not in
+		results = dao.queryBuilder().where().notIn(Foo.ID_COLUMN_NAME, foo2.id).query();
+		assertEquals(1, results.size());
+		assertEquals(foo1.val, results.get(0).val);
+	}
+
+	@Test
 	public void testInMany() throws Exception {
 		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int[] vals = new int[] { 112, 123, 61 };
@@ -468,6 +496,31 @@ public class WhereTest extends BaseCoreTest {
 		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
 		sb.append(" ) ");
 		assertEquals(sb.toString(), whereSb.toString());
+	}
+
+	@Test
+	public void testInSubQueryForReal() throws Exception {
+		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		foo1.id = "grpjrgjpore";
+		foo1.val = 785463547;
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		foo2.id = "wjothjpore";
+		foo2.val = 163547;
+		assertEquals(1, dao.create(foo2));
+
+		QueryBuilder<Foo, Object> qb = dao.queryBuilder();
+		qb.selectColumns(Foo.ID_COLUMN_NAME);
+		qb.where().eq(Foo.VAL_COLUMN_NAME, foo2.val);
+		List<Foo> results = dao.queryBuilder().where().in(Foo.ID_COLUMN_NAME, qb).query();
+		assertEquals(1, results.size());
+		assertEquals(foo2.val, results.get(0).val);
+
+		// test not in with sub query
+		results = dao.queryBuilder().where().notIn(Foo.ID_COLUMN_NAME, qb).query();
+		assertEquals(1, results.size());
+		assertEquals(foo1.val, results.get(0).val);
 	}
 
 	@Test(expected = SQLException.class)
