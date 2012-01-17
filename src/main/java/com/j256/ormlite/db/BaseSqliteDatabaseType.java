@@ -41,6 +41,10 @@ public abstract class BaseSqliteDatabaseType extends BaseDatabaseType implements
 		 * Even though the documentation talks about INTEGER, it is 64-bit with a maximum value of 9223372036854775807.
 		 * See http://www.sqlite.org/faq.html#q1 and http://www.sqlite.org/autoinc.html
 		 */
+		if (fieldType.getSqlType() != SqlType.INTEGER && fieldType.getSqlType() != SqlType.LONG) {
+			throw new IllegalArgumentException(
+					"Sqlite requires that auto-increment generated-id be integer or long types");
+		}
 		sb.append("PRIMARY KEY AUTOINCREMENT ");
 		// no additional call to configureId here
 	}
