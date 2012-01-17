@@ -43,7 +43,7 @@ public abstract class BaseSqliteDatabaseType extends BaseDatabaseType implements
 		 */
 		if (fieldType.getSqlType() != SqlType.INTEGER && fieldType.getSqlType() != SqlType.LONG) {
 			throw new IllegalArgumentException(
-					"Sqlite requires that auto-increment generated-id be integer or long types");
+					"Sqlite requires that auto-increment generated-id be integer or long type");
 		}
 		sb.append("PRIMARY KEY AUTOINCREMENT ");
 		// no additional call to configureId here
