@@ -426,6 +426,34 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		dao.query(qb.prepare());
 	}
 
+	@Test
+	public void testQueryBuilderHaving() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+
+		Foo foo = new Foo();
+		foo.id = "1";
+		foo.val = 3242;
+		assertEquals(1, dao.create(foo));
+		foo = new Foo();
+		foo.id = "2";
+		foo.val = 3242;
+		assertEquals(1, dao.create(foo));
+
+		QueryBuilder<Foo, String> qb = dao.queryBuilder();
+		qb.selectRaw("COUNT(val)");
+		qb.groupBy(Foo.VAL_COLUMN_NAME);
+		qb.having("COUNT(VAL) > 1");
+		GenericRawResults<String[]> results = dao.queryRaw(qb.prepareStatementString());
+		List<String[]> list = results.getResults();
+		assertEquals(1, list.size());
+		assertEquals("2", list.get(0)[0]);
+
+		qb.having("COUNT(VAL) > 2");
+		results = dao.queryRaw(qb.prepareStatementString());
+		list = results.getResults();
+		assertEquals(0, list.size());
+	}
+
 	private static class LimitInline extends BaseDatabaseType {
 		public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 			return true;

@@ -2475,6 +2475,13 @@ or updated.
 Add a raw SQL "GROUP BY" clause to the SQL query statement. This allows you to group by things that are not just column
 names.  The SQL argument should not include the "GROUP BY" string.
 
+@cindex having raw SQL
+@item having(String sql)
+
+Add a raw SQL "HAVING" clause to the SQL query statement. This allows you to apply filters after the WHERE and other
+matching has been completed.  This is usually done with aggregate functions.  The SQL argument should not include the
+"HAVING" string.
+
 @cindex limit
 @item limit(Integer maxRows)
 
@@ -2705,6 +2712,21 @@ Used to NOT the next clause specified when using inline query calls.
 
 Used to NOT the argument clause specified.  This is when you are @emph{not} using inline
 query calls but instead want to use standard arguments.
+
+@cindex NOT IN, SQL
+@item notIn(String columnName, Iterable<?> objects)
+
+Same as the IN clause but negated.  Results are returned that are not in the objects from the iterator.
+
+@cindex NOT IN, SQL
+@item in(String columnName, Object... objects)
+
+Same as IN clause but negated.  Results are returned that are not in the variable array of objects.
+
+@cindex NOT IN sub-query, SQL
+@item in(String columnName, QueryBuilder<?, ?> subQueryBuilder)
+
+Same as IN clause but negated.  Results are returned that are not in the results fromt the sub-query.
 
 @cindex OR, SQL
 @item or()

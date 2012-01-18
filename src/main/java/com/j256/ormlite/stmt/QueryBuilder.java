@@ -42,6 +42,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	private final Dao<T, ID> dao;
 	private FieldType[] resultFieldTypes;
 	private boolean countOf = false;
+	private String having = null;
 
 	public QueryBuilder(DatabaseType databaseType, TableInfo<T, ID> tableInfo, Dao<T, ID> dao) {
 		super(databaseType, tableInfo, StatementType.SELECT);
@@ -244,6 +245,14 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	/**
+	 * Add raw SQL "HAVING" clause to the SQL query statement. This should not include the "HAVING" string.
+	 */
+	public QueryBuilder<T, ID> having(String having) {
+		this.having = having;
+		return this;
+	}
+
+	/**
 	 * A short cut for Dao.query(prepare()). {@link Dao#query(PreparedQuery)}.
 	 */
 	public List<T> query() throws SQLException {
@@ -291,6 +300,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		// 'group by' comes before 'order by'
 		appendGroupBys(sb);
 		appendOrderBys(sb);
+		appendHaving(sb);
 		if (!databaseType.isLimitAfterSelect()) {
 			appendLimit(sb);
 		}
@@ -438,6 +448,12 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			}
 		}
 		sb.append(' ');
+	}
+
+	private void appendHaving(StringBuilder sb) {
+		if (having != null) {
+			sb.append("HAVING ").append(having).append(' ');
+		}
 	}
 
 	/**
