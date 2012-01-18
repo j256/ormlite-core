@@ -431,22 +431,30 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		Dao<Foo, String> dao = createDao(Foo.class, true);
 
 		Foo foo = new Foo();
+		int val1 = 243342;
 		foo.id = "1";
-		foo.val = 3242;
+		foo.val = val1;
 		assertEquals(1, dao.create(foo));
 		foo = new Foo();
 		foo.id = "2";
-		foo.val = 3242;
+		foo.val = val1;
+		assertEquals(1, dao.create(foo));
+		foo = new Foo();
+		// only one of these
+		int val2 = 6543;
+		foo.id = "3";
+		foo.val = val2;
 		assertEquals(1, dao.create(foo));
 
 		QueryBuilder<Foo, String> qb = dao.queryBuilder();
-		qb.selectRaw("COUNT(val)");
+		qb.selectColumns(Foo.VAL_COLUMN_NAME);
 		qb.groupBy(Foo.VAL_COLUMN_NAME);
 		qb.having("COUNT(VAL) > 1");
 		GenericRawResults<String[]> results = dao.queryRaw(qb.prepareStatementString());
 		List<String[]> list = results.getResults();
+		// only val2 has 2 of them
 		assertEquals(1, list.size());
-		assertEquals("2", list.get(0)[0]);
+		assertEquals(String.valueOf(val1), list.get(0)[0]);
 
 		qb.having("COUNT(VAL) > 2");
 		results = dao.queryRaw(qb.prepareStatementString());
