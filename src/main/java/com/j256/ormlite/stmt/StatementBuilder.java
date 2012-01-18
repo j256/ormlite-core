@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.logger.Logger;
@@ -27,25 +28,16 @@ public abstract class StatementBuilder<T, ID> {
 
 	protected final TableInfo<T, ID> tableInfo;
 	protected final DatabaseType databaseType;
+	protected final Dao<T, ID> dao;
 	protected StatementType type;
 
 	private Where<T, ID> where = null;
-	protected Long limit = null;
-	protected Long offset = null;
+	// NOTE: anything added here should be added to the clear() method below
 
-	/**
-	 * Provides statements for various SQL operations.
-	 * 
-	 * @param databaseType
-	 *            Database type.
-	 * @param tableInfo
-	 *            Information about the table/class that is being handled.
-	 * @param type
-	 *            Type of statement we are building.
-	 */
-	public StatementBuilder(DatabaseType databaseType, TableInfo<T, ID> tableInfo, StatementType type) {
+	public StatementBuilder(DatabaseType databaseType, TableInfo<T, ID> tableInfo, Dao<T, ID> dao, StatementType type) {
 		this.databaseType = databaseType;
 		this.tableInfo = tableInfo;
+		this.dao = dao;
 		this.type = type;
 		if (!type.isOkForStatementBuilder()) {
 			throw new IllegalStateException("Building a statement from a " + type + " statement is not allowed");
@@ -70,8 +62,11 @@ public abstract class StatementBuilder<T, ID> {
 
 	/**
 	 * Prepare our statement for the subclasses.
+	 * 
+	 * @param limit
+	 *            Limit for queries. Can be null if none.
 	 */
-	protected MappedPreparedStmt<T, ID> prepareStatement() throws SQLException {
+	protected MappedPreparedStmt<T, ID> prepareStatement(Long limit) throws SQLException {
 		List<ArgumentHolder> argList = new ArrayList<ArgumentHolder>();
 		String statement = buildStatementString(argList);
 		ArgumentHolder[] selectArgs = argList.toArray(new ArgumentHolder[argList.size()]);
@@ -94,6 +89,13 @@ public abstract class StatementBuilder<T, ID> {
 	public String prepareStatementString() throws SQLException {
 		List<ArgumentHolder> argList = new ArrayList<ArgumentHolder>();
 		return buildStatementString(argList);
+	}
+
+	/**
+	 * Clear out all of the statement settings so we can reuse the builder.
+	 */
+	public void clear() {
+		where = null;
 	}
 
 	private String buildStatementString(List<ArgumentHolder> argList) throws SQLException {

@@ -232,12 +232,12 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
 	public UpdateBuilder<T, ID> updateBuilder() {
 		checkForInitialized();
-		return new UpdateBuilder<T, ID>(databaseType, tableInfo);
+		return new UpdateBuilder<T, ID>(databaseType, tableInfo, this);
 	}
 
 	public DeleteBuilder<T, ID> deleteBuilder() {
 		checkForInitialized();
-		return new DeleteBuilder<T, ID>(databaseType, tableInfo);
+		return new DeleteBuilder<T, ID>(databaseType, tableInfo, this);
 	}
 
 	public List<T> query(PreparedQuery<T> preparedQuery) throws SQLException {

@@ -19,8 +19,10 @@ import com.j256.ormlite.table.TableInfo;
  */
 public class DeleteBuilder<T, ID> extends StatementBuilder<T, ID> {
 
-	public DeleteBuilder(DatabaseType databaseType, TableInfo<T, ID> tableInfo) {
-		super(databaseType, tableInfo, StatementType.DELETE);
+	// NOTE: any fields here should be added to the clear() method below
+
+	public DeleteBuilder(DatabaseType databaseType, TableInfo<T, ID> tableInfo, Dao<T, ID> dao) {
+		super(databaseType, tableInfo, dao, StatementType.DELETE);
 	}
 
 	/**
@@ -28,7 +30,20 @@ public class DeleteBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * the where or make other calls you will need to re-call this method to re-prepare the statement for execution.
 	 */
 	public PreparedDelete<T> prepare() throws SQLException {
-		return super.prepareStatement();
+		return super.prepareStatement(null);
+	}
+
+	/**
+	 * A short cut to {@link Dao#delete(PreparedDelete)}.
+	 */
+	public int delete() throws SQLException {
+		return dao.delete(prepare());
+	}
+
+	@Override
+	public void clear() {
+		// NOTE: this is here because it is in the other sub-classes
+		super.clear();
 	}
 
 	@Override

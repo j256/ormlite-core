@@ -2561,6 +2561,11 @@ Convenience method to perform the query.  Same as @code{dao.query(queryBuilder.p
 
 Convenience method to generate the iterator for the query.  Same as @code{dao.iterator(queryBuilder.prepare())}.
 
+@cindex 
+@item clear()
+
+Clear all of the settings in the @code{QueryBuilder} so it can be reused.
+
 @end table
 
 @c ----------------------------------------------------------------

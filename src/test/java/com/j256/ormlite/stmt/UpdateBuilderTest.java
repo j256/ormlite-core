@@ -19,7 +19,7 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testPrepareStatementUpdateValueString() throws Exception {
-		UpdateBuilder<Foo, String> stmtb = new UpdateBuilder<Foo, String>(databaseType, baseFooTableInfo);
+		UpdateBuilder<Foo, String> stmtb = new UpdateBuilder<Foo, String>(databaseType, baseFooTableInfo, null);
 		String idVal = "blah";
 		stmtb.updateColumnValue(Foo.ID_COLUMN_NAME, idVal);
 		PreparedUpdate<Foo> stmt = stmtb.prepare();
@@ -37,7 +37,7 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testPrepareStatementUpdateValueNumber() throws Exception {
-		UpdateBuilder<Foo, String> stmtb = new UpdateBuilder<Foo, String>(databaseType, baseFooTableInfo);
+		UpdateBuilder<Foo, String> stmtb = new UpdateBuilder<Foo, String>(databaseType, baseFooTableInfo, null);
 		int idVal = 13123;
 		stmtb.updateColumnValue(Foo.VAL_COLUMN_NAME, idVal);
 		PreparedUpdate<Foo> stmt = stmtb.prepare();
@@ -53,7 +53,7 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testPrepareStatementUpdateValueExpression() throws Exception {
-		UpdateBuilder<Foo, String> stmtb = new UpdateBuilder<Foo, String>(databaseType, baseFooTableInfo);
+		UpdateBuilder<Foo, String> stmtb = new UpdateBuilder<Foo, String>(databaseType, baseFooTableInfo, null);
 		String idVal = "blah";
 		stmtb.updateColumnValue(Foo.ID_COLUMN_NAME, idVal);
 		String expression = "blah + 1";
@@ -81,7 +81,7 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testEscapeMethods() throws Exception {
-		UpdateBuilder<Foo, String> stmtb = new UpdateBuilder<Foo, String>(databaseType, baseFooTableInfo);
+		UpdateBuilder<Foo, String> stmtb = new UpdateBuilder<Foo, String>(databaseType, baseFooTableInfo, null);
 		String idVal = "blah";
 		stmtb.updateColumnValue(Foo.ID_COLUMN_NAME, idVal);
 		String expression = "blah + 1";
@@ -118,7 +118,8 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 		UpdateBuilder<OurForeignCollection, Integer> stmtb =
 				new UpdateBuilder<OurForeignCollection, Integer>(
 						databaseType,
-						new TableInfo<OurForeignCollection, Integer>(connectionSource, null, OurForeignCollection.class));
+						new TableInfo<OurForeignCollection, Integer>(connectionSource, null, OurForeignCollection.class),
+						null);
 		stmtb.updateColumnValue(OurForeignCollection.FOOS_FIELD_NAME, null);
 	}
 
@@ -127,27 +128,27 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 		UpdateBuilder<OurForeignCollection, Integer> stmtb =
 				new UpdateBuilder<OurForeignCollection, Integer>(
 						databaseType,
-						new TableInfo<OurForeignCollection, Integer>(connectionSource, null, OurForeignCollection.class));
+						new TableInfo<OurForeignCollection, Integer>(connectionSource, null, OurForeignCollection.class),
+						null);
 		stmtb.updateColumnExpression(OurForeignCollection.FOOS_FIELD_NAME, "1");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testPrepareStatementUpdateNotSets() throws Exception {
-		UpdateBuilder<Foo, String> stmtb = new UpdateBuilder<Foo, String>(databaseType, baseFooTableInfo);
+		UpdateBuilder<Foo, String> stmtb = new UpdateBuilder<Foo, String>(databaseType, baseFooTableInfo, null);
 		stmtb.prepare();
 	}
 
 	@Test
 	public void testUpdateDate() throws Exception {
-		Dao<UpdateDate, Object> dao = createDao(UpdateDate.class, true);
+		Dao<UpdateDate, Integer> dao = createDao(UpdateDate.class, true);
 		UpdateDate updateDate = new UpdateDate();
 		updateDate.date = new Date();
 		assertEquals(1, dao.create(updateDate));
 		TableInfo<UpdateDate, Integer> tableInfo =
 				new TableInfo<UpdateDate, Integer>(connectionSource, null, UpdateDate.class);
-		UpdateBuilder<UpdateDate, Integer> stmtb = new UpdateBuilder<UpdateDate, Integer>(databaseType, tableInfo);
-		Thread.sleep(10);
-		Date newDate = new Date();
+		UpdateBuilder<UpdateDate, Integer> stmtb = new UpdateBuilder<UpdateDate, Integer>(databaseType, tableInfo, dao);
+		Date newDate = new Date(System.currentTimeMillis() + 10);
 		stmtb.updateColumnValue(UpdateDate.DATE_FIELD, newDate);
 		// this used to cause a NPE because of a missing args
 		assertEquals(1, dao.update(stmtb.prepare()));
@@ -155,6 +156,24 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 		UpdateDate updateDate2 = dao.queryForId(updateDate.id);
 		assertNotNull(updateDate2);
 		assertEquals(newDate, updateDate2.date);
+	}
+
+	@Test
+	public void testUpdateBuildUpdateMathod() throws Exception {
+		Dao<UpdateDate, Integer> dao = createDao(UpdateDate.class, true);
+		UpdateDate updateDate = new UpdateDate();
+		updateDate.date = new Date();
+		assertEquals(1, dao.create(updateDate));
+		Date newDate = new Date(System.currentTimeMillis() + 10);
+
+		UpdateBuilder<UpdateDate, Integer> ub = dao.updateBuilder();
+		ub.updateColumnValue(UpdateDate.DATE_FIELD, newDate);
+		// this used to cause a NPE because of a missing args
+		assertEquals(1, ub.update());
+		// make sure the update worked
+		UpdateDate result = dao.queryForId(updateDate.id);
+		assertNotNull(result);
+		assertEquals(newDate, result.date);
 	}
 
 	@Test

@@ -2356,6 +2356,26 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		dao.update(ub.prepare());
 	}
 
+	@Test
+	public void testHeritagePattern() throws Exception {
+		Dao<BaseEntity, Integer> baseDao = createDao(BaseEntity.class, true);
+		Dao<SubEntity, Integer> subDao = createDao(SubEntity.class, true);
+
+		SubEntity sub1 = new SubEntity();
+		sub1.stuff = "stuff";
+		sub1.otherStuff = "other";
+		assertEquals(1, subDao.create(sub1));
+
+		SubEntity subResult = subDao.queryForId(sub1.id);
+		assertEquals(sub1.id, subResult.id);
+		assertEquals(sub1.stuff, subResult.stuff);
+		assertEquals(sub1.otherStuff, subResult.otherStuff);
+
+		BaseEntity baseResult = baseDao.queryForId(sub1.id);
+		assertEquals(sub1.id, baseResult.id);
+		assertEquals(sub1.stuff, baseResult.stuff);
+	}
+
 	/* ============================================================================================== */
 
 	private String buildFooQueryAllString(Dao<Foo, Object> fooDao) throws SQLException {
@@ -2562,6 +2582,24 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		@DatabaseField(foreign = true)
 		public One foo;
 		public ForeignIntId() {
+		}
+	}
+
+	@DatabaseTable(tableName = "entity")
+	protected static class BaseEntity {
+		@DatabaseField(generatedId = true)
+		public int id;
+		@DatabaseField
+		public String stuff;
+		public BaseEntity() {
+		}
+	}
+
+	@DatabaseTable(tableName = "entity")
+	protected static class SubEntity extends BaseEntity {
+		@DatabaseField
+		public String otherStuff;
+		public SubEntity() {
 		}
 	}
 

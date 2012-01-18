@@ -469,7 +469,7 @@ public class Where<T, ID> {
 	 * A short-cut for calling prepare() on the original {@link QueryBuilder#prepare()}.
 	 */
 	public PreparedQuery<T> prepare() throws SQLException {
-		return statementBuilder.prepareStatement();
+		return statementBuilder.prepareStatement(null);
 	}
 
 	/**
@@ -497,12 +497,13 @@ public class Where<T, ID> {
 	/**
 	 * Clear out the Where object so it can be re-used.
 	 */
-	public void clear() {
+	public Where<T, ID> clear() {
 		for (int i = 0; i < clauseStackLevel; i++) {
 			// help with gc
 			clauseStack[i] = null;
 		}
 		clauseStackLevel = 0;
+		return this;
 	}
 
 	/**

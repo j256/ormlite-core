@@ -29,9 +29,11 @@ import com.j256.ormlite.table.TableInfo;
  */
 public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 
+	private final FieldType idField;
+	private FieldType[] resultFieldTypes;
+
 	private boolean distinct = false;
 	private boolean selectIdColumn = true;
-	private final FieldType idField;
 	private List<String> selectColumnList = null;
 	private List<String> selectRawList = null;
 	private List<OrderBy> orderByList = null;
@@ -39,15 +41,15 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	private List<String> groupByList = null;
 	private String groupByRaw = null;
 	private boolean isInnerQuery = false;
-	private final Dao<T, ID> dao;
-	private FieldType[] resultFieldTypes;
 	private boolean countOf = false;
 	private String having = null;
+	private Long limit = null;
+	private Long offset = null;
+	// NOTE: anything added here should be added to the clear() method below
 
 	public QueryBuilder(DatabaseType databaseType, TableInfo<T, ID> tableInfo, Dao<T, ID> dao) {
-		super(databaseType, tableInfo, StatementType.SELECT);
+		super(databaseType, tableInfo, dao, StatementType.SELECT);
 		this.idField = tableInfo.getIdField();
-		this.dao = dao;
 	}
 
 	/**
@@ -77,7 +79,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * this method to re-prepare the statement for execution.
 	 */
 	public PreparedQuery<T> prepare() throws SQLException {
-		return super.prepareStatement();
+		return super.prepareStatement(limit);
 	}
 
 	/**
@@ -253,17 +255,35 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * A short cut for Dao.query(prepare()). {@link Dao#query(PreparedQuery)}.
+	 * A short cut to {@link Dao#query(PreparedQuery)}.
 	 */
 	public List<T> query() throws SQLException {
 		return dao.query(prepare());
 	}
 
 	/**
-	 * A short cut for Dao.iterator(prepare()). {@link Dao#iterator(PreparedQuery)}.
+	 * A short cut to {@link Dao#iterator(PreparedQuery)}.
 	 */
 	public CloseableIterator<T> iterator() throws SQLException {
 		return dao.iterator(prepare());
+	}
+
+	@Override
+	public void clear() {
+		super.clear();
+		distinct = false;
+		selectIdColumn = true;
+		selectColumnList = null;
+		selectRawList = null;
+		orderByList = null;
+		orderByRaw = null;
+		groupByList = null;
+		groupByRaw = null;
+		isInnerQuery = false;
+		countOf = false;
+		having = null;
+		limit = null;
+		offset = null;
 	}
 
 	@Override

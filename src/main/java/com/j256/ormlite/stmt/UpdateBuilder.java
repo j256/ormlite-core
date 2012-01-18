@@ -25,9 +25,10 @@ import com.j256.ormlite.table.TableInfo;
 public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 
 	private List<Clause> updateClauseList = null;
+	// NOTE: anything added here should be added to the clear() method below
 
-	public UpdateBuilder(DatabaseType databaseType, TableInfo<T, ID> tableInfo) {
-		super(databaseType, tableInfo, StatementType.UPDATE);
+	public UpdateBuilder(DatabaseType databaseType, TableInfo<T, ID> tableInfo, Dao<T, ID> dao) {
+		super(databaseType, tableInfo, dao, StatementType.UPDATE);
 	}
 
 	/**
@@ -35,7 +36,7 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * the where or make other calls you will need to re-call this method to re-prepare the statement for execution.
 	 */
 	public PreparedUpdate<T> prepare() throws SQLException {
-		return super.prepareStatement();
+		return super.prepareStatement(null);
 	}
 
 	/**
@@ -107,6 +108,19 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 		StringBuilder sb = new StringBuilder(value.length() + 4);
 		databaseType.appendEscapedWord(sb, value);
 		return sb.toString();
+	}
+
+	/**
+	 * A short cut to {@link Dao#update(PreparedUpdate)}.
+	 */
+	public int update() throws SQLException {
+		return dao.update(prepare());
+	}
+
+	@Override
+	public void clear() {
+		super.clear();
+		updateClauseList = null;
 	}
 
 	@Override
