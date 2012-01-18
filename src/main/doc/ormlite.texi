@@ -1124,10 +1124,11 @@ which delegates to it.
 @example
 // basic Apache data source
 BasicDataSource dataSource = new BasicDataSource();
-dataSource.setUrl("jdbc:h2:mem:account");
+String databaseUrl = "jdbc:h2:mem:account";
+dataSource.setUrl(databaseUrl);
 // we wrap it in the DataSourceConnectionSource
 ConnectionSource connectionSource = 
-  new DataSourceConnectionSource(dataSource);
+  new DataSourceConnectionSource(dataSource, databaseUrl);
 @end example
 
 @cindex close data source
@@ -4288,7 +4289,7 @@ was reverted later.
 @item Also renamed the @code{PreparedQuery} object to be @code{PreparedStmt}.
 
 @item One of the big changes for those of you using an external JDBC @code{DataSource} is that you no longer set it on the
-DAO directly.  You need to wrap your @code{DataSource} in a @code{DataSourceDatabaseConnection} wrapper class which gets
+DAO directly.  You need to wrap your @code{DataSource} in a @code{DataSourceConnectionSource} wrapper class which gets
 set on the DAO instead.
 
 @end itemize
