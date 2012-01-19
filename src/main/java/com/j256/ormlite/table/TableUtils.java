@@ -238,7 +238,6 @@ public class TableUtils {
 
 	private static <T> int clearTable(ConnectionSource connectionSource, String tableName) throws SQLException {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
-		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		StringBuilder sb = new StringBuilder(48);
 		if (databaseType.isTruncateSupported()) {
 			sb.append("TRUNCATE TABLE ");
@@ -249,6 +248,7 @@ public class TableUtils {
 		String statement = sb.toString();
 		logger.info("clearing table '{}' with '{}", tableName, statement);
 		CompiledStatement compiledStmt = null;
+		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		try {
 			compiledStmt = connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes);
 			return compiledStmt.runExecute();
