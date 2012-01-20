@@ -40,7 +40,7 @@ public interface DataPersister extends FieldConverter {
 	public boolean isValidGeneratedType();
 
 	/**
-	 * Return true if the field is appropriate for this persister.
+	 * Return true if the field is appropriate for this persister otherwise false.
 	 */
 	public boolean isValidForField(Field field);
 
