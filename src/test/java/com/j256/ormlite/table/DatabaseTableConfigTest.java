@@ -219,6 +219,16 @@ public class DatabaseTableConfigTest {
 		assertEquals(tableName, tableConfig.getTableName());
 	}
 
+	@Test(expected = SQLException.class)
+	public void testNoFields() throws SQLException {
+		new DatabaseTableConfig<DatabaseTableAnno>().getFieldTypes(databaseType);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testNoConstructor() throws SQLException {
+		DatabaseTableConfig.fromClass(connectionSource, NoConstructor.class).getConstructor();
+	}
+
 	/* ======================================================================================= */
 
 	@DatabaseTable(tableName = TABLE_NAME)
