@@ -360,7 +360,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 	}
 
 	@Test
-	public void testQueryBuilderQueryRaw() throws Exception {
+	public void testQueryRaw() throws Exception {
 		Dao<Foo, String> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		foo.id = "stuff1";
@@ -384,7 +384,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 	}
 
 	@Test
-	public void testQueryBuilderQueryRawColumns() throws Exception {
+	public void testQueryRawColumns() throws Exception {
 		Dao<Foo, String> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
 		foo1.id = "stuff1";
@@ -418,7 +418,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 	}
 
 	@Test(expected = SQLException.class)
-	public void testQueryBuilderQueryRawColumnsNotQuery() throws Exception {
+	public void testQueryRawColumnsNotQuery() throws Exception {
 		Dao<Foo, String> dao = createDao(Foo.class, true);
 		QueryBuilder<Foo, String> qb = dao.queryBuilder();
 		qb.selectRaw("COUNT(*)");
@@ -427,7 +427,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 	}
 
 	@Test
-	public void testQueryBuilderHaving() throws Exception {
+	public void testHaving() throws Exception {
 		Dao<Foo, String> dao = createDao(Foo.class, true);
 
 		Foo foo = new Foo();
@@ -460,6 +460,18 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		results = dao.queryRaw(qb.prepareStatementString());
 		list = results.getResults();
 		assertEquals(0, list.size());
+	}
+
+	@Test
+	public void testClear() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, false);
+		QueryBuilder<Foo, String> qb = dao.queryBuilder();
+		qb.selectColumns(Foo.VAL_COLUMN_NAME);
+		qb.groupBy(Foo.VAL_COLUMN_NAME);
+		qb.having("COUNT(VAL) > 1");
+		qb.where().eq(Foo.ID_COLUMN_NAME, 1);
+		qb.clear();
+		assertEquals("SELECT * FROM `foo` ", qb.prepareStatementString());
 	}
 
 	private static class LimitInline extends BaseDatabaseType {

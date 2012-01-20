@@ -1,15 +1,22 @@
 package com.j256.ormlite.stmt;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
+import java.sql.SQLException;
 
 import org.junit.Test;
 
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.GenericRawResults;
+import com.j256.ormlite.support.CompiledStatement;
+import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseResults;
 
 public class SelectIteratorTest extends BaseCoreStmtTest {
@@ -170,5 +177,61 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 		assertTrue(iterator.hasNext());
 		iterator.moveToNext();
 		assertFalse(iterator.hasNext());
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void testHasNextThrow() throws Exception {
+		ConnectionSource cs = createMock(ConnectionSource.class);
+		cs.releaseConnection(null);
+		CompiledStatement stmt = createMock(CompiledStatement.class);
+		DatabaseResults results = createMock(DatabaseResults.class);
+		expect(stmt.runQuery(null)).andReturn(results);
+		expect(results.next()).andThrow(new SQLException("some database problem"));
+		stmt.close();
+		replay(stmt, results, cs);
+		SelectIterator<Foo, Integer> iterator =
+				new SelectIterator<Foo, Integer>(Foo.class, null, null, cs, null, stmt, "statement", null);
+		iterator.hasNext();
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void testNextThrow() throws Exception {
+		ConnectionSource cs = createMock(ConnectionSource.class);
+		cs.releaseConnection(null);
+		CompiledStatement stmt = createMock(CompiledStatement.class);
+		expect(stmt.runQuery(null)).andReturn(null);
+		@SuppressWarnings("unchecked")
+		GenericRowMapper<Foo> mapper = (GenericRowMapper<Foo>) createMock(GenericRowMapper.class);
+		expect(mapper.mapRow(null)).andThrow(new SQLException("some result problem"));
+		stmt.close();
+		replay(stmt, mapper, cs);
+		SelectIterator<Foo, Integer> iterator =
+				new SelectIterator<Foo, Integer>(Foo.class, null, mapper, cs, null, stmt, "statement", null);
+		iterator.next();
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void testRemoveThrow() throws Exception {
+		ConnectionSource cs = createMock(ConnectionSource.class);
+		cs.releaseConnection(null);
+		CompiledStatement stmt = createMock(CompiledStatement.class);
+		DatabaseResults results = createMock(DatabaseResults.class);
+		expect(results.next()).andReturn(true);
+		expect(stmt.runQuery(null)).andReturn(results);
+		@SuppressWarnings("unchecked")
+		GenericRowMapper<Foo> mapper = (GenericRowMapper<Foo>) createMock(GenericRowMapper.class);
+		Foo foo = new Foo();
+		foo.id = "pwjfoefjw";
+		expect(mapper.mapRow(results)).andReturn(foo);
+		@SuppressWarnings("unchecked")
+		Dao<Foo, Integer> dao = (Dao<Foo, Integer>) createMock(Dao.class);
+		expect(dao.delete(foo)).andThrow(new SQLException("some dao problem"));
+		stmt.close();
+		replay(stmt, dao, results, mapper, cs);
+		SelectIterator<Foo, Integer> iterator =
+				new SelectIterator<Foo, Integer>(Foo.class, dao, mapper, cs, null, stmt, "statement", null);
+		iterator.hasNext();
+		iterator.next();
+		iterator.remove();
 	}
 }
