@@ -19,6 +19,7 @@ import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.Test;
 
@@ -151,24 +152,25 @@ public class FieldTypeTest extends BaseCoreTest {
 		final SqlType sqlType = SqlType.DATE;
 		final String nameArg = "zippy buzz";
 		final String nameResult = "blabber bling";
-		expect(databaseType.getFieldConverter(DataType.STRING.getDataPersister())).andReturn(new FieldConverter() {
+		final AtomicBoolean resultToSqlArgCalled = new AtomicBoolean(false);
+		expect(databaseType.getFieldConverter(DataType.STRING.getDataPersister())).andReturn(new BaseFieldConverter() {
 			public SqlType getSqlType() {
 				return sqlType;
 			}
 			public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 				return defaultStr;
 			}
-			public Object resultToJava(FieldType fieldType, DatabaseResults resultSet, int columnPos) {
-				return sqlArgToJava(fieldType, null, columnPos);
+			public Object resultToSqlArg(FieldType fieldType, DatabaseResults resultSet, int columnPos) {
+				resultToSqlArgCalled.set(true);
+				return nameResult;
 			}
+			@Override
 			public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
 				return nameResult;
 			}
+			@Override
 			public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
 				return nameArg;
-			}
-			public boolean isStreamType() {
-				return false;
 			}
 		});
 		expect(databaseType.isEntityNamesMustBeUpCase()).andReturn(false);
@@ -190,8 +192,8 @@ public class FieldTypeTest extends BaseCoreTest {
 		replay(resultMock);
 		assertEquals(nameResult, fieldType.resultToJava(resultMock, new HashMap<String, Integer>()));
 		verify(resultMock);
+		assertTrue(resultToSqlArgCalled.get());
 	}
-
 	@Test
 	public void testFieldForeign() throws Exception {
 

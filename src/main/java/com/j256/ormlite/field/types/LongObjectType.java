@@ -1,6 +1,5 @@
 package com.j256.ormlite.field.types;
 
-import java.lang.reflect.Field;
 import java.sql.SQLException;
 
 import com.j256.ormlite.field.FieldType;
@@ -34,14 +33,8 @@ public class LongObjectType extends BaseDataType {
 	}
 
 	@Override
-	public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+	public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 		return (Long) results.getLong(columnPos);
-	}
-
-	@Override
-	public boolean isValidForField(Field field) {
-		// by default this is a noop
-		return true;
 	}
 
 	@Override

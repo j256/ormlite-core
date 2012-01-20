@@ -3,6 +3,7 @@
 	* CORE: Added support for sql NOT IN clause to where().  Thanks to Marvin Jomble.  Fixes feature #3474550.
 	* CORE: Added support for sql HAVING clause to QueryBuilder.  Thanks to Stephen Couchman.  Fixes feature #3470923.
 	* CORE: Added updateBuilder.update() and deleteBuilder.delete().  Thanks to Marvin Jomble.  Fixes feature #3475613.
+	* CORE: Refactored the FieldConverter stuff a bit to remove a lot of duplicate code.
 	* ANDROID: Fixed missing exception handling in AndroidConnectionSource.  Thanks to Roger Keays.  Fixed bug #3474501.
 	* ANDROID: Added isTableExists() support to Dao/AndroidDatabaseConnection. Thanks to Patrick. Fixes feature #3475173.
 

@@ -1,7 +1,6 @@
 package com.j256.ormlite.field.types;
 
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
 import java.sql.SQLException;
 
 import com.j256.ormlite.field.FieldType;
@@ -34,13 +33,8 @@ public class StringBytesType extends BaseDataType {
 	}
 
 	@Override
-	public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-		byte[] bytes = results.getBytes(columnPos);
-		if (bytes == null) {
-			return null;
-		} else {
-			return sqlArgToJava(fieldType, bytes, columnPos);
-		}
+	public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+		return results.getBytes(columnPos);
 	}
 
 	@Override
@@ -65,12 +59,6 @@ public class StringBytesType extends BaseDataType {
 		} catch (UnsupportedEncodingException e) {
 			throw SqlExceptionUtil.create("Could not convert string with charset name: " + charsetName, e);
 		}
-	}
-
-	@Override
-	public boolean isValidForField(Field field) {
-		// by default this is a noop
-		return true;
 	}
 
 	@Override

@@ -41,14 +41,8 @@ public class SerializableType extends BaseDataType {
 	}
 
 	@Override
-	public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-		byte[] bytes = results.getBytes(columnPos);
-		// need to do this check because we are a stream type
-		if (bytes == null) {
-			return null;
-		} else {
-			return sqlArgToJava(fieldType, bytes, columnPos);
-		}
+	public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+		return results.getBytes(columnPos);
 	}
 
 	@Override

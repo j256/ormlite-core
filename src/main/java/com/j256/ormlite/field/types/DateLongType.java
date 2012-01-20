@@ -1,6 +1,5 @@
 package com.j256.ormlite.field.types;
 
-import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.Date;
 
@@ -41,13 +40,8 @@ public class DateLongType extends BaseDateType {
 	}
 
 	@Override
-	public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-		Long value = results.getLong(columnPos);
-		if (value == null) {
-			return null;
-		} else {
-			return sqlArgToJava(fieldType, value, columnPos);
-		}
+	public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+		return results.getLong(columnPos);
 	}
 
 	@Override
@@ -59,12 +53,6 @@ public class DateLongType extends BaseDateType {
 	public Object javaToSqlArg(FieldType fieldType, Object obj) {
 		Date date = (Date) obj;
 		return (Long) date.getTime();
-	}
-
-	@Override
-	public boolean isValidForField(Field field) {
-		// by default this is a noop
-		return true;
 	}
 
 	@Override

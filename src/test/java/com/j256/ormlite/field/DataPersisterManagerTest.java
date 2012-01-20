@@ -120,7 +120,7 @@ public class DataPersisterManagerTest extends BaseCoreTest {
 			return null;
 		}
 		@Override
-		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) {
+		public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) {
 			return null;
 		}
 		@Override
@@ -144,16 +144,15 @@ public class DataPersisterManagerTest extends BaseCoreTest {
 			return singleton;
 		}
 		public StoredClassPersister() {
-			super(null, new Class[] { StoredClass.class });
+			super(SqlType.STRING, new Class[] { StoredClass.class });
 		}
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 			throw new SQLException("Default string doesn't work");
 		}
 		@Override
-		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-			String value = results.getString(columnPos);
-			return sqlArgToJava(fieldType, value, columnPos);
+		public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+			return results.getString(columnPos);
 		}
 		@Override
 		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
@@ -171,10 +170,6 @@ public class DataPersisterManagerTest extends BaseCoreTest {
 		@Override
 		public boolean isValidForField(Field field) {
 			return field.getType() == StoredClass.class;
-		}
-		@Override
-		public SqlType getSqlType() {
-			return SqlType.STRING;
 		}
 	}
 
@@ -196,8 +191,8 @@ public class DataPersisterManagerTest extends BaseCoreTest {
 			throw new SQLException("Default string doesn't work");
 		}
 		@Override
-		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) {
-			return sqlArgToJava(fieldType, null, columnPos);
+		public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) {
+			return SqlType.BLOB;
 		}
 		@Override
 		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {

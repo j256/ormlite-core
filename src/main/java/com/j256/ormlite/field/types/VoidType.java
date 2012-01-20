@@ -22,7 +22,7 @@ public class VoidType extends BaseDataType {
 	}
 
 	@Override
-	public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) {
+	public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) {
 		return null;
 	}
 

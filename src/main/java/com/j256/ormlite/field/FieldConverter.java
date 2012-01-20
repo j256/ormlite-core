@@ -26,12 +26,18 @@ public interface FieldConverter {
 	public Object javaToSqlArg(FieldType fieldType, Object obj) throws SQLException;
 
 	/**
-	 * Return the object extracted from the results associated with column in position columnPos.
+	 * Return the SQL argument object extracted from the results associated with column in position columnPos.
 	 * 
 	 * @throws SQLException
 	 *             If there is a problem accessing the results data.
 	 * @param fieldType
 	 *            Associated FieldType which may be null.
+	 */
+	public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException;
+
+	/**
+	 * This is usually just a call that takes the result from {@link #resultToSqlArg(FieldType, DatabaseResults, int)}
+	 * and passes it through {@link #sqlArgToJava(FieldType, Object, int)}.
 	 */
 	public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException;
 

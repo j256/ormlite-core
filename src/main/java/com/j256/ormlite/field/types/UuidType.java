@@ -39,13 +39,8 @@ public class UuidType extends BaseDataType {
 	}
 
 	@Override
-	public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-		String uuidStr = results.getString(columnPos);
-		if (uuidStr == null) {
-			return null;
-		} else {
-			return sqlArgToJava(fieldType, uuidStr, columnPos);
-		}
+	public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+		return results.getString(columnPos);
 	}
 
 	@Override
@@ -67,8 +62,7 @@ public class UuidType extends BaseDataType {
 
 	@Override
 	public boolean isValidForField(Field field) {
-		// by default this is a noop
-		return true;
+		return field.getType() == UUID.class;
 	}
 
 	@Override

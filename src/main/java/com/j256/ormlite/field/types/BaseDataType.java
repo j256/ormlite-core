@@ -3,6 +3,7 @@ package com.j256.ormlite.field.types;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 
+import com.j256.ormlite.field.BaseFieldConverter;
 import com.j256.ormlite.field.DataPersister;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
@@ -18,7 +19,7 @@ import com.j256.ormlite.support.DatabaseResults;
  * 
  * @author graywatson
  */
-public abstract class BaseDataType implements DataPersister {
+public abstract class BaseDataType extends BaseFieldConverter implements DataPersister {
 
 	/**
 	 * Type of the data as it is persisted in SQL-land. For example, if you are storing a DateTime, you might consider
@@ -34,32 +35,17 @@ public abstract class BaseDataType implements DataPersister {
 
 	public abstract Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException;
 
-	public abstract Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos)
+	public abstract Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos)
 			throws SQLException;
 
-	/**
-	 * @throws SQLException
-	 *             For subclasses.
-	 */
-	public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
-		// noop pass-thru
-		return sqlArg;
+	public boolean isValidForField(Field field) {
+		// by default this is a noop
+		return true;
 	}
 
 	/**
 	 * @throws SQLException
-	 *             For subclasses.
-	 */
-	public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {
-		// noop pass-thru
-		return javaObject;
-	}
-
-	public abstract boolean isValidForField(Field field);
-
-	/**
-	 * @throws SQLException
-	 *             For subclasses.
+	 *             If there are problems creating the config object.
 	 */
 	public Object makeConfigObject(FieldType fieldType) throws SQLException {
 		return null;
@@ -71,10 +57,6 @@ public abstract class BaseDataType implements DataPersister {
 
 	public Class<?>[] getAssociatedClasses() {
 		return classes;
-	}
-
-	public boolean isStreamType() {
-		return false;
 	}
 
 	public Object convertIdNumber(Number number) {

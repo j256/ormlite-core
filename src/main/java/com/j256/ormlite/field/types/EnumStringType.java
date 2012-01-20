@@ -28,19 +28,15 @@ public class EnumStringType extends BaseEnumType {
 	}
 
 	@Override
-	public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-		String value = results.getString(columnPos);
-		if (fieldType == null) {
-			return value;
-		} else if (value == null) {
-			return null;
-		} else {
-			return sqlArgToJava(fieldType, value, columnPos);
-		}
+	public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+		return results.getString(columnPos);
 	}
 
 	@Override
 	public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
+		if (fieldType == null) {
+			return sqlArg;
+		}
 		String value = (String) sqlArg;
 		@SuppressWarnings("unchecked")
 		Map<String, Enum<?>> enumStringMap = (Map<String, Enum<?>>) fieldType.getDataTypeConfigObj();

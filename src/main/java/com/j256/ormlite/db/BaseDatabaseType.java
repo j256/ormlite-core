@@ -4,6 +4,7 @@ import java.sql.Driver;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.j256.ormlite.field.BaseFieldConverter;
 import com.j256.ormlite.field.DataPersister;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
@@ -493,7 +494,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	/**
 	 * Conversion to/from the Boolean Java field as a number because some databases like the true/false.
 	 */
-	protected static class BooleanNumberFieldConverter implements FieldConverter {
+	protected static class BooleanNumberFieldConverter extends BaseFieldConverter implements FieldConverter {
 		public SqlType getSqlType() {
 			return SqlType.BOOLEAN;
 		}
@@ -501,20 +502,18 @@ public abstract class BaseDatabaseType implements DatabaseType {
 			boolean bool = (boolean) Boolean.parseBoolean(defaultStr);
 			return (bool ? Byte.valueOf((byte) 1) : Byte.valueOf((byte) 0));
 		}
+		@Override
 		public Object javaToSqlArg(FieldType fieldType, Object obj) {
 			Boolean bool = (Boolean) obj;
 			return (bool ? Byte.valueOf((byte) 1) : Byte.valueOf((byte) 0));
 		}
-		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-			Byte result = results.getByte(columnPos);
-			return sqlArgToJava(fieldType, result, columnPos);
+		public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+			return results.getByte(columnPos);
 		}
+		@Override
 		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
 			byte arg = (Byte) sqlArg;
 			return (arg == 1 ? (Boolean) true : (Boolean) false);
-		}
-		public boolean isStreamType() {
-			return false;
 		}
 	}
 }

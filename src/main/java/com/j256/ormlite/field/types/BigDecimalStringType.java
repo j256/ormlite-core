@@ -1,6 +1,5 @@
 package com.j256.ormlite.field.types;
 
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.SQLException;
@@ -40,13 +39,8 @@ public class BigDecimalStringType extends BaseDataType {
 	}
 
 	@Override
-	public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-		String value = results.getString(columnPos);
-		if (value == null) {
-			return null;
-		} else {
-			return sqlArgToJava(fieldType, value, columnPos);
-		}
+	public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+		return results.getString(columnPos);
 	}
 
 	@Override
@@ -63,12 +57,6 @@ public class BigDecimalStringType extends BaseDataType {
 	public Object javaToSqlArg(FieldType fieldType, Object obj) {
 		BigDecimal bigInteger = (BigDecimal) obj;
 		return bigInteger.toString();
-	}
-
-	@Override
-	public boolean isValidForField(Field field) {
-		// by default this is a noop
-		return true;
 	}
 
 	@Override

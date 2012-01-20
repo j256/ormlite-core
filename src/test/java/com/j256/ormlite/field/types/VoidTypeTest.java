@@ -8,7 +8,7 @@ import org.junit.Test;
 public class VoidTypeTest {
 
 	@Test
-	public void testStuff() {
+	public void testStuff() throws Exception {
 		VoidType voidType = new VoidType();
 		assertNull(voidType.parseDefaultString(null, null));
 		assertNull(voidType.resultToJava(null, null, 0));

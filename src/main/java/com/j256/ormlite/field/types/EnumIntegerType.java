@@ -32,17 +32,15 @@ public class EnumIntegerType extends BaseEnumType {
 	}
 
 	@Override
-	public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-		int value = results.getInt(columnPos);
-		if (fieldType == null) {
-			return value;
-		} else {
-			return sqlArgToJava(fieldType, value, columnPos);
-		}
+	public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+		return results.getInt(columnPos);
 	}
 
 	@Override
 	public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
+		if (fieldType == null) {
+			return sqlArg;
+		}
 		// do this once
 		Integer valInteger = (Integer) sqlArg;
 		@SuppressWarnings("unchecked")
