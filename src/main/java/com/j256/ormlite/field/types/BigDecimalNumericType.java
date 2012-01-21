@@ -23,6 +23,7 @@ public class BigDecimalNumericType extends BaseDataType {
 	}
 
 	private BigDecimalNumericType() {
+		// this has no classes because {@link BigDecimalString} is the default
 		super(SqlType.BIG_DECIMAL, new Class<?>[0]);
 	}
 

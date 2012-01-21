@@ -28,6 +28,13 @@ public abstract class BaseDataType extends BaseFieldConverter implements DataPer
 	private final SqlType sqlType;
 	private final Class<?>[] classes;
 
+	/**
+	 * @param sqlType
+	 *            Type of the class as it is persisted in the databases.
+	 * @param classes
+	 *            Associated classes for this type. These should be specified if you want this type to be always used
+	 *            for these Java classes. If this is a custom persister then this array should be empty.
+	 */
 	public BaseDataType(SqlType sqlType, Class<?>[] classes) {
 		this.sqlType = sqlType;
 		this.classes = classes;
@@ -39,8 +46,17 @@ public abstract class BaseDataType extends BaseFieldConverter implements DataPer
 			throws SQLException;
 
 	public boolean isValidForField(Field field) {
-		// by default this is a noop
-		return true;
+		if (classes.length == 0) {
+			// we can't figure out the types so we just say it is valid
+			return true;
+		}
+		for (Class<?> clazz : classes) {
+			if (clazz.isAssignableFrom(field.getType())) {
+				return true;
+			}
+		}
+		// if classes are specified and one of them should match
+		return false;
 	}
 
 	/**

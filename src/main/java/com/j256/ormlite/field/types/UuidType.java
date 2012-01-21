@@ -1,6 +1,5 @@
 package com.j256.ormlite.field.types;
 
-import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.UUID;
 
@@ -58,11 +57,6 @@ public class UuidType extends BaseDataType {
 	public Object javaToSqlArg(FieldType fieldType, Object obj) {
 		UUID uuid = (UUID) obj;
 		return uuid.toString();
-	}
-
-	@Override
-	public boolean isValidForField(Field field) {
-		return field.getType() == UUID.class;
 	}
 
 	@Override

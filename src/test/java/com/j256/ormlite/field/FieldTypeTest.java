@@ -43,7 +43,7 @@ public class FieldTypeTest extends BaseCoreTest {
 	@Test
 	public void testFieldType() throws Exception {
 
-		Field[] fields = Foo.class.getDeclaredFields();
+		Field[] fields = LocalFoo.class.getDeclaredFields();
 		assertTrue(fields.length >= 4);
 		Field nameField = fields[0];
 		Field rankField = fields[1];
@@ -51,7 +51,7 @@ public class FieldTypeTest extends BaseCoreTest {
 		Field intLongField = fields[3];
 
 		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, Foo.class.getSimpleName(), nameField, Foo.class);
+				FieldType.createFieldType(connectionSource, LocalFoo.class.getSimpleName(), nameField, LocalFoo.class);
 		assertEquals(nameField.getName(), fieldType.getFieldName());
 		assertEquals(nameField.getName(), fieldType.getColumnName());
 		assertEquals(DataType.STRING.getDataPersister(), fieldType.getDataPersister());
@@ -59,18 +59,20 @@ public class FieldTypeTest extends BaseCoreTest {
 		assertTrue(fieldType.toString().contains("Foo"));
 		assertTrue(fieldType.toString().contains(nameField.getName()));
 
-		fieldType = FieldType.createFieldType(connectionSource, Foo.class.getSimpleName(), rankField, Foo.class);
+		fieldType =
+				FieldType.createFieldType(connectionSource, LocalFoo.class.getSimpleName(), rankField, LocalFoo.class);
 		assertEquals(RANK_DB_COLUMN_NAME, fieldType.getColumnName());
 		assertEquals(DataType.STRING.getDataPersister(), fieldType.getDataPersister());
 		assertEquals(RANK_WIDTH, fieldType.getWidth());
 
-		fieldType = FieldType.createFieldType(connectionSource, Foo.class.getSimpleName(), serialField, Foo.class);
+		fieldType =
+				FieldType.createFieldType(connectionSource, LocalFoo.class.getSimpleName(), serialField, LocalFoo.class);
 		assertEquals(serialField.getName(), fieldType.getColumnName());
 		assertEquals(DataType.INTEGER_OBJ.getDataPersister(), fieldType.getDataPersister());
 		assertEquals(Integer.parseInt(SERIAL_DEFAULT_VALUE), fieldType.getDefaultValue());
 
-		String tableName = Foo.class.getSimpleName();
-		fieldType = FieldType.createFieldType(connectionSource, tableName, intLongField, Foo.class);
+		String tableName = LocalFoo.class.getSimpleName();
+		fieldType = FieldType.createFieldType(connectionSource, tableName, intLongField, LocalFoo.class);
 		assertEquals(intLongField.getName(), fieldType.getColumnName());
 		assertFalse(fieldType.isGeneratedId());
 		assertEquals(DataType.LONG.getDataPersister(), fieldType.getDataPersister());
@@ -145,7 +147,7 @@ public class FieldTypeTest extends BaseCoreTest {
 
 	@Test
 	public void testFieldTypeConverter() throws Exception {
-		Field[] fields = Foo.class.getDeclaredFields();
+		Field[] fields = LocalFoo.class.getDeclaredFields();
 		assertTrue(fields.length >= 4);
 		Field nameField = fields[0];
 		DatabaseType databaseType = createMock(DatabaseType.class);
@@ -177,11 +179,11 @@ public class FieldTypeTest extends BaseCoreTest {
 		replay(databaseType);
 		connectionSource.setDatabaseType(databaseType);
 		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, Foo.class.getSimpleName(), nameField, Foo.class);
+				FieldType.createFieldType(connectionSource, LocalFoo.class.getSimpleName(), nameField, LocalFoo.class);
 		verify(databaseType);
 
 		assertEquals(sqlType, fieldType.getSqlType());
-		Foo foo = new Foo();
+		LocalFoo foo = new LocalFoo();
 		// it can't be null
 		foo.name = nameArg + " not that";
 		assertEquals(nameArg, fieldType.extractJavaFieldToSqlArgValue(foo));
@@ -356,12 +358,12 @@ public class FieldTypeTest extends BaseCoreTest {
 
 	@Test
 	public void testSetValueField() throws Exception {
-		Field[] fields = Foo.class.getDeclaredFields();
+		Field[] fields = LocalFoo.class.getDeclaredFields();
 		assertTrue(fields.length >= 4);
 		Field nameField = fields[0];
 		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, Foo.class.getSimpleName(), nameField, Foo.class);
-		Foo foo = new Foo();
+				FieldType.createFieldType(connectionSource, LocalFoo.class.getSimpleName(), nameField, LocalFoo.class);
+		LocalFoo foo = new LocalFoo();
 		String name1 = "wfwef";
 		fieldType.assignField(foo, name1, false, null);
 		assertEquals(name1, foo.name);
@@ -382,12 +384,12 @@ public class FieldTypeTest extends BaseCoreTest {
 
 	@Test(expected = SQLException.class)
 	public void testSetIdFieldString() throws Exception {
-		Field[] fields = Foo.class.getDeclaredFields();
+		Field[] fields = LocalFoo.class.getDeclaredFields();
 		assertTrue(fields.length >= 4);
 		Field nameField = fields[0];
 		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, Foo.class.getSimpleName(), nameField, Foo.class);
-		fieldType.assignIdValue(new Foo(), 10, null);
+				FieldType.createFieldType(connectionSource, LocalFoo.class.getSimpleName(), nameField, LocalFoo.class);
+		fieldType.assignIdValue(new LocalFoo(), 10, null);
 	}
 
 	@Test
@@ -513,13 +515,14 @@ public class FieldTypeTest extends BaseCoreTest {
 
 	@Test
 	public void testEscapeDefault() throws Exception {
-		Field field = Foo.class.getDeclaredField("name");
-		FieldType fieldType = FieldType.createFieldType(connectionSource, Foo.class.getSimpleName(), field, Foo.class);
+		Field field = LocalFoo.class.getDeclaredField("name");
+		FieldType fieldType =
+				FieldType.createFieldType(connectionSource, LocalFoo.class.getSimpleName(), field, LocalFoo.class);
 		assertTrue(fieldType.isEscapedValue());
 		assertTrue(fieldType.isEscapedDefaultValue());
 
-		field = Foo.class.getDeclaredField("intLong");
-		fieldType = FieldType.createFieldType(connectionSource, Foo.class.getSimpleName(), field, Foo.class);
+		field = LocalFoo.class.getDeclaredField("intLong");
+		fieldType = FieldType.createFieldType(connectionSource, LocalFoo.class.getSimpleName(), field, LocalFoo.class);
 		assertFalse(fieldType.isEscapedValue());
 		assertFalse(fieldType.isEscapedDefaultValue());
 	}
@@ -744,7 +747,7 @@ public class FieldTypeTest extends BaseCoreTest {
 
 	/* ========================================================================================================= */
 
-	protected static class Foo {
+	protected static class LocalFoo {
 		@DatabaseField
 		String name;
 		@DatabaseField(columnName = RANK_DB_COLUMN_NAME, width = RANK_WIDTH)
@@ -752,7 +755,7 @@ public class FieldTypeTest extends BaseCoreTest {
 		@DatabaseField(defaultValue = SERIAL_DEFAULT_VALUE)
 		Integer serial;
 		@DatabaseField(dataType = DataType.LONG)
-		int intLong;
+		long intLong;
 	}
 
 	protected static class DateDefaultBad {
@@ -854,7 +857,7 @@ public class FieldTypeTest extends BaseCoreTest {
 
 	protected static class ObjectFieldNotForeign {
 		@DatabaseField
-		Foo foo;
+		LocalFoo foo;
 	}
 
 	protected static class GetSetNoGet {

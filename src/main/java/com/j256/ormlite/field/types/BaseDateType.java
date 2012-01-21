@@ -1,5 +1,6 @@
 package com.j256.ormlite.field.types;
 
+import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -81,5 +82,10 @@ public abstract class BaseDateType extends BaseDataType {
 		} else {
 			return new Date(newVal);
 		}
+	}
+
+	@Override
+	public boolean isValidForField(Field field) {
+		return (field.getType() == Date.class);
 	}
 }
