@@ -90,7 +90,7 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 		return type;
 	}
 
-	public void setArgumentHolder(int index, Object value) throws SQLException {
+	public void setArgumentHolderValue(int index, Object value) throws SQLException {
 		if (index < 0) {
 			throw new SQLException("argument holder index " + index + " must be >= 0");
 		}
