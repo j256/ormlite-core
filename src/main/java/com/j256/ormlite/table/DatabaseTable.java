@@ -43,7 +43,7 @@ public @interface DatabaseTable {
 
 	/**
 	 * The DAO class that corresponds to this class. This is used by the {@link DaoManager} when it constructs a DAO
-	 * internally. It is important to use this on devices with minimal memory such as mobile devices.
+	 * internally.
 	 */
 	Class<?> daoClass() default Void.class;
 }
