@@ -89,4 +89,15 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 	public StatementType getType() {
 		return type;
 	}
+
+	public void setArgumentHolder(int index, Object value) throws SQLException {
+		if (index < 0) {
+			throw new SQLException("argument holder index " + index + " must be >= 0");
+		}
+		if (argHolders.length <= index) {
+			throw new SQLException("argument holder index " + index + " not valid, only " + argHolders.length
+					+ " in statement");
+		}
+		argHolders[index].setValue(value);
+	}
 }

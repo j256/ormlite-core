@@ -25,4 +25,21 @@ public interface PreparedStmt<T> extends GenericRowMapper<T> {
 	 * Return the type of the statement for internal consistency checking.
 	 */
 	public StatementType getType();
+
+	/**
+	 * If any argument holder's have been set in this prepared statement then this is a convenience method to be able to
+	 * set them.
+	 * 
+	 * <p>
+	 * <b>NOTE</b> This method is for folks who know what they are doing. Unfortunately the index of the argument holder
+	 * is dependent on how the query was built which for complex queries may be difficult to determine. Also, certain
+	 * field types (such as a Date) allocate an argument internally so you will need to take this into account.
+	 * </p>
+	 * 
+	 * @param index
+	 *            The index of the holder you are going to set, 0 based. See NOTE above.
+	 * @param value
+	 *            Object to set in the argument holder.
+	 */
+	public void setArgumentHolder(int index, Object value) throws SQLException;
 }
