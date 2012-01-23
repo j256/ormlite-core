@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -259,6 +260,20 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 */
 	public List<T> query() throws SQLException {
 		return dao.query(prepare());
+	}
+
+	/**
+	 * A short cut to {@link Dao#queryForFirst(PreparedQuery)}.
+	 */
+	public T queryForFirst() throws SQLException {
+		return dao.queryForFirst(prepare());
+	}
+
+	/**
+	 * A short cut to {@link Dao#queryRaw(String)} and {@link GenericRawResults#getFirstResult()}.
+	 */
+	public String[] queryRawFirst() throws SQLException {
+		return dao.queryRaw(prepareStatementString()).getFirstResult();
 	}
 
 	/**

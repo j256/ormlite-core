@@ -2560,6 +2560,15 @@ Build and return the @code{Where} object with which you can customize your @code
 
 Convenience method to perform the query.  Same as @code{dao.query(queryBuilder.prepare())}.
 
+@item queryForFirst()
+
+Convenience method to perform the query and return the first result.  Same as @code{dao.queryForFirst(queryBuilder.prepare())}.
+
+@item queryRawFirst()
+
+Convenience method to perform a raw query on the generated state and then return the first result as a @code{String[]}.
+Same as @code{Dao.queryRaw(String)} and @code{GenericRawResults.getFirstResult()}.
+
 @item iterator()
 
 Convenience method to generate the iterator for the query.  Same as @code{dao.iterator(queryBuilder.prepare())}.
