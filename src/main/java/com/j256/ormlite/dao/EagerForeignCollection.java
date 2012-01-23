@@ -23,8 +23,8 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 
 	private final List<T> results;
 
-	public EagerForeignCollection(Dao<T, ID> dao, Object parent, Object parentId, String columnName,
-			String orderColumn) throws SQLException {
+	public EagerForeignCollection(Dao<T, ID> dao, Object parent, Object parentId, String columnName, String orderColumn)
+			throws SQLException {
 		super(dao, parent, parentId, columnName, orderColumn);
 		if (parentId == null) {
 			/*
@@ -188,7 +188,7 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 			return false;
 		}
 		@SuppressWarnings("rawtypes")
-		EagerForeignCollection other = (EagerForeignCollection)obj;
+		EagerForeignCollection other = (EagerForeignCollection) obj;
 		return results.equals(other.results);
 	}
 

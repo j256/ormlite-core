@@ -62,7 +62,7 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 				 * This is pretty subtle. We introduced multiple foreign fields to the same type which use the {@link
 				 * ForeignCollectionField} foreignColumnName field. The bug that was created was that all the fields
 				 * were then set with the parent class. Only the fields that have a matching id value should be set to
-				 * the parent.  We had to add the val.equals logic.
+				 * the parent. We had to add the val.equals logic.
 				 */
 				if (val != null && parent != null && fieldType.getField().getType() == parent.getClass()
 						&& val.equals(parentId)) {
