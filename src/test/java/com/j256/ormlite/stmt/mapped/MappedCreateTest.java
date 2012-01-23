@@ -3,6 +3,7 @@ package com.j256.ormlite.stmt.mapped;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.getCurrentArguments;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.isNull;
 import static org.easymock.EasyMock.replay;
@@ -260,6 +261,55 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 		// no additional results should be found
 		assertEquals(1, results.size());
 		assertEquals(foreign.id, results.get(0).id);
+	}
+
+	@Test(expected = SQLException.class)
+	public void testArgumentHolderDoubleSet() throws Exception {
+		TableInfo<Foo, Integer> tableInfo = new TableInfo<Foo, Integer>(connectionSource, null, Foo.class);
+		MappedCreate<Foo, Integer> mappedCreate = MappedCreate.build(databaseType, tableInfo);
+		DatabaseConnection conn = createMock(DatabaseConnection.class);
+		expect(
+				conn.insert(isA(String.class), isA(Object[].class), isA(FieldType[].class),
+						isA(GeneratedKeyHolder.class))).andAnswer(new IAnswer<Integer>() {
+			public Integer answer() throws Throwable {
+				GeneratedKeyHolder holder = (GeneratedKeyHolder) getCurrentArguments()[3];
+				holder.addKey((Integer) 1);
+				holder.addKey((Integer) 2);
+				return 1;
+			}
+		});
+		replay(conn);
+		mappedCreate.insert(databaseType, conn, new Foo(), null);
+	}
+
+	@Test(expected = SQLException.class)
+	public void testArgumentHolderSetZero() throws Exception {
+		TableInfo<Foo, Integer> tableInfo = new TableInfo<Foo, Integer>(connectionSource, null, Foo.class);
+		MappedCreate<Foo, Integer> mappedCreate = MappedCreate.build(databaseType, tableInfo);
+		DatabaseConnection conn = createMock(DatabaseConnection.class);
+		expect(
+				conn.insert(isA(String.class), isA(Object[].class), isA(FieldType[].class),
+						isA(GeneratedKeyHolder.class))).andAnswer(new IAnswer<Integer>() {
+			public Integer answer() throws Throwable {
+				GeneratedKeyHolder holder = (GeneratedKeyHolder) getCurrentArguments()[3];
+				holder.addKey((Integer) 0);
+				return 1;
+			}
+		});
+		replay(conn);
+		mappedCreate.insert(databaseType, conn, new Foo(), null);
+	}
+
+	@Test(expected = SQLException.class)
+	public void testArgumentHolderNotSet() throws Exception {
+		TableInfo<Foo, Integer> tableInfo = new TableInfo<Foo, Integer>(connectionSource, null, Foo.class);
+		MappedCreate<Foo, Integer> mappedCreate = MappedCreate.build(databaseType, tableInfo);
+		DatabaseConnection conn = createMock(DatabaseConnection.class);
+		expect(
+				conn.insert(isA(String.class), isA(Object[].class), isA(FieldType[].class),
+						isA(GeneratedKeyHolder.class))).andReturn(1);
+		replay(conn);
+		mappedCreate.insert(databaseType, conn, new Foo(), null);
 	}
 
 	private static class GeneratedId {
