@@ -5,6 +5,7 @@
 	* CORE: Added updateBuilder.update() and deleteBuilder.delete().  Thanks to Marvin Jomble.  Fixes feature #3475613.
 	* CORE: Refactored the FieldConverter and BaseDataType stuff a bit to remove some duplicate code.
 	* CORE: Added convenience QueryBuilder.queryForFirst() and queryRawFirst() methods.
+	* CORE: Added setArgumentHolder() onto the PreparedStmt so we can set an argument on prepared queries directly.
 	* ANDROID: Fixed missing exception handling in AndroidConnectionSource.  Thanks to Roger Keays.  Fixed bug #3474501.
 	* ANDROID: Added isTableExists() support to Dao/AndroidDatabaseConnection. Thanks to Patrick. Fixes feature #3475173.
 
