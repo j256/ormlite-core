@@ -1846,7 +1846,8 @@ qb.where().ge("orderCount", new SelectArg());
 results = accountDao.queryRaw(qb.prepareStatementString(), 10);
 @end example
 
-If you want to use the @code{QueryBuilder} with aggregate or other raw/custom arguments do something like:
+If you want to use the @code{QueryBuilder} with aggregate or other raw/custom arguments do something like the following.
+Since there is only one result out you can use the @code{genericRawResults.getgetFirstResult()} method:
 
 @example
 QueryBuilder<Account, Integer> qb = accountDao.queryBuilder();
@@ -1854,6 +1855,7 @@ QueryBuilder<Account, Integer> qb = accountDao.queryBuilder();
 qb.selectRaw("MIN(orderCount)", "MAX(orderCount)");
 // the results will contain 2 string values for the min and max
 results = accountDao.queryRaw(qb.prepareStatementString());
+String[] values = results.getFirstResult();
 @end example
 
 For large numbers of results, you should consider using the @code{iterator()} method on the @code{GenericRawResults} object

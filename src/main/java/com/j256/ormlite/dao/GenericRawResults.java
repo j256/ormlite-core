@@ -11,10 +11,11 @@ import com.j256.ormlite.field.DataType;
  * {@link Dao#queryRaw(String, DataType[], String...)} which returns each results as a Object[].
  * 
  * <p>
- * You can access the results one of two ways using this object. You can call the {@link #getResults()} method which
- * will extract all results into a list which is returned. Or you can call the {@link #iterator()} method either
- * directly or with the for... Java statement. The iterator allows you to page through the results and is more
- * appropriate for queries which will return a large number of results.
+ * You must access the results one of three ways using this object. You can call the {@link #getResults()} method which
+ * will extract all results into a list which is returned, you can get the first result only with
+ * {@link #getFirstResult()}, or you can call the {@link #iterator()} method either directly or with the for... Java
+ * statement. The iterator allows you to page through the results and is more appropriate for queries which will return
+ * a large number of results.
  * </p>
  * 
  * <p>
@@ -41,6 +42,14 @@ public interface GenericRawResults<T> extends CloseableWrappedIterable<T> {
 	 * method will allow your to process the results page-by-page.
 	 */
 	public List<T> getResults() throws SQLException;
+
+	/**
+	 * Return the first result only. This should be used if you are only expecting one result. It cannot be used in
+	 * conjunction with {@link #getResults()}.
+	 * 
+	 * @return null if there are no results.
+	 */
+	public T getFirstResult() throws SQLException;
 
 	/**
 	 * Close any open database connections associated with the GenericRawResults. This is only necessary if the

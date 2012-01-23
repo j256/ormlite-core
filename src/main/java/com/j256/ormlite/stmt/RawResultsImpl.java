@@ -51,6 +51,18 @@ public class RawResultsImpl<T> implements GenericRawResults<T> {
 		}
 	}
 
+	public T getFirstResult() throws SQLException {
+		try {
+			if (iterator.hasNextThrow()) {
+				return iterator.nextThrow();
+			} else {
+				return null;
+			}
+		} finally {
+			close();
+		}
+	}
+
 	public CloseableIterator<T> iterator() {
 		return iterator;
 	}
