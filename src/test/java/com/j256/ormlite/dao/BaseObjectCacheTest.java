@@ -18,18 +18,16 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 
 	@Test
 	public void testBasic() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		enableCache(dao);
 
 		Foo foo = new Foo();
-		String id = "hello";
-		foo.id = id;
 		int val = 12312321;
 		foo.val = val;
 
 		assertEquals(1, dao.create(foo));
 
-		Foo result = dao.queryForId(id);
+		Foo result = dao.queryForId(foo.id);
 		assertSame(foo, result);
 
 		List<Foo> results = dao.queryForAll();
@@ -39,28 +37,26 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 		// disable cache
 		dao.setObjectCache(null);
 
-		result = dao.queryForId(id);
+		result = dao.queryForId(foo.id);
 		assertNotSame(foo, result);
 	}
 
 	@Test
 	public void testUpdate() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		enableCache(dao);
 
 		Foo foo = new Foo();
-		String id = "hello";
-		foo.id = id;
 		int val = 12312321;
 		foo.val = val;
 		assertEquals(1, dao.create(foo));
 
-		Foo result = dao.queryForId(id);
+		Foo result = dao.queryForId(foo.id);
 		assertSame(foo, result);
 
 		// update behind the back
 		Foo foo2 = new Foo();
-		foo2.id = id;
+		foo2.id = foo.id;
 		int val2 = 1312341412;
 		foo2.val = val2;
 		assertEquals(1, dao.update(foo2));
@@ -72,25 +68,23 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 
 	@Test
 	public void testUpdateId() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		enableCache(dao);
 
 		Foo foo = new Foo();
-		String id = "hello";
-		foo.id = id;
 		int val = 12312321;
 		foo.val = val;
 		assertEquals(1, dao.create(foo));
 
-		Foo result = dao.queryForId(id);
+		Foo result = dao.queryForId(foo.id);
 		assertSame(foo, result);
 
 		// updateId behind the back
 		Foo foo2 = new Foo();
-		foo2.id = id;
+		foo2.id = foo.id;
 		int val2 = 1312341412;
 		foo2.val = val2;
-		String id2 = "jfpwojfe";
+		int id2 = foo.id + 1;
 		assertEquals(1, dao.updateId(foo2, id2));
 
 		// the result should _not_ have the same value
@@ -101,55 +95,52 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 
 	@Test
 	public void testUpdateIdNotInCache() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 
-		Foo foo = new Foo();
-		String id = "hello";
-		foo.id = id;
+		Foo foo1 = new Foo();
 		int val = 12312321;
-		foo.val = val;
-		assertEquals(1, dao.create(foo));
+		foo1.val = val;
+		assertEquals(1, dao.create(foo1));
+		int id1 = foo1.id;
 
-		Foo result = dao.queryForId(id);
-		assertNotSame(foo, result);
+		Foo result = dao.queryForId(foo1.id);
+		assertNotSame(foo1, result);
 
 		// we enable the cache _after_ Foo was created
 		ObjectCache cache = enableCache(dao);
 
 		// updateId behind the back
 		Foo foo2 = new Foo();
-		foo2.id = id;
+		foo2.id = foo1.id;
 		int val2 = 1312341412;
 		foo2.val = val2;
-		String id2 = "jfpwojfe";
+		int id2 = foo1.id + 1;
 		assertEquals(1, dao.updateId(foo2, id2));
 
 		// the result should _not_ have the same value
-		assertNotSame(foo, foo2);
+		assertNotSame(foo1, foo2);
 		// and the id should be the old one and not the new one
-		assertEquals(id, foo.id);
+		assertEquals(id1, foo1.id);
 
 		assertEquals(0, cache.size(Foo.class));
 	}
 
 	@Test
 	public void testDelete() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		ObjectCache cache = enableCache(dao);
 
 		Foo foo = new Foo();
-		String id = "hello";
-		foo.id = id;
 		int val = 12312321;
 		foo.val = val;
 		assertEquals(1, dao.create(foo));
 
-		Foo result = dao.queryForId(id);
+		Foo result = dao.queryForId(foo.id);
 		assertSame(foo, result);
 
 		// updateId behind the back
 		Foo foo2 = new Foo();
-		foo2.id = id;
+		foo2.id = foo.id;
 
 		assertEquals(1, cache.size(Foo.class));
 		assertEquals(1, dao.delete(foo2));
@@ -160,13 +151,12 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 
 	@Test
 	public void testClearEachClass() throws Exception {
-		Dao<Foo, String> fooDao = createDao(Foo.class, true);
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		Dao<WithId, Integer> withIdDao = createDao(WithId.class, true);
 		ObjectCache cache = enableCache(fooDao);
 		withIdDao.setObjectCache(cache);
 
 		Foo foo = new Foo();
-		foo.id = "hello";
 		assertEquals(1, fooDao.create(foo));
 
 		Foo fooResult = fooDao.queryForId(foo.id);

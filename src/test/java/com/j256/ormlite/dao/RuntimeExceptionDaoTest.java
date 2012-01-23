@@ -103,16 +103,14 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 
 	@Test
 	public void testCoverage() throws Exception {
-		Dao<Foo, String> exceptionDao = createDao(Foo.class, true);
-		RuntimeExceptionDao<Foo, String> dao = new RuntimeExceptionDao<Foo, String>(exceptionDao);
+		Dao<Foo, Integer> exceptionDao = createDao(Foo.class, true);
+		RuntimeExceptionDao<Foo, Integer> dao = new RuntimeExceptionDao<Foo, Integer>(exceptionDao);
 
 		Foo foo = new Foo();
-		String id = "gjerpjpoegr";
-		foo.id = id;
 		int val = 1232131321;
 		foo.val = val;
 		assertEquals(1, dao.create(foo));
-		Foo result = dao.queryForId(id);
+		Foo result = dao.queryForId(foo.id);
 		assertNotNull(result);
 		assertEquals(val, result.val);
 		List<Foo> results = dao.queryForAll();
@@ -125,7 +123,7 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		assertEquals(val, iterator.next().val);
 		assertFalse(iterator.hasNext());
 
-		results = dao.queryForEq(Foo.ID_COLUMN_NAME, id);
+		results = dao.queryForEq(Foo.ID_COLUMN_NAME, foo.id);
 		assertNotNull(results);
 		assertEquals(1, results.size());
 		assertEquals(val, results.get(0).val);
@@ -154,7 +152,7 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		assertEquals(1, dao.update(foo));
 		assertEquals(1, dao.refresh(foo));
 		assertEquals(1, dao.delete(foo));
-		assertNull(dao.queryForId(id));
+		assertNull(dao.queryForId(foo.id));
 		results = dao.queryForAll();
 		assertNotNull(results);
 		assertEquals(0, results.size());
@@ -165,18 +163,17 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 
 	@Test
 	public void testCoverage2() throws Exception {
-		Dao<Foo, String> exceptionDao = createDao(Foo.class, true);
-		RuntimeExceptionDao<Foo, String> dao = new RuntimeExceptionDao<Foo, String>(exceptionDao);
+		Dao<Foo, Integer> exceptionDao = createDao(Foo.class, true);
+		RuntimeExceptionDao<Foo, Integer> dao = new RuntimeExceptionDao<Foo, Integer>(exceptionDao);
 
 		Foo foo = new Foo();
-		String id = "gjerpjpoegr";
-		foo.id = id;
 		int val = 1232131321;
 		foo.val = val;
 		assertEquals(1, dao.create(foo));
+		int id1 = foo.id;
 
 		Map<String, Object> fieldValueMap = new HashMap<String, Object>();
-		fieldValueMap.put(Foo.ID_COLUMN_NAME, id);
+		fieldValueMap.put(Foo.ID_COLUMN_NAME, foo.id);
 		List<Foo> results = dao.queryForFieldValues(fieldValueMap);
 		assertNotNull(results);
 		assertEquals(1, results.size());
@@ -187,13 +184,13 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		assertEquals(1, results.size());
 		assertEquals(val, results.get(0).val);
 
-		QueryBuilder<Foo, String> qb = dao.queryBuilder();
+		QueryBuilder<Foo, Integer> qb = dao.queryBuilder();
 		results = dao.query(qb.prepare());
 		assertNotNull(results);
 		assertEquals(1, results.size());
 		assertEquals(val, results.get(0).val);
 
-		UpdateBuilder<Foo, String> ub = dao.updateBuilder();
+		UpdateBuilder<Foo, Integer> ub = dao.updateBuilder();
 		int val2 = 65809;
 		ub.updateColumnValue(Foo.VAL_COLUMN_NAME, val2);
 		assertEquals(1, dao.update(ub.prepare()));
@@ -206,9 +203,9 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		assertNotNull(status);
 		assertTrue(status.isUpdated());
 
-		String id2 = "fwojfwefwef";
+		int id2 = foo.id + 1;
 		assertEquals(1, dao.updateId(foo, id2));
-		assertNull(dao.queryForId(id));
+		assertNull(dao.queryForId(id1));
 		assertNotNull(dao.queryForId(id2));
 
 		dao.iterator();
@@ -240,7 +237,7 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		assertTrue(dao.objectsEqual(foo, foo));
 		assertTrue(dao.objectToString(foo).contains("val=" + val));
 
-		assertEquals(id2, dao.extractId(foo));
+		assertEquals((Integer) id2, dao.extractId(foo));
 		assertEquals(Foo.class, dao.getDataClass());
 		assertTrue(dao.isTableExists());
 		assertTrue(dao.isUpdatable());
@@ -254,45 +251,41 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 
 	@Test
 	public void testDeletes() throws Exception {
-		Dao<Foo, String> exceptionDao = createDao(Foo.class, true);
-		RuntimeExceptionDao<Foo, String> dao = new RuntimeExceptionDao<Foo, String>(exceptionDao);
+		Dao<Foo, Integer> exceptionDao = createDao(Foo.class, true);
+		RuntimeExceptionDao<Foo, Integer> dao = new RuntimeExceptionDao<Foo, Integer>(exceptionDao);
 
 		Foo foo = new Foo();
-		String id = "gjerpjpoegr";
-		foo.id = id;
 		int val = 1232131321;
 		foo.val = val;
 		assertEquals(1, dao.create(foo));
 
-		assertNotNull(dao.queryForId(id));
-		assertEquals(1, dao.deleteById(id));
-		assertNull(dao.queryForId(id));
+		assertNotNull(dao.queryForId(foo.id));
+		assertEquals(1, dao.deleteById(foo.id));
+		assertNull(dao.queryForId(foo.id));
 
 		assertEquals(1, dao.create(foo));
-		assertNotNull(dao.queryForId(id));
+		assertNotNull(dao.queryForId(foo.id));
 		assertEquals(1, dao.delete(Arrays.asList(foo)));
-		assertNull(dao.queryForId(id));
+		assertNull(dao.queryForId(foo.id));
 
 		assertEquals(1, dao.create(foo));
-		assertNotNull(dao.queryForId(id));
-		assertEquals(1, dao.deleteIds(Arrays.asList(id)));
-		assertNull(dao.queryForId(id));
+		assertNotNull(dao.queryForId(foo.id));
+		assertEquals(1, dao.deleteIds(Arrays.asList(foo.id)));
+		assertNull(dao.queryForId(foo.id));
 
 		assertEquals(1, dao.create(foo));
-		assertNotNull(dao.queryForId(id));
-		DeleteBuilder<Foo, String> db = dao.deleteBuilder();
+		assertNotNull(dao.queryForId(foo.id));
+		DeleteBuilder<Foo, Integer> db = dao.deleteBuilder();
 		dao.delete(db.prepare());
-		assertNull(dao.queryForId(id));
+		assertNull(dao.queryForId(foo.id));
 	}
 
 	@Test
 	public void testCoverage3() throws Exception {
-		Dao<Foo, String> exceptionDao = createDao(Foo.class, true);
-		RuntimeExceptionDao<Foo, String> dao = new RuntimeExceptionDao<Foo, String>(exceptionDao);
+		Dao<Foo, Integer> exceptionDao = createDao(Foo.class, true);
+		RuntimeExceptionDao<Foo, Integer> dao = new RuntimeExceptionDao<Foo, Integer>(exceptionDao);
 
 		Foo foo = new Foo();
-		String id = "gjerpjpoegr";
-		foo.id = id;
 		int val = 1232131321;
 		foo.val = val;
 		assertEquals(1, dao.create(foo));
@@ -304,7 +297,7 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 				Foo fooResult = new Foo();
 				for (int i = 0; i < resultColumns.length; i++) {
 					if (columnNames[i].equals(Foo.ID_COLUMN_NAME)) {
-						fooResult.id = resultColumns[i];
+						fooResult.id = Integer.parseInt(resultColumns[i]);
 					}
 				}
 				return fooResult;
@@ -314,8 +307,8 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		GenericRawResults<Object[]> dataResults =
 				dao.queryRaw("select id,val from foo", new DataType[] { DataType.STRING, DataType.INTEGER });
 		assertEquals(1, dataResults.getResults().size());
-		assertEquals(0, dao.executeRaw("delete from foo where id = ?", id + 1));
-		assertEquals(0, dao.updateRaw("update foo set val = 100 where id = ?", id + 1));
+		assertEquals(0, dao.executeRaw("delete from foo where id = ?", Integer.toString(foo.id + 1)));
+		assertEquals(0, dao.updateRaw("update foo set val = 100 where id = ?", Integer.toString(foo.id + 1)));
 		final String someVal = "fpowejfpjfwe";
 		assertEquals(someVal, dao.callBatchTasks(new Callable<String>() {
 			public String call() {
@@ -343,7 +336,7 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 			}
 			connectionSource.releaseConnection(conn);
 		}
-		assertTrue(dao.idExists(id));
+		assertTrue(dao.idExists(foo.id));
 		Foo result = dao.queryForFirst(prepared);
 		assertEquals(foo.id, result.id);
 		assertNull(dao.getEmptyForeignCollection(Foo.ID_COLUMN_NAME));

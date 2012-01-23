@@ -1,8 +1,8 @@
 package com.j256.ormlite.field;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
 import java.sql.SQLException;
@@ -15,8 +15,6 @@ import com.j256.ormlite.field.types.BaseDataType;
 import com.j256.ormlite.support.DatabaseResults;
 
 public class DataPersisterManagerTest extends BaseCoreTest {
-
-	private static final SqlType FIXED_ENUM_VALUE = SqlType.BLOB;
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testCustomTypeNoPersister() throws Exception {
@@ -65,13 +63,14 @@ public class DataPersisterManagerTest extends BaseCoreTest {
 		try {
 			Dao<PersistedDataType, Object> dao = createDao(PersistedDataType.class, true);
 			PersistedDataType wrapper = new PersistedDataType();
-			SqlType sqlType = SqlType.UNKNOWN;
-			wrapper.sqlType = sqlType;
+			SomeEnum someEnum = SomeEnum.SECOND;
+			wrapper.someEnum = someEnum;
+			assertTrue(wrapper.someEnum != EnumConstantPersister.CONSTANT_VALUE);
 			assertEquals(1, dao.create(wrapper));
 
 			PersistedDataType wrapperResult = dao.queryForId(wrapper.id);
-			assertFalse(wrapperResult.sqlType == sqlType);
-			assertEquals(FIXED_ENUM_VALUE, wrapperResult.sqlType);
+			assertTrue(someEnum != wrapperResult.someEnum);
+			assertEquals(EnumConstantPersister.CONSTANT_VALUE, wrapperResult.someEnum);
 		} finally {
 			DataPersisterManager.clear();
 		}
@@ -177,14 +176,22 @@ public class DataPersisterManagerTest extends BaseCoreTest {
 		@DatabaseField(generatedId = true)
 		int id;
 		@DatabaseField
-		SqlType sqlType;
+		SomeEnum someEnum;
 		PersistedDataType() {
 		}
 	}
 
+	private enum SomeEnum {
+		FIRST,
+		SECOND,
+		// end
+		;
+	}
+
 	private static class EnumConstantPersister extends BaseDataType {
+		public static final SomeEnum CONSTANT_VALUE = SomeEnum.FIRST;
 		public EnumConstantPersister() {
-			super(null, new Class[] {});
+			super(SqlType.STRING, new Class[] {});
 		}
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
@@ -192,12 +199,12 @@ public class DataPersisterManagerTest extends BaseCoreTest {
 		}
 		@Override
 		public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) {
-			return SqlType.BLOB;
+			return CONSTANT_VALUE;
 		}
 		@Override
 		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
 			// constant for testing
-			return SqlType.BLOB;
+			return CONSTANT_VALUE;
 		}
 		@Override
 		public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
@@ -211,10 +218,6 @@ public class DataPersisterManagerTest extends BaseCoreTest {
 		public boolean isValidForField(Field field) {
 			// this matches all enums
 			return field.getType().isEnum();
-		}
-		@Override
-		public SqlType getSqlType() {
-			return SqlType.STRING;
 		}
 	}
 }

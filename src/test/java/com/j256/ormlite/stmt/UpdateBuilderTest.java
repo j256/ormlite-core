@@ -19,8 +19,8 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testPrepareStatementUpdateValueString() throws Exception {
-		UpdateBuilder<Foo, String> stmtb = new UpdateBuilder<Foo, String>(databaseType, baseFooTableInfo, null);
-		String idVal = "blah";
+		UpdateBuilder<Foo, Integer> stmtb = new UpdateBuilder<Foo, Integer>(databaseType, baseFooTableInfo, null);
+		int idVal = 1312;
 		stmtb.updateColumnValue(Foo.ID_COLUMN_NAME, idVal);
 		PreparedUpdate<Foo> stmt = stmtb.prepare();
 		stmt.getStatement();
@@ -29,15 +29,13 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
 		sb.append(" SET ");
 		databaseType.appendEscapedEntityName(sb, Foo.ID_COLUMN_NAME);
-		sb.append(" = ");
-		databaseType.appendEscapedWord(sb, idVal);
-		sb.append(' ');
+		sb.append(" = ").append(idVal).append(' ');
 		assertEquals(sb.toString(), stmtb.prepareStatementString());
 	}
 
 	@Test
 	public void testPrepareStatementUpdateValueNumber() throws Exception {
-		UpdateBuilder<Foo, String> stmtb = new UpdateBuilder<Foo, String>(databaseType, baseFooTableInfo, null);
+		UpdateBuilder<Foo, Integer> stmtb = new UpdateBuilder<Foo, Integer>(databaseType, baseFooTableInfo, null);
 		int idVal = 13123;
 		stmtb.updateColumnValue(Foo.VAL_COLUMN_NAME, idVal);
 		PreparedUpdate<Foo> stmt = stmtb.prepare();
@@ -53,8 +51,8 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testPrepareStatementUpdateValueExpression() throws Exception {
-		UpdateBuilder<Foo, String> stmtb = new UpdateBuilder<Foo, String>(databaseType, baseFooTableInfo, null);
-		String idVal = "blah";
+		UpdateBuilder<Foo, Integer> stmtb = new UpdateBuilder<Foo, Integer>(databaseType, baseFooTableInfo, null);
+		int idVal = 78654;
 		stmtb.updateColumnValue(Foo.ID_COLUMN_NAME, idVal);
 		String expression = "blah + 1";
 		stmtb.updateColumnExpression(Foo.VAL_COLUMN_NAME, expression);
@@ -65,24 +63,20 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
 		sb.append(" SET ");
 		databaseType.appendEscapedEntityName(sb, Foo.ID_COLUMN_NAME);
-		sb.append(" = ");
-		databaseType.appendEscapedWord(sb, idVal);
-		sb.append(" ,");
+		sb.append(" = ").append(idVal).append(" ,");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" = ");
 		sb.append(expression);
 		sb.append(" WHERE ");
 		databaseType.appendEscapedEntityName(sb, Foo.ID_COLUMN_NAME);
-		sb.append(" = ");
-		databaseType.appendEscapedWord(sb, idVal);
-		sb.append(' ');
+		sb.append(" = ").append(idVal).append(' ');
 		assertEquals(sb.toString(), stmtb.prepareStatementString());
 	}
 
 	@Test
 	public void testEscapeMethods() throws Exception {
-		UpdateBuilder<Foo, String> stmtb = new UpdateBuilder<Foo, String>(databaseType, baseFooTableInfo, null);
-		String idVal = "blah";
+		UpdateBuilder<Foo, Integer> stmtb = new UpdateBuilder<Foo, Integer>(databaseType, baseFooTableInfo, null);
+		int idVal = 32524;
 		stmtb.updateColumnValue(Foo.ID_COLUMN_NAME, idVal);
 		String expression = "blah + 1";
 		stmtb.updateColumnExpression(Foo.VAL_COLUMN_NAME, expression);
@@ -93,9 +87,7 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
 		sb.append(" SET ");
 		databaseType.appendEscapedEntityName(sb, Foo.ID_COLUMN_NAME);
-		sb.append(" = ");
-		databaseType.appendEscapedWord(sb, idVal);
-		sb.append(" ,");
+		sb.append(" = ").append(idVal).append(" ,");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" = ");
 		sb.append(expression);
@@ -135,7 +127,7 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testPrepareStatementUpdateNotSets() throws Exception {
-		UpdateBuilder<Foo, String> stmtb = new UpdateBuilder<Foo, String>(databaseType, baseFooTableInfo, null);
+		UpdateBuilder<Foo, Integer> stmtb = new UpdateBuilder<Foo, Integer>(databaseType, baseFooTableInfo, null);
 		stmtb.prepare();
 	}
 
@@ -178,64 +170,62 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testUpdateNull() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		String id = "ewopfjewfwe";
-		foo.id = id;
 		String nullField = "not really that null";
-		foo.nullField = nullField;
+		foo.stringField = nullField;
 		assertEquals(dao.create(foo), 1);
 
-		Foo result = dao.queryForId(id);
+		Foo result = dao.queryForId(foo.id);
 		assertNotNull(result);
-		assertEquals(nullField, result.nullField);
+		assertEquals(nullField, result.stringField);
 
 		// try setting to null
-		UpdateBuilder<Foo, String> ub = dao.updateBuilder();
+		UpdateBuilder<Foo, Integer> ub = dao.updateBuilder();
 		SelectArg arg = new SelectArg();
 		arg.setValue(null);
-		ub.updateColumnValue(Foo.NULL_COLUMN_NAME, arg);
+		ub.updateColumnValue(Foo.STRING_COLUMN_NAME, arg);
 		assertEquals(1, dao.update(ub.prepare()));
 
-		result = dao.queryForId(id);
+		result = dao.queryForId(foo.id);
 		assertNotNull(result);
-		assertNull(result.nullField);
+		assertNull(result.stringField);
 
 		// now back to value
 		ub = dao.updateBuilder();
-		ub.updateColumnValue(Foo.NULL_COLUMN_NAME, nullField);
+		ub.updateColumnValue(Foo.STRING_COLUMN_NAME, nullField);
 		assertEquals(1, dao.update(ub.prepare()));
 
-		result = dao.queryForId(id);
+		result = dao.queryForId(foo.id);
 		assertNotNull(result);
-		assertEquals(nullField, result.nullField);
+		assertEquals(nullField, result.stringField);
 
 		// now back to null
 		ub = dao.updateBuilder();
-		ub.updateColumnExpression(Foo.NULL_COLUMN_NAME, "null");
+		ub.updateColumnExpression(Foo.STRING_COLUMN_NAME, "null");
 		assertEquals(1, dao.update(ub.prepare()));
 
-		result = dao.queryForId(id);
+		result = dao.queryForId(foo.id);
 		assertNotNull(result);
-		assertNull(result.nullField);
+		assertNull(result.stringField);
 
 		// now back to value
 		ub = dao.updateBuilder();
-		ub.updateColumnValue(Foo.NULL_COLUMN_NAME, nullField);
+		ub.updateColumnValue(Foo.STRING_COLUMN_NAME, nullField);
 		assertEquals(1, dao.update(ub.prepare()));
 
-		result = dao.queryForId(id);
+		result = dao.queryForId(foo.id);
 		assertNotNull(result);
-		assertEquals(nullField, result.nullField);
+		assertEquals(nullField, result.stringField);
 
 		// now back to null
 		ub = dao.updateBuilder();
-		ub.updateColumnValue(Foo.NULL_COLUMN_NAME, null);
+		ub.updateColumnValue(Foo.STRING_COLUMN_NAME, null);
 		assertEquals(1, dao.update(ub.prepare()));
 
-		result = dao.queryForId(id);
+		result = dao.queryForId(foo.id);
 		assertNotNull(result);
-		assertNull(result.nullField);
+		assertNull(result.stringField);
 	}
 
 	protected static class OurForeignCollection {

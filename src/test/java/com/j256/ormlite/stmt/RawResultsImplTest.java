@@ -15,13 +15,12 @@ public class RawResultsImplTest extends BaseCoreTest {
 
 	@Test
 	public void testQueryRaw() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		foo.id = "stuff1";
 		foo.val = 1;
 		foo.equal = 10;
 		assertEquals(1, dao.create(foo));
-		QueryBuilder<Foo, String> qb = dao.queryBuilder();
+		QueryBuilder<Foo, Integer> qb = dao.queryBuilder();
 		qb.where().eq(Foo.VAL_COLUMN_NAME, new SelectArg());
 		GenericRawResults<String[]> rawResults = dao.queryRaw(qb.prepareStatementString(), Integer.toString(foo.val));
 		List<String[]> results = rawResults.getResults();
@@ -30,7 +29,7 @@ public class RawResultsImplTest extends BaseCoreTest {
 		String[] columnNames = rawResults.getColumnNames();
 		for (int i = 0; i < rawResults.getNumberColumns(); i++) {
 			if (columnNames[i].equalsIgnoreCase(Foo.ID_COLUMN_NAME)) {
-				assertEquals(foo.id, results.get(0)[0]);
+				assertEquals(Integer.toString(foo.id), results.get(0)[0]);
 				found = true;
 			}
 		}
@@ -39,18 +38,16 @@ public class RawResultsImplTest extends BaseCoreTest {
 
 	@Test
 	public void testQueryRawColumns() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		foo1.id = "stuff1";
 		foo1.val = 1;
 		foo1.equal = 10;
 		assertEquals(1, dao.create(foo1));
 		Foo foo2 = new Foo();
-		foo2.id = "stuff2";
 		foo2.val = 10;
 		foo2.equal = 5;
 		assertEquals(1, dao.create(foo2));
-		QueryBuilder<Foo, String> qb = dao.queryBuilder();
+		QueryBuilder<Foo, Integer> qb = dao.queryBuilder();
 		qb.selectRaw("COUNT(*)");
 		GenericRawResults<String[]> rawResults = dao.queryRaw(qb.prepareStatementString());
 		List<String[]> results = rawResults.getResults();
@@ -73,25 +70,22 @@ public class RawResultsImplTest extends BaseCoreTest {
 
 	@Test
 	public void testHaving() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 
 		Foo foo = new Foo();
 		int val1 = 243342;
-		foo.id = "1";
 		foo.val = val1;
 		assertEquals(1, dao.create(foo));
 		foo = new Foo();
-		foo.id = "2";
 		foo.val = val1;
 		assertEquals(1, dao.create(foo));
 		foo = new Foo();
 		// only one of these
 		int val2 = 6543;
-		foo.id = "3";
 		foo.val = val2;
 		assertEquals(1, dao.create(foo));
 
-		QueryBuilder<Foo, String> qb = dao.queryBuilder();
+		QueryBuilder<Foo, Integer> qb = dao.queryBuilder();
 		qb.selectColumns(Foo.VAL_COLUMN_NAME);
 		qb.groupBy(Foo.VAL_COLUMN_NAME);
 		qb.having("COUNT(VAL) > 1");
@@ -109,17 +103,15 @@ public class RawResultsImplTest extends BaseCoreTest {
 
 	@Test
 	public void testGetFirstResult() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		foo1.id = "1";
 		foo1.val = 342;
 		assertEquals(1, dao.create(foo1));
 		Foo foo2 = new Foo();
-		foo2.id = "2";
 		foo2.val = 9045342;
 		assertEquals(1, dao.create(foo2));
 
-		QueryBuilder<Foo, String> qb = dao.queryBuilder();
+		QueryBuilder<Foo, Integer> qb = dao.queryBuilder();
 		qb.selectRaw("MAX(" + Foo.VAL_COLUMN_NAME + ")");
 		GenericRawResults<String[]> results = dao.queryRaw(qb.prepareStatementString());
 		String[] result = results.getFirstResult();

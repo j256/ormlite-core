@@ -12,7 +12,7 @@ import com.j256.ormlite.table.TableInfo;
 
 public abstract class BaseCoreStmtTest extends BaseCoreTest {
 
-	protected TableInfo<Foo, String> baseFooTableInfo;
+	protected TableInfo<Foo, Integer> baseFooTableInfo;
 	protected FieldType numberFieldType;
 	protected FieldType stringFieldType;
 	protected FieldType foreignFieldType;
@@ -22,7 +22,7 @@ public abstract class BaseCoreStmtTest extends BaseCoreTest {
 	public void before() throws Exception {
 		super.before();
 
-		Field field = Foo.class.getDeclaredField("id");
+		Field field = Foo.class.getDeclaredField("stringField");
 		assertEquals(String.class, field.getType());
 		stringFieldType = FieldType.createFieldType(connectionSource, "BaseFoo", field, Foo.class);
 		stringFieldType.configDaoInformation(connectionSource, Foo.class);
@@ -35,6 +35,6 @@ public abstract class BaseCoreStmtTest extends BaseCoreTest {
 		foreignFieldType = FieldType.createFieldType(connectionSource, "BaseFoo", field, Foreign.class);
 		foreignFieldType.configDaoInformation(connectionSource, Foreign.class);
 
-		baseFooTableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
+		baseFooTableInfo = new TableInfo<Foo, Integer>(connectionSource, null, Foo.class);
 	}
 }

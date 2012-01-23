@@ -46,7 +46,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testDoubleInitialize() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(connectionSource, Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(connectionSource, Foo.class) {
 		};
 		dao.initialize();
 		// this shouldn't barf
@@ -55,31 +55,27 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testInitNoConnectionSource() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		dao.initialize();
 	}
 
 	@Test
 	public void testCreate() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		String id = "stuff";
-		foo.id = id;
 		int equal = 21313;
 		foo.equal = equal;
 		assertEquals(1, dao.create(foo));
-		Foo foo2 = dao.queryForId(id);
-		assertNotNull(foo2);
-		assertEquals(equal, foo2.equal);
+		Foo result = dao.queryForId(foo.id);
+		assertNotNull(result);
+		assertEquals(equal, result.equal);
 	}
 
 	@Test(expected = SQLException.class)
 	public void testQueryForIdThrow() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		String id = "stuff";
-		foo.id = id;
 		int equal = 21313;
 		foo.equal = equal;
 		assertEquals(1, dao.create(foo));
@@ -87,7 +83,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection();
 		try {
 			conn.close();
-			dao.queryForId(id);
+			dao.queryForId(foo.id);
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
@@ -95,39 +91,40 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testQueryPrepared() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		String id1 = "stuff1";
-		foo1.id = id1;
 		assertEquals(1, dao.create(foo1));
 		Foo foo2 = new Foo();
-		String id2 = "stuff2";
-		foo2.id = id2;
 		assertEquals(1, dao.create(foo2));
 
-		Where<Foo, String> qb = dao.queryBuilder().where().eq(Foo.ID_COLUMN_NAME, id2);
+		Where<Foo, Integer> qb = dao.queryBuilder().where().eq(Foo.ID_COLUMN_NAME, foo2.id);
 		List<Foo> results = dao.query(qb.prepare());
 		assertEquals(1, results.size());
-		assertEquals(id2, results.get(0).id);
+		assertEquals(foo2.id, results.get(0).id);
 	}
 
 	@Test(expected = SQLException.class)
 	public void testCreateThrow() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		// no id set
-		dao.create(foo);
+		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		try {
+			conn.close();
+			dao.create(foo);
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test
 	public void testCreateNull() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		assertEquals(0, dao.create((Foo) null));
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testCreateNoInit() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		dao.setConnectionSource(connectionSource);
 		assertEquals(0, dao.create((Foo) null));
@@ -135,9 +132,8 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testUpdate() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		foo.id = "stuff";
 		assertEquals(1, dao.create(foo));
 		foo.equal = 1;
 		assertEquals(1, dao.update(foo));
@@ -145,14 +141,13 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test(expected = SQLException.class)
 	public void testUpdateThrow() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		foo.id = "stuff";
 		assertEquals(1, dao.create(foo));
 		DatabaseConnection conn = connectionSource.getReadWriteConnection();
 		try {
 			conn.close();
-			assertEquals(1, dao.update(foo));
+			dao.update(foo);
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
@@ -160,7 +155,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testUpdateNull() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(connectionSource, Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(connectionSource, Foo.class) {
 		};
 		dao.initialize();
 		assertEquals(0, dao.update((Foo) null));
@@ -168,7 +163,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testUpdateNoInit() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		dao.setConnectionSource(connectionSource);
 		assertEquals(0, dao.update((Foo) null));
@@ -176,23 +171,27 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testUpdateId() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		foo.id = "stuff1";
 		assertEquals(1, dao.create(foo));
-		assertEquals(1, dao.updateId(foo, "stuff2"));
+		int id = foo.id;
+		assertNotNull(dao.queryForId(id));
+		assertNull(dao.queryForId(id + 1));
+		assertEquals(1, dao.updateId(foo, id + 1));
+		assertNull(dao.queryForId(id));
+		assertNotNull(dao.queryForId(id + 1));
 	}
 
 	@Test(expected = SQLException.class)
 	public void testUpdateIdThrow() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		foo.id = "stuff";
 		assertEquals(1, dao.create(foo));
 		DatabaseConnection conn = connectionSource.getReadWriteConnection();
 		try {
+			// close connection
 			conn.close();
-			assertEquals(1, dao.updateId(foo, "new id"));
+			dao.updateId(foo, foo.id + 1);
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
@@ -200,7 +199,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testUpdateIdNull() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(connectionSource, Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(connectionSource, Foo.class) {
 		};
 		dao.initialize();
 		assertEquals(0, dao.updateId(null, null));
@@ -208,7 +207,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testUpdateIdNoInit() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		dao.setConnectionSource(connectionSource);
 		assertEquals(0, dao.updateId(null, null));
@@ -216,43 +215,39 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testUpdatePrepared() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
-		Foo foo = new Foo();
-		String id1 = "stuff1";
-		foo.id = id1;
-		assertEquals(1, dao.create(foo));
-		String id2 = "stuff2";
-		foo.id = id2;
-		assertEquals(1, dao.create(foo));
-		String id3 = "stuff3";
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		assertEquals(1, dao.create(foo2));
+		int id3 = foo2.id + 1;
 
-		assertNotNull(dao.queryForId(id1));
-		assertNotNull(dao.queryForId(id2));
+		assertNotNull(dao.queryForId(foo1.id));
+		assertNotNull(dao.queryForId(foo2.id));
 		assertNull(dao.queryForId(id3));
 
-		UpdateBuilder<Foo, String> updateBuilder = dao.updateBuilder();
+		UpdateBuilder<Foo, Integer> updateBuilder = dao.updateBuilder();
 		updateBuilder.updateColumnValue(Foo.ID_COLUMN_NAME, id3);
-		updateBuilder.where().eq(Foo.ID_COLUMN_NAME, id1);
+		updateBuilder.where().eq(Foo.ID_COLUMN_NAME, foo1.id);
 		assertEquals(1, dao.update(updateBuilder.prepare()));
 
-		assertNull(dao.queryForId(id1));
-		assertNotNull(dao.queryForId(id2));
+		assertNull(dao.queryForId(foo1.id));
+		assertNotNull(dao.queryForId(foo2.id));
 		assertNotNull(dao.queryForId(id3));
 		assertEquals(2, dao.queryForAll().size());
 	}
 
 	@Test(expected = SQLException.class)
 	public void testUpdatePreparedThrow() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		foo.id = "stuff";
 		assertEquals(1, dao.create(foo));
 		DatabaseConnection conn = connectionSource.getReadWriteConnection();
 		try {
 			conn.close();
-			UpdateBuilder<Foo, String> ub = dao.updateBuilder();
+			UpdateBuilder<Foo, Integer> ub = dao.updateBuilder();
 			ub.updateColumnValue(Foo.EQUAL_COLUMN_NAME, 1);
-			assertEquals(1, dao.update(ub.prepare()));
+			dao.update(ub.prepare());
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
@@ -260,22 +255,19 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testDelete() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		String id = "stuff1";
-		foo.id = id;
 		assertEquals(1, dao.create(foo));
-		assertNotNull(dao.queryForId(id));
+		assertNotNull(dao.queryForId(foo.id));
 		assertEquals(1, dao.delete(foo));
-		assertNull(dao.queryForId(id));
+		assertNull(dao.queryForId(foo.id));
 		assertEquals(0, dao.queryForAll().size());
 	}
 
 	@Test(expected = SQLException.class)
 	public void testDeleteThrow() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		foo.id = "stuff";
 		assertEquals(1, dao.create(foo));
 		DatabaseConnection conn = connectionSource.getReadWriteConnection();
 		try {
@@ -288,7 +280,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testDeleteNull() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(connectionSource, Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(connectionSource, Foo.class) {
 		};
 		dao.initialize();
 		assertEquals(0, dao.delete((Foo) null));
@@ -296,7 +288,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testDeleteNoInit() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		dao.setConnectionSource(connectionSource);
 		assertEquals(0, dao.delete((Foo) null));
@@ -304,28 +296,24 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testDeleteById() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		String id = "stuff1";
-		foo.id = id;
 		assertEquals(1, dao.create(foo));
-		assertNotNull(dao.queryForId(id));
-		assertEquals(1, dao.deleteById(id));
-		assertNull(dao.queryForId(id));
+		assertNotNull(dao.queryForId(foo.id));
+		assertEquals(1, dao.deleteById(foo.id));
+		assertNull(dao.queryForId(foo.id));
 		assertEquals(0, dao.queryForAll().size());
 	}
 
 	@Test(expected = SQLException.class)
 	public void testDeleteByIdThrow() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		String id = "stuff1";
-		foo.id = id;
 		assertEquals(1, dao.create(foo));
 		DatabaseConnection conn = connectionSource.getReadWriteConnection();
 		try {
 			conn.close();
-			dao.deleteById(id);
+			dao.deleteById(foo.id);
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
@@ -333,24 +321,20 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testDeleteByIdNull() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		assertEquals(0, dao.deleteById(null));
 	}
 
 	@Test
 	public void testDeleteCollection() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		String id1 = "stuff1";
-		foo1.id = id1;
 		assertEquals(1, dao.create(foo1));
 		Foo foo2 = new Foo();
-		String id2 = "stuff2";
-		foo2.id = id2;
 		assertEquals(1, dao.create(foo2));
 
-		assertNotNull(dao.queryForId(id1));
-		assertNotNull(dao.queryForId(id2));
+		assertNotNull(dao.queryForId(foo1.id));
+		assertNotNull(dao.queryForId(foo2.id));
 
 		List<Foo> foos = new ArrayList<Foo>();
 		foos.add(foo1);
@@ -358,15 +342,14 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 		assertEquals(2, dao.delete(foos));
 		assertEquals(0, dao.queryForAll().size());
-		assertNull(dao.queryForId(id1));
-		assertNull(dao.queryForId(id2));
+		assertNull(dao.queryForId(foo1.id));
+		assertNull(dao.queryForId(foo2.id));
 	}
 
 	@Test(expected = SQLException.class)
 	public void testDeleteCollectionThrow() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		foo.id = "stuff";
 		assertEquals(1, dao.create(foo));
 		DatabaseConnection conn = connectionSource.getReadWriteConnection();
 		try {
@@ -381,28 +364,24 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testDeleteEmptyCollection() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		String id1 = "stuff1";
-		foo1.id = id1;
 		assertEquals(1, dao.create(foo1));
 		Foo foo2 = new Foo();
-		String id2 = "stuff2";
-		foo2.id = id2;
 		assertEquals(1, dao.create(foo2));
 
-		assertNotNull(dao.queryForId(id1));
-		assertNotNull(dao.queryForId(id2));
+		assertNotNull(dao.queryForId(foo1.id));
+		assertNotNull(dao.queryForId(foo2.id));
 
 		assertEquals(0, dao.delete(new ArrayList<Foo>()));
 		assertEquals(2, dao.queryForAll().size());
-		assertNotNull(dao.queryForId(id1));
-		assertNotNull(dao.queryForId(id2));
+		assertNotNull(dao.queryForId(foo1.id));
+		assertNotNull(dao.queryForId(foo2.id));
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testDeleteCollectionNoInit() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		dao.setConnectionSource(connectionSource);
 		assertEquals(0, dao.delete((List<Foo>) null));
@@ -410,38 +389,33 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testDeleteIds() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		String id1 = "stuff1";
-		foo1.id = id1;
 		assertEquals(1, dao.create(foo1));
 		Foo foo2 = new Foo();
-		String id2 = "stuff2";
-		foo2.id = id2;
 		assertEquals(1, dao.create(foo2));
 
-		assertNotNull(dao.queryForId(id1));
-		assertNotNull(dao.queryForId(id2));
+		assertNotNull(dao.queryForId(foo1.id));
+		assertNotNull(dao.queryForId(foo2.id));
 
-		List<String> ids = new ArrayList<String>();
-		ids.add(id1);
-		ids.add(id2);
+		List<Integer> ids = new ArrayList<Integer>();
+		ids.add(foo1.id);
+		ids.add(foo2.id);
 		assertEquals(2, dao.deleteIds(ids));
 		assertEquals(0, dao.queryForAll().size());
-		assertNull(dao.queryForId(id1));
-		assertNull(dao.queryForId(id2));
+		assertNull(dao.queryForId(foo1.id));
+		assertNull(dao.queryForId(foo2.id));
 	}
 
 	@Test(expected = SQLException.class)
 	public void testDeleteIdsThrow() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		foo.id = "stuff";
 		assertEquals(1, dao.create(foo));
 		DatabaseConnection conn = connectionSource.getReadWriteConnection();
 		try {
 			conn.close();
-			List<String> foos = new ArrayList<String>();
+			List<Integer> foos = new ArrayList<Integer>();
 			foos.add(foo.id);
 			dao.deleteIds(foos);
 		} finally {
@@ -451,50 +425,45 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testDeleteIdsEmpty() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(connectionSource, Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(connectionSource, Foo.class) {
 		};
 		dao.initialize();
-		List<String> fooList = new ArrayList<String>();
+		List<Integer> fooList = new ArrayList<Integer>();
 		assertEquals(0, dao.deleteIds(fooList));
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testDeleteIdsNoInit() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		dao.setConnectionSource(connectionSource);
-		assertEquals(0, dao.deleteIds((List<String>) null));
+		assertEquals(0, dao.deleteIds((List<Integer>) null));
 	}
 
 	@Test
 	public void testDeletePreparedStatement() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
-		Foo foo = new Foo();
-		String id1 = "stuff1";
-		foo.id = id1;
-		assertEquals(1, dao.create(foo));
-		String id2 = "stuff2";
-		foo.id = id2;
-		assertEquals(1, dao.create(foo));
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		assertEquals(1, dao.create(foo2));
 
-		assertNotNull(dao.queryForId(id1));
-		assertNotNull(dao.queryForId(id2));
+		assertNotNull(dao.queryForId(foo1.id));
+		assertNotNull(dao.queryForId(foo2.id));
 
-		DeleteBuilder<Foo, String> deleteBuilder = dao.deleteBuilder();
-		deleteBuilder.where().eq(Foo.ID_COLUMN_NAME, id1);
+		DeleteBuilder<Foo, Integer> deleteBuilder = dao.deleteBuilder();
+		deleteBuilder.where().eq(Foo.ID_COLUMN_NAME, foo1.id);
 		assertEquals(1, dao.delete(deleteBuilder.prepare()));
 
 		assertEquals(1, dao.queryForAll().size());
-		assertNull(dao.queryForId(id1));
-		assertNotNull(dao.queryForId(id2));
+		assertNull(dao.queryForId(foo1.id));
+		assertNotNull(dao.queryForId(foo2.id));
 	}
 
 	@Test(expected = SQLException.class)
 	public void testDeletePreparedThrow() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		String id = "stuff";
-		foo.id = id;
 		assertEquals(1, dao.create(foo));
 		DatabaseConnection conn = connectionSource.getReadWriteConnection();
 		try {
@@ -507,20 +476,18 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testRefresh() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		String id1 = "stuff1";
-		foo.id = id1;
 		int equal1 = 11312331;
 		foo.equal = equal1;
 		assertEquals(1, dao.create(foo));
 		int equal2 = 312312;
 
-		assertNotNull(dao.queryForId(id1));
+		assertNotNull(dao.queryForId(foo.id));
 
-		UpdateBuilder<Foo, String> updateBuilder = dao.updateBuilder();
+		UpdateBuilder<Foo, Integer> updateBuilder = dao.updateBuilder();
 		updateBuilder.updateColumnValue(Foo.EQUAL_COLUMN_NAME, equal2);
-		updateBuilder.where().eq(Foo.ID_COLUMN_NAME, id1);
+		updateBuilder.where().eq(Foo.ID_COLUMN_NAME, foo.id);
 		assertEquals(1, dao.update(updateBuilder.prepare()));
 
 		assertEquals(equal1, foo.equal);
@@ -530,9 +497,8 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test(expected = SQLException.class)
 	public void testRefreshThrow() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		foo.id = "stuff";
 		assertEquals(1, dao.create(foo));
 		DatabaseConnection conn = connectionSource.getReadWriteConnection();
 		try {
@@ -545,7 +511,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testRefreshNull() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(connectionSource, Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(connectionSource, Foo.class) {
 		};
 		dao.initialize();
 		assertEquals(0, dao.refresh(null));
@@ -553,7 +519,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testRefreshNoInit() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		dao.setConnectionSource(connectionSource);
 		assertEquals(0, dao.refresh(null));
@@ -561,38 +527,34 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testAnotherConstructor() throws Exception {
-		new BaseDaoImpl<Foo, String>(Foo.class) {
+		new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testNoDatabaseType() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		dao.initialize();
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testQueryForIdNoInit() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
-		dao.queryForId("foo");
+		dao.queryForId(1);
 	}
 
 	@Test
 	public void testQueryForFirst() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		String id1 = "stuff1";
-		foo1.id = id1;
 		assertEquals(1, dao.create(foo1));
 		Foo foo2 = new Foo();
-		String id2 = "stuff2";
-		foo2.id = id2;
 		assertEquals(1, dao.create(foo2));
 
-		assertNotNull(dao.queryForId(id1));
-		assertNotNull(dao.queryForId(id2));
+		assertNotNull(dao.queryForId(foo1.id));
+		assertNotNull(dao.queryForId(foo2.id));
 		assertEquals(2, dao.queryForAll().size());
 
 		Foo foo3 = dao.queryForFirst(dao.queryBuilder().prepare());
@@ -602,10 +564,8 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test(expected = SQLException.class)
 	public void testQueryForFirstThrow() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		String id = "stuff";
-		foo.id = id;
 		int equal = 21313;
 		foo.equal = equal;
 		assertEquals(1, dao.create(foo));
@@ -621,46 +581,44 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testQueryForFirstNoResults() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		assertNull(dao.queryForFirst(dao.queryBuilder().prepare()));
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testStatementBuilderNoInit() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		dao.queryBuilder();
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testQueryForFirstNoInit() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		dao.queryForFirst(null);
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testQueryForPreparedNoInit() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		dao.query((PreparedQuery<Foo>) null);
 	}
 
 	@Test
 	public void testObjectToString() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(connectionSource, Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(connectionSource, Foo.class) {
 		};
 		dao.initialize();
 		Foo foo = new Foo();
-		String idStr = "qdqd";
-		foo.id = idStr;
 		String objStr = dao.objectToString(foo);
-		assertTrue(objStr.contains("id=" + idStr));
+		assertTrue(objStr.contains("id=" + foo.id));
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testObjectToStringNoInit() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		dao.setConnectionSource(connectionSource);
 		dao.objectToString(new Foo());
@@ -668,25 +626,25 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testObjectsEqual() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(connectionSource, Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(connectionSource, Foo.class) {
 		};
 		dao.initialize();
 		Foo foo = new Foo();
-		foo.id = "qdqd";
+		foo.id = 121134243;
 		foo.val = 123123;
 		Foo bar = new Foo();
 		assertTrue(dao.objectsEqual(foo, foo));
 		assertFalse(dao.objectsEqual(foo, bar));
 		assertFalse(dao.objectsEqual(bar, foo));
 		assertTrue(dao.objectsEqual(bar, bar));
-		bar.id = "wqdpq";
+		bar.id = foo.id + 1;
 		bar.val = foo.val;
 		assertFalse(dao.objectsEqual(bar, foo));
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testObjectsEqualNoInit() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		dao.setConnectionSource(connectionSource);
 		dao.objectsEqual(new Foo(), new Foo());
@@ -694,36 +652,31 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testIterator() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		String id1 = "stuff1";
 		int equal1 = 1231231232;
-		foo1.id = id1;
 		foo1.equal = equal1;
 		assertEquals(1, dao.create(foo1));
 		Foo foo2 = new Foo();
 		int equal2 = 1231232;
-		String id2 = "stuff2";
-		foo2.id = id2;
 		foo2.equal = equal2;
 		assertEquals(1, dao.create(foo2));
 
 		CloseableIterator<Foo> iterator = dao.iterator();
 		assertTrue(iterator.hasNext());
 		Foo foo3 = iterator.next();
-		assertEquals(id1, foo3.id);
+		assertEquals(foo1.id, foo3.id);
 		assertTrue(iterator.hasNext());
 		foo3 = iterator.next();
-		assertEquals(id2, foo3.id);
+		assertEquals(foo2.id, foo3.id);
 		assertFalse(iterator.hasNext());
 		iterator.close();
 	}
 
 	@Test
 	public void testIteratorLastClose() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		foo1.id = "stuff1";
 		assertEquals(1, dao.create(foo1));
 
 		CloseableIterator<Foo> iterator = dao.iterator();
@@ -736,9 +689,8 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testWrappedIterator() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		foo1.id = "stuff1";
 		assertEquals(1, dao.create(foo1));
 
 		CloseableWrappedIterable<Foo> wrapped = dao.getWrappedIterable();
@@ -755,9 +707,8 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testWrappedIterableFor() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		foo1.id = "stuff1";
 		assertEquals(1, dao.create(foo1));
 
 		CloseableWrappedIterable<Foo> wrapped = dao.getWrappedIterable();
@@ -775,9 +726,8 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testWrappedIterableForThrow() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		foo1.id = "stuff1";
 		assertEquals(1, dao.create(foo1));
 
 		CloseableWrappedIterable<Foo> wrapped = dao.getWrappedIterable();
@@ -794,14 +744,12 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testWrappedIterablePreparedQueryFor() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 
 		Foo foo1 = new Foo();
-		foo1.id = "stuff1";
 		assertEquals(1, dao.create(foo1));
 
 		Foo foo2 = new Foo();
-		foo2.id = "not stuff1";
 		assertEquals(1, dao.create(foo2));
 
 		CloseableWrappedIterable<Foo> wrapped =
@@ -820,14 +768,12 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testWrappedIterableInvalidPreparedQueryFor() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 
 		Foo foo1 = new Foo();
-		foo1.id = "stuff1";
 		assertEquals(1, dao.create(foo1));
 
 		Foo foo2 = new Foo();
-		foo2.id = "not stuff1";
 		assertEquals(1, dao.create(foo2));
 
 		CloseableWrappedIterable<Foo> wrapped =
@@ -844,10 +790,8 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testIteratorThrow() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		String id = "stuff";
-		foo.id = id;
 		assertEquals(1, dao.create(foo));
 		DatabaseConnection conn = connectionSource.getReadWriteConnection();
 		try {
@@ -860,43 +804,37 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testIteratorNoInit() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		dao.iterator();
 	}
 
 	@Test
 	public void testIteratorPrepared() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		String id1 = "stuff1";
 		int equal1 = 1231231232;
-		foo1.id = id1;
 		foo1.equal = equal1;
 		assertEquals(1, dao.create(foo1));
 		Foo foo2 = new Foo();
 		int equal2 = 1231232;
-		String id2 = "stuff2";
-		foo2.id = id2;
 		foo2.equal = equal2;
 		assertEquals(1, dao.create(foo2));
 
-		QueryBuilder<Foo, String> queryBuilder = dao.queryBuilder();
-		queryBuilder.where().eq(Foo.ID_COLUMN_NAME, id1);
+		QueryBuilder<Foo, Integer> queryBuilder = dao.queryBuilder();
+		queryBuilder.where().eq(Foo.ID_COLUMN_NAME, foo1.id);
 
 		CloseableIterator<Foo> iterator = dao.iterator(queryBuilder.prepare());
 		assertTrue(iterator.hasNext());
-		Foo foo3 = iterator.next();
-		assertEquals(id1, foo3.id);
+		Foo result = iterator.next();
+		assertEquals(foo1.id, result.id);
 		assertFalse(iterator.hasNext());
 	}
 
 	@Test(expected = SQLException.class)
 	public void testIteratorPreparedThrow() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		String id = "stuff";
-		foo.id = id;
 		assertEquals(1, dao.create(foo));
 		DatabaseConnection conn = connectionSource.getReadWriteConnection();
 		try {
@@ -909,7 +847,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testIteratorPreparedNoInit() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		dao.iterator((PreparedQuery<Foo>) null);
 	}
@@ -917,7 +855,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	@Test
 	public void testTableConfig() throws Exception {
 		DatabaseTableConfig<Foo> config = DatabaseTableConfig.fromClass(connectionSource, Foo.class);
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(connectionSource, config) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(connectionSource, config) {
 		};
 		assertSame(config, dao.getTableConfig());
 	}
@@ -925,7 +863,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	@Test
 	public void testSetters() throws Exception {
 		DatabaseTableConfig<Foo> config = DatabaseTableConfig.fromClass(connectionSource, Foo.class);
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		dao.setTableConfig(config);
 		dao.setConnectionSource(connectionSource);
@@ -934,22 +872,18 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testQueryRawStrings() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		String id1 = "stuff1";
 		int equal1 = 1231231232;
-		foo1.id = id1;
 		foo1.equal = equal1;
 		assertEquals(1, dao.create(foo1));
 		Foo foo2 = new Foo();
 		int equal2 = 1231232;
-		String id2 = "stuff2";
-		foo2.id = id2;
 		foo2.equal = equal2;
 		assertEquals(1, dao.create(foo2));
 
-		QueryBuilder<Foo, String> queryBuilder = dao.queryBuilder();
-		queryBuilder.where().eq(Foo.ID_COLUMN_NAME, id1);
+		QueryBuilder<Foo, Integer> queryBuilder = dao.queryBuilder();
+		queryBuilder.where().eq(Foo.ID_COLUMN_NAME, foo1.id);
 
 		GenericRawResults<String[]> results =
 				dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME + " FROM FOO");
@@ -957,20 +891,18 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(2, resultList.size());
 		String[] row = resultList.get(0);
 		assertEquals(2, row.length);
-		assertEquals(foo1.id, row[0]);
+		assertEquals(Integer.toString(foo1.id), row[0]);
 		assertEquals(foo1.equal, Integer.parseInt(row[1]));
 		row = resultList.get(1);
 		assertEquals(2, row.length);
-		assertEquals(foo2.id, row[0]);
+		assertEquals(Integer.toString(foo2.id), row[0]);
 		assertEquals(foo2.equal, Integer.parseInt(row[1]));
 	}
 
 	@Test(expected = SQLException.class)
 	public void testQueryRawStringsThrow() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		String id = "stuff";
-		foo.id = id;
 		assertEquals(1, dao.create(foo));
 		DatabaseConnection conn = connectionSource.getReadWriteConnection();
 		try {
@@ -983,26 +915,22 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testQueryRawStringsArguments() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		String id1 = "stuff1";
 		int equal1 = 1231231232;
-		foo1.id = id1;
 		foo1.equal = equal1;
 		assertEquals(1, dao.create(foo1));
 		Foo foo2 = new Foo();
 		int equal2 = 1231232;
-		String id2 = "stuff2";
-		foo2.id = id2;
 		foo2.equal = equal2;
 		assertEquals(1, dao.create(foo2));
 
-		QueryBuilder<Foo, String> queryBuilder = dao.queryBuilder();
-		queryBuilder.where().eq(Foo.ID_COLUMN_NAME, id1);
+		QueryBuilder<Foo, Integer> queryBuilder = dao.queryBuilder();
+		queryBuilder.where().eq(Foo.ID_COLUMN_NAME, foo1.id);
 
 		GenericRawResults<String[]> results =
 				dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME + " FROM FOO WHERE "
-						+ Foo.ID_COLUMN_NAME + " = ?", id2);
+						+ Foo.ID_COLUMN_NAME + " = ?", Integer.toString(foo2.id));
 		assertEquals(2, results.getNumberColumns());
 		String[] names = results.getColumnNames();
 		assertEquals(2, names.length);
@@ -1012,29 +940,25 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(1, resultList.size());
 		String[] row = resultList.get(0);
 		assertEquals(2, row.length);
-		assertEquals(foo2.id, row[0]);
+		assertEquals(Integer.toString(foo2.id), row[0]);
 		assertEquals(foo2.equal, Integer.parseInt(row[1]));
 		results.close();
 	}
 
 	@Test
 	public void testQueryRawObjects() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		String id1 = "stuff1";
 		int equal1 = 1231231232;
-		foo1.id = id1;
 		foo1.equal = equal1;
 		assertEquals(1, dao.create(foo1));
 		Foo foo2 = new Foo();
 		int equal2 = 1231232;
-		String id2 = "stuff2";
-		foo2.id = id2;
 		foo2.equal = equal2;
 		assertEquals(1, dao.create(foo2));
 
-		QueryBuilder<Foo, String> queryBuilder = dao.queryBuilder();
-		queryBuilder.where().eq(Foo.ID_COLUMN_NAME, id1);
+		QueryBuilder<Foo, Integer> queryBuilder = dao.queryBuilder();
+		queryBuilder.where().eq(Foo.ID_COLUMN_NAME, foo1.id);
 
 		GenericRawResults<Object[]> results =
 				dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME + " FROM FOO",
@@ -1043,20 +967,18 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(2, resultList.size());
 		Object[] row = resultList.get(0);
 		assertEquals(2, row.length);
-		assertEquals(foo1.id, row[0]);
+		assertEquals(Integer.toString(foo1.id), row[0]);
 		assertEquals(foo1.equal, row[1]);
 		row = resultList.get(1);
 		assertEquals(2, row.length);
-		assertEquals(foo2.id, row[0]);
+		assertEquals(Integer.toString(foo2.id), row[0]);
 		assertEquals(foo2.equal, row[1]);
 	}
 
 	@Test(expected = SQLException.class)
 	public void testQueryRawObjectsThrow() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		String id = "stuff";
-		foo.id = id;
 		assertEquals(1, dao.create(foo));
 		DatabaseConnection conn = connectionSource.getReadWriteConnection();
 		try {
@@ -1069,52 +991,45 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testQueryRawObjectsArguments() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		String id1 = "stuff1";
 		int equal1 = 1231231232;
-		foo1.id = id1;
 		foo1.equal = equal1;
 		assertEquals(1, dao.create(foo1));
 		Foo foo2 = new Foo();
 		int equal2 = 1231232;
-		String id2 = "stuff2";
-		foo2.id = id2;
 		foo2.equal = equal2;
 		assertEquals(1, dao.create(foo2));
 
-		QueryBuilder<Foo, String> queryBuilder = dao.queryBuilder();
-		queryBuilder.where().eq(Foo.ID_COLUMN_NAME, id1);
+		QueryBuilder<Foo, Integer> queryBuilder = dao.queryBuilder();
+		queryBuilder.where().eq(Foo.ID_COLUMN_NAME, foo1.id);
 
 		GenericRawResults<Object[]> results =
 				dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME + " FROM FOO WHERE "
-						+ Foo.ID_COLUMN_NAME + " = ?", new DataType[] { DataType.STRING, DataType.INTEGER }, id2);
+						+ Foo.ID_COLUMN_NAME + " = ?", new DataType[] { DataType.STRING, DataType.INTEGER },
+						Integer.toString(foo2.id));
 		List<Object[]> resultList = results.getResults();
 		assertEquals(1, resultList.size());
 		Object[] row = resultList.get(0);
 		assertEquals(2, row.length);
-		assertEquals(foo2.id, row[0]);
+		assertEquals(Integer.toString(foo2.id), row[0]);
 		assertEquals(foo2.equal, row[1]);
 	}
 
 	@Test
 	public void testQueryRawMapped() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		String id1 = "stuff1";
 		int equal1 = 1231231232;
-		foo1.id = id1;
 		foo1.equal = equal1;
 		assertEquals(1, dao.create(foo1));
 		Foo foo2 = new Foo();
 		int equal2 = 1231232;
-		String id2 = "stuff2";
-		foo2.id = id2;
 		foo2.equal = equal2;
 		assertEquals(1, dao.create(foo2));
 
-		QueryBuilder<Foo, String> queryBuilder = dao.queryBuilder();
-		queryBuilder.where().eq(Foo.ID_COLUMN_NAME, id1);
+		QueryBuilder<Foo, Integer> queryBuilder = dao.queryBuilder();
+		queryBuilder.where().eq(Foo.ID_COLUMN_NAME, foo1.id);
 
 		GenericRawResults<Foo> results =
 				dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME + " FROM FOO",
@@ -1123,7 +1038,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 								assertEquals(2, columnNames.length);
 								assertEquals(2, resultColumns.length);
 								Foo foo = new Foo();
-								foo.id = resultColumns[0];
+								foo.id = Integer.parseInt(resultColumns[0]);
 								foo.equal = Integer.parseInt(resultColumns[1]);
 								return foo;
 							}
@@ -1138,10 +1053,8 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test(expected = SQLException.class)
 	public void testQueryRawMappedThrow() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		String id = "stuff";
-		foo.id = id;
 		assertEquals(1, dao.create(foo));
 		DatabaseConnection conn = connectionSource.getReadWriteConnection();
 		try {
@@ -1158,22 +1071,18 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testQueryRawMappedArguments() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		String id1 = "stuff1";
 		int equal1 = 1231231232;
-		foo1.id = id1;
 		foo1.equal = equal1;
 		assertEquals(1, dao.create(foo1));
 		Foo foo2 = new Foo();
 		int equal2 = 1231232;
-		String id2 = "stuff2";
-		foo2.id = id2;
 		foo2.equal = equal2;
 		assertEquals(1, dao.create(foo2));
 
-		QueryBuilder<Foo, String> queryBuilder = dao.queryBuilder();
-		queryBuilder.where().eq(Foo.ID_COLUMN_NAME, id1);
+		QueryBuilder<Foo, Integer> queryBuilder = dao.queryBuilder();
+		queryBuilder.where().eq(Foo.ID_COLUMN_NAME, foo1.id);
 
 		GenericRawResults<Foo> results =
 				dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME + " FROM FOO WHERE "
@@ -1182,11 +1091,11 @@ public class BaseDaoImplTest extends BaseCoreTest {
 						assertEquals(2, columnNames.length);
 						assertEquals(2, resultColumns.length);
 						Foo foo = new Foo();
-						foo.id = resultColumns[0];
+						foo.id = Integer.parseInt(resultColumns[0]);
 						foo.equal = Integer.parseInt(resultColumns[1]);
 						return foo;
 					}
-				}, id2);
+				}, Integer.toString(foo2.id));
 		List<Foo> resultList = results.getResults();
 		assertEquals(1, resultList.size());
 		assertEquals(foo2.id, resultList.get(0).id);
@@ -1195,13 +1104,13 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testIsUpdatable() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, false);
+		Dao<Foo, Integer> dao = createDao(Foo.class, false);
 		assertTrue(dao.isUpdatable());
 	}
 
 	@Test
 	public void testIsTableExists() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, false);
+		Dao<Foo, Integer> dao = createDao(Foo.class, false);
 		assertFalse(dao.isTableExists());
 		TableUtils.createTable(connectionSource, Foo.class);
 		assertTrue(dao.isTableExists());
@@ -1211,10 +1120,8 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test(expected = SQLException.class)
 	public void testIsTableExistsThrow() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		String id = "stuff";
-		foo.id = id;
 		assertEquals(1, dao.create(foo));
 		DatabaseConnection conn = connectionSource.getReadWriteConnection();
 		try {
@@ -1228,54 +1135,48 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	@Test(expected = IllegalStateException.class)
 	public void testBadConnectionSource() throws Exception {
 		ConnectionSource cs = createMock(ConnectionSource.class);
-		new BaseDaoImpl<Foo, String>(cs, Foo.class) {
+		new BaseDaoImpl<Foo, Integer>(cs, Foo.class) {
 		};
 	}
 
 	@Test
 	public void testUpdateBuilder() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(connectionSource, Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(connectionSource, Foo.class) {
 		};
 		dao.updateBuilder();
 	}
 
 	@Test
 	public void testDeleteBuilder() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(connectionSource, Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(connectionSource, Foo.class) {
 		};
 		dao.deleteBuilder();
 	}
 
 	@Test
 	public void testDataClass() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(Foo.class) {
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		assertEquals(Foo.class, dao.getDataClass());
 	}
 
 	@Test
 	public void testUpdateRaw() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		String id1 = "stuff1";
-		foo1.id = id1;
 		assertEquals(1, dao.create(foo1));
 		Foo foo2 = new Foo();
-		String id2 = "stuff2";
-		foo2.id = id2;
 		assertEquals(1, dao.create(foo2));
 
 		assertEquals(2, dao.queryForAll().size());
-		dao.updateRaw("DELETE FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", id1);
+		dao.updateRaw("DELETE FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", Integer.toString(foo1.id));
 		assertEquals(1, dao.queryForAll().size());
 	}
 
 	@Test(expected = SQLException.class)
 	public void testUpdateRawThrow() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		String id = "stuff";
-		foo.id = id;
 		assertEquals(1, dao.create(foo));
 		DatabaseConnection conn = connectionSource.getReadWriteConnection();
 		try {
@@ -1288,14 +1189,10 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testExecuteRaw() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		String id1 = "stuff1";
-		foo1.id = id1;
 		assertEquals(1, dao.create(foo1));
 		Foo foo2 = new Foo();
-		String id2 = "stuff2";
-		foo2.id = id2;
 		assertEquals(1, dao.create(foo2));
 
 		assertEquals(2, dao.queryForAll().size());
@@ -1305,10 +1202,8 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test(expected = SQLException.class)
 	public void testExecuteRawThrow() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		String id = "stuff";
-		foo.id = id;
 		assertEquals(1, dao.create(foo));
 		DatabaseConnection conn = connectionSource.getReadWriteConnection();
 		try {
@@ -1321,11 +1216,9 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testExtractId() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
-		Foo foo1 = new Foo();
-		String id1 = "stuff1";
-		foo1.id = id1;
-		assertEquals(id1, dao.extractId(foo1));
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		assertEquals((Integer) foo.id, dao.extractId(foo));
 	}
 
 	@Test(expected = SQLException.class)
@@ -1351,10 +1244,8 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testCallBatch() throws Exception {
-		final Dao<Foo, String> dao = createDao(Foo.class, true);
+		final Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		final Foo foo1 = new Foo();
-		String id1 = "stuff1";
-		foo1.id = id1;
 		assertEquals(0, dao.queryForAll().size());
 
 		// this should be none
@@ -1370,10 +1261,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test(expected = Exception.class)
 	public void testCallBatchThrow() throws Exception {
-		final Dao<Foo, String> dao = createDao(Foo.class, true);
-		final Foo foo1 = new Foo();
-		String id1 = "stuff1";
-		foo1.id = id1;
+		final Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		assertEquals(0, dao.queryForAll().size());
 
 		// this should be none
@@ -1412,7 +1300,6 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Dao<Foreign, Integer> foreignDao = createDao(Foreign.class, true);
 
 		Foo foo = new Foo();
-		foo.id = "jpoejfew";
 		int val = 6389;
 		foo.val = val;
 		assertEquals(1, fooDao.create(foo));
@@ -1437,7 +1324,6 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Dao<ForeignAutoRefresh, Integer> foreignDao = createDao(ForeignAutoRefresh.class, true);
 
 		Foo foo = new Foo();
-		foo.id = "jpoejfew";
 		int val = 6389;
 		foo.val = val;
 		assertEquals(1, fooDao.create(foo));
@@ -1530,121 +1416,105 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testCountOf() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		assertEquals(0, dao.countOf());
 		Foo foo = new Foo();
-		foo.id = "1";
 		assertEquals(1, dao.create(foo));
 		assertEquals(1, dao.countOf());
-		foo.id = "2";
 		assertEquals(1, dao.create(foo));
 		assertEquals(2, dao.countOf());
 	}
 
 	@Test
 	public void testCountOfPrepared() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		assertEquals(0, dao.countOf());
 		Foo foo = new Foo();
-		String id1 = "1";
-		foo.id = id1;
 		assertEquals(1, dao.create(foo));
-		foo.id = "2";
 		assertEquals(1, dao.create(foo));
 		assertEquals(2, dao.countOf());
 
-		QueryBuilder<Foo, String> qb = dao.queryBuilder();
-		qb.setCountOf(true).where().eq(Foo.ID_COLUMN_NAME, id1);
+		QueryBuilder<Foo, Integer> qb = dao.queryBuilder();
+		qb.setCountOf(true).where().eq(Foo.ID_COLUMN_NAME, foo.id);
 		assertEquals(1, dao.countOf(qb.prepare()));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testCountOfPreparedNoCountOf() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
-		QueryBuilder<Foo, String> qb = dao.queryBuilder();
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		QueryBuilder<Foo, Integer> qb = dao.queryBuilder();
 		dao.countOf(qb.prepare());
 	}
 
 	@Test
 	public void testQueryForEq() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		assertEquals(0, dao.countOf());
-		Foo foo = new Foo();
-		String id = "1";
-		foo.id = id;
-		int val = 1231231;
-		foo.val = val;
-		assertEquals(1, dao.create(foo));
-		foo.id = "not " + id;
-		foo.val = val + 1;
-		assertEquals(1, dao.create(foo));
+		Foo foo1 = new Foo();
+		foo1.val = 1231231;
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		foo2.val = foo1.val + 1;
+		assertEquals(1, dao.create(foo2));
 
-		List<Foo> results = dao.queryForEq(Foo.VAL_COLUMN_NAME, val);
+		List<Foo> results = dao.queryForEq(Foo.VAL_COLUMN_NAME, foo1.val);
 		assertEquals(1, results.size());
-		assertEquals(id, results.get(0).id);
+		assertEquals(foo1.id, results.get(0).id);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testUseOfAndMany() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		assertEquals(0, dao.countOf());
-		Foo foo = new Foo();
-		String id = "1";
-		foo.id = id;
-		int val = 1231231;
-		foo.val = val;
-		assertEquals(1, dao.create(foo));
-		String notId = "not " + id;
-		foo.id = notId;
-		foo.val = val + 1;
-		assertEquals(1, dao.create(foo));
+		Foo foo1 = new Foo();
+		foo1.val = 1231231;
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		foo2.val = foo1.val + 1;
+		assertEquals(1, dao.create(foo2));
 
-		Where<Foo, String> where = dao.queryBuilder().where();
-		where.and(where.eq(Foo.VAL_COLUMN_NAME, val), where.eq(Foo.ID_COLUMN_NAME, id));
+		Where<Foo, Integer> where = dao.queryBuilder().where();
+		where.and(where.eq(Foo.VAL_COLUMN_NAME, foo1.val), where.eq(Foo.ID_COLUMN_NAME, foo1.id));
 
 		List<Foo> results = where.query();
 		assertEquals(1, results.size());
-		assertEquals(id, results.get(0).id);
+		assertEquals(foo1.id, results.get(0).id);
 
 		// this should match none
 		where.clear();
-		where.and(where.eq(Foo.ID_COLUMN_NAME, id), where.eq(Foo.ID_COLUMN_NAME, notId),
-				where.eq(Foo.VAL_COLUMN_NAME, val), where.eq(Foo.VAL_COLUMN_NAME, val + 1));
+		where.and(where.eq(Foo.ID_COLUMN_NAME, foo1.id), where.eq(Foo.ID_COLUMN_NAME, foo2.id),
+				where.eq(Foo.VAL_COLUMN_NAME, foo1.val), where.eq(Foo.VAL_COLUMN_NAME, foo2.val));
 		results = where.query();
 		assertEquals(0, results.size());
 	}
 
 	@Test
 	public void testUseOfAndInt() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		assertEquals(0, dao.countOf());
-		Foo foo = new Foo();
-		String id = "1";
-		foo.id = id;
-		int val = 1231231;
-		foo.val = val;
-		assertEquals(1, dao.create(foo));
-		String notId = "not " + id;
-		foo.id = notId;
-		foo.val = val + 1;
-		assertEquals(1, dao.create(foo));
+		Foo foo1 = new Foo();
+		foo1.val = 1231231;
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		foo2.val = foo1.val + 1;
+		assertEquals(1, dao.create(foo1));
 
-		Where<Foo, String> where = dao.queryBuilder().where();
-		where.eq(Foo.VAL_COLUMN_NAME, val);
-		where.eq(Foo.ID_COLUMN_NAME, id);
+		Where<Foo, Integer> where = dao.queryBuilder().where();
+		where.eq(Foo.VAL_COLUMN_NAME, foo1.val);
+		where.eq(Foo.ID_COLUMN_NAME, foo1.id);
 		where.and(2);
 
 		List<Foo> results = where.query();
 		assertEquals(1, results.size());
-		assertEquals(id, results.get(0).id);
+		assertEquals(foo1.id, results.get(0).id);
 
 		// this should match none
 		where.clear();
-		where.eq(Foo.ID_COLUMN_NAME, id);
-		where.eq(Foo.ID_COLUMN_NAME, notId);
-		where.eq(Foo.VAL_COLUMN_NAME, val);
-		where.eq(Foo.VAL_COLUMN_NAME, val + 1);
+		where.eq(Foo.ID_COLUMN_NAME, foo1.id);
+		where.eq(Foo.ID_COLUMN_NAME, foo2.id);
+		where.eq(Foo.VAL_COLUMN_NAME, foo1.val);
+		where.eq(Foo.VAL_COLUMN_NAME, foo2.val);
 		where.and(4);
 
 		results = where.query();
@@ -1654,80 +1524,71 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testUseOfOrMany() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		assertEquals(0, dao.countOf());
-		Foo foo = new Foo();
-		String id = "1";
-		foo.id = id;
+		Foo foo1 = new Foo();
 		int val = 1231231;
-		foo.val = val;
-		assertEquals(1, dao.create(foo));
-		String notId = "not " + id;
-		foo.id = notId;
-		foo.val = val + 1;
-		assertEquals(1, dao.create(foo));
+		foo1.val = val;
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		foo2.val = val + 1;
+		assertEquals(1, dao.create(foo2));
 
-		Where<Foo, String> where = dao.queryBuilder().where();
-		where.or(where.eq(Foo.ID_COLUMN_NAME, id), where.eq(Foo.ID_COLUMN_NAME, notId),
-				where.eq(Foo.VAL_COLUMN_NAME, val), where.eq(Foo.VAL_COLUMN_NAME, val + 1));
+		Where<Foo, Integer> where = dao.queryBuilder().where();
+		where.or(where.eq(Foo.ID_COLUMN_NAME, foo1.id), where.eq(Foo.ID_COLUMN_NAME, foo2.id),
+				where.eq(Foo.VAL_COLUMN_NAME, val), where.eq(Foo.VAL_COLUMN_NAME, foo2.val));
 
 		List<Foo> results = where.query();
 		assertEquals(2, results.size());
-		assertEquals(id, results.get(0).id);
-		assertEquals(notId, results.get(1).id);
+		assertEquals(foo1.id, results.get(0).id);
+		assertEquals(foo2.id, results.get(1).id);
 	}
 
 	@Test
 	public void testUseOfOrInt() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		assertEquals(0, dao.countOf());
-		Foo foo = new Foo();
-		String id = "1";
-		foo.id = id;
+		Foo foo1 = new Foo();
 		int val = 1231231;
-		foo.val = val;
-		assertEquals(1, dao.create(foo));
-		String notId = "not " + id;
-		foo.id = notId;
-		foo.val = val + 1;
-		assertEquals(1, dao.create(foo));
+		foo1.val = val;
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		foo2.val = val + 1;
+		assertEquals(1, dao.create(foo2));
 
-		Where<Foo, String> where = dao.queryBuilder().where();
-		where.eq(Foo.ID_COLUMN_NAME, id);
-		where.eq(Foo.ID_COLUMN_NAME, notId);
+		Where<Foo, Integer> where = dao.queryBuilder().where();
+		where.eq(Foo.ID_COLUMN_NAME, foo1.id);
+		where.eq(Foo.ID_COLUMN_NAME, foo2.id);
 		where.eq(Foo.VAL_COLUMN_NAME, val);
 		where.eq(Foo.VAL_COLUMN_NAME, val + 1);
 		where.or(4);
 
 		List<Foo> results = where.query();
 		assertEquals(2, results.size());
-		assertEquals(id, results.get(0).id);
-		assertEquals(notId, results.get(1).id);
+		assertEquals(foo1.id, results.get(0).id);
+		assertEquals(foo2.id, results.get(1).id);
 	}
 
 	@Test
 	public void testQueryForMatching() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		assertEquals(0, dao.countOf());
-		Foo foo = new Foo();
-		String id = "1";
-		foo.id = id;
+		Foo foo1 = new Foo();
 		int val = 1231231;
-		foo.val = val;
-		assertEquals(1, dao.create(foo));
-		String notId = "not " + id;
-		foo.id = notId;
-		foo.val = val + 1;
-		assertEquals(1, dao.create(foo));
+		foo1.val = val;
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		foo2.val = val + 1;
+		assertEquals(1, dao.create(foo2));
 
 		Foo match = new Foo();
 		match.val = val;
 		List<Foo> results = dao.queryForMatching(match);
 		assertEquals(1, results.size());
-		assertEquals(id, results.get(0).id);
+		assertEquals(foo1.id, results.get(0).id);
 
 		match = new Foo();
-		match.id = notId;
+		match.id = foo2.id;
 		match.val = val;
 		results = dao.queryForMatching(match);
 		assertEquals(0, results.size());
@@ -1735,54 +1596,41 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test(expected = SQLException.class)
 	public void testQueryForMatchingQuotes() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		assertEquals(0, dao.countOf());
 		Foo foo = new Foo();
-		String id = "1";
-		foo.id = id;
-		int val = 1231231;
-		foo.val = val;
-		assertEquals(1, dao.create(foo));
-		String notId = "not " + id;
-		foo.id = notId;
-		foo.val = val + 1;
+		foo.val = 1231231;
 		assertEquals(1, dao.create(foo));
 
 		Foo match = new Foo();
-		match.id = "this id has a quote '";
+		match.stringField = "this id has a quote '";
 		dao.queryForMatching(match);
 	}
 
 	@Test
 	public void testQueryForMatchingArgs() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		assertEquals(0, dao.countOf());
-		Foo foo = new Foo();
-		String id = "1";
-		foo.id = id;
+		Foo foo1 = new Foo();
 		int val = 1231231;
-		foo.val = val;
-		assertEquals(1, dao.create(foo));
-		String notId = "not " + id;
-		foo.id = notId;
-		foo.val = val + 1;
-		assertEquals(1, dao.create(foo));
+		foo1.val = val;
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		foo2.val = val + 1;
+		assertEquals(1, dao.create(foo2));
 
 		Foo match = new Foo();
-		match.id = "this id has a quote '";
+		match.stringField = "this id has a quote '";
 		List<Foo> results = dao.queryForMatchingArgs(match);
 		assertEquals(0, results.size());
 	}
 
 	@Test
 	public void testQueryForMatchingNoFields() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		assertEquals(0, dao.countOf());
 		Foo foo = new Foo();
-		String id = "1";
-		foo.id = id;
-		int val = 1231231;
-		foo.val = val;
+		foo.val = 1231231;
 		assertEquals(1, dao.create(foo));
 
 		Foo match = new Foo();
@@ -1792,45 +1640,34 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testQueryForFieldValues() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		assertEquals(0, dao.countOf());
-		Foo foo = new Foo();
-		String id = "1";
-		foo.id = id;
-		int val = 1231231;
-		foo.val = val;
-		assertEquals(1, dao.create(foo));
-		String notId = "not " + id;
-		foo.id = notId;
-		foo.val = val + 1;
-		assertEquals(1, dao.create(foo));
+		Foo foo1 = new Foo();
+		foo1.val = 1231231;
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		foo2.val = foo1.val + 1;
+		assertEquals(1, dao.create(foo2));
 
 		Map<String, Object> fieldValues = new HashMap<String, Object>();
-		fieldValues.put(Foo.VAL_COLUMN_NAME, val);
+		fieldValues.put(Foo.VAL_COLUMN_NAME, foo1.val);
 		List<Foo> results = dao.queryForFieldValues(fieldValues);
 		assertEquals(1, results.size());
-		assertEquals(id, results.get(0).id);
+		assertEquals(foo1.id, results.get(0).id);
 
-		fieldValues.put(Foo.ID_COLUMN_NAME, notId);
-		fieldValues.put(Foo.VAL_COLUMN_NAME, val);
+		fieldValues.put(Foo.ID_COLUMN_NAME, foo2.id);
+		fieldValues.put(Foo.VAL_COLUMN_NAME, foo1.val);
 		results = dao.queryForFieldValues(fieldValues);
 		assertEquals(0, results.size());
 	}
 
 	@Test(expected = SQLException.class)
 	public void testQueryForFieldValuesQuotes() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		assertEquals(0, dao.countOf());
-		Foo foo = new Foo();
-		String id = "1";
-		foo.id = id;
-		int val = 1231231;
-		foo.val = val;
-		assertEquals(1, dao.create(foo));
-		String notId = "not " + id;
-		foo.id = notId;
-		foo.val = val + 1;
-		assertEquals(1, dao.create(foo));
+		Foo foo1 = new Foo();
+		foo1.val = 1231231;
+		assertEquals(1, dao.create(foo1));
 
 		Map<String, Object> fieldValues = new HashMap<String, Object>();
 		fieldValues.put(Foo.ID_COLUMN_NAME, "this id has a quote '");
@@ -1839,33 +1676,18 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testQueryForFieldValuesArgs() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
-		assertEquals(0, dao.countOf());
-		Foo foo = new Foo();
-		String id = "1";
-		foo.id = id;
-		int val = 1231231;
-		foo.val = val;
-		assertEquals(1, dao.create(foo));
-		String notId = "not " + id;
-		foo.id = notId;
-		foo.val = val + 1;
-		assertEquals(1, dao.create(foo));
-
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Map<String, Object> fieldValues = new HashMap<String, Object>();
-		fieldValues.put(Foo.ID_COLUMN_NAME, "this id has a quote '");
+		fieldValues.put(Foo.STRING_COLUMN_NAME, "this id has a quote '");
 		dao.queryForFieldValuesArgs(fieldValues);
 	}
 
 	@Test
 	public void testQueryForFieldValuesEmpty() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		assertEquals(0, dao.countOf());
 		Foo foo = new Foo();
-		String id = "1";
-		foo.id = id;
-		int val = 1231231;
-		foo.val = val;
+		foo.val = 1231231;
 		assertEquals(1, dao.create(foo));
 
 		Map<String, Object> fieldValues = new HashMap<String, Object>();
@@ -1878,27 +1700,23 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	 */
 	@Test
 	public void testExecuteRawTrigger() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		dao.executeRaw("CREATE TRIGGER foo_trigger AFTER INSERT ON foo\n" + "FOR EACH ROW CALL " + "\""
 				+ ExampleH2Trigger.class.getName() + "\"");
 
-		Foo foo = new Foo();
-		foo.id = "1";
 		assertEquals(0, ExampleH2Trigger.callC);
-		assertEquals(1, dao.create(foo));
+		assertEquals(1, dao.create(new Foo()));
 		assertEquals(1, ExampleH2Trigger.callC);
-		foo.id = "2";
-		assertEquals(1, dao.create(foo));
+		assertEquals(1, dao.create(new Foo()));
 		assertEquals(2, ExampleH2Trigger.callC);
 	}
 
 	@Test
 	public void testSelectRaw() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		foo.id = "1";
 		assertEquals(1, dao.create(foo));
-		QueryBuilder<Foo, String> qb = dao.queryBuilder();
+		QueryBuilder<Foo, Integer> qb = dao.queryBuilder();
 		qb.selectRaw("COUNT(*)");
 		GenericRawResults<String[]> results = dao.queryRaw(qb.prepareStatementString());
 		List<String[]> list = results.getResults();
@@ -1910,11 +1728,10 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test(expected = SQLException.class)
 	public void testSelectRawNotQuery() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		foo.id = "1";
 		assertEquals(1, dao.create(foo));
-		QueryBuilder<Foo, String> qb = dao.queryBuilder();
+		QueryBuilder<Foo, Integer> qb = dao.queryBuilder();
 		qb.selectRaw("COUNTOF(*)");
 		qb.query();
 	}
@@ -2044,10 +1861,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	public void testQueryRawMappedIterator() throws Exception {
 		Dao<Foo, Object> fooDao = createDao(Foo.class, true);
 		final Foo foo = new Foo();
-		String id = "zebra";
-		foo.id = id;
-		int val = 1313131;
-		foo.val = val;
+		foo.val = 1313131;
 
 		String queryString = buildFooQueryAllString(fooDao);
 		Mapper mapper = new Mapper();
@@ -2066,9 +1880,8 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testCreateOrUpdate() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		foo1.id = "stuff";
 		int equal1 = 21313;
 		foo1.equal = equal1;
 		CreateOrUpdateStatus status = dao.createOrUpdate(foo1);
@@ -2089,7 +1902,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testCreateOrUpdateNull() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		CreateOrUpdateStatus status = dao.createOrUpdate(null);
 		assertFalse(status.isCreated());
 		assertFalse(status.isUpdated());
@@ -2122,9 +1935,8 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testQueryForSameId() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		foo1.id = "stuff";
 		foo1.equal = 198412893;
 		assertEquals(1, dao.create(foo1));
 
@@ -2135,15 +1947,14 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testQueryForSameIdNull() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		assertNull(dao.queryForSameId(null));
 	}
 
 	@Test
 	public void testCreateIfNotExists() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		foo1.id = "stuff";
 		foo1.equal = 198412893;
 
 		Foo fooResult = dao.createIfNotExists(foo1);
@@ -2159,7 +1970,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testCreateIfNotExistsNull() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		assertNull(dao.createIfNotExists(null));
 	}
 
@@ -2170,21 +1981,19 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		dao.setObjectCache(cache1);
 
 		Foo foo = new Foo();
-		String id = "hello";
-		foo.id = id;
 		int val = 12312321;
 		foo.val = val;
 
 		assertEquals(1, dao.create(foo));
 
-		Foo result = dao.queryForId(id);
+		Foo result = dao.queryForId(foo.id);
 		assertSame(foo, result);
 
 		// enable a new cache
 		dao.setObjectCache(new ReferenceObjectCache(true));
 		assertEquals(0, cache1.size(Foo.class));
 
-		result = dao.queryForId(id);
+		result = dao.queryForId(foo.id);
 		assertNotSame(foo, result);
 	}
 
@@ -2218,10 +2027,10 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(1, dao.update(foo1));
 		assertEquals(2, foo1.version);
 
-		VersionField foo2 = dao.queryForId(foo1.id);
+		VersionField result = dao.queryForId(foo1.id);
 		// we update this one to a new version number
-		assertEquals(1, dao.update(foo2));
-		assertEquals(3, foo2.version);
+		assertEquals(1, dao.update(result));
+		assertEquals(3, result.version);
 
 		// the old one doesn't change
 		assertEquals(2, foo1.version);
@@ -2237,13 +2046,13 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		foo1.version = 10;
 		assertEquals(1, dao.create(foo1));
 
-		VersionField foo2 = dao.queryForId(foo1.id);
+		VersionField result = dao.queryForId(foo1.id);
 		// we update this one to a new version number
-		assertEquals(1, dao.update(foo2));
-		assertEquals(foo1.version + 1, foo2.version);
+		assertEquals(1, dao.update(result));
+		assertEquals(foo1.version + 1, result.version);
 
-		assertEquals(1, dao.update(foo2));
-		assertEquals(foo1.version + 2, foo2.version);
+		assertEquals(1, dao.update(result));
+		assertEquals(foo1.version + 2, result.version);
 	}
 
 	@Test
@@ -2305,16 +2114,14 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testIfExists() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 
 		Foo foo = new Foo();
-		String id = "fewojfewf";
-		foo.id = id;
 
-		assertFalse(dao.idExists(id));
+		assertFalse(dao.idExists(1));
 		assertEquals(1, dao.create(foo));
-		assertTrue(dao.idExists(id));
-		assertFalse(dao.idExists(id + "1"));
+		assertTrue(dao.idExists(1));
+		assertFalse(dao.idExists(2));
 	}
 
 	@Test
@@ -2338,18 +2145,18 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testUpdateTwoNulls() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
-		UpdateBuilder<Foo, String> ub = dao.updateBuilder();
-		ub.updateColumnValue(Foo.NULL_COLUMN_NAME, null);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		UpdateBuilder<Foo, Integer> ub = dao.updateBuilder();
+		ub.updateColumnValue(Foo.STRING_COLUMN_NAME, null);
 		ub.updateColumnValue(Foo.EQUAL_COLUMN_NAME, null);
 		dao.update(ub.prepare());
 	}
 
 	@Test
 	public void testUpdateTwoNullsInSeperateStatements() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
-		UpdateBuilder<Foo, String> ub = dao.updateBuilder();
-		ub.updateColumnValue(Foo.NULL_COLUMN_NAME, null);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		UpdateBuilder<Foo, Integer> ub = dao.updateBuilder();
+		ub.updateColumnValue(Foo.STRING_COLUMN_NAME, null);
 		dao.update(ub.prepare());
 		ub = dao.updateBuilder();
 		ub.updateColumnValue(Foo.EQUAL_COLUMN_NAME, null);
@@ -2608,7 +2415,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 			Foo foo = new Foo();
 			for (int i = 0; i < columnNames.length; i++) {
 				if (columnNames[i].equalsIgnoreCase(Foo.ID_COLUMN_NAME)) {
-					foo.id = resultColumns[i];
+					foo.id = Integer.parseInt(resultColumns[i]);
 				} else if (columnNames[i].equalsIgnoreCase(Foo.VAL_COLUMN_NAME)) {
 					foo.val = Integer.parseInt(resultColumns[i]);
 				}

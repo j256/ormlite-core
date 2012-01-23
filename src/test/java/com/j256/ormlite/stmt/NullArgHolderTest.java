@@ -1,6 +1,6 @@
 package com.j256.ormlite.stmt;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 

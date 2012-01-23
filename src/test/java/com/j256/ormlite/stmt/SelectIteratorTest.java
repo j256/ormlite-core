@@ -23,28 +23,24 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testIterator() throws Exception {
-		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		CloseableIterator<Foo> iterator = dao.iterator();
 		assertFalse(iterator.hasNext());
 
-		Foo foo = new Foo();
-		String id1 = "id1";
-		foo.id = id1;
-		assertEquals(1, dao.create(foo));
+		Foo foo1 = new Foo();
+		assertEquals(1, dao.create(foo1));
 
 		Foo foo2 = new Foo();
-		String id2 = "id2";
-		foo2.id = id2;
 		assertEquals(1, dao.create(foo2));
 
 		iterator = dao.iterator();
 		assertTrue(iterator.hasNext());
-		Foo foo3 = iterator.next();
-		assertEquals(id1, foo3.id);
+		Foo result = iterator.next();
+		assertEquals(foo1.id, result.id);
 		assertTrue(iterator.hasNext());
 
-		foo3 = iterator.next();
-		assertEquals(id2, foo3.id);
+		result = iterator.next();
+		assertEquals(foo2.id, result.id);
 
 		assertFalse(iterator.hasNext());
 		assertNull(iterator.next());
@@ -52,22 +48,18 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testIteratorPrepared() throws Exception {
-		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		String id1 = "id1";
-		foo1.id = id1;
 		assertEquals(1, dao.create(foo1));
 
 		Foo foo2 = new Foo();
-		String id2 = "id2";
-		foo2.id = id2;
 		assertEquals(1, dao.create(foo2));
 
-		PreparedQuery<Foo> query = dao.queryBuilder().where().eq(Foo.ID_COLUMN_NAME, id2).prepare();
+		PreparedQuery<Foo> query = dao.queryBuilder().where().eq(Foo.ID_COLUMN_NAME, foo2.id).prepare();
 		CloseableIterator<Foo> iterator = dao.iterator(query);
 		assertTrue(iterator.hasNext());
-		Foo foo3 = iterator.next();
-		assertEquals(id2, foo3.id);
+		Foo result = iterator.next();
+		assertEquals(foo2.id, result.id);
 		assertFalse(iterator.hasNext());
 		assertNull(iterator.next());
 	}
@@ -85,18 +77,16 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testIteratorRemove() throws Exception {
-		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		String id1 = "id1";
-		foo1.id = id1;
 		assertEquals(1, dao.create(foo1));
 
 		assertEquals(1, dao.queryForAll().size());
 
 		CloseableIterator<Foo> iterator = dao.iterator();
 		assertTrue(iterator.hasNext());
-		Foo foo3 = iterator.next();
-		assertEquals(id1, foo3.id);
+		Foo result = iterator.next();
+		assertEquals(foo1.id, result.id);
 		iterator.remove();
 
 		assertFalse(iterator.hasNext());
@@ -108,10 +98,8 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testIteratorHasNextClosed() throws Exception {
-		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		String id1 = "id1";
-		foo1.id = id1;
 		assertEquals(1, dao.create(foo1));
 
 		assertEquals(1, dao.queryForAll().size());
@@ -129,10 +117,8 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testIteratorGetRawResults() throws Exception {
-		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		String id1 = "id1";
-		foo1.id = id1;
 		assertEquals(1, dao.create(foo1));
 
 		assertEquals(1, dao.queryForAll().size());
@@ -146,10 +132,8 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testIteratorRawResults() throws Exception {
-		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		String id1 = "id1";
-		foo1.id = id1;
 		assertEquals(1, dao.create(foo1));
 
 		GenericRawResults<String[]> rawResults = dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + " FROM FOO");
@@ -165,10 +149,8 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testMultipleHasNext() throws Exception {
-		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		String id1 = "id1";
-		foo1.id = id1;
 		assertEquals(1, dao.create(foo1));
 
 		CloseableIterator<Foo> iterator = dao.iterator();
@@ -221,7 +203,6 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 		@SuppressWarnings("unchecked")
 		GenericRowMapper<Foo> mapper = (GenericRowMapper<Foo>) createMock(GenericRowMapper.class);
 		Foo foo = new Foo();
-		foo.id = "pwjfoefjw";
 		expect(mapper.mapRow(results)).andReturn(foo);
 		@SuppressWarnings("unchecked")
 		Dao<Foo, Integer> dao = (Dao<Foo, Integer>) createMock(Dao.class);

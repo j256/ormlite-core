@@ -17,24 +17,22 @@ public class SetValueTest extends BaseCoreTest {
 
 	@Test
 	public void testBasic() throws Exception {
-		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		String id = "jewpfjew";
-		foo.id = id;
 		int val = 66654654;
 		foo.val = val;
 		assertEquals(1, dao.create(foo));
 
-		Foo result = dao.queryForId(id);
+		Foo result = dao.queryForId(foo.id);
 		assertNotNull(result);
 		assertEquals(val, result.val);
 
-		UpdateBuilder<Foo, Object> up = dao.updateBuilder();
+		UpdateBuilder<Foo, Integer> up = dao.updateBuilder();
 		int newVal = 165445654;
 		up.updateColumnValue(Foo.VAL_COLUMN_NAME, newVal);
 		assertEquals(1, dao.update(up.prepare()));
 
-		result = dao.queryForId(id);
+		result = dao.queryForId(foo.id);
 		assertNotNull(result);
 		assertEquals(newVal, result.val);
 	}

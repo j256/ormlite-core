@@ -6,6 +6,7 @@ import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,8 @@ import java.util.List;
 import org.junit.Test;
 
 import com.j256.ormlite.db.DatabaseType;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.ArgumentHolder;
 import com.j256.ormlite.stmt.BaseCoreStmtTest;
 import com.j256.ormlite.stmt.SelectArg;
@@ -105,20 +108,37 @@ public class BaseComparisonTest extends BaseCoreStmtTest {
 	public void testForeignId() throws SQLException {
 		StringBuilder sb = new StringBuilder();
 		Foo baseFoo = new Foo();
-		String id = "zebra";
-		baseFoo.id = id;
 		cmpForeign.appendArgOrValue(databaseType, foreignFieldType, sb, new ArrayList<ArgumentHolder>(), baseFoo);
 		StringBuilder expectSb = new StringBuilder();
-		databaseType.appendEscapedWord(expectSb, id);
+		expectSb.append(baseFoo.id);
 		expectSb.append(' ');
 		assertEquals(expectSb.toString(), sb.toString());
 	}
 
 	@Test(expected = SQLException.class)
-	public void testForeignIdNull() throws SQLException {
+	public void testForeignIdNull() throws Exception {
 		StringBuilder sb = new StringBuilder();
-		Foo baseFoo = new Foo();
-		baseFoo.id = null;
-		cmpForeign.appendArgOrValue(databaseType, foreignFieldType, sb, new ArrayList<ArgumentHolder>(), baseFoo);
+		Field field = ForeignNull.class.getDeclaredField("foreign");
+		FieldType fieldType = FieldType.createFieldType(connectionSource, "BaseFoo", field, ForeignNull.class);
+		fieldType.configDaoInformation(connectionSource, ForeignNull.class);
+		ForeignNullForeign foo = new ForeignNullForeign();
+		foo.id = null;
+		cmpForeign.appendArgOrValue(databaseType, fieldType, sb, new ArrayList<ArgumentHolder>(), foo);
+	}
+
+	protected static class ForeignNull {
+		@DatabaseField(id = true)
+		String id;
+		@DatabaseField(foreign = true)
+		ForeignNullForeign foreign;
+		public ForeignNull() {
+		}
+	}
+
+	protected static class ForeignNullForeign {
+		@DatabaseField(id = true)
+		String id;
+		public ForeignNullForeign() {
+		}
 	}
 }

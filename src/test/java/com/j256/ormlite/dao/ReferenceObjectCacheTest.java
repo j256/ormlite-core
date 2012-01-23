@@ -10,51 +10,45 @@ public class ReferenceObjectCacheTest extends BaseObjectCacheTest {
 
 	@Test
 	public void testEnableBoolean() throws Exception {
-		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		dao.setObjectCache(true);
 
 		Foo foo = new Foo();
-		String id = "hello";
-		foo.id = id;
 		int val = 12312321;
 		foo.val = val;
 		assertEquals(1, dao.create(foo));
 
-		Foo result = dao.queryForId(id);
+		Foo result = dao.queryForId(foo.id);
 		assertSame(foo, result);
 		dao.setObjectCache(false);
 	}
 
 	@Test
 	public void testDisableAlreadyDisabled() throws Exception {
-		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		dao.setObjectCache(false);
 
 		Foo foo = new Foo();
-		String id = "hello";
-		foo.id = id;
 		int val = 12312321;
 		foo.val = val;
 		assertEquals(1, dao.create(foo));
 
-		Foo result = dao.queryForId(id);
+		Foo result = dao.queryForId(foo.id);
 		assertNotSame(foo, result);
 	}
 
 	@Test
 	public void testWeakGcClean() throws Exception {
-		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		ReferenceObjectCache cache = ReferenceObjectCache.makeWeakCache();
 		dao.setObjectCache(cache);
 
 		Foo foo = new Foo();
-		String id = "hello";
-		foo.id = id;
 		int val = 12312321;
 		foo.val = val;
 		assertEquals(1, dao.create(foo));
 		assertEquals(1, cache.size(Foo.class));
-		Foo result = dao.queryForId(id);
+		Foo result = dao.queryForId(foo.id);
 		assertSame(foo, result);
 
 		System.gc();
@@ -72,19 +66,18 @@ public class ReferenceObjectCacheTest extends BaseObjectCacheTest {
 
 	@Test
 	public void testWeakGc() throws Exception {
-		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		ReferenceObjectCache cache = ReferenceObjectCache.makeWeakCache();
 		dao.setObjectCache(cache);
 
 		Foo foo = new Foo();
-		String id = "hello";
-		foo.id = id;
 		int val = 12312321;
 		foo.val = val;
 		assertEquals(1, dao.create(foo));
 		assertEquals(1, cache.size(Foo.class));
-		Foo result = dao.queryForId(id);
+		Foo result = dao.queryForId(foo.id);
 		assertSame(foo, result);
+		int id = foo.id;
 
 		System.gc();
 		cache.cleanNullReferences(Foo.class);
@@ -104,19 +97,18 @@ public class ReferenceObjectCacheTest extends BaseObjectCacheTest {
 
 	@Test
 	public void testWeakCleanNullAll() throws Exception {
-		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		ReferenceObjectCache cache = ReferenceObjectCache.makeWeakCache();
 		dao.setObjectCache(cache);
 
 		Foo foo = new Foo();
-		String id = "hello";
-		foo.id = id;
 		int val = 12312321;
 		foo.val = val;
 		assertEquals(1, dao.create(foo));
 		assertEquals(1, cache.size(Foo.class));
-		Foo result = dao.queryForId(id);
+		Foo result = dao.queryForId(foo.id);
 		assertSame(foo, result);
+		int id = foo.id;
 
 		System.gc();
 		cache.cleanNullReferencesAll();
@@ -136,13 +128,11 @@ public class ReferenceObjectCacheTest extends BaseObjectCacheTest {
 
 	@Test
 	public void testSoftGc() throws Exception {
-		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		ReferenceObjectCache cache = ReferenceObjectCache.makeSoftCache();
 		dao.setObjectCache(cache);
 
 		Foo foo = new Foo();
-		String id = "hello";
-		foo.id = id;
 		int val = 12312321;
 		foo.val = val;
 		assertEquals(1, dao.create(foo));

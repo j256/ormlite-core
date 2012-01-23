@@ -12,7 +12,7 @@ public class DeleteBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testDeleteAll() throws Exception {
-		DeleteBuilder<Foo, String> stmtb = new DeleteBuilder<Foo, String>(databaseType, baseFooTableInfo, null);
+		DeleteBuilder<Foo, Integer> stmtb = new DeleteBuilder<Foo, Integer>(databaseType, baseFooTableInfo, null);
 		StringBuilder sb = new StringBuilder();
 		sb.append("DELETE FROM ");
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
@@ -22,14 +22,13 @@ public class DeleteBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testDeleteMethod() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		foo.id = "owepjf";
 		foo.val = 123123;
 		assertEquals(1, dao.create(foo));
 
 		assertNotNull(dao.queryForId(foo.id));
-		DeleteBuilder<Foo, String> db = dao.deleteBuilder();
+		DeleteBuilder<Foo, Integer> db = dao.deleteBuilder();
 		// no match
 		db.where().eq(Foo.VAL_COLUMN_NAME, foo.val + 1);
 		assertEquals(0, db.delete());

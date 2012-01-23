@@ -225,7 +225,7 @@ public class TransactionManagerTest extends BaseCoreTest {
 			return;
 		}
 		TransactionManager mgr = new TransactionManager(connectionSource);
-		final Dao<Foo, String> fooDao = createDao(Foo.class, true);
+		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		testTransactionManager(mgr, null, fooDao);
 	}
 
@@ -235,7 +235,7 @@ public class TransactionManagerTest extends BaseCoreTest {
 			return;
 		}
 		TransactionManager mgr = new TransactionManager(connectionSource);
-		final Dao<Foo, String> fooDao = createDao(Foo.class, true);
+		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		testTransactionManager(mgr, new RuntimeException("What!!  I protest!!"), fooDao);
 	}
 
@@ -247,7 +247,7 @@ public class TransactionManagerTest extends BaseCoreTest {
 		TransactionManager mgr = new TransactionManager();
 		mgr.setConnectionSource(connectionSource);
 		mgr.initialize();
-		final Dao<Foo, String> fooDao = createDao(Foo.class, true);
+		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		testTransactionManager(mgr, new RuntimeException("What!!  I protest!!"), fooDao);
 	}
 
@@ -259,7 +259,7 @@ public class TransactionManagerTest extends BaseCoreTest {
 		TransactionManager mgr = new TransactionManager();
 		mgr.setConnectionSource(connectionSource);
 		mgr.initialize();
-		final Dao<Foo, String> fooDao = createDao(Foo.class, true);
+		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		testTransactionManager(mgr, new Exception("What!!  I protest via an Exception!!"), fooDao);
 	}
 
@@ -269,7 +269,7 @@ public class TransactionManagerTest extends BaseCoreTest {
 			return;
 		}
 		final TransactionManager mgr = new TransactionManager(connectionSource);
-		final Dao<Foo, String> fooDao = createDao(Foo.class, true);
+		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		mgr.callInTransaction(new Callable<Void>() {
 			public Void call() throws Exception {
 				testTransactionManager(mgr, null, fooDao);
@@ -278,11 +278,10 @@ public class TransactionManagerTest extends BaseCoreTest {
 		});
 	}
 
-	private void testTransactionManager(TransactionManager mgr, final Exception exception, final Dao<Foo, String> fooDao)
-			throws Exception {
+	private void testTransactionManager(TransactionManager mgr, final Exception exception,
+			final Dao<Foo, Integer> fooDao) throws Exception {
 		final Foo foo1 = new Foo();
 		int val = 13131511;
-		foo1.id = "id string";
 		foo1.val = val;
 		assertEquals(1, fooDao.create(foo1));
 		try {

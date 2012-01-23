@@ -46,15 +46,15 @@ public abstract class BaseCoreTest {
 		public static final String ID_COLUMN_NAME = "id";
 		public static final String VAL_COLUMN_NAME = "val";
 		public static final String EQUAL_COLUMN_NAME = "equal";
-		public static final String NULL_COLUMN_NAME = "null";
-		@DatabaseField(id = true, columnName = ID_COLUMN_NAME)
-		public String id;
+		public static final String STRING_COLUMN_NAME = "null";
+		@DatabaseField(generatedId = true, columnName = ID_COLUMN_NAME)
+		public int id;
 		@DatabaseField(columnName = VAL_COLUMN_NAME)
 		public int val;
 		@DatabaseField(columnName = EQUAL_COLUMN_NAME)
 		public int equal;
-		@DatabaseField(columnName = NULL_COLUMN_NAME)
-		public String nullField;
+		@DatabaseField(columnName = STRING_COLUMN_NAME)
+		public String stringField;
 		public Foo() {
 		}
 		@Override
@@ -65,11 +65,11 @@ public abstract class BaseCoreTest {
 		public boolean equals(Object other) {
 			if (other == null || other.getClass() != getClass())
 				return false;
-			return id.equals(((Foo) other).id);
+			return id == ((Foo) other).id;
 		}
 		@Override
 		public int hashCode() {
-			return id.hashCode();
+			return id;
 		}
 	}
 

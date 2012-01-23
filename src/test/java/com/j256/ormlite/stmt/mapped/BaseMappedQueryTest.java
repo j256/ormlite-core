@@ -23,21 +23,20 @@ public class BaseMappedQueryTest extends BaseCoreStmtTest {
 		String tableName = "basefoo";
 		FieldType[] resultFieldTypes =
 				new FieldType[] { FieldType.createFieldType(connectionSource, tableName, field, Foo.class) };
-		BaseMappedQuery<Foo, String> baseMappedQuery =
-				new BaseMappedQuery<Foo, String>(baseFooTableInfo, "select * from " + tableName, new FieldType[0],
+		BaseMappedQuery<Foo, Integer> baseMappedQuery =
+				new BaseMappedQuery<Foo, Integer>(baseFooTableInfo, "select * from " + tableName, new FieldType[0],
 						resultFieldTypes) {
 				};
 		DatabaseResults results = createMock(DatabaseResults.class);
 		int colN = 1;
 		expect(results.getObjectCache()).andReturn(null);
 		expect(results.findColumn(Foo.ID_COLUMN_NAME)).andReturn(colN);
-		String idString = "deopdjed";
-		expect(results.getString(colN)).andReturn(idString);
-		expect(results.wasNull(colN)).andReturn(false);
+		int id = 63365;
+		expect(results.getInt(colN)).andReturn(id);
 		replay(results);
 		Foo baseFoo = baseMappedQuery.mapRow(results);
 		assertNotNull(baseFoo);
-		assertEquals(idString, baseFoo.id);
+		assertEquals(id, baseFoo.id);
 		verify(results);
 	}
 }

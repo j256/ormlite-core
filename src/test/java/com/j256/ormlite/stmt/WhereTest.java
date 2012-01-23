@@ -209,12 +209,10 @@ public class WhereTest extends BaseCoreTest {
 	public void testNotIn() throws Exception {
 		Dao<Foo, String> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		foo1.id = "ewpfjew";
 		foo1.val = 63465365;
 		assertEquals(1, dao.create(foo1));
 		Foo foo2 = new Foo();
 		foo2 = new Foo();
-		foo2.id = "ewpewffewfjew";
 		foo2.val = 163123;
 		assertEquals(1, dao.create(foo2));
 
@@ -500,17 +498,15 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testInSubQueryForReal() throws Exception {
-		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		foo1.id = "grpjrgjpore";
 		foo1.val = 785463547;
 		assertEquals(1, dao.create(foo1));
 		Foo foo2 = new Foo();
-		foo2.id = "wjothjpore";
 		foo2.val = 163547;
 		assertEquals(1, dao.create(foo2));
 
-		QueryBuilder<Foo, Object> qb = dao.queryBuilder();
+		QueryBuilder<Foo, Integer> qb = dao.queryBuilder();
 		qb.selectColumns(Foo.ID_COLUMN_NAME);
 		qb.where().eq(Foo.VAL_COLUMN_NAME, foo2.val);
 		List<Foo> results = dao.queryBuilder().where().in(Foo.ID_COLUMN_NAME, qb).query();
@@ -578,8 +574,8 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testRaw() throws Exception {
-		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
-		Where<Foo, String> where = new Where<Foo, String>(tableInfo, null, databaseType);
+		TableInfo<Foo, Integer> tableInfo = new TableInfo<Foo, Integer>(connectionSource, null, Foo.class);
+		Where<Foo, Integer> where = new Where<Foo, Integer>(tableInfo, null, databaseType);
 		String raw = "VAL = 1";
 		int val = 17;
 		where.eq(Foo.VAL_COLUMN_NAME, val).and().raw(raw);
@@ -595,16 +591,14 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testRawComparison() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		String id = "ewpfjew";
-		foo.id = id;
 		int val = 63465365;
 		foo.val = val;
 		assertEquals(1, dao.create(foo));
 
-		QueryBuilder<Foo, String> qb = dao.queryBuilder();
-		qb.where().rawComparison("id", "=", new SelectArg(id));
+		QueryBuilder<Foo, Integer> qb = dao.queryBuilder();
+		qb.where().rawComparison("id", "=", new SelectArg(foo.id));
 		List<Foo> results = qb.query();
 		assertNotNull(results);
 		assertEquals(1, results.size());
@@ -615,14 +609,12 @@ public class WhereTest extends BaseCoreTest {
 	public void testRawArgsColumn() throws Exception {
 		Dao<Foo, String> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		String id = "ewpfjew";
-		foo.id = id;
 		int val = 63465365;
 		foo.val = val;
 		assertEquals(1, dao.create(foo));
 
 		QueryBuilder<Foo, String> qb = dao.queryBuilder();
-		qb.where().raw(Foo.ID_COLUMN_NAME + " = ?", new SelectArg(Foo.ID_COLUMN_NAME, id));
+		qb.where().raw(Foo.ID_COLUMN_NAME + " = ?", new SelectArg(Foo.ID_COLUMN_NAME, foo.id));
 		List<Foo> results = qb.query();
 		assertNotNull(results);
 		assertEquals(1, results.size());
@@ -631,16 +623,14 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testRawArgsColumnSqlType() throws Exception {
-		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		String id = "ewpfjew";
-		foo.id = id;
 		int val = 63465365;
 		foo.val = val;
 		assertEquals(1, dao.create(foo));
 
-		QueryBuilder<Foo, String> qb = dao.queryBuilder();
-		qb.where().raw(Foo.ID_COLUMN_NAME + " = ? and " + val + " = ?", new SelectArg(SqlType.STRING, id),
+		QueryBuilder<Foo, Integer> qb = dao.queryBuilder();
+		qb.where().raw(Foo.ID_COLUMN_NAME + " = ? and " + val + " = ?", new SelectArg(SqlType.STRING, foo.id),
 				new SelectArg(SqlType.INTEGER, val));
 		List<Foo> results = qb.query();
 		assertNotNull(results);
@@ -836,7 +826,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testInnerQuerySubQuery() throws Exception {
-		Dao<Foo, Object> fooDao = createDao(Foo.class, true);
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 
 		fooDao.queryBuilder().where().in(Foo.ID_COLUMN_NAME,
 		// this is a problem because eq() returns a Where not a QueryBuilder
