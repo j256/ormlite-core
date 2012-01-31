@@ -11,7 +11,7 @@ import java.sql.SQLException;
  */
 public class CloseableWrappedIterableImpl<T> implements CloseableWrappedIterable<T> {
 
-	private CloseableIterable<T> iterable;
+	private final CloseableIterable<T> iterable;
 	private CloseableIterator<T> iterator;
 
 	public CloseableWrappedIterableImpl(CloseableIterable<T> iterable) {
