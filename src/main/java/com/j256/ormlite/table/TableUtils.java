@@ -494,7 +494,7 @@ public class TableUtils {
 				DatabaseResults results = compiledStmt.runQuery(null);
 				int rowC = 0;
 				// count the results
-				while (results.next()) {
+				for (boolean isThereMore = results.first(); isThereMore; isThereMore = results.next()) {
 					rowC++;
 				}
 				logger.info("executing create table after-query got {} results: {}", rowC, query);

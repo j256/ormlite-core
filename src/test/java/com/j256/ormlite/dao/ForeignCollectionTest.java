@@ -697,6 +697,74 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertSame(orders[0], orders2[0]);
 	}
 
+	@Test
+	public void testEagerCollectionIterator() throws Exception {
+		Dao<Account, Integer> accountDao = createDao(Account.class, true);
+		Dao<Order, Integer> orderDao = createDao(Order.class, true);
+
+		Account account = new Account();
+		account.name = "fwejpojfpofewjo";
+		assertEquals(1, accountDao.create(account));
+
+		Order order1 = new Order();
+		order1.account = account;
+		order1.val = 1;
+		assertEquals(1, orderDao.create(order1));
+		Order order2 = new Order();
+		order2.account = account;
+		order2.val = 2;
+		assertEquals(1, orderDao.create(order2));
+
+		Account result = accountDao.queryForId(account.id);
+		assertEquals(2, result.orders.size());
+		CloseableIterator<Order> iterator = result.orders.iteratorThrow();
+		assertEquals(order1, iterator.first());
+		assertEquals(order1, iterator.first());
+		assertEquals(order1, iterator.current());
+		assertEquals(order2, iterator.next());
+		assertEquals(order2, iterator.current());
+		assertEquals(order1, iterator.previous());
+		assertEquals(order2, iterator.next());
+		assertEquals(order1, iterator.moveRelative(-1));
+		assertEquals(order1, iterator.moveRelative(0));
+		assertEquals(order2, iterator.next());
+		assertFalse(iterator.hasNext());
+		assertNull(iterator.nextThrow());
+		assertNull(iterator.moveRelative(1));
+		assertNull(iterator.previous());
+		assertEquals(order1, iterator.first());
+	}
+
+	@Test
+	public void testEagerFirstNone() throws Exception {
+		Dao<Account, Integer> accountDao = createDao(Account.class, true);
+		createTable(Order.class, true);
+
+		Account account = new Account();
+		account.name = "fwejpojfpofewjo";
+		assertEquals(1, accountDao.create(account));
+
+		Account result = accountDao.queryForId(account.id);
+		assertEquals(0, result.orders.size());
+		CloseableIterator<Order> iterator = result.orders.iteratorThrow();
+		assertNull(iterator.first());
+	}
+
+	@Test
+	public void testEagerCurrentNone() throws Exception {
+		Dao<Account, Integer> accountDao = createDao(Account.class, true);
+		createTable(Order.class, true);
+
+		Account account = new Account();
+		account.name = "fwejpojfpofewjo";
+		assertEquals(1, accountDao.create(account));
+
+		Account result = accountDao.queryForId(account.id);
+		assertEquals(0, result.orders.size());
+		CloseableIterator<Order> iterator = result.orders.iteratorThrow();
+		assertNull(iterator.current());
+	}
+
 	/* =============================================================================================== */
 
 	private void testCollection(Dao<Account, Integer> accountDao, boolean eager) throws Exception {

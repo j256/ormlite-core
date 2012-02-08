@@ -34,8 +34,9 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 	private final DatabaseResults results;
 	private final GenericRowMapper<T> rowMapper;
 	private final String statement;
+	private boolean first = true;
 	private boolean closed = false;
-	private Boolean hasNext = null;
+	private boolean alreadyMoved = false;
 	private T last = null;
 	private int rowC = 0;
 
@@ -59,28 +60,35 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 	}
 
 	/**
-	 * Returns whether or not there are any remaining objects in the table. Must be called before next().
+	 * Returns whether or not there are any remaining objects in the table. Can be called before next().
 	 * 
 	 * @throws SQLException
 	 *             If there was a problem getting more results via SQL.
 	 */
 	public boolean hasNextThrow() throws SQLException {
-		if (hasNext != null) {
-			// we do this so multiple hasNext() calls can be made
-			return hasNext;
-		} else if (closed) {
-			return false;
-		} else if (results.next()) {
-			hasNext = true;
-			return true;
-		} else {
-			close();
+		if (closed) {
 			return false;
 		}
+		if (alreadyMoved) {
+			// we do this so multiple hasNext() calls can be made, result would be true or closed is true
+			return true;
+		}
+		boolean result;
+		if (first) {
+			first = false;
+			result = results.first();
+		} else {
+			result = results.next();
+		}
+		if (!result) {
+			close();
+		}
+		alreadyMoved = true;
+		return result;
 	}
 
 	/**
-	 * Returns whether or not there are any remaining objects in the table. Must be called before next().
+	 * Returns whether or not there are any remaining objects in the table. Can be called before next().
 	 * 
 	 * @throws IllegalStateException
 	 *             If there was a problem getting more results via SQL.
@@ -90,50 +98,100 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 			return hasNextThrow();
 		} catch (SQLException e) {
 			last = null;
-			try {
-				close();
-			} catch (SQLException e1) {
-				// ignore it
-			}
+			closeNoThrow();
 			// unfortunately, can't propagate back the SQLException
 			throw new IllegalStateException("Errors getting more results of " + dataClass, e);
 		}
 	}
 
-	/**
-	 * Returns the next() object in the table.
-	 * 
-	 * @throws SQLException
-	 *             If there was a problem extracting the object from SQL.
-	 */
-	public T nextThrow() throws SQLException {
-		hasNext = null;
+	public T first() throws SQLException {
 		if (closed) {
 			return null;
 		}
-		last = rowMapper.mapRow(results);
-		rowC++;
-		return last;
+		first = false;
+		if (results.first()) {
+			return getCurrent();
+		} else {
+			return null;
+		}
+	}
+
+	public T previous() throws SQLException {
+		if (closed) {
+			return null;
+		}
+		first = false;
+		if (results.previous()) {
+			return getCurrent();
+		} else {
+			return null;
+		}
+	}
+
+	public T current() throws SQLException {
+		if (closed) {
+			return null;
+		}
+		if (first) {
+			return first();
+		} else {
+			return getCurrent();
+		}
+	}
+
+	public T nextThrow() throws SQLException {
+		if (closed) {
+			return null;
+		}
+		if (!alreadyMoved) {
+			boolean hasResult;
+			if (first) {
+				first = false;
+				hasResult = results.first();
+			} else {
+				hasResult = results.next();
+			}
+			// move forward
+			if (!hasResult) {
+				first = false;
+				return null;
+			}
+		}
+		first = false;
+		return getCurrent();
 	}
 
 	/**
-	 * Returns the next() object in the table.
+	 * Returns the next object in the table.
 	 * 
 	 * @throws IllegalStateException
 	 *             If there was a problem extracting the object from SQL.
 	 */
 	public T next() {
+		SQLException sqlException = null;
 		try {
-			return nextThrow();
-		} catch (SQLException e) {
-			last = null;
-			try {
-				close();
-			} catch (SQLException e1) {
-				// ignore it
+			T result = nextThrow();
+			if (result != null) {
+				return result;
 			}
-			// unfortunately, can't propagate back the SQLException
-			throw new IllegalStateException("Errors getting more results of " + dataClass, e);
+		} catch (SQLException e) {
+			sqlException = e;
+		}
+		// we have to throw if there is no next or on a SQLException
+		last = null;
+		closeNoThrow();
+		throw new IllegalStateException("Could not get next result for " + dataClass, sqlException);
+	}
+
+	public T moveRelative(int offset) throws SQLException {
+		if (closed) {
+			return null;
+		}
+		first = false;
+		if (results.moveRelative(offset)) {
+			return getCurrent();
+		} else {
+			return null;
 		}
 	}
 
@@ -172,13 +230,9 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 		try {
 			removeThrow();
 		} catch (SQLException e) {
-			try {
-				close();
-			} catch (SQLException e1) {
-				// ignore it
-			}
+			closeNoThrow();
 			// unfortunately, can't propagate back the SQLException
-			throw new IllegalStateException("Errors trying to delete " + dataClass + " object " + last, e);
+			throw new IllegalStateException("Could not delete " + dataClass + " object " + last, e);
 		}
 	}
 
@@ -186,7 +240,6 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 		if (!closed) {
 			compiledStmt.close();
 			closed = true;
-			hasNext = false;
 			last = null;
 			if (statement != null) {
 				logger.debug("closed iterator @{} after {} rows", hashCode(), rowC);
@@ -200,7 +253,23 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 	}
 
 	public void moveToNext() {
-		hasNext = null;
 		last = null;
+		first = false;
+		alreadyMoved = false;
+	}
+
+	private void closeNoThrow() {
+		try {
+			close();
+		} catch (SQLException e) {
+			// ignore it
+		}
+	}
+
+	private T getCurrent() throws SQLException {
+		last = rowMapper.mapRow(results);
+		alreadyMoved = false;
+		rowC++;
+		return last;
 	}
 }

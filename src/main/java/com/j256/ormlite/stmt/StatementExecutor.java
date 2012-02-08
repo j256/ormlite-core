@@ -90,7 +90,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		CompiledStatement stmt = preparedStmt.compile(databaseConnection, StatementType.SELECT);
 		try {
 			DatabaseResults results = stmt.runQuery(objectCache);
-			if (results.next()) {
+			if (results.first()) {
 				logger.debug("query-for-first of '{}' returned at least 1 result", preparedStmt.getStatement());
 				return preparedStmt.mapRow(results);
 			} else {
@@ -134,7 +134,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		CompiledStatement stmt = preparedStmt.compile(databaseConnection, StatementType.SELECT_LONG);
 		try {
 			DatabaseResults results = stmt.runQuery(null);
-			if (results.next()) {
+			if (results.first()) {
 				return results.getLong(0);
 			} else {
 				return 0;
@@ -151,7 +151,8 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	public List<T> query(ConnectionSource connectionSource, PreparedStmt<T> preparedStmt, ObjectCache objectCache)
 			throws SQLException {
 		SelectIterator<T, ID> iterator =
-				buildIterator(/* no dao specified because no removes */null, connectionSource, preparedStmt, objectCache);
+				buildIterator(/* no dao specified because no removes */null, connectionSource, preparedStmt, objectCache,
+						DatabaseConnection.DEFAULT_RESULT_FLAGS);
 		try {
 			List<T> results = new ArrayList<T>();
 			while (iterator.hasNextThrow()) {
@@ -168,9 +169,9 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 * Create and return a SelectIterator for the class using the default mapped query for all statement.
 	 */
 	public SelectIterator<T, ID> buildIterator(BaseDaoImpl<T, ID> classDao, ConnectionSource connectionSource,
-			ObjectCache objectCache) throws SQLException {
+			int resultFlags, ObjectCache objectCache) throws SQLException {
 		prepareQueryForAll();
-		return buildIterator(classDao, connectionSource, preparedQueryForAll, objectCache);
+		return buildIterator(classDao, connectionSource, preparedQueryForAll, objectCache, resultFlags);
 	}
 
 	/**
@@ -185,11 +186,11 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 * Create and return an {@link SelectIterator} for the class using a prepared statement.
 	 */
 	public SelectIterator<T, ID> buildIterator(BaseDaoImpl<T, ID> classDao, ConnectionSource connectionSource,
-			PreparedStmt<T> preparedStmt, ObjectCache objectCache) throws SQLException {
+			PreparedStmt<T> preparedStmt, ObjectCache objectCache, int resultFlags) throws SQLException {
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		CompiledStatement compiledStatement = null;
 		try {
-			compiledStatement = preparedStmt.compile(connection, StatementType.SELECT);
+			compiledStatement = preparedStmt.compile(connection, StatementType.SELECT, resultFlags);
 			SelectIterator<T, ID> iterator =
 					new SelectIterator<T, ID>(tableInfo.getDataClass(), classDao, preparedStmt, connectionSource,
 							connection, compiledStatement, preparedStmt.getStatement(), objectCache);

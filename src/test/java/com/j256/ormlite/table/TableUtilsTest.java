@@ -485,7 +485,7 @@ public class TableUtilsTest extends BaseCoreTest {
 				expect(conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class))).andReturn(
 						stmt);
 				results = createMock(DatabaseResults.class);
-				expect(results.next()).andReturn(false);
+				expect(results.first()).andReturn(false);
 				expect(stmt.runQuery(null)).andReturn(results);
 				stmt.close();
 				replay(results);

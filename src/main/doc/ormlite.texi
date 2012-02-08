@@ -6,9 +6,9 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.33
+@set ormlite_version 4.34
 @set ormlite_year 2012
-@set ormlite_date January @value{ormlite_year}
+@set ormlite_date February @value{ormlite_year}
 @set package ORMLite
 @c ----------------------------------------------------------------
 
@@ -2573,7 +2573,6 @@ Same as @code{Dao.queryRaw(String)} and @code{GenericRawResults.getFirstResult()
 
 Convenience method to generate the iterator for the query.  Same as @code{dao.iterator(queryBuilder.prepare())}.
 
-@cindex 
 @item clear()
 
 Clear all of the settings in the @code{QueryBuilder} so it can be reused.
@@ -3212,6 +3211,7 @@ manually.
 * Transactions::               Using database transactions.
 * Object Caches::              How to cache objects handled by ORMLite.
 * Maven::                      Configure a maven project for ORMLite.
+* Batch Operations::           Running batch operations.
 @end menu
 
 @c ----------------------------------------------------------------
@@ -3738,9 +3738,6 @@ Run a raw update SQL statement (@code{INSERT}, @code{DELETE}, or @code{UPDATE} a
 @xref{Raw Updates}.
 
 @cindex batch operations
-@cindex auto commit
-@cindex turn off auto commit
-@cindex large number of inserts
 @cindex callBatchTasks
 @anchor{callBatchTasks}
 @item callBatchTasks(Callable callable)
@@ -3955,12 +3952,9 @@ If for some reason, the @code{accountDao.update()} fails in the above example, t
 the database.  Transactions allow you to make multiple operations while still ensuring data integrity.  Notice that you
 can return an object from the callable so you could pass back the number of rows affected or other information.
 
-@cindex Android batch tasks
-@cindex callBatchTasks
 @emph{NOTE:} Performing database operations within a transaction also has the side effect of better performance since
 a number of changes are written at once in a batch.  The @code{Dao.callBatchTasks()} method should always be used if
-you are looking for performance of a large number of operations. @xref{callBatchTasks}.  For databases that do not 
-support disabling of auto-commit, a transaction may be used under the covers.
+you are looking for performance of a large number of operations. @xref{callBatchTasks}.
 
 @c ----------------------------------------------------------------
 @node Object Caches, Maven, Transactions, Advanced
@@ -4055,7 +4049,7 @@ accountDao.setObjectCache(false);
 @end example
 
 @c ----------------------------------------------------------------
-@node Maven, How to Upgrade, Object Caches, Advanced
+@node Maven, Batch Operations, Object Caches, Advanced
 @section Configuring a Maven Project
 
 @cindex maven configuration
@@ -4091,7 +4085,39 @@ in automatically by maven.
 then just replace the @code{ormlite-jdbc} artifact name with @code{ormlite-android}.
 
 @c ----------------------------------------------------------------
-@node How to Upgrade, 4.30, Maven, Top
+@node Batch Operations, How to Upgrade, Maven, Advanced
+@section Running Batch Operations
+
+@cindex batch operations
+@cindex bulk inserts
+@cindex callBatchTasks
+Every so often you need to efficiently do a number of database updates at one time -- bulk database inserts is a common
+pattern.  ORMLite supports a @code{callBatchTasks} method on the @code{Dao} class which supports this behavior in most
+database types.  For example:
+
+@example
+final List<Account> accountsToInsert = new ArrayList<Account>();
+@dots{}
+accountDao.callBatchTasks(new Callable<Void>() @{
+    public Void call() throws Exception @{
+        for (Account account : accountsToInsert) @{
+            accountDao.create(account);
+        @}
+    @}
+@});
+@end example
+
+Databases by default commit changes after every SQL operation.  This method disbales this "auto-commit" bahavior so a
+number of changes can be made faster and then commited all at once.  More specifically, the method turns "auto-commit",
+calls the @code{Callable.call()} method passed in as an argument, calls SQL @code{commit} to persist the changes when the
+call returns, and finally re-enabled auto-commit.  Some databases do not support auto-commit so a transaction may be used
+to accomplish the same behavior.
+
+@emph{NOTE:} If neither auto-commit nor transactions are supported by the database type then @code{callBatchTasks} method
+may do nothing.
+
+@c ----------------------------------------------------------------
+@node How to Upgrade, 4.30, Batch Operations, Top
 @chapter Upgrade From Old Versions
 
 @cindex upgrading from previous versions

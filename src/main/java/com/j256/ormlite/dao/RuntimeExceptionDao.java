@@ -335,6 +335,13 @@ public class RuntimeExceptionDao<T, ID> {
 	}
 
 	/**
+	 * @see Dao#iterator(int))
+	 */
+	public CloseableIterator<T> iterator(int resultFlags) {
+		return dao.iterator(resultFlags);
+	}
+
+	/**
 	 * @see Dao#getWrappedIterable()
 	 */
 	public CloseableWrappedIterable<T> getWrappedIterable() {
@@ -365,6 +372,17 @@ public class RuntimeExceptionDao<T, ID> {
 	public CloseableIterator<T> iterator(PreparedQuery<T> preparedQuery) {
 		try {
 			return dao.iterator(preparedQuery);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * @see Dao#iterator(PreparedQuery, int)
+	 */
+	public CloseableIterator<T> iterator(PreparedQuery<T> preparedQuery, int resultFlags) {
+		try {
+			return dao.iterator(preparedQuery, resultFlags);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

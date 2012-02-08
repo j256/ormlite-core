@@ -17,6 +17,7 @@ public interface DatabaseConnection {
 
 	/** returned by {@link #queryForOne} if more than one result was found by the query */
 	public final static Object MORE_THAN_ONE = new Object();
+	public final static int DEFAULT_RESULT_FLAGS = -1;
 
 	/**
 	 * Return if auto-commit is supported.
@@ -63,8 +64,19 @@ public interface DatabaseConnection {
 	/**
 	 * Compile and prepare the SQL statement for execution.
 	 */
-	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argfieldTypes)
+	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argFieldTypes)
 			throws SQLException;
+
+	/**
+	 * Like {@link #compileStatement(String, StatementType, FieldType[])} except the caller can specify the result
+	 * flags.
+	 * 
+	 * @param resultFlags
+	 *            Allows specification of some result flags. This is dependent on the backend and database type. Set to
+	 *            {@link #DEFAULT_RESULT_FLAGS} for the internal default.
+	 */
+	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argFieldTypes,
+			int resultFlags) throws SQLException;
 
 	/**
 	 * Perform a SQL update while with the associated SQL statement, arguments, and types. This will possibly return

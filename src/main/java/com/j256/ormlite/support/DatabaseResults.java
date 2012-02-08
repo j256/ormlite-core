@@ -24,11 +24,36 @@ public interface DatabaseResults {
 	public int getColumnCount() throws SQLException;
 
 	/**
+	 * Moves to the first result. This may not work with the default iterator depending on your database.
+	 * 
+	 * @return true if there are more results to be processed.
+	 */
+	public boolean first() throws SQLException;
+
+	/**
+	 * Moves to the previous result. This may not work with the default iterator depending on your database.
+	 * 
+	 * @return true if there are more results to be processed.
+	 */
+	public boolean previous() throws SQLException;
+
+	/**
 	 * Moves to the next result.
 	 * 
 	 * @return true if there are more results to be processed.
 	 */
 	public boolean next() throws SQLException;
+
+	/**
+	 * Moves forward (positive value) or backwards (negative value) the list of results. moveRelative(1) should be the
+	 * same as {@link #next()}. moveRelative(-1) is the same as {@link #previous} result. This may not work with the
+	 * default iterator depending on your database.
+	 * 
+	 * @param offset
+	 *            Number of rows to move. Positive moves forward in the results. Negative moves backwards.
+	 * @return true if there are more results to be processed.
+	 */
+	public boolean moveRelative(int offset) throws SQLException;
 
 	/**
 	 * Return the column index associated with the column name.
@@ -109,7 +134,7 @@ public interface DatabaseResults {
 	public boolean wasNull(int columnIndex) throws SQLException;
 
 	/**
-	 * Return any object cache that is associated with these results or null if none.
+	 * Return the object cache that is associated with these results or null if none.
 	 */
 	public ObjectCache getObjectCache();
 }

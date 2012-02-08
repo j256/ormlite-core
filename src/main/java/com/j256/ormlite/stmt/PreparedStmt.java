@@ -17,6 +17,15 @@ public interface PreparedStmt<T> extends GenericRowMapper<T> {
 	public CompiledStatement compile(DatabaseConnection databaseConnection, StatementType type) throws SQLException;
 
 	/**
+	 * Like {@link #compile(DatabaseConnection, StatementType)} but allows to specify the result flags.
+	 * 
+	 * @param resultFlags
+	 *            Set to -1 for default.
+	 */
+	public CompiledStatement compile(DatabaseConnection databaseConnection, StatementType type, int resultFlags)
+			throws SQLException;
+
+	/**
 	 * Return the associated SQL statement string for logging purposes.
 	 */
 	public String getStatement() throws SQLException;

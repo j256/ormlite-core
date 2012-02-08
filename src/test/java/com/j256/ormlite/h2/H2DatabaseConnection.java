@@ -61,8 +61,18 @@ public class H2DatabaseConnection implements DatabaseConnection {
 
 	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argFieldTypes)
 			throws SQLException {
-		return new H2CompiledStatement(connection.prepareStatement(statement, ResultSet.TYPE_FORWARD_ONLY,
-				ResultSet.CONCUR_READ_ONLY));
+		return compileStatement(statement, type, argFieldTypes, DatabaseConnection.DEFAULT_RESULT_FLAGS);
+	}
+
+	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argFieldTypes,
+			int resultFlags) throws SQLException {
+		PreparedStatement stmt;
+		if (resultFlags == DatabaseConnection.DEFAULT_RESULT_FLAGS) {
+			stmt = connection.prepareStatement(statement, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+		} else {
+			stmt = connection.prepareStatement(statement, resultFlags, ResultSet.CONCUR_READ_ONLY);
+		}
+		return new H2CompiledStatement(stmt);
 	}
 
 	public int insert(String statement, Object[] args, FieldType[] argFieldTypes, GeneratedKeyHolder keyHolder)

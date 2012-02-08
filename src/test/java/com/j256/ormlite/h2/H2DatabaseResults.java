@@ -29,8 +29,20 @@ public class H2DatabaseResults implements DatabaseResults {
 		return resultSet.getMetaData().getColumnCount();
 	}
 
+	public boolean first() throws SQLException {
+		return resultSet.first();
+	}
+
 	public boolean next() throws SQLException {
 		return resultSet.next();
+	}
+
+	public boolean previous() throws SQLException {
+		return resultSet.previous();
+	}
+
+	public boolean moveRelative(int num) throws SQLException {
+		return resultSet.relative(num);
 	}
 
 	public int findColumn(String columnName) throws SQLException {

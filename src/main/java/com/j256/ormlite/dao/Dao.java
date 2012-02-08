@@ -323,6 +323,18 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public CloseableIterator<T> iterator();
 
 	/**
+	 * Same as {@link #iterator()} but while specifying flags for the results. This is necessary with certain database
+	 * types.
+	 * 
+	 * <p>
+	 * <b>WARNING:</b> Depending on the database type the underlying connection may never be freed -- even if you go all
+	 * of the way through the results. It is <i>strongly</i> recommended that you call the
+	 * {@link CloseableIterator#close()} method when you are done with the iterator.
+	 * </p>
+	 */
+	public CloseableIterator<T> iterator(int resultFlags);
+
+	/**
 	 * Same as {@link #iterator()} but with a prepared query parameter. See {@link #queryBuilder} for more information.
 	 * You use it like the following:
 	 * 
@@ -353,6 +365,12 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 *             on any SQL problems.
 	 */
 	public CloseableIterator<T> iterator(PreparedQuery<T> preparedQuery) throws SQLException;
+
+	/**
+	 * Same as {@link #iterator(PreparedQuery)} but while specifying flags for the results. This is necessary with
+	 * certain database types.
+	 */
+	public CloseableIterator<T> iterator(PreparedQuery<T> preparedQuery, int resultFlags) throws SQLException;
 
 	/**
 	 * This makes a one time use iterable class that can be closed afterwards. The DAO itself is

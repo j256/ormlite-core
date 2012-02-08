@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -49,20 +48,68 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 	public CloseableIterator<T> iteratorThrow() {
 		// we have to wrap the iterator since we are returning the List's iterator
 		return new CloseableIterator<T>() {
-			private Iterator<T> iterator = results.iterator();
-			private T last = null;
+			private int offset = -1;
 			public boolean hasNext() {
-				return iterator.hasNext();
+				return (offset + 1 < results.size());
+			}
+			public T first() {
+				offset = 0;
+				if (offset >= results.size()) {
+					return null;
+				} else {
+					return results.get(0);
+				}
 			}
 			public T next() {
-				last = iterator.next();
-				return last;
+				offset++;
+				// this should throw if OOB
+				return results.get(offset);
+			}
+			public T nextThrow() {
+				offset++;
+				if (offset >= results.size()) {
+					return null;
+				} else {
+					return results.get(offset);
+				}
+			}
+			public T current() {
+				if (offset < 0) {
+					offset = 0;
+				}
+				if (offset >= results.size()) {
+					return null;
+				} else {
+					return results.get(offset);
+				}
+			}
+			public T previous() {
+				offset--;
+				if (offset < 0 || offset >= results.size()) {
+					return null;
+				} else {
+					return results.get(offset);
+				}
+			}
+			public T moveRelative(int relativeOffset) {
+				offset += relativeOffset;
+				if (offset < 0 || offset >= results.size()) {
+					return null;
+				} else {
+					return results.get(offset);
+				}
 			}
 			public void remove() {
-				iterator.remove();
+				if (offset < 0) {
+					throw new IllegalStateException("next() must be called before remove()");
+				}
+				if (offset >= results.size()) {
+					throw new IllegalStateException("current results position (" + offset + ") is out of bounds");
+				}
+				T removed = results.remove(offset);
 				if (dao != null) {
 					try {
-						dao.delete(last);
+						dao.delete(removed);
 					} catch (SQLException e) {
 						// have to demote this to be runtime
 						throw new RuntimeException(e);
@@ -77,7 +124,7 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 				return null;
 			}
 			public void moveToNext() {
-				last = iterator.next();
+				offset++;
 			}
 		};
 	}

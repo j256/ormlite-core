@@ -37,12 +37,41 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 	}
 
 	public CompiledStatement compile(DatabaseConnection databaseConnection, StatementType type) throws SQLException {
+		return compile(databaseConnection, type, DatabaseConnection.DEFAULT_RESULT_FLAGS);
+	}
+
+	public CompiledStatement compile(DatabaseConnection databaseConnection, StatementType type, int resultFlags)
+			throws SQLException {
 		if (this.type != type) {
 			throw new SQLException("Could not compile this " + this.type
 					+ " statement since the caller is expecting a " + type
 					+ " statement.  Check your QueryBuilder methods.");
 		}
-		CompiledStatement stmt = databaseConnection.compileStatement(statement, type, argFieldTypes);
+		CompiledStatement stmt = databaseConnection.compileStatement(statement, type, argFieldTypes, resultFlags);
+		return compileStatement(databaseConnection, stmt);
+	}
+
+	public String getStatement() {
+		return statement;
+	}
+
+	public StatementType getType() {
+		return type;
+	}
+
+	public void setArgumentHolderValue(int index, Object value) throws SQLException {
+		if (index < 0) {
+			throw new SQLException("argument holder index " + index + " must be >= 0");
+		}
+		if (argHolders.length <= index) {
+			throw new SQLException("argument holder index " + index + " not valid, only " + argHolders.length
+					+ " in statement");
+		}
+		argHolders[index].setValue(value);
+	}
+
+	private CompiledStatement compileStatement(DatabaseConnection databaseConnection, CompiledStatement stmt)
+			throws SQLException {
 		boolean ok = false;
 		try {
 			if (limit != null) {
@@ -80,24 +109,5 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 				stmt.close();
 			}
 		}
-	}
-
-	public String getStatement() {
-		return statement;
-	}
-
-	public StatementType getType() {
-		return type;
-	}
-
-	public void setArgumentHolderValue(int index, Object value) throws SQLException {
-		if (index < 0) {
-			throw new SQLException("argument holder index " + index + " must be >= 0");
-		}
-		if (argHolders.length <= index) {
-			throw new SQLException("argument holder index " + index + " not valid, only " + argHolders.length
-					+ " in statement");
-		}
-		argHolders[index].setValue(value);
 	}
 }

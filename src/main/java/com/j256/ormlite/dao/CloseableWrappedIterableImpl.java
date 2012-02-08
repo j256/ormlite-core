@@ -23,6 +23,12 @@ public class CloseableWrappedIterableImpl<T> implements CloseableWrappedIterable
 	}
 
 	public CloseableIterator<T> closeableIterator() {
+		try {
+			// close an existing iterator, if any
+			close();
+		} catch (SQLException e) {
+			// ignored
+		}
 		iterator = iterable.closeableIterator();
 		return iterator;
 	}
