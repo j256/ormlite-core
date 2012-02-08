@@ -187,7 +187,7 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 		CompiledStatement stmt = createMock(CompiledStatement.class);
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(stmt.runQuery(null)).andReturn(results);
-		expect(results.next()).andReturn(true);
+		expect(results.first()).andReturn(true);
 		@SuppressWarnings("unchecked")
 		GenericRowMapper<Foo> mapper = (GenericRowMapper<Foo>) createMock(GenericRowMapper.class);
 		expect(mapper.mapRow(results)).andThrow(new SQLException("some result problem"));
