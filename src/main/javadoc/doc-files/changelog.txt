@@ -3,6 +3,7 @@
 	* CORE: Added support for sql NOT IN clause to where().  Thanks to Marvin Jomble.  Fixes feature #3474550.
 	* CORE: Added support for sql HAVING clause to QueryBuilder.  Thanks to Stephen Couchman.  Fixes feature #3470923.
 	* CORE: Added updateBuilder.update() and deleteBuilder.delete().  Thanks to Marvin Jomble.  Fixes feature #3475613.
+	* CORE: Fixed problem with ForeignCollections when inserting into cache. Thanks to Nick Campion. Fixes bug #3486577.
 	* CORE: Revamped the CloseableIterator to support first, previous, ... moving methods to support more than next.
 	* CORE: Added result-flags to some of the iterator methods to allow forwards/backwards in JDBC.
 	* CORE: Refactored the FieldConverter and BaseDataType stuff a bit to remove some duplicate code.

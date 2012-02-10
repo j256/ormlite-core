@@ -765,6 +765,42 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertNull(iterator.current());
 	}
 
+	@Test
+	public void testForeignCollectionWithForeginCollection() throws Exception {
+		Dao<First, Integer> firstDao = createDao(First.class, true);
+		firstDao.setObjectCache(true);
+		Dao<Second, Integer> secondDao = createDao(Second.class, true);
+		secondDao.setObjectCache(true);
+		Dao<Third, Integer> thirdDao = createDao(Third.class, true);
+		thirdDao.setObjectCache(true);
+
+		First first = new First();
+		assertEquals(1, firstDao.create(first));
+
+		Second second = new Second();
+		second.first = first;
+		assertEquals(1, secondDao.create(second));
+
+		Third third = new Third();
+		third.second = second;
+		third.stuff = "owejfpweofj";
+		assertEquals(1, thirdDao.create(third));
+
+		First firstResult = firstDao.queryForId(first.id);
+		assertNotNull(firstResult);
+		assertNotNull(firstResult.seconds);
+		Second[] secondResults = firstResult.seconds.toArray(new Second[0]);
+		assertEquals(1, secondResults.length);
+		Second secondResult = secondResults[0];
+		assertEquals(second.id, secondResult.id);
+		assertNotNull(secondResult.thirds);
+		Third[] thirdResults = secondResult.thirds.toArray(new Third[0]);
+		assertEquals(1, thirdResults.length);
+		Third thirdResult = thirdResults[0];
+		assertEquals(third.id, thirdResult.id);
+		assertEquals(third.stuff, thirdResult.stuff);
+	}
+
 	/* =============================================================================================== */
 
 	private void testCollection(Dao<Account, Integer> accountDao, boolean eager) throws Exception {
@@ -1410,6 +1446,37 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		@DatabaseField(foreign = true)
 		InvalidColumnNameForeign foreign;
 		public InvalidColumnName() {
+		}
+	}
+
+	protected static class First {
+		@DatabaseField(generatedId = true)
+		int id;
+		@ForeignCollectionField(eager = false)
+		ForeignCollection<Second> seconds;
+		public First() {
+		}
+	}
+
+	protected static class Second {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(foreign = true)
+		First first;
+		@ForeignCollectionField(eager = false)
+		ForeignCollection<Third> thirds;
+		public Second() {
+		}
+	}
+
+	protected static class Third {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(foreign = true)
+		Second second;
+		@DatabaseField
+		String stuff;
+		public Third() {
 		}
 	}
 }

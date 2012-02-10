@@ -108,7 +108,11 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 					}
 					assignIdValue(data, key, "keyholder", objectCache);
 				}
-				if (objectCache != null) {
+				/*
+				 * If we have a cache and if all of the foreign-collection fields have been assigned then add to cache.
+				 * However, if one of the foreign collections has not be assigned then don't add it to the cache.
+				 */
+				if (objectCache != null && foreignCollectionsAreAssigned(tableInfo.getForeignCollections(), data)) {
 					Object id = idField.extractJavaFieldValue(data);
 					objectCache.put(clazz, id, data);
 				}
@@ -167,6 +171,15 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 		FieldType idField = tableInfo.getIdField();
 		String queryNext = buildQueryNextSequence(databaseType, idField);
 		return new MappedCreate<T, ID>(tableInfo, sb.toString(), argFieldTypes, queryNext, versionFieldTypeIndex);
+	}
+
+	private boolean foreignCollectionsAreAssigned(FieldType[] foreignCollections, Object data) throws SQLException {
+		for (FieldType fieldType : foreignCollections) {
+			if (fieldType.extractJavaFieldValue(data) == null) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private static boolean isFieldCreatable(DatabaseType databaseType, FieldType fieldType) {

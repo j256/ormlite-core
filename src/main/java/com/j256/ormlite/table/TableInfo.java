@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
@@ -25,10 +26,13 @@ import com.j256.ormlite.support.ConnectionSource;
  */
 public class TableInfo<T, ID> {
 
+	private static final FieldType[] NO_FOREIGN_COLLECTIONS = new FieldType[0];
+
 	private final Dao<T, ID> dao;
 	private final Class<T> dataClass;
 	private final String tableName;
 	private final FieldType[] fieldTypes;
+	private final FieldType[] foreignCollections;
 	private final FieldType idField;
 	private final Constructor<T> constructor;
 	private final boolean foreignAutoCreate;
@@ -62,6 +66,7 @@ public class TableInfo<T, ID> {
 		// find the id field
 		FieldType findIdFieldType = null;
 		boolean foreignAutoCreate = false;
+		int foreignCollectionCount = 0;
 		for (FieldType fieldType : fieldTypes) {
 			if (fieldType.isId() || fieldType.isGeneratedId() || fieldType.isGeneratedIdSequence()) {
 				if (findIdFieldType != null) {
@@ -73,11 +78,26 @@ public class TableInfo<T, ID> {
 			if (fieldType.isForeignAutoCreate()) {
 				foreignAutoCreate = true;
 			}
+			if (fieldType.isForeignCollection()) {
+				foreignCollectionCount++;
+			}
 		}
 		// can be null if there is no id field
 		this.idField = findIdFieldType;
 		this.constructor = tableConfig.getConstructor();
 		this.foreignAutoCreate = foreignAutoCreate;
+		if (foreignCollectionCount == 0) {
+			this.foreignCollections = NO_FOREIGN_COLLECTIONS;
+		} else {
+			this.foreignCollections = new FieldType[foreignCollectionCount];
+			foreignCollectionCount = 0;
+			for (FieldType fieldType : fieldTypes) {
+				if (fieldType.isForeignCollection()) {
+					this.foreignCollections[foreignCollectionCount] = fieldType;
+					foreignCollectionCount++;
+				}
+			}
+		}
 	}
 
 	/**
@@ -195,6 +215,13 @@ public class TableInfo<T, ID> {
 	 */
 	public boolean isForeignAutoCreate() {
 		return foreignAutoCreate;
+	}
+
+	/**
+	 * Return an array with the fields that are {@link ForeignCollection}s or a blank array if none.
+	 */
+	public FieldType[] getForeignCollections() {
+		return foreignCollections;
 	}
 
 	/**
