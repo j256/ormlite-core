@@ -55,7 +55,8 @@ public @interface DatabaseField {
 
 	/**
 	 * The DataType associated with the field. If not set then the Java class of the field is used to match with the
-	 * appropriate DataType.
+	 * appropriate DataType. This should only be set if you are overriding the default database type or if the field
+	 * cannot be automatically determined (ex: byte[]).
 	 */
 	DataType dataType() default DataType.UNKNOWN;
 

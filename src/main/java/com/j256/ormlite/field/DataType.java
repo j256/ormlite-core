@@ -50,7 +50,7 @@ public enum DataType {
 	 */
 	LONG_STRING(LongStringType.getSingleton()),
 	/**
-	 * Persists the {@link String} Java class.
+	 * Persists the {@link String} Java class as an array of bytes.
 	 */
 	STRING_BYTES(StringBytesType.getSingleton()),
 	/**
@@ -58,7 +58,7 @@ public enum DataType {
 	 */
 	BOOLEAN(BooleanType.getSingleton()),
 	/**
-	 * Persists the {@link Boolean} Java class.
+	 * Persists the {@link Boolean} object Java class.
 	 */
 	BOOLEAN_OBJ(BooleanObjectType.getSingleton()),
 	/**
@@ -96,7 +96,7 @@ public enum DataType {
 	 */
 	CHAR(CharType.getSingleton()),
 	/**
-	 * Persists the char primitive.
+	 * Persists the {@link Character} object Java class.
 	 */
 	CHAR_OBJ(CharacterObjectType.getSingleton()),
 	/**
@@ -108,7 +108,7 @@ public enum DataType {
 	 */
 	BYTE_ARRAY(ByteArrayType.getSingleton()),
 	/**
-	 * Persists the {@link Byte} Java class.
+	 * Persists the {@link Byte} object Java class.
 	 */
 	BYTE_OBJ(ByteObjectType.getSingleton()),
 	/**
@@ -116,7 +116,7 @@ public enum DataType {
 	 */
 	SHORT(ShortType.getSingleton()),
 	/**
-	 * Persists the {@link Short} Java class.
+	 * Persists the {@link Short} object Java class.
 	 */
 	SHORT_OBJ(ShortObjectType.getSingleton()),
 	/**
@@ -124,7 +124,7 @@ public enum DataType {
 	 */
 	INTEGER(IntType.getSingleton()),
 	/**
-	 * Persists the {@link Integer} Java class.
+	 * Persists the {@link Integer} object Java class.
 	 */
 	INTEGER_OBJ(IntegerObjectType.getSingleton()),
 	/**
@@ -132,7 +132,7 @@ public enum DataType {
 	 */
 	LONG(LongType.getSingleton()),
 	/**
-	 * Persists the {@link Long} Java class.
+	 * Persists the {@link Long} object Java class.
 	 */
 	LONG_OBJ(LongObjectType.getSingleton()),
 	/**
@@ -140,7 +140,7 @@ public enum DataType {
 	 */
 	FLOAT(FloatType.getSingleton()),
 	/**
-	 * Persists the {@link Float} Java class.
+	 * Persists the {@link Float} object Java class.
 	 */
 	FLOAT_OBJ(FloatObjectType.getSingleton()),
 	/**
@@ -148,7 +148,7 @@ public enum DataType {
 	 */
 	DOUBLE(DoubleType.getSingleton()),
 	/**
-	 * Persists the {@link Double} Java class.
+	 * Persists the {@link Double} object Java class.
 	 */
 	DOUBLE_OBJ(DoubleObjectType.getSingleton()),
 	/**
