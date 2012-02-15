@@ -8,7 +8,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -19,7 +18,6 @@ import javax.persistence.OneToOne;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
-import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.BaseDatabaseType;
 import com.j256.ormlite.db.DatabaseType;
 
@@ -290,48 +288,6 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 				fieldConfig.getUniqueIndexName(tableName));
 	}
 
-	@Test
-	public void testAltAnnotations() throws Exception {
-		Field field = AltAnno.class.getDeclaredField("id");
-		String tableName = "table-name";
-		DatabaseFieldConfig fieldConfig = DatabaseFieldConfig.fromField(databaseType, tableName, field);
-		assertTrue(fieldConfig.isGeneratedId());
-		field = AltAnno.class.getDeclaredField("id2");
-		fieldConfig = DatabaseFieldConfig.fromField(databaseType, "table-name", field);
-		assertEquals(AltAnno.GENERATED_ID_SEQ_NAME, fieldConfig.getGeneratedIdSequence());
-		field = AltAnno.class.getDeclaredField("stuff");
-		fieldConfig = DatabaseFieldConfig.fromField(databaseType, "table-name", field);
-		assertTrue(fieldConfig.isCanBeNull());
-		assertEquals(AltAnno.STUFF_FIELD_NAME, fieldConfig.getColumnName());
-		field = AltAnno.class.getDeclaredField("junk");
-		fieldConfig = DatabaseFieldConfig.fromField(databaseType, "table-name", field);
-		assertNotNull(fieldConfig.getIndexName(tableName));
-		field = AltAnno.class.getDeclaredField("ourEnum");
-		fieldConfig = DatabaseFieldConfig.fromField(databaseType, "table-name", field);
-		assertEquals(OurEnum.FIRST, fieldConfig.getUnknownEnumValue());
-		field = AltAnno.class.getDeclaredField("foreign");
-		fieldConfig = DatabaseFieldConfig.fromField(databaseType, "table-name", field);
-		assertTrue(fieldConfig.isForeign());
-		field = AltAnno.class.getDeclaredField("format");
-		fieldConfig = DatabaseFieldConfig.fromField(databaseType, "table-name", field);
-		assertEquals(AltAnno.FORMAT_FORMAT, fieldConfig.getFormat());
-		assertNull(fieldConfig.getDefaultValue());
-		field = AltAnno.class.getDeclaredField("defaultValue");
-		fieldConfig = DatabaseFieldConfig.fromField(databaseType, "table-name", field);
-		assertEquals(AltAnno.DEFAULT_DEFAULT_VALUE, fieldConfig.getDefaultValue());
-	}
-
-	@Test
-	public void testDatabaseFieldOther() throws Exception {
-		// we had a problem where the columnDefinition was not being handled right
-		Dao<CommunicationData, Object> dao = createDao(CommunicationData.class, true);
-		CommunicationData data = new CommunicationData();
-		assertEquals(1, dao.create(data));
-		List<CommunicationData> unknowns = dao.queryForAll();
-		assertEquals(1, unknowns.size());
-		assertEquals(OurEnum.SECOND, unknowns.get(0).communicationMedium);
-	}
-
 	protected class Foo {
 		@DatabaseField(canBeNull = true)
 		String field;
@@ -404,17 +360,6 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 		OurEnum ourEnum;
 	}
 
-	@SuppressWarnings("deprecation")
-	protected static class CommunicationData {
-
-		@DatabaseFieldSimple(defaultValue = "SECOND")
-		@DatabaseFieldOther(dataType = DataType.ENUM_STRING)
-		OurEnum communicationMedium;
-
-		public CommunicationData() {
-		}
-	}
-
 	private enum OurEnum {
 		FIRST,
 		SECOND, ;
@@ -460,38 +405,6 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 		@DatabaseField
 		String none;
 		public DefaultString() {
-		}
-	}
-
-	@SuppressWarnings("deprecation")
-	protected static class AltAnno {
-		public static final String STUFF_FIELD_NAME = "zipper";
-		public static final String FORMAT_FORMAT = "you know format";
-		public static final String DEFAULT_DEFAULT_VALUE = "some value";
-		public static final String GENERATED_ID_SEQ_NAME = "some seq";
-		@DatabaseFieldSimple
-		@DatabaseFieldId(generatedId = true)
-		int id;
-		@DatabaseFieldSimple
-		@DatabaseFieldId(generatedIdSequence = GENERATED_ID_SEQ_NAME)
-		int id2;
-		@DatabaseFieldSimple(columnName = STUFF_FIELD_NAME)
-		String stuff;
-		@DatabaseFieldSimple
-		@DatabaseFieldIndex(index = true)
-		String junk;
-		@DatabaseFieldSimple
-		@DatabaseFieldOther(unknownEnumName = "FIRST")
-		OurEnum ourEnum;
-		@DatabaseFieldSimple
-		@DatabaseFieldOther(format = FORMAT_FORMAT)
-		String format;
-		@DatabaseFieldSimple
-		@DatabaseFieldForeign(foreign = true)
-		Object foreign;
-		@DatabaseFieldSimple(defaultValue = DEFAULT_DEFAULT_VALUE)
-		String defaultValue;
-		public AltAnno() {
 		}
 	}
 }

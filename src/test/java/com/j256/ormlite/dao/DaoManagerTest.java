@@ -59,7 +59,6 @@ public class DaoManagerTest extends BaseCoreTest {
 		DaoManager.lookupDao(null, new DatabaseTableConfig<Foo>());
 	}
 
-	@SuppressWarnings("deprecation")
 	@Test
 	public void testRegisterDao() throws Exception {
 		Dao<RegisterClass, Void> dao = DaoManager.lookupDao(connectionSource, RegisterClass.class);
@@ -70,7 +69,6 @@ public class DaoManagerTest extends BaseCoreTest {
 		assertSame(daoImpl, dao);
 	}
 
-	@SuppressWarnings("deprecation")
 	@Test
 	public void testRegisterDaoTable() throws Exception {
 		DatabaseTableConfig<Bar> tableConfig =

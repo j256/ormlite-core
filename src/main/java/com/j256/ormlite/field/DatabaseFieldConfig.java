@@ -436,9 +436,8 @@ public class DatabaseFieldConfig {
 
 	/**
 	 * Create and return a config converted from a {@link Field} that may have one of the following annotations:
-	 * {@link DatabaseField}, {@link DatabaseFieldSimple}, {@link ForeignCollectionField}, or javax.persistence...
+	 * {@link DatabaseField}, {@link ForeignCollectionField}, or javax.persistence...
 	 */
-	@SuppressWarnings("deprecation")
 	public static DatabaseFieldConfig fromField(DatabaseType databaseType, String tableName, Field field)
 			throws SQLException {
 
@@ -450,14 +449,6 @@ public class DatabaseFieldConfig {
 			} else {
 				return null;
 			}
-		}
-
-		// next we lookup @DatabaseFieldSimple and friends
-		DatabaseFieldSimple databaseFieldSimple = field.getAnnotation(DatabaseFieldSimple.class);
-		if (databaseFieldSimple != null) {
-			return fromDatabaseFieldAnnotations(databaseType, tableName, field, databaseFieldSimple,
-					field.getAnnotation(DatabaseFieldId.class), field.getAnnotation(DatabaseFieldForeign.class),
-					field.getAnnotation(DatabaseFieldIndex.class), field.getAnnotation(DatabaseFieldOther.class));
 		}
 
 		// lastly we check for @ForeignCollectionField
@@ -573,75 +564,6 @@ public class DatabaseFieldConfig {
 		config.columnDefinition = valueIfNotBlank(databaseField.columnDefinition());
 		config.foreignAutoCreate = databaseField.foreignAutoCreate();
 		config.version = databaseField.version();
-
-		return config;
-	}
-
-	@SuppressWarnings("deprecation")
-	public static DatabaseFieldConfig fromDatabaseFieldAnnotations(DatabaseType databaseType, String tableName,
-			Field field, DatabaseFieldSimple simpleAnno, DatabaseFieldId idAnno, DatabaseFieldForeign foreignAnno,
-			DatabaseFieldIndex indexAnno, DatabaseFieldOther otherAnno) {
-		DatabaseFieldConfig config = new DatabaseFieldConfig();
-		config.fieldName = field.getName();
-		if (databaseType.isEntityNamesMustBeUpCase()) {
-			config.fieldName = config.fieldName.toUpperCase();
-		}
-		config.columnName = valueIfNotBlank(simpleAnno.columnName());
-		if (otherAnno != null) {
-			DataType dataType = otherAnno.dataType();
-			if (dataType != null) {
-				config.dataPersister = dataType.getDataPersister();
-			}
-		}
-		// NOTE: == did not work with the NO_DEFAULT string
-		String defaultValue = simpleAnno.defaultValue();
-		if (!defaultValue.equals(DatabaseField.DEFAULT_STRING)) {
-			config.defaultValue = defaultValue;
-		}
-		config.width = simpleAnno.width();
-		config.canBeNull = simpleAnno.canBeNull();
-		if (idAnno != null) {
-			config.id = idAnno.id();
-			config.generatedId = idAnno.generatedId();
-			config.generatedIdSequence = valueIfNotBlank(idAnno.generatedIdSequence());
-		}
-		if (foreignAnno != null) {
-			config.foreign = foreignAnno.foreign();
-		}
-		if (otherAnno != null) {
-			config.useGetSet = otherAnno.useGetSet();
-			config.unknownEnumValue = findMatchingEnumVal(field, otherAnno.unknownEnumName());
-			config.throwIfNull = otherAnno.throwIfNull();
-			config.format = valueIfNotBlank(otherAnno.format());
-		}
-		if (indexAnno != null) {
-			config.unique = indexAnno.unique();
-			config.uniqueCombo = indexAnno.uniqueCombo();
-			// add in the index information
-			config.index = indexAnno.index();
-			config.indexName = valueIfNotBlank(indexAnno.indexName());
-			config.uniqueIndex = indexAnno.uniqueIndex();
-			config.uniqueIndexName = valueIfNotBlank(indexAnno.uniqueIndexName());
-		}
-		if (foreignAnno != null) {
-			config.foreignAutoRefresh = foreignAnno.foreignAutoRefresh();
-			config.maxForeignAutoRefreshLevel = foreignAnno.maxForeignAutoRefreshLevel();
-		}
-		if (otherAnno != null) {
-			config.persisterClass = otherAnno.persisterClass();
-		}
-		if (idAnno != null) {
-			config.allowGeneratedIdInsert = idAnno.allowGeneratedIdInsert();
-		}
-		if (otherAnno != null) {
-			config.columnDefinition = valueIfNotBlank(otherAnno.columnDefinition());
-		}
-		if (foreignAnno != null) {
-			config.foreignAutoCreate = foreignAnno.foreignAutoCreate();
-		}
-		if (otherAnno != null) {
-			config.version = otherAnno.version();
-		}
 
 		return config;
 	}
