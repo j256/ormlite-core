@@ -766,7 +766,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 	}
 
 	@Test
-	public void testForeignCollectionWithForeginCollection() throws Exception {
+	public void testForeignCollectionWithForeignCollection() throws Exception {
 		Dao<First, Integer> firstDao = createDao(First.class, true);
 		firstDao.setObjectCache(true);
 		Dao<Second, Integer> secondDao = createDao(Second.class, true);
