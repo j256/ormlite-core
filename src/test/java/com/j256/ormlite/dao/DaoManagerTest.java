@@ -78,7 +78,7 @@ public class DaoManagerTest extends BaseCoreTest {
 		Dao<Bar, Void> dao = DaoManager.lookupDao(connectionSource, tableConfig);
 		assertNull(dao);
 		Dao<? extends Bar, Object> daoImpl = BaseDaoImpl.createDao(connectionSource, tableConfig);
-		DaoManager.registerDao(connectionSource, daoImpl);
+		DaoManager.registerDaoWithTableConfig(connectionSource, daoImpl);
 		dao = DaoManager.lookupDao(connectionSource, tableConfig);
 		assertSame(daoImpl, dao);
 	}
