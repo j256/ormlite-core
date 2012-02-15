@@ -773,11 +773,8 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	 * <b>NOTE:</b> You should use {@link DaoManager#createDao(ConnectionSource, DatabaseTableConfig)} instead of this
 	 * method so you won't have to create the DAO multiple times.
 	 * </p>
-	 * 
-	 * @deprecated You should be using the {@link DaoManager#createDao(ConnectionSource, Class)}
 	 */
-	@Deprecated
-	public static <T, ID> Dao<T, ID> createDao(ConnectionSource connectionSource, Class<T> clazz) throws SQLException {
+	static <T, ID> Dao<T, ID> createDao(ConnectionSource connectionSource, Class<T> clazz) throws SQLException {
 		return new BaseDaoImpl<T, ID>(connectionSource, clazz) {
 		};
 	}
@@ -789,11 +786,8 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	 * <b>NOTE:</b> You should use {@link DaoManager#createDao(ConnectionSource, DatabaseTableConfig)} instead of this
 	 * method so you won't have to create the DAO multiple times.
 	 * </p>
-	 * 
-	 * @deprecated You should be using the {@link DaoManager#createDao(ConnectionSource, DatabaseTableConfig)}
 	 */
-	@Deprecated
-	public static <T, ID> Dao<T, ID> createDao(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig)
+	static <T, ID> Dao<T, ID> createDao(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig)
 			throws SQLException {
 		return new BaseDaoImpl<T, ID>(connectionSource, tableConfig) {
 		};
