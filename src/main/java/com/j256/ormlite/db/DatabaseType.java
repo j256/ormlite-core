@@ -9,6 +9,8 @@ import com.j256.ormlite.field.DataPersister;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.DatabaseTableConfig;
 
 /**
  * Definition of the per-database functionality needed to isolate the differences between the various databases.
@@ -221,4 +223,12 @@ public interface DatabaseType {
 	 * Return the name of the database for logging purposes.
 	 */
 	public String getDatabaseName();
+
+	/**
+	 * Extract and return a custom database configuration for this class.
+	 * 
+	 * @return null if no custom configuration extractor for this database type.
+	 */
+	public <T> DatabaseTableConfig<T> extractDatabaseTableConfig(ConnectionSource connectionSource, Class<T> clazz)
+			throws SQLException;
 }

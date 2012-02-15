@@ -10,7 +10,9 @@ import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.misc.SqlExceptionUtil;
+import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseResults;
+import com.j256.ormlite.table.DatabaseTableConfig;
 
 /**
  * Base class for all of the {@link DatabaseType} classes that provide the per-database type functionality to create
@@ -468,6 +470,16 @@ public abstract class BaseDatabaseType implements DatabaseType {
 
 	public boolean isAllowGeneratedIdInsertSupported() {
 		return true;
+	}
+
+	/**
+	 * @throws SQLException
+	 *             for sub classes.
+	 */
+	public <T> DatabaseTableConfig<T> extractDatabaseTableConfig(ConnectionSource connectionSource, Class<T> clazz)
+			throws SQLException {
+		// default is no default extractor
+		return null;
 	}
 
 	/**

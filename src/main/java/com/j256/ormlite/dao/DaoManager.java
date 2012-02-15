@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.misc.SqlExceptionUtil;
@@ -53,8 +54,15 @@ public class DaoManager {
 		DatabaseTable databaseTable = clazz.getAnnotation(DatabaseTable.class);
 		if (databaseTable == null || databaseTable.daoClass() == Void.class
 				|| databaseTable.daoClass() == BaseDaoImpl.class) {
-			@SuppressWarnings("deprecation")
-			Dao<T, ?> daoTmp = BaseDaoImpl.createDao(connectionSource, clazz);
+			// see if the database type has some special table config extract method (Android)
+			DatabaseType databaseType = connectionSource.getDatabaseType();
+			DatabaseTableConfig<T> config = databaseType.extractDatabaseTableConfig(connectionSource, clazz);
+			Dao<T, ?> daoTmp;
+			if (config == null) {
+				daoTmp = BaseDaoImpl.createDao(connectionSource, clazz);
+			} else {
+				daoTmp = BaseDaoImpl.createDao(connectionSource, config);
+			}
 			dao = daoTmp;
 			logger.debug("created dao for class {} with reflection", clazz);
 		} else {
@@ -159,7 +167,6 @@ public class DaoManager {
 		DatabaseTable databaseTable = tableConfig.getDataClass().getAnnotation(DatabaseTable.class);
 		if (databaseTable == null || databaseTable.daoClass() == Void.class
 				|| databaseTable.daoClass() == BaseDaoImpl.class) {
-			@SuppressWarnings("deprecation")
 			Dao<T, ?> daoTmp = BaseDaoImpl.createDao(connectionSource, tableConfig);
 			dao = daoTmp;
 		} else {
@@ -211,15 +218,32 @@ public class DaoManager {
 	}
 
 	/**
-	 * Register the dao with the cache inside of this class. This will allow folks to build a DAO externally and then
-	 * register so it can be used internally as necessary.
+	 * Register the dao with the cache. This will allow folks to build a DAO externally and then register so it can be
+	 * used internally as necessary.
 	 * 
 	 * <p>
-	 * <b>NOTE:</b> It is better to use the {@link DatabaseTable#daoClass()} and have the DaoManager construct the DAO
+	 * <b>NOTE:</b> By default this registers the dao to be associated with the class that it uses. If you need to
+	 * register multiple dao's that use different {@link DatabaseTableConfig}s then you should use
+	 * {@link #registerDaoWithTableConfig(ConnectionSource, Dao)}.
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> You should maybe use the {@link DatabaseTable#daoClass()} and have the DaoManager construct the DAO
 	 * if possible.
 	 * </p>
 	 */
 	public static synchronized void registerDao(ConnectionSource connectionSource, Dao<?, ?> dao) {
+		if (connectionSource == null) {
+			throw new IllegalArgumentException("connectionSource argument cannot be null");
+		}
+		classMap.put(new ClassConnectionSource(connectionSource, dao.getDataClass()), dao);
+	}
+
+	/**
+	 * Same as {@link #registerDao(ConnectionSource, Dao)} but this allows you to register it just with its
+	 * {@link DatabaseTableConfig}. This allows multiple versions of the dao to be configured if necessary.
+	 */
+	public static synchronized void registerDaoWithTableConfig(ConnectionSource connectionSource, Dao<?, ?> dao) {
 		if (connectionSource == null) {
 			throw new IllegalArgumentException("connectionSource argument cannot be null");
 		}
