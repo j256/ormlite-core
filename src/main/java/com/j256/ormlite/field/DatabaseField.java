@@ -286,7 +286,7 @@ public @interface DatabaseField {
 	boolean version() default false;
 
 	/*
-	 * NOTE: if you add fields here you have to add them to the DatabaseFieldConfigLoader and
-	 * DatabaseFieldConfigLoaderTest
+	 * NOTE: if you add fields here you have to add them to the DatabaseFieldConfigLoader,
+	 * DatabaseFieldConfigLoaderTest, and DatabaseTableConfigUtil.
 	 */
 }
