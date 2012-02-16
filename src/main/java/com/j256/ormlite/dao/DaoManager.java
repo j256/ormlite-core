@@ -189,7 +189,7 @@ public class DaoManager {
 
 		// if it is not in the class config either then add it
 		if (lookupDao(key2) == null) {
-			classMap.put(key2, dao);
+			addDaoToMap(key2, dao);
 		}
 
 		@SuppressWarnings("unchecked")
@@ -236,7 +236,7 @@ public class DaoManager {
 		if (connectionSource == null) {
 			throw new IllegalArgumentException("connectionSource argument cannot be null");
 		}
-		classMap.put(new ClassConnectionSource(connectionSource, dao.getDataClass()), dao);
+		addDaoToMap(new ClassConnectionSource(connectionSource, dao.getDataClass()), dao);
 	}
 
 	/**
@@ -254,7 +254,7 @@ public class DaoManager {
 				return;
 			}
 		}
-		classMap.put(new ClassConnectionSource(connectionSource, dao.getDataClass()), dao);
+		addDaoToMap(new ClassConnectionSource(connectionSource, dao.getDataClass()), dao);
 	}
 
 	/**
@@ -287,6 +287,13 @@ public class DaoManager {
 			logger.info("Loaded configuration for {}", config.getDataClass());
 		}
 		configMap = newMap;
+	}
+
+	private static void addDaoToMap(ClassConnectionSource connectionSource, Dao<?, ?> dao) {
+		if (classMap == null) {
+			classMap = new HashMap<ClassConnectionSource, Dao<?, ?>>();
+		}
+		classMap.put(connectionSource, dao);
 	}
 
 	private static <T> Dao<?, ?> lookupDao(ClassConnectionSource key) {
