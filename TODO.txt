@@ -174,4 +174,3 @@
  	- DatabaseMetaData metaData = connection.getMetaData();
 	- metaData.supportsGetGeneratedKeys() -- not exactly what we need
 	- supportsMultipleTransactions() -- in different connections so not relevant
-	
