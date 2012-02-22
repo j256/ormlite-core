@@ -1,4 +1,6 @@
-4.34: 2/22/2012 (svn r????)
+4.35: 3/XX/2012 (svn rYYYY)
+
+4.34: 2/22/2012 (svn r2318)
 	* CORE: Fixed restriction on Long auto-incremented SQLite ids. Thanks to John Kristian. Fixes bug #3474479.
 	* CORE: Added support for sql NOT IN clause to where().  Thanks to Marvin Jomble.  Fixes feature #3474550.
 	* CORE: Added support for sql HAVING clause to QueryBuilder.  Thanks to Stephen Couchman.  Fixes feature #3470923.
