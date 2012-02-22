@@ -335,7 +335,7 @@ public class RuntimeExceptionDao<T, ID> {
 	}
 
 	/**
-	 * @see Dao#iterator(int))
+	 * @see Dao#iterator(int)
 	 */
 	public CloseableIterator<T> iterator(int resultFlags) {
 		return dao.iterator(resultFlags);

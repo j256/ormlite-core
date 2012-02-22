@@ -68,8 +68,7 @@ public interface DatabaseConnection {
 			throws SQLException;
 
 	/**
-	 * Like {@link #compileStatement(String, StatementType, FieldType[])} except the caller can specify the result
-	 * flags.
+	 * Like compileStatement(String, StatementType, FieldType[]) except the caller can specify the result flags.
 	 * 
 	 * @param resultFlags
 	 *            Allows specification of some result flags. This is dependent on the backend and database type. Set to

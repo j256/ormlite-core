@@ -270,7 +270,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * A short cut to {@link Dao#queryRaw(String)} and {@link GenericRawResults#getFirstResult()}.
+	 * A short cut to {@link Dao#queryRaw(String, String...)} and {@link GenericRawResults#getFirstResult()}.
 	 */
 	public String[] queryRawFirst() throws SQLException {
 		return dao.queryRaw(prepareStatementString()).getFirstResult();
