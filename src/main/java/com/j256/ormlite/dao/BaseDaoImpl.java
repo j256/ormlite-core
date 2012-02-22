@@ -722,6 +722,13 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	/**
+	 * Special call mostly used in testing to clear the internal object caches so we can reset state.
+	 */
+	public static void clearAllInternalObjectCaches() {
+		defaultObjectCache = null;
+	}
+
 	public T mapSelectStarRow(DatabaseResults results) throws SQLException {
 		return statementExecutor.getSelectStarRowMapper().mapRow(results);
 	}

@@ -1,4 +1,5 @@
-4.35: 3/XX/2012 (svn rYYYY)
+4.35: 2/22/2012 (svn rYYYY)
+	* CORE: Fixed bug where not all queries were adding objects to cache. Thanks to Filipe Leandro. Fixes bug #3491418.
 
 4.34: 2/22/2012 (svn r2318)
 	* CORE: Fixed restriction on Long auto-incremented SQLite ids. Thanks to John Kristian. Fixes bug #3474479.
@@ -11,7 +12,7 @@
 	* CORE: Refactored the FieldConverter and BaseDataType stuff a bit to remove some duplicate code.
 	* CORE: Added convenience QueryBuilder.queryForFirst() and queryRawFirst() methods.
 	* CORE: Added setArgumentHolderValue() to the PreparedStmt so we can set an argument on prepared queries directly.
-	* CORE: Removed the deprecated @DatabaseFieldSimple and friends that were removed in 4.30.
+	* CORE: Removed the @DatabaseFieldSimple and friends annotations that were deprecated in 4.30.
 	* ANDROID: Significantly simplified, improved the internal DAO caching.  Thanks to Ben Mosher.  Fixes bug #3487674. 
 	* ANDROID: Fixed missing exception handling in AndroidConnectionSource.  Thanks to Roger Keays.  Fixes bug #3474501.
 	* ANDROID: Added isTableExists() support to Dao/AndroidDatabaseConnection. Thanks to Patrick. Fixes feature #3475173.

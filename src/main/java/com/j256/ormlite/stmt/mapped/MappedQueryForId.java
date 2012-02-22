@@ -46,16 +46,9 @@ public class MappedQueryForId<T, ID> extends BaseMappedQuery<T, ID> {
 			logger.debug("{} using '{}' and {} args, got 1 result", label, statement, args.length);
 		}
 		logArgs(args);
-		if (result == null) {
-			return null;
-		} else {
-			@SuppressWarnings("unchecked")
-			T castResult = (T) result;
-			if (objectCache != null) {
-				objectCache.put(clazz, id, castResult);
-			}
-			return castResult;
-		}
+		@SuppressWarnings("unchecked")
+		T castResult = (T) result;
+		return castResult;
 	}
 
 	public static <T, ID> MappedQueryForId<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo)

@@ -86,6 +86,10 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 				}
 			}
 		}
+		// if we have a cache and we have an id then add it to the cache
+		if (objectCache != null && id != null) {
+			objectCache.put(clazz, id, instance);
+		}
 		if (columnPositions == null) {
 			columnPositions = colPosMap;
 		}
