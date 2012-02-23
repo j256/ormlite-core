@@ -1,5 +1,7 @@
-4.35: 2/22/2012 (svn rYYYY)
-	* CORE: Fixed bug where not all queries were adding objects to cache. Thanks to Filipe Leandro. Fixes bug #3491418.
+4.36: 3/XX/2012 (svn rYYYY)
+
+4.35: 2/22/2012 (svn r2337)
+	* CORE: Fixed bug where not all queried objects were added to cache. Thanks to Filipe Leandro. Fixes bug #3491418.
 
 4.34: 2/22/2012 (svn r2318)
 	* CORE: Fixed restriction on Long auto-incremented SQLite ids. Thanks to John Kristian. Fixes bug #3474479.
