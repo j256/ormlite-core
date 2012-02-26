@@ -285,6 +285,19 @@ public @interface DatabaseField {
 	 */
 	boolean version() default false;
 
+	/**
+	 * Name of the foreign object's field that is tied to this table. This does not need to be specified if you are
+	 * using the ID of the foreign object which is recommended. For example, if you have an Order object with a foreign
+	 * Account then you may want to key off of the Account name instead of the Account ID.
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> Setting this implies {@link #foreignAutoRefresh()} is also set to true because there is no way to
+	 * refresh the object since the id field is not stored in the database. So when this is set, the field will be
+	 * automatically refreshed in another database query.
+	 * </p>
+	 */
+	String foreignColumnName() default "";
+
 	/*
 	 * NOTE: if you add fields here you have to add them to the DatabaseFieldConfigLoader,
 	 * DatabaseFieldConfigLoaderTest, and DatabaseTableConfigUtil.

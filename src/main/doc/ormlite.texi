@@ -643,6 +643,17 @@ the object's version field will be set by ORMLite to the new-value, 1 will be re
 
 Only the following field types are appropriate for version fields: short, integer, long, and Date fields.
 
+@cindex foreign column name
+@item foreignColumnName
+
+Name of the foreign object's field that is tied to this table. This does not need to be specified if you are using the
+ID of the foreign object which is recommended. For example, if you have an @code{Order} object with a foreign
+@code{Account} then you may want to key off of the @code{Account} name instead of the ID.
+
+@emph{NOTE:} Setting this implies @code{foreignAutoRefresh} is also set to true because there is no way to refresh the
+object since the id field is not stored in the database. So when this is set, the field will be automatically refreshed
+in another database query.
+	
 @end table
 
 @c ----------------------------------------------------------------

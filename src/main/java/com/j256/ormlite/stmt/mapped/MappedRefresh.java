@@ -45,7 +45,12 @@ public class MappedRefresh<T, ID> extends MappedQueryForId<T, ID> {
 
 	public static <T, ID> MappedRefresh<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo)
 			throws SQLException {
-		String statement = buildStatement(databaseType, tableInfo);
+		FieldType idField = tableInfo.getIdField();
+		if (idField == null) {
+			throw new SQLException("Cannot refresh " + tableInfo.getDataClass()
+					+ " because it doesn't have an id field");
+		}
+		String statement = buildStatement(databaseType, tableInfo, idField);
 		return new MappedRefresh<T, ID>(tableInfo, statement, new FieldType[] { tableInfo.getIdField() },
 				tableInfo.getFieldTypes());
 	}

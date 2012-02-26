@@ -185,6 +185,22 @@ public class DatabaseTableConfig<T> {
 	}
 
 	/**
+	 * Find and return the field-type of the field in this class that matches a name.
+	 */
+	public static <T> FieldType extractFieldType(ConnectionSource connectionSource, Class<T> clazz, String fieldName,
+			String tableName) throws SQLException {
+		for (Class<?> classWalk = clazz; classWalk != null; classWalk = classWalk.getSuperclass()) {
+			for (Field field : classWalk.getDeclaredFields()) {
+				FieldType fieldType = FieldType.createFieldType(connectionSource, tableName, field, clazz);
+				if (fieldType != null && fieldType.getColumnName().equals(fieldName)) {
+					return fieldType;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Locate the no arg constructor for the class.
 	 */
 	public static <T> Constructor<T> findNoArgConstructor(Class<T> dataClass) {

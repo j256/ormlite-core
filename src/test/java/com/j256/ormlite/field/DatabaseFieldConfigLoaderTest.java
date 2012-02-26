@@ -171,6 +171,11 @@ public class DatabaseFieldConfigLoaderTest {
 		body.append("version=true\n");
 		checkConfigOutput(config, body, writer, buffer);
 
+		String foreignColumnName = "foreignNameOfColumn";
+		config.setForeignColumnName(foreignColumnName);
+		body.append("foreignColumnName=").append(foreignColumnName).append("\n");
+		checkConfigOutput(config, body, writer, buffer);
+
 		/*
 		 * Test foreign collection
 		 */

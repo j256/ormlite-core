@@ -2183,6 +2183,27 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(sub1.stuff, baseResult.stuff);
 	}
 
+	@Test
+	public void testForeignColumnName() throws Exception {
+		Dao<ForeignColumnName, Integer> dao = createDao(ForeignColumnName.class, true);
+		Dao<ForeignColumnNameForeign, Integer> foreignDao = createDao(ForeignColumnNameForeign.class, true);
+
+		ForeignColumnNameForeign foreign = new ForeignColumnNameForeign();
+		foreign.name = "Buzz Lightyear";
+		assertEquals(1, foreignDao.create(foreign));
+
+		ForeignColumnName fcn = new ForeignColumnName();
+		fcn.foreign = foreign;
+		assertEquals(1, dao.create(fcn));
+
+		ForeignColumnName result = dao.queryForId(fcn.id);
+		assertNotNull(result);
+		assertEquals(foreign.id, result.foreign.id);
+		assertEquals(foreign.name, result.foreign.name);
+
+		assertEquals(1, foreignDao.refresh(result.foreign));
+	}
+
 	/* ============================================================================================== */
 
 	private String buildFooQueryAllString(Dao<Foo, Object> fooDao) throws SQLException {
@@ -2191,6 +2212,20 @@ public class BaseDaoImplTest extends BaseCoreTest {
 						.selectColumns(Foo.ID_COLUMN_NAME, Foo.EQUAL_COLUMN_NAME, Foo.VAL_COLUMN_NAME)
 						.prepareStatementString();
 		return queryString;
+	}
+
+	private static class Mapper implements RawRowMapper<Foo> {
+		public Foo mapRow(String[] columnNames, String[] resultColumns) {
+			Foo foo = new Foo();
+			for (int i = 0; i < columnNames.length; i++) {
+				if (columnNames[i].equalsIgnoreCase(Foo.ID_COLUMN_NAME)) {
+					foo.id = Integer.parseInt(resultColumns[i]);
+				} else if (columnNames[i].equalsIgnoreCase(Foo.VAL_COLUMN_NAME)) {
+					foo.val = Integer.parseInt(resultColumns[i]);
+				}
+			}
+			return foo;
+		}
 	}
 
 	/* ============================================================================================== */
@@ -2410,17 +2445,22 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		}
 	}
 
-	private static class Mapper implements RawRowMapper<Foo> {
-		public Foo mapRow(String[] columnNames, String[] resultColumns) {
-			Foo foo = new Foo();
-			for (int i = 0; i < columnNames.length; i++) {
-				if (columnNames[i].equalsIgnoreCase(Foo.ID_COLUMN_NAME)) {
-					foo.id = Integer.parseInt(resultColumns[i]);
-				} else if (columnNames[i].equalsIgnoreCase(Foo.VAL_COLUMN_NAME)) {
-					foo.val = Integer.parseInt(resultColumns[i]);
-				}
-			}
-			return foo;
+	protected static class ForeignColumnName {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(foreign = true, foreignColumnName = ForeignColumnNameForeign.FIELD_NAME)
+		ForeignColumnNameForeign foreign;
+		public ForeignColumnName() {
+		}
+	}
+
+	protected static class ForeignColumnNameForeign {
+		public static final String FIELD_NAME = "name";
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField
+		String name;
+		public ForeignColumnNameForeign() {
 		}
 	}
 }

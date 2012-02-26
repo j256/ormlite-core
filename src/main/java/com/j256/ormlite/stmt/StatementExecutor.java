@@ -77,7 +77,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 */
 	public T queryForId(DatabaseConnection databaseConnection, ID id, ObjectCache objectCache) throws SQLException {
 		if (mappedQueryForId == null) {
-			mappedQueryForId = MappedQueryForId.build(databaseType, tableInfo);
+			mappedQueryForId = MappedQueryForId.build(databaseType, tableInfo, null);
 		}
 		return mappedQueryForId.execute(databaseConnection, id, objectCache);
 	}

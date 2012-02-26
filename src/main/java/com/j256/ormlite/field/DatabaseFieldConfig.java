@@ -59,6 +59,7 @@ public class DatabaseFieldConfig {
 	private String columnDefinition;
 	private boolean foreignAutoCreate;
 	private boolean version;
+	private String foreignColumnName;
 
 	public DatabaseFieldConfig() {
 		// for spring
@@ -343,7 +344,11 @@ public class DatabaseFieldConfig {
 	}
 
 	public boolean isForeignAutoRefresh() {
-		return foreignAutoRefresh;
+		if (foreignAutoRefresh || foreignColumnName != null) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public int getMaxForeignAutoRefreshLevel() {
@@ -432,6 +437,14 @@ public class DatabaseFieldConfig {
 
 	public void setVersion(boolean version) {
 		this.version = version;
+	}
+
+	public String getForeignColumnName() {
+		return foreignColumnName;
+	}
+
+	public void setForeignColumnName(String foreignColumnName) {
+		this.foreignColumnName = foreignColumnName;
 	}
 
 	/**
@@ -564,6 +577,7 @@ public class DatabaseFieldConfig {
 		config.columnDefinition = valueIfNotBlank(databaseField.columnDefinition());
 		config.foreignAutoCreate = databaseField.foreignAutoCreate();
 		config.version = databaseField.version();
+		config.foreignColumnName = valueIfNotBlank(databaseField.foreignColumnName());
 
 		return config;
 	}

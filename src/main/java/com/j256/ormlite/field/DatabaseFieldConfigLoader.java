@@ -108,6 +108,7 @@ public class DatabaseFieldConfigLoader {
 	private static final String FIELD_NAME_COLUMN_DEFINITION = "columnDefinition";
 	private static final String FIELD_NAME_FOREIGN_AUTO_CREATE = "foreignAutoCreate";
 	private static final String FIELD_NAME_VERSION = "version";
+	private static final String FOREIGN_COLUMN_NAME = "foreignColumnName";
 
 	/**
 	 * Print the config to the writer.
@@ -234,6 +235,11 @@ public class DatabaseFieldConfigLoader {
 			writer.append(FIELD_NAME_VERSION).append('=').append("true");
 			writer.newLine();
 		}
+		String foreignColumnName = config.getForeignColumnName();
+		if (foreignColumnName != null) {
+			writer.append(FOREIGN_COLUMN_NAME).append('=').append(foreignColumnName);
+			writer.newLine();
+		}
 
 		/*
 		 * Foreign collection settings:
@@ -357,6 +363,8 @@ public class DatabaseFieldConfigLoader {
 			config.setForeignAutoCreate(Boolean.parseBoolean(value));
 		} else if (field.equals(FIELD_NAME_VERSION)) {
 			config.setVersion(Boolean.parseBoolean(value));
+		} else if (field.equals(FOREIGN_COLUMN_NAME)) {
+			config.setForeignColumnName(value);
 		}
 	}
 }

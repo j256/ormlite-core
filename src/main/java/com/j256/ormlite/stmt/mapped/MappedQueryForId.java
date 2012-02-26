@@ -51,24 +51,26 @@ public class MappedQueryForId<T, ID> extends BaseMappedQuery<T, ID> {
 		return castResult;
 	}
 
-	public static <T, ID> MappedQueryForId<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo)
-			throws SQLException {
-		String statement = buildStatement(databaseType, tableInfo);
-		return new MappedQueryForId<T, ID>(tableInfo, statement, new FieldType[] { tableInfo.getIdField() },
+	public static <T, ID> MappedQueryForId<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
+			FieldType idFieldType) throws SQLException {
+		if (idFieldType == null) {
+			idFieldType = tableInfo.getIdField();
+			if (idFieldType == null) {
+				throw new SQLException("Cannot query-for-id with " + tableInfo.getDataClass()
+						+ " because it doesn't have an id field");
+			}
+		}
+		String statement = buildStatement(databaseType, tableInfo, idFieldType);
+		return new MappedQueryForId<T, ID>(tableInfo, statement, new FieldType[] { idFieldType },
 				tableInfo.getFieldTypes(), "query-for-id");
 	}
 
-	protected static <T, ID> String buildStatement(DatabaseType databaseType, TableInfo<T, ID> tableInfo)
-			throws SQLException {
-		FieldType idField = tableInfo.getIdField();
-		if (idField == null) {
-			throw new SQLException("Cannot query-for-id with " + tableInfo.getDataClass()
-					+ " because it doesn't have an id field");
-		}
+	protected static <T, ID> String buildStatement(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
+			FieldType idFieldType) {
 		// build the select statement by hand
 		StringBuilder sb = new StringBuilder(64);
 		appendTableName(databaseType, sb, "SELECT * FROM ", tableInfo.getTableName());
-		appendWhereFieldEq(databaseType, idField, sb, null);
+		appendWhereFieldEq(databaseType, idFieldType, sb, null);
 		return sb.toString();
 	}
 
