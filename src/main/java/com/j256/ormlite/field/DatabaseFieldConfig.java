@@ -344,11 +344,7 @@ public class DatabaseFieldConfig {
 	}
 
 	public boolean isForeignAutoRefresh() {
-		if (foreignAutoRefresh || foreignColumnName != null) {
-			return true;
-		} else {
-			return false;
-		}
+		return foreignAutoRefresh;
 	}
 
 	public int getMaxForeignAutoRefreshLevel() {

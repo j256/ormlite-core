@@ -130,13 +130,13 @@ public class FieldType {
 						+ " is not valid for data persister " + dataPersister);
 			}
 		}
+		String foreignColumnName = fieldConfig.getForeignColumnName();
 		String defaultFieldName = field.getName();
-		if (fieldConfig.isForeign() || fieldConfig.isForeignAutoRefresh()) {
+		if (fieldConfig.isForeign() || fieldConfig.isForeignAutoRefresh() || foreignColumnName != null) {
 			if (dataPersister != null && dataPersister.isPrimitive()) {
 				throw new IllegalArgumentException("Field " + this + " is a primitive class " + clazz
 						+ " but marked as foreign");
 			}
-			String foreignColumnName = fieldConfig.getForeignColumnName();
 			if (foreignColumnName == null) {
 				defaultFieldName = defaultFieldName + FOREIGN_ID_FIELD_SUFFIX;
 			} else {
@@ -242,6 +242,10 @@ public class FieldType {
 			throw new IllegalArgumentException("Field " + field.getName()
 					+ " must have foreign = true if foreignAutoCreate = true");
 		}
+		if (fieldConfig.getForeignColumnName() != null && !fieldConfig.isForeign()) {
+			throw new IllegalArgumentException("Field " + field.getName()
+					+ " must have foreign = true if foreignColumnName is set");
+		}
 		if (fieldConfig.isVersion() && (dataPersister == null || !dataPersister.isValidForVersion())) {
 			throw new IllegalArgumentException("Field " + field.getName()
 					+ " is not a valid type to be a version field");
@@ -265,7 +269,8 @@ public class FieldType {
 		final Dao<?, ?> foreignDao;
 		final MappedQueryForId<Object, Object> mappedQueryForId;
 
-		if (fieldConfig.isForeignAutoRefresh()) {
+		String foreignColumnName = fieldConfig.getForeignColumnName();
+		if (fieldConfig.isForeignAutoRefresh() || foreignColumnName != null) {
 			DatabaseTableConfig<?> tableConfig = fieldConfig.getForeignTableConfig();
 			if (tableConfig == null) {
 				// NOTE: the cast is necessary for maven
@@ -277,14 +282,17 @@ public class FieldType {
 				foreignDao = (BaseDaoImpl<?, ?>) DaoManager.createDao(connectionSource, tableConfig);
 				foreignTableInfo = ((BaseDaoImpl<?, ?>) foreignDao).getTableInfo();
 			}
-			String foreignColumnName = fieldConfig.getForeignColumnName();
 			if (foreignColumnName == null) {
 				foreignIdField = foreignTableInfo.getIdField();
+				if (foreignIdField == null) {
+					throw new IllegalArgumentException("Foreign field " + clazz + " does not have id field");
+				}
 			} else {
 				foreignIdField = foreignTableInfo.getFieldTypeByColumnName(foreignColumnName);
-			}
-			if (foreignIdField == null) {
-				throw new IllegalArgumentException("Foreign field " + clazz + " does not have id field");
+				if (foreignIdField == null) {
+					throw new IllegalArgumentException("Foreign field " + clazz + " does not have field named '"
+							+ foreignColumnName + "'");
+				}
 			}
 			@SuppressWarnings("unchecked")
 			MappedQueryForId<Object, Object> castMappedQueryForId =
@@ -298,49 +306,29 @@ public class FieldType {
 				throw new IllegalArgumentException("Field " + this + " is a primitive class " + clazz
 						+ " but marked as foreign");
 			}
-			String foreignColumnName = fieldConfig.getForeignColumnName();
 			DatabaseTableConfig<?> tableConfig = fieldConfig.getForeignTableConfig();
 			if (tableConfig != null) {
 				tableConfig.extractFieldTypes(connectionSource);
 				// NOTE: the cast is necessary for maven
 				foreignDao = (BaseDaoImpl<?, ?>) DaoManager.createDao(connectionSource, tableConfig);
 				foreignTableInfo = ((BaseDaoImpl<?, ?>) foreignDao).getTableInfo();
-				if (foreignColumnName == null) {
-					foreignIdField = foreignTableInfo.getIdField();
-				} else {
-					foreignIdField = foreignTableInfo.getFieldTypeByColumnName(foreignColumnName);
-				}
+				foreignIdField = foreignTableInfo.getIdField();
 				foreignConstructor = foreignTableInfo.getConstructor();
 			} else if (BaseDaoEnabled.class.isAssignableFrom(clazz) || fieldConfig.isForeignAutoCreate()) {
 				// NOTE: the cast is necessary for maven
 				foreignDao = (BaseDaoImpl<?, ?>) DaoManager.createDao(connectionSource, clazz);
 				foreignTableInfo = ((BaseDaoImpl<?, ?>) foreignDao).getTableInfo();
-				if (foreignColumnName == null) {
-					foreignIdField = foreignTableInfo.getIdField();
-				} else {
-					foreignIdField = foreignTableInfo.getFieldTypeByColumnName(foreignColumnName);
-				}
+				foreignIdField = foreignTableInfo.getIdField();
 				foreignConstructor = foreignTableInfo.getConstructor();
 			} else {
 				foreignDao = null;
-				if (foreignColumnName == null) {
-					foreignIdField =
-							DatabaseTableConfig.extractIdFieldType(connectionSource, clazz,
-									DatabaseTableConfig.extractTableName(clazz));
-				} else {
-					foreignIdField =
-							DatabaseTableConfig.extractFieldType(connectionSource, clazz, foreignColumnName,
-									DatabaseTableConfig.extractTableName(clazz));
-				}
+				foreignIdField =
+						DatabaseTableConfig.extractIdFieldType(connectionSource, clazz,
+								DatabaseTableConfig.extractTableName(clazz));
 				foreignConstructor = DatabaseTableConfig.findNoArgConstructor(clazz);
 			}
 			if (foreignIdField == null) {
-				if (foreignColumnName == null) {
-					throw new IllegalArgumentException("Foreign field " + clazz + " does not have id field");
-				} else {
-					throw new IllegalArgumentException("Foreign field " + clazz + " does not have field named '"
-							+ foreignColumnName + "'");
-				}
+				throw new IllegalArgumentException("Foreign field " + clazz + " does not have id field");
 			}
 			if (isForeignAutoCreate() && !foreignIdField.isGeneratedId()) {
 				throw new IllegalArgumentException("Field " + field.getName()
