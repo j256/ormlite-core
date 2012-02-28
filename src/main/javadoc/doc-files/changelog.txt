@@ -1,5 +1,6 @@
 4.36: 3/XX/2012 (svn rYYYY)
 	* CORE: Added support for @DatabaseFiled(foreignColumnName="name") to map foreign to non-ID.  Thanks to Mathias Lin.
+	* CORE: Added update() and refresh() to ForeignCollection which call through to the inner Dao.
 
 4.35: 2/22/2012 (svn r2337)
 	* CORE: Fixed bug where not all queried objects were added to cache. Thanks to Filipe Leandro. Fixes bug #3491418.

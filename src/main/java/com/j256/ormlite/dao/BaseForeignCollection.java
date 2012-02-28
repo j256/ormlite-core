@@ -151,6 +151,22 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 		}
 	}
 
+	public int update(T data) throws SQLException {
+		if (dao == null) {
+			return 0;
+		} else {
+			return dao.update(data);
+		}
+	}
+
+	public int refresh(T data) throws SQLException {
+		if (dao == null) {
+			return 0;
+		} else {
+			return dao.refresh(data);
+		}
+	}
+
 	protected PreparedQuery<T> getPreparedQuery() throws SQLException {
 		if (dao == null) {
 			return null;

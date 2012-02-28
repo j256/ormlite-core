@@ -64,4 +64,16 @@ public interface ForeignCollection<T> extends Collection<T>, CloseableIterable<T
 	 * Returns true if this an eager collection otherwise false.
 	 */
 	public boolean isEager();
+
+	/**
+	 * This is a call through to {@link Dao#update(Object)} using the internal collection DAO. Objects inside of the
+	 * collection are not updated if the parent object is refreshed so you will need to so that by hand.
+	 */
+	public int update(T obj) throws SQLException;
+
+	/**
+	 * This is a call through to {@link Dao#refresh(Object)} using the internal collection DAO. Objects inside of the
+	 * collection are not refreshed if the parent object is refreshed so you will need to so that by hand.
+	 */
+	public int refresh(T obj) throws SQLException;
 }
