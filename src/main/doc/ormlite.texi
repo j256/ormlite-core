@@ -1065,6 +1065,17 @@ You specify the @code{dataType} field (from the @code{@@DatabaseField} annotatio
 in which case a @code{java.math.BigDecimal} field will be persisted as a @code{NUMERIC} type.  This is only supported by some
 database types and with various default precision settings.  Android should use the default @code{DataType.BIG_DECIMAL}.
 
+@cindex DateTime Joda type
+@cindex Joda DateTime type
+@item DateTime (DataType.DATE_TIME)
+
+This stores the Joda @code{DateTime} into the database as long epoch millis.  This persister uses reflection to avoid
+setting up a dependency with Joda jars.  You can define a custom data persister if you want to natively use the class. 
+@xref{custom data persister}.
+
+@emph{NOTE:} To use this type, you @emph{must} specify @code{DataType.DATE_TIME} using the @code{dataType} field.  It will
+not be auto-detected.  @xref{DatabaseField dataType}.
+
 @end table
 
 @emph{NOTE:} ORMLite also supports the concept of foreign objects where the id of another object is

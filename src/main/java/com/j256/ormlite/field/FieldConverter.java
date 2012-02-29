@@ -46,6 +46,9 @@ public interface FieldConverter {
 	 * 
 	 * @param fieldType
 	 *            Associated FieldType which may be null.
+	 * @param sqlArg
+	 *            SQL argument converted with {@link #resultToSqlArg(FieldType, DatabaseResults, int)} which will not be
+	 *            null.
 	 */
 	public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException;
 

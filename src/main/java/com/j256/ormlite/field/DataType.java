@@ -15,6 +15,7 @@ import com.j256.ormlite.field.types.CharType;
 import com.j256.ormlite.field.types.CharacterObjectType;
 import com.j256.ormlite.field.types.DateLongType;
 import com.j256.ormlite.field.types.DateStringType;
+import com.j256.ormlite.field.types.DateTimeType;
 import com.j256.ormlite.field.types.DateType;
 import com.j256.ormlite.field.types.DoubleObjectType;
 import com.j256.ormlite.field.types.DoubleType;
@@ -50,7 +51,8 @@ public enum DataType {
 	 */
 	LONG_STRING(LongStringType.getSingleton()),
 	/**
-	 * Persists the {@link String} Java class as an array of bytes.
+	 * Persists the {@link String} Java class as an array of bytes. By default this will use {@link #STRING} so you will
+	 * need to specify this using {@link DatabaseField#dataType()}.
 	 */
 	STRING_BYTES(StringBytesType.getSingleton()),
 	/**
@@ -71,7 +73,8 @@ public enum DataType {
 	DATE(DateType.getSingleton()),
 
 	/**
-	 * Persists the {@link java.util.Date} Java class as long milliseconds since epoch.
+	 * Persists the {@link java.util.Date} Java class as long milliseconds since epoch. By default this will use
+	 * {@link #DATE} so you will need to specify this using {@link DatabaseField#dataType()}.
 	 * 
 	 * <p>
 	 * NOTE: This is <i>not</i> the same as the {@link java.sql.Date} class.
@@ -79,7 +82,8 @@ public enum DataType {
 	 */
 	DATE_LONG(DateLongType.getSingleton()),
 	/**
-	 * Persists the {@link java.util.Date} Java class as a string of a format.
+	 * Persists the {@link java.util.Date} Java class as a string of a format. By default this will use {@link #DATE} so
+	 * you will need to specify this using {@link DatabaseField#dataType()}.
 	 * 
 	 * <p>
 	 * NOTE: This is <i>not</i> the same as the {@link java.sql.Date} class.
@@ -104,7 +108,8 @@ public enum DataType {
 	 */
 	BYTE(ByteType.getSingleton()),
 	/**
-	 * Persists the byte[] array type.
+	 * Persists the byte[] array type. Because of some backwards compatibility issues, you will need to specify this
+	 * using {@link DatabaseField#dataType()}. It won't be detected automatically.
 	 */
 	BYTE_ARRAY(ByteArrayType.getSingleton()),
 	/**
@@ -152,7 +157,9 @@ public enum DataType {
 	 */
 	DOUBLE_OBJ(DoubleObjectType.getSingleton()),
 	/**
-	 * Persists an unknown Java Object that is serializable.
+	 * Persists an unknown Java Object that is serializable. Because of some backwards and forwards compatibility
+	 * concerns, you will need to specify this using {@link DatabaseField#dataType()}. It won't be detected
+	 * automatically.
 	 */
 	SERIALIZABLE(SerializableType.getSingleton()),
 	/**
@@ -180,6 +187,12 @@ public enum DataType {
 	 * Persists the {@link BigDecimal} Java class as a SQL NUMERIC.
 	 */
 	BIG_DECIMAL_NUMERIC(BigDecimalNumericType.getSingleton()),
+	/**
+	 * Persists the org.joda.time.DateTime type with reflection since we don't want to add the dependency. Because this
+	 * class uses reflection, you have to specify this using {@link DatabaseField#dataType()}. It won't be detected
+	 * automatically.
+	 */
+	DATE_TIME(DateTimeType.getSingleton()),
 	/**
 	 * Marker for fields that are unknown.
 	 */
