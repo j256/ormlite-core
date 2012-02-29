@@ -25,10 +25,6 @@
 	- foreign key constraint can be in addition to (or required for) the foreign=true
 	- is this handled by the columnDefinition?
 
-- need to document the custom persister stuff:
-	- DataPersiterManager
-	- DatabaseField.persisterClass
-
 - fix ignored tests inside of ForeignCollectionTest
 
 - TableUtils from JC:

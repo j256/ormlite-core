@@ -4143,12 +4143,13 @@ may do nothing.
 @node Custom Persisters, How to Upgrade, Batch Operations, Advanced
 @section Custom Data Type Persisters
 
+@anchor{custom data persister}
 @cindex custom persisters
 @cindex custom data types
 @cindex storing custom data types
 @cindex overriding how data is stored
 
-ORMLite has internal definitions for storing the basic primitive and other common data types. @xref{Persisted Data Types}.
+ORMLite has internal definitions for storing the basic primitive and other common data types. @xref{Persisted Types}.
 Sometimes, however, you either want to store a new data type in your database or you want to change the way ORMLite
 stores values to the database for common types -- this often happens when you are trying to work with an existing schema.
 You can change how types are stored in the database by defining a class which implements the @code{DataPersister} interface.
@@ -4174,49 +4175,34 @@ The data persister example has a @code{MyDatePersister} class which does just th
 To use your persister class on a particular field in your objects, you would do something like this:
 
 @example
-@DatabaseField(persisterClass = MyDatePersister.class)
+@@DatabaseField(persisterClass = MyDatePersister.class)
 Date birthDate;
 @end example
 
-ORMLite also allows you to define data persisters for atypical or custom data types.  @code{org.joda.time.DateTime} is a
-common field to stored in this manner.  In this case, you could extend one of the other data type persisters or the
+ORMLite also allows you to define data persisters for atypical or custom data types that are not handled at all by
+the internal classes.  When defining a data persister class from scratch, you could extend one of the other data type
+persisters or the @code{BaseDataType} class.  You will need to define the following methods.
 
+@enumerate
+@item @code{parseDefaultString} -- Converts a default string into a SQL argument suitable to be loaded into the database. 
+@item @code{resultToSqlArg} -- Uses the @code{DatabaseResults} object to get the right SQL argument type out of the
+results.
+@item @code{sqlArgToJava} -- Converts the SQL argument to the associated Java class. 
+@end enumerate
 
-You can also define your own data persister that stores 
-
-You specify the class like this:
-
-    @DatabaseField(persisterClass = MyDatePersister.class)
-    Date birthDate;
-
-Then your persister class might look like:
-
-	public class MyDatePersister extends com.j256.ormlite.field.types.DateType {
-		private static final MyDatePersister singleTon = new MyDatePersister();
-
-		private MyDatePersister() {
-			super(SqlType.DATE, new Class<?>[] { Date.class });
-		}
-
-		public static MyDatePersister getSingleton() {
-			return singleTon;
-		}
-	
-		@Override
-		public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-			Timestamp timestamp = results.getTimestamp(columnPos);
-			if (TODO: somehow test fo 0000-00-00 here) {
-				return null;
-			} else {
-				return timestamp;
-			}
-		}
-	}
-
-Hope this helps.
-
-  [1]: http://ormlite.com/
+Look at the other data
+types in @code{com.j256.ormlite.field.types} for other examples.  When you have defined your persister class, you can use
+it with the @code{persisterClass} construct above or you can register it with the
+@code{DataPersisterManager.registerPersisters(...)} method.  This will then automatically call your persister whenever a
+field with the associated class is configured.
   
+@example
+DataPersisterManager.registerDataPersisters(MyTypePersister.getSingleton());
+@end example
+
+You probably would not want to register the @code{MyDatePersister} above because you would not want to change the 
+persistence behavior for @emph{all} @code{Date} types.
+
 @c ----------------------------------------------------------------
 @node How to Upgrade, 4.30, Custom Persisters, Top
 @chapter Upgrade From Old Versions
