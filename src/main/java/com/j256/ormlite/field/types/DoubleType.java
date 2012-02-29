@@ -19,6 +19,10 @@ public class DoubleType extends DoubleObjectType {
 		super(SqlType.DOUBLE, new Class<?>[] { double.class });
 	}
 
+	protected DoubleType(SqlType sqlType, Class<?>[] classes) {
+		super(sqlType, classes);
+	}
+
 	@Override
 	public boolean isPrimitive() {
 		return true;

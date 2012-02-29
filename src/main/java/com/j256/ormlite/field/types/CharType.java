@@ -20,6 +20,10 @@ public class CharType extends CharacterObjectType {
 		super(SqlType.CHAR, new Class<?>[] { char.class });
 	}
 
+	protected CharType(SqlType sqlType, Class<?>[] classes) {
+		super(sqlType, classes);
+	}
+
 	@Override
 	public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
 		Character character = (Character) javaObject;

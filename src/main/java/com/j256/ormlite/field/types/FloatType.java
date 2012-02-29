@@ -19,6 +19,10 @@ public class FloatType extends FloatObjectType {
 		super(SqlType.FLOAT, new Class<?>[] { float.class });
 	}
 
+	protected FloatType(SqlType sqlType, Class<?>[] classes) {
+		super(sqlType, classes);
+	}
+
 	@Override
 	public boolean isPrimitive() {
 		return true;

@@ -27,6 +27,10 @@ public class UuidType extends BaseDataType {
 		super(SqlType.STRING, new Class<?>[] { UUID.class });
 	}
 
+	protected UuidType(SqlType sqlType, Class<?>[] classes) {
+		super(sqlType, classes);
+	}
+
 	@Override
 	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 		try {

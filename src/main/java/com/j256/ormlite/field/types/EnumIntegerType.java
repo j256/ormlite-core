@@ -26,6 +26,10 @@ public class EnumIntegerType extends BaseEnumType {
 		super(SqlType.INTEGER, new Class<?>[0]);
 	}
 
+	protected EnumIntegerType(SqlType sqlType, Class<?>[] classes) {
+		super(sqlType, classes);
+	}
+
 	@Override
 	public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 		return Integer.parseInt(defaultStr);

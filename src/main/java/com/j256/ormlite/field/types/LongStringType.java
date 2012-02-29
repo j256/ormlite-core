@@ -19,6 +19,10 @@ public class LongStringType extends StringType {
 		super(SqlType.LONG_STRING, new Class<?>[0]);
 	}
 
+	protected LongStringType(SqlType sqlType, Class<?>[] classes) {
+		super(sqlType, classes);
+	}
+
 	@Override
 	public boolean isAppropriateId() {
 		return false;

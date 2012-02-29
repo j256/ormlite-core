@@ -27,6 +27,10 @@ public class EnumStringType extends BaseEnumType {
 		super(SqlType.STRING, new Class<?>[] { Enum.class });
 	}
 
+	protected EnumStringType(SqlType sqlType, Class<?>[] classes) {
+		super(sqlType, classes);
+	}
+
 	@Override
 	public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 		return results.getString(columnPos);

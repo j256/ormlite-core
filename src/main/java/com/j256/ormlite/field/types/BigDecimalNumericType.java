@@ -27,6 +27,10 @@ public class BigDecimalNumericType extends BaseDataType {
 		super(SqlType.BIG_DECIMAL, new Class<?>[0]);
 	}
 
+	protected BigDecimalNumericType(SqlType sqlType, Class<?>[] classes) {
+		super(sqlType, classes);
+	}
+
 	@Override
 	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 		try {

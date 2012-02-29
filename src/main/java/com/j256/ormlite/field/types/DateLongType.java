@@ -29,6 +29,10 @@ public class DateLongType extends BaseDateType {
 		super(SqlType.LONG, new Class<?>[0]);
 	}
 
+	protected DateLongType(SqlType sqlType, Class<?>[] classes) {
+		super(sqlType, classes);
+	}
+
 	@Override
 	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 		try {

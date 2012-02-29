@@ -19,6 +19,10 @@ public class ByteType extends ByteObjectType {
 		super(SqlType.BYTE, new Class<?>[] { byte.class });
 	}
 
+	protected ByteType(SqlType sqlType, Class<?>[] classes) {
+		super(sqlType, classes);
+	}
+
 	@Override
 	public boolean isPrimitive() {
 		return true;

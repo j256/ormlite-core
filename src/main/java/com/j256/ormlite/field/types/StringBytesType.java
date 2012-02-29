@@ -27,6 +27,10 @@ public class StringBytesType extends BaseDataType {
 		super(SqlType.BYTE_ARRAY, new Class<?>[0]);
 	}
 
+	protected StringBytesType(SqlType sqlType, Class<?>[] classes) {
+		super(sqlType, classes);
+	}
+
 	@Override
 	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 		throw new SQLException("String bytes type cannot have default values");

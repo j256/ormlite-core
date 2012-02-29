@@ -3223,6 +3223,7 @@ manually.
 * Object Caches::              How to cache objects handled by ORMLite.
 * Maven::                      Configure a maven project for ORMLite.
 * Batch Operations::           Running batch operations.
+* Custom Persisters::          Defining custom data type persisters.
 @end menu
 
 @c ----------------------------------------------------------------
@@ -4096,7 +4097,7 @@ in automatically by maven.
 then just replace the @code{ormlite-jdbc} artifact name with @code{ormlite-android}.
 
 @c ----------------------------------------------------------------
-@node Batch Operations, How to Upgrade, Maven, Advanced
+@node Batch Operations, Custom Persisters, Maven, Advanced
 @section Running Batch Operations
 
 @cindex batch operations
@@ -4128,7 +4129,85 @@ to accomplish the same behavior.
 may do nothing.
 
 @c ----------------------------------------------------------------
-@node How to Upgrade, 4.30, Batch Operations, Top
+@node Custom Persisters, How to Upgrade, Batch Operations, Advanced
+@section Custom Data Type Persisters
+
+@cindex custom persisters
+@cindex custom data types
+@cindex storing custom data types
+@cindex overriding how data is stored
+
+ORMLite has internal definitions for storing the basic primitive and other common data types. @xref{Persisted Data Types}.
+Sometimes, however, you either want to store a new data type in your database or you want to change the way ORMLite
+stores values to the database for common types -- this often happens when you are trying to work with an existing schema.
+You can change how types are stored in the database by defining a class which implements the @code{DataPersister} interface.
+
+For example, you might have a @code{Date} field in an existing database that was not nullable but instead stored the date
+@code{0000-00-00} when there was no date.  You want ORMLite to return null if the 0 date was retrieved from the database.
+To implement a custom data persister to handle the @code{Date} type in this manner would probably override the
+@code{com.j256.ormlite.field.types.DateType} class and tweak the result-to-sql-argument method as follows:
+
+@example
+@@Override
+public Object resultToSqlArg(FieldType fieldType, DatabaseResults results,
+      int columnPos) throws SQLException @{
+   Timestamp timestamp = results.getTimestamp(columnPos);
+   if (TODO: somehow test fo 0000-00-00 here)
+      return null;
+   else
+      return timestamp;
+@}
+@end example
+
+The data persister example has a @code{MyDatePersister} class which does just that.  @xref{data persister example}.
+To use your persister class on a particular field in your objects, you would do something like this:
+
+@example
+@DatabaseField(persisterClass = MyDatePersister.class)
+Date birthDate;
+@end example
+
+ORMLite also allows you to define data persisters for atypical or custom data types.  @code{org.joda.time.DateTime} is a
+common field to stored in this manner.  In this case, you could extend one of the other data type persisters or the
+
+
+You can also define your own data persister that stores 
+
+You specify the class like this:
+
+    @DatabaseField(persisterClass = MyDatePersister.class)
+    Date birthDate;
+
+Then your persister class might look like:
+
+	public class MyDatePersister extends com.j256.ormlite.field.types.DateType {
+		private static final MyDatePersister singleTon = new MyDatePersister();
+
+		private MyDatePersister() {
+			super(SqlType.DATE, new Class<?>[] { Date.class });
+		}
+
+		public static MyDatePersister getSingleton() {
+			return singleTon;
+		}
+	
+		@Override
+		public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+			Timestamp timestamp = results.getTimestamp(columnPos);
+			if (TODO: somehow test fo 0000-00-00 here) {
+				return null;
+			} else {
+				return timestamp;
+			}
+		}
+	}
+
+Hope this helps.
+
+  [1]: http://ormlite.com/
+  
+@c ----------------------------------------------------------------
+@node How to Upgrade, 4.30, Custom Persisters, Top
 @chapter Upgrade From Old Versions
 
 @cindex upgrading from previous versions
@@ -4423,6 +4502,13 @@ source code in SVN}.
 
 To demonstrate how to use Spring wiring with ORMLite, this little program includes classes and XML configuration files.
 See the @uref{http://ormlite.com/docs/example-spring, source code in SVN}.
+
+@cindex data persister example
+@anchor{data persister example}
+@item Data persister
+
+This example shows how to define custome data persisters with ORMLite which can change how data types are stored in the
+database.  See the @uref{http://ormlite.com/docs/example-data-persister, source code in SVN}.
 
 @end table
 

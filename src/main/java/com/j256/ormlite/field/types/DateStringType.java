@@ -29,6 +29,10 @@ public class DateStringType extends BaseDateType {
 		super(SqlType.STRING, new Class<?>[0]);
 	}
 
+	protected DateStringType(SqlType sqlType, Class<?>[] classes) {
+		super(sqlType, classes);
+	}
+
 	@Override
 	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 		DateStringFormatConfig formatConfig = convertDateStringConfig(fieldType);

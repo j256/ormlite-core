@@ -57,6 +57,12 @@ public class DataPersisterManager {
 				if (persister.isValidForField(field)) {
 					return persister;
 				}
+				// check the classes instead
+				for (Class<?> clazz : persister.getAssociatedClasses()) {
+					if (field.getType() == clazz) {
+						return persister;
+					}
+				}
 			}
 		}
 

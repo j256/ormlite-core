@@ -23,8 +23,12 @@ public class BigIntegerType extends BaseDataType {
 		return singleTon;
 	}
 
-	private BigIntegerType() {
+	protected BigIntegerType() {
 		super(SqlType.STRING, new Class<?>[] { BigInteger.class });
+	}
+
+	protected BigIntegerType(SqlType sqlType, Class<?>[] classes) {
+		super(sqlType, classes);
 	}
 
 	@Override

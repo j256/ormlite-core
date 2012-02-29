@@ -10,11 +10,17 @@ import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
- * Base data type that defines the defaults the various data types.
+ * Base data type that defines the default persistance methods for the various data types.
  * 
  * <p>
  * Here's a good page about the <a href="http://docs.codehaus.org/display/CASTOR/Type+Mapping" >mapping for a number of
  * database types</a>:
+ * </p>
+ * 
+ * <p>
+ * <b>NOTE:</b> If you are creating your own custom database persister, you probably will need to override the
+ * {@link BaseFieldConverter#sqlArgToJava(FieldType, Object, int)} method as well which converts from a SQL data to
+ * java.
  * </p>
  * 
  * @author graywatson

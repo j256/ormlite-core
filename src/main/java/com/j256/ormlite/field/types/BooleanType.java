@@ -19,6 +19,10 @@ public class BooleanType extends BooleanObjectType {
 		super(SqlType.BOOLEAN, new Class<?>[] { boolean.class });
 	}
 
+	protected BooleanType(SqlType sqlType, Class<?>[] classes) {
+		super(sqlType, classes);
+	}
+
 	@Override
 	public boolean isPrimitive() {
 		return true;

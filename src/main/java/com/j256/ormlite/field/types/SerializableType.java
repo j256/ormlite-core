@@ -35,6 +35,10 @@ public class SerializableType extends BaseDataType {
 		super(SqlType.SERIALIZABLE, new Class<?>[0]);
 	}
 
+	protected SerializableType(SqlType sqlType, Class<?>[] classes) {
+		super(sqlType, classes);
+	}
+
 	@Override
 	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 		throw new SQLException("Default values for serializable types are not supported");

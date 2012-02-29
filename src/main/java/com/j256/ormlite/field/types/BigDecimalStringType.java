@@ -28,6 +28,10 @@ public class BigDecimalStringType extends BaseDataType {
 		super(SqlType.STRING, new Class<?>[] { BigDecimal.class });
 	}
 
+	protected BigDecimalStringType(SqlType sqlType, Class<?>[] classes) {
+		super(sqlType, classes);
+	}
+
 	@Override
 	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 		try {

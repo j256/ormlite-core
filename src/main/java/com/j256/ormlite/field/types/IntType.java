@@ -19,6 +19,10 @@ public class IntType extends IntegerObjectType {
 		super(SqlType.INTEGER, new Class<?>[] { int.class });
 	}
 
+	protected IntType(SqlType sqlType, Class<?>[] classes) {
+		super(sqlType, classes);
+	}
+
 	@Override
 	public boolean isPrimitive() {
 		return true;
