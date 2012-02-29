@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on February, 22 2012 by texi2html 1.70 -->
+<!-- Created on February, 29 2012 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -54,7 +54,7 @@ ul.toc {list-style: none}
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC69" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC70" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h1 class="chapter"> 3. Custom Statement Builder </h1>
@@ -95,7 +95,7 @@ object for the DAO with which you can construct custom queries to return a sub-s
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC69" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC70" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.1 Query Builder Basics </h2>
@@ -115,7 +115,7 @@ public class Account {
 <p>This allows us to construct queries using the password field name without having the renaming of a field in the future break
 our queries.  This should be done <em>even</em> if the name of the field and the column name are the same.
 
-</p><a name="IDX204"></a>
+</p><a name="IDX207"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">// get our query builder from the DAO
 QueryBuilder&lt;Account, String&gt; queryBuilder =
   accountDao.queryBuilder();
@@ -126,7 +126,7 @@ PreparedQuery&lt;Account&gt; preparedQuery = queryBuilder.prepare();
 // query for all accounts that have &quot;qwerty&quot; as a password
 List&lt;Account&gt; accountList = accountDao.query(preparedQuery);
 </pre></td></tr></table>
-<a name="IDX205"></a>
+<a name="IDX208"></a>
 <p>You get a <code>QueryBuilder</code> object from the <code>Dao.queryBuilder()</code> method, call methods on it to build your custom
 query, call <code>queryBuilder.prepare()</code> which returns a <code>PreparedQuery</code> object, and then pass the <code>PreparedQuery</code>
 to the DAO's <code>query</code> or <code>iterator</code> methods.
@@ -165,7 +165,7 @@ List&lt;Account&gt; accountList =
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC69" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC70" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.2 Building Queries </h2>
@@ -190,7 +190,7 @@ PreparedQuery&lt;Account&gt; preparedQuery = queryBuilder.prepare();
 </p><table><tr><td>&nbsp;</td><td><pre class="example">SELECT * FROM account
   WHERE (name = 'foo' AND password = '_secret')
 </pre></td></tr></table>
-<a name="IDX206"></a>
+<a name="IDX209"></a>
 <p>If you'd rather chain the methods onto one line (like StringBuilder), this can also be written as:
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">queryBuilder.where()
@@ -204,7 +204,7 @@ PreparedQuery&lt;Account&gt; preparedQuery = queryBuilder.prepare();
 where.and(where.eq(Account.NAME_FIELD_NAME, &quot;foo&quot;),
           where.eq(Account.PASSWORD_FIELD_NAME, &quot;_secret&quot;));
 </pre></td></tr></table>
-<a name="IDX207"></a>
+<a name="IDX210"></a>
 <p>All three of the above call formats produce the same SQL.  For complex queries that mix ANDs and ORs, the last
 format may be necessary to get the grouping correct.  For example, here's a complex query:
 
@@ -223,8 +223,8 @@ where.or(
   WHERE ((name = 'foo' AND password = '_secret')
          OR (name = 'bar' AND password = 'qwerty'))
 </pre></td></tr></table>
-<a name="IDX208"></a>
-<a name="IDX209"></a>
+<a name="IDX211"></a>
+<a name="IDX212"></a>
 <p>The <code>QueryBuilder</code> also allows you to set what specific select columns you want returned, specify the 'ORDER BY'
 and 'GROUP BY' fields, and various other SQL features (LIKE, IN, &gt;, &gt;=, &lt;, &lt;=, &lt;&gt;, IS NULL, DISTINCT, &hellip;).
 See section <a href="#SEC37">Where Capabilities</a>. You can also see the javadocs on <code>QueryBuilder</code> and <code>Where</code> classes for more
@@ -246,7 +246,7 @@ information.  Here's a <a href="http://www.w3schools.com/Sql/">good SQL referenc
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC69" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC70" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.3 Building Statements </h2>
@@ -303,7 +303,7 @@ accountDao.delete(deleteBuilder.prepare());
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC69" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC70" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.4 QueryBuilder Capabilities </h2>
@@ -317,7 +317,7 @@ be chained.
 
 </p><dl compact="compact">
 <dd>
-<a name="IDX210"></a>
+<a name="IDX213"></a>
 </dd>
 <dt><code> distinct()</code></dt>
 <dd>
@@ -326,7 +326,7 @@ be chained.
 </p><p><em>NOTE:</em> Use of this means that the resulting objects may not have a valid ID column value so cannot be deleted
 or updated.
 
-</p><a name="IDX211"></a>
+</p><a name="IDX214"></a>
 </dd>
 <dt><code> groupBy(String columnName) </code></dt>
 <dd>
@@ -336,14 +336,14 @@ times to group by multiple columns.
 </p><p><em>NOTE:</em> Use of this means that the resulting objects may not have a valid ID column value so cannot be deleted
 or updated.
 
-</p><a name="IDX212"></a>
+</p><a name="IDX215"></a>
 </dd>
 <dt><code> groupByRaw(String sql)</code></dt>
 <dd>
 <p>Add a raw SQL &quot;GROUP BY&quot; clause to the SQL query statement. This allows you to group by things that are not just column
 names.  The SQL argument should not include the &quot;GROUP BY&quot; string.
 
-</p><a name="IDX213"></a>
+</p><a name="IDX216"></a>
 </dd>
 <dt><code> having(String sql)</code></dt>
 <dd>
@@ -351,13 +351,13 @@ names.  The SQL argument should not include the &quot;GROUP BY&quot; string.
 matching has been completed.  This is usually done with aggregate functions.  The SQL argument should not include the
 &quot;HAVING&quot; string.
 
-</p><a name="IDX214"></a>
+</p><a name="IDX217"></a>
 </dd>
 <dt><code> limit(Integer maxRows)</code></dt>
 <dd>
 <p>Limit the output to maxRows maximum number of rows. Set to null for no limit (the default).
 
-</p><a name="IDX215"></a>
+</p><a name="IDX218"></a>
 </dd>
 <dt><code> offset(Integer startRow)</code></dt>
 <dd>
@@ -368,21 +368,21 @@ Otherwise, if you are paging you probably want to specify a column to <code>orde
 </p><p><em>NOTE:</em> This is not supported for all databases. Also, for some databases, the limit <em>must</em> also be
 specified since the offset is an argument of the limit.
 
-</p><a name="IDX216"></a>
+</p><a name="IDX219"></a>
 </dd>
 <dt><code> orderBy(String columnName, boolean ascending)</code></dt>
 <dd>
 <p>Add &quot;ORDER BY&quot; clause to the SQL query statement to order the results by the specified column name.  Use the ascending
 boolean to get a ascending or descending order.  This can be called multiple times to group by multiple columns.
 
-</p><a name="IDX217"></a>
+</p><a name="IDX220"></a>
 </dd>
 <dt><code> orderByRaw(String sql)</code></dt>
 <dd>
 <p>Add a raw SQL &quot;ORDER BY&quot; clause to the SQL query statement. This allows you to order by things that are not just columns
 but can include calculations.  The SQL argument should not include the &quot;ORDER BY&quot; string.
 
-</p><a name="IDX218"></a>
+</p><a name="IDX221"></a>
 </dd>
 <dt><code> prepare()</code></dt>
 <dd>
@@ -391,12 +391,12 @@ but can include calculations.  The SQL argument should not include the &quot;ORD
 to re-call this method to re-prepare the statement for execution.
 
 </p><p><a name="ANC30"></a>
-<a name="IDX219"></a>
+<a name="IDX222"></a>
 </p></dd>
 <dt><code> selectColumns(String... columns)</code></dt>
 <dd>
-<a name="IDX220"></a>
-<a name="IDX221"></a>
+<a name="IDX223"></a>
+<a name="IDX224"></a>
 <p>Add columns to be returned by the SELECT query and set on any resulting objects. If no columns are selected then
 all columns are returned by default. For classes with id columns, the id column is added to the select list
 automagically.  All fields not selected in the object with be their default values (null, 0, false, etc.).  
@@ -414,17 +414,17 @@ want to access.  To get all of the fields on the object later, you can either do
 <dd>
 <p>Same as the above but with an iterable (such as a collection) instead of a variable list of column names.
 
-</p><a name="IDX222"></a>
-<a name="IDX223"></a>
-<a name="IDX224"></a>
-<a name="IDX225"></a>
+</p><a name="IDX225"></a>
+<a name="IDX226"></a>
+<a name="IDX227"></a>
+<a name="IDX228"></a>
 </dd>
 <dt><code> rawColumns(String... columns)</code></dt>
 <dd>
 <p>Add raw columns or aggregate functions (COUNT, MAX, ...) to the query. This will turn the query into something
 only suitable for using as a raw query.  See section <a href="ormlite_2.html#SEC26">Issuing Raw Queries</a>.
 
-</p><a name="IDX226"></a>
+</p><a name="IDX229"></a>
 </dd>
 <dt><code> where()</code></dt>
 <dd>
@@ -476,7 +476,7 @@ Same as <code>Dao.queryRaw(String)</code> and <code>GenericRawResults.getFirstRe
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC69" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC70" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.5 Where Capabilities </h2>
@@ -489,14 +489,14 @@ about the available methods.  All of the methods return the <code>Where</code> o
 
 </p><dl compact="compact">
 <dd>
-<a name="IDX227"></a>
+<a name="IDX230"></a>
 </dd>
 <dt><code> and()</code></dt>
 <dd>
 <p>Binary <code>AND</code> operation which takes the previous clause and the next clause and AND's them together.  This is when
 you are using inline query calls.
 
-</p><a name="IDX228"></a>
+</p><a name="IDX231"></a>
 </dd>
 <dt><code> and(Where&lt;T, ID&gt; first, Where&lt;T, ID&gt; second, Where&lt;T, ID&gt;... others)</code></dt>
 <dd>
@@ -517,20 +517,20 @@ previous clauses so the programmer has to count precisely.
 
 </p><p><em>NOTE:</em> There is no guarantee of the order of the clauses that are generated in the final query.
 
-</p><a name="IDX229"></a>
+</p><a name="IDX232"></a>
 </dd>
 <dt><code> between(String columnName, Object low, Object high)</code></dt>
 <dd>
 <p>Add a BETWEEN clause which makes sure the column is between the low and high parameters.
 
-</p><a name="IDX230"></a>
-<a name="IDX231"></a>
+</p><a name="IDX233"></a>
+<a name="IDX234"></a>
 </dd>
 <dt><code> eq(String columnName, Object value)</code></dt>
 <dd>
 <p>Add a '=' clause which makes sure the column is equal to the value.
 
-</p><a name="IDX232"></a>
+</p><a name="IDX235"></a>
 </dd>
 <dt><code> exists(QueryBuilder&lt;?, ?&gt; subQueryBuilder)</code></dt>
 <dd>
@@ -539,17 +539,17 @@ results.
 
 </p><p><em>NOTE:</em> The sub-query will be prepared at the same time that the outside query is.
 
-</p><a name="IDX233"></a>
-<a name="IDX234"></a>
-<a name="IDX235"></a>
+</p><a name="IDX236"></a>
+<a name="IDX237"></a>
+<a name="IDX238"></a>
 </dd>
 <dt><code> ge(String columnName, Object value)</code></dt>
 <dd>
 <p>Add a '&gt;=' clause which makes sure the column is greater-than or equals-to the value.
 
-</p><a name="IDX236"></a>
-<a name="IDX237"></a>
-<a name="IDX238"></a>
+</p><a name="IDX239"></a>
+<a name="IDX240"></a>
+<a name="IDX241"></a>
 </dd>
 <dt><code> gt(String columnName, Object value)</code></dt>
 <dd>
@@ -565,22 +565,22 @@ results.
 <dd>
 <p>Add a clause where the ID is extracted from an existing object.
 
-</p><a name="IDX239"></a>
+</p><a name="IDX242"></a>
 </dd>
 <dt><code> in(String columnName, Iterable&lt;?&gt; objects)</code></dt>
 <dd>
 <p>Add a IN clause which makes sure the column is equal-to one of the objects from the <code>Iterable</code> passed in.  Most likely the
 <code>Iterable</code> should probably be on of the <code>Collection</code> classes such as a <code>List</code> or <code>Set</code>.
 
-</p><a name="IDX240"></a>
+</p><a name="IDX243"></a>
 </dd>
 <dt><code> in(String columnName, Object... objects)</code></dt>
 <dd>
 <p>Add a IN clause which makes sure the column is equal-to one of the objects passed in.
 
-</p><a name="IDX241"></a>
-<a name="IDX242"></a>
-<a name="IDX243"></a>
+</p><a name="IDX244"></a>
+<a name="IDX245"></a>
+<a name="IDX246"></a>
 </dd>
 <dt><code> in(String columnName, QueryBuilder&lt;?, ?&gt; subQueryBuilder)</code></dt>
 <dd>
@@ -590,52 +590,52 @@ method calls. That 1 argument must match the SQL type of the column-name passed 
 
 </p><p><em>NOTE:</em> The sub-query will be prepared at the same time that the outside query is.
 
-</p><a name="IDX244"></a>
-<a name="IDX245"></a>
+</p><a name="IDX247"></a>
+<a name="IDX248"></a>
 </dd>
 <dt><code> isNull(String columnName)</code></dt>
 <dd>
 <p>Add a 'IS NULL' clause which makes sure the column's value is null. '=' NULL does not work.
 
-</p><a name="IDX246"></a>
-<a name="IDX247"></a>
+</p><a name="IDX249"></a>
+<a name="IDX250"></a>
 </dd>
 <dt><code> isNotNull(String columnName)</code></dt>
 <dd>
 <p>Add a 'IS NOT NULL' clause so the column must not be null. '&lt;&gt;' NULL does not work.
 
-</p><a name="IDX248"></a>
-<a name="IDX249"></a>
-<a name="IDX250"></a>
+</p><a name="IDX251"></a>
+<a name="IDX252"></a>
+<a name="IDX253"></a>
 </dd>
 <dt><code> le(String columnName, Object value)</code></dt>
 <dd>
 <p>Add a '&lt;=' clause which makes sure the column is less-than or equals-to the value.
 
-</p><a name="IDX251"></a>
-<a name="IDX252"></a>
-<a name="IDX253"></a>
+</p><a name="IDX254"></a>
+<a name="IDX255"></a>
+<a name="IDX256"></a>
 </dd>
 <dt><code> lt(String columnName, Object value)</code></dt>
 <dd>
 <p>Add a '&lt;' clause which makes sure the column is less-than the value.
 
-</p><a name="IDX254"></a>
+</p><a name="IDX257"></a>
 </dd>
 <dt><code> like(String columnName, Object value)</code></dt>
 <dd>
 <p>Add a LIKE clause which makes sure the column match the value using '%' patterns.
 
-</p><a name="IDX255"></a>
-<a name="IDX256"></a>
-<a name="IDX257"></a>
-<a name="IDX258"></a>
+</p><a name="IDX258"></a>
+<a name="IDX259"></a>
+<a name="IDX260"></a>
+<a name="IDX261"></a>
 </dd>
 <dt><code> ne(String columnName, Object value)</code></dt>
 <dd>
 <p>Add a '&lt;&gt;' clause which makes sure the column is not-equal-to the value.
 
-</p><a name="IDX259"></a>
+</p><a name="IDX262"></a>
 </dd>
 <dt><code> not()</code></dt>
 <dd>
@@ -647,25 +647,25 @@ method calls. That 1 argument must match the SQL type of the column-name passed 
 <p>Used to NOT the argument clause specified.  This is when you are <em>not</em> using inline
 query calls but instead want to use standard arguments.
 
-</p><a name="IDX260"></a>
+</p><a name="IDX263"></a>
 </dd>
 <dt><code> notIn(String columnName, Iterable&lt;?&gt; objects)</code></dt>
 <dd>
 <p>Same as the IN clause but negated.  Results are returned that are not in the objects from the iterator.
 
-</p><a name="IDX261"></a>
+</p><a name="IDX264"></a>
 </dd>
 <dt><code> in(String columnName, Object... objects)</code></dt>
 <dd>
 <p>Same as IN clause but negated.  Results are returned that are not in the variable array of objects.
 
-</p><a name="IDX262"></a>
+</p><a name="IDX265"></a>
 </dd>
 <dt><code> in(String columnName, QueryBuilder&lt;?, ?&gt; subQueryBuilder)</code></dt>
 <dd>
 <p>Same as IN clause but negated.  Results are returned that are not in the results fromt the sub-query.
 
-</p><a name="IDX263"></a>
+</p><a name="IDX266"></a>
 </dd>
 <dt><code> or()</code></dt>
 <dd>
@@ -690,7 +690,7 @@ be ignored.
 calls to <code>Where.eq()</code> or other methods and will string them together with OR's. There is no way to verify the number of
 previous clauses so the programmer has to count precisely.
 
-</p><a name="IDX264"></a>
+</p><a name="IDX267"></a>
 </dd>
 <dt><code> raw(String rawStatement)</code></dt>
 <dd>
@@ -704,7 +704,7 @@ database specific features.
 <p>A short-cut for calling <code>prepare()</code> on the original <code>QueryBuilder.prepare()</code>.  This method returns a
 <code>PreparedQuery</code> object.
 
-</p><a name="IDX265"></a>
+</p><a name="IDX268"></a>
 </dd>
 <dt><code> clear()</code></dt>
 <dd>
@@ -741,7 +741,7 @@ database specific features.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC69" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC70" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.6 Using Select Arguments </h2>
@@ -769,10 +769,10 @@ List&lt;Account&gt; accounts = accountDao.query(preparedQuery);
 selectArg.setValue(&quot;bar&quot;);
 accounts = accountDao.query(preparedQuery);
 </pre></td></tr></table>
-<a name="IDX266"></a>
-<a name="IDX267"></a>
-<a name="IDX268"></a>
 <a name="IDX269"></a>
+<a name="IDX270"></a>
+<a name="IDX271"></a>
+<a name="IDX272"></a>
 <p>It is a common problem for people to try to build queries or other statements with arguments that contain quote characters.
 These quotes can clash with the auto-generated SQL and result in syntax errors.  In these cases a <code>SelectArg</code> is required.
 In addition, if you are passing in arguments from user-input, you can use <code>SelectArg</code> to protect yourself from SQL
@@ -793,12 +793,12 @@ a new object if you want to use a <code>SelectArg</code> with another column.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC69" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC70" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>February, 22 2012</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>February, 29 2012</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 

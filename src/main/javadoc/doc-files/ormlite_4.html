@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on February, 22 2012 by texi2html 1.70 -->
+<!-- Created on February, 29 2012 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -54,7 +54,7 @@ ul.toc {list-style: none}
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC69" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC70" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h1 class="chapter"> 4. Using With Android </h1>
@@ -89,7 +89,7 @@ ul.toc {list-style: none}
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC69" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC70" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 4.1 Android Basics </h2>
@@ -123,7 +123,7 @@ classes.  An easy way to use the <code>OpenHelperManager</code> is to extend <co
 activity classes - there is also <code>OrmLiteBaseListActivity</code>, <code>OrmLiteBaseService</code>, and <code>OrmLiteBaseTabActivity</code>.
 These classes provide a <code>helper</code> protected field and a <code>getHelper()</code> method to access the database helper whenever it
 is needed and will automatically create the helper in the <code>onCreate()</code> method and release it in the <code>onDestroy()</code>
-method.  See the sample <code>HelloAndroid</code> activity class in the examples.  See section <a href="ormlite_7.html#SEC66">Android Examples</a>.
+method.  See the sample <code>HelloAndroid</code> activity class in the examples.  See section <a href="ormlite_7.html#SEC67">Android Examples</a>.
 
 </p></li><li><p> If you do not want to extend the <code>OrmLiteBaseActivity</code> and other base classes then you will need to duplicate their
 functionality.  You will need to call <code>OpenHelperManager.getHelper(Context context, Class openHelperClass)</code> at the start of
@@ -149,8 +149,8 @@ private DBHelper getHelper() {
     return databaseHelper;
 }
 </pre></td></tr></table>
-<a name="IDX270"></a>
-<a name="IDX271"></a>
+<a name="IDX273"></a>
+<a name="IDX274"></a>
 <p><a name="ANC31"></a>
 </p></li><li><p> By default, if you are using <code>OrmLiteBaseActivity</code> or other base classes, the <code>OpenHelperManager</code> will detect the
 database helper class through reflection.  Another way to wire in the appropriate database helper class is to set the full class
@@ -165,7 +165,7 @@ get exceptions.
 
 </p></li></ol>
 
-<p>Please see the example code documentation for more information.  See section <a href="ormlite_7.html#SEC66">Android Examples</a>.  Again, feedback on this is welcome.
+<p>Please see the example code documentation for more information.  See section <a href="ormlite_7.html#SEC67">Android Examples</a>.  Again, feedback on this is welcome.
 
 </p><hr size="6">
 <a name="NOD42"></a>
@@ -183,7 +183,7 @@ get exceptions.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC69" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC70" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 4.2 Using Table Config File </h2>
@@ -302,7 +302,7 @@ see log entries like the following:
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC69" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC70" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 4.3 Android Logging </h2>
@@ -360,7 +360,7 @@ D/BaseMappedStatement(  465): assigned id '9' from keyholder to 'id' in
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC69" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC70" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 4.4 Runtime Versus SQL Exceptions </h2>
@@ -399,7 +399,7 @@ RuntimeExceptionDao&lt;Account, String&gt; accountDao =
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC69" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC70" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 4.5 Upgrading Your Schema </h2>
@@ -418,7 +418,7 @@ that extends the following method from the <code>OrmLiteSqliteOpenHelper</code>.
 // change the table to add a new column named &quot;age&quot; 
 dao.executeRaw(&quot;ALTER TABLE `account` ADD COLUMN age INTEGER;&quot;);
 </pre></td></tr></table>
-<a name="IDX272"></a>
+<a name="IDX275"></a>
 <p>Here's more information about <a href="http://www.sqlite.org/lang_altertable.html">SQLite's ALTER TABLE</a>.
 In SQLite, all you can do is rename a table name and add a new column.  You can't rename or remove a column or change the constraints.
 Remember that SQLite is typeless so changing the type of a column doesn't matter.
@@ -453,12 +453,12 @@ manually.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC69" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC70" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>February, 22 2012</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>February, 29 2012</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 
