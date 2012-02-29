@@ -258,7 +258,7 @@ public class DaoManager {
 	}
 
 	/**
-	 * Clear out the cache.  This is mostly used for testing purposes.
+	 * Clear out the cache. This is mostly used for testing purposes.
 	 */
 	public static synchronized void clearCache() {
 		if (configMap != null) {
