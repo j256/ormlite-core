@@ -279,7 +279,7 @@ public class DaoManager {
 	 * This adds database table configurations to the internal cache which can be used to speed up DAO construction.
 	 * This is especially true of Android and other mobile platforms.
 	 */
-	public static void addCachedDatabaseConfigs(Collection<DatabaseTableConfig<?>> configs) {
+	public static synchronized void addCachedDatabaseConfigs(Collection<DatabaseTableConfig<?>> configs) {
 		Map<Class<?>, DatabaseTableConfig<?>> newMap;
 		if (configMap == null) {
 			newMap = new HashMap<Class<?>, DatabaseTableConfig<?>>();

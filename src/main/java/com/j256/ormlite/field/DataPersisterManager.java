@@ -19,8 +19,21 @@ public class DataPersisterManager {
 
 	private static final DataPersister DEFAULT_ENUM_PERSISTER = EnumStringType.getSingleton();
 
-	private static Map<Class<?>, DataPersister> builtInMap = null;
+	private static final Map<Class<?>, DataPersister> builtInMap;
 	private static List<DataPersister> registeredPersisters = null;
+
+	static {
+		// add our built-in persisters
+		builtInMap = new HashMap<Class<?>, DataPersister>();
+		for (DataType dataType : DataType.values()) {
+			DataPersister persister = dataType.getDataPersister();
+			if (persister != null) {
+				for (Class<?> clazz : persister.getAssociatedClasses()) {
+					builtInMap.put(clazz, persister);
+				}
+			}
+		}
+	}
 
 	/**
 	 * Register a data type with the manager.
@@ -64,20 +77,6 @@ public class DataPersisterManager {
 					}
 				}
 			}
-		}
-
-		if (builtInMap == null) {
-			// add our built-in persisters the first time around if necessary
-			HashMap<Class<?>, DataPersister> newMap = new HashMap<Class<?>, DataPersister>();
-			for (DataType dataType : DataType.values()) {
-				DataPersister persister = dataType.getDataPersister();
-				if (persister != null) {
-					for (Class<?> clazz : persister.getAssociatedClasses()) {
-						newMap.put(clazz, persister);
-					}
-				}
-			}
-			builtInMap = newMap;
 		}
 
 		// look it up in our built-in map by class

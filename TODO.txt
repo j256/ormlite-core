@@ -25,6 +25,18 @@
 	- foreign key constraint can be in addition to (or required for) the foreign=true
 	- is this handled by the columnDefinition?
 
+- look into migrating the foreign collections to use AbstractCollection as a simplification
+	- how about AbstractSet?
+
+- there are a number of places in StatementExecutor where we do this:
+		if (mappedQueryForId == null) {
+			mappedQueryForId = MappedQueryForId.build(databaseType, tableInfo, null);
+		}
+		- this is the classic initialization out of order race condition with multiple threads using the DAO
+		- maybe just bite the bullet and do the initialization at the start
+		- or maybe give users a DAO call to do all of the builds at once
+		- i do wonder if aggressive refactoring can get rid of a lot of the custom statements
+
 - fix ignored tests inside of ForeignCollectionTest
 
 - TableUtils from JC:

@@ -28,6 +28,14 @@ public class LruObjectCache implements ObjectCache {
 		this.capacity = capacity;
 	}
 
+	public synchronized <T> void registerClass(Class<T> clazz) {
+		Map<Object, Object> objectMap = classMaps.get(clazz);
+		if (objectMap == null) {
+			objectMap = Collections.synchronizedMap(new LimitedLinkedHashMap<Object, Object>(capacity));
+			classMaps.put(clazz, objectMap);
+		}
+	}
+
 	public <T, ID> T get(Class<T> clazz, ID id) {
 		Map<Object, Object> objectMap = getMapForClass(clazz);
 		Object obj = objectMap.get(id);
@@ -85,10 +93,11 @@ public class LruObjectCache implements ObjectCache {
 	private Map<Object, Object> getMapForClass(Class<?> clazz) {
 		Map<Object, Object> objectMap = classMaps.get(clazz);
 		if (objectMap == null) {
-			objectMap = Collections.synchronizedMap(new LimitedLinkedHashMap<Object, Object>(capacity));
-			classMaps.put(clazz, objectMap);
+			// NOTE: we don't do the new Map here because of reordered constructor race conditions
+			throw new IllegalStateException("Class " + clazz + " was not registered in this cache");
+		} else {
+			return objectMap;
 		}
-		return objectMap;
 	}
 
 	/**

@@ -44,6 +44,14 @@ public class ReferenceObjectCache implements ObjectCache {
 		return new ReferenceObjectCache(false);
 	}
 
+	public synchronized <T> void registerClass(Class<T> clazz) {
+		Map<Object, Reference<Object>> objectMap = classMaps.get(clazz);
+		if (objectMap == null) {
+			objectMap = new ConcurrentHashMap<Object, Reference<Object>>();
+			classMaps.put(clazz, objectMap);
+		}
+	}
+
 	public <T, ID> T get(Class<T> clazz, ID id) {
 		Map<Object, Reference<Object>> objectMap = getMapForClass(clazz);
 		Reference<Object> ref = objectMap.get(id);
@@ -140,9 +148,10 @@ public class ReferenceObjectCache implements ObjectCache {
 	private Map<Object, Reference<Object>> getMapForClass(Class<?> clazz) {
 		Map<Object, Reference<Object>> objectMap = classMaps.get(clazz);
 		if (objectMap == null) {
-			objectMap = new ConcurrentHashMap<Object, Reference<Object>>();
-			classMaps.put(clazz, objectMap);
+			// NOTE: we don't do the new Map here because of reordered constructor race conditions
+			throw new IllegalStateException("Class " + clazz + " was not registered in this cache");
+		} else {
+			return objectMap;
 		}
-		return objectMap;
 	}
 }

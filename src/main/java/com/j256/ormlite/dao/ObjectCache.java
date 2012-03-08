@@ -13,6 +13,12 @@ package com.j256.ormlite.dao;
 public interface ObjectCache {
 
 	/**
+	 * Register a class for use with this class. This will be called before any other method for the particular class is
+	 * called.
+	 */
+	public <T> void registerClass(Class<T> clazz);
+
+	/**
 	 * Lookup in the cache for an object of a certain class that has a certain id.
 	 * 
 	 * @return The found object or null if none.
