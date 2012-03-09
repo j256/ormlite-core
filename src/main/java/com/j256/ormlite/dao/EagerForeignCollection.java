@@ -226,6 +226,22 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 		super.clear();
 	}
 
+	public int updateAll() throws SQLException {
+		int updatedC = 0;
+		for (T data : results) {
+			updatedC += dao.update(data);
+		}
+		return updatedC;
+	}
+
+	public int refreshAll() throws SQLException {
+		int updatedC = 0;
+		for (T data : results) {
+			updatedC += dao.refresh(data);
+		}
+		return updatedC;
+	}
+
 	/**
 	 * This is just a call to the equals method of the internal results list.
 	 */

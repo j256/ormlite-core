@@ -3,6 +3,8 @@
 	* CORE: Added update() and refresh() to ForeignCollection which call through to the inner Dao.
 	* CORE: Improved the custom data persister code so it can extend one of the types.  Added docs and example.
 	* CORE: Added a Joda DateTime persister which uses reflection.  You have to specify the dataType=DataType.DATE_TIME.
+	* CORE: Increased synchronization around some code to be proactive about constructor reordering race-conditions.
+	* CORE: Added updateAll() and refreshAll() for eager foreign collections.  Thanks to Chris Nevill.
 
 4.35: 2/22/2012 (svn r2337)
 	* CORE: Fixed bug where not all queried objects were added to cache. Thanks to Filipe Leandro. Fixes bug #3491418.

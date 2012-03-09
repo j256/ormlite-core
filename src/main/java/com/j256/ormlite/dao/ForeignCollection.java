@@ -72,8 +72,18 @@ public interface ForeignCollection<T> extends Collection<T>, CloseableIterable<T
 	public int update(T obj) throws SQLException;
 
 	/**
+	 * Update all of the items in the collection with the database. This is only applicable for eager collections.
+	 */
+	public int updateAll() throws SQLException;
+
+	/**
 	 * This is a call through to {@link Dao#refresh(Object)} using the internal collection DAO. Objects inside of the
 	 * collection are not refreshed if the parent object is refreshed so you will need to so that by hand.
 	 */
 	public int refresh(T obj) throws SQLException;
+
+	/**
+	 * Refresh all of the items in the collection with the database. This is only applicable for eager collections.
+	 */
+	public int refreshAll() throws SQLException;
 }

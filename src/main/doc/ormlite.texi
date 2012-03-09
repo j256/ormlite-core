@@ -2154,7 +2154,7 @@ collection.
 @end table
 
 Remember that when you have a @code{ForeignCollection} field, the class in the collection @emph{must} (in this example Order) must
-gave a foreign field for the class that has the collection (in this example Account).  If Account has a foreign collection of Orders,
+have a foreign field for the class that has the collection (in this example Account).  If Account has a foreign collection of Orders,
 then Order must have an Account foreign field.  It is required so ORMLite can find the orders that match a particular account.   
 
 @emph{WARNING:} With lazy collections, even the @code{size()} method causes a iteration across the database.  You'll most likely want
@@ -2168,7 +2168,20 @@ The foreign collections support the @code{add()} and @code{remove()} methods in 
 from the internal list if the collection is eager, and DAO calls will be made to affect the order table as well for both eager and
 lazy collections.
 
-There is example code to show how to use foreign collections.  @xref{foreign collections example}.
+@emph{NOTE:} When you call @code{update} on an object with a foreign collection (like @code{Account} above) the objects that are
+stored in the collection are @emph{not} automatically written to the database as well.  There is no way for ORMLite to be able to
+detect which of the objects has been updated unfortunately.  If you update an object in the collection you should call the
+@code{update(data)} method on the @code{ForeignCollection} to make sure that the object is persisted.  For example:
+
+@example
+for (Order order : account.orders()) {
+   // if we are changing some field in the order
+   order.setAmount(123);
+   // then we need to update it in the database
+   account.orders.update(order);
+@end example
+
+Lastly, there is example code to show how to use foreign collections.  @xref{foreign collections example}.
 
 @c ----------------------------------------------------------------
 @node DAO Enabled Objects, Statement Builder, Foreign Collection, Using
@@ -4501,10 +4514,11 @@ To demonstrate how to use Spring wiring with ORMLite, this little program includ
 See the @uref{http://ormlite.com/docs/example-spring, source code in SVN}.
 
 @cindex data persister example
+@cindex custom data persister example
 @anchor{data persister example}
 @item Data persister
 
-This example shows how to define custome data persisters with ORMLite which can change how data types are stored in the
+This example shows how to define custom data persisters with ORMLite which can change how data types are stored in the
 database.  See the @uref{http://ormlite.com/docs/example-data-persister, source code in SVN}.
 
 @end table
