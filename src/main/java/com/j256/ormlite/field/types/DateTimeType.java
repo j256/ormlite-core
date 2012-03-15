@@ -81,6 +81,16 @@ public class DateTimeType extends BaseDataType {
 		}
 	}
 
+	@Override
+	public boolean isEscapedValue() {
+		return false;
+	}
+
+	@Override
+	public boolean isAppropriateId() {
+		return false;
+	}
+
 	private Method getMillisMethod() throws Exception {
 		if (getMillisMethod == null) {
 			Class<?> clazz = getDateTimeClass();
@@ -103,5 +113,4 @@ public class DateTimeType extends BaseDataType {
 		}
 		return dateTimeClass;
 	}
-
 }
