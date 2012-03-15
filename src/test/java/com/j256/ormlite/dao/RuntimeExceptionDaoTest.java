@@ -89,7 +89,7 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 				continue;
 			}
 			// skip these
-			if (runtimeMethod.getName().equals("createDao")) {
+			if (runtimeMethod.getName().equals("createDao") || runtimeMethod.getName().equals("logMessage")) {
 				continue;
 			}
 			System.err.println("Unknown RuntimeExceptionDao method: " + runtimeMethod);
