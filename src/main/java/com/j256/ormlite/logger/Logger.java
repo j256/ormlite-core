@@ -31,87 +31,101 @@ public class Logger {
 	 * Log a trace message.
 	 */
 	public void trace(String msg, Object... args) {
-		log(Level.TRACE, null, msg, args);
+		innerLog(Level.TRACE, null, msg, args);
 	}
 
 	/**
 	 * Log a trace message with a throwable.
 	 */
 	public void trace(Throwable throwable, String msg, Object... args) {
-		log(Level.TRACE, throwable, msg, args);
+		innerLog(Level.TRACE, throwable, msg, args);
 	}
 
 	/**
 	 * Log a debug message.
 	 */
 	public void debug(String msg, Object... args) {
-		log(Level.DEBUG, null, msg, args);
+		innerLog(Level.DEBUG, null, msg, args);
 	}
 
 	/**
 	 * Log a debug message with a throwable.
 	 */
 	public void debug(Throwable throwable, String msg, Object... args) {
-		log(Level.DEBUG, throwable, msg, args);
+		innerLog(Level.DEBUG, throwable, msg, args);
 	}
 
 	/**
 	 * Log a info message.
 	 */
 	public void info(String msg, Object... args) {
-		log(Level.INFO, null, msg, args);
+		innerLog(Level.INFO, null, msg, args);
 	}
 
 	/**
 	 * Log a info message with a throwable.
 	 */
 	public void info(Throwable throwable, String msg, Object... args) {
-		log(Level.INFO, throwable, msg, args);
+		innerLog(Level.INFO, throwable, msg, args);
 	}
 
 	/**
 	 * Log a warning message.
 	 */
 	public void warn(String msg, Object... args) {
-		log(Level.WARNING, null, msg, args);
+		innerLog(Level.WARNING, null, msg, args);
 	}
 
 	/**
 	 * Log a warning message with a throwable.
 	 */
 	public void warn(Throwable throwable, String msg, Object... args) {
-		log(Level.WARNING, throwable, msg, args);
+		innerLog(Level.WARNING, throwable, msg, args);
 	}
 
 	/**
 	 * Log a error message.
 	 */
 	public void error(String msg, Object... args) {
-		log(Level.ERROR, null, msg, args);
+		innerLog(Level.ERROR, null, msg, args);
 	}
 
 	/**
 	 * Log a error message with a throwable.
 	 */
 	public void error(Throwable throwable, String msg, Object... args) {
-		log(Level.ERROR, throwable, msg, args);
+		innerLog(Level.ERROR, throwable, msg, args);
 	}
 
 	/**
 	 * Log a fatal message.
 	 */
 	public void fatal(String msg, Object... args) {
-		log(Level.FATAL, null, msg, args);
+		innerLog(Level.FATAL, null, msg, args);
 	}
 
 	/**
 	 * Log a fatal message with a throwable.
 	 */
 	public void fatal(Throwable throwable, String msg, Object... args) {
-		log(Level.FATAL, throwable, msg, args);
+		innerLog(Level.FATAL, throwable, msg, args);
 	}
 
-	private void log(Level level, Throwable throwable, String msg, Object[] args) {
+	/**
+	 * Log a message at the provided level.
+	 */
+	public void log(Level level, String msg, Object... args) {
+		innerLog(level, null, msg, args);
+	}
+
+	/**
+	 * Log a message with a throwable at the provided level.
+	 */
+	public void log(Level level, Throwable throwable, String msg, Object... args) {
+		innerLog(level, throwable, msg, args);
+	}
+
+	private void innerLog(Level level, Throwable throwable, String msg, Object[] args) {
 		if (log.isLevelEnabled(level)) {
 			String fullMsg = buildFullMessage(msg, args);
 			if (throwable == null) {

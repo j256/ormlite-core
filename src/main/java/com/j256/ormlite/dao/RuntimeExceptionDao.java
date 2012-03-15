@@ -9,6 +9,9 @@ import java.util.concurrent.Callable;
 import com.j256.ormlite.dao.Dao.CreateOrUpdateStatus;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.logger.Logger;
+import com.j256.ormlite.logger.LoggerFactory;
+import com.j256.ormlite.logger.Log.Level;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.stmt.PreparedDelete;
@@ -36,7 +39,14 @@ import com.j256.ormlite.table.DatabaseTableConfig;
  */
 public class RuntimeExceptionDao<T, ID> {
 
+	/*
+	 * We use debug here because we don't want these messages to be logged by default. The user will need to turn on
+	 * logging for this class to DEBUG to see the messages.
+	 */
+	private static final Level LOG_LEVEL = Level.DEBUG;
+
 	private Dao<T, ID> dao;
+	private static final Logger logger = LoggerFactory.getLogger(RuntimeExceptionDao.class);
 
 	public RuntimeExceptionDao(Dao<T, ID> dao) {
 		this.dao = dao;
@@ -71,6 +81,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.queryForId(id);
 		} catch (SQLException e) {
+			logMessage(e, "queryForId threw exception on: " + id);
 			throw new RuntimeException(e);
 		}
 	}
@@ -82,6 +93,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.queryForFirst(preparedQuery);
 		} catch (SQLException e) {
+			logMessage(e, "queryForFirst threw exception on: " + preparedQuery);
 			throw new RuntimeException(e);
 		}
 	}
@@ -93,6 +105,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.queryForAll();
 		} catch (SQLException e) {
+			logMessage(e, "queryForAll threw exception");
 			throw new RuntimeException(e);
 		}
 	}
@@ -104,6 +117,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.queryForEq(fieldName, value);
 		} catch (SQLException e) {
+			logMessage(e, "queryForEq threw exception on: " + fieldName);
 			throw new RuntimeException(e);
 		}
 	}
@@ -115,6 +129,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.queryForMatching(matchObj);
 		} catch (SQLException e) {
+			logMessage(e, "queryForMatching threw exception on: " + matchObj);
 			throw new RuntimeException(e);
 		}
 	}
@@ -126,6 +141,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.queryForMatchingArgs(matchObj);
 		} catch (SQLException e) {
+			logMessage(e, "queryForMatchingArgs threw exception on: " + matchObj);
 			throw new RuntimeException(e);
 		}
 	}
@@ -137,6 +153,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.queryForFieldValues(fieldValues);
 		} catch (SQLException e) {
+			logMessage(e, "queryForFieldValues threw exception");
 			throw new RuntimeException(e);
 		}
 	}
@@ -148,6 +165,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.queryForFieldValuesArgs(fieldValues);
 		} catch (SQLException e) {
+			logMessage(e, "queryForFieldValuesArgs threw exception");
 			throw new RuntimeException(e);
 		}
 	}
@@ -159,6 +177,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.queryForSameId(data);
 		} catch (SQLException e) {
+			logMessage(e, "queryForSameId threw exception on: " + data);
 			throw new RuntimeException(e);
 		}
 	}
@@ -191,6 +210,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.query(preparedQuery);
 		} catch (SQLException e) {
+			logMessage(e, "query threw exception on: " + preparedQuery);
 			throw new RuntimeException(e);
 		}
 	}
@@ -202,6 +222,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.create(data);
 		} catch (SQLException e) {
+			logMessage(e, "create threw exception on: " + data);
 			throw new RuntimeException(e);
 		}
 	}
@@ -213,6 +234,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.createIfNotExists(data);
 		} catch (SQLException e) {
+			logMessage(e, "createIfNotExists threw exception on: " + data);
 			throw new RuntimeException(e);
 		}
 	}
@@ -224,6 +246,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.createOrUpdate(data);
 		} catch (SQLException e) {
+			logMessage(e, "createOrUpdate threw exception on: " + data);
 			throw new RuntimeException(e);
 		}
 	}
@@ -235,6 +258,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.update(data);
 		} catch (SQLException e) {
+			logMessage(e, "update threw exception on: " + data);
 			throw new RuntimeException(e);
 		}
 	}
@@ -246,6 +270,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.updateId(data, newId);
 		} catch (SQLException e) {
+			logMessage(e, "updateId threw exception on: " + data);
 			throw new RuntimeException(e);
 		}
 	}
@@ -257,6 +282,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.update(preparedUpdate);
 		} catch (SQLException e) {
+			logMessage(e, "update threw exception on: " + preparedUpdate);
 			throw new RuntimeException(e);
 		}
 	}
@@ -268,6 +294,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.refresh(data);
 		} catch (SQLException e) {
+			logMessage(e, "refresh threw exception on: " + data);
 			throw new RuntimeException(e);
 		}
 	}
@@ -279,6 +306,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.delete(data);
 		} catch (SQLException e) {
+			logMessage(e, "delete threw exception on: " + data);
 			throw new RuntimeException(e);
 		}
 	}
@@ -290,6 +318,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.deleteById(id);
 		} catch (SQLException e) {
+			logMessage(e, "deleteById threw exception on: " + id);
 			throw new RuntimeException(e);
 		}
 	}
@@ -301,6 +330,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.delete(datas);
 		} catch (SQLException e) {
+			logMessage(e, "delete threw exception on: " + datas);
 			throw new RuntimeException(e);
 		}
 	}
@@ -312,6 +342,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.deleteIds(ids);
 		} catch (SQLException e) {
+			logMessage(e, "deleteIds threw exception on: " + ids);
 			throw new RuntimeException(e);
 		}
 	}
@@ -323,6 +354,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.delete(preparedDelete);
 		} catch (SQLException e) {
+			logMessage(e, "delete threw exception on: " + preparedDelete);
 			throw new RuntimeException(e);
 		}
 	}
@@ -362,6 +394,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			dao.closeLastIterator();
 		} catch (SQLException e) {
+			logMessage(e, "closeLastIterator threw exception");
 			throw new RuntimeException(e);
 		}
 	}
@@ -373,6 +406,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.iterator(preparedQuery);
 		} catch (SQLException e) {
+			logMessage(e, "iterator threw exception on: " + preparedQuery);
 			throw new RuntimeException(e);
 		}
 	}
@@ -384,6 +418,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.iterator(preparedQuery, resultFlags);
 		} catch (SQLException e) {
+			logMessage(e, "iterator threw exception on: " + preparedQuery);
 			throw new RuntimeException(e);
 		}
 	}
@@ -395,6 +430,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.queryRaw(query, arguments);
 		} catch (SQLException e) {
+			logMessage(e, "queryRaw threw exception on: " + query);
 			throw new RuntimeException(e);
 		}
 	}
@@ -406,6 +442,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.queryRaw(query, mapper, arguments);
 		} catch (SQLException e) {
+			logMessage(e, "queryRaw threw exception on: " + query);
 			throw new RuntimeException(e);
 		}
 	}
@@ -417,6 +454,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.queryRaw(query, columnTypes, arguments);
 		} catch (SQLException e) {
+			logMessage(e, "queryRaw threw exception on: " + query);
 			throw new RuntimeException(e);
 		}
 	}
@@ -428,6 +466,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.executeRaw(statement, arguments);
 		} catch (SQLException e) {
+			logMessage(e, "executeRaw threw exception on: " + statement);
 			throw new RuntimeException(e);
 		}
 	}
@@ -439,6 +478,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.updateRaw(statement, arguments);
 		} catch (SQLException e) {
+			logMessage(e, "updateRaw threw exception on: " + statement);
 			throw new RuntimeException(e);
 		}
 	}
@@ -450,6 +490,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.callBatchTasks(callable);
 		} catch (Exception e) {
+			logMessage(e, "callBatchTasks threw exception on: " + callable);
 			throw new RuntimeException(e);
 		}
 	}
@@ -468,6 +509,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.objectsEqual(data1, data2);
 		} catch (SQLException e) {
+			logMessage(e, "objectsEqual threw exception on: " + data1 + " and " + data2);
 			throw new RuntimeException(e);
 		}
 	}
@@ -479,6 +521,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.extractId(data);
 		} catch (SQLException e) {
+			logMessage(e, "extractId threw exception on: " + data);
 			throw new RuntimeException(e);
 		}
 	}
@@ -511,6 +554,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.isTableExists();
 		} catch (SQLException e) {
+			logMessage(e, "isTableExists threw exception");
 			throw new RuntimeException(e);
 		}
 	}
@@ -522,6 +566,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.countOf();
 		} catch (SQLException e) {
+			logMessage(e, "countOf threw exception");
 			throw new RuntimeException(e);
 		}
 	}
@@ -533,6 +578,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.countOf(preparedQuery);
 		} catch (SQLException e) {
+			logMessage(e, "countOf threw exception on " + preparedQuery);
 			throw new RuntimeException(e);
 		}
 	}
@@ -544,6 +590,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.getEmptyForeignCollection(fieldName);
 		} catch (SQLException e) {
+			logMessage(e, "getEmptyForeignCollection threw exception on " + fieldName);
 			throw new RuntimeException(e);
 		}
 	}
@@ -551,8 +598,13 @@ public class RuntimeExceptionDao<T, ID> {
 	/**
 	 * @see Dao#setObjectCache(boolean)
 	 */
-	public void setObjectCache(boolean enabled) throws SQLException {
-		dao.setObjectCache(enabled);
+	public void setObjectCache(boolean enabled) {
+		try {
+			dao.setObjectCache(enabled);
+		} catch (SQLException e) {
+			logMessage(e, "setObjectCache(" + enabled + ") threw exception");
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
@@ -565,8 +617,13 @@ public class RuntimeExceptionDao<T, ID> {
 	/**
 	 * @see Dao#setObjectCache(ObjectCache)
 	 */
-	public void setObjectCache(ObjectCache objectCache) throws SQLException {
-		dao.setObjectCache(objectCache);
+	public void setObjectCache(ObjectCache objectCache) {
+		try {
+			dao.setObjectCache(objectCache);
+		} catch (SQLException e) {
+			logMessage(e, "setObjectCache threw exception on " + objectCache);
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
@@ -583,6 +640,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.mapSelectStarRow(results);
 		} catch (SQLException e) {
+			logMessage(e, "mapSelectStarRow threw exception on results");
 			throw new RuntimeException(e);
 		}
 	}
@@ -594,6 +652,7 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.getSelectStarRowMapper();
 		} catch (SQLException e) {
+			logMessage(e, "getSelectStarRowMapper threw exception");
 			throw new RuntimeException(e);
 		}
 	}
@@ -605,7 +664,12 @@ public class RuntimeExceptionDao<T, ID> {
 		try {
 			return dao.idExists(id);
 		} catch (SQLException e) {
+			logMessage(e, "idExists threw exception on " + id);
 			throw new RuntimeException(e);
 		}
+	}
+
+	private void logMessage(Exception e, String message) {
+		logger.log(LOG_LEVEL, e, message);
 	}
 }
