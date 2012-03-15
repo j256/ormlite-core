@@ -712,6 +712,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 				throw new SQLException("Class " + dataClass + " must have an id field to enable the object cache");
 			}
 			this.objectCache = objectCache;
+			this.objectCache.registerClass(dataClass);
 		}
 	}
 

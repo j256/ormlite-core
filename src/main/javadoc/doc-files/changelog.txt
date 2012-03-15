@@ -1,19 +1,20 @@
 4.36: 3/XX/2012 (svn rYYYY)
-	* CORE: Added support for @DatabaseFiled(foreignColumnName="name") to map foreign to non-ID.  Thanks to Mathias Lin.
+	* CORE: Added support for @DatabaseField(foreignColumnName="name") to map foreign to non-ID.  Thanks to Mathias Lin.
 	* CORE: Added update() and refresh() to ForeignCollection which call through to the inner Dao.
 	* CORE: Improved the custom data persister code so it can extend one of the types.  Added docs and example.
 	* CORE: Added a Joda DateTime persister which uses reflection.  You have to specify the dataType=DataType.DATE_TIME.
 	* CORE: Increased synchronization around some code to be proactive about constructor reordering race-conditions.
 	* CORE: Added updateAll() and refreshAll() for eager foreign collections.  Thanks to Chris Nevill.
+	* CORE: Added logging of exceptions to the RuntimeExceptionDao.  Thanks to Kaan.
 
 4.35: 2/22/2012 (svn r2337)
 	* CORE: Fixed bug where not all queried objects were added to cache. Thanks to Filipe Leandro. Fixes bug #3491418.
 
 4.34: 2/22/2012 (svn r2318)
 	* CORE: Fixed restriction on Long auto-incremented SQLite ids. Thanks to John Kristian. Fixes bug #3474479.
-	* CORE: Added support for sql NOT IN clause to where().  Thanks to Marvin Jomble.  Fixes feature #3474550.
-	* CORE: Added support for sql HAVING clause to QueryBuilder.  Thanks to Stephen Couchman.  Fixes feature #3470923.
-	* CORE: Added updateBuilder.update() and deleteBuilder.delete().  Thanks to Marvin Jomble.  Fixes feature #3475613.
+	* CORE: Added support for sql NOT IN clause to where().  Thanks to Marvin Jomble.  Adds feature #3474550.
+	* CORE: Added support for sql HAVING clause to QueryBuilder.  Thanks to Stephen Couchman.  Adds feature #3470923.
+	* CORE: Added updateBuilder.update() and deleteBuilder.delete().  Thanks to Marvin Jomble.  Adds feature #3475613.
 	* CORE: Fixed problem with ForeignCollections when inserting into cache. Thanks to Nick Campion. Fixes bug #3486577.
 	* CORE: Revamped the CloseableIterator to support first, previous, ... moving methods to support more than next.
 	* CORE: Added result-flags to some of the iterator methods to allow forwards/backwards in JDBC.
@@ -23,7 +24,7 @@
 	* CORE: Removed the @DatabaseFieldSimple and friends annotations that were deprecated in 4.30.
 	* ANDROID: Significantly simplified, improved the internal DAO caching.  Thanks to Ben Mosher.  Fixes bug #3487674. 
 	* ANDROID: Fixed missing exception handling in AndroidConnectionSource.  Thanks to Roger Keays.  Fixes bug #3474501.
-	* ANDROID: Added isTableExists() support to Dao/AndroidDatabaseConnection. Thanks to Patrick. Fixes feature #3475173.
+	* ANDROID: Added isTableExists() support to Dao/AndroidDatabaseConnection. Thanks to Patrick. Adds feature #3475173.
 
 4.33: 1/12/2012 (svn r2249)
 	* Fixed a find-bugs result from the eager collection equals method that would always return false.
@@ -50,8 +51,8 @@
 	* CORE: Deprecated the @DatabaseFieldSimple and other smaller annotations that were causing confusion.  Sorry.
 	* CORE: Fixed config loader support for foreignAutoCreate and version fields.  Thanks to Chase.  Fixes bug #3433599.
 	* CORE: Fixed foreignAutoCreate bug where parent object didn't get foreign id.  Thanks to Chase. Fixes bug #3434550.
-	* CORE: Added TableInfo.hasColumnName() method.  Thanks to JC.  Resolves feature #3435754.
-	* CORE: Added Dao.idExists(ID id) to see if row with id exists. Thanks to Craig Andrews. Resolves feature #3300688.
+	* CORE: Added TableInfo.hasColumnName() method.  Thanks to JC.  Adds feature #3435754.
+	* CORE: Added Dao.idExists(ID id) to see if row with id exists. Thanks to Craig Andrews. Adds feature #3300688.
 	* CORE: Moved limit() and offset() to take long parameters to be more consistent.  Possible deprecation warnings. 
 	* ANDROID: Added some reflection fu to make reading Annotations ~20 times faster.  Thanks a ton to Josh Guilfoyle.
 	* ANDROID: Fixed problems with Dao.countOf() method.  Thanks to Pedro Velasco.  Fixes bug #3434508.
@@ -65,12 +66,12 @@
 	* CORE: Added QueryBuilder.rawColumns(String... columns) to better support aggregates.  Thanks to Pedro Velasco.
 	* CORE: Added support for @DatabaseField(version=true) and row version field for numbers and Date's.  Cool.
 	* CORE: Fixed a field that was missing transient, making LazyForeignCollection not serializable. Fixes bug #3426884.
-	* ANDROID: Added OrmLiteSqliteOpenHelper.getRuntimeExceptionDao(). Thanks to Jo‹o Bosco. Resolves feature #3425272.
+	* ANDROID: Added OrmLiteSqliteOpenHelper.getRuntimeExceptionDao(). Thanks to Jo‹o Bosco. Adds feature #3425272.
 	* JDBC: Fixed a spin loop in the JdbcPooledConnectionSource.  Thanks to Ali Aksakarya.  Fixes bug #3426903.
 
 4.27: 10/11/2011 (svn r2019)
 	* CORE: Added @DatabaseField(foreignAutoCreate=true) for auto-creating foreign fields with blank IDs using the internal DAO.
-	* CORE: Added support for storing BigDecimal and BigInteger fields.  Thanks to Pedro Velasco.  Resolves feature #3414432.
+	* CORE: Added support for storing BigDecimal and BigInteger fields.  Thanks to Pedro Velasco.  Adds feature #3414432.
 	* CORE: Added support for the javax.persistence.Enumerated annotation for setting @Enumerated(ORDINAL) or @Enumerated(STRING).
 	* CORE: Fixed problem with the columnDefinition field handling in @DatabaseFieldOther.  Thanks to Flo.  Fixes bug #3419779.
 	* CORE: Removed the restriction on classes with just the ID.  Update now just returns 0.
@@ -98,7 +99,7 @@
 4.25: 8/22/2011 (svn r1897)
 	* CORE: Fixed problem with id=true with UUID fields not working.  Thanks to Evan Grim.  Fixed bug #3392691.
 	* CORE: Exposed the fields in CreateOrUpdateStatus that were package protected.  Thanks to steffen.  Fixes bug #3383768.
-	* CORE: Added to FieldType getter for foreign field type.  Resolves feature #3386969.  Thanks to Jean-Maxime Pelletier.
+	* CORE: Added to FieldType getter for foreign field type.  Thanks to Jean-Maxime Pelletier.  Adds feature #3386969.
 	* CORE: Added allowGeneratedIdInsert feature to allow optional generated-id fields.  Thanks to Craig Andrews.
 	* CORE: Fixed problem with null ids an createOrUpdate.  Thanks to Jo‹o Bosco.  Fixes bug #3390169.
 	* CORE: Fixed race condition with field and constructor accessibility.  Thanks to Jeroen Rakhorst.  Fixes bug #3381083.

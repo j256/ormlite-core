@@ -28,6 +28,11 @@
 - look into migrating the foreign collections to use AbstractCollection as a simplification
 	- how about AbstractSet?
 
+- ORMLite should at least LOG ERRORS if the versions are different between core and android/jdbc
+
+- do auto-detection of DateTime (and other reflection classes) by looking at the string name of the unknown field
+	class and matching it with DateTime somehow 
+
 - there are a number of places in StatementExecutor where we do this:
 		if (mappedQueryForId == null) {
 			mappedQueryForId = MappedQueryForId.build(databaseType, tableInfo, null);
