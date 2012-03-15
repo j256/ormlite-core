@@ -31,6 +31,6 @@ public class DateTimeTypeTest {
 		long value = 2094234324L;
 		expect(results.getLong(col)).andReturn(value);
 		replay(results);
-		DateTimeType.getSingleton().resultToSqlArg(null, results, col);
+		DateTimeType.getSingleton().resultToJava(null, results, col);
 	}
 }

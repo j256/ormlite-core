@@ -81,6 +81,10 @@ public abstract class BaseDataType extends BaseFieldConverter implements DataPer
 		return classes;
 	}
 
+	public String[] getAssociatedClassNames() {
+		return null;
+	}
+
 	public Object convertIdNumber(Number number) {
 		// by default the type cannot convert an id number
 		return null;
