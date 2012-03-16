@@ -271,6 +271,11 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 		throw new UnsupportedOperationException("Cannot call updateAll() on a lazy collection.");
 	}
 
+	public int refreshCollection() {
+		// no-op for lazy collections
+		return 0;
+	}
+
 	/**
 	 * This is just a call to {@link Object#equals(Object)}.
 	 * 

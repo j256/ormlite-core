@@ -85,7 +85,7 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		// now see if we have any extra methods left over in RuntimeExceptionDao
 		for (Method runtimeMethod : runtimeMethods) {
 			// coverage magic
-			if (runtimeMethod.getName().equals("$VRi")) {
+			if (runtimeMethod.getName().startsWith("$")) {
 				continue;
 			}
 			// skip these

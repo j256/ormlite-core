@@ -20,7 +20,7 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 
 	private static final long serialVersionUID = -2523335606983317721L;
 
-	private final List<T> results;
+	private List<T> results;
 
 	public EagerForeignCollection(Dao<T, ID> dao, Object parent, Object parentId, String columnName, String orderColumn)
 			throws SQLException {
@@ -240,6 +240,11 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 			updatedC += dao.refresh(data);
 		}
 		return updatedC;
+	}
+
+	public int refreshCollection() throws SQLException {
+		results = dao.query(getPreparedQuery());
+		return results.size();
 	}
 
 	/**

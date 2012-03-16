@@ -72,7 +72,10 @@ public interface ForeignCollection<T> extends Collection<T>, CloseableIterable<T
 	public int update(T obj) throws SQLException;
 
 	/**
-	 * Update all of the items in the collection with the database. This is only applicable for eager collections.
+	 * Update all of the items <i>currently</i> in the collection with the database. This is only applicable for eager
+	 * collections.
+	 * 
+	 * @return The number of rows updated.
 	 */
 	public int updateAll() throws SQLException;
 
@@ -83,7 +86,20 @@ public interface ForeignCollection<T> extends Collection<T>, CloseableIterable<T
 	public int refresh(T obj) throws SQLException;
 
 	/**
-	 * Refresh all of the items in the collection with the database. This is only applicable for eager collections.
+	 * Call to refresh on all of the items <i>currently</i> in the collection with the database. This is only applicable
+	 * for eager collections. If you want to see new objects in the collection then you should use
+	 * {@link #refreshCollection()}.
+	 * 
+	 * @return The number of rows refreshed.
 	 */
 	public int refreshAll() throws SQLException;
+
+	/**
+	 * This re-issues the query that initially built the collection replacing any underlying result collection with a
+	 * new one build from the database. This is only applicable for eager collections and is a no-op for lazy
+	 * collections.
+	 * 
+	 * @return The number of objects loaded into the new collection.
+	 */
+	public int refreshCollection() throws SQLException;
 }
