@@ -11,7 +11,6 @@ import com.j256.ormlite.logger.Logger;
  */
 public abstract class BaseConnectionSource implements ConnectionSource {
 
-	protected boolean usedSpecialConnection = false;
 	private ThreadLocal<NestedConnection> specialConnection = new ThreadLocal<NestedConnection>();
 
 	public DatabaseConnection getSpecialConnection() {
@@ -27,9 +26,6 @@ public abstract class BaseConnectionSource implements ConnectionSource {
 	 * Returns the connection that has been saved or null if none.
 	 */
 	protected DatabaseConnection getSavedConnection() {
-		if (!usedSpecialConnection) {
-			return null;
-		}
 		NestedConnection nested = specialConnection.get();
 		if (nested == null) {
 			return null;
@@ -42,9 +38,6 @@ public abstract class BaseConnectionSource implements ConnectionSource {
 	 * Return true if the connection being released is the one that has been saved.
 	 */
 	protected boolean isSavedConnection(DatabaseConnection connection) {
-		if (!usedSpecialConnection) {
-			return false;
-		}
 		NestedConnection currentSaved = specialConnection.get();
 		if (currentSaved == null) {
 			return false;
@@ -65,11 +58,6 @@ public abstract class BaseConnectionSource implements ConnectionSource {
 		// check for a connection already saved
 		NestedConnection currentSaved = specialConnection.get();
 		if (currentSaved == null) {
-			/*
-			 * This is fine to not be synchronized since it is only this thread we care about. Other threads will set
-			 * this or have it synchronized in over time.
-			 */
-			usedSpecialConnection = true;
 			specialConnection.set(new NestedConnection(connection));
 			return true;
 		} else {
