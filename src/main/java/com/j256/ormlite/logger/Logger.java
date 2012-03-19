@@ -278,6 +278,13 @@ public class Logger {
 	/**
 	 * Log a warning message.
 	 */
+	public void warn(String msg, Object arg0, Object arg1, Object arg2) {
+		innerLog(Level.WARNING, null, msg, arg0, arg1, arg2, null);
+	}
+
+	/**
+	 * Log a warning message.
+	 */
 	public void warn(String msg, Object[] argArray) {
 		innerLog(Level.WARNING, null, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, argArray);
 	}
