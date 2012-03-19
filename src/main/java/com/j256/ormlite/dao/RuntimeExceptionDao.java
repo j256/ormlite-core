@@ -669,6 +669,30 @@ public class RuntimeExceptionDao<T, ID> {
 		}
 	}
 
+	/**
+	 * @see Dao#setAutoCommit(boolean)
+	 */
+	public void setAutoCommit(boolean autoCommit) {
+		try {
+			dao.setAutoCommit(autoCommit);
+		} catch (SQLException e) {
+			logMessage(e, "setAutoCommit(" + autoCommit + ") threw exception");
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * @see Dao#isAutoCommit()
+	 */
+	public boolean isAutoCommit() {
+		try {
+			return dao.isAutoCommit();
+		} catch (SQLException e) {
+			logMessage(e, "isAutoCommit threw exception");
+			throw new RuntimeException(e);
+		}
+	}
+
 	private void logMessage(Exception e, String message) {
 		logger.log(LOG_LEVEL, e, message);
 	}
