@@ -6,6 +6,7 @@
 	* CORE: Increased synchronization around some code to be proactive about constructor reordering race-conditions.
 	* CORE: Added updateAll(), refreshAll(), refreshCollection() for eager foreign collections.  Thanks to Chris Nevill.
 	* CORE: Added logging of exceptions to the RuntimeExceptionDao.  Thanks to Kaan.
+	* CORE: Revamped the Logger stuff to remove new Object[] that was happening on each Logger call. Bug #3509015.
 	* JDBC: Fixed a bug in where transactions aren't commited with auto-commit off.  Thanks to Tony. Bug #3508746. 
 
 4.35: 2/22/2012 (svn r2337)

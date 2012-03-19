@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.logger.Log.Level;
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.GeneratedKeyHolder;
@@ -227,7 +228,10 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 	private void assignIdValue(T data, Number val, String label, ObjectCache objectCache) throws SQLException {
 		// better to do this in one please with consistent logging
 		idField.assignIdValue(data, val, objectCache);
-		logger.debug("assigned id '{}' from {} to '{}' in {} object", val, label, idField.getFieldName(), dataClassName);
+		if (logger.isLevelEnabled(Level.DEBUG)) {
+			logger.debug("assigned id '{}' from {} to '{}' in {} object",
+					new Object[] { val, label, idField.getFieldName(), dataClassName });
+		}
 	}
 
 	private static class KeyHolder implements GeneratedKeyHolder {

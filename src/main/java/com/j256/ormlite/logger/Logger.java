@@ -14,6 +14,7 @@ public class Logger {
 
 	private final static String ARG_STRING = "{}";
 	private final static int ARG_STRING_LENGTH = ARG_STRING.length();
+	private final static Object UNKNOWN_ARG = new Object();
 	private final Log log;
 
 	public Logger(Log log) {
@@ -30,104 +31,506 @@ public class Logger {
 	/**
 	 * Log a trace message.
 	 */
-	public void trace(String msg, Object... args) {
-		innerLog(Level.TRACE, null, msg, args);
+	public void trace(String msg) {
+		innerLog(Level.TRACE, null, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a trace message.
+	 */
+	public void trace(String msg, Object arg0) {
+		innerLog(Level.TRACE, null, msg, arg0, UNKNOWN_ARG, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a trace message.
+	 */
+	public void trace(String msg, Object arg0, Object arg1) {
+		innerLog(Level.TRACE, null, msg, arg0, arg1, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a trace message.
+	 */
+	public void trace(String msg, Object arg0, Object arg1, Object arg2) {
+		innerLog(Level.TRACE, null, msg, arg0, arg1, arg2, null);
+	}
+
+	/**
+	 * Log a trace message. Should be protected with a:
+	 * 
+	 * <pre>
+	 * if (logger.isLevelEnabled(Level...)) ...
+	 * </pre>
+	 */
+	public void trace(String msg, Object[] argArray) {
+		innerLog(Level.TRACE, null, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, argArray);
 	}
 
 	/**
 	 * Log a trace message with a throwable.
 	 */
-	public void trace(Throwable throwable, String msg, Object... args) {
-		innerLog(Level.TRACE, throwable, msg, args);
+	public void trace(Throwable throwable, String msg) {
+		innerLog(Level.TRACE, throwable, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a trace message with a throwable.
+	 */
+	public void trace(Throwable throwable, String msg, Object arg0) {
+		innerLog(Level.TRACE, throwable, msg, arg0, UNKNOWN_ARG, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a trace message with a throwable.
+	 */
+	public void trace(Throwable throwable, String msg, Object arg0, Object arg1) {
+		innerLog(Level.TRACE, throwable, msg, arg0, arg1, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a trace message with a throwable.
+	 */
+	public void trace(Throwable throwable, String msg, Object arg0, Object arg1, Object arg2) {
+		innerLog(Level.TRACE, throwable, msg, arg0, arg1, arg2, null);
+	}
+
+	/**
+	 * Log a trace message with a throwable.
+	 * 
+	 * <pre>
+	 * if (logger.isLevelEnabled(Level...)) ...
+	 * </pre>
+	 */
+	public void trace(Throwable throwable, String msg, Object[] argArray) {
+		innerLog(Level.TRACE, throwable, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, argArray);
 	}
 
 	/**
 	 * Log a debug message.
 	 */
-	public void debug(String msg, Object... args) {
-		innerLog(Level.DEBUG, null, msg, args);
+	public void debug(String msg) {
+		innerLog(Level.DEBUG, null, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a debug message.
+	 */
+	public void debug(String msg, Object arg0) {
+		innerLog(Level.DEBUG, null, msg, arg0, UNKNOWN_ARG, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a debug message.
+	 */
+	public void debug(String msg, Object arg0, Object arg1) {
+		innerLog(Level.DEBUG, null, msg, arg0, arg1, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a debug message.
+	 */
+	public void debug(String msg, Object arg0, Object arg1, Object arg2) {
+		innerLog(Level.DEBUG, null, msg, arg0, arg1, arg2, null);
+	}
+
+	/**
+	 * Log a debug message.
+	 * 
+	 * <pre>
+	 * if (logger.isLevelEnabled(Level...)) ...
+	 * </pre>
+	 */
+	public void debug(String msg, Object[] argArray) {
+		innerLog(Level.DEBUG, null, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, argArray);
 	}
 
 	/**
 	 * Log a debug message with a throwable.
 	 */
-	public void debug(Throwable throwable, String msg, Object... args) {
-		innerLog(Level.DEBUG, throwable, msg, args);
+	public void debug(Throwable throwable, String msg) {
+		innerLog(Level.DEBUG, throwable, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a debug message with a throwable.
+	 */
+	public void debug(Throwable throwable, String msg, Object arg0) {
+		innerLog(Level.DEBUG, throwable, msg, arg0, UNKNOWN_ARG, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a debug message with a throwable.
+	 */
+	public void debug(Throwable throwable, String msg, Object arg0, Object arg1) {
+		innerLog(Level.DEBUG, throwable, msg, arg0, arg1, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a debug message with a throwable.
+	 */
+	public void debug(Throwable throwable, String msg, Object arg0, Object arg1, Object arg2) {
+		innerLog(Level.DEBUG, throwable, msg, arg0, arg1, arg2, null);
+	}
+
+	/**
+	 * Log a debug message with a throwable.
+	 * 
+	 * <pre>
+	 * if (logger.isLevelEnabled(Level...)) ...
+	 * </pre>
+	 */
+	public void debug(Throwable throwable, String msg, Object[] argArray) {
+		innerLog(Level.DEBUG, throwable, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, argArray);
 	}
 
 	/**
 	 * Log a info message.
 	 */
-	public void info(String msg, Object... args) {
-		innerLog(Level.INFO, null, msg, args);
+	public void info(String msg) {
+		innerLog(Level.INFO, null, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a info message.
+	 */
+	public void info(String msg, Object arg0) {
+		innerLog(Level.INFO, null, msg, arg0, UNKNOWN_ARG, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a info message.
+	 */
+	public void info(String msg, Object arg0, Object arg1) {
+		innerLog(Level.INFO, null, msg, arg0, arg1, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a info message.
+	 */
+	public void info(String msg, Object arg0, Object arg1, Object arg2) {
+		innerLog(Level.INFO, null, msg, arg0, arg1, arg2, null);
+	}
+
+	/**
+	 * Log a info message.
+	 */
+	public void info(String msg, Object[] argArray) {
+		innerLog(Level.INFO, null, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, argArray);
 	}
 
 	/**
 	 * Log a info message with a throwable.
 	 */
-	public void info(Throwable throwable, String msg, Object... args) {
-		innerLog(Level.INFO, throwable, msg, args);
+	public void info(Throwable throwable, String msg) {
+		innerLog(Level.INFO, throwable, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a info message with a throwable.
+	 */
+	public void info(Throwable throwable, String msg, Object arg0) {
+		innerLog(Level.INFO, throwable, msg, arg0, UNKNOWN_ARG, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a info message with a throwable.
+	 */
+	public void info(Throwable throwable, String msg, Object arg0, Object arg1) {
+		innerLog(Level.INFO, throwable, msg, arg0, arg1, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a info message with a throwable.
+	 */
+	public void info(Throwable throwable, String msg, Object arg0, Object arg1, Object arg2) {
+		innerLog(Level.INFO, throwable, msg, arg0, arg1, arg2, null);
+	}
+
+	/**
+	 * Log a info message with a throwable.
+	 */
+	public void info(Throwable throwable, String msg, Object[] argArray) {
+		innerLog(Level.INFO, throwable, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, argArray);
 	}
 
 	/**
 	 * Log a warning message.
 	 */
-	public void warn(String msg, Object... args) {
-		innerLog(Level.WARNING, null, msg, args);
+	public void warn(String msg) {
+		innerLog(Level.WARNING, null, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a warning message.
+	 */
+	public void warn(String msg, Object arg0) {
+		innerLog(Level.WARNING, null, msg, arg0, UNKNOWN_ARG, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a warning message.
+	 */
+	public void warn(String msg, Object arg0, Object arg1) {
+		innerLog(Level.WARNING, null, msg, arg0, arg1, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a warning message.
+	 */
+	public void warn(String msg, Object[] argArray) {
+		innerLog(Level.WARNING, null, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, argArray);
 	}
 
 	/**
 	 * Log a warning message with a throwable.
 	 */
-	public void warn(Throwable throwable, String msg, Object... args) {
-		innerLog(Level.WARNING, throwable, msg, args);
+	public void warn(Throwable throwable, String msg) {
+		innerLog(Level.WARNING, throwable, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a warning message with a throwable.
+	 */
+	public void warn(Throwable throwable, String msg, Object arg0) {
+		innerLog(Level.WARNING, throwable, msg, arg0, UNKNOWN_ARG, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a warning message with a throwable.
+	 */
+	public void warn(Throwable throwable, String msg, Object arg0, Object arg1) {
+		innerLog(Level.WARNING, throwable, msg, arg0, arg1, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a warning message with a throwable.
+	 */
+	public void warn(Throwable throwable, String msg, Object arg0, Object arg1, Object arg2) {
+		innerLog(Level.WARNING, throwable, msg, arg0, arg1, arg2, null);
+	}
+
+	/**
+	 * Log a warning message with a throwable.
+	 */
+	public void warn(Throwable throwable, String msg, Object[] argArray) {
+		innerLog(Level.WARNING, throwable, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, argArray);
 	}
 
 	/**
 	 * Log a error message.
 	 */
-	public void error(String msg, Object... args) {
-		innerLog(Level.ERROR, null, msg, args);
+	public void error(String msg) {
+		innerLog(Level.ERROR, null, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a error message.
+	 */
+	public void error(String msg, Object arg0) {
+		innerLog(Level.ERROR, null, msg, arg0, UNKNOWN_ARG, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a error message.
+	 */
+	public void error(String msg, Object arg0, Object arg1) {
+		innerLog(Level.ERROR, null, msg, arg0, arg1, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a error message.
+	 */
+	public void error(String msg, Object arg0, Object arg1, Object arg2) {
+		innerLog(Level.ERROR, null, msg, arg0, arg1, arg2, null);
+	}
+
+	/**
+	 * Log a error message.
+	 */
+	public void error(String msg, Object[] argArray) {
+		innerLog(Level.ERROR, null, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, argArray);
 	}
 
 	/**
 	 * Log a error message with a throwable.
 	 */
-	public void error(Throwable throwable, String msg, Object... args) {
-		innerLog(Level.ERROR, throwable, msg, args);
+	public void error(Throwable throwable, String msg) {
+		innerLog(Level.ERROR, throwable, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a error message with a throwable.
+	 */
+	public void error(Throwable throwable, String msg, Object arg0) {
+		innerLog(Level.ERROR, throwable, msg, arg0, UNKNOWN_ARG, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a error message with a throwable.
+	 */
+	public void error(Throwable throwable, String msg, Object arg0, Object arg1) {
+		innerLog(Level.ERROR, throwable, msg, arg0, arg1, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a error message with a throwable.
+	 */
+	public void error(Throwable throwable, String msg, Object arg0, Object arg1, Object arg2) {
+		innerLog(Level.ERROR, throwable, msg, arg0, arg1, arg2, null);
+	}
+
+	/**
+	 * Log a error message with a throwable.
+	 */
+	public void error(Throwable throwable, String msg, Object[] argArray) {
+		innerLog(Level.ERROR, throwable, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, argArray);
 	}
 
 	/**
 	 * Log a fatal message.
 	 */
-	public void fatal(String msg, Object... args) {
-		innerLog(Level.FATAL, null, msg, args);
+	public void fatal(String msg) {
+		innerLog(Level.FATAL, null, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a fatal message.
+	 */
+	public void fatal(String msg, Object arg0) {
+		innerLog(Level.FATAL, null, msg, arg0, UNKNOWN_ARG, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a fatal message.
+	 */
+	public void fatal(String msg, Object arg0, Object arg1) {
+		innerLog(Level.FATAL, null, msg, arg0, arg1, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a fatal message.
+	 */
+	public void fatal(String msg, Object arg0, Object arg1, Object arg2) {
+		innerLog(Level.FATAL, null, msg, arg0, arg1, arg2, null);
+	}
+
+	/**
+	 * Log a fatal message.
+	 */
+	public void fatal(String msg, Object[] argArray) {
+		innerLog(Level.FATAL, null, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, argArray);
 	}
 
 	/**
 	 * Log a fatal message with a throwable.
 	 */
-	public void fatal(Throwable throwable, String msg, Object... args) {
-		innerLog(Level.FATAL, throwable, msg, args);
+	public void fatal(Throwable throwable, String msg) {
+		innerLog(Level.FATAL, throwable, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a fatal message with a throwable.
+	 */
+	public void fatal(Throwable throwable, String msg, Object arg0) {
+		innerLog(Level.FATAL, throwable, msg, arg0, UNKNOWN_ARG, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a fatal message with a throwable.
+	 */
+	public void fatal(Throwable throwable, String msg, Object arg0, Object arg1) {
+		innerLog(Level.FATAL, throwable, msg, arg0, arg1, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a fatal message with a throwable.
+	 */
+	public void fatal(Throwable throwable, String msg, Object arg0, Object arg1, Object arg2) {
+		innerLog(Level.FATAL, throwable, msg, arg0, arg1, arg2, null);
+	}
+
+	/**
+	 * Log a fatal message with a throwable.
+	 */
+	public void fatal(Throwable throwable, String msg, Object[] argArray) {
+		innerLog(Level.FATAL, throwable, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, argArray);
 	}
 
 	/**
 	 * Log a message at the provided level.
 	 */
-	public void log(Level level, String msg, Object... args) {
-		innerLog(level, null, msg, args);
+	public void log(Level level, String msg) {
+		innerLog(level, null, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a message at the provided level.
+	 */
+	public void log(Level level, String msg, Object arg0) {
+		innerLog(level, null, msg, arg0, UNKNOWN_ARG, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a message at the provided level.
+	 */
+	public void log(Level level, String msg, Object arg0, Object arg1) {
+		innerLog(level, null, msg, arg0, arg1, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a message at the provided level.
+	 */
+	public void log(Level level, String msg, Object arg0, Object arg1, Object arg2) {
+		innerLog(level, null, msg, arg0, arg1, arg2, null);
+	}
+
+	/**
+	 * Log a message at the provided level.
+	 */
+	public void log(Level level, String msg, Object[] argArray) {
+		innerLog(level, null, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, argArray);
 	}
 
 	/**
 	 * Log a message with a throwable at the provided level.
 	 */
-	public void log(Level level, Throwable throwable, String msg, Object... args) {
-		innerLog(level, throwable, msg, args);
+	public void log(Level level, Throwable throwable, String msg) {
+		innerLog(level, throwable, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, null);
 	}
 
-	private void innerLog(Level level, Throwable throwable, String msg, Object[] args) {
+	/**
+	 * Log a message with a throwable at the provided level.
+	 */
+	public void log(Level level, Throwable throwable, String msg, Object arg0) {
+		innerLog(level, throwable, msg, arg0, UNKNOWN_ARG, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a message with a throwable at the provided level.
+	 */
+	public void log(Level level, Throwable throwable, String msg, Object arg0, Object arg1) {
+		innerLog(level, throwable, msg, arg0, arg1, UNKNOWN_ARG, null);
+	}
+
+	/**
+	 * Log a message with a throwable at the provided level.
+	 */
+	public void log(Level level, Throwable throwable, String msg, Object arg0, Object arg1, Object arg2) {
+		innerLog(level, throwable, msg, arg0, arg1, arg2, null);
+	}
+
+	/**
+	 * Log a message with a throwable at the provided level.
+	 */
+	public void log(Level level, Throwable throwable, String msg, Object[] argArray) {
+		innerLog(level, throwable, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, argArray);
+	}
+
+	private void innerLog(Level level, Throwable throwable, String msg, Object arg0, Object arg1, Object arg2,
+			Object[] argArray) {
 		if (log.isLevelEnabled(level)) {
-			String fullMsg = buildFullMessage(msg, args);
+			String fullMsg = buildFullMessage(msg, arg0, arg1, arg2, argArray);
 			if (throwable == null) {
 				log.log(level, fullMsg);
 			} else {
@@ -139,7 +542,7 @@ public class Logger {
 	/**
 	 * Return a combined single message from the msg (with possible {}) and optional arguments.
 	 */
-	private String buildFullMessage(String msg, Object[] args) {
+	private String buildFullMessage(String msg, Object arg0, Object arg1, Object arg2, Object[] argArray) {
 		StringBuilder sb = new StringBuilder(128);
 		int lastIndex = 0;
 		int argC = 0;
@@ -154,18 +557,31 @@ public class Logger {
 			// shift our last-index past the arg-string
 			lastIndex = argIndex + ARG_STRING_LENGTH;
 			// add the argument, if we still have any
-			if (argC < args.length) {
-				Object arg = args[argC];
-				if (arg != null && arg.getClass().isArray()) {
-					sb.append(Arrays.toString((Object[]) arg));
-				} else {
-					sb.append(arg);
+			if (argArray == null) {
+				if (argC == 0) {
+					appendArg(sb, arg0);
+				} else if (argC == 1) {
+					appendArg(sb, arg1);
+				} else if (argC == 2) {
+					appendArg(sb, arg2);
 				}
-				argC++;
+			} else if (argC < argArray.length) {
+				appendArg(sb, argArray[argC]);
 			}
+			argC++;
 		}
 		// spit out the end of the msg
 		sb.append(msg.substring(lastIndex));
 		return sb.toString();
+	}
+
+	private void appendArg(StringBuilder sb, Object arg) {
+		if (arg == UNKNOWN_ARG) {
+			// ignore it
+		} else if (arg != null && arg.getClass().isArray()) {
+			sb.append(Arrays.toString((Object[]) arg));
+		} else {
+			sb.append(arg);
+		}
 	}
 }
