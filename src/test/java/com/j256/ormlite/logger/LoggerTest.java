@@ -11,6 +11,7 @@ import static org.junit.Assert.fail;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -373,7 +374,7 @@ public class LoggerTest {
 		Object arg2 = "wanker";
 		Object arg3 = "avatar";
 		Object[] argArray = new Object[] { arg0, arg1, arg2, arg3 };
-		String result = msg + "0[" + arg0 + ", " + arg1 + ", " + arg2 + ", " + arg3 + "]0";
+		String result = msg + "0" + Arrays.toString(argArray) + "0";
 		String pattern = msg + "0{}0";
 		reset(mockLog);
 		expect(mockLog.isLevelEnabled(Level.INFO)).andReturn(true);
