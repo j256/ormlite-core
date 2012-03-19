@@ -753,6 +753,24 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	public void setAutoCommit(boolean autoCommit) throws SQLException {
+		DatabaseConnection connection = connectionSource.getReadWriteConnection();
+		try {
+			connection.setAutoCommit(autoCommit);
+		} finally {
+			connectionSource.releaseConnection(connection);
+		}
+	}
+
+	public boolean isAutoCommit() throws SQLException {
+		DatabaseConnection connection = connectionSource.getReadWriteConnection();
+		try {
+			return connection.getAutoCommit();
+		} finally {
+			connectionSource.releaseConnection(connection);
+		}
+	}
+
 	/**
 	 * Returns the table configuration information associated with the Dao's class or null if none.
 	 */

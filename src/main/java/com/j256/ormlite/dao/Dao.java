@@ -625,6 +625,19 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public boolean idExists(ID id) throws SQLException;
 
 	/**
+	 * Set auto-commit mode to be true or false. This may not be supported by all database types and also may only set
+	 * the mode for the current connection. If you are using a pooled connection source then this may only set
+	 * auto-commit for a single connection.
+	 */
+	public void setAutoCommit(boolean autoCommit) throws SQLException;
+
+	/**
+	 * Return true if the database is in auto-commit mode otherwise false. This may not be supported by all database
+	 * types. If you are using a pooled connection source then this may only set auto-commit for a single connection.
+	 */
+	public boolean isAutoCommit() throws SQLException;
+
+	/**
 	 * Return class for the {@link Dao#createOrUpdate(Object)} method.
 	 */
 	public class CreateOrUpdateStatus {
