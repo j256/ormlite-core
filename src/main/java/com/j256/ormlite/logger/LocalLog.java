@@ -40,23 +40,24 @@ import java.util.regex.Pattern;
  */
 public class LocalLog implements Log {
 
-	public final static String LOCAL_LOG_LEVEL_PROPERTY = "com.j256.ormlite.logger.level";
-	public final static String LOCAL_LOG_FILE_PROPERTY = "com.j256.ormlite.logger.file";
-	public final static String LOCAL_LOG_PROPERTIES_FILE = "/ormliteLocalLog.properties";
+	public static final String LOCAL_LOG_LEVEL_PROPERTY = "com.j256.ormlite.logger.level";
+	public static final String LOCAL_LOG_FILE_PROPERTY = "com.j256.ormlite.logger.file";
+	public static final String LOCAL_LOG_PROPERTIES_FILE = "/ormliteLocalLog.properties";
 
-	private final static Level DEFAULT_LEVEL = Level.DEBUG;
-	private static ThreadLocal<DateFormat> dateFormatThreadLocal = new ThreadLocal<DateFormat>();
-	private static List<PatternLevel> classLevels;
+	private static final Level DEFAULT_LEVEL = Level.DEBUG;
+	private static final ThreadLocal<DateFormat> dateFormatThreadLocal = new ThreadLocal<DateFormat>();
+	private static final PrintStream printStream;
+	private static final List<PatternLevel> classLevels;
 
 	private final String className;
 	private final Level level;
-	private final PrintStream printStream;
 
 	static {
 		InputStream stream = LocalLog.class.getResourceAsStream(LOCAL_LOG_PROPERTIES_FILE);
+		List<PatternLevel> levels = null;
 		if (stream != null) {
 			try {
-				classLevels = configureClassLevels(stream);
+				levels = configureClassLevels(stream);
 			} catch (IOException e) {
 				System.err.println("IO exception reading the log properties file '" + LOCAL_LOG_PROPERTIES_FILE + "': "
 						+ e);
@@ -66,6 +67,22 @@ public class LocalLog implements Log {
 				} catch (IOException e) {
 					// ignore close exception
 				}
+			}
+		}
+		classLevels = levels;
+
+		/*
+		 * We need to do this here otherwise each logger has their own open PrintStream to the file and the messages can
+		 * overlap. Not good.
+		 */
+		String logPath = System.getProperty(LOCAL_LOG_FILE_PROPERTY);
+		if (logPath == null) {
+			printStream = System.out;
+		} else {
+			try {
+				printStream = new PrintStream(new File(logPath));
+			} catch (FileNotFoundException e) {
+				throw new IllegalArgumentException("Log file " + logPath + " was not found", e);
 			}
 		}
 	}
@@ -102,18 +119,6 @@ public class LocalLog implements Log {
 			}
 		}
 		this.level = level;
-
-		// see if stuff goes to stdout or a file
-		String logPath = System.getProperty(LOCAL_LOG_FILE_PROPERTY);
-		if (logPath == null) {
-			this.printStream = System.out;
-		} else {
-			try {
-				this.printStream = new PrintStream(new File(logPath));
-			} catch (FileNotFoundException e) {
-				throw new IllegalArgumentException("Log file " + logPath + " was not found", e);
-			}
-		}
 	}
 
 	public boolean isLevelEnabled(Level level) {
