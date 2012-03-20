@@ -2171,11 +2171,12 @@ detect which of the objects has been updated unfortunately.  If you update an ob
 @code{update(data)} method on the @code{ForeignCollection} to make sure that the object is persisted.  For example:
 
 @example
-for (Order order : account.orders()) {
+for (Order order : account.orders()) @{
    // if we are changing some field in the order
    order.setAmount(123);
    // then we need to update it in the database
    account.orders.update(order);
+@}
 @end example
 
 Lastly, there is example code to show how to use foreign collections.  @xref{foreign collections example}.
