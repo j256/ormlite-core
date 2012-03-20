@@ -1,4 +1,8 @@
-4.36: 3/19/2012 (svn rYYYY)
+4.37: 4/XX/2012 (svn rYYYY)
+	* CORE: Fixed bug where LocalLog was overwriting log data written to local file.  Thanks to mjomble.  Bug #3437823.
+	* ANDROID: Fixed a bug with Android lookup of column names with periods.  Thanks to Sebastian Roth.  Bug #3509386.
+
+4.36: 3/19/2012 (svn r2389)
 	* CORE: Added support for @DatabaseField(foreignColumnName="name") to map foreign to non-ID.  Thanks to Mathias Lin.
 	* CORE: Added update() and refresh() to ForeignCollection which call through to the inner Dao.
 	* CORE: Improved the custom data persister code so it can extend one of the types.  Added docs and example.
