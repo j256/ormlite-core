@@ -1,4 +1,4 @@
-4.36: 3/XX/2012 (svn rYYYY)
+4.36: 3/19/2012 (svn rYYYY)
 	* CORE: Added support for @DatabaseField(foreignColumnName="name") to map foreign to non-ID.  Thanks to Mathias Lin.
 	* CORE: Added update() and refresh() to ForeignCollection which call through to the inner Dao.
 	* CORE: Improved the custom data persister code so it can extend one of the types.  Added docs and example.
