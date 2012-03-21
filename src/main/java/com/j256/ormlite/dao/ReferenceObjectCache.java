@@ -54,6 +54,9 @@ public class ReferenceObjectCache implements ObjectCache {
 
 	public <T, ID> T get(Class<T> clazz, ID id) {
 		Map<Object, Reference<Object>> objectMap = getMapForClass(clazz);
+		if (objectMap == null) {
+			return null;
+		}
 		Reference<Object> ref = objectMap.get(id);
 		if (ref == null) {
 			return null;
@@ -71,16 +74,20 @@ public class ReferenceObjectCache implements ObjectCache {
 
 	public <T, ID> void put(Class<T> clazz, ID id, T data) {
 		Map<Object, Reference<Object>> objectMap = getMapForClass(clazz);
-		if (useWeak) {
-			objectMap.put(id, new WeakReference<Object>(data));
-		} else {
-			objectMap.put(id, new SoftReference<Object>(data));
+		if (objectMap != null) {
+			if (useWeak) {
+				objectMap.put(id, new WeakReference<Object>(data));
+			} else {
+				objectMap.put(id, new SoftReference<Object>(data));
+			}
 		}
 	}
 
 	public <T> void clear(Class<T> clazz) {
 		Map<Object, Reference<Object>> objectMap = getMapForClass(clazz);
-		objectMap.clear();
+		if (objectMap != null) {
+			objectMap.clear();
+		}
 	}
 
 	public void clearAll() {
@@ -91,11 +98,16 @@ public class ReferenceObjectCache implements ObjectCache {
 
 	public <T, ID> void remove(Class<T> clazz, ID id) {
 		Map<Object, Reference<Object>> objectMap = getMapForClass(clazz);
-		objectMap.remove(id);
+		if (objectMap != null) {
+			objectMap.remove(id);
+		}
 	}
 
 	public <T, ID> T updateId(Class<T> clazz, ID oldId, ID newId) {
 		Map<Object, Reference<Object>> objectMap = getMapForClass(clazz);
+		if (objectMap == null) {
+			return null;
+		}
 		Reference<Object> ref = objectMap.remove(oldId);
 		if (ref == null) {
 			return null;
@@ -108,7 +120,11 @@ public class ReferenceObjectCache implements ObjectCache {
 
 	public <T> int size(Class<T> clazz) {
 		Map<Object, Reference<Object>> objectMap = getMapForClass(clazz);
-		return objectMap.size();
+		if (objectMap == null) {
+			return 0;
+		} else {
+			return objectMap.size();
+		}
 	}
 
 	public int sizeAll() {
@@ -124,7 +140,9 @@ public class ReferenceObjectCache implements ObjectCache {
 	 */
 	public <T> void cleanNullReferences(Class<T> clazz) {
 		Map<Object, Reference<Object>> objectMap = getMapForClass(clazz);
-		cleanMap(objectMap);
+		if (objectMap != null) {
+			cleanMap(objectMap);
+		}
 	}
 
 	/**
@@ -148,8 +166,7 @@ public class ReferenceObjectCache implements ObjectCache {
 	private Map<Object, Reference<Object>> getMapForClass(Class<?> clazz) {
 		Map<Object, Reference<Object>> objectMap = classMaps.get(clazz);
 		if (objectMap == null) {
-			// NOTE: we don't do the new Map here because of reordered constructor race conditions
-			throw new IllegalStateException("Class " + clazz + " was not registered in this cache");
+			return null;
 		} else {
 			return objectMap;
 		}

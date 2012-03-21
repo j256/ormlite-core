@@ -38,6 +38,9 @@ public class LruObjectCache implements ObjectCache {
 
 	public <T, ID> T get(Class<T> clazz, ID id) {
 		Map<Object, Object> objectMap = getMapForClass(clazz);
+		if (objectMap == null) {
+			return null;
+		}
 		Object obj = objectMap.get(id);
 		@SuppressWarnings("unchecked")
 		T castObj = (T) obj;
@@ -46,12 +49,16 @@ public class LruObjectCache implements ObjectCache {
 
 	public <T, ID> void put(Class<T> clazz, ID id, T data) {
 		Map<Object, Object> objectMap = getMapForClass(clazz);
-		objectMap.put(id, data);
+		if (objectMap != null) {
+			objectMap.put(id, data);
+		}
 	}
 
 	public <T> void clear(Class<T> clazz) {
 		Map<Object, Object> objectMap = getMapForClass(clazz);
-		objectMap.clear();
+		if (objectMap != null) {
+			objectMap.clear();
+		}
 	}
 
 	public void clearAll() {
@@ -62,11 +69,16 @@ public class LruObjectCache implements ObjectCache {
 
 	public <T, ID> void remove(Class<T> clazz, ID id) {
 		Map<Object, Object> objectMap = getMapForClass(clazz);
-		objectMap.remove(id);
+		if (objectMap != null) {
+			objectMap.remove(id);
+		}
 	}
 
 	public <T, ID> T updateId(Class<T> clazz, ID oldId, ID newId) {
 		Map<Object, Object> objectMap = getMapForClass(clazz);
+		if (objectMap == null) {
+			return null;
+		}
 		Object obj = objectMap.remove(oldId);
 		if (obj == null) {
 			return null;
@@ -79,7 +91,11 @@ public class LruObjectCache implements ObjectCache {
 
 	public <T> int size(Class<T> clazz) {
 		Map<Object, Object> objectMap = getMapForClass(clazz);
-		return objectMap.size();
+		if (objectMap == null) {
+			return 0;
+		} else {
+			return objectMap.size();
+		}
 	}
 
 	public int sizeAll() {
@@ -93,8 +109,7 @@ public class LruObjectCache implements ObjectCache {
 	private Map<Object, Object> getMapForClass(Class<?> clazz) {
 		Map<Object, Object> objectMap = classMaps.get(clazz);
 		if (objectMap == null) {
-			// NOTE: we don't do the new Map here because of reordered constructor race conditions
-			throw new IllegalStateException("Class " + clazz + " was not registered in this cache");
+			return null;
 		} else {
 			return objectMap;
 		}

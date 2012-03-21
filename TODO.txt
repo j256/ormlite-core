@@ -25,13 +25,13 @@
 	- foreign key constraint can be in addition to (or required for) the foreign=true
 	- is this handled by the columnDefinition?
 
+- DANGER: might be some problems with how we pass around object cache objects internally:
+	- in the case of foreign-auto-refresh, we may be passing the object cache of the parent object in
+
 - look into migrating the foreign collections to use AbstractCollection as a simplification
 	- how about AbstractSet?
 
 - ORMLite should at least LOG ERRORS if the versions are different between core and android/jdbc
-
-- do auto-detection of DateTime (and other reflection classes) by looking at the string name of the unknown field
-	class and matching it with DateTime somehow 
 
 - there are a number of places in StatementExecutor where we do this:
 		if (mappedQueryForId == null) {

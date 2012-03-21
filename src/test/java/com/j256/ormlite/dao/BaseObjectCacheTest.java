@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 
 public abstract class BaseObjectCacheTest extends BaseCoreTest {
 
@@ -216,13 +217,58 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 		enableCache(dao);
 	}
 
+	@Test
+	public void testOneWithOneWithout() throws Exception {
+		Dao<Parent, Integer> parentDao = createDao(Parent.class, true);
+		enableCache(parentDao);
+
+		Dao<Child, Integer> childDao = createDao(Child.class, true);
+		// don't add to cache
+
+		Child child = new Child();
+		assertEquals(1, childDao.create(child));
+
+		Parent parent = new Parent();
+		parent.child = child;
+		assertEquals(1, parentDao.create(parent));
+
+		Child result = childDao.queryForId(child.id);
+		assertNotNull(result);
+		assertNotNull(result.parents);
+		Parent[] parents = result.parents.toArray(new Parent[0]);
+		assertEquals(1, parents.length);
+		assertEquals(parent.id, parents[0].id);
+	}
+
+	@Test
+	public void testOneWithOneWithoutAutoRefresh() throws Exception {
+
+		Dao<Parent, Integer> parentDao = createDao(Parent.class, true);
+
+		Dao<Child, Integer> childDao = createDao(Child.class, true);
+		// don't add to cache
+
+		Child child = new Child();
+		assertEquals(1, childDao.create(child));
+
+		Parent parent = new Parent();
+		parent.child = child;
+		assertEquals(1, parentDao.create(parent));
+
+		// this has to be done here
+		enableCache(parentDao);
+
+		Parent result = parentDao.queryForId(parent.id);
+		assertNotNull(result);
+		assertNotNull(result.child);
+		assertEquals(child.id, result.child.id);
+	}
+
 	protected static class NoId {
 		@DatabaseField
 		int notId;
-
 		@DatabaseField
 		String stuff;
-
 		public NoId() {
 		}
 	}
@@ -230,11 +276,27 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 	protected static class WithId {
 		@DatabaseField(generatedId = true)
 		int id;
-
 		@DatabaseField
 		String stuff;
-
 		public WithId() {
+		}
+	}
+
+	protected static class Parent {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(foreign = true, foreignAutoRefresh = true)
+		Child child;
+		public Parent() {
+		}
+	}
+
+	protected static class Child {
+		@DatabaseField(generatedId = true)
+		int id;
+		@ForeignCollectionField
+		ForeignCollection<Parent> parents;
+		public Child() {
 		}
 	}
 }

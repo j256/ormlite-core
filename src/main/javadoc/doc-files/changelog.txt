@@ -1,6 +1,7 @@
-4.37: 4/XX/2012 (svn rYYYY)
+4.37: 3/21/2012 (svn rYYYY)
+	* CORE: Fixed blocking bug where object cache exceptions would be thrown.  Thanks to Filipe Leandro.  Bug #3509853.
 	* CORE: Fixed bug where LocalLog was overwriting log data written to local file.  Thanks to mjomble.  Bug #3437823.
-	* ANDROID: Fixed a bug with Android lookup of column names with periods.  Thanks to Sebastian Roth.  Bug #3509386.
+	* ANDROID: Fixed a bug with Android API lookup of column names with periods. Thanks to Sebastian Roth. Bug #3509386.
 
 4.36: 3/19/2012 (svn r2389)
 	* CORE: Added support for @DatabaseField(foreignColumnName="name") to map foreign to non-ID.  Thanks to Mathias Lin.
@@ -39,7 +40,7 @@
 
 4.32: 1/11/2012 (svn r2229)
 	* CORE: Fixed bad bug where foreign objects cannot have primitive ids.  Thanks to Vladimir.  Bug #3456339.
-	* CORE: Bug where foreign collections couldn't handle two foreign fields. Thanks to André. Bug #3471320.
+	* CORE: Fixed bug where foreign collections couldn't handle two foreign fields. Thanks to André. Bug #3471320.
 	* CORE: Added support for a BIG_DECIMAL_NUMERIC to support existing NUMERIC database fields.
 	* JDBC: Bug where SQLite class warning is spit out for other databases.  Thanks to Kaan.  Bug #3472476.
 	* JDBC: Fixed problem with MySQL's creating of index if not exists.  Bug #3472782.
