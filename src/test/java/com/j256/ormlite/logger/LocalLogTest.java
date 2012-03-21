@@ -45,7 +45,7 @@ public class LocalLogTest extends BaseLogTest {
 		String logPath = "target/foo.txt";
 		File logFile = new File(logPath);
 		logFile.delete();
-		System.setProperty(LocalLog.LOCAL_LOG_FILE_PROPERTY, logPath);
+		LocalLog.openLogFile(logPath);
 		try {
 			LocalLog log = new LocalLog("foo");
 			assertTrue(log.isLevelEnabled(Level.FATAL));
@@ -57,20 +57,14 @@ public class LocalLogTest extends BaseLogTest {
 				Thread.sleep(100);
 			}
 		} finally {
-			System.clearProperty(LocalLog.LOCAL_LOG_FILE_PROPERTY);
+			LocalLog.openLogFile(null);
 			logFile.delete();
 		}
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidFileProperty() {
-		String logPath = "not-a-proper-directory-name-we-hope/foo.txt";
-		System.setProperty(LocalLog.LOCAL_LOG_FILE_PROPERTY, logPath);
-		try {
-			new LocalLog("foo");
-		} finally {
-			System.clearProperty(LocalLog.LOCAL_LOG_FILE_PROPERTY);
-		}
+		LocalLog.openLogFile("not-a-proper-directory-name-we-hope/foo.txt");
 	}
 
 	@Test
@@ -78,7 +72,7 @@ public class LocalLogTest extends BaseLogTest {
 		String logPath = "target/foo.txt";
 		File logFile = new File(logPath);
 		logFile.delete();
-		System.setProperty(LocalLog.LOCAL_LOG_FILE_PROPERTY, logPath);
+		LocalLog.openLogFile(logPath);
 		try {
 			LocalLog log = new LocalLog("foo");
 			if (log.isLevelEnabled(Level.TRACE)) {
@@ -90,7 +84,7 @@ public class LocalLogTest extends BaseLogTest {
 			assertTrue(logFile.exists());
 			assertEquals(0, logFile.length());
 		} finally {
-			System.clearProperty(LocalLog.LOCAL_LOG_FILE_PROPERTY);
+			LocalLog.openLogFile(null);
 			logFile.delete();
 		}
 	}

@@ -46,7 +46,7 @@ public class LocalLog implements Log {
 
 	private static final Level DEFAULT_LEVEL = Level.DEBUG;
 	private static final ThreadLocal<DateFormat> dateFormatThreadLocal = new ThreadLocal<DateFormat>();
-	private static final PrintStream printStream;
+	private static PrintStream printStream;
 	private static final List<PatternLevel> classLevels;
 
 	private final String className;
@@ -76,15 +76,7 @@ public class LocalLog implements Log {
 		 * overlap. Not good.
 		 */
 		String logPath = System.getProperty(LOCAL_LOG_FILE_PROPERTY);
-		if (logPath == null) {
-			printStream = System.out;
-		} else {
-			try {
-				printStream = new PrintStream(new File(logPath));
-			} catch (FileNotFoundException e) {
-				throw new IllegalArgumentException("Log file " + logPath + " was not found", e);
-			}
-		}
+		openLogFile(logPath);
 	}
 
 	public LocalLog(String className) {
@@ -119,6 +111,21 @@ public class LocalLog implements Log {
 			}
 		}
 		this.level = level;
+	}
+
+	/**
+	 * Reopen the associated static logging stream. Set to null to redirect to System.out.
+	 */
+	public static void openLogFile(String logPath) {
+		if (logPath == null) {
+			printStream = System.out;
+		} else {
+			try {
+				printStream = new PrintStream(new File(logPath));
+			} catch (FileNotFoundException e) {
+				throw new IllegalArgumentException("Log file " + logPath + " was not found", e);
+			}
+		}
 	}
 
 	public boolean isLevelEnabled(Level level) {
