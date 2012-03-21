@@ -220,10 +220,7 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 	@Test
 	public void testOneWithOneWithout() throws Exception {
 		Dao<Parent, Integer> parentDao = createDao(Parent.class, true);
-		enableCache(parentDao);
-
 		Dao<Child, Integer> childDao = createDao(Child.class, true);
-		// don't add to cache
 
 		Child child = new Child();
 		assertEquals(1, childDao.create(child));
@@ -231,6 +228,10 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 		Parent parent = new Parent();
 		parent.child = child;
 		assertEquals(1, parentDao.create(parent));
+
+		// this has to be done here so we don't cache on create
+		enableCache(parentDao);
+		// don't add cache to childDao
 
 		Child result = childDao.queryForId(child.id);
 		assertNotNull(result);
@@ -246,7 +247,6 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 		Dao<Parent, Integer> parentDao = createDao(Parent.class, true);
 
 		Dao<Child, Integer> childDao = createDao(Child.class, true);
-		// don't add to cache
 
 		Child child = new Child();
 		assertEquals(1, childDao.create(child));
@@ -255,8 +255,9 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 		parent.child = child;
 		assertEquals(1, parentDao.create(parent));
 
-		// this has to be done here
+		// this has to be done here so we don't cache on create
 		enableCache(parentDao);
+		// don't add cache to childDao
 
 		Parent result = parentDao.queryForId(parent.id);
 		assertNotNull(result);
