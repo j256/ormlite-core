@@ -59,6 +59,10 @@ public class H2CompiledStatement implements CompiledStatement {
 		preparedStatement.setMaxRows(max);
 	}
 
+	public void setQueryTimeout(long millis) throws SQLException {
+		preparedStatement.setQueryTimeout(Long.valueOf(millis).intValue() / 1000);
+	}
+
 	public static int sqlTypeToJdbcInt(SqlType sqlType) {
 		switch (sqlType) {
 			case STRING :

@@ -58,4 +58,15 @@ public interface CompiledStatement {
 	 * Set the number of rows to return in the results.
 	 */
 	public void setMaxRows(int max) throws SQLException;
+
+	/**
+	 * Set the query timeout in milliseconds. This may or may not be supported by all database types. Although this is
+	 * in milliseconds, the underlying timeout resolution may be in seconds.
+	 * 
+	 * <p>
+	 * <b> WARNING: </b> This will stop the query connection but it will _not_ terminate the query if it is already be
+	 * running by the database.
+	 * </p>
+	 */
+	public void setQueryTimeout(long millis) throws SQLException;
 }
