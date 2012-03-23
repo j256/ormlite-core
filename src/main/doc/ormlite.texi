@@ -6,7 +6,7 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.38
+@set ormlite_version 4.39
 @set ormlite_year 2012
 @set ormlite_date March @value{ormlite_year}
 @set package ORMLite
@@ -3789,6 +3789,20 @@ number of database operations at once -- maybe loading data from a file. This wi
 "auto-commit" mode, run the call-able and then re-enable "auto-commit".
 
 @emph{NOTE:} If neither auto-commit nor transactions are supported by the database type then this may do nothing.
+
+@example
+accountDao.callBatchTasks(connectionSource,
+  new Callable<Void>() @{
+    public Void call() throws SQLException @{
+        // insert a number of accounts at once
+        for (Account account : accountsToInsert) {
+           // update our account object
+           accountDao.create(account);
+        }
+        return null;
+    @}
+@});
+@end example
 
 @cindex count of table rows
 @cindex countOf

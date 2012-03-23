@@ -1,4 +1,7 @@
-4.38: 3/23/2012 (svn rYYYY)
+4.39: 3/XX/2012 (svn rYYYY)
+	* ANDROID: Added SQLite calls to determine how many rows have changed for delete and updates.
+
+4.38: 3/23/2012 (svn r2426)
 	* ANDROID: Fixed bad ObjectCache bug deep in Android shutdown/startup logic. Thanks to Filipe Leandro. Bug #3510266.
 
 4.37: 3/21/2012 (svn r2406)
