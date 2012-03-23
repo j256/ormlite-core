@@ -197,6 +197,7 @@ ormliteTestPom=ormliteTest/pom.xml
 sed -e "s,<ormlite-version>.*</ormlite-version>,<ormlite-version>${newVersion}</ormlite-version>," < $ormliteTestPom > ${ormliteTestPom}.t
 if [ $? -eq 0 ]; then
     mv ${ormliteTestPom}.t $ormliteTestPom 
+    svn commit -m 'updated version' $ormliteTestPom
 fi
 
 #############################################################
