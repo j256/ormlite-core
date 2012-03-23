@@ -189,6 +189,17 @@ if [ "$cont" = "" -o "$cont" = "y" ]; then
 fi
 
 #############################################################
+# change the ormliteTest pom version
+
+cd $LOCAL_DIR
+newVersion=`grep version ormlite-core/pom.xml | grep SNAPSHOT | head -1 | cut -f2 -d\> | cut -f1 -d\<`
+ormliteTestPom=ormliteTest/pom.xml
+sed -e "s,<ormlite-version>.*</ormlite-version>,<ormlite-version>${newVersion}</ormlite-version>," < $ormliteTestPom > ${ormliteTestPom}.t
+if [ $? -eq 0 ]; then
+    mv ${ormliteTestPom}.t $ormliteTestPom 
+fi
+
+#############################################################
 # run mvn eclipse/eclipse in local
 
 cd $LOCAL_DIR
