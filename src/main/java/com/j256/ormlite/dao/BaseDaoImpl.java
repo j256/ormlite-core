@@ -732,8 +732,8 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	public synchronized static void clearAllInternalObjectCaches() {
 		if (defaultObjectCache != null) {
 			defaultObjectCache.clearAll();
+			defaultObjectCache = null;
 		}
-		defaultObjectCache = null;
 	}
 
 	public T mapSelectStarRow(DatabaseResults results) throws SQLException {

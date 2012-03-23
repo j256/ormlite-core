@@ -6,7 +6,7 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.37
+@set ormlite_version 4.38
 @set ormlite_year 2012
 @set ormlite_date March @value{ormlite_year}
 @set package ORMLite
@@ -3146,6 +3146,14 @@ To enable all debug messages for all ORMLite classes then use the following:
 
 @example
 adb shell setprop log.tag.ORMLite DEBUG
+@end example
+
+@emph{NOTE:} Unfortunately, Android property names are limited in size so the ORMLite logger only takes that last 23 [sic]
+characters of the class name if it is larger than 23 characters. For example, if the class is AndroidDatabaseConnection
+you would do:
+
+@example
+adb shell setprop log.tag.droidDatabaseConnection VERBOSE
 @end example
 
 @c ----------------------------------------------------------------

@@ -1,4 +1,7 @@
-4.37: 3/21/2012 (svn rYYYY)
+4.38: 3/23/2012 (svn rYYYY)
+	* ANDROID: Fixed bad ObjectCache bug deep in Android shutdown/startup logic. Thanks to Filipe Leandro. Bug #3510266.
+
+4.37: 3/21/2012 (svn r2406)
 	* CORE: Fixed blocking bug where object cache exceptions would be thrown.  Thanks to Filipe Leandro.  Bug #3509853.
 	* CORE: Fixed bug where LocalLog was overwriting log data written to local file.  Thanks to mjomble.  Bug #3437823.
 	* ANDROID: Fixed a bug with Android API lookup of column names with periods. Thanks to Sebastian Roth. Bug #3509386.
