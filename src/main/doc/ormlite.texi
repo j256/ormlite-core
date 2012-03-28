@@ -3156,6 +3156,13 @@ you would do:
 adb shell setprop log.tag.droidDatabaseConnection VERBOSE
 @end example
 
+If you are trying to track operations performed to the database by ORMLite use:
+
+@example
+adb shell setprop log.tag.droidDatabaseConnection VERBOSE
+adb shell setprop log.tag.ndroidCompiledStatement VERBOSE
+@end example
+
 @c ----------------------------------------------------------------
 @node RuntimeExceptionDao, Upgrading Schema, Android Logging, Use With Android
 @section Runtime Versus SQL Exceptions
