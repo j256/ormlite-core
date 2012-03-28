@@ -72,9 +72,20 @@ public @interface ForeignCollectionField {
 	String orderColumnName() default "";
 
 	/**
-	 * Name of the column in the class that the collection is holding that corresponds to the collection. This is needed
-	 * if there are two foreign fields in the class in the collection (such as a tree structure) and you want to
-	 * identify which column you want in this collection.
+	 * @deprecated This has been renamed as {@link #foreignFieldName()} to make it more consistent to how it works.
 	 */
+	@Deprecated
 	String foreignColumnName() default "";
+
+	/**
+	 * Name of the _field_ (not the column name) in the class that the collection is holding that corresponds to the
+	 * collection. This is needed if there are two foreign fields in the class in the collection (such as a tree
+	 * structure) and you want to identify which column you want in this collection.
+	 * 
+	 * <p>
+	 * <b>WARNING:</b> Due to some internal complexities, this it field/member name in the class and not the
+	 * column-name.
+	 * </p>
+	 */
+	String foreignFieldName() default "";
 }

@@ -801,6 +801,38 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertEquals(third.stuff, thirdResult.stuff);
 	}
 
+	@Test
+	public void testForeignCollectionMultipleForeign() throws Exception {
+		Dao<ForeignFieldName, Object> nameDao = createDao(ForeignFieldName.class, true);
+		Dao<ForeignFieldNameForeign, Object> foreignDao = createDao(ForeignFieldNameForeign.class, true);
+
+		ForeignFieldNameForeign f1 = new ForeignFieldNameForeign();
+		f1.stuff = "fjpowejfwef";
+		assertEquals(1, foreignDao.create(f1));
+		ForeignFieldNameForeign f2 = new ForeignFieldNameForeign();
+		f2.stuff = "efefefefe";
+		assertEquals(1, foreignDao.create(f2));
+		
+		ForeignFieldName name1 = new ForeignFieldName();
+		name1.stuff = "ewpojfwepfjwe";
+		name1.foreign1 = f1;
+		name1.foreign2 = f2;
+		assertEquals(1, nameDao.create(name1));
+		ForeignFieldName name2 = new ForeignFieldName();
+		name2.stuff = "2131232312";
+		name2.foreign1 = f2;
+		name2.foreign2 = f1;
+		assertEquals(1, nameDao.create(name2));
+		
+		ForeignFieldNameForeign result = foreignDao.queryForId(f1.id);
+		ForeignFieldName[] f1s = result.f1s.toArray(new ForeignFieldName[1]);
+		ForeignFieldName[] f2s = result.f2s.toArray(new ForeignFieldName[1]);
+		assertEquals(1, f1s.length);
+		assertEquals(name1.stuff, f1s[0].stuff);
+		assertEquals(1, f2s.length);
+		assertEquals(name2.stuff, f2s[0].stuff);
+	}
+
 	/* =============================================================================================== */
 
 	private void testCollection(Dao<Account, Integer> accountDao, boolean eager) throws Exception {
@@ -1477,6 +1509,32 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		@DatabaseField
 		String stuff;
 		public Third() {
+		}
+	}
+
+	protected static class ForeignFieldName {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField
+		String stuff;
+		@DatabaseField(foreign = true, columnName = "f1")
+		ForeignFieldNameForeign foreign1;
+		@DatabaseField(foreign = true, columnName = "f2")
+		ForeignFieldNameForeign foreign2;
+		public ForeignFieldName() {
+		}
+	}
+
+	protected static class ForeignFieldNameForeign {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField
+		String stuff;
+		@ForeignCollectionField(foreignColumnName = "foreign1")
+		ForeignCollection<ForeignFieldName> f1s;
+		@ForeignCollectionField(foreignFieldName = "foreign2")
+		ForeignCollection<ForeignFieldName> f2s;
+		public ForeignFieldNameForeign() {
 		}
 	}
 }

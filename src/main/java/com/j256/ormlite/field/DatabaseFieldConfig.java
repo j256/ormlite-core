@@ -608,7 +608,14 @@ public class DatabaseFieldConfig {
 		config.foreignCollectionEager = foreignCollection.eager();
 		config.maxEagerForeignCollectionLevel = foreignCollection.maxEagerForeignCollectionLevel();
 		config.foreignCollectionOrderColumn = valueIfNotBlank(foreignCollection.orderColumnName());
-		config.foreignCollectionColumn = valueIfNotBlank(foreignCollection.foreignColumnName());
+		String foreignFieldName = valueIfNotBlank(foreignCollection.foreignFieldName());
+		if (foreignFieldName == null) {
+			@SuppressWarnings("deprecation")
+			String foreignColumnName = valueIfNotBlank(foreignCollection.foreignColumnName());
+			config.foreignCollectionColumn = valueIfNotBlank(foreignColumnName);
+		} else {
+			config.foreignCollectionColumn = foreignFieldName;
+		}
 		return config;
 	}
 
