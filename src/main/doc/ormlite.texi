@@ -6,7 +6,7 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.39
+@set ormlite_version 4.38
 @set ormlite_year 2012
 @set ormlite_date March @value{ormlite_year}
 @set package ORMLite
@@ -595,7 +595,8 @@ If this is set with a string then it will be used to define the column in the @c
 used to auto-generate the SQL necessary to create the column.  The column name is provided by ORMLite.  For example:
 
 @example
-@@DatabaseField(columnDefinition = "LONGBLOB not null", dataType = DataType.BYTE_ARRAY)
+@@DatabaseField(columnDefinition = "LONGBLOB not null",
+  dataType = DataType.BYTE_ARRAY)
 public byte[] bigBunchOfBytes;
 @end example
 
@@ -613,7 +614,7 @@ using its DAO directly. This only works if @code{generatedId} is also set to tru
 @example
 // the account field in Order has foreignAutoCreate=true
 Order order1 = new Order();
-// account1 has not been created in the db yet, its id field is null
+// account1 has not been created in the db yet, id field is null
 order1.account = account1;
 // this will create order1 in the order table _and_
 // pass order1.account to the internal accountDao.create().
@@ -1859,9 +1860,9 @@ If you want to use the @code{QueryBuilder} with arguments to the raw query then 
 
 @example
 QueryBuilder<Account, Integer> qb = accountDao.queryBuilder();
-// we specify a SelectArg here to generate a ? in the statement string below
+// we specify a SelectArg here to generate a ? in statement string below
 qb.where().ge("orderCount", new SelectArg());
-// the 10 at the end is an optional argument to fulfill the SelectArg above
+// the 10 at the end is an optional argument to fulfill SelectArg above
 results = accountDao.queryRaw(qb.prepareStatementString(), 10);
 @end example
 
@@ -3135,10 +3136,10 @@ adb shell setprop log.tag.MappedCreate VERBOSE
 This enables messages such as:
 
 @example
-D/BaseMappedStatement(  465): create object using 'INSERT INTO `simpledata`
+D/BaseMappedStatement(465): create object using 'INSERT INTO `simpledata`
    (`date` ,`string` ,`millis` ,`even` ) VALUES (?,?,?,?)' and 4 args,
    changed 1 rows
-D/BaseMappedStatement(  465): assigned id '9' from keyholder to 'id' in
+D/BaseMappedStatement(465): assigned id '9' from keyholder to 'id' in
    SimpleData object
 @end example
 
@@ -3802,10 +3803,10 @@ accountDao.callBatchTasks(connectionSource,
   new Callable<Void>() @{
     public Void call() throws SQLException @{
         // insert a number of accounts at once
-        for (Account account : accountsToInsert) {
+        for (Account account : accountsToInsert) @{
            // update our account object
            accountDao.create(account);
-        }
+        @}
         return null;
     @}
 @});
@@ -4201,8 +4202,9 @@ To implement a custom data persister to handle the @code{Date} type in this mann
 
 @example
 @@Override
-public Object resultToSqlArg(FieldType fieldType, DatabaseResults results,
-      int columnPos) throws SQLException @{
+public Object resultToSqlArg(FieldType fieldType,
+      DatabaseResults results, int columnPos)
+      throws SQLException @{
    Timestamp timestamp = results.getTimestamp(columnPos);
    if (TODO: somehow test fo 0000-00-00 here)
       return null;
@@ -4237,14 +4239,15 @@ it with the @code{persisterClass} construct above or you can register it with th
 field with the associated class is configured.
   
 @example
-DataPersisterManager.registerDataPersisters(MyTypePersister.getSingleton());
+DataPersisterManager.registerDataPersisters(
+   MyTypePersister.getSingleton());
 @end example
 
 You probably would not want to register the @code{MyDatePersister} above because you would not want to change the 
 persistence behavior for @emph{all} @code{Date} types.
 
 @c ----------------------------------------------------------------
-@node How to Upgrade, 4.30, Custom Persisters, Top
+@node How to Upgrade, 4.37, Custom Persisters, Top
 @chapter Upgrade From Old Versions
 
 @cindex upgrading from previous versions
@@ -4256,6 +4259,7 @@ However, sometimes when a new version is released, changes are made that require
 and rarely the on-disk database formats. 
 
 @menu
+* 4.37::                Upgrade to version 4.37
 * 4.30::                Upgrade to version 4.30
 * 4.20::                Upgrade to version 4.20
 * 4.14::                Upgrade to version 4.14
@@ -4266,7 +4270,43 @@ and rarely the on-disk database formats.
 @end menu
 
 @c ----------------------------------------------------------------
-@node 4.30, 4.20, How to Upgrade, How to Upgrade
+@node 4.37, 4.30, How to Upgrade, How to Upgrade
+@section Upgrade to Version 4.37
+
+@cindex Android case sensitive columns
+@cindex case sensitive columns, Android
+For Android users, in 4.37 we fixed a problem with looking up column names with imbedded periods in them by implementing
+our own column lookup and not using the Android API.  This had the unintended consequence of making the field name lookups
+be case sensitive.  Folks were seeing the following exception:
+
+@example
+java.sql.SQLException: Unknown field 'accountName' from the
+    Android sqlite cursor, not in:[accountname, ...]"
+@end example
+
+Since other parts of the system are @emph{also} case sensitive, we mad the decision to not fix
+this problem but to encourage our users to properly use the @code{@@DatabaseField} @code{columnName} if the case of your
+database does not match your Java fields.  @xref{columnName}.
+
+For example, before 4.36 your Android SQLite database might have the column @code{accountname} although your Java field
+might actually be @code{accountName}.  As of 4.37, when you look up your Java fields you will have to add a
+@code{columnName} value like the following:
+
+@example
+@@DatabaseField(columnName = "accountname")
+private String accountName;
+@end example
+
+We made the decision to force this change because there are other parts of ORMLite that are @emph{already} case sensitive. 
+For example, using the @code{dao.queryForMatching(obj)} method would not work without the case matching the database.
+If you were building a custom query, you would have to say @code{queryBuilder.where().eq("columnname", value)} and
+could not use @code{columnName}.
+
+This confusion is the main reason we decided not to fix this issue.  Sorry for not recognizing this incompatibility
+earlier.
+
+@c ----------------------------------------------------------------
+@node 4.30, 4.20, 4.37, How to Upgrade
 @section Upgrade to Version 4.30
 
 For Android users, in 4.30 we added some reflection hacks to make the processing of the @code{@@DatabaseField} annotations
