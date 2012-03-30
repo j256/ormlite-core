@@ -179,7 +179,7 @@ public class TransactionManager {
 				if (hasSavePoint) {
 					rollBack(connection, savePoint);
 				}
-				throw SqlExceptionUtil.create("Operation in transaction threw non-SQL exception", e);
+				throw SqlExceptionUtil.create("Transaction callable threw non-SQL exception", e);
 			}
 		} finally {
 			if (autoCommitAtStart) {

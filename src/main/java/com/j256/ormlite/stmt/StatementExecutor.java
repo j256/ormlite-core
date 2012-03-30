@@ -17,6 +17,7 @@ import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
+import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.misc.TransactionManager;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.stmt.mapped.MappedCreate;
@@ -448,7 +449,8 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	/**
 	 * Call batch tasks insude of a connection which may, or may not, have been "saved".
 	 */
-	public <CT> CT callBatchTasks(DatabaseConnection connection, boolean saved, Callable<CT> callable) throws Exception {
+	public <CT> CT callBatchTasks(DatabaseConnection connection, boolean saved, Callable<CT> callable)
+			throws SQLException {
 		if (databaseType.isBatchUseTransaction()) {
 			return TransactionManager.callInTransaction(connection, saved, databaseType, callable);
 		}
@@ -462,7 +464,13 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 					logger.debug("disabled auto-commit on table {} before batch tasks", tableInfo.getTableName());
 				}
 			}
-			return callable.call();
+			try {
+				return callable.call();
+			} catch (SQLException e) {
+				throw e;
+			} catch (Exception e) {
+				throw SqlExceptionUtil.create("Batch tasks callable threw non-SQL exception", e);
+			}
 		} finally {
 			if (autoCommitAtStart) {
 				// try to restore if we are in auto-commit mode

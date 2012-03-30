@@ -3,6 +3,7 @@
 	* CORE: Changed dao.callBatchTasks() from throwing Exception to SQLException.  Thanks to JC.
 	* JDBC: Added support for preparedStatement.setQueryTimeout(millis).  Thanks to mjomble. Feature #3502803.
 	* ANDROID: Finally fixed the number of rows changed for insert/delete/update calls using SQLite CHANGES() pragma.
+	* ANDROID: Decided to _not_ fix the columnName case sensitivity issue introduced in 4.37.  Thanks to Roman Zimmer.
 
 4.38: 3/23/2012 (svn r2426)
 	* ANDROID: Fixed bad ObjectCache bug deep in Android shutdown/startup logic. Thanks to Filipe Leandro. Bug #3510266.

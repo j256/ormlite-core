@@ -566,7 +566,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
-	public <CT> CT callBatchTasks(Callable<CT> callable) throws Exception {
+	public <CT> CT callBatchTasks(Callable<CT> callable) throws SQLException {
 		checkForInitialized();
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		try {
