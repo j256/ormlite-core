@@ -114,7 +114,7 @@ be case sensitive.  Folks were seeing the following exception:
 this problem but to encourage our users to properly use the <code>@DatabaseField</code> <code>columnName</code> if the case of your
 database does not match your Java fields.  See <a href="ormlite_2.html#ANC1">columnName</a>.
 
-</p><p>For example, before 4.36 your Android SQLite database might have the column <code>accountname</code> although your Java field
+</p><p>For example, before 4.37 your Android SQLite database might have the column <code>accountname</code> although your Java field
 might actually be <code>accountName</code>.  As of 4.37, when you look up your Java fields you will have to add a
 <code>columnName</code> value like the following:
 
