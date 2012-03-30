@@ -1,5 +1,7 @@
 4.39: 3/XX/2012 (svn rYYYY)
-	* JDBC: Added support for preparedStatement.setQueryTimeout(millis).  Thanks to mjomble. Feature #3502803. 
+	* CORE: Deprecated @DatabaseField foreignColumnName, renamed to foreignFieldName. Thanks to Candlejack. Bug #3507094.
+	* CORE: Changed dao.callBatchTasks() from throwing Exception to SQLException.  Thanks to JC.
+	* JDBC: Added support for preparedStatement.setQueryTimeout(millis).  Thanks to mjomble. Feature #3502803.
 	* ANDROID: Finally fixed the number of rows changed for insert/delete/update calls using SQLite CHANGES() pragma.
 
 4.38: 3/23/2012 (svn r2426)
