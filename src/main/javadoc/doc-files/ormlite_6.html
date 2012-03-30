@@ -103,31 +103,33 @@ and rarely the on-disk database formats.
 </tr></table>
 <h2 class="section"> 6.1 Upgrade to Version 4.37 </h2>
 
-<p>For Android users, in 4.37 we fixed a problem with looking up column names with imbedded periods in them by implementing
-our own column lookup and not using the Android API.  This had the unintended consequence of making the field name lookups
-be case sensitive.  Folks were seeing the following exception:
+<p>For Android users, in 4.37 we fixed a problem with the looking up of column names with imbedded periods in them by implementing
+our own lookup and not using the Android API.  The API matches columns in a case insensitive manner so this had the
+unintended consequence of making the field name lookups be case <em>sensitive</em>.  If you used ORMLite to generate your
+tables or if you used the <code>@DatabaseField</code> <code>columnName</code> to match the case then you would <em>not</em> be affected
+by this issue.  But if you were working with an existing database with field names that did <em>not</em> match the case of
+the Java fields, then as of 4.37 you would be seeing the following exception.  
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">java.sql.SQLException: Unknown field 'accountName' from the
     Android sqlite cursor, not in:[accountname, ...]&quot;
 </pre></td></tr></table>
-<p>Since other parts of the system are <em>also</em> case sensitive, we mad the decision to not fix
-this problem but to encourage our users to properly use the <code>@DatabaseField</code> <code>columnName</code> if the case of your
-database does not match your Java fields.  See <a href="ormlite_2.html#ANC1">columnName</a>.
+<p>Since other parts of the system are <em>also</em> case sensitive, we made the decision to not fix this problem but to encourage
+our users to properly use the <code>@DatabaseField</code> <code>columnName</code> if the case of your database does not match your
+Java fields.  See <a href="ormlite_2.html#ANC1">columnName</a>.
 
-</p><p>For example, before 4.37 your Android SQLite database might have the column <code>accountname</code> although your Java field
-might actually be <code>accountName</code>.  As of 4.37, when you look up your Java fields you will have to add a
-<code>columnName</code> value like the following:
+</p><p>For example, before 4.37 your Android SQLite database might have the column <code>accountname</code> although your Java field might
+actually be <code>accountName</code>.  As of 4.37, when you look up your Java fields you will have to add a <code>columnName</code> value
+like the following:
 
 </p><table><tr><td>&nbsp;</td><td><pre class="example">@DatabaseField(columnName = &quot;accountname&quot;)
 private String accountName;
 </pre></td></tr></table>
 <p>We made the decision to force this change because there are other parts of ORMLite that are <em>already</em> case sensitive. 
-For example, using the <code>dao.queryForMatching(obj)</code> method would not work without the case matching the database.
-If you were building a custom query, you would have to say <code>queryBuilder.where().eq(&quot;columnname&quot;, value)</code> and
-could not use <code>columnName</code>.
+For example, if you had mismatched case in your field names then using the <code>dao.queryForMatching(obj)</code> method would
+not work without the case matching the database.   If you were building a custom query, you would have to say
+<code>queryBuilder.where().eq(&quot;columnname&quot;, value)</code> and could not use <code>columnName</code>.
 
-</p><p>This confusion is the main reason we decided not to fix this issue.  Sorry for not recognizing this incompatibility
-earlier.
+</p><p>Sorry for not recognizing this incompatibility earlier.
 
 </p><hr size="6">
 <a name="NOD60"></a>
