@@ -4288,7 +4288,7 @@ Since other parts of the system are @emph{also} case sensitive, we mad the decis
 this problem but to encourage our users to properly use the @code{@@DatabaseField} @code{columnName} if the case of your
 database does not match your Java fields.  @xref{columnName}.
 
-For example, before 4.36 your Android SQLite database might have the column @code{accountname} although your Java field
+For example, before 4.37 your Android SQLite database might have the column @code{accountname} although your Java field
 might actually be @code{accountName}.  As of 4.37, when you look up your Java fields you will have to add a
 @code{columnName} value like the following:
 
