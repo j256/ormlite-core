@@ -310,8 +310,9 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		if (data == null) {
 			return new CreateOrUpdateStatus(false, false, 0);
 		}
-		T existing = queryForSameId(data);
-		if (existing == null) {
+		ID id = extractId(data);
+		// assume we need to create it if there is no id
+		if (id == null || !idExists(id)) {
 			int numRows = create(data);
 			return new CreateOrUpdateStatus(true, false, numRows);
 		} else {
