@@ -159,7 +159,8 @@ public class Where<T, ID> {
 	 * <b>NOTE:</b> There is no guarantee of the order of the clauses that are generated in the final query.
 	 * </p>
 	 * <p>
-	 * <b>NOTE:</b> I couldn't remove the code warning associated with this method when used with more than 2 arguments.
+	 * <b>NOTE:</b> I can't remove the generics code warning that can be associated with this method. You can instead
+	 * use the {@link #and(int)} method.
 	 * </p>
 	 */
 	public Where<T, ID> and(Where<T, ID> first, Where<T, ID> second, Where<T, ID>... others) {
@@ -374,7 +375,8 @@ public class Where<T, ID> {
 	 * <b>NOTE:</b> There is no guarantee of the order of the clauses that are generated in the final query.
 	 * </p>
 	 * <p>
-	 * <b>NOTE:</b> I can't remove the code warning associated with this method. Use the iterator method below.
+	 * <b>NOTE:</b> I can't remove the generics code warning that can be associated with this method. You can instead
+	 * use the {@link #or(int)} method.
 	 * </p>
 	 */
 	public Where<T, ID> or(Where<T, ID> left, Where<T, ID> right, Where<T, ID>... others) {
