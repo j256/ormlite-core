@@ -48,12 +48,12 @@
 				<repository>
 					<id>sourceforge</id>
 					<name>SourceForge</name>
-					<url>sftp://graywatson,ormlite@frs.sourceforge.net:/home/frs/project/o/or/ormlite/releases</url>
+					<url>sftp://graywatson,ormlite@frs.sourceforge.net:/home/frs/project/ormlite/releases</url>
 				</repository>
 				<snapshotRepository>
 					<id>sourceforge</id>
 					<name>SourceForge</name>
-					<url>sftp://graywatson,ormlite@frs.sourceforge.net:/home/frs/project/o/or/ormlite/snapshots</url>
+					<url>sftp://graywatson,ormlite@frs.sourceforge.net:/home/frs/project/ormlite/snapshots</url>
 				</snapshotRepository>
 			</distributionManagement>
 		</profile>

@@ -72,7 +72,7 @@ To release ORMLite:
 12) Possibly trim the older releases in the release directory on SF.  Try to leave last major release and couple minors.
 
 	create_sf_shell							(script)
-	cd /home/frs/project/o/or/ormlite/releases/com/j256/ormlite
+	cd /home/frs/project/ormlite/releases/com/j256/ormlite
 	rm -rf 1.11 1.12
 	shutdown
 	
