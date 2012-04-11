@@ -577,7 +577,7 @@ public class Where<T, ID> {
 			clauses = new Clause[others.length];
 			// fill in reverse order
 			for (int i = others.length - 1; i >= 0; i--) {
-				clauses[i] = pop("AND");
+				clauses[i] = pop(label);
 			}
 		}
 		return clauses;
