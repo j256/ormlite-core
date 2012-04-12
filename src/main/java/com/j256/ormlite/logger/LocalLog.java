@@ -45,7 +45,12 @@ public class LocalLog implements Log {
 	public static final String LOCAL_LOG_PROPERTIES_FILE = "/ormliteLocalLog.properties";
 
 	private static final Level DEFAULT_LEVEL = Level.DEBUG;
-	private static final ThreadLocal<DateFormat> dateFormatThreadLocal = new ThreadLocal<DateFormat>();
+	private static final ThreadLocal<DateFormat> dateFormatThreadLocal = new ThreadLocal<DateFormat>() {
+		@Override
+		protected DateFormat initialValue() {
+			return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
+		}
+	};
 	private static PrintStream printStream;
 	private static final List<PatternLevel> classLevels;
 
@@ -183,10 +188,6 @@ public class LocalLog implements Log {
 		}
 		StringBuilder sb = new StringBuilder(128);
 		DateFormat dateFormat = dateFormatThreadLocal.get();
-		if (dateFormat == null) {
-			dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
-			dateFormatThreadLocal.set(dateFormat);
-		}
 		sb.append(dateFormat.format(new Date()));
 		sb.append(" [").append(level.name()).append("] ");
 		sb.append(className).append(' ');

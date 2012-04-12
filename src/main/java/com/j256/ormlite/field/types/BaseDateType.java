@@ -48,18 +48,18 @@ public abstract class BaseDateType extends BaseDataType {
 	}
 
 	protected static class DateStringFormatConfig {
-		private final ThreadLocal<DateFormat> threadLocal = new ThreadLocal<DateFormat>();
+		private final ThreadLocal<DateFormat> threadLocal = new ThreadLocal<DateFormat>() {
+			@Override
+			protected DateFormat initialValue() {
+				return new SimpleDateFormat(dateFormatStr);
+			}
+		};
 		final String dateFormatStr;
 		public DateStringFormatConfig(String dateFormatStr) {
 			this.dateFormatStr = dateFormatStr;
 		}
 		public DateFormat getDateFormat() {
-			DateFormat dateFormat = threadLocal.get();
-			if (dateFormat == null) {
-				dateFormat = new SimpleDateFormat(dateFormatStr);
-				threadLocal.set(dateFormat);
-			}
-			return dateFormat;
+			return threadLocal.get();
 		}
 		@Override
 		public String toString() {
