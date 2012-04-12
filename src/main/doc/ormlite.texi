@@ -4276,11 +4276,10 @@ and rarely the on-disk database formats.
 @cindex Android case sensitive columns
 @cindex case sensitive columns, Android
 For Android users, in 4.37 we fixed a problem with the looking up of column names with imbedded periods in them by implementing
-our own lookup and not using the Android API.  The API matches columns in a case insensitive manner so this had the
-unintended consequence of making the field name lookups be case @emph{sensitive}.  If you used ORMLite to generate your
-tables or if you used the @code{@@DatabaseField} @code{columnName} to match the case then you would @emph{not} be affected
-by this issue.  But if you were working with an existing database with field names that did @emph{not} match the case of
-the Java fields, then as of 4.37 you would be seeing the following exception.  
+our own lookup and not using the Android API.  This had the unintended consequence of making the field name lookups be case
+@emph{sensitive}.  If you used ORMLite to generate your tables or if you used the @code{@@DatabaseField} @code{columnName}
+to match the case then you would @emph{not} be affected by this issue.  But if you were working with an existing database with
+field names that did @emph{not} match the case of the Java fields, then as of 4.37 you would be seeing the following exception.  
 
 @example
 java.sql.SQLException: Unknown field 'accountName' from the
