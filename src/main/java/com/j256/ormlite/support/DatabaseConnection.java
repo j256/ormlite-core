@@ -27,7 +27,7 @@ public interface DatabaseConnection {
 	/**
 	 * Return if auto-commit is currently enabled.
 	 */
-	public boolean getAutoCommit() throws SQLException;
+	public boolean isAutoCommit() throws SQLException;
 
 	/**
 	 * Set the auto-commit to be on (true) or off (false).

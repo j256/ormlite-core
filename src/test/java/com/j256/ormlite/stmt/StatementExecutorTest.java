@@ -92,7 +92,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
 		DatabaseConnection connection = createMock(DatabaseConnection.class);
 		expect(connection.isAutoCommitSupported()).andReturn(true);
-		expect(connection.getAutoCommit()).andReturn(false);
+		expect(connection.isAutoCommit()).andReturn(false);
 		StatementExecutor<Foo, String> statementExec =
 				new StatementExecutor<Foo, String>(databaseType, tableInfo, null);
 		replay(connection);
@@ -112,7 +112,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
 		DatabaseConnection connection = createMock(DatabaseConnection.class);
 		expect(connection.isAutoCommitSupported()).andReturn(true);
-		expect(connection.getAutoCommit()).andReturn(true);
+		expect(connection.isAutoCommit()).andReturn(true);
 		connection.setAutoCommit(false);
 		connection.setAutoCommit(true);
 		StatementExecutor<Foo, String> statementExec =
@@ -134,7 +134,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
 		DatabaseConnection connection = createMock(DatabaseConnection.class);
 		expect(connection.isAutoCommitSupported()).andReturn(true);
-		expect(connection.getAutoCommit()).andReturn(true);
+		expect(connection.isAutoCommit()).andReturn(true);
 		connection.setAutoCommit(false);
 		connection.setAutoCommit(true);
 		StatementExecutor<Foo, String> statementExec =

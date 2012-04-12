@@ -149,7 +149,7 @@ public class TransactionManager {
 			Savepoint savePoint = null;
 			if (saved || databaseType.isNestedSavePointsSupported()) {
 				if (connection.isAutoCommitSupported()) {
-					autoCommitAtStart = connection.getAutoCommit();
+					autoCommitAtStart = connection.isAutoCommit();
 					if (autoCommitAtStart) {
 						// disable auto-commit mode if supported and enabled at start
 						connection.setAutoCommit(false);

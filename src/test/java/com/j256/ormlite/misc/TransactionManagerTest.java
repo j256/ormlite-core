@@ -159,7 +159,7 @@ public class TransactionManagerTest extends BaseCoreTest {
 		ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		DatabaseConnection conn = createMock(DatabaseConnection.class);
 		expect(conn.isAutoCommitSupported()).andReturn(true);
-		expect(conn.getAutoCommit()).andReturn(false);
+		expect(conn.isAutoCommit()).andReturn(false);
 		Savepoint savePoint = createMock(Savepoint.class);
 		expect(savePoint.getSavepointName()).andReturn("name").anyTimes();
 		expect(conn.setSavePoint(isA(String.class))).andReturn(savePoint);
@@ -184,7 +184,7 @@ public class TransactionManagerTest extends BaseCoreTest {
 		ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		DatabaseConnection conn = createMock(DatabaseConnection.class);
 		expect(conn.isAutoCommitSupported()).andReturn(true);
-		expect(conn.getAutoCommit()).andReturn(true);
+		expect(conn.isAutoCommit()).andReturn(true);
 		conn.setAutoCommit(false);
 		Savepoint savePoint = createMock(Savepoint.class);
 		expect(savePoint.getSavepointName()).andReturn("name").anyTimes();
