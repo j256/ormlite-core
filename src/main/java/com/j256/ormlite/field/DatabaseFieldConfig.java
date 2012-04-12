@@ -52,7 +52,7 @@ public class DatabaseFieldConfig {
 	private boolean foreignCollection;
 	private boolean foreignCollectionEager;
 	private String foreignCollectionOrderColumn;
-	private String foreignCollectionColumn;
+	private String foreignCollectionColumnName;
 	private int maxEagerForeignCollectionLevel = DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL;
 	private Class<? extends DataPersister> persisterClass = DEFAULT_PERSISTER_CLASS;
 	private boolean allowGeneratedIdInsert;
@@ -387,12 +387,20 @@ public class DatabaseFieldConfig {
 		return foreignCollectionOrderColumn;
 	}
 
+	/**
+	 * @deprecated You should use {@link #setForeignCollectionColumnName(String)}
+	 */
+	@Deprecated
 	public void setForeignCollectionColumn(String foreignCollectionColumn) {
-		this.foreignCollectionColumn = foreignCollectionColumn;
+		this.foreignCollectionColumnName = foreignCollectionColumn;
 	}
 
-	public String getForeignCollectionColumn() {
-		return foreignCollectionColumn;
+	public void setForeignCollectionColumnName(String foreignCollectionColumn) {
+		this.foreignCollectionColumnName = foreignCollectionColumn;
+	}
+
+	public String getForeignCollectionColumnName() {
+		return foreignCollectionColumnName;
 	}
 
 	public Class<? extends DataPersister> getPersisterClass() {
@@ -612,9 +620,9 @@ public class DatabaseFieldConfig {
 		if (foreignFieldName == null) {
 			@SuppressWarnings("deprecation")
 			String foreignColumnName = valueIfNotBlank(foreignCollection.foreignColumnName());
-			config.foreignCollectionColumn = valueIfNotBlank(foreignColumnName);
+			config.foreignCollectionColumnName = valueIfNotBlank(foreignColumnName);
 		} else {
-			config.foreignCollectionColumn = foreignFieldName;
+			config.foreignCollectionColumnName = foreignFieldName;
 		}
 		return config;
 	}
