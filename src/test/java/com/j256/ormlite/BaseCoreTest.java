@@ -29,6 +29,7 @@ public abstract class BaseCoreTest {
 	@After
 	public void after() throws Exception {
 		connectionSource.close();
+		connectionSource = null;
 		DaoManager.clearCache();
 	}
 

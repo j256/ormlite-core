@@ -776,22 +776,49 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	public DatabaseConnection startThreadConnection() throws SQLException {
+		DatabaseConnection connection = connectionSource.getReadWriteConnection();
+		connectionSource.saveSpecialConnection(connection);
+		return connection;
+	}
+
+	public void endThreadConnection(DatabaseConnection connection) throws SQLException {
+		connectionSource.clearSpecialConnection(connection);
+		connectionSource.releaseConnection(connection);
+	}
+
 	public void setAutoCommit(boolean autoCommit) throws SQLException {
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		try {
-			connection.setAutoCommit(autoCommit);
+			setAutoCommit(connection, autoCommit);
 		} finally {
 			connectionSource.releaseConnection(connection);
 		}
 	}
 
+	public void setAutoCommit(DatabaseConnection connection, boolean autoCommit) throws SQLException {
+		connection.setAutoCommit(autoCommit);
+	}
+
 	public boolean isAutoCommit() throws SQLException {
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		try {
-			return connection.getAutoCommit();
+			return isAutoCommit(connection);
 		} finally {
 			connectionSource.releaseConnection(connection);
 		}
+	}
+
+	public boolean isAutoCommit(DatabaseConnection connection) throws SQLException {
+		return connection.isAutoCommit();
+	}
+
+	public void commit(DatabaseConnection connection) throws SQLException {
+		connection.commit(null);
+	}
+
+	public void rollBack(DatabaseConnection connection) throws SQLException {
+		connection.rollback(null);
 	}
 
 	/**

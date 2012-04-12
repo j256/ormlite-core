@@ -2204,6 +2204,73 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(1, foreignDao.refresh(result.foreign));
 	}
 
+	@Test
+	public void testAutoCommitClose() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		DatabaseConnection conn = null;
+		try {
+			conn = dao.startThreadConnection();
+			dao.setAutoCommit(conn, false);
+
+			Foo foo = new Foo();
+			assertEquals(1, dao.create(foo));
+			List<Foo> results = dao.queryForAll();
+			assertEquals(1, results.size());
+
+			dao.endThreadConnection(conn);
+			conn = null;
+			after();
+			DaoManager.clearCache();
+			before();
+
+			dao = createDao(Foo.class, true);
+
+			results = dao.queryForAll();
+			// we expect there to be no results because we closed the connection to the database before a commit
+			// happened
+			assertEquals(0, results.size());
+		} finally {
+			if (conn != null) {
+				dao.endThreadConnection(conn);
+			}
+		}
+	}
+
+	@Test
+	public void testConnectionMethods() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		DatabaseConnection conn = null;
+		try {
+			conn = dao.startThreadConnection();
+			assertTrue(dao.isAutoCommit(conn));
+			dao.setAutoCommit(conn, false);
+			assertFalse(dao.isAutoCommit(conn));
+
+			Foo foo = new Foo();
+			assertEquals(1, dao.create(foo));
+			assertNotNull(dao.queryForId(foo.id));
+
+			dao.rollBack(conn);
+			assertNull(dao.queryForId(foo.id));
+
+			foo = new Foo();
+			assertEquals(1, dao.create(foo));
+			assertNotNull(dao.queryForId(foo.id));
+
+			dao.commit(conn);
+			assertNotNull(dao.queryForId(foo.id));
+
+			dao.rollBack(conn);
+			assertNotNull(dao.queryForId(foo.id));
+
+		} finally {
+			if (conn != null) {
+				conn.setAutoCommit(true);
+				dao.endThreadConnection(conn);
+			}
+		}
+	}
+
 	/* ============================================================================================== */
 
 	private String buildFooQueryAllString(Dao<Foo, Object> fooDao) throws SQLException {

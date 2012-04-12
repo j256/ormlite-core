@@ -20,6 +20,7 @@ import com.j256.ormlite.stmt.PreparedUpdate;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTableConfig;
 
@@ -669,9 +670,28 @@ public class RuntimeExceptionDao<T, ID> {
 		}
 	}
 
+	public DatabaseConnection startThreadConnection() {
+		try {
+			return dao.startThreadConnection();
+		} catch (SQLException e) {
+			logMessage(e, "startThreadConnection() threw exception");
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void endThreadConnection(DatabaseConnection connection) {
+		try {
+			dao.endThreadConnection(connection);
+		} catch (SQLException e) {
+			logMessage(e, "endThreadConnection(" + connection + ") threw exception");
+			throw new RuntimeException(e);
+		}
+	}
+
 	/**
 	 * @see Dao#setAutoCommit(boolean)
 	 */
+	@Deprecated
 	public void setAutoCommit(boolean autoCommit) {
 		try {
 			dao.setAutoCommit(autoCommit);
@@ -681,14 +701,51 @@ public class RuntimeExceptionDao<T, ID> {
 		}
 	}
 
+	public void setAutoCommit(DatabaseConnection connection, boolean autoCommit) {
+		try {
+			dao.setAutoCommit(connection, autoCommit);
+		} catch (SQLException e) {
+			logMessage(e, "setAutoCommit(" + connection + "," + autoCommit + ") threw exception");
+			throw new RuntimeException(e);
+		}
+	}
+
 	/**
 	 * @see Dao#isAutoCommit()
 	 */
+	@Deprecated
 	public boolean isAutoCommit() {
 		try {
 			return dao.isAutoCommit();
 		} catch (SQLException e) {
-			logMessage(e, "isAutoCommit threw exception");
+			logMessage(e, "isAutoCommit() threw exception");
+			throw new RuntimeException(e);
+		}
+	}
+
+	public boolean isAutoCommit(DatabaseConnection connection) {
+		try {
+			return dao.isAutoCommit(connection);
+		} catch (SQLException e) {
+			logMessage(e, "isAutoCommit(" + connection + ") threw exception");
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void commit(DatabaseConnection connection) {
+		try {
+			dao.commit(connection);
+		} catch (SQLException e) {
+			logMessage(e, "commit(" + connection + ") threw exception");
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void rollBack(DatabaseConnection connection) {
+		try {
+			dao.rollBack(connection);
+		} catch (SQLException e) {
+			logMessage(e, "rollBack(" + connection + ") threw exception");
 			throw new RuntimeException(e);
 		}
 	}

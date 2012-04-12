@@ -39,7 +39,7 @@ public class H2DatabaseConnection implements DatabaseConnection {
 		return true;
 	}
 
-	public boolean getAutoCommit() throws SQLException {
+	public boolean isAutoCommit() throws SQLException {
 		return connection.getAutoCommit();
 	}
 
@@ -52,11 +52,15 @@ public class H2DatabaseConnection implements DatabaseConnection {
 	}
 
 	public void commit(Savepoint savePoint) throws SQLException {
-		connection.releaseSavepoint(savePoint);
+		connection.commit();
 	}
 
 	public void rollback(Savepoint savePoint) throws SQLException {
-		connection.rollback(savePoint);
+		if (savePoint == null) {
+			connection.rollback();
+		} else {
+			connection.rollback(savePoint);
+		}
 	}
 
 	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argFieldTypes)

@@ -12,6 +12,7 @@ import java.util.concurrent.Callable;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.misc.TransactionManager;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.stmt.PreparedDelete;
@@ -20,6 +21,7 @@ import com.j256.ormlite.stmt.PreparedUpdate;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.UpdateBuilder;
+import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
@@ -173,8 +175,12 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public CreateOrUpdateStatus createOrUpdate(T data) throws SQLException;
 
 	/**
-	 * Save the fields from an object to the database. If you have made changes to an object, this is how you persist
-	 * those changes to the database. You cannot use this method to update the id field -- see {@link #updateId}.
+	 * Store the fields from an object to the database. If you have made changes to an object, this is how you persist
+	 * those changes to the database. You cannot use this method to update the id field -- see {@link #updateId} .
+	 * 
+	 * <p>
+	 * NOTE: Typically this will not save changes made to foreign objects or to foreign collections.
+	 * </p>
 	 * 
 	 * @param data
 	 *            The data item that we are updating in the database.
@@ -625,17 +631,97 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public boolean idExists(ID id) throws SQLException;
 
 	/**
-	 * Set auto-commit mode to be true or false. This may not be supported by all database types and also may only set
-	 * the mode for the current connection. If you are using a pooled connection source then this may only set
-	 * auto-commit for a single connection.
+	 * <p>
+	 * <b>WARNING:</b> This method is for advanced users only. It is only to support the {@link #setAutoCommit(boolean)}
+	 * and other methods below. Chances are you should be using the
+	 * {@link TransactionManager#callInTransaction(Callable)} instead of this method unless you know what you are doing.
+	 * </p>
+	 * 
+	 * <p>
+	 * This allocates a connection for this specific thread that will be used in all other DAO operations. The thread
+	 * <i>must</i> call {@link #endThreadConnection(DatabaseConnection)} once it is done with the connection. It is
+	 * highly recommended that a
+	 * <code>try { conn = allocateThreadConnection(); ... } finally { freeThreadConnection(conn); }</code> type of
+	 * pattern be used here to ensure you do not leak connections.
+	 * </p>
+	 * 
+	 * <p>
+	 * This is really only useful if you are using a pooled connection source and want to do certain operations on the
+	 * same pool. Android users, for example have a single connection to the database so this is effecitively a no-op.
+	 * </p>
 	 */
+	public DatabaseConnection startThreadConnection() throws SQLException;
+
+	/**
+	 * <p>
+	 * <b>WARNING:</b> This method is for advanced users only. It is only to support the {@link #setAutoCommit(boolean)}
+	 * and other methods below. Chances are you should be using the
+	 * {@link TransactionManager#callInTransaction(Callable)} instead of this method unless you know what you are doing.
+	 * </p>
+	 * 
+	 * <p>
+	 * This method is used to free the connection returned by the {@link #startThreadConnection()} above.
+	 * </p>
+	 * 
+	 * @param connection
+	 *            Connection to be freed. If null then it will be a no-op.
+	 */
+	public void endThreadConnection(DatabaseConnection connection) throws SQLException;
+
+	/**
+	 * @deprecated You should use the {@link #setAutoCommit(DatabaseConnection, boolean)} method instead.
+	 */
+	@Deprecated
 	public void setAutoCommit(boolean autoCommit) throws SQLException;
 
 	/**
-	 * Return true if the database is in auto-commit mode otherwise false. This may not be supported by all database
-	 * types. If you are using a pooled connection source then this may only set auto-commit for a single connection.
+	 * Set auto-commit mode to be true or false on the connection returned by the {@link #startThreadConnection()}. This
+	 * may not be supported by all database types.
+	 * 
+	 * <p>
+	 * <b>WARNING:</b> Chances are you should be using the {@link TransactionManager#callInTransaction(Callable)}
+	 * instead of this method unless you know what you are doing.
+	 * </p>
 	 */
+	public void setAutoCommit(DatabaseConnection connection, boolean autoCommit) throws SQLException;
+
+	/**
+	 * @deprecated You should use the {@link #isAutoCommit(DatabaseConnection)} method instead.
+	 */
+	@Deprecated
 	public boolean isAutoCommit() throws SQLException;
+
+	/**
+	 * Return true if the database connection returned by the {@link #startThreadConnection()} is in auto-commit mode
+	 * otherwise false. This may not be supported by all database types.
+	 */
+	public boolean isAutoCommit(DatabaseConnection connection) throws SQLException;
+
+	/**
+	 * If you have previously set auto-commit to false using {@link #setAutoCommit(DatabaseConnection, boolean)} then
+	 * this will commit all changes to the database made from that point up to now on the connection returned by the
+	 * {@link #startThreadConnection()}. The changes will be written to the database and discarded. The connection will
+	 * continue to stay in the current auto-commit mode.
+	 * 
+	 * <p>
+	 * <b>WARNING:</b> Chances are you should be using the {@link TransactionManager#callInTransaction(Callable)}
+	 * instead of this method unless you know what you are doing.
+	 * </p>
+	 */
+	public void commit(DatabaseConnection connection) throws SQLException;
+
+	/**
+	 * If you have previously set auto-commit to false using {@link #setAutoCommit(DatabaseConnection, boolean)} then
+	 * this will roll-back and flush all changes to the database made from that point up to now on the connection
+	 * returned by the {@link #startThreadConnection()} . None of those changes will be written to the database and are
+	 * discarded. The connection will continue to stay in the current auto-commit mode.
+	 * 
+	 * <p>
+	 * <b>WARNING:</b> Chances are you should be using the {@link TransactionManager#callInTransaction(Callable)}
+	 * instead of this method unless you know what you are doing.
+	 * </p>
+	 */
+	public void rollBack(DatabaseConnection connection) throws SQLException;
 
 	/**
 	 * Return class for the {@link Dao#createOrUpdate(Object)} method.

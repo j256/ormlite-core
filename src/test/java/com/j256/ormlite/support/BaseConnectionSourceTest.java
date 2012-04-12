@@ -3,6 +3,7 @@ package com.j256.ormlite.support;
 import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -25,6 +26,7 @@ public class BaseConnectionSourceTest extends BaseCoreTest {
 		OurConnectionSource cs = new OurConnectionSource();
 		assertFalse(cs.isSavedConnection(createMock(DatabaseConnection.class)));
 		DatabaseConnection conn = cs.getReadOnlyConnection();
+		assertNotNull(conn);
 		assertNull(cs.getSpecialConnection());
 		cs.saveSpecialConnection(conn);
 		assertSame(conn, cs.getSpecialConnection());
@@ -32,6 +34,7 @@ public class BaseConnectionSourceTest extends BaseCoreTest {
 		assertFalse(cs.isSavedConnection(createMock(DatabaseConnection.class)));
 		DatabaseConnection conn2 = cs.getReadOnlyConnection();
 		assertSame(conn, conn2);
+		assertNotNull(conn2);
 		cs.clearSpecialConnection(conn);
 		assertNull(cs.getSpecialConnection());
 		assertFalse(cs.isSavedConnection(conn));
@@ -79,9 +82,9 @@ public class BaseConnectionSourceTest extends BaseCoreTest {
 		public DatabaseConnection getReadWriteConnection() {
 			DatabaseConnection conn = getSavedConnection();
 			if (conn == null) {
-				return conn;
-			} else {
 				return createMock(DatabaseConnection.class);
+			} else {
+				return conn;
 			}
 		}
 
