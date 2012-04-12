@@ -79,7 +79,9 @@ public abstract class BaseConnectionSource implements ConnectionSource {
 	protected boolean clearSpecial(DatabaseConnection connection, Logger logger) {
 		NestedConnection currentSaved = specialConnection.get();
 		boolean cleared = false;
-		if (currentSaved == null) {
+		if (connection == null) {
+			// ignored
+		} else if (currentSaved == null) {
 			logger.error("no connection has been saved when clear() called");
 		} else if (currentSaved.connection == connection) {
 			if (currentSaved.decrementAndGet() == 0) {
