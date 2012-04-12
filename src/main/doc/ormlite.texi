@@ -6,9 +6,9 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.38
+@set ormlite_version 4.39
 @set ormlite_year 2012
-@set ormlite_date March @value{ormlite_year}
+@set ormlite_date April @value{ormlite_year}
 @set package ORMLite
 @c ----------------------------------------------------------------
 
@@ -3867,11 +3867,59 @@ results.  It is particularly useful if you are repositioning a database cursor e
 
 Return a row mapper that is suitable for mapping results from a query to @code{select *} (star).
 
-@item if id exists
-@item does id exist already
+@cindex if id exists
+@cindex does id exist already
 @item idExists(ID id)
 
 Returns true if an object exists that matches this ID otherwise false.
+
+@cindex cache database connection
+@item startThreadConnection()
+
+@emph{WARNING:} This method is for advanced users only. It is only to support the {@link #setAutoCommit(boolean)}
+and other methods below. Chances are you should be using the @code{TransactionManager.callInTransaction(Callable)} instead
+of this method unless you know what you are doing.
+
+This allocates a connection for this specific thread that will be used in all other DAO operations. The thread
+@emph{must} call @code{endThreadConnection(conn)} once it is done with the connection. It is highly recommended that a
+@code{try / finally} pattern be used here to ensure you do not leak connections.
+
+This is really only useful if you are using a pooled connection source and want to do certain operations on the
+same pool. Android users, for example have a single connection to the database so this is effecitively a no-op.
+
+@item endThreadConnection(DatabaseConnection connection)
+
+This method is used to free the connection returned by the @code{startThreadConnection()} above.
+
+@item setAutoCommit(DatabaseConnection connection, boolean autoCommit)
+
+Set auto-commit mode to be true or false on the connection returned by the @code{startThreadConnection()}. This
+may not be supported by all database types.
+
+@item isAutoCommit(DatabaseConnection connection)
+
+Return true if the database connection returned by the @code{startThreadConnection()} is in auto-commit mode
+otherwise false. This may not be supported by all database types.
+
+@item commit(DatabaseConnection connection)
+
+If you have previously called @code{setAutoCommit(conn, false)} then this will commit all changes to the database
+made from that point up to now on the connection returned by the @code{startThreadConnection()}. The changes
+will be written to the database and discarded. The connection will continue to stay in the current auto-commit
+mode.
+
+@emph{WARNING:} Chances are you should be using the @code{TransactionManager.callInTransaction(Callable)}
+instead of this method unless you know what you are doing.
+
+@item rollBack(DatabaseConnection connection)
+
+If you have previously called @code{setAutoCommit(conn, false)} then this will roll-back and flush all changes to the
+database made from that point up to now on the connection returned by the @code{startThreadConnection()}. None
+of those changes will be written to the database and are discarded. The connection will continue to stay in the
+current auto-commit mode.
+
+@emph{WARNING:} Chances are you should be using the @code{TransactionManager.callInTransaction(Callable)}
+instead of this method unless you know what you are doing.
 
 @end table
 
