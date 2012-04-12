@@ -5,6 +5,7 @@
 	* CORE: Fixed tough bug with table configs of self referencing classes. Thanks to Slava Tysianchuk. Bug #3517094.
 	* CORE: Added support for start and endThreadConnection() and added dao.commit() and rollBack().  Thanks to AlexPal.
 	* JDBC: Added support for preparedStatement.setQueryTimeout(millis).  Thanks to mjomble. Feature #3502803.
+	* JDBC: Fixed bug with pooled connection source and connections with autoCommit off. Thanks to AlexPal. Bug #3517098.
 	* ANDROID: Finally fixed the number of rows changed for insert/delete/update calls using SQLite CHANGES() pragma.
 	* ANDROID: Decided to _not_ fix the columnName case sensitivity issue introduced in 4.37.  Thanks to Roman Zimmer.
 	* ANDROID: Fixed bad bug that was prematurely clearing DAO configs.  Thanks to Slava Tysianchuk.  Bug #3516920.
