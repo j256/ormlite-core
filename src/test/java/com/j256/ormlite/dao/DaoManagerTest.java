@@ -3,6 +3,7 @@ package com.j256.ormlite.dao;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
@@ -11,6 +12,7 @@ import static org.junit.Assert.fail;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -18,6 +20,7 @@ import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.DatabaseTableConfig;
@@ -40,12 +43,12 @@ public class DaoManagerTest extends BaseCoreTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testLookupDaoNull() throws Exception {
+	public void testLookupDaoNull() {
 		DaoManager.lookupDao(null, Foo.class);
 	}
 
 	@Test
-	public void testLookupDaoUnknown() throws Exception {
+	public void testLookupDaoUnknown() {
 		assertNull(DaoManager.lookupDao(connectionSource, getClass()));
 	}
 
@@ -182,6 +185,30 @@ public class DaoManagerTest extends BaseCoreTest {
 		assertSame(GenericBar.class.getName(), bardao.doGenericAction());
 	}
 
+	@Test
+	public void testSelfReferenceWithLoadedConfig() throws Exception {
+		DaoManager.clearCache();
+		DatabaseTableConfig<SelfReference> config =
+				DatabaseTableConfig.fromClass(connectionSource, SelfReference.class);
+		@SuppressWarnings("unchecked")
+		List<DatabaseTableConfig<?>> configs = new ArrayList<DatabaseTableConfig<?>>(Arrays.asList(config));
+		DaoManager.addCachedDatabaseConfigs(configs);
+		// this used to throw an exception
+		DaoManager.createDao(connectionSource, SelfReference.class);
+	}
+
+	@Test
+	public void testClassLoopWithLoadedConfig() throws Exception {
+		DaoManager.clearCache();
+		DatabaseTableConfig<LoopOne> config1 = DatabaseTableConfig.fromClass(connectionSource, LoopOne.class);
+		DatabaseTableConfig<LoopTwo> config2 = DatabaseTableConfig.fromClass(connectionSource, LoopTwo.class);
+		@SuppressWarnings("unchecked")
+		List<DatabaseTableConfig<?>> configs = new ArrayList<DatabaseTableConfig<?>>(Arrays.asList(config1, config2));
+		DaoManager.addCachedDatabaseConfigs(configs);
+		assertNotNull(DaoManager.createDao(connectionSource, LoopOne.class));
+		assertNotNull(DaoManager.createDao(connectionSource, LoopTwo.class));
+	}
+
 	/* ================================================================== */
 
 	private <T> void testClass(Class<T> clazz) throws Exception {
@@ -269,6 +296,39 @@ public class DaoManagerTest extends BaseCoreTest {
 		@DatabaseField
 		String foo;
 		public RegisterClass() {
+		}
+	}
+
+	public static class SelfReference {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(foreign = true)
+		SelfReference foreign;
+		@ForeignCollectionField
+		ForeignCollection<SelfReference> others;
+		public SelfReference() {
+		}
+	}
+
+	public static class LoopOne {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(foreign = true)
+		LoopTwo foreign;
+		@ForeignCollectionField
+		ForeignCollection<LoopTwo> twos;
+		public LoopOne() {
+		}
+	}
+
+	public static class LoopTwo {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(foreign = true)
+		LoopOne foreign;
+		@ForeignCollectionField
+		ForeignCollection<LoopOne> ones;
+		public LoopTwo() {
 		}
 	}
 

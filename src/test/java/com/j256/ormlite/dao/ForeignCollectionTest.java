@@ -812,7 +812,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		ForeignFieldNameForeign f2 = new ForeignFieldNameForeign();
 		f2.stuff = "efefefefe";
 		assertEquals(1, foreignDao.create(f2));
-		
+
 		ForeignFieldName name1 = new ForeignFieldName();
 		name1.stuff = "ewpojfwepfjwe";
 		name1.foreign1 = f1;
@@ -823,7 +823,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		name2.foreign1 = f2;
 		name2.foreign2 = f1;
 		assertEquals(1, nameDao.create(name2));
-		
+
 		ForeignFieldNameForeign result = foreignDao.queryForId(f1.id);
 		ForeignFieldName[] f1s = result.f1s.toArray(new ForeignFieldName[1]);
 		ForeignFieldName[] f2s = result.f2s.toArray(new ForeignFieldName[1]);

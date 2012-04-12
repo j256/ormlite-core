@@ -65,7 +65,12 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	protected ConnectionSource connectionSource;
 	protected CloseableIterator<T> lastIterator;
 
-	private static final ThreadLocal<DaoConfigLevel> daoConfigLevelLocal = new ThreadLocal<DaoConfigLevel>();
+	private static final ThreadLocal<DaoConfigLevel> daoConfigLevelLocal = new ThreadLocal<DaoConfigLevel>() {
+		@Override
+		protected DaoConfigLevel initialValue() {
+			return new DaoConfigLevel();
+		}
+	};
 	private static ReferenceObjectCache defaultObjectCache;
 	private ObjectCache objectCache = null;
 
@@ -160,33 +165,51 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		 * go back and call FieldType.configDaoInformation() after we are done. So for every DAO that is initialized
 		 * here, we have to see if it is the top DAO. If not we save it for dao configuration later.
 		 */
-		DaoConfigLevel daoConfigLevel = getDaoConfigLevel();
+		DaoConfigLevel daoConfigLevel = daoConfigLevelLocal.get();
 		daoConfigLevel.level++;
 		try {
 			if (daoConfigLevel.level > 1) {
 				// if we have recursed then we need to save the dao for later configuration
 				daoConfigLevel.addDao(this);
 			} else {
+				/*
+				 * Here's another complex bit. The first DAO that is being constructed as part of a DAO chain is not yet
+				 * in the DaoManager cache. If we continue onward we might come back around and try to configure this
+				 * DAO again. Forcing it into the cache here makes sure it won't be configured twice. This will cause it
+				 * to be stuck in twice when it returns out to the DaoManager but that's a small price to pay. This also
+				 * applies to self-referencing classes.
+				 */
+				DaoManager.registerDao(connectionSource, this);
+
 				// configure the root dao _first_ which may start the recursion and fill the daoList
 				for (FieldType fieldType : tableInfo.getFieldTypes()) {
 					// this can cause recursion
 					fieldType.configDaoInformation(connectionSource, dataClass);
 				}
+
 				List<BaseDaoImpl<?, ?>> daoList = daoConfigLevel.daoList;
-				// configure any
+				// configure any DAOs that we need to
 				if (daoList != null) {
-					/*
-					 * WARNING: We do _not_ use an iterator here because we may be adding to the list as we process it
-					 * and we'll get exceptions otherwise. This is an ArrayList so the get(i) should be efficient.
-					 */
-					for (int i = 0; i < daoList.size(); i++) {
-						BaseDaoImpl<?, ?> baseDaoImpl = daoList.get(i);
-						for (FieldType fieldType : baseDaoImpl.getTableInfo().getFieldTypes()) {
-							// this may cause recursion
-							fieldType.configDaoInformation(connectionSource, baseDaoImpl.dataClass);
+					try {
+						/*
+						 * WARNING: We do _not_ use an iterator here because we may be adding to the list as we process
+						 * it and we'll get exceptions otherwise. This is an ArrayList so the get(i) should be
+						 * efficient.
+						 */
+						for (int i = 0; i < daoList.size(); i++) {
+							BaseDaoImpl<?, ?> baseDaoImpl = daoList.get(i);
+							for (FieldType fieldType : baseDaoImpl.getTableInfo().getFieldTypes()) {
+								// this may cause recursion
+								fieldType.configDaoInformation(connectionSource, baseDaoImpl.getDataClass());
+							}
 						}
+					} finally {
+						/*
+						 * we do this in a finally because otherwise if we threw an exception we might pollute the
+						 * daoConfigLevel thread-local
+						 */
+						daoList.clear();
 					}
-					daoList.clear();
 				}
 			}
 		} finally {
@@ -195,7 +218,6 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
 		initialized = true;
 	}
-
 	public T queryForId(ID id) throws SQLException {
 		checkForInitialized();
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
@@ -850,15 +872,6 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		} catch (SQLException e) {
 			throw SqlExceptionUtil.create("Could not build prepared-query iterator for " + dataClass, e);
 		}
-	}
-
-	private DaoConfigLevel getDaoConfigLevel() {
-		DaoConfigLevel daoConfigLevel = daoConfigLevelLocal.get();
-		if (daoConfigLevel == null) {
-			daoConfigLevel = new DaoConfigLevel();
-			daoConfigLevelLocal.set(daoConfigLevel);
-		}
-		return daoConfigLevel;
 	}
 
 	private List<T> queryForMatching(T matchObj, boolean useArgs) throws SQLException {

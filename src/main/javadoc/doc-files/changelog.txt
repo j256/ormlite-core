@@ -2,10 +2,11 @@
 	* CORE: Deprecated @DatabaseField foreignColumnName, renamed to foreignFieldName. Thanks to Candlejack. Bug #3507094.
 	* CORE: Changed dao.callBatchTasks() from throwing Exception to SQLException.  Thanks to JC.
 	* CORE: Improved createOrUpdate() to use idExists() instead of expensive method. Thanks to Chris Nevill. Bug #3514164.
+	* CORE: Fixed tough bug with table configs of self referencing classes. Thanks to Slava Tysianchuk. Bug #3517094.
 	* JDBC: Added support for preparedStatement.setQueryTimeout(millis).  Thanks to mjomble. Feature #3502803.
 	* ANDROID: Finally fixed the number of rows changed for insert/delete/update calls using SQLite CHANGES() pragma.
 	* ANDROID: Decided to _not_ fix the columnName case sensitivity issue introduced in 4.37.  Thanks to Roman Zimmer.
-	* ANDROID: Fixed bad bug to stop prematurely clearing DAO configs.  Thanks to Viachaslau Tysianchuk.  Bug #3516920.
+	* ANDROID: Fixed bad bug that was prematurely clearing DAO configs.  Thanks to Slava Tysianchuk.  Bug #3516920.
 
 4.38: 3/23/2012 (svn r2426)
 	* ANDROID: Fixed bad ObjectCache bug deep in Android shutdown/startup logic. Thanks to Filipe Leandro. Bug #3510266.
