@@ -1,4 +1,4 @@
-4.39: 4/XX/2012 (svn rYYYY)
+4.39: 4/13/2012 (svn rYYYY)
 	* CORE: Deprecated @DatabaseField foreignColumnName, renamed to foreignFieldName. Thanks to Candlejack. Bug #3507094.
 	* CORE: Changed dao.callBatchTasks() from throwing Exception to SQLException.  Thanks to JC.
 	* CORE: Improved createOrUpdate() to use idExists() instead of expensive method. Thanks to Chris Nevill. Bug #3514164.
