@@ -115,7 +115,6 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		expect(connection.isAutoCommitSupported()).andReturn(true);
 		expect(connection.isAutoCommit()).andReturn(true);
 		connection.setAutoCommit(false);
-		connection.commit(null);
 		connection.setAutoCommit(true);
 		StatementExecutor<Foo, String> statementExec =
 				new StatementExecutor<Foo, String>(databaseType, tableInfo, null);
@@ -138,7 +137,6 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		expect(connection.isAutoCommitSupported()).andReturn(true);
 		expect(connection.isAutoCommit()).andReturn(true);
 		connection.setAutoCommit(false);
-		connection.commit(null);
 		connection.setAutoCommit(true);
 		StatementExecutor<Foo, String> statementExec =
 				new StatementExecutor<Foo, String>(databaseType, tableInfo, null);

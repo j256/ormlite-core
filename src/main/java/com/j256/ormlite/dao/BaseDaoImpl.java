@@ -55,7 +55,7 @@ import com.j256.ormlite.table.TableInfo;
  */
 public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
-	private boolean initialized = false;
+	private boolean initialized;
 
 	protected StatementExecutor<T, ID> statementExecutor;
 	protected DatabaseType databaseType;
@@ -72,7 +72,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	};
 	private static ReferenceObjectCache defaultObjectCache;
-	private ObjectCache objectCache = null;
+	private ObjectCache objectCache;
 
 	/**
 	 * Construct our base DAO using Spring type wiring. The {@link ConnectionSource} must be set with the
@@ -181,16 +181,16 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 				 */
 				DaoManager.registerDao(connectionSource, this);
 
-				// configure the root dao _first_ which may start the recursion and fill the daoList
-				for (FieldType fieldType : tableInfo.getFieldTypes()) {
-					// this can cause recursion
-					fieldType.configDaoInformation(connectionSource, dataClass);
-				}
-
 				List<BaseDaoImpl<?, ?>> daoList = daoConfigLevel.daoList;
-				// configure any DAOs that we need to
-				if (daoList != null) {
-					try {
+				try {
+					// configure the root dao _first_ which may start the recursion and fill the daoList
+					for (FieldType fieldType : tableInfo.getFieldTypes()) {
+						// this can cause recursion
+						fieldType.configDaoInformation(connectionSource, dataClass);
+					}
+
+					// configure any DAOs that we need to
+					if (daoList != null) {
 						/*
 						 * WARNING: We do _not_ use an iterator here because we may be adding to the list as we process
 						 * it and we'll get exceptions otherwise. This is an ArrayList so the get(i) should be
@@ -203,7 +203,10 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 								fieldType.configDaoInformation(connectionSource, baseDaoImpl.getDataClass());
 							}
 						}
-					} finally {
+					}
+				} finally {
+					// NOTE: we do this here because we may throw in configDaoInformation()
+					if (daoList != null) {
 						/*
 						 * we do this in a finally because otherwise if we threw an exception we might pollute the
 						 * daoConfigLevel thread-local
@@ -218,6 +221,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
 		initialized = true;
 	}
+
 	public T queryForId(ID id) throws SQLException {
 		checkForInitialized();
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();

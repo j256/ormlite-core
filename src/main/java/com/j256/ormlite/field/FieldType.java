@@ -21,7 +21,6 @@ import com.j256.ormlite.dao.LazyForeignCollection;
 import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.types.VoidType;
-import com.j256.ormlite.misc.BaseDaoEnabled;
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.stmt.mapped.MappedQueryForId;
 import com.j256.ormlite.support.ConnectionSource;
@@ -315,38 +314,20 @@ public class FieldType {
 			if (tableConfig != null) {
 				tableConfig.extractFieldTypes(connectionSource);
 				// NOTE: the cast is necessary for maven
-				foreignDao = (BaseDaoImpl<?, ?>) DaoManager.createDao(connectionSource, tableConfig);
-				foreignTableInfo = ((BaseDaoImpl<?, ?>) foreignDao).getTableInfo();
-				foreignIdField = foreignTableInfo.getIdField();
-				foreignConstructor = foreignTableInfo.getConstructor();
-			} else if (BaseDaoEnabled.class.isAssignableFrom(fieldClass) || fieldConfig.isForeignAutoCreate()) {
-				// NOTE: the cast is necessary for maven
-				foreignDao = (BaseDaoImpl<?, ?>) DaoManager.createDao(connectionSource, fieldClass);
-				foreignTableInfo = ((BaseDaoImpl<?, ?>) foreignDao).getTableInfo();
-				foreignIdField = foreignTableInfo.getIdField();
-				foreignConstructor = foreignTableInfo.getConstructor();
+				foreignDao = (Dao<?, ?>) DaoManager.createDao(connectionSource, tableConfig);
 			} else {
-				foreignDao = null;
-				// try to save us from using reflection on a class or if we do it, do it once
-				BaseDaoImpl<?, ?> dao = (BaseDaoImpl<?, ?>) DaoManager.lookupDao(connectionSource, fieldClass);
-				if (dao == null) {
-					foreignIdField =
-							DatabaseTableConfig.extractIdFieldType(connectionSource, fieldClass,
-									DatabaseTableConfig.extractTableName(fieldClass));
-					foreignConstructor = DatabaseTableConfig.findNoArgConstructor(fieldClass);
-				} else {
-					tableConfig = dao.getTableConfig();
-					FieldType idField = null;
-					for (FieldType fieldType : tableConfig.getFieldTypes(databaseType)) {
-						if (fieldType.isId() || fieldType.isGeneratedId() || fieldType.isGeneratedIdSequence()) {
-							idField = fieldType;
-							break;
-						}
-					}
-					foreignIdField = idField;
-					foreignConstructor = tableConfig.getConstructor();
-				}
+				/*
+				 * Initially we were only doing this just for BaseDaoEnabled.class and isForeignAutoCreate(). But we
+				 * need it also for foreign fields because the alternative was to use reflection. Chances are if it is
+				 * foreign we're going to need the DAO in the future anyway so we might as well create it. This also
+				 * allows us to make use of any table configs.
+				 */
+				// NOTE: the cast is necessary for maven
+				foreignDao = (Dao<?, ?>) DaoManager.createDao(connectionSource, fieldClass);
 			}
+			foreignTableInfo = ((BaseDaoImpl<?, ?>) foreignDao).getTableInfo();
+			foreignIdField = foreignTableInfo.getIdField();
+			foreignConstructor = foreignTableInfo.getConstructor();
 			if (foreignIdField == null) {
 				throw new IllegalArgumentException("Foreign field " + fieldClass + " does not have id field");
 			}
