@@ -447,7 +447,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	}
 
 	/**
-	 * Call batch tasks insude of a connection which may, or may not, have been "saved".
+	 * Call batch tasks inside of a connection which may, or may not, have been "saved".
 	 */
 	public <CT> CT callBatchTasks(DatabaseConnection connection, boolean saved, Callable<CT> callable)
 			throws SQLException {

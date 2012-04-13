@@ -5,6 +5,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -114,6 +115,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		expect(connection.isAutoCommitSupported()).andReturn(true);
 		expect(connection.isAutoCommit()).andReturn(true);
 		connection.setAutoCommit(false);
+		connection.commit(null);
 		connection.setAutoCommit(true);
 		StatementExecutor<Foo, String> statementExec =
 				new StatementExecutor<Foo, String>(databaseType, tableInfo, null);
@@ -136,6 +138,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		expect(connection.isAutoCommitSupported()).andReturn(true);
 		expect(connection.isAutoCommit()).andReturn(true);
 		connection.setAutoCommit(false);
+		connection.commit(null);
 		connection.setAutoCommit(true);
 		StatementExecutor<Foo, String> statementExec =
 				new StatementExecutor<Foo, String>(databaseType, tableInfo, null);
@@ -200,6 +203,26 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		ArrayList<Object> noIdList = new ArrayList<Object>();
 		noIdList.add(noId);
 		noIdDao.deleteIds(noIdList);
+	}
+
+	@Test
+	public void testCallBatchTasksCommitted() throws Exception {
+		final Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		final Foo foo1 = new Foo();
+		DatabaseConnection conn = dao.startThreadConnection();
+		try {
+			dao.callBatchTasks(new Callable<Void>() {
+				public Void call() throws Exception {
+					assertEquals(1, dao.create(foo1));
+					assertNotNull(dao.queryForId(foo1.id));
+					return null;
+				}
+			});
+			dao.rollBack(conn);
+			assertNotNull(dao.queryForId(foo1.id));
+		} finally {
+			dao.endThreadConnection(conn);
+		}
 	}
 
 	protected static class NoId {
