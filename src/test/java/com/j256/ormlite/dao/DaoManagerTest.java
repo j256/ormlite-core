@@ -188,6 +188,13 @@ public class DaoManagerTest extends BaseCoreTest {
 	@Test
 	public void testSelfReferenceWithLoadedConfig() throws Exception {
 		DaoManager.clearCache();
+		/*
+		 * If a class was loaded as a config (this was found under Android) then, when it went recursive it would build
+		 * itself and set its foreign field to be a primitive. Then when it re-configured itself it would scream because
+		 * the primitive was marked as foreign.
+		 * 
+		 * The answer was to do a better job of pre-caching the DAOs in the DaoManager.
+		 */
 		DatabaseTableConfig<SelfReference> config =
 				DatabaseTableConfig.fromClass(connectionSource, SelfReference.class);
 		@SuppressWarnings("unchecked")
@@ -207,6 +214,27 @@ public class DaoManagerTest extends BaseCoreTest {
 		DaoManager.addCachedDatabaseConfigs(configs);
 		assertNotNull(DaoManager.createDao(connectionSource, LoopOne.class));
 		assertNotNull(DaoManager.createDao(connectionSource, LoopTwo.class));
+	}
+
+	@Test
+	public void testMoreComplexClassLoopWithLoadedConfig() throws Exception {
+		DaoManager.clearCache();
+		DatabaseTableConfig<MoreComplexLoopOne> config1 =
+				DatabaseTableConfig.fromClass(connectionSource, MoreComplexLoopOne.class);
+		DatabaseTableConfig<MoreComplexLoopTwo> config2 =
+				DatabaseTableConfig.fromClass(connectionSource, MoreComplexLoopTwo.class);
+		DatabaseTableConfig<MoreComplexLoopThree> config3 =
+				DatabaseTableConfig.fromClass(connectionSource, MoreComplexLoopThree.class);
+		DatabaseTableConfig<MoreComplexLoopFour> config4 =
+				DatabaseTableConfig.fromClass(connectionSource, MoreComplexLoopFour.class);
+		@SuppressWarnings("unchecked")
+		List<DatabaseTableConfig<?>> configs =
+				new ArrayList<DatabaseTableConfig<?>>(Arrays.asList(config1, config2, config3, config4));
+		DaoManager.addCachedDatabaseConfigs(configs);
+		assertNotNull(DaoManager.createDao(connectionSource, MoreComplexLoopOne.class));
+		assertNotNull(DaoManager.createDao(connectionSource, MoreComplexLoopTwo.class));
+		assertNotNull(DaoManager.createDao(connectionSource, MoreComplexLoopThree.class));
+		assertNotNull(DaoManager.createDao(connectionSource, MoreComplexLoopFour.class));
 	}
 
 	/* ================================================================== */
@@ -329,6 +357,48 @@ public class DaoManagerTest extends BaseCoreTest {
 		@ForeignCollectionField
 		ForeignCollection<LoopOne> ones;
 		public LoopTwo() {
+		}
+	}
+
+	public static class MoreComplexLoopOne {
+		@DatabaseField(generatedId = true)
+		int id;
+		@ForeignCollectionField
+		ForeignCollection<MoreComplexLoopTwo> two;
+		public MoreComplexLoopOne() {
+		}
+	}
+
+	public static class MoreComplexLoopTwo {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(foreign = true)
+		MoreComplexLoopOne foreign;
+		@ForeignCollectionField
+		ForeignCollection<MoreComplexLoopThree> threes;
+		public MoreComplexLoopTwo() {
+		}
+	}
+
+	public static class MoreComplexLoopThree {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(foreign = true)
+		MoreComplexLoopTwo foreign;
+		@DatabaseField(foreign = true)
+		MoreComplexLoopThree self;
+		@ForeignCollectionField
+		ForeignCollection<MoreComplexLoopFour> fours;
+		public MoreComplexLoopThree() {
+		}
+	}
+
+	public static class MoreComplexLoopFour {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(foreign = true)
+		MoreComplexLoopThree foreign;
+		public MoreComplexLoopFour() {
 		}
 	}
 
