@@ -327,10 +327,25 @@ public class FieldType {
 				foreignConstructor = foreignTableInfo.getConstructor();
 			} else {
 				foreignDao = null;
-				foreignIdField =
-						DatabaseTableConfig.extractIdFieldType(connectionSource, fieldClass,
-								DatabaseTableConfig.extractTableName(fieldClass));
-				foreignConstructor = DatabaseTableConfig.findNoArgConstructor(fieldClass);
+				// try to save us from using reflection on a class or if we do it, do it once
+				BaseDaoImpl<?, ?> dao = (BaseDaoImpl<?, ?>) DaoManager.lookupDao(connectionSource, fieldClass);
+				if (dao == null) {
+					foreignIdField =
+							DatabaseTableConfig.extractIdFieldType(connectionSource, fieldClass,
+									DatabaseTableConfig.extractTableName(fieldClass));
+					foreignConstructor = DatabaseTableConfig.findNoArgConstructor(fieldClass);
+				} else {
+					tableConfig = dao.getTableConfig();
+					FieldType idField = null;
+					for (FieldType fieldType : tableConfig.getFieldTypes(databaseType)) {
+						if (fieldType.isId() || fieldType.isGeneratedId() || fieldType.isGeneratedIdSequence()) {
+							idField = fieldType;
+							break;
+						}
+					}
+					foreignIdField = idField;
+					foreignConstructor = tableConfig.getConstructor();
+				}
 			}
 			if (foreignIdField == null) {
 				throw new IllegalArgumentException("Foreign field " + fieldClass + " does not have id field");
