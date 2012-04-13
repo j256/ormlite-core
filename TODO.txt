@@ -31,6 +31,9 @@
 - look into migrating the foreign collections to use AbstractCollection as a simplification
 	- how about AbstractSet?
 
+- the Foreign Collections have an addAll method which takes a List type:
+	- DAO's could have a createAll/createOrUpdateAll which would use the batch tasks
+
 - ORMLite should at least LOG ERRORS if the versions are different between core and android/jdbc
 
 - there are a number of places in StatementExecutor where we do this:

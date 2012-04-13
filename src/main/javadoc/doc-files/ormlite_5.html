@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on March, 30 2012 by texi2html 1.70 -->
+<!-- Created on April, 12 2012 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -805,12 +805,66 @@ results.  It is particularly useful if you are repositioning a database cursor e
 <dd>
 <p>Return a row mapper that is suitable for mapping results from a query to <code>select *</code> (star).
 
-</p></dd>
-<dt><code> if id exists</code></dt>
-<dt><code> does id exist already</code></dt>
+</p><a name="IDX342"></a>
+<a name="IDX343"></a>
+</dd>
 <dt><code> idExists(ID id)</code></dt>
 <dd>
 <p>Returns true if an object exists that matches this ID otherwise false.
+
+</p><a name="IDX344"></a>
+</dd>
+<dt><code> startThreadConnection()</code></dt>
+<dd>
+<p><em>WARNING:</em> This method is for advanced users only. It is only to support the <code>setAutoCommit(conn, boolean)</code>
+and other methods below. Chances are you should be using the <code>TransactionManager.callInTransaction(Callable)</code> instead
+of this method unless you know what you are doing.
+
+</p><p>This allocates a connection for this specific thread that will be used in all other DAO operations. The thread
+<em>must</em> call <code>endThreadConnection(conn)</code> once it is done with the connection. It is highly recommended that a
+<code>try / finally</code> pattern be used here to ensure you do not leak connections.
+
+</p><p>This is really only useful if you are using a pooled connection source and want to do certain operations on the
+same pool. Android users, for example have a single connection to the database so this is effecitively a no-op.
+
+</p></dd>
+<dt><code> endThreadConnection(DatabaseConnection connection)</code></dt>
+<dd>
+<p>This method is used to free the connection returned by the <code>startThreadConnection()</code> above.
+
+</p></dd>
+<dt><code> setAutoCommit(DatabaseConnection connection, boolean autoCommit)</code></dt>
+<dd>
+<p>Set auto-commit mode to be true or false on the connection returned by the <code>startThreadConnection()</code>. This
+may not be supported by all database types.
+
+</p></dd>
+<dt><code> isAutoCommit(DatabaseConnection connection)</code></dt>
+<dd>
+<p>Return true if the database connection returned by the <code>startThreadConnection()</code> is in auto-commit mode
+otherwise false. This may not be supported by all database types.
+
+</p></dd>
+<dt><code> commit(DatabaseConnection connection)</code></dt>
+<dd>
+<p>If you have previously called <code>setAutoCommit(conn, false)</code> then this will commit all changes to the database
+made from that point up to now on the connection returned by the <code>startThreadConnection()</code>. The changes
+will be written to the database and discarded. The connection will continue to stay in the current auto-commit
+mode.
+
+</p><p><em>WARNING:</em> Chances are you should be using the <code>TransactionManager.callInTransaction(Callable)</code>
+instead of this method unless you know what you are doing.
+
+</p></dd>
+<dt><code> rollBack(DatabaseConnection connection)</code></dt>
+<dd>
+<p>If you have previously called <code>setAutoCommit(conn, false)</code> then this will roll-back and flush all changes to the
+database made from that point up to now on the connection returned by the <code>startThreadConnection()</code>. None
+of those changes will be written to the database and are discarded. The connection will continue to stay in the
+current auto-commit mode.
+
+</p><p><em>WARNING:</em> Chances are you should be using the <code>TransactionManager.callInTransaction(Callable)</code>
+instead of this method unless you know what you are doing.
 
 </p></dd>
 </dl>
@@ -852,7 +906,7 @@ logger.debug(&quot;built statement {}&quot;, statement);
 <p>If you are using log4j (through Apache commons logging or directly), you can use something
 like the following as your <code>log4j.properties</code> file to see details about the SQL calls.
 
-</p><a name="IDX342"></a>
+</p><a name="IDX345"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">log4j.rootLogger=INFO, stdout
 
 log4j.appender.stdout=org.apache.log4j.ConsoleAppender
@@ -870,8 +924,8 @@ log4j.logger.com.j256.ormlite=DEBUG
 #log4j.logger.com.j256.ormlite.stmt.mapped.MappedCreate=TRACE
 #log4j.logger.com.j256.ormlite.stmt.StatementExecutor=TRACE
 </pre></td></tr></table>
-<a name="IDX343"></a>
-<a name="IDX344"></a>
+<a name="IDX346"></a>
+<a name="IDX347"></a>
 <p><em>Notice</em> that you can uncomment the last lines in the above log4j.properties file to log the arguments to the
 various SQL calls.  This may expose passwords or other sensitive information in the database so probably should
 only be used during debugging and should not be the default.
@@ -917,7 +971,7 @@ and Log4j but these classes will <em>not</em> be referenced unless they exist in
 
 </p><dl compact="compact">
 <dd>
-<a name="IDX345"></a>
+<a name="IDX348"></a>
 </dd>
 <dt><code> javax.persistence</code></dt>
 <dd>
@@ -971,7 +1025,7 @@ Order was inserted but then a disk error stopped the Account from being updated,
 If you used a transaction then both changes would be saved to the database only when the transaction was closed.  Most (not all)
 databases support transactions which are designed specifically with these sorts of scenarios in mind.
 
-</p><a name="IDX346"></a>
+</p><a name="IDX349"></a>
 <p>ORMLite has basic support for transactions through the use of the <code>TransactionManager</code> class which wraps
 databases operations in a transaction.  If those operations throw an exception, then the transaction is &quot;rolled-back&quot;
 and none of the operations are persisted to the database.  Once the operations are finished, if no exception is thrown,
@@ -1060,8 +1114,8 @@ it is not in the cache then it will be added to the cache.  This does <em>not</e
 
 </p></li></ul>
 
-<a name="IDX347"></a>
-<a name="IDX348"></a>
+<a name="IDX350"></a>
+<a name="IDX351"></a>
 <p>By default the cache that is used internally by ORMLite if you enable the cache with <code>true</code> will be a &quot;weak-reference&quot; cache.  This
 means that if no other code has a strong reference to the object, it will be removed from the cache during the next garbage collection
 cycle. ORMLite also has a &quot;soft-reference&quot; cache which will use more memory to hold objects if available and supported by your OS.  You
@@ -1077,8 +1131,8 @@ accountDao.setObjectCache(
 accessed.  You should consider calling the <code>cleanNullReferencesAll()</code> method on your cache to remove these objects and free up
 their associated memory on occasion.
 
-</p><a name="IDX349"></a>
-<a name="IDX350"></a>
+</p><a name="IDX352"></a>
+<a name="IDX353"></a>
 <p>There is also a Least Recently Used (LRU) cache that will store a certain number of objects based on a capacity value.  Each class gets
 the same capacity value so if the same cache is used in 5 different daos, then 500 objects will be held in the <code>LruObjectCache</code> if
 the capacity is 100.
@@ -1130,7 +1184,7 @@ dependency list.  In this example we are using MySQL but any of the supported JD
         &lt;dependency&gt;
             &lt;groupId&gt;com.j256.ormlite&lt;/groupId&gt;
             &lt;artifactId&gt;ormlite-jdbc&lt;/artifactId&gt;
-            &lt;version&gt;4.38&lt;/version&gt;
+            &lt;version&gt;4.39&lt;/version&gt;
         &lt;/dependency&gt;
         &lt;!-- You will need to add some sort of database driver too.
              In this example we've used MySQL. --&gt;
@@ -1214,10 +1268,10 @@ may do nothing.
 <h2 class="section"> 5.11 Custom Data Type Persisters </h2>
 
 <p><a name="ANC35"></a>
-<a name="IDX351"></a>
-<a name="IDX352"></a>
-<a name="IDX353"></a>
 <a name="IDX354"></a>
+<a name="IDX355"></a>
+<a name="IDX356"></a>
+<a name="IDX357"></a>
 
 </p><p>ORMLite has internal definitions for storing the basic primitive and other common data types. See section <a href="ormlite_2.html#SEC11">Persisted Data Types</a>.
 Sometimes, however, you either want to store a new data type in your database or you want to change the way ORMLite
@@ -1285,7 +1339,7 @@ persistence behavior for <em>all</em> <code>Date</code> types.
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>March, 30 2012</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>April, 12 2012</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 

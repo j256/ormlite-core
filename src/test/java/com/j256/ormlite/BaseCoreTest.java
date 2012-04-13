@@ -24,13 +24,13 @@ public abstract class BaseCoreTest {
 	public void before() throws Exception {
 		connectionSource = new WrappedConnectionSource(new H2ConnectionSource());
 		databaseType = connectionSource.getDatabaseType();
+		DaoManager.clearCache();
 	}
 
 	@After
 	public void after() throws Exception {
 		connectionSource.close();
 		connectionSource = null;
-		DaoManager.clearCache();
 	}
 
 	protected static class LimitAfterSelectDatabaseType extends H2DatabaseType {
