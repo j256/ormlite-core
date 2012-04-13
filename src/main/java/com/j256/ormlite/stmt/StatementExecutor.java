@@ -473,7 +473,12 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			}
 		} finally {
 			if (autoCommitAtStart) {
-				// try to restore if we are in auto-commit mode
+				/**
+				 * Try to restore if we are in auto-commit mode.
+				 * 
+				 * NOTE: we do _not_ have to do a commit here. According to {@link Connection#setAutoCommit(boolean)},
+				 * this will start a transaction when auto-commit is turned off and it will be committed here.
+				 */
 				connection.setAutoCommit(true);
 				logger.debug("re-enabled auto-commit on table {} after batch tasks", tableInfo.getTableName());
 			}

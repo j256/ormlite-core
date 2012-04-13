@@ -490,12 +490,13 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	/**
 	 * Call the call-able that will perform a number of batch tasks. This is for performance when you want to run a
 	 * number of database operations at once -- maybe loading data from a file. This will turn off what databases call
-	 * "auto-commit" mode, run the call-able and then re-enable "auto-commit". If auto-commit is not supported then a
+	 * "auto-commit" mode, run the call-able, and then re-enable "auto-commit". If auto-commit is not supported then a
 	 * transaction will be used instead.
 	 * 
 	 * <p>
 	 * <b>NOTE:</b> If neither auto-commit nor transactions are supported by the database type then this may just call
-	 * the callable.
+	 * the callable. Also, "commit()" is <i>not</i> called on the connection at all. If "auto-commit" is disabled then
+	 * this will leave it off and nothing will have been persisted.
 	 * </p>
 	 */
 	public <CT> CT callBatchTasks(Callable<CT> callable) throws Exception;
