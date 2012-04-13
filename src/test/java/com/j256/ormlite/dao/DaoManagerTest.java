@@ -363,6 +363,10 @@ public class DaoManagerTest extends BaseCoreTest {
 	public static class MoreComplexLoopOne {
 		@DatabaseField(generatedId = true)
 		int id;
+		@DatabaseField(foreign = true)
+		MoreComplexLoopOne foreign;
+		@DatabaseField(foreign = true)
+		MoreComplexLoopFour four;
 		@ForeignCollectionField
 		ForeignCollection<MoreComplexLoopTwo> two;
 		public MoreComplexLoopOne() {
@@ -398,6 +402,8 @@ public class DaoManagerTest extends BaseCoreTest {
 		int id;
 		@DatabaseField(foreign = true)
 		MoreComplexLoopThree foreign;
+		@ForeignCollectionField
+		ForeignCollection<MoreComplexLoopOne> ones;
 		public MoreComplexLoopFour() {
 		}
 	}
