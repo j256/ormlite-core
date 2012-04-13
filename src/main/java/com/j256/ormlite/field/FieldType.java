@@ -399,6 +399,10 @@ public class FieldType {
 		return field;
 	}
 
+	public String getTableName() {
+		return tableName;
+	}
+
 	public String getFieldName() {
 		return field.getName();
 	}
