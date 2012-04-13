@@ -134,18 +134,18 @@ public class TableInfo<T, ID> {
 			fieldNameMap = map;
 		}
 		FieldType fieldType = fieldNameMap.get(columnName);
-		// if column name is not found
-		if (fieldType == null) {
-			// look to see if someone is using the field-name instead of column-name
-			for (FieldType fieldType2 : fieldTypes) {
-				if (fieldType2.getFieldName().equals(columnName)) {
-					throw new IllegalArgumentException("You should use columnName '" + fieldType2.getColumnName()
-							+ "' for table " + tableName + " instead of fieldName '" + columnName + "'");
-				}
-			}
-			throw new IllegalArgumentException("Unknown column name '" + columnName + "' in table " + tableName);
+		// if column name is found, return it
+		if (fieldType != null) {
+			return fieldType;
 		}
-		return fieldType;
+		// look to see if someone is using the field-name instead of column-name
+		for (FieldType fieldType2 : fieldTypes) {
+			if (fieldType2.getFieldName().equals(columnName)) {
+				throw new IllegalArgumentException("You should use columnName '" + fieldType2.getColumnName()
+						+ "' for table " + tableName + " instead of fieldName '" + fieldType2.getFieldName() + "'");
+			}
+		}
+		throw new IllegalArgumentException("Unknown column name '" + columnName + "' in table " + tableName);
 	}
 
 	/**
