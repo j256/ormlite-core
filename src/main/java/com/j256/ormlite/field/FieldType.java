@@ -676,8 +676,20 @@ public class FieldType {
 	/**
 	 * Call through to {@link DataPersister#isComparable()}
 	 */
-	public boolean isComparable() {
-		return dataPersister.isComparable();
+	public boolean isComparable() throws SQLException {
+		if (fieldConfig.isForeignCollection()) {
+			return false;
+		}
+		/*
+		 * We've seen dataPersister being null here in some strange cases. Why? It may because someone is searching on
+		 * an improper field. Or maybe a table-config does not match the Java object?
+		 */
+		if (dataPersister == null) {
+			throw new SQLException("Internal error.  Data persister has not been configured for field.  "
+					+ "Please post the _full_ exception with associated objects to mailing list: " + this);
+		} else {
+			return dataPersister.isComparable();
+		}
 	}
 
 	/**
@@ -949,6 +961,11 @@ public class FieldType {
 	private void assignDataType(DatabaseType databaseType, DataPersister dataPersister) throws SQLException {
 		this.dataPersister = dataPersister;
 		if (dataPersister == null) {
+			if (!fieldConfig.isForeign() && !fieldConfig.isForeignCollection()) {
+				// may never happen but let's be careful out there
+				throw new SQLException("Data persister for field " + this
+						+ " is null but the field is not a foreign or foreignCollection");
+			}
 			return;
 		}
 		this.fieldConverter = databaseType.getFieldConverter(dataPersister);
