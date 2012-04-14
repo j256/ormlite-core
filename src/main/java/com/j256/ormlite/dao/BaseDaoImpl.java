@@ -65,10 +65,10 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	protected ConnectionSource connectionSource;
 	protected CloseableIterator<T> lastIterator;
 
-	private static final ThreadLocal<DaoConfigLevel> daoConfigLevelLocal = new ThreadLocal<DaoConfigLevel>() {
+	private static final ThreadLocal<DaoConfigArray> daoConfigLevelLocal = new ThreadLocal<DaoConfigArray>() {
 		@Override
-		protected DaoConfigLevel initialValue() {
-			return new DaoConfigLevel();
+		protected DaoConfigArray initialValue() {
+			return new DaoConfigArray();
 		}
 	};
 	private static ReferenceObjectCache defaultObjectCache;
@@ -165,8 +165,8 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		 * go back and call FieldType.configDaoInformation() after we are done. So for every DAO that is initialized
 		 * here, we have to see if it is the top DAO. If not we save it for dao configuration later.
 		 */
-		DaoConfigLevel daoConfigLevel = daoConfigLevelLocal.get();
-		if (!daoConfigLevel.isFirst()) {
+		DaoConfigArray daoConfigLevel = daoConfigLevelLocal.get();
+		if (daoConfigLevel.size() > 0) {
 			// if we have recursed then we need to save the dao for later configuration
 			daoConfigLevel.addDao(this);
 			return;
@@ -181,8 +181,8 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			 * Also, do _not_ get a copy of daoConfigLevel.doArray because that array may be replaced by another, larger
 			 * one during the recursion.
 			 */
-			for (int i = 0; i < daoConfigLevel.daoArrayC; i++) {
-				BaseDaoImpl<?, ?> dao = daoConfigLevel.daoArray[i];
+			for (int i = 0; i < daoConfigLevel.size(); i++) {
+				BaseDaoImpl<?, ?> dao = daoConfigLevel.get(i);
 
 				/*
 				 * Here's another complex bit. The first DAO that is being constructed as part of a DAO chain is not yet
@@ -938,17 +938,20 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
-	private static class DaoConfigLevel {
-		BaseDaoImpl<?, ?>[] daoArray = new BaseDaoImpl<?, ?>[10];
-		int daoArrayC = 0;
+	private static class DaoConfigArray {
+		private BaseDaoImpl<?, ?>[] daoArray = new BaseDaoImpl<?, ?>[10];
+		private int daoArrayC = 0;
 		public void addDao(BaseDaoImpl<?, ?> dao) {
 			if (daoArrayC == daoArray.length) {
 				daoArray = Arrays.copyOf(daoArray, daoArray.length * 2);
 			}
 			daoArray[daoArrayC++] = dao;
 		}
-		public boolean isFirst() {
-			return daoArrayC == 0;
+		public int size() {
+			return daoArrayC;
+		}
+		public BaseDaoImpl<?, ?> get(int i) {
+			return daoArray[i];
 		}
 		public void clear() {
 			// help GC
