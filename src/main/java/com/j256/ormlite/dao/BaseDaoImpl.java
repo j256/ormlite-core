@@ -166,7 +166,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		 * here, we have to see if it is the top DAO. If not we save it for dao configuration later.
 		 */
 		DaoConfigLevel daoConfigLevel = daoConfigLevelLocal.get();
-		daoConfigLevel.level++;
+		daoConfigLevel.increment();
 		try {
 			if (daoConfigLevel.level > 1) {
 				// if we have recursed then we need to save the dao for later configuration
@@ -181,42 +181,31 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 				 */
 				DaoManager.registerDao(connectionSource, this);
 
-				List<BaseDaoImpl<?, ?>> daoList = daoConfigLevel.daoList;
-				try {
-					// configure the root dao _first_ which may start the recursion and fill the daoList
-					for (FieldType fieldType : tableInfo.getFieldTypes()) {
-						// this can cause recursion
-						fieldType.configDaoInformation(connectionSource, dataClass);
-					}
+				// configure the root dao _first_ which may start the recursion and fill the daoList
+				for (FieldType fieldType : tableInfo.getFieldTypes()) {
+					// this can cause recursion
+					fieldType.configDaoInformation(connectionSource, dataClass);
+				}
 
-					// configure any DAOs that we need to
-					if (daoList != null) {
-						/*
-						 * WARNING: We do _not_ use an iterator here because we may be adding to the list as we process
-						 * it and we'll get exceptions otherwise. This is an ArrayList so the get(i) should be
-						 * efficient.
-						 */
-						for (int i = 0; i < daoList.size(); i++) {
-							BaseDaoImpl<?, ?> baseDaoImpl = daoList.get(i);
-							for (FieldType fieldType : baseDaoImpl.getTableInfo().getFieldTypes()) {
-								// this may cause recursion
-								fieldType.configDaoInformation(connectionSource, baseDaoImpl.getDataClass());
-							}
+				// configure any DAOs that we need to
+				List<BaseDaoImpl<?, ?>> daoList = daoConfigLevel.daoList;
+				if (daoList != null) {
+					/*
+					 * WARNING: We do _not_ use an iterator here because we may be adding to the list as we process it
+					 * and we'll get exceptions otherwise. This is an ArrayList so the get(i) should be efficient.
+					 */
+					for (int i = 0; i < daoList.size(); i++) {
+						BaseDaoImpl<?, ?> baseDaoImpl = daoList.get(i);
+						for (FieldType fieldType : baseDaoImpl.getTableInfo().getFieldTypes()) {
+							// this may cause recursion
+							fieldType.configDaoInformation(connectionSource, baseDaoImpl.getDataClass());
 						}
-					}
-				} finally {
-					// NOTE: we do this here because we may throw in configDaoInformation()
-					if (daoList != null) {
-						/*
-						 * we do this in a finally because otherwise if we threw an exception we might pollute the
-						 * daoConfigLevel thread-local
-						 */
-						daoList.clear();
 					}
 				}
 			}
 		} finally {
-			daoConfigLevel.level--;
+			// decrement the counter and maybe clear the list
+			daoConfigLevel.decrement();
 		}
 
 		initialized = true;
@@ -955,6 +944,17 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 				daoList = new ArrayList<BaseDaoImpl<?, ?>>();
 			}
 			daoList.add(dao);
+		}
+		public void increment() {
+			level++;
+		}
+		public void decrement() {
+			level--;
+			if (level == 0) {
+				if (daoList != null) {
+					daoList.clear();
+				}
+			}
 		}
 	}
 }
