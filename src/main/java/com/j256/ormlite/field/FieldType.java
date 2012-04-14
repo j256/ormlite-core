@@ -685,8 +685,8 @@ public class FieldType {
 		 * an improper field. Or maybe a table-config does not match the Java object?
 		 */
 		if (dataPersister == null) {
-			throw new SQLException("Internal error.  Data persister has not been configured for field.  "
-					+ "Please post the _full_ exception with associated objects to mailing list: " + this);
+			throw new SQLException("Internal error.  Data-persister is not configured for field.  "
+					+ "Please post _full_ exception with associated data objects to mailing list: " + this);
 		} else {
 			return dataPersister.isComparable();
 		}
