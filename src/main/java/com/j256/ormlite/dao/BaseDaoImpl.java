@@ -1,7 +1,7 @@
 package com.j256.ormlite.dao;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -166,12 +166,24 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		 * here, we have to see if it is the top DAO. If not we save it for dao configuration later.
 		 */
 		DaoConfigLevel daoConfigLevel = daoConfigLevelLocal.get();
-		daoConfigLevel.increment();
+		if (!daoConfigLevel.isFirst()) {
+			// if we have recursed then we need to save the dao for later configuration
+			daoConfigLevel.addDao(this);
+			return;
+		}
+
+		daoConfigLevel.addDao(this);
 		try {
-			if (daoConfigLevel.level > 1) {
-				// if we have recursed then we need to save the dao for later configuration
-				daoConfigLevel.addDao(this);
-			} else {
+			/*
+			 * WARNING: We do _not_ use an iterator here because we may be adding to the list as we process it and we'll
+			 * get exceptions otherwise. This is an ArrayList so the get(i) should be efficient.
+			 * 
+			 * Also, do _not_ get a copy of daoConfigLevel.doArray because that array may be replaced by another, larger
+			 * one during the recursion.
+			 */
+			for (int i = 0; i < daoConfigLevel.daoArrayC; i++) {
+				BaseDaoImpl<?, ?> dao = daoConfigLevel.daoArray[i];
+
 				/*
 				 * Here's another complex bit. The first DAO that is being constructed as part of a DAO chain is not yet
 				 * in the DaoManager cache. If we continue onward we might come back around and try to configure this
@@ -179,36 +191,26 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 				 * to be stuck in twice when it returns out to the DaoManager but that's a small price to pay. This also
 				 * applies to self-referencing classes.
 				 */
-				DaoManager.registerDao(connectionSource, this);
+				DaoManager.registerDao(connectionSource, dao);
 
-				// configure the root dao _first_ which may start the recursion and fill the daoList
-				for (FieldType fieldType : tableInfo.getFieldTypes()) {
-					// this can cause recursion
-					fieldType.configDaoInformation(connectionSource, dataClass);
-				}
-
-				// configure any DAOs that we need to
-				List<BaseDaoImpl<?, ?>> daoList = daoConfigLevel.daoList;
-				if (daoList != null) {
-					/*
-					 * WARNING: We do _not_ use an iterator here because we may be adding to the list as we process it
-					 * and we'll get exceptions otherwise. This is an ArrayList so the get(i) should be efficient.
-					 */
-					for (int i = 0; i < daoList.size(); i++) {
-						BaseDaoImpl<?, ?> baseDaoImpl = daoList.get(i);
-						for (FieldType fieldType : baseDaoImpl.getTableInfo().getFieldTypes()) {
-							// this may cause recursion
-							fieldType.configDaoInformation(connectionSource, baseDaoImpl.getDataClass());
-						}
+				try {
+					// config our fields which may go recursive
+					for (FieldType fieldType : dao.getTableInfo().getFieldTypes()) {
+						fieldType.configDaoInformation(connectionSource, dao.getDataClass());
 					}
+				} catch (SQLException e) {
+					// unregister the DAO we just pre-registered
+					DaoManager.unregisterDao(connectionSource, dao);
+					throw e;
 				}
+
+				// it's now been fully initialized
+				dao.initialized = true;
 			}
 		} finally {
-			// decrement the counter and maybe clear the list
-			daoConfigLevel.decrement();
+			// if we throw we want to clear our class hierarchy here
+			daoConfigLevel.clear();
 		}
-
-		initialized = true;
 	}
 
 	public T queryForId(ID id) throws SQLException {
@@ -937,24 +939,23 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	private static class DaoConfigLevel {
-		int level;
-		List<BaseDaoImpl<?, ?>> daoList;
+		BaseDaoImpl<?, ?>[] daoArray = new BaseDaoImpl<?, ?>[10];
+		int daoArrayC = 0;
 		public void addDao(BaseDaoImpl<?, ?> dao) {
-			if (daoList == null) {
-				daoList = new ArrayList<BaseDaoImpl<?, ?>>();
+			if (daoArrayC == daoArray.length) {
+				daoArray = Arrays.copyOf(daoArray, daoArray.length * 2);
 			}
-			daoList.add(dao);
+			daoArray[daoArrayC++] = dao;
 		}
-		public void increment() {
-			level++;
+		public boolean isFirst() {
+			return daoArrayC == 0;
 		}
-		public void decrement() {
-			level--;
-			if (level == 0) {
-				if (daoList != null) {
-					daoList.clear();
-				}
+		public void clear() {
+			// help GC
+			for (int i = 0; i < daoArrayC; i++) {
+				daoArray[i] = null;
 			}
+			daoArrayC = 0;
 		}
 	}
 }

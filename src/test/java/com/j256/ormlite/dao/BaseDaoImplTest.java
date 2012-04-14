@@ -2271,6 +2271,33 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		}
 	}
 
+	@Test
+	public void testJeremyNull() throws Exception {
+		Jeremy1 loop1 = new Jeremy1();
+		Dao<Jeremy2, Long> dao = createDao(Jeremy2.class, true);
+		List<Jeremy2> bars =
+				dao.queryBuilder()
+						.where()
+						.eq(Jeremy2.LOOP1_COLUMN_NAME, loop1)
+						.and()
+						.eq(Jeremy2.OTHER_COLUMN_NAME, "someValue")
+						.query();
+		assertEquals(0, bars.size());
+	}
+
+	@Test
+	public void testComparisonOfForeignCollection() throws Exception {
+		Dao<ForeignCollectionComparison, Long> dao = createDao(ForeignCollectionComparison.class, true);
+		try {
+			// we can't do a query on a foreign collection field
+			dao.queryForEq("foos", "someValue");
+		} catch (NullPointerException e) {
+			fail("Should not get a NPE here");
+		} catch (SQLException e) {
+			// this is what we should get
+		}
+	}
+
 	/* ============================================================================================== */
 
 	private String buildFooQueryAllString(Dao<Foo, Object> fooDao) throws SQLException {
@@ -2528,6 +2555,46 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		@DatabaseField
 		String name;
 		public ForeignColumnNameForeign() {
+		}
+	}
+
+	public static class Jeremy1 {
+		@DatabaseField(generatedId = true)
+		int id;
+		@ForeignCollectionField(eager = false)
+		ForeignCollection<Jeremy2> bars;
+		public Jeremy1() {
+		}
+	}
+
+	public static class Jeremy2 {
+		public static final String LOOP1_COLUMN_NAME = "loop1";
+		public static final String OTHER_COLUMN_NAME = "other";
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(columnName = LOOP1_COLUMN_NAME, foreign = true)
+		Jeremy1 loop1;
+		@DatabaseField(columnName = OTHER_COLUMN_NAME)
+		String other;
+		public Jeremy2() {
+		}
+	}
+
+	public static class ForeignCollectionComparison {
+		@DatabaseField(generatedId = true)
+		int id;
+		@ForeignCollectionField(eager = false)
+		ForeignCollection<ForeignCollectionComparison2> foos;
+		public ForeignCollectionComparison() {
+		}
+	}
+
+	public static class ForeignCollectionComparison2 {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(foreign = true)
+		ForeignCollectionComparison foreign;
+		public ForeignCollectionComparison2() {
 		}
 	}
 }
