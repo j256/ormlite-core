@@ -1,7 +1,6 @@
 package com.j256.ormlite.dao;
 
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -942,8 +941,15 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		private BaseDaoImpl<?, ?>[] daoArray = new BaseDaoImpl<?, ?>[10];
 		private int daoArrayC = 0;
 		public void addDao(BaseDaoImpl<?, ?> dao) {
+			// if the array is full we double its size
 			if (daoArrayC == daoArray.length) {
-				daoArray = Arrays.copyOf(daoArray, daoArray.length * 2);
+				BaseDaoImpl<?, ?>[] newDaoArray = new BaseDaoImpl<?, ?>[daoArray.length * 2];
+				// NOTE: Arrays.copyof is only for Java 1.6
+				for (int i = 0; i < daoArray.length; i++) {
+					newDaoArray[i] = daoArray[i];
+					daoArray[i] = null;
+				}
+				daoArray = newDaoArray;
 			}
 			daoArray[daoArrayC++] = dao;
 		}
