@@ -194,7 +194,7 @@ public class DatabaseFieldConfigLoaderTest {
 
 		int maxEager = 341;
 		config.setForeignCollectionMaxEagerLevel(maxEager);
-		body.append("maxEagerForeignCollectionLevel=").append(maxEager).append("\n");
+		body.append("foreignCollectionMaxEagerLevel=").append(maxEager).append("\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		String columName = "jrgpgrjrwgpj";
@@ -204,7 +204,7 @@ public class DatabaseFieldConfigLoaderTest {
 
 		String foreignOrderColumn = "w225fwhi4jp";
 		config.setForeignCollectionOrderColumnName(foreignOrderColumn);
-		body.append("foreignCollectionOrderColumn=").append(foreignOrderColumn).append("\n");
+		body.append("foreignCollectionOrderColumnName=").append(foreignOrderColumn).append("\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		String foreignCollectionForeignFieldName = "ghiegerih";
@@ -287,7 +287,7 @@ public class DatabaseFieldConfigLoaderTest {
 		writer.getBuffer().setLength(0);
 	}
 
-	private boolean isConfigEquals(DatabaseFieldConfig config1, DatabaseFieldConfig config2) {
+	public static boolean isConfigEquals(DatabaseFieldConfig config1, DatabaseFieldConfig config2) {
 		EqualsBuilder eb = new EqualsBuilder();
 		eb.append(config1.getFieldName(), config2.getFieldName());
 		eb.append(config1.getColumnName(), config2.getColumnName());

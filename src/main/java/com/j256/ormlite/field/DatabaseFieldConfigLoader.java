@@ -94,7 +94,9 @@ public class DatabaseFieldConfigLoader {
 	private static final String FIELD_NAME_FORMAT = "format";
 	private static final String FIELD_NAME_UNIQUE = "unique";
 	private static final String FIELD_NAME_UNIQUE_COMBO = "uniqueCombo";
+	private static final String FIELD_NAME_INDEX = "index";
 	private static final String FIELD_NAME_INDEX_NAME = "indexName";
+	private static final String FIELD_NAME_UNIQUE_INDEX = "uniqueIndex";
 	private static final String FIELD_NAME_UNIQUE_INDEX_NAME = "uniqueIndexName";
 	private static final String FIELD_NAME_FOREIGN_AUTO_REFRESH = "foreignAutoRefresh";
 	private static final String FIELD_NAME_MAX_FOREIGN_AUTO_REFRESH_LEVEL = "maxForeignAutoRefreshLevel";
@@ -107,10 +109,13 @@ public class DatabaseFieldConfigLoader {
 
 	private static final String FIELD_NAME_FOREIGN_COLLECTION = "foreignCollection";
 	private static final String FIELD_NAME_FOREIGN_COLLECTION_EAGER = "foreignCollectionEager";
-	private static final String FIELD_NAME_MAX_EAGER_FOREIGN_COLLECTION_LEVEL = "maxEagerForeignCollectionLevel";
+	private static final String FIELD_NAME_MAX_EAGER_FOREIGN_COLLECTION_LEVEL_OLD = "maxEagerForeignCollectionLevel";
+	private static final String FIELD_NAME_MAX_EAGER_FOREIGN_COLLECTION_LEVEL = "foreignCollectionMaxEagerLevel";
 	private static final String FIELD_NAME_FOREIGN_COLLECTION_COLUMN_NAME = "foreignCollectionColumnName";
-	// no Name at the end because of historical reasons
-	private static final String FIELD_NAME_FOREIGN_COLLECTION_ORDER_COLUMN_NAME = "foreignCollectionOrderColumn";
+	private static final String FIELD_NAME_FOREIGN_COLLECTION_ORDER_COLUMN_NAME_OLD = "foreignCollectionOrderColumn";
+	private static final String FIELD_NAME_FOREIGN_COLLECTION_ORDER_COLUMN_NAME = "foreignCollectionOrderColumnName";
+	private static final String FIELD_NAME_FOREIGN_COLLECTION_FOREIGN_FIELD_NAME_OLD =
+			"foreignCollectionForeignColumnName";
 	private static final String FIELD_NAME_FOREIGN_COLLECTION_FOREIGN_FIELD_NAME = "foreignCollectionForeignFieldName";
 
 	/**
@@ -314,17 +319,17 @@ public class DatabaseFieldConfigLoader {
 			String[] parts = value.split("#", -2);
 			if (parts.length != 2) {
 				throw new IllegalArgumentException(
-						"Invalid value for unknownEnumvalue which should be in class#name format: " + value);
+						"Invalid value for unknownEnumValue which should be in class#name format: " + value);
 			}
 			Class<?> enumClass;
 			try {
 				enumClass = Class.forName(parts[0]);
 			} catch (ClassNotFoundException e) {
-				throw new IllegalArgumentException("Unknown class specified for unknownEnumvalue: " + value);
+				throw new IllegalArgumentException("Unknown class specified for unknownEnumValue: " + value);
 			}
 			Object[] consts = enumClass.getEnumConstants();
 			if (consts == null) {
-				throw new IllegalArgumentException("Invalid class is not an Enum for unknownEnumvalue: " + value);
+				throw new IllegalArgumentException("Invalid class is not an Enum for unknownEnumValue: " + value);
 			}
 			@SuppressWarnings("rawtypes")
 			Enum[] enumConstants = (Enum[]) consts;
@@ -346,9 +351,15 @@ public class DatabaseFieldConfigLoader {
 			config.setUnique(Boolean.parseBoolean(value));
 		} else if (field.equals(FIELD_NAME_UNIQUE_COMBO)) {
 			config.setUniqueCombo(Boolean.parseBoolean(value));
+		} else if (field.equals(FIELD_NAME_INDEX)) {
+			config.setIndex(Boolean.parseBoolean(value));
 		} else if (field.equals(FIELD_NAME_INDEX_NAME)) {
+			config.setIndex(true);
 			config.setIndexName(value);
+		} else if (field.equals(FIELD_NAME_UNIQUE_INDEX)) {
+			config.setUniqueIndex(Boolean.parseBoolean(value));
 		} else if (field.equals(FIELD_NAME_UNIQUE_INDEX_NAME)) {
+			config.setUniqueIndex(true);
 			config.setUniqueIndexName(value);
 		} else if (field.equals(FIELD_NAME_FOREIGN_AUTO_REFRESH)) {
 			config.setForeignAutoRefresh(Boolean.parseBoolean(value));
@@ -380,12 +391,18 @@ public class DatabaseFieldConfigLoader {
 			config.setForeignCollection(Boolean.parseBoolean(value));
 		} else if (field.equals(FIELD_NAME_FOREIGN_COLLECTION_EAGER)) {
 			config.setForeignCollectionEager(Boolean.parseBoolean(value));
+		} else if (field.equals(FIELD_NAME_MAX_EAGER_FOREIGN_COLLECTION_LEVEL_OLD)) {
+			config.setForeignCollectionMaxEagerLevel(Integer.parseInt(value));
 		} else if (field.equals(FIELD_NAME_MAX_EAGER_FOREIGN_COLLECTION_LEVEL)) {
 			config.setForeignCollectionMaxEagerLevel(Integer.parseInt(value));
 		} else if (field.equals(FIELD_NAME_FOREIGN_COLLECTION_COLUMN_NAME)) {
 			config.setForeignCollectionColumnName(value);
+		} else if (field.equals(FIELD_NAME_FOREIGN_COLLECTION_ORDER_COLUMN_NAME_OLD)) {
+			config.setForeignCollectionOrderColumnName(value);
 		} else if (field.equals(FIELD_NAME_FOREIGN_COLLECTION_ORDER_COLUMN_NAME)) {
 			config.setForeignCollectionOrderColumnName(value);
+		} else if (field.equals(FIELD_NAME_FOREIGN_COLLECTION_FOREIGN_FIELD_NAME_OLD)) {
+			config.setForeignCollectionForeignFieldName(value);
 		} else if (field.equals(FIELD_NAME_FOREIGN_COLLECTION_FOREIGN_FIELD_NAME)) {
 			config.setForeignCollectionForeignFieldName(value);
 		}
