@@ -20,8 +20,7 @@ public class DatabaseFieldConfigLoader {
 
 	private static final int DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL =
 			DatabaseField.DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL;
-	private static final int DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL =
-			ForeignCollectionField.MAX_EAGER_FOREIGN_COLLECTION_LEVEL;
+	private static final int DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL = ForeignCollectionField.MAX_EAGER_LEVEL;
 	private static final Class<? extends DataPersister> DEFAULT_PERSISTER_CLASS = VoidType.class;
 	private static final DataPersister DEFAULT_DATA_PERSISTER = DataType.UNKNOWN.getDataPersister();
 	private static final boolean DEFAULT_CAN_BE_NULL = true;
@@ -99,16 +98,20 @@ public class DatabaseFieldConfigLoader {
 	private static final String FIELD_NAME_UNIQUE_INDEX_NAME = "uniqueIndexName";
 	private static final String FIELD_NAME_FOREIGN_AUTO_REFRESH = "foreignAutoRefresh";
 	private static final String FIELD_NAME_MAX_FOREIGN_AUTO_REFRESH_LEVEL = "maxForeignAutoRefreshLevel";
-	private static final String FIELD_NAME_FOREIGN_COLLECTION = "foreignCollection";
-	private static final String FIELD_NAME_FOREIGN_COLLECTION_EAGER = "foreignCollectionEager";
-	private static final String FIELD_NAME_FOREIGN_COLLECTION_ORDER_COLUMN = "foreignCollectionOrderColumn";
-	private static final String FIELD_NAME_MAX_EAGER_FOREIGN_COLLECTION_LEVEL = "maxEagerForeignCollectionLevel";
 	private static final String FIELD_NAME_PERSISTER_CLASS = "persisterClass";
 	private static final String FIELD_NAME_ALLOW_GENERATED_ID_INSERT = "allowGeneratedIdInsert";
 	private static final String FIELD_NAME_COLUMN_DEFINITION = "columnDefinition";
 	private static final String FIELD_NAME_FOREIGN_AUTO_CREATE = "foreignAutoCreate";
 	private static final String FIELD_NAME_VERSION = "version";
 	private static final String FOREIGN_COLUMN_NAME = "foreignColumnName";
+
+	private static final String FIELD_NAME_FOREIGN_COLLECTION = "foreignCollection";
+	private static final String FIELD_NAME_FOREIGN_COLLECTION_EAGER = "foreignCollectionEager";
+	private static final String FIELD_NAME_MAX_EAGER_FOREIGN_COLLECTION_LEVEL = "maxEagerForeignCollectionLevel";
+	private static final String FIELD_NAME_FOREIGN_COLLECTION_COLUMN_NAME = "foreignCollectionColumnName";
+	// no Name at the end because of historical reasons
+	private static final String FIELD_NAME_FOREIGN_COLLECTION_ORDER_COLUMN_NAME = "foreignCollectionOrderColumn";
+	private static final String FIELD_NAME_FOREIGN_COLLECTION_FOREIGN_FIELD_NAME = "foreignCollectionForeignFieldName";
 
 	/**
 	 * Print the config to the writer.
@@ -252,16 +255,28 @@ public class DatabaseFieldConfigLoader {
 			writer.append(FIELD_NAME_FOREIGN_COLLECTION_EAGER).append('=').append("true");
 			writer.newLine();
 		}
-		if (config.getForeignCollectionOrderColumn() != null) {
-			writer.append(FIELD_NAME_FOREIGN_COLLECTION_ORDER_COLUMN)
-					.append('=')
-					.append(config.getForeignCollectionOrderColumn());
-			writer.newLine();
-		}
-		if (config.getMaxEagerForeignCollectionLevel() != DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL) {
+		if (config.getForeignCollectionMaxEagerLevel() != DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL) {
 			writer.append(FIELD_NAME_MAX_EAGER_FOREIGN_COLLECTION_LEVEL)
 					.append('=')
-					.append(Integer.toString(config.getMaxEagerForeignCollectionLevel()));
+					.append(Integer.toString(config.getForeignCollectionMaxEagerLevel()));
+			writer.newLine();
+		}
+		if (config.getForeignCollectionColumnName() != null) {
+			writer.append(FIELD_NAME_FOREIGN_COLLECTION_COLUMN_NAME)
+					.append('=')
+					.append(config.getForeignCollectionColumnName());
+			writer.newLine();
+		}
+		if (config.getForeignCollectionOrderColumnName() != null) {
+			writer.append(FIELD_NAME_FOREIGN_COLLECTION_ORDER_COLUMN_NAME)
+					.append('=')
+					.append(config.getForeignCollectionOrderColumnName());
+			writer.newLine();
+		}
+		if (config.getForeignCollectionForeignFieldName() != null) {
+			writer.append(FIELD_NAME_FOREIGN_COLLECTION_FOREIGN_FIELD_NAME)
+					.append('=')
+					.append(config.getForeignCollectionForeignFieldName());
 			writer.newLine();
 		}
 
@@ -339,14 +354,6 @@ public class DatabaseFieldConfigLoader {
 			config.setForeignAutoRefresh(Boolean.parseBoolean(value));
 		} else if (field.equals(FIELD_NAME_MAX_FOREIGN_AUTO_REFRESH_LEVEL)) {
 			config.setMaxForeignAutoRefreshLevel(Integer.parseInt(value));
-		} else if (field.equals(FIELD_NAME_FOREIGN_COLLECTION)) {
-			config.setForeignCollection(Boolean.parseBoolean(value));
-		} else if (field.equals(FIELD_NAME_FOREIGN_COLLECTION_EAGER)) {
-			config.setForeignCollectionEager(Boolean.parseBoolean(value));
-		} else if (field.equals(FIELD_NAME_FOREIGN_COLLECTION_ORDER_COLUMN)) {
-			config.setForeignCollectionOrderColumn(value);
-		} else if (field.equals(FIELD_NAME_MAX_EAGER_FOREIGN_COLLECTION_LEVEL)) {
-			config.setMaxEagerForeignCollectionLevel(Integer.parseInt(value));
 		} else if (field.equals(FIELD_NAME_PERSISTER_CLASS)) {
 			try {
 				@SuppressWarnings("unchecked")
@@ -365,6 +372,22 @@ public class DatabaseFieldConfigLoader {
 			config.setVersion(Boolean.parseBoolean(value));
 		} else if (field.equals(FOREIGN_COLUMN_NAME)) {
 			config.setForeignColumnName(value);
+		}
+		/**
+		 * foreign collection field information
+		 */
+		else if (field.equals(FIELD_NAME_FOREIGN_COLLECTION)) {
+			config.setForeignCollection(Boolean.parseBoolean(value));
+		} else if (field.equals(FIELD_NAME_FOREIGN_COLLECTION_EAGER)) {
+			config.setForeignCollectionEager(Boolean.parseBoolean(value));
+		} else if (field.equals(FIELD_NAME_MAX_EAGER_FOREIGN_COLLECTION_LEVEL)) {
+			config.setForeignCollectionMaxEagerLevel(Integer.parseInt(value));
+		} else if (field.equals(FIELD_NAME_FOREIGN_COLLECTION_COLUMN_NAME)) {
+			config.setForeignCollectionColumnName(value);
+		} else if (field.equals(FIELD_NAME_FOREIGN_COLLECTION_ORDER_COLUMN_NAME)) {
+			config.setForeignCollectionOrderColumnName(value);
+		} else if (field.equals(FIELD_NAME_FOREIGN_COLLECTION_FOREIGN_FIELD_NAME)) {
+			config.setForeignCollectionForeignFieldName(value);
 		}
 	}
 }

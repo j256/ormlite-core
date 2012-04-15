@@ -19,15 +19,15 @@ public class DatabaseFieldConfig {
 
 	private static final int DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL =
 			DatabaseField.DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL;
-	private static final int DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL =
-			ForeignCollectionField.MAX_EAGER_FOREIGN_COLLECTION_LEVEL;
+	private static final int DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL = ForeignCollectionField.MAX_EAGER_LEVEL;
 	private static final Class<? extends DataPersister> DEFAULT_PERSISTER_CLASS = VoidType.class;
-	private static final DataPersister DEFAULT_DATA_PERSISTER = DataType.UNKNOWN.getDataPersister();
+	private static final DataType DEFAULT_DATA_TYPE = DataType.UNKNOWN;
 	private static final boolean DEFAULT_CAN_BE_NULL = true;
 
 	private String fieldName;
 	private String columnName;
-	private DataPersister dataPersister = DEFAULT_DATA_PERSISTER;
+	private DataType dataType = DEFAULT_DATA_TYPE;
+	private DataPersister dataPersister;
 	private String defaultValue;
 	private int width;
 	private boolean canBeNull = DEFAULT_CAN_BE_NULL;
@@ -49,17 +49,19 @@ public class DatabaseFieldConfig {
 	private String uniqueIndexName;
 	private boolean foreignAutoRefresh;
 	private int maxForeignAutoRefreshLevel = DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL;
-	private boolean foreignCollection;
-	private boolean foreignCollectionEager;
-	private String foreignCollectionOrderColumn;
-	private String foreignCollectionColumnName;
-	private int maxEagerForeignCollectionLevel = DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL;
 	private Class<? extends DataPersister> persisterClass = DEFAULT_PERSISTER_CLASS;
 	private boolean allowGeneratedIdInsert;
 	private String columnDefinition;
 	private boolean foreignAutoCreate;
 	private boolean version;
 	private String foreignColumnName;
+	// foreign collection field information
+	private boolean foreignCollection;
+	private boolean foreignCollectionEager;
+	private int foreignCollectionMaxEagerLevel = DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL;
+	private String foreignCollectionColumnName;
+	private String foreignCollectionOrderColumnName;
+	private String foreignCollectionForeignFieldName;
 
 	public DatabaseFieldConfig() {
 		// for spring
@@ -74,20 +76,9 @@ public class DatabaseFieldConfig {
 			DatabaseTableConfig<?> foreignTableConfig, boolean useGetSet, Enum<?> unknownEnumValue,
 			boolean throwIfNull, String format, boolean unique, String indexName, String uniqueIndexName,
 			boolean autoRefresh, int maxForeignAutoRefreshLevel, int maxForeignCollectionLevel) {
-		this(fieldName, columnName, (dataType == null ? null : dataType.getDataPersister()), defaultValue, width,
-				canBeNull, id, generatedId, generatedIdSequence, foreign, foreignTableConfig, useGetSet,
-				unknownEnumValue, throwIfNull, format, unique, indexName, uniqueIndexName, autoRefresh,
-				maxForeignAutoRefreshLevel, maxForeignCollectionLevel);
-	}
-
-	public DatabaseFieldConfig(String fieldName, String columnName, DataPersister dataPersister, String defaultValue,
-			int width, boolean canBeNull, boolean id, boolean generatedId, String generatedIdSequence, boolean foreign,
-			DatabaseTableConfig<?> foreignTableConfig, boolean useGetSet, Enum<?> unknownEnumValue,
-			boolean throwIfNull, String format, boolean unique, String indexName, String uniqueIndexName,
-			boolean autoRefresh, int maxForeignAutoRefreshLevel, int maxForeignCollectionLevel) {
 		this.fieldName = fieldName;
 		this.columnName = columnName;
-		this.dataPersister = dataPersister;
+		this.dataType = DataType.UNKNOWN;
 		this.defaultValue = defaultValue;
 		this.width = width;
 		this.canBeNull = canBeNull;
@@ -105,7 +96,7 @@ public class DatabaseFieldConfig {
 		this.uniqueIndexName = uniqueIndexName;
 		this.foreignAutoRefresh = autoRefresh;
 		this.maxForeignAutoRefreshLevel = maxForeignAutoRefreshLevel;
-		this.maxEagerForeignCollectionLevel = maxForeignCollectionLevel;
+		this.foreignCollectionMaxEagerLevel = maxForeignCollectionLevel;
 	}
 
 	/**
@@ -131,19 +122,25 @@ public class DatabaseFieldConfig {
 	}
 
 	/**
-	 * The name is historical.
-	 */
-	public void setDataType(DataType dataType) {
-		this.dataPersister = dataType.getDataPersister();
-	}
-
-	/**
-	 * The name is historical.
-	 * 
 	 * @see DatabaseField#dataType()
 	 */
+	public DataType getDataType() {
+		return dataType;
+	}
+
+	public void setDataType(DataType dataType) {
+		this.dataType = dataType;
+	}
+
+	/*
+	 * The name is historical.
+	 */
 	public DataPersister getDataPersister() {
-		return dataPersister;
+		if (dataPersister == null) {
+			return dataType.getDataPersister();
+		} else {
+			return dataPersister;
+		}
 	}
 
 	/**
@@ -309,6 +306,10 @@ public class DatabaseFieldConfig {
 		this.uniqueCombo = uniqueCombo;
 	}
 
+	public boolean isIndex() {
+		return index;
+	}
+
 	public void setIndex(boolean index) {
 		this.index = index;
 	}
@@ -322,6 +323,10 @@ public class DatabaseFieldConfig {
 
 	public void setIndexName(String indexName) {
 		this.indexName = indexName;
+	}
+
+	public boolean isUniqueIndex() {
+		return uniqueIndex;
 	}
 
 	public void setUniqueIndex(boolean uniqueIndex) {
@@ -355,52 +360,88 @@ public class DatabaseFieldConfig {
 		this.maxForeignAutoRefreshLevel = maxForeignLevel;
 	}
 
-	public int getMaxEagerForeignCollectionLevel() {
-		return maxEagerForeignCollectionLevel;
-	}
+	/*
+	 * Foreign collection field configurations
+	 */
 
-	public void setMaxEagerForeignCollectionLevel(int maxEagerForeignCollectionLevel) {
-		this.maxEagerForeignCollectionLevel = maxEagerForeignCollectionLevel;
+	public boolean isForeignCollection() {
+		return foreignCollection;
 	}
 
 	public void setForeignCollection(boolean foreignCollection) {
 		this.foreignCollection = foreignCollection;
 	}
 
-	public boolean isForeignCollection() {
-		return foreignCollection;
+	public boolean isForeignCollectionEager() {
+		return foreignCollectionEager;
 	}
 
 	public void setForeignCollectionEager(boolean foreignCollectionEager) {
 		this.foreignCollectionEager = foreignCollectionEager;
 	}
 
-	public boolean isForeignCollectionEager() {
-		return foreignCollectionEager;
+	public int getForeignCollectionMaxEagerLevel() {
+		return foreignCollectionMaxEagerLevel;
 	}
 
-	public void setForeignCollectionOrderColumn(String foreignCollectionOrderColumn) {
-		this.foreignCollectionOrderColumn = foreignCollectionOrderColumn;
-	}
-
-	public String getForeignCollectionOrderColumn() {
-		return foreignCollectionOrderColumn;
+	public void setForeignCollectionMaxEagerLevel(int foreignCollectionMaxEagerLevel) {
+		this.foreignCollectionMaxEagerLevel = foreignCollectionMaxEagerLevel;
 	}
 
 	/**
-	 * @deprecated You should use {@link #setForeignCollectionColumnName(String)}
+	 * @deprecated Should use {@link #setForeignCollectionMaxEagerLevel(int)}
 	 */
 	@Deprecated
-	public void setForeignCollectionColumn(String foreignCollectionColumn) {
-		this.foreignCollectionColumnName = foreignCollectionColumn;
+	public void setMaxEagerForeignCollectionLevel(int maxEagerForeignCollectionLevel) {
+		this.foreignCollectionMaxEagerLevel = maxEagerForeignCollectionLevel;
+	}
+
+	/**
+	 * @deprecated Should use {@link #setForeignCollectionMaxEagerLevel(int)}
+	 */
+	@Deprecated
+	public void setForeignCollectionMaxEagerForeignCollectionLevel(int maxEagerForeignCollectionLevel) {
+		this.foreignCollectionMaxEagerLevel = maxEagerForeignCollectionLevel;
+	}
+
+	public String getForeignCollectionColumnName() {
+		return foreignCollectionColumnName;
 	}
 
 	public void setForeignCollectionColumnName(String foreignCollectionColumn) {
 		this.foreignCollectionColumnName = foreignCollectionColumn;
 	}
 
-	public String getForeignCollectionColumnName() {
-		return foreignCollectionColumnName;
+	public String getForeignCollectionOrderColumnName() {
+		return foreignCollectionOrderColumnName;
+	}
+
+	/**
+	 * @deprecated You should use {@link #setForeignCollectionOrderColumnName(String)}
+	 */
+	@Deprecated
+	public void setForeignCollectionOrderColumn(String foreignCollectionOrderColumn) {
+		this.foreignCollectionOrderColumnName = foreignCollectionOrderColumn;
+	}
+
+	public void setForeignCollectionOrderColumnName(String foreignCollectionOrderColumn) {
+		this.foreignCollectionOrderColumnName = foreignCollectionOrderColumn;
+	}
+
+	public String getForeignCollectionForeignFieldName() {
+		return foreignCollectionForeignFieldName;
+	}
+
+	/**
+	 * @deprecated You should use {@link #setForeignCollectionForeignFieldName(String)}
+	 */
+	@Deprecated
+	public void setForeignCollectionForeignColumnName(String foreignCollectionForeignColumnName) {
+		this.foreignCollectionForeignFieldName = foreignCollectionForeignColumnName;
+	}
+
+	public void setForeignCollectionForeignFieldName(String foreignCollectionForeignFieldName) {
+		this.foreignCollectionForeignFieldName = foreignCollectionForeignFieldName;
 	}
 
 	public Class<? extends DataPersister> getPersisterClass() {
@@ -547,10 +588,7 @@ public class DatabaseFieldConfig {
 			config.fieldName = config.fieldName.toUpperCase();
 		}
 		config.columnName = valueIfNotBlank(databaseField.columnName());
-		DataType dataType = databaseField.dataType();
-		if (dataType != null) {
-			config.dataPersister = dataType.getDataPersister();
-		}
+		config.dataType = databaseField.dataType();
 		// NOTE: == did not work with the NO_DEFAULT string
 		String defaultValue = databaseField.defaultValue();
 		if (!defaultValue.equals(DatabaseField.DEFAULT_STRING)) {
@@ -614,15 +652,22 @@ public class DatabaseFieldConfig {
 		}
 		config.foreignCollection = true;
 		config.foreignCollectionEager = foreignCollection.eager();
-		config.maxEagerForeignCollectionLevel = foreignCollection.maxEagerForeignCollectionLevel();
-		config.foreignCollectionOrderColumn = valueIfNotBlank(foreignCollection.orderColumnName());
+		@SuppressWarnings("deprecation")
+		int maxEagerLevel = foreignCollection.maxEagerForeignCollectionLevel();
+		if (maxEagerLevel != ForeignCollectionField.MAX_EAGER_LEVEL) {
+			config.foreignCollectionMaxEagerLevel = maxEagerLevel;
+		} else {
+			config.foreignCollectionMaxEagerLevel = foreignCollection.maxEagerLevel();
+		}
+		config.foreignCollectionOrderColumnName = valueIfNotBlank(foreignCollection.orderColumnName());
+		config.foreignCollectionColumnName = valueIfNotBlank(foreignCollection.columnName());
 		String foreignFieldName = valueIfNotBlank(foreignCollection.foreignFieldName());
 		if (foreignFieldName == null) {
 			@SuppressWarnings("deprecation")
 			String foreignColumnName = valueIfNotBlank(foreignCollection.foreignColumnName());
-			config.foreignCollectionColumnName = valueIfNotBlank(foreignColumnName);
+			config.foreignCollectionForeignFieldName = valueIfNotBlank(foreignColumnName);
 		} else {
-			config.foreignCollectionColumnName = foreignFieldName;
+			config.foreignCollectionForeignFieldName = foreignFieldName;
 		}
 		return config;
 	}

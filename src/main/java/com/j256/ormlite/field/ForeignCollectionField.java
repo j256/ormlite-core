@@ -35,7 +35,7 @@ public @interface ForeignCollectionField {
 	/**
 	 * @see #maxEagerForeignCollectionLevel()
 	 */
-	public static final int MAX_EAGER_FOREIGN_COLLECTION_LEVEL = 1;
+	public static final int MAX_EAGER_LEVEL = 1;
 
 	/**
 	 * Set to true if the collection is a an eager collection where all of the results should be retrieved when the
@@ -51,13 +51,19 @@ public @interface ForeignCollectionField {
 	boolean eager() default false;
 
 	/**
+	 * @deprecated Should use {@link #maxEagerLevel()}
+	 */
+	@Deprecated
+	int maxEagerForeignCollectionLevel() default MAX_EAGER_LEVEL;
+
+	/**
 	 * Set this to be the number of times to expand an eager foreign collection's foreign collection. If you query for A
 	 * and it has an eager foreign-collection of field B which has an eager foreign-collection of field C ..., then a
 	 * lot of database operations are going to happen whenever you query for A. By default this value is 1 meaning that
 	 * if you query for A, the collection of B will be eager fetched but each of the B objects will have a lazy
 	 * collection instead of an eager collection of C. It should be increased only if you know what you are doing.
 	 */
-	int maxEagerForeignCollectionLevel() default MAX_EAGER_FOREIGN_COLLECTION_LEVEL;
+	int maxEagerLevel() default MAX_EAGER_LEVEL;
 
 	/**
 	 * The name of the column. This is only used when you want to match the string passed to
@@ -83,9 +89,14 @@ public @interface ForeignCollectionField {
 	 * structure) and you want to identify which column you want in this collection.
 	 * 
 	 * <p>
-	 * <b>WARNING:</b> Due to some internal complexities, this it field/member name in the class and not the
+	 * <b>WARNING:</b> Due to some internal complexities, this it field/member name in the class and _not_ the
 	 * column-name.
 	 * </p>
 	 */
 	String foreignFieldName() default "";
+
+	/*
+	 * NOTE: if you add fields here you have to add them to the DatabaseFieldConfigLoader,
+	 * DatabaseFieldConfigLoaderTest, and DatabaseTableConfigUtil.
+	 */
 }

@@ -192,16 +192,25 @@ public class DatabaseFieldConfigLoaderTest {
 		body.append("foreignCollectionEager=true\n");
 		checkConfigOutput(config, body, writer, buffer);
 
-		String foreignOrderColumn = "w225fwhi4jp";
-		config.setForeignCollectionOrderColumn(foreignOrderColumn);
-		body.append("foreignCollectionOrderColumn=").append(foreignOrderColumn).append("\n");
-		checkConfigOutput(config, body, writer, buffer);
-
 		int maxEager = 341;
-		config.setMaxEagerForeignCollectionLevel(maxEager);
+		config.setForeignCollectionMaxEagerLevel(maxEager);
 		body.append("maxEagerForeignCollectionLevel=").append(maxEager).append("\n");
 		checkConfigOutput(config, body, writer, buffer);
 
+		String columName = "jrgpgrjrwgpj";
+		config.setForeignCollectionColumnName(columName);
+		body.append("foreignCollectionColumnName=").append(columName).append("\n");
+		checkConfigOutput(config, body, writer, buffer);
+
+		String foreignOrderColumn = "w225fwhi4jp";
+		config.setForeignCollectionOrderColumnName(foreignOrderColumn);
+		body.append("foreignCollectionOrderColumn=").append(foreignOrderColumn).append("\n");
+		checkConfigOutput(config, body, writer, buffer);
+
+		String foreignCollectionForeignFieldName = "ghiegerih";
+		config.setForeignCollectionForeignFieldName(foreignCollectionForeignFieldName);
+		body.append("foreignCollectionForeignFieldName=").append(foreignCollectionForeignFieldName).append("\n");
+		checkConfigOutput(config, body, writer, buffer);
 	}
 
 	@Test
@@ -310,8 +319,9 @@ public class DatabaseFieldConfigLoaderTest {
 		// foreign collections
 		eb.append(config1.isForeignCollection(), config2.isForeignCollection());
 		eb.append(config1.isForeignCollectionEager(), config2.isForeignCollectionEager());
-		eb.append(config1.getForeignCollectionOrderColumn(), config2.getForeignCollectionOrderColumn());
-		eb.append(config1.getMaxEagerForeignCollectionLevel(), config2.getMaxEagerForeignCollectionLevel());
+		eb.append(config1.getForeignCollectionOrderColumnName(), config2.getForeignCollectionOrderColumnName());
+		eb.append(config1.getForeignCollectionMaxEagerLevel(), config2.getForeignCollectionMaxEagerLevel());
+		eb.append(config1.getForeignCollectionForeignFieldName(), config2.getForeignCollectionForeignFieldName());
 		return eb.isEquals();
 	}
 }

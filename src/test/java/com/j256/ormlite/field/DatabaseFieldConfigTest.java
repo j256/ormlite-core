@@ -244,10 +244,10 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 		fieldConfig.setThrowIfNull(throwIfNull);
 		assertTrue(fieldConfig.isThrowIfNull());
 
-		assertEquals(1, fieldConfig.getMaxEagerForeignCollectionLevel());
+		assertEquals(1, fieldConfig.getForeignCollectionMaxEagerLevel());
 		int maxLevel = 123123;
-		fieldConfig.setMaxEagerForeignCollectionLevel(maxLevel);
-		assertEquals(maxLevel, fieldConfig.getMaxEagerForeignCollectionLevel());
+		fieldConfig.setForeignCollectionMaxEagerLevel(maxLevel);
+		assertEquals(maxLevel, fieldConfig.getForeignCollectionMaxEagerLevel());
 
 		assertEquals(DatabaseField.DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL, fieldConfig.getMaxForeignAutoRefreshLevel());
 		int maxRefresh = 1432323;
@@ -264,10 +264,10 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 		fieldConfig.setForeignAutoRefresh(foreignAutoRefresh);
 		assertTrue(fieldConfig.isForeignAutoRefresh());
 
-		assertNull(fieldConfig.getForeignCollectionOrderColumn());
+		assertNull(fieldConfig.getForeignCollectionOrderColumnName());
 		String columnName = "wpofjewfpeff";
-		fieldConfig.setForeignCollectionOrderColumn(columnName);
-		assertEquals(columnName, fieldConfig.getForeignCollectionOrderColumn());
+		fieldConfig.setForeignCollectionOrderColumnName(columnName);
+		assertEquals(columnName, fieldConfig.getForeignCollectionOrderColumnName());
 	}
 	@Test
 	public void testNotPersisted() throws Exception {
@@ -287,6 +287,8 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 		assertEquals(tableName + "_" + IndexName.UNIQUE_INDEX_COLUMN_NAME + "_idx",
 				fieldConfig.getUniqueIndexName(tableName));
 	}
+
+	/* ================================================================================================ */
 
 	protected class Foo {
 		@DatabaseField(canBeNull = true)

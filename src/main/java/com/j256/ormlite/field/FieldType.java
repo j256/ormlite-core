@@ -729,20 +729,20 @@ public class FieldType {
 		if (!fieldConfig.isForeignCollectionEager() && !forceEager) {
 			// we know this won't go recursive so no need for the counters
 			return new LazyForeignCollection<FT, FID>(castDao, parent, id, foreignFieldType.columnName,
-					fieldConfig.getForeignCollectionOrderColumn());
+					fieldConfig.getForeignCollectionOrderColumnName());
 		}
 
 		LevelCounters levelCounters = threadLevelCounters.get();
 		// are we over our level limit?
-		if (levelCounters.foreignCollectionLevel >= fieldConfig.getMaxEagerForeignCollectionLevel()) {
+		if (levelCounters.foreignCollectionLevel >= fieldConfig.getForeignCollectionMaxEagerLevel()) {
 			// then return a lazy collection instead
 			return new LazyForeignCollection<FT, FID>(castDao, parent, id, foreignFieldType.columnName,
-					fieldConfig.getForeignCollectionOrderColumn());
+					fieldConfig.getForeignCollectionOrderColumnName());
 		}
 		levelCounters.foreignCollectionLevel++;
 		try {
 			return new EagerForeignCollection<FT, FID>(castDao, parent, id, foreignFieldType.columnName,
-					fieldConfig.getForeignCollectionOrderColumn());
+					fieldConfig.getForeignCollectionOrderColumnName());
 		} finally {
 			levelCounters.foreignCollectionLevel--;
 		}
@@ -931,7 +931,7 @@ public class FieldType {
 	 */
 	private FieldType findForeignFieldType(Class<?> clazz, Class<?> foreignClass, BaseDaoImpl<?, ?> foreignDao)
 			throws SQLException {
-		String foreignColumnName = fieldConfig.getForeignCollectionColumnName();
+		String foreignColumnName = fieldConfig.getForeignCollectionForeignFieldName();
 		for (FieldType fieldType : foreignDao.getTableInfo().getFieldTypes()) {
 			if (fieldType.getType() == foreignClass
 					&& (foreignColumnName == null || fieldType.getField().getName().equals(foreignColumnName))) {
