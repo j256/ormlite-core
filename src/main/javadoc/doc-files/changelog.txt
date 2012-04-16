@@ -1,4 +1,8 @@
-4.39: 4/13/2012 (svn rYYYY)
+4.40: 4/XX/2012 (svn rYYYY)
+	* CORE: Fixed a couple of missing field configuration entries.   Thanks to Jeremy Stone.  Bug #3518474.
+	* CORE: Fixed a problem that was causing FieldType to always use reflection.  Thanks to Jeremy Stone.  Bug #3518472.
+
+4.39: 4/13/2012 (svn r2485)
 	* CORE: Deprecated @DatabaseField foreignColumnName, renamed to foreignFieldName. Thanks to Candlejack. Bug #3507094.
 	* CORE: Changed dao.callBatchTasks() from throwing Exception to SQLException.  Thanks to JC.
 	* CORE: Improved createOrUpdate() to use idExists() instead of expensive method. Thanks to Chris Nevill. Bug #3514164.
