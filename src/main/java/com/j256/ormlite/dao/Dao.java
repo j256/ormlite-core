@@ -634,7 +634,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	/**
 	 * <p>
 	 * <b>WARNING:</b> This method is for advanced users only. It is only to support the
-	 * {@link #setAutoCommit(DatabaseConnection, boolean))} and other methods below. Chances are you should be using the
+	 * {@link #setAutoCommit(DatabaseConnection, boolean)} and other methods below. Chances are you should be using the
 	 * {@link TransactionManager#callInTransaction(Callable)} instead of this method unless you know what you are doing.
 	 * </p>
 	 * 
@@ -656,7 +656,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	/**
 	 * <p>
 	 * <b>WARNING:</b> This method is for advanced users only. It is only to support the
-	 * {@link #setAutoCommit(DatabaseConnection, boolean))} and other methods below. Chances are you should be using the
+	 * {@link #setAutoCommit(DatabaseConnection, boolean)} and other methods below. Chances are you should be using the
 	 * {@link TransactionManager#callInTransaction(Callable)} instead of this method unless you know what you are doing.
 	 * </p>
 	 * 
