@@ -1,4 +1,4 @@
-4.40: 4/XX/2012 (svn rYYYY)
+4.40: 4/16/2012 (svn rYYYY)
 	* CORE: Fixed a couple of missing field configuration entries.   Thanks to Jeremy Stone.  Bug #3518474.
 	* CORE: Fixed a problem that was causing FieldType to always use reflection.  Thanks to Jeremy Stone.  Bug #3518472.
 
