@@ -8,6 +8,14 @@ import com.j256.ormlite.logger.Log.Level;
  * Class which wraps our {@link Log} interface and provides {} argument features like slf4j. It allows us to plug in
  * additional log systems if necessary.
  * 
+ * <p>
+ * <b>NOTE:</b> We do the (msg, arg0), (msg, arg0, arg1), (msg, arg0, arg1, arg2), and (msg, argArray) patterns because
+ * if we do ... for everything, we will get a new Object[] each log call which we don't want -- even if the message is
+ * never logged because of the log level. Also, we don't use ... at all because we want to know <i>when</i> we are
+ * creating a new Object[] so we can make sure it is what we want. I thought this was so much better than slf4j but it
+ * turns out they were spot on. Sigh.
+ * </p>
+ * 
  * @author graywatson
  */
 public class Logger {
@@ -571,9 +579,13 @@ public class Logger {
 					appendArg(sb, arg1);
 				} else if (argC == 2) {
 					appendArg(sb, arg2);
+				} else {
+					// we have too many {} so we just ignore them
 				}
 			} else if (argC < argArray.length) {
 				appendArg(sb, argArray[argC]);
+			} else {
+				// we have too many {} so we just ignore them
 			}
 			argC++;
 		}
@@ -585,7 +597,11 @@ public class Logger {
 	private void appendArg(StringBuilder sb, Object arg) {
 		if (arg == UNKNOWN_ARG) {
 			// ignore it
-		} else if (arg != null && arg.getClass().isArray()) {
+		} else if (arg == null) {
+			// this is what sb.append(null) does
+			sb.append("null");
+		} else if (arg.getClass().isArray()) {
+			// we do a special thing if we have an array argument
 			sb.append(Arrays.toString((Object[]) arg));
 		} else {
 			sb.append(arg);
