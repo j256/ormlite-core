@@ -1690,6 +1690,7 @@ accountDao.delete(account);
 
 @cindex iterator
 @cindex iterating through all rows
+@anchor{iterator}
 @item iterate through all of the rows in a table:
 
 The DAO is also an iterator so you can easily run through all of the rows in the database:
@@ -1701,14 +1702,30 @@ for (Account account : accountDao) @{
 @}
 @end example
 
-@cindex closing an iterator 
+@cindex closing an iterator
 @emph{NOTE:} you must page through @emph{all} items for the iterator to close the underlying SQL object.   If you don't
-go all of the way, the garbage collector will close the SQL statement some time later which is considered bad form.  See
-the wrapped iterable below.
+go all of the way through to the loop, ORMLite does not know to close the underlying object, and a connection to the database
+may be leaked that will only be closed if the garbage collector reaps some time later which may cause bugs in your code.
+Use the @code{try ... finally} wrapped iterator patterns below.
+
+For example, the following @code{for} loop is a very bad pattern.
+
+@example
+for (Account account : accountDao) @{
+    if (account.getName().equals("Bob Smith")) @{
+        // you can't return, break, or throw from here
+        return account;
+    @}
+@}
+@end example
+
+This also may happen if an exception is thrown out of the loop so @code{for} loops should not be used in these cases.
+This is also the case with lazy loaded collections.  @xref{lazy collection iterator}.  
 
 @item use the iterator directly
 
-You can also use the iterator directly if the for-loop is not optimal.
+You can also use the iterator directly because the @code{for} loops are not optimal.  This allows you to use
+@code{try ... finally} which is a much better pattern.
 
 @example
 CloseableIterator<Account> iterator =
@@ -1728,8 +1745,7 @@ try @{
 @cindex CloseableWrappedIterable
 @item get a "wrapped iterable"
 
-You can also use the "wrapped iterable" which allows you to do the close in the finally with for
-each loops.
+You can also use the "wrapped iterable" which allows you to do the close in the finally while still using @code{for} loops.
 
 @example
 CloseableWrappedIterable<Account> wrappedIterable =
@@ -2158,9 +2174,12 @@ then Order must have an Account foreign field.  It is required so ORMLite can fi
 @emph{WARNING:} With lazy collections, even the @code{size()} method causes a iteration across the database.  You'll most likely want
 to just use the @code{iterator()} and @code{toArray()} methods on lazy collections.
 
+@anchor{lazy collection iterator}
 @emph{NOTE:} Like with the @code{Dao.iterator()} method, the iterator returned by a lazy collection must be closed when you are done
 with it because there is a connection open to the database underneath.  A close happens either if you go all of the way through the
-iterator or if you call @code{close()} on it.  Only the @code{ForeignCollection} returns a closable iterator.
+iterator or if you call @code{close()} on it.  Only the @code{ForeignCollection} returns a closable iterator.   This means that
+@code{for} loops across lazy loaded collections are a bad pattern.  For more details about iterating across lazy collections, see
+the iterator documentation.  @xref{iterator}.
 
 The foreign collections support the @code{add()} and @code{remove()} methods in which case the objects will be both added or removed
 from the internal list if the collection is eager, and DAO calls will be made to affect the order table as well for both eager and
@@ -3650,9 +3669,11 @@ parameter.
 @cindex create or update
 @item createOrUpdate(T data)
 
-This is a convenience method for creating an item in the database if it does not exist. If it does exist then all of the fields will be
-updated from the fields in the parameter object.  It returns a status object with the number of rows changed and whether an insert or
-update was performed.
+This is a convenience method for creating an item in the database if it does not exist. The id is extracted from
+the data argument and a query-by-id is made on the database. If a row in the database with the same id exists
+then all of the columns in the database will be updated from the fields in the data parameter. If the id is @code{null}
+(or 0 or some other default value) or doesn't exist in the database then the object will be created in the
+database. This also means that your data item @emph{must} have an id field defined.
 
 @cindex updating an object
 @item update(T data)

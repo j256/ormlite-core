@@ -167,8 +167,11 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public T createIfNotExists(T data) throws SQLException;
 
 	/**
-	 * This is a convenience method for creating an item in the database if it does not exist. If it does exist then all
-	 * of the fields will be updated from the fields in the parameter object.
+	 * This is a convenience method for creating an item in the database if it does not exist. The id is extracted from
+	 * the data argument and a query-by-id is made on the database. If a row in the database with the same id exists
+	 * then all of the columns in the database will be updated from the fields in the data parameter. If the id is null
+	 * (or 0 or some other default value) or doesn't exist in the database then the object will be created in the
+	 * database. This also means that your data item <i>must</i> have an id field defined.
 	 * 
 	 * @return Status object with the number of rows changed and whether an insert or update was performed.
 	 */
