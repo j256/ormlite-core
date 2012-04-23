@@ -12,7 +12,8 @@ import com.j256.ormlite.support.DatabaseConnection;
 public interface PreparedStmt<T> extends GenericRowMapper<T> {
 
 	/**
-	 * Create and return the associated compiled statement.
+	 * Create and return the associated compiled statement. You must call {@link CompiledStatement#close()} after you
+	 * are done with the statement so any database connections can be freed.
 	 */
 	public CompiledStatement compile(DatabaseConnection databaseConnection, StatementType type) throws SQLException;
 
