@@ -3,7 +3,6 @@ package com.j256.ormlite.field.types;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
-import java.util.Date;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
@@ -14,15 +13,12 @@ import com.j256.ormlite.support.DatabaseResults;
  * Type that persists a {@link java.util.Date} object.
  * 
  * <p>
- * NOTE: This is <i>not</i> the same as the {@link java.sql.Date} class.
+ * NOTE: This is <i>not</i> the same as the {@link java.sql.Date} class that is handled by {@link SqlDateType}.
  * </p>
  * 
  * @author graywatson
  */
 public class DateType extends BaseDateType {
-
-	public static final DateStringFormatConfig defaultDateFormatConfig = new DateStringFormatConfig(
-			"yyyy-MM-dd HH:mm:ss.SSSSSS");
 
 	private static final DateType singleTon = new DateType();
 
@@ -31,7 +27,7 @@ public class DateType extends BaseDateType {
 	}
 
 	private DateType() {
-		super(SqlType.DATE, new Class<?>[] { Date.class });
+		super(SqlType.DATE, new Class<?>[] { java.util.Date.class });
 	}
 
 	protected DateType(SqlType sqlType, Class<?>[] classes) {
@@ -57,12 +53,12 @@ public class DateType extends BaseDateType {
 	@Override
 	public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
 		Timestamp value = (Timestamp) sqlArg;
-		return new Date(value.getTime());
+		return new java.util.Date(value.getTime());
 	}
 
 	@Override
 	public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
-		Date date = (Date) javaObject;
+		java.util.Date date = (java.util.Date) javaObject;
 		return new Timestamp(date.getTime());
 	}
 

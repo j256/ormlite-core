@@ -31,8 +31,10 @@ import com.j256.ormlite.field.types.LongType;
 import com.j256.ormlite.field.types.SerializableType;
 import com.j256.ormlite.field.types.ShortObjectType;
 import com.j256.ormlite.field.types.ShortType;
+import com.j256.ormlite.field.types.SqlDateType;
 import com.j256.ormlite.field.types.StringBytesType;
 import com.j256.ormlite.field.types.StringType;
+import com.j256.ormlite.field.types.TimeStampType;
 import com.j256.ormlite.field.types.UuidType;
 
 /**
@@ -193,6 +195,18 @@ public enum DataType {
 	 * automatically.
 	 */
 	DATE_TIME(DateTimeType.getSingleton()),
+	/**
+	 * Persists the {@link java.sql.Date} Java class.
+	 * 
+	 * <p>
+	 * NOTE: If you want to use the {@link java.util.Date} class then use {@link #DATE} which is recommended instead.
+	 * </p>
+	 */
+	SQL_DATE(SqlDateType.getSingleton()),
+	/**
+	 * Persists the {@link java.sql.Timestamp} Java class. The {@link #DATE} type is recommended instead.
+	 */
+	TIME_STAMP(TimeStampType.getSingleton()),
 	/**
 	 * Marker for fields that are unknown.
 	 */

@@ -14,7 +14,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.table.DatabaseTable;
 
-public class DateTypeTest extends BaseTypeTest {
+public class SqlDateTypeTest extends BaseTypeTest {
 
 	private static final String DATE_COLUMN = "date";
 
@@ -22,7 +22,7 @@ public class DateTypeTest extends BaseTypeTest {
 	public void testDate() throws Exception {
 		Class<LocalDate> clazz = LocalDate.class;
 		Dao<LocalDate, Object> dao = createDao(clazz, true);
-		java.util.Date val = new java.util.Date();
+		java.sql.Date val = new java.sql.Date(System.currentTimeMillis());
 		String format = "yyyy-MM-dd HH:mm:ss.SSSSSS";
 		DateFormat dateFormat = new SimpleDateFormat(format);
 		String valStr = dateFormat.format(val);
@@ -54,6 +54,6 @@ public class DateTypeTest extends BaseTypeTest {
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalDate {
 		@DatabaseField(columnName = DATE_COLUMN)
-		java.util.Date date;
+		java.sql.Date date;
 	}
 }

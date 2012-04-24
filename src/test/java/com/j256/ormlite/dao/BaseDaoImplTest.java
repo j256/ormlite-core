@@ -12,6 +12,7 @@ import static org.junit.Assert.fail;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -2298,6 +2299,17 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		}
 	}
 
+	@Test
+	public void testSerializableTimeStamp() throws Exception {
+		Dao<TimeStampSerializable, Object> dao = createDao(TimeStampSerializable.class, true);
+		TimeStampSerializable foo = new TimeStampSerializable();
+		foo.timestamp = new Timestamp(System.currentTimeMillis());
+		assertEquals(1, dao.create(foo));
+		
+		TimeStampSerializable result = dao.queryForId(foo.id);
+		assertEquals(foo.timestamp, result.timestamp);
+	}
+
 	/* ============================================================================================== */
 
 	private String buildFooQueryAllString(Dao<Foo, Object> fooDao) throws SQLException {
@@ -2595,6 +2607,15 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		@DatabaseField(foreign = true)
 		ForeignCollectionComparison foreign;
 		public ForeignCollectionComparison2() {
+		}
+	}
+
+	public static class TimeStampSerializable {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(dataType = DataType.SERIALIZABLE)
+		java.sql.Timestamp timestamp;
+		public TimeStampSerializable() {
 		}
 	}
 }

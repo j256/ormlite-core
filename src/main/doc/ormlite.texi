@@ -623,7 +623,7 @@ orderDao.create(order1);
 
 @cindex version field
 @cindex row versioning
-@anchor{version feature}
+@anchor{version field}
 @item version
 
 Set this to true (default false) to have this field be a version for the row.  A version field adds restrictions when an
@@ -642,7 +642,23 @@ will not match the version column in the database and 0 rows changed will be ret
 the object's version field will be set by ORMLite to the new-value, 1 will be returned from @code{update}
 @end enumerate
 
-Only the following field types are appropriate for version fields: short, integer, long, and Date fields.
+Only the following field types are appropriate for version fields: @code{short}, @code{integer}, @code{long}, and @code{Date}
+fields.  @code{Date} can also be stored as a string (@code{dataType = DataType.DATE_STRING}) or long
+(@code{dataType = DataType.DATE_LONG}).
+
+@cindex last modified field
+@cindex modified last field
+@cindex time row last modified
+@cindex date row last modified
+@emph{NOTE:} If you define a @code{Date} field to be a version then you can also use it as a modification time on the row.
+When the object is created in the database, the version field will be automatically inserted with the current @code{Date}.
+When the object is updated, the version field will be updated with the current @code{Date}.  Something like the following
+works well (the @code{dataType=...} is optional}:
+
+@example
+@@DatabaseField(version = true, dataType = DataType.DATE_LONG)
+private Date lastModified;
+@end example  
 
 @cindex foreign column name
 @item foreignColumnName
@@ -796,7 +812,7 @@ Set to true to have a field be able to be inserted into the database with a null
 @cindex Version annotation
 @item @@Version
 
-Using this annotation will turn short, integer, long, and Date fields into a version field.  @xref{version feature}.
+Using this annotation will turn short, integer, long, and Date fields into a version field.  @xref{version field}.
 
 @end table
 
@@ -895,7 +911,7 @@ Persisted as SQL type @code{TIMESTAMP}.  This type automatically uses an interna
 format of it is unreliable to match the database format.  @xref{Select Arguments}.  See also @code{DATE_LONG} and
 @code{DATE_STRING}.
 
-@emph{NOTE:} This is a different class from @code{java.sql.Date}.
+@emph{NOTE:} This is a different class from @code{java.sql.Date} which is handled by @code{DataType.SQL_DATE}.
 
 @emph{NOTE:} Certain databases only provide seconds resolution so the milliseconds will be 0.
 
@@ -906,7 +922,7 @@ format of it is unreliable to match the database format.  @xref{Select Arguments
 You can also specify the @code{dataType} field to the @code{@@DatabaseField} annotation as a @code{DataType.DATE_LONG}
 in which case the milliseconds value of the @code{Date} will be stored as an LONG.  See also @code{DATE} and @code{DATE_STRING}.
 
-@emph{NOTE:} This is a different class from @code{java.sql.Date}.
+@emph{NOTE:} This is a different class from @code{java.sql.Date} which is handled by @code{DataType.SQL_DATE}.
 
 @emph{NOTE:} Certain databases only provide seconds resolution so the milliseconds will be 0.
 
@@ -919,7 +935,7 @@ You can also specify the @code{dataType} field to the @code{@@DatabaseField} ann
 in which case the date will be stored as a string in @code{yyyy-MM-dd HH:mm:ss.SSSSSS} format.  You can use the
 @code{format} field in @code{DatabaseField} to set the date to another format.  See also @code{DATE} and @code{DATE_LONG}.
 
-@emph{NOTE:} This is a different class from @code{java.sql.Date}.
+@emph{NOTE:} This is a different class from @code{java.sql.Date} which is handled by @code{DataType.SQL_DATE}.
 
 @emph{NOTE:} Certain databases only provide seconds resolution so the milliseconds will be 0.
 
@@ -1073,6 +1089,24 @@ database types and with various default precision settings.  Android should use 
 This stores the Joda @code{DateTime} into the database as long epoch millis.  This persister uses reflection to avoid
 setting up a dependency with Joda jars.  You can define a custom data persister if you want to natively use the class. 
 @xref{custom data persister}.
+
+@cindex java.sql.Date type
+@cindex SQL Date type
+@cindex Date, SQL type
+@item java.sql.Date (DataType.SQL_DATE)
+
+Persisted as SQL type @code{TIMESTAMP}.
+
+@emph{NOTE:} This is the @code{java.sql.Date} and not the @code{java.util.Date}.  It is recommended that you use the
+@code{java.util.Date} class handled by @code{DataType.DATE} instead.
+
+@cindex Timestamp, SQL type
+@cindex SQL Timestamp type
+@item java.sql.Timestamp (DataType.TIME_STAMP)
+
+Persisted as SQL type @code{TIMESTAMP}.
+
+@emph{NOTE:} It is recommended that you use the @code{java.util.Date} class instead which is the @code{DataType.DATE} type.
 
 @end table
 

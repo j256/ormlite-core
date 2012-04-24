@@ -15,9 +15,8 @@ import com.j256.ormlite.support.DatabaseResults;
  * integer. This is done with reflection so we don't have to introduce the dependency.
  * 
  * <p>
- * <b>NOTE:</b> Persists the org.joda.time.DateTime type using reflection since we don't want to add the dependency.
- * Because this class uses reflection, you have to specify this using {@link DatabaseField#dataType()}. It won't be
- * detected automatically.
+ * <b>NOTE:</b> Because this class uses reflection, you have to specify this using {@link DatabaseField#dataType()}. It
+ * won't be detected automatically.
  * </p>
  * 
  * @author graywatson
