@@ -110,8 +110,8 @@ public class LoggerFactory {
 			} catch (Exception e) {
 				// oh well, fallback to the local log
 				Log log = new LocalLog(classLabel);
-				log.log(Level.WARNING, "Unable to call constructor for class " + logClassName
-						+ ", so had to use local log", e);
+				log.log(Level.WARNING, "Unable to call constructor with single String argument for class "
+						+ logClassName + ", so had to use local log", e);
 				return log;
 			}
 		}
