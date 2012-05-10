@@ -461,7 +461,8 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * Similar to the {@link #queryRaw(String, String...)} but this iterator returns rows that you can map yourself. For
 	 * every result that is returned by the database, the {@link RawRowMapper#mapRow(String[], String[])} method is
 	 * called so you can convert the result columns into an object to be returned by the iterator. The arguments are
-	 * optional but can be set with strings to expand ? type of SQL.
+	 * optional but can be set with strings to expand ? type of SQL. For a simple implementation of a raw row mapper,
+	 * see {@link #getRawRowMapper()}.
 	 */
 	public <UO> GenericRawResults<UO> queryRaw(String query, RawRowMapper<UO> mapper, String... arguments)
 			throws SQLException;
@@ -645,13 +646,8 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * This allocates a connection for this specific thread that will be used in all other DAO operations. The thread
 	 * <i>must</i> call {@link #endThreadConnection(DatabaseConnection)} once it is done with the connection. It is
 	 * highly recommended that a
-	 * <code>try { conn = allocateThreadConnection(); ... } finally { freeThreadConnection(conn); }</code> type of
+	 * <code>try { conn = dao.startThreadConnection(); ... } finally { dao.endThreadConnection(conn); }</code> type of
 	 * pattern be used here to ensure you do not leak connections.
-	 * </p>
-	 * 
-	 * <p>
-	 * This is really only useful if you are using a pooled connection source and want to do certain operations on the
-	 * same pool. Android users, for example have a single connection to the database so this is effecitively a no-op.
 	 * </p>
 	 */
 	public DatabaseConnection startThreadConnection() throws SQLException;
