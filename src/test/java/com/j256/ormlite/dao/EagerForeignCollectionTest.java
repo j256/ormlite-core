@@ -15,17 +15,17 @@ import com.j256.ormlite.field.ForeignCollectionField;
 public class EagerForeignCollectionTest extends BaseCoreTest {
 
 	@Test
-	public void test() throws Exception {
+	public void testBasic() throws Exception {
 		Dao<Eager, Integer> eagerDao = createDao(Eager.class, true);
 		Dao<Foreign, Integer> foreignDao = createDao(Foreign.class, true);
 		Eager eager = new Eager();
 		assertEquals(1, eagerDao.create(eager));
 
 		Eager result = eagerDao.queryForId(eager.id);
-		assertNotNull(result.foreign);
-		assertTrue(result.foreign.isEager());
-		assertFalse(System.identityHashCode(result.foreign) == result.foreign.hashCode());
-		assertEquals(result.foreign, result.foreign);
+		assertNotNull(result.foreignCollection);
+		assertTrue(result.foreignCollection.isEager());
+		assertFalse(System.identityHashCode(result.foreignCollection) == result.foreignCollection.hashCode());
+		assertEquals(result.foreignCollection, result.foreignCollection);
 
 		Foreign f0 = new Foreign();
 		f0.eager = eager;
@@ -35,12 +35,12 @@ public class EagerForeignCollectionTest extends BaseCoreTest {
 		f1.eager = eager;
 		assertEquals(1, foreignDao.create(f1));
 
-		Foreign[] foreigns = result.foreign.toArray(new Foreign[0]);
+		Foreign[] foreigns = result.foreignCollection.toArray(new Foreign[0]);
 		assertNotNull(foreigns);
 		assertEquals(0, foreigns.length);
 
-		assertEquals(2, result.foreign.refreshCollection());
-		foreigns = result.foreign.toArray(new Foreign[0]);
+		assertEquals(2, result.foreignCollection.refreshCollection());
+		foreigns = result.foreignCollection.toArray(new Foreign[0]);
 		assertNotNull(foreigns);
 		assertEquals(2, foreigns.length);
 		assertEquals(f0.id, foreigns[0].id);
@@ -51,7 +51,7 @@ public class EagerForeignCollectionTest extends BaseCoreTest {
 		assertEquals(1, foreignDao.update(f0));
 
 		assertNull(foreigns[0].stuff);
-		assertEquals(2, result.foreign.refreshAll());
+		assertEquals(2, result.foreignCollection.refreshAll());
 		assertNotNull(foreigns[0].stuff);
 		assertNotNull(stuff0, foreigns[0].stuff);
 
@@ -60,17 +60,38 @@ public class EagerForeignCollectionTest extends BaseCoreTest {
 		foreignDao.refresh(f1);
 		assertNull(f1.stuff);
 
-		assertEquals(2, result.foreign.updateAll());
+		assertEquals(2, result.foreignCollection.updateAll());
 		foreignDao.refresh(f1);
 		assertNotNull(f1.stuff);
 		assertEquals(stuff1, f1.stuff);
+	}
+
+	@Test
+	public void testContains() throws Exception {
+		Dao<Eager, Integer> eagerDao = createDao(Eager.class, true);
+		Dao<Foreign, Integer> foreignDao = createDao(Foreign.class, true);
+		Eager eager = new Eager();
+		assertEquals(1, eagerDao.create(eager));
+
+		Foreign f0 = new Foreign();
+		f0.eager = eager;
+		assertEquals(1, foreignDao.create(f0));
+		// and another one
+		Foreign f1 = new Foreign();
+		f1.eager = eager;
+		assertEquals(1, foreignDao.create(f1));
+
+		Eager result = eagerDao.queryForId(eager.id);
+		for (Foreign foreign : result.foreignCollection) {
+			assertTrue(result.foreignCollection.contains(foreign));
+		}
 	}
 
 	protected static class Eager {
 		@DatabaseField(generatedId = true)
 		int id;
 		@ForeignCollectionField(eager = true)
-		ForeignCollection<Foreign> foreign;
+		ForeignCollection<Foreign> foreignCollection;
 		public Eager() {
 		}
 	}
