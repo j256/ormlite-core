@@ -1917,7 +1917,7 @@ results = accountDao.queryRaw(qb.prepareStatementString(), 10);
 @end example
 
 If you want to use the @code{QueryBuilder} with aggregate or other raw/custom arguments do something like the following.
-Since there is only one result out you can use the @code{genericRawResults.getgetFirstResult()} method:
+Since there is only one result out you can use the @code{genericRawResults.getFirstResult()} method:
 
 @example
 QueryBuilder<Account, Integer> qb = accountDao.queryBuilder();
@@ -2170,9 +2170,12 @@ There are two different types of foreign collections: eager or lazy.   If eager 
 and the orders are stored as a list within the collection.  If eager is set to false (the default) then the collection is considered to be
 "lazy" and will iterate over the database using the @code{Dao.iterator()} only when a method is called on the collection.
 
+@emph{WARNING:} By default, if you have eager collections of objects that themselves have eager collections, the inner collection will be created
+as lazy for performance reasons.  If you need change this see the @code{maxEagerLevel} setting below.
+
 @cindex max eager foreign collection level
 @cindex limiting eager foreign collections
-@item maxEagerForeignCollectionLevel
+@item maxEagerLevel
 
 This can be set to the number of times to expand an eager foreign collection's foreign collection. If you query for A and it has an eager
 foreign-collection of field B which has an eager foreign-collection of field C (@dots{}), then a lot of database operations are going to
@@ -2193,11 +2196,14 @@ specify that you want the collection returned when you specify @code{queryBuilde
 
 The name of the column in the foreign object that we should order the collection by.
 
-@item foreignColumnName
+@item foreignFieldName
 
-Name of the column in the class that the collection is holding that corresponds to this particular collection.  This is needed if
-there are two foreign fields in the class (such as a tree structure) and you want to identify which specific column you want in this
-collection.
+Name of the @emph{field} (not the column name) in the class that the collection is holding that corresponds to the
+collection. This is needed if there are two foreign fields in the class in the collection (such as a tree
+structure) and you want to identify which column you want in this collection.
+
+@emph{WARNING:} Due to some internal complexities, this it field/member name in the class and @emph{not} the
+column-name.
 
 @end table
 
@@ -3032,6 +3038,8 @@ Please see the example code documentation for more information.  @xref{Android E
 @cindex garbage collection
 @cindex startup optimization
 @cindex table config file
+@cindex database config file
+@cindex config file for tables
 @cindex android performance
 For some time we have been struggling with DAO startup issues under Android that we thought were due to ORMLite object bandwidth.
 Although improvements and DAO cacheing has been made, creating a couple of DAOs when your application starts can still take too long and

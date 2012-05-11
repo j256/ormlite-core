@@ -47,6 +47,12 @@ public @interface ForeignCollectionField {
 	 * you iterate through the collection. This means that you need to make sure it is closed when you finish. See
 	 * {@link LazyForeignCollection#iterator()} for more information.
 	 * </p>
+	 * 
+	 * <p>
+	 * <b>WARNING:</b> By default, if you have eager collections of objects that themselves have eager collections, the
+	 * inner collection will be created as lazy for performance reasons. If you need change this see the
+	 * {@link #maxEagerLevel()} setting below.
+	 * </p>
 	 */
 	boolean eager() default false;
 
