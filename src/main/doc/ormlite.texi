@@ -653,7 +653,7 @@ fields.  @code{Date} can also be stored as a string (@code{dataType = DataType.D
 @emph{NOTE:} If you define a @code{Date} field to be a version then you can also use it as a modification time on the row.
 When the object is created in the database, the version field will be automatically inserted with the current @code{Date}.
 When the object is updated, the version field will be updated with the current @code{Date}.  Something like the following
-works well (the @code{dataType=...} is optional}:
+works well (the @code{dataType=...} is optional):
 
 @example
 @@DatabaseField(version = true, dataType = DataType.DATE_LONG)
