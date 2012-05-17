@@ -1,11 +1,13 @@
 package com.j256.ormlite.field.types;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.sql.SQLException;
 
 import org.junit.Test;
@@ -15,6 +17,7 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
+import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseResults;
@@ -108,6 +111,44 @@ public class SerializableTypeTest extends BaseTypeTest {
 		DataType.SERIALIZABLE.getDataPersister().parseDefaultString(null, null);
 	}
 
+	@Test
+	public void testUpdateBuilderSerializable() throws Exception {
+		Dao<SerializedUpdate, Integer> dao = createDao(SerializedUpdate.class, true);
+		SerializedUpdate foo = new SerializedUpdate();
+		SerializedField serialized1 = new SerializedField("wow");
+		foo.serialized = serialized1;
+		assertEquals(1, dao.create(foo));
+
+		SerializedUpdate result = dao.queryForId(foo.id);
+		assertNotNull(result);
+		assertNotNull(result.serialized);
+		assertEquals(serialized1.foo, result.serialized.foo);
+
+		// update with dao.update
+		SerializedField serialized2 = new SerializedField("zip");
+		foo.serialized = serialized2;
+		assertEquals(1, dao.update(foo));
+
+		result = dao.queryForId(foo.id);
+		assertNotNull(result);
+		assertNotNull(result.serialized);
+		assertEquals(serialized2.foo, result.serialized.foo);
+
+		// update with UpdateBuilder
+		SerializedField serialized3 = new SerializedField("crack");
+		UpdateBuilder<SerializedUpdate, Integer> ub = dao.updateBuilder();
+		ub.updateColumnValue(SerializedUpdate.SERIALIZED_FIELD_NAME, serialized3);
+		ub.where().idEq(foo.id);
+		assertEquals(1, ub.update());
+
+		result = dao.queryForId(foo.id);
+		assertNotNull(result);
+		assertNotNull(result.serialized);
+		assertEquals(serialized3.foo, result.serialized.foo);
+	}
+
+	/* ------------------------------------------------------------------------------------ */
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalSerializable {
 		@DatabaseField(columnName = SERIALIZABLE_COLUMN, dataType = DataType.SERIALIZABLE)
@@ -118,5 +159,23 @@ public class SerializableTypeTest extends BaseTypeTest {
 	protected static class LocalByteArray {
 		@DatabaseField(columnName = BYTE_COLUMN, dataType = DataType.BYTE_ARRAY)
 		byte[] byteField;
+	}
+
+	protected static class SerializedUpdate {
+		public final static String SERIALIZED_FIELD_NAME = "serialized";
+		@DatabaseField(generatedId = true)
+		public int id;
+		@DatabaseField(dataType = DataType.SERIALIZABLE, columnName = SERIALIZED_FIELD_NAME)
+		public SerializedField serialized;
+		public SerializedUpdate() {
+		}
+	}
+
+	protected static class SerializedField implements Serializable {
+		private static final long serialVersionUID = 4531762180289888888L;
+		String foo;
+		public SerializedField(String foo) {
+			this.foo = foo;
+		}
 	}
 }

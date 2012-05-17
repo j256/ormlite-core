@@ -1,9 +1,11 @@
 4.41: 4/XX/2012 (svn rYYYY)
-	* CORE: Added java.sql.Date and java.sql.Timestmp data persister types.  java.util.Date is still recommended 
+	* CORE: Added java.sql.Date and java.sql.Timestmp data persister types.  java.util.Date is still recommended.
+	* ANDROID: Fixed the updating of serializable and other byte[] fields.  Thanks to Yossi Wasserman.  Bug #3527685.
 
 4.40: 4/16/2012 (svn r2516)
 	* CORE: Fixed a couple of missing field configuration entries.   Thanks to Jeremy Stone.  Bug #3518474.
 	* CORE: Fixed a problem that was causing FieldType to always use reflection.  Thanks to Jeremy Stone.  Bug #3518472.
+	* ANDROID: Big performance bug fix when creating DAOs. Foreign fields always used reflection instead of table configs.
 
 4.39: 4/13/2012 (svn r2485)
 	* CORE: Deprecated @DatabaseField foreignColumnName, renamed to foreignFieldName. Thanks to Candlejack. Bug #3507094.
