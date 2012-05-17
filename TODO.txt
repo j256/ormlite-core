@@ -1,3 +1,17 @@
+- add something to the DAO which returns a wrapper around a statement/connection
+	- allows you to do a .execute, .query, etc.. depending on the type, maybe subclassed
+	- allows you to set arguments with array or individually
+	- has a .close() or .release() and lots of documentation around it
+
+- need to have a default RawRowMapper for an entity
+	- constructs the entity
+	- looks up the fields
+	- converts the string values into entity values
+	- assigns the fields
+
+- maybe watch the number of connections gotten from a connection source that aren't released
+	- maybe keep an exception to be used to track the caller
+
 - support for JTA annotations, whatever the common one is
 	- maybe also JDO?
 
