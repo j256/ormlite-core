@@ -2,6 +2,7 @@ package com.j256.ormlite.field.types;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -52,24 +53,46 @@ public class SerializableType extends BaseDataType {
 	@Override
 	public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
 		byte[] bytes = (byte[]) sqlArg;
+		ObjectInputStream objInStream = null;
 		try {
-			ObjectInputStream objInStream = new ObjectInputStream(new ByteArrayInputStream(bytes));
+			objInStream = new ObjectInputStream(new ByteArrayInputStream(bytes));
 			return objInStream.readObject();
 		} catch (Exception e) {
 			throw SqlExceptionUtil.create("Could not read serialized object from byte array: " + Arrays.toString(bytes)
 					+ "(len " + bytes.length + ")", e);
+		} finally {
+			if (objInStream != null) {
+				try {
+					// we do this to give GC a hand with ObjectInputStream reference maps
+					objInStream.close();
+				} catch (IOException e) {
+					// ignored
+				}
+			}
 		}
 	}
 
 	@Override
 	public Object javaToSqlArg(FieldType fieldType, Object obj) throws SQLException {
+		ObjectOutputStream objOutStream = null;
 		try {
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-			ObjectOutputStream objOutStream = new ObjectOutputStream(outStream);
+			objOutStream = new ObjectOutputStream(outStream);
 			objOutStream.writeObject(obj);
+			objOutStream.close();
+			objOutStream = null;
 			return outStream.toByteArray();
 		} catch (Exception e) {
 			throw SqlExceptionUtil.create("Could not write serialized object to byte array: " + obj, e);
+		} finally {
+			if (objOutStream != null) {
+				try {
+					// we do this to give GC a hand with ObjectOutputStream reference maps
+					objOutStream.close();
+				} catch (IOException e) {
+					// ignored
+				}
+			}
 		}
 	}
 
