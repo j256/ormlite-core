@@ -19,6 +19,8 @@ public class DateStringType extends BaseDateType {
 
 	public static int DEFAULT_WIDTH = 50;
 
+	private static final DateStringFormatConfig defaultDateFormatConfig = new DateStringFormatConfig(
+			"yyyy-MM-dd HH:mm:ss.SSSSSS");
 	private static final DateStringType singleTon = new DateStringType();
 
 	public static DateStringType getSingleton() {
@@ -35,7 +37,7 @@ public class DateStringType extends BaseDateType {
 
 	@Override
 	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
-		DateStringFormatConfig formatConfig = convertDateStringConfig(fieldType);
+		DateStringFormatConfig formatConfig = convertDateStringConfig(fieldType, defaultDateFormatConfig);
 		try {
 			// we parse to make sure it works and then format it again
 			return normalizeDateString(formatConfig, defaultStr);
@@ -53,7 +55,7 @@ public class DateStringType extends BaseDateType {
 	@Override
 	public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
 		String value = (String) sqlArg;
-		DateStringFormatConfig formatConfig = convertDateStringConfig(fieldType);
+		DateStringFormatConfig formatConfig = convertDateStringConfig(fieldType, defaultDateFormatConfig);
 		try {
 			return parseDateString(formatConfig, value);
 		} catch (ParseException e) {
@@ -64,7 +66,7 @@ public class DateStringType extends BaseDateType {
 
 	@Override
 	public Object javaToSqlArg(FieldType fieldType, Object obj) {
-		DateFormat dateFormat = convertDateStringConfig(fieldType).getDateFormat();
+		DateFormat dateFormat = convertDateStringConfig(fieldType, defaultDateFormatConfig).getDateFormat();
 		return dateFormat.format((Date) obj);
 	}
 

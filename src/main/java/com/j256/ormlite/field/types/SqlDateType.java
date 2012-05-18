@@ -9,7 +9,8 @@ import com.j256.ormlite.field.SqlType;
  * Type that persists a {@link java.sql.Date} object.
  * 
  * <p>
- * NOTE: This is <i>not</i> the same as the {@link java.util.Date} class handled with {@link DateType}.
+ * NOTE: This is <i>not</i> the same as the {@link java.util.Date} class handled with {@link DateType}. If it
+ * recommended that you use the other Date class which is more standard to Java programs.
  * </p>
  * 
  * @author graywatson
@@ -17,6 +18,7 @@ import com.j256.ormlite.field.SqlType;
 public class SqlDateType extends DateType {
 
 	private static final SqlDateType singleTon = new SqlDateType();
+	private static final DateStringFormatConfig sqlDateFormatConfig = new DateStringFormatConfig("yyyy-MM-dd");
 
 	public static SqlDateType getSingleton() {
 		return singleTon;
@@ -40,5 +42,10 @@ public class SqlDateType extends DateType {
 	public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
 		java.sql.Date date = (java.sql.Date) javaObject;
 		return new Timestamp(date.getTime());
+	}
+
+	@Override
+	protected DateStringFormatConfig getDefaultDateFormatConfig() {
+		return sqlDateFormatConfig;
 	}
 }

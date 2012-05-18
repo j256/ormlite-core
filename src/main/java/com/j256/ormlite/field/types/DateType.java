@@ -20,6 +20,8 @@ import com.j256.ormlite.support.DatabaseResults;
  */
 public class DateType extends BaseDateType {
 
+	private static final DateStringFormatConfig defaultDateFormatConfig = new DateStringFormatConfig(
+			"yyyy-MM-dd HH:mm:ss.SSSSSS");
 	private static final DateType singleTon = new DateType();
 
 	public static DateType getSingleton() {
@@ -36,7 +38,7 @@ public class DateType extends BaseDateType {
 
 	@Override
 	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
-		DateStringFormatConfig dateFormatConfig = convertDateStringConfig(fieldType);
+		DateStringFormatConfig dateFormatConfig = convertDateStringConfig(fieldType, getDefaultDateFormatConfig());
 		try {
 			return new Timestamp(parseDateString(dateFormatConfig, defaultStr).getTime());
 		} catch (ParseException e) {
@@ -65,5 +67,12 @@ public class DateType extends BaseDateType {
 	@Override
 	public boolean isArgumentHolderRequired() {
 		return true;
+	}
+
+	/**
+	 * Return the default date format configuration.
+	 */
+	protected DateStringFormatConfig getDefaultDateFormatConfig() {
+		return defaultDateFormatConfig;
 	}
 }
