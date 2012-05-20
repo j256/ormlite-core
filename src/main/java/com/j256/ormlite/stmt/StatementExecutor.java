@@ -59,9 +59,10 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	private MappedUpdateId<T, ID> mappedUpdateId;
 	private MappedDelete<T, ID> mappedDelete;
 	private MappedRefresh<T, ID> mappedRefresh;
-	private String countStarQuery = null;
-	private String ifExistsQuery = null;
-	private FieldType[] ifExistsFieldTypes = null;
+	private String countStarQuery;
+	private String ifExistsQuery;
+	private FieldType[] ifExistsFieldTypes;
+	private RawRowMapper<T> rawRowMapper;
 
 	/**
 	 * Provides statements for various SQL operations.
@@ -181,6 +182,16 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	public GenericRowMapper<T> getSelectStarRowMapper() throws SQLException {
 		prepareQueryForAll();
 		return preparedQueryForAll;
+	}
+
+	/**
+	 * Return a raw row mapper suitable for use with {@link Dao#queryRaw(String, RawRowMapper, String...)}.
+	 */
+	public RawRowMapper<T> getRawRowMapper() {
+		if (rawRowMapper == null) {
+			rawRowMapper = new RawRowMapperImpl<T, ID>(tableInfo);
+		}
+		return rawRowMapper;
 	}
 
 	/**

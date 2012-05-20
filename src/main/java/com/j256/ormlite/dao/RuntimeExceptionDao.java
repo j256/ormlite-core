@@ -750,6 +750,10 @@ public class RuntimeExceptionDao<T, ID> {
 		}
 	}
 
+	public RawRowMapper<T> getRawRowMapper() {
+		return dao.getRawRowMapper();
+	}
+
 	private void logMessage(Exception e, String message) {
 		logger.log(LOG_LEVEL, e, message);
 	}

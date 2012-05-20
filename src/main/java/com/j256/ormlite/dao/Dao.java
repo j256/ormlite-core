@@ -631,6 +631,13 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public GenericRowMapper<T> getSelectStarRowMapper() throws SQLException;
 
 	/**
+	 * Return a row mapper that is suitable for use with {@link #queryRaw(String, RawRowMapper, String...)}. This is a
+	 * bit experimental at this time. It most likely will _not_ work with all databases since the string output for each
+	 * data type is hard to forecast. Please provide feedback.
+	 */
+	public RawRowMapper<T> getRawRowMapper();
+
+	/**
 	 * Returns true if an object exists that matches this ID otherwise false.
 	 */
 	public boolean idExists(ID id) throws SQLException;

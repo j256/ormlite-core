@@ -4,7 +4,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
+import java.util.Collection;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DataPersisterManager;
 import com.j256.ormlite.field.DataType;
@@ -110,27 +112,51 @@ public class JavaxPersistence {
 			}
 		}
 		if (oneToOneAnnotation != null || manyToOneAnnotation != null) {
-			config.setForeign(true);
-			if (joinColumnAnnotation != null) {
-				try {
-					Method method = joinColumnAnnotation.getClass().getMethod("name");
-					String name = (String) method.invoke(joinColumnAnnotation);
-					if (name != null && name.length() > 0) {
-						config.setColumnName(name);
+			// if we have a collection then make it a foreign collection
+			if (Collection.class.isAssignableFrom(field.getType())
+					|| ForeignCollection.class.isAssignableFrom(field.getType())) {
+				config.setForeignCollection(true);
+				if (joinColumnAnnotation != null) {
+					try {
+						Method method = joinColumnAnnotation.getClass().getMethod("name");
+						String name = (String) method.invoke(joinColumnAnnotation);
+						if (name != null && name.length() > 0) {
+							config.setForeignCollectionColumnName(name);
+						}
+						method = joinColumnAnnotation.getClass().getMethod("fetch");
+						Object fetchType = method.invoke(joinColumnAnnotation);
+						if (fetchType != null && fetchType.toString().equals("EAGER")) {
+							config.setForeignCollectionEager(true);
+						}
+					} catch (Exception e) {
+						throw SqlExceptionUtil.create(
+								"Problem accessing fields from the @JoinColumn annotation for field " + field, e);
 					}
-					method = joinColumnAnnotation.getClass().getMethod("nullable");
-					Boolean nullable = (Boolean) method.invoke(joinColumnAnnotation);
-					if (nullable != null) {
-						config.setCanBeNull(nullable);
+				}
+			} else {
+				// otherwise it is a foreign field
+				config.setForeign(true);
+				if (joinColumnAnnotation != null) {
+					try {
+						Method method = joinColumnAnnotation.getClass().getMethod("name");
+						String name = (String) method.invoke(joinColumnAnnotation);
+						if (name != null && name.length() > 0) {
+							config.setColumnName(name);
+						}
+						method = joinColumnAnnotation.getClass().getMethod("nullable");
+						Boolean nullable = (Boolean) method.invoke(joinColumnAnnotation);
+						if (nullable != null) {
+							config.setCanBeNull(nullable);
+						}
+						method = joinColumnAnnotation.getClass().getMethod("unique");
+						Boolean unique = (Boolean) method.invoke(joinColumnAnnotation);
+						if (unique != null) {
+							config.setUnique(unique);
+						}
+					} catch (Exception e) {
+						throw SqlExceptionUtil.create(
+								"Problem accessing fields from the @JoinColumn annotation for field " + field, e);
 					}
-					method = joinColumnAnnotation.getClass().getMethod("unique");
-					Boolean unique = (Boolean) method.invoke(joinColumnAnnotation);
-					if (unique != null) {
-						config.setUnique(unique);
-					}
-				} catch (Exception e) {
-					throw SqlExceptionUtil.create("Problem accessing fields from the @JoinColumn annotation for field "
-							+ field, e);
 				}
 			}
 		}

@@ -761,6 +761,10 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		return statementExecutor.getSelectStarRowMapper();
 	}
 
+	public RawRowMapper<T> getRawRowMapper() {
+		return statementExecutor.getRawRowMapper();
+	}
+
 	public boolean idExists(ID id) throws SQLException {
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		try {

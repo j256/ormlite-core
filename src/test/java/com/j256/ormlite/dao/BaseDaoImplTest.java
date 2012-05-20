@@ -2305,7 +2305,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		TimeStampSerializable foo = new TimeStampSerializable();
 		foo.timestamp = new Timestamp(System.currentTimeMillis());
 		assertEquals(1, dao.create(foo));
-		
+
 		TimeStampSerializable result = dao.queryForId(foo.id);
 		assertEquals(foo.timestamp, result.timestamp);
 	}
