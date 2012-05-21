@@ -3,12 +3,6 @@
 	- allows you to set arguments with array or individually
 	- has a .close() or .release() and lots of documentation around it
 
-- need to have a default RawRowMapper for an entity
-	- constructs the entity
-	- looks up the fields
-	- converts the string values into entity values
-	- assigns the fields
-
 - maybe watch the number of connections gotten from a connection source that aren't released
 	- maybe keep an exception to be used to track the caller
 
@@ -47,8 +41,6 @@
 
 - the Foreign Collections have an addAll method which takes a List type:
 	- DAO's could have a createAll/createOrUpdateAll which would use the batch tasks
-
-- ORMLite should at least LOG ERRORS if the versions are different between core and android/jdbc
 
 - there are a number of places in StatementExecutor where we do this:
 		if (mappedQueryForId == null) {
