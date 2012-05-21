@@ -174,6 +174,9 @@ public class FieldTypeTest extends BaseCoreTest {
 			public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
 				return nameArg;
 			}
+			public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) {
+				return stringValue;
+			}
 		});
 		expect(databaseType.isEntityNamesMustBeUpCase()).andReturn(false);
 		replay(databaseType);

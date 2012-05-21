@@ -33,7 +33,7 @@ public class StringBytesType extends BaseDataType {
 
 	@Override
 	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
-		throw new SQLException("String bytes type cannot have default values");
+		throw new SQLException("String-bytes type cannot have default values");
 	}
 
 	@Override
@@ -73,6 +73,11 @@ public class StringBytesType extends BaseDataType {
 	@Override
 	public boolean isArgumentHolderRequired() {
 		return true;
+	}
+
+	@Override
+	public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) throws SQLException {
+		throw new SQLException("String-bytes type cannot be converted from string to Java");
 	}
 
 	private String getCharsetName(FieldType fieldType) {

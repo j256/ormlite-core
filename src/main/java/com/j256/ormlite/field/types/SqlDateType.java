@@ -48,4 +48,9 @@ public class SqlDateType extends DateType {
 	protected DateStringFormatConfig getDefaultDateFormatConfig() {
 		return sqlDateFormatConfig;
 	}
+
+	@Override
+	public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) {
+		return sqlArgToJava(fieldType, Timestamp.valueOf(stringValue), columnPos);
+	}
 }

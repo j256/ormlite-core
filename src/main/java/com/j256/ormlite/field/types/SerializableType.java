@@ -121,4 +121,9 @@ public class SerializableType extends BaseDataType {
 	public boolean isArgumentHolderRequired() {
 		return true;
 	}
+
+	@Override
+	public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) throws SQLException {
+		throw new SQLException("Serializable type cannot be converted from string to Java");
+	}
 }

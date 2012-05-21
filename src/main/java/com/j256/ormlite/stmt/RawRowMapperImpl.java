@@ -30,7 +30,7 @@ public class RawRowMapperImpl<T, ID> implements RawRowMapper<T> {
 			}
 			// run through and convert each field
 			FieldType fieldType = tableInfo.getFieldTypeByColumnName(columnNames[i]);
-			Object fieldObj = fieldType.convertStringToJavaField(resultColumns[i]);
+			Object fieldObj = fieldType.convertStringToJavaField(resultColumns[i], i);
 			// assign it to the row object
 			fieldType.assignField(rowObj, fieldObj, false, null);
 		}

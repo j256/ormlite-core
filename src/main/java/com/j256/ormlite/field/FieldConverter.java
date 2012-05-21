@@ -62,4 +62,9 @@ public interface FieldConverter {
 	 * than once. If true, the converter has to protect itself against null values.
 	 */
 	public boolean isStreamType();
+
+	/**
+	 * Convert a string result value to the related Java field.
+	 */
+	public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) throws SQLException;
 }

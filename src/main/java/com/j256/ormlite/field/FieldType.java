@@ -615,6 +615,17 @@ public class FieldType {
 	}
 
 	/**
+	 * Convert a string value into the appropriate Java field value.
+	 */
+	public Object convertStringToJavaField(String value, int columnPos) throws SQLException {
+		if (value == null) {
+			return null;
+		} else {
+			return fieldConverter.resultStringToJava(this, value, columnPos);
+		}
+	}
+
+	/**
 	 * Move the SQL value to the next one for version processing.
 	 */
 	public Object moveToNextValue(Object val) {

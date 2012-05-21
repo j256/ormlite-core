@@ -148,4 +148,8 @@ public abstract class BaseDataType extends BaseFieldConverter implements DataPer
 	public Object moveToNextValue(Object currentValue) {
 		return null;
 	}
+
+	public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) throws SQLException {
+		return parseDefaultString(fieldType, stringValue);
+	}
 }

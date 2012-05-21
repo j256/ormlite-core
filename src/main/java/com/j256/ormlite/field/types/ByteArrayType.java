@@ -58,4 +58,9 @@ public class ByteArrayType extends BaseDataType {
 			return Arrays.equals((byte[]) fieldObj1, (byte[]) fieldObj2);
 		}
 	}
+
+	@Override
+	public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) throws SQLException {
+		throw new SQLException("byte[] type cannot be converted from string to Java");
+	}
 }

@@ -96,6 +96,15 @@ public abstract class BaseTypeTest extends BaseCoreTest {
 				assertEquals(1, list.size());
 				assertTrue(dao.objectsEqual(foo, list.get(0)));
 			}
+			if (dataType == DataType.STRING_BYTES || dataType == DataType.BYTE_ARRAY
+					|| dataType == DataType.SERIALIZABLE) {
+				// no converting from string to value
+			} else {
+				// test string conversion
+				String stringVal = results.getString(colNum);
+				Object convertedJavaVal = fieldType.convertStringToJavaField(stringVal, 0);
+				assertEquals(javaVal, convertedJavaVal);
+			}
 		} finally {
 			if (stmt != null) {
 				stmt.close();

@@ -527,5 +527,8 @@ public abstract class BaseDatabaseType implements DatabaseType {
 			byte arg = (Byte) sqlArg;
 			return (arg == 1 ? (Boolean) true : (Boolean) false);
 		}
+		public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) {
+			return sqlArgToJava(fieldType, Byte.parseByte(stringValue), columnPos);
+		}
 	}
 }
