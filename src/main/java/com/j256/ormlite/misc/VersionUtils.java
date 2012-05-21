@@ -49,13 +49,13 @@ public class VersionUtils {
 	private static void logVersionErrors(String label1, String version1, String label2, String version2) {
 		if (version1 == null) {
 			if (version2 != null) {
-				getLogger().error("Unknown version for {}, version for {} is {}", label1, label2, version2);
+				getLogger().error("Unknown version for {}, version for {} is '{}'", label1, label2, version2);
 			}
 		} else {
 			if (version2 == null) {
-				getLogger().error("Unknown version for {}, version for {} is {}", label2, label1, version1);
+				getLogger().error("Unknown version for {}, version for {} is '{}'", label2, label1, version1);
 			} else if (!version1.equals(version2)) {
-				getLogger().error("Mismatched versions: {} is {}, while {} is {}",
+				getLogger().error("Mismatched versions: {} is '{}', while {} is '{}'",
 						new Object[] { label1, version1, label2, version2 });
 			}
 		}
