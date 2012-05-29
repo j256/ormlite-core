@@ -9,7 +9,7 @@ import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 
 /**
- * A class which helps us verify that we are running symetric versions.
+ * A class which helps us verify that we are running symmetric versions.
  * 
  * @author graywatson
  */
@@ -109,6 +109,9 @@ public class VersionUtils {
 		return version;
 	}
 
+	/**
+	 * Get the logger for the class. We do this so we don't have to create it all of the time.
+	 */
 	private static Logger getLogger() {
 		if (logger == null) {
 			logger = LoggerFactory.getLogger(VersionUtils.class);
