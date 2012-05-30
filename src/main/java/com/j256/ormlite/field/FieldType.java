@@ -92,6 +92,10 @@ public class FieldType {
 		this.tableName = tableName;
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		this.field = field;
+
+		// post process our config settings
+		fieldConfig.postProcess();
+
 		Class<?> clazz = field.getType();
 		DataPersister dataPersister;
 		if (fieldConfig.getDataPersister() == null) {

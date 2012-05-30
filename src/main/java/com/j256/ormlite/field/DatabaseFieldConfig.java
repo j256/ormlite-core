@@ -618,15 +618,21 @@ public class DatabaseFieldConfig {
 		config.foreignAutoCreate = databaseField.foreignAutoCreate();
 		config.version = databaseField.version();
 		config.foreignColumnName = valueIfNotBlank(databaseField.foreignColumnName());
-		if (config.foreignColumnName != null) {
-			config.foreignAutoRefresh = true;
-		}
-		if (config.foreignAutoRefresh
-				&& config.maxForeignAutoRefreshLevel == DatabaseField.NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED) {
-			config.maxForeignAutoRefreshLevel = DatabaseField.DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL;
-		}
 
 		return config;
+	}
+
+	/**
+	 * Process the settings when we are going to consume them.
+	 */
+	public void postProcess() {
+		if (foreignColumnName != null) {
+			foreignAutoRefresh = true;
+		}
+		if (foreignAutoRefresh
+				&& maxForeignAutoRefreshLevel == DatabaseField.NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED) {
+			maxForeignAutoRefreshLevel = DatabaseField.DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL;
+		}
 	}
 
 	/**
