@@ -46,7 +46,7 @@ public class DatabaseFieldConfig {
 	private boolean uniqueIndex;
 	private String uniqueIndexName;
 	private boolean foreignAutoRefresh;
-	private int maxForeignAutoRefreshLevel = DatabaseField.DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL;
+	private int maxForeignAutoRefreshLevel = DatabaseField.NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED;
 	private Class<? extends DataPersister> persisterClass = DEFAULT_PERSISTER_CLASS;
 	private boolean allowGeneratedIdInsert;
 	private String columnDefinition;

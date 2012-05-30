@@ -22,8 +22,11 @@ public class DateTypeTest extends BaseTypeTest {
 	public void testDate() throws Exception {
 		Class<LocalDate> clazz = LocalDate.class;
 		Dao<LocalDate, Object> dao = createDao(clazz, true);
-		java.util.Date val = new java.util.Date();
-		String format = "yyyy-MM-dd HH:mm:ss.SSS";
+		// we have to round to 0 millis
+		long millis = System.currentTimeMillis();
+		millis -= millis % 1000;
+		java.util.Date val = new java.util.Date(millis);
+		String format = "yyyy-MM-dd HH:mm:ss.SSSSSS";
 		DateFormat dateFormat = new SimpleDateFormat(format);
 		String valStr = dateFormat.format(val);
 		LocalDate foo = new LocalDate();
