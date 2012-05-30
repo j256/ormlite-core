@@ -3,6 +3,7 @@
 	* CORE: Added version checking which logs errors if core, jdbc, and android versions do not match.
 	* CORE: Added a Dao.getRawRowMapper() for mapping result string to an object.
 	* CORE: Added some handling of ForeignCollection with the javax.persistence.* annotations.
+	* CORE: Fixed problem with maxForeignAutoRefreshLevel that made it ~worthless. Thanks to Andrea Sprega. Bug #3530801.
 	* ANDROID: Fixed the updating of serializable and other byte[] fields.  Thanks to Yossi Wasserman.  Bug #3527685.
 
 4.40: 4/16/2012 (svn r2516)

@@ -17,8 +17,6 @@ import com.j256.ormlite.table.DatabaseTableConfig;
  */
 public class DatabaseFieldConfig {
 
-	private static final int DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL =
-			DatabaseField.DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL;
 	private static final int DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL = ForeignCollectionField.MAX_EAGER_LEVEL;
 	private static final Class<? extends DataPersister> DEFAULT_PERSISTER_CLASS = VoidType.class;
 	private static final DataType DEFAULT_DATA_TYPE = DataType.UNKNOWN;
@@ -48,7 +46,7 @@ public class DatabaseFieldConfig {
 	private boolean uniqueIndex;
 	private String uniqueIndexName;
 	private boolean foreignAutoRefresh;
-	private int maxForeignAutoRefreshLevel = DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL;
+	private int maxForeignAutoRefreshLevel = DatabaseField.DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL;
 	private Class<? extends DataPersister> persisterClass = DEFAULT_PERSISTER_CLASS;
 	private boolean allowGeneratedIdInsert;
 	private String columnDefinition;
@@ -620,6 +618,13 @@ public class DatabaseFieldConfig {
 		config.foreignAutoCreate = databaseField.foreignAutoCreate();
 		config.version = databaseField.version();
 		config.foreignColumnName = valueIfNotBlank(databaseField.foreignColumnName());
+		if (config.foreignColumnName != null) {
+			config.foreignAutoRefresh = true;
+		}
+		if (config.foreignAutoRefresh
+				&& config.maxForeignAutoRefreshLevel == DatabaseField.NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED) {
+			config.maxForeignAutoRefreshLevel = DatabaseField.DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL;
+		}
 
 		return config;
 	}

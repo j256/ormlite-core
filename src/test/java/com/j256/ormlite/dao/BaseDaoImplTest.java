@@ -2199,9 +2199,11 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 		ForeignColumnName result = dao.queryForId(fcn.id);
 		assertNotNull(result);
+		assertNotNull(result.foreign);
 		assertEquals(foreign.id, result.foreign.id);
 		assertEquals(foreign.name, result.foreign.name);
 
+		// this should work and not throw
 		assertEquals(1, foreignDao.refresh(result.foreign));
 	}
 
@@ -2308,6 +2310,36 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 		TimeStampSerializable result = dao.queryForId(foo.id);
 		assertEquals(foo.timestamp, result.timestamp);
+	}
+
+	@Test
+	public void testForeignLoop() throws Exception {
+		Dao<ForeignLoop1, Object> dao1 = createDao(ForeignLoop1.class, true);
+		Dao<ForeignLoop2, Object> dao2 = createDao(ForeignLoop2.class, true);
+		Dao<ForeignLoop3, Object> dao3 = createDao(ForeignLoop3.class, true);
+		Dao<ForeignLoop4, Object> dao4 = createDao(ForeignLoop4.class, true);
+		ForeignLoop1 loop1 = new ForeignLoop1();
+		ForeignLoop2 loop2 = new ForeignLoop2();
+		ForeignLoop3 loop3 = new ForeignLoop3();
+		ForeignLoop4 loop4 = new ForeignLoop4();
+		loop4.stuff = "wow";
+		assertEquals(1, dao4.create(loop4));
+		loop3.loop = loop4;
+		assertEquals(1, dao3.create(loop3));
+		loop2.loop = loop3;
+		assertEquals(1, dao2.create(loop2));
+		loop1.loop = loop2;
+		assertEquals(1, dao1.create(loop1));
+
+		ForeignLoop1 result = dao1.queryForId(loop1.id);
+		assertNotNull(result);
+		assertNotNull(result.loop);
+		assertEquals(loop2.id, result.loop.id);
+		assertNotNull(result.loop.loop);
+		assertEquals(loop3.id, result.loop.loop.id);
+		assertNotNull(result.loop.loop.loop);
+		assertEquals(loop4.id, result.loop.loop.loop.id);
+		assertNull(result.loop.loop.loop.stuff);
 	}
 
 	/* ============================================================================================== */
@@ -2616,6 +2648,42 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		@DatabaseField(dataType = DataType.SERIALIZABLE)
 		java.sql.Timestamp timestamp;
 		public TimeStampSerializable() {
+		}
+	}
+
+	public static class ForeignLoop1 {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 2)
+		ForeignLoop2 loop;
+		public ForeignLoop1() {
+		}
+	}
+
+	public static class ForeignLoop2 {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(foreign = true)
+		ForeignLoop3 loop;
+		public ForeignLoop2() {
+		}
+	}
+
+	public static class ForeignLoop3 {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(foreign = true)
+		ForeignLoop4 loop;
+		public ForeignLoop3() {
+		}
+	}
+
+	public static class ForeignLoop4 {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField
+		String stuff;
+		public ForeignLoop4() {
 		}
 	}
 }

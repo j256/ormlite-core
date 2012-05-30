@@ -42,6 +42,12 @@ public @interface DatabaseField {
 	public static final String DEFAULT_STRING = "__ormlite__ no default value string was specified";
 
 	/**
+	 * If the {@link #maxForeignAutoRefreshLevel()} is set to this then it will be reset internally to be
+	 * {@link #DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL} if {@link #foreignAutoRefresh()} is set to true.
+	 */
+	public static final int NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED = -1;
+
+	/**
 	 * Default for the maxForeignAutoRefreshLevel.
 	 * 
 	 * @see #maxForeignAutoRefreshLevel()
@@ -214,18 +220,17 @@ public @interface DatabaseField {
 	boolean foreignAutoRefresh() default false;
 
 	/**
-	 * Set this to be the number of times to configure a foreign object's foreign object. If you query for A and it has
-	 * an foreign field B which has an foreign field C ..., then a lot of configuration information is being stored. If
-	 * each of these fields is auto-refreshed, then querying for A could get expensive. Setting this value to 1 will
-	 * mean that when you query for A, B will be auto-refreshed, but C will just have its id field set. This also works
-	 * if A has an auto-refresh field B which has an auto-refresh field A.
+	 * Set this to be the number of times to refresh a foreign object's foreign object. If you query for A and it has an
+	 * foreign field B which has an foreign field C ..., then querying for A could get expensive. Setting this value to
+	 * 1 will mean that when you query for A, B will be auto-refreshed, but C will just have its id field set. This also
+	 * works if A has an auto-refresh field B which has an auto-refresh field A.
 	 * 
 	 * <p>
 	 * <b>NOTE:</b> Increasing this value will result in more database transactions whenever you query for A, so use
-	 * carefully.
+	 * carefully. Default value is {@link #DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL}.
 	 * </p>
 	 */
-	int maxForeignAutoRefreshLevel() default DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL;
+	int maxForeignAutoRefreshLevel() default NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED;
 
 	/**
 	 * Allows you to set a custom persister class to handle this field. This class must have a getSingleton() static

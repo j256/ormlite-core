@@ -254,6 +254,10 @@ public class FieldType {
 			throw new IllegalArgumentException("Field " + field.getName()
 					+ " is not a valid type to be a version field");
 		}
+		if (fieldConfig.getMaxForeignAutoRefreshLevel() > 0 && !fieldConfig.isForeignAutoRefresh()) {
+			throw new IllegalArgumentException("Field " + field.getName()
+					+ " has maxForeignAutoRefreshLevel set but not foreignAutoRefresh is false");
+		}
 		assignDataType(databaseType, dataPersister);
 	}
 
@@ -496,27 +500,41 @@ public class FieldType {
 			}
 			if (!parentObject) {
 				Object foreignObject;
-				/*
-				 * If we don't have a mappedQueryForId or if we have recursed the proper number of times, just return a
-				 * shell with the id set.
-				 */
 				LevelCounters levelCounters = threadLevelCounters.get();
-				if (mappedQueryForId == null
-						|| levelCounters.autoRefreshlevel >= fieldConfig.getMaxForeignAutoRefreshLevel()) {
+				// we record the current auto-refresh level which will be used along the way
+				if (levelCounters.autoRefreshLevel == 0) {
+					levelCounters.autoRefreshLevelMax = fieldConfig.getMaxForeignAutoRefreshLevel();
+				}
+				// if we have recursed the proper number of times, return a shell with just the id set
+				if (levelCounters.autoRefreshLevel >= levelCounters.autoRefreshLevelMax) {
 					// create a shell and assign its id field
 					foreignObject = TableInfo.createObject(foreignConstructor, foreignDao);
 					foreignIdField.assignField(foreignObject, val, false, objectCache);
 				} else {
-					levelCounters.autoRefreshlevel++;
+					/*
+					 * We may not have a mapped query for id because we aren't auto-refreshing ourselves. But a parent
+					 * class may be auto-refreshing us with a level > 1 so we may need to build out query-for-id
+					 * optimization on the fly here.
+					 */
+					if (mappedQueryForId == null) {
+						@SuppressWarnings("unchecked")
+						MappedQueryForId<Object, Object> castMappedQueryForId =
+								(MappedQueryForId<Object, Object>) MappedQueryForId.build(
+										connectionSource.getDatabaseType(),
+										((BaseDaoImpl<?, ?>) foreignDao).getTableInfo(), foreignIdField);
+						mappedQueryForId = castMappedQueryForId;
+					}
+					levelCounters.autoRefreshLevel++;
 					try {
 						DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection();
 						try {
+							// recurse and get the sub-object
 							foreignObject = mappedQueryForId.execute(databaseConnection, val, objectCache);
 						} finally {
 							connectionSource.releaseConnection(databaseConnection);
 						}
 					} finally {
-						levelCounters.autoRefreshlevel--;
+						levelCounters.autoRefreshLevel--;
 					}
 				}
 				// the value we are to assign to our field is now the foreign object itself
@@ -744,8 +762,11 @@ public class FieldType {
 		}
 
 		LevelCounters levelCounters = threadLevelCounters.get();
+		if (levelCounters.foreignCollectionLevel == 0) {
+			levelCounters.foreignCollectionLevelMax = fieldConfig.getForeignCollectionMaxEagerLevel();
+		}
 		// are we over our level limit?
-		if (levelCounters.foreignCollectionLevel >= fieldConfig.getForeignCollectionMaxEagerLevel()) {
+		if (levelCounters.foreignCollectionLevel >= levelCounters.foreignCollectionLevelMax) {
 			// then return a lazy collection instead
 			return new LazyForeignCollection<FT, FID>(castDao, parent, id, foreignFieldType.columnName,
 					fieldConfig.getForeignCollectionOrderColumnName());
@@ -1014,7 +1035,14 @@ public class FieldType {
 	}
 
 	private static class LevelCounters {
-		int autoRefreshlevel;
+		// current auto-refresh recursion level
+		int autoRefreshLevel;
+		// maximum auto-refresh recursion level
+		int autoRefreshLevelMax;
+
+		// current foreign-collection recursion level
 		int foreignCollectionLevel;
+		// maximum foreign-collection recursion level
+		int foreignCollectionLevelMax;
 	}
 }

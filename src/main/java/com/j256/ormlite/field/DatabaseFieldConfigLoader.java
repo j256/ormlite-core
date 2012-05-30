@@ -18,8 +18,6 @@ public class DatabaseFieldConfigLoader {
 	private static final String CONFIG_FILE_START_MARKER = "# --field-start--";
 	private static final String CONFIG_FILE_END_MARKER = "# --field-end--";
 
-	private static final int DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL =
-			DatabaseField.DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL;
 	private static final int DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL = ForeignCollectionField.MAX_EAGER_LEVEL;
 	private static final Class<? extends DataPersister> DEFAULT_PERSISTER_CLASS = VoidType.class;
 	private static final DataPersister DEFAULT_DATA_PERSISTER = DataType.UNKNOWN.getDataPersister();
@@ -217,7 +215,7 @@ public class DatabaseFieldConfigLoader {
 			writer.append(FIELD_NAME_FOREIGN_AUTO_REFRESH).append('=').append("true");
 			writer.newLine();
 		}
-		if (config.getMaxForeignAutoRefreshLevel() != DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL) {
+		if (config.getMaxForeignAutoRefreshLevel() != DatabaseField.NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED) {
 			writer.append(FIELD_NAME_MAX_FOREIGN_AUTO_REFRESH_LEVEL)
 					.append('=')
 					.append(Integer.toString(config.getMaxForeignAutoRefreshLevel()));
