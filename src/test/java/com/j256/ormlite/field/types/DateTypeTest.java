@@ -23,7 +23,7 @@ public class DateTypeTest extends BaseTypeTest {
 		Class<LocalDate> clazz = LocalDate.class;
 		Dao<LocalDate, Object> dao = createDao(clazz, true);
 		java.util.Date val = new java.util.Date();
-		String format = "yyyy-MM-dd HH:mm:ss.SSSSSS";
+		String format = "yyyy-MM-dd HH:mm:ss.SSS";
 		DateFormat dateFormat = new SimpleDateFormat(format);
 		String valStr = dateFormat.format(val);
 		LocalDate foo = new LocalDate();
