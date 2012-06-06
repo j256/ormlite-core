@@ -22,7 +22,10 @@ public class TimeStampTypeTest extends BaseTypeTest {
 	public void testTimeStamp() throws Exception {
 		Class<LocalTimeStamp> clazz = LocalTimeStamp.class;
 		Dao<LocalTimeStamp, Object> dao = createDao(clazz, true);
-		java.sql.Timestamp val = new java.sql.Timestamp(System.currentTimeMillis());
+		// millis has to be 0 or something
+		long millis = System.currentTimeMillis();
+		millis -= millis % 1000;
+		java.sql.Timestamp val = new java.sql.Timestamp(millis);
 		String format = "yyyy-MM-dd HH:mm:ss.SSSSSS";
 		DateFormat dateFormat = new SimpleDateFormat(format);
 		String valStr = dateFormat.format(val);
