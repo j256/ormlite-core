@@ -1,4 +1,4 @@
-4.41: 4/XX/2012 (svn rYYYY)
+4.41: 6/6/2012 (svn rYYYY)
 	* CORE: Added java.sql.Date and java.sql.Timestmp data persister types.  java.util.Date is still recommended.
 	* CORE: Added version checking which logs errors if core, jdbc, and android versions do not match.
 	* CORE: Added a Dao.getRawRowMapper() for mapping result string to an object.
