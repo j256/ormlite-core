@@ -1,5 +1,6 @@
 4.42: 6/XX/2012 (svn rYYYY)
 	* CORE: Fixed problems with java.sql.Date and Timestmp persisters.  Thanks to Mohammad Moghimi.  Bug #3534395.
+	* ANDROID: Added support for auto-commit under Android using transactions.  Thanks to Chad Schultz.
 
 4.41: 6/6/2012 (svn r2575)
 	* CORE: Added java.sql.Date and java.sql.Timestmp data persister types.  java.util.Date is still recommended.

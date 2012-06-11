@@ -682,7 +682,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 
 	/**
 	 * Set auto-commit mode to be true or false on the connection returned by the {@link #startThreadConnection()}. This
-	 * may not be supported by all database types.  Android does not support auto-commit.
+	 * may not be supported by all database types.
 	 * 
 	 * <p>
 	 * <b>WARNING:</b> Chances are you should be using the {@link #callBatchTasks(Callable)} instead of this method
