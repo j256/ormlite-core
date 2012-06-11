@@ -1,5 +1,7 @@
 package com.j256.ormlite.field.types;
 
+import java.lang.reflect.Field;
+
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 
@@ -34,5 +36,10 @@ public class TimeStampType extends DateType {
 	public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
 		// noop pass-thru
 		return javaObject;
+	}
+
+	@Override
+	public boolean isValidForField(Field field) {
+		return (field.getType() == java.sql.Timestamp.class);
 	}
 }

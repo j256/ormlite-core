@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
 
 import org.junit.Test;
 
@@ -17,14 +18,15 @@ import com.j256.ormlite.table.DatabaseTable;
 public class TimeStampTypeTest extends BaseTypeTest {
 
 	private static final String TIME_STAMP_COLUMN = "timestamp";
+	private DataType dataType = DataType.TIME_STAMP;
 
 	@Test
 	public void testTimeStamp() throws Exception {
 		Class<LocalTimeStamp> clazz = LocalTimeStamp.class;
 		Dao<LocalTimeStamp, Object> dao = createDao(clazz, true);
-		// millis has to be 0 or something
-		long millis = System.currentTimeMillis();
-		millis -= millis % 1000;
+		GregorianCalendar c = new GregorianCalendar();
+		c.set(GregorianCalendar.MILLISECOND, 0);
+		long millis = c.getTimeInMillis();
 		java.sql.Timestamp val = new java.sql.Timestamp(millis);
 		String format = "yyyy-MM-dd HH:mm:ss.SSSSSS";
 		DateFormat dateFormat = new SimpleDateFormat(format);
@@ -32,8 +34,8 @@ public class TimeStampTypeTest extends BaseTypeTest {
 		LocalTimeStamp foo = new LocalTimeStamp();
 		foo.timestamp = val;
 		assertEquals(1, dao.create(foo));
-		testType(dao, foo, clazz, val, val, val, valStr, DataType.DATE, TIME_STAMP_COLUMN, false, true, true, false,
-				true, false, true, false);
+		testType(dao, foo, clazz, val, val, val, valStr, dataType, TIME_STAMP_COLUMN, false, true, true, false, true,
+				false, true, false);
 	}
 
 	@Test
@@ -42,8 +44,8 @@ public class TimeStampTypeTest extends BaseTypeTest {
 		Dao<LocalTimeStamp, Object> dao = createDao(clazz, true);
 		LocalTimeStamp foo = new LocalTimeStamp();
 		assertEquals(1, dao.create(foo));
-		testType(dao, foo, clazz, null, null, null, null, DataType.DATE, TIME_STAMP_COLUMN, false, true, true, false,
-				true, false, true, false);
+		testType(dao, foo, clazz, null, null, null, null, dataType, TIME_STAMP_COLUMN, false, true, true, false, true,
+				false, true, false);
 	}
 
 	@Test(expected = SQLException.class)
@@ -51,7 +53,7 @@ public class TimeStampTypeTest extends BaseTypeTest {
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, TABLE_NAME,
 						LocalTimeStamp.class.getDeclaredField(TIME_STAMP_COLUMN), LocalTimeStamp.class);
-		DataType.DATE.getDataPersister().parseDefaultString(fieldType, "not valid date string");
+		dataType.getDataPersister().parseDefaultString(fieldType, "not valid date string");
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

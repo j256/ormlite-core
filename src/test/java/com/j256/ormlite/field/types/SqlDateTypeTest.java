@@ -3,8 +3,10 @@ package com.j256.ormlite.field.types;
 import static org.junit.Assert.assertEquals;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
 
 import org.junit.Test;
 
@@ -17,38 +19,48 @@ import com.j256.ormlite.table.DatabaseTable;
 public class SqlDateTypeTest extends BaseTypeTest {
 
 	private static final String DATE_COLUMN = "date";
+	private DataType dataType = DataType.SQL_DATE;
 
 	@Test
-	public void testDate() throws Exception {
+	public void testSqlDate() throws Exception {
 		Class<LocalDate> clazz = LocalDate.class;
 		Dao<LocalDate, Object> dao = createDao(clazz, true);
-		java.sql.Date val = new java.sql.Date(System.currentTimeMillis());
-		String format = "yyyy-MM-dd HH:mm:ss.SSSSSS";
+
+		GregorianCalendar c = new GregorianCalendar();
+		c.set(GregorianCalendar.HOUR_OF_DAY, 0);
+		c.set(GregorianCalendar.MINUTE, 0);
+		c.set(GregorianCalendar.SECOND, 0);
+		c.set(GregorianCalendar.MILLISECOND, 0);
+		long millis = c.getTimeInMillis();
+
+		java.sql.Date val = new java.sql.Date(millis);
+		Timestamp defaultSqlVal = new java.sql.Timestamp(millis);
+		String format = "yyyy-MM-dd HH:mm:ss.S";
 		DateFormat dateFormat = new SimpleDateFormat(format);
 		String valStr = dateFormat.format(val);
 		LocalDate foo = new LocalDate();
 		foo.date = val;
 		assertEquals(1, dao.create(foo));
-		testType(dao, foo, clazz, val, val, val, valStr, DataType.DATE, DATE_COLUMN, false, true, true, false, true,
-				false, true, false);
+		testType(dao, foo, clazz, val, defaultSqlVal, val, valStr, dataType, DATE_COLUMN, false, true, true, false,
+				true, false, true, false);
 	}
 
 	@Test
-	public void testDateNull() throws Exception {
+	public void testSqlDateNull() throws Exception {
 		Class<LocalDate> clazz = LocalDate.class;
 		Dao<LocalDate, Object> dao = createDao(clazz, true);
 		LocalDate foo = new LocalDate();
 		assertEquals(1, dao.create(foo));
-		testType(dao, foo, clazz, null, null, null, null, DataType.DATE, DATE_COLUMN, false, true, true, false, true,
-				false, true, false);
+		testType(dao, foo, clazz, null, null, null, null, dataType, DATE_COLUMN, false, true, true, false, true, false,
+				true, false);
 	}
 
 	@Test(expected = SQLException.class)
-	public void testDateParseInvalid() throws Exception {
+	public void testSqlDateParseInvalid() throws Exception {
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, TABLE_NAME, LocalDate.class.getDeclaredField(DATE_COLUMN),
 						LocalDate.class);
-		DataType.DATE.getDataPersister().parseDefaultString(fieldType, "not valid date string");
+		dataType.getDataPersister().parseDefaultString(fieldType, "not valid date string");
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

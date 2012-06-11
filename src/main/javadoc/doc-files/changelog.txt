@@ -1,6 +1,9 @@
-4.41: 6/6/2012 (svn rYYYY)
+4.42: 6/XX/2012 (svn rYYYY)
+	* CORE: Fixed problems with java.sql.Date and Timestmp persisters.  Thanks to Mohammad Moghimi.  Bug #3534395.
+
+4.41: 6/6/2012 (svn r2575)
 	* CORE: Added java.sql.Date and java.sql.Timestmp data persister types.  java.util.Date is still recommended.
-	* CORE: Added version checking which logs errors if core, jdbc, and android versions do not match.
+	* CORE: Added version checking which logs errors if core, jdbc, and android versions do not match. Thanks to nybblr.
 	* CORE: Added a Dao.getRawRowMapper() for mapping result string to an object.
 	* CORE: Added some handling of ForeignCollection with the javax.persistence.* annotations.
 	* CORE: Fixed problem with maxForeignAutoRefreshLevel that made it ~worthless. Thanks to Andrea Sprega. Bug #3530801.

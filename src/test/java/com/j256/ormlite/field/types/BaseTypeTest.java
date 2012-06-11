@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -39,8 +40,13 @@ public abstract class BaseTypeTest extends BaseCoreTest {
 			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
 			int colNum = results.findColumn(columnName);
-			FieldType fieldType =
-					FieldType.createFieldType(connectionSource, TABLE_NAME, clazz.getDeclaredField(columnName), clazz);
+			Field field = clazz.getDeclaredField(columnName);
+			FieldType fieldType = FieldType.createFieldType(connectionSource, TABLE_NAME, field, clazz);
+			Class<?>[] classes = fieldType.getDataPersister().getAssociatedClasses();
+			if (classes.length > 0) {
+				assertTrue(classes[0].isAssignableFrom(fieldType.getType()));
+			}
+			assertTrue(fieldType.getDataPersister().isValidForField(field));
 			if (javaVal instanceof byte[]) {
 				assertTrue(Arrays.equals((byte[]) javaVal,
 						(byte[]) dataPersister.resultToJava(fieldType, results, colNum)));
