@@ -134,7 +134,7 @@ public class FieldType {
 		} else {
 			dataPersister = fieldConfig.getDataPersister();
 			if (!dataPersister.isValidForField(field)) {
-				throw new IllegalArgumentException("Field class " + clazz + " for field " + this
+				throw new IllegalArgumentException("Field class " + clazz.getName() + " for field " + this
 						+ " is not valid for data persister " + dataPersister);
 			}
 		}
@@ -177,7 +177,7 @@ public class FieldType {
 				throw new SQLException("ORMLite can't store unknown class " + clazz + " for field '" + field.getName()
 						+ "'. Serializable fields must specify dataType=DataType.SERIALIZABLE");
 			} else {
-				throw new IllegalArgumentException("ORMLite does not know how to store field class " + clazz
+				throw new IllegalArgumentException("ORMLite does not know how to store field class " + clazz.getName()
 						+ " for field " + this);
 			}
 		}
