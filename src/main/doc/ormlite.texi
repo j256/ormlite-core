@@ -3863,9 +3863,11 @@ Run a raw update SQL statement (@code{INSERT}, @code{DELETE}, or @code{UPDATE} a
 
 Call the call-able that will perform a number of batch tasks. This is for performance when you want to run a
 number of database operations at once -- maybe loading data from a file. This will turn off what databases call
-"auto-commit" mode, run the call-able and then re-enable "auto-commit".
+"auto-commit" mode, run the call-able and then re-enable "auto-commit".  If auto-commit is not supported then it
+will try to use a database transaction to speed up the tasks.
 
-@emph{NOTE:} If neither auto-commit nor transactions are supported by the database type then this may do nothing.
+@emph{NOTE:} If neither auto-commit nor transactions are supported by the database type then this method may not
+give any performance improvement.
 
 @example
 accountDao.callBatchTasks(connectionSource,

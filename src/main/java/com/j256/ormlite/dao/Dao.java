@@ -12,7 +12,6 @@ import java.util.concurrent.Callable;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.ForeignCollectionField;
-import com.j256.ormlite.misc.TransactionManager;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.stmt.PreparedDelete;
@@ -646,7 +645,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * <p>
 	 * <b>WARNING:</b> This method is for advanced users only. It is only to support the
 	 * {@link #setAutoCommit(DatabaseConnection, boolean)} and other methods below. Chances are you should be using the
-	 * {@link TransactionManager#callInTransaction(Callable)} instead of this method unless you know what you are doing.
+	 * {@link #callBatchTasks(Callable)} instead of this method unless you know what you are doing.
 	 * </p>
 	 * 
 	 * <p>
@@ -663,7 +662,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * <p>
 	 * <b>WARNING:</b> This method is for advanced users only. It is only to support the
 	 * {@link #setAutoCommit(DatabaseConnection, boolean)} and other methods below. Chances are you should be using the
-	 * {@link TransactionManager#callInTransaction(Callable)} instead of this method unless you know what you are doing.
+	 * {@link #callBatchTasks(Callable)} instead of this method unless you know what you are doing.
 	 * </p>
 	 * 
 	 * <p>
@@ -683,11 +682,11 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 
 	/**
 	 * Set auto-commit mode to be true or false on the connection returned by the {@link #startThreadConnection()}. This
-	 * may not be supported by all database types.
+	 * may not be supported by all database types.  Android does not support auto-commit.
 	 * 
 	 * <p>
-	 * <b>WARNING:</b> Chances are you should be using the {@link TransactionManager#callInTransaction(Callable)}
-	 * instead of this method unless you know what you are doing.
+	 * <b>WARNING:</b> Chances are you should be using the {@link #callBatchTasks(Callable)} instead of this method
+	 * unless you know what you are doing.
 	 * </p>
 	 */
 	public void setAutoCommit(DatabaseConnection connection, boolean autoCommit) throws SQLException;
@@ -711,8 +710,8 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * continue to stay in the current auto-commit mode.
 	 * 
 	 * <p>
-	 * <b>WARNING:</b> Chances are you should be using the {@link TransactionManager#callInTransaction(Callable)}
-	 * instead of this method unless you know what you are doing.
+	 * <b>WARNING:</b> Chances are you should be using the {@link #callBatchTasks(Callable)} instead of this method
+	 * unless you know what you are doing.
 	 * </p>
 	 */
 	public void commit(DatabaseConnection connection) throws SQLException;
@@ -724,8 +723,8 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * discarded. The connection will continue to stay in the current auto-commit mode.
 	 * 
 	 * <p>
-	 * <b>WARNING:</b> Chances are you should be using the {@link TransactionManager#callInTransaction(Callable)}
-	 * instead of this method unless you know what you are doing.
+	 * <b>WARNING:</b> Chances are you should be using the {@link #callBatchTasks(Callable)} instead of this method
+	 * unless you know what you are doing.
 	 * </p>
 	 */
 	public void rollBack(DatabaseConnection connection) throws SQLException;
