@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.BaseDatabaseType;
+import com.j256.ormlite.field.DatabaseField;
 
 public class QueryBuilderTest extends BaseCoreStmtTest {
 
@@ -370,6 +371,44 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals("SELECT * FROM `foo` ", qb.prepareStatementString());
 	}
 
+	@Test
+	public void testInnerCountOf() throws Exception {
+		Dao<Foo, String> fooDao = createDao(Foo.class, true);
+		Dao<Bar, String> barDao = createDao(Bar.class, true);
+
+		Bar bar1 = new Bar();
+		int val = 12;
+		bar1.val = val;
+		assertEquals(1, barDao.create(bar1));
+		Bar bar2 = new Bar();
+		bar2.val = val + 1;
+		assertEquals(1, barDao.create(bar2));
+
+		Foo foo1 = new Foo();
+		foo1.val = bar1.id;
+		assertEquals(1, fooDao.create(foo1));
+		Foo foo2 = new Foo();
+		foo2.val = bar1.id;
+		assertEquals(1, fooDao.create(foo2));
+		Foo foo3 = new Foo();
+		foo3.val = bar1.id + 1;
+		assertEquals(1, fooDao.create(foo3));
+
+		QueryBuilder<Bar, String> barQb = barDao.queryBuilder();
+		barQb.selectColumns(Bar.ID_FIELD);
+		barQb.where().eq(Bar.VAL_FIELD, val);
+
+		QueryBuilder<Foo, String> fooQb = fooDao.queryBuilder();
+		List<Integer> idList = new ArrayList<Integer>();
+		idList.add(foo1.id);
+		idList.add(foo2.id);
+		idList.add(foo3.id);
+		fooQb.where().in(Foo.ID_COLUMN_NAME, idList).and().in(Foo.VAL_COLUMN_NAME, barQb);
+
+		fooQb.setCountOf(true);
+		assertEquals(2, fooDao.countOf(fooQb.prepare()));
+	}
+
 	private static class LimitInline extends BaseDatabaseType {
 		public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 			return true;
@@ -380,6 +419,18 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		}
 		public String getDatabaseName() {
 			return "zipper";
+		}
+	}
+
+	private static class Bar {
+		public static final String ID_FIELD = "id";
+		public static final String VAL_FIELD = "val";
+		@DatabaseField(generatedId = true, columnName = ID_FIELD)
+		int id;
+		@SuppressWarnings("unused")
+		@DatabaseField(columnName = VAL_FIELD)
+		int val;
+		public Bar() {
 		}
 	}
 }
