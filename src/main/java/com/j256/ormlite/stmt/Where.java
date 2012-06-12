@@ -2,6 +2,7 @@ package com.j256.ormlite.stmt;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.j256.ormlite.dao.CloseableIterator;
@@ -560,7 +561,8 @@ public class Where<T, ID> {
 	private Where<T, ID> in(boolean in, String columnName, QueryBuilder<?, ?> subQueryBuilder) throws SQLException {
 		if (subQueryBuilder.getSelectColumnCount() != 1) {
 			throw new SQLException("Inner query must have only 1 select column specified instead of "
-					+ subQueryBuilder.getSelectColumnCount());
+					+ subQueryBuilder.getSelectColumnCount() + ": "
+					+ Arrays.toString(subQueryBuilder.getSelectColumns().toArray(new String[0])));
 		}
 		// we do this to turn off the automatic addition of the ID column in the select column list
 		subQueryBuilder.enableInnerQuery();

@@ -3,6 +3,7 @@ package com.j256.ormlite.stmt;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import com.j256.ormlite.dao.CloseableIterator;
@@ -71,6 +72,17 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			return 0;
 		} else {
 			return selectColumnList.size();
+		}
+	}
+
+	/**
+	 * Return the selected columns in the query or an empty list if none were specified.
+	 */
+	List<String> getSelectColumns() {
+		if (selectColumnList == null) {
+			return Collections.emptyList();
+		} else {
+			return selectColumnList;
 		}
 	}
 
