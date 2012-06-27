@@ -304,7 +304,7 @@ public @interface DatabaseField {
 	String foreignColumnName() default "";
 
 	/*
-	 * NOTE: if you add fields here you have to add them to the DatabaseFieldConfigLoader,
+	 * NOTE to developers: if you add fields here you have to add them to the DatabaseFieldConfigLoader,
 	 * DatabaseFieldConfigLoaderTest, and DatabaseTableConfigUtil.
 	 */
 }
