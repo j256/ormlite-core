@@ -1288,11 +1288,11 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	public void testForeignIntIdNull() throws Exception {
 		Dao<ForeignIntId, Integer> dao = createDao(ForeignIntId.class, true);
 		ForeignIntId foreign = new ForeignIntId();
-		foreign.foo = null;
+		foreign.one = null;
 		assertEquals(1, dao.create(foreign));
 		ForeignIntId foreign2 = dao.queryForId(foreign.id);
 		assertNotNull(foreign2);
-		assertNull(foreign2.foo);
+		assertNull(foreign2.one);
 	}
 
 	@Test
@@ -2342,6 +2342,37 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertNull(result.loop.loop.loop.stuff);
 	}
 
+	@Test
+	public void testBaseClassForeignEq() throws Exception {
+		Dao<One, Object> oneDao = createDao(One.class, true);
+		Dao<ForeignSubClass, Object> foreignDao = createDao(ForeignSubClass.class, true);
+
+		One one1 = new One();
+		assertEquals(1, oneDao.create(one1));
+		One one2 = new One();
+		assertEquals(1, oneDao.create(one2));
+		One one3 = new One();
+		assertEquals(1, oneDao.create(one3));
+
+		ForeignSubClass fii1 = new ForeignSubClass();
+		fii1.one = one1;
+		assertEquals(1, foreignDao.create(fii1));
+		ForeignSubClass fii2 = new ForeignSubClass();
+		fii2.one = one2;
+		assertEquals(1, foreignDao.create(fii2));
+
+		List<ForeignSubClass> results = foreignDao.queryBuilder().where().eq(ForeignIntId.FIELD_NAME_ONE, one1).query();
+		assertEquals(1, results.size());
+		assertEquals(fii1.id, results.get(0).id);
+
+		results = foreignDao.queryBuilder().where().eq(ForeignIntId.FIELD_NAME_ONE, one2).query();
+		assertEquals(1, results.size());
+		assertEquals(fii2.id, results.get(0).id);
+
+		results = foreignDao.queryBuilder().where().eq(ForeignIntId.FIELD_NAME_ONE, one3).query();
+		assertEquals(0, results.size());
+	}
+
 	/* ============================================================================================== */
 
 	private String buildFooQueryAllString(Dao<Foo, Object> fooDao) throws SQLException {
@@ -2557,10 +2588,11 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	}
 
 	protected static class ForeignIntId {
+		public static final String FIELD_NAME_ONE = "one";
 		@DatabaseField(generatedId = true)
 		public int id;
-		@DatabaseField(foreign = true)
-		public One foo;
+		@DatabaseField(foreign = true, columnName = FIELD_NAME_ONE)
+		public One one;
 		public ForeignIntId() {
 		}
 	}
@@ -2685,5 +2717,8 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		String stuff;
 		public ForeignLoop4() {
 		}
+	}
+
+	protected static class ForeignSubClass extends ForeignIntId {
 	}
 }
