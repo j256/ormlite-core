@@ -41,6 +41,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.DatabaseTableConfig;
+import com.j256.ormlite.table.ObjectFactory;
 import com.j256.ormlite.table.TableUtils;
 
 public class BaseDaoImplTest extends BaseCoreTest {
@@ -2373,6 +2374,28 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(0, results.size());
 	}
 
+	@Test
+	public void testObjectFactory() throws Exception {
+		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		FooFactory fooFactory = new FooFactory();
+		dao.setObjectFactory(fooFactory);
+
+		Foo foo = new Foo();
+		foo.val = 1231;
+		assertEquals(1, dao.create(foo));
+
+		assertEquals(0, fooFactory.fooList.size());
+		List<Foo> results = dao.queryForAll();
+		assertEquals(1, results.size());
+		assertEquals(foo.val, results.get(0).val);
+		assertEquals(1, fooFactory.fooList.size());
+
+		results = dao.queryForAll();
+		assertEquals(1, results.size());
+		assertEquals(foo.val, results.get(0).val);
+		assertEquals(2, fooFactory.fooList.size());
+	}
+
 	/* ============================================================================================== */
 
 	private String buildFooQueryAllString(Dao<Foo, Object> fooDao) throws SQLException {
@@ -2720,5 +2743,16 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	}
 
 	protected static class ForeignSubClass extends ForeignIntId {
+	}
+
+	public static class FooFactory implements ObjectFactory<Foo> {
+
+		final List<Foo> fooList = new ArrayList<Foo>();
+
+		public Foo createObject() {
+			Foo foo = new Foo();
+			fooList.add(foo);
+			return foo;
+		}
 	}
 }
