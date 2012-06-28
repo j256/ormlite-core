@@ -1,4 +1,5 @@
-4.42: 6/XX/2012 (svn rYYYY)
+4.42: 7/XX/2012 (svn rYYYY)
+	* CORE: Fixed a bug in comparing superclasses of the field with the field.  Thanks to glenviewjeff.  Bug #3538777.
 	* CORE: Fixed problems with java.sql.Date and Timestmp persisters.  Thanks to Mohammad Moghimi.  Bug #3534395.
 	* ANDROID: Added support for auto-commit under Android using transactions.  Thanks to Chad Schultz.
 
