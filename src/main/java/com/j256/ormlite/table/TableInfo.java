@@ -188,14 +188,20 @@ public class TableInfo<T, ID> {
 	 */
 	public static <T, ID> T createObject(Constructor<?> constructor, Dao<T, ID> dao) throws SQLException {
 		try {
-			// create our instance
-			@SuppressWarnings("unchecked")
-			T instance = (T) constructor.newInstance();
-			if (instance instanceof BaseDaoEnabled) {
-				@SuppressWarnings("unchecked")
-				BaseDaoEnabled<T, ID> daoEnabled = (BaseDaoEnabled<T, ID>) instance;
-				daoEnabled.setDao(dao);
+			T instance;
+			ObjectFactory<T> factory = null;
+			if (dao != null) {
+				factory = dao.getObjectFactory();
 			}
+			if (factory == null) {
+				// create our instance
+				@SuppressWarnings("unchecked")
+				T t = (T) constructor.newInstance();
+				instance = t;
+			} else {
+				instance = factory.createObject();
+			}
+			wireNewInstance(dao, instance);
 			return instance;
 		} catch (Exception e) {
 			throw SqlExceptionUtil.create("Could not create object for " + constructor.getDeclaringClass(), e);
@@ -235,5 +241,13 @@ public class TableInfo<T, ID> {
 			}
 		}
 		return false;
+	}
+
+	private static <T, ID> void wireNewInstance(Dao<T, ID> dao, T instance) {
+		if (instance instanceof BaseDaoEnabled) {
+			@SuppressWarnings("unchecked")
+			BaseDaoEnabled<T, ID> daoEnabled = (BaseDaoEnabled<T, ID>) instance;
+			daoEnabled.setDao(dao);
+		}
 	}
 }

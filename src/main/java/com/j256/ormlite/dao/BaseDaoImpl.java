@@ -30,6 +30,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTableConfig;
+import com.j256.ormlite.table.ObjectFactory;
 import com.j256.ormlite.table.TableInfo;
 
 /**
@@ -63,6 +64,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	protected TableInfo<T, ID> tableInfo;
 	protected ConnectionSource connectionSource;
 	protected CloseableIterator<T> lastIterator;
+	protected ObjectFactory<T> objectFactory;
 
 	private static final ThreadLocal<DaoConfigArray> daoConfigLevelLocal = new ThreadLocal<DaoConfigArray>() {
 		@Override
@@ -817,6 +819,15 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
 	public void rollBack(DatabaseConnection connection) throws SQLException {
 		connection.rollback(null);
+	}
+
+	public ObjectFactory<T> getObjectFactory() {
+		return objectFactory;
+	}
+
+	public void setObjectFactory(ObjectFactory<T> objectFactory) {
+		checkForInitialized();
+		this.objectFactory = objectFactory;
 	}
 
 	/**

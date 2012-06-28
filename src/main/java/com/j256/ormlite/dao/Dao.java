@@ -22,6 +22,7 @@ import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseResults;
+import com.j256.ormlite.table.ObjectFactory;
 
 /**
  * The definition of the Database Access Objects that handle the reading and writing a class from the database. Kudos to
@@ -181,7 +182,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * those changes to the database. You cannot use this method to update the id field -- see {@link #updateId} .
 	 * 
 	 * <p>
-	 * NOTE: Typically this will not save changes made to foreign objects or to foreign collections.
+	 * NOTE: This will not save changes made to foreign objects or to foreign collections.
 	 * </p>
 	 * 
 	 * @param data
@@ -728,6 +729,16 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * </p>
 	 */
 	public void rollBack(DatabaseConnection connection) throws SQLException;
+
+	/**
+	 * Get the object factory set in {@link #setObjectFactory(ObjectFactory)}.
+	 */
+	public ObjectFactory<T> getObjectFactory();
+
+	/**
+	 * Set an object factory so we can wire in controls over an object when it is constructed.
+	 */
+	public void setObjectFactory(ObjectFactory<T> objectFactory);
 
 	/**
 	 * Return class for the {@link Dao#createOrUpdate(Object)} method.

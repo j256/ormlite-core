@@ -23,6 +23,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTableConfig;
+import com.j256.ormlite.table.ObjectFactory;
 
 /**
  * Proxy to a {@link Dao} that wraps each Exception and rethrows it as RuntimeException. You can use this if your usage
@@ -748,6 +749,14 @@ public class RuntimeExceptionDao<T, ID> {
 			logMessage(e, "rollBack(" + connection + ") threw exception");
 			throw new RuntimeException(e);
 		}
+	}
+
+	public ObjectFactory<T> getObjectFactory() {
+		return dao.getObjectFactory();
+	}
+
+	public void setObjectFactory(ObjectFactory<T> objectFactory) {
+		dao.setObjectFactory(objectFactory);
 	}
 
 	public RawRowMapper<T> getRawRowMapper() {

@@ -47,10 +47,11 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 
 	@Test
 	public void testIfAllMethodsAreThere() {
+		List<String> failedMessages = new ArrayList<String>();
+
 		List<Method> runtimeMethods =
 				new ArrayList<Method>(Arrays.asList(RuntimeExceptionDao.class.getDeclaredMethods()));
 
-		boolean failed = false;
 		List<Method> daoMethods = new ArrayList<Method>(Arrays.asList(Dao.class.getDeclaredMethods()));
 		Iterator<Method> daoIterator = daoMethods.iterator();
 		while (daoIterator.hasNext()) {
@@ -77,8 +78,7 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 
 			// make sure we found the method in RuntimeExceptionDao
 			if (!found) {
-				System.err.println("Could not find Dao method: " + daoMethod);
-				failed = true;
+				failedMessages.add("Could not find Dao method: " + daoMethod);
 			}
 		}
 
@@ -92,11 +92,13 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 			if (runtimeMethod.getName().equals("createDao") || runtimeMethod.getName().equals("logMessage")) {
 				continue;
 			}
-			System.err.println("Unknown RuntimeExceptionDao method: " + runtimeMethod);
-			failed = true;
+			failedMessages.add("Unknown RuntimeExceptionDao method: " + runtimeMethod);
 		}
 
-		if (failed) {
+		if (!failedMessages.isEmpty()) {
+			for (String message : failedMessages) {
+				System.err.println(message);
+			}
 			fail("See the console for details");
 		}
 	}
