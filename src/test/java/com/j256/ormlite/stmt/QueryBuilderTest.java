@@ -3,6 +3,7 @@ package com.j256.ormlite.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -409,6 +410,34 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(2, fooDao.countOf(fooQb.prepare()));
 	}
 
+	@Test
+	public void testBaseClassComparison() throws Exception {
+		Dao<Bar, String> barDao = createDao(Bar.class, true);
+		Dao<Baz, String> bazDao = createDao(Baz.class, true);
+
+		BarSuperClass bar1 = new BarSuperClass();
+		bar1.val = 10;
+		assertEquals(1, barDao.create(bar1));
+
+		Baz baz1 = new Baz();
+		baz1.bar = bar1;
+		assertEquals(1, bazDao.create(baz1));
+
+		List<Baz> results = bazDao.queryBuilder().where().eq(Baz.BAR_FIELD, bar1).query();
+		assertEquals(1, results.size());
+		assertEquals(bar1.id, results.get(0).bar.id);
+		
+		try {
+			// we allow a super class of the field but _not_ a sub class
+			results = bazDao.queryBuilder().where().eq(Baz.BAR_FIELD, new Object()).query();
+			fail("Should have thrown");
+		} catch (SQLException e) {
+			// expected
+		}
+	}
+
+	/* ======================================================================================================== */
+
 	private static class LimitInline extends BaseDatabaseType {
 		public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 			return true;
@@ -431,6 +460,19 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		@DatabaseField(columnName = VAL_FIELD)
 		int val;
 		public Bar() {
+		}
+	}
+
+	private static class BarSuperClass extends Bar {
+	}
+
+	protected static class Baz {
+		public static final String BAR_FIELD = "bar";
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(foreign = true, columnName = BAR_FIELD)
+		Bar bar;
+		public Baz() {
 		}
 	}
 }

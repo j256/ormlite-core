@@ -1314,6 +1314,17 @@ No special instructions.  We use this database for all of our internal testing w
 There are multiple SQLite drivers out there.  Make sure you use the @uref{http://www.xerial.org/trac/Xerial/wiki/SQLiteJDBC, Xerial driver}
 and not the @uref{http://www.zentus.com/sqlitejdbc/, Zentus driver} which does not support generated ids.
 
+If you want to use the internal SQLite time/date functions (such as @code{strftime}) on @code{Date} fields, your fields should
+be of type @code{DATE_STRING} to have the dates match in the internal date formats.  For example:
+
+@example
+@@DatabaseField(dataType = DataType.DATE_STRING)
+private Date date;
+@end example
+
+@DatabaseField(dataType = DataType.DATE_STRING)
+Date date;
+
 @cindex Android SQLite database
 @item Android SQLite
 
