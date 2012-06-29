@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.db.DatabaseType;
@@ -28,7 +29,7 @@ public class TableInfo<T, ID> {
 
 	private static final FieldType[] NO_FOREIGN_COLLECTIONS = new FieldType[0];
 
-	private final Dao<T, ID> dao;
+	private final BaseDaoImpl<T, ID> dao;
 	private final Class<T> dataClass;
 	private final String tableName;
 	private final FieldType[] fieldTypes;
@@ -46,7 +47,7 @@ public class TableInfo<T, ID> {
 	 * @param dataClass
 	 *            Class that we are holding information about.
 	 */
-	public TableInfo(ConnectionSource connectionSource, Dao<T, ID> dao, Class<T> dataClass) throws SQLException {
+	public TableInfo(ConnectionSource connectionSource, BaseDaoImpl<T, ID> dao, Class<T> dataClass) throws SQLException {
 		this(connectionSource.getDatabaseType(), dao, DatabaseTableConfig.fromClass(connectionSource, dataClass));
 	}
 
@@ -58,7 +59,7 @@ public class TableInfo<T, ID> {
 	 * @param tableConfig
 	 *            Configuration for our table.
 	 */
-	public TableInfo(DatabaseType databaseType, Dao<T, ID> dao, DatabaseTableConfig<T> tableConfig) throws SQLException {
+	public TableInfo(DatabaseType databaseType, BaseDaoImpl<T, ID> dao, DatabaseTableConfig<T> tableConfig) throws SQLException {
 		this.dao = dao;
 		this.dataClass = tableConfig.getDataClass();
 		this.tableName = tableConfig.getTableName();
@@ -186,7 +187,7 @@ public class TableInfo<T, ID> {
 	/**
 	 * Create and return an object of this type using our reflection constructor.
 	 */
-	public static <T, ID> T createObject(Constructor<?> constructor, Dao<T, ID> dao) throws SQLException {
+	public static <T, ID> T createObject(Constructor<?> constructor, BaseDaoImpl<T, ID> dao) throws SQLException {
 		try {
 			T instance;
 			ObjectFactory<T> factory = null;

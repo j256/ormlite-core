@@ -751,10 +751,6 @@ public class RuntimeExceptionDao<T, ID> {
 		}
 	}
 
-	public ObjectFactory<T> getObjectFactory() {
-		return dao.getObjectFactory();
-	}
-
 	public void setObjectFactory(ObjectFactory<T> objectFactory) {
 		dao.setObjectFactory(objectFactory);
 	}

@@ -731,11 +731,6 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public void rollBack(DatabaseConnection connection) throws SQLException;
 
 	/**
-	 * Get the object factory set in {@link #setObjectFactory(ObjectFactory)}.
-	 */
-	public ObjectFactory<T> getObjectFactory();
-
-	/**
 	 * Set an object factory so we can wire in controls over an object when it is constructed.
 	 */
 	public void setObjectFactory(ObjectFactory<T> objectFactory);

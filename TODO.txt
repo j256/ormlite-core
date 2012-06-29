@@ -28,6 +28,10 @@
 	- account_customer has a column for account_id and customer_id to handle this relationship
 	- how can ORMLite assist in the loading of a Java list of Customers on an Account object
 
+- documentation:
+	- object factory
+	- comparisons with foreign objects
+
 - more support for more constraints (other than primary and unique):
 	- maybe a check="> 10" type of addition to DatabaseField so we can add a check constraint
 	- foreign key constraint can be in addition to (or required for) the foreign=true
