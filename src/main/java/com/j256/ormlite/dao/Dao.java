@@ -731,7 +731,8 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public void rollBack(DatabaseConnection connection) throws SQLException;
 
 	/**
-	 * Set an object factory so we can wire in controls over an object when it is constructed.
+	 * Set an object factory so we can wire in controls over an object when it is constructed. Set to null to disable
+	 * the factory.
 	 */
 	public void setObjectFactory(ObjectFactory<T> objectFactory);
 

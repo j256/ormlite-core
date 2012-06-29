@@ -20,6 +20,10 @@ public class VersionUtils {
 	private static final String ANDROID_VERSION_FILE = "/com/j256/ormlite/android/VERSION.txt";
 
 	private static Logger logger;
+	private static String coreVersionFile = CORE_VERSION_FILE;
+	private static String jdbcVersionFile = JDBC_VERSION_FILE;
+	private static String androidVersionFile = ANDROID_VERSION_FILE;
+	private static boolean thrownOnErrors = false;
 
 	private VersionUtils() {
 		// only for static methods
@@ -44,19 +48,47 @@ public class VersionUtils {
 	}
 
 	/**
+	 * For testing purposes.
+	 */
+	static void setCoreVersionFile(String coreVersionFile) {
+		VersionUtils.coreVersionFile = coreVersionFile;
+	}
+
+	/**
+	 * For testing purposes.
+	 */
+	static void setJdbcVersionFile(String jdbcVersionFile) {
+		VersionUtils.jdbcVersionFile = jdbcVersionFile;
+	}
+
+	/**
+	 * For testing purposes.
+	 */
+	static void setAndroidVersionFile(String androidVersionFile) {
+		VersionUtils.androidVersionFile = androidVersionFile;
+	}
+
+	/**
+	 * For testing purposes.
+	 */
+	static void setThrownOnErrors(boolean thrownOnErrors) {
+		VersionUtils.thrownOnErrors = thrownOnErrors;
+	}
+
+	/**
 	 * Log error information
 	 */
 	private static void logVersionErrors(String label1, String version1, String label2, String version2) {
 		if (version1 == null) {
 			if (version2 != null) {
-				getLogger().error("Unknown version for {}, version for {} is '{}'", label1, label2, version2);
+				error(null, "Unknown version for {}, version for {} is '{}'", label1, label2, version2);
 			}
 		} else {
 			if (version2 == null) {
-				getLogger().error("Unknown version for {}, version for {} is '{}'", label2, label1, version1);
+				error(null, "Unknown version for {}, version for {} is '{}'", label2, label1, version1);
 			} else if (!version1.equals(version2)) {
-				getLogger().error("Mismatched versions: {} is '{}', while {} is '{}'",
-						new Object[] { label1, version1, label2, version2 });
+				error(null, "Mismatched versions: {} is '{}', while {} is '{}'", new Object[] { label1, version1,
+						label2, version2 });
 			}
 		}
 	}
@@ -65,27 +97,27 @@ public class VersionUtils {
 	 * Read and return the version for the core package.
 	 */
 	private static String readCoreVersion() {
-		return getVersionFromFile(CORE_VERSION_FILE);
+		return getVersionFromFile(coreVersionFile);
 	}
 
 	/**
 	 * Read and return the version for the core package.
 	 */
 	private static String readJdbcVersion() {
-		return getVersionFromFile(JDBC_VERSION_FILE);
+		return getVersionFromFile(jdbcVersionFile);
 	}
 
 	/**
 	 * Read and return the version for the core package.
 	 */
 	private static String readAndroidVersion() {
-		return getVersionFromFile(ANDROID_VERSION_FILE);
+		return getVersionFromFile(androidVersionFile);
 	}
 
 	private static String getVersionFromFile(String file) {
 		InputStream inputStream = VersionUtils.class.getResourceAsStream(file);
 		if (inputStream == null) {
-			getLogger().error("Could not find version file {}", file);
+			error(null, "Could not find version file {}", file, null, null);
 			return null;
 		}
 		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -94,7 +126,7 @@ public class VersionUtils {
 			version = reader.readLine();
 		} catch (IOException e) {
 			// exception ignored
-			getLogger().error(e, "Could not read version from {}", file);
+			error(e, "Could not read version from {}", file, null, null);
 			return null;
 		} finally {
 			try {
@@ -104,9 +136,23 @@ public class VersionUtils {
 			}
 		}
 		if (version == null) {
-			getLogger().error("No version specified in {}", file);
+			error(null, "No version specified in {}", file, null, null);
 		}
 		return version;
+	}
+
+	private static void error(Throwable th, String msg, Object arg0, Object arg1, Object arg2) {
+		getLogger().error(th, msg, arg0, arg1, arg2);
+		if (VersionUtils.thrownOnErrors) {
+			throw new IllegalStateException("See error log for details: " + msg);
+		}
+	}
+
+	private static void error(Throwable th, String msg, Object[] args) {
+		getLogger().error(th, msg, args);
+		if (VersionUtils.thrownOnErrors) {
+			throw new IllegalStateException("See error log for details:" + msg);
+		}
 	}
 
 	/**

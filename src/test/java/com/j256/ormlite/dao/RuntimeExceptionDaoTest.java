@@ -42,6 +42,7 @@ import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTableConfig;
+import com.j256.ormlite.table.ObjectFactory;
 
 public class RuntimeExceptionDaoTest extends BaseCoreTest {
 
@@ -235,6 +236,8 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		assertTrue(iterator.hasNext());
 		iterator.next();
 		assertFalse(iterator.hasNext());
+		dao.iterator(DatabaseConnection.DEFAULT_RESULT_FLAGS).close();
+		dao.iterator(dao.queryBuilder().prepare(), DatabaseConnection.DEFAULT_RESULT_FLAGS).close();
 
 		assertTrue(dao.objectsEqual(foo, foo));
 		assertTrue(dao.objectToString(foo).contains("val=" + val));
@@ -342,6 +345,20 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		Foo result = dao.queryForFirst(prepared);
 		assertEquals(foo.id, result.id);
 		assertNull(dao.getEmptyForeignCollection(Foo.ID_COLUMN_NAME));
+		conn = dao.startThreadConnection();
+		dao.setAutoCommit(conn, true);
+		assertTrue(dao.isAutoCommit(conn));
+		dao.commit(conn);
+		dao.rollBack(conn);
+		dao.endThreadConnection(conn);
+		ObjectFactory<Foo> objectFactory = new ObjectFactory<Foo>() {
+			public Foo createObject() {
+				return new Foo();
+			}
+		};
+		dao.setObjectFactory(objectFactory);
+		dao.setObjectFactory(null);
+		assertNotNull(dao.getRawRowMapper());
 	}
 
 	@Test
