@@ -1,5 +1,6 @@
 package com.j256.ormlite.table;
 
+import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 
 /**
@@ -15,5 +16,5 @@ public interface ObjectFactory<T> {
 	 * @throws SQLException
 	 *             if there was a problem creating the object.
 	 */
-	public T createObject() throws SQLException;
+	public T createObject(Constructor<T> construcor, Class<T> dataClass) throws SQLException;
 }

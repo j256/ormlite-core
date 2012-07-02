@@ -14,6 +14,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -352,7 +353,7 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		dao.rollBack(conn);
 		dao.endThreadConnection(conn);
 		ObjectFactory<Foo> objectFactory = new ObjectFactory<Foo>() {
-			public Foo createObject() {
+			public Foo createObject(Constructor<Foo> construcor, Class<Foo> dataClass) {
 				return new Foo();
 			}
 		};

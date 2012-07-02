@@ -1,7 +1,6 @@
 package com.j256.ormlite.field;
 
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -71,7 +70,7 @@ public class FieldType {
 
 	private FieldConverter fieldConverter;
 	private FieldType foreignIdField;
-	private Constructor<?> foreignConstructor;
+	private TableInfo<?, ?> foreignTableInfo;
 	private FieldType foreignFieldType;
 	private BaseDaoImpl<?, ?> foreignDao;
 	private MappedQueryForId<Object, Object> mappedQueryForId;
@@ -276,7 +275,6 @@ public class FieldType {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		TableInfo<?, ?> foreignTableInfo;
 		final FieldType foreignIdField;
-		final Constructor<?> foreignConstructor;
 		final FieldType foreignFieldType;
 		final BaseDaoImpl<?, ?> foreignDao;
 		final MappedQueryForId<Object, Object> mappedQueryForId;
@@ -311,7 +309,6 @@ public class FieldType {
 					(MappedQueryForId<Object, Object>) MappedQueryForId.build(databaseType, foreignTableInfo,
 							foreignIdField);
 			mappedQueryForId = castMappedQueryForId;
-			foreignConstructor = foreignTableInfo.getConstructor();
 			foreignFieldType = null;
 		} else if (fieldConfig.isForeign()) {
 			if (this.dataPersister != null && this.dataPersister.isPrimitive()) {
@@ -335,7 +332,6 @@ public class FieldType {
 			}
 			foreignTableInfo = foreignDao.getTableInfo();
 			foreignIdField = foreignTableInfo.getIdField();
-			foreignConstructor = foreignTableInfo.getConstructor();
 			if (foreignIdField == null) {
 				throw new IllegalArgumentException("Foreign field " + fieldClass + " does not have id field");
 			}
@@ -378,10 +374,10 @@ public class FieldType {
 			foreignDao = foundDao;
 			foreignFieldType = findForeignFieldType(collectionClazz, parentClass, (BaseDaoImpl<?, ?>) foundDao);
 			foreignIdField = null;
-			foreignConstructor = null;
+			foreignTableInfo = null;
 			mappedQueryForId = null;
 		} else {
-			foreignConstructor = null;
+			foreignTableInfo = null;
 			foreignIdField = null;
 			foreignFieldType = null;
 			foreignDao = null;
@@ -389,7 +385,7 @@ public class FieldType {
 		}
 
 		this.mappedQueryForId = mappedQueryForId;
-		this.foreignConstructor = foreignConstructor;
+		this.foreignTableInfo = foreignTableInfo;
 		this.foreignFieldType = foreignFieldType;
 		this.foreignDao = foreignDao;
 		this.foreignIdField = foreignIdField;
@@ -513,7 +509,7 @@ public class FieldType {
 				// if we have recursed the proper number of times, return a shell with just the id set
 				if (levelCounters.autoRefreshLevel >= levelCounters.autoRefreshLevelMax) {
 					// create a shell and assign its id field
-					foreignObject = TableInfo.createObject(foreignConstructor, foreignDao);
+					foreignObject = foreignTableInfo.createObject();
 					foreignIdField.assignField(foreignObject, val, false, objectCache);
 				} else {
 					/*

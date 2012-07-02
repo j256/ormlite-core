@@ -10,6 +10,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.lang.reflect.Constructor;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -1341,6 +1342,28 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(val, foreign2.foo.val);
 	}
 
+	@Test
+	public void testForeignAutoRefreshFalse() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
+		Dao<ForeignAutoRefreshFalse, Integer> foreignDao = createDao(ForeignAutoRefreshFalse.class, true);
+
+		Foo foo = new Foo();
+		foo.val = 6389;
+		foo.stringField = "not null";
+		assertEquals(1, fooDao.create(foo));
+
+		ForeignAutoRefreshFalse foreign = new ForeignAutoRefreshFalse();
+		foreign.foo = foo;
+		assertEquals(1, foreignDao.create(foreign));
+
+		ForeignAutoRefreshFalse foreign2 = foreignDao.queryForId(foreign.id);
+		assertNotNull(foreign2);
+		assertNotNull(foreign2.foo.id);
+		assertEquals(foo.id, foreign2.foo.id);
+		assertEquals(0, foreign2.foo.val);
+		assertNull(foreign2.foo.stringField);
+	}
+
 	@Test(expected = SQLException.class)
 	public void testForeignCantBeNull() throws Exception {
 		Dao<ForeignNotNull, Integer> dao = createDao(ForeignNotNull.class, true);
@@ -2478,6 +2501,15 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		}
 	}
 
+	protected static class ForeignAutoRefreshFalse {
+		@DatabaseField(generatedId = true)
+		public int id;
+		@DatabaseField(foreign = true, foreignAutoRefresh = false)
+		public Foo foo;
+		public ForeignAutoRefreshFalse() {
+		}
+	}
+
 	protected static class ForeignAutoRefresh2 {
 		public int id;
 		@DatabaseField(foreign = true, foreignAutoRefresh = true)
@@ -2749,7 +2781,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 		final List<Foo> fooList = new ArrayList<Foo>();
 
-		public Foo createObject() {
+		public Foo createObject(Constructor<Foo> construcor, Class<Foo> dataClass) {
 			Foo foo = new Foo();
 			fooList.add(foo);
 			return foo;
