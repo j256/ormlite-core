@@ -426,7 +426,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		List<Baz> results = bazDao.queryBuilder().where().eq(Baz.BAR_FIELD, bar1).query();
 		assertEquals(1, results.size());
 		assertEquals(bar1.id, results.get(0).bar.id);
-		
+
 		try {
 			// we allow a super class of the field but _not_ a sub class
 			results = bazDao.queryBuilder().where().eq(Baz.BAR_FIELD, new Object()).query();
@@ -434,6 +434,14 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		} catch (SQLException e) {
 			// expected
 		}
+	}
+
+	@Test
+	public void testReservedWords() throws Exception {
+		Dao<Reserved, Integer> dao = createDao(Reserved.class, true);
+		QueryBuilder<Reserved, Integer> sb = dao.queryBuilder();
+		sb.where().eq(Reserved.FIELD_NAME_GROUP, "something");
+		sb.query();
 	}
 
 	/* ======================================================================================================== */
@@ -473,6 +481,16 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		@DatabaseField(foreign = true, columnName = BAR_FIELD)
 		Bar bar;
 		public Baz() {
+		}
+	}
+
+	protected static class Reserved {
+		public static final String FIELD_NAME_GROUP = "group";
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(columnName = FIELD_NAME_GROUP)
+		String group;
+		public Reserved() {
 		}
 	}
 }

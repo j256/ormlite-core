@@ -2016,6 +2016,10 @@ rawResults.close();
 to have the statement closed automatically.  You can also call the @code{GenericRawResults.close()} method to make sure the
 iterator, and any associated database connections, is closed.
 
+@emph{NOTE:} If you are using the @code{QueryBuilder#prepareStatementString()} method to build your query, it may have
+added the id column to the selected column list if the Dao object has an id you did not include it in the columns
+you selected. So your results might have one more column than you are expecting.
+
 @c ----------------------------------------------------------------
 @node Raw Updates, Raw Executes, Raw Queries, Raw Statements
 @subsection Issuing Raw Update Statements

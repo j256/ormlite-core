@@ -454,6 +454,12 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * </pre>
 	 * 
 	 * </p>
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> If you are using the {@link QueryBuilder#prepareStatementString()} to build your query, it may have
+	 * added the id column to the selected column list if the Dao object has an id you did not include it in the columns
+	 * you selected. So the results might have one more column than you are expecting.
+	 * </p>
 	 */
 	public GenericRawResults<String[]> queryRaw(String query, String... arguments) throws SQLException;
 

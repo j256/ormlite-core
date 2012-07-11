@@ -1,12 +1,14 @@
 package com.j256.ormlite.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
 import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
+import com.j256.ormlite.stmt.QueryBuilder;
 
 public class RawRowMapperTest extends BaseCoreTest {
 
@@ -20,8 +22,9 @@ public class RawRowMapperTest extends BaseCoreTest {
 		foo2.val = 754282321;
 		assertEquals(1, dao.create(foo2));
 
-		GenericRawResults<Integer> rawResults =
-				dao.queryRaw("select " + Foo.VAL_COLUMN_NAME + " from foo", new IntMapper());
+		QueryBuilder<Foo, Object> qb = dao.queryBuilder();
+		qb.selectColumns(Foo.VAL_COLUMN_NAME);
+		GenericRawResults<Integer> rawResults = dao.queryRaw(qb.prepareStatementString(), new IntMapper());
 		List<Integer> results = rawResults.getResults();
 		assertEquals(2, results.size());
 		assertEquals(foo1.val, (int) results.get(0));
@@ -30,7 +33,9 @@ public class RawRowMapperTest extends BaseCoreTest {
 
 	private static class IntMapper implements RawRowMapper<Integer> {
 		public Integer mapRow(String[] columnNames, String[] resultColumns) {
-			assertEquals(1, resultColumns.length);
+			// may be more than 1 because of the id
+			assertTrue(resultColumns.length >= 1);
+			// id is added at the end always
 			return Integer.parseInt(resultColumns[0]);
 		}
 	}
