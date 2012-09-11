@@ -537,7 +537,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		try {
 			return statementExecutor.queryRaw(connectionSource, query, arguments, objectCache);
 		} catch (SQLException e) {
-			throw SqlExceptionUtil.create("Could not build iterator for " + query, e);
+			throw SqlExceptionUtil.create("Could not perform raw query for " + query, e);
 		}
 	}
 
@@ -547,7 +547,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		try {
 			return statementExecutor.queryRaw(connectionSource, query, mapper, arguments, objectCache);
 		} catch (SQLException e) {
-			throw SqlExceptionUtil.create("Could not build iterator for " + query, e);
+			throw SqlExceptionUtil.create("Could not perform raw query for " + query, e);
 		}
 	}
 
@@ -557,7 +557,19 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		try {
 			return statementExecutor.queryRaw(connectionSource, query, columnTypes, arguments, objectCache);
 		} catch (SQLException e) {
-			throw SqlExceptionUtil.create("Could not build iterator for " + query, e);
+			throw SqlExceptionUtil.create("Could not perform raw query for " + query, e);
+		}
+	}
+
+	public long queryRawValue(String query, String... arguments) throws SQLException {
+		checkForInitialized();
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		try {
+			return statementExecutor.queryForLong(connection, query, arguments);
+		} catch (SQLException e) {
+			throw SqlExceptionUtil.create("Could not perform raw value query for " + query, e);
+		} finally {
+			connectionSource.releaseConnection(connection);
 		}
 	}
 
@@ -676,7 +688,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		try {
-			return statementExecutor.queryForCountStar(connection, preparedQuery);
+			return statementExecutor.queryForLong(connection, preparedQuery);
 		} finally {
 			connectionSource.releaseConnection(connection);
 		}

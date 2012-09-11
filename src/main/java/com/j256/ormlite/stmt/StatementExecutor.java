@@ -129,20 +129,46 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	}
 
 	/**
-	 * Return a long value which is the number of rows in the table.
+	 * Return a long value from a prepared query.
 	 */
-	public long queryForCountStar(DatabaseConnection databaseConnection, PreparedStmt<T> preparedStmt)
-			throws SQLException {
+	public long queryForLong(DatabaseConnection databaseConnection, PreparedStmt<T> preparedStmt) throws SQLException {
 		CompiledStatement stmt = preparedStmt.compile(databaseConnection, StatementType.SELECT_LONG);
 		try {
 			DatabaseResults results = stmt.runQuery(null);
 			if (results.first()) {
 				return results.getLong(0);
 			} else {
-				return 0;
+				throw new SQLException("No result found in queryForLong: " + preparedStmt.getStatement());
 			}
 		} finally {
 			stmt.close();
+		}
+	}
+
+	/**
+	 * Return a long from a raw query with String[] arguments.
+	 */
+	public long queryForLong(DatabaseConnection databaseConnection, String query, String[] arguments)
+			throws SQLException {
+		logger.debug("executing raw query for long: {}", query);
+		if (arguments.length > 0) {
+			// need to do the (Object) cast to force args to be a single object
+			logger.trace("query arguments: {}", (Object) arguments);
+		}
+		CompiledStatement stmt = null;
+		try {
+			stmt = databaseConnection.compileStatement(query, StatementType.SELECT, noFieldTypes);
+			assignStatementArguments(stmt, arguments);
+			DatabaseResults results = stmt.runQuery(null);
+			if (results.first()) {
+				return results.getLong(0);
+			} else {
+				throw new SQLException("No result found in queryForLong: " + query);
+			}
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
 		}
 	}
 

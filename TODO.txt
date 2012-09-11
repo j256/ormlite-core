@@ -9,6 +9,9 @@
 - support for JTA annotations, whatever the common one is
 	- maybe also JDO?
 
+- support for a cached lazy foreign collection
+	- it turns into an eager collection after it loads it for the first time
+
 - support for embedded objects
 	- look to see if the unknown class has a DatabaseTable(embedded = true) or javax annotation
 	- take all of the fields as if they were fields in this class

@@ -2419,6 +2419,17 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(2, fooFactory.fooList.size());
 	}
 
+	@Test
+	public void testQueryRawValue() throws Exception {
+		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		assertEquals(1, dao.create(new Foo()));
+		assertEquals(1, dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from foo"));
+		assertEquals(1, dao.create(new Foo()));
+		assertEquals(2, dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from foo"));
+		assertEquals(1, dao.create(new Foo()));
+		assertEquals(3, dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from foo"));
+	}
+
 	/* ============================================================================================== */
 
 	private String buildFooQueryAllString(Dao<Foo, Object> fooDao) throws SQLException {

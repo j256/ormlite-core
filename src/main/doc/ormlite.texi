@@ -6,9 +6,9 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.41
+@set ormlite_version 4.42
 @set ormlite_year 2012
-@set ormlite_date June @value{ormlite_year}
+@set ormlite_date September @value{ormlite_year}
 @set package ORMLite
 @c ----------------------------------------------------------------
 
@@ -1479,6 +1479,9 @@ TableUtils.createTable(connectionSource, tableConfig);
 
 Similar to the last method but it will only create the table if it doesn't exist.  This is not supported on all database types.
 
+@cindex drop tables
+@cindex delete tables
+@cindex remove tables
 @item dropTable(ConnectionSource, Class, boolean ignoreErrors)
 
 This method drops the table associated with the class.  It uses the annotations from the class to determine the name of the table to
@@ -1961,6 +1964,18 @@ for (String[] resultArray : rawResults) @{
 rawResults.close();
 @end example
 
+@cindex mac function
+@cindex query for number
+@cindex query single number
+@cindex aggregate function, query
+If you are just trying to query for a single value (typically an aggregate function like @code{MAX}) then you can
+use the @code{queryRawValue(...)} method:
+
+@example
+long maxUnits = orderDao.queryRaw("select max(units) from orders");
+@end example
+
+@raw query object[]
 If some of your fields cannot be appropriately mapped to strings, you can also return the fields as an @code{Object[]} if you
 pass in the types of the resulting columns.  For example:
 
@@ -1981,8 +1996,13 @@ rawResults.close();
 @emph{NOTE}: @code{select *} can return fields in different orders depending on the database type.  To make sure that the data-type
 array matches the returned columns you must specify the fields specifically and @emph{not} with a SQL @code{*}.
 
+@cindex map raw query objects
+@cindex raw row mapper
 You can also map the results into your own object by passing in a @code{RawRowMapper} object.  This will call the mapping object
-with an array of strings and allow it to convert the strings into an object.  For example:
+with an array of strings and allow it to convert the strings into an object.  The DAO provides a default @code{RawRowMapper} that
+can be gotten from @code{orderDao.getRawRowMapper()} that knows how to convert the string array into the object.
+
+You can also define your own custom mapper if the results are more complex.  For example:
 
 @example
 // return the orders with the sum of their amounts per account
@@ -2530,7 +2550,7 @@ UpdateBuilder<Account, String> updateBuilder =
 updateBuilder.updateColumnValue("password", "none");
 // only update the rows where password is null
 updateBuilder.where().isNull(Account.PASSWORD_FIELD_NAME);
-accountDao.update(updateBuilder.prepare());
+updateBuilder.update();
 @end example
 
 With update, you can also specify the update value to be an expression:
@@ -2552,7 +2572,7 @@ DeleteBuilder<Account, String> deleteBuilder =
   accountDao.deleteBuilder();
 // only delete the rows where password is null
 deleteBuilder.where().isNull(Account.PASSWORD_FIELD_NAME);
-accountDao.delete(deleteBuilder.prepare());
+deleteBuilder.delete();
 @end example
 
 @c ----------------------------------------------------------------
@@ -3861,6 +3881,11 @@ as an array of strings, this will map the row using the mapper object passed in.
 
 Same as the above @code{queryRaw} method but with the addition of a an array of column data types.  Instead of each
 row being returned as an array of strings, they are returned as an array of objects.  @xref{Raw Queries}.
+
+@item queryRawValue(String query, String... arguments)
+
+Perform a raw query that returns a single value (usually an aggregate function like @code{MAX} or @code{COUNT}). If the query
+does not return a single long value then it will throw a SQLException.
 
 @item executeRaw(String statement)
 

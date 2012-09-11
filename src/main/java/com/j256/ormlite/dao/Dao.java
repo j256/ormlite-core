@@ -482,6 +482,12 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 			throws SQLException;
 
 	/**
+	 * Perform a raw query that returns a single value (usually an aggregate function like MAX or COUNT). If the query
+	 * does not return a single long value then it will throw a SQLException.
+	 */
+	public long queryRawValue(String query, String... arguments) throws SQLException;
+
+	/**
 	 * Run a raw execute SQL statement to the database.The arguments are optional but can be set with strings to expand
 	 * ? type of SQL.
 	 * 

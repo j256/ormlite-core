@@ -2,7 +2,9 @@
 	* CORE: Added ObjectFactory support on the DAO to better support Guice and other wiring.  Thanks to glenviewjeff.
 	* CORE: Fixed a bug in comparing superclasses of the field with the field.  Thanks to glenviewjeff.  Bug #3538777.
 	* CORE: Fixed problems with java.sql.Date and Timestmp persisters.  Thanks to Mohammad Moghimi.  Bug #3534395.
+	* CORE: Added queryRawValue() method to the DAO for getting a single aggregate result.
 	* ANDROID: Added support for auto-commit under Android using transactions.  Thanks to Chad Schultz.
+	* JDBC: Fixed some problems with the OracleDatabaseType.  Thanks much to Stew.
 
 4.41: 6/6/2012 (svn r2575)
 	* CORE: Added java.sql.Date and java.sql.Timestmp data persister types.  java.util.Date is still recommended.

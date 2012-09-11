@@ -438,6 +438,18 @@ public class RuntimeExceptionDao<T, ID> {
 	}
 
 	/**
+	 * @see Dao#queryRawValue(String, String...)
+	 */
+	public long queryRawValue(String query, String... arguments) {
+		try {
+			return dao.queryRawValue(query, arguments);
+		} catch (SQLException e) {
+			logMessage(e, "queryRawValue threw exception on: " + query);
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
 	 * @see Dao#queryRaw(String, RawRowMapper, String...)
 	 */
 	public <UO> GenericRawResults<UO> queryRaw(String query, RawRowMapper<UO> mapper, String... arguments) {
