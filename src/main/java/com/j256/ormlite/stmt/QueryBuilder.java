@@ -359,7 +359,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			sb.append("COUNT(*) ");
 		} else if (selectRawList != null && !selectRawList.isEmpty()) {
 			type = StatementType.SELECT_RAW;
-			appendRawColumns(sb);
+			appendSelectRaw(sb);
 		} else {
 			type = StatementType.SELECT;
 			appendColumns(sb);
@@ -453,7 +453,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		selectColumnList.add(columnName);
 	}
 
-	private void appendRawColumns(StringBuilder sb) {
+	private void appendSelectRaw(StringBuilder sb) {
 		boolean first = true;
 		for (String column : selectRawList) {
 			if (first) {
