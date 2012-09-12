@@ -20,7 +20,7 @@ public class Raw implements Clause {
 		this.args = args;
 	}
 
-	public void appendSql(DatabaseType databaseType, StringBuilder sb, List<ArgumentHolder> argList) {
+	public void appendSql(DatabaseType databaseType, String tableName, StringBuilder sb, List<ArgumentHolder> argList) {
 		sb.append(statement);
 		sb.append(' ');
 		for (ArgumentHolder arg : args) {

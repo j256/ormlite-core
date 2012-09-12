@@ -27,16 +27,18 @@ public abstract class StatementBuilder<T, ID> {
 	private static Logger logger = LoggerFactory.getLogger(StatementBuilder.class);
 
 	protected final TableInfo<T, ID> tableInfo;
+	protected final String tableName;
 	protected final DatabaseType databaseType;
 	protected final Dao<T, ID> dao;
 	protected StatementType type;
 
-	private Where<T, ID> where = null;
+	protected Where<T, ID> where = null;
 	// NOTE: anything added here should be added to the clear() method below
 
 	public StatementBuilder(DatabaseType databaseType, TableInfo<T, ID> tableInfo, Dao<T, ID> dao, StatementType type) {
 		this.databaseType = databaseType;
 		this.tableInfo = tableInfo;
+		this.tableName = tableInfo.getTableName();
 		this.dao = dao;
 		this.type = type;
 		if (!type.isOkForStatementBuilder()) {
@@ -117,10 +119,7 @@ public abstract class StatementBuilder<T, ID> {
 	 */
 	protected void appendStatementString(StringBuilder sb, List<ArgumentHolder> argList) throws SQLException {
 		appendStatementStart(sb, argList);
-		if (where != null) {
-			sb.append("WHERE ");
-			where.appendSql(sb, argList);
-		}
+		appendWhereStatement(sb, argList, where, (shouldPrependTableNameToColumns() ? tableName : null), true);
 		appendStatementEnd(sb);
 	}
 
@@ -130,17 +129,43 @@ public abstract class StatementBuilder<T, ID> {
 	protected abstract void appendStatementStart(StringBuilder sb, List<ArgumentHolder> argList) throws SQLException;
 
 	/**
-	 * Get the result array from our statement after the {@link #appendStatementStart(StringBuilder, List)} was called.
-	 * This will be null except for the QueryBuilder.
+	 * Append the WHERE part of the statement to the StringBuilder.
 	 */
-	protected FieldType[] getResultFieldTypes() {
-		return null;
+	protected void appendWhereStatement(StringBuilder sb, List<ArgumentHolder> argList, Where<?, ?> where,
+			String tableName, boolean first) throws SQLException {
+		if (where == null) {
+			return;
+		}
+		if (first) {
+			sb.append("WHERE ");
+		} else {
+			sb.append("AND (");
+		}
+		where.appendSql(tableName, sb, argList);
+		if (!first) {
+			sb.append(") ");
+		}
 	}
 
 	/**
 	 * Append the end of our statement string to the StringBuilder.
 	 */
 	protected abstract void appendStatementEnd(StringBuilder sb) throws SQLException;
+
+	/**
+	 * Return true if we need to prepend table-name to columns.
+	 */
+	protected boolean shouldPrependTableNameToColumns() {
+		return false;
+	}
+
+	/**
+	 * Get the result array from our statement after the {@link #appendStatementStart(StringBuilder, List)} was called.
+	 * This will be null except for the QueryBuilder.
+	 */
+	protected FieldType[] getResultFieldTypes() {
+		return null;
+	}
 
 	/**
 	 * Verify the columnName is valid and return its FieldType.

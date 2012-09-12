@@ -1,7 +1,7 @@
 PKG = ormlite
 DOCS = $(PKG).html $(PKG) $(PKG).pdf
 TEXI = $(PKG).texi
-REMOTE ?= ormlite-doc-host
+REMOTE ?= doc-host
 
 all : $(DOCS)
 
@@ -21,8 +21,8 @@ $(PKG) : $(TEXI)
 
 $(PKG).pdf : $(TEXI)
 	scp $(TEXI) $(REMOTE):$(PKG)
-	ssh $(REMOTE) "(cd $(PKG) ; make)"
-	scp $(REMOTE):$(PKG)/ormlite.pdf .
+	ssh $(REMOTE) "(cd remote_texi ; make $@)"
+	scp $(REMOTE):remote_texi/ormlite.pdf .
 
 $(PKG).info : $(TEXI)
 	rm -f $@

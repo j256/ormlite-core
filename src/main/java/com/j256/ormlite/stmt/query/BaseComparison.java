@@ -33,8 +33,12 @@ abstract class BaseComparison implements Comparison {
 
 	public abstract void appendOperation(StringBuilder sb);
 
-	public void appendSql(DatabaseType databaseType, StringBuilder sb, List<ArgumentHolder> argList)
+	public void appendSql(DatabaseType databaseType, String tableName, StringBuilder sb, List<ArgumentHolder> argList)
 			throws SQLException {
+		if (tableName != null) {
+			databaseType.appendEscapedEntityName(sb, tableName);
+			sb.append('.');
+		}
 		databaseType.appendEscapedEntityName(sb, columnName);
 		sb.append(' ');
 		appendOperation(sb);

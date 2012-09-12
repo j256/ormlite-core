@@ -138,7 +138,7 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 			} else {
 				sb.append(',');
 			}
-			clause.appendSql(databaseType, sb, argList);
+			clause.appendSql(databaseType, null, sb, argList);
 		}
 	}
 

@@ -52,20 +52,20 @@ public class ManyClause implements Clause, NeedsFutureClause {
 		this.operation = operation;
 	}
 
-	public void appendSql(DatabaseType databaseType, StringBuilder sb, List<ArgumentHolder> selectArgList)
+	public void appendSql(DatabaseType databaseType, String tableName, StringBuilder sb, List<ArgumentHolder> selectArgList)
 			throws SQLException {
 		sb.append("(");
-		first.appendSql(databaseType, sb, selectArgList);
+		first.appendSql(databaseType, tableName, sb, selectArgList);
 		if (second != null) {
 			sb.append(operation);
 			sb.append(' ');
-			second.appendSql(databaseType, sb, selectArgList);
+			second.appendSql(databaseType, tableName, sb, selectArgList);
 		}
 		if (others != null) {
 			for (int i = startOthersAt; i < others.length; i++) {
 				sb.append(operation);
 				sb.append(' ');
-				others[i].appendSql(databaseType, sb, selectArgList);
+				others[i].appendSql(databaseType, tableName, sb, selectArgList);
 			}
 		}
 		sb.append(") ");

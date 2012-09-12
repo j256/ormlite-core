@@ -27,7 +27,7 @@ public class NotTest extends BaseCoreStmtTest {
 			public String getColumnName() {
 				return null;
 			}
-			public void appendSql(DatabaseType databaseType, StringBuilder sb, List<ArgumentHolder> argList) {
+			public void appendSql(DatabaseType databaseType, String tableName, StringBuilder sb, List<ArgumentHolder> argList) {
 			}
 		};
 		not.setMissingClause(clause);
@@ -37,7 +37,7 @@ public class NotTest extends BaseCoreStmtTest {
 	@Test(expected = IllegalStateException.class)
 	public void testNoClause() throws Exception {
 		Not not = new Not();
-		not.appendSql(databaseType, new StringBuilder(), new ArrayList<ArgumentHolder>());
+		not.appendSql(databaseType, null, new StringBuilder(), new ArrayList<ArgumentHolder>());
 	}
 
 	@Test(expected = IllegalArgumentException.class)

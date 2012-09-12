@@ -21,7 +21,7 @@ public class Exists implements Clause {
 		this.subQueryBuilder = subQueryBuilder;
 	}
 
-	public void appendSql(DatabaseType databaseType, StringBuilder sb, List<ArgumentHolder> argList)
+	public void appendSql(DatabaseType databaseType, String tableName, StringBuilder sb, List<ArgumentHolder> argList)
 			throws SQLException {
 		sb.append("EXISTS (");
 		subQueryBuilder.appendStatementString(sb, argList);

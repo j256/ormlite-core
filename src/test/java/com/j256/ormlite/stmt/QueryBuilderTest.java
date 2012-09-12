@@ -2,6 +2,7 @@ package com.j256.ormlite.stmt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -444,6 +445,150 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		sb.query();
 	}
 
+	@Test
+	public void testSimpleJoin() throws Exception {
+		Dao<Bar, Integer> barDao = createDao(Bar.class, true);
+		Dao<Baz, Integer> bazDao = createDao(Baz.class, true);
+
+		Bar bar1 = new Bar();
+		bar1.val = 2234;
+		assertEquals(1, barDao.create(bar1));
+		Bar bar2 = new Bar();
+		bar2.val = 324322234;
+		assertEquals(1, barDao.create(bar2));
+
+		Baz baz1 = new Baz();
+		baz1.bar = bar1;
+		assertEquals(1, bazDao.create(baz1));
+		Baz baz2 = new Baz();
+		baz2.bar = bar2;
+		assertEquals(1, bazDao.create(baz2));
+
+		QueryBuilder<Bar, Integer> barQb = barDao.queryBuilder();
+		barQb.where().eq(Bar.VAL_FIELD, bar1.val);
+		List<Baz> results = bazDao.queryBuilder().query();
+		assertEquals(2, results.size());
+		results = bazDao.queryBuilder().join(barQb).query();
+		assertEquals(1, results.size());
+		assertEquals(bar1.id, results.get(0).bar.id);
+	}
+
+	@Test
+	public void testReverseJoin() throws Exception {
+		Dao<Bar, Integer> barDao = createDao(Bar.class, true);
+		Dao<Baz, Integer> bazDao = createDao(Baz.class, true);
+
+		Bar bar1 = new Bar();
+		bar1.val = 2234;
+		assertEquals(1, barDao.create(bar1));
+		Bar bar2 = new Bar();
+		bar2.val = 324322234;
+		assertEquals(1, barDao.create(bar2));
+
+		Baz baz1 = new Baz();
+		baz1.bar = bar1;
+		assertEquals(1, bazDao.create(baz1));
+		Baz baz2 = new Baz();
+		baz2.bar = bar2;
+		assertEquals(1, bazDao.create(baz2));
+
+		QueryBuilder<Baz, Integer> bazQb = bazDao.queryBuilder();
+		bazQb.where().eq(Baz.ID_FIELD, baz1.id);
+		List<Bar> results = barDao.queryBuilder().query();
+		assertEquals(2, results.size());
+		results = barDao.queryBuilder().join(bazQb).query();
+		assertEquals(1, results.size());
+		assertEquals(bar1.val, results.get(0).val);
+	}
+
+	@Test
+	public void testJoinDoubleWhere() throws Exception {
+		Dao<Bar, Integer> barDao = createDao(Bar.class, true);
+		Dao<Baz, Integer> bazDao = createDao(Baz.class, true);
+
+		Bar bar1 = new Bar();
+		bar1.val = 2234;
+		assertEquals(1, barDao.create(bar1));
+		Bar bar2 = new Bar();
+		bar2.val = 324322234;
+		assertEquals(1, barDao.create(bar2));
+
+		Baz baz1 = new Baz();
+		baz1.bar = bar1;
+		assertEquals(1, bazDao.create(baz1));
+		Baz baz2 = new Baz();
+		// both have bar1
+		baz2.bar = bar1;
+		assertEquals(1, bazDao.create(baz2));
+
+		QueryBuilder<Bar, Integer> barQb = barDao.queryBuilder();
+		barQb.where().eq(Bar.VAL_FIELD, bar1.val);
+		QueryBuilder<Baz, Integer> bazQb = bazDao.queryBuilder();
+		bazQb.where().eq(Baz.ID_FIELD, baz1.id);
+		List<Baz> results = bazQb.join(barQb).query();
+		assertNotNull(results);
+		assertEquals(1, results.size());
+		assertEquals(bar1.id, results.get(0).bar.id);
+	}
+
+	@Test
+	public void testJoinOrder() throws Exception {
+		Dao<Bar, Integer> barDao = createDao(Bar.class, true);
+		Dao<Baz, Integer> bazDao = createDao(Baz.class, true);
+
+		Bar bar1 = new Bar();
+		bar1.val = 2234;
+		assertEquals(1, barDao.create(bar1));
+		Bar bar2 = new Bar();
+		bar2.val = 324322234;
+		assertEquals(1, barDao.create(bar2));
+
+		Baz baz1 = new Baz();
+		baz1.bar = bar1;
+		assertEquals(1, bazDao.create(baz1));
+		Baz baz2 = new Baz();
+		baz2.bar = bar2;
+		assertEquals(1, bazDao.create(baz2));
+
+		QueryBuilder<Bar, Integer> barQb = barDao.queryBuilder();
+		barQb.where().eq(Bar.VAL_FIELD, bar1.val);
+		barQb.orderBy(Bar.ID_FIELD, true);
+		List<Baz> results = bazDao.queryBuilder().query();
+		assertEquals(2, results.size());
+		results = bazDao.queryBuilder().orderBy(Baz.ID_FIELD, true).join(barQb).query();
+		assertEquals(1, results.size());
+		assertEquals(bar1.id, results.get(0).bar.id);
+	}
+
+	@Test
+	public void testJoinGroup() throws Exception {
+		Dao<Bar, Integer> barDao = createDao(Bar.class, true);
+		Dao<Baz, Integer> bazDao = createDao(Baz.class, true);
+
+		Bar bar1 = new Bar();
+		bar1.val = 2234;
+		assertEquals(1, barDao.create(bar1));
+		Bar bar2 = new Bar();
+		bar2.val = 324322234;
+		assertEquals(1, barDao.create(bar2));
+
+		Baz baz1 = new Baz();
+		baz1.bar = bar1;
+		assertEquals(1, bazDao.create(baz1));
+		Baz baz2 = new Baz();
+		baz2.bar = bar2;
+		assertEquals(1, bazDao.create(baz2));
+
+		QueryBuilder<Bar, Integer> barQb = barDao.queryBuilder();
+		barQb.where().eq(Bar.VAL_FIELD, bar1.val);
+		barQb.groupBy(Bar.ID_FIELD);
+		List<Baz> results = bazDao.queryBuilder().query();
+		assertEquals(2, results.size());
+		results = bazDao.queryBuilder().groupBy(Baz.ID_FIELD).join(barQb).query();
+		assertEquals(1, results.size());
+		assertEquals(bar1.id, results.get(0).bar.id);
+	}
+
 	/* ======================================================================================================== */
 
 	private static class LimitInline extends BaseDatabaseType {
@@ -459,12 +604,11 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		}
 	}
 
-	private static class Bar {
+	protected static class Bar {
 		public static final String ID_FIELD = "id";
 		public static final String VAL_FIELD = "val";
 		@DatabaseField(generatedId = true, columnName = ID_FIELD)
 		int id;
-		@SuppressWarnings("unused")
 		@DatabaseField(columnName = VAL_FIELD)
 		int val;
 		public Bar() {
@@ -475,8 +619,9 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 	}
 
 	protected static class Baz {
+		public static final String ID_FIELD = "id";
 		public static final String BAR_FIELD = "bar";
-		@DatabaseField(generatedId = true)
+		@DatabaseField(generatedId = true, columnName = ID_FIELD)
 		int id;
 		@DatabaseField(foreign = true, columnName = BAR_FIELD)
 		Bar bar;

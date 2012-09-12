@@ -16,6 +16,6 @@ public interface Clause {
 	/**
 	 * Add to the string-builder the appropriate SQL for this clause.
 	 */
-	public void appendSql(DatabaseType databaseType, StringBuilder sb, List<ArgumentHolder> argList)
+	public void appendSql(DatabaseType databaseType, String tableName, StringBuilder sb, List<ArgumentHolder> argList)
 			throws SQLException;
 }

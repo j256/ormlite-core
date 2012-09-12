@@ -34,19 +34,24 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	private final FieldType idField;
 	private FieldType[] resultFieldTypes;
 
-	private boolean distinct = false;
+	private boolean distinct;
 	private boolean selectIdColumn = true;
-	private List<String> selectColumnList = null;
-	private List<String> selectRawList = null;
-	private List<OrderBy> orderByList = null;
-	private String orderByRaw = null;
-	private List<String> groupByList = null;
-	private String groupByRaw = null;
-	private boolean isInnerQuery = false;
-	private boolean countOf = false;
-	private String having = null;
-	private Long limit = null;
-	private Long offset = null;
+	private List<String> selectColumnList;
+	private List<String> selectRawList;
+	private List<OrderBy> orderByList;
+	private String orderByRaw;
+	private List<String> groupByList;
+	private String groupByRaw;
+	private boolean isInnerQuery;
+	private boolean countOf;
+	private String having;
+	private Long limit;
+	private Long offset;
+	private String joinType;
+	private QueryBuilder<?, ?> joinedQueryBuilder;
+	private FieldType localJoinedField;
+	private FieldType remoteJoinedField;
+
 	// NOTE: anything added here should be added to the clear() method below
 
 	public QueryBuilder(DatabaseType databaseType, TableInfo<T, ID> tableInfo, Dao<T, ID> dao) {
@@ -268,6 +273,33 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	/**
+	 * Join with another query builder. This will add into the SQL something close to " INNER JOIN other-table ...".
+	 * Either the object associated with the current QueryBuilder or the argument QueryBuilder must have a foreign field
+	 * of the other one. An exception will be thrown otherwise.
+	 */
+	public QueryBuilder<T, ID> join(QueryBuilder<?, ?> joinedQueryBuilder) throws SQLException {
+		joinType = "INNER";
+		this.joinedQueryBuilder = joinedQueryBuilder;
+		matchJoinedFields(joinedQueryBuilder);
+		return this;
+	}
+
+	/**
+	 * Same as {@link #innerJoin(QueryBuilder)} but it will use "LEFT JOIN" instead.
+	 * 
+	 * See: <a href="http://www.w3schools.com/sql/sql_join_left.asp" >LEFT JOIN SQL docs</a>
+	 * 
+	 * NOTE: RIGHT and FULL JOIN SQL commands are not supported because we are only returning objects from the "left"
+	 * table.
+	 */
+	public QueryBuilder<T, ID> leftJoin(QueryBuilder<?, ?> joinedQueryBuilder) throws SQLException {
+		joinType = "LEFT";
+		this.joinedQueryBuilder = joinedQueryBuilder;
+		matchJoinedFields(joinedQueryBuilder);
+		return this;
+	}
+
+	/**
 	 * A short cut to {@link Dao#query(PreparedQuery)}.
 	 */
 	public List<T> query() throws SQLException {
@@ -335,11 +367,28 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		sb.append("FROM ");
 		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
 		sb.append(' ');
+		if (joinedQueryBuilder != null) {
+			appendJoinSql(sb, localJoinedField, remoteJoinedField);
+		}
 	}
 
 	@Override
 	protected FieldType[] getResultFieldTypes() {
 		return resultFieldTypes;
+	}
+
+	@Override
+	protected void appendWhereStatement(StringBuilder sb, List<ArgumentHolder> argList, Where<?, ?> where,
+			String tableName, boolean first) throws SQLException {
+		boolean joinedFirst = true;
+		if (this.where != null) {
+			super.appendWhereStatement(sb, argList, this.where, (joinedQueryBuilder == null ? null : this.tableName),
+					joinedFirst);
+			joinedFirst = false;
+		}
+		if (joinedQueryBuilder != null && joinedQueryBuilder.where != null) {
+			super.appendWhereStatement(sb, argList, joinedQueryBuilder.where, joinedQueryBuilder.tableName, joinedFirst);
+		}
 	}
 
 	@Override
@@ -352,6 +401,51 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			appendLimit(sb);
 		}
 		appendOffset(sb);
+	}
+
+	@Override
+	protected boolean shouldPrependTableNameToColumns() {
+		return joinedQueryBuilder != null;
+	}
+
+	/**
+	 * Match up our joined fields so we can throw a nice exception immediately if you can't join with this type.
+	 */
+	private void matchJoinedFields(QueryBuilder<?, ?> joinedQueryBuilder) throws SQLException {
+		for (FieldType fieldType : tableInfo.getFieldTypes()) {
+			// if this is a foreign field and its foreign-id field is the same as the other's id
+			FieldType foreignIdField = fieldType.getForeignIdField();
+			if (fieldType.isForeign() && foreignIdField == joinedQueryBuilder.tableInfo.getIdField()) {
+				localJoinedField = fieldType;
+				remoteJoinedField = foreignIdField;
+				return;
+			}
+		}
+		// if this other field is a foreign field and its foreign-id field is our id
+		for (FieldType fieldType : joinedQueryBuilder.tableInfo.getFieldTypes()) {
+			if (fieldType.isForeign() && fieldType.getForeignIdField() == idField) {
+				localJoinedField = idField;
+				remoteJoinedField = fieldType;
+				return;
+			}
+		}
+
+		throw new SQLException("Could not find a foreign " + tableInfo.getDataClass() + " field in "
+				+ joinedQueryBuilder.tableInfo.getDataClass() + " or vice versa");
+	}
+
+	private void appendJoinSql(StringBuilder sb, FieldType localField, FieldType joinedField) {
+		sb.append(joinType).append(" JOIN ");
+		databaseType.appendEscapedEntityName(sb, joinedQueryBuilder.tableName);
+		sb.append(" ON ");
+		databaseType.appendEscapedEntityName(sb, tableName);
+		sb.append('.');
+		databaseType.appendEscapedEntityName(sb, localField.getColumnName());
+		sb.append(" = ");
+		databaseType.appendEscapedEntityName(sb, joinedQueryBuilder.tableName);
+		sb.append('.');
+		databaseType.appendEscapedEntityName(sb, joinedField.getColumnName());
+		sb.append(' ');
 	}
 
 	private void addSelectColumnToList(String columnName) {
@@ -375,6 +469,10 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	private void appendColumns(StringBuilder sb) {
 		// if no columns were specified then * is the default
 		if (selectColumnList == null) {
+			if (joinedQueryBuilder != null) {
+				databaseType.appendEscapedEntityName(sb, tableName);
+				sb.append('.');
+			}
 			sb.append("* ");
 			resultFieldTypes = tableInfo.getFieldTypes();
 			return;
@@ -422,7 +520,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	private void appendFieldColumnName(StringBuilder sb, FieldType fieldType, List<FieldType> fieldTypeList) {
-		databaseType.appendEscapedEntityName(sb, fieldType.getColumnName());
+		appendColumnName(sb, fieldType.getColumnName());
 		if (fieldTypeList != null) {
 			fieldTypeList.add(fieldType);
 		}
@@ -448,46 +546,78 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	private void appendGroupBys(StringBuilder sb) {
-		if ((groupByList == null || groupByList.isEmpty()) && groupByRaw == null) {
-			return;
+		boolean first = true;
+		if (hasGroupStuff(this)) {
+			appendGroupBys(sb, this, first);
+			first = false;
 		}
+		if (joinedQueryBuilder != null && hasGroupStuff(joinedQueryBuilder)) {
+			appendGroupBys(sb, joinedQueryBuilder, first);
+			first = false;
+		}
+	}
 
-		sb.append("GROUP BY ");
+	private boolean hasGroupStuff(QueryBuilder<?, ?> queryBuilder) {
+		return ((queryBuilder.groupByList != null && !queryBuilder.groupByList.isEmpty()) || queryBuilder.groupByRaw != null);
+	}
+
+	private void appendGroupBys(StringBuilder sb, QueryBuilder<?, ?> queryBuilder, boolean first) {
+		if (first) {
+			sb.append("GROUP BY ");
+		}
 		if (groupByRaw != null) {
+			if (!first) {
+				sb.append(',');
+			}
 			sb.append(groupByRaw);
 		} else {
-			boolean first = true;
 			for (String columnName : groupByList) {
 				if (first) {
 					first = false;
 				} else {
 					sb.append(',');
 				}
-				databaseType.appendEscapedEntityName(sb, columnName);
+				appendColumnName(sb, columnName);
 			}
 		}
 		sb.append(' ');
 	}
 
 	private void appendOrderBys(StringBuilder sb) {
-		if ((orderByList == null || orderByList.isEmpty()) && orderByRaw == null) {
-			return;
+		boolean first = true;
+		if (hasOrderStuff(this)) {
+			appendOrderBys(sb, this, first);
+			first = false;
 		}
+		if (joinedQueryBuilder != null && hasOrderStuff(joinedQueryBuilder)) {
+			appendOrderBys(sb, joinedQueryBuilder, first);
+			first = false;
+		}
+	}
 
-		sb.append("ORDER BY ");
+	private boolean hasOrderStuff(QueryBuilder<?, ?> queryBuilder) {
+		return ((queryBuilder.orderByList != null && !queryBuilder.orderByList.isEmpty()) || queryBuilder.orderByRaw != null);
+	}
+
+	private void appendOrderBys(StringBuilder sb, QueryBuilder<?, ?> queryBuilder, boolean first) {
+		if (first) {
+			sb.append("ORDER BY ");
+		}
 		if (orderByRaw != null) {
+			if (!first) {
+				sb.append(',');
+			}
 			sb.append(orderByRaw);
 		} else {
-			boolean first = true;
 			for (OrderBy orderBy : orderByList) {
 				if (first) {
 					first = false;
 				} else {
 					sb.append(',');
 				}
-				String columnName = orderBy.getColumnName();
-				databaseType.appendEscapedEntityName(sb, columnName);
+				appendColumnName(sb, orderBy.getColumnName());
 				if (orderBy.isAscending()) {
+					// here for documentation purposes, ASC is the default
 					// sb.append(" ASC");
 				} else {
 					sb.append(" DESC");
@@ -495,6 +625,14 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			}
 		}
 		sb.append(' ');
+	}
+
+	private void appendColumnName(StringBuilder sb, String columnName) {
+		if (joinedQueryBuilder != null) {
+			databaseType.appendEscapedEntityName(sb, tableName);
+			sb.append('.');
+		}
+		databaseType.appendEscapedEntityName(sb, columnName);
 	}
 
 	private void appendHaving(StringBuilder sb) {

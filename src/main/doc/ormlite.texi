@@ -1322,9 +1322,6 @@ be of type @code{DATE_STRING} to have the dates match in the internal date forma
 private Date date;
 @end example
 
-@DatabaseField(dataType = DataType.DATE_STRING)
-Date date;
-
 @cindex Android SQLite database
 @item Android SQLite
 
@@ -1975,7 +1972,7 @@ use the @code{queryRawValue(...)} method:
 long maxUnits = orderDao.queryRaw("select max(units) from orders");
 @end example
 
-@raw query object[]
+@cindex raw query object[]
 If some of your fields cannot be appropriately mapped to strings, you can also return the fields as an @code{Object[]} if you
 pass in the types of the resulting columns.  For example:
 
@@ -2382,6 +2379,7 @@ object for the DAO with which you can construct custom queries to return a sub-s
 * QueryBuilder Capabilities::   Description of the various QueryBuilder methods.
 * Where Capabilities::          Description of the various WHERE methods.
 * Select Arguments::            Using arguments to queries.
+* Join Queries::                Explaining how to use JOIN queries.
 @end menu
 
 @c ----------------------------------------------------------------
@@ -2619,6 +2617,23 @@ Add a raw SQL "HAVING" clause to the SQL query statement. This allows you to app
 matching has been completed.  This is usually done with aggregate functions.  The SQL argument should not include the
 "HAVING" string.
 
+@cindex join query
+@cindex inner join query
+@item join(QueryBuilder joinedQueryBuilder)
+
+Join with another query builder. This will add into the SQL something close to "INNER JOIN other-table ...".
+Either the object associated with the current query builder or the argument query builder @emph{must} have a foreign field
+of the other one. An exception will be thrown otherwise.
+
+@cindex left join query
+@item leftJoin(QueryBuilder joinedQueryBuilder)
+
+Same as @code{join(QueryBuilder)} but it will use "LEFT JOIN" instead.  See:
+@uref{http://www.w3schools.com/sql/sql_join_left.asp, LEFT JOIN SQL documentation}.
+
+@emph{NOTE:} @code{RIGHT} and @code{FULL JOIN} SQL commands are not supported because we are only returning objects from
+the "left" table.
+
 @cindex limit
 @item limit(Integer maxRows)
 
@@ -2810,7 +2825,7 @@ Add a IN clause which makes sure the column is equal-to one of the objects passe
 
 Add a IN clause which makes sure the column is in one of the columns returned from a sub-query inside of parenthesis.
 The @code{QueryBuilder} must return 1 and only one column which can be set with the @code{QueryBuilder.selectColumns(String...)}
-method calls. That 1 argument must match the SQL type of the column-name passed to this method.
+method calls. That 1 argument must match the SQL type of the column-name passed to this method.  See also @ref{Join Queries}.
 
 @emph{NOTE:} The sub-query will be prepared at the same time that the outside query is.
 
@@ -2874,7 +2889,7 @@ Same as the IN clause but negated.  Results are returned that are not in the obj
 Same as IN clause but negated.  Results are returned that are not in the variable array of objects.
 
 @cindex NOT IN sub-query, SQL
-@item in(String columnName, QueryBuilder<?, ?> subQueryBuilder)
+@item notIn(String columnName, QueryBuilder<?, ?> subQueryBuilder)
 
 Same as IN clause but negated.  Results are returned that are not in the results fromt the sub-query.
 
@@ -2976,7 +2991,45 @@ of the object does not reliably match the database form of the object -- @code{j
 a new object if you want to use a @code{SelectArg} with another column.
 
 @c ----------------------------------------------------------------
-@node Use With Android, Android Basics, Select Arguments, Top
+@node Join Queries, Use With Android, Select Arguments, Statement Builder
+@section Building Join Queries
+
+@cindex join queries, building
+@cindex inner join queries, building
+One of the newer features added to ORMLite is support for basic @code{JOIN} SQL queries.  For more information about
+how @code{JOIN} queries work see @uref{http://www.w3schools.com/Sql/sql_join.asp, JOIN documentation}.
+
+You setup a join query by building 2 @code{QueryBuilder} objects -- one in the DAO from which you are returning objects,
+and another DAO which is related to the first.  One of the objects must be a foreign field of the other object (either
+direction is supported) or the join methods will throw an exception. 
+
+For example, let's say you want to return a set of @code{Account} objects what have an @code{Order} that is larger than
+$100.  We would set it up something like the following:
+
+@example
+QueryBuilder<Order, Integer> orderQb = orderDao.queryBuilder();
+orderQb.where().ge("amount", 100.0F);
+QueryBuilder<Account, Integer> accountQb = accountDao.queryBuilder();
+// join with the order query
+List<Account> results = accountQb.join(orderQb).query();
+@end example
+
+This will return all of the @code{Account} records that have a corresponding @code{Order} that has a @code{value} field
+that is more than @code{100.0}.  Notice that none of the @code{Order} information is returned by the query -- just
+@code{Account} information is retrieved.  You could also reverse the situation and, for example, return all of the orders
+that have an account whose first-name is equal to @code{"Bob"}.
+
+ORMlite also supports the concept of @code{"LEFT JOIN"} which means, the contect of the above example, that accounts that
+have _no_ orders will also be returned.  Typically with a "normal" join, only accounts that have orders are candidates to
+be returned by the query.  ORMLite does _not_ support @code{"RIGHT JOIN"} or @code{"FULL JOIN"} since none of the "right"
+object's information is being returned by the query. 
+
+@emph{Please note} that other ORM libraries use @code{JOIN} statements to retrieve results from multiple tables to fill in
+foreign fields and foreign collections.  ORMLite does not support this feature.  You can only get results from one table using
+it.
+
+@c ----------------------------------------------------------------
+@node Use With Android, Android Basics, Join Queries, Top
 @chapter Using With Android
 
 @cindex use with Android OS

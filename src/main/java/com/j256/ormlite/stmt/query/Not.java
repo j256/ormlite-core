@@ -45,7 +45,7 @@ public class Not implements Clause, NeedsFutureClause {
 		}
 	}
 
-	public void appendSql(DatabaseType databaseType, StringBuilder sb, List<ArgumentHolder> selectArgList)
+	public void appendSql(DatabaseType databaseType, String tableName, StringBuilder sb, List<ArgumentHolder> selectArgList)
 			throws SQLException {
 		if (comparison == null && exists == null) {
 			throw new IllegalStateException("Clause has not been set in NOT operation");
@@ -53,9 +53,13 @@ public class Not implements Clause, NeedsFutureClause {
 		// this generates: (NOT 'x' = 123 )
 		if (comparison == null) {
 			sb.append("(NOT ");
-			exists.appendSql(databaseType, sb, selectArgList);
+			exists.appendSql(databaseType, tableName, sb, selectArgList);
 		} else {
 			sb.append("(NOT ");
+			if (tableName != null) {
+				databaseType.appendEscapedEntityName(sb, tableName);
+				sb.append('.');
+			}
 			databaseType.appendEscapedEntityName(sb, comparison.getColumnName());
 			sb.append(' ');
 			comparison.appendOperation(sb);

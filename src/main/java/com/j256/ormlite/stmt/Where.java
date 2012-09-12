@@ -514,14 +514,14 @@ public class Where<T, ID> {
 	 */
 	public String getStatement() throws SQLException {
 		StringBuilder sb = new StringBuilder();
-		appendSql(sb, new ArrayList<ArgumentHolder>());
+		appendSql(null, sb, new ArrayList<ArgumentHolder>());
 		return sb.toString();
 	}
 
 	/**
 	 * Used by the internal classes to add the where SQL to the {@link StringBuilder}.
 	 */
-	void appendSql(StringBuilder sb, List<ArgumentHolder> columnArgList) throws SQLException {
+	void appendSql(String tableName, StringBuilder sb, List<ArgumentHolder> columnArgList) throws SQLException {
 		if (clauseStackLevel == 0) {
 			throw new IllegalStateException("No where clauses defined.  Did you miss a where operation?");
 		}
@@ -531,7 +531,7 @@ public class Where<T, ID> {
 		}
 
 		// we don't pop here because we may want to run the query multiple times
-		peek().appendSql(databaseType, sb, columnArgList);
+		peek().appendSql(databaseType, tableName, sb, columnArgList);
 	}
 
 	@Override
