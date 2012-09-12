@@ -856,6 +856,10 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		return tableInfo;
 	}
 
+	public ConnectionSource getConnectionSource() {
+		return connectionSource;
+	}
+
 	public void setConnectionSource(ConnectionSource connectionSource) {
 		this.connectionSource = connectionSource;
 	}

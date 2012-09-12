@@ -771,6 +771,10 @@ public class RuntimeExceptionDao<T, ID> {
 		return dao.getRawRowMapper();
 	}
 
+	public ConnectionSource getConnectionSource() {
+		return dao.getConnectionSource();
+	}
+
 	private void logMessage(Exception e, String message) {
 		logger.log(LOG_LEVEL, e, message);
 	}

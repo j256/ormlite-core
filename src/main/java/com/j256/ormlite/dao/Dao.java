@@ -20,6 +20,7 @@ import com.j256.ormlite.stmt.PreparedUpdate;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.UpdateBuilder;
+import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.ObjectFactory;
@@ -741,6 +742,11 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * </p>
 	 */
 	public void rollBack(DatabaseConnection connection) throws SQLException;
+
+	/**
+	 * Return the associated ConnectionSource or null if none set on the DAO yet.
+	 */
+	public ConnectionSource getConnectionSource();
 
 	/**
 	 * Set an object factory so we can wire in controls over an object when it is constructed. Set to null to disable
