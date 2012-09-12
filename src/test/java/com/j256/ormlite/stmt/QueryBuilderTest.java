@@ -589,6 +589,37 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(bar1.id, results.get(0).bar.id);
 	}
 
+	@Test
+	public void testLeftJoin() throws Exception {
+		Dao<Bar, Integer> barDao = createDao(Bar.class, true);
+		Dao<Baz, Integer> bazDao = createDao(Baz.class, true);
+
+		Bar bar1 = new Bar();
+		bar1.val = 2234;
+		assertEquals(1, barDao.create(bar1));
+		Bar bar2 = new Bar();
+		bar2.val = 324322234;
+		assertEquals(1, barDao.create(bar2));
+
+		Baz baz1 = new Baz();
+		baz1.bar = bar1;
+		assertEquals(1, bazDao.create(baz1));
+		Baz baz2 = new Baz();
+		baz2.bar = bar2;
+		assertEquals(1, bazDao.create(baz2));
+		Baz baz3 = new Baz();
+		// no bar
+		assertEquals(1, bazDao.create(baz3));
+
+		QueryBuilder<Bar, Integer> barQb = barDao.queryBuilder();
+		List<Baz> results = bazDao.queryBuilder().query();
+		assertEquals(3, results.size());
+		results = bazDao.queryBuilder().join(barQb).query();
+		assertEquals(2, results.size());
+		results = bazDao.queryBuilder().leftJoin(barQb).query();
+		assertEquals(3, results.size());
+	}
+
 	/* ======================================================================================================== */
 
 	private static class LimitInline extends BaseDatabaseType {

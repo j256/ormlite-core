@@ -5,6 +5,7 @@
 	* CORE: Fixed problems with java.sql.Date and Timestmp persisters.  Thanks to Mohammad Moghimi.  Bug #3534395.
 	* CORE: Added queryRawValue() method to the DAO for getting a single aggregate result.
 	* CORE: Added last() and moveAbsolute() cursor move methods to DatabaseResults.  Thanks to Andrey.
+	* CORE: Added a Dao.getConnectionSource() method to assign with the RuntimeExceptionDao.  Thanks to glenviewjeff.	
 	* ANDROID: Added support for auto-commit under Android using transactions.  Thanks to Chad Schultz.
 	* ANDROID: Added getCount() and getPosition() cursor methods AndroidDatabaseResults.  Thanks to Andrey.
 	* JDBC: Fixed some problems with the OracleDatabaseType.  Work in progress.  Thanks much to Stew.

@@ -2,6 +2,7 @@ PKG = ormlite
 DOCS = $(PKG).html $(PKG) $(PKG).pdf
 TEXI = $(PKG).texi
 REMOTE ?= doc-host
+REMOTE_DIR = remote_texi
 
 all : $(DOCS)
 
@@ -20,9 +21,9 @@ $(PKG) : $(TEXI)
 	texi2html --number --split=chapter ormlite.texi
 
 $(PKG).pdf : $(TEXI)
-	scp $(TEXI) $(REMOTE):$(PKG)
-	ssh $(REMOTE) "(cd remote_texi ; make $@)"
-	scp $(REMOTE):remote_texi/ormlite.pdf .
+	scp $(TEXI) $(REMOTE):$(REMOTE_DIR)
+	ssh $(REMOTE) "(cd $(REMOTE_DIR) ; make $@)"
+	scp $(REMOTE):$(REMOTE_DIR)/ormlite.pdf .
 
 $(PKG).info : $(TEXI)
 	rm -f $@

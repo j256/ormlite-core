@@ -3019,9 +3019,9 @@ that is more than @code{100.0}.  Notice that none of the @code{Order} informatio
 @code{Account} information is retrieved.  You could also reverse the situation and, for example, return all of the orders
 that have an account whose first-name is equal to @code{"Bob"}.
 
-ORMlite also supports the concept of @code{"LEFT JOIN"} which means, the contect of the above example, that accounts that
-have _no_ orders will also be returned.  Typically with a "normal" join, only accounts that have orders are candidates to
-be returned by the query.  ORMLite does _not_ support @code{"RIGHT JOIN"} or @code{"FULL JOIN"} since none of the "right"
+ORMlite also supports the concept of @code{"LEFT JOIN"} which means, in the context of the above example, that accounts that
+have @emph{no} orders will also be returned.  Typically with a "normal" join, only accounts that have orders are candidates to
+be returned by the query.  ORMLite does @emph{not} support @code{"RIGHT JOIN"} or @code{"FULL JOIN"} since none of the "right"
 object's information is being returned by the query. 
 
 @emph{Please note} that other ORM libraries use @code{JOIN} statements to retrieve results from multiple tables to fill in
