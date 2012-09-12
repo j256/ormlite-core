@@ -45,6 +45,13 @@ public interface DatabaseResults {
 	public boolean next() throws SQLException;
 
 	/**
+	 * Moves to the last result. This may not work with the default iterator depending on your database.
+	 * 
+	 * @return true if there are more results to be processed.
+	 */
+	public boolean last() throws SQLException;
+
+	/**
 	 * Moves forward (positive value) or backwards (negative value) the list of results. moveRelative(1) should be the
 	 * same as {@link #next()}. moveRelative(-1) is the same as {@link #previous} result. This may not work with the
 	 * default iterator depending on your database.
@@ -54,6 +61,16 @@ public interface DatabaseResults {
 	 * @return true if there are more results to be processed.
 	 */
 	public boolean moveRelative(int offset) throws SQLException;
+
+	/**
+	 * Moves to an absolute position in the list of results. This may not work with the default iterator depending on
+	 * your database.
+	 * 
+	 * @param position
+	 *            Row number in the result list to move to.
+	 * @return true if there are more results to be processed.
+	 */
+	public boolean moveAbsolute(int position) throws SQLException;
 
 	/**
 	 * Return the column index associated with the column name.

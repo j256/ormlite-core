@@ -1,10 +1,14 @@
 4.42: 7/XX/2012 (svn rYYYY)
+	* CORE: Added basic INNER and LEFT JOIN capabilities for queries only.  Finally.  Work in progress.
 	* CORE: Added ObjectFactory support on the DAO to better support Guice and other wiring.  Thanks to glenviewjeff.
 	* CORE: Fixed a bug in comparing superclasses of the field with the field.  Thanks to glenviewjeff.  Bug #3538777.
 	* CORE: Fixed problems with java.sql.Date and Timestmp persisters.  Thanks to Mohammad Moghimi.  Bug #3534395.
 	* CORE: Added queryRawValue() method to the DAO for getting a single aggregate result.
+	* CORE: Added last() and moveAbsolute() cursor move methods to DatabaseResults.  Thanks to Andrey.
 	* ANDROID: Added support for auto-commit under Android using transactions.  Thanks to Chad Schultz.
-	* JDBC: Fixed some problems with the OracleDatabaseType.  Thanks much to Stew.
+	* ANDROID: Added getCount() and getPosition() cursor methods AndroidDatabaseResults.  Thanks to Andrey.
+	* JDBC: Fixed some problems with the OracleDatabaseType.  Work in progress.  Thanks much to Stew.
+	* JDBC: Added OTHER to the SqlType enum for custom persisters.  Thanks much to Mark Rogers.
 
 4.41: 6/6/2012 (svn r2575)
 	* CORE: Added java.sql.Date and java.sql.Timestmp data persister types.  java.util.Date is still recommended.
