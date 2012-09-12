@@ -46,6 +46,10 @@
 - look into migrating the foreign collections to use AbstractCollection as a simplification
 	- how about AbstractSet?
 
+- look into composite keys with multiple fields?
+	- can we simulate it somehow?
+	- maybe just under the covers to the unique-combo index and a generated-id?
+
 - the Foreign Collections have an addAll method which takes a List type:
 	- DAO's could have a createAll/createOrUpdateAll which would use the batch tasks
 

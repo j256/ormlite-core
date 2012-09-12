@@ -2694,7 +2694,7 @@ Same as the above but with an iterable (such as a collection) instead of a varia
 @cindex raw columns, query
 @cindex aggregate functions, query
 @cindex query for aggregate functions
-@item rawColumns(String... columns)
+@item selectRaw(String... columns)
 
 Add raw columns or aggregate functions (COUNT, MAX, ...) to the query. This will turn the query into something
 only suitable for using as a raw query.  @xref{Raw Queries}.
