@@ -27,6 +27,8 @@ public enum SqlType {
 	SERIALIZABLE,
 	BLOB,
 	BIG_DECIMAL,
+	// for other types handled by custom persisters
+	OTHER,
 	UNKNOWN,
 	// end
 	;
