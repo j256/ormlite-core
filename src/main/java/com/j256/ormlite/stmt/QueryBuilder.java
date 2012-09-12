@@ -285,7 +285,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * Same as {@link #innerJoin(QueryBuilder)} but it will use "LEFT JOIN" instead.
+	 * Similar to {@link #join(QueryBuilder)} but it will use "LEFT JOIN" instead.
 	 * 
 	 * See: <a href="http://www.w3schools.com/sql/sql_join_left.asp" >LEFT JOIN SQL docs</a>
 	 * 

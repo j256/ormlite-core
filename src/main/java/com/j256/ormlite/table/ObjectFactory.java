@@ -3,8 +3,11 @@ package com.j256.ormlite.table;
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 
+import com.j256.ormlite.dao.Dao;
+
 /**
- * Interface to support the {@link DatabaseTable#constructorFactory()} method.
+ * Interface that allows you to inject a factory class that creates objects of this class. You sert it on the Dao using:
+ * {@link Dao#setObjectFactory(ObjectFactory)}.
  * 
  * @author graywatson
  */
