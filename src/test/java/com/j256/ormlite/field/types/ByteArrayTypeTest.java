@@ -10,6 +10,7 @@ import org.junit.Test;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.table.DatabaseTable;
 
 public class ByteArrayTypeTest extends BaseTypeTest {
@@ -42,6 +43,11 @@ public class ByteArrayTypeTest extends BaseTypeTest {
 	@Test(expected = SQLException.class)
 	public void testByteArrayParseDefault() throws Exception {
 		DataType.BYTE_ARRAY.getDataPersister().parseDefaultString(null, null);
+	}
+
+	@Test
+	public void testCoverage() {
+		new ByteArrayType(SqlType.BYTE_ARRAY, new Class[0]);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

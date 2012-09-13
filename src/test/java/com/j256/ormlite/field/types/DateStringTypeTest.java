@@ -1,12 +1,14 @@
 package com.j256.ormlite.field.types;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -14,6 +16,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.DatabaseConnection;
@@ -82,9 +85,44 @@ public class DateStringTypeTest extends BaseTypeTest {
 		}
 	}
 
+	@Test
+	public void testDateStringFormat() throws Exception {
+		Dao<DateStringFormat, Object> dao = createDao(DateStringFormat.class, true);
+		DateStringFormat dateStringFormat = new DateStringFormat();
+		dateStringFormat.date = new SimpleDateFormat("yyyy-MM-dd").parse("2012-09-01");
+		assertEquals(1, dao.create(dateStringFormat));
+
+		List<DateStringFormat> results = dao.queryForAll();
+		assertEquals(1, results.size());
+		assertEquals(dateStringFormat.date, results.get(0).date);
+	}
+
+	@Test
+	public void testDateStringFormatNotDayAlign() throws Exception {
+		Dao<DateStringFormat, Object> dao = createDao(DateStringFormat.class, true);
+		DateStringFormat dateStringFormat = new DateStringFormat();
+		dateStringFormat.date = new SimpleDateFormat("yyyy-MM-dd HH").parse("2012-09-01 12");
+		assertEquals(1, dao.create(dateStringFormat));
+
+		List<DateStringFormat> results = dao.queryForAll();
+		assertEquals(1, results.size());
+		assertFalse(dateStringFormat.date.equals(results.get(0).date));
+	}
+
+	@Test
+	public void testCoverage() {
+		new DateStringType(SqlType.STRING, new Class[0]);
+	}
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalDateString {
 		@DatabaseField(columnName = DATE_COLUMN, dataType = DataType.DATE_STRING)
+		Date date;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class DateStringFormat {
+		@DatabaseField(columnName = DATE_COLUMN, dataType = DataType.DATE_STRING, format = "yyyy-MM-dd")
 		Date date;
 	}
 

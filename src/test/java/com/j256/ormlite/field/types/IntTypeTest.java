@@ -9,6 +9,7 @@ import org.junit.Test;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.table.DatabaseTable;
 
 public class IntTypeTest extends BaseTypeTest {
@@ -45,6 +46,11 @@ public class IntTypeTest extends BaseTypeTest {
 	public void testIntConvertId() {
 		int intId = 213123123;
 		assertEquals(intId, DataType.INTEGER.getDataPersister().convertIdNumber((long) intId));
+	}
+
+	@Test
+	public void testCoverage() {
+		new IntType(SqlType.INTEGER, new Class[0]);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

@@ -10,13 +10,14 @@ import org.junit.Test;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTable;
 
-public class EnumIntTypeTest extends BaseTypeTest {
+public class EnumIntegerTypeTest extends BaseTypeTest {
 
 	private static final String ENUM_COLUMN = "ourEnum";
 
@@ -78,6 +79,11 @@ public class EnumIntTypeTest extends BaseTypeTest {
 		List<EnumDefault> unknowns = dao.queryForAll();
 		assertEquals(1, unknowns.size());
 		assertEquals(OurEnum.SECOND, unknowns.get(0).ourEnum);
+	}
+
+	@Test
+	public void testCoverage() {
+		new EnumIntegerType(SqlType.INTEGER, new Class[0]);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

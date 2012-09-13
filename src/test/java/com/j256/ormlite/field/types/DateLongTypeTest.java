@@ -11,6 +11,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.table.DatabaseTable;
 
 public class DateLongTypeTest extends BaseTypeTest {
@@ -47,6 +48,11 @@ public class DateLongTypeTest extends BaseTypeTest {
 				FieldType.createFieldType(connectionSource, TABLE_NAME,
 						LocalDateLong.class.getDeclaredField(DATE_COLUMN), LocalDateLong.class);
 		DataType.DATE_LONG.getDataPersister().parseDefaultString(fieldType, "not valid long number");
+	}
+
+	@Test
+	public void testCoverage() {
+		new DateLongType(SqlType.LONG, new Class[0]);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

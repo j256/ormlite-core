@@ -620,6 +620,13 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(3, results.size());
 	}
 
+	@Test(expected = SQLException.class)
+	public void testBadJoin() throws Exception {
+		Dao<Bar, Integer> barDao = createDao(Bar.class, true);
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
+		fooDao.queryBuilder().join(barDao.queryBuilder()).query();
+	}
+
 	/* ======================================================================================================== */
 
 	private static class LimitInline extends BaseDatabaseType {

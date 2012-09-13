@@ -27,7 +27,8 @@ public class NotTest extends BaseCoreStmtTest {
 			public String getColumnName() {
 				return null;
 			}
-			public void appendSql(DatabaseType databaseType, String tableName, StringBuilder sb, List<ArgumentHolder> argList) {
+			public void appendSql(DatabaseType databaseType, String tableName, StringBuilder sb,
+					List<ArgumentHolder> argList) {
 			}
 		};
 		not.setMissingClause(clause);

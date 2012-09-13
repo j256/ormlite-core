@@ -12,6 +12,7 @@ import org.junit.Test;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.table.DatabaseTable;
 
 public class BigDecimalNumericTypeTest extends BaseTypeTest {
@@ -57,6 +58,11 @@ public class BigDecimalNumericTypeTest extends BaseTypeTest {
 		assertEquals(1, notDao.create(notFoo));
 
 		dao.queryForAll();
+	}
+
+	@Test
+	public void testCoverage() {
+		new BigDecimalNumericType(SqlType.BIG_DECIMAL, new Class[0]);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

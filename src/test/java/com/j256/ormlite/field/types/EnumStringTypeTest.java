@@ -11,6 +11,7 @@ import org.junit.Test;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.DatabaseConnection;
@@ -101,6 +102,18 @@ public class EnumStringTypeTest extends BaseTypeTest {
 		assertEquals(OurEnum.SECOND, unknowns.get(0).ourEnum);
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void testNotEnum() throws Exception {
+		createDao(NotEnum.class, true);
+	}
+
+	@Test
+	public void testCoverage() {
+		new EnumStringType(SqlType.STRING, new Class[0]);
+	}
+
+	/* ================================================================================ */
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalEnumString {
 		@DatabaseField(columnName = ENUM_COLUMN)
@@ -116,6 +129,12 @@ public class EnumStringTypeTest extends BaseTypeTest {
 	protected static class EnumDefault {
 		@DatabaseField(defaultValue = "SECOND")
 		OurEnum ourEnum;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class NotEnum {
+		@DatabaseField(dataType = DataType.ENUM_STRING)
+		String notEnum;
 	}
 
 	private enum OurEnum {

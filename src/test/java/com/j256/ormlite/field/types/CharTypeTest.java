@@ -7,6 +7,7 @@ import org.junit.Test;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.table.DatabaseTable;
 
 public class CharTypeTest extends BaseTypeTest {
@@ -32,6 +33,11 @@ public class CharTypeTest extends BaseTypeTest {
 		PostgresCharNull nullChar = new PostgresCharNull();
 		nullChar.charField = '\0';
 		assertEquals(1, dao.create(nullChar));
+	}
+
+	@Test
+	public void testCoverage() {
+		new CharType(SqlType.CHAR, new Class[0]);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

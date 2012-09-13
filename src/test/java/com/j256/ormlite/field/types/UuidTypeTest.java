@@ -12,6 +12,7 @@ import org.junit.Test;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.table.DatabaseTable;
 
 public class UuidTypeTest extends BaseTypeTest {
@@ -57,6 +58,11 @@ public class UuidTypeTest extends BaseTypeTest {
 
 		Dao<UuidClass, Integer> uuidDao = createDao(UuidClass.class, false);
 		uuidDao.queryForId(uuidString.id);
+	}
+
+	@Test
+	public void testCoverage() {
+		new UuidType(SqlType.STRING, new Class[0]);
 	}
 
 	private static final String UUID_FILE_NAME = "uuid";

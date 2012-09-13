@@ -9,6 +9,7 @@ import org.junit.Test;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.table.DatabaseTable;
 
 public class DoubleTypeTest extends BaseTypeTest {
@@ -38,6 +39,11 @@ public class DoubleTypeTest extends BaseTypeTest {
 		List<LocalDouble> all = dao.queryForAll();
 		assertEquals(1, all.size());
 		assertEquals(0.0F, all.get(0).doubleField, 0.0F);
+	}
+
+	@Test
+	public void testCoverage() {
+		new DoubleType(SqlType.DOUBLE, new Class[0]);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

@@ -9,6 +9,7 @@ import org.junit.Test;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.table.DatabaseTable;
 
 public class LongTypeTest extends BaseTypeTest {
@@ -44,6 +45,11 @@ public class LongTypeTest extends BaseTypeTest {
 	public void testLongConvertId() {
 		long longId = 1312313123131L;
 		assertEquals(longId, DataType.LONG.getDataPersister().convertIdNumber(longId));
+	}
+
+	@Test
+	public void testCoverage() {
+		new LongType(SqlType.LONG, new Class[0]);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

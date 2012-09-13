@@ -10,6 +10,7 @@ import org.junit.Test;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.table.DatabaseTable;
 
 public class BooleanTypeTest extends BaseTypeTest {
@@ -39,6 +40,11 @@ public class BooleanTypeTest extends BaseTypeTest {
 		List<LocalBoolean> all = dao.queryForAll();
 		assertEquals(1, all.size());
 		assertFalse(all.get(0).bool);
+	}
+
+	@Test
+	public void testCoverage() {
+		new BooleanType(SqlType.BOOLEAN, new Class[0]);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

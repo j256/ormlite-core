@@ -7,6 +7,7 @@ import org.junit.Test;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.table.DatabaseTable;
 
 public class StringBytesTypeTest extends BaseTypeTest {
@@ -46,6 +47,11 @@ public class StringBytesTypeTest extends BaseTypeTest {
 		assertEquals(1, dao.create(foo));
 		testType(dao, foo, clazz, null, null, null, null, DataType.STRING_BYTES, STRING_COLUMN, false, false, true,
 				false, true, false, true, false);
+	}
+
+	@Test
+	public void testCoverage() {
+		new StringBytesType(SqlType.BYTE_ARRAY, new Class[0]);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

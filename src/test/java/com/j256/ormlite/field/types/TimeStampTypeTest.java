@@ -13,6 +13,8 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.field.SqlType;
+import com.j256.ormlite.field.types.DateTypeTest.LocalDate;
 import com.j256.ormlite.table.DatabaseTable;
 
 public class TimeStampTypeTest extends BaseTypeTest {
@@ -54,6 +56,23 @@ public class TimeStampTypeTest extends BaseTypeTest {
 				FieldType.createFieldType(connectionSource, TABLE_NAME,
 						LocalTimeStamp.class.getDeclaredField(TIME_STAMP_COLUMN), LocalTimeStamp.class);
 		dataType.getDataPersister().parseDefaultString(fieldType, "not valid date string");
+	}
+
+	@Test
+	public void testCoverage() {
+		new TimeStampType(SqlType.DATE, new Class[0]);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testInvalidDateField() throws Exception {
+		FieldType.createFieldType(connectionSource, TABLE_NAME, InvalidDate.class.getDeclaredField("invalidType"),
+				LocalDate.class);
+	}
+
+	@DatabaseTable
+	protected static class InvalidDate {
+		@DatabaseField(dataType = DataType.TIME_STAMP)
+		String invalidType;
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

@@ -16,6 +16,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.support.CompiledStatement;
@@ -145,6 +146,11 @@ public class SerializableTypeTest extends BaseTypeTest {
 		assertNotNull(result);
 		assertNotNull(result.serialized);
 		assertEquals(serialized3.foo, result.serialized.foo);
+	}
+
+	@Test
+	public void testCoverage() {
+		new SerializableType(SqlType.SERIALIZABLE, new Class[0]);
 	}
 
 	/* ------------------------------------------------------------------------------------ */
