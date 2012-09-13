@@ -24,6 +24,9 @@ public class ByteArrayType extends BaseDataType {
 		super(SqlType.BYTE_ARRAY, new Class<?>[0]);
 	}
 
+	/**
+	 * Here for others to subclass.
+	 */
 	protected ByteArrayType(SqlType sqlType, Class<?>[] classes) {
 		super(sqlType, classes);
 	}

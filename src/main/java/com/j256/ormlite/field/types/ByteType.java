@@ -19,6 +19,9 @@ public class ByteType extends ByteObjectType {
 		super(SqlType.BYTE, new Class<?>[] { byte.class });
 	}
 
+	/**
+	 * Here for others to subclass.
+	 */
 	protected ByteType(SqlType sqlType, Class<?>[] classes) {
 		super(sqlType, classes);
 	}

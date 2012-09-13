@@ -19,6 +19,9 @@ public class LongType extends LongObjectType {
 		super(SqlType.LONG, new Class<?>[] { long.class });
 	}
 
+	/**
+	 * Here for others to subclass.
+	 */
 	protected LongType(SqlType sqlType, Class<?>[] classes) {
 		super(sqlType, classes);
 	}

@@ -19,6 +19,9 @@ public class DoubleType extends DoubleObjectType {
 		super(SqlType.DOUBLE, new Class<?>[] { double.class });
 	}
 
+	/**
+	 * Here for others to subclass.
+	 */
 	protected DoubleType(SqlType sqlType, Class<?>[] classes) {
 		super(sqlType, classes);
 	}

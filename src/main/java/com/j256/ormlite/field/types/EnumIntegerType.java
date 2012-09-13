@@ -26,6 +26,9 @@ public class EnumIntegerType extends BaseEnumType {
 		super(SqlType.INTEGER, new Class<?>[0]);
 	}
 
+	/**
+	 * Here for others to subclass.
+	 */
 	protected EnumIntegerType(SqlType sqlType, Class<?>[] classes) {
 		super(sqlType, classes);
 	}

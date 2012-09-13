@@ -19,6 +19,9 @@ public class ShortType extends ShortObjectType {
 		super(SqlType.SHORT, new Class<?>[] { short.class });
 	}
 
+	/**
+	 * Here for others to subclass.
+	 */
 	protected ShortType(SqlType sqlType, Class<?>[] classes) {
 		super(sqlType, classes);
 	}

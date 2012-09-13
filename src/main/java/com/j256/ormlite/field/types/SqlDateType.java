@@ -29,6 +29,9 @@ public class SqlDateType extends DateType {
 		super(SqlType.DATE, new Class<?>[] { java.sql.Date.class });
 	}
 
+	/**
+	 * Here for others to subclass.
+	 */
 	protected SqlDateType(SqlType sqlType, Class<?>[] classes) {
 		super(sqlType, classes);
 	}

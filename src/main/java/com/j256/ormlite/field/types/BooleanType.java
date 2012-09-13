@@ -19,6 +19,9 @@ public class BooleanType extends BooleanObjectType {
 		super(SqlType.BOOLEAN, new Class<?>[] { boolean.class });
 	}
 
+	/**
+	 * Here for others to subclass.
+	 */
 	protected BooleanType(SqlType sqlType, Class<?>[] classes) {
 		super(sqlType, classes);
 	}

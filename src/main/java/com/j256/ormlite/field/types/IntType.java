@@ -19,6 +19,9 @@ public class IntType extends IntegerObjectType {
 		super(SqlType.INTEGER, new Class<?>[] { int.class });
 	}
 
+	/**
+	 * Here for others to subclass.
+	 */
 	protected IntType(SqlType sqlType, Class<?>[] classes) {
 		super(sqlType, classes);
 	}

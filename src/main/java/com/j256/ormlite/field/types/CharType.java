@@ -20,6 +20,9 @@ public class CharType extends CharacterObjectType {
 		super(SqlType.CHAR, new Class<?>[] { char.class });
 	}
 
+	/**
+	 * Here for others to subclass.
+	 */
 	protected CharType(SqlType sqlType, Class<?>[] classes) {
 		super(sqlType, classes);
 	}

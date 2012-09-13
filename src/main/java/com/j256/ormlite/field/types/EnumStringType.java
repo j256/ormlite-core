@@ -27,6 +27,9 @@ public class EnumStringType extends BaseEnumType {
 		super(SqlType.STRING, new Class<?>[] { Enum.class });
 	}
 
+	/**
+	 * Here for others to subclass.
+	 */
 	protected EnumStringType(SqlType sqlType, Class<?>[] classes) {
 		super(sqlType, classes);
 	}

@@ -19,6 +19,9 @@ public class FloatType extends FloatObjectType {
 		super(SqlType.FLOAT, new Class<?>[] { float.class });
 	}
 
+	/**
+	 * Here for others to subclass.
+	 */
 	protected FloatType(SqlType sqlType, Class<?>[] classes) {
 		super(sqlType, classes);
 	}

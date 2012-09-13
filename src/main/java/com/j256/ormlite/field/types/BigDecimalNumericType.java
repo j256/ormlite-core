@@ -27,6 +27,9 @@ public class BigDecimalNumericType extends BaseDataType {
 		super(SqlType.BIG_DECIMAL, new Class<?>[0]);
 	}
 
+	/**
+	 * Here for others to subclass.
+	 */
 	protected BigDecimalNumericType(SqlType sqlType, Class<?>[] classes) {
 		super(sqlType, classes);
 	}

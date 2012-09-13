@@ -19,6 +19,9 @@ public class LongStringType extends StringType {
 		super(SqlType.LONG_STRING, new Class<?>[0]);
 	}
 
+	/**
+	 * Here for others to subclass.
+	 */
 	protected LongStringType(SqlType sqlType, Class<?>[] classes) {
 		super(sqlType, classes);
 	}

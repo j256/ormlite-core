@@ -29,6 +29,9 @@ public class DateLongType extends BaseDateType {
 		super(SqlType.LONG, new Class<?>[0]);
 	}
 
+	/**
+	 * Here for others to subclass.
+	 */
 	protected DateLongType(SqlType sqlType, Class<?>[] classes) {
 		super(sqlType, classes);
 	}

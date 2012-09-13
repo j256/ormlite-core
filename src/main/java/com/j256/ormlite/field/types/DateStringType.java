@@ -31,6 +31,9 @@ public class DateStringType extends BaseDateType {
 		super(SqlType.STRING, new Class<?>[0]);
 	}
 
+	/**
+	 * Here for others to subclass.
+	 */
 	protected DateStringType(SqlType sqlType, Class<?>[] classes) {
 		super(sqlType, classes);
 	}

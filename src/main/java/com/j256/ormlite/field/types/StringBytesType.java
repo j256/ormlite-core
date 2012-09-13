@@ -27,6 +27,9 @@ public class StringBytesType extends BaseDataType {
 		super(SqlType.BYTE_ARRAY, new Class<?>[0]);
 	}
 
+	/**
+	 * Here for others to subclass.
+	 */
 	protected StringBytesType(SqlType sqlType, Class<?>[] classes) {
 		super(sqlType, classes);
 	}

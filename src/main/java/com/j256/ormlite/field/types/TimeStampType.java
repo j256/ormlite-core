@@ -22,6 +22,9 @@ public class TimeStampType extends DateType {
 		super(SqlType.DATE, new Class<?>[] { java.sql.Timestamp.class });
 	}
 
+	/**
+	 * Here for others to subclass.
+	 */
 	protected TimeStampType(SqlType sqlType, Class<?>[] classes) {
 		super(sqlType, classes);
 	}

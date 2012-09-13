@@ -36,6 +36,9 @@ public class SerializableType extends BaseDataType {
 		super(SqlType.SERIALIZABLE, new Class<?>[0]);
 	}
 
+	/**
+	 * Here for others to subclass.
+	 */
 	protected SerializableType(SqlType sqlType, Class<?>[] classes) {
 		super(sqlType, classes);
 	}
