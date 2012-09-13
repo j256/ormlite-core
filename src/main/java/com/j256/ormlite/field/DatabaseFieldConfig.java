@@ -248,14 +248,6 @@ public class DatabaseFieldConfig {
 		this.useGetSet = useGetSet;
 	}
 
-	/**
-	 * @deprecated Switch to {@link #getUnknownEnumValue()}.
-	 */
-	@Deprecated
-	public Enum<?> getUnknownEnumvalue() {
-		return unknownEnumValue;
-	}
-
 	public Enum<?> getUnknownEnumValue() {
 		return unknownEnumValue;
 	}

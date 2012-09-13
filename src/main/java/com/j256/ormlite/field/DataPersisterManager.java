@@ -41,6 +41,10 @@ public class DataPersisterManager {
 		}
 	}
 
+	private DataPersisterManager() {
+		// only for static methods
+	}
+
 	/**
 	 * Register a data type with the manager.
 	 */
