@@ -59,21 +59,7 @@ public class LocalLog implements Log {
 
 	static {
 		InputStream stream = LocalLog.class.getResourceAsStream(LOCAL_LOG_PROPERTIES_FILE);
-		List<PatternLevel> levels = null;
-		if (stream != null) {
-			try {
-				levels = configureClassLevels(stream);
-			} catch (IOException e) {
-				System.err.println("IO exception reading the log properties file '" + LOCAL_LOG_PROPERTIES_FILE + "': "
-						+ e);
-			} finally {
-				try {
-					stream.close();
-				} catch (IOException e) {
-					// ignore close exception
-				}
-			}
-		}
+		List<PatternLevel> levels = readLevelResourceFile(stream);
 		classLevels = levels;
 
 		/*
@@ -150,6 +136,28 @@ public class LocalLog implements Log {
 	 */
 	void flush() {
 		printStream.flush();
+	}
+
+	/**
+	 * Read in our levels from our configuration file.
+	 */
+	static List<PatternLevel> readLevelResourceFile(InputStream stream) {
+		List<PatternLevel> levels = null;
+		if (stream != null) {
+			try {
+				levels = configureClassLevels(stream);
+			} catch (IOException e) {
+				System.err.println("IO exception reading the log properties file '" + LOCAL_LOG_PROPERTIES_FILE + "': "
+						+ e);
+			} finally {
+				try {
+					stream.close();
+				} catch (IOException e) {
+					// ignore close exception
+				}
+			}
+		}
+		return levels;
 	}
 
 	private static List<PatternLevel> configureClassLevels(InputStream stream) throws IOException {

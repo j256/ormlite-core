@@ -3,7 +3,11 @@ package com.j256.ormlite.logger;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 
 import org.junit.Test;
 
@@ -88,4 +92,35 @@ public class LocalLogTest extends BaseLogTest {
 			logFile.delete();
 		}
 	}
+
+	@Test
+	public void testInvalidLevelsFile() {
+		StringWriter stringWriter = new StringWriter();
+		// invalid line
+		stringWriter.write("x\n");
+		// invalid level
+		stringWriter.write("com\\.j256\\.ormlite\\.stmt\\.StatementExecutor = INVALID_LEVEL\n");
+		LocalLog.readLevelResourceFile(new ByteArrayInputStream(stringWriter.toString().getBytes()));
+	}
+
+	@Test
+	public void testIoErrorsReadingLevelFile() {
+		InputStream errorStream = new InputStream() {
+			@Override
+			public int read() throws IOException {
+				throw new IOException("simulated exception");
+			}
+			@Override
+			public void close() throws IOException {
+				throw new IOException("simulated exception");
+			}
+		};
+		LocalLog.readLevelResourceFile(errorStream);
+	}
+
+	@Test
+	public void testInputStreamNull() {
+		LocalLog.readLevelResourceFile(null);
+	}
+
 }
