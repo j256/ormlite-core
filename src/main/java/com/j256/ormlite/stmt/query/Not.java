@@ -45,8 +45,8 @@ public class Not implements Clause, NeedsFutureClause {
 		}
 	}
 
-	public void appendSql(DatabaseType databaseType, String tableName, StringBuilder sb, List<ArgumentHolder> selectArgList)
-			throws SQLException {
+	public void appendSql(DatabaseType databaseType, String tableName, StringBuilder sb,
+			List<ArgumentHolder> selectArgList) throws SQLException {
 		if (comparison == null && exists == null) {
 			throw new IllegalStateException("Clause has not been set in NOT operation");
 		}
