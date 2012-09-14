@@ -75,6 +75,14 @@ public class WrappedConnectionSource implements ConnectionSource {
 		wrappedConnections.clear();
 	}
 
+	public void closeQuietly() {
+		try {
+			close();
+		} catch (SQLException e) {
+			// ignored
+		}
+	}
+
 	protected WrappedConnection wrapConnection(DatabaseConnection connection) {
 		WrappedDatabaseConnection wrapped = new WrappedDatabaseConnection(connection);
 		return wrapped;

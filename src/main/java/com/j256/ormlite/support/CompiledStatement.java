@@ -43,6 +43,11 @@ public interface CompiledStatement {
 	public void close() throws SQLException;
 
 	/**
+	 * Close the statement but swallows any SQLExceptions.
+	 */
+	public void closeQuietly();
+
+	/**
 	 * Set the parameter specified by the index and type to be an object.
 	 * 
 	 * @param parameterIndex

@@ -28,6 +28,14 @@ public class H2ConnectionSource implements ConnectionSource {
 		}
 	}
 
+	public void closeQuietly() {
+		try {
+			close();
+		} catch (SQLException e) {
+			// ignored
+		}
+	}
+
 	public DatabaseConnection getReadOnlyConnection() throws SQLException {
 		return getReadWriteConnection();
 	}

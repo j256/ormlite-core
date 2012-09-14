@@ -64,6 +64,11 @@ public interface ConnectionSource {
 	public void close() throws SQLException;
 
 	/**
+	 * Close any outstanding database connections.
+	 */
+	public void closeQuietly();
+
+	/**
 	 * Return the DatabaseTypre associated with this connection.
 	 */
 	public DatabaseType getDatabaseType();

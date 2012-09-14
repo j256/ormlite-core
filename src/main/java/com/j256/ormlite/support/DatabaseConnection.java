@@ -167,6 +167,11 @@ public interface DatabaseConnection {
 	public void close() throws SQLException;
 
 	/**
+	 * Close the connection to the database but swallow any SQLExceptions.
+	 */
+	public void closeQuietly();
+
+	/**
 	 * Return if the connection has been closed either through a call to {@link #close()} or because of a fatal error.
 	 */
 	public boolean isClosed() throws SQLException;

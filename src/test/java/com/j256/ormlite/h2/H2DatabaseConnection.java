@@ -154,6 +154,14 @@ public class H2DatabaseConnection implements DatabaseConnection {
 		connection.close();
 	}
 
+	public void closeQuietly() {
+		try {
+			close();
+		} catch (SQLException e) {
+			// ignored
+		}
+	}
+
 	public boolean isClosed() throws SQLException {
 		return connection.isClosed();
 	}

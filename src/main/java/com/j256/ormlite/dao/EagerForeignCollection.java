@@ -119,6 +119,9 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 			public void close() {
 				// noop
 			}
+			public void closeQuietly() {
+				// noop
+			}
 			public DatabaseResults getRawResults() {
 				// no results object
 				return null;

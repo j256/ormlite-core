@@ -104,6 +104,10 @@ public class BaseConnectionSourceTest extends BaseCoreTest {
 			// noop
 		}
 
+		public void closeQuietly() {
+			// noop
+		}
+
 		public DatabaseType getDatabaseType() {
 			return databaseType;
 		}

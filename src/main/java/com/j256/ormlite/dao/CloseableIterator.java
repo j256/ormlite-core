@@ -23,6 +23,11 @@ public interface CloseableIterator<T> extends Iterator<T> {
 	public void close() throws SQLException;
 
 	/**
+	 * Close any underlying SQL statements but swallow any SQLExceptions.
+	 */
+	public void closeQuietly();
+
+	/**
 	 * Return the underlying database results object if any. May return null. This should not be used unless you know
 	 * what you are doing.
 	 */

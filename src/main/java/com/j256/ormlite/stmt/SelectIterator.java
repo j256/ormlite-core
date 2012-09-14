@@ -98,7 +98,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 			return hasNextThrow();
 		} catch (SQLException e) {
 			last = null;
-			closeNoThrow();
+			closeQuietly();
 			// unfortunately, can't propagate back the SQLException
 			throw new IllegalStateException("Errors getting more results of " + dataClass, e);
 		}
@@ -179,7 +179,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 		}
 		// we have to throw if there is no next or on a SQLException
 		last = null;
-		closeNoThrow();
+		closeQuietly();
 		throw new IllegalStateException("Could not get next result for " + dataClass, sqlException);
 	}
 
@@ -230,7 +230,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 		try {
 			removeThrow();
 		} catch (SQLException e) {
-			closeNoThrow();
+			closeQuietly();
 			// unfortunately, can't propagate back the SQLException
 			throw new IllegalStateException("Could not delete " + dataClass + " object " + last, e);
 		}
@@ -248,6 +248,14 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 		}
 	}
 
+	public void closeQuietly() {
+		try {
+			close();
+		} catch (SQLException e) {
+			// ignore it
+		}
+	}
+
 	public DatabaseResults getRawResults() {
 		return results;
 	}
@@ -256,14 +264,6 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 		last = null;
 		first = false;
 		alreadyMoved = false;
-	}
-
-	private void closeNoThrow() {
-		try {
-			close();
-		} catch (SQLException e) {
-			// ignore it
-		}
 	}
 
 	private T getCurrent() throws SQLException {
