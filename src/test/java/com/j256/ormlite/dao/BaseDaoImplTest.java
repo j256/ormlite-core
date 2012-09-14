@@ -40,6 +40,7 @@ import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
+import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.ObjectFactory;
@@ -2428,6 +2429,27 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(2, dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from foo"));
 		assertEquals(1, dao.create(new Foo()));
 		assertEquals(3, dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from foo"));
+	}
+
+	@Test
+	public void testQueryRawDatabaseResults() throws Exception {
+		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		foo.val = 342234232;
+		assertEquals(1, dao.create(foo));
+
+		CloseableIterator<Foo> iterator =
+				dao.iterator(dao.queryBuilder().where().eq(Foo.VAL_COLUMN_NAME, foo.val).prepare());
+		try {
+			DatabaseResults results = iterator.getRawResults();
+			assertTrue(results.first());
+			assertTrue(results.getColumnCount() >= 4);
+			int valIndex = results.findColumn(Foo.VAL_COLUMN_NAME);
+			assertEquals(foo.val, results.getInt(valIndex));
+			assertFalse(results.next());
+		} finally {
+			iterator.closeQuietly();
+		}
 	}
 
 	/* ============================================================================================== */
