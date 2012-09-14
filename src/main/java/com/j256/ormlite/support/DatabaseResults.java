@@ -73,7 +73,7 @@ public interface DatabaseResults {
 	public boolean moveAbsolute(int position) throws SQLException;
 
 	/**
-	 * Return the column index associated with the column name.
+	 * Returns the column index associated with the column name.
 	 * 
 	 * @throws SQLException
 	 *             if the column was not found in the results.
@@ -151,7 +151,17 @@ public interface DatabaseResults {
 	public boolean wasNull(int columnIndex) throws SQLException;
 
 	/**
-	 * Return the object cache that is associated with these results or null if none.
+	 * Returns the object cache that is associated with these results or null if none.
 	 */
 	public ObjectCache getObjectCache();
+
+	/**
+	 * Closes any underlying database connections.
+	 */
+	public void close() throws SQLException;
+
+	/**
+	 * Closes any underlying database connections but swallows any SQLExceptions.
+	 */
+	public void closeQuietly();
 }
