@@ -48,7 +48,8 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 					+ " statement.  Check your QueryBuilder methods.");
 		}
 		CompiledStatement stmt = databaseConnection.compileStatement(statement, type, argFieldTypes, resultFlags);
-		return compileStatement(databaseConnection, stmt);
+		// this may return null if the stmt had to be closed
+		return assignStatementArguments(stmt);
 	}
 
 	public String getStatement() {
@@ -70,8 +71,12 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 		argHolders[index].setValue(value);
 	}
 
-	private CompiledStatement compileStatement(DatabaseConnection databaseConnection, CompiledStatement stmt)
-			throws SQLException {
+	/**
+	 * Assign arguments to the statement.
+	 * 
+	 * @return The statement passed in or null if it had to be closed on error.
+	 */
+	private CompiledStatement assignStatementArguments(CompiledStatement stmt) throws SQLException {
 		boolean ok = false;
 		try {
 			if (limit != null) {
