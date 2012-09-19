@@ -66,59 +66,59 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		switch (dataPersister.getSqlType()) {
 
 			case STRING :
-				appendStringType(sb, fieldWidth);
+				appendStringType(sb, fieldType, fieldWidth);
 				break;
 
 			case LONG_STRING :
-				appendLongStringType(sb, fieldWidth);
+				appendLongStringType(sb, fieldType, fieldWidth);
 				break;
 
 			case BOOLEAN :
-				appendBooleanType(sb, fieldWidth);
+				appendBooleanType(sb, fieldType, fieldWidth);
 				break;
 
 			case DATE :
-				appendDateType(sb, fieldWidth);
+				appendDateType(sb, fieldType, fieldWidth);
 				break;
 
 			case CHAR :
-				appendCharType(sb, fieldWidth);
+				appendCharType(sb, fieldType, fieldWidth);
 				break;
 
 			case BYTE :
-				appendByteType(sb, fieldWidth);
+				appendByteType(sb, fieldType, fieldWidth);
 				break;
 
 			case BYTE_ARRAY :
-				appendByteArrayType(sb, fieldWidth);
+				appendByteArrayType(sb, fieldType, fieldWidth);
 				break;
 
 			case SHORT :
-				appendShortType(sb, fieldWidth);
+				appendShortType(sb, fieldType, fieldWidth);
 				break;
 
 			case INTEGER :
-				appendIntegerType(sb, fieldWidth);
+				appendIntegerType(sb, fieldType, fieldWidth);
 				break;
 
 			case LONG :
-				appendLongType(fieldType, sb, fieldWidth);
+				appendLongType(sb, fieldType, fieldWidth);
 				break;
 
 			case FLOAT :
-				appendFloatType(sb, fieldWidth);
+				appendFloatType(sb, fieldType, fieldWidth);
 				break;
 
 			case DOUBLE :
-				appendDoubleType(sb, fieldWidth);
+				appendDoubleType(sb, fieldType, fieldWidth);
 				break;
 
 			case SERIALIZABLE :
-				appendSerializableType(sb, fieldWidth);
+				appendSerializableType(sb, fieldType, fieldWidth);
 				break;
 
 			case BIG_DECIMAL :
-				appendBigDecimalNumericType(sb, fieldWidth);
+				appendBigDecimalNumericType(sb, fieldType, fieldWidth);
 				break;
 
 			case UNKNOWN :
@@ -161,8 +161,11 @@ public abstract class BaseDatabaseType implements DatabaseType {
 
 	/**
 	 * Output the SQL type for a Java String.
+	 * 
+	 * @param fieldType
+	 *            TODO
 	 */
-	protected void appendStringType(StringBuilder sb, int fieldWidth) {
+	protected void appendStringType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		if (isVarcharFieldWidthSupported()) {
 			sb.append("VARCHAR(").append(fieldWidth).append(")");
 		} else {
@@ -172,92 +175,128 @@ public abstract class BaseDatabaseType implements DatabaseType {
 
 	/**
 	 * Output the SQL type for a Java Long String.
+	 * 
+	 * @param fieldType
+	 *            TODO
 	 */
-	protected void appendLongStringType(StringBuilder sb, int fieldWidth) {
+	protected void appendLongStringType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("TEXT");
 	}
 
 	/**
 	 * Output the SQL type for a Java Date.
+	 * 
+	 * @param fieldType
+	 *            TODO
 	 */
-	protected void appendDateType(StringBuilder sb, int fieldWidth) {
+	protected void appendDateType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("TIMESTAMP");
 	}
 
 	/**
 	 * Output the SQL type for a Java boolean.
+	 * 
+	 * @param fieldType
+	 *            TODO
 	 */
-	protected void appendBooleanType(StringBuilder sb, int fieldWidth) {
+	protected void appendBooleanType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("BOOLEAN");
 	}
 
 	/**
 	 * Output the SQL type for a Java char.
+	 * 
+	 * @param fieldType
+	 *            TODO
 	 */
-	protected void appendCharType(StringBuilder sb, int fieldWidth) {
+	protected void appendCharType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("CHAR");
 	}
 
 	/**
 	 * Output the SQL type for a Java byte.
+	 * 
+	 * @param fieldType
+	 *            TODO
 	 */
-	protected void appendByteType(StringBuilder sb, int fieldWidth) {
+	protected void appendByteType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("TINYINT");
 	}
 
 	/**
 	 * Output the SQL type for a Java short.
+	 * 
+	 * @param fieldType
+	 *            TODO
 	 */
-	protected void appendShortType(StringBuilder sb, int fieldWidth) {
+	protected void appendShortType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("SMALLINT");
 	}
 
 	/**
 	 * Output the SQL type for a Java integer.
+	 * 
+	 * @param fieldType
+	 *            TODO
 	 */
-	private void appendIntegerType(StringBuilder sb, int fieldWidth) {
+	private void appendIntegerType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("INTEGER");
 	}
 
 	/**
 	 * Output the SQL type for a Java long.
 	 */
-	protected void appendLongType(FieldType fieldType, StringBuilder sb, int fieldWidth) {
+	protected void appendLongType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("BIGINT");
 	}
 
 	/**
 	 * Output the SQL type for a Java float.
+	 * 
+	 * @param fieldType
+	 *            TODO
 	 */
-	private void appendFloatType(StringBuilder sb, int fieldWidth) {
+	private void appendFloatType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("FLOAT");
 	}
 
 	/**
 	 * Output the SQL type for a Java double.
+	 * 
+	 * @param fieldType
+	 *            TODO
 	 */
-	private void appendDoubleType(StringBuilder sb, int fieldWidth) {
+	private void appendDoubleType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("DOUBLE PRECISION");
 	}
 
 	/**
 	 * Output the SQL type for either a serialized Java object or a byte[].
+	 * 
+	 * @param fieldType
+	 *            TODO
 	 */
-	protected void appendByteArrayType(StringBuilder sb, int fieldWidth) {
+	protected void appendByteArrayType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("BLOB");
 	}
 
 	/**
 	 * Output the SQL type for a serialized Java object.
+	 * 
+	 * @param fieldType
+	 *            TODO
 	 */
-	protected void appendSerializableType(StringBuilder sb, int fieldWidth) {
+	protected void appendSerializableType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("BLOB");
 	}
 
 	/**
 	 * Output the SQL type for a BigDecimal object.
+	 * 
+	 * @param fieldType
+	 *            TODO
 	 */
-	protected void appendBigDecimalNumericType(StringBuilder sb, int fieldWidth) {
+	protected void appendBigDecimalNumericType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("NUMERIC");
 	}
 

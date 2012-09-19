@@ -21,7 +21,7 @@ public abstract class BaseSqliteDatabaseType extends BaseDatabaseType implements
 	private final static FieldConverter booleanConverter = new BooleanNumberFieldConverter();
 
 	@Override
-	protected void appendLongType(FieldType fieldType, StringBuilder sb, int fieldWidth) {
+	protected void appendLongType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		/*
 		 * This is unfortunate. SQLIte requires that a generated-id have the string "INTEGER PRIMARY KEY AUTOINCREMENT"
 		 * even though the maximum generated value is 64-bit. See configureGeneratedId below.
