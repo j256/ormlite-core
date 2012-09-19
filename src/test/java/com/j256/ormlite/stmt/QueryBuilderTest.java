@@ -620,6 +620,48 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(3, results.size());
 	}
 
+	@Test
+	public void testMultipleJoin() throws Exception {
+		Dao<Bar, Integer> barDao = createDao(Bar.class, true);
+		Dao<Baz, Integer> bazDao = createDao(Baz.class, true);
+		Dao<Bing, Integer> bingDao = createDao(Bing.class, true);
+
+		Bar bar1 = new Bar();
+		bar1.val = 2234;
+		assertEquals(1, barDao.create(bar1));
+		Bar bar2 = new Bar();
+		bar2.val = 324322234;
+		assertEquals(1, barDao.create(bar2));
+
+		Baz baz1 = new Baz();
+		baz1.bar = bar1;
+		assertEquals(1, bazDao.create(baz1));
+		Baz baz2 = new Baz();
+		baz2.bar = bar2;
+		assertEquals(1, bazDao.create(baz2));
+
+		Bing bing1 = new Bing();
+		bing1.baz = baz1;
+		assertEquals(1, bingDao.create(bing1));
+		Bing bing2 = new Bing();
+		bing2.baz = baz2;
+		assertEquals(1, bingDao.create(bing2));
+
+		QueryBuilder<Bar, Integer> barQb = barDao.queryBuilder();
+		barQb.where().eq(Bar.VAL_FIELD, bar1.val);
+
+		QueryBuilder<Baz, Integer> bazQb = bazDao.queryBuilder();
+		assertEquals(2, bazQb.query().size());
+		bazQb.join(barQb);
+
+		List<Bing> results = bingDao.queryBuilder().join(bazQb).query();
+		assertEquals(1, results.size());
+		assertEquals(bing1.id, results.get(0).id);
+		assertEquals(baz1.id, results.get(0).baz.id);
+		bazDao.refresh(results.get(0).baz);
+		assertEquals(bar1.id, results.get(0).baz.bar.id);
+	}
+
 	@Test(expected = SQLException.class)
 	public void testBadJoin() throws Exception {
 		Dao<Bar, Integer> barDao = createDao(Bar.class, true);
@@ -664,6 +706,17 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		@DatabaseField(foreign = true, columnName = BAR_FIELD)
 		Bar bar;
 		public Baz() {
+		}
+	}
+
+	protected static class Bing {
+		public static final String ID_FIELD = "id";
+		public static final String BAZ_FIELD = "baz";
+		@DatabaseField(generatedId = true, columnName = ID_FIELD)
+		int id;
+		@DatabaseField(foreign = true, columnName = BAZ_FIELD)
+		Baz baz;
+		public Bing() {
 		}
 	}
 

@@ -31,6 +31,7 @@ public abstract class StatementBuilder<T, ID> {
 	protected final DatabaseType databaseType;
 	protected final Dao<T, ID> dao;
 	protected StatementType type;
+	protected boolean addTableName;
 
 	protected Where<T, ID> where = null;
 	// NOTE: anything added here should be added to the clear() method below
@@ -119,7 +120,7 @@ public abstract class StatementBuilder<T, ID> {
 	 */
 	protected void appendStatementString(StringBuilder sb, List<ArgumentHolder> argList) throws SQLException {
 		appendStatementStart(sb, argList);
-		appendWhereStatement(sb, argList, where, (shouldPrependTableNameToColumns() ? tableName : null), true);
+		appendWhereStatement(sb, argList, true);
 		appendStatementEnd(sb);
 	}
 
@@ -131,8 +132,8 @@ public abstract class StatementBuilder<T, ID> {
 	/**
 	 * Append the WHERE part of the statement to the StringBuilder.
 	 */
-	protected void appendWhereStatement(StringBuilder sb, List<ArgumentHolder> argList, Where<?, ?> where,
-			String tableName, boolean first) throws SQLException {
+	protected void appendWhereStatement(StringBuilder sb, List<ArgumentHolder> argList, boolean first)
+			throws SQLException {
 		if (where == null) {
 			return;
 		}
@@ -141,7 +142,7 @@ public abstract class StatementBuilder<T, ID> {
 		} else {
 			sb.append("AND (");
 		}
-		where.appendSql(tableName, sb, argList);
+		where.appendSql((addTableName ? tableName : null), sb, argList);
 		if (!first) {
 			sb.append(") ");
 		}

@@ -520,6 +520,9 @@ public class Where<T, ID> {
 
 	/**
 	 * Used by the internal classes to add the where SQL to the {@link StringBuilder}.
+	 * 
+	 * @param tableName
+	 *            Name of the table to prepend to any column names or null to be ignored.
 	 */
 	void appendSql(String tableName, StringBuilder sb, List<ArgumentHolder> columnArgList) throws SQLException {
 		if (clauseStackLevel == 0) {

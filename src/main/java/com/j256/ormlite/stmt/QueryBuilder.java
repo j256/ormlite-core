@@ -343,10 +343,19 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		having = null;
 		limit = null;
 		offset = null;
+		joinedQueryBuilder = null;
+		localJoinedField = null;
+		remoteJoinedField = null;
+		addTableName = false;
 	}
 
 	@Override
 	protected void appendStatementStart(StringBuilder sb, List<ArgumentHolder> argList) {
+		if (joinedQueryBuilder == null) {
+			setAddTableName(false);
+		} else {
+			setAddTableName(true);
+		}
 		sb.append("SELECT ");
 		if (databaseType.isLimitAfterSelect()) {
 			appendLimit(sb);
@@ -365,10 +374,10 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			appendColumns(sb);
 		}
 		sb.append("FROM ");
-		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
+		databaseType.appendEscapedEntityName(sb, tableName);
 		sb.append(' ');
 		if (joinedQueryBuilder != null) {
-			appendJoinSql(sb, localJoinedField, remoteJoinedField);
+			appendJoinSql(sb);
 		}
 	}
 
@@ -378,16 +387,14 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	@Override
-	protected void appendWhereStatement(StringBuilder sb, List<ArgumentHolder> argList, Where<?, ?> where,
-			String tableName, boolean first) throws SQLException {
-		boolean joinedFirst = true;
+	protected void appendWhereStatement(StringBuilder sb, List<ArgumentHolder> argList, boolean first)
+			throws SQLException {
 		if (this.where != null) {
-			super.appendWhereStatement(sb, argList, this.where, (joinedQueryBuilder == null ? null : this.tableName),
-					joinedFirst);
-			joinedFirst = false;
+			super.appendWhereStatement(sb, argList, first);
+			first = false;
 		}
-		if (joinedQueryBuilder != null && joinedQueryBuilder.where != null) {
-			super.appendWhereStatement(sb, argList, joinedQueryBuilder.where, joinedQueryBuilder.tableName, joinedFirst);
+		if (joinedQueryBuilder != null) {
+			joinedQueryBuilder.appendWhereStatement(sb, argList, first);
 		}
 	}
 
@@ -401,11 +408,20 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			appendLimit(sb);
 		}
 		appendOffset(sb);
+		// clear the add-table name flag so we can reuse the builder
+		setAddTableName(false);
 	}
 
 	@Override
 	protected boolean shouldPrependTableNameToColumns() {
 		return joinedQueryBuilder != null;
+	}
+
+	private void setAddTableName(boolean addTableName) {
+		this.addTableName = addTableName;
+		if (joinedQueryBuilder != null) {
+			joinedQueryBuilder.setAddTableName(addTableName);
+		}
 	}
 
 	/**
@@ -434,23 +450,27 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 				+ joinedQueryBuilder.tableInfo.getDataClass() + " or vice versa");
 	}
 
-	private void appendJoinSql(StringBuilder sb, FieldType localField, FieldType joinedField) {
+	private void addSelectColumnToList(String columnName) {
+		verifyColumnName(columnName);
+		selectColumnList.add(columnName);
+	}
+
+	private void appendJoinSql(StringBuilder sb) {
 		sb.append(joinType).append(" JOIN ");
 		databaseType.appendEscapedEntityName(sb, joinedQueryBuilder.tableName);
 		sb.append(" ON ");
 		databaseType.appendEscapedEntityName(sb, tableName);
 		sb.append('.');
-		databaseType.appendEscapedEntityName(sb, localField.getColumnName());
+		databaseType.appendEscapedEntityName(sb, localJoinedField.getColumnName());
 		sb.append(" = ");
 		databaseType.appendEscapedEntityName(sb, joinedQueryBuilder.tableName);
 		sb.append('.');
-		databaseType.appendEscapedEntityName(sb, joinedField.getColumnName());
+		databaseType.appendEscapedEntityName(sb, remoteJoinedField.getColumnName());
 		sb.append(' ');
-	}
-
-	private void addSelectColumnToList(String columnName) {
-		verifyColumnName(columnName);
-		selectColumnList.add(columnName);
+		// keep on going down if multiple JOIN layers
+		if (this.joinedQueryBuilder.joinedQueryBuilder != null) {
+			joinedQueryBuilder.appendJoinSql(sb);
+		}
 	}
 
 	private void appendSelectRaw(StringBuilder sb) {
@@ -469,7 +489,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	private void appendColumns(StringBuilder sb) {
 		// if no columns were specified then * is the default
 		if (selectColumnList == null) {
-			if (joinedQueryBuilder != null) {
+			if (addTableName) {
 				databaseType.appendEscapedEntityName(sb, tableName);
 				sb.append('.');
 			}
@@ -547,21 +567,24 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 
 	private void appendGroupBys(StringBuilder sb) {
 		boolean first = true;
-		if (hasGroupStuff(this)) {
-			appendGroupBys(sb, this, first);
+		if (hasGroupStuff()) {
+			appendGroupBys(sb, first);
 			first = false;
 		}
-		if (joinedQueryBuilder != null && hasGroupStuff(joinedQueryBuilder)) {
-			appendGroupBys(sb, joinedQueryBuilder, first);
-			first = false;
+		/*
+		 * NOTE: this may not be legal and doesn't seem to work with some database types but we'll check this out
+		 * anyway.
+		 */
+		if (joinedQueryBuilder != null && joinedQueryBuilder.hasGroupStuff()) {
+			joinedQueryBuilder.appendGroupBys(sb, first);
 		}
 	}
 
-	private boolean hasGroupStuff(QueryBuilder<?, ?> queryBuilder) {
-		return ((queryBuilder.groupByList != null && !queryBuilder.groupByList.isEmpty()) || queryBuilder.groupByRaw != null);
+	private boolean hasGroupStuff() {
+		return ((groupByList != null && !groupByList.isEmpty()) || groupByRaw != null);
 	}
 
-	private void appendGroupBys(StringBuilder sb, QueryBuilder<?, ?> queryBuilder, boolean first) {
+	private void appendGroupBys(StringBuilder sb, boolean first) {
 		if (first) {
 			sb.append("GROUP BY ");
 		}
@@ -585,21 +608,24 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 
 	private void appendOrderBys(StringBuilder sb) {
 		boolean first = true;
-		if (hasOrderStuff(this)) {
-			appendOrderBys(sb, this, first);
+		if (hasOrderStuff()) {
+			appendOrderBys(sb, first);
 			first = false;
 		}
-		if (joinedQueryBuilder != null && hasOrderStuff(joinedQueryBuilder)) {
-			appendOrderBys(sb, joinedQueryBuilder, first);
-			first = false;
+		/*
+		 * NOTE: this may not be necessary since the inner results aren't at all returned but we'll leave this code here
+		 * anyway.
+		 */
+		if (joinedQueryBuilder != null && joinedQueryBuilder.hasOrderStuff()) {
+			joinedQueryBuilder.appendOrderBys(sb, first);
 		}
 	}
 
-	private boolean hasOrderStuff(QueryBuilder<?, ?> queryBuilder) {
-		return ((queryBuilder.orderByList != null && !queryBuilder.orderByList.isEmpty()) || queryBuilder.orderByRaw != null);
+	private boolean hasOrderStuff() {
+		return ((orderByList != null && !orderByList.isEmpty()) || orderByRaw != null);
 	}
 
-	private void appendOrderBys(StringBuilder sb, QueryBuilder<?, ?> queryBuilder, boolean first) {
+	private void appendOrderBys(StringBuilder sb, boolean first) {
 		if (first) {
 			sb.append("ORDER BY ");
 		}
@@ -628,7 +654,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	private void appendColumnName(StringBuilder sb, String columnName) {
-		if (joinedQueryBuilder != null) {
+		if (addTableName) {
 			databaseType.appendEscapedEntityName(sb, tableName);
 			sb.append('.');
 		}
