@@ -489,12 +489,20 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public long queryRawValue(String query, String... arguments) throws SQLException;
 
 	/**
-	 * Run a raw execute SQL statement to the database.The arguments are optional but can be set with strings to expand
-	 * ? type of SQL.
+	 * Run a raw execute SQL statement to the database. The arguments are optional but can be set with strings to expand
+	 * ? type of SQL. If you have no arguments, you may want to call {@link #executeRawNoArgs(String, String...)}.
 	 * 
 	 * @return number of rows affected.
 	 */
 	public int executeRaw(String statement, String... arguments) throws SQLException;
+
+	/**
+	 * Run a raw execute SQL statement on the database without any arguments. This may use a different mechanism to
+	 * execute the query depending on the database backend.
+	 * 
+	 * @return number of rows affected.
+	 */
+	public int executeRawNoArgs(String statement) throws SQLException;
 
 	/**
 	 * Run a raw update SQL statement to the database. The statement must be an SQL INSERT, UPDATE or DELETE

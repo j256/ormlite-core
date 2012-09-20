@@ -7,10 +7,12 @@
 	* CORE: Added last(), moveAbsolute(), and close() methods to DatabaseResults.  Thanks to Andrey.
 	* CORE: Added a Dao.getConnectionSource() method to assign with the RuntimeExceptionDao.  Thanks to glenviewjeff.	
 	* CORE: Added closeQuietly() methods for all close() methods in a number of classes/interfaces.
+	* CORE: Added Dao.executeRawNoArgs() method for executing raw statements with no arguments.  Necessary for JDBC fix.
 	* ANDROID: Added support for auto-commit under Android using transactions.  Thanks to Chad Schultz.
 	* ANDROID: Added getCount() and getPosition() cursor methods AndroidDatabaseResults.  Thanks to Andrey.
 	* JDBC: Fixed some problems with the OracleDatabaseType.  Work in progress.  Thanks much to Stew.
 	* JDBC: Added OTHER to the SqlType enum for custom persisters.  Thanks to Mark Rogers.
+	* JDBC: Added a DatabaseConnection.executeStatement() method which uses Statement.execute() for SQL. Thanks to Stew.
 
 4.41: 6/6/2012 (svn r2575)
 	* CORE: Added java.sql.Date and java.sql.Timestmp data persister types.  java.util.Date is still recommended.

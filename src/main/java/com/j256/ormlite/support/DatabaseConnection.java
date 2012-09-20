@@ -64,6 +64,15 @@ public interface DatabaseConnection {
 	public void rollback(Savepoint savePoint) throws SQLException;
 
 	/**
+	 * Execute a statement directly on the connection.
+	 * 
+	 * @param resultFlags
+	 *            Allows specification of some result flags. This is dependent on the backend and database type. Set to
+	 *            {@link #DEFAULT_RESULT_FLAGS} for the internal default.
+	 */
+	public int executeStatement(String statementStr, int resultFlags) throws SQLException;
+
+	/**
 	 * Compile and prepare the SQL statement for execution.
 	 */
 	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argFieldTypes)

@@ -63,6 +63,15 @@ public class H2DatabaseConnection implements DatabaseConnection {
 		}
 	}
 
+	public int executeStatement(String statementStr, int resultFlags) throws SQLException {
+		if (resultFlags == DatabaseConnection.DEFAULT_RESULT_FLAGS) {
+			resultFlags = ResultSet.TYPE_FORWARD_ONLY;
+		}
+		Statement statement = connection.createStatement(resultFlags, ResultSet.CONCUR_READ_ONLY);
+		statement.execute(statementStr);
+		return statement.getUpdateCount();
+	}
+
 	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argFieldTypes)
 			throws SQLException {
 		return compileStatement(statement, type, argFieldTypes, DatabaseConnection.DEFAULT_RESULT_FLAGS);

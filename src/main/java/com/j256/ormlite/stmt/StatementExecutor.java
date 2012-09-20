@@ -363,6 +363,14 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	/**
 	 * Return true if it worked else false.
 	 */
+	public int executeRawNoArgs(DatabaseConnection connection, String statement) throws SQLException {
+		logger.debug("running raw execute statement: {}", statement);
+		return connection.executeStatement(statement, DatabaseConnection.DEFAULT_RESULT_FLAGS);
+	}
+
+	/**
+	 * Return true if it worked else false.
+	 */
 	public int executeRaw(DatabaseConnection connection, String statement, String[] arguments) throws SQLException {
 		logger.debug("running raw execute statement: {}", statement);
 		if (arguments.length > 0) {
