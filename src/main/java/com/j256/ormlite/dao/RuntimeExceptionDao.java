@@ -486,6 +486,18 @@ public class RuntimeExceptionDao<T, ID> {
 	}
 
 	/**
+	 * @see Dao#executeRawNoArgs(String)
+	 */
+	public int executeRawNoArgs(String statement) {
+		try {
+			return dao.executeRawNoArgs(statement);
+		} catch (SQLException e) {
+			logMessage(e, "executeRawNoArgs threw exception on: " + statement);
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
 	 * @see Dao#updateRaw(String, String...)
 	 */
 	public int updateRaw(String statement, String... arguments) {
