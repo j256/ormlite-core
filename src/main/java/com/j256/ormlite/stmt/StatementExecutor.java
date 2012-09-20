@@ -260,10 +260,9 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		try {
 			compiledStatement = connection.compileStatement(query, StatementType.SELECT, noFieldTypes);
 			assignStatementArguments(compiledStatement, arguments);
-			String[] columnNames = extractColumnNames(compiledStatement);
 			GenericRawResults<String[]> rawResults =
 					new RawResultsImpl<String[]>(connectionSource, connection, query, String[].class,
-							compiledStatement, columnNames, this, objectCache);
+							compiledStatement, this, objectCache);
 			compiledStatement = null;
 			connection = null;
 			return rawResults;
@@ -292,10 +291,9 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		try {
 			compiledStatement = connection.compileStatement(query, StatementType.SELECT, noFieldTypes);
 			assignStatementArguments(compiledStatement, arguments);
-			String[] columnNames = extractColumnNames(compiledStatement);
 			RawResultsImpl<UO> rawResults =
 					new RawResultsImpl<UO>(connectionSource, connection, query, String[].class, compiledStatement,
-							columnNames, new UserObjectRowMapper<UO>(rowMapper, columnNames, this), objectCache);
+							new UserObjectRowMapper<UO>(rowMapper, this), objectCache);
 			compiledStatement = null;
 			connection = null;
 			return rawResults;
@@ -324,10 +322,9 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		try {
 			compiledStatement = connection.compileStatement(query, StatementType.SELECT, noFieldTypes);
 			assignStatementArguments(compiledStatement, arguments);
-			String[] columnNames = extractColumnNames(compiledStatement);
 			RawResultsImpl<Object[]> rawResults =
 					new RawResultsImpl<Object[]>(connectionSource, connection, query, Object[].class,
-							compiledStatement, columnNames, new ObjectArrayRowMapper(columnTypes), objectCache);
+							compiledStatement, new ObjectArrayRowMapper(columnTypes), objectCache);
 			compiledStatement = null;
 			connection = null;
 			return rawResults;
@@ -558,15 +555,6 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		}
 	}
 
-	private String[] extractColumnNames(CompiledStatement compiledStatement) throws SQLException {
-		int colN = compiledStatement.getColumnCount();
-		String[] columnNames = new String[colN];
-		for (int colC = 0; colC < colN; colC++) {
-			columnNames[colC] = compiledStatement.getColumnName(colC);
-		}
-		return columnNames;
-	}
-
 	private void prepareQueryForAll() throws SQLException {
 		if (preparedQueryForAll == null) {
 			preparedQueryForAll = new QueryBuilder<T, ID>(databaseType, tableInfo, dao).prepare();
@@ -579,19 +567,25 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	private static class UserObjectRowMapper<UO> implements GenericRowMapper<UO> {
 
 		private final RawRowMapper<UO> mapper;
-		private final String[] columnNames;
 		private final GenericRowMapper<String[]> stringRowMapper;
+		private String[] columnNames;
 
-		public UserObjectRowMapper(RawRowMapper<UO> mapper, String[] columnNames,
-				GenericRowMapper<String[]> stringMapper) {
+		public UserObjectRowMapper(RawRowMapper<UO> mapper, GenericRowMapper<String[]> stringMapper) {
 			this.mapper = mapper;
-			this.columnNames = columnNames;
 			this.stringRowMapper = stringMapper;
 		}
 
 		public UO mapRow(DatabaseResults results) throws SQLException {
 			String[] stringResults = stringRowMapper.mapRow(results);
-			return mapper.mapRow(columnNames, stringResults);
+			return mapper.mapRow(getColumnNames(results), stringResults);
+		}
+
+		private String[] getColumnNames(DatabaseResults results) throws SQLException {
+			if (columnNames != null) {
+				return columnNames;
+			}
+			columnNames = results.getColumnNames();
+			return columnNames;
 		}
 	}
 

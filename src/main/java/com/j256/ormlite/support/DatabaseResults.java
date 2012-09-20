@@ -24,6 +24,11 @@ public interface DatabaseResults {
 	public int getColumnCount() throws SQLException;
 
 	/**
+	 * Returns an array of column names.
+	 */
+	public String[] getColumnNames() throws SQLException;
+
+	/**
 	 * Moves to the first result. This may not work with the default iterator depending on your database.
 	 * 
 	 * @return true if there are more results to be processed.

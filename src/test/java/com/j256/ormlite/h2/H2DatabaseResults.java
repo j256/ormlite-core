@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
@@ -27,6 +28,16 @@ public class H2DatabaseResults implements DatabaseResults {
 
 	public int getColumnCount() throws SQLException {
 		return resultSet.getMetaData().getColumnCount();
+	}
+
+	public String[] getColumnNames() throws SQLException {
+		int colN = getColumnCount();
+		String[] columnNames = new String[colN];
+		ResultSetMetaData metaData = resultSet.getMetaData();
+		for (int colC = 0; colC < colN; colC++) {
+			columnNames[colC] = metaData.getColumnName(colC + 1);
+		}
+		return columnNames;
 	}
 
 	public boolean first() throws SQLException {

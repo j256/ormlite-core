@@ -23,12 +23,13 @@ public class RawResultsImpl<T> implements GenericRawResults<T> {
 	private final String[] columnNames;
 
 	public RawResultsImpl(ConnectionSource connectionSource, DatabaseConnection connection, String query,
-			Class<?> clazz, CompiledStatement compiledStmt, String[] columnNames, GenericRowMapper<T> rowMapper,
-			ObjectCache objectCache) throws SQLException {
+			Class<?> clazz, CompiledStatement compiledStmt, GenericRowMapper<T> rowMapper, ObjectCache objectCache)
+			throws SQLException {
 		iterator =
 				new SelectIterator<T, Void>(clazz, null, rowMapper, connectionSource, connection, compiledStmt, query,
 						objectCache);
-		this.columnNames = columnNames;
+		// NOTE: we _have_ to get these here before the results objet can be closed
+		this.columnNames = iterator.getRawResults().getColumnNames();
 	}
 
 	public int getNumberColumns() {

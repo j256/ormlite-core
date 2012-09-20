@@ -13,6 +13,7 @@
 	* JDBC: Fixed some problems with the OracleDatabaseType.  Work in progress.  Thanks much to Stew.
 	* JDBC: Added OTHER to the SqlType enum for custom persisters.  Thanks to Mark Rogers.
 	* JDBC: Added a DatabaseConnection.executeStatement() method which uses Statement.execute() for SQL. Thanks to Stew.
+	* JDBC: Fixed a problem with Oracle where we were asking for column info too early.  Thanks to Stew.  Bug #3570129.
 
 4.41: 6/6/2012 (svn r2575)
 	* CORE: Added java.sql.Date and java.sql.Timestmp data persister types.  java.util.Date is still recommended.
