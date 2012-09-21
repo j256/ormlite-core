@@ -19,21 +19,22 @@ import com.j256.ormlite.support.DatabaseResults;
 public class H2DatabaseResults implements DatabaseResults {
 
 	private final ResultSet resultSet;
+	private final ResultSetMetaData metaData;
 	private final ObjectCache objectCache;
 
-	public H2DatabaseResults(ResultSet resultSet, ObjectCache objectCache) {
+	public H2DatabaseResults(ResultSet resultSet, ObjectCache objectCache) throws SQLException {
 		this.resultSet = resultSet;
+		this.metaData = resultSet.getMetaData();
 		this.objectCache = objectCache;
 	}
 
 	public int getColumnCount() throws SQLException {
-		return resultSet.getMetaData().getColumnCount();
+		return metaData.getColumnCount();
 	}
 
 	public String[] getColumnNames() throws SQLException {
 		int colN = getColumnCount();
 		String[] columnNames = new String[colN];
-		ResultSetMetaData metaData = resultSet.getMetaData();
 		for (int colC = 0; colC < colN; colC++) {
 			columnNames[colC] = metaData.getColumnName(colC + 1);
 		}

@@ -28,7 +28,9 @@ public class RawResultsImpl<T> implements GenericRawResults<T> {
 		iterator =
 				new SelectIterator<T, Void>(clazz, null, rowMapper, connectionSource, connection, compiledStmt, query,
 						objectCache);
-		// NOTE: we _have_ to get these here before the results objet can be closed
+		/*
+		 * NOTE: we _have_ to get these here before the results object is closed if there are no results
+		 */
 		this.columnNames = iterator.getRawResults().getColumnNames();
 	}
 
