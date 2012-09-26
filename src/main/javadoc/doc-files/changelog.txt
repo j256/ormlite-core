@@ -8,6 +8,7 @@
 	* CORE: Added a Dao.getConnectionSource() method to assign with the RuntimeExceptionDao.  Thanks to glenviewjeff.	
 	* CORE: Added closeQuietly() methods for all close() methods in a number of classes/interfaces.
 	* CORE: Added Dao.executeRawNoArgs() method for executing raw statements with no arguments.  Necessary for JDBC fix.
+	* CORE: Added the ability to order your foreign collections ASC or DESC.  Thanks to Jaykob.  Feature #3571690.
 	* ANDROID: Added support for auto-commit under Android using transactions.  Thanks to Chad Schultz.
 	* ANDROID: Added getCount() and getPosition() cursor methods AndroidDatabaseResults.  Thanks to Andrey.
 	* JDBC: Fixed some problems with the OracleDatabaseType.  Work in progress.  Thanks much to Stew.

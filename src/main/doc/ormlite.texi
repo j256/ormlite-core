@@ -2234,6 +2234,11 @@ specify that you want the collection returned when you specify @code{queryBuilde
 
 The name of the column in the foreign object that we should order the collection by.
 
+@item orderAscending
+
+If an order column has been defined with the above @code{orderColumnName}, this sets the order as ascending (true which is the
+default) or descending (false).
+
 @item foreignFieldName
 
 Name of the @emph{field} (not the column name) in the class that the collection is holding that corresponds to the

@@ -695,6 +695,9 @@ public class RuntimeExceptionDao<T, ID> {
 		}
 	}
 
+	/**
+	 * @see Dao#startThreadConnection()
+	 */
 	public DatabaseConnection startThreadConnection() {
 		try {
 			return dao.startThreadConnection();
@@ -704,6 +707,9 @@ public class RuntimeExceptionDao<T, ID> {
 		}
 	}
 
+	/**
+	 * @see Dao#endThreadConnection(DatabaseConnection)
+	 */
 	public void endThreadConnection(DatabaseConnection connection) {
 		try {
 			dao.endThreadConnection(connection);
@@ -726,6 +732,9 @@ public class RuntimeExceptionDao<T, ID> {
 		}
 	}
 
+	/**
+	 * @see Dao#setAutoCommit(DatabaseConnection, boolean)
+	 */
 	public void setAutoCommit(DatabaseConnection connection, boolean autoCommit) {
 		try {
 			dao.setAutoCommit(connection, autoCommit);
@@ -748,6 +757,9 @@ public class RuntimeExceptionDao<T, ID> {
 		}
 	}
 
+	/**
+	 * @see Dao#isAutoCommit(DatabaseConnection)
+	 */
 	public boolean isAutoCommit(DatabaseConnection connection) {
 		try {
 			return dao.isAutoCommit(connection);
@@ -757,6 +769,9 @@ public class RuntimeExceptionDao<T, ID> {
 		}
 	}
 
+	/**
+	 * @see Dao#commit(DatabaseConnection)
+	 */
 	public void commit(DatabaseConnection connection) {
 		try {
 			dao.commit(connection);
@@ -766,6 +781,9 @@ public class RuntimeExceptionDao<T, ID> {
 		}
 	}
 
+	/**
+	 * @see Dao#rollBack(DatabaseConnection)
+	 */
 	public void rollBack(DatabaseConnection connection) {
 		try {
 			dao.rollBack(connection);
@@ -775,14 +793,23 @@ public class RuntimeExceptionDao<T, ID> {
 		}
 	}
 
+	/**
+	 * @see Dao#setObjectFactory(ObjectFactory)
+	 */
 	public void setObjectFactory(ObjectFactory<T> objectFactory) {
 		dao.setObjectFactory(objectFactory);
 	}
 
+	/**
+	 * @see Dao#getRawRowMapper()
+	 */
 	public RawRowMapper<T> getRawRowMapper() {
 		return dao.getRawRowMapper();
 	}
 
+	/**
+	 * @see Dao#getConnectionSource()
+	 */
 	public ConnectionSource getConnectionSource() {
 		return dao.getConnectionSource();
 	}

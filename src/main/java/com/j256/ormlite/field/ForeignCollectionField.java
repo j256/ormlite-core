@@ -84,6 +84,12 @@ public @interface ForeignCollectionField {
 	String orderColumnName() default "";
 
 	/**
+	 * If an order column has been defined with {@link #orderColumnName()}, this sets the order as ascending (true, the
+	 * default) or descending (false).
+	 */
+	boolean orderAscending() default true;
+
+	/**
 	 * @deprecated This has been renamed as {@link #foreignFieldName()} to make it more consistent to how it works.
 	 */
 	@Deprecated

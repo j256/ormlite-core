@@ -30,14 +30,16 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 	private transient final Object parentId;
 	private transient PreparedQuery<T> preparedQuery;
 	private transient final String orderColumn;
+	private transient final boolean orderAscending;
 	private transient final Object parent;
 
 	protected BaseForeignCollection(Dao<T, ID> dao, Object parent, Object parentId, String columnName,
-			String orderColumn) {
+			String orderColumn, boolean orderAscending) {
 		this.dao = dao;
 		this.columnName = columnName;
 		this.parentId = parentId;
 		this.orderColumn = orderColumn;
+		this.orderAscending = orderAscending;
 		this.parent = parent;
 	}
 
@@ -176,7 +178,7 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 			fieldArg.setValue(parentId);
 			QueryBuilder<T, ID> qb = dao.queryBuilder();
 			if (orderColumn != null) {
-				qb.orderBy(orderColumn, true);
+				qb.orderBy(orderColumn, orderAscending);
 			}
 			preparedQuery = qb.where().eq(columnName, fieldArg).prepare();
 			if (preparedQuery instanceof MappedPreparedStmt) {

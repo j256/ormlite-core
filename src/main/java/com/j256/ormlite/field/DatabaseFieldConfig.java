@@ -18,9 +18,10 @@ import com.j256.ormlite.table.DatabaseTableConfig;
 public class DatabaseFieldConfig {
 
 	private static final int DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL = ForeignCollectionField.MAX_EAGER_LEVEL;
-	private static final Class<? extends DataPersister> DEFAULT_PERSISTER_CLASS = VoidType.class;
-	private static final DataType DEFAULT_DATA_TYPE = DataType.UNKNOWN;
-	private static final boolean DEFAULT_CAN_BE_NULL = true;
+	public static final Class<? extends DataPersister> DEFAULT_PERSISTER_CLASS = VoidType.class;
+	public static final DataType DEFAULT_DATA_TYPE = DataType.UNKNOWN;
+	public static final boolean DEFAULT_CAN_BE_NULL = true;
+	public static final boolean DEFAULT_FOREIGN_COLLECTION_ORDER_ASCENDING = true;
 
 	private String fieldName;
 	private String columnName;
@@ -59,6 +60,7 @@ public class DatabaseFieldConfig {
 	private int foreignCollectionMaxEagerLevel = DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL;
 	private String foreignCollectionColumnName;
 	private String foreignCollectionOrderColumnName;
+	private boolean foreignCollectionOrderAscending = DEFAULT_FOREIGN_COLLECTION_ORDER_ASCENDING;
 	private String foreignCollectionForeignFieldName;
 
 	public DatabaseFieldConfig() {
@@ -418,6 +420,14 @@ public class DatabaseFieldConfig {
 		this.foreignCollectionOrderColumnName = foreignCollectionOrderColumn;
 	}
 
+	public boolean isForeignCollectionOrderAscending() {
+		return foreignCollectionOrderAscending;
+	}
+
+	public void setForeignCollectionOrderAscending(boolean foreignCollectionOrderAscending) {
+		this.foreignCollectionOrderAscending = foreignCollectionOrderAscending;
+	}
+
 	public String getForeignCollectionForeignFieldName() {
 		return foreignCollectionForeignFieldName;
 	}
@@ -663,6 +673,7 @@ public class DatabaseFieldConfig {
 			config.foreignCollectionMaxEagerLevel = foreignCollection.maxEagerLevel();
 		}
 		config.foreignCollectionOrderColumnName = valueIfNotBlank(foreignCollection.orderColumnName());
+		config.foreignCollectionOrderAscending = foreignCollection.orderAscending();
 		config.foreignCollectionColumnName = valueIfNotBlank(foreignCollection.columnName());
 		String foreignFieldName = valueIfNotBlank(foreignCollection.foreignFieldName());
 		if (foreignFieldName == null) {

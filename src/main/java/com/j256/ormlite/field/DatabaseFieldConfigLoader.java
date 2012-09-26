@@ -5,7 +5,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import com.j256.ormlite.field.types.VoidType;
 import com.j256.ormlite.misc.SqlExceptionUtil;
 
 /**
@@ -19,9 +18,8 @@ public class DatabaseFieldConfigLoader {
 	private static final String CONFIG_FILE_END_MARKER = "# --field-end--";
 
 	private static final int DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL = ForeignCollectionField.MAX_EAGER_LEVEL;
-	private static final Class<? extends DataPersister> DEFAULT_PERSISTER_CLASS = VoidType.class;
-	private static final DataPersister DEFAULT_DATA_PERSISTER = DataType.UNKNOWN.getDataPersister();
-	private static final boolean DEFAULT_CAN_BE_NULL = true;
+	private static final DataPersister DEFAULT_DATA_PERSISTER =
+			DatabaseFieldConfig.DEFAULT_DATA_TYPE.getDataPersister();
 
 	/**
 	 * Load a configuration in from a text file.
@@ -112,6 +110,7 @@ public class DatabaseFieldConfigLoader {
 	private static final String FIELD_NAME_FOREIGN_COLLECTION_COLUMN_NAME = "foreignCollectionColumnName";
 	private static final String FIELD_NAME_FOREIGN_COLLECTION_ORDER_COLUMN_NAME_OLD = "foreignCollectionOrderColumn";
 	private static final String FIELD_NAME_FOREIGN_COLLECTION_ORDER_COLUMN_NAME = "foreignCollectionOrderColumnName";
+	private static final String FIELD_NAME_FOREIGN_COLLECTION_ORDER_ASCENDING = "foreignCollectionOrderAscending";
 	private static final String FIELD_NAME_FOREIGN_COLLECTION_FOREIGN_FIELD_NAME_OLD =
 			"foreignCollectionForeignColumnName";
 	private static final String FIELD_NAME_FOREIGN_COLLECTION_FOREIGN_FIELD_NAME = "foreignCollectionForeignFieldName";
@@ -153,7 +152,7 @@ public class DatabaseFieldConfigLoader {
 			writer.append(FIELD_NAME_WIDTH).append('=').append(Integer.toString(config.getWidth()));
 			writer.newLine();
 		}
-		if (config.isCanBeNull() != DEFAULT_CAN_BE_NULL) {
+		if (config.isCanBeNull() != DatabaseFieldConfig.DEFAULT_CAN_BE_NULL) {
 			writer.append(FIELD_NAME_CAN_BE_NULL).append('=').append(Boolean.toString(config.isCanBeNull()));
 			writer.newLine();
 		}
@@ -221,7 +220,7 @@ public class DatabaseFieldConfigLoader {
 					.append(Integer.toString(config.getMaxForeignAutoRefreshLevel()));
 			writer.newLine();
 		}
-		if (config.getPersisterClass() != DEFAULT_PERSISTER_CLASS) {
+		if (config.getPersisterClass() != DatabaseFieldConfig.DEFAULT_PERSISTER_CLASS) {
 			writer.append(FIELD_NAME_PERSISTER_CLASS).append('=').append(config.getPersisterClass().getName());
 			writer.newLine();
 		}
@@ -274,6 +273,12 @@ public class DatabaseFieldConfigLoader {
 			writer.append(FIELD_NAME_FOREIGN_COLLECTION_ORDER_COLUMN_NAME)
 					.append('=')
 					.append(config.getForeignCollectionOrderColumnName());
+			writer.newLine();
+		}
+		if (config.isForeignCollectionOrderAscending() != DatabaseFieldConfig.DEFAULT_FOREIGN_COLLECTION_ORDER_ASCENDING) {
+			writer.append(FIELD_NAME_FOREIGN_COLLECTION_ORDER_ASCENDING)
+					.append('=')
+					.append(Boolean.toString(config.isForeignCollectionOrderAscending()));
 			writer.newLine();
 		}
 		if (config.getForeignCollectionForeignFieldName() != null) {
@@ -399,6 +404,8 @@ public class DatabaseFieldConfigLoader {
 			config.setForeignCollectionOrderColumnName(value);
 		} else if (field.equals(FIELD_NAME_FOREIGN_COLLECTION_ORDER_COLUMN_NAME)) {
 			config.setForeignCollectionOrderColumnName(value);
+		} else if (field.equals(FIELD_NAME_FOREIGN_COLLECTION_ORDER_ASCENDING)) {
+			config.setForeignCollectionOrderAscending(Boolean.parseBoolean(value));
 		} else if (field.equals(FIELD_NAME_FOREIGN_COLLECTION_FOREIGN_FIELD_NAME_OLD)) {
 			config.setForeignCollectionForeignFieldName(value);
 		} else if (field.equals(FIELD_NAME_FOREIGN_COLLECTION_FOREIGN_FIELD_NAME)) {

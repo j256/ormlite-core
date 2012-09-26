@@ -30,8 +30,9 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 
 	private transient CloseableIterator<T> lastIterator;
 
-	public LazyForeignCollection(Dao<T, ID> dao, Object parent, Object parentId, String columnName, String orderColumn) {
-		super(dao, parent, parentId, columnName, orderColumn);
+	public LazyForeignCollection(Dao<T, ID> dao, Object parent, Object parentId, String columnName, String orderColumn,
+			boolean orderAscending) {
+		super(dao, parent, parentId, columnName, orderColumn, orderAscending);
 	}
 
 	/**

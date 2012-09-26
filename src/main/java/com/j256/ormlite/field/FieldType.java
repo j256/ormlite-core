@@ -759,7 +759,7 @@ public class FieldType {
 		if (!fieldConfig.isForeignCollectionEager() && !forceEager) {
 			// we know this won't go recursive so no need for the counters
 			return new LazyForeignCollection<FT, FID>(castDao, parent, id, foreignFieldType.columnName,
-					fieldConfig.getForeignCollectionOrderColumnName());
+					fieldConfig.getForeignCollectionOrderColumnName(), fieldConfig.isForeignCollectionOrderAscending());
 		}
 
 		LevelCounters levelCounters = threadLevelCounters.get();
@@ -770,12 +770,12 @@ public class FieldType {
 		if (levelCounters.foreignCollectionLevel >= levelCounters.foreignCollectionLevelMax) {
 			// then return a lazy collection instead
 			return new LazyForeignCollection<FT, FID>(castDao, parent, id, foreignFieldType.columnName,
-					fieldConfig.getForeignCollectionOrderColumnName());
+					fieldConfig.getForeignCollectionOrderColumnName(), fieldConfig.isForeignCollectionOrderAscending());
 		}
 		levelCounters.foreignCollectionLevel++;
 		try {
 			return new EagerForeignCollection<FT, FID>(castDao, parent, id, foreignFieldType.columnName,
-					fieldConfig.getForeignCollectionOrderColumnName());
+					fieldConfig.getForeignCollectionOrderColumnName(), fieldConfig.isForeignCollectionOrderAscending());
 		} finally {
 			levelCounters.foreignCollectionLevel--;
 		}
