@@ -490,7 +490,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 
 	/**
 	 * Run a raw execute SQL statement to the database. The arguments are optional but can be set with strings to expand
-	 * ? type of SQL. If you have no arguments, you may want to call {@link #executeRawNoArgs(String, String...)}.
+	 * ? type of SQL. If you have no arguments, you may want to call {@link #executeRawNoArgs(String)}.
 	 * 
 	 * @return number of rows affected.
 	 */
