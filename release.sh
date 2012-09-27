@@ -7,6 +7,7 @@ LOCAL_DIR="$HOME/svn/local/ormlite"
 CORE_DIR=$LOCAL_DIR/ormlite-core
 JDBC_DIR=$LOCAL_DIR/ormlite-jdbc
 ANDROID_DIR=$LOCAL_DIR/ormlite-android
+SVN_ROOT=http://svn.code.sf.net/p/ormlite/code
 
 #############################################################
 # check for not commited files:
@@ -112,7 +113,7 @@ echo -n "Should we release -core to sonatype [y]: "
 read cont
 if [ "$cont" = "" -o "$cont" = "y" ]; then
     cd $CORE_DIR
-    svn -m cp delete https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-core/tags/ormlite-core-$release
+    svn -m cp delete $SVN_ROOT/ormlite-core/tags/ormlite-core-$release
     mvn -P st release:clean || exit 1
     mvn $GPG_ARGS -P st release:prepare || exit 1
     mvn $GPG_ARGS -P st release:perform || exit 1
@@ -137,7 +138,7 @@ echo -n "Should we release -jdbc to sonatype [y]: "
 read cont
 if [ "$cont" = "" -o "$cont" = "y" ]; then
     cd $JDBC_DIR
-    svn -m cp delete https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-jdbc/tags/ormlite-jdbc-$release
+    svn -m cp delete $SVN_ROOT/ormlite-jdbc/tags/ormlite-jdbc-$release
     mvn -P st release:clean || exit 1
     mvn $GPG_ARGS -Dormlite-version=$release -P st release:prepare || exit 1
     mvn $GPG_ARGS -P st release:perform || exit 1
@@ -152,7 +153,7 @@ echo -n "Should we release -android to sonatype [y]: "
 read cont
 if [ "$cont" = "" -o "$cont" = "y" ]; then
     cd $ANDROID_DIR
-    svn -m cp delete https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-jdbc/tags/ormlite-android-$release
+    svn -m cp delete $SVN_ROOT/ormlite-jdbc/tags/ormlite-android-$release
     mvn -P st release:clean || exit 1
     mvn $GPG_ARGS -Dormlite-version=$release -P st release:prepare || exit 1
     mvn $GPG_ARGS -P st release:perform || exit 1
