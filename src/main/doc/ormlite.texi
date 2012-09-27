@@ -3011,6 +3011,7 @@ a new object if you want to use a @code{SelectArg} with another column.
 @section Building Join Queries
 
 @cindex join queries, building
+@cindex join query, example
 @cindex inner join queries, building
 One of the newer features added to ORMLite is support for basic @code{JOIN} SQL queries.  For more information about
 how @code{JOIN} queries work see @uref{http://www.w3schools.com/Sql/sql_join.asp, JOIN documentation}.
