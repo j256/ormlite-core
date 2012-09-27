@@ -22,9 +22,9 @@
 		<version>5</version>
 	</parent>
 	<scm>
-		<url>http://svn.code.sf.net/p/ormlite/code/ormlite-core/trunk</url>
-		<connection>scm:svn:http://svn.code.sf.net/p/ormlite/code/ormlite-core/trunk</connection>
-		<developerConnection>scm:svn:http://svn.code.sf.net/p/ormlite/code/ormlite-core/trunk</developerConnection>
+		<url>https://svn.code.sf.net/p/ormlite/code/ormlite-core/trunk</url>
+		<connection>scm:svn:https://svn.code.sf.net/p/ormlite/code/ormlite-core/trunk</connection>
+		<developerConnection>scm:svn:https://svn.code.sf.net/p/ormlite/code/ormlite-core/trunk</developerConnection>
 	</scm>
 	<developers>
 		<developer>
