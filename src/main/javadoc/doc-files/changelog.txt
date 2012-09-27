@@ -1,4 +1,4 @@
-4.42: 9/XX/2012 (svn rYYYY)
+4.42: 9/27/2012 (svn rYYYY)
 	* CORE: Added basic INNER and LEFT JOIN capabilities for queries only.  Finally.  Work in progress.
 	* CORE: Added ObjectFactory support on the DAO to better support Guice and other wiring.  Thanks to glenviewjeff.
 	* CORE: Fixed a bug in comparing superclasses of the field with the field.  Thanks to glenviewjeff.  Bug #3538777.
