@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.j256.ormlite</groupId>
 	<artifactId>ormlite-core</artifactId>
-	<version>4.42-SNAPSHOT</version>
+	<version>4.42</version>
 	<packaging>jar</packaging>
 	<name>ORMLite Core</name>
 	<url>http://ormlite.sourceforge.net/</url>
@@ -22,9 +22,9 @@
 		<version>5</version>
 	</parent>
 	<scm>
-		<url>http://ormlite.svn.sourceforge.net/viewvc/ormlite/ormlite-core/trunk/</url>
-		<connection>scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-core/trunk</connection>
-		<developerConnection>scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-core/trunk
+		<url>http://ormlite.svn.sourceforge.net/viewvc/ormlite/ormlite-core/tags/ormlite-core-4.42</url>
+		<connection>scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-core/tags/ormlite-core-4.42</connection>
+		<developerConnection>scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-core/tags/ormlite-core-4.42
 		</developerConnection>
 	</scm>
 	<developers>
