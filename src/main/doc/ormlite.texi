@@ -1264,10 +1264,21 @@ interface.
 /** JDBC implementation of the AccountDao interface. */
 public class AccountDaoImpl extends BaseDaoImpl<Account, String>
   implements AccountDao @{
+    // this constructor must be defined
     public AccountDaoImpl(ConnectionSource connectionSource)
       throws SQLException @{
         super(connectionSource, Account.class);
     @}
+@}
+@end example
+
+To make use of your custom DAO classes, you need to add the @code{daoClass} field to the @code{@@DatabaseTable} on the corresponding
+entity class:
+
+@example
+@@DatabaseTable(daoClass = AccountDaoImpl.class)
+public class Account @{
+   @dots{}
 @}
 @end example
 

@@ -85,7 +85,7 @@ public class DaoManager {
 				if (daoConstructor == null) {
 					throw new SQLException(
 							"Could not find public constructor with ConnectionSource and optional Class parameters "
-									+ daoClass);
+									+ daoClass + ".  Missing static on class?");
 				}
 			}
 			try {
