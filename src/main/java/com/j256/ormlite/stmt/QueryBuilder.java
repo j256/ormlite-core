@@ -43,7 +43,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	private List<String> groupByList;
 	private String groupByRaw;
 	private boolean isInnerQuery;
-	private boolean countOf;
+	private boolean isCountOfQuery;
 	private String having;
 	private Long limit;
 	private Long offset;
@@ -257,10 +257,13 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * Set whether or not we should only return the count of the results.
+	 * Set whether or not we should only return the count of the results. This query can then be used by
+	 * {@link Dao#countOf(PreparedQuery)}.
+	 * 
+	 * To get the count-of directly, use {@link #countOf()}.
 	 */
 	public QueryBuilder<T, ID> setCountOf(boolean countOf) {
-		this.countOf = countOf;
+		this.isCountOfQuery = countOf;
 		return this;
 	}
 
@@ -327,6 +330,15 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		return dao.iterator(prepare());
 	}
 
+	/**
+	 * Sets the count-of query flag using {@link #setCountOf(boolean)} to true and then calls
+	 * {@link Dao#countOf(PreparedQuery)}.
+	 */
+	public long countOf() throws SQLException {
+		setCountOf(true);
+		return dao.countOf(prepare());
+	}
+
 	@Override
 	public void clear() {
 		super.clear();
@@ -339,7 +351,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		groupByList = null;
 		groupByRaw = null;
 		isInnerQuery = false;
-		countOf = false;
+		isCountOfQuery = false;
 		having = null;
 		limit = null;
 		offset = null;
@@ -363,7 +375,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		if (distinct) {
 			sb.append("DISTINCT ");
 		}
-		if (countOf) {
+		if (isCountOfQuery) {
 			type = StatementType.SELECT_LONG;
 			sb.append("COUNT(*) ");
 		} else if (selectRawList != null && !selectRawList.isEmpty()) {
