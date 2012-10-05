@@ -825,12 +825,21 @@ public class WhereTest extends BaseCoreTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testInnerQuerySubQuery() throws Exception {
+	public void testInnerQuerySubQueryWhere() throws Exception {
 		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 
 		fooDao.queryBuilder().where().in(Foo.ID_COLUMN_NAME,
 		// this is a problem because eq() returns a Where not a QueryBuilder
 				fooDao.queryBuilder().selectColumns(Foo.ID_COLUMN_NAME).where().eq(Foo.ID_COLUMN_NAME, 1)).query();
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testInnerQuerySubQueryPrepared() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
+
+		fooDao.queryBuilder().where().in(Foo.ID_COLUMN_NAME,
+		// this is a problem because prepare() returns a PreparedStmt not a QueryBuilder
+				fooDao.queryBuilder().selectColumns(Foo.ID_COLUMN_NAME).prepare()).query();
 	}
 
 	@Test

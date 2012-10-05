@@ -558,7 +558,7 @@ public class Where<T, ID> {
 						+ " seems to be a Where object, did you mean the QueryBuilder?");
 			}
 			if (objects[0] instanceof PreparedStmt) {
-				throw new SQLException("Object argument to " + (in ? "IN" : "notId")
+				throw new IllegalArgumentException("Object argument to " + (in ? "IN" : "notId")
 						+ " seems to be a prepared statement, did you mean the QueryBuilder?");
 			}
 		}
