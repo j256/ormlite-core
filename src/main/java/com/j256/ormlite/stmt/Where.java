@@ -550,11 +550,16 @@ public class Where<T, ID> {
 	private Where<T, ID> in(boolean in, String columnName, Object... objects) throws SQLException {
 		if (objects.length == 1) {
 			if (objects[0].getClass().isArray()) {
-				throw new IllegalArgumentException("Object argument to IN seems to be an array within an array");
+				throw new IllegalArgumentException("Object argument to " + (in ? "IN" : "notId")
+						+ " seems to be an array within an array");
 			}
-			if (objects[0].getClass() == Where.class) {
-				throw new IllegalArgumentException(
-						"Object argument to IN seems to be a Where.class instead of a QueryBuilder.class");
+			if (objects[0] instanceof Where) {
+				throw new IllegalArgumentException("Object argument to " + (in ? "IN" : "notId")
+						+ " seems to be a Where object, did you mean the QueryBuilder?");
+			}
+			if (objects[0] instanceof PreparedStmt) {
+				throw new SQLException("Object argument to " + (in ? "IN" : "notId")
+						+ " seems to be a prepared statement, did you mean the QueryBuilder?");
 			}
 		}
 		addClause(new In(columnName, findColumnFieldType(columnName), objects, in));
