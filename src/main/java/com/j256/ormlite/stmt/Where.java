@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.QueryBuilder.InternalQueryBuilderWrapper;
@@ -479,44 +480,42 @@ public class Where<T, ID> {
 	 * A short-cut for calling {@link QueryBuilder#query()}.
 	 */
 	public List<T> query() throws SQLException {
-		if (statementBuilder instanceof QueryBuilder) {
-			return ((QueryBuilder<T, ID>) statementBuilder).query();
-		} else {
-			throw new SQLException("Cannot call query() on a statement of type " + statementBuilder.getType());
-		}
+		return checkQueryBuilderMethod("query()").query();
+	}
+
+	/**
+	 * A short-cut for calling {@link QueryBuilder#queryRaw()}.
+	 */
+	public GenericRawResults<String[]> queryRaw() throws SQLException {
+		return checkQueryBuilderMethod("queryRaw()").queryRaw();
 	}
 
 	/**
 	 * A short-cut for calling {@link QueryBuilder#queryForFirst()}.
 	 */
 	public T queryForFirst() throws SQLException {
-		if (statementBuilder instanceof QueryBuilder) {
-			return ((QueryBuilder<T, ID>) statementBuilder).queryForFirst();
-		} else {
-			throw new SQLException("Cannot call queryForFirst() on a statement of type " + statementBuilder.getType());
-		}
+		return checkQueryBuilderMethod("queryForFirst()").queryForFirst();
+	}
+
+	/**
+	 * A short-cut for calling {@link QueryBuilder#queryRawFirst()}.
+	 */
+	public String[] queryRawFirst() throws SQLException {
+		return checkQueryBuilderMethod("queryRawFirst()").queryRawFirst();
 	}
 
 	/**
 	 * A short-cut for calling {@link QueryBuilder#countOf()}.
 	 */
 	public long countOf() throws SQLException {
-		if (statementBuilder instanceof QueryBuilder) {
-			return ((QueryBuilder<T, ID>) statementBuilder).countOf();
-		} else {
-			throw new SQLException("Cannot call countOf() on a statement of type " + statementBuilder.getType());
-		}
+		return checkQueryBuilderMethod("countOf()").countOf();
 	}
 
 	/**
 	 * A short-cut for calling {@link QueryBuilder#iterator()}.
 	 */
 	public CloseableIterator<T> iterator() throws SQLException {
-		if (statementBuilder instanceof QueryBuilder) {
-			return ((QueryBuilder<T, ID>) statementBuilder).iterator();
-		} else {
-			throw new SQLException("Cannot call iterator on a statement of type " + statementBuilder.getType());
-		}
+		return checkQueryBuilderMethod("iterator()").iterator();
 	}
 
 	/**
@@ -566,6 +565,15 @@ public class Where<T, ID> {
 		} else {
 			Clause clause = peek();
 			return "where clause: " + clause;
+		}
+	}
+
+	private QueryBuilder<T, ID> checkQueryBuilderMethod(String methodName) throws SQLException {
+		if (statementBuilder instanceof QueryBuilder) {
+			return (QueryBuilder<T, ID>) statementBuilder;
+		} else {
+			throw new SQLException("Cannot call " + methodName + " on a statement of type "
+					+ statementBuilder.getType());
 		}
 	}
 

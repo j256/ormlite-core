@@ -2953,10 +2953,20 @@ Clear out the where object so it can be reused in a new query but with the same 
 Convenience method to perform the query.  Same as @code{queryBuilder.query()} and
 @code{dao.query(queryBuilder.prepare())}.
 
+@item queryRaw()
+
+Convenience method to perform the query and return raw results.  Same as @code{queryBuilder.queryRaw()} and
+@code{dao.queryRaw(...)}.
+
 @item queryForFirst()
 
 Convenience method to perform the query and return the first result.  Same as @code{queryBuilder.queryForFirst()} and
 @code{dao.queryForFirst(queryBuilder.prepare())}.
+
+@item queryRawFirst()
+
+Convenience method to perform the query and return the first raw result.  Same as @code{queryBuilder.queryRawFirst()} and
+@code{dao.queryRaw(...)}.
 
 @item countOf()
 
