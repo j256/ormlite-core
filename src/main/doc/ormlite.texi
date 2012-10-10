@@ -2958,6 +2958,11 @@ Convenience method to perform the query.  Same as @code{queryBuilder.query()} an
 Convenience method to perform the query and return the first result.  Same as @code{queryBuilder.queryForFirst()} and
 @code{dao.queryForFirst(queryBuilder.prepare())}.
 
+@item countOf()
+
+Convenience method to perform the query and return the number of results.  Same as @code{queryBuilder.countOf()} and
+@code{dao.countOf(queryBuilder.prepare())}.
+
 @item iterator()
 
 Convenience method to generate the iterator for the query.  Same as @code{queryBuilder.iterator()} and

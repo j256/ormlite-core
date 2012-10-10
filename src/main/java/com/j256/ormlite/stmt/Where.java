@@ -498,6 +498,17 @@ public class Where<T, ID> {
 	}
 
 	/**
+	 * A short-cut for calling {@link QueryBuilder#countOf()}.
+	 */
+	public long countOf() throws SQLException {
+		if (statementBuilder instanceof QueryBuilder) {
+			return ((QueryBuilder<T, ID>) statementBuilder).countOf();
+		} else {
+			throw new SQLException("Cannot call countOf() on a statement of type " + statementBuilder.getType());
+		}
+	}
+
+	/**
 	 * A short-cut for calling {@link QueryBuilder#iterator()}.
 	 */
 	public CloseableIterator<T> iterator() throws SQLException {
