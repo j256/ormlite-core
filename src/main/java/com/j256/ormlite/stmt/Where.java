@@ -469,25 +469,36 @@ public class Where<T, ID> {
 	}
 
 	/**
-	 * A short-cut for calling prepare() on the original {@link QueryBuilder#prepare()}.
+	 * A short-cut for calling {@link QueryBuilder#prepare()}.
 	 */
 	public PreparedQuery<T> prepare() throws SQLException {
 		return statementBuilder.prepareStatement(null);
 	}
 
 	/**
-	 * A short-cut for calling query() on the original {@link QueryBuilder#query()}.
+	 * A short-cut for calling {@link QueryBuilder#query()}.
 	 */
 	public List<T> query() throws SQLException {
 		if (statementBuilder instanceof QueryBuilder) {
 			return ((QueryBuilder<T, ID>) statementBuilder).query();
 		} else {
-			throw new SQLException("Cannot call query on a statement of type " + statementBuilder.getType());
+			throw new SQLException("Cannot call query() on a statement of type " + statementBuilder.getType());
 		}
 	}
 
 	/**
-	 * A short-cut for calling query() on the original {@link QueryBuilder#iterator()}.
+	 * A short-cut for calling {@link QueryBuilder#queryForFirst()}.
+	 */
+	public T queryForFirst() throws SQLException {
+		if (statementBuilder instanceof QueryBuilder) {
+			return ((QueryBuilder<T, ID>) statementBuilder).queryForFirst();
+		} else {
+			throw new SQLException("Cannot call queryForFirst() on a statement of type " + statementBuilder.getType());
+		}
+	}
+
+	/**
+	 * A short-cut for calling {@link QueryBuilder#iterator()}.
 	 */
 	public CloseableIterator<T> iterator() throws SQLException {
 		if (statementBuilder instanceof QueryBuilder) {
