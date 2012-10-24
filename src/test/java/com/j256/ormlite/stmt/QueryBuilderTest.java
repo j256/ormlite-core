@@ -342,12 +342,12 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(1, foreignDao.create(foreign));
 
 		// use the auto-extract method to extract by id
-		List<Foreign> results = foreignDao.queryBuilder().where().eq(Foreign.FOREIGN_COLUMN_NAME, foo).query();
+		List<Foreign> results = foreignDao.queryBuilder().where().eq(Foreign.FOO_COLUMN_NAME, foo).query();
 		assertEquals(1, results.size());
 		assertEquals(foreign.id, results.get(0).id);
 
 		// query for the id directly
-		List<Foreign> results2 = foreignDao.queryBuilder().where().eq(Foreign.FOREIGN_COLUMN_NAME, foo.id).query();
+		List<Foreign> results2 = foreignDao.queryBuilder().where().eq(Foreign.FOO_COLUMN_NAME, foo.id).query();
 		assertEquals(1, results2.size());
 		assertEquals(foreign.id, results2.get(0).id);
 	}
