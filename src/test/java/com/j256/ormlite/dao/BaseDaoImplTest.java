@@ -1488,6 +1488,30 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(foo1.id, results.get(0).id);
 	}
 
+	@Test
+	public void testQueryForForeignEq() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
+		Dao<Foreign, Integer> foreignDao = createDao(Foreign.class, true);
+
+		Foo foo1 = new Foo();
+		foo1.val = 1231231;
+		assertEquals(1, fooDao.create(foo1));
+		Foo foo2 = new Foo();
+		foo1.val = 1233241231;
+		assertEquals(1, fooDao.create(foo2));
+
+		Foreign foreign = new Foreign();
+		foreign.foo = foo1;
+		assertEquals(1, foreignDao.create(foreign));
+
+		List<Foreign> results = foreignDao.queryForEq(Foreign.FOO_COLUMN_NAME, foo1);
+		assertEquals(1, results.size());
+		assertEquals(foo1.id, results.get(0).foo.id);
+
+		results = foreignDao.queryForEq(Foreign.FOO_COLUMN_NAME, foo2);
+		assertEquals(0, results.size());
+	}
+
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testUseOfAndMany() throws Exception {

@@ -75,10 +75,10 @@ public abstract class BaseCoreTest {
 	}
 
 	protected static class Foreign {
-		public static final String FOREIGN_COLUMN_NAME = "foo_id";
+		public static final String FOO_COLUMN_NAME = "foo_id";
 		@DatabaseField(generatedId = true)
 		public int id;
-		@DatabaseField(foreign = true, columnName = FOREIGN_COLUMN_NAME)
+		@DatabaseField(foreign = true, columnName = FOO_COLUMN_NAME)
 		public Foo foo;
 		public Foreign() {
 		}
