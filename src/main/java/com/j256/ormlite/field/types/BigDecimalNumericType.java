@@ -58,4 +58,9 @@ public class BigDecimalNumericType extends BaseDataType {
 	public boolean isEscapedValue() {
 		return false;
 	}
+
+	@Override
+	public Class<?> getPrimaryClass() {
+		return BigDecimal.class;
+	}
 }

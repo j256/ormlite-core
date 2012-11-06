@@ -65,9 +65,17 @@ public abstract class BaseDataType extends BaseFieldConverter implements DataPer
 		return false;
 	}
 
+	public Class<?> getPrimaryClass() {
+		if (classes.length == 0) {
+			return null;
+		} else {
+			return classes[0];
+		}
+	}
+
 	/**
 	 * @throws SQLException
-	 *             If there are problems creating the config object.
+	 *             If there are problems creating the config object. Needed for subclasses.
 	 */
 	public Object makeConfigObject(FieldType fieldType) throws SQLException {
 		return null;

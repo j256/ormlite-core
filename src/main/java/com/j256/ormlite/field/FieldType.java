@@ -133,8 +133,15 @@ public class FieldType {
 		} else {
 			dataPersister = fieldConfig.getDataPersister();
 			if (!dataPersister.isValidForField(field)) {
-				throw new IllegalArgumentException("Field class " + clazz.getName() + " for field " + this
-						+ " is not valid for data persister " + dataPersister);
+				StringBuilder sb = new StringBuilder();
+				sb.append("Field class ").append(clazz.getName());
+				sb.append(" for field ").append(this);
+				sb.append(" is not valid for type ").append(dataPersister);
+				Class<?> primaryClass = dataPersister.getPrimaryClass();
+				if (primaryClass != null) {
+					sb.append(", maybe should be " + primaryClass);
+				}
+				throw new IllegalArgumentException(sb.toString());
 			}
 		}
 		String foreignColumnName = fieldConfig.getForeignColumnName();

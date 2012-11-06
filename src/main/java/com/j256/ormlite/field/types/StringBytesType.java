@@ -83,6 +83,11 @@ public class StringBytesType extends BaseDataType {
 		throw new SQLException("String-bytes type cannot be converted from string to Java");
 	}
 
+	@Override
+	public Class<?> getPrimaryClass() {
+		return String.class;
+	}
+
 	private String getCharsetName(FieldType fieldType) {
 		if (fieldType == null || fieldType.getFormat() == null) {
 			return DEFAULT_STRING_BYTES_CHARSET_NAME;

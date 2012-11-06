@@ -90,6 +90,16 @@ public class DateTimeType extends BaseDataType {
 		return false;
 	}
 
+	@Override
+	public Class<?> getPrimaryClass() {
+		try {
+			return getDateTimeClass();
+		} catch (ClassNotFoundException e) {
+			// ignore the exception
+			return null;
+		}
+	}
+
 	private Method getMillisMethod() throws Exception {
 		if (getMillisMethod == null) {
 			Class<?> clazz = getDateTimeClass();

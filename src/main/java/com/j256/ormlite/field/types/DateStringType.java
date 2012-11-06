@@ -92,4 +92,9 @@ public class DateStringType extends BaseDateType {
 	public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) throws SQLException {
 		return sqlArgToJava(fieldType, stringValue, columnPos);
 	}
+
+	@Override
+	public Class<?> getPrimaryClass() {
+		return byte[].class;
+	}
 }

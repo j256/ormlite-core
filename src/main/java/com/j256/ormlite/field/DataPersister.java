@@ -51,6 +51,11 @@ public interface DataPersister extends FieldConverter {
 	public boolean isValidForField(Field field);
 
 	/**
+	 * Return the class most associated with this persister or null if none.
+	 */
+	public Class<?> getPrimaryClass();
+
+	/**
 	 * Return whether this field's default value should be escaped in SQL.
 	 */
 	public boolean isEscapedDefaultValue();
