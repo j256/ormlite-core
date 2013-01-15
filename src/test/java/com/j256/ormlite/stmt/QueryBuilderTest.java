@@ -790,6 +790,33 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(bar1.id, results.get(0).bar.id);
 	}
 
+	@Test
+	public void testHavingOrderBy() throws Exception {
+		Dao<Foo, Object> fooDao = createDao(Foo.class, true);
+
+		Foo foo1 = new Foo();
+		foo1.val = 10;
+		assertEquals(1, fooDao.create(foo1));
+		Foo foo2 = new Foo();
+		foo2.val = 20;
+		assertEquals(1, fooDao.create(foo2));
+		Foo foo3 = new Foo();
+		foo3.val = 30;
+		assertEquals(1, fooDao.create(foo3));
+		Foo foo4 = new Foo();
+		foo4.val = 40;
+		assertEquals(1, fooDao.create(foo4));
+
+		QueryBuilder<Foo, Object> qb = fooDao.queryBuilder();
+		qb.groupBy(Foo.ID_COLUMN_NAME);
+		qb.orderBy(Foo.VAL_COLUMN_NAME, false);
+		qb.having("val < " + foo3.val);
+		List<Foo> results = qb.query();
+		assertEquals(2, results.size());
+		assertEquals(foo2.val, results.get(0).val);
+		assertEquals(foo1.val, results.get(1).val);
+	}
+
 	/* ======================================================================================================== */
 
 	private static class LimitInline extends BaseDatabaseType {

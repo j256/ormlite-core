@@ -439,8 +439,8 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	protected void appendStatementEnd(StringBuilder sb, List<ArgumentHolder> argList) throws SQLException {
 		// 'group by' comes before 'order by'
 		appendGroupBys(sb);
-		appendOrderBys(sb, argList);
 		appendHaving(sb);
+		appendOrderBys(sb, argList);
 		if (!databaseType.isLimitAfterSelect()) {
 			appendLimit(sb);
 		}
