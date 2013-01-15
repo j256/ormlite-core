@@ -1,6 +1,7 @@
 4.43: 10/XX/2012 (svn rYYYY)
 	* CORE: Added QueryBuilder.countOf() and queryRaw() methods as shortcuts to their DAO equivalents.
 	* CORE: Added Where.queryForFirst(), queryRaw(), queryRawFirst(), countOf() methods as shortcut to QueryBuilder.
+	* CORE: Added the ColumnArg feature to compare two columns using QueryBuilder.
 
 4.42: 9/27/2012 (svn r2653)
 	* CORE: Added basic INNER and LEFT JOIN capabilities for queries only.  Finally.  Work in progress.

@@ -6,6 +6,7 @@ import java.util.List;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.ArgumentHolder;
+import com.j256.ormlite.stmt.ColumnArg;
 import com.j256.ormlite.stmt.SelectArg;
 
 /**
@@ -101,6 +102,14 @@ abstract class BaseComparison implements Comparison {
 				}
 			}
 			sb.append(value);
+		} else if (argOrValue instanceof ColumnArg) {
+			ColumnArg columnArg = (ColumnArg)argOrValue;
+			String tableName = columnArg.getTableName();
+			if (tableName != null) {
+				databaseType.appendEscapedEntityName(sb, tableName);
+				sb.append('.');
+			}
+			databaseType.appendEscapedEntityName(sb, columnArg.getColumnName());
 		} else {
 			// numbers can't have quotes around them in derby
 			sb.append(fieldType.convertJavaFieldToSqlArgValue(argOrValue));
