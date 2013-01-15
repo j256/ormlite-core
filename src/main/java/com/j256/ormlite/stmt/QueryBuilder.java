@@ -450,7 +450,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		for (FieldType fieldType : tableInfo.getFieldTypes()) {
 			// if this is a foreign field and its foreign-id field is the same as the other's id
 			FieldType foreignIdField = fieldType.getForeignIdField();
-			if (fieldType.isForeign() && foreignIdField == joinedQueryBuilder.tableInfo.getIdField()) {
+			if (fieldType.isForeign() && foreignIdField.equals(joinedQueryBuilder.tableInfo.getIdField())) {
 				localJoinedField = fieldType;
 				remoteJoinedField = foreignIdField;
 				return;
@@ -458,7 +458,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		}
 		// if this other field is a foreign field and its foreign-id field is our id
 		for (FieldType fieldType : joinedQueryBuilder.tableInfo.getFieldTypes()) {
-			if (fieldType.isForeign() && fieldType.getForeignIdField() == idField) {
+			if (fieldType.isForeign() && fieldType.getForeignIdField().equals(idField)) {
 				localJoinedField = idField;
 				remoteJoinedField = fieldType;
 				return;
