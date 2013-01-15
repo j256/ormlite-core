@@ -704,6 +704,66 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		fooDao.queryBuilder().join(barDao.queryBuilder()).query();
 	}
 
+	@Test
+	public void testColumnArg() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		int val = 3123123;
+		foo1.val = val;
+		foo1.equal = val;
+		assertEquals(1, fooDao.create(foo1));
+		Foo foo2 = new Foo();
+		foo2.val = val;
+		foo2.equal = val + 1;
+		assertEquals(1, fooDao.create(foo2));
+
+		QueryBuilder<Foo, Integer> qb = fooDao.queryBuilder();
+		qb.where().eq(Foo.VAL_COLUMN_NAME, new ColumnArg(Foo.EQUAL_COLUMN_NAME));
+		List<Foo> results = qb.query();
+		assertNotNull(results);
+		assertEquals(1, results.size());
+		assertEquals(foo1.id, results.get(0).id);
+	}
+
+	@Test
+	public void testSimpleJoinColumnArg() throws Exception {
+		Dao<Bar, Integer> barDao = createDao(Bar.class, true);
+		Dao<Baz, Integer> bazDao = createDao(Baz.class, true);
+
+		Bar bar1 = new Bar();
+		int val = 1313123;
+		bar1.val = val;
+		assertEquals(1, barDao.create(bar1));
+		Bar bar2 = new Bar();
+		bar2.val = val;
+		assertEquals(1, barDao.create(bar2));
+
+		Baz baz1 = new Baz();
+		baz1.bar = bar1;
+		baz1.val = val;
+		assertEquals(1, bazDao.create(baz1));
+		Baz baz2 = new Baz();
+		baz2.bar = bar2;
+		baz2.val = val + 1;
+		assertEquals(1, bazDao.create(baz2));
+		Baz baz3 = new Baz();
+		baz1.bar = bar2;
+		baz1.val = val;
+		assertEquals(1, bazDao.create(baz3));
+		Baz baz4 = new Baz();
+		baz2.bar = bar1;
+		baz2.val = val;
+		assertEquals(1, bazDao.create(baz4));
+
+		QueryBuilder<Bar, Integer> barQb = barDao.queryBuilder();
+		barQb.where().eq(Bar.VAL_FIELD, new ColumnArg("baz", Baz.VAL_FIELD));
+		List<Baz> results = bazDao.queryBuilder().query();
+		assertEquals(4, results.size());
+		results = bazDao.queryBuilder().join(barQb).query();
+		assertEquals(1, results.size());
+		assertEquals(bar1.id, results.get(0).bar.id);
+	}
+
 	/* ======================================================================================================== */
 
 	private static class LimitInline extends BaseDatabaseType {
@@ -735,9 +795,12 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 
 	protected static class Baz {
 		public static final String ID_FIELD = "id";
+		public static final String VAL_FIELD = "val";
 		public static final String BAR_FIELD = "bar";
 		@DatabaseField(generatedId = true, columnName = ID_FIELD)
 		int id;
+		@DatabaseField(columnName = VAL_FIELD)
+		int val;
 		@DatabaseField(foreign = true, columnName = BAR_FIELD)
 		Bar bar;
 		public Baz() {
