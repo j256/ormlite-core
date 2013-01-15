@@ -16,6 +16,7 @@ import org.junit.Test;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.BaseDatabaseType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.SqlType;
 
 public class QueryBuilderTest extends BaseCoreStmtTest {
 
@@ -326,6 +327,31 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(2, results.size());
 		assertEquals(foo2.id, results.get(0).id);
 		assertEquals(foo1.id, results.get(1).id);
+	}
+
+	@Test
+	public void testOrderByRawArg() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		foo1.val = 1;
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		foo2.val = 2;
+		assertEquals(1, dao.create(foo2));
+		List<Foo> results =
+				dao.queryBuilder()
+						.orderByRaw("(" + Foo.VAL_COLUMN_NAME + " = ? ) DESC", new SelectArg(SqlType.INTEGER, 2))
+						.query();
+		assertEquals(2, results.size());
+		assertEquals(foo2.id, results.get(0).id);
+		assertEquals(foo1.id, results.get(1).id);
+		results =
+				dao.queryBuilder()
+						.orderByRaw("(" + Foo.VAL_COLUMN_NAME + " = ? )", new SelectArg(SqlType.INTEGER, 2))
+						.query();
+		assertEquals(2, results.size());
+		assertEquals(foo1.id, results.get(0).id);
+		assertEquals(foo2.id, results.get(1).id);
 	}
 
 	@Test

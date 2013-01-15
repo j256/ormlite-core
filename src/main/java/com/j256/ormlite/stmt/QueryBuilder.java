@@ -40,6 +40,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	private List<String> selectRawList;
 	private List<OrderBy> orderByList;
 	private String orderByRaw;
+	private ArgumentHolder[] orderByArgs;
 	private List<String> groupByList;
 	private String groupByRaw;
 	private boolean isInnerQuery;
@@ -192,10 +193,27 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * Add raw SQL "ORDER BY" clause to the SQL query statement. This should not include the "ORDER BY".
+	 * Add raw SQL "ORDER BY" clause to the SQL query statement.
+	 * 
+	 * @param rawSql
+	 *            The raw SQL order by clause. This should not include the "ORDER BY".
 	 */
 	public QueryBuilder<T, ID> orderByRaw(String rawSql) {
+		return orderByRaw(rawSql, (ArgumentHolder[]) null);
+	}
+
+	/**
+	 * Add raw SQL "ORDER BY" clause to the SQL query statement.
+	 * 
+	 * @param rawSql
+	 *            The raw SQL order by clause. This should not include the "ORDER BY".
+	 * @param args
+	 *            Optional arguments that correspond to any ? specified in the rawSql. Each of the arguments must have
+	 *            the sql-type set.
+	 */
+	public QueryBuilder<T, ID> orderByRaw(String rawSql, ArgumentHolder... args) {
 		orderByRaw = rawSql;
+		orderByArgs = args;
 		return this;
 	}
 
@@ -418,10 +436,10 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	@Override
-	protected void appendStatementEnd(StringBuilder sb) throws SQLException {
+	protected void appendStatementEnd(StringBuilder sb, List<ArgumentHolder> argList) throws SQLException {
 		// 'group by' comes before 'order by'
 		appendGroupBys(sb);
-		appendOrderBys(sb);
+		appendOrderBys(sb, argList);
 		appendHaving(sb);
 		if (!databaseType.isLimitAfterSelect()) {
 			appendLimit(sb);
@@ -625,10 +643,10 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		sb.append(' ');
 	}
 
-	private void appendOrderBys(StringBuilder sb) {
+	private void appendOrderBys(StringBuilder sb, List<ArgumentHolder> argList) {
 		boolean first = true;
 		if (hasOrderStuff()) {
-			appendOrderBys(sb, first);
+			appendOrderBys(sb, first, argList);
 			first = false;
 		}
 		/*
@@ -636,7 +654,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		 * anyway.
 		 */
 		if (joinedQueryBuilder != null && joinedQueryBuilder.hasOrderStuff()) {
-			joinedQueryBuilder.appendOrderBys(sb, first);
+			joinedQueryBuilder.appendOrderBys(sb, first, argList);
 		}
 	}
 
@@ -644,7 +662,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		return ((orderByList != null && !orderByList.isEmpty()) || orderByRaw != null);
 	}
 
-	private void appendOrderBys(StringBuilder sb, boolean first) {
+	private void appendOrderBys(StringBuilder sb, boolean first, List<ArgumentHolder> argList) {
 		if (first) {
 			sb.append("ORDER BY ");
 		}
@@ -653,6 +671,11 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 				sb.append(',');
 			}
 			sb.append(orderByRaw);
+			if (orderByArgs != null) {
+				for (ArgumentHolder arg : orderByArgs) {
+					argList.add(arg);
+				}
+			}
 		} else {
 			for (OrderBy orderBy : orderByList) {
 				if (first) {

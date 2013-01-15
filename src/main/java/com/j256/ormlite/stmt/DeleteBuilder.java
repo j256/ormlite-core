@@ -54,7 +54,7 @@ public class DeleteBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	@Override
-	protected void appendStatementEnd(StringBuilder sb) {
+	protected void appendStatementEnd(StringBuilder sb, List<ArgumentHolder> argList) {
 		// noop
 	}
 }

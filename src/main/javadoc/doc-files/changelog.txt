@@ -3,6 +3,7 @@
 	* CORE: Added Where.queryForFirst(), queryRaw(), queryRawFirst(), countOf() methods as shortcut to QueryBuilder.
 	* CORE: Added the ColumnArg feature to compare two columns using QueryBuilder.
 	* CORE: Fixed possible problem with field-type comparison in certain situations.  Thanks to shikajiro.  Bug #136.
+	* CORE: Added ? arguments to QueryBuilder.orderByRaw(...) method.  Thanks a bunch to Nathan Jones.  Feature #138.
 	* ANDROID: Fixed unclosed Cursor in AndroidDatabaseConnection.isTableExists().  Thanks to Andreas. Bug #137.
 
 4.42: 9/27/2012 (svn r2653)

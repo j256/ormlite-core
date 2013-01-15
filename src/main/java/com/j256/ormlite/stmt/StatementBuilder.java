@@ -121,7 +121,7 @@ public abstract class StatementBuilder<T, ID> {
 	protected void appendStatementString(StringBuilder sb, List<ArgumentHolder> argList) throws SQLException {
 		appendStatementStart(sb, argList);
 		appendWhereStatement(sb, argList, true);
-		appendStatementEnd(sb);
+		appendStatementEnd(sb, argList);
 	}
 
 	/**
@@ -151,7 +151,7 @@ public abstract class StatementBuilder<T, ID> {
 	/**
 	 * Append the end of our statement string to the StringBuilder.
 	 */
-	protected abstract void appendStatementEnd(StringBuilder sb) throws SQLException;
+	protected abstract void appendStatementEnd(StringBuilder sb, List<ArgumentHolder> argList) throws SQLException;
 
 	/**
 	 * Return true if we need to prepend table-name to columns.
