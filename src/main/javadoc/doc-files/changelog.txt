@@ -5,6 +5,7 @@
 	* CORE: Fixed a problem with GROUP BY, ORDER BY, and HAVING order.  Bug #134.
 	* CORE: Fixed possible problem with field-type comparison in certain situations.  Thanks to shikajiro.  Bug #136.
 	* CORE: Added ? arguments to QueryBuilder.orderByRaw(...) method.  Thanks a bunch to Nathan Jones.  Feature #138.
+	* ANDROID: Added protections around missing classes when building class config.  Thanks to Bart.  Bug #133.
 	* ANDROID: Fixed unclosed Cursor in AndroidDatabaseConnection.isTableExists().  Thanks to Andreas. Bug #137.
 
 4.42: 9/27/2012 (svn r2653)
