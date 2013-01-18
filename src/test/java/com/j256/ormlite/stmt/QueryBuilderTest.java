@@ -500,6 +500,36 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 	}
 
 	@Test
+	public void testSimpleJoinWhere() throws Exception {
+		Dao<Bar, Integer> barDao = createDao(Bar.class, true);
+		Dao<Baz, Integer> bazDao = createDao(Baz.class, true);
+
+		Bar bar1 = new Bar();
+		bar1.val = 2234;
+		assertEquals(1, barDao.create(bar1));
+		Bar bar2 = new Bar();
+		bar2.val = 324322234;
+		assertEquals(1, barDao.create(bar2));
+
+		Baz baz1 = new Baz();
+		baz1.bar = bar1;
+		assertEquals(1, bazDao.create(baz1));
+		Baz baz2 = new Baz();
+		baz2.bar = bar2;
+		assertEquals(1, bazDao.create(baz2));
+
+		QueryBuilder<Bar, Integer> barQb = barDao.queryBuilder();
+		barQb.where().eq(Bar.VAL_FIELD, bar1.val);
+		List<Baz> results = bazDao.queryBuilder().query();
+		assertEquals(2, results.size());
+		QueryBuilder<Baz, Integer> bazQb = bazDao.queryBuilder();
+		bazQb.where().eq(Baz.VAL_FIELD, baz1.val);
+		results = bazQb.join(barQb).query();
+		assertEquals(1, results.size());
+		assertEquals(bar1.id, results.get(0).bar.id);
+	}
+
+	@Test
 	public void testReverseJoin() throws Exception {
 		Dao<Bar, Integer> barDao = createDao(Bar.class, true);
 		Dao<Baz, Integer> bazDao = createDao(Baz.class, true);
