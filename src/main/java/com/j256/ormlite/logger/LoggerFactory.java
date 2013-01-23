@@ -48,6 +48,7 @@ public class LoggerFactory {
 	 * Return the most appropriate log type. This should _never_ return null.
 	 */
 	private static LogType findLogType() {
+
 		for (LogType logType : LogType.values()) {
 			if (logType.isAvailable()) {
 				return logType;
@@ -66,6 +67,7 @@ public class LoggerFactory {
 		 * messages are ignored that are sent there. Grrrrr.
 		 */
 		ANDROID("android.util.Log", "com.j256.ormlite.android.AndroidLog"),
+		SLF4J("org.slf4j.LoggerFactory", "com.j256.ormlite.logger.Slf4jLoggingLog"),
 		COMMONS_LOGGING("org.apache.commons.logging.LogFactory", "com.j256.ormlite.logger.CommonsLoggingLog"),
 		LOG4J("org.apache.log4j.Logger", "com.j256.ormlite.logger.Log4jLog"),
 		// this should always be at the end, arguments are unused
@@ -95,23 +97,13 @@ public class LoggerFactory {
 		 * Create and return a Log class for this type.
 		 */
 		public Log createLog(String classLabel) {
-			return createLogFromClassName(classLabel);
-		}
-
-		/**
-		 * This is package permissions for testing purposes.
-		 */
-		Log createLogFromClassName(String classLabel) {
 			try {
-				Class<?> clazz = Class.forName(logClassName);
-				@SuppressWarnings("unchecked")
-				Constructor<Log> constructor = (Constructor<Log>) clazz.getConstructor(String.class);
-				return constructor.newInstance(classLabel);
+				return createLogFromClassName(classLabel);
 			} catch (Exception e) {
-				// oh well, fallback to the local log
+				// oh well, fall back to the local log
 				Log log = new LocalLog(classLabel);
 				log.log(Level.WARNING, "Unable to call constructor with single String argument for class "
-						+ logClassName + ", so had to use local log", e);
+						+ logClassName + ", so had to use local log: " + e.getMessage());
 				return log;
 			}
 		}
@@ -120,7 +112,27 @@ public class LoggerFactory {
 		 * Return true if the log class is available.
 		 */
 		public boolean isAvailable() {
-			return isAvailableTestClass();
+			if (!isAvailableTestClass()) {
+				return false;
+			}
+			try {
+				// try to actually use the logger which resolves problems with the Android stub
+				Log log = createLogFromClassName(getClass().getName());
+				log.isLevelEnabled(Level.INFO);
+				return true;
+			} catch (Exception e) {
+				return false;
+			}
+		}
+
+		/**
+		 * Try to create the log from the class name which may throw.
+		 */
+		Log createLogFromClassName(String classLabel) throws Exception {
+			Class<?> clazz = Class.forName(logClassName);
+			@SuppressWarnings("unchecked")
+			Constructor<Log> constructor = (Constructor<Log>) clazz.getConstructor(String.class);
+			return constructor.newInstance(classLabel);
 		}
 
 		/**

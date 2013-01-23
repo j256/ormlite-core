@@ -15,6 +15,11 @@ public abstract class BaseLogTest {
 	}
 
 	@Test
+	public void testLogStuff() {
+		log.log(Level.INFO, "hello there");
+	}
+
+	@Test
 	public void testLevelEnabled() {
 		boolean shouldBeEnabled = false;
 		shouldBeEnabled = checkEnabled(log.isLevelEnabled(Level.TRACE), shouldBeEnabled);

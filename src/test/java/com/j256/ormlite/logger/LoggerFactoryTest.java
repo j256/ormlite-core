@@ -43,19 +43,19 @@ public class LoggerFactoryTest {
 	public void testLogTypeUnknownLog() {
 		Log log = LoggerFactory.LogType.ANDROID.createLog(getClass().getName());
 		assertTrue(log instanceof LocalLog);
-		log = LoggerFactory.LogType.ANDROID.createLogFromClassName(getClass().getName());
+		log = LoggerFactory.LogType.ANDROID.createLog(getClass().getName());
 		assertTrue(log instanceof LocalLog);
 		log = LoggerFactory.LogType.COMMONS_LOGGING.createLog(getClass().getName());
 		assertTrue(log instanceof LocalLog);
-		log = LoggerFactory.LogType.COMMONS_LOGGING.createLogFromClassName(getClass().getName());
+		log = LoggerFactory.LogType.COMMONS_LOGGING.createLog(getClass().getName());
 		assertTrue(log instanceof LocalLog);
 		log = LoggerFactory.LogType.LOG4J.createLog(getClass().getName());
 		assertTrue(log instanceof LocalLog);
-		log = LoggerFactory.LogType.LOG4J.createLogFromClassName(getClass().getName());
+		log = LoggerFactory.LogType.LOG4J.createLog(getClass().getName());
 		assertTrue(log instanceof LocalLog);
 		log = LoggerFactory.LogType.LOCAL.createLog(getClass().getName());
 		assertTrue(log instanceof LocalLog);
-		log = LoggerFactory.LogType.LOCAL.createLogFromClassName(getClass().getName());
+		log = LoggerFactory.LogType.LOCAL.createLog(getClass().getName());
 		assertTrue(log instanceof LocalLog);
 	}
 
