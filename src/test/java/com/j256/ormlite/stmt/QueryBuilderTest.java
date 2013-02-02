@@ -712,7 +712,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 	}
 
 	@Test
-	public void testMultipleJoin() throws Exception {
+	public void testInnerJoin() throws Exception {
 		Dao<Bar, Integer> barDao = createDao(Bar.class, true);
 		Dao<Baz, Integer> bazDao = createDao(Baz.class, true);
 		Dao<Bing, Integer> bingDao = createDao(Bing.class, true);
@@ -758,6 +758,48 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		Dao<Bar, Integer> barDao = createDao(Bar.class, true);
 		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		fooDao.queryBuilder().join(barDao.queryBuilder()).query();
+	}
+
+	@Test
+	public void testMultipleJoin() throws Exception {
+		Dao<Bar, Integer> barDao = createDao(Bar.class, true);
+		Dao<Baz, Integer> bazDao = createDao(Baz.class, true);
+		Dao<Bing, Integer> bingDao = createDao(Bing.class, true);
+
+		Bar bar1 = new Bar();
+		bar1.val = 2234;
+		assertEquals(1, barDao.create(bar1));
+		Bar bar2 = new Bar();
+		bar2.val = 324322234;
+		assertEquals(1, barDao.create(bar2));
+
+		Baz baz1 = new Baz();
+		baz1.bar = bar1;
+		assertEquals(1, bazDao.create(baz1));
+		Baz baz2 = new Baz();
+		baz2.bar = bar2;
+		assertEquals(1, bazDao.create(baz2));
+
+		Bing bing1 = new Bing();
+		bing1.baz = baz1;
+		assertEquals(1, bingDao.create(bing1));
+		Bing bing2 = new Bing();
+		bing2.baz = baz1;
+		assertEquals(1, bingDao.create(bing2));
+
+		QueryBuilder<Bar, Integer> barQb = barDao.queryBuilder();
+		barQb.where().eq(Bar.VAL_FIELD, bar1.val);
+		List<Baz> results = bazDao.queryBuilder().query();
+		assertEquals(2, results.size());
+
+		QueryBuilder<Bing, Integer> bingQb = bingDao.queryBuilder();
+		bingQb.where().eq(Bing.ID_FIELD, bing2.id);
+		List<Baz> bingResults = bazDao.queryBuilder().query();
+		assertEquals(2, bingResults.size());
+
+		results = bazDao.queryBuilder().join(barQb).join(bingQb).query();
+		assertEquals(1, results.size());
+		assertEquals(bar1.id, results.get(0).bar.id);
 	}
 
 	@Test

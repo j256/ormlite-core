@@ -48,10 +48,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	private String having;
 	private Long limit;
 	private Long offset;
-	private String joinType;
-	private QueryBuilder<?, ?> joinedQueryBuilder;
-	private FieldType localJoinedField;
-	private FieldType remoteJoinedField;
+	private List<JoinInfo> joinList;
 
 	// NOTE: anything added here should be added to the clear() method below
 
@@ -299,12 +296,9 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * of the other one. An exception will be thrown otherwise.
 	 */
 	public QueryBuilder<T, ID> join(QueryBuilder<?, ?> joinedQueryBuilder) throws SQLException {
-		joinType = "INNER";
-		this.joinedQueryBuilder = joinedQueryBuilder;
-		matchJoinedFields(joinedQueryBuilder);
+		addJoinInfo("INNER", joinedQueryBuilder);
 		return this;
 	}
-
 	/**
 	 * Similar to {@link #join(QueryBuilder)} but it will use "LEFT JOIN" instead.
 	 * 
@@ -314,9 +308,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * table.
 	 */
 	public QueryBuilder<T, ID> leftJoin(QueryBuilder<?, ?> joinedQueryBuilder) throws SQLException {
-		joinType = "LEFT";
-		this.joinedQueryBuilder = joinedQueryBuilder;
-		matchJoinedFields(joinedQueryBuilder);
+		addJoinInfo("LEFT", joinedQueryBuilder);
 		return this;
 	}
 
@@ -380,15 +372,17 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		having = null;
 		limit = null;
 		offset = null;
-		joinedQueryBuilder = null;
-		localJoinedField = null;
-		remoteJoinedField = null;
+		if (joinList != null) {
+			// help gc
+			joinList.clear();
+			joinList = null;
+		}
 		addTableName = false;
 	}
 
 	@Override
 	protected void appendStatementStart(StringBuilder sb, List<ArgumentHolder> argList) {
-		if (joinedQueryBuilder == null) {
+		if (joinList == null) {
 			setAddTableName(false);
 		} else {
 			setAddTableName(true);
@@ -413,7 +407,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		sb.append("FROM ");
 		databaseType.appendEscapedEntityName(sb, tableName);
 		sb.append(' ');
-		if (joinedQueryBuilder != null) {
+		if (joinList != null) {
 			appendJoinSql(sb);
 		}
 	}
@@ -430,8 +424,11 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			super.appendWhereStatement(sb, argList, first);
 			first = false;
 		}
-		if (joinedQueryBuilder != null) {
-			joinedQueryBuilder.appendWhereStatement(sb, argList, first);
+		if (joinList != null) {
+			for (JoinInfo joinInfo : joinList) {
+				joinInfo.queryBuilder.appendWhereStatement(sb, argList, first);
+				first = false;
+			}
 		}
 	}
 
@@ -451,34 +448,48 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 
 	@Override
 	protected boolean shouldPrependTableNameToColumns() {
-		return joinedQueryBuilder != null;
+		return joinList != null;
 	}
 
 	private void setAddTableName(boolean addTableName) {
 		this.addTableName = addTableName;
-		if (joinedQueryBuilder != null) {
-			joinedQueryBuilder.setAddTableName(addTableName);
+		if (joinList != null) {
+			for (JoinInfo joinInfo : joinList) {
+				joinInfo.queryBuilder.setAddTableName(addTableName);
+			}
 		}
+	}
+
+	/**
+	 * Add join info to the query.
+	 */
+	private void addJoinInfo(String type, QueryBuilder<?, ?> joinedQueryBuilder) throws SQLException {
+		JoinInfo joinInfo = new JoinInfo(type, joinedQueryBuilder);
+		matchJoinedFields(joinInfo, joinedQueryBuilder);
+		if (joinList == null) {
+			joinList = new ArrayList<JoinInfo>();
+		}
+		joinList.add(joinInfo);
 	}
 
 	/**
 	 * Match up our joined fields so we can throw a nice exception immediately if you can't join with this type.
 	 */
-	private void matchJoinedFields(QueryBuilder<?, ?> joinedQueryBuilder) throws SQLException {
+	private void matchJoinedFields(JoinInfo joinInfo, QueryBuilder<?, ?> joinedQueryBuilder) throws SQLException {
 		for (FieldType fieldType : tableInfo.getFieldTypes()) {
 			// if this is a foreign field and its foreign-id field is the same as the other's id
 			FieldType foreignIdField = fieldType.getForeignIdField();
 			if (fieldType.isForeign() && foreignIdField.equals(joinedQueryBuilder.tableInfo.getIdField())) {
-				localJoinedField = fieldType;
-				remoteJoinedField = foreignIdField;
+				joinInfo.localField = fieldType;
+				joinInfo.remoteField = foreignIdField;
 				return;
 			}
 		}
 		// if this other field is a foreign field and its foreign-id field is our id
 		for (FieldType fieldType : joinedQueryBuilder.tableInfo.getFieldTypes()) {
 			if (fieldType.isForeign() && fieldType.getForeignIdField().equals(idField)) {
-				localJoinedField = idField;
-				remoteJoinedField = fieldType;
+				joinInfo.localField = idField;
+				joinInfo.remoteField = fieldType;
 				return;
 			}
 		}
@@ -493,20 +504,22 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	private void appendJoinSql(StringBuilder sb) {
-		sb.append(joinType).append(" JOIN ");
-		databaseType.appendEscapedEntityName(sb, joinedQueryBuilder.tableName);
-		sb.append(" ON ");
-		databaseType.appendEscapedEntityName(sb, tableName);
-		sb.append('.');
-		databaseType.appendEscapedEntityName(sb, localJoinedField.getColumnName());
-		sb.append(" = ");
-		databaseType.appendEscapedEntityName(sb, joinedQueryBuilder.tableName);
-		sb.append('.');
-		databaseType.appendEscapedEntityName(sb, remoteJoinedField.getColumnName());
-		sb.append(' ');
-		// keep on going down if multiple JOIN layers
-		if (this.joinedQueryBuilder.joinedQueryBuilder != null) {
-			joinedQueryBuilder.appendJoinSql(sb);
+		for (JoinInfo joinInfo : joinList) {
+			sb.append(joinInfo.type).append(" JOIN ");
+			databaseType.appendEscapedEntityName(sb, joinInfo.queryBuilder.tableName);
+			sb.append(" ON ");
+			databaseType.appendEscapedEntityName(sb, tableName);
+			sb.append('.');
+			databaseType.appendEscapedEntityName(sb, joinInfo.localField.getColumnName());
+			sb.append(" = ");
+			databaseType.appendEscapedEntityName(sb, joinInfo.queryBuilder.tableName);
+			sb.append('.');
+			databaseType.appendEscapedEntityName(sb, joinInfo.remoteField.getColumnName());
+			sb.append(' ');
+			// keep on going down if multiple JOIN layers
+			if (joinInfo.queryBuilder.joinList != null) {
+				joinInfo.queryBuilder.appendJoinSql(sb);
+			}
 		}
 	}
 
@@ -612,8 +625,12 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		 * NOTE: this may not be legal and doesn't seem to work with some database types but we'll check this out
 		 * anyway.
 		 */
-		if (joinedQueryBuilder != null && joinedQueryBuilder.hasGroupStuff()) {
-			joinedQueryBuilder.appendGroupBys(sb, first);
+		if (joinList != null) {
+			for (JoinInfo joinInfo : joinList) {
+				if (joinInfo.queryBuilder != null && joinInfo.queryBuilder.hasGroupStuff()) {
+					joinInfo.queryBuilder.appendGroupBys(sb, first);
+				}
+			}
 		}
 	}
 
@@ -653,8 +670,12 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		 * NOTE: this may not be necessary since the inner results aren't at all returned but we'll leave this code here
 		 * anyway.
 		 */
-		if (joinedQueryBuilder != null && joinedQueryBuilder.hasOrderStuff()) {
-			joinedQueryBuilder.appendOrderBys(sb, first, argList);
+		if (joinList != null) {
+			for (JoinInfo joinInfo : joinList) {
+				if (joinInfo.queryBuilder != null && joinInfo.queryBuilder.hasOrderStuff()) {
+					joinInfo.queryBuilder.appendOrderBys(sb, first, argList);
+				}
+			}
 		}
 	}
 
@@ -706,6 +727,21 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	private void appendHaving(StringBuilder sb) {
 		if (having != null) {
 			sb.append("HAVING ").append(having).append(' ');
+		}
+	}
+
+	/**
+	 * Encapsulates our join information.
+	 */
+	private class JoinInfo {
+		final String type;
+		final QueryBuilder<?, ?> queryBuilder;
+		FieldType localField;
+		FieldType remoteField;
+
+		public JoinInfo(String type, QueryBuilder<?, ?> queryBuilder) {
+			this.type = type;
+			this.queryBuilder = queryBuilder;
 		}
 	}
 

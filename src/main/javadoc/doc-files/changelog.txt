@@ -1,4 +1,4 @@
-4.43: 10/XX/2012 (svn rYYYY)
+4.43: 2/XX/2013 (svn rYYYY)
 	* CORE: Added QueryBuilder.countOf() and queryRaw() methods as shortcuts to their DAO equivalents.
 	* CORE: Added Where.queryForFirst(), queryRaw(), queryRawFirst(), countOf() methods as shortcut to QueryBuilder.
 	* CORE: Added the ColumnArg feature to compare two columns using QueryBuilder in simple queries and joins.
@@ -6,6 +6,7 @@
 	* CORE: Fixed possible problem with field-type comparison in certain situations.  Thanks to shikajiro.  Bug #136.
 	* CORE: Added ? arguments to QueryBuilder.orderByRaw(...) method.  Thanks a bunch to Nathan Jones.  Feature #138.
 	* CORE: Improved the log class detection and added support for SLF4J with a wrapper class.
+	* CORE: Added support for multiple JOIN statements.  Thanks to Ramps.  Feature #28.
 	* ANDROID: Added protections around missing classes when building class config.  Thanks to Bart.  Bug #133.
 	* ANDROID: Fixed unclosed Cursor in AndroidDatabaseConnection.isTableExists().  Thanks to Andreas. Bug #137.
 
