@@ -39,7 +39,7 @@ import com.j256.ormlite.table.ObjectFactory;
  * 
  * @author graywatson
  */
-public class RuntimeExceptionDao<T, ID> {
+public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 
 	/*
 	 * We use debug here because we don't want these messages to be logged by default. The user will need to turn on
@@ -366,6 +366,10 @@ public class RuntimeExceptionDao<T, ID> {
 	 */
 	public CloseableIterator<T> iterator() {
 		return dao.iterator();
+	}
+
+	public CloseableIterator<T> closeableIterator() {
+		return dao.closeableIterator();
 	}
 
 	/**

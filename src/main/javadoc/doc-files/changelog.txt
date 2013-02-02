@@ -8,6 +8,7 @@
 	* CORE: Added support for multiple JOIN statements.  Thanks to Ramps.  Feature #28.
 	* CORE: Added ability to select log-type using "com.j256.ormlite.logger.type" system property.  See LoggerFactory.
 	* CORE: Creating an empty foreign collection now mirrors the collection type.  "Fixes" bug #124.
+	* CORE: Made the RuntimeExceptionDao implement ClosableIterarble.  Feature #34.
 	* JDBC: Improved the log class detection and added support for Slf4j nad Log4j2.  Feature #27.
 	* ANDROID: Added protections around missing classes when building class config.  Thanks to Bart.  Bug #133.
 	* ANDROID: Fixed unclosed Cursor in AndroidDatabaseConnection.isTableExists().  Thanks to Andreas. Bug #137.
