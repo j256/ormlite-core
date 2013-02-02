@@ -163,7 +163,8 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * extracts the ID from the data parameter, does a {@link #queryForId(Object)} on it, returning the data if it
 	 * exists. If it does not exist {@link #create(Object)} will be called with the parameter.
 	 * 
-	 * @return Either the data parameter if it was inserted or the data that existed already in the database.
+	 * @return Either the data parameter if it was inserted (now with the ID field set via the create method) or the
+	 *         data element that existed already in the database.
 	 */
 	public T createIfNotExists(T data) throws SQLException;
 
