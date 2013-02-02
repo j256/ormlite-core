@@ -752,18 +752,15 @@ public class FieldType {
 	 * @param id
 	 *            The id of the foreign object we will look for. This can be null if we are creating an empty
 	 *            collection.
-	 * @param forceEager
-	 *            Set to true to force this to be an eager collection.
 	 */
-	public <FT, FID> BaseForeignCollection<FT, FID> buildForeignCollection(FT parent, FID id, boolean forceEager)
-			throws SQLException {
+	public <FT, FID> BaseForeignCollection<FT, FID> buildForeignCollection(FT parent, FID id) throws SQLException {
 		// this can happen if we have a foreign-auto-refresh scenario
 		if (foreignFieldType == null) {
 			return null;
 		}
 		@SuppressWarnings("unchecked")
 		Dao<FT, FID> castDao = (Dao<FT, FID>) foreignDao;
-		if (!fieldConfig.isForeignCollectionEager() && !forceEager) {
+		if (!fieldConfig.isForeignCollectionEager()) {
 			// we know this won't go recursive so no need for the counters
 			return new LazyForeignCollection<FT, FID>(castDao, parent, id, foreignFieldType.columnName,
 					fieldConfig.getForeignCollectionOrderColumnName(), fieldConfig.isForeignCollectionOrderAscending());

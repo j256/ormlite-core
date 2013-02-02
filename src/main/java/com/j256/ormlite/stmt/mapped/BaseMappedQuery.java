@@ -79,7 +79,7 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 			// go back and initialize any foreign collections
 			for (FieldType fieldType : resultsFieldTypes) {
 				if (fieldType.isForeignCollection()) {
-					BaseForeignCollection<?, ?> collection = fieldType.buildForeignCollection(instance, id, false);
+					BaseForeignCollection<?, ?> collection = fieldType.buildForeignCollection(instance, id);
 					if (collection != null) {
 						fieldType.assignField(instance, collection, false, objectCache);
 					}
