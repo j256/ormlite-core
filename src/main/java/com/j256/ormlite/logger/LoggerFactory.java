@@ -5,10 +5,17 @@ import java.lang.reflect.Constructor;
 import com.j256.ormlite.logger.Log.Level;
 
 /**
- * Factory that creates {@link Logger} instances.
+ * Factory that creates {@link Logger} instances for ORMLite. It uses reflection to see what loggers are installed on
+ * the system and tries to find the most appropriate one.
+ * 
+ * <p>
+ * To set the logger to a particular type, set the system property ("com.j256.ormlite.logger.type") contained in
+ * {@link #LOGGER_FACTORY_LOG_TYPE_SYSTEM_PROPERTY} to be one of the values in {@link #LogType}.
+ * </p>
  */
 public class LoggerFactory {
 
+	public static final String LOG_TYPE_SYSTEM_PROPERTY = "com.j256.ormlite.logger.type";
 	private static LogType logType;
 
 	/**
@@ -34,6 +41,9 @@ public class LoggerFactory {
 		return new Logger(logType.createLog(className));
 	}
 
+	/**
+	 * Return the single class name from a class-name string.
+	 */
 	public static String getSimpleClassName(String className) {
 		// get the last part of the class name
 		String[] parts = className.split("\\.");
@@ -49,6 +59,18 @@ public class LoggerFactory {
 	 */
 	private static LogType findLogType() {
 
+		// see if the log-type was specified as a system property
+		String logTypeString = System.getProperty(LOG_TYPE_SYSTEM_PROPERTY);
+		if (logTypeString != null) {
+			try {
+				return LogType.valueOf(logTypeString);
+			} catch (IllegalArgumentException e) {
+				Log log = new LocalLog(LoggerFactory.class.getName());
+				log.log(Level.WARNING, "Could not find valid log-type from system property '"
+						+ LOG_TYPE_SYSTEM_PROPERTY + "', value '" + logTypeString + "'");
+			}
+		}
+
 		for (LogType logType : LogType.values()) {
 			if (logType.isAvailable()) {
 				return logType;
@@ -61,7 +83,7 @@ public class LoggerFactory {
 	/**
 	 * Type of internal logs supported. This is package permissions for testing.
 	 */
-	enum LogType {
+	public enum LogType {
 		/**
 		 * WARNING: Android log must be _before_ commons logging since Android provides commons logging but logging
 		 * messages are ignored that are sent there. Grrrrr.
@@ -69,6 +91,7 @@ public class LoggerFactory {
 		ANDROID("android.util.Log", "com.j256.ormlite.android.AndroidLog"),
 		SLF4J("org.slf4j.LoggerFactory", "com.j256.ormlite.logger.Slf4jLoggingLog"),
 		COMMONS_LOGGING("org.apache.commons.logging.LogFactory", "com.j256.ormlite.logger.CommonsLoggingLog"),
+		LOG4J2("org.apache.logging.log4j.LogManager", "com.j256.ormlite.logger.Log4j2Log"),
 		LOG4J("org.apache.log4j.Logger", "com.j256.ormlite.logger.Log4jLog"),
 		// this should always be at the end, arguments are unused
 		LOCAL(LocalLog.class.getName(), LocalLog.class.getName()) {
