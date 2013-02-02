@@ -102,4 +102,14 @@ public interface ForeignCollection<T> extends Collection<T>, CloseableIterable<T
 	 * @return The number of objects loaded into the new collection.
 	 */
 	public int refreshCollection() throws SQLException;
+
+	/**
+	 * Adds the object to the collection. This will also add it to the database by calling through to [@link
+	 * {@link Dao#create(Object)}. If the object has already been created in the database then you just need to set the
+	 * foreign field on the object and call {@link Dao#update(Object)}. If you add it here the DAO will try to create it
+	 * in the database again which will most likely cause an error.
+	 * 
+	 * @see Collection#add(Object)
+	 */
+	public boolean add(T obj);
 }
