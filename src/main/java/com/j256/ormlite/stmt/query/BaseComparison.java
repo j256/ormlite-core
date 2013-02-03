@@ -103,7 +103,7 @@ abstract class BaseComparison implements Comparison {
 			}
 			sb.append(value);
 		} else if (argOrValue instanceof ColumnArg) {
-			ColumnArg columnArg = (ColumnArg)argOrValue;
+			ColumnArg columnArg = (ColumnArg) argOrValue;
 			String tableName = columnArg.getTableName();
 			if (tableName != null) {
 				databaseType.appendEscapedEntityName(sb, tableName);
