@@ -20,8 +20,6 @@ import com.j256.ormlite.support.DatabaseResults;
  */
 public class DateType extends BaseDateType {
 
-	private static final DateStringFormatConfig defaultDateFormatConfig = new DateStringFormatConfig(
-			"yyyy-MM-dd HH:mm:ss.SSSSSS");
 	private static final DateType singleTon = new DateType();
 
 	public static DateType getSingleton() {

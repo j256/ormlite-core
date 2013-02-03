@@ -6,9 +6,9 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.42
-@set ormlite_year 2012
-@set ormlite_date September @value{ormlite_year}
+@set ormlite_version 4.43
+@set ormlite_year 2013
+@set ormlite_date February @value{ormlite_year}
 @set package ORMLite
 @c ----------------------------------------------------------------
 
@@ -2279,6 +2279,11 @@ The foreign collections support the @code{add()} and @code{remove()} methods in 
 from the internal list if the collection is eager, and DAO calls will be made to affect the order table as well for both eager and
 lazy collections.
 
+@emph{NOTE: When you are adding a new object to a foreign collection, this will also add it to the database by calling through to 
+@code{dao.create(obj)}. If the object has @emph{already} been created in the database then you should instead set the foreign field on
+the object and call @code{dao.update(obj)}. If you add it here the DAO will try to create it in the database again which will most
+likely cause an error.
+
 @emph{NOTE:} When you call @code{update} on an object with a foreign collection (like @code{Account} above) the objects that are
 stored in the collection are @emph{not} automatically written to the database as well.  There is no way for ORMLite to be able to
 detect which of the objects has been updated unfortunately.  If you update an object in the collection you should call the
@@ -4508,6 +4513,7 @@ However, sometimes when a new version is released, changes are made that require
 and rarely the on-disk database formats. 
 
 @menu
+* 4.43::                Upgrade to version 4.43
 * 4.37::                Upgrade to version 4.37
 * 4.30::                Upgrade to version 4.30
 * 4.20::                Upgrade to version 4.20
@@ -4519,7 +4525,24 @@ and rarely the on-disk database formats.
 @end menu
 
 @c ----------------------------------------------------------------
-@node 4.37, 4.30, How to Upgrade, How to Upgrade
+@node 4.43, 4.37, How to Upgrade, How to Upgrade
+@section Upgrade to Version 4.37
+
+@cindex date formats
+@cindex{datatype date string}
+A bug was recently reported which pointed out that the string version of the @code{Date} fields (@code{dataType=DataType.DATE_STRING})
+produces date strings that do not contain timezone information.  That meant that as we cross time-zones or over daylight-savings,
+the date values would effectively change.  A very good point.
+
+In 4.43 I decided to make the default string format for the database be @code{"yyyy-MM-dd HH:mm:ss.SSS Z"}.  If the date string is not
+in this format, it also tries the old format @code{"yyyy-MM-dd HH:mm:ss.SSSSSS"} for backwards compatibility sake.  If any rows are
+created or updated, the new format will be used.
+
+This will mean that multiple date-string formats may exist in the database at the same time -- possibly confusing queries or other
+operations.  If people are very worried about it, you can update each row which will rewrite the date-string to the new format.
+
+@c ----------------------------------------------------------------
+@node 4.37, 4.30, 4.43, How to Upgrade
 @section Upgrade to Version 4.37
 
 @cindex Android case sensitive columns
