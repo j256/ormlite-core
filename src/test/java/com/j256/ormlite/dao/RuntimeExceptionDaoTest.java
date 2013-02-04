@@ -55,8 +55,6 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 				new ArrayList<Method>(Arrays.asList(RuntimeExceptionDao.class.getDeclaredMethods()));
 
 		List<Method> daoMethods = new ArrayList<Method>(Arrays.asList(Dao.class.getDeclaredMethods()));
-		daoMethods.addAll(Arrays.asList(CloseableIterable.class.getDeclaredMethods()));
-		daoMethods.addAll(Arrays.asList(Iterable.class.getDeclaredMethods()));
 		Iterator<Method> daoIterator = daoMethods.iterator();
 		while (daoIterator.hasNext()) {
 			Method daoMethod = daoIterator.next();
