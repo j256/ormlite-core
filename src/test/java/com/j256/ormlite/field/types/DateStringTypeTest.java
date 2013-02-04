@@ -28,15 +28,12 @@ public class DateStringTypeTest extends BaseTypeTest {
 	private static final String DATE_COLUMN = "date";
 	private static final String STRING_COLUMN = "string";
 
-	private static final String DEFAULT_VALUE1 = "2013-02-03 11:41:09.000975";
-	private static final String DEFAULT_VALUE2 = "2013-02-03 11:41:09.0985 -0500";
-
 	@Test
 	public void testDateString() throws Exception {
 		Class<LocalDateString> clazz = LocalDateString.class;
 		Dao<LocalDateString, Object> dao = createDao(clazz, true);
 		Date val = new Date();
-		String format = "yyyy-MM-dd HH:mm:ss.SSS Z";
+		String format = "yyyy-MM-dd HH:mm:ss.SSSSSS";
 		DateFormat dateFormat = new SimpleDateFormat(format);
 		String valStr = dateFormat.format(val);
 		String sqlVal = valStr;
@@ -113,43 +110,6 @@ public class DateStringTypeTest extends BaseTypeTest {
 	}
 
 	@Test
-	public void testOldDateStringToNew() throws Exception {
-		Dao<LocalDateString, Object> dateDao = createDao(LocalDateString.class, true);
-		Dao<StringDateString, Object> stringDao = createDao(StringDateString.class, false);
-
-		// first we create a date with the old format
-		Date date1 = new Date();
-		Thread.sleep(10);
-		Date date2 = new Date();
-		StringDateString stringDateString = new StringDateString();
-		stringDateString.date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS").format(date1);
-		assertEquals(1, stringDao.create(stringDateString));
-
-		// create another one in the new format
-		stringDateString.date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS Z").format(date2);
-		assertEquals(1, stringDao.create(stringDateString));
-
-		// make sure both of them parse
-		List<LocalDateString> results = dateDao.queryForAll();
-		assertEquals(2, results.size());
-		assertEquals(date1, results.get(0).date);
-		assertEquals(date2, results.get(1).date);
-	}
-
-	@Test
-	public void testDateStringDefulatOldNew() throws Exception {
-		Dao<StringDateStringDefault, Object> dao = createDao(StringDateStringDefault.class, true);
-
-		StringDateStringDefault stringDefault = new StringDateStringDefault();
-		assertEquals(1, dao.create(stringDefault));
-
-		List<StringDateStringDefault> results = dao.queryForAll();
-		assertEquals(1, results.size());
-		assertEquals(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS").parse(DEFAULT_VALUE1), results.get(0).date1);
-		assertEquals(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS Z").parse(DEFAULT_VALUE2), results.get(0).date2);
-	}
-
-	@Test
 	public void testCoverage() {
 		new DateStringType(SqlType.STRING, new Class[0]);
 	}
@@ -158,20 +118,6 @@ public class DateStringTypeTest extends BaseTypeTest {
 	protected static class LocalDateString {
 		@DatabaseField(columnName = DATE_COLUMN, dataType = DataType.DATE_STRING)
 		Date date;
-	}
-
-	@DatabaseTable(tableName = TABLE_NAME)
-	protected static class StringDateString {
-		@DatabaseField(columnName = DATE_COLUMN)
-		String date;
-	}
-
-	@DatabaseTable(tableName = TABLE_NAME)
-	protected static class StringDateStringDefault {
-		@DatabaseField(defaultValue = DEFAULT_VALUE1)
-		Date date1;
-		@DatabaseField(defaultValue = DEFAULT_VALUE2)
-		Date date2;
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

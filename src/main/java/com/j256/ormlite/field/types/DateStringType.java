@@ -1,6 +1,7 @@
 package com.j256.ormlite.field.types;
 
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
 
@@ -66,7 +67,8 @@ public class DateStringType extends BaseDateType {
 
 	@Override
 	public Object javaToSqlArg(FieldType fieldType, Object obj) {
-		return convertDateStringConfig(fieldType, defaultDateFormatConfig).format((Date) obj);
+		DateFormat dateFormat = convertDateStringConfig(fieldType, defaultDateFormatConfig).getDateFormat();
+		return dateFormat.format((Date) obj);
 	}
 
 	@Override
