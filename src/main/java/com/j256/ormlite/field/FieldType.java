@@ -753,7 +753,7 @@ public class FieldType {
 	 *            The id of the foreign object we will look for. This can be null if we are creating an empty
 	 *            collection.
 	 */
-	public <FT, FID> BaseForeignCollection<FT, FID> buildForeignCollection(FT parent, FID id) throws SQLException {
+	public <FT, FID> BaseForeignCollection<FT, FID> buildForeignCollection(Object parent, FID id) throws SQLException {
 		// this can happen if we have a foreign-auto-refresh scenario
 		if (foreignFieldType == null) {
 			return null;
@@ -762,7 +762,7 @@ public class FieldType {
 		Dao<FT, FID> castDao = (Dao<FT, FID>) foreignDao;
 		if (!fieldConfig.isForeignCollectionEager()) {
 			// we know this won't go recursive so no need for the counters
-			return new LazyForeignCollection<FT, FID>(castDao, parent, id, foreignFieldType.columnName,
+			return new LazyForeignCollection<FT, FID>(castDao, parent, id, foreignFieldType,
 					fieldConfig.getForeignCollectionOrderColumnName(), fieldConfig.isForeignCollectionOrderAscending());
 		}
 
@@ -773,12 +773,12 @@ public class FieldType {
 		// are we over our level limit?
 		if (levelCounters.foreignCollectionLevel >= levelCounters.foreignCollectionLevelMax) {
 			// then return a lazy collection instead
-			return new LazyForeignCollection<FT, FID>(castDao, parent, id, foreignFieldType.columnName,
+			return new LazyForeignCollection<FT, FID>(castDao, parent, id, foreignFieldType,
 					fieldConfig.getForeignCollectionOrderColumnName(), fieldConfig.isForeignCollectionOrderAscending());
 		}
 		levelCounters.foreignCollectionLevel++;
 		try {
-			return new EagerForeignCollection<FT, FID>(castDao, parent, id, foreignFieldType.columnName,
+			return new EagerForeignCollection<FT, FID>(castDao, parent, id, foreignFieldType,
 					fieldConfig.getForeignCollectionOrderColumnName(), fieldConfig.isForeignCollectionOrderAscending());
 		} finally {
 			levelCounters.foreignCollectionLevel--;

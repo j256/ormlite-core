@@ -614,6 +614,18 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	}
 
 	/**
+	 * @see Dao#assignEmptyForeignCollection(Object, String)
+	 */
+	public void assignEmptyForeignCollection(T parent, String fieldName) {
+		try {
+			dao.assignEmptyForeignCollection(parent, fieldName);
+		} catch (SQLException e) {
+			logMessage(e, "assignEmptyForeignCollection threw exception on " + fieldName);
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
 	 * @see Dao#getEmptyForeignCollection(String)
 	 */
 	public <FT> ForeignCollection<FT> getEmptyForeignCollection(String fieldName) {

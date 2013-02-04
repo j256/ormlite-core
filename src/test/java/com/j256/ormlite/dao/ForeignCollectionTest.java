@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Ignore;
@@ -879,6 +880,68 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertEquals(name1.stuff, f1s[0].stuff);
 		assertEquals(1, f2s.length);
 		assertEquals(name2.stuff, f2s[0].stuff);
+	}
+
+	@Test
+	public void testAddNoForeign() throws Exception {
+		createTable(Order.class, true);
+		Dao<Account, Integer> accountDao = createDao(Account.class, true);
+
+		Account account = new Account();
+		String name = "fwepfjewfew";
+		account.name = name;
+		assertEquals(1, accountDao.create(account));
+		accountDao.assignEmptyForeignCollection(account, Account.ORDERS_FIELD_NAME);
+
+		Order order1 = new Order();
+		order1.val = 1453783141;
+		account.orders.add(order1);
+
+		Order order2 = new Order();
+		order2.val = 247895295;
+		account.orders.add(order2);
+
+		Account result = accountDao.queryForId(account.id);
+		assertNotNull(result);
+
+		Iterator<Order> iterator = result.orders.iterator();
+		assertTrue(iterator.hasNext());
+		assertEquals(order1.val, iterator.next().val);
+		assertTrue(iterator.hasNext());
+		assertEquals(order2.val, iterator.next().val);
+		assertFalse(iterator.hasNext());
+	}
+
+	@Test
+	public void testAddDontOverwriteForeign() throws Exception {
+		createTable(Order.class, true);
+		Dao<Account, Integer> accountDao = createDao(Account.class, true);
+
+		Account account1 = new Account();
+		account1.name = "fwepfjewfew";
+		assertEquals(1, accountDao.create(account1));
+		accountDao.assignEmptyForeignCollection(account1, Account.ORDERS_FIELD_NAME);
+
+		Account account2 = new Account();
+		account2.name = "fhwoifwepfjewfew";
+		assertEquals(1, accountDao.create(account2));
+
+		Order order1 = new Order();
+		order1.val = 1453783141;
+		order1.account = account2;
+		account1.orders.add(order1);
+
+		Order order2 = new Order();
+		order2.val = 247895295;
+		order2.account = account2;
+		account1.orders.add(order2);
+
+		Account result = accountDao.queryForId(account1.id);
+		assertNotNull(result);
+
+		// we don't find any because they were alreayd set with account2's id
+		Iterator<Order> iterator = result.orders.iterator();
+		assertFalse(iterator.hasNext());
 	}
 
 	/* =============================================================================================== */

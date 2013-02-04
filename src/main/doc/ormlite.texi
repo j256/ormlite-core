@@ -2236,7 +2236,7 @@ doing.
 @cindex empty foreign collection
 @item columnName
 
-The name of the column.  This is only used if you want to match the string passed to @code{Dao.getEmptyForeignCollection(String)} or to
+The name of the column.  This is only used if you want to match the string passed to @code{Dao.assignEmptyForeignCollection(Object, String)} or to
 specify that you want the collection returned when you specify @code{queryBuilder.selectColumns(...)}.  @xref{selectColumns}.
 
 @cindex ordered foreign collection
@@ -4032,13 +4032,14 @@ the table and the database type, this may be expensive and take a while.
 
 @cindex empty foreign collection
 @cindex foreign collection, empty
-@item getEmptyForeignCollection(String fieldName)
+@cindex assignEmptyForeignCollection
+@item assignEmptyForeignCollection(T parent, String fieldName)
 
-Returns an empty collection that can be assigned to a collection field. This allows you to add things to the
+Assigns an empty collection to the appropriate collection field that has the field-name. This allows you to add things to the
 collection from the start.  This allows you to do something like:
 
 @example
-account.orders = accoundDao.getEmptyForeignCollection("orders");
+accoundDao.assignEmptyForeignCollection(account, "orders");
 // this would add it the collection and the internal DAO
 account.orders.add(order1);
 @end example

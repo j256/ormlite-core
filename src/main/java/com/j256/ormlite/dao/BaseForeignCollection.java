@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Collection;
 
+import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -26,17 +27,17 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 	private static final long serialVersionUID = -5158840898186237589L;
 
 	protected transient final Dao<T, ID> dao;
-	private transient final String columnName;
+	private transient final FieldType foreignFieldType;
 	private transient final Object parentId;
 	private transient PreparedQuery<T> preparedQuery;
 	private transient final String orderColumn;
 	private transient final boolean orderAscending;
 	private transient final Object parent;
 
-	protected BaseForeignCollection(Dao<T, ID> dao, Object parent, Object parentId, String columnName,
+	protected BaseForeignCollection(Dao<T, ID> dao, Object parent, Object parentId, FieldType foreignFieldType,
 			String orderColumn, boolean orderAscending) {
 		this.dao = dao;
-		this.columnName = columnName;
+		this.foreignFieldType = foreignFieldType;
 		this.parentId = parentId;
 		this.orderColumn = orderColumn;
 		this.orderAscending = orderAscending;
@@ -49,10 +50,13 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 	 * @return Returns true if the item did not already exist in the collection otherwise false.
 	 */
 	public boolean add(T data) {
-		if (dao == null) {
-			return false;
-		}
 		try {
+			if (parent != null && foreignFieldType.getFieldValueIfNotDefault(data) == null) {
+				foreignFieldType.assignField(data, parent, true, null);
+			}
+			if (dao == null) {
+				return false;
+			}
 			dao.create(data);
 			return true;
 		} catch (SQLException e) {
@@ -180,7 +184,7 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 			if (orderColumn != null) {
 				qb.orderBy(orderColumn, orderAscending);
 			}
-			preparedQuery = qb.where().eq(columnName, fieldArg).prepare();
+			preparedQuery = qb.where().eq(foreignFieldType.getColumnName(), fieldArg).prepare();
 			if (preparedQuery instanceof MappedPreparedStmt) {
 				@SuppressWarnings("unchecked")
 				MappedPreparedStmt<T, Object> mappedStmt = ((MappedPreparedStmt<T, Object>) preparedQuery);

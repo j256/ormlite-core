@@ -587,8 +587,8 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public long countOf(PreparedQuery<T> preparedQuery) throws SQLException;
 
 	/**
-	 * Returns an empty collection that can be assigned to a collection field. This allows you to add things to the
-	 * collection from the start.
+	 * Creates an empty collection and assigns it to the appropriate field in the parent object. This allows you to add
+	 * things to the collection from the start.
 	 * 
 	 * For example let's say you have an Account which has the field:
 	 * 
@@ -600,14 +600,26 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * You would then call:
 	 * 
 	 * <pre>
-	 * account.orders = accoundDao.getEmptyForeignCollection(&quot;orders&quot;);
+	 * accoundDao.assignEmptyForeignCollection(account, &quot;orders&quot;);
 	 * // this would add it the collection and the internal DAO
 	 * account.orders.add(order1);
 	 * </pre>
 	 * 
+	 * @param parent
+	 *            Parent object that will be associated with all items added to this collection if not already assigned.
 	 * @param fieldName
 	 *            parameter is the field name of the foreign collection field -- you might consider using the
 	 *            {@link ForeignCollectionField#columnName()} to set the name to a static name.
+	 */
+	public void assignEmptyForeignCollection(T parent, String fieldName) throws SQLException;
+
+	/**
+	 * Like {@link #getEmptyForeignCollection(Object, String)} but it returns the empty collection that you assign to
+	 * the appropriate field.
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> May be deprecated in the future.
+	 * </p>
 	 */
 	public <FT> ForeignCollection<FT> getEmptyForeignCollection(String fieldName) throws SQLException;
 

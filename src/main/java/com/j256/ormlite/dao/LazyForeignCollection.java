@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.ForeignCollectionField;
 
 /**
@@ -30,9 +31,9 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 
 	private transient CloseableIterator<T> lastIterator;
 
-	public LazyForeignCollection(Dao<T, ID> dao, Object parent, Object parentId, String columnName, String orderColumn,
-			boolean orderAscending) {
-		super(dao, parent, parentId, columnName, orderColumn, orderAscending);
+	public LazyForeignCollection(Dao<T, ID> dao, Object parent, Object parentId, FieldType foreignFieldType,
+			String orderColumn, boolean orderAscending) {
+		super(dao, parent, parentId, foreignFieldType, orderColumn, orderAscending);
 	}
 
 	/**
