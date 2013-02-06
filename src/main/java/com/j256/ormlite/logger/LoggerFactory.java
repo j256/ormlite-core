@@ -10,7 +10,7 @@ import com.j256.ormlite.logger.Log.Level;
  * 
  * <p>
  * To set the logger to a particular type, set the system property ("com.j256.ormlite.logger.type") contained in
- * {@link #LOG_TYPE_SYSTEM_PROPERTY} to be one of the values in {@link #LogType}.
+ * {@link #LOG_TYPE_SYSTEM_PROPERTY} to be one of the values in LogType enum.
  * </p>
  */
 public class LoggerFactory {
