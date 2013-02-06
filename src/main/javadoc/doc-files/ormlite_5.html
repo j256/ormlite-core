@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on September, 27 2012 by texi2html 1.70 -->
+<!-- Created on February, 5 2013 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -770,18 +770,19 @@ the table and the database type, this may be expensive and take a while.
 
 </p><a name="IDX355"></a>
 <a name="IDX356"></a>
+<a name="IDX357"></a>
 </dd>
-<dt><code> getEmptyForeignCollection(String fieldName)</code></dt>
+<dt><code> assignEmptyForeignCollection(T parent, String fieldName)</code></dt>
 <dd>
-<p>Returns an empty collection that can be assigned to a collection field. This allows you to add things to the
+<p>Assigns an empty collection to the appropriate collection field that has the field-name. This allows you to add things to the
 collection from the start.  This allows you to do something like:
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">account.orders = accoundDao.getEmptyForeignCollection(&quot;orders&quot;);
+</p><table><tr><td>&nbsp;</td><td><pre class="example">accoundDao.assignEmptyForeignCollection(account, &quot;orders&quot;);
 // this would add it the collection and the internal DAO
 account.orders.add(order1);
 </pre></td></tr></table>
-<a name="IDX357"></a>
 <a name="IDX358"></a>
+<a name="IDX359"></a>
 </dd>
 <dt><code> setObjectCache(boolean enabled);</code></dt>
 <dd>
@@ -793,17 +794,17 @@ account.orders.add(order1);
 <p>Same as <code>setObjectCache(boolean)</code> except you specify the actual cache instance to use for the DAO.  This allows
 you to inject your own cache classes.  Call it with null to disable the cache.  See section <a href="#SEC54">Object Caches</a>.
 
-</p><a name="IDX359"></a>
-<a name="IDX360"></a>
+</p><a name="IDX360"></a>
+<a name="IDX361"></a>
 </dd>
 <dt><code> clearObjectCache();</code></dt>
 <dd>
 <p>Flush the object cache if it has been enabled. This will remove an objects that are in the cache to reclaim
 memory. Any future queries will re-request them from the database.
 
-</p><a name="IDX361"></a>
-<a name="IDX362"></a>
+</p><a name="IDX362"></a>
 <a name="IDX363"></a>
+<a name="IDX364"></a>
 </dd>
 <dt><code> mapSelectStarRow(DatabaseResults results)</code></dt>
 <dd>
@@ -815,14 +816,14 @@ results.  It is particularly useful if you are repositioning a database cursor e
 <dd>
 <p>Return a row mapper that is suitable for mapping results from a query to <code>select *</code> (star).
 
-</p><a name="IDX364"></a>
-<a name="IDX365"></a>
+</p><a name="IDX365"></a>
+<a name="IDX366"></a>
 </dd>
 <dt><code> idExists(ID id)</code></dt>
 <dd>
 <p>Returns true if an object exists that matches this ID otherwise false.
 
-</p><a name="IDX366"></a>
+</p><a name="IDX367"></a>
 </dd>
 <dt><code> startThreadConnection()</code></dt>
 <dd>
@@ -916,7 +917,7 @@ logger.debug(&quot;built statement {}&quot;, statement);
 <p>If you are using log4j (through Apache commons logging or directly), you can use something
 like the following as your <code>log4j.properties</code> file to see details about the SQL calls.
 
-</p><a name="IDX367"></a>
+</p><a name="IDX368"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">log4j.rootLogger=INFO, stdout
 
 log4j.appender.stdout=org.apache.log4j.ConsoleAppender
@@ -934,8 +935,8 @@ log4j.logger.com.j256.ormlite=DEBUG
 #log4j.logger.com.j256.ormlite.stmt.mapped.MappedCreate=TRACE
 #log4j.logger.com.j256.ormlite.stmt.StatementExecutor=TRACE
 </pre></td></tr></table>
-<a name="IDX368"></a>
 <a name="IDX369"></a>
+<a name="IDX370"></a>
 <p><em>Notice</em> that you can uncomment the last lines in the above log4j.properties file to log the arguments to the
 various SQL calls.  This may expose passwords or other sensitive information in the database so probably should
 only be used during debugging and should not be the default.
@@ -981,7 +982,7 @@ and Log4j but these classes will <em>not</em> be referenced unless they exist in
 
 </p><dl compact="compact">
 <dd>
-<a name="IDX370"></a>
+<a name="IDX371"></a>
 </dd>
 <dt><code> javax.persistence</code></dt>
 <dd>
@@ -1035,7 +1036,7 @@ Order was inserted but then a disk error stopped the Account from being updated,
 If you used a transaction then both changes would be saved to the database only when the transaction was closed.  Most (not all)
 databases support transactions which are designed specifically with these sorts of scenarios in mind.
 
-</p><a name="IDX371"></a>
+</p><a name="IDX372"></a>
 <p>ORMLite has basic support for transactions through the use of the <code>TransactionManager</code> class which wraps
 databases operations in a transaction.  If those operations throw an exception, then the transaction is &quot;rolled-back&quot;
 and none of the operations are persisted to the database.  Once the operations are finished, if no exception is thrown,
@@ -1124,8 +1125,8 @@ it is not in the cache then it will be added to the cache.  This does <em>not</e
 
 </p></li></ul>
 
-<a name="IDX372"></a>
 <a name="IDX373"></a>
+<a name="IDX374"></a>
 <p>By default the cache that is used internally by ORMLite if you enable the cache with <code>true</code> will be a &quot;weak-reference&quot; cache.  This
 means that if no other code has a strong reference to the object, it will be removed from the cache during the next garbage collection
 cycle. ORMLite also has a &quot;soft-reference&quot; cache which will use more memory to hold objects if available and supported by your OS.  You
@@ -1141,8 +1142,8 @@ accountDao.setObjectCache(
 accessed.  You should consider calling the <code>cleanNullReferencesAll()</code> method on your cache to remove these objects and free up
 their associated memory on occasion.
 
-</p><a name="IDX374"></a>
-<a name="IDX375"></a>
+</p><a name="IDX375"></a>
+<a name="IDX376"></a>
 <p>There is also a Least Recently Used (LRU) cache that will store a certain number of objects based on a capacity value.  Each class gets
 the same capacity value so if the same cache is used in 5 different daos, then 500 objects will be held in the <code>LruObjectCache</code> if
 the capacity is 100.
@@ -1194,7 +1195,7 @@ dependency list.  In this example we are using MySQL but any of the supported JD
         &lt;dependency&gt;
             &lt;groupId&gt;com.j256.ormlite&lt;/groupId&gt;
             &lt;artifactId&gt;ormlite-jdbc&lt;/artifactId&gt;
-            &lt;version&gt;4.42&lt;/version&gt;
+            &lt;version&gt;4.43&lt;/version&gt;
         &lt;/dependency&gt;
         &lt;!-- You will need to add some sort of database driver too.
              In this example we've used MySQL. --&gt;
@@ -1278,10 +1279,10 @@ may do nothing.
 <h2 class="section"> 5.11 Custom Data Type Persisters </h2>
 
 <p><a name="ANC37"></a>
-<a name="IDX376"></a>
 <a name="IDX377"></a>
 <a name="IDX378"></a>
 <a name="IDX379"></a>
+<a name="IDX380"></a>
 
 </p><p>ORMLite has internal definitions for storing the basic primitive and other common data types. See section <a href="ormlite_2.html#SEC11">Persisted Data Types</a>.
 Sometimes, however, you either want to store a new data type in your database or you want to change the way ORMLite
@@ -1349,7 +1350,7 @@ persistence behavior for <em>all</em> <code>Date</code> types.
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>September, 27 2012</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>February, 5 2013</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 

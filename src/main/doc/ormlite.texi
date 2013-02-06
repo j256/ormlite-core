@@ -2279,12 +2279,12 @@ The foreign collections support the @code{add()} and @code{remove()} methods in 
 from the internal list if the collection is eager, and DAO calls will be made to affect the order table as well for both eager and
 lazy collections.
 
-@emph{NOTE: When you are adding a new object to a foreign collection, this will also add it to the database by calling through to 
+@emph{NOTE}: When you are adding a new object to a foreign collection, this will also add it to the database by calling through to 
 @code{dao.create(obj)}. If the object has @emph{already} been created in the database then you should instead set the foreign field on
 the object and call @code{dao.update(obj)}. If you add it here the DAO will try to create it in the database again which will most
 likely cause an error.
 
-@emph{NOTE:} When you call @code{update} on an object with a foreign collection (like @code{Account} above) the objects that are
+@emph{NOTE}: When you call @code{update} on an object with a foreign collection (like @code{Account} above) the objects that are
 stored in the collection are @emph{not} automatically written to the database as well.  There is no way for ORMLite to be able to
 detect which of the objects has been updated unfortunately.  If you update an object in the collection you should call the
 @code{update(data)} method on the @code{ForeignCollection} to make sure that the object is persisted.  For example:
