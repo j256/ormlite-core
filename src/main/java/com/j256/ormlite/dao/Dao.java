@@ -614,7 +614,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public void assignEmptyForeignCollection(T parent, String fieldName) throws SQLException;
 
 	/**
-	 * Like {@link #getEmptyForeignCollection(Object, String)} but it returns the empty collection that you assign to
+	 * Like {@link #assignEmptyForeignCollection(Object, String)} but it returns the empty collection that you assign to
 	 * the appropriate field.
 	 * 
 	 * <p>
