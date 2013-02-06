@@ -2400,6 +2400,7 @@ object for the DAO with which you can construct custom queries to return a sub-s
 * QueryBuilder Capabilities::   Description of the various QueryBuilder methods.
 * Where Capabilities::          Description of the various WHERE methods.
 * Select Arguments::            Using arguments to queries.
+* Column Arguments::            Using arguments to queries to compare columns.
 * Join Queries::                Explaining how to use JOIN queries.
 @end menu
 
@@ -2986,7 +2987,7 @@ Convenience method to generate the iterator for the query.  Same as @code{queryB
 @end table
 
 @c ----------------------------------------------------------------
-@node Select Arguments, Use With Android, Where Capabilities, Statement Builder
+@node Select Arguments, Column Arguments, Where Capabilities, Statement Builder
 @section Using Select Arguments
 
 @cindex query arguments
@@ -3032,13 +3033,52 @@ of the object does not reliably match the database form of the object -- @code{j
 a new object if you want to use a @code{SelectArg} with another column.
 
 @c ----------------------------------------------------------------
-@node Join Queries, Use With Android, Select Arguments, Statement Builder
+@node Column Arguments, Join Queries, Select Arguments, Statement Builder
+@section Using Column Arguments
+
+@cindex ColumnArg
+@cindex column arguments
+@cindex comparing multiple columns
+@cindex table columns comparing
+Typically when you use the @code{QueryBuilder} you ae comparing a column and a value.  To compare one column against another
+you can use a @code{ColumnArg}.
+
+For example:
+
+@example
+QueryBuilder<Account, String> queryBuilder =
+  accountDao.queryBuilder();
+// list all of the accounts that have the same
+// name and password field 
+queryBuilder.where().eq(Account.NAME_FIELD_NAME,
+    new ColumnArg(Account.PASSWORD_FIELD_NAME));
+List<Account> results = queryBuilder.query();
+@end example
+
+The @code{ColumnArg} can also take a table-name which is useful with @code{JOIN} queries to compare a column from one table
+with one in another table.  @xref{Join Queries}.
+
+For example:
+
+@example
+QueryBuilder<Order, Integer> orderQb = orderDao.queryBuilder();
+orderQb.where().ge("amount", 100.0F);
+QueryBuilder<Account, Integer> accountQb = accountDao.queryBuilder();
+// find all accounts who have an order larger than their limit
+accountQb.where().gt(Account.MAX_LIMIT_AMOUNT_FIELD,
+     new ColumnArg("orders", Order.AMOUNT_FIELD));
+// join with the order query
+List<Account> results = accountQb.join(orderQb).query();
+@end example
+
+@c ----------------------------------------------------------------
+@node Join Queries, Use With Android, Column Arguments, Statement Builder
 @section Building Join Queries
 
 @cindex join queries, building
 @cindex join query, example
 @cindex inner join queries, building
-One of the newer features added to ORMLite is support for basic @code{JOIN} SQL queries.  For more information about
+ORMLite supports basic @code{JOIN} SQL queries.  For more information about
 how @code{JOIN} queries work see @uref{http://www.w3schools.com/Sql/sql_join.asp, JOIN documentation}.
 
 You setup a join query by building 2 @code{QueryBuilder} objects -- one in the DAO from which you are returning objects,
@@ -3059,7 +3099,8 @@ List<Account> results = accountQb.join(orderQb).query();
 This will return all of the @code{Account} records that have a corresponding @code{Order} that has a @code{value} field
 that is more than @code{100.0}.  Notice that none of the @code{Order} information is returned by the query -- just
 @code{Account} information is retrieved.  You could also reverse the situation and, for example, return all of the orders
-that have an account whose first-name is equal to @code{"Bob"}.
+that have an account whose first-name is equal to @code{"Bob"}.  To compare fields from diffeent tables, you can use the
+@code{ColumnArg} class. @xref{Column Arguments}. 
 
 ORMlite also supports the concept of @code{"LEFT JOIN"} which means, in the context of the above example, that accounts that
 have @emph{no} orders will also be returned.  Typically with a "normal" join, only accounts that have orders are candidates to
@@ -3436,7 +3477,8 @@ if (oldVersion < 2) @{
 You can also modify data in the tables using something like the following:
 
 @example
-dao.executeRaw("ALTER TABLE `account` ADD COLUMN hasDog BOOLEAN DEFAULT 0;");
+dao.executeRaw(
+    "ALTER TABLE `account` ADD COLUMN hasDog BOOLEAN DEFAULT 0;");
 dao.updateRaw("UPDATE `account` SET hasDog = 1 WHERE dogCount > 0;");
 @end example
 
@@ -4084,8 +4126,8 @@ Returns true if an object exists that matches this ID otherwise false.
 @item startThreadConnection()
 
 @emph{WARNING:} This method is for advanced users only. It is only to support the @code{setAutoCommit(conn, boolean)}
-and other methods below. Chances are you should be using the @code{TransactionManager.callInTransaction(Callable)} instead
-of this method unless you know what you are doing.
+and other methods below. Chances are you should be using the @code{TransactionManager} class' @code{callInTransaction(Callable)}
+method instead f this method unless you know what you are doing.
 
 This allocates a connection for this specific thread that will be used in all other DAO operations. The thread
 @emph{must} call @code{endThreadConnection(conn)} once it is done with the connection. It is highly recommended that a
@@ -4115,8 +4157,8 @@ made from that point up to now on the connection returned by the @code{startThre
 will be written to the database and discarded. The connection will continue to stay in the current auto-commit
 mode.
 
-@emph{WARNING:} Chances are you should be using the @code{TransactionManager.callInTransaction(Callable)}
-instead of this method unless you know what you are doing.
+@emph{WARNING:} Chances are you should be using the @code{TransactionManager} class' @code{callInTransaction(Callable)}
+method instead unless you know what you are doing.
 
 @item rollBack(DatabaseConnection connection)
 
@@ -4125,8 +4167,8 @@ database made from that point up to now on the connection returned by the @code{
 of those changes will be written to the database and are discarded. The connection will continue to stay in the
 current auto-commit mode.
 
-@emph{WARNING:} Chances are you should be using the @code{TransactionManager.callInTransaction(Callable)}
-instead of this method unless you know what you are doing.
+@emph{WARNING:} Chances are you should be using the @code{TransactionManager} class' @code{callInTransaction(Callable)}
+method instead unless you know what you are doing.
 
 @end table
 
@@ -4918,43 +4960,83 @@ project.
 @code{DAO} interface and the @code{BaseDaoImpl} where in some part modeled after his code.
 
 @c -----------------
+@c Up through version 4.43
 
 @item Thanks much to the following folks for their bug reports, unit test submissions, memory analysis, code samples, feature requests,
 improvements, and general feedback:
 Adam Brown,
+AlexPal,
 Ali Aksakarya,
+Andre,
+Andrea Sprega,
+Andreas,
 Andrew Sleeman,
+Andrey,
+Bart,
+Ben Mosher,
+Candlejack,
+Chad Schultz,
 Chase,
 Chris Banes,
+Chris Nevill,
 Dale Asberry,
 Daniel Colchete,
 Evan Grim.
+Filipe Leandro,
 Flo,
 Ian Dees,
+Javier Hinmel,
 Jaxelrod,
+Jaykob,
 Jean-Maxime Pelletier,
 Jeremy Mcjunkin,
+Jeremy Stone,
 Jeroen Rakhorst,
-Johny Jugianto,
-Josh Guilfoyle,
 Joao Bosco,
+John Kristian,
+Johny Jugianto,
+Jomble,
+Josh Guilfoyle,
+Kaan,
+Kyle Lampert,
 Larry Hamel,
 Luke Meyer,
 Mariak Kalman,
+Mark Rogers,
 Markus Wiederkehr,
+Mathias Lin,
 Micael Dahlgren,
 Michael,
 Ming Lin,
+Mohammad Moghimi,
+Nathan Jones,
+Nick Campion,
 Patras Vlad,
+Patrick,
+Pedro Velasco,
 Rahan,
+Ramps,
 Richard Kooijman,
+Roger Keays,
+Roman Zimmer,
+Sebastian Roth,
 Skylar,
+Slava Tysianchuk,
+Stephen Couchman,
+Stew,
 Stewert,
 Timo,
+Tom Tantisalidchai,
+Tony,
+Vladimir,
 Wayne Stidolph,
+Yossi Wasserman,
 birbird,
 coder sam,
-kyle lampert,
+glenviewjeff,
+mjomble,
+nybblr,
+shikajiro,
 steffen,
 zachawilson
 .

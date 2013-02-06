@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on February, 5 2013 by texi2html 1.70 -->
+<!-- Created on February, 6 2013 by texi2html 1.70 -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -47,14 +47,14 @@ ul.toc {list-style: none}
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite_2.html#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_4.html#SEC40" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_4.html#SEC41" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC72" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h1 class="chapter"> 3. Custom Statement Builder </h1>
@@ -77,7 +77,9 @@ object for the DAO with which you can construct custom queries to return a sub-s
 </td></tr>
 <tr><td align="left" valign="top"><a href="#SEC38">3.6 Using Select Arguments</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">            Using arguments to queries.
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC39">3.7 Building Join Queries</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Explaining how to use JOIN queries.
+<tr><td align="left" valign="top"><a href="#SEC39">3.7 Using Column Arguments</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">            Using arguments to queries to compare columns.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC40">3.8 Building Join Queries</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Explaining how to use JOIN queries.
 </td></tr>
 </table>
 
@@ -90,14 +92,14 @@ object for the DAO with which you can construct custom queries to return a sub-s
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC32" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC32" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_4.html#SEC40" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_4.html#SEC41" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC72" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.1 Query Builder Basics </h2>
@@ -160,14 +162,14 @@ List&lt;Account&gt; accountList =
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC32" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC32" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_4.html#SEC40" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_4.html#SEC41" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC72" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.2 Building Queries </h2>
@@ -241,14 +243,14 @@ information.  Here's a <a href="http://www.w3schools.com/Sql/">good SQL referenc
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC32" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC32" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_4.html#SEC40" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_4.html#SEC41" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC72" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.3 Building Statements </h2>
@@ -298,14 +300,14 @@ deleteBuilder.delete();
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC32" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC32" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_4.html#SEC40" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_4.html#SEC41" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC72" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.4 QueryBuilder Capabilities </h2>
@@ -490,14 +492,14 @@ Same as <code>Dao.queryRaw(String)</code> and <code>GenericRawResults.getFirstRe
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC32" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC32" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_4.html#SEC40" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_4.html#SEC41" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC72" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.5 Where Capabilities </h2>
@@ -607,7 +609,7 @@ results.
 <dd>
 <p>Add a IN clause which makes sure the column is in one of the columns returned from a sub-query inside of parenthesis.
 The <code>QueryBuilder</code> must return 1 and only one column which can be set with the <code>QueryBuilder.selectColumns(String...)</code>
-method calls. That 1 argument must match the SQL type of the column-name passed to this method.  See also <a href="#SEC39">Building Join Queries</a>.
+method calls. That 1 argument must match the SQL type of the column-name passed to this method.  See also <a href="#SEC40">Building Join Queries</a>.
 
 </p><p><em>NOTE:</em> The sub-query will be prepared at the same time that the outside query is.
 
@@ -779,14 +781,14 @@ database specific features.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC32" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC32" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_4.html#SEC40" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_4.html#SEC41" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC72" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <h2 class="section"> 3.6 Using Select Arguments </h2>
@@ -832,23 +834,71 @@ a new object if you want to use a <code>SelectArg</code> with another column.
 <a name="SEC39"></a>
 <table cellpadding="1" cellspacing="1" border="0">
 <tr><td valign="middle" align="left">[<a href="#SEC38" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_4.html#SEC40" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC40" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#SEC32" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#SEC32" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_4.html#SEC40" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_4.html#SEC41" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC72" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 3.7 Building Join Queries </h2>
+<h2 class="section"> 3.7 Using Column Arguments </h2>
 
-<p>One of the newer features added to ORMLite is support for basic <code>JOIN</code> SQL queries.  For more information about
+<p>Typically when you use the <code>QueryBuilder</code> you ae comparing a column and a value.  To compare one column against another
+you can use a <code>ColumnArg</code>.
+
+</p><p>For example:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">QueryBuilder&lt;Account, String&gt; queryBuilder =
+  accountDao.queryBuilder();
+// list all of the accounts that have the same
+// name and password field 
+queryBuilder.where().eq(Account.NAME_FIELD_NAME,
+    new ColumnArg(Account.PASSWORD_FIELD_NAME));
+List&lt;Account&gt; results = queryBuilder.query();
+</pre></td></tr></table>
+<p>The <code>ColumnArg</code> can also take a table-name which is useful with <code>JOIN</code> queries to compare a column from one table
+with one in another table.  See section <a href="#SEC40">Building Join Queries</a>.
+
+</p><p>For example:
+
+</p><table><tr><td>&nbsp;</td><td><pre class="example">QueryBuilder&lt;Order, Integer&gt; orderQb = orderDao.queryBuilder();
+orderQb.where().ge(&quot;amount&quot;, 100.0F);
+QueryBuilder&lt;Account, Integer&gt; accountQb = accountDao.queryBuilder();
+// find all accounts who have an order larger than their limit
+accountQb.where().gt(Account.MAX_LIMIT_AMOUNT_FIELD,
+     new ColumnArg(&quot;orders&quot;, Order.AMOUNT_FIELD));
+// join with the order query
+List&lt;Account&gt; results = accountQb.join(orderQb).query();
+</pre></td></tr></table>
+<hr size="6">
+<a name="NOD41"></a>
+<a name="SEC40"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC39" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_4.html#SEC41" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC32" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC32" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_4.html#SEC41" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 3.8 Building Join Queries </h2>
+
+<p>ORMLite supports basic <code>JOIN</code> SQL queries.  For more information about
 how <code>JOIN</code> queries work see <a href="http://www.w3schools.com/Sql/sql_join.asp">JOIN documentation</a>.
 
 </p><p>You setup a join query by building 2 <code>QueryBuilder</code> objects - one in the DAO from which you are returning objects,
@@ -867,7 +917,8 @@ List&lt;Account&gt; results = accountQb.join(orderQb).query();
 <p>This will return all of the <code>Account</code> records that have a corresponding <code>Order</code> that has a <code>value</code> field
 that is more than <code>100.0</code>.  Notice that none of the <code>Order</code> information is returned by the query - just
 <code>Account</code> information is retrieved.  You could also reverse the situation and, for example, return all of the orders
-that have an account whose first-name is equal to <code>&quot;Bob&quot;</code>.
+that have an account whose first-name is equal to <code>&quot;Bob&quot;</code>.  To compare fields from diffeent tables, you can use the
+<code>ColumnArg</code> class. See section <a href="#SEC39">Using Column Arguments</a>. 
 
 </p><p>ORMlite also supports the concept of <code>&quot;LEFT JOIN&quot;</code> which means, in the context of the above example, that accounts that
 have <em>no</em> orders will also be returned.  Typically with a &quot;normal&quot; join, only accounts that have orders are candidates to
@@ -881,7 +932,7 @@ it.
 </p><hr size="6">
 <table cellpadding="1" cellspacing="1" border="0">
 <tr><td valign="middle" align="left">[<a href="#SEC32" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_4.html#SEC40" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_4.html#SEC41" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
@@ -889,12 +940,12 @@ it.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC72" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>February, 5 2013</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>February, 6 2013</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
  </font>
  <br>
 
