@@ -5,71 +5,26 @@ import org.junit.Test;
 public class VersionUtilsTest {
 
 	@Test
-	public void testCheckCoreVersusJdbcVersions() {
+	public void testCheckCoreVersusJdbcVersionsGood() {
 		VersionUtils.setThrownOnErrors(true);
-		VersionUtils.setCoreVersionFile("/coreVersion.txt");
-		VersionUtils.setJdbcVersionFile("/jdbcVersion.txt");
-		VersionUtils.checkCoreVersusJdbcVersions();
-	}
-
-	@Test
-	public void testCheckCoreVersusAndroidVersions() {
-		VersionUtils.setThrownOnErrors(true);
-		VersionUtils.setCoreVersionFile("/coreVersion.txt");
-		VersionUtils.setAndroidVersionFile("/androidVersion.txt");
-		VersionUtils.checkCoreVersusAndroidVersions();
+		VersionUtils.checkCoreVersusJdbcVersions(VersionUtils.getCoreVersion());
 	}
 
 	@Test(expected = IllegalStateException.class)
-	public void testUnknownFiles() {
+	public void testCheckCoreVersusJdbcVersionsBad() {
 		VersionUtils.setThrownOnErrors(true);
-		VersionUtils.setCoreVersionFile("some/unknown/file/path");
-		VersionUtils.checkCoreVersusJdbcVersions();
+		VersionUtils.checkCoreVersusJdbcVersions("xxx");
 	}
 
 	@Test
-	public void testUnknownFilesNoThrowNoCore() {
-		VersionUtils.setThrownOnErrors(false);
-		VersionUtils.setCoreVersionFile("some/unknown/file/path");
-		VersionUtils.checkCoreVersusJdbcVersions();
-	}
-
-	@Test
-	public void testUnknownFilesNoThrowNoJdbc() {
-		VersionUtils.setThrownOnErrors(false);
-		VersionUtils.setCoreVersionFile("/coreVersion.txt");
-		VersionUtils.setJdbcVersionFile("some/unknown/file/path");
-		VersionUtils.checkCoreVersusJdbcVersions();
+	public void testCheckCoreVersusAndroidVersionsGood() {
+		VersionUtils.setThrownOnErrors(true);
+		VersionUtils.checkCoreVersusAndroidVersions(VersionUtils.getCoreVersion());
 	}
 
 	@Test(expected = IllegalStateException.class)
-	public void testMismatch() {
+	public void testCheckCoreVersusAndroidVersionsBad() {
 		VersionUtils.setThrownOnErrors(true);
-		VersionUtils.setCoreVersionFile("/coreVersion.txt");
-		VersionUtils.setJdbcVersionFile("/otherVersion.txt");
-		VersionUtils.checkCoreVersusJdbcVersions();
-	}
-
-	@Test
-	public void testMismatchNoThrow() {
-		VersionUtils.setThrownOnErrors(false);
-		VersionUtils.setCoreVersionFile("/coreVersion.txt");
-		VersionUtils.setJdbcVersionFile("/otherVersion.txt");
-		VersionUtils.checkCoreVersusJdbcVersions();
-	}
-
-	@Test(expected = IllegalStateException.class)
-	public void testEmpty() {
-		VersionUtils.setThrownOnErrors(true);
-		VersionUtils.setCoreVersionFile("/emptyVersion.txt");
-		VersionUtils.checkCoreVersusJdbcVersions();
-	}
-
-	@Test
-	public void testEmptyNoThrow() {
-		VersionUtils.setThrownOnErrors(false);
-		VersionUtils.setCoreVersionFile("/emptyVersion.txt");
-		VersionUtils.setJdbcVersionFile("/jdbcVersion.txt");
-		VersionUtils.checkCoreVersusJdbcVersions();
+		VersionUtils.checkCoreVersusAndroidVersions("xxx");
 	}
 }

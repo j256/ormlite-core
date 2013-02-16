@@ -1,4 +1,7 @@
-4.43: 2/5/2013 (svn rYYYY)
+4.44: 2/XX/2013 (svn rYYYY)
+	* CORE: Improved the speed of the version checking under Android.  Thanks much to Nick Campion.
+
+4.43: 2/5/2013 (svn r2719)
 	* CORE: Added QueryBuilder.countOf() and queryRaw() methods as shortcuts to their DAO equivalents.
 	* CORE: Added Where.queryForFirst(), queryRaw(), queryRawFirst(), countOf() methods as shortcut to QueryBuilder.
 	* CORE: Added the ColumnArg feature to compare two columns using QueryBuilder in simple queries and joins.
