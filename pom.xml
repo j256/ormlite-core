@@ -24,8 +24,8 @@
 	</parent>
 	<scm>
 		<url>https://github.com/j256/ormlite-core</url>
-		<connection>scm:git:ssh://git@github.com:j256/ormlite-core.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com:j256/ormlite-core.git</developerConnection>
+		<connection>scm:git:ssh://git@github.com/gitroot/j256/ormlite-core.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/gitroot/j256/ormlite-core.git</developerConnection>
 	</scm>
 	<developers>
 		<developer>
