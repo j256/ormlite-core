@@ -1,4 +1,4 @@
-4.44: 3/12/2013 (svn rYYYY)
+4.44: 3/13/2013 (svn rYYYY)
 	* CORE: Improved the speed of the version checking under Android.  Thanks much to Nick Campion.
 
 4.43: 2/5/2013 (svn r2719)
