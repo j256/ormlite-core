@@ -1,5 +1,3 @@
-BACKGROUND:
-
 This package provides the core functionality for the JDBC and Android packages.  Users
 that are connecting to SQL databases via JDBC connections will need to download the
 ormlite-jdbc package as well. Android users should download the ormlite-android package
