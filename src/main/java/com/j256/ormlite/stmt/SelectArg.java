@@ -22,21 +22,66 @@ public class SelectArg extends BaseArgumentHolder implements ArgumentHolder {
 	private boolean hasBeenSet = false;
 	private Object value = null;
 
+	/**
+	 * Constructor for when the value will be set later with {@link #setValue(Object)}.
+	 */
 	public SelectArg() {
 		super();
 		// value set later
 	}
 
+	/**
+	 * This constructor is only necessary if you are using the {@link Where#raw(String, ArgumentHolder...)} and similar
+	 * methods.
+	 * 
+	 * @param columnName
+	 *            Name of the column this argument corresponds to.
+	 * @param value
+	 *            Value for the select-arg if know at time of construction. Otherwise call {@link #setValue(Object)}
+	 *            later.
+	 */
 	public SelectArg(String columnName, Object value) {
 		super(columnName);
 		setValue(value);
 	}
 
+	/**
+	 * This constructor is only necessary if you are using the {@link Where#raw(String, ArgumentHolder...)} and similar
+	 * methods.
+	 * 
+	 * @param sqlType
+	 *            Type of the column that this argument corresponds to. Only necessary if you are using the
+	 *            {@link Where#raw(String, ArgumentHolder...)} and similar methods.
+	 * @param value
+	 *            Value for the select-arg if know at time of construction. Otherwise call {@link #setValue(Object)}
+	 *            later.
+	 */
 	public SelectArg(SqlType sqlType, Object value) {
 		super(sqlType);
 		setValue(value);
 	}
 
+	/**
+	 * This constructor is only necessary if you are using the {@link Where#raw(String, ArgumentHolder...)} and similar
+	 * methods.
+	 * 
+	 * @param sqlType
+	 *            Type of the column that this argument corresponds to. Only necessary if you are using the
+	 *            {@link Where#raw(String, ArgumentHolder...)} and similar methods.
+	 */
+	public SelectArg(SqlType sqlType) {
+		super(sqlType);
+	}
+
+	/**
+	 * Constructor for when the value is known at time of construction. You can instead use the {@link #SelectArg()}
+	 * empty constructor and set the value later with {@link #setValue(Object)}.
+	 * 
+	 * <p>
+	 * <b>WARNING,</b> This constructor sets the _value_ not the column-name. To set the column-name only, use the
+	 * {@link #SelectArg(String, Object)} and pass a null as the value.
+	 * </p>
+	 */
 	public SelectArg(Object value) {
 		setValue(value);
 	}

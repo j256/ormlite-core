@@ -622,6 +622,24 @@ public class WhereTest extends BaseCoreTest {
 	}
 
 	@Test
+	public void testRawArgsColumnNoValue() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		int val = 63465365;
+		foo.val = val;
+		assertEquals(1, dao.create(foo));
+
+		QueryBuilder<Foo, String> qb = dao.queryBuilder();
+		SelectArg arg = new SelectArg(Foo.ID_COLUMN_NAME);
+		qb.where().raw(Foo.ID_COLUMN_NAME + " = ?", arg);
+		arg.setValue(foo.id);
+		List<Foo> results = qb.query();
+		assertNotNull(results);
+		assertEquals(1, results.size());
+		assertEquals(val, results.get(0).val);
+	}
+
+	@Test
 	public void testRawArgsColumnSqlType() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
