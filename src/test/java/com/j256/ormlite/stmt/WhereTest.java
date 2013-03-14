@@ -630,7 +630,7 @@ public class WhereTest extends BaseCoreTest {
 		assertEquals(1, dao.create(foo));
 
 		QueryBuilder<Foo, String> qb = dao.queryBuilder();
-		SelectArg arg = new SelectArg(Foo.ID_COLUMN_NAME);
+		SelectArg arg = new SelectArg(Foo.ID_COLUMN_NAME, null);
 		qb.where().raw(Foo.ID_COLUMN_NAME + " = ?", arg);
 		arg.setValue(foo.id);
 		List<Foo> results = qb.query();
