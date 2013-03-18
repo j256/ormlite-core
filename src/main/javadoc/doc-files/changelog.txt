@@ -5,9 +5,10 @@
 
 4.44: 3/13/2013
 	* CORE: Improved the speed of the version checking under Android.  Thanks much to Nick Campion.
+	* ALL: Moved to github.com and to use git for all packages.
 
 4.43: 2/5/2013 (svn r2719)
-	* CORE: WARNING: changed the string version of the date string which broke version=true for date strings.  See docs.
+	* CORE: WARNING: changed format of date-string which broke backwards compatibility.  Use version 4.45+.
 	* CORE: Added QueryBuilder.countOf() and queryRaw() methods as shortcuts to their DAO equivalents.
 	* CORE: Added Where.queryForFirst(), queryRaw(), queryRawFirst(), countOf() methods as shortcut to QueryBuilder.
 	* CORE: Added the ColumnArg feature to compare two columns using QueryBuilder in simple queries and joins.

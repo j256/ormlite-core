@@ -4572,17 +4572,28 @@ and rarely the on-disk database formats.
 @node 4.45, 4.43, How to Upgrade, How to Upgrade
 @section Upgrade to Version 4.45
 
-To fix the date-string format introduced in version 4.43, I've decided to revert back to the date-string of
+To fix the date-string format bug introduced in version 4.43, I've decided to revert back to the date-string of
 @code{yyyy-MM-dd HH:mm:ss.SSSSSS} from the one introduced in 4.43 which was @code{yyyy-MM-dd HH:mm:ss.SSS}.  This means
-that for folks doing date comparisons or using the @code{version = true} feature, you will have to add the following to
-your date fields.
+that for folks doing date comparisons or using the @code{version = true} feature, if you have created data under 4.43
+you will have to add the following to your date fields to make it work.
 
 @example
-@@DatabaseField(version = true, format="yyyy-MM-dd HH:mm:ss.SSS", dataType=DataType.DATE_STRING)
+@@DatabaseField(version = true, format="yyyy-MM-dd HH:mm:ss.SSS",
+   dataType=DataType.DATE_STRING)
 private Date date;
 @end example
 
-My apologies for this mess up.
+If you have data that was created @emph{both} in 4.42 or before and 4.43 or 4.44 then you will have to convert some of
+the data.  Something like the following @code{UPDATE} statement should work:
+
+@example
+UPDATE your-table SET your-date-field =
+    CONCAT(SUBSTRING(your-date-field, 1, 20), "000",
+       SUBSTRING(your-date-field, 20, 3))
+    WHERE LENGTH(your-date-field) = 23;
+@end example
+
+My sincere apologies for this mess up.
 
 @c ----------------------------------------------------------------
 @node 4.43, 4.37, 4.45, How to Upgrade
@@ -4599,7 +4610,8 @@ We have fixed this problem in 4.45 which reverts the string format.  If you want
 @code{format} specifier on your date-string fields:
 
 @example
-@@DatabaseField(version = true, format="yyyy-MM-dd HH:mm:ss.SSSSSS", dataType=DataType.DATE_STRING)
+@@DatabaseField(version = true, format="yyyy-MM-dd HH:mm:ss.SSSSSS",
+   dataType=DataType.DATE_STRING)
 private Date date;
 @end example
 

@@ -1,27 +1,27 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on March, 13 2013 by texi2html 1.70 -->
-<!--
-Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+<!-- Created on March 18, 2013 by texi2html 1.82
+texi2html was written by: 
+            Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
             Olaf Bachmann <obachman@mathematik.uni-kl.de>
             and many others.
-Maintained by: Many creative people <dev@texi2html.cvshome.org>
-Send bugs and suggestions to <users@texi2html.cvshome.org>
-
+Maintained by: Many creative people.
+Send bugs and suggestions to <texi2html-bug@nongnu.org>
 -->
 <head>
-<title>ORMLite Package: 5. Advanced Concepts</title>
+<title>ORMLite Documentation: 5. Advanced Concepts</title>
 
-<meta name="description" content="ORMLite Package: 5. Advanced Concepts">
-<meta name="keywords" content="ORMLite Package: 5. Advanced Concepts">
+<meta name="description" content="ORMLite Documentation: 5. Advanced Concepts">
+<meta name="keywords" content="ORMLite Documentation: 5. Advanced Concepts">
 <meta name="resource-type" content="document">
 <meta name="distribution" content="global">
-<meta name="Generator" content="texi2html 1.70">
-<meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+<meta name="Generator" content="texi2html 1.82">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <style type="text/css">
 <!--
 a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
 pre.display {font-family: serif}
 pre.format {font-family: serif}
 pre.menu-comment {font-family: serif}
@@ -30,6 +30,8 @@ pre.smalldisplay {font-family: serif; font-size: smaller}
 pre.smallexample {font-size: smaller}
 pre.smallformat {font-family: serif; font-size: smaller}
 pre.smalllisp {font-size: smaller}
+span.roman {font-family:serif; font-weight:normal;}
+span.sansserif {font-family:sans-serif; font-weight:normal;}
 ul.toc {list-style: none}
 -->
 </style>
@@ -39,105 +41,107 @@ ul.toc {list-style: none}
 
 <body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
 
-<a name="NOD48"></a>
-<a name="SEC47"></a>
+<a name="Advanced"></a>
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="ormlite_4.html#SEC46" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC48" title="Next section in reading order"> &gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="ormlite_4.html#Upgrading-Schema" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Spring-Configuration" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="ormlite_4.html#SEC41" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC59" title="Next chapter"> &gt;&gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite_4.html#Use-With-Android" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite.html#Top" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#How-to-Upgrade" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#Index-of-Concepts" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h1 class="chapter"> 5. Advanced Concepts </h1>
+<a name="Advanced-Concepts"></a>
+<h1 class="chapter">5. Advanced Concepts</h1>
 
 <table class="menu" border="0" cellspacing="0">
-<tr><td align="left" valign="top"><a href="#SEC48">5.1 Spring Configuration</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">       How to wire ORMLite in Spring.
+<tr><td align="left" valign="top"><a href="#Spring-Configuration">5.1 Spring Configuration</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">       How to wire ORMLite in Spring.
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC49">5.2 Class Configuration</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">        Alternate ways to configure your classes.
+<tr><td align="left" valign="top"><a href="#Class-Configuration">5.2 Class Configuration</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">        Alternate ways to configure your classes.
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC50">5.3 Database Specific Code</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">      Description of the database specific code.
+<tr><td align="left" valign="top"><a href="#Database-Type-Details">5.3 Database Specific Code</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">      Description of the database specific code.
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC51">5.4 DAO Methods</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                What functionality is provided by the DAO.
+<tr><td align="left" valign="top"><a href="#DAO-Methods">5.4 DAO Methods</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                What functionality is provided by the DAO.
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC52">5.5 ORMLite Logging</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                    How to log messages with ORMLite.
+<tr><td align="left" valign="top"><a href="#Logging">5.5 ORMLite Logging</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                    How to log messages with ORMLite.
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC53">5.6 External Dependencies</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">               External dependencies of ORMLite.
+<tr><td align="left" valign="top"><a href="#Dependencies">5.6 External Dependencies</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">               External dependencies of ORMLite.
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC54">5.7 Using Database Transactions</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">               Using database transactions.
+<tr><td align="left" valign="top"><a href="#Transactions">5.7 Using Database Transactions</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">               Using database transactions.
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC55">5.8 Object Caches</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">              How to cache objects handled by ORMLite.
+<tr><td align="left" valign="top"><a href="#Object-Caches">5.8 Object Caches</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">              How to cache objects handled by ORMLite.
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC56">5.9 Configuring a Maven Project</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                      Configure a maven project for ORMLite.
+<tr><td align="left" valign="top"><a href="#Maven">5.9 Configuring a Maven Project</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                      Configure a maven project for ORMLite.
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC57">5.10 Running Batch Operations</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">           Running batch operations.
+<tr><td align="left" valign="top"><a href="#Batch-Operations">5.10 Running Batch Operations</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">           Running batch operations.
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC58">5.11 Custom Data Type Persisters</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">          Defining custom data type persisters.
+<tr><td align="left" valign="top"><a href="#Custom-Persisters">5.11 Custom Data Type Persisters</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">          Defining custom data type persisters.
 </td></tr>
 </table>
 
 <hr size="6">
-<a name="NOD49"></a>
-<a name="SEC48"></a>
+<a name="Spring-Configuration"></a>
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC47" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC49" title="Next section in reading order"> &gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="#Advanced" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Class-Configuration" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="#SEC47" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC47" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC59" title="Next chapter"> &gt;&gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Advanced" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Advanced" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#How-to-Upgrade" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#Index-of-Concepts" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 5.1 Spring Configuration </h2>
+<a name="Spring-Configuration-1"></a>
+<h2 class="section">5.1 Spring Configuration</h2>
 
+<a name="index-spring-framework"></a>
+<a name="index-configuration-with-Spring"></a>
 <p>ORMLite contains some classes which make it easy to configure the various database classes using
 the <a href="http://www.springsource.org/">Spring Framework</a>.
-
-</p><dl compact="compact">
+</p>
+<dl compact="compact">
 <dd>
-<a name="IDX298"></a>
-<a name="IDX299"></a>
-<a name="IDX300"></a>
-<a name="IDX301"></a>
-<a name="IDX302"></a>
-<a name="IDX303"></a>
-<a name="IDX304"></a>
-<a name="IDX305"></a>
+<a name="index-TableCreator-1"></a>
+<a name="index-create-schema"></a>
+<a name="index-create-tables"></a>
+<a name="index-generation-of-the-schema"></a>
+<a name="index-schema-generation"></a>
+<a name="index-auto-create-tables"></a>
+<a name="index-auto-drop-tables"></a>
+<a name="index-drop-tables-1"></a>
 </dd>
-<dt><code> TableCreator</code></dt>
+<dt> <code>TableCreator</code></dt>
 <dd>
 <p>Spring bean that auto-creates any tables that it finds DAOs for if the system property <code>ormlite.auto.create.tables</code>
 has been set to true. It will also auto-drop any tables that were auto-created if the property
 <code>ormlite.auto.drop.tables</code> has been set to true.  This should be used carefully and probably only in tests.
-
-</p><a name="IDX306"></a>
+</p>
+<a name="index-dao-factory"></a>
 </dd>
-<dt><code> DaoFactory</code></dt>
+<dt> <code>DaoFactory</code></dt>
 <dd>
-<p>Spring bean that can be used to create Dao's for certain classes without needing to define their own Dao class.
-
-</p></dd>
+<p>Spring bean that can be used to create Dao&rsquo;s for certain classes without needing to define their own Dao class.
+</p>
+</dd>
 </dl>
 
-<a name="IDX307"></a>
-<p>Here's an example of a full Spring configuration.
-
-</p><table><tr><td>&nbsp;</td><td><pre class="example">&lt;!-- URL used for database, probably should be in properties file --&gt;
+<a name="index-spring-examples"></a>
+<p>Here&rsquo;s an example of a full Spring configuration.
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">&lt;!-- URL used for database, probably should be in properties file --&gt;
 &lt;bean id=&quot;databaseUrl&quot; class=&quot;java.lang.String&quot;&gt;
     &lt;!-- we are using the in-memory H2 database in this example --&gt;
     &lt;constructor-arg index=&quot;0&quot; value=&quot;jdbc:h2:mem:account&quot; /&gt;
@@ -169,41 +173,43 @@ has been set to true. It will also auto-drop any tables that were auto-created i
       value=&quot;com.j256.ormlite.examples.spring.Delivery&quot; /&gt;
 &lt;/bean&gt;
 </pre></td></tr></table>
-<p>You can also take a look at the spring example code.  See <a href="ormlite_7.html#ANC42">spring example</a>.
 
-</p><hr size="6">
-<a name="NOD50"></a>
-<a name="SEC49"></a>
+<p>You can also take a look at the spring example code.  See <a href="ormlite_7.html#spring-example">spring example</a>.
+</p>
+<hr size="6">
+<a name="Class-Configuration"></a>
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC48" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC50" title="Next section in reading order"> &gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="#Spring-Configuration" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Database-Type-Details" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="#SEC47" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC47" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC59" title="Next chapter"> &gt;&gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Advanced" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Advanced" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#How-to-Upgrade" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#Index-of-Concepts" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 5.2 Class Configuration </h2>
+<a name="Class-Configuration-1"></a>
+<h2 class="section">5.2 Class Configuration</h2>
 
+<a name="index-class-configuration"></a>
 <p>The simplest mechanism for configuring a class to be persisted by ORMLite is to use the <code>@DatabaseTable</code>
-and <code>@DatabaseField</code> annotations.  See section <a href="ormlite_2.html#SEC8">Adding ORMLite Annotations</a>.  However if you do not own the class you are
+and <code>@DatabaseField</code> annotations.  See section <a href="ormlite_2.html#Local-Annotations">Adding ORMLite Annotations</a>.  However if you do not own the class you are
 persisting or there are permission problems with the class, you may want to configure the class using Java code instead.
-
-</p><a name="IDX308"></a>
+</p>
+<a name="index-configure-a-class-in-code"></a>
 <p>To configure a class in code, you use the <code>DatabaseFieldConfig</code> and <code>DatabaseTableConfig</code> objects.
 The field config object holds all of the details that are in the <code>@DatabaseField</code> annotation as well as
 the name of the corresponding field in the object.  The <code>DatabaseTableConfig</code> object holds the class and the
 corresponding list of <code>DatabaseFieldConfig</code>s.  For example, to configure the <code>Account</code> object using Java code
-you'd do something like the following:
-
-</p><table><tr><td>&nbsp;</td><td><pre class="example">List&lt;DatabaseFieldConfig&gt; fieldConfigs =
+you&rsquo;d do something like the following:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">List&lt;DatabaseFieldConfig&gt; fieldConfigs =
     new ArrayList&lt;DatabaseFieldConfig&gt;();
 DatabaseFieldConfig field1 = new DatabaseFieldConfig(&quot;name&quot;);
 field1.setId(true);
@@ -217,12 +223,13 @@ DatabaseTableConfig&lt;Account&gt; accountTableConfig
 AccountDaoImpl accountDao =
     new AccountDaoImpl(connectionSource, accountTableConfig);
 </pre></td></tr></table>
-<a name="IDX309"></a>
+
+<a name="index-spring-wire-a-class"></a>
 <p>See the Javadocs for the <code>DatabaseFieldConfig</code> class for the fields to pass to the constructor.  You can also
 use the no-argument constructor and call the setters for each field.  You use the setters as well when you are
 configuring a class using Spring wiring.  Here is the above example in Spring:
-
-</p><table><tr><td>&nbsp;</td><td><pre class="example">&lt;bean id=&quot;accountTableConfig&quot;
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">&lt;bean id=&quot;accountTableConfig&quot;
   class=&quot;com.j256.ormlite.table.DatabaseTableConfig&quot;&gt;
     &lt;property name=&quot;dataClass&quot;
         value=&quot;com.j256.ormlite.examples.common.Account&quot; /&gt;
@@ -241,430 +248,436 @@ configuring a class using Spring wiring.  Here is the above example in Spring:
     &lt;/property&gt;
 &lt;/bean&gt;
 </pre></td></tr></table>
-<p>You can also look at the field configuration example code.  See <a href="ormlite_7.html#ANC40">field config example</a>.
 
-</p><hr size="6">
-<a name="NOD51"></a>
-<a name="SEC50"></a>
+<p>You can also look at the field configuration example code.  See <a href="ormlite_7.html#field-config-example">field config example</a>.
+</p>
+<hr size="6">
+<a name="Database-Type-Details"></a>
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC49" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC51" title="Next section in reading order"> &gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="#Class-Configuration" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#DAO-Methods" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="#SEC47" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC47" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC59" title="Next chapter"> &gt;&gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Advanced" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Advanced" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#How-to-Upgrade" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#Index-of-Concepts" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 5.3 Database Specific Code </h2>
+<a name="Database-Specific-Code"></a>
+<h2 class="section">5.3 Database Specific Code</h2>
 
+<a name="index-database-type"></a>
+<a name="index-database-specific-code"></a>
 <p>ORMLite uses an internal <code>DatabaseType</code> object which defines all of the per-database information necessary
 to support the various features on all of the different database types.  The <code>JdbcConnectionSource</code> uses the database
 URL to pick the correct <code>DatabaseType</code>.  If it picks an incorrect one then you may need to set the <code>DatabaseType</code>
 on the connection source <em>directly</em>.  For example:
-
-</p><table><tr><td>&nbsp;</td><td><pre class="example">String databaseUrl = &quot;jdbc:derby://dbserver1:1527/&quot;;
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">String databaseUrl = &quot;jdbc:derby://dbserver1:1527/&quot;;
 DatabaseType databaseType = new DerbyClientServerDatabaseType();
 ConnectionSource connectionSource =
    new JdbcConnectionSource(databaseUrl, databaseType);
 </pre></td></tr></table>
-<p>Android users do not need to worry about this because the <code>AndroidConnectionSource</code> always uses the
-<code>SqliteAndroidDatabaseType</code>.  See section <a href="ormlite_4.html#SEC41">Using With Android</a>.
 
-</p><p>The <code>DatabaseType</code> classes are found in <code>com.j256.ormlite.db</code>.  Each of the supported databases has a class there
+<p>Android users do not need to worry about this because the <code>AndroidConnectionSource</code> always uses the
+<code>SqliteAndroidDatabaseType</code>.  See section <a href="ormlite_4.html#Use-With-Android">Using With Android</a>.
+</p>
+<p>The <code>DatabaseType</code> classes are found in <code>com.j256.ormlite.db</code>.  Each of the supported databases has a class there
 which implements the code needed to handle the unique features of the database (H2DatabaseType, MySqlDatabaseType, etc.).
 If you want to help develop and test against other SQL databases, a externally available server that the author could connect
 to and test against would be appreciated.  Please contact the author if your database is not supported or if you want to help.
-
-</p><p>The following methods are currently used by the system to isolate the database specific behavior in one place.
+</p>
+<p>The following methods are currently used by the system to isolate the database specific behavior in one place.
 See the javadocs for the <code>DatabaseType</code> class for the most up to date information.
-
-</p><dl compact="compact">
-<dt><code> isDatabaseUrlThisType</code></dt>
+</p>
+<dl compact="compact">
+<dt> <code>isDatabaseUrlThisType</code></dt>
 <dd>
 <p>Return true if the database URL corresponds to this database type. Usually the URL is in the form <code>jdbc:ddd:&hellip;</code>
 where ddd is the driver url part.
-
-</p></dd>
-<dt><code> loadDriver</code></dt>
+</p>
+</dd>
+<dt> <code>loadDriver</code></dt>
 <dd>
 <p>Load the driver class associated with this database so it can wire itself into JDBC.
-
-</p></dd>
-<dt><code> appendColumnArg</code></dt>
+</p>
+</dd>
+<dt> <code>appendColumnArg</code></dt>
 <dd>
 <p>Takes a field type and appends the SQL necessary to create the field.  It may also generate arguments
 for the end of the table create statement or commands that must run before or after the table create.
-
-</p></dd>
-<dt><code> dropColumnArg</code></dt>
+</p>
+</dd>
+<dt> <code>dropColumnArg</code></dt>
 <dd>
 <p>Takes a field type and adds all of the commands necessary to drop the column from the database.
-
-</p></dd>
-<dt><code> appendEscapedEntityName</code></dt>
+</p>
+</dd>
+<dt> <code>appendEscapedEntityName</code></dt>
 <dd>
 <p>Add a entity-name (table or column name) word to the SQL wrapped in the proper characters to escape it.
 This avoids problems with table, column, and sequence-names being reserved words.
-
-</p></dd>
-<dt><code> appendEscapedWord</code></dt>
+</p>
+</dd>
+<dt> <code>appendEscapedWord</code></dt>
 <dd>
 <p>Add the word to the string builder wrapped in the proper characters to escape it. This avoids problems with
 data values being reserved words.
-
-</p></dd>
-<dt><code> generateIdSequenceName</code></dt>
+</p>
+</dd>
+<dt> <code>generateIdSequenceName</code></dt>
 <dd>
 <p>Return the name of an ID sequence based on the table-name and the field-type of the id.  This is required
 by some database types when we have generated ids.
-
-</p></dd>
-<dt><code> getCommentLinePrefix</code></dt>
+</p>
+</dd>
+<dt> <code>getCommentLinePrefix</code></dt>
 <dd>
 <p>Return the prefix to put at the front of a SQL line to mark it as a comment.
-
-</p></dd>
-<dt><code> isIdSequenceNeeded</code></dt>
+</p>
+</dd>
+<dt> <code>isIdSequenceNeeded</code></dt>
 <dd>
 <p>Return true if the database needs a sequence when you insert for generated IDs.  Some databases handle
 generated ids internally.
-
-</p></dd>
-<dt><code> getFieldConverter</code></dt>
+</p>
+</dd>
+<dt> <code>getFieldConverter</code></dt>
 <dd>
 <p>Return the field converter associated with a particular field type.  This allows the database instance to
 convert a field as necessary before it goes to the database.
-
-</p></dd>
-<dt><code> isVarcharFieldWidthSupported</code></dt>
+</p>
+</dd>
+<dt> <code>isVarcharFieldWidthSupported</code></dt>
 <dd>
 <p>Return true if the database supports the width parameter on VARCHAR fields.
-
-</p></dd>
-<dt><code> isLimitSqlSupported</code></dt>
+</p>
+</dd>
+<dt> <code>isLimitSqlSupported</code></dt>
 <dd>
 <p>Return true if the database supports the LIMIT sql command.
-
-</p></dd>
-<dt><code> isLimitAfterSelect</code></dt>
+</p>
+</dd>
+<dt> <code>isLimitAfterSelect</code></dt>
 <dd>
 <p>Return true if the LIMIT should be called after SELECT otherwise at the end of the WHERE (the default).
-
-</p></dd>
-<dt><code> appendLimitValue</code></dt>
+</p>
+</dd>
+<dt> <code>appendLimitValue</code></dt>
 <dd>
 <p>Add the necessary SQL to limit the results to a certain number.
-
-</p></dd>
-<dt><code> isOffsetSqlSupported</code></dt>
+</p>
+</dd>
+<dt> <code>isOffsetSqlSupported</code></dt>
 <dd>
 <p>Return true if the database supports the OFFSET SQL command in some form.
-
-</p></dd>
-<dt><code> isOffsetLimitArgument </code></dt>
+</p>
+</dd>
+<dt> <code>isOffsetLimitArgument</code> </dt>
 <dd>
 <p>Return true if the database supports the offset as a comma argument from the limit. This also means that the
 limit <em>must</em> be specified if the offset is specified.
-
-</p></dd>
-<dt><code> appendOffsetValue</code></dt>
+</p>
+</dd>
+<dt> <code>appendOffsetValue</code></dt>
 <dd>
 <p>Append to the string builder the necessary SQL to start the results at a certain row number.
-
-</p></dd>
-<dt><code> appendSelectNextValFromSequence</code></dt>
+</p>
+</dd>
+<dt> <code>appendSelectNextValFromSequence</code></dt>
 <dd>
 <p>Add the SQL necessary to get the next-value from a sequence. This is only necessary if
 isIdSequenceNeeded returns true.
-
-</p></dd>
-<dt><code> appendCreateTableSuffix</code></dt>
+</p>
+</dd>
+<dt> <code>appendCreateTableSuffix</code></dt>
 <dd>
 <p>Append the SQL necessary to properly finish a CREATE TABLE line.
-
-</p></dd>
-<dt><code> isCreateTableReturnsZero</code></dt>
+</p>
+</dd>
+<dt> <code>isCreateTableReturnsZero</code></dt>
 <dd>
-<p>Returns true if a 'CREATE TABLE' statement should return 0. False if &gt; 0.
-
-</p></dd>
-<dt><code> isEntityNamesMustBeUpCase</code></dt>
+<p>Returns true if a &rsquo;CREATE TABLE&rsquo; statement should return 0. False if &gt; 0.
+</p>
+</dd>
+<dt> <code>isEntityNamesMustBeUpCase</code></dt>
 <dd>
 <p>Returns true if table and field names should be made uppercase.  This is an unfortunate &quot;feature&quot; of Derby and Hsqldb.
 See the Javadocs for the class for more information.
-
-</p></dd>
-<dt><code> isNestedSavePointsSupported</code></dt>
+</p>
+</dd>
+<dt> <code>isNestedSavePointsSupported</code></dt>
 <dd>
 <p>Returns true if the database supports nested savepoints (transactions).
-
-</p></dd>
-<dt><code> getPingStatement</code></dt>
+</p>
+</dd>
+<dt> <code>getPingStatement</code></dt>
 <dd>
-<p>Return an statement that doesn't do anything but which can be used to ping the database by sending it over a
+<p>Return an statement that doesn&rsquo;t do anything but which can be used to ping the database by sending it over a
 database connection.
-
-</p></dd>
-<dt><code> isBatchUseTransaction</code></dt>
+</p>
+</dd>
+<dt> <code>isBatchUseTransaction</code></dt>
 <dd>
 <p>Returns true if batch operations should be done inside of a transaction. Default is false in which case
 auto-commit disabling will be done.
-
-</p></dd>
-<dt><code> isTruncateSupported</code></dt>
+</p>
+</dd>
+<dt> <code>isTruncateSupported</code></dt>
 <dd>
 <p>Returns true if the table truncate operation is supported.
-
-</p></dd>
-<dt><code> isCreateIfNotExistsSupported</code></dt>
+</p>
+</dd>
+<dt> <code>isCreateIfNotExistsSupported</code></dt>
 <dd>
 <p>Returns true if the table creation <code>IF NOT EXISTS</code> syntax is supported.
-
-</p></dd>
+</p>
+</dd>
 </dl>
 
 <hr size="6">
-<a name="NOD52"></a>
-<a name="SEC51"></a>
+<a name="DAO-Methods"></a>
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC50" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC52" title="Next section in reading order"> &gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="#Database-Type-Details" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Logging" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="#SEC47" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC47" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC59" title="Next chapter"> &gt;&gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Advanced" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Advanced" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#How-to-Upgrade" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#Index-of-Concepts" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 5.4 DAO Methods </h2>
+<a name="DAO-Methods-1"></a>
+<h2 class="section">5.4 DAO Methods</h2>
 
+<a name="index-dao-methods"></a>
 <p>The DAO classes provide the following methods that you can use to store your objects to your database.
 This list may be out of date.  See the <code>Dao</code> interface class for the latest methods.
-
-</p><dl compact="compact">
+</p>
+<dl compact="compact">
 <dd>
-<a name="IDX310"></a>
+<a name="index-query-for-id-1"></a>
 </dd>
-<dt><code> queryForId(ID id)</code></dt>
+<dt> <code>queryForId(ID id)</code></dt>
 <dd>
 <p>Looks up the id in the database and retrieves an object associated with it.
-
-</p><a name="IDX311"></a>
+</p>
+<a name="index-query-for-first"></a>
 </dd>
-<dt><code> queryForFirst(PreparedQuery&lt;T&gt; preparedQuery)</code></dt>
+<dt> <code>queryForFirst(PreparedQuery&lt;T&gt; preparedQuery)</code></dt>
 <dd>
 <p>Query for and return the first item in the object table which matches a prepared statement. This can be used to return
 the object that matches a single unique column.  You should use queryForId if you want to query for the id column.
-
-</p><a name="IDX312"></a>
+</p>
+<a name="index-query-for-all"></a>
 </dd>
-<dt><code> queryForAll()</code></dt>
+<dt> <code>queryForAll()</code></dt>
 <dd>
 <p>Query for all of the items in the object table and return a list of them. For medium sized or large tables,
 this may load a lot of objects into memory so you should consider using the <code>iterator</code> method instead.
-
-</p><a name="IDX313"></a>
-<a name="IDX314"></a>
+</p>
+<a name="index-queryForEq"></a>
+<a name="index-query-for-single-value"></a>
 </dd>
-<dt><code> queryForEq(String fieldName, Object value)</code></dt>
+<dt> <code>queryForEq(String fieldName, Object value)</code></dt>
 <dd>
 <p>Query for the items in the object table that match a simple where with a single <code>field = value</code> type of WHERE clause.  This
 is a convenience method for calling <code>queryBuilder().where().eq(fieldName, value).query()</code>.
-
-</p><a name="IDX315"></a>
-<a name="IDX316"></a>
-<a name="IDX317"></a>
+</p>
+<a name="index-queryForMatching"></a>
+<a name="index-query-for-matching-object"></a>
+<a name="index-matching-object"></a>
 </dd>
-<dt><code> queryForMatching(T matchObj)</code></dt>
+<dt> <code>queryForMatching(T matchObj)</code></dt>
 <dd>
 <p>Query for the rows in the database that match the object passed in as an argument. Any fields in the matching object that
 are not the default value (null, false, 0, 0.0, etc.) are used as the matching parameters with <code>AND</code>.  If you are worried
 about SQL quote escaping, you should use <code>queryForMatchingArgs</code>.
-
-</p><a name="IDX318"></a>
-<a name="IDX319"></a>
-<a name="IDX320"></a>
+</p>
+<a name="index-queryForMatchingArgs"></a>
+<a name="index-query-for-matching-object-1"></a>
+<a name="index-matching-object-1"></a>
 </dd>
-<dt><code> queryForMatchingArgs(T matchObj)</code></dt>
+<dt> <code>queryForMatchingArgs(T matchObj)</code></dt>
 <dd>
-<p>Same as <code>queryForMatching</code> but this uses SQL ? arguments. This is slightly more expensive but you don't have to worry about
+<p>Same as <code>queryForMatching</code> but this uses SQL ? arguments. This is slightly more expensive but you don&rsquo;t have to worry about
 SQL quote escaping.
-
-</p><a name="IDX321"></a>
-<a name="IDX322"></a>
+</p>
+<a name="index-queryForFieldValues"></a>
+<a name="index-query-for-field-value-map"></a>
 </dd>
-<dt><code> queryForFieldValues(Map&lt;String, Object&gt; fieldValues)</code></dt>
+<dt> <code>queryForFieldValues(Map&lt;String, Object&gt; fieldValues)</code></dt>
 <dd>
 <p>Query for the rows in the database that matches all of the field to value entries from the map passed in.
-
-</p><a name="IDX323"></a>
+</p>
+<a name="index-queryForFieldValuesArgs"></a>
 </dd>
-<dt><code> queryForFieldValuesArgs(Map&lt;String, Object&gt; fieldValues)</code></dt>
+<dt> <code>queryForFieldValuesArgs(Map&lt;String, Object&gt; fieldValues)</code></dt>
 <dd>
-<p>Same as <code>queryForFieldValues</code> but this uses SQL ? arguments. This is slightly more expensive but you don't have to worry
+<p>Same as <code>queryForFieldValues</code> but this uses SQL ? arguments. This is slightly more expensive but you don&rsquo;t have to worry
 about SQL quote escaping.
-
-</p><a name="IDX324"></a>
+</p>
+<a name="index-queryForSameId"></a>
 </dd>
-<dt><code> queryForSameId(T data)</code></dt>
+<dt> <code>queryForSameId(T data)</code></dt>
 <dd>
 <p>Query for a data item in the table that has the same ID as the data parameter.
-
-</p><a name="IDX325"></a>
-<a name="IDX326"></a>
+</p>
+<a name="index-query-builder"></a>
+<a name="index-statement-builder-1"></a>
 </dd>
-<dt><code> queryBuilder()</code></dt>
+<dt> <code>queryBuilder()</code></dt>
 <dd>
-<p>Create and return a new <code>QueryBuilder</code> object which allows you to build a custom query.  See section <a href="ormlite_3.html#SEC33">Query Builder Basics</a>.
-
-</p><a name="IDX327"></a>
+<p>Create and return a new <code>QueryBuilder</code> object which allows you to build a custom query.  See section <a href="ormlite_3.html#QueryBuilder-Basics">Query Builder Basics</a>.
+</p>
+<a name="index-update-builder"></a>
 </dd>
-<dt><code> updateBuilder()</code></dt>
+<dt> <code>updateBuilder()</code></dt>
 <dd>
-<p>Create and return a new <code>UpdateBuilder</code> object which allows you to build a custom update statement.  See <a href="ormlite_3.html#ANC31">UpdateBuilder</a>.
-
-</p><a name="IDX328"></a>
+<p>Create and return a new <code>UpdateBuilder</code> object which allows you to build a custom update statement.  See <a href="ormlite_3.html#UpdateBuilder">UpdateBuilder</a>.
+</p>
+<a name="index-delete-builder"></a>
 </dd>
-<dt><code> deleteBuilder()</code></dt>
+<dt> <code>deleteBuilder()</code></dt>
 <dd>
-<p>Create and return a new <code>DeleteBuilder</code> object which allows you to build a custom delete statement.  See <a href="ormlite_3.html#ANC30">DeleteBuilder</a>.
-
-</p><a name="IDX329"></a>
+<p>Create and return a new <code>DeleteBuilder</code> object which allows you to build a custom delete statement.  See <a href="ormlite_3.html#DeleteBuilder">DeleteBuilder</a>.
+</p>
+<a name="index-query-for-objects"></a>
 </dd>
-<dt><code> query(PreparedQuery&lt;T&gt; preparedQuery)</code></dt>
+<dt> <code>query(PreparedQuery&lt;T&gt; preparedQuery)</code></dt>
 <dd>
-<p>Query for the items in the object table which match a prepared statement.  See section <a href="ormlite_3.html#SEC32">Custom Statement Builder</a>.  This returns a
+<p>Query for the items in the object table which match a prepared statement.  See section <a href="ormlite_3.html#Statement-Builder">Custom Statement Builder</a>.  This returns a
 list of matching objects. For medium sized or large tables, this may load a lot of objects into memory so you
 should consider using the <code>iterator</code> method instead.  
-
-</p><a name="IDX330"></a>
+</p>
+<a name="index-creating-an-object"></a>
 </dd>
-<dt><code> create(T data)</code></dt>
+<dt> <code>create(T data)</code></dt>
 <dd>
 <p>Create a new entry in the database from an object.  Should return 1 indicating 1 row was inserted.
-
-</p><a name="IDX331"></a>
+</p>
+<a name="index-create-if-not-exists"></a>
 </dd>
-<dt><code> createIfNotExists(T data)</code></dt>
+<dt> <code>createIfNotExists(T data)</code></dt>
 <dd>
 <p>This is a convenience method to creating a data item but only if the ID does not already exist in the table. This extracts the id from
 the data parameter, does a query for on it, returning the data if it exists.  If it does not exist then create is called with the data
 parameter.
-
-</p><a name="IDX332"></a>
+</p>
+<a name="index-create-or-update"></a>
 </dd>
-<dt><code> createOrUpdate(T data)</code></dt>
+<dt> <code>createOrUpdate(T data)</code></dt>
 <dd>
 <p>This is a convenience method for creating an item in the database if it does not exist. The id is extracted from
 the data argument and a query-by-id is made on the database. If a row in the database with the same id exists
 then all of the columns in the database will be updated from the fields in the data parameter. If the id is <code>null</code>
-(or 0 or some other default value) or doesn't exist in the database then the object will be created in the
+(or 0 or some other default value) or doesn&rsquo;t exist in the database then the object will be created in the
 database. This also means that your data item <em>must</em> have an id field defined.
-
-</p><a name="IDX333"></a>
+</p>
+<a name="index-updating-an-object-1"></a>
 </dd>
-<dt><code> update(T data)</code></dt>
+<dt> <code>update(T data)</code></dt>
 <dd>
 <p>Save the fields from an object to the database. If you have made changes to an object, this is how you persist
-those changes to the database. You cannot use this method to update the id field - see <code>updateId()</code>.  This
+those changes to the database. You cannot use this method to update the id field &ndash; see <code>updateId()</code>.  This
 should return 1 since 1 row was updated.
-
-</p><a name="IDX334"></a>
-<p><a name="ANC35"></a>
+</p>
+<a name="index-update-an-object-id"></a>
+<p><a name="updateId"></a>
 </p></dd>
-<dt><code> updateId(T data, ID newId)</code></dt>
+<dt> <code>updateId(T data, ID newId)</code></dt>
 <dd>
 <p>Update an object in the database to change its id to a new id. The data <em>must</em> have its current id set and
 the new-id is passed in as an argument.  After the id has been updated in the database, the id field of the data
 object will also be changed.  This should return 1 since 1 row was updated.
-
-</p><a name="IDX335"></a>
-<a name="IDX336"></a>
+</p>
+<a name="index-update-custom-statement"></a>
+<a name="index-custom-update-statement"></a>
 </dd>
-<dt><code> update(PreparedUpdate&lt;T&gt; preparedUpdate)</code></dt>
+<dt> <code>update(PreparedUpdate&lt;T&gt; preparedUpdate)</code></dt>
 <dd>
 <p>Update objects that match a custom update statement.
-
-</p><a name="IDX337"></a>
+</p>
+<a name="index-refreshing-an-object-1"></a>
 </dd>
-<dt><code> refresh(T data, ID newId)</code></dt>
+<dt> <code>refresh(T data, ID newId)</code></dt>
 <dd>
-<p>Does a query for the object's id and copies in each of the field values from the database to refresh the data
+<p>Does a query for the object&rsquo;s id and copies in each of the field values from the database to refresh the data
 parameter. Any local object changes to persisted fields will be overwritten.  If the database has been updated
 this brings your local object up-to-date.  This should return 1 since 1 row was retrieved.
-
-</p><a name="IDX338"></a>
+</p>
+<a name="index-deleting-an-object-1"></a>
 </dd>
-<dt><code> delete(T data)</code></dt>
+<dt> <code>delete(T data)</code></dt>
 <dd>
 <p>Delete an object from the database.  This should return 1 since 1 row was removed.
-
-</p><a name="IDX339"></a>
+</p>
+<a name="index-deleting-by-ID"></a>
 </dd>
-<dt><code> deleteById(ID id)</code></dt>
+<dt> <code>deleteById(ID id)</code></dt>
 <dd>
 <p>Delete an object from the database if you have its id.  This should return 1 since 1 row was removed.
-
-</p><a name="IDX340"></a>
+</p>
+<a name="index-delete-multiple-objects"></a>
 </dd>
-<dt><code> delete(Collection&lt;T&gt; datas)</code></dt>
+<dt> <code>delete(Collection&lt;T&gt; datas)</code></dt>
 <dd>
 <p>Delete a collection of objects from the database using an IN SQL clause.  This returns the number of rows that
 were deleted.
-
-</p><a name="IDX341"></a>
+</p>
+<a name="index-delete-objects-by-id"></a>
 </dd>
-<dt><code> deleteIds(Collection&lt;ID&gt; ids)</code></dt>
+<dt> <code>deleteIds(Collection&lt;ID&gt; ids)</code></dt>
 <dd>
 <p>Delete the objects that match the collection of ids from the database using an IN SQL clause.   This returns the
 number of rows that were deleted.  
-
-</p><a name="IDX342"></a>
-<a name="IDX343"></a>
+</p>
+<a name="index-delete-custom-statement"></a>
+<a name="index-custom-delete-statement"></a>
 </dd>
-<dt><code> delete(PreparedDelete&lt;T&gt; preparedDelete)</code></dt>
+<dt> <code>delete(PreparedDelete&lt;T&gt; preparedDelete)</code></dt>
 <dd>
 <p>Delete objects that match a custom delete statement.
-
-</p><a name="IDX344"></a>
+</p>
+<a name="index-iterator-1"></a>
 </dd>
-<dt><code> iterator()</code></dt>
+<dt> <code>iterator()</code></dt>
 <dd>
 <p>This method satisfies the <code>Iterable</code> Java interface for the class and allows you to iterate through the objects
 in the table using SQL.  This method allows you to do something like:
-
-</p><table><tr><td>&nbsp;</td><td><pre class="example">for (Account account : accountDao) { &hellip; }
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">for (Account account : accountDao) { &hellip; }
 </pre></td></tr></table>
+
 <p><em>WARNING:</em> See the <code>Dao</code> class for warnings about using this method.
-
-</p></dd>
-<dt><code> iterator(PreparedQuery&lt;T&gt; preparedQuery)</code></dt>
-<dd>
-<p>Same is the <code>iterator</code> method but with a prepared statement parameter. See section <a href="ormlite_3.html#SEC32">Custom Statement Builder</a>.
-
-</p><a name="IDX345"></a>
-<a name="IDX346"></a>
+</p>
 </dd>
-<dt><code> getWrappedIterable()</code></dt>
+<dt> <code>iterator(PreparedQuery&lt;T&gt; preparedQuery)</code></dt>
+<dd>
+<p>Same is the <code>iterator</code> method but with a prepared statement parameter. See section <a href="ormlite_3.html#Statement-Builder">Custom Statement Builder</a>.
+</p>
+<a name="index-wrapped-iterable-1"></a>
+<a name="index-CloseableWrappedIterable-1"></a>
+</dd>
+<dt> <code>getWrappedIterable()</code></dt>
 <dd>
 <p>This returns a one time use iterable class that can be closed afterwards. The DAO itself is
 <code>CloseableWrappedIterable</code> but multiple threads can each call this to get their own closeable iterable.
 This allows you to do something like:
-
-</p><table><tr><td>&nbsp;</td><td><pre class="example">CloseableWrappedIterable&lt;Account&gt; wrappedIterable =
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">CloseableWrappedIterable&lt;Account&gt; wrappedIterable =
     accountDao.getWrappedIterable();
 try {
     for (Account account : wrappedIterable) {
@@ -674,75 +687,76 @@ try {
     wrappedIterable.close();
 }
 </pre></td></tr></table>
+
 </dd>
-<dt><code> getWrappedIterable(PreparedQuery&lt;T&gt; preparedQuery)</code></dt>
+<dt> <code>getWrappedIterable(PreparedQuery&lt;T&gt; preparedQuery)</code></dt>
 <dd>
 <p>Same as <code>getWrappedIterable()</code> but with a prepared query parameter.
-
-</p><a name="IDX347"></a>
+</p>
+<a name="index-close-last-iterator"></a>
 </dd>
-<dt><code> closeLastIterator()</code></dt>
+<dt> <code>closeLastIterator()</code></dt>
 <dd>
 <p>This closes the last iterator returned by the <code>iterator()</code> method.
-
-</p><p><em>NOTE:</em> This is not reentrant. If multiple threads are getting iterators from this DAO then you should use
+</p>
+<p><em>NOTE:</em> This is not reentrant. If multiple threads are getting iterators from this DAO then you should use
 <code>getWrappedIterable()</code> method.
-
-</p><a name="IDX348"></a>
-<a name="IDX349"></a>
-<a name="IDX350"></a>
+</p>
+<a name="index-query-for-all-raw"></a>
+<a name="index-raw-select-statements"></a>
+<a name="index-executing-raw-select-statements"></a>
 </dd>
-<dt><code> queryRaw(String query)</code></dt>
+<dt> <code>queryRaw(String query)</code></dt>
 <dd>
 <p>Query for all of the items in the object table that match the SQL select query argument. This method allows you
-to do special queries that aren't supported otherwise. For medium sized or large tables, this may load a lot of 
+to do special queries that aren&rsquo;t supported otherwise. For medium sized or large tables, this may load a lot of 
 objects into memory so you should consider using the <code>iterator()</code> method on the <code>GenericRawResults</code>
-instead of the <code>getResults</code> method.  See section <a href="ormlite_2.html#SEC26">Issuing Raw Queries</a>.
-
-</p></dd>
-<dt><code> queryRaw(String query, RawRowMapper&lt;UO&gt; mapper)</code></dt>
+instead of the <code>getResults</code> method.  See section <a href="ormlite_2.html#Raw-Queries">Issuing Raw Queries</a>.
+</p>
+</dd>
+<dt> <code>queryRaw(String query, RawRowMapper&lt;UO&gt; mapper)</code></dt>
 <dd>
 <p>Same as the above <code>queryRaw</code> method but with the addition of a row mapper.  Instead of each row being returned
-as an array of strings, this will map the row using the mapper object passed in.  See section <a href="ormlite_2.html#SEC26">Issuing Raw Queries</a>.
-
-</p></dd>
-<dt><code> queryRaw(String query, DataType[] columnTypes)</code></dt>
+as an array of strings, this will map the row using the mapper object passed in.  See section <a href="ormlite_2.html#Raw-Queries">Issuing Raw Queries</a>.
+</p>
+</dd>
+<dt> <code>queryRaw(String query, DataType[] columnTypes)</code></dt>
 <dd>
 <p>Same as the above <code>queryRaw</code> method but with the addition of a an array of column data types.  Instead of each
-row being returned as an array of strings, they are returned as an array of objects.  See section <a href="ormlite_2.html#SEC26">Issuing Raw Queries</a>.
-
-</p></dd>
-<dt><code> queryRawValue(String query, String... arguments)</code></dt>
+row being returned as an array of strings, they are returned as an array of objects.  See section <a href="ormlite_2.html#Raw-Queries">Issuing Raw Queries</a>.
+</p>
+</dd>
+<dt> <code>queryRawValue(String query, String... arguments)</code></dt>
 <dd>
 <p>Perform a raw query that returns a single value (usually an aggregate function like <code>MAX</code> or <code>COUNT</code>). If the query
 does not return a single long value then it will throw a SQLException.
-
-</p></dd>
-<dt><code> executeRaw(String statement)</code></dt>
+</p>
+</dd>
+<dt> <code>executeRaw(String statement)</code></dt>
 <dd>
-<p>Run a raw execute SQL statement against the database.  See section <a href="ormlite_2.html#SEC28">Issuing Raw Execute Statements</a>.
-
-</p></dd>
-<dt><code> updateRaw(String statement)</code></dt>
+<p>Run a raw execute SQL statement against the database.  See section <a href="ormlite_2.html#Raw-Executes">Issuing Raw Execute Statements</a>.
+</p>
+</dd>
+<dt> <code>updateRaw(String statement)</code></dt>
 <dd>
 <p>Run a raw update SQL statement (<code>INSERT</code>, <code>DELETE</code>, or <code>UPDATE</code> against the database.
-See section <a href="ormlite_2.html#SEC27">Issuing Raw Update Statements</a>.
-
-</p><a name="IDX351"></a>
-<a name="IDX352"></a>
-<p><a name="ANC36"></a>
+See section <a href="ormlite_2.html#Raw-Updates">Issuing Raw Update Statements</a>.
+</p>
+<a name="index-batch-operations"></a>
+<a name="index-callBatchTasks"></a>
+<p><a name="callBatchTasks"></a>
 </p></dd>
-<dt><code> callBatchTasks(Callable callable)</code></dt>
+<dt> <code>callBatchTasks(Callable callable)</code></dt>
 <dd>
 <p>Call the call-able that will perform a number of batch tasks. This is for performance when you want to run a
-number of database operations at once - maybe loading data from a file. This will turn off what databases call
+number of database operations at once &ndash; maybe loading data from a file. This will turn off what databases call
 &quot;auto-commit&quot; mode, run the call-able and then re-enable &quot;auto-commit&quot;.  If auto-commit is not supported then it
 will try to use a database transaction to speed up the tasks.
-
-</p><p><em>NOTE:</em> If neither auto-commit nor transactions are supported by the database type then this method may not
+</p>
+<p><em>NOTE:</em> If neither auto-commit nor transactions are supported by the database type then this method may not
 give any performance improvement.
-
-</p><table><tr><td>&nbsp;</td><td><pre class="example">accountDao.callBatchTasks(connectionSource,
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">accountDao.callBatchTasks(connectionSource,
   new Callable&lt;Void&gt;() {
     public Void call() throws SQLException {
         // insert a number of accounts at once
@@ -754,170 +768,174 @@ give any performance improvement.
     }
 });
 </pre></td></tr></table>
-<a name="IDX353"></a>
-<a name="IDX354"></a>
+
+<a name="index-count-of-table-rows"></a>
+<a name="index-countOf"></a>
 </dd>
-<dt><code> countOf()</code></dt>
+<dt> <code>countOf()</code></dt>
 <dd>
 <p>Returns the value returned from a <code>SELECT COUNT(*)</code> query which is the number of rows in the table.  Depending on the
 database and the size of the table, this could be expensive. 
-
-</p></dd>
-<dt><code> countOf(PreparedQuery&lt;T&gt; preparedQuery)</code></dt>
+</p>
+</dd>
+<dt> <code>countOf(PreparedQuery&lt;T&gt; preparedQuery)</code></dt>
 <dd>
 <p>Returns the number of rows in the table associated with the prepared query passed in. Depending on the size of
 the table and the database type, this may be expensive and take a while.
-
-</p><a name="IDX355"></a>
-<a name="IDX356"></a>
-<a name="IDX357"></a>
+</p>
+<a name="index-empty-foreign-collection-1"></a>
+<a name="index-foreign-collection_002c-empty"></a>
+<a name="index-assignEmptyForeignCollection"></a>
 </dd>
-<dt><code> assignEmptyForeignCollection(T parent, String fieldName)</code></dt>
+<dt> <code>assignEmptyForeignCollection(T parent, String fieldName)</code></dt>
 <dd>
 <p>Assigns an empty collection to the appropriate collection field that has the field-name. This allows you to add things to the
 collection from the start.  This allows you to do something like:
-
-</p><table><tr><td>&nbsp;</td><td><pre class="example">accoundDao.assignEmptyForeignCollection(account, &quot;orders&quot;);
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">accoundDao.assignEmptyForeignCollection(account, &quot;orders&quot;);
 // this would add it the collection and the internal DAO
 account.orders.add(order1);
 </pre></td></tr></table>
-<a name="IDX358"></a>
-<a name="IDX359"></a>
-</dd>
-<dt><code> setObjectCache(boolean enabled);</code></dt>
-<dd>
-<p>Call this with true to enable an object cache for the DAO. Set to false to disable any caching.  See section <a href="#SEC55">Object Caches</a>.
 
-</p></dd>
-<dt><code> setObjectCache(ObjectCache objectCache);</code></dt>
+<a name="index-enable-object-cache"></a>
+<a name="index-object-cache_002c-enable"></a>
+</dd>
+<dt> <code>setObjectCache(boolean enabled);</code></dt>
+<dd>
+<p>Call this with true to enable an object cache for the DAO. Set to false to disable any caching.  See section <a href="#Object-Caches">Object Caches</a>.
+</p>
+</dd>
+<dt> <code>setObjectCache(ObjectCache objectCache);</code></dt>
 <dd>	
 <p>Same as <code>setObjectCache(boolean)</code> except you specify the actual cache instance to use for the DAO.  This allows
-you to inject your own cache classes.  Call it with null to disable the cache.  See section <a href="#SEC55">Object Caches</a>.
-
-</p><a name="IDX360"></a>
-<a name="IDX361"></a>
+you to inject your own cache classes.  Call it with null to disable the cache.  See section <a href="#Object-Caches">Object Caches</a>.
+</p>
+<a name="index-clear-object-cache"></a>
+<a name="index-object-cache_002c-clear"></a>
 </dd>
-<dt><code> clearObjectCache();</code></dt>
+<dt> <code>clearObjectCache();</code></dt>
 <dd>
 <p>Flush the object cache if it has been enabled. This will remove an objects that are in the cache to reclaim
 memory. Any future queries will re-request them from the database.
-
-</p><a name="IDX362"></a>
-<a name="IDX363"></a>
-<a name="IDX364"></a>
+</p>
+<a name="index-map-select-starquery"></a>
+<a name="index-object-mapping-for-select-star"></a>
+<a name="index-row-mapping-for-select-star"></a>
 </dd>
-<dt><code> mapSelectStarRow(DatabaseResults results)</code></dt>
+<dt> <code>mapSelectStarRow(DatabaseResults results)</code></dt>
 <dd>
 <p>Return the latest row from the database results from a query to <code>select *</code> (star).  This allows you to remap the
 results.  It is particularly useful if you are repositioning a database cursor externally. 
-
-</p></dd>
-<dt><code> getSelectStarRowMapper()</code></dt>
+</p>
+</dd>
+<dt> <code>getSelectStarRowMapper()</code></dt>
 <dd>
 <p>Return a row mapper that is suitable for mapping results from a query to <code>select *</code> (star).
-
-</p><a name="IDX365"></a>
-<a name="IDX366"></a>
+</p>
+<a name="index-if-id-exists"></a>
+<a name="index-does-id-exist-already"></a>
 </dd>
-<dt><code> idExists(ID id)</code></dt>
+<dt> <code>idExists(ID id)</code></dt>
 <dd>
 <p>Returns true if an object exists that matches this ID otherwise false.
-
-</p><a name="IDX367"></a>
+</p>
+<a name="index-cache-database-connection"></a>
 </dd>
-<dt><code> startThreadConnection()</code></dt>
+<dt> <code>startThreadConnection()</code></dt>
 <dd>
 <p><em>WARNING:</em> This method is for advanced users only. It is only to support the <code>setAutoCommit(conn, boolean)</code>
-and other methods below. Chances are you should be using the <code>TransactionManager</code> class' <code>callInTransaction(Callable)</code>
+and other methods below. Chances are you should be using the <code>TransactionManager</code> class&rsquo; <code>callInTransaction(Callable)</code>
 method instead f this method unless you know what you are doing.
-
-</p><p>This allocates a connection for this specific thread that will be used in all other DAO operations. The thread
+</p>
+<p>This allocates a connection for this specific thread that will be used in all other DAO operations. The thread
 <em>must</em> call <code>endThreadConnection(conn)</code> once it is done with the connection. It is highly recommended that a
 <code>try / finally</code> pattern be used here to ensure you do not leak connections.
-
-</p><p>This is really only useful if you are using a pooled connection source and want to do certain operations on the
+</p>
+<p>This is really only useful if you are using a pooled connection source and want to do certain operations on the
 same pool. Android users, for example have a single connection to the database so this is effecitively a no-op.
-
-</p></dd>
-<dt><code> endThreadConnection(DatabaseConnection connection)</code></dt>
+</p>
+</dd>
+<dt> <code>endThreadConnection(DatabaseConnection connection)</code></dt>
 <dd>
 <p>This method is used to free the connection returned by the <code>startThreadConnection()</code> above.
-
-</p></dd>
-<dt><code> setAutoCommit(DatabaseConnection connection, boolean autoCommit)</code></dt>
+</p>
+</dd>
+<dt> <code>setAutoCommit(DatabaseConnection connection, boolean autoCommit)</code></dt>
 <dd>
 <p>Set auto-commit mode to be true or false on the connection returned by the <code>startThreadConnection()</code>. This
 may not be supported by all database types.
-
-</p></dd>
-<dt><code> isAutoCommit(DatabaseConnection connection)</code></dt>
+</p>
+</dd>
+<dt> <code>isAutoCommit(DatabaseConnection connection)</code></dt>
 <dd>
 <p>Return true if the database connection returned by the <code>startThreadConnection()</code> is in auto-commit mode
 otherwise false. This may not be supported by all database types.
-
-</p></dd>
-<dt><code> commit(DatabaseConnection connection)</code></dt>
+</p>
+</dd>
+<dt> <code>commit(DatabaseConnection connection)</code></dt>
 <dd>
 <p>If you have previously called <code>setAutoCommit(conn, false)</code> then this will commit all changes to the database
 made from that point up to now on the connection returned by the <code>startThreadConnection()</code>. The changes
 will be written to the database and discarded. The connection will continue to stay in the current auto-commit
 mode.
-
-</p><p><em>WARNING:</em> Chances are you should be using the <code>TransactionManager</code> class' <code>callInTransaction(Callable)</code>
+</p>
+<p><em>WARNING:</em> Chances are you should be using the <code>TransactionManager</code> class&rsquo; <code>callInTransaction(Callable)</code>
 method instead unless you know what you are doing.
-
-</p></dd>
-<dt><code> rollBack(DatabaseConnection connection)</code></dt>
+</p>
+</dd>
+<dt> <code>rollBack(DatabaseConnection connection)</code></dt>
 <dd>
 <p>If you have previously called <code>setAutoCommit(conn, false)</code> then this will roll-back and flush all changes to the
 database made from that point up to now on the connection returned by the <code>startThreadConnection()</code>. None
 of those changes will be written to the database and are discarded. The connection will continue to stay in the
 current auto-commit mode.
-
-</p><p><em>WARNING:</em> Chances are you should be using the <code>TransactionManager</code> class' <code>callInTransaction(Callable)</code>
+</p>
+<p><em>WARNING:</em> Chances are you should be using the <code>TransactionManager</code> class&rsquo; <code>callInTransaction(Callable)</code>
 method instead unless you know what you are doing.
-
-</p></dd>
+</p>
+</dd>
 </dl>
 
 <hr size="6">
-<a name="NOD53"></a>
-<a name="SEC52"></a>
+<a name="Logging"></a>
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC51" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC53" title="Next section in reading order"> &gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="#DAO-Methods" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Dependencies" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="#SEC47" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC47" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC59" title="Next chapter"> &gt;&gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Advanced" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Advanced" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#How-to-Upgrade" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#Index-of-Concepts" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 5.5 ORMLite Logging </h2>
+<a name="ORMLite-Logging"></a>
+<h2 class="section">5.5 ORMLite Logging</h2>
 
+<a name="index-logging-information"></a>
 <p>ORMLite uses a log system which can plug into Apache commons logging, Log4j, Android Log, or its own internal
 log implementations.  The logger code first looks for the <code>android.util.Log</code> and if found will use the Android internal
-logger.  Next it looks for <code>org.apache.commons.logging.LogFactory</code> class in the class-path - if found it will use Apache
+logger.  Next it looks for <code>org.apache.commons.logging.LogFactory</code> class in the class-path &ndash; if found it will use Apache
 commons logging.  If that class is not found it then looks for <code>org.apache.log4j.Logger</code> and if found will use Log4j.
-If none of these classes are available it will use an internal logger - see <code>LocalLog</code>.  The logger code also provides
+If none of these classes are available it will use an internal logger &ndash; see <code>LocalLog</code>.  The logger code also provides
 simple {} argument expansion like <code>slf4j</code> which means that you can save on <code>toString()</code> calls and
 <code>StringBuilder</code> operations if the log level is not high enough.  This allows us to do something like the following:
-
-</p><table><tr><td>&nbsp;</td><td><pre class="example">private static Logger logger =
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">private static Logger logger =
   LoggerFactory.getLogger(QueryBuilder.class);
 &hellip;
 logger.debug(&quot;built statement {}&quot;, statement);
 </pre></td></tr></table>
+
 <p>If you are using log4j (through Apache commons logging or directly), you can use something
 like the following as your <code>log4j.properties</code> file to see details about the SQL calls.
-
-</p><a name="IDX368"></a>
+</p>
+<a name="index-log4j-properties-file"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">log4j.rootLogger=INFO, stdout
 
 log4j.appender.stdout=org.apache.log4j.ConsoleAppender
@@ -935,114 +953,121 @@ log4j.logger.com.j256.ormlite=DEBUG
 #log4j.logger.com.j256.ormlite.stmt.mapped.MappedCreate=TRACE
 #log4j.logger.com.j256.ormlite.stmt.StatementExecutor=TRACE
 </pre></td></tr></table>
-<a name="IDX369"></a>
-<a name="IDX370"></a>
+
+<a name="index-logging-sql-arguments"></a>
+<a name="index-sql-argument-logging"></a>
 <p><em>Notice</em> that you can uncomment the last lines in the above log4j.properties file to log the arguments to the
 various SQL calls.  This may expose passwords or other sensitive information in the database so probably should
 only be used during debugging and should not be the default.
-
-</p><p>If you are using the <code>LocalLog</code> logger (which is helpful for testing at least) then you can configure it using
+</p>
+<p>If you are using the <code>LocalLog</code> logger (which is helpful for testing at least) then you can configure it using
 a <code>ormliteLocalLog.properties</code> file.  The file configures the log output of the ORMLite LocalLog class.
 Lines in the file have the format <code>class-regex-pattern = Level</code>.  For example:
-
-</p><table><tr><td>&nbsp;</td><td><pre class="example">com\.j256\.ormlite.* = DEBUG
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">com\.j256\.ormlite.* = DEBUG
 com\.j256\.ormlite\.stmt\.mapped\.BaseMappedStatement = TRACE
 com\.j256\.ormlite\.stmt\.mapped\.MappedCreate = TRACE
 com\.j256\.ormlite\.stmt\.StatementExecutor = TRACE
 </pre></td></tr></table>
+
 <p><em>NOTE:</em> You should escape any period characters with a single backslash unless they are part of a regex match.
-
-</p><p>For logging with Android, See section <a href="ormlite_4.html#SEC44">Android Logging</a>.
-
-</p><hr size="6">
-<a name="NOD54"></a>
-<a name="SEC53"></a>
+</p>
+<p>For logging with Android, See section <a href="ormlite_4.html#Android-Logging">Android Logging</a>.
+</p>
+<hr size="6">
+<a name="Dependencies"></a>
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC52" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC54" title="Next section in reading order"> &gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="#Logging" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Transactions" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="#SEC47" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC47" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC59" title="Next chapter"> &gt;&gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Advanced" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Advanced" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#How-to-Upgrade" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#Index-of-Concepts" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 5.6 External Dependencies </h2>
+<a name="External-Dependencies"></a>
+<h2 class="section">5.6 External Dependencies</h2>
 
+<a name="index-external-dependencies"></a>
 <p>ORMLite does not have any direct dependencies.  It has logging classes that depend on Apache commons-logging
 and Log4j but these classes will <em>not</em> be referenced unless they exist in the class-path.
-  
-</p><p>If you want to get the ORMLite Junit tests to run, there are test dependencies on the following packages:
-
-</p><dl compact="compact">
+</p>  
+<p>If you want to get the ORMLite Junit tests to run, there are test dependencies on the following packages:
+</p>
+<dl compact="compact">
 <dd>
-<a name="IDX371"></a>
+<a name="index-JPA-1"></a>
 </dd>
-<dt><code> javax.persistence</code></dt>
+<dt> <code>javax.persistence</code></dt>
 <dd>
 <p>For testing the compatibility annotations <code>@Column</code> and the like.
-
-</p></dd>
-<dt><code> org.junit</code></dt>
+</p>
+</dd>
+<dt> <code>org.junit</code></dt>
 <dd>
 <p>We use Junit for our unit tasks.
-
-</p></dd>
-<dt><code> org.easymock.easymock</code></dt>
+</p>
+</dd>
+<dt> <code>org.easymock.easymock</code></dt>
 <dd>
 <p>We use, and are in love with, <a href="http://easymock.org/">EasyMock</a>.  It allows us to mock out dependencies so we can
 concentrate on testing a particular class instead of the whole package. 
-
-</p></dd>
-<dt><code> com.h2database</code></dt>
+</p>
+</dd>
+<dt> <code>com.h2database</code></dt>
 <dd>
 <p>As a test database implementation, H2 is very fast and simple to use.  However, we recommend MySQL or Postgres for
 multi-threaded, high-performance, production databases.
-
-</p></dd>
+</p>
+</dd>
 </dl>
 
 <hr size="6">
-<a name="NOD55"></a>
-<a name="SEC54"></a>
+<a name="Transactions"></a>
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC53" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC55" title="Next section in reading order"> &gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="#Dependencies" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Object-Caches" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="#SEC47" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC47" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC59" title="Next chapter"> &gt;&gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Advanced" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Advanced" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#How-to-Upgrade" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#Index-of-Concepts" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 5.7 Using Database Transactions </h2>
+<a name="Using-Database-Transactions"></a>
+<h2 class="section">5.7 Using Database Transactions</h2>
 
+<a name="index-database-transactions"></a>
+<a name="index-transactions"></a>
+<a name="index-commit"></a>
+<a name="index-roll-back"></a>
 <p>Database transactions allow you to make a number of changes to the database and then if any of them fail, none of the
-changes are actually written.  For example, let's say you are recording an order into your order entry system which
+changes are actually written.  For example, let&rsquo;s say you are recording an order into your order entry system which
 requires you to insert a row into the Order table and also to update the Account table with the order number.  If the
 Order was inserted but then a disk error stopped the Account from being updated, the Order data would be left dangling.
 If you used a transaction then both changes would be saved to the database only when the transaction was closed.  Most (not all)
 databases support transactions which are designed specifically with these sorts of scenarios in mind.
-
-</p><a name="IDX372"></a>
+</p>
+<a name="index-TransactionManager"></a>
 <p>ORMLite has basic support for transactions through the use of the <code>TransactionManager</code> class which wraps
 databases operations in a transaction.  If those operations throw an exception, then the transaction is &quot;rolled-back&quot;
 and none of the operations are persisted to the database.  Once the operations are finished, if no exception is thrown,
 then the transaction is &quot;committed&quot; and the changes are written to the database.
-
-</p><table><tr><td>&nbsp;</td><td><pre class="example">// we need the final to see it within the Callable
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">// we need the final to see it within the Callable
 final Order order = new Order();
 
 TransactionManager.callInTransaction(connectionSource,
@@ -1059,43 +1084,48 @@ TransactionManager.callInTransaction(connectionSource,
     }
 });
 </pre></td></tr></table>
+
 <p>If for some reason, the <code>accountDao.update()</code> fails in the above example, the order insert will not be committed to
 the database.  Transactions allow you to make multiple operations while still ensuring data integrity.  Notice that you
 can return an object from the callable so you could pass back the number of rows affected or other information.
-
-</p><p><em>NOTE:</em> Performing database operations within a transaction also has the side effect of better performance since
+</p>
+<p><em>NOTE:</em> Performing database operations within a transaction also has the side effect of better performance since
 a number of changes are written at once in a batch.  The <code>Dao.callBatchTasks()</code> method should always be used if
-you are looking for performance of a large number of operations. See <a href="#ANC36">callBatchTasks</a>.
-
-</p><hr size="6">
-<a name="NOD56"></a>
-<a name="SEC55"></a>
+you are looking for performance of a large number of operations. See <a href="#callBatchTasks">callBatchTasks</a>.
+</p>
+<hr size="6">
+<a name="Object-Caches"></a>
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC54" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC56" title="Next section in reading order"> &gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="#Transactions" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Maven" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="#SEC47" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC47" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC59" title="Next chapter"> &gt;&gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Advanced" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Advanced" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#How-to-Upgrade" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#Index-of-Concepts" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 5.8 Object Caches </h2>
+<a name="Object-Caches-1"></a>
+<h2 class="section">5.8 Object Caches</h2>
 
+<a name="index-caching-objects"></a>
+<a name="index-object-cache"></a>
+<a name="index-level-1-cache"></a>
+<a name="index-weak-reference-cache"></a>
 
 <p>As of September 2011, one of the newer features in ORMLite is the ability to enable an object cache for a DAO.  The object
 cache keeps an internal collection of objects that have been created or queried and will return a reference to the same
 object if it is handled in the future.  
-
-</p><p>For example:
-
-</p><table><tr><td>&nbsp;</td><td><pre class="example">Dao&lt;Account, String&gt; accountDao =
+</p>
+<p>For example:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">Dao&lt;Account, String&gt; accountDao =
     DaoManager.createDao(connectionSource, Account.class);
 // enable the default object cache for this dao
 accountDao.setObjectCache(true);
@@ -1108,94 +1138,99 @@ Account result = dao.queryForId(&quot;Jim Coakley&quot;);
 // this result will be the same object as account above
 assertSame(account, result);
 </pre></td></tr></table>
+
 <p><em>NOTE:</em> For an object cache to work, the class being stored must have an ID field.  If you try to enable the object cache for
 a class without an ID field, an exception will be thrown.  The following operations are supported by the object cache:
+</p>
+<ul>
+<li> If you create an object using the DAO, it will be added to the cache.
 
-</p><ul>
-<li><p> If you create an object using the DAO, it will be added to the cache.
-
-</p></li><li><p> When you query for an object using the standard query methods from the DAO, if the object is in the cache it will be returned.  If
+</li><li> When you query for an object using the standard query methods from the DAO, if the object is in the cache it will be returned.  If
 it is not in the cache then it will be added to the cache.  This does <em>not</em> apply to the <code>queryRaw()</code> methods.
 
-</p></li><li><p> If you update an object with the database using the DAO, if it exists in the cache it will be updated as well. 
+</li><li> If you update an object with the database using the DAO, if it exists in the cache it will be updated as well. 
 
-</p></li><li><p> If you refresh an object from the database using the DAO, if it exists in the cache it will be refreshed as well. 
+</li><li> If you refresh an object from the database using the DAO, if it exists in the cache it will be refreshed as well. 
 
-</p></li><li><p> If you delete the object using the DAO, the object will be deleted from the cache.  All delete methods are supported.
+</li><li> If you delete the object using the DAO, the object will be deleted from the cache.  All delete methods are supported.
 
-</p></li></ul>
+</li></ul>
 
-<a name="IDX373"></a>
-<a name="IDX374"></a>
+<a name="index-soft-reference-cache"></a>
+<a name="index-ReferenceObjectCache"></a>
 <p>By default the cache that is used internally by ORMLite if you enable the cache with <code>true</code> will be a &quot;weak-reference&quot; cache.  This
 means that if no other code has a strong reference to the object, it will be removed from the cache during the next garbage collection
 cycle. ORMLite also has a &quot;soft-reference&quot; cache which will use more memory to hold objects if available and supported by your OS.  You
 can enable it using:
-
-</p><table><tr><td>&nbsp;</td><td><pre class="example">Dao&lt;Account, String&gt; accountDao =
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">Dao&lt;Account, String&gt; accountDao =
     DaoManager.createDao(connectionSource, Account.class);
 // enable a soft-reference cache
 accountDao.setObjectCache(
     ReferenceObjectCache.makeSoftCache());
 </pre></td></tr></table>
+
 <p>The reference caches store a small object that refers to the cached object.  These small objects only get cleaned up when the object is
 accessed.  You should consider calling the <code>cleanNullReferencesAll()</code> method on your cache to remove these objects and free up
 their associated memory on occasion.
-
-</p><a name="IDX375"></a>
-<a name="IDX376"></a>
+</p>
+<a name="index-LRU-cache"></a>
+<a name="index-LruObjectCache"></a>
 <p>There is also a Least Recently Used (LRU) cache that will store a certain number of objects based on a capacity value.  Each class gets
 the same capacity value so if the same cache is used in 5 different daos, then 500 objects will be held in the <code>LruObjectCache</code> if
 the capacity is 100.
-
-</p><table><tr><td>&nbsp;</td><td><pre class="example">Dao&lt;Account, String&gt; accountDao =
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">Dao&lt;Account, String&gt; accountDao =
   DaoManager.createDao(connectionSource, Account.class);
 // enable least-recently-used cache with max 100 items per class
 accountDao.setObjectCache(new LruObjectCache(100));
 </pre></td></tr></table>
+
 <p>You can also implement your own cache class that implements the <code>ObjectCache</code> interface.
-
-</p><p>All of the caches can be cleared if you want to free up memory and you can also disable the cache from the DAO if necessary.
-
-</p><table><tr><td>&nbsp;</td><td><pre class="example">// clear all Account items from the cache
+</p>
+<p>All of the caches can be cleared if you want to free up memory and you can also disable the cache from the DAO if necessary.
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">// clear all Account items from the cache
 accountDao.clearObjectCache();
 &hellip;
 // disable the cache
 accountDao.setObjectCache(false);
 </pre></td></tr></table>
+
 <hr size="6">
-<a name="NOD57"></a>
-<a name="SEC56"></a>
+<a name="Maven"></a>
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC55" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC57" title="Next section in reading order"> &gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="#Object-Caches" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Batch-Operations" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="#SEC47" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC47" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC59" title="Next chapter"> &gt;&gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Advanced" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Advanced" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#How-to-Upgrade" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#Index-of-Concepts" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 5.9 Configuring a Maven Project </h2>
+<a name="Configuring-a-Maven-Project"></a>
+<h2 class="section">5.9 Configuring a Maven Project</h2>
 
+<a name="index-maven-configuration"></a>
 
 <p>To use ORMLite in your project if you are using maven, then you should add the following configuration stanza
 to your <code>pom.xml</code> file.  As mentioned below, you will also need to add some database driver as well to your
 dependency list.  In this example we are using MySQL but any of the supported JDBC database drivers will do.
-
-</p><table><tr><td>&nbsp;</td><td><pre class="example">&lt;project&gt;
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">&lt;project&gt;
     &hellip;
     &lt;dependencies&gt;
         &lt;dependency&gt;
             &lt;groupId&gt;com.j256.ormlite&lt;/groupId&gt;
             &lt;artifactId&gt;ormlite-jdbc&lt;/artifactId&gt;
-            &lt;version&gt;4.44&lt;/version&gt;
+            &lt;version&gt;4.45&lt;/version&gt;
         &lt;/dependency&gt;
         &lt;!-- You will need to add some sort of database driver too.
              In this example we've used MySQL. --&gt;
@@ -1207,38 +1242,42 @@ dependency list.  In this example we are using MySQL but any of the supported JD
     &lt;/dependencies&gt;
 &lt;/project&gt;
 </pre></td></tr></table>
+
 <p>The <code>-jdbc</code> artifact mentioned in the example depends on the <code>-core</code> artifact, but that should be pulled
 in automatically by maven.
-
-</p><p><em>NOTE:</em> I do not have any details about how to configure Android projects with maven.  If you are doing so
+</p>
+<p><em>NOTE:</em> I do not have any details about how to configure Android projects with maven.  If you are doing so
 then just replace the <code>ormlite-jdbc</code> artifact name with <code>ormlite-android</code>.
-
-</p><hr size="6">
-<a name="NOD58"></a>
-<a name="SEC57"></a>
+</p>
+<hr size="6">
+<a name="Batch-Operations"></a>
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC56" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC58" title="Next section in reading order"> &gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="#Maven" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Custom-Persisters" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="#SEC47" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC47" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC59" title="Next chapter"> &gt;&gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Advanced" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Advanced" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#How-to-Upgrade" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#Index-of-Concepts" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 5.10 Running Batch Operations </h2>
+<a name="Running-Batch-Operations"></a>
+<h2 class="section">5.10 Running Batch Operations</h2>
 
-<p>Every so often you need to efficiently do a number of database updates at one time - bulk database inserts is a common
+<a name="index-batch-operations-1"></a>
+<a name="index-bulk-inserts"></a>
+<a name="index-callBatchTasks-1"></a>
+<p>Every so often you need to efficiently do a number of database updates at one time &ndash; bulk database inserts is a common
 pattern.  ORMLite supports a <code>callBatchTasks</code> method on the <code>Dao</code> class which supports this behavior in most
 database types.  For example:
-
-</p><table><tr><td>&nbsp;</td><td><pre class="example">final List&lt;Account&gt; accountsToInsert = new ArrayList&lt;Account&gt;();
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">final List&lt;Account&gt; accountsToInsert = new ArrayList&lt;Account&gt;();
 &hellip;
 accountDao.callBatchTasks(new Callable&lt;Void&gt;() {
     public Void call() throws Exception {
@@ -1248,53 +1287,54 @@ accountDao.callBatchTasks(new Callable&lt;Void&gt;() {
     }
 });
 </pre></td></tr></table>
+
 <p>Databases by default commit changes after every SQL operation.  This method disbales this &quot;auto-commit&quot; bahavior so a
 number of changes can be made faster and then commited all at once.  More specifically, the method turns &quot;auto-commit&quot;,
 calls the <code>Callable.call()</code> method passed in as an argument, calls SQL <code>commit</code> to persist the changes when the
 call returns, and finally re-enabled auto-commit.  Some databases do not support auto-commit so a transaction may be used
 to accomplish the same behavior.
-
-</p><p><em>NOTE:</em> If neither auto-commit nor transactions are supported by the database type then <code>callBatchTasks</code> method
+</p>
+<p><em>NOTE:</em> If neither auto-commit nor transactions are supported by the database type then <code>callBatchTasks</code> method
 may do nothing.
-
-</p><hr size="6">
-<a name="NOD59"></a>
-<a name="SEC58"></a>
+</p>
+<hr size="6">
+<a name="Custom-Persisters"></a>
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC57" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC59" title="Next section in reading order"> &gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="#Batch-Operations" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#How-to-Upgrade" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="#SEC47" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC47" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC59" title="Next chapter"> &gt;&gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Advanced" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Advanced" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#How-to-Upgrade" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#Index-of-Concepts" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 5.11 Custom Data Type Persisters </h2>
+<a name="Custom-Data-Type-Persisters"></a>
+<h2 class="section">5.11 Custom Data Type Persisters</h2>
 
-<p><a name="ANC37"></a>
-<a name="IDX377"></a>
-<a name="IDX378"></a>
-<a name="IDX379"></a>
-<a name="IDX380"></a>
-
-</p><p>ORMLite has internal definitions for storing the basic primitive and other common data types. See section <a href="ormlite_2.html#SEC11">Persisted Data Types</a>.
+<p><a name="custom-data-persister"></a>
+<a name="index-custom-persisters"></a>
+<a name="index-custom-data-types"></a>
+<a name="index-storing-custom-data-types"></a>
+<a name="index-overriding-how-data-is-stored"></a>
+</p>
+<p>ORMLite has internal definitions for storing the basic primitive and other common data types. See section <a href="ormlite_2.html#Persisted-Types">Persisted Data Types</a>.
 Sometimes, however, you either want to store a new data type in your database or you want to change the way ORMLite
-stores values to the database for common types - this often happens when you are trying to work with an existing schema.
+stores values to the database for common types &ndash; this often happens when you are trying to work with an existing schema.
 You can change how types are stored in the database by defining a class which implements the <code>DataPersister</code> interface.
-
-</p><p>For example, you might have a <code>Date</code> field in an existing database that was not nullable but instead stored the date
+</p>
+<p>For example, you might have a <code>Date</code> field in an existing database that was not nullable but instead stored the date
 <code>0000-00-00</code> when there was no date.  You want ORMLite to return null if the 0 date was retrieved from the database.
 To implement a custom data persister to handle the <code>Date</code> type in this manner would probably override the
 <code>com.j256.ormlite.field.types.DateType</code> class and tweak the result-to-sql-argument method as follows:
-
-</p><table><tr><td>&nbsp;</td><td><pre class="example">@Override
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">@Override
 public Object resultToSqlArg(FieldType fieldType,
       DatabaseResults results, int columnPos)
       throws SQLException {
@@ -1305,52 +1345,55 @@ public Object resultToSqlArg(FieldType fieldType,
       return timestamp;
 }
 </pre></td></tr></table>
-<p>The data persister example has a <code>MyDatePersister</code> class which does just that.  See <a href="ormlite_7.html#ANC43">data persister example</a>.
-To use your persister class on a particular field in your objects, you would do something like this:
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">@DatabaseField(persisterClass = MyDatePersister.class)
+<p>The data persister example has a <code>MyDatePersister</code> class which does just that.  See <a href="ormlite_7.html#data-persister-example">data persister example</a>.
+To use your persister class on a particular field in your objects, you would do something like this:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">@DatabaseField(persisterClass = MyDatePersister.class)
 Date birthDate;
 </pre></td></tr></table>
+
 <p>ORMLite also allows you to define data persisters for atypical or custom data types that are not handled at all by
 the internal classes.  When defining a data persister class from scratch, you could extend one of the other data type
 persisters or the <code>BaseDataType</code> class.  You will need to define the following methods.
-
-</p><ol>
-<li><p> <code>parseDefaultString</code> - Converts a default string into a SQL argument suitable to be loaded into the database. 
-</p></li><li><p> <code>resultToSqlArg</code> - Uses the <code>DatabaseResults</code> object to get the right SQL argument type out of the
+</p>
+<ol>
+<li> <code>parseDefaultString</code> &ndash; Converts a default string into a SQL argument suitable to be loaded into the database. 
+</li><li> <code>resultToSqlArg</code> &ndash; Uses the <code>DatabaseResults</code> object to get the right SQL argument type out of the
 results.
-</p></li><li><p> <code>sqlArgToJava</code> - Converts the SQL argument to the associated Java class. 
-</p></li></ol>
+</li><li> <code>sqlArgToJava</code> &ndash; Converts the SQL argument to the associated Java class. 
+</li></ol>
 
 <p>Look at the other data
 types in <code>com.j256.ormlite.field.types</code> for other examples.  When you have defined your persister class, you can use
 it with the <code>persisterClass</code> construct above or you can register it with the
 <code>DataPersisterManager.registerPersisters(...)</code> method.  This will then automatically call your persister whenever a
 field with the associated class is configured.
-  
-</p><table><tr><td>&nbsp;</td><td><pre class="example">DataPersisterManager.registerDataPersisters(
+</p>  
+<table><tr><td>&nbsp;</td><td><pre class="example">DataPersisterManager.registerDataPersisters(
    MyTypePersister.getSingleton());
 </pre></td></tr></table>
+
 <p>You probably would not want to register the <code>MyDatePersister</code> above because you would not want to change the 
 persistence behavior for <em>all</em> <code>Date</code> types.
-
-</p><hr size="6">
+</p>
+<hr size="6">
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC47" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_6.html#SEC59" title="Next chapter"> &gt;&gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="#Advanced" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_6.html#How-to-Upgrade" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#Index-of-Concepts" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>March, 13 2013</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>March 18, 2013</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
  </font>
  <br>
 

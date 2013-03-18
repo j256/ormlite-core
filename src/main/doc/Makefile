@@ -18,7 +18,8 @@ $(PKG).html : $(TEXI)
 
 $(PKG) : $(TEXI)
 	rm -rf $(PKG)
-	texi2html --number --split=chapter ormlite.texi
+	mkdir $(PKG)
+	cd $(PKG) ; texi2html --number --split=chapter ../ormlite.texi
 
 $(PKG).pdf : $(TEXI)
 	scp $(TEXI) $(REMOTE):$(REMOTE_DIR)

@@ -1,27 +1,27 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on March, 13 2013 by texi2html 1.70 -->
-<!--
-Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+<!-- Created on March 18, 2013 by texi2html 1.82
+texi2html was written by: 
+            Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
             Olaf Bachmann <obachman@mathematik.uni-kl.de>
             and many others.
-Maintained by: Many creative people <dev@texi2html.cvshome.org>
-Send bugs and suggestions to <users@texi2html.cvshome.org>
-
+Maintained by: Many creative people.
+Send bugs and suggestions to <texi2html-bug@nongnu.org>
 -->
 <head>
-<title>ORMLite Package: 4. Using With Android</title>
+<title>ORMLite Documentation: 4. Using With Android</title>
 
-<meta name="description" content="ORMLite Package: 4. Using With Android">
-<meta name="keywords" content="ORMLite Package: 4. Using With Android">
+<meta name="description" content="ORMLite Documentation: 4. Using With Android">
+<meta name="keywords" content="ORMLite Documentation: 4. Using With Android">
 <meta name="resource-type" content="document">
 <meta name="distribution" content="global">
-<meta name="Generator" content="texi2html 1.70">
-<meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+<meta name="Generator" content="texi2html 1.82">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <style type="text/css">
 <!--
 a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
 pre.display {font-family: serif}
 pre.format {font-family: serif}
 pre.menu-comment {font-family: serif}
@@ -30,6 +30,8 @@ pre.smalldisplay {font-family: serif; font-size: smaller}
 pre.smallexample {font-size: smaller}
 pre.smallformat {font-family: serif; font-size: smaller}
 pre.smalllisp {font-size: smaller}
+span.roman {font-family:serif; font-weight:normal;}
+span.sansserif {font-family:sans-serif; font-weight:normal;}
 ul.toc {list-style: none}
 -->
 </style>
@@ -39,72 +41,76 @@ ul.toc {list-style: none}
 
 <body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
 
-<a name="NOD42"></a>
-<a name="SEC41"></a>
+<a name="Use-With-Android"></a>
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="ormlite_3.html#SEC40" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC42" title="Next section in reading order"> &gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="ormlite_3.html#Join-Queries" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Android-Basics" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="ormlite_3.html#SEC32" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_5.html#SEC47" title="Next chapter"> &gt;&gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite_3.html#Statement-Builder" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite.html#Top" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_5.html#Advanced" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#Index-of-Concepts" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h1 class="chapter"> 4. Using With Android </h1>
+<a name="Using-With-Android"></a>
+<h1 class="chapter">4. Using With Android</h1>
 
+<a name="index-use-with-Android-OS"></a>
+<a name="index-Android-OS-support"></a>
+<a name="index-droid-support"></a>
 
 <table class="menu" border="0" cellspacing="0">
-<tr><td align="left" valign="top"><a href="#SEC42">4.1 Android Basics</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">            How to use ORMLite on Android OS.
+<tr><td align="left" valign="top"><a href="#Android-Basics">4.1 Android Basics</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">            How to use ORMLite on Android OS.
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC43">4.2 Using Table Config File</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">       Use a table config file to speed up startup.
+<tr><td align="left" valign="top"><a href="#Config-Optimization">4.2 Using Table Config File</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">       Use a table config file to speed up startup.
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC44">4.3 Android Logging</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">           How to log messages under Android.
+<tr><td align="left" valign="top"><a href="#Android-Logging">4.3 Android Logging</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">           How to log messages under Android.
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC45">4.4 Runtime Versus SQL Exceptions</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">       Runtime versus SQL exceptions.
+<tr><td align="left" valign="top"><a href="#RuntimeExceptionDao">4.4 Runtime Versus SQL Exceptions</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">       Runtime versus SQL exceptions.
 </td></tr>
-<tr><td align="left" valign="top"><a href="#SEC46">4.5 Upgrading Your Schema</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">          How to upgrade your SQLite schema.
+<tr><td align="left" valign="top"><a href="#Upgrading-Schema">4.5 Upgrading Your Schema</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">          How to upgrade your SQLite schema.
 </td></tr>
 </table>
 
 <hr size="6">
-<a name="NOD43"></a>
-<a name="SEC42"></a>
+<a name="Android-Basics"></a>
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC41" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC43" title="Next section in reading order"> &gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="#Use-With-Android" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Config-Optimization" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="#SEC41" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC41" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_5.html#SEC47" title="Next chapter"> &gt;&gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Use-With-Android" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Use-With-Android" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_5.html#Advanced" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#Index-of-Concepts" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 4.1 Android Basics </h2>
+<a name="Android-Basics-1"></a>
+<h2 class="section">4.1 Android Basics</h2>
 
+<a name="index-Android-basics"></a>
 <p>Because of the lack of official support for JDBC in Android OS, ORMLite makes direct calls to the Android database APIs
 to access SQLite databases.  You should make sure that you have downloaded and are depending on the <code>ormlite-core.jar</code>
 and <code>ormlite-android.jar</code> files, but <em>not</em> the <code>ormlite-jdbc.jar</code> version.  Although a number of developers
 are using the package in their projects, we continue to improve how ORMLite integrates with the Android classes.
 Feedback on this would be welcome.
-
-</p><p>After you have read the getting started section (see section <a href="ormlite_1.html#SEC1">Getting Started</a>), the following instructions should be
+</p>
+<p>After you have read the getting started section (see section <a href="ormlite_1.html#Getting-Started">Getting Started</a>), the following instructions should be
 followed to help you get ORMLite working under Android OS.
-
-</p><ol>
-<li><p> You will need to create your own database helper class which should extend the <code>OrmLiteSqliteOpenHelper</code> 
+</p>
+<ol>
+<li> You will need to create your own database helper class which should extend the <code>OrmLiteSqliteOpenHelper</code> 
 class.  This class creates and upgrades the database when your application is installed and can also provide the DAO classes
 used by your other classes.  Your helper class must implement the methods
 <code>onCreate(SQLiteDatabase sqliteDatabase, ConnectionSource connectionSource)</code> and
@@ -113,24 +119,24 @@ used by your other classes.  Your helper class must implement the methods
 of the database tables when you upgrade your app to a new version.  There is a sample <code>DatabaseHelper</code> class as well as
 <a href="http://ormlite.com/android/examples/">example projects online</a>. 
 
-</p></li><li><p> The helper can be kept open across all activities in your app with the same SQLite database connection reused by
+</li><li> The helper can be kept open across all activities in your app with the same SQLite database connection reused by
 all threads.  If you open multiple connections to the same database, stale data and unexpected results may occur.
-We recommend using the <code>OpenHelperManager</code> to monitor the usage of the helper - it will create it on the first
+We recommend using the <code>OpenHelperManager</code> to monitor the usage of the helper &ndash; it will create it on the first
 access, track each time a part of your code is using it, and then it will close the last time the helper is released.
 
-</p></li><li><p>  Once you have defined your database helper and are managing it correctly, you will need to use it in your <code>Activity</code>
+</li><li>  Once you have defined your database helper and are managing it correctly, you will need to use it in your <code>Activity</code>
 classes.  An easy way to use the <code>OpenHelperManager</code> is to extend <code>OrmLiteBaseActivity</code> for each of your
-activity classes - there is also <code>OrmLiteBaseListActivity</code>, <code>OrmLiteBaseService</code>, and <code>OrmLiteBaseTabActivity</code>.
+activity classes &ndash; there is also <code>OrmLiteBaseListActivity</code>, <code>OrmLiteBaseService</code>, and <code>OrmLiteBaseTabActivity</code>.
 These classes provide a <code>helper</code> protected field and a <code>getHelper()</code> method to access the database helper whenever it
 is needed and will automatically create the helper in the <code>onCreate()</code> method and release it in the <code>onDestroy()</code>
-method.  See the sample <code>HelloAndroid</code> activity class in the examples.  See section <a href="ormlite_7.html#SEC70">Android Examples</a>.
+method.  See the sample <code>HelloAndroid</code> activity class in the examples.  See section <a href="ormlite_7.html#Android-Examples">Android Examples</a>.
 
-</p></li><li><p> If you do not want to extend the <code>OrmLiteBaseActivity</code> and other base classes then you will need to duplicate their
+</li><li> If you do not want to extend the <code>OrmLiteBaseActivity</code> and other base classes then you will need to duplicate their
 functionality.  You will need to call <code>OpenHelperManager.getHelper(Context context, Class openHelperClass)</code> at the start of
 your code, save the helper and use it as much as you want, and then call <code>OpenHelperManager.release()</code> when you are done with
 it.  You will probably want to have something like the following in your classes:
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">private DatabaseHelper databaseHelper = null;
+<table><tr><td>&nbsp;</td><td><pre class="example">private DatabaseHelper databaseHelper = null;
 
 @Override
 protected void onDestroy() {
@@ -149,80 +155,89 @@ private DBHelper getHelper() {
     return databaseHelper;
 }
 </pre></td></tr></table>
-<a name="IDX295"></a>
-<a name="IDX296"></a>
-<p><a name="ANC33"></a>
-</p></li><li><p> By default, if you are using <code>OrmLiteBaseActivity</code> or other base classes, the <code>OpenHelperManager</code> will detect the
+
+<a name="index-Android-strings-resources"></a>
+<a name="index-database-open-helper-wiring"></a>
+<p><a name="database-open-helper-wiring"></a>
+</p></li><li> By default, if you are using <code>OrmLiteBaseActivity</code> or other base classes, the <code>OpenHelperManager</code> will detect the
 database helper class through reflection.  Another way to wire in the appropriate database helper class is to set the full class
 name of it in the the <code>open_helper_classname</code> value defined in the <code>res/values/strings.xml</code> resource file .  You can also
 set the class using the <code>OpenHelperManager.setOpenHelperClass(Class)</code> method in a <code>static {}</code> block in your code.
 
-</p></li><li><p> The Android native SQLite database type is <code>SqliteAndroidDatabaseType</code> and is used by the base classes internally.
+</li><li> The Android native SQLite database type is <code>SqliteAndroidDatabaseType</code> and is used by the base classes internally.
 
-</p></li><li><p> <em>WARNING:</em> You must make sure that any background threads call the <em>OpenHelperManager.getHelper()</em> and
+</li><li> <em>WARNING:</em> You must make sure that any background threads call the <em>OpenHelperManager.getHelper()</em> and
 <em>release()</em> methods appropriately.  Otherwise, if they access the database before it is opened or after it is closed, you will
 get exceptions.
 
-</p></li></ol>
+</li></ol>
 
-<p>Please see the example code documentation for more information.  See section <a href="ormlite_7.html#SEC70">Android Examples</a>.  Again, feedback on this is welcome.
-
-</p><hr size="6">
-<a name="NOD44"></a>
-<a name="SEC43"></a>
+<p>Please see the example code documentation for more information.  See section <a href="ormlite_7.html#Android-Examples">Android Examples</a>.  Again, feedback on this is welcome.
+</p>
+<hr size="6">
+<a name="Config-Optimization"></a>
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC42" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC44" title="Next section in reading order"> &gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="#Android-Basics" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Android-Logging" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="#SEC41" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC41" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_5.html#SEC47" title="Next chapter"> &gt;&gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Use-With-Android" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Use-With-Android" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_5.html#Advanced" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#Index-of-Concepts" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 4.2 Using Table Config File </h2>
+<a name="Using-Table-Config-File"></a>
+<h2 class="section">4.2 Using Table Config File</h2>
 
+<a name="index-garbage-collection"></a>
+<a name="index-startup-optimization"></a>
+<a name="index-table-config-file"></a>
+<a name="index-database-config-file"></a>
+<a name="index-config-file-for-tables"></a>
+<a name="index-android-performance"></a>
 <p>For some time we have been struggling with DAO startup issues under Android that we thought were due to ORMLite object bandwidth.
 Although improvements and DAO cacheing has been made, creating a couple of DAOs when your application starts can still take too long and
-generate far too much garbage collection activity.  Turns out that one of the major culprits is some ugly code down in the Android OS -
+generate far too much garbage collection activity.  Turns out that one of the major culprits is some ugly code down in the Android OS &ndash;
 especially in <code>Method.equals()</code>.  Because annotations use this method, looking up annotation values is <em>extremely</em> expensive,
 often garbage collecting thousands of objects and megabytes of space.  Android knows about the issues and a fix has been made but we have
 no idea when these performance improvements will make it into an Android release.
-
-</p><p>We have made a couple of changes in ORMLite to help work around this issue.  Firstly, we added some reflection hacks to work around
+</p>
+<p>We have made a couple of changes in ORMLite to help work around this issue.  Firstly, we added some reflection hacks to work around
 these problems in the short run.  Annotations using this mechanism run 20 times faster than with the native Android calls.
-
-</p><p>With a little bit of work (and some caveats), you can remove all annotation work from your application and make DAO creation
+</p>
+<p>With a little bit of work (and some caveats), you can remove all annotation work from your application and make DAO creation
 an extremely fast operation.  ORMLite supports the loading of the data configurations from a text configuration file.
 When a DAO is created, these configurations will be used, removing the need for any annotation method calls entirely.
-
-</p><ol>
-<li><p> The <code>OrmLiteConfigUtil</code> utility class writes a <code>ormlite_config.txt</code> configuration file in the raw resource
+</p>
+<ol>
+<li> The <code>OrmLiteConfigUtil</code> utility class writes a <code>ormlite_config.txt</code> configuration file in the raw resource
 folder <code>res/raw/ormlite_config.txt</code>.  You will need to extend this class into your own project along side your <code>DatabaseHelper</code>
 class.  It should look something like:
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">public class DatabaseConfigUtil extends OrmLiteConfigUtil {
+<table><tr><td>&nbsp;</td><td><pre class="example">public class DatabaseConfigUtil extends OrmLiteConfigUtil {
   public static void main(String[] args) throws Exception {
     writeConfigFile(&quot;ormlite_config.txt&quot;);
   }
 }
-</pre></td></tr></table></li><li><p> You will need to run this utility locally on your development box (not in an Android device), whenever you make a change to one of
+</pre></td></tr></table>
+
+</li><li> You will need to run this utility locally on your development box (not in an Android device), whenever you make a change to one of
 your data classes.  This means that right now, this <em>must</em> be done by hand to keep the configuration file in sync with your database
 classes.  To run the utility you will need to use the local Java runtime environment (JRE).  Under eclipse, edit the &quot;Run Configuration&quot; for
-the utility, select the JRE tab, and select an alternative JRE (1.5 or 1.6).  Your project's JRE should be undefined since it is an Android
-application.  You'll also need to remove the Android bootstrap entry from the Classpath tab.
+the utility, select the JRE tab, and select an alternative JRE (1.5 or 1.6).  Your project&rsquo;s JRE should be undefined since it is an Android
+application.  You&rsquo;ll also need to remove the Android bootstrap entry from the Classpath tab.
 
-</p></li><li><p> By default this utility will look in the current directory and below in files ending in <code>.java</code> for the existence of one of the
+</li><li> By default this utility will look in the current directory and below in files ending in <code>.java</code> for the existence of one of the
 <code>@DatabaseTable</code> or <code>DatabaseField</code> annotations.  These classes will be investigated and written into the database configuration
 file.  You can also list the classes to be processed:
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">public class DatabaseConfigUtil extends OrmLiteConfigUtil {
+<table><tr><td>&nbsp;</td><td><pre class="example">public class DatabaseConfigUtil extends OrmLiteConfigUtil {
   private static final Class&lt;?&gt;[] classes = new Class[] {
     SimpleData.class,
   };
@@ -230,17 +245,20 @@ file.  You can also list the classes to be processed:
     writeConfigFile(&quot;ormlite_config.txt&quot;, classes);
   }
 }
-</pre></td></tr></table></li><li><p> When the utility is run it should create the <code>ormlite_config.txt</code> configuration file in the raw resource folder.  This folder must
+</pre></td></tr></table>
+
+</li><li> When the utility is run it should create the <code>ormlite_config.txt</code> configuration file in the raw resource folder.  This folder must
 exist before the utility is run.  Afterwards, if you refresh your project your should see the file appear.  In the Eclipse console, you
 should see something like the following outputted by the utility:
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">Writing configurations to /HelloAndroid/./res/raw/ormlite_config.txt
+<table><tr><td>&nbsp;</td><td><pre class="example">Writing configurations to /HelloAndroid/./res/raw/ormlite_config.txt
 Wrote config for class com.example.helloandroid.SimpleData
 Done.
 </pre></td></tr></table>
-<p>The config file generated should look something like:
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">#
+<p>The config file generated should look something like:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">#
 # generated on 2011/09/15 01:42:02
 #
 # --table-start--
@@ -252,11 +270,13 @@ fieldName=id
 canBeNull=true
 generatedId=true
 &hellip;
-</pre></td></tr></table></li><li><p> The first time you create the config file in the resource folder, the Android build plugin should add it to the <code>R.java</code> file inside of
+</pre></td></tr></table>
+
+</li><li> The first time you create the config file in the resource folder, the Android build plugin should add it to the <code>R.java</code> file inside of
 the <code>gen</code> folder.  This defines a unique integer value so that the application can open this resource by file-id number.  The file should contain
 something like:
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">public final class R {
+<table><tr><td>&nbsp;</td><td><pre class="example">public final class R {
   &hellip;
   public static final class raw {
     public static final int ormlite_config=0x7f040000;
@@ -264,60 +284,67 @@ something like:
   &hellip;
 }
 </pre></td></tr></table>
-</li><li><p> After the <code>R.java</code> file entry has been generated, you will need to enable the reading of the file at runtime.  Inside of your <code>DatabaseHelper</code>
+
+
+</li><li> After the <code>R.java</code> file entry has been generated, you will need to enable the reading of the file at runtime.  Inside of your <code>DatabaseHelper</code>
 class, you will need to change the constructor to add the integer file-id.  The constructor will look something like the following:
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">public DatabaseHelper(Context context) {
+<table><tr><td>&nbsp;</td><td><pre class="example">public DatabaseHelper(Context context) {
   super(context, DATABASE_NAME, null, DATABASE_VERSION,
     R.raw.ormlite_config);
 }
 </pre></td></tr></table>
+
 <p>Notice the <code>R.raw.ormlite_config</code> entry at the end that passes the file-id to the super class so it can be read in.
 You can also pass in a file-name or a Java <code>File</code> if you want to load in the config file from another location.
-
-</p></li><li><p> When you build and run your application, you will know that the database configuration file is being loaded if you
+</p>
+</li><li> When you build and run your application, you will know that the database configuration file is being loaded if you
 see log entries like the following:
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">I/DaoManager(  999): Loaded configuration for class ...SimpleData
+<table><tr><td>&nbsp;</td><td><pre class="example">I/DaoManager(  999): Loaded configuration for class ...SimpleData
 </pre></td></tr></table>
-<p>Oh, and if it is working you should notice a significant lack of GC messages during DAO startup.
 
-</p></li></ol>
+<p>Oh, and if it is working you should notice a significant lack of GC messages during DAO startup.
+</p>
+</li></ol>
 
 <p>As of 9/2011, this is one of the newest parts of ORMLite so we most likely will be improving it.  Feedback is welcome.
-
-</p><hr size="6">
-<a name="NOD45"></a>
-<a name="SEC44"></a>
+</p>
+<hr size="6">
+<a name="Android-Logging"></a>
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC43" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC45" title="Next section in reading order"> &gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="#Config-Optimization" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#RuntimeExceptionDao" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="#SEC41" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC41" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_5.html#SEC47" title="Next chapter"> &gt;&gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Use-With-Android" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Use-With-Android" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_5.html#Advanced" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#Index-of-Concepts" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 4.3 Android Logging </h2>
+<a name="Android-Logging-1"></a>
+<h2 class="section">4.3 Android Logging</h2>
 
-<p><a name="ANC34"></a>
-
-</p><p>The <code>ormlite-android.jar</code> classes define the <code>AndroidLog</code> class which is the Android specific version of ORMLite
+<a name="index-Android-logging"></a>
+<a name="index-logging-under-Android"></a>
+<p><a name="Android-logging"></a>
+</p>
+<p>The <code>ormlite-android.jar</code> classes define the <code>AndroidLog</code> class which is the Android specific version of ORMLite
 logging.  This class makes calls to the <code>Log.d</code>, <code>Log.i</code>, &hellip; methods in the Android API.  To see the log output,
 you will need to use the <code>adb</code> utility to view the log output:
-
-</p><table><tr><td>&nbsp;</td><td><pre class="example">adb logcat
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">adb logcat
 </pre></td></tr></table>
-<p>Since <code>INFO</code> is the default under Android, only message such as the following will be spit out by default:
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">I/TableUtils(  254): creating table 'simpledata'
+<p>Since <code>INFO</code> is the default under Android, only message such as the following will be spit out by default:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">I/TableUtils(  254): creating table 'simpledata'
 I/TableUtils(  254): creating index 'simpledata_string_idx' for table
    'simpledata
 I/TableUtils(  254): executed create table statement changed 1 rows:
@@ -326,117 +353,134 @@ I/TableUtils(  254): executed create table statement changed 1 rows:
 I/TableUtils(  254): executed create table statement changed 1 rows:
    CREATE INDEX `simpledata_string_idx` ON `simpledata` ( `string` )
 </pre></td></tr></table>
-<p>To enable more debug information you will want to do something like the following to turn on logging for a particular class:
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">adb shell setprop log.tag.StatementExecutor VERBOSE
+<p>To enable more debug information you will want to do something like the following to turn on logging for a particular class:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">adb shell setprop log.tag.StatementExecutor VERBOSE
 adb shell setprop log.tag.BaseMappedStatement VERBOSE
 adb shell setprop log.tag.MappedCreate VERBOSE
 </pre></td></tr></table>
-<p>This enables messages such as:
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">D/BaseMappedStatement(465): create object using 'INSERT INTO `simpledata`
+<p>This enables messages such as:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">D/BaseMappedStatement(465): create object using 'INSERT INTO `simpledata`
    (`date` ,`string` ,`millis` ,`even` ) VALUES (?,?,?,?)' and 4 args,
    changed 1 rows
 D/BaseMappedStatement(465): assigned id '9' from keyholder to 'id' in
    SimpleData object
 </pre></td></tr></table>
-<p>To enable all debug messages for all ORMLite classes then use the following:
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">adb shell setprop log.tag.ORMLite DEBUG
+<p>To enable all debug messages for all ORMLite classes then use the following:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">adb shell setprop log.tag.ORMLite DEBUG
 </pre></td></tr></table>
+
 <p><em>NOTE:</em> Unfortunately, Android property names are limited in size so the ORMLite logger only takes that last 23 [sic]
 characters of the class name if it is larger than 23 characters. For example, if the class is AndroidDatabaseConnection
 you would do:
-
-</p><table><tr><td>&nbsp;</td><td><pre class="example">adb shell setprop log.tag.droidDatabaseConnection VERBOSE
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">adb shell setprop log.tag.droidDatabaseConnection VERBOSE
 </pre></td></tr></table>
-<p>If you are trying to track operations performed to the database by ORMLite use:
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">adb shell setprop log.tag.droidDatabaseConnection VERBOSE
+<p>If you are trying to track operations performed to the database by ORMLite use:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">adb shell setprop log.tag.droidDatabaseConnection VERBOSE
 adb shell setprop log.tag.ndroidCompiledStatement VERBOSE
 </pre></td></tr></table>
+
 <hr size="6">
-<a name="NOD46"></a>
-<a name="SEC45"></a>
+<a name="RuntimeExceptionDao"></a>
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC44" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC46" title="Next section in reading order"> &gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="#Android-Logging" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Upgrading-Schema" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="#SEC41" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC41" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_5.html#SEC47" title="Next chapter"> &gt;&gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Use-With-Android" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Use-With-Android" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_5.html#Advanced" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#Index-of-Concepts" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 4.4 Runtime Versus SQL Exceptions </h2>
+<a name="Runtime-Versus-SQL-Exceptions"></a>
+<h2 class="section">4.4 Runtime Versus SQL Exceptions</h2>
 
+<a name="index-RuntimeExceptionDao"></a>
+<a name="index-SQLExceptionDao"></a>
+<a name="index-exceptions_002c-runtime"></a>
 <p>By default, most of the DAO methods throw <code>SQLException</code> which is the default internal exception for most JDBC and other
 SQL calls.  But in Android-land, especially, most of the exceptions extend <code>RuntimeException</code> so having to put a lot of 
-ignored <code>try ... catch</code> stanzas is inconvenient.  For this reason we've added a <code>RuntimeExceptionDao</code> which wraps all
+ignored <code>try ... catch</code> stanzas is inconvenient.  For this reason we&rsquo;ve added a <code>RuntimeExceptionDao</code> which wraps all
 calls to the underlying DAO to rethrow the SQL exceptions as runtime exceptons.  To get one, you can wrap your own down in it:
-
-</p><table><tr><td>&nbsp;</td><td><pre class="example">Dao&lt;Account, String&gt; dao =
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">Dao&lt;Account, String&gt; dao =
   DaoManager.createDao(connectionSource, Account.class);
 RuntimeExceptionDao&lt;Account, String&gt; accountDao =
   new RuntimeExceptionDao&lt;Account, String&gt;(dao);
 </pre></td></tr></table>
-<p>Or you can call the <code>createDao</code> helper methods on <code>RuntimeExceptionDao</code>:
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">RuntimeExceptionDao&lt;Account, String&gt; accountDao =
+<p>Or you can call the <code>createDao</code> helper methods on <code>RuntimeExceptionDao</code>:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">RuntimeExceptionDao&lt;Account, String&gt; accountDao =
   RuntimeExceptionDao.createDao(connectionSource, Account.class);
 </pre></td></tr></table>
+
 <p>Other classes such as <code>TableUtils</code> and <code>QueryBuilder</code> still throw <code>SQLException</code> but the hope is that
 <code>RuntimeExceptionDao</code> helps a little bit at least.
-
-</p><hr size="6">
-<a name="NOD47"></a>
-<a name="SEC46"></a>
+</p>
+<hr size="6">
+<a name="Upgrading-Schema"></a>
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC45" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_5.html#SEC47" title="Next section in reading order"> &gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="#RuntimeExceptionDao" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_5.html#Advanced" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="#SEC41" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC41" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_5.html#SEC47" title="Next chapter"> &gt;&gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Use-With-Android" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Use-With-Android" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_5.html#Advanced" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#Index-of-Concepts" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 4.5 Upgrading Your Schema </h2>
+<a name="Upgrading-Your-Schema"></a>
+<h2 class="section">4.5 Upgrading Your Schema</h2>
 
+<a name="index-updating-database-schema"></a>
+<a name="index-upgrading-database-schema"></a>
+<a name="index-schema-upgrade"></a>
+<a name="index-database-schema-upgrade"></a>
 <p>When you upgrade your application, you may have to add columns or make other changes to the data that was stored by previous
 versions of your application.  If you are on Android then in your <code>DatabaseHelper</code>, there should be an <code>onUpgrade()</code> method
 that extends the following method from the <code>OrmLiteSqliteOpenHelper</code>.
-
-</p><table><tr><td>&nbsp;</td><td><pre class="example">abstract void onUpgrade(SQLiteDatabase database,
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">abstract void onUpgrade(SQLiteDatabase database,
   ConnectionSource connectionSource, int oldVersion, int newVersion)
 </pre></td></tr></table>
 
-<p>In that method you can use your DAO to perform any tweaks to the schema:
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">Dao&lt;Account, Integer&gt; dao = getHelper().getAccountDao();
+<p>In that method you can use your DAO to perform any tweaks to the schema:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">Dao&lt;Account, Integer&gt; dao = getHelper().getAccountDao();
 // change the table to add a new column named &quot;age&quot; 
 dao.executeRaw(&quot;ALTER TABLE `account` ADD COLUMN age INTEGER;&quot;);
 </pre></td></tr></table>
-<a name="IDX297"></a>
-<p>Here's more information about <a href="http://www.sqlite.org/lang_altertable.html">SQLite's ALTER TABLE</a>.
-In SQLite, all you can do is rename a table name and add a new column.  You can't rename or remove a column or change the constraints.
-Remember that SQLite is typeless so changing the type of a column doesn't matter.
 
-</p><p>Most likely, you should make your schema changes conditional to the version you are upgrading from:
-
-</p><table><tr><td>&nbsp;</td><td><pre class="example">if (oldVersion == 1) {
+<a name="index-sqlite-alter-table"></a>
+<p>Here&rsquo;s more information about <a href="http://www.sqlite.org/lang_altertable.html">SQLite&rsquo;s ALTER TABLE</a>.
+In SQLite, all you can do is rename a table name and add a new column.  You can&rsquo;t rename or remove a column or change the constraints.
+Remember that SQLite is typeless so changing the type of a column doesn&rsquo;t matter.
+</p>
+<p>Most likely, you should make your schema changes conditional to the version you are upgrading from:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">if (oldVersion == 1) {
   // we added the age column in version 2
   dao.executeRaw(&quot;ALTER TABLE `account` ADD COLUMN age INTEGER;&quot;);
 }
@@ -445,32 +489,34 @@ if (oldVersion &lt; 2) {
   dao.executeRaw(&quot;ALTER TABLE `account` ADD COLUMN weight INTEGER;&quot;);
 }
 </pre></td></tr></table>
-<p>You can also modify data in the tables using something like the following:
 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">dao.executeRaw(
+<p>You can also modify data in the tables using something like the following:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">dao.executeRaw(
     &quot;ALTER TABLE `account` ADD COLUMN hasDog BOOLEAN DEFAULT 0;&quot;);
 dao.updateRaw(&quot;UPDATE `account` SET hasDog = 1 WHERE dogCount &gt; 0;&quot;);
 </pre></td></tr></table>
+
 <p>If you are using some other database over JDBC then the above commands will work but you will have to handle the versioning of your application
 manually.
-
-</p><hr size="6">
+</p>
+<hr size="6">
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC41" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_5.html#SEC47" title="Next chapter"> &gt;&gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="#Use-With-Android" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_5.html#Advanced" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="ormlite.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="ormlite_10.html#SEC73" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#Index-of-Concepts" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>March, 13 2013</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.70</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>March 18, 2013</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
  </font>
  <br>
 
