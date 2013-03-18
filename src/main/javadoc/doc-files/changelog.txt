@@ -1,10 +1,12 @@
-4.45: 3/XX/2013 (svn rYYYY)
+4.45: 3/XX/2013
 	Added better exception handling around inner classes.  Thanks to Jonathan Caryl.
+	Fixed bad problem with recursion and OrmLiteConfigUtil.  Thanks to Jonathan Caryl.
 
-4.44: 3/13/2013 (svn rYYYY)
+4.44: 3/13/2013
 	* CORE: Improved the speed of the version checking under Android.  Thanks much to Nick Campion.
 
 4.43: 2/5/2013 (svn r2719)
+	* CORE: WARNING: changed the string version of the date string which broke version=true for date strings.  See docs.
 	* CORE: Added QueryBuilder.countOf() and queryRaw() methods as shortcuts to their DAO equivalents.
 	* CORE: Added Where.queryForFirst(), queryRaw(), queryRawFirst(), countOf() methods as shortcut to QueryBuilder.
 	* CORE: Added the ColumnArg feature to compare two columns using QueryBuilder in simple queries and joins.
