@@ -17,7 +17,7 @@ import com.j256.ormlite.field.SqlType;
 public abstract class BaseDateType extends BaseDataType {
 
 	protected static final DateStringFormatConfig defaultDateFormatConfig = new DateStringFormatConfig(
-			"yyyy-MM-dd HH:mm:ss.SSS");
+			"yyyy-MM-dd HH:mm:ss.SSSSSS");
 
 	protected BaseDateType(SqlType sqlType, Class<?>[] classes) {
 		super(sqlType, classes);

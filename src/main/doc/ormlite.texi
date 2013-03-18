@@ -6,7 +6,7 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.44
+@set ormlite_version 4.45
 @set ormlite_year 2013
 @set ormlite_date March @value{ormlite_year}
 @set package ORMLite
@@ -4544,7 +4544,7 @@ You probably would not want to register the @code{MyDatePersister} above because
 persistence behavior for @emph{all} @code{Date} types.
 
 @c ----------------------------------------------------------------
-@node How to Upgrade, 4.43, Custom Persisters, Top
+@node How to Upgrade, 4.45, Custom Persisters, Top
 @chapter Upgrade From Old Versions
 
 @cindex upgrading from previous versions
@@ -4556,6 +4556,7 @@ However, sometimes when a new version is released, changes are made that require
 and rarely the on-disk database formats. 
 
 @menu
+* 4.45::                Upgrade to version 4.45
 * 4.43::                Upgrade to version 4.43
 * 4.37::                Upgrade to version 4.37
 * 4.30::                Upgrade to version 4.30
@@ -4568,7 +4569,23 @@ and rarely the on-disk database formats.
 @end menu
 
 @c ----------------------------------------------------------------
-@node 4.43, 4.37, How to Upgrade, How to Upgrade
+@node 4.45, 4.43, How to Upgrade, How to Upgrade
+@section Upgrade to Version 4.45
+
+To fix the date-string format introduced in version 4.43, I've decided to revert back to the date-string of
+@code{yyyy-MM-dd HH:mm:ss.SSSSSS} from the one introduced in 4.43 which was @code{yyyy-MM-dd HH:mm:ss.SSS}.  This means
+that for folks doing date comparisons or using the @code{version = true} feature, you will have to add the following to
+your date fields.
+
+@example
+@@DatabaseField(version = true, format="yyyy-MM-dd HH:mm:ss.SSS", dataType=DataType.DATE_STRING)
+private Date date;
+@end example
+
+My apologies for this mess up.
+
+@c ----------------------------------------------------------------
+@node 4.43, 4.37, 4.45, How to Upgrade
 @section Upgrade to Version 4.43
 
 In the process of looking into adding the timezone to the date-string, I made a change to the date-string format from
@@ -4578,8 +4595,8 @@ with other date formats, @emph{broke} the handling of the @code{version = true} 
 code uses equality to verify that the object date is the same with the database and the new string value @code{...###} is
 not equal to the old database format of @code{...######}. 
 
-Unfortunately, to fix this, you will need to add the format specifier to your date-string fields with the version field
-enabled:
+We have fixed this problem in 4.45 which reverts the string format.  If you want to fix it permanently, you can use the
+@code{format} specifier on your date-string fields:
 
 @example
 @@DatabaseField(version = true, format="yyyy-MM-dd HH:mm:ss.SSSSSS", dataType=DataType.DATE_STRING)

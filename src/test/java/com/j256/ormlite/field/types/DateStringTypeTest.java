@@ -33,7 +33,7 @@ public class DateStringTypeTest extends BaseTypeTest {
 		Class<LocalDateString> clazz = LocalDateString.class;
 		Dao<LocalDateString, Object> dao = createDao(clazz, true);
 		Date val = new Date();
-		String format = "yyyy-MM-dd HH:mm:ss.SSS";
+		String format = "yyyy-MM-dd HH:mm:ss.SSSSSS";
 		DateFormat dateFormat = new SimpleDateFormat(format);
 		String valStr = dateFormat.format(val);
 		String sqlVal = valStr;

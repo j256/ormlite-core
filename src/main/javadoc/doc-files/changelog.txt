@@ -1,6 +1,7 @@
-4.45: 3/XX/2013
-	Added better exception handling around inner classes.  Thanks to Jonathan Caryl.
-	Fixed bad problem with recursion and OrmLiteConfigUtil.  Thanks to Jonathan Caryl.
+4.45: 3/18/2013
+	* CORE: Fixed bad bug introduced in 4.43 that broke date-string backwards compatibility.  Thanks to Howard Liberty. 
+	* ANDROID: Added better exception handling around inner classes.  Thanks to Jonathan Caryl.
+	* ANDROID: Fixed bad problem with recursion and OrmLiteConfigUtil.  Thanks to Jonathan Caryl.
 
 4.44: 3/13/2013
 	* CORE: Improved the speed of the version checking under Android.  Thanks much to Nick Campion.
