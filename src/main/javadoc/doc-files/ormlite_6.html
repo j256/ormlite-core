@@ -72,7 +72,7 @@ and rarely the on-disk database formats.
 <table class="menu" border="0" cellspacing="0">
 <tr><td align="left" valign="top"><a href="#g_t4_002e45">6.1 Upgrade to Version 4.45</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.45
 </td></tr>
-<tr><td align="left" valign="top"><a href="#g_t4_002e43">6.2 Upgrade to Version 4.43</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.43
+<tr><td align="left" valign="top"><a href="#g_t4_002e43">6.2 Problems With Version 4.43</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Problems With version 4.43
 </td></tr>
 <tr><td align="left" valign="top"><a href="#g_t4_002e37">6.3 Upgrade to Version 4.37</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.37
 </td></tr>
@@ -113,16 +113,26 @@ and rarely the on-disk database formats.
 <a name="Upgrade-to-Version-4_002e45"></a>
 <h2 class="section">6.1 Upgrade to Version 4.45</h2>
 
-<p>To fix the date-string format introduced in version 4.43, I&rsquo;ve decided to revert back to the date-string of
+<p>To fix the date-string format bug introduced in version 4.43, I&rsquo;ve decided to revert back to the date-string of
 <code>yyyy-MM-dd HH:mm:ss.SSSSSS</code> from the one introduced in 4.43 which was <code>yyyy-MM-dd HH:mm:ss.SSS</code>.  This means
-that for folks doing date comparisons or using the <code>version = true</code> feature, you will have to add the following to
-your date fields.
+that for folks doing date comparisons or using the <code>version = true</code> feature, if you have created data under 4.43
+you will have to add the following to your date fields to make it work.
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example">@DatabaseField(version = true, format=&quot;yyyy-MM-dd HH:mm:ss.SSS&quot;, dataType=DataType.DATE_STRING)
+<table><tr><td>&nbsp;</td><td><pre class="example">@DatabaseField(version = true, format=&quot;yyyy-MM-dd HH:mm:ss.SSS&quot;,
+   dataType=DataType.DATE_STRING)
 private Date date;
 </pre></td></tr></table>
 
-<p>My apologies for this mess up.
+<p>If you have data that was created <em>both</em> in 4.42 or before and 4.43 or 4.44 then you will have to convert some of
+the data.  Something like the following <code>UPDATE</code> statement should work:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">UPDATE your-table SET your-date-field =
+    CONCAT(SUBSTRING(your-date-field, 1, 20), &quot;000&quot;,
+       SUBSTRING(your-date-field, 20, 3))
+    WHERE LENGTH(your-date-field) = 23;
+</pre></td></tr></table>
+
+<p>My sincere apologies for this mess up.
 </p>
 <hr size="6">
 <a name="g_t4_002e43"></a>
@@ -142,8 +152,8 @@ private Date date;
 <td valign="middle" align="left">[<a href="ormlite_10.html#Index-of-Concepts" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<a name="Upgrade-to-Version-4_002e43"></a>
-<h2 class="section">6.2 Upgrade to Version 4.43</h2>
+<a name="Problems-With-Version-4_002e43"></a>
+<h2 class="section">6.2 Problems With Version 4.43</h2>
 
 <p>In the process of looking into adding the timezone to the date-string, I made a change to the date-string format from
 <code>yyyy-MM-dd HH:mm:ss.SSSSSS</code> to <code>yyyy-MM-dd HH:mm:ss.SSS</code> &ndash; changing the milliseconds output from 6 digits to 3.
@@ -155,7 +165,8 @@ not equal to the old database format of <code>...######</code>.
 <p>We have fixed this problem in 4.45 which reverts the string format.  If you want to fix it permanently, you can use the
 <code>format</code> specifier on your date-string fields:
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example">@DatabaseField(version = true, format=&quot;yyyy-MM-dd HH:mm:ss.SSSSSS&quot;, dataType=DataType.DATE_STRING)
+<table><tr><td>&nbsp;</td><td><pre class="example">@DatabaseField(version = true, format=&quot;yyyy-MM-dd HH:mm:ss.SSSSSS&quot;,
+   dataType=DataType.DATE_STRING)
 private Date date;
 </pre></td></tr></table>
 

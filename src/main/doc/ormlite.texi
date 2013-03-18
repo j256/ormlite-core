@@ -4557,7 +4557,7 @@ and rarely the on-disk database formats.
 
 @menu
 * 4.45::                Upgrade to version 4.45
-* 4.43::                Upgrade to version 4.43
+* 4.43::                Problems With version 4.43
 * 4.37::                Upgrade to version 4.37
 * 4.30::                Upgrade to version 4.30
 * 4.20::                Upgrade to version 4.20
@@ -4597,7 +4597,7 @@ My sincere apologies for this mess up.
 
 @c ----------------------------------------------------------------
 @node 4.43, 4.37, 4.45, How to Upgrade
-@section Upgrade to Version 4.43
+@section Problems With Version 4.43
 
 In the process of looking into adding the timezone to the date-string, I made a change to the date-string format from
 @code{yyyy-MM-dd HH:mm:ss.SSSSSS} to @code{yyyy-MM-dd HH:mm:ss.SSS} -- changing the milliseconds output from 6 digits to 3.
