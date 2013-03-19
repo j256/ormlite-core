@@ -2,6 +2,7 @@ package com.j256.ormlite.field.types;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.SQLException;
@@ -114,10 +115,73 @@ public class DateStringTypeTest extends BaseTypeTest {
 		new DateStringType(SqlType.STRING, new Class[0]);
 	}
 
+	@Test
+	public void testDateStringBackwardsCompatibility() throws Exception {
+		Dao<VersionString, Object> stringDao = createDao(VersionString.class, true);
+		Dao<VersionDate, Object> dateDao = createDao(VersionDate.class, true);
+
+		VersionString string = new VersionString();
+		/*
+		 * WARNING, do not change this test otherwise you break backwards compatibility with string equality checking.
+		 * 
+		 * Changing this would _also_ break the <tt>version=true</tt> feature with dates which _also_ uses equality.
+		 */
+		final String formatStr = "yyyy-MM-dd HH:mm:ss.SSSSSS";
+		final SimpleDateFormat format = new SimpleDateFormat(formatStr);
+		Date date = new Date();
+		string.date = format.format(date);
+		assertEquals(1, stringDao.create(string));
+
+		VersionDate result = dateDao.queryForId(string.id);
+		assertNotNull(result);
+
+		/*
+		 * Check equality testing of dates.
+		 */
+		List<VersionDate> results = dateDao.queryForEq(DATE_COLUMN, result.date);
+		assertNotNull(results);
+		assertEquals(1, results.size());
+		assertEquals(date, results.get(0).date);
+
+		assertEquals(date, result.date);
+
+		/*
+		 * Check updating which was affected if the field is a version field.
+		 */
+		Thread.sleep(1);
+		result.stuff = 12312312;
+		assertEquals(1, dateDao.update(result));
+
+		VersionDate newVersionDate = dateDao.queryForId(result.id);
+		assertNotNull(newVersionDate);
+		assertEquals(result.stuff, newVersionDate.stuff);
+		assertTrue(newVersionDate.date.after(date));
+	}
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalDateString {
 		@DatabaseField(columnName = DATE_COLUMN, dataType = DataType.DATE_STRING)
 		Date date;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class VersionString {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(columnName = DATE_COLUMN)
+		String date;
+		@DatabaseField
+		int stuff;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class VersionDate {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(columnName = DATE_COLUMN, dataType = DataType.DATE_STRING, version = true)
+		Date date;
+		@DatabaseField
+		int stuff;
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
