@@ -30,9 +30,12 @@ import com.j256.ormlite.stmt.BaseCoreStmtTest;
 import com.j256.ormlite.stmt.StatementExecutor;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.GeneratedKeyHolder;
+import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.TableInfo;
 
 public class MappedCreateTest extends BaseCoreStmtTest {
+
+	private static final String READ_ONLY_TABLE = "readonly";
 
 	@Test
 	public void testGeneratedId() throws Exception {
@@ -312,6 +315,38 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 		mappedCreate.insert(databaseType, conn, new Foo(), null);
 	}
 
+	@Test
+	public void testReadOnly() throws Exception {
+		Dao<ReadOnly, Integer> readOnlyDao = createDao(ReadOnly.class, true);
+		Dao<ReadOnlyInsert, Integer> readOnlyInsertDao = createDao(ReadOnlyInsert.class, true);
+
+		ReadOnly readOnly = new ReadOnly();
+		readOnly.stuff = "fpweojfew";
+		readOnly.readOnly = "read read and only read";
+		assertEquals(1, readOnlyDao.create(readOnly));
+
+		ReadOnly result = readOnlyDao.queryForId(readOnly.id);
+		assertNotNull(result);
+		assertEquals(readOnly.id, result.id);
+		assertEquals(readOnly.stuff, result.stuff);
+		// this is null because the above create didn't insert it
+		assertNull(result.readOnly);
+
+		ReadOnlyInsert insert = new ReadOnlyInsert();
+		insert.stuff = "wefewerwrwe";
+		insert.readOnly = "insert should work here";
+		assertEquals(1, readOnlyInsertDao.create(insert));
+
+		result = readOnlyDao.queryForId(insert.id);
+		assertNotNull(result);
+		assertEquals(insert.id, result.id);
+		assertEquals(insert.stuff, result.stuff);
+		// but this is not null because it was inserted using readOnlyInsertDao
+		assertEquals(insert.readOnly, result.readOnly);
+	}
+
+	/* ================================================================================================= */
+
 	private static class GeneratedId {
 		@DatabaseField(generatedId = true)
 		public int genId;
@@ -391,6 +426,26 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 		int id;
 		@DatabaseField
 		String stuff;
+	}
+
+	@DatabaseTable(tableName = READ_ONLY_TABLE)
+	protected static class ReadOnly {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField
+		String stuff;
+		@DatabaseField(readOnly = true)
+		String readOnly;
+	}
+
+	@DatabaseTable(tableName = READ_ONLY_TABLE)
+	protected static class ReadOnlyInsert {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField
+		String stuff;
+		@DatabaseField
+		String readOnly;
 	}
 
 	private static class NeedsSequenceDatabaseType extends BaseDatabaseType {

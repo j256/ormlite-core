@@ -101,7 +101,8 @@ public class DatabaseFieldConfigLoader {
 	private static final String FIELD_NAME_COLUMN_DEFINITION = "columnDefinition";
 	private static final String FIELD_NAME_FOREIGN_AUTO_CREATE = "foreignAutoCreate";
 	private static final String FIELD_NAME_VERSION = "version";
-	private static final String FOREIGN_COLUMN_NAME = "foreignColumnName";
+	private static final String FIELD_NAME_FOREIGN_COLUMN_NAME = "foreignColumnName";
+	private static final String FIELD_NAME_READ_ONLY = "readOnly";
 
 	private static final String FIELD_NAME_FOREIGN_COLLECTION = "foreignCollection";
 	private static final String FIELD_NAME_FOREIGN_COLLECTION_EAGER = "foreignCollectionEager";
@@ -242,7 +243,11 @@ public class DatabaseFieldConfigLoader {
 		}
 		String foreignColumnName = config.getForeignColumnName();
 		if (foreignColumnName != null) {
-			writer.append(FOREIGN_COLUMN_NAME).append('=').append(foreignColumnName);
+			writer.append(FIELD_NAME_FOREIGN_COLUMN_NAME).append('=').append(foreignColumnName);
+			writer.newLine();
+		}
+		if (config.isReadOnly()) {
+			writer.append(FIELD_NAME_READ_ONLY).append('=').append("true");
 			writer.newLine();
 		}
 
@@ -384,8 +389,10 @@ public class DatabaseFieldConfigLoader {
 			config.setForeignAutoCreate(Boolean.parseBoolean(value));
 		} else if (field.equals(FIELD_NAME_VERSION)) {
 			config.setVersion(Boolean.parseBoolean(value));
-		} else if (field.equals(FOREIGN_COLUMN_NAME)) {
+		} else if (field.equals(FIELD_NAME_FOREIGN_COLUMN_NAME)) {
 			config.setForeignColumnName(value);
+		} else if (field.equals(FIELD_NAME_READ_ONLY)) {
+			config.setReadOnly(Boolean.parseBoolean(value));
 		}
 		/**
 		 * foreign collection field information

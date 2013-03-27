@@ -860,6 +860,13 @@ public class FieldType {
 	}
 
 	/**
+	 * Call through to {@link DatabaseFieldConfig#isReadOnly()}
+	 */
+	public boolean isReadOnly() {
+		return fieldConfig.isReadOnly();
+	}
+
+	/**
 	 * Return the value of field in the data argument if it is not the default value for the class. If it is the default
 	 * then null is returned.
 	 */

@@ -29,7 +29,8 @@ import com.j256.ormlite.field.types.VoidType;
  * </p>
  * 
  * <p>
- * <b> WARNING:</b> If you add any extra fields here, you will need to add them to {@link DatabaseFieldConfig} as well.
+ * <b> WARNING:</b> If you add any extra fields here, you will need to add them to {@link DatabaseFieldConfig},
+ * {@link DatabaseFieldConfigLoader}, {@link DatabaseFieldConfigLoaderTest}, and DatabaseTableConfigUtil as well.
  * </p>
  * 
  * @author graywatson
@@ -303,8 +304,14 @@ public @interface DatabaseField {
 	 */
 	String foreignColumnName() default "";
 
+	/**
+	 * Set this to be true (default false) if this field is a read-only field. This field will be returned by queries
+	 * however it will be ignored during insert/create statements.
+	 */
+	boolean readOnly() default false;
+
 	/*
-	 * NOTE to developers: if you add fields here you have to add them to the DatabaseFieldConfigLoader,
-	 * DatabaseFieldConfigLoaderTest, and DatabaseTableConfigUtil.
+	 * NOTE to developers: if you add fields here you have to add them to the DatabaseFieldConfig,
+	 * DatabaseFieldConfigLoader, DatabaseFieldConfigLoaderTest, and DatabaseTableConfigUtil.
 	 */
 }

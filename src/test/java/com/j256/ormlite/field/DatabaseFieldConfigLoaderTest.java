@@ -176,6 +176,12 @@ public class DatabaseFieldConfigLoaderTest {
 		body.append("foreignColumnName=").append(foreignColumnName).append("\n");
 		checkConfigOutput(config, body, writer, buffer);
 
+		config.setReadOnly(false);
+		checkConfigOutput(config, body, writer, buffer);
+		config.setReadOnly(true);
+		body.append("readOnly=true\n");
+		checkConfigOutput(config, body, writer, buffer);
+
 		/*
 		 * Test foreign collection
 		 */

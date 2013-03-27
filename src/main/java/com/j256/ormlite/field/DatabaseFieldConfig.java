@@ -54,6 +54,7 @@ public class DatabaseFieldConfig {
 	private boolean foreignAutoCreate;
 	private boolean version;
 	private String foreignColumnName;
+	private boolean readOnly;
 	// foreign collection field information
 	private boolean foreignCollection;
 	private boolean foreignCollectionEager;
@@ -492,6 +493,14 @@ public class DatabaseFieldConfig {
 		this.foreignColumnName = foreignColumnName;
 	}
 
+	public boolean isReadOnly() {
+		return readOnly;
+	}
+
+	public void setReadOnly(boolean readOnly) {
+		this.readOnly = readOnly;
+	}
+
 	/**
 	 * Create and return a config converted from a {@link Field} that may have one of the following annotations:
 	 * {@link DatabaseField}, {@link ForeignCollectionField}, or javax.persistence...
@@ -620,6 +629,7 @@ public class DatabaseFieldConfig {
 		config.foreignAutoCreate = databaseField.foreignAutoCreate();
 		config.version = databaseField.version();
 		config.foreignColumnName = valueIfNotBlank(databaseField.foreignColumnName());
+		config.readOnly = databaseField.readOnly();
 
 		return config;
 	}

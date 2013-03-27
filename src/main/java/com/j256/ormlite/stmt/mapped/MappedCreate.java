@@ -188,6 +188,9 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 		if (fieldType.isForeignCollection()) {
 			// skip foreign collections
 			return false;
+		} else if (fieldType.isReadOnly()) {
+			// ignore read-only fields
+			return false;
 		} else if (databaseType.isIdSequenceNeeded() && databaseType.isSelectSequenceBeforeInsert()) {
 			// we need to query for the next value from the sequence and the idField is inserted afterwards
 			return true;
