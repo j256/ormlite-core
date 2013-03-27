@@ -4601,10 +4601,10 @@ My sincere apologies for this mess up.
 
 In the process of looking into adding the timezone to the date-string, I made a change to the date-string format from
 @code{yyyy-MM-dd HH:mm:ss.SSSSSS} to @code{yyyy-MM-dd HH:mm:ss.SSS} -- changing the milliseconds output from 6 digits to 3.
-This relatively small change, which I verified was backwards compatible with string to value processing and more in keeping
-with other date formats, @emph{broke} the handling of the @code{version = true} with date strings.  The version processing
-code uses equality to verify that the object date is the same with the database and the new string value @code{...###} is
-not equal to the old database format of @code{...######}. 
+This relatively small change @emph{broke} the equality checking for date-strings which meant that @code{Where.eq(...)} and
+@code{version = true} field settings ceased to work correctly.  The version processing code uses equality to verify that
+the object date is the same with the database and the new string value @code{...###} is not equal to the old database
+format of @code{...######}.
 
 We have fixed this problem in 4.45 which reverts the string format.  If you want to fix it permanently, you can use the
 @code{format} specifier on your date-string fields:
