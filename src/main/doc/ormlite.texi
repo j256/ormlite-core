@@ -2645,7 +2645,8 @@ matching has been completed.  This is usually done with aggregate functions.  Th
 
 Join with another query builder. This will add into the SQL something close to "INNER JOIN other-table ...".
 Either the object associated with the current query builder or the argument query builder @emph{must} have a foreign field
-of the other one. An exception will be thrown otherwise.
+of the other one. An exception will be thrown otherwise.  This can be called multiple times to join with more than one
+table.
 
 @cindex left join query
 @item leftJoin(QueryBuilder joinedQueryBuilder)
@@ -2703,14 +2704,15 @@ automagically.  All fields not selected in the object with be their default valu
 This allows you to in effect have lazy loaded fields.  You can specify exactly which fields to be set on the
 resulting objects. This is especially helpful if you have large fields in a table that you don't always
 want to access.  To get all of the fields on the object later, you can either do another query or call
-@code{refresh()} with the object.
+@code{refresh()} with the object.  This can be called multiple times to add more columns to select.
 
 @emph{WARNING:} If you specify any columns to return, then any foreign-collection fields will be returned as null
 @emph{unless} their @code{ForeignCollectionField.columnName} is also in the list.  @xref{ForeignCollectionField}.
 
 @item selectColumns(Iterable<String> columns)
 
-Same as the above but with an iterable (such as a collection) instead of a variable list of column names.
+Same as the above but with an iterable (such as a collection) instead of a variable list of column names.  This can be
+called multiple times to add more columns to select.
 
 @cindex query raw columns
 @cindex raw columns, query
@@ -2719,7 +2721,8 @@ Same as the above but with an iterable (such as a collection) instead of a varia
 @item selectRaw(String... columns)
 
 Add raw columns or aggregate functions (COUNT, MAX, ...) to the query. This will turn the query into something
-only suitable for using as a raw query.  @xref{Raw Queries}.
+only suitable for using as a raw query. This can be called multiple times to add more columns to select.
+@xref{Raw Queries}.
 
 @cindex where method
 @item where()

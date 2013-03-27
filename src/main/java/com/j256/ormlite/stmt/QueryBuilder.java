@@ -100,7 +100,8 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 
 	/**
 	 * Add columns to be returned by the SELECT query. If no columns are selected then all columns are returned by
-	 * default. For classes with id columns, the id column is added to the select list automagically.
+	 * default. For classes with id columns, the id column is added to the select list automagically. This can be called
+	 * multiple times to add more columns to select.
 	 * 
 	 * <p>
 	 * <b>WARNING:</b> If you specify any columns to return, then any foreign-collection fields will be returned as null
@@ -119,7 +120,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 
 	/**
 	 * Same as {@link #selectColumns(String...)} except the columns are specified as an iterable -- probably will be a
-	 * {@link Collection}.
+	 * {@link Collection}. This can be called multiple times to add more columns to select.
 	 */
 	public QueryBuilder<T, ID> selectColumns(Iterable<String> columns) {
 		if (selectColumnList == null) {
@@ -133,7 +134,8 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 
 	/**
 	 * Add raw columns or aggregate functions (COUNT, MAX, ...) to the query. This will turn the query into something
-	 * only suitable for the {@link Dao#queryRaw(String, String...)} type of statement.
+	 * only suitable for the {@link Dao#queryRaw(String, String...)} type of statement. This can be called multiple
+	 * times to add more columns to select.
 	 */
 	public QueryBuilder<T, ID> selectRaw(String... columns) {
 		if (selectRawList == null) {
@@ -146,7 +148,8 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * Add "GROUP BY" clause to the SQL query statement.
+	 * Add "GROUP BY" clause to the SQL query statement. This can be called multiple times to add additional "GROUP BY"
+	 * clauses.
 	 * 
 	 * <p>
 	 * NOTE: Use of this means that the resulting objects may not have a valid ID column value so cannot be deleted or
@@ -175,7 +178,8 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * Add "ORDER BY" clause to the SQL query statement.
+	 * Add "ORDER BY" clause to the SQL query statement. This can be called multiple times to add additional "ORDER BY"
+	 * clauses. Ones earlier are applied first.
 	 */
 	public QueryBuilder<T, ID> orderBy(String columnName, boolean ascending) {
 		FieldType fieldType = verifyColumnName(columnName);
@@ -461,7 +465,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * Add join info to the query.
+	 * Add join info to the query. This can be called multiple times to join with more than one table.
 	 */
 	private void addJoinInfo(String type, QueryBuilder<?, ?> joinedQueryBuilder) throws SQLException {
 		JoinInfo joinInfo = new JoinInfo(type, joinedQueryBuilder);
