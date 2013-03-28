@@ -8,7 +8,9 @@ import static org.junit.Assert.assertTrue;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.sql.SQLException;
+import java.util.Collection;
 
 import org.junit.Test;
 
@@ -153,6 +155,11 @@ public class SerializableTypeTest extends BaseTypeTest {
 		new SerializableType(SqlType.SERIALIZABLE, new Class[0]);
 	}
 
+	@Test
+	public void testSerializedNotSerializable() throws Exception {
+		createDao(SerializedCollection.class, false);
+	}
+
 	/* ------------------------------------------------------------------------------------ */
 
 	@DatabaseTable(tableName = TABLE_NAME)
@@ -182,6 +189,37 @@ public class SerializableTypeTest extends BaseTypeTest {
 		String foo;
 		public SerializedField(String foo) {
 			this.foo = foo;
+		}
+	}
+
+	protected static class SerializedCollection {
+		public final static String SERIALIZED_FIELD_NAME = "serialized";
+		@DatabaseField(generatedId = true)
+		public int id;
+		@DatabaseField(columnName = SERIALIZED_FIELD_NAME, persisterClass = LocalSerializableType.class)
+		public Collection<String> serialized;
+		public SerializedCollection() {
+		}
+	}
+
+	protected static class LocalSerializableType extends SerializableType {
+
+		private static LocalSerializableType singleton;
+
+		public LocalSerializableType() {
+			super(SqlType.SERIALIZABLE, new Class<?>[0]);
+		}
+
+		public static LocalSerializableType getSingleton() {
+			if (singleton == null) {
+				singleton = new LocalSerializableType();
+			}
+			return singleton;
+		}
+
+		@Override
+		public boolean isValidForField(Field field) {
+			return Collection.class.isAssignableFrom(field.getType());
 		}
 	}
 }
