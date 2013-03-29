@@ -343,6 +343,14 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 		assertEquals(insert.stuff, result.stuff);
 		// but this is not null because it was inserted using readOnlyInsertDao
 		assertEquals(insert.readOnly, result.readOnly);
+
+		ReadOnly update = result;
+		update.readOnly = "something else";
+		// the update should _not_ update read-only field
+		assertEquals(1, readOnlyDao.update(update));
+
+		result = readOnlyDao.queryForId(insert.id);
+		assertFalse(update.readOnly.equals(result.readOnly));
 	}
 
 	/* ================================================================================================= */
