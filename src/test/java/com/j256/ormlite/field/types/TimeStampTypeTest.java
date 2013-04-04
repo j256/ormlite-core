@@ -1,8 +1,10 @@
 package com.j256.ormlite.field.types;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
@@ -69,6 +71,23 @@ public class TimeStampTypeTest extends BaseTypeTest {
 				LocalDate.class);
 	}
 
+	@Test
+	public void testTimeStampDefault() throws Exception {
+		Dao<TimeStampDefault, Object> dao = createDao(TimeStampDefault.class, true);
+		TimeStampDefault foo = new TimeStampDefault();
+		Timestamp before = new Timestamp(System.currentTimeMillis());
+		Thread.sleep(1);
+		assertEquals(1, dao.create(foo));
+		Thread.sleep(1);
+		Timestamp after = new Timestamp(System.currentTimeMillis());
+
+		TimeStampDefault result = dao.queryForId(foo.id);
+		assertTrue(result.timestamp.after(before));
+		assertTrue(result.timestamp.before(after));
+	}
+
+	/* =================================================================================== */
+
 	@DatabaseTable
 	protected static class InvalidDate {
 		@DatabaseField(dataType = DataType.TIME_STAMP)
@@ -79,5 +98,43 @@ public class TimeStampTypeTest extends BaseTypeTest {
 	protected static class LocalTimeStamp {
 		@DatabaseField(columnName = TIME_STAMP_COLUMN)
 		java.sql.Timestamp timestamp;
+	}
+
+	@DatabaseTable
+	protected static class TimeStampDefault {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(columnName = TIME_STAMP_COLUMN, persisterClass = LocalCurrentTimeStampType.class, defaultValue = "CURRENT_TIMESTAMP()", readOnly = true)
+		java.sql.Timestamp timestamp;
+		@DatabaseField
+		String stuff;
+	}
+
+	protected static class LocalCurrentTimeStampType extends TimeStampType {
+		private static final LocalCurrentTimeStampType singleton = new LocalCurrentTimeStampType();
+		private String defaultStr;
+		public LocalCurrentTimeStampType() {
+			super(SqlType.DATE, new Class<?>[] { java.sql.Timestamp.class });
+		}
+		public static LocalCurrentTimeStampType getSingleton() {
+			return singleton;
+		}
+		@Override
+		public boolean isEscapedDefaultValue() {
+			if ("CURRENT_TIMESTAMP()".equals(defaultStr)) {
+				return false;
+			} else {
+				return super.isEscapedDefaultValue();
+			}
+		}
+		@Override
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+			this.defaultStr = defaultStr;
+			if ("CURRENT_TIMESTAMP()".equals(defaultStr)) {
+				return defaultStr;
+			} else {
+				return super.parseDefaultString(fieldType, defaultStr);
+			}
+		}
 	}
 }
