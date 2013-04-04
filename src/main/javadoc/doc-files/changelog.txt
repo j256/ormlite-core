@@ -1,4 +1,5 @@
 4.46: 4/XX/2013
+    * CORE: Added support for using java.sql.Timestamp fields with @DatabaseField(version = true).
 	* CORE: Added support for @DatabaseField(readOnly = true) for query only fields.  Thanks to Casey.
 
 4.45: 3/18/2013

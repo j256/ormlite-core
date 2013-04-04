@@ -86,6 +86,31 @@ public class TimeStampTypeTest extends BaseTypeTest {
 		assertTrue(result.timestamp.before(after));
 	}
 
+	@Test
+	public void testTimeStampVersion() throws Exception {
+		Dao<TimeStampVersion, Object> dao = createDao(TimeStampVersion.class, true);
+		TimeStampVersion foo = new TimeStampVersion();
+		Timestamp before = new Timestamp(System.currentTimeMillis());
+		Thread.sleep(1);
+		assertEquals(1, dao.create(foo));
+		Thread.sleep(1);
+		Timestamp after = new Timestamp(System.currentTimeMillis());
+
+		TimeStampVersion result = dao.queryForId(foo.id);
+		assertTrue(result.timestamp.after(before));
+		assertTrue(result.timestamp.before(after));
+
+		before = new Timestamp(System.currentTimeMillis());
+		Thread.sleep(1);
+		assertEquals(1, dao.update(foo));
+		Thread.sleep(1);
+		after = new Timestamp(System.currentTimeMillis());
+
+		result = dao.queryForId(foo.id);
+		assertTrue(result.timestamp.after(before));
+		assertTrue(result.timestamp.before(after));
+	}
+
 	/* =================================================================================== */
 
 	@DatabaseTable
@@ -98,6 +123,16 @@ public class TimeStampTypeTest extends BaseTypeTest {
 	protected static class LocalTimeStamp {
 		@DatabaseField(columnName = TIME_STAMP_COLUMN)
 		java.sql.Timestamp timestamp;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class TimeStampVersion {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(columnName = TIME_STAMP_COLUMN, version = true)
+		java.sql.Timestamp timestamp;
+		@DatabaseField
+		String stuff;
 	}
 
 	@DatabaseTable
