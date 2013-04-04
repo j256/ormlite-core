@@ -161,9 +161,6 @@ public abstract class BaseDatabaseType implements DatabaseType {
 
 	/**
 	 * Output the SQL type for a Java String.
-	 * 
-	 * @param fieldType
-	 *            TODO
 	 */
 	protected void appendStringType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		if (isVarcharFieldWidthSupported()) {
@@ -175,9 +172,6 @@ public abstract class BaseDatabaseType implements DatabaseType {
 
 	/**
 	 * Output the SQL type for a Java Long String.
-	 * 
-	 * @param fieldType
-	 *            TODO
 	 */
 	protected void appendLongStringType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("TEXT");
@@ -185,9 +179,6 @@ public abstract class BaseDatabaseType implements DatabaseType {
 
 	/**
 	 * Output the SQL type for a Java Date.
-	 * 
-	 * @param fieldType
-	 *            TODO
 	 */
 	protected void appendDateType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("TIMESTAMP");
@@ -195,9 +186,6 @@ public abstract class BaseDatabaseType implements DatabaseType {
 
 	/**
 	 * Output the SQL type for a Java boolean.
-	 * 
-	 * @param fieldType
-	 *            TODO
 	 */
 	protected void appendBooleanType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("BOOLEAN");
@@ -205,9 +193,6 @@ public abstract class BaseDatabaseType implements DatabaseType {
 
 	/**
 	 * Output the SQL type for a Java char.
-	 * 
-	 * @param fieldType
-	 *            TODO
 	 */
 	protected void appendCharType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("CHAR");
@@ -215,9 +200,6 @@ public abstract class BaseDatabaseType implements DatabaseType {
 
 	/**
 	 * Output the SQL type for a Java byte.
-	 * 
-	 * @param fieldType
-	 *            TODO
 	 */
 	protected void appendByteType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("TINYINT");
@@ -225,9 +207,6 @@ public abstract class BaseDatabaseType implements DatabaseType {
 
 	/**
 	 * Output the SQL type for a Java short.
-	 * 
-	 * @param fieldType
-	 *            TODO
 	 */
 	protected void appendShortType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("SMALLINT");
@@ -235,9 +214,6 @@ public abstract class BaseDatabaseType implements DatabaseType {
 
 	/**
 	 * Output the SQL type for a Java integer.
-	 * 
-	 * @param fieldType
-	 *            TODO
 	 */
 	private void appendIntegerType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("INTEGER");
@@ -252,9 +228,6 @@ public abstract class BaseDatabaseType implements DatabaseType {
 
 	/**
 	 * Output the SQL type for a Java float.
-	 * 
-	 * @param fieldType
-	 *            TODO
 	 */
 	private void appendFloatType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("FLOAT");
@@ -262,9 +235,6 @@ public abstract class BaseDatabaseType implements DatabaseType {
 
 	/**
 	 * Output the SQL type for a Java double.
-	 * 
-	 * @param fieldType
-	 *            TODO
 	 */
 	private void appendDoubleType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("DOUBLE PRECISION");
@@ -272,9 +242,6 @@ public abstract class BaseDatabaseType implements DatabaseType {
 
 	/**
 	 * Output the SQL type for either a serialized Java object or a byte[].
-	 * 
-	 * @param fieldType
-	 *            TODO
 	 */
 	protected void appendByteArrayType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("BLOB");
@@ -282,9 +249,6 @@ public abstract class BaseDatabaseType implements DatabaseType {
 
 	/**
 	 * Output the SQL type for a serialized Java object.
-	 * 
-	 * @param fieldType
-	 *            TODO
 	 */
 	protected void appendSerializableType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("BLOB");
@@ -292,9 +256,6 @@ public abstract class BaseDatabaseType implements DatabaseType {
 
 	/**
 	 * Output the SQL type for a BigDecimal object.
-	 * 
-	 * @param fieldType
-	 *            TODO
 	 */
 	protected void appendBigDecimalNumericType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("NUMERIC");
@@ -545,7 +506,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	/**
 	 * Conversion to/from the Boolean Java field as a number because some databases like the true/false.
 	 */
-	protected static class BooleanNumberFieldConverter extends BaseFieldConverter implements FieldConverter {
+	protected static class BooleanNumberFieldConverter extends BaseFieldConverter {
 		public SqlType getSqlType() {
 			return SqlType.BOOLEAN;
 		}
