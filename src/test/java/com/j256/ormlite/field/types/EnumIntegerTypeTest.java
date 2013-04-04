@@ -1,9 +1,8 @@
 package com.j256.ormlite.field.types;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
-import java.util.List;
 
 import org.junit.Test;
 
@@ -76,9 +75,9 @@ public class EnumIntegerTypeTest extends BaseTypeTest {
 		Dao<EnumDefault, Object> dao = createDao(EnumDefault.class, true);
 		EnumDefault enumDefault = new EnumDefault();
 		assertEquals(1, dao.create(enumDefault));
-		List<EnumDefault> unknowns = dao.queryForAll();
-		assertEquals(1, unknowns.size());
-		assertEquals(OurEnum.SECOND, unknowns.get(0).ourEnum);
+		EnumDefault result = dao.queryForId(enumDefault.id);
+		assertNotNull(result);
+		assertEquals(OurEnum.SECOND, result.ourEnum);
 	}
 
 	@Test
@@ -98,6 +97,8 @@ public class EnumIntegerTypeTest extends BaseTypeTest {
 	}
 
 	protected static class EnumDefault {
+		@DatabaseField(generatedId = true)
+		int id;
 		@DatabaseField(defaultValue = "SECOND")
 		OurEnum ourEnum;
 	}
