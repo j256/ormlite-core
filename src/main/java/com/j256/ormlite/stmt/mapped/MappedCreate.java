@@ -86,7 +86,18 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 				args[versionFieldTypeIndex] = versionFieldType.convertJavaFieldToSqlArgValue(versionDefaultValue);
 			}
 
-			int rowC = databaseConnection.insert(statement, args, argFieldTypes, keyHolder);
+			int rowC;
+			try {
+				rowC = databaseConnection.insert(statement, args, argFieldTypes, keyHolder);
+			} catch (SQLException e) {
+				logger.debug("insert data with statement '{}' and {} args, threw exception: {}", statement,
+						args.length, e);
+				if (args.length > 0) {
+					// need to do the (Object) cast to force args to be a single object
+					logger.trace("insert arguments: {}", (Object) args);
+				}
+				throw e;
+			}
 			logger.debug("insert data with statement '{}' and {} args, changed {} rows", statement, args.length, rowC);
 			if (args.length > 0) {
 				// need to do the (Object) cast to force args to be a single object
