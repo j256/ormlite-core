@@ -71,7 +71,11 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * Return the number of selected columns in the query.
 	 */
 	int getSelectColumnCount() {
-		if (selectColumnList == null) {
+		if (isCountOfQuery) {
+			return 1;
+		} else if (selectRawList != null && !selectRawList.isEmpty()) {
+			return selectRawList.size();
+		} else if (selectColumnList == null) {
 			return 0;
 		} else {
 			return selectColumnList.size();
@@ -82,7 +86,11 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * Return the selected columns in the query or an empty list if none were specified.
 	 */
 	List<String> getSelectColumns() {
-		if (selectColumnList == null) {
+		if (isCountOfQuery) {
+			return Collections.singletonList("COUNT(*)");
+		} else if (selectRawList != null && !selectRawList.isEmpty()) {
+			return selectRawList;
+		} else if (selectColumnList == null) {
 			return Collections.emptyList();
 		} else {
 			return selectColumnList;
@@ -765,7 +773,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		}
 
 		public FieldType[] getResultFieldTypes() {
-			return queryBuilder.resultFieldTypes;
+			return queryBuilder.getResultFieldTypes();
 		}
 	}
 }
