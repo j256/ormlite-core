@@ -19,8 +19,8 @@ import com.j256.ormlite.table.DatabaseTableConfig;
  * tables and build queries.
  * 
  * <p>
- * Here's a good page which shows some of the <a href="http://www.1keydata.com/sql/sql-primary-key.html" >differences
- * between SQL versions</a>.
+ * Here's a good page which shows some of the <a href="http://troels.arvin.dk/db/rdbms/" >differences between SQL
+ * databases</a>.
  * </p>
  * 
  * @author graywatson
