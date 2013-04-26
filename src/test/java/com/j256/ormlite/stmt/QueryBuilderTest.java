@@ -889,6 +889,32 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(foo1.val, results.get(1).val);
 	}
 
+	@Test
+	public void testMaxJoin() throws Exception {
+		Dao<Foo, Object> fooDao = createDao(Foo.class, true);
+
+		Foo foo1 = new Foo();
+		foo1.val = 10;
+		assertEquals(1, fooDao.create(foo1));
+		Foo foo2 = new Foo();
+		foo2.val = 20;
+		assertEquals(1, fooDao.create(foo2));
+		Foo foo3 = new Foo();
+		foo3.val = 30;
+		assertEquals(1, fooDao.create(foo3));
+		Foo foo4 = new Foo();
+		foo4.val = 40;
+		assertEquals(1, fooDao.create(foo4));
+
+		QueryBuilder<Foo, Object> iqb = fooDao.queryBuilder();
+		iqb.selectRaw("max(id)");
+
+		QueryBuilder<Foo, Object> oqb = fooDao.queryBuilder();
+		Foo result = oqb.where().in(Foo.ID_COLUMN_NAME, iqb).queryForFirst();
+		assertNotNull(result);
+		assertEquals(foo4.id, result.id);
+	}
+
 	/* ======================================================================================================== */
 
 	private static class LimitInline extends BaseDatabaseType {
