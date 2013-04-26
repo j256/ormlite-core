@@ -1,6 +1,8 @@
 4.46: 4/XX/2013
-    * CORE: Added support for using java.sql.Timestamp fields with @DatabaseField(version = true).
+	* CORE: Added support for raw selects in inner queries.  More powerful and flexible.
 	* CORE: Added support for @DatabaseField(readOnly = true) for query only fields.  Thanks to Casey.
+    * CORE: Added support for using java.sql.Timestamp fields with @DatabaseField(version = true).
+	* CORE: Added support for QueryBuilder.prepareStatementInfo() to return statement and args.  Thanks to SO user.
 
 4.45: 3/18/2013
 	* CORE: Fixed bad bug introduced in 4.43 that broke date-string backwards compatibility.  Thanks to Howard Liberty. 
