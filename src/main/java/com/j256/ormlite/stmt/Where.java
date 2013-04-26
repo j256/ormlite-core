@@ -600,9 +600,13 @@ public class Where<T, ID> {
 
 	private Where<T, ID> in(boolean in, String columnName, QueryBuilder<?, ?> subQueryBuilder) throws SQLException {
 		if (subQueryBuilder.getSelectColumnCount() != 1) {
-			throw new SQLException("Inner query must have only 1 select column specified instead of "
-					+ subQueryBuilder.getSelectColumnCount() + ": "
-					+ Arrays.toString(subQueryBuilder.getSelectColumns().toArray(new String[0])));
+			if (subQueryBuilder.getSelectColumnCount() == 0) {
+				throw new SQLException("Inner query must have only 1 select column specified instead of *");
+			} else {
+				throw new SQLException("Inner query must have only 1 select column specified instead of "
+						+ subQueryBuilder.getSelectColumnCount() + ": "
+						+ Arrays.toString(subQueryBuilder.getSelectColumns().toArray(new String[0])));
+			}
 		}
 		// we do this to turn off the automatic addition of the ID column in the select column list
 		subQueryBuilder.enableInnerQuery();
