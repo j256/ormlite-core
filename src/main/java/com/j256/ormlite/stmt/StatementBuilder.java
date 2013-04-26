@@ -95,13 +95,22 @@ public abstract class StatementBuilder<T, ID> {
 	}
 
 	/**
+	 * Build and return all of the information about the prepared statement. See {@link StatementInfo} for more details.
+	 */
+	public StatementInfo prepareStatementInfo() throws SQLException {
+		List<ArgumentHolder> argList = new ArrayList<ArgumentHolder>();
+		String statement = buildStatementString(argList);
+		return new StatementInfo(statement, argList);
+	}
+
+	/**
 	 * Clear out all of the statement settings so we can reuse the builder.
 	 */
 	public void clear() {
 		where = null;
 	}
 
-	private String buildStatementString(List<ArgumentHolder> argList) throws SQLException {
+	protected String buildStatementString(List<ArgumentHolder> argList) throws SQLException {
 		StringBuilder sb = new StringBuilder(128);
 		appendStatementString(sb, argList);
 		String statement = sb.toString();
@@ -231,6 +240,28 @@ public abstract class StatementBuilder<T, ID> {
 
 		public boolean isOkForExecute() {
 			return okForExecute;
+		}
+	}
+
+	/**
+	 * Class which wraps information about a statement including the arguments and the generated SQL statement string.
+	 */
+	public static class StatementInfo {
+
+		private final String statement;
+		private final List<ArgumentHolder> argList;
+
+		private StatementInfo(String statement, List<ArgumentHolder> argList) {
+			this.argList = argList;
+			this.statement = statement;
+		}
+
+		public String getStatement() {
+			return statement;
+		}
+
+		public List<ArgumentHolder> getArgList() {
+			return argList;
 		}
 	}
 }
