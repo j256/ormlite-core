@@ -20,10 +20,10 @@ import com.j256.ormlite.table.DatabaseTableConfigTest.NoFields;
 
 public class DatabaseTableConfigLoaderTest {
 
-	private final static String TABLE_START = "# --table-start--\n";
-	private final static String TABLE_END = "# --table-end--\n";
-	private final static String TABLE_FIELDS_START = "# --table-fields-start--\n";
-	private final static String TABLE_FIELDS_END = "# --table-fields-end--\n";
+	private final static String TABLE_START = "# --table-start--\r\n";
+	private final static String TABLE_END = "# --table-end--\r\n";
+	private final static String TABLE_FIELDS_START = "# --table-fields-start--\r\n";
+	private final static String TABLE_FIELDS_END = "# --table-fields-end--\r\n";
 
 	@Test
 	public void testConfigFile() throws Exception {
@@ -34,12 +34,12 @@ public class DatabaseTableConfigLoaderTest {
 
 		Class<NoFields> clazz = NoFields.class;
 		config.setDataClass(clazz);
-		body.append("dataClass=").append(clazz.getName()).append("\n");
+		body.append("dataClass=").append(clazz.getName()).append("\r\n");
 		checkConfigOutput(config, body, writer, buffer, false);
 
 		String tableName = "pojgefwpjoefwpjo";
 		config.setTableName(tableName);
-		body.append("tableName=").append(tableName).append("\n");
+		body.append("tableName=").append(tableName).append("\r\n");
 		checkConfigOutput(config, body, writer, buffer, false);
 
 		DatabaseFieldConfig field1 = new DatabaseFieldConfig();
@@ -50,7 +50,7 @@ public class DatabaseTableConfigLoaderTest {
 		BufferedWriter fieldBuffer = new BufferedWriter(fieldWriter);
 		DatabaseFieldConfigLoader.write(fieldBuffer, field1, tableName);
 		fieldBuffer.flush();
-		body.append("# --table-fields-start--\n");
+		body.append("# --table-fields-start--\r\n");
 		body.append(fieldWriter.toString());
 		checkConfigOutput(config, body, writer, buffer, true);
 	}
@@ -59,20 +59,20 @@ public class DatabaseTableConfigLoaderTest {
 	public void testConfigEntriesFromStream() throws Exception {
 		StringBuilder value = new StringBuilder();
 		value.append(TABLE_START);
-		value.append("# random comment\n");
+		value.append("# random comment\r\n");
 		// blank line
-		value.append("\n");
-		value.append("dataClass=" + Foo.class.getName() + "\n");
+		value.append("\r\n");
+		value.append("dataClass=" + Foo.class.getName() + "\r\n");
 		String tableName = "fprwojfgopwejfw";
-		value.append("tableName=" + tableName + "\n");
-		value.append("# --table-fields-start--\n");
-		value.append("# --field-start--\n");
+		value.append("tableName=" + tableName + "\r\n");
+		value.append("# --table-fields-start--\r\n");
+		value.append("# --field-start--\r\n");
 		String fieldName = "weopjfwefjw";
-		value.append("fieldName=" + fieldName + "\n");
-		value.append("canBeNull=true\n");
-		value.append("generatedId=true\n");
-		value.append("# --field-end--\n");
-		value.append("# --table-fields-end--\n");
+		value.append("fieldName=" + fieldName + "\r\n");
+		value.append("canBeNull=true\r\n");
+		value.append("generatedId=true\r\n");
+		value.append("# --field-end--\r\n");
+		value.append("# --table-fields-end--\r\n");
 		value.append(TABLE_END);
 		List<DatabaseTableConfig<?>> tables =
 				DatabaseTableConfigLoader.loadDatabaseConfigFromReader(new BufferedReader(new StringReader(
@@ -89,7 +89,7 @@ public class DatabaseTableConfigLoaderTest {
 	public void testConfigInvalidLine() throws Exception {
 		StringBuilder value = new StringBuilder();
 		value.append(TABLE_START);
-		value.append("dataClass\n");
+		value.append("dataClass\r\n");
 		DatabaseTableConfigLoader.loadDatabaseConfigFromReader(new BufferedReader(new StringReader(value.toString())));
 	}
 
@@ -97,12 +97,12 @@ public class DatabaseTableConfigLoaderTest {
 	public void testConfigUnknownClass() throws Exception {
 		StringBuilder value = new StringBuilder();
 		value.append(TABLE_START);
-		value.append("dataClass=unknown.class.name.okay\n");
-		value.append("# --table-fields-start--\n");
-		value.append("# --field-start--\n");
-		value.append("fieldName=xxx\n");
-		value.append("# --field-end--\n");
-		value.append("# --table-fields-end--\n");
+		value.append("dataClass=unknown.class.name.okay\r\n");
+		value.append("# --table-fields-start--\r\n");
+		value.append("# --field-start--\r\n");
+		value.append("fieldName=xxx\r\n");
+		value.append("# --field-end--\r\n");
+		value.append("# --table-fields-end--\r\n");
 		value.append(TABLE_END);
 		DatabaseTableConfigLoader.loadDatabaseConfigFromReader(new BufferedReader(new StringReader(value.toString())));
 	}
@@ -111,12 +111,12 @@ public class DatabaseTableConfigLoaderTest {
 	public void testQuickEndOfConfig() throws Exception {
 		StringBuilder value = new StringBuilder();
 		value.append(TABLE_START);
-		value.append("dataClass=" + Foo.class.getName() + "\n");
-		value.append("# --table-fields-start--\n");
-		value.append("# --field-start--\n");
-		value.append("fieldName=xxx\n");
-		value.append("# --field-end--\n");
-		value.append("# --field-start--\n");
+		value.append("dataClass=" + Foo.class.getName() + "\r\n");
+		value.append("# --table-fields-start--\r\n");
+		value.append("# --field-start--\r\n");
+		value.append("fieldName=xxx\r\n");
+		value.append("# --field-end--\r\n");
+		value.append("# --field-start--\r\n");
 		List<DatabaseTableConfig<?>> tables =
 				DatabaseTableConfigLoader.loadDatabaseConfigFromReader(new BufferedReader(new StringReader(
 						value.toString())));
