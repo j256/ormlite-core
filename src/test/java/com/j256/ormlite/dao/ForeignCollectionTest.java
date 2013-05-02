@@ -383,6 +383,13 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		Dao<Account, Object> dao = createDao(Account.class, true);
 		dao.getEmptyForeignCollection("unknown field name");
 	}
+	
+	/*@Test
+	//TODO The underlying collection iterator has problems with backward movement operations. This should be corrected.
+	//     After that this test should work just as it already works with eager collection iterator.  
+	public void testLazyCollectionIterator() throws Exception {
+		testCollectionIterator(createLazyOrderDao());
+	}*/
 
 	@Test
 	public void testLazyContainsAll() throws Exception {
@@ -749,39 +756,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 	@Test
 	public void testEagerCollectionIterator() throws Exception {
 		Dao<Account, Integer> accountDao = createDao(Account.class, true);
-		Dao<Order, Integer> orderDao = createDao(Order.class, true);
-
-		Account account = new Account();
-		account.name = "fwejpojfpofewjo";
-		assertEquals(1, accountDao.create(account));
-
-		Order order1 = new Order();
-		order1.account = account;
-		order1.val = 1;
-		assertEquals(1, orderDao.create(order1));
-		Order order2 = new Order();
-		order2.account = account;
-		order2.val = 2;
-		assertEquals(1, orderDao.create(order2));
-
-		Account result = accountDao.queryForId(account.id);
-		assertEquals(2, result.orders.size());
-		CloseableIterator<Order> iterator = result.orders.iteratorThrow();
-		assertEquals(order1, iterator.first());
-		assertEquals(order1, iterator.first());
-		assertEquals(order1, iterator.current());
-		assertEquals(order2, iterator.next());
-		assertEquals(order2, iterator.current());
-		assertEquals(order1, iterator.previous());
-		assertEquals(order2, iterator.next());
-		assertEquals(order1, iterator.moveRelative(-1));
-		assertEquals(order1, iterator.moveRelative(0));
-		assertEquals(order2, iterator.next());
-		assertFalse(iterator.hasNext());
-		assertNull(iterator.nextThrow());
-		assertNull(iterator.moveRelative(1));
-		assertNull(iterator.previous());
-		assertEquals(order1, iterator.first());
+		testCollectionIterator(accountDao);
 	}
 
 	@Test
@@ -1180,7 +1155,10 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertTrue(gotOrder5);
 		assertTrue(gotOrder6);
 
+		//Test if clear() removes all elements from collection and database
 		accountResult.orders.clear();
+		assertEquals(0, accountResult.orders.size());
+		accountDao.refresh(accountResult);
 		assertEquals(0, accountResult.orders.size());
 
 		orders = accountResult.orders.toArray(new Order[2]);
@@ -1252,6 +1230,57 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		DatabaseTableConfig<Account> tableConfig = new DatabaseTableConfig<Account>(Account.class, fieldConfigs);
 		Dao<Account, Integer> accountDao = createDao(tableConfig, true);
 		return accountDao;
+	}
+	
+	private void testCollectionIterator(Dao<Account, Integer> accountDao) throws Exception {
+		Dao<Order, Integer> orderDao = createDao(Order.class, true);
+
+		Account account = new Account();
+		account.name = "fwejpojfpofewjo";
+		assertEquals(1, accountDao.create(account));
+
+		Order order1 = new Order();
+		order1.account = account;
+		order1.val = 1;
+		assertEquals(1, orderDao.create(order1));
+		Order order2 = new Order();
+		order2.account = account;
+		order2.val = 2;
+		assertEquals(1, orderDao.create(order2));
+
+		Account result = accountDao.queryForId(account.id);
+		assertEquals(2, result.orders.size());
+		CloseableIterator<Order> iterator = result.orders.iteratorThrow();
+		assertEquals(order1, iterator.first());
+		assertEquals(order1, iterator.first());
+		assertEquals(order1, iterator.current());
+		assertEquals(order2, iterator.next());
+		assertEquals(order2, iterator.current());
+		assertEquals(order1, iterator.previous());
+		assertEquals(order2, iterator.next());
+		assertEquals(order1, iterator.moveRelative(-1));
+		assertEquals(order1, iterator.moveRelative(0));
+		assertEquals(order2, iterator.next());
+		assertFalse(iterator.hasNext());
+		assertNull(iterator.nextThrow());
+		assertNull(iterator.moveRelative(1));
+		assertNull(iterator.previous());
+		assertEquals(order1, iterator.first());
+
+		iterator = result.orders.closeableIterator();
+		try {
+			while (iterator.hasNext()) {
+				iterator.next();
+				iterator.remove();
+			}
+		} finally {
+			try {
+				iterator.close();
+			} catch (SQLException e) {}
+		}
+		assertEquals(0, result.orders.size());
+		accountDao.refresh(result);
+		assertEquals(0, result.orders.size());
 	}
 
 	/* =============================================================================================== */

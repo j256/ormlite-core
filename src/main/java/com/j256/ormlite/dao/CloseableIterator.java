@@ -74,4 +74,24 @@ public interface CloseableIterator<T> extends Iterator<T> {
 	 *            Number of rows to move. Positive moves forward in the results. Negative moves backwards.
 	 */
 	public T moveRelative(int offset) throws SQLException;
+	
+	/**
+     * Removes from the underlying collection the last element returned
+     * by this iterator (optional operation).  This method can be called
+     * only once per call to {@link #next}, {@link #first}, {@link #current}, 
+     * {@link #previous}, {@link #moveRelative}, {@link #nextThrow} or {@link #moveToNext}.  
+     * The behavior of an iterator is unspecified if the underlying collection is modified
+     * while the iteration is in progress in any way other than by calling this method.
+     *
+     * @throws UnsupportedOperationException if the {@code remove}
+     *         operation is not supported by this iterator
+     *
+     * @throws IllegalStateException if the {@code next}, {@link #first}, {@link #current}, 
+     *         {@link #previous}, {@link #moveRelative}, {@link #nextThrow} or {@link #moveToNext}
+     *         method has not yet been called, or the {@code remove} method has already
+     *         been called after the last call to the {@code next}, {@link #first}, {@link #current}, 
+     *         {@link #previous}, {@link #moveRelative}, {@link #nextThrow} or {@link #moveToNext}
+     *         method
+     */
+	public void remove();
 }

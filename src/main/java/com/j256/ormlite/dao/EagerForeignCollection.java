@@ -50,6 +50,9 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 		// we have to wrap the iterator since we are returning the List's iterator
 		return new CloseableIterator<T>() {
 			private int offset = -1;
+			// needed to get sure that cursor was moved
+			private boolean isCursorMoved = false;
+			
 			public boolean hasNext() {
 				return (offset + 1 < results.size());
 			}
@@ -58,20 +61,20 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 				if (offset >= results.size()) {
 					return null;
 				} else {
-					return results.get(0);
+					return getResult(0);
 				}
 			}
 			public T next() {
 				offset++;
 				// this should throw if OOB
-				return results.get(offset);
+				return getResult(offset);
 			}
 			public T nextThrow() {
 				offset++;
 				if (offset >= results.size()) {
 					return null;
 				} else {
-					return results.get(offset);
+					return getResult(offset);
 				}
 			}
 			public T current() {
@@ -81,7 +84,7 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 				if (offset >= results.size()) {
 					return null;
 				} else {
-					return results.get(offset);
+					return getResult(offset);
 				}
 			}
 			public T previous() {
@@ -89,7 +92,7 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 				if (offset < 0 || offset >= results.size()) {
 					return null;
 				} else {
-					return results.get(offset);
+					return getResult(offset);
 				}
 			}
 			public T moveRelative(int relativeOffset) {
@@ -97,17 +100,25 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 				if (offset < 0 || offset >= results.size()) {
 					return null;
 				} else {
-					return results.get(offset);
+					return getResult(offset);
 				}
 			}
+			private T getResult(int position) {
+				isCursorMoved = true;
+				return results.get(position);
+			}
 			public void remove() {
-				if (offset < 0) {
-					throw new IllegalStateException("next() must be called before remove()");
+				if (offset < 0 || !isCursorMoved) {
+					throw new IllegalStateException("cursor must be moved by some iterator method (first(), current(), " +
+							"next(), previous(), nextThrow(), moveRelative() or moveToNext()) before remove()");
 				}
 				if (offset >= results.size()) {
 					throw new IllegalStateException("current results position (" + offset + ") is out of bounds");
 				}
 				T removed = results.remove(offset);
+				// go back to the previous element to get sure that the next next() call moves the cursor to the right position
+				offset--;
+				isCursorMoved = false;
 				if (dao != null) {
 					try {
 						dao.delete(removed);
@@ -129,6 +140,7 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 			}
 			public void moveToNext() {
 				offset++;
+				isCursorMoved = true;
 			}
 		};
 	}
@@ -222,12 +234,6 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 	public boolean retainAll(Collection<?> collection) {
 		// delete from the iterate removes from the eager list and dao
 		return super.retainAll(collection);
-	}
-
-	@Override
-	public void clear() {
-		results.clear();
-		super.clear();
 	}
 
 	public int updateAll() throws SQLException {
