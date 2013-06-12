@@ -172,12 +172,22 @@ public class TransactionManager {
 				return result;
 			} catch (SQLException e) {
 				if (hasSavePoint) {
-					rollBack(connection, savePoint);
+					try {
+						rollBack(connection, savePoint);
+					} catch (SQLException e2) {
+						logger.error(e, "after commit exception, rolling back to save-point also threw exception");
+						// we continue to throw the commit exception
+					}
 				}
 				throw e;
 			} catch (Exception e) {
 				if (hasSavePoint) {
-					rollBack(connection, savePoint);
+					try {
+						rollBack(connection, savePoint);
+					} catch (SQLException e2) {
+						logger.error(e, "after commit exception, rolling back to save-point also threw exception");
+						// we continue to throw the commit exception
+					}
 				}
 				throw SqlExceptionUtil.create("Transaction callable threw non-SQL exception", e);
 			}
