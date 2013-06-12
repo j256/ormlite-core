@@ -1288,6 +1288,16 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	}
 
 	@Test
+	public void testForeignNoId() throws Exception {
+		Dao<Foreign, Integer> dao = createDao(Foreign.class, true);
+		Foreign foreign = new Foreign();
+		foreign.foo = null;
+		assertEquals(1, dao.create(foreign));
+		foreign.foo = new Foo();
+		assertEquals(1, dao.update(foreign));
+	}
+
+	@Test
 	public void testForeignIntIdNull() throws Exception {
 		Dao<ForeignIntId, Integer> dao = createDao(ForeignIntId.class, true);
 		ForeignIntId foreign = new ForeignIntId();
