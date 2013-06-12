@@ -58,8 +58,9 @@ extended to additional ones relatively easily.  ORMLite also supports native dat
 are also initial implementations for DB2, Oracle, generic ODBC, and Netezza although the author needs access to
 an instance of each of these databases to tune the support.  Contact the author if your database is not supported.
 
-To get started quickly with ORMLite, @pxref{Getting Started}.  You can also take a look at the  the examples
-section of the document which has various working code packages and Android applications.  @xref{Examples}.
+To get started quickly with ORMLite, @pxref{Getting Started}.  Android users should also look at the Android specific
+pages. @xref{Use With Android}.   You can also take a look at the  the examples section of the document which has
+various working code packages and Android applications.  @xref{Examples}.
 @ifhtml
 There is also a @uref{http://ormlite.com/docs/ormlite.pdf, PDF version of this documentation}.
 @end ifhtml
@@ -85,6 +86,9 @@ Gray Watson @uref{http://256.com/gray/}
 @c ----------------------------------------------------------------
 @node Getting Started, Downloading, Top, Top
 @chapter Getting Started
+
+The following information should help you to get started with ORMLite.  Android users should also look at the Android
+specific page after reading these pages here. @xref{Use With Android}.   
 
 @cindex getting started
 @cindex how to get started
@@ -2536,6 +2540,26 @@ This produces the following approximate SQL:
 SELECT * FROM account
   WHERE ((name = 'foo' AND password = '_secret')
          OR (name = 'bar' AND password = 'qwerty'))
+@end example
+
+@cindex RPN queries
+@cindex reverse polish notation
+If you want to do complex queries linearly, you can even use Reverse Polish Notation (of all things).  There is a
+@code{Where.or(int)} and @code{Where.and(int)} methods which do the operation on the previous number of specified clauses.
+
+@example
+where.eq(Account.NAME_FIELD_NAME, "foo");
+where.eq(Account.PASSWORD_FIELD_NAME, "_secret");
+// this does an AND between the previous 2 clauses
+// it also puts a clause back on the stack
+where.and(2);
+where.eq(Account.NAME_FIELD_NAME, "bar"),
+where.eq(Account.PASSWORD_FIELD_NAME, "qwerty")));
+// this does an AND between the previous 2 clauses
+// it also puts a clause back on the stack
+where.and(2);
+// this does an OR between the previous 2 AND clauses
+where.or(2);
 @end example
 
 @cindex ORDER BY, SQL

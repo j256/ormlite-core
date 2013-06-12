@@ -13,6 +13,7 @@ import com.j256.ormlite.field.types.BigDecimalStringType;
  * 
  * <p>
  * NOTE: We need this here because the Android version subclasses it.
+ * </p>
  * 
  * @author graywatson
  */

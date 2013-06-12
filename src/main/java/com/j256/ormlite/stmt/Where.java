@@ -181,6 +181,10 @@ public class Where<T, ID> {
 	 * <p>
 	 * <b>NOTE:</b> There is no guarantee of the order of the clauses that are generated in the final query.
 	 * </p>
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> This will throw an exception if numClauses is 0 but will work with 1 or more.
+	 * </p>
 	 */
 	public Where<T, ID> and(int numClauses) {
 		if (numClauses == 0) {
@@ -396,6 +400,10 @@ public class Where<T, ID> {
 	 * 
 	 * <p>
 	 * <b>NOTE:</b> There is no guarantee of the order of the clauses that are generated in the final query.
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> This will throw an exception if numClauses is 0 but will work with 1 or more.
 	 * </p>
 	 */
 	public Where<T, ID> or(int numClauses) {
