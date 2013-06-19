@@ -16,9 +16,15 @@ public class H2ConnectionSource implements ConnectionSource {
 
 	public DatabaseType databaseType = new H2DatabaseType();
 	private DatabaseConnection connection = null;
+	private final String databaseUrl;
 
 	public H2ConnectionSource() throws SQLException {
+		this(H2DatabaseType.DATABASE_URL);
+	}
+
+	public H2ConnectionSource(String databaseUrl) throws SQLException {
 		databaseType.loadDriver();
+		this.databaseUrl = databaseUrl;
 	}
 
 	public void close() throws SQLException {
@@ -42,7 +48,7 @@ public class H2ConnectionSource implements ConnectionSource {
 
 	public DatabaseConnection getReadWriteConnection() throws SQLException {
 		if (connection == null) {
-			connection = new H2DatabaseConnection(DriverManager.getConnection(H2DatabaseType.DATABASE_URL));
+			connection = new H2DatabaseConnection(DriverManager.getConnection(databaseUrl));
 		}
 		return connection;
 	}
