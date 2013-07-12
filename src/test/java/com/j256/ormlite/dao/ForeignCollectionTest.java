@@ -1266,7 +1266,20 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertNull(iterator.moveRelative(1));
 		assertNull(iterator.previous());
 		assertEquals(order1, iterator.first());
-
+		
+		// test remove of the certain element and iterator's behavior after that
+		Order order3 = new Order();
+		order3.account = account;
+		order3.val = 3;
+		assertEquals(1, orderDao.create(order3));
+		accountDao.refresh(result);
+		iterator = result.orders.iteratorThrow();
+		assertEquals(order1, iterator.next());
+		assertEquals(order2, iterator.next());
+		iterator.remove();
+		assertEquals(order3, iterator.next());
+		assertEquals(order1, iterator.previous());
+		
 		iterator = result.orders.closeableIterator();
 		try {
 			while (iterator.hasNext()) {
