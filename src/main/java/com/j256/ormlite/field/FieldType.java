@@ -177,14 +177,15 @@ public class FieldType {
 			}
 		} else if (dataPersister == null && (!fieldConfig.isForeignCollection())) {
 			if (byte[].class.isAssignableFrom(clazz)) {
-				throw new SQLException("ORMLite can't store unknown class " + clazz + " for field '" + field.getName()
+				throw new SQLException("ORMLite does not know how to store " + clazz + " for field '" + field.getName()
 						+ "'. byte[] fields must specify dataType=DataType.BYTE_ARRAY or SERIALIZABLE");
 			} else if (Serializable.class.isAssignableFrom(clazz)) {
-				throw new SQLException("ORMLite can't store unknown class " + clazz + " for field '" + field.getName()
-						+ "'. Serializable fields must specify dataType=DataType.SERIALIZABLE");
+				throw new SQLException("ORMLite does not know how to store " + clazz + " for field '" + field.getName()
+						+ "'.  Use another class, custom persister, or to serialize it use "
+						+ "dataType=DataType.SERIALIZABLE");
 			} else {
-				throw new IllegalArgumentException("ORMLite does not know how to store field class " + clazz.getName()
-						+ " for field " + this);
+				throw new IllegalArgumentException("ORMLite does not know how to store " + clazz + " for field "
+						+ field.getName() + ". Use another class or a custom persister.");
 			}
 		}
 		if (fieldConfig.getColumnName() == null) {
