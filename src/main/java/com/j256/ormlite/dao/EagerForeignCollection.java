@@ -196,15 +196,6 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 	}
 
 	@Override
-	public boolean addAll(Collection<? extends T> collection) {
-		if (results.addAll(collection)) {
-			return super.addAll(collection);
-		} else {
-			return false;
-		}
-	}
-
-	@Override
 	public boolean remove(Object data) {
 		if (!results.remove(data) || dao == null) {
 			return false;

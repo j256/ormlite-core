@@ -57,10 +57,10 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 			if (dao == null) {
 				return false;
 			}
-			dao.create(data);
+			dao.createOrUpdate(data);
 			return true;
 		} catch (SQLException e) {
-			throw new IllegalStateException("Could not create data element in dao", e);
+			throw new IllegalStateException("Could not create or update data element in dao", e);
 		}
 	}
 
@@ -75,12 +75,7 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 		}
 		boolean changed = false;
 		for (T data : collection) {
-			try {
-				dao.create(data);
-				changed = true;
-			} catch (SQLException e) {
-				throw new IllegalStateException("Could not create data elements in dao", e);
-			}
+			changed = add(data);
 		}
 		return changed;
 	}
