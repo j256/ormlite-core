@@ -4,6 +4,7 @@
     * CORE: Added support for using java.sql.Timestamp fields with @DatabaseField(version = true).
 	* CORE: Added support for QueryBuilder.prepareStatementInfo() to return statement and args.  Thanks to SO user.
 	* CORE: Fixed problems with SQLExceptions thrown during transaction rollbacks.  Thanks to Miroslav Nadhajský.
+	* CORE: Fixed a stupid bug in the handling of ColumnArgs and Strings (plus others.  Thanks to jon.
 	* JDBC: Made some portions of JdbcPooledConnectionSource protected for subclasses.  Thanks to Miroslav Nadhajsky.
 
 4.45: 3/18/2013

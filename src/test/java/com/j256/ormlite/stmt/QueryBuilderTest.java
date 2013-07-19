@@ -824,6 +824,27 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 	}
 
 	@Test
+	public void testColumnArgString() throws Exception {
+		Dao<StringColumnArg, Integer> dao = createDao(StringColumnArg.class, true);
+		StringColumnArg foo1 = new StringColumnArg();
+		String val = "3123123";
+		foo1.str1 = val;
+		foo1.str2 = val;
+		assertEquals(1, dao.create(foo1));
+		StringColumnArg foo2 = new StringColumnArg();
+		foo2.str1 = val;
+		foo2.str2 = val + "...";
+		assertEquals(1, dao.create(foo2));
+
+		QueryBuilder<StringColumnArg, Integer> qb = dao.queryBuilder();
+		qb.where().eq(StringColumnArg.STR1_FIELD, new ColumnArg(StringColumnArg.STR2_FIELD));
+		List<StringColumnArg> results = qb.query();
+		assertNotNull(results);
+		assertEquals(1, results.size());
+		assertEquals(foo1.id, results.get(0).id);
+	}
+
+	@Test
 	public void testSimpleJoinColumnArg() throws Exception {
 		Dao<Bar, Integer> barDao = createDao(Bar.class, true);
 		Dao<Baz, Integer> bazDao = createDao(Baz.class, true);
@@ -976,6 +997,20 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		@DatabaseField(columnName = FIELD_NAME_GROUP)
 		String group;
 		public Reserved() {
+		}
+	}
+
+	protected static class StringColumnArg {
+		public static final String ID_FIELD = "id";
+		public static final String STR1_FIELD = "str1";
+		public static final String STR2_FIELD = "str2";
+		@DatabaseField(generatedId = true, columnName = ID_FIELD)
+		int id;
+		@DatabaseField(columnName = STR1_FIELD)
+		String str1;
+		@DatabaseField(columnName = STR2_FIELD)
+		String str2;
+		public StringColumnArg() {
 		}
 	}
 }

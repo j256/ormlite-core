@@ -69,6 +69,14 @@ abstract class BaseComparison implements Comparison {
 			ArgumentHolder argHolder = (ArgumentHolder) argOrValue;
 			argHolder.setMetaInfo(columnName, fieldType);
 			argList.add(argHolder);
+		} else if (argOrValue instanceof ColumnArg) {
+			ColumnArg columnArg = (ColumnArg) argOrValue;
+			String tableName = columnArg.getTableName();
+			if (tableName != null) {
+				databaseType.appendEscapedEntityName(sb, tableName);
+				sb.append('.');
+			}
+			databaseType.appendEscapedEntityName(sb, columnArg.getColumnName());
 		} else if (fieldType.isArgumentHolderRequired()) {
 			sb.append('?');
 			ArgumentHolder argHolder = new SelectArg();
@@ -102,14 +110,6 @@ abstract class BaseComparison implements Comparison {
 				}
 			}
 			sb.append(value);
-		} else if (argOrValue instanceof ColumnArg) {
-			ColumnArg columnArg = (ColumnArg) argOrValue;
-			String tableName = columnArg.getTableName();
-			if (tableName != null) {
-				databaseType.appendEscapedEntityName(sb, tableName);
-				sb.append('.');
-			}
-			databaseType.appendEscapedEntityName(sb, columnArg.getColumnName());
 		} else {
 			// numbers can't have quotes around them in derby
 			sb.append(fieldType.convertJavaFieldToSqlArgValue(argOrValue));
