@@ -29,9 +29,9 @@ import com.j256.ormlite.table.ObjectFactory;
  * The definition of the Database Access Objects that handle the reading and writing a class from the database. Kudos to
  * Robert A. for the general concept of this hierarchy.
  * 
- * @param T
+ * @param <T>
  *            The class that the code will be operating on.
- * @param ID
+ * @param <ID>
  *            The class of the ID column associated with the class. The T class does not require an ID field. The class
  *            needs an ID parameter however so you can use Void or Object to satisfy the compiler.
  * @author graywatson

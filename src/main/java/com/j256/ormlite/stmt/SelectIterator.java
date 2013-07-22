@@ -15,9 +15,9 @@ import com.j256.ormlite.support.DatabaseResults;
 /**
  * Internal iterator so we can page through the class. This is used by the {@link Dao#iterator} methods.
  * 
- * @param T
+ * @param <T>
  *            The class that the code will be operating on.
- * @param ID
+ * @param <ID>
  *            The class of the ID column associated with the class. The T class does not require an ID field. The class
  *            needs an ID parameter however so you can use Void or Object to satisfy the compiler.
  * @author graywatson
