@@ -187,6 +187,7 @@
 				<configuration>
 					<!-- j256 Releases (Code releases for j256.com) <j256@256.com> -->
 					<keyname>D3412AC1</keyname>
+					<skip>true</skip>
 				</configuration>
 			</plugin>
 			<plugin>

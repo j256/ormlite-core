@@ -15,8 +15,8 @@ import org.junit.Test;
 
 public class DatabaseFieldConfigLoaderTest {
 
-	private final static String FIELD_START = "# --field-start--\n";
-	private final static String FIELD_END = "# --field-end--\n";
+	private final static String FIELD_START = "# --field-start--\r\n";
+	private final static String FIELD_END = "# --field-end--\r\n";
 
 	@Test
 	public void testConfigFile() throws Exception {
@@ -27,62 +27,62 @@ public class DatabaseFieldConfigLoaderTest {
 
 		String fieldName = "pwojfpweofjwefw";
 		config.setFieldName(fieldName);
-		body.append("fieldName=").append(fieldName).append("\n");
+		body.append("fieldName=").append(fieldName).append("\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		String columnName = "pwefw";
 		config.setColumnName(columnName);
-		body.append("columnName=").append(columnName).append("\n");
+		body.append("columnName=").append(columnName).append("\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		DataPersister dataPersister = DataType.BYTE_OBJ.getDataPersister();
 		config.setDataPersister(dataPersister);
-		body.append("dataPersister=").append(DataType.BYTE_OBJ).append("\n");
+		body.append("dataPersister=").append(DataType.BYTE_OBJ).append("\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		String defaultValue = "pwefw";
 		config.setDefaultValue(defaultValue);
-		body.append("defaultValue=").append(defaultValue).append("\n");
+		body.append("defaultValue=").append(defaultValue).append("\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		int width = 13212;
 		config.setWidth(width);
-		body.append("width=").append(width).append("\n");
+		body.append("width=").append(width).append("\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		config.setCanBeNull(true);
 		checkConfigOutput(config, body, writer, buffer);
 		config.setCanBeNull(false);
-		body.append("canBeNull=false\n");
+		body.append("canBeNull=false\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		config.setId(false);
 		checkConfigOutput(config, body, writer, buffer);
 		config.setId(true);
-		body.append("id=true\n");
+		body.append("id=true\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		config.setGeneratedId(false);
 		checkConfigOutput(config, body, writer, buffer);
 		config.setGeneratedId(true);
-		body.append("generatedId=true\n");
+		body.append("generatedId=true\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		String generatedIdSequence = "24332423";
 		config.setGeneratedIdSequence(generatedIdSequence);
-		body.append("generatedIdSequence=").append(generatedIdSequence).append("\n");
+		body.append("generatedIdSequence=").append(generatedIdSequence).append("\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		config.setForeign(false);
 		checkConfigOutput(config, body, writer, buffer);
 		config.setForeign(true);
-		body.append("foreign=true\n");
+		body.append("foreign=true\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		config.setUseGetSet(false);
 		checkConfigOutput(config, body, writer, buffer);
 		config.setUseGetSet(true);
-		body.append("useGetSet=true\n");
+		body.append("useGetSet=true\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		Enum<?> enumValue = OurEnum.FIRST;
@@ -91,13 +91,13 @@ public class DatabaseFieldConfigLoaderTest {
 				.append(enumValue.getClass().getName())
 				.append('#')
 				.append(enumValue)
-				.append("\n");
+				.append("\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		config.setThrowIfNull(false);
 		checkConfigOutput(config, body, writer, buffer);
 		config.setThrowIfNull(true);
-		body.append("throwIfNull=true\n");
+		body.append("throwIfNull=true\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		/**
@@ -106,80 +106,80 @@ public class DatabaseFieldConfigLoaderTest {
 
 		String format = "wpgjogwjpogwjp";
 		config.setFormat(format);
-		body.append("format=").append(format).append("\n");
+		body.append("format=").append(format).append("\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		config.setUnique(false);
 		checkConfigOutput(config, body, writer, buffer);
 		config.setUnique(true);
-		body.append("unique=true\n");
+		body.append("unique=true\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		config.setUniqueCombo(false);
 		checkConfigOutput(config, body, writer, buffer);
 		config.setUniqueCombo(true);
-		body.append("uniqueCombo=true\n");
+		body.append("uniqueCombo=true\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		String indexName = "wfewjpwepjjp";
 		config.setIndexName(indexName);
-		body.append("indexName=").append(indexName).append("\n");
+		body.append("indexName=").append(indexName).append("\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		String uniqueIndexName = "w2254423fewjpwepjjp";
 		config.setUniqueIndexName(uniqueIndexName);
-		body.append("uniqueIndexName=").append(uniqueIndexName).append("\n");
+		body.append("uniqueIndexName=").append(uniqueIndexName).append("\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		config.setForeignAutoRefresh(false);
 		checkConfigOutput(config, body, writer, buffer);
 		config.setForeignAutoRefresh(true);
-		body.append("foreignAutoRefresh=true\n");
+		body.append("foreignAutoRefresh=true\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		int maxForeign = 2112;
 		config.setMaxForeignAutoRefreshLevel(maxForeign);
-		body.append("maxForeignAutoRefreshLevel=").append(maxForeign).append("\n");
+		body.append("maxForeignAutoRefreshLevel=").append(maxForeign).append("\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		@SuppressWarnings("unchecked")
 		Class<DataPersister> clazz = (Class<DataPersister>) DataType.CHAR.getDataPersister().getClass();
 		config.setPersisterClass(clazz);
-		body.append("persisterClass=").append(clazz.getName()).append("\n");
+		body.append("persisterClass=").append(clazz.getName()).append("\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		config.setAllowGeneratedIdInsert(false);
 		checkConfigOutput(config, body, writer, buffer);
 		config.setAllowGeneratedIdInsert(true);
-		body.append("allowGeneratedIdInsert=true\n");
+		body.append("allowGeneratedIdInsert=true\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		String columnDefinition = "columnDef";
 		config.setColumnDefinition(columnDefinition);
-		body.append("columnDefinition=").append(columnDefinition).append("\n");
+		body.append("columnDefinition=").append(columnDefinition).append("\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		config.setForeignAutoCreate(false);
 		checkConfigOutput(config, body, writer, buffer);
 		config.setForeignAutoCreate(true);
-		body.append("foreignAutoCreate=true\n");
+		body.append("foreignAutoCreate=true\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		config.setVersion(false);
 		checkConfigOutput(config, body, writer, buffer);
 		config.setVersion(true);
-		body.append("version=true\n");
+		body.append("version=true\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		String foreignColumnName = "foreignNameOfColumn";
 		config.setForeignColumnName(foreignColumnName);
-		body.append("foreignColumnName=").append(foreignColumnName).append("\n");
+		body.append("foreignColumnName=").append(foreignColumnName).append("\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		config.setReadOnly(false);
 		checkConfigOutput(config, body, writer, buffer);
 		config.setReadOnly(true);
-		body.append("readOnly=true\n");
+		body.append("readOnly=true\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		/*
@@ -189,33 +189,33 @@ public class DatabaseFieldConfigLoaderTest {
 		config.setForeignCollection(false);
 		checkConfigOutput(config, body, writer, buffer);
 		config.setForeignCollection(true);
-		body.append("foreignCollection=true\n");
+		body.append("foreignCollection=true\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		config.setForeignCollectionEager(false);
 		checkConfigOutput(config, body, writer, buffer);
 		config.setForeignCollectionEager(true);
-		body.append("foreignCollectionEager=true\n");
+		body.append("foreignCollectionEager=true\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		int maxEager = 341;
 		config.setForeignCollectionMaxEagerLevel(maxEager);
-		body.append("foreignCollectionMaxEagerLevel=").append(maxEager).append("\n");
+		body.append("foreignCollectionMaxEagerLevel=").append(maxEager).append("\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		String columName = "jrgpgrjrwgpj";
 		config.setForeignCollectionColumnName(columName);
-		body.append("foreignCollectionColumnName=").append(columName).append("\n");
+		body.append("foreignCollectionColumnName=").append(columName).append("\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		String foreignOrderColumn = "w225fwhi4jp";
 		config.setForeignCollectionOrderColumnName(foreignOrderColumn);
-		body.append("foreignCollectionOrderColumnName=").append(foreignOrderColumn).append("\n");
+		body.append("foreignCollectionOrderColumnName=").append(foreignOrderColumn).append("\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 
 		String foreignCollectionForeignFieldName = "ghiegerih";
 		config.setForeignCollectionForeignFieldName(foreignCollectionForeignFieldName);
-		body.append("foreignCollectionForeignFieldName=").append(foreignCollectionForeignFieldName).append("\n");
+		body.append("foreignCollectionForeignFieldName=").append(foreignCollectionForeignFieldName).append("\r\n");
 		checkConfigOutput(config, body, writer, buffer);
 	}
 
@@ -233,43 +233,43 @@ public class DatabaseFieldConfigLoaderTest {
 
 	@Test
 	public void testBlankLine() throws Exception {
-		String value = "\n";
+		String value = "\r\n";
 		assertNull(DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value))));
 	}
 
 	@Test
 	public void testComment() throws Exception {
-		String value = "# some comment\n";
+		String value = "# some comment\r\n";
 		assertNull(DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value))));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testBadPersisterClass() throws Exception {
-		String value = "persisterClass=unknown class name\n";
+		String value = "persisterClass=unknown class name\r\n";
 		DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value)));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testBadEnumValue() throws Exception {
-		String value = "unknownEnumValue=notvalidclass\n";
+		String value = "unknownEnumValue=notvalidclass\r\n";
 		DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value)));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testBadEnumClass() throws Exception {
-		String value = "unknownEnumValue=notvalidclass#somevalue\n";
+		String value = "unknownEnumValue=notvalidclass#somevalue\r\n";
 		DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value)));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testBadEnumClassNotAnEnum() throws Exception {
-		String value = "unknownEnumValue=java.lang.Object#somevalue\n";
+		String value = "unknownEnumValue=java.lang.Object#somevalue\r\n";
 		DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value)));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testBadEnumClassInvalidEnumValue() throws Exception {
-		String value = "unknownEnumValue=" + OurEnum.class.getName() + "#notvalid\n";
+		String value = "unknownEnumValue=" + OurEnum.class.getName() + "#notvalid\r\n";
 		DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value)));
 	}
 
