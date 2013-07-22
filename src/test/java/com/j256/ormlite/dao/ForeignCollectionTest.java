@@ -1180,7 +1180,10 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertTrue(gotOrder5);
 		assertTrue(gotOrder6);
 
+		assertEquals(4, accountResult.orders.size());
 		accountResult.orders.clear();
+		assertEquals(0, accountResult.orders.size());
+		accountDao.refresh(accountResult);
 		assertEquals(0, accountResult.orders.size());
 
 		orders = accountResult.orders.toArray(new Order[2]);

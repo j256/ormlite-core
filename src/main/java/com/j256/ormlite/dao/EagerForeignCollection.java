@@ -108,6 +108,7 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 					throw new IllegalStateException("current results position (" + offset + ") is out of bounds");
 				}
 				T removed = results.remove(offset);
+				offset--;
 				if (dao != null) {
 					try {
 						dao.delete(removed);
@@ -222,12 +223,6 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 	public boolean retainAll(Collection<?> collection) {
 		// delete from the iterate removes from the eager list and dao
 		return super.retainAll(collection);
-	}
-
-	@Override
-	public void clear() {
-		results.clear();
-		super.clear();
 	}
 
 	public int updateAll() throws SQLException {

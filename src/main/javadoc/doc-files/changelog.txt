@@ -3,8 +3,10 @@
 	* CORE: Added support for @DatabaseField(readOnly = true) for query only fields.  Thanks to Casey.
     * CORE: Added support for using java.sql.Timestamp fields with @DatabaseField(version = true).
 	* CORE: Added support for QueryBuilder.prepareStatementInfo() to return statement and args.  Thanks to SO user.
-	* CORE: Fixed problems with SQLExceptions thrown during transaction rollbacks.  Thanks to Miroslav Nadhajský.
-	* CORE: Fixed a stupid bug in the handling of ColumnArgs and Strings (plus others).  Thanks to jon.
+	* CORE: Fixed problems with SQLExceptions thrown during transaction rollbacks. Thanks to Miroslav Nadhajský. Bug #148.
+	* CORE: Fixed a stupid bug in the handling of ColumnArgs and Strings (plus others).  Thanks to jon.  Bug #147.
+	* CORE: Fixed eager-collection clear() which was broken.  Thanks to igromanru.  Bug #149.
+	* CORE: Fixed eager-collection iterator.remove() which removed every other.  Thanks to igromanru.  Bug #150.
 	* JDBC: Made some portions of JdbcPooledConnectionSource protected for subclasses.  Thanks to Miroslav Nadhajsky.
 
 4.45: 3/18/2013
