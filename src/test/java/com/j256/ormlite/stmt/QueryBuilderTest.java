@@ -803,6 +803,63 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 	}
 
 	@Test
+	public void testPickTheRightJoin() throws Exception {
+		Dao<One, Integer> oneDao = createDao(One.class, true);
+		Dao<Two, Integer> twoDao = createDao(Two.class, true);
+
+		One one1 = new One();
+		one1.val = 2234;
+		assertEquals(1, oneDao.create(one1));
+		One one2 = new One();
+		one2.val = 324322234;
+		assertEquals(1, oneDao.create(one2));
+
+		Two two1 = new Two();
+		two1.one = one1;
+		assertEquals(1, twoDao.create(two1));
+		Two two2 = new Two();
+		two2.one = one2;
+		assertEquals(1, twoDao.create(two2));
+
+		QueryBuilder<One, Integer> oneQb = oneDao.queryBuilder();
+		oneQb.where().eq(One.VAL_FIELD, one1.val);
+		List<Two> results = twoDao.queryBuilder().query();
+		assertEquals(2, results.size());
+		results = twoDao.queryBuilder().join(oneQb).query();
+		assertEquals(1, results.size());
+		assertEquals(one1.id, results.get(0).one.id);
+	}
+
+	@Test
+	public void testPickTheRightJoinReverse() throws Exception {
+		Dao<One, Integer> oneDao = createDao(One.class, true);
+		Dao<Two, Integer> twoDao = createDao(Two.class, true);
+
+		One one1 = new One();
+		one1.val = 2234;
+		assertEquals(1, oneDao.create(one1));
+		One one2 = new One();
+		one2.val = 324322234;
+		assertEquals(1, oneDao.create(one2));
+
+		Two two1 = new Two();
+		two1.val = 431231232;
+		two1.one = one1;
+		assertEquals(1, twoDao.create(two1));
+		Two two2 = new Two();
+		two2.one = one2;
+		assertEquals(1, twoDao.create(two2));
+
+		QueryBuilder<Two, Integer> twoQb = twoDao.queryBuilder();
+		twoQb.where().eq(Two.VAL_FIELD, two1.val);
+		List<One> results = oneDao.queryBuilder().query();
+		assertEquals(2, results.size());
+		results = oneDao.queryBuilder().join(twoQb).query();
+		assertEquals(1, results.size());
+		assertEquals(two1.one.id, results.get(0).id);
+	}
+
+	@Test
 	public void testColumnArg() throws Exception {
 		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
@@ -1011,6 +1068,34 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		@DatabaseField(columnName = STR2_FIELD)
 		String str2;
 		public StringColumnArg() {
+		}
+	}
+
+	protected static class One {
+		public static final String ID_FIELD = "id";
+		public static final String VAL_FIELD = "val";
+		@DatabaseField(generatedId = true, columnName = ID_FIELD)
+		int id;
+		@DatabaseField(columnName = VAL_FIELD)
+		int val;
+		public One() {
+		}
+	}
+
+	protected static class Two {
+		public static final String ID_FIELD = "id";
+		public static final String VAL_FIELD = "val";
+		@DatabaseField(generatedId = true, columnName = ID_FIELD)
+		int id;
+		@DatabaseField(columnName = VAL_FIELD)
+		int val;
+		@DatabaseField(foreign = true)
+		Baz baz;
+		@DatabaseField(foreign = true)
+		One one;
+		@DatabaseField(foreign = true)
+		Bar bar;
+		public Two() {
 		}
 	}
 }
