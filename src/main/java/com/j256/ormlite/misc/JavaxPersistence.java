@@ -26,6 +26,7 @@ public class JavaxPersistence {
 	 */
 	public static DatabaseFieldConfig createFieldConfig(DatabaseType databaseType, Field field) throws SQLException {
 		Annotation columnAnnotation = null;
+		Annotation basicAnnotation = null;
 		Annotation idAnnotation = null;
 		Annotation generatedValueAnnotation = null;
 		Annotation oneToOneAnnotation = null;
@@ -38,6 +39,9 @@ public class JavaxPersistence {
 			Class<?> annotationClass = annotation.annotationType();
 			if (annotationClass.getName().equals("javax.persistence.Column")) {
 				columnAnnotation = annotation;
+			}
+			if (annotationClass.getName().equals("javax.persistence.Basic")) {
+				basicAnnotation = annotation;
 			}
 			if (annotationClass.getName().equals("javax.persistence.Id")) {
 				idAnnotation = annotation;
@@ -62,7 +66,7 @@ public class JavaxPersistence {
 			}
 		}
 
-		if (columnAnnotation == null && idAnnotation == null && oneToOneAnnotation == null
+		if (columnAnnotation == null && basicAnnotation == null && idAnnotation == null && oneToOneAnnotation == null
 				&& manyToOneAnnotation == null && enumeratedAnnotation == null && versionAnnotation == null) {
 			return null;
 		}
@@ -101,6 +105,20 @@ public class JavaxPersistence {
 			} catch (Exception e) {
 				throw SqlExceptionUtil.create(
 						"Problem accessing fields from the @Column annotation for field " + field, e);
+			}
+		}
+		if (basicAnnotation != null) {
+			try {
+				Method method = basicAnnotation.getClass().getMethod("optional");
+				Boolean optional = (Boolean) method.invoke(basicAnnotation);
+				if (optional == null) {
+					config.setCanBeNull(true);
+				} else {
+					config.setCanBeNull(optional);
+				}
+			} catch (Exception e) {
+				throw SqlExceptionUtil.create("Problem accessing fields from the @Basic annotation for field " + field,
+						e);
 			}
 		}
 		if (idAnnotation != null) {

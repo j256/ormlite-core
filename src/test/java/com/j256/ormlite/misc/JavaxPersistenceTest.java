@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -183,6 +184,24 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 				assertTrue(config.isVersion());
 				assertNull(config.getColumnName());
 				assertNull(config.getColumnDefinition());
+			} else if (field.getName().equals("basic")) {
+				assertFalse(config.isId());
+				assertFalse(config.isGeneratedId());
+				assertFalse(config.isForeign());
+				assertFalse(config.isUnique());
+				assertTrue(config.isCanBeNull());
+				assertFalse(config.isVersion());
+				assertNull(config.getColumnName());
+				assertNull(config.getColumnDefinition());
+			} else if (field.getName().equals("basicNotOptional")) {
+				assertFalse(config.isId());
+				assertFalse(config.isGeneratedId());
+				assertFalse(config.isForeign());
+				assertFalse(config.isUnique());
+				assertFalse(config.isCanBeNull());
+				assertFalse(config.isVersion());
+				assertNull(config.getColumnName());
+				assertNull(config.getColumnDefinition());
 			} else {
 				System.err.println("\n\n\nUnknown field: " + field.getName());
 			}
@@ -248,6 +267,10 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 		OurEnum ourEnumString;
 		@Version
 		int version;
+		@Basic
+		int basic;
+		@Basic(optional = false)
+		String basicNotOptional;
 		public Javax() {
 		}
 	}
