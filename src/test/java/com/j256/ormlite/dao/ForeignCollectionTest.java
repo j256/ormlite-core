@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
@@ -660,7 +659,6 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertTrue(found2);
 	}
 
-	@Ignore("for now")
 	@Test
 	public void testForeignLinkage() throws Exception {
 		Dao<EagerConnection, Integer> multipleDao = createDao(EagerConnection.class, true);
@@ -679,10 +677,9 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		EagerNode result = foreignDao.queryForId(foreign1.id);
 		EagerConnection[] array = result.froms.toArray(new EagerConnection[result.froms.size()]);
 		assertEquals(1, array.length);
-		assertSame(foreign1, array[0].from);
+		assertSame(result, array[0].from);
 	}
 
-	@Ignore("for now")
 	@Test
 	public void testForeignLinkageWithCache() throws Exception {
 		Dao<EagerConnection, Integer> multipleDao = createDao(EagerConnection.class, true);
@@ -955,6 +952,38 @@ public class ForeignCollectionTest extends BaseCoreTest {
 
 		// we don't find any because they were alreayd set with account2's id
 		Iterator<Order> iterator = result.orders.iterator();
+		assertFalse(iterator.hasNext());
+	}
+
+	@Test
+	public void testForeignCollectionSameAutoRefresh() throws Exception {
+		Dao<ForeignAutoRefreshSame, Integer> sameDao = createDao(ForeignAutoRefreshSame.class, true);
+		Dao<ForeignAutoRefreshSameCollection, Integer> collectionDao =
+				createDao(ForeignAutoRefreshSameCollection.class, true);
+
+		ForeignAutoRefreshSameCollection foreign = new ForeignAutoRefreshSameCollection();
+		foreign.val = 428524234;
+		assertEquals(1, collectionDao.create(foreign));
+
+		ForeignAutoRefreshSame same1 = new ForeignAutoRefreshSame();
+		same1.foreign = foreign;
+		assertEquals(1, sameDao.create(same1));
+		ForeignAutoRefreshSame same2 = new ForeignAutoRefreshSame();
+		same2.foreign = foreign;
+		assertEquals(1, sameDao.create(same2));
+
+		ForeignAutoRefreshSameCollection result = collectionDao.queryForId(foreign.id);
+		assertNotNull(result);
+		assertNotNull(result.collection);
+
+		Iterator<ForeignAutoRefreshSame> iterator = result.collection.iterator();
+		assertTrue(iterator.hasNext());
+		ForeignAutoRefreshSame sameResult = iterator.next();
+		assertSame(result, sameResult.foreign);
+		assertEquals(foreign.val, sameResult.foreign.val);
+		sameResult = iterator.next();
+		assertSame(result, sameResult.foreign);
+		assertEquals(foreign.val, sameResult.foreign.val);
 		assertFalse(iterator.hasNext());
 	}
 
@@ -1509,9 +1538,9 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		int id;
 		@DatabaseField
 		String stuff;
-		@ForeignCollectionField(eager = true, foreignColumnName = "from")
+		@ForeignCollectionField(eager = true, foreignFieldName = "from")
 		ForeignCollection<EagerConnection> froms;
-		@ForeignCollectionField(eager = true, foreignColumnName = "to")
+		@ForeignCollectionField(eager = true, foreignFieldName = "to")
 		ForeignCollection<EagerConnection> tos;
 		public EagerNode() {
 		}
@@ -1565,9 +1594,9 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		int id;
 		@DatabaseField
 		String stuff;
-		@ForeignCollectionField(eager = false, foreignColumnName = "from")
+		@ForeignCollectionField(eager = false, foreignFieldName = "from")
 		ForeignCollection<LazyConnection> froms;
-		@ForeignCollectionField(eager = false, foreignColumnName = "to")
+		@ForeignCollectionField(eager = false, foreignFieldName = "to")
 		ForeignCollection<LazyConnection> tos;
 		public LazyNode() {
 		}
@@ -1619,7 +1648,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 	protected static class InvalidColumnNameForeign {
 		@DatabaseField(generatedId = true)
 		int id;
-		@ForeignCollectionField(eager = true, foreignColumnName = "unknowncolumn")
+		@ForeignCollectionField(eager = true, foreignFieldName = "unknowncolumn")
 		ForeignCollection<InvalidColumnName> froms;
 		public InvalidColumnNameForeign() {
 		}
@@ -1683,11 +1712,33 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		int id;
 		@DatabaseField
 		String stuff;
-		@ForeignCollectionField(foreignColumnName = "foreign1")
+		@ForeignCollectionField(foreignFieldName = "foreign1")
 		ForeignCollection<ForeignFieldName> f1s;
 		@ForeignCollectionField(foreignFieldName = "foreign2")
 		ForeignCollection<ForeignFieldName> f2s;
 		public ForeignFieldNameForeign() {
+		}
+	}
+
+	protected static class ForeignAutoRefreshSame {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField
+		String stuff;
+		@DatabaseField(foreign = true/*, foreignAutoRefresh = true*/)
+		ForeignAutoRefreshSameCollection foreign;
+		public ForeignAutoRefreshSame() {
+		}
+	}
+
+	protected static class ForeignAutoRefreshSameCollection {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField
+		int val;
+		@ForeignCollectionField(eager = true)
+		ForeignCollection<ForeignAutoRefreshSame> collection;
+		public ForeignAutoRefreshSameCollection() {
 		}
 	}
 }

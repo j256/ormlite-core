@@ -9,6 +9,7 @@
 	* CORE: Fixed eager-collection iterator.remove() which removed every other.  Thanks to igromanru.  Bug #150.
 	* CORE: Added support for the javax.persistance @Basic annotation.  Thanks to Roland Oldenburg.  Bug #151.
 	* JDBC: Made some portions of JdbcPooledConnectionSource protected for subclasses.  Thanks to Miroslav Nadhajsky.
+	* ANDROID: Fixed possible problem with not closing Cursor in queryForFirst().  Thanks to Guillermo Campelo.  Bug #143.
 
 4.45: 3/18/2013
 	* CORE: Fixed bad bug introduced in 4.43 that broke date-string backwards compatibility.  Thanks to Howard Liberty. 

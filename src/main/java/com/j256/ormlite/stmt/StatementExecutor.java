@@ -90,8 +90,9 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	public T queryForFirst(DatabaseConnection databaseConnection, PreparedStmt<T> preparedStmt, ObjectCache objectCache)
 			throws SQLException {
 		CompiledStatement stmt = preparedStmt.compile(databaseConnection, StatementType.SELECT);
+		DatabaseResults results = null;
 		try {
-			DatabaseResults results = stmt.runQuery(objectCache);
+			results = stmt.runQuery(objectCache);
 			if (results.first()) {
 				logger.debug("query-for-first of '{}' returned at least 1 result", preparedStmt.getStatement());
 				return preparedStmt.mapRow(results);
@@ -100,6 +101,9 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 				return null;
 			}
 		} finally {
+			if (results != null) {
+				results.close();
+			}
 			stmt.close();
 		}
 	}
@@ -133,14 +137,18 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 */
 	public long queryForLong(DatabaseConnection databaseConnection, PreparedStmt<T> preparedStmt) throws SQLException {
 		CompiledStatement stmt = preparedStmt.compile(databaseConnection, StatementType.SELECT_LONG);
+		DatabaseResults results = null;
 		try {
-			DatabaseResults results = stmt.runQuery(null);
+			results = stmt.runQuery(null);
 			if (results.first()) {
 				return results.getLong(0);
 			} else {
 				throw new SQLException("No result found in queryForLong: " + preparedStmt.getStatement());
 			}
 		} finally {
+			if (results != null) {
+				results.close();
+			}
 			stmt.close();
 		}
 	}
@@ -156,16 +164,20 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			logger.trace("query arguments: {}", (Object) arguments);
 		}
 		CompiledStatement stmt = null;
+		DatabaseResults results = null;
 		try {
 			stmt = databaseConnection.compileStatement(query, StatementType.SELECT, noFieldTypes);
 			assignStatementArguments(stmt, arguments);
-			DatabaseResults results = stmt.runQuery(null);
+			results = stmt.runQuery(null);
 			if (results.first()) {
 				return results.getLong(0);
 			} else {
 				throw new SQLException("No result found in queryForLong: " + query);
 			}
 		} finally {
+			if (results != null) {
+				results.close();
+			}
 			if (stmt != null) {
 				stmt.close();
 			}
