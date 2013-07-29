@@ -1,4 +1,4 @@
-4.46: 7/22/2013
+4.46: 7/29/2013
 	* CORE: Added support for raw selects in inner queries.  More powerful and flexible.
 	* CORE: Added support for @DatabaseField(readOnly = true) for query only fields.  Thanks to Casey.
 	* CORE: Added support for using java.sql.Timestamp fields with @DatabaseField(version = true).
