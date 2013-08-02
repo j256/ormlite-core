@@ -32,7 +32,6 @@ public interface DatabaseConnection {
 	/**
 	 * Set the auto-commit to be on (true) or off (false). Setting auto-commit to true may or may-not cause a commit
 	 * depending on the underlying database code.
-	 * 
 	 */
 	public void setAutoCommit(boolean autoCommit) throws SQLException;
 

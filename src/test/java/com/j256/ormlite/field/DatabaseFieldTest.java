@@ -16,10 +16,10 @@ public class DatabaseFieldTest extends BaseCoreTest {
 		String stuff = "djeqpodjewdopjed";
 		sub.stuff = stuff;
 
-		Dao<Sub, Object> subDao = createDao(Sub.class, true);
+		Dao<Sub, Object> dao = createDao(Sub.class, true);
 		assertEquals(0, sub.id);
-		assertEquals(1, subDao.create(sub));
-		Sub sub2 = subDao.queryForId(sub.id);
+		assertEquals(1, dao.create(sub));
+		Sub sub2 = dao.queryForId(sub.id);
 		assertNotNull(sub2);
 		assertEquals(sub.stuff, sub2.stuff);
 	}

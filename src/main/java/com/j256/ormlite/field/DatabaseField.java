@@ -6,6 +6,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.types.VoidType;
 
@@ -69,6 +70,12 @@ public @interface DatabaseField {
 
 	/**
 	 * The default value of the field for creating the table. Default is none.
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> If the field has a null value then this value will be inserted in its place when you call you call
+	 * {@link Dao#create(Object)}. This does not apply to primitive fields so you should just assign them in the class
+	 * instead.
+	 * </p>
 	 */
 	String defaultValue() default DEFAULT_STRING;
 

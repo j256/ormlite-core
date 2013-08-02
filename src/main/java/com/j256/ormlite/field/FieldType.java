@@ -1037,7 +1037,7 @@ public class FieldType {
 		}
 		this.dataTypeConfigObj = dataPersister.makeConfigObject(this);
 		String defaultStr = fieldConfig.getDefaultValue();
-		if (defaultStr == null || defaultStr.equals("")) {
+		if (defaultStr == null) {
 			this.defaultValue = null;
 		} else if (this.isGeneratedId) {
 			throw new SQLException("Field '" + field.getName() + "' cannot be a generatedId and have a default value '"

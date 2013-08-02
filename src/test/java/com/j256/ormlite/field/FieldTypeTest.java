@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.db.DatabaseType;
@@ -199,6 +200,7 @@ public class FieldTypeTest extends BaseCoreTest {
 		verify(resultMock);
 		assertTrue(resultToSqlArgCalled.get());
 	}
+
 	@Test
 	public void testFieldForeign() throws Exception {
 
@@ -748,6 +750,27 @@ public class FieldTypeTest extends BaseCoreTest {
 		createDao(ForeignCollectionForeign.class, true);
 	}
 
+	@Test
+	public void testDefaultValueFieldTypeEmptyType() throws Exception {
+		Field field = DefaultEmptyString.class.getDeclaredField("defaultBlank");
+		FieldType fieldType =
+				FieldType.createFieldType(connectionSource, DefaultEmptyString.class.getSimpleName(), field,
+						DefaultEmptyString.class);
+		assertEquals("", fieldType.getDefaultValue());
+	}
+
+	@Test
+	public void testDefaultValueEmptyStringPersist() throws Exception {
+		Dao<DefaultEmptyString, Integer> dao = createDao(DefaultEmptyString.class, true);
+
+		DefaultEmptyString foo = new DefaultEmptyString();
+		assertEquals(1, dao.create(foo));
+
+		DefaultEmptyString result = dao.queryForId(foo.id);
+		assertNotNull(result);
+		assertEquals("", result.defaultBlank);
+	}
+
 	/* ========================================================================================================= */
 
 	protected static class LocalFoo {
@@ -1065,6 +1088,16 @@ public class FieldTypeTest extends BaseCoreTest {
 		@Override
 		public boolean isIdSequenceNeeded() {
 			return true;
+		}
+	}
+
+	protected static class DefaultEmptyString {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(defaultValue = "")
+		String defaultBlank;
+		public DefaultEmptyString() {
+			// for ormlite
 		}
 	}
 }

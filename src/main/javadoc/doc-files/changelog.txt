@@ -1,3 +1,6 @@
+4.47: 8/XX/2013
+	* CORE: Fixed problem where defaultValue = "" was being ignored.  Thanks to ManosProm.  Bug #152.
+
 4.46: 7/29/2013
 	* CORE: Added support for raw selects in inner queries.  More powerful and flexible.
 	* CORE: Added support for @DatabaseField(readOnly = true) for query only fields.  Thanks to Casey.
