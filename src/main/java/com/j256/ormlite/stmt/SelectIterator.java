@@ -35,10 +35,10 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 	private final GenericRowMapper<T> rowMapper;
 	private final String statement;
 	private boolean first = true;
-	private boolean closed = false;
-	private boolean alreadyMoved = false;
-	private T last = null;
-	private int rowC = 0;
+	private boolean closed;
+	private boolean alreadyMoved;
+	private T last;
+	private int rowC;
 
 	/**
 	 * If the statement parameter is null then this won't log information
