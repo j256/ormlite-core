@@ -63,9 +63,6 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 	 * @return Returns true if any of the items did not already exist in the collection otherwise false.
 	 */
 	public boolean addAll(Collection<? extends T> collection) {
-		if (dao == null) {
-			return false;
-		}
 		boolean changed = false;
 		for (T data : collection) {
 			try {
@@ -189,11 +186,11 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 	}
 
 	private boolean addElement(T data) throws SQLException {
-		if (parent != null && foreignFieldType.getFieldValueIfNotDefault(data) == null) {
-			foreignFieldType.assignField(data, parent, true, null);
-		}
 		if (dao == null) {
 			return false;
+		}
+		if (parent != null && foreignFieldType.getFieldValueIfNotDefault(data) == null) {
+			foreignFieldType.assignField(data, parent, true, null);
 		}
 		dao.create(data);
 		return true;

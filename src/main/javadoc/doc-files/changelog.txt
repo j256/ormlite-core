@@ -1,5 +1,6 @@
 4.47: 8/XX/2013
 	* CORE: Fixed problem where defaultValue = "" was being ignored.  Thanks to ManosProm.  Bug #152.
+	* CORE: Fixed ForeignCollection.addAll() which was not doing the same thing as add().  Thanks to Igromanru.  Bug #153.
 
 4.46: 7/29/2013
 	* CORE: Added support for raw selects in inner queries.  More powerful and flexible.
