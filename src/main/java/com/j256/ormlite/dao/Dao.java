@@ -2,7 +2,6 @@ package com.j256.ormlite.dao;
 
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
@@ -341,7 +340,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 
 	/**
 	 * Same as {@link #iterator()} but while specifying flags for the results. This is necessary with certain database
-	 * types. The resultFlags could be something like {@link ResultSet#TYPE_SCROLL_INSENSITIVE} or other values.
+	 * types. The resultFlags could be something like ResultSet.TYPE_SCROLL_INSENSITIVE or other values.
 	 * 
 	 * <p>
 	 * <b>WARNING:</b> Depending on the database type the underlying connection may never be freed -- even if you go all

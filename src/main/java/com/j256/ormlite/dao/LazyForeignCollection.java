@@ -10,6 +10,7 @@ import java.util.Set;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.support.DatabaseConnection;
 
 /**
  * Collection that is set on a field that as been marked with the {@link ForeignCollectionField} annotation when an
@@ -43,47 +44,46 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 	 * which will close the last iterator returned. See the reentrant warning.
 	 */
 	public CloseableIterator<T> iterator() {
-		return closeableIterator();
+		return closeableIterator(DatabaseConnection.DEFAULT_RESULT_FLAGS);
+	}
+
+	public CloseableIterator<T> iterator(int flags) {
+		return closeableIterator(flags);
 	}
 
 	public CloseableIterator<T> closeableIterator() {
+		return closeableIterator(DatabaseConnection.DEFAULT_RESULT_FLAGS);
+	}
+
+	public CloseableIterator<T> closeableIterator(int flags) {
 		try {
-			return iteratorThrow();
+			return iteratorThrow(flags);
 		} catch (SQLException e) {
 			throw new IllegalStateException("Could not build lazy iterator for " + dao.getDataClass(), e);
 		}
 	}
 
-	/**
-	 * This is the same as {@link #iterator()} except it throws.
-	 */
 	public CloseableIterator<T> iteratorThrow() throws SQLException {
-		lastIterator = seperateIteratorThrow();
+		return iteratorThrow(DatabaseConnection.DEFAULT_RESULT_FLAGS);
+	}
+
+	public CloseableIterator<T> iteratorThrow(int flags) throws SQLException {
+		lastIterator = seperateIteratorThrow(flags);
 		return lastIterator;
 	}
 
-	/**
-	 * Same as {@link #iteratorThrow()} except this doesn't set the last iterator which can be closed with the
-	 * {@link #closeLastIterator()}.
-	 */
-	public CloseableIterator<T> seperateIteratorThrow() throws SQLException {
-		// check state to make sure we have a DAO in case we have a deserialized collection
-		if (dao == null) {
-			throw new IllegalStateException(
-					"Internal DAO object is null.  Lazy collections cannot be used if they have been deserialized.");
-		} else {
-			return dao.iterator(getPreparedQuery());
-		}
+	public CloseableWrappedIterable<T> getWrappedIterable() {
+		return getWrappedIterable(DatabaseConnection.DEFAULT_RESULT_FLAGS);
 	}
 
-	public CloseableWrappedIterable<T> getWrappedIterable() {
+	public CloseableWrappedIterable<T> getWrappedIterable(final int flags) {
 		return new CloseableWrappedIterableImpl<T>(new CloseableIterable<T>() {
 			public CloseableIterator<T> iterator() {
 				return closeableIterator();
 			}
 			public CloseableIterator<T> closeableIterator() {
 				try {
-					return LazyForeignCollection.this.seperateIteratorThrow();
+					return LazyForeignCollection.this.seperateIteratorThrow(flags);
 				} catch (Exception e) {
 					throw new IllegalStateException("Could not build lazy iterator for " + dao.getDataClass(), e);
 				}
@@ -302,5 +302,15 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 	@Override
 	public int hashCode() {
 		return super.hashCode();
+	}
+
+	private CloseableIterator<T> seperateIteratorThrow(int flags) throws SQLException {
+		// check state to make sure we have a DAO in case we have a deserialized collection
+		if (dao == null) {
+			throw new IllegalStateException(
+					"Internal DAO object is null.  Lazy collections cannot be used if they have been deserialized.");
+		} else {
+			return dao.iterator(getPreparedQuery(), flags);
+		}
 	}
 }

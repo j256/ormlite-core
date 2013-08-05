@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
@@ -39,14 +40,26 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 	}
 
 	public CloseableIterator<T> iterator() {
-		return iteratorThrow();
+		return iteratorThrow(DatabaseConnection.DEFAULT_RESULT_FLAGS);
+	}
+
+	public CloseableIterator<T> iterator(int flags) {
+		return iteratorThrow(flags);
 	}
 
 	public CloseableIterator<T> closeableIterator() {
-		return iteratorThrow();
+		return iteratorThrow(DatabaseConnection.DEFAULT_RESULT_FLAGS);
+	}
+
+	public CloseableIterator<T> closeableIterator(int flags) {
+		return iteratorThrow(DatabaseConnection.DEFAULT_RESULT_FLAGS);
 	}
 
 	public CloseableIterator<T> iteratorThrow() {
+		return iteratorThrow(DatabaseConnection.DEFAULT_RESULT_FLAGS);
+	}
+
+	public CloseableIterator<T> iteratorThrow(int flags) {
 		// we have to wrap the iterator since we are returning the List's iterator
 		return new CloseableIterator<T>() {
 			private int offset = -1;
@@ -136,6 +149,10 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 
 	public CloseableWrappedIterable<T> getWrappedIterable() {
 		// since the iterators don't have any connections, the collection can be a wrapped iterable
+		return this;
+	}
+
+	public CloseableWrappedIterable<T> getWrappedIterable(int flags) {
 		return this;
 	}
 

@@ -39,15 +39,39 @@ import com.j256.ormlite.field.ForeignCollectionField;
 public interface ForeignCollection<T> extends Collection<T>, CloseableIterable<T> {
 
 	/**
+	 * Like {@link Collection#iterator()} but while specifying flags for the results. This is necessary with certain
+	 * database types. The resultFlags could be something like ResultSet.TYPE_SCROLL_INSENSITIVE or other
+	 * values.
+	 */
+	public CloseableIterator<T> iterator(int flags);
+
+	/**
+	 * Same as {@link #iterator(int)}.
+	 */
+	public CloseableIterator<T> closeableIterator(int flags);
+
+	/**
 	 * Like {@link Collection#iterator()} but returns a closeable iterator instead and can throw a SQLException.
 	 */
 	public CloseableIterator<T> iteratorThrow() throws SQLException;
+
+	/**
+	 * Like {@link #iteratorThrow()} but while specifying flags for the results. This is necessary with certain database
+	 * types. The resultFlags could be something like ResultSet.TYPE_SCROLL_INSENSITIVE or other values.
+	 */
+	public CloseableIterator<T> iteratorThrow(int flags) throws SQLException;
 
 	/**
 	 * This makes a one time use iterable class that can be closed afterwards. The ForeignCollection itself is
 	 * {@link CloseableWrappedIterable} but multiple threads can each call this to get their own closeable iterable.
 	 */
 	public CloseableWrappedIterable<T> getWrappedIterable();
+
+	/**
+	 * Like {@link #getWrappedIterable()} but while specifying flags for the results. This is necessary with certain
+	 * database types. The resultFlags could be something like ResultSet.TYPE_SCROLL_INSENSITIVE or other values.
+	 */
+	public CloseableWrappedIterable<T> getWrappedIterable(int flags);
 
 	/**
 	 * This will close the last iterator returned by the {@link #iterator()} method.

@@ -15,6 +15,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -779,6 +780,28 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertNull(iterator.moveRelative(1));
 		assertNull(iterator.previous());
 		assertEquals(order1, iterator.first());
+		iterator.closeQuietly();
+	}
+
+	@Test
+	public void testEagerCollectionIteratorRemove() throws Exception {
+		Dao<Account, Integer> accountDao = createDao(Account.class, true);
+		Dao<Order, Integer> orderDao = createDao(Order.class, true);
+
+		Account account = new Account();
+		account.name = "fwejpojfpofewjo";
+		assertEquals(1, accountDao.create(account));
+
+		Order order1 = new Order();
+		order1.account = account;
+		order1.val = 1;
+		assertEquals(1, orderDao.create(order1));
+		Order order2 = new Order();
+		order2.account = account;
+		order2.val = 2;
+		assertEquals(1, orderDao.create(order2));
+
+		Account result = accountDao.queryForId(account.id);
 
 		// test remove of the certain element and iterator's behavior after that
 		Order order3 = new Order();
@@ -787,12 +810,52 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertEquals(1, orderDao.create(order3));
 		accountDao.refresh(result);
 
-		iterator = result.orders.iteratorThrow();
+		CloseableIterator<Order> iterator = result.orders.iteratorThrow();
 		assertEquals(order1, iterator.next());
 		assertEquals(order2, iterator.next());
 		iterator.remove();
 		assertEquals(order3, iterator.next());
 		assertEquals(order1, iterator.previous());
+		iterator.closeQuietly();
+	}
+
+	@Test
+	public void testLazyCollectionIteratorRemove() throws Exception {
+		Dao<LazyNode, Integer> nodeDao = createDao(LazyNode.class, true);
+		Dao<LazyConnection, Integer> connDao = createDao(LazyConnection.class, true);
+
+		LazyNode node = new LazyNode();
+		node.stuff = "fwejpojfpofewjo";
+		assertEquals(1, nodeDao.create(node));
+
+		LazyConnection conn1 = new LazyConnection();
+		conn1.to = node;
+		conn1.stuff = "1231331";
+		assertEquals(1, connDao.create(conn1));
+		LazyConnection conn2 = new LazyConnection();
+		conn2.to = node;
+		conn2.stuff = "fwgregreegr";
+		assertEquals(1, connDao.create(conn2));
+		LazyConnection conn3 = new LazyConnection();
+		conn3.to = node;
+		conn3.stuff = "beehergregr";
+		assertEquals(1, connDao.create(conn3));
+
+		LazyNode result = nodeDao.queryForId(node.id);
+		CloseableIterator<LazyConnection> iterator = result.tos.iteratorThrow(ResultSet.TYPE_SCROLL_INSENSITIVE);
+		assertTrue(iterator.hasNext());
+		assertEquals(conn1, iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals(conn2, iterator.next());
+		iterator.remove();
+		assertTrue(iterator.hasNext());
+		assertEquals(conn3, iterator.next());
+		/*
+		 * NOTE: this is conn2 in the lazy test because the cursor sees the data that has been removed underneath the
+		 * covers. Not sure how to fix this.
+		 */
+		assertEquals(conn2, iterator.previous());
+		iterator.closeQuietly();
 	}
 
 	@Test
@@ -1725,7 +1788,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		int id;
 		@DatabaseField
 		String stuff;
-		@DatabaseField(foreign = true/*, foreignAutoRefresh = true*/)
+		@DatabaseField(foreign = true/* , foreignAutoRefresh = true */)
 		ForeignAutoRefreshSameCollection foreign;
 		public ForeignAutoRefreshSame() {
 		}
