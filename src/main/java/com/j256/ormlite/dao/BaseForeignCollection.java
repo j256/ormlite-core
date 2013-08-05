@@ -51,14 +51,7 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 	 */
 	public boolean add(T data) {
 		try {
-			if (parent != null && foreignFieldType.getFieldValueIfNotDefault(data) == null) {
-				foreignFieldType.assignField(data, parent, true, null);
-			}
-			if (dao == null) {
-				return false;
-			}
-			dao.create(data);
-			return true;
+			return addElement(data);
 		} catch (SQLException e) {
 			throw new IllegalStateException("Could not create data element in dao", e);
 		}
@@ -67,7 +60,7 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 	/**
 	 * Add the collection of elements to this collection. This will also them to the associated database table.
 	 * 
-	 * @return Returns true if the item did not already exist in the collection otherwise false.
+	 * @return Returns true if any of the items did not already exist in the collection otherwise false.
 	 */
 	public boolean addAll(Collection<? extends T> collection) {
 		if (dao == null) {
@@ -76,8 +69,9 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 		boolean changed = false;
 		for (T data : collection) {
 			try {
-				dao.create(data);
-				changed = true;
+				if (addElement(data)) {
+					changed = true;
+				}
 			} catch (SQLException e) {
 				throw new IllegalStateException("Could not create data elements in dao", e);
 			}
@@ -192,5 +186,16 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 			}
 		}
 		return preparedQuery;
+	}
+
+	private boolean addElement(T data) throws SQLException {
+		if (parent != null && foreignFieldType.getFieldValueIfNotDefault(data) == null) {
+			foreignFieldType.assignField(data, parent, true, null);
+		}
+		if (dao == null) {
+			return false;
+		}
+		dao.create(data);
+		return true;
 	}
 }
