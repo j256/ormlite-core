@@ -558,7 +558,7 @@ public class Logger {
 	 * Return a combined single message from the msg (with possible {}) and optional arguments.
 	 */
 	private String buildFullMessage(String msg, Object arg0, Object arg1, Object arg2, Object[] argArray) {
-		StringBuilder sb = new StringBuilder(128);
+		StringBuilder sb = null;
 		int lastIndex = 0;
 		int argC = 0;
 		while (true) {
@@ -566,6 +566,9 @@ public class Logger {
 			// no more {} arguments?
 			if (argIndex == -1) {
 				break;
+			}
+			if (sb == null) {
+				sb = new StringBuilder(128);
 			}
 			// add the string before the arg-string
 			sb.append(msg.substring(lastIndex, argIndex));
@@ -589,9 +592,13 @@ public class Logger {
 			}
 			argC++;
 		}
-		// spit out the end of the msg
-		sb.append(msg.substring(lastIndex));
-		return sb.toString();
+		if (sb == null) {
+			return msg;
+		} else {
+			// spit out the end of the msg
+			sb.append(msg.substring(lastIndex));
+			return sb.toString();
+		}
 	}
 
 	private void appendArg(StringBuilder sb, Object arg) {
