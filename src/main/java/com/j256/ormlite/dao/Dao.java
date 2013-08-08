@@ -783,7 +783,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	/**
 	 * Return class for the {@link Dao#createOrUpdate(Object)} method.
 	 */
-	public class CreateOrUpdateStatus {
+	public static class CreateOrUpdateStatus {
 		private boolean created;
 		private boolean updated;
 		private int numLinesChanged;
