@@ -131,7 +131,7 @@ public class MappedUpdate<T, ID> extends BaseMappedStatement<T, ID> {
 	}
 
 	private static boolean isFieldUpdatable(FieldType fieldType, FieldType idField) {
-		if (fieldType == idField || fieldType.isForeignCollection() | fieldType.isReadOnly()) {
+		if (fieldType == idField || fieldType.isForeignCollection() || fieldType.isReadOnly()) {
 			return false;
 		} else {
 			return true;

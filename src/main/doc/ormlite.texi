@@ -1885,6 +1885,7 @@ create unique indexes that ensure that no two row has the same value(s) for the 
 
 @cindex raw SQL statements
 @cindex SQL statements, raw
+@cindex execute native SQL
 In a number of instances, using the defined DAO functionality may not be enough to change your database.  For this
 reason, ORMLite has calls which allow you to issue raw query, update, and execute statements to the database.
 
@@ -1899,6 +1900,7 @@ reason, ORMLite has calls which allow you to issue raw query, update, and execut
 @subsection Issuing Raw Queries
 
 @cindex raw queries
+@cindex native queries
 @cindex aggregate, raw queries
 @cindex SUM, using
 @cindex COUNT, using

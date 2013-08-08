@@ -720,7 +720,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 				if (tableInfo.getIdField() == null) {
 					throw new SQLException("Class " + dataClass + " must have an id field to enable the object cache");
 				}
-				synchronized (getClass()) {
+				synchronized (BaseDaoImpl.class) {
 					if (defaultObjectCache == null) {
 						// only make one
 						defaultObjectCache = ReferenceObjectCache.makeWeakCache();
