@@ -306,9 +306,22 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * Join with another query builder. This will add into the SQL something close to " INNER JOIN other-table ...".
 	 * Either the object associated with the current QueryBuilder or the argument QueryBuilder must have a foreign field
 	 * of the other one. An exception will be thrown otherwise.
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> This will do combine the WHERE statement of the two query builders with a SQL "AND". See
+	 * {@link #joinOr(QueryBuilder)}.
+	 * </p>
 	 */
 	public QueryBuilder<T, ID> join(QueryBuilder<?, ?> joinedQueryBuilder) throws SQLException {
-		addJoinInfo("INNER", joinedQueryBuilder);
+		addJoinInfo("INNER", joinedQueryBuilder, WhereOperation.AND);
+		return this;
+	}
+
+	/**
+	 * Like {@link #join(QueryBuilder)} but this combines the WHERE statements of two query builders with a SQL "OR".
+	 */
+	public QueryBuilder<T, ID> joinOr(QueryBuilder<?, ?> joinedQueryBuilder) throws SQLException {
+		addJoinInfo("INNER", joinedQueryBuilder, WhereOperation.OR);
 		return this;
 	}
 
@@ -317,11 +330,27 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * 
 	 * See: <a href="http://www.w3schools.com/sql/sql_join_left.asp" >LEFT JOIN SQL docs</a>
 	 * 
-	 * NOTE: RIGHT and FULL JOIN SQL commands are not supported because we are only returning objects from the "left"
-	 * table.
+	 * <p>
+	 * <b>NOTE:</b> RIGHT and FULL JOIN SQL commands are not supported because we are only returning objects from the
+	 * "left" table.
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> This will do combine the WHERE statement of the two query builders with a SQL "AND". See
+	 * {@link #leftJoinOr(QueryBuilder)}.
+	 * </p>
 	 */
 	public QueryBuilder<T, ID> leftJoin(QueryBuilder<?, ?> joinedQueryBuilder) throws SQLException {
-		addJoinInfo("LEFT", joinedQueryBuilder);
+		addJoinInfo("LEFT", joinedQueryBuilder, WhereOperation.AND);
+		return this;
+	}
+
+	/**
+	 * Like {@link #leftJoin(QueryBuilder)} but this combines the WHERE statements of two query builders with a SQL
+	 * "OR".
+	 */
+	public QueryBuilder<T, ID> leftJoinOr(QueryBuilder<?, ?> joinedQueryBuilder) throws SQLException {
+		addJoinInfo("LEFT", joinedQueryBuilder, WhereOperation.OR);
 		return this;
 	}
 
@@ -440,18 +469,23 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	@Override
-	protected void appendWhereStatement(StringBuilder sb, List<ArgumentHolder> argList, boolean first)
+	protected boolean appendWhereStatement(StringBuilder sb, List<ArgumentHolder> argList, WhereOperation operation)
 			throws SQLException {
+		boolean first = (operation == WhereOperation.FIRST);
 		if (this.where != null) {
-			super.appendWhereStatement(sb, argList, first);
-			first = false;
+			first = super.appendWhereStatement(sb, argList, operation);
 		}
 		if (joinList != null) {
 			for (JoinInfo joinInfo : joinList) {
-				joinInfo.queryBuilder.appendWhereStatement(sb, argList, first);
-				first = false;
+				if (first) {
+					operation = WhereOperation.FIRST;
+				} else {
+					operation = joinInfo.operation;
+				}
+				first = joinInfo.queryBuilder.appendWhereStatement(sb, argList, operation);
 			}
 		}
+		return first;
 	}
 
 	@Override
@@ -485,8 +519,9 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	/**
 	 * Add join info to the query. This can be called multiple times to join with more than one table.
 	 */
-	private void addJoinInfo(String type, QueryBuilder<?, ?> joinedQueryBuilder) throws SQLException {
-		JoinInfo joinInfo = new JoinInfo(type, joinedQueryBuilder);
+	private void addJoinInfo(String type, QueryBuilder<?, ?> joinedQueryBuilder, WhereOperation operation)
+			throws SQLException {
+		JoinInfo joinInfo = new JoinInfo(type, joinedQueryBuilder, operation);
 		matchJoinedFields(joinInfo, joinedQueryBuilder);
 		if (joinList == null) {
 			joinList = new ArrayList<JoinInfo>();
@@ -760,10 +795,12 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		final QueryBuilder<?, ?> queryBuilder;
 		FieldType localField;
 		FieldType remoteField;
+		WhereOperation operation;
 
-		public JoinInfo(String type, QueryBuilder<?, ?> queryBuilder) {
+		public JoinInfo(String type, QueryBuilder<?, ?> queryBuilder, WhereOperation operation) {
 			this.type = type;
 			this.queryBuilder = queryBuilder;
+			this.operation = operation;
 		}
 	}
 

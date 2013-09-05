@@ -1542,7 +1542,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(foo1.id, results.get(0).id);
 
 		// this should match none
-		where.clear();
+		where.reset();
 		where.and(where.eq(Foo.ID_COLUMN_NAME, foo1.id), where.eq(Foo.ID_COLUMN_NAME, foo2.id),
 				where.eq(Foo.VAL_COLUMN_NAME, foo1.val), where.eq(Foo.VAL_COLUMN_NAME, foo2.val));
 		results = where.query();
@@ -1570,7 +1570,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(foo1.id, results.get(0).id);
 
 		// this should match none
-		where.clear();
+		where.reset();
 		where.eq(Foo.ID_COLUMN_NAME, foo1.id);
 		where.eq(Foo.ID_COLUMN_NAME, foo2.id);
 		where.eq(Foo.VAL_COLUMN_NAME, foo1.val);

@@ -137,7 +137,7 @@ public abstract class StatementBuilder<T, ID> {
 	 */
 	protected void appendStatementString(StringBuilder sb, List<ArgumentHolder> argList) throws SQLException {
 		appendStatementStart(sb, argList);
-		appendWhereStatement(sb, argList, true);
+		appendWhereStatement(sb, argList, WhereOperation.FIRST);
 		appendStatementEnd(sb, argList);
 	}
 
@@ -149,20 +149,15 @@ public abstract class StatementBuilder<T, ID> {
 	/**
 	 * Append the WHERE part of the statement to the StringBuilder.
 	 */
-	protected void appendWhereStatement(StringBuilder sb, List<ArgumentHolder> argList, boolean first)
+	protected boolean appendWhereStatement(StringBuilder sb, List<ArgumentHolder> argList, WhereOperation operation)
 			throws SQLException {
 		if (where == null) {
-			return;
+			return operation == WhereOperation.FIRST;
 		}
-		if (first) {
-			sb.append("WHERE ");
-		} else {
-			sb.append("AND (");
-		}
+		operation.appendBefore(sb);
 		where.appendSql((addTableName ? tableName : null), sb, argList);
-		if (!first) {
-			sb.append(") ");
-		}
+		operation.appendAfter(sb);
+		return false;
 	}
 
 	/**
@@ -270,6 +265,43 @@ public abstract class StatementBuilder<T, ID> {
 
 		public List<ArgumentHolder> getArgList() {
 			return argList;
+		}
+	}
+
+	/**
+	 * Enum which defines which type of where operation we are appending.
+	 */
+	protected enum WhereOperation {
+		FIRST("WHERE ", null),
+		AND("AND (", ") "),
+		OR("OR (", ") "),
+		// end
+		;
+
+		private final String before;
+		private final String after;
+
+		private WhereOperation(String before, String after) {
+			this.before = before;
+			this.after = after;
+		}
+
+		/**
+		 * Append the necessary operators before the where statement.
+		 */
+		public void appendBefore(StringBuilder sb) {
+			if (before != null) {
+				sb.append(before);
+			}
+		}
+
+		/**
+		 * Append the necessary operators after the where statement.
+		 */
+		public void appendAfter(StringBuilder sb) {
+			if (after != null) {
+				sb.append(after);
+			}
 		}
 	}
 }

@@ -1,4 +1,6 @@
 4.47: 8/XX/2013
+	* CORE: Added support to the QueryBuilder to support joinOr(...) and innerJoinOr().  Default is AND.
+	* CORE: Renamed QueryBuilder and Where clear() to be reset() and deprecated the clear() methods.
 	* CORE: Fixed problem where defaultValue = "" was being ignored.  Thanks to ManosProm.  Bug #152.
 	* CORE: Fixed ForeignCollection.addAll() which was not doing the same thing as add().  Thanks to Igromanru.  Bug #153.
 
