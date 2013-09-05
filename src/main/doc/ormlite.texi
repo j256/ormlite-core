@@ -2773,9 +2773,9 @@ Same as @code{Dao.queryRaw(String)} and @code{GenericRawResults.getFirstResult()
 
 Convenience method to generate the iterator for the query.  Same as @code{dao.iterator(queryBuilder.prepare())}.
 
-@item clear()
+@item reset()
 
-Clear all of the settings in the @code{QueryBuilder} so it can be reused.
+Resets all of the settings in the @code{QueryBuilder} so it can be reused.
 
 @end table
 
@@ -2978,10 +2978,10 @@ database specific features.
 A short-cut for calling @code{prepare()} on the original @code{QueryBuilder.prepare()}.  This method returns a
 @code{PreparedQuery} object.
 
-@cindex clear Where object
-@item clear()
+@cindex reset Where object
+@item reset()
 
-Clear out the where object so it can be reused in a new query but with the same @code{QueryBuilder}.
+Reset the where object so it can be reused in a new query but with the same @code{QueryBuilder}.
 
 @item query()
 

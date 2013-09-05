@@ -311,6 +311,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		addJoinInfo("INNER", joinedQueryBuilder);
 		return this;
 	}
+
 	/**
 	 * Similar to {@link #join(QueryBuilder)} but it will use "LEFT JOIN" instead.
 	 * 
@@ -368,9 +369,18 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		return dao.countOf(prepare());
 	}
 
+	/**
+	 * @deprecated Renamed to be {@link #reset()}.
+	 */
+	@Deprecated
 	@Override
 	public void clear() {
-		super.clear();
+		reset();
+	}
+
+	@Override
+	public void reset() {
+		super.reset();
 		distinct = false;
 		selectIdColumn = true;
 		selectColumnList = null;

@@ -529,9 +529,17 @@ public class Where<T, ID> {
 	}
 
 	/**
-	 * Clear out the Where object so it can be re-used.
+	 * @deprecated Should now use {@link #reset()}.
 	 */
+	@Deprecated
 	public Where<T, ID> clear() {
+		return reset();
+	}
+
+	/**
+	 * Reset the Where object so it can be re-used.
+	 */
+	public Where<T, ID> reset() {
 		for (int i = 0; i < clauseStackLevel; i++) {
 			// help with gc
 			clauseStack[i] = null;

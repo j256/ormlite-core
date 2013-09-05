@@ -40,10 +40,19 @@ public class DeleteBuilder<T, ID> extends StatementBuilder<T, ID> {
 		return dao.delete(prepare());
 	}
 
+	/**
+	 * @deprecated Renamed to be {@link #reset()}.
+	 */
+	@Deprecated
 	@Override
 	public void clear() {
+		reset();
+	}
+
+	@Override
+	public void reset() {
 		// NOTE: this is here because it is in the other sub-classes
-		super.clear();
+		super.reset();
 	}
 
 	@Override

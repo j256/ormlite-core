@@ -34,7 +34,7 @@ public class DeleteBuilderTest extends BaseCoreStmtTest {
 		assertEquals(0, db.delete());
 		assertNotNull(dao.queryForId(foo.id));
 
-		db.where().clear();
+		db.where().reset();
 		db.where().eq(Foo.VAL_COLUMN_NAME, foo.val);
 		assertEquals(1, db.delete());
 		assertNull(dao.queryForId(foo.id));

@@ -675,7 +675,7 @@ public class WhereTest extends BaseCoreTest {
 		sb.append(val).append(' ');
 		assertEquals(sb.toString(), whereSb.toString());
 
-		where.clear();
+		where.reset();
 		whereSb.setLength(0);
 		where.eq(Foo.VAL_COLUMN_NAME, val + 1);
 		where.appendSql(null, whereSb, new ArrayList<ArgumentHolder>());
@@ -715,7 +715,7 @@ public class WhereTest extends BaseCoreTest {
 		sb.append(" ) ");
 		assertEquals(sb.toString(), whereSb.toString());
 
-		where.clear();
+		where.reset();
 		where.eq(Foo.VAL_COLUMN_NAME, val1);
 		where.eq(Foo.VAL_COLUMN_NAME, val2);
 		where.eq(Foo.VAL_COLUMN_NAME, val3);
@@ -875,12 +875,12 @@ public class WhereTest extends BaseCoreTest {
 		List<DateBetween> results = qb.query();
 		assertEquals(1, results.size());
 
-		qb.where().clear();
+		qb.where().reset();
 		qb.where().between(DateBetween.DATE_COLUMN_NAME, new Date(now), new Date(now + 1));
 		results = qb.query();
 		assertEquals(1, results.size());
 
-		qb.where().clear();
+		qb.where().reset();
 		qb.where().between(DateBetween.DATE_COLUMN_NAME, new Date(now), new Date(now));
 		results = qb.query();
 		assertEquals(1, results.size());

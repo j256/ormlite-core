@@ -117,9 +117,18 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 		return dao.update(prepare());
 	}
 
+	/**
+	 * @deprecated Renamed to be {@link #reset()}.
+	 */
+	@Deprecated
 	@Override
 	public void clear() {
-		super.clear();
+		reset();
+	}
+
+	@Override
+	public void reset() {
+		super.reset();
 		updateClauseList = null;
 	}
 

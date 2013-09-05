@@ -104,9 +104,17 @@ public abstract class StatementBuilder<T, ID> {
 	}
 
 	/**
+	 * @deprecated Renamed to be {@link #reset()}.
+	 */
+	@Deprecated
+	public void clear() {
+		reset();
+	}
+
+	/**
 	 * Clear out all of the statement settings so we can reuse the builder.
 	 */
-	public void clear() {
+	public void reset() {
 		where = null;
 	}
 
