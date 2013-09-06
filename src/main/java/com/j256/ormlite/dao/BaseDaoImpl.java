@@ -551,6 +551,16 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	public <UO> GenericRawResults<UO> queryRaw(String query, DataType[] columnTypes, RawRowObjectMapper<UO> mapper,
+			String... arguments) throws SQLException {
+		checkForInitialized();
+		try {
+			return statementExecutor.queryRaw(connectionSource, query, columnTypes, mapper, arguments, objectCache);
+		} catch (SQLException e) {
+			throw SqlExceptionUtil.create("Could not perform raw query for " + query, e);
+		}
+	}
+
 	public GenericRawResults<Object[]> queryRaw(String query, DataType[] columnTypes, String... arguments)
 			throws SQLException {
 		checkForInitialized();

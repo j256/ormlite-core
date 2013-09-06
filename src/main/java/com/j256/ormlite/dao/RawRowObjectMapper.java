@@ -2,23 +2,24 @@ package com.j256.ormlite.dao;
 
 import java.sql.SQLException;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.stmt.QueryBuilder;
 
 /**
  * Parameterized row mapper that takes output from the {@link GenericRawResults} and returns a T. Is used in the
- * {@link Dao#queryRaw(String, RawRowMapper, String...)} method.
+ * {@link Dao#queryRaw(String, DataType[], RawRowObjectMapper, String...)} method.
  * 
  * <p>
- * <b> NOTE: </b> If you need to map Objects instead then consider using the {@link RawRowObjectMapper} with the
- * {@link Dao#queryRaw(String, com.j256.ormlite.field.DataType[], RawRowObjectMapper, String...)} method which allows
- * you to iterate over the raw results as Object[].
+ * <b> NOTE: </b> If you need to map Strings instead then consider using the {@link RawRowMapper} with the
+ * {@link Dao#queryRaw(String, RawRowMapper, String...)} method which allows you to iterate over the raw results as
+ * String[].
  * </p>
  * 
  * @param <T>
  *            Type that the mapRow returns.
  * @author graywatson
  */
-public interface RawRowMapper<T> {
+public interface RawRowObjectMapper<T> {
 
 	/**
 	 * Used to convert a raw results row to an object.
@@ -33,10 +34,13 @@ public interface RawRowMapper<T> {
 	 *         generated from these results.
 	 * @param columnNames
 	 *            Array of names of columns.
+	 * @param dataTypes
+	 *            Array of the DataTypes of each of the columns as passed into the
+	 *            {@link Dao#queryRaw(String, DataType[], RawRowObjectMapper, String...)}
 	 * @param resultColumns
 	 *            Array of result columns.
 	 * @throws SQLException
 	 *             If there is any critical error with the data and you want to stop the paging.
 	 */
-	public T mapRow(String[] columnNames, String[] resultColumns) throws SQLException;
+	public T mapRow(String[] columnNames, DataType[] dataTypes, Object[] resultColumns) throws SQLException;
 }

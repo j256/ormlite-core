@@ -11,6 +11,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.dao.RawRowMapper;
+import com.j256.ormlite.dao.RawRowObjectMapper;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.FieldType;
@@ -305,7 +306,38 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			assignStatementArguments(compiledStatement, arguments);
 			RawResultsImpl<UO> rawResults =
 					new RawResultsImpl<UO>(connectionSource, connection, query, String[].class, compiledStatement,
-							new UserObjectRowMapper<UO>(rowMapper, this), objectCache);
+							new UserRawRowMapper<UO>(rowMapper, this), objectCache);
+			compiledStatement = null;
+			connection = null;
+			return rawResults;
+		} finally {
+			if (compiledStatement != null) {
+				compiledStatement.close();
+			}
+			if (connection != null) {
+				connectionSource.releaseConnection(connection);
+			}
+		}
+	}
+
+	/**
+	 * Return a results object associated with an internal iterator is mapped by the user's rowMapper.
+	 */
+	public <UO> GenericRawResults<UO> queryRaw(ConnectionSource connectionSource, String query, DataType[] columnTypes,
+			RawRowObjectMapper<UO> rowMapper, String[] arguments, ObjectCache objectCache) throws SQLException {
+		logger.debug("executing raw query for: {}", query);
+		if (arguments.length > 0) {
+			// need to do the (Object) cast to force args to be a single object
+			logger.trace("query arguments: {}", (Object) arguments);
+		}
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		CompiledStatement compiledStatement = null;
+		try {
+			compiledStatement = connection.compileStatement(query, StatementType.SELECT, noFieldTypes);
+			assignStatementArguments(compiledStatement, arguments);
+			RawResultsImpl<UO> rawResults =
+					new RawResultsImpl<UO>(connectionSource, connection, query, String[].class, compiledStatement,
+							new UserRawRowObjectMapper<UO>(rowMapper, columnTypes), objectCache);
 			compiledStatement = null;
 			connection = null;
 			return rawResults;
@@ -574,15 +606,15 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	}
 
 	/**
-	 * Map raw results to return a user object;
+	 * Map raw results to return a user object from a String array.
 	 */
-	private static class UserObjectRowMapper<UO> implements GenericRowMapper<UO> {
+	private static class UserRawRowMapper<UO> implements GenericRowMapper<UO> {
 
 		private final RawRowMapper<UO> mapper;
 		private final GenericRowMapper<String[]> stringRowMapper;
 		private String[] columnNames;
 
-		public UserObjectRowMapper(RawRowMapper<UO> mapper, GenericRowMapper<String[]> stringMapper) {
+		public UserRawRowMapper(RawRowMapper<UO> mapper, GenericRowMapper<String[]> stringMapper) {
 			this.mapper = mapper;
 			this.stringRowMapper = stringMapper;
 		}
@@ -590,6 +622,42 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		public UO mapRow(DatabaseResults results) throws SQLException {
 			String[] stringResults = stringRowMapper.mapRow(results);
 			return mapper.mapRow(getColumnNames(results), stringResults);
+		}
+
+		private String[] getColumnNames(DatabaseResults results) throws SQLException {
+			if (columnNames != null) {
+				return columnNames;
+			}
+			columnNames = results.getColumnNames();
+			return columnNames;
+		}
+	}
+
+	/**
+	 * Map raw results to return a user object from an Object array.
+	 */
+	private static class UserRawRowObjectMapper<UO> implements GenericRowMapper<UO> {
+
+		private final RawRowObjectMapper<UO> mapper;
+		private final DataType[] columnTypes;
+		private String[] columnNames;
+
+		public UserRawRowObjectMapper(RawRowObjectMapper<UO> mapper, DataType[] columnTypes) {
+			this.mapper = mapper;
+			this.columnTypes = columnTypes;
+		}
+
+		public UO mapRow(DatabaseResults results) throws SQLException {
+			int columnN = results.getColumnCount();
+			Object[] objectResults = new Object[columnN];
+			for (int colC = 0; colC < columnN; colC++) {
+				if (colC >= columnTypes.length) {
+					objectResults[colC] = null;
+				} else {
+					objectResults[colC] = columnTypes[colC].getDataPersister().resultToJava(null, results, colC);
+				}
+			}
+			return mapper.mapRow(getColumnNames(results), columnTypes, objectResults);
 		}
 
 		private String[] getColumnNames(DatabaseResults results) throws SQLException {

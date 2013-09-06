@@ -6,9 +6,9 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.46
+@set ormlite_version 4.47
 @set ormlite_year 2013
-@set ormlite_date July @value{ormlite_year}
+@set ormlite_date September @value{ormlite_year}
 @set package ORMLite
 @c ----------------------------------------------------------------
 
@@ -4031,17 +4031,22 @@ This closes the last iterator returned by the @code{iterator()} method.
 @cindex query for all raw
 @cindex raw select statements
 @cindex executing raw select statements
-@item queryRaw(String query)
+@item queryRaw(String query, String... arguments)
 
 Query for all of the items in the object table that match the SQL select query argument. This method allows you
 to do special queries that aren't supported otherwise. For medium sized or large tables, this may load a lot of 
 objects into memory so you should consider using the @code{iterator()} method on the @code{GenericRawResults}
 instead of the @code{getResults} method.  @xref{Raw Queries}.
 
-@item queryRaw(String query, RawRowMapper<UO> mapper)
+@item queryRaw(String query, RawRowMapper<UO> mapper, String... arguments)
 
 Same as the above @code{queryRaw} method but with the addition of a row mapper.  Instead of each row being returned
 as an array of strings, this will map the row using the mapper object passed in.  @xref{Raw Queries}.
+
+@item queryRaw(String query, DataType[] columnTypes, RawRowObjectMapper<UO> mapper, String... arguments)
+
+Similar to the above @code{queryRaw} but uses the column-types array to present an array of object results to the mapper
+instead of strings. The arguments are optional but can be set with strings to expand @code{?} type of SQL.  @xref{Raw Queries}.
 
 @item queryRaw(String query, DataType[] columnTypes)
 
@@ -4384,7 +4389,7 @@ a class without an ID field, an exception will be thrown.  The following operati
 @item If you create an object using the DAO, it will be added to the cache.
 
 @item When you query for an object using the standard query methods from the DAO, if the object is in the cache it will be returned.  If
-it is not in the cache then it will be added to the cache.  This does @emph{not} apply to the @code{queryRaw()} methods.
+it is not in the cache then it will be added to the cache.  This does @emph{not} apply to the @code{queryRaw(...)} methods.
 
 @item If you update an object with the database using the DAO, if it exists in the cache it will be updated as well. 
 
@@ -4785,7 +4790,7 @@ the following API code was altered:
 @code{GenericRawResults} class.  See the @code{GenericRawResults} for more information.  @xref{Raw Queries}.  
 
 @item The @code{Dao} methods @code{queryForAllRaw()} and @code{iteratorRaw()} are now deprecated.  They are replaced with
-@code{queryRaw()} methods.  See the @code{Dao} class javadocs for more information. 
+@code{queryRaw(...)} methods.  See the @code{Dao} class javadocs for more information. 
 
 @item Before this release the -jdbc and -android versions of ORMLite contained the -core functionality.  In this release we split
 out the -core from the other packages so you will now need to install @emph{both} the core and android (or jdbc) packages to get the

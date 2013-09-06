@@ -481,6 +481,14 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 			throws SQLException;
 
 	/**
+	 * Similar to the {@link #queryRaw(String, RawRowMapper, String...)} but uses the column-types array to present an
+	 * array of object results to the mapper instead of strings. The arguments are optional but can be set with strings
+	 * to expand ? type of SQL.
+	 */
+	public <UO> GenericRawResults<UO> queryRaw(String query, DataType[] columnTypes, RawRowObjectMapper<UO> mapper,
+			String... arguments) throws SQLException;
+
+	/**
 	 * Similar to the {@link #queryRaw(String, String...)} but instead of an array of String results being returned by
 	 * the iterator, this uses the column-types parameter to return an array of Objects instead. The arguments are
 	 * optional but can be set with strings to expand ? type of SQL.
