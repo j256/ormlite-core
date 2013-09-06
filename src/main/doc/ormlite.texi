@@ -617,7 +617,7 @@ public byte[] bigBunchOfBytes;
 @item foreignAutoCreate
 
 Set this to be true (default false) to have the foreign field automatically created using an internal DAO if its ID field is not set (null or 0).
-So when you call @code{dao.create()} on the parent object, any foreign field that has this set to true will possibly generate an additonal
+So when you call @code{dao.create()} on the parent object, any foreign field that has this set to true will possibly generate an additional
 create call via an internal DAO.  By default you have to create the object using its DAO directly.  By default you have to create the object
 using its DAO directly. This only works if @code{generatedId} is also set to true.
 
@@ -637,7 +637,7 @@ orderDao.create(order1);
 @item version
 
 Set this to true (default false) to have this field be a version for the row.  A version field adds restrictions when an
-object is updated to the datbase that protects against data corruption when multiple entites are updating the row at the
+object is updated to the datbase that protects against data corruption when multiple entities are updating the row at the
 same time.  This is very useful in distributed database scenarios if (for example) a utility process is updating an
 @code{Account} and you don't want to protect against overwriting a user update from the web-server.
 
@@ -2277,7 +2277,7 @@ to just use the @code{iterator()} and @code{toArray()} methods on lazy collectio
 @anchor{lazy collection iterator}
 @emph{NOTE:} Like with the @code{Dao.iterator()} method, the iterator returned by a lazy collection must be closed when you are done
 with it because there is a connection open to the database underneath.  A close happens either if you go all of the way through the
-iterator or if you call @code{close()} on it.  Only the @code{ForeignCollection} returns a closable iterator.   This means that
+iterator or if you call @code{close()} on it.  Only the @code{ForeignCollection} returns a closeable iterator.   This means that
 @code{for} loops across lazy loaded collections are a bad pattern.  For more details about iterating across lazy collections, see
 the iterator documentation.  @xref{iterator}.
 
@@ -2602,9 +2602,9 @@ updateBuilder.update();
 With update, you can also specify the update value to be an expression:
 
 @example
-// update hasDogs boolean to true if dogC > 0
+// update hasDog boolean to true if dogC > 0
 updateBuilder.updateColumnExpression(
-  "hasDogs", "dogC > 0");
+  "hasDog", "dogC > 0");
 @end example
 
 To help you construct your expressions, you can use the @code{UpdateBuilder}'s escape methods @code{escapeColumnName} and
@@ -2942,7 +2942,7 @@ Same as IN clause but negated.  Results are returned that are not in the variabl
 @cindex NOT IN sub-query, SQL
 @item notIn(String columnName, QueryBuilder<?, ?> subQueryBuilder)
 
-Same as IN clause but negated.  Results are returned that are not in the results fromt the sub-query.
+Same as IN clause but negated.  Results are returned that are not in the results from the sub-query.
 
 @cindex OR, SQL
 @item or()
@@ -3128,7 +3128,7 @@ List<Account> results = accountQb.join(orderQb).query();
 This will return all of the @code{Account} records that have a corresponding @code{Order} that has a @code{value} field
 that is more than @code{100.0}.  Notice that none of the @code{Order} information is returned by the query -- just
 @code{Account} information is retrieved.  You could also reverse the situation and, for example, return all of the orders
-that have an account whose first-name is equal to @code{"Bob"}.  To compare fields from diffeent tables, you can use the
+that have an account whose first-name is equal to @code{"Bob"}.  To compare fields from different tables, you can use the
 @code{ColumnArg} class. @xref{Column Arguments}. 
 
 ORMlite also supports the concept of @code{"LEFT JOIN"} which means, in the context of the above example, that accounts that
@@ -3248,7 +3248,7 @@ Please see the example code documentation for more information.  @xref{Android E
 @cindex config file for tables
 @cindex android performance
 For some time we have been struggling with DAO startup issues under Android that we thought were due to ORMLite object bandwidth.
-Although improvements and DAO cacheing has been made, creating a couple of DAOs when your application starts can still take too long and
+Although improvements and DAO caching has been made, creating a couple of DAOs when your application starts can still take too long and
 generate far too much garbage collection activity.  Turns out that one of the major culprits is some ugly code down in the Android OS --
 especially in @code{Method.equals()}.  Because annotations use this method, looking up annotation values is @emph{extremely} expensive,
 often garbage collecting thousands of objects and megabytes of space.  Android knows about the issues and a fix has been made but we have
@@ -3441,7 +3441,7 @@ adb shell setprop log.tag.ndroidCompiledStatement VERBOSE
 By default, most of the DAO methods throw @code{SQLException} which is the default internal exception for most JDBC and other
 SQL calls.  But in Android-land, especially, most of the exceptions extend @code{RuntimeException} so having to put a lot of 
 ignored @code{try ... catch} stanzas is inconvenient.  For this reason we've added a @code{RuntimeExceptionDao} which wraps all
-calls to the underlying DAO to rethrow the SQL exceptions as runtime exceptons.  To get one, you can wrap your own down in it:
+calls to the underlying DAO to rethrow the SQL exceptions as runtime exceptions.  To get one, you can wrap your own down in it:
 
 @example
 Dao<Account, String> dao =
@@ -4168,7 +4168,7 @@ This allocates a connection for this specific thread that will be used in all ot
 @code{try / finally} pattern be used here to ensure you do not leak connections.
 
 This is really only useful if you are using a pooled connection source and want to do certain operations on the
-same pool. Android users, for example have a single connection to the database so this is effecitively a no-op.
+same pool. Android users, for example have a single connection to the database so this is effectively a no-op.
 
 @item endThreadConnection(DatabaseConnection connection)
 
@@ -4502,8 +4502,8 @@ accountDao.callBatchTasks(new Callable<Void>() @{
 @});
 @end example
 
-Databases by default commit changes after every SQL operation.  This method disbales this "auto-commit" bahavior so a
-number of changes can be made faster and then commited all at once.  More specifically, the method turns "auto-commit",
+Databases by default commit changes after every SQL operation.  This method disables this "auto-commit" bahavior so a
+number of changes can be made faster and then committed all at once.  More specifically, the method turns "auto-commit",
 calls the @code{Callable.call()} method passed in as an argument, calls SQL @code{commit} to persist the changes when the
 call returns, and finally re-enabled auto-commit.  Some databases do not support auto-commit so a transaction may be used
 to accomplish the same behavior.
@@ -5045,7 +5045,7 @@ project.
 @code{DAO} interface and the @code{BaseDaoImpl} where in some part modeled after his code.
 
 @c -----------------
-@c Up through version 4.43
+@c Extracted from the ChangeLog up through version 4.47
 
 @item Thanks much to the following folks for their bug reports, unit test submissions, memory analysis, code samples, feature requests,
 improvements, and general feedback:
@@ -5060,6 +5060,7 @@ Andrey,
 Bart,
 Ben Mosher,
 Candlejack,
+Casey,
 Chad Schultz,
 Chase,
 Chris Banes,
@@ -5069,6 +5070,8 @@ Daniel Colchete,
 Evan Grim.
 Filipe Leandro,
 Flo,
+Guillermo Campelo,
+Howard Liberty,
 Ian Dees,
 Javier Hinmel,
 Jaxelrod,
@@ -5081,11 +5084,13 @@ Joao Bosco,
 John Kristian,
 Johny Jugianto,
 Jomble,
+Jonathan Caryl,
 Josh Guilfoyle,
 Kaan,
 Kyle Lampert,
 Larry Hamel,
 Luke Meyer,
+ManosProm,
 Mariak Kalman,
 Mark Rogers,
 Markus Wiederkehr,
@@ -5093,6 +5098,7 @@ Mathias Lin,
 Micael Dahlgren,
 Michael,
 Ming Lin,
+Miroslav Nadhajsky,
 Mohammad Moghimi,
 Nathan Jones,
 Nick Campion,
@@ -5103,6 +5109,7 @@ Rahan,
 Ramps,
 Richard Kooijman,
 Roger Keays,
+Roland Oldenburg,
 Roman Zimmer,
 Sebastian Roth,
 Skylar,
@@ -5119,6 +5126,8 @@ Yossi Wasserman,
 birbird,
 coder sam,
 glenviewjeff,
+igromanru,
+jon,
 mjomble,
 nybblr,
 shikajiro,

@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on July 29, 2013 by texi2html 1.82
+<!-- Created on September 6, 2013 by texi2html 1.82
 texi2html was written by: 
             Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -706,7 +706,7 @@ try {
 <a name="index-raw-select-statements"></a>
 <a name="index-executing-raw-select-statements"></a>
 </dd>
-<dt> <code>queryRaw(String query)</code></dt>
+<dt> <code>queryRaw(String query, String... arguments)</code></dt>
 <dd>
 <p>Query for all of the items in the object table that match the SQL select query argument. This method allows you
 to do special queries that aren&rsquo;t supported otherwise. For medium sized or large tables, this may load a lot of 
@@ -714,10 +714,16 @@ objects into memory so you should consider using the <code>iterator()</code> met
 instead of the <code>getResults</code> method.  See section <a href="ormlite_2.html#Raw-Queries">Issuing Raw Queries</a>.
 </p>
 </dd>
-<dt> <code>queryRaw(String query, RawRowMapper&lt;UO&gt; mapper)</code></dt>
+<dt> <code>queryRaw(String query, RawRowMapper&lt;UO&gt; mapper, String... arguments)</code></dt>
 <dd>
 <p>Same as the above <code>queryRaw</code> method but with the addition of a row mapper.  Instead of each row being returned
 as an array of strings, this will map the row using the mapper object passed in.  See section <a href="ormlite_2.html#Raw-Queries">Issuing Raw Queries</a>.
+</p>
+</dd>
+<dt> <code>queryRaw(String query, DataType[] columnTypes, RawRowObjectMapper&lt;UO&gt; mapper, String... arguments)</code></dt>
+<dd>
+<p>Similar to the above <code>queryRaw</code> but uses the column-types array to present an array of object results to the mapper
+instead of strings. The arguments are optional but can be set with strings to expand <code>?</code> type of SQL.  See section <a href="ormlite_2.html#Raw-Queries">Issuing Raw Queries</a>.
 </p>
 </dd>
 <dt> <code>queryRaw(String query, DataType[] columnTypes)</code></dt>
@@ -852,7 +858,7 @@ method instead f this method unless you know what you are doing.
 <code>try / finally</code> pattern be used here to ensure you do not leak connections.
 </p>
 <p>This is really only useful if you are using a pooled connection source and want to do certain operations on the
-same pool. Android users, for example have a single connection to the database so this is effecitively a no-op.
+same pool. Android users, for example have a single connection to the database so this is effectively a no-op.
 </p>
 </dd>
 <dt> <code>endThreadConnection(DatabaseConnection connection)</code></dt>
@@ -1146,7 +1152,7 @@ a class without an ID field, an exception will be thrown.  The following operati
 <li> If you create an object using the DAO, it will be added to the cache.
 
 </li><li> When you query for an object using the standard query methods from the DAO, if the object is in the cache it will be returned.  If
-it is not in the cache then it will be added to the cache.  This does <em>not</em> apply to the <code>queryRaw()</code> methods.
+it is not in the cache then it will be added to the cache.  This does <em>not</em> apply to the <code>queryRaw(...)</code> methods.
 
 </li><li> If you update an object with the database using the DAO, if it exists in the cache it will be updated as well. 
 
@@ -1230,7 +1236,7 @@ dependency list.  In this example we are using MySQL but any of the supported JD
         &lt;dependency&gt;
             &lt;groupId&gt;com.j256.ormlite&lt;/groupId&gt;
             &lt;artifactId&gt;ormlite-jdbc&lt;/artifactId&gt;
-            &lt;version&gt;4.46&lt;/version&gt;
+            &lt;version&gt;4.47&lt;/version&gt;
         &lt;/dependency&gt;
         &lt;!-- You will need to add some sort of database driver too.
              In this example we've used MySQL. --&gt;
@@ -1288,8 +1294,8 @@ accountDao.callBatchTasks(new Callable&lt;Void&gt;() {
 });
 </pre></td></tr></table>
 
-<p>Databases by default commit changes after every SQL operation.  This method disbales this &quot;auto-commit&quot; bahavior so a
-number of changes can be made faster and then commited all at once.  More specifically, the method turns &quot;auto-commit&quot;,
+<p>Databases by default commit changes after every SQL operation.  This method disables this &quot;auto-commit&quot; bahavior so a
+number of changes can be made faster and then committed all at once.  More specifically, the method turns &quot;auto-commit&quot;,
 calls the <code>Callable.call()</code> method passed in as an argument, calls SQL <code>commit</code> to persist the changes when the
 call returns, and finally re-enabled auto-commit.  Some databases do not support auto-commit so a transaction may be used
 to accomplish the same behavior.
@@ -1393,7 +1399,7 @@ persistence behavior for <em>all</em> <code>Date</code> types.
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>July 29, 2013</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>September 6, 2013</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
  </font>
  <br>
 

@@ -1,6 +1,6 @@
-4.47: 8/XX/2013
+4.47: 9/6/2013
 	* CORE: Added support to the QueryBuilder to support joinOr(...) and innerJoinOr().  Default is AND.
-	* CORE: Added support to Dao for another type of raw query that maps results from Object[].
+	* CORE: Added support to Dao for another type of queryRaw(...) method that maps results from Object[].
 	* CORE: Renamed QueryBuilder and Where clear() to be reset() and deprecated the clear() methods.
 	* CORE: Fixed problem where defaultValue = "" was being ignored.  Thanks to ManosProm.  Bug #152.
 	* CORE: Fixed ForeignCollection.addAll() which was not doing the same thing as add().  Thanks to Igromanru.  Bug #153.
