@@ -40,8 +40,7 @@ public interface ForeignCollection<T> extends Collection<T>, CloseableIterable<T
 
 	/**
 	 * Like {@link Collection#iterator()} but while specifying flags for the results. This is necessary with certain
-	 * database types. The resultFlags could be something like ResultSet.TYPE_SCROLL_INSENSITIVE or other
-	 * values.
+	 * database types. The resultFlags could be something like ResultSet.TYPE_SCROLL_INSENSITIVE or other values.
 	 */
 	public CloseableIterator<T> iterator(int flags);
 

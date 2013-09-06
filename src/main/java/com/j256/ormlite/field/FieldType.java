@@ -63,7 +63,7 @@ public class FieldType {
 	private final String generatedIdSequence;
 	private final Method fieldGetMethod;
 	private final Method fieldSetMethod;
-    private final Class<?> parentClass;
+	private final Class<?> parentClass;
 
 	private DataPersister dataPersister;
 	private Object defaultValue;
@@ -92,7 +92,7 @@ public class FieldType {
 		this.tableName = tableName;
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		this.field = field;
-        this.parentClass = parentClass;
+		this.parentClass = parentClass;
 
 		// post process our config settings
 		fieldConfig.postProcess();
@@ -946,8 +946,8 @@ public class FieldType {
 			return false;
 		}
 		FieldType other = (FieldType) arg;
-		return field.equals(other.field) &&
-                (parentClass == null ? other.parentClass == null : parentClass.equals(other.parentClass));
+		return field.equals(other.field)
+				&& (parentClass == null ? other.parentClass == null : parentClass.equals(other.parentClass));
 	}
 
 	@Override
