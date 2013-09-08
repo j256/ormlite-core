@@ -1,4 +1,4 @@
-4.47: 9/6/2013
+4.47: 9/8/2013
 	* CORE: Added support to the QueryBuilder to support joinOr(...) and innerJoinOr().  Default is AND.
 	* CORE: Added support to Dao for another type of queryRaw(...) method that maps results from Object[].
 	* CORE: Renamed QueryBuilder and Where clear() to be reset() and deprecated the clear() methods.

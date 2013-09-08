@@ -31,7 +31,7 @@ import com.j256.ormlite.field.types.VoidType;
  * 
  * <p>
  * <b> WARNING:</b> If you add any extra fields here, you will need to add them to {@link DatabaseFieldConfig},
- * {@link DatabaseFieldConfigLoader}, {@link DatabaseFieldConfigLoaderTest}, and DatabaseTableConfigUtil as well.
+ * {@link DatabaseFieldConfigLoader}, DatabaseFieldConfigLoaderTest, and DatabaseTableConfigUtil as well.
  * </p>
  * 
  * @author graywatson
