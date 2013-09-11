@@ -76,7 +76,7 @@ public class MappedQueryForId<T, ID> extends BaseMappedQuery<T, ID> {
 
 	private void logArgs(Object[] args) {
 		if (args.length > 0) {
-			// need to do the (Object) cast to force args to be a single object
+			// need to do the (Object) cast to force args to be a single object and not an array
 			logger.trace("{} arguments: {}", label, (Object) args);
 		}
 	}
