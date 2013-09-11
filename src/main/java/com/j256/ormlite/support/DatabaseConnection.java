@@ -72,12 +72,6 @@ public interface DatabaseConnection {
 	public int executeStatement(String statementStr, int resultFlags) throws SQLException;
 
 	/**
-	 * Compile and prepare the SQL statement for execution.
-	 */
-	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argFieldTypes)
-			throws SQLException;
-
-	/**
 	 * Like compileStatement(String, StatementType, FieldType[]) except the caller can specify the result flags.
 	 * 
 	 * @param resultFlags

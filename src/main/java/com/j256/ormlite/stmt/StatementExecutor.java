@@ -167,7 +167,9 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		CompiledStatement stmt = null;
 		DatabaseResults results = null;
 		try {
-			stmt = databaseConnection.compileStatement(query, StatementType.SELECT, noFieldTypes);
+			stmt =
+					databaseConnection.compileStatement(query, StatementType.SELECT, noFieldTypes,
+							DatabaseConnection.DEFAULT_RESULT_FLAGS);
 			assignStatementArguments(stmt, arguments);
 			results = stmt.runQuery(null);
 			if (results.first()) {
@@ -271,7 +273,9 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		CompiledStatement compiledStatement = null;
 		try {
-			compiledStatement = connection.compileStatement(query, StatementType.SELECT, noFieldTypes);
+			compiledStatement =
+					connection.compileStatement(query, StatementType.SELECT, noFieldTypes,
+							DatabaseConnection.DEFAULT_RESULT_FLAGS);
 			assignStatementArguments(compiledStatement, arguments);
 			GenericRawResults<String[]> rawResults =
 					new RawResultsImpl<String[]>(connectionSource, connection, query, String[].class,
@@ -302,7 +306,9 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		CompiledStatement compiledStatement = null;
 		try {
-			compiledStatement = connection.compileStatement(query, StatementType.SELECT, noFieldTypes);
+			compiledStatement =
+					connection.compileStatement(query, StatementType.SELECT, noFieldTypes,
+							DatabaseConnection.DEFAULT_RESULT_FLAGS);
 			assignStatementArguments(compiledStatement, arguments);
 			RawResultsImpl<UO> rawResults =
 					new RawResultsImpl<UO>(connectionSource, connection, query, String[].class, compiledStatement,
@@ -333,7 +339,9 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		CompiledStatement compiledStatement = null;
 		try {
-			compiledStatement = connection.compileStatement(query, StatementType.SELECT, noFieldTypes);
+			compiledStatement =
+					connection.compileStatement(query, StatementType.SELECT, noFieldTypes,
+							DatabaseConnection.DEFAULT_RESULT_FLAGS);
 			assignStatementArguments(compiledStatement, arguments);
 			RawResultsImpl<UO> rawResults =
 					new RawResultsImpl<UO>(connectionSource, connection, query, String[].class, compiledStatement,
@@ -364,7 +372,9 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		CompiledStatement compiledStatement = null;
 		try {
-			compiledStatement = connection.compileStatement(query, StatementType.SELECT, noFieldTypes);
+			compiledStatement =
+					connection.compileStatement(query, StatementType.SELECT, noFieldTypes,
+							DatabaseConnection.DEFAULT_RESULT_FLAGS);
 			assignStatementArguments(compiledStatement, arguments);
 			RawResultsImpl<Object[]> rawResults =
 					new RawResultsImpl<Object[]>(connectionSource, connection, query, Object[].class,
@@ -392,7 +402,8 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			logger.trace("update arguments: {}", (Object) arguments);
 		}
 		CompiledStatement compiledStatement =
-				connection.compileStatement(statement, StatementType.UPDATE, noFieldTypes);
+				connection.compileStatement(statement, StatementType.UPDATE, noFieldTypes,
+						DatabaseConnection.DEFAULT_RESULT_FLAGS);
 		try {
 			assignStatementArguments(compiledStatement, arguments);
 			return compiledStatement.runUpdate();
@@ -419,7 +430,8 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			logger.trace("execute arguments: {}", (Object) arguments);
 		}
 		CompiledStatement compiledStatement =
-				connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes);
+				connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes,
+						DatabaseConnection.DEFAULT_RESULT_FLAGS);
 		try {
 			assignStatementArguments(compiledStatement, arguments);
 			return compiledStatement.runExecute();

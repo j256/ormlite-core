@@ -1,5 +1,6 @@
 package com.j256.ormlite.table;
 
+import static org.easymock.EasyMock.anyInt;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
@@ -181,13 +182,13 @@ public class TableUtilsTest extends BaseCoreTest {
 		DatabaseConnection conn = createMock(DatabaseConnection.class);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
 		final CompiledStatement stmt = createMock(CompiledStatement.class);
-		expect(conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class))).andAnswer(
+		expect(conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class), anyInt())).andAnswer(
 				new IAnswer<CompiledStatement>() {
 					private int stmtC = 0;
 					public CompiledStatement answer() {
 						Object[] args = EasyMock.getCurrentArguments();
 						assertNotNull(args);
-						assertEquals(3, args.length);
+						assertEquals(4, args.length);
 						if (stmtC == 0) {
 							assertEquals("CREATE TABLE `index` (`stuff` VARCHAR(255) ) ", args[0]);
 						} else if (stmtC == 1) {
@@ -204,7 +205,8 @@ public class TableUtilsTest extends BaseCoreTest {
 						assertEquals(0, ((FieldType[]) args[2]).length);
 						return stmt;
 					}
-				}).anyTimes();
+				})
+				.anyTimes();
 		expect(stmt.runExecute()).andReturn(0).anyTimes();
 		connectionSource.releaseConnection(conn);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
@@ -225,13 +227,13 @@ public class TableUtilsTest extends BaseCoreTest {
 		DatabaseConnection conn = createMock(DatabaseConnection.class);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
 		final CompiledStatement stmt = createMock(CompiledStatement.class);
-		expect(conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class))).andAnswer(
+		expect(conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class), anyInt())).andAnswer(
 				new IAnswer<CompiledStatement>() {
 					private int stmtC = 0;
 					public CompiledStatement answer() {
 						Object[] args = EasyMock.getCurrentArguments();
 						assertNotNull(args);
-						assertEquals(3, args.length);
+						assertEquals(4, args.length);
 						if (stmtC == 0) {
 							assertEquals("CREATE TABLE `comboindex` (`stuff` VARCHAR(255) , `junk` BIGINT ) ", args[0]);
 						} else if (stmtC == 1) {
@@ -271,13 +273,13 @@ public class TableUtilsTest extends BaseCoreTest {
 		DatabaseConnection conn = createMock(DatabaseConnection.class);
 		expect(connectionSource.getReadWriteConnection()).andReturn(conn);
 		final CompiledStatement stmt = createMock(CompiledStatement.class);
-		expect(conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class))).andAnswer(
+		expect(conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class), anyInt())).andAnswer(
 				new IAnswer<CompiledStatement>() {
 					private int stmtC = 0;
 					public CompiledStatement answer() {
 						Object[] args = EasyMock.getCurrentArguments();
 						assertNotNull(args);
-						assertEquals(3, args.length);
+						assertEquals(4, args.length);
 						if (stmtC == 0) {
 							assertEquals("CREATE TABLE `uniqueindex` (`stuff` VARCHAR(255) ) ", args[0]);
 						} else if (stmtC == 1) {
@@ -474,16 +476,17 @@ public class TableUtilsTest extends BaseCoreTest {
 		DatabaseResults results = null;
 		final AtomicInteger rowC = new AtomicInteger(1);
 		if (throwExecute) {
-			expect(conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class))).andThrow(
+			expect(conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class), anyInt())).andThrow(
 					new SQLException("you asked us to!!"));
 		} else {
-			expect(conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class))).andReturn(
+			expect(conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class), anyInt())).andReturn(
 					stmt);
 			expect(stmt.runExecute()).andReturn(rowN);
 			stmt.close();
 			if (queryAfter != null) {
-				expect(conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class))).andReturn(
-						stmt);
+				expect(
+						conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class),
+								anyInt())).andReturn(stmt);
 				results = createMock(DatabaseResults.class);
 				expect(results.first()).andReturn(false);
 				expect(stmt.runQuery(null)).andReturn(results);

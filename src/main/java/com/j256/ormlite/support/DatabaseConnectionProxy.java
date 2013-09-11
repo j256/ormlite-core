@@ -72,15 +72,6 @@ public class DatabaseConnectionProxy implements DatabaseConnection {
 		}
 	}
 
-	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argFieldTypes)
-			throws SQLException {
-		if (proxy == null) {
-			return null;
-		} else {
-			return proxy.compileStatement(statement, type, argFieldTypes);
-		}
-	}
-
 	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argFieldTypes,
 			int resultFlags) throws SQLException {
 		if (proxy == null) {

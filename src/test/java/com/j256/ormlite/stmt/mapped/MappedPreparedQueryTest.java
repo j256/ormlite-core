@@ -39,7 +39,9 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
 		CompiledStatement stmt = null;
 		try {
-			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, new FieldType[0]);
+			stmt =
+					conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, new FieldType[0],
+							DatabaseConnection.DEFAULT_RESULT_FLAGS);
 
 			DatabaseResults results = stmt.runQuery(null);
 			while (results.next()) {

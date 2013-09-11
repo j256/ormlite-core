@@ -73,7 +73,9 @@ public class DateStringTypeTest extends BaseTypeTest {
 		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
 		CompiledStatement stmt = null;
 		try {
-			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes);
+			stmt =
+					conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
+							DatabaseConnection.DEFAULT_RESULT_FLAGS);
 			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
 			int colNum = results.findColumn(STRING_COLUMN);

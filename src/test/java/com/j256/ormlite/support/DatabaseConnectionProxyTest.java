@@ -127,23 +127,6 @@ public class DatabaseConnectionProxyTest {
 	}
 
 	@Test
-	public void testCompileStatementStringStatementTypeFieldTypeArray() throws Exception {
-		DatabaseConnection conn = createMock(DatabaseConnection.class);
-		String statement = "select foo from bar";
-		StatementType type = StatementType.DELETE;
-		expect(conn.compileStatement(statement, type, null)).andReturn(null);
-		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(conn);
-		replay(conn);
-		proxy.compileStatement(statement, type, null);
-		verify(conn);
-	}
-
-	@Test
-	public void testCompileStatementStringStatementTypeFieldTypeArrayNull() throws Exception {
-		assertNull(new DatabaseConnectionProxy(null).compileStatement("statment", StatementType.DELETE, null));
-	}
-
-	@Test
 	public void testCompileStatementStringStatementTypeFieldTypeArrayInt() throws Exception {
 		DatabaseConnection conn = createMock(DatabaseConnection.class);
 		String statement = "select foo from bar";
