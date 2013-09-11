@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
+import com.j256.ormlite.support.DatabaseConnectionProxyFactory;
 
 /**
  * H2 connection source.
@@ -17,6 +18,7 @@ public class H2ConnectionSource implements ConnectionSource {
 	public DatabaseType databaseType = new H2DatabaseType();
 	private DatabaseConnection connection = null;
 	private final String databaseUrl;
+	private static DatabaseConnectionProxyFactory connectionProxyFactory;
 
 	public H2ConnectionSource() throws SQLException {
 		this(H2DatabaseType.DATABASE_URL);
@@ -49,6 +51,9 @@ public class H2ConnectionSource implements ConnectionSource {
 	public DatabaseConnection getReadWriteConnection() throws SQLException {
 		if (connection == null) {
 			connection = new H2DatabaseConnection(DriverManager.getConnection(databaseUrl));
+			if (connectionProxyFactory != null) {
+				connection = connectionProxyFactory.createProxy(connection);
+			}
 		}
 		return connection;
 	}
@@ -80,5 +85,12 @@ public class H2ConnectionSource implements ConnectionSource {
 
 	public boolean isOpen() {
 		return connection != null;
+	}
+
+	/**
+	 * Set to enable connection proxying.  Set to null to disable. 
+	 */
+	public static void setDatabaseConnectionProxyFactory(DatabaseConnectionProxyFactory connectionProxyFactory) {
+		H2ConnectionSource.connectionProxyFactory = connectionProxyFactory;
 	}
 }
