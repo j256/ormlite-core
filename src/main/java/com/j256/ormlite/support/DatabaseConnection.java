@@ -38,12 +38,12 @@ public interface DatabaseConnection {
 	/**
 	 * Start a save point with a certain name. It can be a noop if savepoints are not supported.
 	 * 
-	 * @param name
+	 * @param savePointName
 	 *            to use for the Savepoint although it can be ignored.
 	 * 
 	 * @return A SavePoint object with which we can release or commit in the future or null if none.
 	 */
-	public Savepoint setSavePoint(String name) throws SQLException;
+	public Savepoint setSavePoint(String savePointName) throws SQLException;
 
 	/**
 	 * Commit all changes since the savepoint was created. If savePoint is null then commit all outstanding changes.
