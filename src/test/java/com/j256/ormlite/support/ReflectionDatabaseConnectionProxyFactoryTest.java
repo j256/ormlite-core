@@ -17,7 +17,7 @@ import com.j256.ormlite.h2.H2ConnectionSource;
 public class ReflectionDatabaseConnectionProxyFactoryTest extends BaseCoreTest {
 
 	private static final int VALUE_INCREMENT = 13;
-	
+
 	@BeforeClass
 	public static void beforeClass() {
 		ReflectionDatabaseConnectionProxyFactory factory =

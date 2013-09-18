@@ -88,7 +88,7 @@ public class H2ConnectionSource implements ConnectionSource {
 	}
 
 	/**
-	 * Set to enable connection proxying.  Set to null to disable. 
+	 * Set to enable connection proxying. Set to null to disable.
 	 */
 	public static void setDatabaseConnectionProxyFactory(DatabaseConnectionProxyFactory connectionProxyFactory) {
 		H2ConnectionSource.connectionProxyFactory = connectionProxyFactory;

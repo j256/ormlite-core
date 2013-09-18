@@ -1552,7 +1552,8 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		int id;
 		@DatabaseField
 		String name;
-		@ForeignCollectionField(eager = true, columnName = ORDERS_FIELD_NAME, orderColumnName = OrderOrdered.VAL_FIELD_NAME)
+		@ForeignCollectionField(eager = true, columnName = ORDERS_FIELD_NAME,
+				orderColumnName = OrderOrdered.VAL_FIELD_NAME)
 		ForeignCollection<OrderOrdered> orders;
 		protected AccountOrdered() {
 		}
@@ -1577,7 +1578,8 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		int id;
 		@DatabaseField
 		String name;
-		@ForeignCollectionField(eager = true, columnName = ORDERS_FIELD_NAME, orderColumnName = OrderOrdered.VAL_FIELD_NAME, orderAscending = false)
+		@ForeignCollectionField(eager = true, columnName = ORDERS_FIELD_NAME,
+				orderColumnName = OrderOrdered.VAL_FIELD_NAME, orderAscending = false)
 		ForeignCollection<OrderOrderedDesc> orders;
 		protected AccountOrderedDesc() {
 		}

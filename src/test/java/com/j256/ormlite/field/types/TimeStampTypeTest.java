@@ -139,7 +139,8 @@ public class TimeStampTypeTest extends BaseTypeTest {
 	protected static class TimeStampDefault {
 		@DatabaseField(generatedId = true)
 		int id;
-		@DatabaseField(columnName = TIME_STAMP_COLUMN, persisterClass = LocalCurrentTimeStampType.class, defaultValue = "CURRENT_TIMESTAMP()", readOnly = true)
+		@DatabaseField(columnName = TIME_STAMP_COLUMN, persisterClass = LocalCurrentTimeStampType.class,
+				defaultValue = "CURRENT_TIMESTAMP()", readOnly = true)
 		java.sql.Timestamp timestamp;
 		@DatabaseField
 		String stuff;
