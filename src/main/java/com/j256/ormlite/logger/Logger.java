@@ -571,7 +571,7 @@ public class Logger {
 				sb = new StringBuilder(128);
 			}
 			// add the string before the arg-string
-			sb.append(msg.substring(lastIndex, argIndex));
+			sb.append(msg, lastIndex, argIndex);
 			// shift our last-index past the arg-string
 			lastIndex = argIndex + ARG_STRING_LENGTH;
 			// add the argument, if we still have any
@@ -596,7 +596,7 @@ public class Logger {
 			return msg;
 		} else {
 			// spit out the end of the msg
-			sb.append(msg.substring(lastIndex));
+			sb.append(msg, lastIndex, msg.length());
 			return sb.toString();
 		}
 	}

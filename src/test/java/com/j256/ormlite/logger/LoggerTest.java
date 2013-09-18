@@ -107,6 +107,17 @@ public class LoggerTest {
 	}
 
 	@Test
+	public void testNullArg() {
+		expect(mockLog.isLevelEnabled(Level.TRACE)).andReturn(true);
+		String prefix = "a";
+		String suffix = "b";
+		mockLog.log(Level.TRACE, prefix + "null" + suffix);
+		replay(mockLog);
+		logger.trace(prefix + "{}" + suffix, (Object) null);
+		verify(mockLog);
+	}
+
+	@Test
 	public void testMessage() throws Exception {
 		String msg = "ooooooh";
 		for (Level level : Level.values()) {
