@@ -249,10 +249,10 @@ public @interface DatabaseField {
 	Class<? extends DataPersister> persisterClass() default VoidType.class;
 
 	/**
-	 * If this is set to true then inserting an object with the ID field already set will not override it with a
-	 * generated-id. This is useful when you have a table where items sometimes have IDs and sometimes need them
-	 * generated. This only works if the database supports this behavior and if {@link #generatedId()} is also true for
-	 * the field.
+	 * If this is set to true then inserting an object with the ID field already set (i.e. not null, 0) will not
+	 * override it with a generated-id. If the field is null or 0 then the id will be generated. This is useful when you
+	 * have a table where items sometimes have IDs and sometimes need them generated. This only works if the database
+	 * supports this behavior and if {@link #generatedId()} is also true for the field.
 	 */
 	boolean allowGeneratedIdInsert() default false;
 
