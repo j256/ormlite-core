@@ -1978,7 +1978,7 @@ for (String[] resultArray : rawResults) @{
 rawResults.close();
 @end example
 
-@cindex mac function
+@cindex max function
 @cindex query for number
 @cindex query single number
 @cindex aggregate function, query
@@ -1986,7 +1986,7 @@ If you are just trying to query for a single value (typically an aggregate funct
 use the @code{queryRawValue(...)} method:
 
 @example
-long maxUnits = orderDao.queryRaw("select max(units) from orders");
+long maxUnits = orderDao.queryRawValue("select max(units) from orders");
 @end example
 
 @cindex raw query object[]

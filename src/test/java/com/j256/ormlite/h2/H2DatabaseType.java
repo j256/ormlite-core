@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.j256.ormlite.db.BaseDatabaseType;
-import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 
 /**
@@ -13,7 +12,7 @@ import com.j256.ormlite.field.FieldType;
  * 
  * @author graywatson
  */
-public class H2DatabaseType extends BaseDatabaseType implements DatabaseType {
+public class H2DatabaseType extends BaseDatabaseType {
 
 	public static final String DATABASE_URL = "jdbc:h2:mem:h2testdatabase";
 

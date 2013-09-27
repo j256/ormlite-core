@@ -2486,6 +2486,16 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		}
 	}
 
+	@Test
+	public void testFewFields() throws Exception {
+		Dao<FewFields, Object> dao = createDao(FewFields.class, true);
+		FewFields few = new FewFields();
+		assertEquals(1, dao.create(few));
+
+		FewFields result = dao.queryForId(few.id);
+		assertNotNull(result);
+	}
+
 	/* ============================================================================================== */
 
 	private String buildFooQueryAllString(Dao<Foo, Object> fooDao) throws SQLException {
@@ -2756,7 +2766,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		}
 	}
 
-	public static class Jeremy1 {
+	protected static class Jeremy1 {
 		@DatabaseField(generatedId = true)
 		int id;
 		@ForeignCollectionField(eager = false)
@@ -2765,7 +2775,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		}
 	}
 
-	public static class Jeremy2 {
+	protected static class Jeremy2 {
 		public static final String LOOP1_COLUMN_NAME = "loop1";
 		public static final String OTHER_COLUMN_NAME = "other";
 		@DatabaseField(generatedId = true)
@@ -2778,7 +2788,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		}
 	}
 
-	public static class ForeignCollectionComparison {
+	protected static class ForeignCollectionComparison {
 		@DatabaseField(generatedId = true)
 		int id;
 		@ForeignCollectionField(eager = false)
@@ -2787,7 +2797,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		}
 	}
 
-	public static class ForeignCollectionComparison2 {
+	protected static class ForeignCollectionComparison2 {
 		@DatabaseField(generatedId = true)
 		int id;
 		@DatabaseField(foreign = true)
@@ -2796,7 +2806,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		}
 	}
 
-	public static class TimeStampSerializable {
+	protected static class TimeStampSerializable {
 		@DatabaseField(generatedId = true)
 		int id;
 		@DatabaseField(dataType = DataType.SERIALIZABLE)
@@ -2805,7 +2815,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		}
 	}
 
-	public static class ForeignLoop1 {
+	protected static class ForeignLoop1 {
 		@DatabaseField(generatedId = true)
 		int id;
 		@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 2)
@@ -2814,7 +2824,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		}
 	}
 
-	public static class ForeignLoop2 {
+	protected static class ForeignLoop2 {
 		@DatabaseField(generatedId = true)
 		int id;
 		@DatabaseField(foreign = true)
@@ -2823,7 +2833,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		}
 	}
 
-	public static class ForeignLoop3 {
+	protected static class ForeignLoop3 {
 		@DatabaseField(generatedId = true)
 		int id;
 		@DatabaseField(foreign = true)
@@ -2832,12 +2842,19 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		}
 	}
 
-	public static class ForeignLoop4 {
+	protected static class ForeignLoop4 {
 		@DatabaseField(generatedId = true)
 		int id;
 		@DatabaseField
 		String stuff;
 		public ForeignLoop4() {
+		}
+	}
+
+	protected static class FewFields {
+		@DatabaseField(generatedId = true)
+		int id;
+		public FewFields() {
 		}
 	}
 

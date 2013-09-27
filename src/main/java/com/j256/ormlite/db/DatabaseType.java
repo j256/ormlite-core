@@ -231,4 +231,9 @@ public interface DatabaseType {
 	 */
 	public <T> DatabaseTableConfig<T> extractDatabaseTableConfig(ConnectionSource connectionSource, Class<T> clazz)
 			throws SQLException;
+
+	/**
+	 * Append the SQL necessary to properly finish a "INSERT INTO xxx" line when there are no arguments.
+	 */
+	public void appendInsertNoColumns(StringBuilder sb);
 }

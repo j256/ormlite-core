@@ -48,7 +48,7 @@ public class BaseDatabaseTypeTest extends BaseCoreTest {
 		assertNull(DataPersisterManager.lookupForField(SomeFields.class.getDeclaredField("byteArray")));
 	}
 
-	private static class TestDatabaseType extends BaseDatabaseType implements DatabaseType {
+	private static class TestDatabaseType extends BaseDatabaseType {
 
 		public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 			return false;

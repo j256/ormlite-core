@@ -12,12 +12,12 @@ import com.j256.ormlite.field.types.BigDecimalStringType;
  * Sqlite database type information used to create the tables, etc..
  * 
  * <p>
- * NOTE: We need this here because the Android version subclasses it.
+ * NOTE: We need this here because the Android and JDBC versions both subclasses it.
  * </p>
  * 
  * @author graywatson
  */
-public abstract class BaseSqliteDatabaseType extends BaseDatabaseType implements DatabaseType {
+public abstract class BaseSqliteDatabaseType extends BaseDatabaseType {
 
 	private final static FieldConverter booleanConverter = new BooleanNumberFieldConverter();
 
@@ -82,5 +82,10 @@ public abstract class BaseSqliteDatabaseType extends BaseDatabaseType implements
 			default :
 				return super.getFieldConverter(dataPersister);
 		}
+	}
+
+	@Override
+	public void appendInsertNoColumns(StringBuilder sb) {
+		sb.append("DEFAULT VALUES");
 	}
 }

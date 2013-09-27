@@ -139,7 +139,6 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 	public static <T, ID> MappedCreate<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo) {
 		StringBuilder sb = new StringBuilder(128);
 		appendTableName(databaseType, sb, "INSERT INTO ", tableInfo.getTableName());
-		sb.append('(');
 		int argFieldC = 0;
 		int versionFieldTypeIndex = -1;
 		// first we count up how many arguments we are going to have
@@ -152,34 +151,39 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 			}
 		}
 		FieldType[] argFieldTypes = new FieldType[argFieldC];
-		argFieldC = 0;
-		boolean first = true;
-		for (FieldType fieldType : tableInfo.getFieldTypes()) {
-			if (!isFieldCreatable(databaseType, fieldType)) {
-				continue;
+		if (argFieldC == 0) {
+			databaseType.appendInsertNoColumns(sb);
+		} else {
+			argFieldC = 0;
+			boolean first = true;
+			sb.append('(');
+			for (FieldType fieldType : tableInfo.getFieldTypes()) {
+				if (!isFieldCreatable(databaseType, fieldType)) {
+					continue;
+				}
+				if (first) {
+					first = false;
+				} else {
+					sb.append(",");
+				}
+				appendFieldColumnName(databaseType, sb, fieldType, null);
+				argFieldTypes[argFieldC++] = fieldType;
 			}
-			if (first) {
-				first = false;
-			} else {
-				sb.append(",");
+			sb.append(") VALUES (");
+			first = true;
+			for (FieldType fieldType : tableInfo.getFieldTypes()) {
+				if (!isFieldCreatable(databaseType, fieldType)) {
+					continue;
+				}
+				if (first) {
+					first = false;
+				} else {
+					sb.append(",");
+				}
+				sb.append("?");
 			}
-			appendFieldColumnName(databaseType, sb, fieldType, null);
-			argFieldTypes[argFieldC++] = fieldType;
+			sb.append(")");
 		}
-		sb.append(") VALUES (");
-		first = true;
-		for (FieldType fieldType : tableInfo.getFieldTypes()) {
-			if (!isFieldCreatable(databaseType, fieldType)) {
-				continue;
-			}
-			if (first) {
-				first = false;
-			} else {
-				sb.append(",");
-			}
-			sb.append("?");
-		}
-		sb.append(")");
 		FieldType idField = tableInfo.getIdField();
 		String queryNext = buildQueryNextSequence(databaseType, idField);
 		return new MappedCreate<T, ID>(tableInfo, sb.toString(), argFieldTypes, queryNext, versionFieldTypeIndex);

@@ -1,5 +1,6 @@
 4.48: 9/XX/2013
 	* CORE: Added support for tracking direct database connection activity with DatabaseConnectionProxy.
+	* CORE: Fixed problem when inserting no columns to Sqlite (Android), other DBs. Thanks to Michael Weimann. Bug #155.
 
 4.47: 9/8/2013
 	* CORE: Added support to the QueryBuilder to support joinOr(...) and innerJoinOr().  Default is AND.
