@@ -136,11 +136,11 @@ public class TableInfo<T, ID> {
 			// build our alias map if we need it
 			Map<String, FieldType> map = new HashMap<String, FieldType>();
 			for (FieldType fieldType : fieldTypes) {
-				map.put(fieldType.getColumnName(), fieldType);
+				map.put(fieldType.getColumnName().toLowerCase(), fieldType);
 			}
 			fieldNameMap = map;
 		}
-		FieldType fieldType = fieldNameMap.get(columnName);
+		FieldType fieldType = fieldNameMap.get(columnName.toLowerCase());
 		// if column name is found, return it
 		if (fieldType != null) {
 			return fieldType;
