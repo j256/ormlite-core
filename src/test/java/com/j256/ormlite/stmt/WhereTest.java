@@ -85,7 +85,7 @@ public class WhereTest extends BaseCoreTest {
 		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		assertNotNull(Foo.class.getDeclaredField(Foo.ID_COLUMN_NAME));
 		int val = 1;
-		where.eq("string", val);
+		where.eq("stringField", val);
 	}
 
 	@Test
