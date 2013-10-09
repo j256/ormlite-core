@@ -13,7 +13,9 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.db.BaseDatabaseType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.SqlType;
@@ -1009,28 +1011,66 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testMaxJoin() throws Exception {
-		Dao<Foo, Object> fooDao = createDao(Foo.class, true);
+		Dao<Foo, Object> dao = createDao(Foo.class, true);
 
 		Foo foo1 = new Foo();
 		foo1.val = 10;
-		assertEquals(1, fooDao.create(foo1));
+		assertEquals(1, dao.create(foo1));
 		Foo foo2 = new Foo();
 		foo2.val = 20;
-		assertEquals(1, fooDao.create(foo2));
+		assertEquals(1, dao.create(foo2));
 		Foo foo3 = new Foo();
 		foo3.val = 30;
-		assertEquals(1, fooDao.create(foo3));
+		assertEquals(1, dao.create(foo3));
 		Foo foo4 = new Foo();
 		foo4.val = 40;
-		assertEquals(1, fooDao.create(foo4));
+		assertEquals(1, dao.create(foo4));
 
-		QueryBuilder<Foo, Object> iqb = fooDao.queryBuilder();
+		QueryBuilder<Foo, Object> iqb = dao.queryBuilder();
 		iqb.selectRaw("max(id)");
 
-		QueryBuilder<Foo, Object> oqb = fooDao.queryBuilder();
+		QueryBuilder<Foo, Object> oqb = dao.queryBuilder();
 		Foo result = oqb.where().in(Foo.ID_COLUMN_NAME, iqb).queryForFirst();
 		assertNotNull(result);
 		assertEquals(foo4.id, result.id);
+	}
+
+	@Test
+	public void testQueryRawMax() throws Exception {
+		Dao<Foo, Object> dao = createDao(Foo.class, true);
+
+		Foo foo1 = new Foo();
+		foo1.stringField = "1";
+		foo1.val = 10;
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		foo2.stringField = "1";
+		foo2.val = 20;
+		assertEquals(1, dao.create(foo2));
+		Foo foo3 = new Foo();
+		foo3.stringField = "2";
+		foo3.val = 30;
+		assertEquals(1, dao.create(foo3));
+		Foo foo4 = new Foo();
+		foo4.stringField = "2";
+		foo4.val = 40;
+		assertEquals(1, dao.create(foo4));
+
+		QueryBuilder<Foo, Object> qb = dao.queryBuilder();
+		qb.selectRaw("id, string, max(val) as val");
+		qb.groupBy(Foo.STRING_COLUMN_NAME);
+		GenericRawResults<Foo> results = dao.queryRaw(qb.prepareStatementString(), dao.getRawRowMapper());
+		assertNotNull(results);
+		CloseableIterator<Foo> iterator = results.closeableIterator();
+		try {
+			assertTrue(iterator.hasNext());
+			assertEquals(foo2.val, iterator.next().val);
+			assertTrue(iterator.hasNext());
+			assertEquals(foo4.val, iterator.next().val);
+			assertFalse(iterator.hasNext());
+		} finally {
+			iterator.close();
+		}
 	}
 
 	/* ======================================================================================================== */

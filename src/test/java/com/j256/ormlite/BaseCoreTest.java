@@ -47,7 +47,7 @@ public abstract class BaseCoreTest {
 		public static final String ID_COLUMN_NAME = "id";
 		public static final String VAL_COLUMN_NAME = "val";
 		public static final String EQUAL_COLUMN_NAME = "equal";
-		public static final String STRING_COLUMN_NAME = "null";
+		public static final String STRING_COLUMN_NAME = "string";
 		@DatabaseField(generatedId = true, columnName = ID_COLUMN_NAME)
 		public int id;
 		@DatabaseField(columnName = VAL_COLUMN_NAME)
