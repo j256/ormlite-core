@@ -48,6 +48,12 @@ public interface CompiledStatement {
 	public void closeQuietly();
 
 	/**
+	 * Cancel a currently running query associated with this statement. Support for this is highly architecture and
+	 * database dependent.
+	 */
+	public void cancel() throws SQLException;
+
+	/**
 	 * Set the parameter specified by the index and type to be an object.
 	 * 
 	 * @param parameterIndex
