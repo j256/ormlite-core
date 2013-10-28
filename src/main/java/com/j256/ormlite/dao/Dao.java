@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.stmt.DeleteBuilder;
@@ -83,7 +84,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public List<T> queryForEq(String fieldName, Object value) throws SQLException;
 
 	/**
-	 * Query for the rows in the database that match the object passed in as an argument. Any fields in the matching
+	 * Query for the rows in the database that match the object passed in as a parameter. Any fields in the matching
 	 * object that are not the default value (null, false, 0, 0.0, etc.) are used as the matching parameters with AND.
 	 * If you are worried about SQL quote escaping, you should use {@link #queryForMatchingArgs(Object)}.
 	 */
@@ -108,7 +109,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public List<T> queryForFieldValuesArgs(Map<String, Object> fieldValues) throws SQLException;
 
 	/**
-	 * Query for a data item in the table that has the same ID as the data parameter.
+	 * Query for a data item in the table that has the same id as the data parameter.
 	 */
 	public T queryForSameId(T data) throws SQLException;
 
@@ -150,7 +151,9 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public List<T> query(PreparedQuery<T> preparedQuery) throws SQLException;
 
 	/**
-	 * Create a new row in the database from an object.
+	 * Create a new row in the database from an object. If the object being created uses
+	 * {@link DatabaseField#generatedId()} then the data parameter will be modified and set with the corresponding id
+	 * from the database.
 	 * 
 	 * @param data
 	 *            The data item that we are creating in the database.
@@ -160,7 +163,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 
 	/**
 	 * This is a convenience method to creating a data item but only if the ID does not already exist in the table. This
-	 * extracts the ID from the data parameter, does a {@link #queryForId(Object)} on it, returning the data if it
+	 * extracts the id from the data parameter, does a {@link #queryForId(Object)} on it, returning the data if it
 	 * exists. If it does not exist {@link #create(Object)} will be called with the parameter.
 	 * 
 	 * @return Either the data parameter if it was inserted (now with the ID field set via the create method) or the
@@ -170,7 +173,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 
 	/**
 	 * This is a convenience method for creating an item in the database if it does not exist. The id is extracted from
-	 * the data argument and a query-by-id is made on the database. If a row in the database with the same id exists
+	 * the data parameter and a query-by-id is made on the database. If a row in the database with the same id exists
 	 * then all of the columns in the database will be updated from the fields in the data parameter. If the id is null
 	 * (or 0 or some other default value) or doesn't exist in the database then the object will be created in the
 	 * database. This also means that your data item <i>must</i> have an id field defined.
@@ -180,8 +183,9 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public CreateOrUpdateStatus createOrUpdate(T data) throws SQLException;
 
 	/**
-	 * Store the fields from an object to the database. If you have made changes to an object, this is how you persist
-	 * those changes to the database. You cannot use this method to update the id field -- see {@link #updateId} .
+	 * Store the fields from an object to the database row corresponding to the id from the data parameter. If you have
+	 * made changes to an object, this is how you persist those changes to the database. You cannot use this method to
+	 * update the id field -- see {@link #updateId} .
 	 * 
 	 * <p>
 	 * NOTE: This will not save changes made to foreign objects or to foreign collections.
@@ -198,9 +202,9 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public int update(T data) throws SQLException;
 
 	/**
-	 * Update an object in the database to change its id to the newId parameter. The data <i>must</i> have its current
-	 * id set. If the id field has already changed then it cannot be updated. After the id has been updated in the
-	 * database, the id field of the data object will also be changed.
+	 * Update the data parameter in the database to change its id to the newId parameter. The data <i>must</i> have its
+	 * current (old) id set. If the id field has already changed then it cannot be updated. After the id has been
+	 * updated in the database, the id field of the data parameter will also be changed.
 	 * 
 	 * <p>
 	 * <b>NOTE:</b> Depending on the database type and the id type, you may be unable to change the id of the field.
@@ -217,8 +221,9 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public int updateId(T data, ID newId) throws SQLException;
 
 	/**
-	 * Update all rows in the table according to the prepared statement argument. To use this, the {@link UpdateBuilder}
-	 * must have set-columns applied to it using the {@link UpdateBuilder#updateColumnValue(String, Object)} or
+	 * Update all rows in the table according to the prepared statement parameter. To use this, the
+	 * {@link UpdateBuilder} must have set-columns applied to it using the
+	 * {@link UpdateBuilder#updateColumnValue(String, Object)} or
 	 * {@link UpdateBuilder#updateColumnExpression(String, String)} methods.
 	 * 
 	 * @param preparedUpdate
@@ -232,9 +237,9 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public int update(PreparedUpdate<T> preparedUpdate) throws SQLException;
 
 	/**
-	 * Does a query for the object's id and copies in each of the field values from the database to refresh the data
-	 * parameter. Any local object changes to persisted fields will be overwritten. If the database has been updated
-	 * this brings your local object up to date.
+	 * Does a query for the data parameter's id and copies in each of the field values from the database to refresh the
+	 * data parameter. Any local object changes to persisted fields will be overwritten. If the database has been
+	 * updated this brings your local object up to date.
 	 * 
 	 * @param data
 	 *            The data item that we are refreshing with fields from the database.
@@ -246,7 +251,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public int refresh(T data) throws SQLException;
 
 	/**
-	 * Delete an object from the database.
+	 * Delete the database row corresponding to the id from the data parameter.
 	 * 
 	 * @param data
 	 *            The data item that we are deleting from the database.
@@ -268,7 +273,8 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public int deleteById(ID id) throws SQLException;
 
 	/**
-	 * Delete a collection of objects from the database using an IN SQL clause.
+	 * Delete a collection of objects from the database using an IN SQL clause. The ids are extracted from the datas
+	 * parameter and used to remove the corresponding rows in the database with those ids.
 	 * 
 	 * @param datas
 	 *            A collection of data items to be deleted.
@@ -290,7 +296,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public int deleteIds(Collection<ID> ids) throws SQLException;
 
 	/**
-	 * Delete the objects that match the prepared statement argument.
+	 * Delete the objects that match the prepared statement parameter.
 	 * 
 	 * @param preparedDelete
 	 *            A prepared statement to match database rows to be deleted.
@@ -550,8 +556,8 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public String objectToString(T data);
 
 	/**
-	 * Return true if the two arguments are equal. This checks each of the fields defined in the database to see if they
-	 * are equal. Useful for testing and debugging.
+	 * Return true if the two parameters are equal. This checks each of the fields defined in the database to see if
+	 * they are equal. Useful for testing and debugging.
 	 * 
 	 * @param data1
 	 *            One of the data items that we are checking for equality.
@@ -561,7 +567,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public boolean objectsEqual(T data1, T data2) throws SQLException;
 
 	/**
-	 * Returns the ID from the data argument passed in. This is used by some of the internal queries to be able to
+	 * Returns the ID from the data parameter passed in. This is used by some of the internal queries to be able to
 	 * search by id.
 	 */
 	public ID extractId(T data) throws SQLException;
