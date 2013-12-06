@@ -3493,11 +3493,11 @@ Remember that SQLite is typeless so changing the type of a column doesn't matter
 Most likely, you should make your schema changes conditional to the version you are upgrading from:
 
 @example
-if (oldVersion == 1) @{
+if (oldVersion < 2) @{
   // we added the age column in version 2
   dao.executeRaw("ALTER TABLE `account` ADD COLUMN age INTEGER;");
 @}
-if (oldVersion < 2) @{
+if (oldVersion < 3) @{
   // we added the weight column in version 3
   dao.executeRaw("ALTER TABLE `account` ADD COLUMN weight INTEGER;");
 @}
