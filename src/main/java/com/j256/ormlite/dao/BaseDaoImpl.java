@@ -1,6 +1,7 @@
 package com.j256.ormlite.dao;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -66,12 +67,13 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	protected CloseableIterator<T> lastIterator;
 	protected ObjectFactory<T> objectFactory;
 
-	private static final ThreadLocal<DaoConfigArray> daoConfigLevelLocal = new ThreadLocal<DaoConfigArray>() {
-		@Override
-		protected DaoConfigArray initialValue() {
-			return new DaoConfigArray();
-		}
-	};
+	private static final ThreadLocal<List<BaseDaoImpl<?, ?>>> daoConfigLevelLocal =
+			new ThreadLocal<List<BaseDaoImpl<?, ?>>>() {
+				@Override
+				protected List<BaseDaoImpl<?, ?>> initialValue() {
+					return new ArrayList<BaseDaoImpl<?, ?>>(10);
+				}
+			};
 	private static ReferenceObjectCache defaultObjectCache;
 	private ObjectCache objectCache;
 
@@ -166,9 +168,9 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		 * go back and call FieldType.configDaoInformation() after we are done. So for every DAO that is initialized
 		 * here, we have to see if it is the top DAO. If not we save it for dao configuration later.
 		 */
-		DaoConfigArray daoConfigLevel = daoConfigLevelLocal.get();
-		daoConfigLevel.addDao(this);
-		if (daoConfigLevel.size() > 1) {
+		List<BaseDaoImpl<?, ?>> daoConfigList = daoConfigLevelLocal.get();
+		daoConfigList.add(this);
+		if (daoConfigList.size() > 1) {
 			// if we have recursed then just save the dao for later configuration
 			return;
 		}
@@ -181,8 +183,8 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			 * Also, do _not_ get a copy of daoConfigLevel.doArray because that array may be replaced by another, larger
 			 * one during the recursion.
 			 */
-			for (int i = 0; i < daoConfigLevel.size(); i++) {
-				BaseDaoImpl<?, ?> dao = daoConfigLevel.get(i);
+			for (int i = 0; i < daoConfigList.size(); i++) {
+				BaseDaoImpl<?, ?> dao = daoConfigList.get(i);
 
 				/*
 				 * Here's another complex bit. The first DAO that is being constructed as part of a DAO chain is not yet
@@ -209,7 +211,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			}
 		} finally {
 			// if we throw we want to clear our class hierarchy here
-			daoConfigLevel.clear();
+			daoConfigList.clear();
 			daoConfigLevelLocal.remove();
 		}
 	}
@@ -1006,37 +1008,6 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		} else {
 			where.and(fieldValues.size());
 			return qb.query();
-		}
-	}
-
-	private static class DaoConfigArray {
-		private BaseDaoImpl<?, ?>[] daoArray = new BaseDaoImpl<?, ?>[10];
-		private int daoArrayC = 0;
-		public void addDao(BaseDaoImpl<?, ?> dao) {
-			// if the array is full we double its size
-			if (daoArrayC == daoArray.length) {
-				BaseDaoImpl<?, ?>[] newDaoArray = new BaseDaoImpl<?, ?>[daoArray.length * 2];
-				// NOTE: Arrays.copyof is only for Java 1.6
-				for (int i = 0; i < daoArray.length; i++) {
-					newDaoArray[i] = daoArray[i];
-					daoArray[i] = null;
-				}
-				daoArray = newDaoArray;
-			}
-			daoArray[daoArrayC++] = dao;
-		}
-		public int size() {
-			return daoArrayC;
-		}
-		public BaseDaoImpl<?, ?> get(int i) {
-			return daoArray[i];
-		}
-		public void clear() {
-			// help GC
-			for (int i = 0; i < daoArrayC; i++) {
-				daoArray[i] = null;
-			}
-			daoArrayC = 0;
 		}
 	}
 }
