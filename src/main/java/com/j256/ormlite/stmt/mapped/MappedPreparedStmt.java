@@ -65,8 +65,8 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 			throw new SQLException("argument holder index " + index + " must be >= 0");
 		}
 		if (argHolders.length <= index) {
-			throw new SQLException("argument holder index " + index + " not valid, only " + argHolders.length
-					+ " in statement");
+			throw new SQLException("argument holder index " + index + " is not valid, only " + argHolders.length
+					+ " in statement (index starts at 0)");
 		}
 		argHolders[index].setValue(value);
 	}
