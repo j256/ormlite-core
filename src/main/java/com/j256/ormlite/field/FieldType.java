@@ -546,6 +546,9 @@ public class FieldType {
 						}
 					} finally {
 						levelCounters.autoRefreshLevel--;
+						if (levelCounters.autoRefreshLevel <= 0) {
+							threadLevelCounters.remove();
+						}
 					}
 				}
 				// the value we are to assign to our field is now the foreign object itself

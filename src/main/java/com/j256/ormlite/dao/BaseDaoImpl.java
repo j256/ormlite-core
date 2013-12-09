@@ -167,13 +167,12 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		 * here, we have to see if it is the top DAO. If not we save it for dao configuration later.
 		 */
 		DaoConfigArray daoConfigLevel = daoConfigLevelLocal.get();
-		if (daoConfigLevel.size() > 0) {
-			// if we have recursed then we need to save the dao for later configuration
-			daoConfigLevel.addDao(this);
+		daoConfigLevel.addDao(this);
+		if (daoConfigLevel.size() > 1) {
+			// if we have recursed then just save the dao for later configuration
 			return;
 		}
 
-		daoConfigLevel.addDao(this);
 		try {
 			/*
 			 * WARNING: We do _not_ use an iterator here because we may be adding to the list as we process it and we'll
@@ -211,6 +210,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		} finally {
 			// if we throw we want to clear our class hierarchy here
 			daoConfigLevel.clear();
+			daoConfigLevelLocal.remove();
 		}
 	}
 
