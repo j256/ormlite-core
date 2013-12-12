@@ -367,6 +367,11 @@ public class FieldType {
 				throw new SQLException("Field class for '" + field.getName()
 						+ "' must be a parameterized Collection with at least 1 type.");
 			}
+			if (!(genericArguments[0] instanceof Class)) {
+				throw new SQLException("Field class for '" + field.getName()
+						+ "' must be a parameterized Collection whose generic argument is an entity class not: "
+						+ genericArguments[0]);
+			}
 			Class<?> collectionClazz = (Class<?>) genericArguments[0];
 			DatabaseTableConfig<?> tableConfig = fieldConfig.getForeignTableConfig();
 			BaseDaoImpl<Object, Object> foundDao;
