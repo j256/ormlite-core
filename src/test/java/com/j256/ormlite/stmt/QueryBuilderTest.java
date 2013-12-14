@@ -358,6 +358,40 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 	}
 
 	@Test
+	public void testOrderByRawAndOrderBy() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		foo1.val = 1;
+		foo1.equal = 10;
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		foo2.val = 5;
+		foo2.equal = 7;
+		assertEquals(1, dao.create(foo2));
+		Foo foo3 = new Foo();
+		foo3.val = 7;
+		foo3.equal = 5;
+		assertEquals(1, dao.create(foo3));
+		List<Foo> results =
+				dao.queryBuilder()
+						.orderByRaw("(" + Foo.VAL_COLUMN_NAME + "+" + Foo.EQUAL_COLUMN_NAME + ") DESC")
+						.query();
+		assertEquals(3, results.size());
+		assertEquals(foo2.id, results.get(0).id);
+		assertEquals(foo3.id, results.get(1).id);
+		assertEquals(foo1.id, results.get(2).id);
+		results =
+				dao.queryBuilder()
+						.orderByRaw("(" + Foo.VAL_COLUMN_NAME + "+" + Foo.EQUAL_COLUMN_NAME + ") DESC")
+						.orderBy(Foo.VAL_COLUMN_NAME, false)
+						.query();
+		assertEquals(3, results.size());
+		assertEquals(foo3.id, results.get(0).id);
+		assertEquals(foo2.id, results.get(1).id);
+		assertEquals(foo1.id, results.get(2).id);
+	}
+
+	@Test
 	public void testQueryForForeign() throws Exception {
 		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		Dao<Foreign, Object> foreignDao = createDao(Foreign.class, true);

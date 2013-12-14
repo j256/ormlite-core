@@ -2,6 +2,8 @@
 	* CORE: Added support for tracking direct database connection activity with DatabaseConnectionProxy.
 	* CORE: Fixed problem when inserting no columns to Sqlite (Android), other DBs. Thanks to Michael Weimann. Bug #155.
 	* CORE: Added support for canceling of long running prepared queries. Thanks to Nathan Jones.
+	* CORE: More aggressively remove of some ThreadLocal data.  Thanks to Pavel Arnošt.
+	* CORE: Fixed QueryBuilder.orderByRaw(...) and orderBy(...) mutually exclusivity.  Thanks to Diederik.  Bug #161.
 	* ANDROID: Added initial API compatibility code for handling multiple API versions.
 
 4.47: 9/8/2013

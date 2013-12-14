@@ -754,7 +754,10 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 					argList.add(arg);
 				}
 			}
-		} else {
+			// we assume that it held some stuff that we need to separate
+			first = false;
+		}
+		if (orderByList != null) {
 			for (OrderBy orderBy : orderByList) {
 				if (first) {
 					first = false;
