@@ -121,7 +121,8 @@ import com.j256.ormlite.table.TableInfo;
  */
 public class Where<T, ID> {
 
-	private final static int START_CLAUSE_SIZE = 4;
+	private final static int CLAUSE_STACK_START_SIZE = 4;
+	private static final int NEEDS_FUTURE_STACK_START_SIZE = 2;
 
 	private final TableInfo<T, ID> tableInfo;
 	private final StatementBuilder<T, ID> statementBuilder;
@@ -129,9 +130,10 @@ public class Where<T, ID> {
 	private final String idColumnName;
 	private final DatabaseType databaseType;
 
-	private Clause[] clauseStack = new Clause[START_CLAUSE_SIZE];
-	private int clauseStackLevel = 0;
-	private NeedsFutureClause needsFuture = null;
+	private Clause[] clauseStack = new Clause[CLAUSE_STACK_START_SIZE];
+	private int clauseStackLevel;
+	private NeedsFutureClause[] needsFutureClauseStack = null;
+	private int needsFutureClauseStackLevel;
 
 	Where(TableInfo<T, ID> tableInfo, StatementBuilder<T, ID> statementBuilder, DatabaseType databaseType) {
 		// limit the constructor scope
@@ -571,6 +573,10 @@ public class Where<T, ID> {
 			throw new IllegalStateException(
 					"Both the \"left-hand\" and \"right-hand\" clauses have been defined.  Did you miss an AND or OR?");
 		}
+		if (needsFutureClauseStackLevel != 0) {
+			throw new IllegalStateException(
+					"The SQL statement has not been finished since there are previous operations still waiting for clauses.");
+		}
 
 		// we don't pop here because we may want to run the query multiple times
 		peek().appendSql(databaseType, tableName, sb, columnArgList);
@@ -645,22 +651,36 @@ public class Where<T, ID> {
 		return clauses;
 	}
 
-	private void addNeedsFuture(NeedsFutureClause clause) {
-		if (needsFuture != null) {
-			throw new IllegalStateException(needsFuture + " is already waiting for a future clause, can't add: "
-					+ clause);
+	private void addNeedsFuture(NeedsFutureClause needsFuture) {
+		if (needsFutureClauseStack == null) {
+			needsFutureClauseStack = new NeedsFutureClause[NEEDS_FUTURE_STACK_START_SIZE];
+			needsFutureClauseStackLevel = 0;
 		}
-		needsFuture = clause;
-		push(clause);
+		if (needsFutureClauseStackLevel == needsFutureClauseStack.length) {
+			// double its size each time
+			NeedsFutureClause[] newStack = new NeedsFutureClause[needsFutureClauseStackLevel * 2];
+			// copy the entries over to the new stack
+			for (int i = 0; i < needsFutureClauseStackLevel; i++) {
+				newStack[i] = needsFutureClauseStack[i];
+				// to help gc
+				needsFutureClauseStack[i] = null;
+			}
+			needsFutureClauseStack = newStack;
+		}
+		needsFutureClauseStack[needsFutureClauseStackLevel++] = needsFuture;
+		push(needsFuture);
 	}
 
 	private void addClause(Clause clause) {
-		if (needsFuture == null) {
+		if (needsFutureClauseStack == null || needsFutureClauseStackLevel == 0) {
 			push(clause);
 		} else {
+			// pop from needs future
+			NeedsFutureClause needsFuture = needsFutureClauseStack[--needsFutureClauseStackLevel];
+			// to help gc
+			needsFutureClauseStack[needsFutureClauseStackLevel] = null;
 			// we have a binary statement which was called before the right clause was defined
 			needsFuture.setMissingClause(clause);
-			needsFuture = null;
 		}
 	}
 

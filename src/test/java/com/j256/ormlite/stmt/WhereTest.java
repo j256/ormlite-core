@@ -47,6 +47,8 @@ public class WhereTest extends BaseCoreTest {
 		where.eq(Foo.VAL_COLUMN_NAME, "bar");
 		where.and();
 		where.and();
+		StringBuilder sb = new StringBuilder();
+		where.appendSql(null, sb, null);
 	}
 
 	@Test(expected = IllegalStateException.class)
