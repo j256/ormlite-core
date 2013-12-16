@@ -4,7 +4,8 @@
 	* CORE: Added support for canceling of long running prepared queries. Thanks to Nathan Jones.
 	* CORE: More aggressively remove of some ThreadLocal data.  Thanks to Pavel Arnošt.
 	* CORE: Fixed QueryBuilder.orderByRaw(...) and orderBy(...) mutually exclusivity.  Thanks to Diederik.  Bug #161.
-	* CORE: Added support for multiple future clauses to support and() not().  Thanks to ????.  Bug #159.
+	* CORE: Fixed problem with queries similar to and().not().like(...).  Thanks to ????.  Bug #159.
+	* CORE: Added better use of object cache when hydrating foreign fields.  Thanks to Anthony Whitlock.  Feature #38.
 	* ANDROID: Added initial API compatibility code for handling multiple API versions.
 
 4.47: 9/8/2013
