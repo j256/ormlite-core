@@ -514,7 +514,17 @@ public class FieldType {
 			if (foreignId != null && foreignId.equals(val)) {
 				return;
 			}
-			if (!parentObject) {
+			// awhitlock: raised as OrmLite issue: bug #122
+			Object cachedVal;
+			ObjectCache foreignCache = foreignDao.getObjectCache();
+			if (foreignCache == null) {
+				cachedVal = null;
+			} else {
+				cachedVal = foreignCache.get(getType(), val);
+			}
+			if (cachedVal != null) {
+				val = cachedVal;
+			} else if (!parentObject) {
 				Object foreignObject;
 				LevelCounters levelCounters = threadLevelCounters.get();
 				// we record the current auto-refresh level which will be used along the way

@@ -205,9 +205,11 @@ public class FieldTypeTest extends BaseCoreTest {
 	public void testFieldForeign() throws Exception {
 
 		Field[] fields = ForeignParent.class.getDeclaredFields();
-		assertTrue(fields.length >= 2);
-		Field nameField = fields[0];
-		Field bazField = fields[1];
+		assertTrue(fields.length >= 3);
+		@SuppressWarnings("unused")
+		Field idField = fields[0];
+		Field nameField = fields[1];
+		Field bazField = fields[2];
 
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, ForeignParent.class.getSimpleName(), nameField,
@@ -414,8 +416,8 @@ public class FieldTypeTest extends BaseCoreTest {
 	@Test
 	public void testAssignForeign() throws Exception {
 		Field[] fields = ForeignParent.class.getDeclaredFields();
-		assertTrue(fields.length >= 2);
-		Field field = fields[1];
+		assertTrue(fields.length >= 3);
+		Field field = fields[2];
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, ForeignParent.class.getSimpleName(), field,
 						ForeignParent.class);
@@ -771,6 +773,27 @@ public class FieldTypeTest extends BaseCoreTest {
 		assertEquals("", result.defaultBlank);
 	}
 
+	@Test
+	public void testForeignInCache() throws Exception {
+		Dao<ForeignParent, Integer> parentDao = createDao(ForeignParent.class, true);
+		Dao<ForeignForeign, Integer> foreignDao = createDao(ForeignForeign.class, true);
+		foreignDao.setObjectCache(true);
+
+		ForeignForeign foreign = new ForeignForeign();
+		foreign.stuff = "hello";
+		foreignDao.create(foreign);
+
+		assertSame(foreign, foreignDao.queryForId(foreign.id));
+
+		ForeignParent parent = new ForeignParent();
+		parent.foreign = foreign;
+		parentDao.create(parent);
+
+		ForeignParent result = parentDao.queryForId(parent.id);
+		assertNotSame(parent, result);
+		assertSame(foreign, result.foreign);
+	}
+
 	/* ========================================================================================================= */
 
 	protected static class LocalFoo {
@@ -835,6 +858,8 @@ public class FieldTypeTest extends BaseCoreTest {
 	}
 
 	protected static class ForeignParent {
+		@DatabaseField(generatedId = true)
+		int id;
 		@DatabaseField
 		String name;
 		@DatabaseField(foreign = true)
