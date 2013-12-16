@@ -6,9 +6,9 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.47
+@set ormlite_version 4.48
 @set ormlite_year 2013
-@set ormlite_date September @value{ormlite_year}
+@set ormlite_date December @value{ormlite_year}
 @set package ORMLite
 @c ----------------------------------------------------------------
 

@@ -1,4 +1,4 @@
-4.48: 9/XX/2013
+4.48: 12/16/2013
 	* CORE: Added support for tracking direct database connection activity with DatabaseConnectionProxy.
 	* CORE: Fixed problem when inserting no columns to Sqlite (Android), other DBs. Thanks to Michael Weimann. Bug #155.
 	* CORE: Added support for canceling of long running prepared queries. Thanks to Nathan Jones.
@@ -44,7 +44,7 @@
 	* CORE: Added the ColumnArg feature to compare two columns using QueryBuilder in simple queries and joins.
 	* CORE: Fixed a problem with GROUP BY, ORDER BY, and HAVING order.  Bug #134.
 	* CORE: Fixed possible problem with field-type comparison in certain situations.  Thanks to shikajiro.  Bug #136.
-	* CORE: Added ? arguments to QueryBuilder.orderByRaw(...) method.  Thanks a bunch to Nathan Jones.  Feature #138.
+	* CORE: Added ? arguments to QueryBuilder.orderByRaw(...) method.  Thanks a bunch to Nathan Jones.  Feature #39.
 	* CORE: Added support for multiple JOIN statements.  Thanks to Ramps.  Feature #28.
 	* CORE: Added ability to select log-type using "com.j256.ormlite.logger.type" system property.  See LoggerFactory.
 	* CORE: Creating an empty foreign collection now mirrors the collection type.  "Fixes" bug #124.
