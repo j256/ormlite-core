@@ -122,7 +122,6 @@ import com.j256.ormlite.table.TableInfo;
 public class Where<T, ID> {
 
 	private final static int CLAUSE_STACK_START_SIZE = 4;
-	private static final int NEEDS_FUTURE_STACK_START_SIZE = 2;
 
 	private final TableInfo<T, ID> tableInfo;
 	private final StatementBuilder<T, ID> statementBuilder;
@@ -132,8 +131,7 @@ public class Where<T, ID> {
 
 	private Clause[] clauseStack = new Clause[CLAUSE_STACK_START_SIZE];
 	private int clauseStackLevel;
-	private NeedsFutureClause[] needsFutureClauseStack = null;
-	private int needsFutureClauseStackLevel;
+	private NeedsFutureClause needsFuture = null;
 
 	Where(TableInfo<T, ID> tableInfo, StatementBuilder<T, ID> statementBuilder, DatabaseType databaseType) {
 		// limit the constructor scope
@@ -152,7 +150,9 @@ public class Where<T, ID> {
 	 * AND operation which takes the previous clause and the next clause and AND's them together.
 	 */
 	public Where<T, ID> and() {
-		addNeedsFuture(new ManyClause(pop("AND"), ManyClause.AND_OPERATION));
+		ManyClause clause = new ManyClause(pop("AND"), ManyClause.AND_OPERATION);
+		push(clause);
+		addNeedsFuture(clause);
 		return this;
 	}
 
@@ -356,7 +356,13 @@ public class Where<T, ID> {
 	 * Used to NOT the next clause specified.
 	 */
 	public Where<T, ID> not() {
-		addNeedsFuture(new Not());
+		/*
+		 * Special circumstance here when we have a needs future with a not. Something like and().not().like(...). In
+		 * this case we satisfy the and()'s future as the not() but the not() becomes the new needs-future.
+		 */
+		Not not = new Not();
+		addClause(not);
+		addNeedsFuture(not);
 		return this;
 	}
 
@@ -372,7 +378,9 @@ public class Where<T, ID> {
 	 * OR operation which takes the previous clause and the next clause and OR's them together.
 	 */
 	public Where<T, ID> or() {
-		addNeedsFuture(new ManyClause(pop("OR"), ManyClause.OR_OPERATION));
+		ManyClause clause = new ManyClause(pop("OR"), ManyClause.OR_OPERATION);
+		push(clause);
+		addNeedsFuture(clause);
 		return this;
 	}
 
@@ -573,7 +581,7 @@ public class Where<T, ID> {
 			throw new IllegalStateException(
 					"Both the \"left-hand\" and \"right-hand\" clauses have been defined.  Did you miss an AND or OR?");
 		}
-		if (needsFutureClauseStackLevel != 0) {
+		if (needsFuture != null) {
 			throw new IllegalStateException(
 					"The SQL statement has not been finished since there are previous operations still waiting for clauses.");
 		}
@@ -651,36 +659,21 @@ public class Where<T, ID> {
 		return clauses;
 	}
 
-	private void addNeedsFuture(NeedsFutureClause needsFuture) {
-		if (needsFutureClauseStack == null) {
-			needsFutureClauseStack = new NeedsFutureClause[NEEDS_FUTURE_STACK_START_SIZE];
-			needsFutureClauseStackLevel = 0;
+	private void addNeedsFuture(NeedsFutureClause clause) {
+		if (needsFuture != null) {
+			throw new IllegalStateException(needsFuture + " is already waiting for a future clause, can't add: "
+					+ clause);
 		}
-		if (needsFutureClauseStackLevel == needsFutureClauseStack.length) {
-			// double its size each time
-			NeedsFutureClause[] newStack = new NeedsFutureClause[needsFutureClauseStackLevel * 2];
-			// copy the entries over to the new stack
-			for (int i = 0; i < needsFutureClauseStackLevel; i++) {
-				newStack[i] = needsFutureClauseStack[i];
-				// to help gc
-				needsFutureClauseStack[i] = null;
-			}
-			needsFutureClauseStack = newStack;
-		}
-		needsFutureClauseStack[needsFutureClauseStackLevel++] = needsFuture;
-		push(needsFuture);
+		needsFuture = clause;
 	}
 
 	private void addClause(Clause clause) {
-		if (needsFutureClauseStack == null || needsFutureClauseStackLevel == 0) {
+		if (needsFuture == null) {
 			push(clause);
 		} else {
-			// pop from needs future
-			NeedsFutureClause needsFuture = needsFutureClauseStack[--needsFutureClauseStackLevel];
-			// to help gc
-			needsFutureClauseStack[needsFutureClauseStackLevel] = null;
 			// we have a binary statement which was called before the right clause was defined
 			needsFuture.setMissingClause(clause);
+			needsFuture = null;
 		}
 	}
 

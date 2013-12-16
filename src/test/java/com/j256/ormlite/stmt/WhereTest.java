@@ -340,6 +340,28 @@ public class WhereTest extends BaseCoreTest {
 	}
 
 	@Test
+	public void testMultipleFuture() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+
+		Foo foo1 = new Foo();
+		foo1.val = 123;
+		foo1.stringField = "fjewpjfew";
+		dao.create(foo1);
+
+		QueryBuilder<Foo, String> qb = dao.queryBuilder();
+		Where<Foo, String> where = qb.where();
+
+		where.eq(Foo.VAL_COLUMN_NAME, foo1.val);
+		where.and();
+		where.not();
+		where.like(Foo.STRING_COLUMN_NAME, "hello");
+		List<Foo> results = where.query();
+		assertNotNull(results);
+		assertEquals(1, results.size());
+		assertEquals(foo1.id, results.get(0).id);
+	}
+
+	@Test
 	public void testNotAbsorb() throws Exception {
 		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int val = 112;
