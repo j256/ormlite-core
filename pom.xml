@@ -188,14 +188,13 @@
 				<executions>
 					<execution>
 						<id>sign-artifacts</id>
-						<phase>${env.gpgPhase}</phase>
+						<phase>${gpgPhase}</phase>
 						<goals>
 							<goal>sign</goal>
 						</goals>
 					</execution>
 				</executions>
 				<configuration>
-					<!-- j256 Releases (Code releases for j256.com) <j256@256.com> -->
 					<keyname>D3412AC1</keyname>
 				</configuration>
 			</plugin>
