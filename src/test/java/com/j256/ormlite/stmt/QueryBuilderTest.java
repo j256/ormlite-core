@@ -380,6 +380,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(foo2.id, results.get(0).id);
 		assertEquals(foo3.id, results.get(1).id);
 		assertEquals(foo1.id, results.get(2).id);
+		
 		results =
 				dao.queryBuilder()
 						.orderByRaw("(" + Foo.VAL_COLUMN_NAME + "+" + Foo.EQUAL_COLUMN_NAME + ") DESC")
@@ -389,6 +390,16 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(foo3.id, results.get(0).id);
 		assertEquals(foo2.id, results.get(1).id);
 		assertEquals(foo1.id, results.get(2).id);
+		
+		results =
+				dao.queryBuilder()
+						.orderBy(Foo.VAL_COLUMN_NAME, true)
+						.orderByRaw("(" + Foo.VAL_COLUMN_NAME + "+" + Foo.EQUAL_COLUMN_NAME + ") DESC")
+						.query();
+		assertEquals(3, results.size());
+		assertEquals(foo1.id, results.get(0).id);
+		assertEquals(foo2.id, results.get(1).id);
+		assertEquals(foo3.id, results.get(2).id);
 	}
 
 	@Test

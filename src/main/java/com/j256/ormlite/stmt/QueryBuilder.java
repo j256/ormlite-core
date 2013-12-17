@@ -39,8 +39,6 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	private List<String> selectColumnList;
 	private List<String> selectRawList;
 	private List<OrderBy> orderByList;
-	private String orderByRaw;
-	private ArgumentHolder[] orderByArgs;
 	private List<String> groupByList;
 	private String groupByRaw;
 	private boolean isInnerQuery;
@@ -194,10 +192,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		if (fieldType.isForeignCollection()) {
 			throw new IllegalArgumentException("Can't orderBy foreign colletion field: " + columnName);
 		}
-		if (orderByList == null) {
-			orderByList = new ArrayList<OrderBy>();
-		}
-		orderByList.add(new OrderBy(columnName, ascending));
+		addOrder(new OrderBy(columnName, ascending));
 		return this;
 	}
 
@@ -208,7 +203,8 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 *            The raw SQL order by clause. This should not include the "ORDER BY".
 	 */
 	public QueryBuilder<T, ID> orderByRaw(String rawSql) {
-		return orderByRaw(rawSql, (ArgumentHolder[]) null);
+		addOrder(new OrderBy(rawSql, (ArgumentHolder[]) null));
+		return this;
 	}
 
 	/**
@@ -221,8 +217,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 *            the sql-type set.
 	 */
 	public QueryBuilder<T, ID> orderByRaw(String rawSql, ArgumentHolder... args) {
-		orderByRaw = rawSql;
-		orderByArgs = args;
+		addOrder(new OrderBy(rawSql, args));
 		return this;
 	}
 
@@ -415,7 +410,6 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		selectColumnList = null;
 		selectRawList = null;
 		orderByList = null;
-		orderByRaw = null;
 		groupByList = null;
 		groupByRaw = null;
 		isInnerQuery = false;
@@ -505,6 +499,13 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	@Override
 	protected boolean shouldPrependTableNameToColumns() {
 		return joinList != null;
+	}
+
+	private void addOrder(OrderBy orderBy) {
+		if (orderByList == null) {
+			orderByList = new ArrayList<OrderBy>();
+		}
+		orderByList.add(orderBy);
 	}
 
 	private void setAddTableName(boolean addTableName) {
@@ -731,45 +732,40 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			for (JoinInfo joinInfo : joinList) {
 				if (joinInfo.queryBuilder != null && joinInfo.queryBuilder.hasOrderStuff()) {
 					joinInfo.queryBuilder.appendOrderBys(sb, first, argList);
+					first = false;
 				}
 			}
 		}
 	}
 
 	private boolean hasOrderStuff() {
-		return ((orderByList != null && !orderByList.isEmpty()) || orderByRaw != null);
+		return (orderByList != null && !orderByList.isEmpty());
 	}
 
 	private void appendOrderBys(StringBuilder sb, boolean first, List<ArgumentHolder> argList) {
 		if (first) {
 			sb.append("ORDER BY ");
 		}
-		if (orderByRaw != null) {
-			if (!first) {
+		for (OrderBy orderBy : orderByList) {
+			if (first) {
+				first = false;
+			} else {
 				sb.append(',');
 			}
-			sb.append(orderByRaw);
-			if (orderByArgs != null) {
-				for (ArgumentHolder arg : orderByArgs) {
-					argList.add(arg);
-				}
-			}
-			// we assume that it held some stuff that we need to separate
-			first = false;
-		}
-		if (orderByList != null) {
-			for (OrderBy orderBy : orderByList) {
-				if (first) {
-					first = false;
-				} else {
-					sb.append(',');
-				}
+			if (orderBy.getRawSql() == null) {
 				appendColumnName(sb, orderBy.getColumnName());
 				if (orderBy.isAscending()) {
 					// here for documentation purposes, ASC is the default
 					// sb.append(" ASC");
 				} else {
 					sb.append(" DESC");
+				}
+			} else {
+				sb.append(orderBy.getRawSql());
+				if (orderBy.getOrderByArgs() != null) {
+					for (ArgumentHolder arg : orderBy.getOrderByArgs()) {
+						argList.add(arg);
+					}
 				}
 			}
 		}
