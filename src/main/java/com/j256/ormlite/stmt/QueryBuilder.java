@@ -12,6 +12,7 @@ import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.stmt.query.GroupBy;
 import com.j256.ormlite.stmt.query.OrderBy;
 import com.j256.ormlite.table.TableInfo;
 
@@ -39,8 +40,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	private List<String> selectColumnList;
 	private List<String> selectRawList;
 	private List<OrderBy> orderByList;
-	private List<String> groupByList;
-	private String groupByRaw;
+	private List<GroupBy> groupByList;
 	private boolean isInnerQuery;
 	private boolean isCountOfQuery;
 	private String having;
@@ -167,11 +167,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		if (fieldType.isForeignCollection()) {
 			throw new IllegalArgumentException("Can't groupBy foreign colletion field: " + columnName);
 		}
-		if (groupByList == null) {
-			groupByList = new ArrayList<String>();
-		}
-		groupByList.add(columnName);
-		selectIdColumn = false;
+		addGroupBy(GroupBy.byColumnName(columnName));
 		return this;
 	}
 
@@ -179,7 +175,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * Add a raw SQL "GROUP BY" clause to the SQL query statement. This should not include the "GROUP BY".
 	 */
 	public QueryBuilder<T, ID> groupByRaw(String rawSql) {
-		groupByRaw = rawSql;
+		addGroupBy(GroupBy.byRawSql(rawSql));
 		return this;
 	}
 
@@ -192,7 +188,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		if (fieldType.isForeignCollection()) {
 			throw new IllegalArgumentException("Can't orderBy foreign colletion field: " + columnName);
 		}
-		addOrder(new OrderBy(columnName, ascending));
+		addOrderBy(new OrderBy(columnName, ascending));
 		return this;
 	}
 
@@ -203,7 +199,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 *            The raw SQL order by clause. This should not include the "ORDER BY".
 	 */
 	public QueryBuilder<T, ID> orderByRaw(String rawSql) {
-		addOrder(new OrderBy(rawSql, (ArgumentHolder[]) null));
+		addOrderBy(new OrderBy(rawSql, (ArgumentHolder[]) null));
 		return this;
 	}
 
@@ -217,7 +213,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 *            the sql-type set.
 	 */
 	public QueryBuilder<T, ID> orderByRaw(String rawSql, ArgumentHolder... args) {
-		addOrder(new OrderBy(rawSql, args));
+		addOrderBy(new OrderBy(rawSql, args));
 		return this;
 	}
 
@@ -411,7 +407,6 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		selectRawList = null;
 		orderByList = null;
 		groupByList = null;
-		groupByRaw = null;
 		isInnerQuery = false;
 		isCountOfQuery = false;
 		having = null;
@@ -501,11 +496,19 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		return joinList != null;
 	}
 
-	private void addOrder(OrderBy orderBy) {
+	private void addOrderBy(OrderBy orderBy) {
 		if (orderByList == null) {
 			orderByList = new ArrayList<OrderBy>();
 		}
 		orderByList.add(orderBy);
+	}
+
+	private void addGroupBy(GroupBy groupBy) {
+		if (groupByList == null) {
+			groupByList = new ArrayList<GroupBy>();
+		}
+		groupByList.add(groupBy);
+		selectIdColumn = false;
 	}
 
 	private void setAddTableName(boolean addTableName) {
@@ -687,32 +690,30 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			for (JoinInfo joinInfo : joinList) {
 				if (joinInfo.queryBuilder != null && joinInfo.queryBuilder.hasGroupStuff()) {
 					joinInfo.queryBuilder.appendGroupBys(sb, first);
+					first = false;
 				}
 			}
 		}
 	}
 
 	private boolean hasGroupStuff() {
-		return ((groupByList != null && !groupByList.isEmpty()) || groupByRaw != null);
+		return (groupByList != null && !groupByList.isEmpty());
 	}
 
 	private void appendGroupBys(StringBuilder sb, boolean first) {
 		if (first) {
 			sb.append("GROUP BY ");
 		}
-		if (groupByRaw != null) {
-			if (!first) {
+		for (GroupBy groupBy : groupByList) {
+			if (first) {
+				first = false;
+			} else {
 				sb.append(',');
 			}
-			sb.append(groupByRaw);
-		} else {
-			for (String columnName : groupByList) {
-				if (first) {
-					first = false;
-				} else {
-					sb.append(',');
-				}
-				appendColumnName(sb, columnName);
+			if (groupBy.getRawSql() == null) {
+				appendColumnName(sb, groupBy.getColumnName());
+			} else {
+				sb.append(groupBy.getRawSql());
 			}
 		}
 		sb.append(' ');
