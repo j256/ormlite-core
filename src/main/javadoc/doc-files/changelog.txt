@@ -1,4 +1,5 @@
 4.49: 12/??/2013
+	* CORE: Added JOIN-ing between tables _without_ a foreign-object relationship.
 	* CORE: Really fix QueryBuilder.orderByRaw(...) and orderBy(...) mutually exclusivity. Thanks to Diederik. Bug #161.
 
 4.48: 12/16/2013

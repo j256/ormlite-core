@@ -304,7 +304,17 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * </p>
 	 */
 	public QueryBuilder<T, ID> join(QueryBuilder<?, ?> joinedQueryBuilder) throws SQLException {
-		addJoinInfo("INNER", joinedQueryBuilder, WhereOperation.AND);
+		addJoinInfo(JoinType.INNER, null, null, joinedQueryBuilder, JoinWhereOperation.AND);
+		return this;
+	}
+
+	/**
+	 * Like {@link #join(QueryBuilder)} but allows you to specify the join type and the operation used to combine the
+	 * WHERE statements.
+	 */
+	public QueryBuilder<T, ID> join(QueryBuilder<?, ?> joinedQueryBuilder, JoinType type, JoinWhereOperation operation)
+			throws SQLException {
+		addJoinInfo(type, null, null, joinedQueryBuilder, operation);
 		return this;
 	}
 
@@ -312,7 +322,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * Like {@link #join(QueryBuilder)} but this combines the WHERE statements of two query builders with a SQL "OR".
 	 */
 	public QueryBuilder<T, ID> joinOr(QueryBuilder<?, ?> joinedQueryBuilder) throws SQLException {
-		addJoinInfo("INNER", joinedQueryBuilder, WhereOperation.OR);
+		addJoinInfo(JoinType.INNER, null, null, joinedQueryBuilder, JoinWhereOperation.OR);
 		return this;
 	}
 
@@ -332,7 +342,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * </p>
 	 */
 	public QueryBuilder<T, ID> leftJoin(QueryBuilder<?, ?> joinedQueryBuilder) throws SQLException {
-		addJoinInfo("LEFT", joinedQueryBuilder, WhereOperation.AND);
+		addJoinInfo(JoinType.LEFT, null, null, joinedQueryBuilder, JoinWhereOperation.AND);
 		return this;
 	}
 
@@ -341,7 +351,28 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * "OR".
 	 */
 	public QueryBuilder<T, ID> leftJoinOr(QueryBuilder<?, ?> joinedQueryBuilder) throws SQLException {
-		addJoinInfo("LEFT", joinedQueryBuilder, WhereOperation.OR);
+		addJoinInfo(JoinType.LEFT, null, null, joinedQueryBuilder, JoinWhereOperation.OR);
+		return this;
+	}
+
+	/**
+	 * Similar to {@link #join(QueryBuilder)} but this allows you to link two tables that share a field of the same
+	 * type. So even if there is _not_ a foreign-object relationship between the tables, you can JOIN them. This will
+	 * add into the SQL something close to " INNER JOIN other-table ...".
+	 */
+	public QueryBuilder<T, ID> join(String localColumnName, String joinedColumnName,
+			QueryBuilder<?, ?> joinedQueryBuilder) throws SQLException {
+		addJoinInfo(JoinType.INNER, localColumnName, joinedColumnName, joinedQueryBuilder, JoinWhereOperation.AND);
+		return this;
+	}
+
+	/**
+	 * Similar to {@link #join(QueryBuilder, JoinType, JoinWhereOperation)} but this allows you to link two tables that
+	 * share a field of the same type.
+	 */
+	public QueryBuilder<T, ID> join(String localColumnName, String joinedColumnName,
+			QueryBuilder<?, ?> joinedQueryBuilder, JoinType type, JoinWhereOperation operation) throws SQLException {
+		addJoinInfo(type, localColumnName, joinedColumnName, joinedQueryBuilder, operation);
 		return this;
 	}
 
@@ -469,7 +500,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 				if (first) {
 					operation = WhereOperation.FIRST;
 				} else {
-					operation = joinInfo.operation;
+					operation = joinInfo.operation.whereOperation;
 				}
 				first = joinInfo.queryBuilder.appendWhereStatement(sb, argList, operation);
 			}
@@ -523,14 +554,35 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	/**
 	 * Add join info to the query. This can be called multiple times to join with more than one table.
 	 */
-	private void addJoinInfo(String type, QueryBuilder<?, ?> joinedQueryBuilder, WhereOperation operation)
-			throws SQLException {
+	private void addJoinInfo(JoinType type, String localColumnName, String joinedColumnName,
+			QueryBuilder<?, ?> joinedQueryBuilder, JoinWhereOperation operation) throws SQLException {
 		JoinInfo joinInfo = new JoinInfo(type, joinedQueryBuilder, operation);
-		matchJoinedFields(joinInfo, joinedQueryBuilder);
+		if (localColumnName == null) {
+			matchJoinedFields(joinInfo, joinedQueryBuilder);
+		} else {
+			matchJoinedFieldsByName(joinInfo, localColumnName, joinedColumnName, joinedQueryBuilder);
+		}
 		if (joinList == null) {
 			joinList = new ArrayList<JoinInfo>();
 		}
 		joinList.add(joinInfo);
+	}
+
+	/**
+	 * Match up our joined fields so we can throw a nice exception immediately if you can't join with this type.
+	 */
+	private void matchJoinedFieldsByName(JoinInfo joinInfo, String localColumnName, String joinedColumnName,
+			QueryBuilder<?, ?> joinedQueryBuilder) throws SQLException {
+		joinInfo.localField = tableInfo.getFieldTypeByColumnName(localColumnName);
+		if (joinInfo.localField == null) {
+			throw new SQLException("Could not find field in " + tableInfo.getDataClass() + " that has column-name '"
+					+ localColumnName + "'");
+		}
+		joinInfo.remoteField = joinedQueryBuilder.tableInfo.getFieldTypeByColumnName(joinedColumnName);
+		if (joinInfo.remoteField == null) {
+			throw new SQLException("Could not find field in " + joinedQueryBuilder.tableInfo.getDataClass()
+					+ " that has column-name '" + joinedColumnName + "'");
+		}
 	}
 
 	/**
@@ -566,7 +618,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 
 	private void appendJoinSql(StringBuilder sb) {
 		for (JoinInfo joinInfo : joinList) {
-			sb.append(joinInfo.type).append(" JOIN ");
+			sb.append(joinInfo.type.sql).append(" JOIN ");
 			databaseType.appendEscapedEntityName(sb, joinInfo.queryBuilder.tableName);
 			sb.append(" ON ");
 			databaseType.appendEscapedEntityName(sb, tableName);
@@ -791,13 +843,13 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * Encapsulates our join information.
 	 */
 	private class JoinInfo {
-		final String type;
+		final JoinType type;
 		final QueryBuilder<?, ?> queryBuilder;
 		FieldType localField;
 		FieldType remoteField;
-		WhereOperation operation;
+		JoinWhereOperation operation;
 
-		public JoinInfo(String type, QueryBuilder<?, ?> queryBuilder, WhereOperation operation) {
+		public JoinInfo(JoinType type, QueryBuilder<?, ?> queryBuilder, JoinWhereOperation operation) {
 			this.type = type;
 			this.queryBuilder = queryBuilder;
 			this.operation = operation;
@@ -821,6 +873,61 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 
 		public FieldType[] getResultFieldTypes() {
 			return queryBuilder.getResultFieldTypes();
+		}
+	}
+
+	/**
+	 * Type of the JOIN that we are adding.
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> RIGHT and FULL JOIN SQL commands are not supported because we are only returning objects from the
+	 * "left" table.
+	 */
+	public enum JoinType {
+		/**
+		 * The most common type of join. "An SQL INNER JOIN return all rows from multiple tables where the join
+		 * condition is met."
+		 * 
+		 * <p>
+		 * See <a href="http://www.w3schools.com/sql/sql_join.asp" >SQL JOIN</a>
+		 * </p>
+		 */
+		INNER("INNER"),
+		/**
+		 * "The LEFT JOIN keyword returns all rows from the left table (table1), with the matching rows in the right
+		 * table (table2). The result is NULL in the right side when there is no match."
+		 * 
+		 * <p>
+		 * See: <a href="http://www.w3schools.com/sql/sql_join_left.asp" >LEFT JOIN SQL docs</a>
+		 * </p>
+		 */
+		LEFT("LEFT"),
+		// end
+		;
+
+		private String sql;
+
+		private JoinType(String sql) {
+			this.sql = sql;
+		}
+	}
+
+	/**
+	 * When we are combining WHERE statements from the two joined query-builders, this determines the operator to use to
+	 * do so.
+	 */
+	public enum JoinWhereOperation {
+		/** combine the two WHERE parts of the JOINed queries with an AND */
+		AND(WhereOperation.AND),
+		/** combine the two WHERE parts of the JOINed queries with an OR */
+		OR(WhereOperation.OR),
+		// end
+		;
+
+		private WhereOperation whereOperation;
+
+		private JoinWhereOperation(WhereOperation whereOperation) {
+			this.whereOperation = whereOperation;
 		}
 	}
 }

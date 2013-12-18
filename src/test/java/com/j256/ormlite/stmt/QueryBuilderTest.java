@@ -20,6 +20,8 @@ import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.db.BaseDatabaseType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.SqlType;
+import com.j256.ormlite.stmt.QueryBuilder.JoinType;
+import com.j256.ormlite.stmt.QueryBuilder.JoinWhereOperation;
 
 public class QueryBuilderTest extends BaseCoreStmtTest {
 
@@ -380,7 +382,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(foo2.id, results.get(0).id);
 		assertEquals(foo3.id, results.get(1).id);
 		assertEquals(foo1.id, results.get(2).id);
-		
+
 		results =
 				dao.queryBuilder()
 						.orderByRaw("(" + Foo.VAL_COLUMN_NAME + "+" + Foo.EQUAL_COLUMN_NAME + ") DESC")
@@ -390,7 +392,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(foo3.id, results.get(0).id);
 		assertEquals(foo2.id, results.get(1).id);
 		assertEquals(foo1.id, results.get(2).id);
-		
+
 		results =
 				dao.queryBuilder()
 						.orderBy(Foo.VAL_COLUMN_NAME, true)
@@ -575,6 +577,13 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		QueryBuilder<Baz, Integer> bazQb = bazDao.queryBuilder();
 		bazQb.where().eq(Baz.VAL_FIELD, baz2.val);
 		results = bazQb.joinOr(barQb).query();
+		assertEquals(2, results.size());
+		assertEquals(bar1.id, results.get(0).bar.id);
+		assertEquals(bar2.id, results.get(1).bar.id);
+
+		bazQb.reset();
+		bazQb.where().eq(Baz.VAL_FIELD, baz2.val);
+		results = bazQb.join(barQb, JoinType.INNER, JoinWhereOperation.OR).query();
 		assertEquals(2, results.size());
 		assertEquals(bar1.id, results.get(0).bar.id);
 		assertEquals(bar2.id, results.get(1).bar.id);
@@ -795,7 +804,11 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(3, results.size());
 		results = bazDao.queryBuilder().join(barQb).query();
 		assertEquals(2, results.size());
+
 		results = bazDao.queryBuilder().leftJoin(barQb).query();
+		assertEquals(3, results.size());
+
+		results = bazDao.queryBuilder().join(barQb, JoinType.LEFT, JoinWhereOperation.AND).query();
 		assertEquals(3, results.size());
 	}
 
@@ -1118,6 +1131,88 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		} finally {
 			iterator.close();
 		}
+	}
+
+	@Test
+	public void testJoinTwoColumns() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
+		Dao<StringColumnArg, Integer> scaDao = createDao(StringColumnArg.class, true);
+
+		Foo foo1 = new Foo();
+		foo1.val = 123213213;
+		foo1.stringField = "stuff";
+		fooDao.create(foo1);
+
+		Foo foo2 = new Foo();
+		foo2.stringField = "not stuff";
+		fooDao.create(foo2);
+
+		StringColumnArg sca1 = new StringColumnArg();
+		sca1.str1 = foo1.stringField;
+		scaDao.create(sca1);
+
+		StringColumnArg sca2 = new StringColumnArg();
+		sca2.str1 = foo2.stringField;
+		scaDao.create(sca2);
+
+		StringColumnArg sca3 = new StringColumnArg();
+		sca3.str1 = "some other field";
+		scaDao.create(sca3);
+
+		QueryBuilder<Foo, Integer> fooQb = fooDao.queryBuilder();
+		fooQb.where().eq(Foo.VAL_COLUMN_NAME, foo1.val);
+
+		QueryBuilder<StringColumnArg, Integer> scaQb = scaDao.queryBuilder();
+		scaQb.join(StringColumnArg.STR1_FIELD, Foo.STRING_COLUMN_NAME, fooQb);
+		List<StringColumnArg> results = scaQb.query();
+		assertNotNull(results);
+		assertEquals(1, results.size());
+		assertEquals(sca1.id, results.get(0).id);
+
+		fooQb.reset();
+		fooQb.where().eq(Foo.VAL_COLUMN_NAME, foo2.val);
+
+		scaQb.reset();
+		scaQb.join(StringColumnArg.STR1_FIELD, Foo.STRING_COLUMN_NAME, fooQb);
+		results = scaQb.query();
+		assertNotNull(results);
+		assertEquals(1, results.size());
+		assertEquals(sca2.id, results.get(0).id);
+	}
+
+	@Test
+	public void testLeftJoinTwoColumns() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
+		Dao<StringColumnArg, Integer> scaDao = createDao(StringColumnArg.class, true);
+
+		Foo foo1 = new Foo();
+		foo1.val = 123213213;
+		foo1.stringField = "stuff";
+		fooDao.create(foo1);
+
+		StringColumnArg sca1 = new StringColumnArg();
+		sca1.str1 = foo1.stringField;
+		scaDao.create(sca1);
+
+		StringColumnArg sca2 = new StringColumnArg();
+		sca2.str1 = "something eles";
+		scaDao.create(sca2);
+
+		QueryBuilder<Foo, Integer> fooQb = fooDao.queryBuilder();
+		QueryBuilder<StringColumnArg, Integer> scaQb = scaDao.queryBuilder();
+		scaQb.join(StringColumnArg.STR1_FIELD, Foo.STRING_COLUMN_NAME, fooQb);
+		List<StringColumnArg> results = scaQb.query();
+		assertNotNull(results);
+		assertEquals(1, results.size());
+		assertEquals(sca1.id, results.get(0).id);
+
+		scaQb.reset();
+		scaQb.join(StringColumnArg.STR1_FIELD, Foo.STRING_COLUMN_NAME, fooQb, JoinType.LEFT, JoinWhereOperation.AND);
+		results = scaQb.query();
+		assertNotNull(results);
+		assertEquals(2, results.size());
+		assertEquals(sca1.id, results.get(0).id);
+		assertEquals(sca2.id, results.get(1).id);
 	}
 
 	/* ======================================================================================================== */
