@@ -10,11 +10,11 @@ public class ColumnNameOrRawSql {
 	private final String columnName;
 	private final String rawSql;
 
-	public static ColumnNameOrRawSql byColumnName(String columnName) {
+	public static ColumnNameOrRawSql withColumnName(String columnName) {
 		return new ColumnNameOrRawSql(columnName, null);
 	}
 
-	public static ColumnNameOrRawSql byRawSql(String rawSql) {
+	public static ColumnNameOrRawSql withRawSql(String rawSql) {
 		return new ColumnNameOrRawSql(null, rawSql);
 	}
 
@@ -29,5 +29,14 @@ public class ColumnNameOrRawSql {
 
 	public String getRawSql() {
 		return rawSql;
+	}
+
+	@Override
+	public String toString() {
+		if (rawSql == null) {
+			return columnName;
+		} else {
+			return rawSql;
+		}
 	}
 }

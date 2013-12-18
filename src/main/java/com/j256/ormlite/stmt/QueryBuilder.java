@@ -3,7 +3,6 @@ package com.j256.ormlite.stmt;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import com.j256.ormlite.dao.CloseableIterator;
@@ -37,8 +36,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 
 	private boolean distinct;
 	private boolean selectIdColumn = true;
-	private List<String> selectColumnList;
-	private List<String> selectRawList;
+	private List<ColumnNameOrRawSql> selectList;
 	private List<OrderBy> orderByList;
 	private List<ColumnNameOrRawSql> groupByList;
 	private boolean isInnerQuery;
@@ -71,27 +69,23 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	int getSelectColumnCount() {
 		if (isCountOfQuery) {
 			return 1;
-		} else if (selectRawList != null && !selectRawList.isEmpty()) {
-			return selectRawList.size();
-		} else if (selectColumnList == null) {
+		} else if (selectList == null) {
 			return 0;
 		} else {
-			return selectColumnList.size();
+			return selectList.size();
 		}
 	}
 
 	/**
 	 * Return the selected columns in the query or an empty list if none were specified.
 	 */
-	List<String> getSelectColumns() {
+	String getSelectColumnsAsString() {
 		if (isCountOfQuery) {
-			return Collections.singletonList("COUNT(*)");
-		} else if (selectRawList != null && !selectRawList.isEmpty()) {
-			return selectRawList;
-		} else if (selectColumnList == null) {
-			return Collections.emptyList();
+			return "COUNT(*)";
+		} else if (selectList == null) {
+			return "";
 		} else {
-			return selectColumnList;
+			return selectList.toString();
 		}
 	}
 
@@ -115,9 +109,6 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * </p>
 	 */
 	public QueryBuilder<T, ID> selectColumns(String... columns) {
-		if (selectColumnList == null) {
-			selectColumnList = new ArrayList<String>();
-		}
 		for (String column : columns) {
 			addSelectColumnToList(column);
 		}
@@ -129,9 +120,6 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * {@link Collection}. This can be called multiple times to add more columns to select.
 	 */
 	public QueryBuilder<T, ID> selectColumns(Iterable<String> columns) {
-		if (selectColumnList == null) {
-			selectColumnList = new ArrayList<String>();
-		}
 		for (String column : columns) {
 			addSelectColumnToList(column);
 		}
@@ -144,11 +132,8 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * times to add more columns to select.
 	 */
 	public QueryBuilder<T, ID> selectRaw(String... columns) {
-		if (selectRawList == null) {
-			selectRawList = new ArrayList<String>();
-		}
 		for (String column : columns) {
-			selectRawList.add(column);
+			addSelectToList(ColumnNameOrRawSql.withRawSql(column));
 		}
 		return this;
 	}
@@ -167,7 +152,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		if (fieldType.isForeignCollection()) {
 			throw new IllegalArgumentException("Can't groupBy foreign colletion field: " + columnName);
 		}
-		addGroupBy(ColumnNameOrRawSql.byColumnName(columnName));
+		addGroupBy(ColumnNameOrRawSql.withColumnName(columnName));
 		return this;
 	}
 
@@ -175,7 +160,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * Add a raw SQL "GROUP BY" clause to the SQL query statement. This should not include the "GROUP BY".
 	 */
 	public QueryBuilder<T, ID> groupByRaw(String rawSql) {
-		addGroupBy(ColumnNameOrRawSql.byRawSql(rawSql));
+		addGroupBy(ColumnNameOrRawSql.withRawSql(rawSql));
 		return this;
 	}
 
@@ -434,10 +419,18 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		super.reset();
 		distinct = false;
 		selectIdColumn = true;
-		selectColumnList = null;
-		selectRawList = null;
-		orderByList = null;
-		groupByList = null;
+		if (selectList != null) {
+			selectList.clear();
+			selectList = null;
+		}
+		if (orderByList != null) {
+			orderByList.clear();
+			orderByList = null;
+		}
+		if (groupByList != null) {
+			groupByList.clear();
+			groupByList = null;
+		}
 		isInnerQuery = false;
 		isCountOfQuery = false;
 		having = null;
@@ -468,12 +461,9 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		if (isCountOfQuery) {
 			type = StatementType.SELECT_LONG;
 			sb.append("COUNT(*) ");
-		} else if (selectRawList != null && !selectRawList.isEmpty()) {
-			type = StatementType.SELECT_RAW;
-			appendSelectRaw(sb);
 		} else {
-			type = StatementType.SELECT;
-			appendColumns(sb);
+			// type set in appendSelects depending on raw or not
+			appendSelects(sb);
 		}
 		sb.append("FROM ");
 		databaseType.appendEscapedEntityName(sb, tableName);
@@ -613,7 +603,14 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 
 	private void addSelectColumnToList(String columnName) {
 		verifyColumnName(columnName);
-		selectColumnList.add(columnName);
+		addSelectToList(ColumnNameOrRawSql.withColumnName(columnName));
+	}
+
+	private void addSelectToList(ColumnNameOrRawSql select) {
+		if (selectList == null) {
+			selectList = new ArrayList<ColumnNameOrRawSql>();
+		}
+		selectList.add(select);
 	}
 
 	private void appendJoinSql(StringBuilder sb) {
@@ -636,22 +633,12 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		}
 	}
 
-	private void appendSelectRaw(StringBuilder sb) {
-		boolean first = true;
-		for (String column : selectRawList) {
-			if (first) {
-				first = false;
-			} else {
-				sb.append(", ");
-			}
-			sb.append(column);
-		}
-		sb.append(' ');
-	}
+	private void appendSelects(StringBuilder sb) {
+		// the default
+		type = StatementType.SELECT;
 
-	private void appendColumns(StringBuilder sb) {
 		// if no columns were specified then * is the default
-		if (selectColumnList == null) {
+		if (selectList == null) {
 			if (addTableName) {
 				databaseType.appendEscapedEntityName(sb, tableName);
 				sb.append('.');
@@ -668,9 +655,20 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		} else {
 			hasId = false;
 		}
-		List<FieldType> fieldTypeList = new ArrayList<FieldType>(selectColumnList.size() + 1);
-		for (String columnName : selectColumnList) {
-			FieldType fieldType = tableInfo.getFieldTypeByColumnName(columnName);
+		List<FieldType> fieldTypeList = new ArrayList<FieldType>(selectList.size() + 1);
+		for (ColumnNameOrRawSql select : selectList) {
+			if (select.getRawSql() != null) {
+				// if any are raw-sql then that's our type
+				type = StatementType.SELECT_RAW;
+				if (first) {
+					first = false;
+				} else {
+					sb.append(", ");
+				}
+				sb.append(select.getRawSql());
+				continue;
+			}
+			FieldType fieldType = tableInfo.getFieldTypeByColumnName(select.getColumnName());
 			/*
 			 * If this is a foreign-collection then we add it to our field-list but _not_ to the select list because
 			 * foreign collections don't have a column in the database.
@@ -690,16 +688,18 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			}
 		}
 
-		// we have to add the idField even if it isn't in the columnNameSet
-		if (!hasId && selectIdColumn) {
-			if (!first) {
-				sb.append(',');
+		if (type != StatementType.SELECT_RAW) {
+			// we have to add the idField even if it isn't in the columnNameSet
+			if (!hasId && selectIdColumn) {
+				if (!first) {
+					sb.append(',');
+				}
+				appendFieldColumnName(sb, idField, fieldTypeList);
 			}
-			appendFieldColumnName(sb, idField, fieldTypeList);
-		}
-		sb.append(' ');
+			sb.append(' ');
 
-		resultFieldTypes = fieldTypeList.toArray(new FieldType[fieldTypeList.size()]);
+			resultFieldTypes = fieldTypeList.toArray(new FieldType[fieldTypeList.size()]);
+		}
 	}
 
 	private void appendFieldColumnName(StringBuilder sb, FieldType fieldType, List<FieldType> fieldTypeList) {

@@ -2,7 +2,6 @@ package com.j256.ormlite.stmt;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.j256.ormlite.dao.CloseableIterator;
@@ -634,8 +633,7 @@ public class Where<T, ID> {
 				throw new SQLException("Inner query must have only 1 select column specified instead of *");
 			} else {
 				throw new SQLException("Inner query must have only 1 select column specified instead of "
-						+ subQueryBuilder.getSelectColumnCount() + ": "
-						+ Arrays.toString(subQueryBuilder.getSelectColumns().toArray(new String[0])));
+						+ subQueryBuilder.getSelectColumnCount() + ": " + subQueryBuilder.getSelectColumnsAsString());
 			}
 		}
 		// we do this to turn off the automatic addition of the ID column in the select column list
