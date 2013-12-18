@@ -12,7 +12,7 @@ import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.ForeignCollectionField;
-import com.j256.ormlite.stmt.query.GroupBy;
+import com.j256.ormlite.stmt.query.ColumnNameOrRawSql;
 import com.j256.ormlite.stmt.query.OrderBy;
 import com.j256.ormlite.table.TableInfo;
 
@@ -40,7 +40,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	private List<String> selectColumnList;
 	private List<String> selectRawList;
 	private List<OrderBy> orderByList;
-	private List<GroupBy> groupByList;
+	private List<ColumnNameOrRawSql> groupByList;
 	private boolean isInnerQuery;
 	private boolean isCountOfQuery;
 	private String having;
@@ -167,7 +167,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		if (fieldType.isForeignCollection()) {
 			throw new IllegalArgumentException("Can't groupBy foreign colletion field: " + columnName);
 		}
-		addGroupBy(GroupBy.byColumnName(columnName));
+		addGroupBy(ColumnNameOrRawSql.byColumnName(columnName));
 		return this;
 	}
 
@@ -175,7 +175,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * Add a raw SQL "GROUP BY" clause to the SQL query statement. This should not include the "GROUP BY".
 	 */
 	public QueryBuilder<T, ID> groupByRaw(String rawSql) {
-		addGroupBy(GroupBy.byRawSql(rawSql));
+		addGroupBy(ColumnNameOrRawSql.byRawSql(rawSql));
 		return this;
 	}
 
@@ -534,9 +534,9 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		orderByList.add(orderBy);
 	}
 
-	private void addGroupBy(GroupBy groupBy) {
+	private void addGroupBy(ColumnNameOrRawSql groupBy) {
 		if (groupByList == null) {
-			groupByList = new ArrayList<GroupBy>();
+			groupByList = new ArrayList<ColumnNameOrRawSql>();
 		}
 		groupByList.add(groupBy);
 		selectIdColumn = false;
@@ -756,7 +756,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		if (first) {
 			sb.append("GROUP BY ");
 		}
-		for (GroupBy groupBy : groupByList) {
+		for (ColumnNameOrRawSql groupBy : groupByList) {
 			if (first) {
 				first = false;
 			} else {
