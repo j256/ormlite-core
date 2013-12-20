@@ -1240,8 +1240,11 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		Dao<NoId, Void> dao = createDao(NoId.class, true);
 		QueryBuilder<NoId, Void> qb = dao.queryBuilder();
 		qb.selectColumns(NoId.FIELD_NAME_STUFF);
-		PreparedQuery<NoId> preparedQuery = qb.prepare();
-		assertNotNull(preparedQuery);
+		/*
+		 * Had a subtle, long-standing bug here that threw an exception when building the query if you were selecting
+		 * specific columns from an entity _without_ an id field.
+		 */
+		qb.prepare();
 	}
 
 	/* ======================================================================================================== */
