@@ -16,9 +16,11 @@ import org.junit.Test;
 
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.db.BaseDatabaseType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.stmt.QueryBuilder.JoinType;
 import com.j256.ormlite.stmt.QueryBuilder.JoinWhereOperation;
@@ -1215,6 +1217,33 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(sca2.id, results.get(1).id);
 	}
 
+	@Ignore("here to look at query output")
+	@Test
+	public void testSpecificJoinBug() throws Exception {
+		/*
+		 * Test trying to specifically reproduce a reported bug. The query built in the logs was enough to show that
+		 * either the bug has alreay been fixed or the test is not reproducing the problem adequately.
+		 */
+
+		Dao<Category, Integer> categoryDao = createDao(Category.class, true);
+		Dao<Criterion, Integer> criterionDao = createDao(Criterion.class, true);
+
+		QueryBuilder<Criterion, Integer> criteriaQb = criterionDao.queryBuilder();
+		criteriaQb.where().eq("active", Boolean.valueOf(true));
+
+		QueryBuilder<Category, Integer> categoryQb = categoryDao.queryBuilder();
+		categoryQb.orderByRaw("id").join(criteriaQb).query();
+	}
+
+	@Test
+	public void testSelectColumnsNoId() throws Exception {
+		Dao<NoId, Void> dao = createDao(NoId.class, true);
+		QueryBuilder<NoId, Void> qb = dao.queryBuilder();
+		qb.selectColumns(NoId.FIELD_NAME_STUFF);
+		PreparedQuery<NoId> preparedQuery = qb.prepare();
+		assertNotNull(preparedQuery);
+	}
+
 	/* ======================================================================================================== */
 
 	private static class LimitInline extends BaseDatabaseType {
@@ -1319,5 +1348,49 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		Bar bar;
 		public Two() {
 		}
+	}
+
+	protected static class BaseModel {
+		@DatabaseField(generatedId = true)
+		int id;
+	}
+
+	protected static class Project extends BaseModel {
+		// nothing here
+
+		@ForeignCollectionField(eager = false)
+		ForeignCollection<Category> categories;
+	}
+
+	protected static class Category extends BaseModel {
+
+		@DatabaseField(canBeNull = false, foreign = true)
+		Project project;
+
+		@ForeignCollectionField(eager = false)
+		ForeignCollection<Criterion> criteria;
+
+		public Category() {
+		}
+	}
+
+	protected static class Criterion extends BaseModel {
+		@DatabaseField
+		boolean active;
+
+		@DatabaseField
+		Integer weight;
+
+		@DatabaseField(canBeNull = false, foreign = true)
+		Category category;
+
+		public Criterion() {
+		}
+	}
+
+	protected static class NoId {
+		public static final String FIELD_NAME_STUFF = "stuff";
+		@DatabaseField(columnName = FIELD_NAME_STUFF)
+		String stuff;
 	}
 }

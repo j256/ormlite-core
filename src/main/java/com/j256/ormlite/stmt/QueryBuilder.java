@@ -35,7 +35,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	private FieldType[] resultFieldTypes;
 
 	private boolean distinct;
-	private boolean selectIdColumn = true;
+	private boolean selectIdColumn;
 	private List<ColumnNameOrRawSql> selectList;
 	private List<OrderBy> orderByList;
 	private List<ColumnNameOrRawSql> groupByList;
@@ -51,6 +51,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	public QueryBuilder(DatabaseType databaseType, TableInfo<T, ID> tableInfo, Dao<T, ID> dao) {
 		super(databaseType, tableInfo, dao, StatementType.SELECT);
 		this.idField = tableInfo.getIdField();
+		this.selectIdColumn = (idField != null);
 	}
 
 	/**
@@ -418,7 +419,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	public void reset() {
 		super.reset();
 		distinct = false;
-		selectIdColumn = true;
+		selectIdColumn = (idField != null);
 		if (selectList != null) {
 			selectList.clear();
 			selectList = null;

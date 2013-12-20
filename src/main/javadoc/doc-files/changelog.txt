@@ -1,6 +1,8 @@
 4.49: 12/??/2013
 	* CORE: Added JOIN-ing between tables _without_ a foreign-object relationship.
 	* CORE: Really fix QueryBuilder.orderByRaw(...) and orderBy(...) mutually exclusivity. Thanks to Diederik. Bug #161.
+	* CORE: Fixed a bug when we select columns on an entity without an id field.  Thanks to lder.orderByRaw(...) and orderBy(...) mutually exclusivity. Thanks to Diederik. Bug #161.
+	* ANDROID: Added initial take on Loader base classes from EgorAnd for newer Android versions.  Thanks much!!
 
 4.48: 12/16/2013
 	* CORE: Added support for tracking direct database connection activity with DatabaseConnectionProxy.
@@ -9,7 +11,7 @@
 	* CORE: More aggressively remove of some ThreadLocal data.  Thanks to Pavel Arnošt.
 	* CORE: Fixed problem with queries similar to and().not().like(...).  Thanks to ????.  Bug #159.
 	* CORE: Added better use of object cache when hydrating foreign fields.  Thanks to Anthony Whitlock.  Feature #38.
-	* ANDROID: Added initial API compatibility code for handling multiple API versions.
+	* ANDROID: Added initial API compatibility code for handling multiple API versions.  Needed to support canceling.
 
 4.47: 9/8/2013
 	* CORE: Added support to the QueryBuilder to support joinOr(...) and innerJoinOr().  Default is AND.
