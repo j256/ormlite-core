@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Map;
@@ -367,6 +368,12 @@ public class FieldType {
 				throw new SQLException("Field class for '" + field.getName()
 						+ "' must be a parameterized Collection with at least 1 type.");
 			}
+
+			// If argument is a type variable we need to get arguments from superclass
+			if (genericArguments[0] instanceof TypeVariable) {
+				genericArguments = ((ParameterizedType) parentClass.getGenericSuperclass()).getActualTypeArguments();
+			}
+
 			if (!(genericArguments[0] instanceof Class)) {
 				throw new SQLException("Field class for '" + field.getName()
 						+ "' must be a parameterized Collection whose generic argument is an entity class not: "
