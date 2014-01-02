@@ -112,11 +112,13 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 					Number key = keyHolder.getKey();
 					if (key == null) {
 						// may never happen but let's be careful out there
-						throw new SQLException("generated-id key was not set by the update call");
+						throw new SQLException(
+								"generated-id key was not set by the update call, maybe a schema mismatch between entity and database table?");
 					}
 					if (key.longValue() == 0L) {
 						// sanity check because the generated-key returned is 0 by default, may never happen
-						throw new SQLException("generated-id key must not be 0 value");
+						throw new SQLException(
+								"generated-id key must not be 0 value, maybe a schema mismatch between entity and database table?");
 					}
 					assignIdValue(data, key, "keyholder", objectCache);
 				}
