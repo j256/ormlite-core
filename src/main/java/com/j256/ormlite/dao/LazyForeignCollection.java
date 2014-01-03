@@ -32,6 +32,11 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 
 	private transient CloseableIterator<T> lastIterator;
 
+	/**
+	 * WARNING: The user should not be calling this constructor. You should be using the
+	 * {@link Dao#assignEmptyForeignCollection(Object, String)} or {@link Dao#getEmptyForeignCollection(String)} methods
+	 * instead.
+	 */
 	public LazyForeignCollection(Dao<T, ID> dao, Object parent, Object parentId, FieldType foreignFieldType,
 			String orderColumn, boolean orderAscending) {
 		super(dao, parent, parentId, foreignFieldType, orderColumn, orderAscending);
@@ -308,7 +313,8 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 		// check state to make sure we have a DAO in case we have a deserialized collection
 		if (dao == null) {
 			throw new IllegalStateException(
-					"Internal DAO object is null.  Lazy collections cannot be used if they have been deserialized.");
+					"Internal DAO object is null.  Maybe the collection was deserialized or otherwise constructed wrongly.  "
+							+ "Use dao.assignEmptyForeignCollection(...) or dao.getEmptyForeignCollection(...) instead");
 		} else {
 			return dao.iterator(getPreparedQuery(), flags);
 		}

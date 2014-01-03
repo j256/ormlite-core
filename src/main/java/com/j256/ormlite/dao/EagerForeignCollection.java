@@ -24,6 +24,11 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 
 	private List<T> results;
 
+	/**
+	 * WARNING: The user should not be calling this constructor. You should be using the
+	 * {@link Dao#assignEmptyForeignCollection(Object, String)} or {@link Dao#getEmptyForeignCollection(String)} methods
+	 * instead.
+	 */
 	public EagerForeignCollection(Dao<T, ID> dao, Object parent, Object parentId, FieldType foreignFieldType,
 			String orderColumn, boolean orderAscending) throws SQLException {
 		super(dao, parent, parentId, foreignFieldType, orderColumn, orderAscending);
