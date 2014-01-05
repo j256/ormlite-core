@@ -48,8 +48,9 @@ public interface Log {
 		}
 
 		/**
-		 * Return whether or not a level argument is enabled for this level value. So, Level.INFO.isEnabled(Level.WARN)
-		 * returns true but Level.INFO.isEnabled(Level.DEBUG) returns false.
+		 * Return whether or not a level argument is enabled for this level value. So,
+		 * {@code Level.INFO.isEnabled(Level.WARN)} returns true but {@code Level.INFO.isEnabled(Level.DEBUG)} returns
+		 * false.
 		 */
 		public boolean isEnabled(Level otherLevel) {
 			return level <= otherLevel.level;
