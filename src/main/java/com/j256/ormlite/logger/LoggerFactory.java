@@ -5,8 +5,8 @@ import java.lang.reflect.Constructor;
 import com.j256.ormlite.logger.Log.Level;
 
 /**
- * Factory that creates {@link Logger} instances for ORMLite. It uses reflection to see what loggers are installed on
- * the system and tries to find the most appropriate one.
+ * Factory that creates {@link Logger} instances. It uses reflection to see what loggers are installed on the system and
+ * tries to find the most appropriate one.
  * 
  * <p>
  * To set the logger to a particular type, set the system property ("com.j256.ormlite.logger.type") contained in
