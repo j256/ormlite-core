@@ -76,7 +76,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 
 	/**
 	 * Return the object associated with the id or null if none. This does a SQL
-	 * <tt>select col1,col2,... from ... where ... = id</tt> type query.
+	 * {@code SELECT col1,col2,... FROM ... WHERE ... = id} type query.
 	 */
 	public T queryForId(DatabaseConnection databaseConnection, ID id, ObjectCache objectCache) throws SQLException {
 		if (mappedQueryForId == null) {

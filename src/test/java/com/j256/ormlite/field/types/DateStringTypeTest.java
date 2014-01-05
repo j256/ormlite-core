@@ -126,7 +126,7 @@ public class DateStringTypeTest extends BaseTypeTest {
 		/*
 		 * WARNING, do not change this test otherwise you break backwards compatibility with string equality checking.
 		 * 
-		 * Changing this would _also_ break the <tt>version=true</tt> feature with dates which _also_ uses equality.
+		 * Changing this would _also_ break the {@code version=true} feature with dates which _also_ uses equality.
 		 */
 		final String formatStr = "yyyy-MM-dd HH:mm:ss.SSSSSS";
 		final SimpleDateFormat format = new SimpleDateFormat(formatStr);

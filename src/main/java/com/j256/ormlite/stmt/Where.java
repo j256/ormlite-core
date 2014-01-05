@@ -461,8 +461,8 @@ public class Where<T, ID> {
 	 * @param args
 	 *            Optional arguments that correspond to any ? specified in the rawStatement. Each of the arguments must
 	 *            have either the corresponding columnName or the sql-type set. <b>WARNING,</b> you cannot use the
-	 *            <tt>SelectArg("columnName")</tt> constructor since that sets the _value_, not the name. Use
-	 *            <tt>new SelectArg("column-name", null);</tt>.
+	 *            {@code SelectArg("columnName")} constructor since that sets the _value_, not the name. Use
+	 *            {@code new SelectArg("column-name", null);}.
 	 */
 	public Where<T, ID> raw(String rawStatement, ArgumentHolder... args) {
 		for (ArgumentHolder arg : args) {
