@@ -17,8 +17,8 @@ import com.j256.ormlite.support.DatabaseResults;
  * 
  * @author graywatson
  */
-public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> implements ForeignCollection<T>,
-		CloseableWrappedIterable<T>, Serializable {
+public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> implements CloseableWrappedIterable<T>,
+		Serializable {
 
 	private static final long serialVersionUID = -2523335606983317721L;
 

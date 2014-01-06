@@ -25,8 +25,7 @@ import com.j256.ormlite.support.DatabaseConnection;
  * 
  * @author graywatson
  */
-public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> implements ForeignCollection<T>,
-		Serializable {
+public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> implements Serializable {
 
 	private static final long serialVersionUID = -5460708106909626233L;
 
