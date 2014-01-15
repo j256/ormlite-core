@@ -10,7 +10,12 @@ import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 
 /**
  * Database connection proxy so you can intercept database operations either for debugging, replication, logging, or
- * other purposes.
+ * other purposes. This is designed to be extended by a subclass with particular methods overridden by the subclass to
+ * do monitoring, logging, or to do some special hackery.
+ * 
+ * <p>
+ * See the {@link DatabaseConnectionProxyFactory} javadocs for more details.
+ * </p>
  * 
  * @author graywatson
  */
