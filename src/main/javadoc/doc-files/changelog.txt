@@ -1,7 +1,10 @@
 4.49: 12/??/2013
 	* CORE: Added JOIN-ing between tables _without_ a foreign-object relationship.
 	* CORE: Really fix QueryBuilder.orderByRaw(...) and orderBy(...) mutually exclusivity. Thanks to Diederik. Bug #161.
-	* CORE: Fixed a bug when we select columns on an entity without an id field.  Thanks to lder.orderByRaw(...) and orderBy(...) mutually exclusivity. Thanks to Diederik. Bug #161.
+	* CORE: Fixed a bug when we select columns on an entity without an id field.  Thanks to lder.
+	* CORE: Added TimeStampStringType to support Android timestamps.
+	* CORE: Added the ability to override the DataPersister as well as the FieldConverter.
+	* ANDROID: Fixed the string processing when persisting java.sql.Timestamp classes. Bug #163.
 	* ANDROID: Added initial take on Loader base classes from EgorAnd for newer Android versions.  Thanks much!!
 
 4.48: 12/16/2013

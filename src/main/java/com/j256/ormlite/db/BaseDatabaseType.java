@@ -383,6 +383,11 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		return "-- ";
 	}
 
+	public DataPersister getDataPersister(DataPersister defaultPersister) {
+		// default is noop
+		return defaultPersister;
+	}
+
 	public FieldConverter getFieldConverter(DataPersister dataPersister) {
 		// default is to use the dataPersister itself
 		return dataPersister;

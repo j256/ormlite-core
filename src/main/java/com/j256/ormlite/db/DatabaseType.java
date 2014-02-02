@@ -97,6 +97,12 @@ public interface DatabaseType {
 	public boolean isIdSequenceNeeded();
 
 	/**
+	 * Return the DataPersister to associate with the DataType. This allows the database instance to convert a field as
+	 * necessary before it goes to the database.
+	 */
+	public DataPersister getDataPersister(DataPersister defaultPersister);
+
+	/**
 	 * Return the FieldConverter to associate with the DataType. This allows the database instance to convert a field as
 	 * necessary before it goes to the database.
 	 */

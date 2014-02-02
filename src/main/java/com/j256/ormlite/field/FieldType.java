@@ -582,9 +582,11 @@ public class FieldType {
 			try {
 				field.set(data, val);
 			} catch (IllegalArgumentException e) {
-				throw SqlExceptionUtil.create("Could not assign object '" + val + "' to field " + this, e);
+				throw SqlExceptionUtil.create("Could not assign object '" + val + "' of type " + val.getClass()
+						+ " to field " + this, e);
 			} catch (IllegalAccessException e) {
-				throw SqlExceptionUtil.create("Could not assign object '" + val + "' to field " + this, e);
+				throw SqlExceptionUtil.create("Could not assign object '" + val + "' of type " + val.getClass()
+						+ "' to field " + this, e);
 			}
 		} else {
 			try {
@@ -1032,6 +1034,7 @@ public class FieldType {
 	 * {@link #configDaoInformation} method can set the data-type.
 	 */
 	private void assignDataType(DatabaseType databaseType, DataPersister dataPersister) throws SQLException {
+		dataPersister = databaseType.getDataPersister(dataPersister);
 		this.dataPersister = dataPersister;
 		if (dataPersister == null) {
 			if (!fieldConfig.isForeign() && !fieldConfig.isForeignCollection()) {
@@ -1046,7 +1049,7 @@ public class FieldType {
 			StringBuilder sb = new StringBuilder();
 			sb.append("Generated-id field '").append(field.getName());
 			sb.append("' in ").append(field.getDeclaringClass().getSimpleName());
-			sb.append(" can't be type ").append(this.dataPersister.getSqlType());
+			sb.append(" can't be type ").append(dataPersister.getSqlType());
 			sb.append(".  Must be one of: ");
 			for (DataType dataType : DataType.values()) {
 				DataPersister persister = dataType.getDataPersister();
