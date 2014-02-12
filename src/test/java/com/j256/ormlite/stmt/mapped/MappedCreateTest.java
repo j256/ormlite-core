@@ -358,7 +358,6 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 	private static class GeneratedId {
 		@DatabaseField(generatedId = true)
 		public int genId;
-		@SuppressWarnings("unused")
 		@DatabaseField
 		public String stuff;
 	}
