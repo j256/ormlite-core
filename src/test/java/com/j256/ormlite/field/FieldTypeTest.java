@@ -156,7 +156,7 @@ public class FieldTypeTest extends BaseCoreTest {
 		final String nameArg = "zippy buzz";
 		final String nameResult = "blabber bling";
 		final AtomicBoolean resultToSqlArgCalled = new AtomicBoolean(false);
-		BaseFieldConverter converter = new BaseFieldConverter() {
+		expect(databaseType.getFieldConverter(DataType.STRING.getDataPersister())).andReturn(new BaseFieldConverter() {
 			public SqlType getSqlType() {
 				return sqlType;
 			}
@@ -178,9 +178,7 @@ public class FieldTypeTest extends BaseCoreTest {
 			public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) {
 				return stringValue;
 			}
-		};
-		expect(databaseType.getDataPersister(DataType.STRING.getDataPersister())).andReturn(converter);
-		expect(databaseType.getFieldConverter(DataType.STRING.getDataPersister())).andReturn(converter);
+		});
 		expect(databaseType.isEntityNamesMustBeUpCase()).andReturn(false);
 		replay(databaseType);
 		connectionSource.setDatabaseType(databaseType);
