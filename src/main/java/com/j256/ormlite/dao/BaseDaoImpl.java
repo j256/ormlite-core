@@ -708,7 +708,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		checkForInitialized();
 		if (preparedQuery.getType() != StatementType.SELECT_LONG) {
 			throw new IllegalArgumentException("Prepared query is not of type " + StatementType.SELECT_LONG
-					+ ", did you call QueryBuilder.setCountOf(true)?");
+					+ ", you need to call QueryBuilder.setCountOf(true)");
 		}
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		try {

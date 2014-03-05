@@ -602,6 +602,12 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	/**
 	 * Returns the number of rows in the table associated with the prepared query passed in. Depending on the size of
 	 * the table and the database type, this may be expensive and take a while.
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> If the query was prepared with the {@link QueryBuilder} then you should have called the
+	 * {@link QueryBuilder#setCountOf(boolean)} with true before you prepared the query. You may instead want to use
+	 * {@link QueryBuilder#countOf()} which makes it all easier.
+	 * </p>
 	 */
 	public long countOf(PreparedQuery<T> preparedQuery) throws SQLException;
 

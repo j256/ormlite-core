@@ -398,12 +398,17 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * Sets the count-of query flag using {@link #setCountOf(boolean)} to true and then calls
-	 * {@link Dao#countOf(PreparedQuery)}.
+	 * Sets the count-of flag using {@link #setCountOf(boolean)} to true and then calls
+	 * {@link Dao#countOf(PreparedQuery)}. It restores the previous count-of value before returning.
 	 */
 	public long countOf() throws SQLException {
-		setCountOf(true);
-		return dao.countOf(prepare());
+		boolean countOf = isCountOfQuery;
+		try {
+			setCountOf(true);
+			return dao.countOf(prepare());
+		} finally {
+			setCountOf(countOf);
+		}
 	}
 
 	/**
