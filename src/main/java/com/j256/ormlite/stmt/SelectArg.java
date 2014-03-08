@@ -17,7 +17,7 @@ import com.j256.ormlite.field.SqlType;
  * 
  * @author graywatson
  */
-public class SelectArg extends BaseArgumentHolder implements ArgumentHolder {
+public class SelectArg extends BaseArgumentHolder {
 
 	private boolean hasBeenSet = false;
 	private Object value = null;

@@ -8,7 +8,7 @@ import com.j256.ormlite.field.SqlType;
  * 
  * @author graywatson
  */
-public class ThreadLocalSelectArg extends BaseArgumentHolder implements ArgumentHolder {
+public class ThreadLocalSelectArg extends BaseArgumentHolder {
 
 	private ThreadLocal<ValueWrapper> threadValue = new ThreadLocal<ValueWrapper>();
 
