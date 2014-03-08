@@ -1096,7 +1096,6 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(foo4.id, result.id);
 	}
 
-	@Ignore("could not get this to work because the ID must be in the group-by list")
 	@Test
 	public void testQueryRawMax() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
@@ -1119,7 +1118,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(1, dao.create(foo4));
 
 		QueryBuilder<Foo, Object> qb = dao.queryBuilder();
-		qb.selectRaw("id, string, max(val) as val");
+		qb.selectRaw("string, max(val) as val");
 		qb.groupBy(Foo.STRING_COLUMN_NAME);
 		GenericRawResults<Foo> results = dao.queryRaw(qb.prepareStatementString(), dao.getRawRowMapper());
 		assertNotNull(results);

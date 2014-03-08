@@ -903,6 +903,31 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(foo2.equal, Integer.parseInt(row[1]));
 	}
 
+	@Test
+	public void testQueryRawUsingRawRowMapper() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		int equal1 = 1231231232;
+		foo1.equal = equal1;
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		int equal2 = 1231232;
+		foo2.equal = equal2;
+		assertEquals(1, dao.create(foo2));
+
+		QueryBuilder<Foo, Integer> queryBuilder = dao.queryBuilder();
+		queryBuilder.where().eq(Foo.ID_COLUMN_NAME, foo1.id);
+
+		GenericRawResults<Foo> results =
+				dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + " FROM FOO", dao.getRawRowMapper());
+		List<Foo> resultList = results.getResults();
+		assertEquals(2, resultList.size());
+		assertEquals(foo1.id, resultList.get(0).id);
+		assertEquals(0, resultList.get(0).equal);
+		assertEquals(foo2.id, resultList.get(1).id);
+		assertEquals(0, resultList.get(0).equal);
+	}
+
 	@Test(expected = SQLException.class)
 	public void testQueryRawStringsThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);

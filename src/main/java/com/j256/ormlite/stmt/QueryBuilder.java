@@ -686,13 +686,14 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			if (first) {
 				first = false;
 			} else {
-				sb.append(',');
+				sb.append(", ");
 			}
 			appendFieldColumnName(sb, fieldType, fieldTypeList);
 			if (fieldType == idField) {
 				hasId = true;
 			}
 		}
+		sb.append(' ');
 
 		if (type != StatementType.SELECT_RAW) {
 			// we have to add the idField even if it isn't in the columnNameSet
