@@ -1,38 +1,23 @@
 package com.j256.ormlite.dao;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.misc.BaseDaoEnabled;
 import com.j256.ormlite.misc.SqlExceptionUtil;
-import com.j256.ormlite.stmt.DeleteBuilder;
-import com.j256.ormlite.stmt.GenericRowMapper;
-import com.j256.ormlite.stmt.PreparedDelete;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.PreparedUpdate;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.stmt.SelectArg;
-import com.j256.ormlite.stmt.SelectIterator;
+import com.j256.ormlite.stmt.*;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
-import com.j256.ormlite.stmt.StatementExecutor;
-import com.j256.ormlite.stmt.UpdateBuilder;
-import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.ObjectFactory;
 import com.j256.ormlite.table.TableInfo;
+
+import java.sql.SQLException;
+import java.util.*;
+import java.util.concurrent.Callable;
 
 /**
  * Base class for the Database Access Objects that handle the reading and writing a class from the database.
@@ -1010,4 +995,32 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			return qb.query();
 		}
 	}
+
+    private static final Set<Observer> OBSERVERS = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<Observer, Boolean>()));
+
+    /**
+     * Notify all registered ContentObservers that a change has been made.
+     */
+    public void notifyContentChanged() {
+
+        // Make a copy of the content observers for this DAO
+        // so that we minimize the amount of time we spend in a synchronized block
+        final ArrayList<Observer> observersCopy;
+
+        // Must synchronize iteration, see Collections.synchronizedSet
+        synchronized (OBSERVERS) {
+            observersCopy = new ArrayList<Observer>(OBSERVERS);
+        }
+
+        for( Observer observer : observersCopy)
+            observer.onContentUpdated();
+    }
+
+    public void registerContentObserver( Observer observer) {
+        OBSERVERS.add(observer);
+    }
+
+    public void unregisterContentObserver( Observer observer) {
+        OBSERVERS.remove(observer);
+    }
 }
