@@ -1,17 +1,6 @@
 package com.j256.ormlite.stmt;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.Callable;
-
-import com.j256.ormlite.dao.BaseDaoImpl;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.GenericRawResults;
-import com.j256.ormlite.dao.ObjectCache;
-import com.j256.ormlite.dao.RawRowMapper;
-import com.j256.ormlite.dao.RawRowObjectMapper;
+import com.j256.ormlite.dao.*;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.FieldType;
@@ -21,18 +10,16 @@ import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.misc.TransactionManager;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
-import com.j256.ormlite.stmt.mapped.MappedCreate;
-import com.j256.ormlite.stmt.mapped.MappedDelete;
-import com.j256.ormlite.stmt.mapped.MappedDeleteCollection;
-import com.j256.ormlite.stmt.mapped.MappedQueryForId;
-import com.j256.ormlite.stmt.mapped.MappedRefresh;
-import com.j256.ormlite.stmt.mapped.MappedUpdate;
-import com.j256.ormlite.stmt.mapped.MappedUpdateId;
+import com.j256.ormlite.stmt.mapped.*;
 import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.TableInfo;
+
+import java.sql.SQLException;
+import java.util.*;
+import java.util.concurrent.Callable;
 
 /**
  * Executes SQL statements for a particular table in a particular database. Basically a call through to various mapped
@@ -64,8 +51,9 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	private String ifExistsQuery;
 	private FieldType[] ifExistsFieldTypes;
 	private RawRowMapper<T> rawRowMapper;
+    private Set<DatabaseConnection> isInBatchMode = Collections.synchronizedSet(new HashSet<DatabaseConnection>());
 
-	/**
+    /**
 	 * Provides statements for various SQL operations.
 	 */
 	public StatementExecutor(DatabaseType databaseType, TableInfo<T, ID> tableInfo, Dao<T, ID> dao) {
@@ -447,7 +435,10 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		if (mappedInsert == null) {
 			mappedInsert = MappedCreate.build(databaseType, tableInfo);
 		}
-		return mappedInsert.insert(databaseType, databaseConnection, data, objectCache);
+		final int rtrn = mappedInsert.insert(databaseType, databaseConnection, data, objectCache);
+        if( !isInBatchMode.contains(databaseConnection) )
+            dao.notifyContentChanged();
+        return rtrn;
 	}
 
 	/**
@@ -457,7 +448,10 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		if (mappedUpdate == null) {
 			mappedUpdate = MappedUpdate.build(databaseType, tableInfo);
 		}
-		return mappedUpdate.update(databaseConnection, data, objectCache);
+		final int rtrn = mappedUpdate.update(databaseConnection, data, objectCache);
+        if( !isInBatchMode.contains(databaseConnection) )
+            dao.notifyContentChanged();
+        return rtrn;
 	}
 
 	/**
@@ -468,7 +462,10 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		if (mappedUpdateId == null) {
 			mappedUpdateId = MappedUpdateId.build(databaseType, tableInfo);
 		}
-		return mappedUpdateId.execute(databaseConnection, data, newId, objectCache);
+		final int rtrn = mappedUpdateId.execute(databaseConnection, data, newId, objectCache);
+        if( !isInBatchMode.contains(databaseConnection) )
+            dao.notifyContentChanged();
+        return rtrn;
 	}
 
 	/**
@@ -477,7 +474,10 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	public int update(DatabaseConnection databaseConnection, PreparedUpdate<T> preparedUpdate) throws SQLException {
 		CompiledStatement stmt = preparedUpdate.compile(databaseConnection, StatementType.UPDATE);
 		try {
-			return stmt.runUpdate();
+			final int rtrn = stmt.runUpdate();
+            if( !isInBatchMode.contains(databaseConnection) )
+                dao.notifyContentChanged();
+            return rtrn;
 		} finally {
 			stmt.close();
 		}
@@ -501,7 +501,10 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		if (mappedDelete == null) {
 			mappedDelete = MappedDelete.build(databaseType, tableInfo);
 		}
-		return mappedDelete.delete(databaseConnection, data, objectCache);
+		final int rtrn = mappedDelete.delete(databaseConnection, data, objectCache);
+        if( !isInBatchMode.contains(databaseConnection) )
+            dao.notifyContentChanged();
+        return rtrn;
 	}
 
 	/**
@@ -511,7 +514,10 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		if (mappedDelete == null) {
 			mappedDelete = MappedDelete.build(databaseType, tableInfo);
 		}
-		return mappedDelete.deleteById(databaseConnection, id, objectCache);
+		final int rtrn = mappedDelete.deleteById(databaseConnection, id, objectCache);
+        if( !isInBatchMode.contains(databaseConnection) )
+            dao.notifyContentChanged();
+        return rtrn;
 	}
 
 	/**
@@ -520,7 +526,10 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	public int deleteObjects(DatabaseConnection databaseConnection, Collection<T> datas, ObjectCache objectCache)
 			throws SQLException {
 		// have to build this on the fly because the collection has variable number of args
-		return MappedDeleteCollection.deleteObjects(databaseType, tableInfo, databaseConnection, datas, objectCache);
+		final int rtrn = MappedDeleteCollection.deleteObjects(databaseType, tableInfo, databaseConnection, datas, objectCache);
+        if( !isInBatchMode.contains(databaseConnection) )
+            dao.notifyContentChanged();
+        return rtrn;
 	}
 
 	/**
@@ -529,7 +538,10 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	public int deleteIds(DatabaseConnection databaseConnection, Collection<ID> ids, ObjectCache objectCache)
 			throws SQLException {
 		// have to build this on the fly because the collection has variable number of args
-		return MappedDeleteCollection.deleteIds(databaseType, tableInfo, databaseConnection, ids, objectCache);
+		final int rtrn = MappedDeleteCollection.deleteIds(databaseType, tableInfo, databaseConnection, ids, objectCache);
+        if( !isInBatchMode.contains(databaseConnection) )
+            dao.notifyContentChanged();
+        return rtrn;
 	}
 
 	/**
@@ -538,7 +550,10 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	public int delete(DatabaseConnection databaseConnection, PreparedDelete<T> preparedDelete) throws SQLException {
 		CompiledStatement stmt = preparedDelete.compile(databaseConnection, StatementType.DELETE);
 		try {
-			return stmt.runUpdate();
+			final int rtrn = stmt.runUpdate();
+            if( !isInBatchMode.contains(databaseConnection) )
+                dao.notifyContentChanged();
+            return rtrn;
 		} finally {
 			stmt.close();
 		}
@@ -549,38 +564,50 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 */
 	public <CT> CT callBatchTasks(DatabaseConnection connection, boolean saved, Callable<CT> callable)
 			throws SQLException {
-		if (databaseType.isBatchUseTransaction()) {
-			return TransactionManager.callInTransaction(connection, saved, databaseType, callable);
-		}
-		boolean autoCommitAtStart = false;
-		try {
-			if (connection.isAutoCommitSupported()) {
-				autoCommitAtStart = connection.isAutoCommit();
-				if (autoCommitAtStart) {
-					// disable auto-commit mode if supported and enabled at start
-					connection.setAutoCommit(false);
-					logger.debug("disabled auto-commit on table {} before batch tasks", tableInfo.getTableName());
-				}
-			}
-			try {
-				return callable.call();
-			} catch (SQLException e) {
-				throw e;
-			} catch (Exception e) {
-				throw SqlExceptionUtil.create("Batch tasks callable threw non-SQL exception", e);
-			}
-		} finally {
-			if (autoCommitAtStart) {
-				/**
-				 * Try to restore if we are in auto-commit mode.
-				 * 
-				 * NOTE: we do _not_ have to do a commit here. According to {@link Connection#setAutoCommit(boolean)},
-				 * this will start a transaction when auto-commit is turned off and it will be committed here.
-				 */
-				connection.setAutoCommit(true);
-				logger.debug("re-enabled auto-commit on table {} after batch tasks", tableInfo.getTableName());
-			}
-		}
+        try {
+            // Gray: this might be able to be a simple boolean, but I wasn't sure if it was safe.
+            // By associating the flag with the DatabaseConnection, I knew it was just as safe
+            // as the code that's already here (which toggles the autocommit of the connection
+            // before an after executing code).
+            isInBatchMode.add(connection);
+
+
+
+            if (databaseType.isBatchUseTransaction()) {
+                return TransactionManager.callInTransaction(connection, saved, databaseType, callable);
+            }
+            boolean autoCommitAtStart = false;
+            try {
+                if (connection.isAutoCommitSupported()) {
+                    autoCommitAtStart = connection.isAutoCommit();
+                    if (autoCommitAtStart) {
+                        // disable auto-commit mode if supported and enabled at start
+                        connection.setAutoCommit(false);
+                        logger.debug("disabled auto-commit on table {} before batch tasks", tableInfo.getTableName());
+                    }
+                }
+                try {
+                    return callable.call();
+                } catch (SQLException e) {
+                    throw e;
+                } catch (Exception e) {
+                    throw SqlExceptionUtil.create("Batch tasks callable threw non-SQL exception", e);
+                }
+            } finally {
+                if (autoCommitAtStart) {
+                    /**
+                     * Try to restore if we are in auto-commit mode.
+                     *
+                     * NOTE: we do _not_ have to do a commit here. According to {@link Connection#setAutoCommit(boolean)},
+                     * this will start a transaction when auto-commit is turned off and it will be committed here.
+                     */
+                    connection.setAutoCommit(true);
+                    logger.debug("re-enabled auto-commit on table {} after batch tasks", tableInfo.getTableName());
+                }
+            }
+        } finally {
+            isInBatchMode.remove(connection);
+        }
 	}
 
 	public String[] mapRow(DatabaseResults results) throws SQLException {

@@ -800,6 +800,33 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 */
 	public void setObjectFactory(ObjectFactory<T> objectFactory);
 
+
+    /**
+     * Notify any ContentObservers that the underlying data has changed.
+     * This is done automatically when using #create, #update, #updateId,
+     * #update, or #delete.  It will not be done automatically for
+     * statements that are run inside of a batch operation.
+     */
+    public void notifyContentChanged();
+
+    /**
+     * Register a callback for when the data changes for this DAO.
+     * Every call SHOULD be accompanied by a call to unregisterContentObserver,
+     * but our list of ContentObservers uses weak references so they should be
+     * garbage collected automatically even if they're not unregistered.
+     * @param observer
+     */
+    public void registerContentObserver( Observer observer);
+
+    public void unregisterContentObserver( Observer observer);
+
+    public static interface Observer {
+        void onContentUpdated();
+    }
+
+
+
+
 	/**
 	 * Return class for the {@link Dao#createOrUpdate(Object)} method.
 	 */
