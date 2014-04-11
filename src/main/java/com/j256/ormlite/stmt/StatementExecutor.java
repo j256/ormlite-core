@@ -682,7 +682,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
         }
 
         public UO mapRow(DatabaseResults results) throws SQLException {
-            return mapper.mapRow(results.getResultSet(), results.getResultSetMetaData());
+            return mapper.mapRow(results.getResultSet());
         }
     }
 

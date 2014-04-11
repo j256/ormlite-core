@@ -13,5 +13,5 @@ public interface ResultSetMapper<T> {
      * @return the value to return for this row
      * @throws java.sql.SQLException if anythign goes wrong go ahead and let this percolate, jDBI will handle it
      */
-    public T mapRow(ResultSet r, ResultSetMetaData mapper) throws SQLException;
+    public T mapRow(ResultSet r) throws SQLException;
 }

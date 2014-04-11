@@ -32,10 +32,6 @@ public class H2DatabaseResults implements DatabaseResults {
         return resultSet;
     }
 
-    public ResultSetMetaData getResultSetMetaData() throws SQLException {
-        return metaData;
-    }
-
     public int getColumnCount() throws SQLException {
 		return metaData.getColumnCount();
 	}
