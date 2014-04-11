@@ -2,6 +2,8 @@ package com.j256.ormlite.support;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
@@ -17,6 +19,16 @@ import com.j256.ormlite.dao.ObjectCache;
  * @author graywatson
  */
 public interface DatabaseResults {
+
+    /**
+     * Return {@link java.sql.ResultSet} in result.
+     */
+    public ResultSet getResultSet() throws SQLException;
+
+    /**
+     * Return {@link java.sql.ResultSetMetaData} in result.
+     */
+    public ResultSetMetaData getResultSetMetaData() throws SQLException;
 
 	/**
 	 * Returns the number of columns in these results.
