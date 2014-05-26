@@ -693,7 +693,6 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 				hasId = true;
 			}
 		}
-		sb.append(' ');
 
 		if (type != StatementType.SELECT_RAW) {
 			// we have to add the idField even if it isn't in the columnNameSet
@@ -703,10 +702,10 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 				}
 				appendFieldColumnName(sb, idField, fieldTypeList);
 			}
-			sb.append(' ');
 
 			resultFieldTypes = fieldTypeList.toArray(new FieldType[fieldTypeList.size()]);
 		}
+		sb.append(' ');
 	}
 
 	private void appendFieldColumnName(StringBuilder sb, FieldType fieldType, List<FieldType> fieldTypeList) {

@@ -48,7 +48,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		sb.append("SELECT ");
 		for (String column : columns1) {
 			databaseType.appendEscapedEntityName(sb, column);
-			sb.append(',');
+			sb.append(", ");
 		}
 		databaseType.appendEscapedEntityName(sb, column2);
 		sb.append(" FROM ");
@@ -93,7 +93,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		sb.append("SELECT ");
 		for (String column : columns1) {
 			databaseType.appendEscapedEntityName(sb, column);
-			sb.append(',');
+			sb.append(", ");
 		}
 		databaseType.appendEscapedEntityName(sb, column2);
 		sb.append(" FROM ");
