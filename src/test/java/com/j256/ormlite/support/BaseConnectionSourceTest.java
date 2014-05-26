@@ -39,6 +39,7 @@ public class BaseConnectionSourceTest extends BaseCoreTest {
 		assertNull(cs.getSpecialConnection());
 		assertFalse(cs.isSavedConnection(conn));
 		assertNull(cs.getSavedConnection());
+		cs.close();
 	}
 
 	@Test
@@ -49,6 +50,7 @@ public class BaseConnectionSourceTest extends BaseCoreTest {
 		cs.saveSpecialConnection(conn);
 		cs.clearSpecialConnection(conn);
 		assertEquals(conn, cs.getSpecialConnection());
+		cs.close();
 	}
 
 	@Test(expected = SQLException.class)
@@ -57,12 +59,14 @@ public class BaseConnectionSourceTest extends BaseCoreTest {
 		DatabaseConnection conn = cs.getReadOnlyConnection();
 		cs.saveSpecialConnection(conn);
 		cs.saveSpecialConnection(createMock(DatabaseConnection.class));
+		cs.close();
 	}
 
 	@Test
 	public void testClearNone() {
 		OurConnectionSource cs = new OurConnectionSource();
 		cs.clearSpecialConnection(createMock(DatabaseConnection.class));
+		cs.close();
 	}
 
 	@Test
@@ -71,6 +75,7 @@ public class BaseConnectionSourceTest extends BaseCoreTest {
 		DatabaseConnection conn = cs.getReadOnlyConnection();
 		cs.saveSpecialConnection(conn);
 		cs.clearSpecialConnection(createMock(DatabaseConnection.class));
+		cs.close();
 	}
 
 	private class OurConnectionSource extends BaseConnectionSource {

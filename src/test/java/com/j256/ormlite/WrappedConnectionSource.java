@@ -1,5 +1,6 @@
 package com.j256.ormlite;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -7,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.j256.ormlite.db.DatabaseType;
+import com.j256.ormlite.misc.IOUtils;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 
@@ -64,10 +66,10 @@ public class WrappedConnectionSource implements ConnectionSource {
 		// System.err.println("released wrapped " + wrapped.hashCode() + ", count = " + getReleaseCount);
 	}
 
-	public void close() throws SQLException {
+	public void close() throws IOException {
 		cs.close();
 		if (!isOkay()) {
-			throw new SQLException("Wrapped connection was not okay on close");
+			throw new IOException("Wrapped connection was not okay on close");
 		}
 		for (WrappedConnection wrapped : wrappedConnections.values()) {
 			wrapped.close();
@@ -76,11 +78,7 @@ public class WrappedConnectionSource implements ConnectionSource {
 	}
 
 	public void closeQuietly() {
-		try {
-			close();
-		} catch (SQLException e) {
-			// ignored
-		}
+		IOUtils.closeQuietly(this);
 	}
 
 	protected WrappedConnection wrapConnection(DatabaseConnection connection) {

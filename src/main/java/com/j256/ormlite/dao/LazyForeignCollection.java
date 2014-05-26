@@ -1,5 +1,6 @@
 package com.j256.ormlite.dao;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.Set;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.misc.IOUtils;
 import com.j256.ormlite.support.DatabaseConnection;
 
 /**
@@ -95,7 +97,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 		});
 	}
 
-	public void closeLastIterator() throws SQLException {
+	public void closeLastIterator() throws IOException {
 		if (lastIterator != null) {
 			lastIterator.close();
 			lastIterator = null;
@@ -116,11 +118,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 			}
 			return sizeC;
 		} finally {
-			try {
-				iterator.close();
-			} catch (SQLException e) {
-				// ignored
-			}
+			IOUtils.closeQuietly(iterator);
 		}
 	}
 
@@ -129,11 +127,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 		try {
 			return !iterator.hasNext();
 		} finally {
-			try {
-				iterator.close();
-			} catch (SQLException e) {
-				// ignored
-			}
+			IOUtils.closeQuietly(iterator);
 		}
 	}
 
@@ -147,11 +141,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 			}
 			return false;
 		} finally {
-			try {
-				iterator.close();
-			} catch (SQLException e) {
-				// ignored
-			}
+			IOUtils.closeQuietly(iterator);
 		}
 	}
 
@@ -164,11 +154,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 			}
 			return leftOvers.isEmpty();
 		} finally {
-			try {
-				iterator.close();
-			} catch (SQLException e) {
-				// ignored
-			}
+			IOUtils.closeQuietly(iterator);
 		}
 	}
 
@@ -184,11 +170,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 			}
 			return false;
 		} finally {
-			try {
-				iterator.close();
-			} catch (SQLException e) {
-				// ignored
-			}
+			IOUtils.closeQuietly(iterator);
 		}
 	}
 
@@ -205,11 +187,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 			}
 			return changed;
 		} finally {
-			try {
-				iterator.close();
-			} catch (SQLException e) {
-				// ignored
-			}
+			IOUtils.closeQuietly(iterator);
 		}
 	}
 
@@ -222,11 +200,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 			}
 			return items.toArray();
 		} finally {
-			try {
-				iterator.close();
-			} catch (SQLException e) {
-				// ignored
-			}
+			IOUtils.closeQuietly(iterator);
 		}
 	}
 
@@ -253,11 +227,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 				itemC++;
 			}
 		} finally {
-			try {
-				iterator.close();
-			} catch (SQLException e) {
-				// ignored
-			}
+			IOUtils.closeQuietly(iterator);
 		}
 		if (items == null) {
 			if (itemC < array.length - 1) {

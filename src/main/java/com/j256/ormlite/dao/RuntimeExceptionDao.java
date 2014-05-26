@@ -1,5 +1,6 @@
 package com.j256.ormlite.dao;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
@@ -399,7 +400,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	public void closeLastIterator() {
 		try {
 			dao.closeLastIterator();
-		} catch (SQLException e) {
+		} catch (IOException e) {
 			logMessage(e, "closeLastIterator threw exception");
 			throw new RuntimeException(e);
 		}

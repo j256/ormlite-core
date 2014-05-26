@@ -2,7 +2,6 @@ package com.j256.ormlite.field.types;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -12,6 +11,7 @@ import java.util.Arrays;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
+import com.j256.ormlite.misc.IOUtils;
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
 
@@ -64,14 +64,8 @@ public class SerializableType extends BaseDataType {
 			throw SqlExceptionUtil.create("Could not read serialized object from byte array: " + Arrays.toString(bytes)
 					+ "(len " + bytes.length + ")", e);
 		} finally {
-			if (objInStream != null) {
-				try {
-					// we do this to give GC a hand with ObjectInputStream reference maps
-					objInStream.close();
-				} catch (IOException e) {
-					// ignored
-				}
-			}
+			// we do this to give GC a hand with ObjectInputStream reference maps
+			IOUtils.closeQuietly(objInStream);
 		}
 	}
 
@@ -88,14 +82,8 @@ public class SerializableType extends BaseDataType {
 		} catch (Exception e) {
 			throw SqlExceptionUtil.create("Could not write serialized object to byte array: " + obj, e);
 		} finally {
-			if (objOutStream != null) {
-				try {
-					// we do this to give GC a hand with ObjectOutputStream reference maps
-					objOutStream.close();
-				} catch (IOException e) {
-					// ignored
-				}
-			}
+			// we do this to give GC a hand with ObjectOutputStream reference maps
+			IOUtils.closeQuietly(objOutStream);
 		}
 	}
 

@@ -1,9 +1,11 @@
 package com.j256.ormlite.h2;
 
+import java.io.IOException;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import com.j256.ormlite.db.DatabaseType;
+import com.j256.ormlite.misc.IOUtils;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseConnectionProxyFactory;
@@ -29,7 +31,7 @@ public class H2ConnectionSource implements ConnectionSource {
 		this.databaseUrl = databaseUrl;
 	}
 
-	public void close() throws SQLException {
+	public void close() throws IOException {
 		if (connection != null) {
 			connection.close();
 			connection = null;
@@ -37,11 +39,7 @@ public class H2ConnectionSource implements ConnectionSource {
 	}
 
 	public void closeQuietly() {
-		try {
-			close();
-		} catch (SQLException e) {
-			// ignored
-		}
+		IOUtils.closeQuietly(this);
 	}
 
 	public DatabaseConnection getReadOnlyConnection() throws SQLException {

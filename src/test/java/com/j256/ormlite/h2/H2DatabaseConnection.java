@@ -1,5 +1,6 @@
 package com.j256.ormlite.h2;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -12,6 +13,7 @@ import java.sql.Types;
 
 import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.misc.IOUtils;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.CompiledStatement;
@@ -128,6 +130,7 @@ public class H2DatabaseConnection implements DatabaseConnection {
 		DatabaseResults results = new H2DatabaseResults(stmt.executeQuery(), objectCache);
 		if (!results.next()) {
 			// no results at all
+			IOUtils.closeThrowSqlException(results, "results");
 			return null;
 		}
 		T first = rowMapper.mapRow(results);
@@ -154,16 +157,16 @@ public class H2DatabaseConnection implements DatabaseConnection {
 		}
 	}
 
-	public void close() throws SQLException {
-		connection.close();
+	public void close() throws IOException {
+		try {
+			connection.close();
+		} catch (SQLException e) {
+			throw new IOException("could not close SQL connection", e);
+		}
 	}
 
 	public void closeQuietly() {
-		try {
-			close();
-		} catch (SQLException e) {
-			// ignored
-		}
+		IOUtils.closeQuietly(this);
 	}
 
 	public boolean isClosed() throws SQLException {

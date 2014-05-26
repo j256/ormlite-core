@@ -17,6 +17,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
+import com.j256.ormlite.misc.IOUtils;
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.CompiledStatement;
@@ -255,9 +256,7 @@ public class TableUtils {
 							DatabaseConnection.DEFAULT_RESULT_FLAGS);
 			return compiledStmt.runExecute();
 		} finally {
-			if (compiledStmt != null) {
-				compiledStmt.close();
-			}
+			IOUtils.closeThrowSqlException(compiledStmt, "compiled statement");
 			connectionSource.releaseConnection(connection);
 		}
 	}
@@ -468,9 +467,7 @@ public class TableUtils {
 					throw SqlExceptionUtil.create("SQL statement failed: " + statement, e);
 				}
 			} finally {
-				if (compiledStmt != null) {
-					compiledStmt.close();
-				}
+				IOUtils.closeThrowSqlException(compiledStmt, "compiled statement");
 			}
 			// sanity check
 			if (rowC < 0) {
@@ -509,9 +506,7 @@ public class TableUtils {
 				throw SqlExceptionUtil.create("executing create table after-query failed: " + query, e);
 			} finally {
 				// result set is closed by the statement being closed
-				if (compiledStmt != null) {
-					compiledStmt.close();
-				}
+				IOUtils.closeThrowSqlException(compiledStmt, "compiled statement");
 			}
 			stmtC++;
 		}

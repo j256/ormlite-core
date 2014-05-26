@@ -1,5 +1,6 @@
 package com.j256.ormlite.support;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 
@@ -136,7 +137,7 @@ public class DatabaseConnectionProxy implements DatabaseConnection {
 		}
 	}
 
-	public void close() throws SQLException {
+	public void close() throws IOException {
 		if (proxy != null) {
 			proxy.close();
 		}

@@ -1,5 +1,6 @@
 package com.j256.ormlite.support;
 
+import java.io.Closeable;
 import java.sql.SQLException;
 
 import com.j256.ormlite.db.DatabaseType;
@@ -9,7 +10,7 @@ import com.j256.ormlite.db.DatabaseType;
  * 
  * @author graywatson
  */
-public interface ConnectionSource {
+public interface ConnectionSource extends Closeable {
 
 	/**
 	 * Return a database connection suitable for read-only operations. After you are done, you should call
@@ -57,11 +58,6 @@ public interface ConnectionSource {
 	 * Return the currently saved connection or null if none.
 	 */
 	public DatabaseConnection getSpecialConnection();
-
-	/**
-	 * Close any outstanding database connections.
-	 */
-	public void close() throws SQLException;
 
 	/**
 	 * Close any outstanding database connections.

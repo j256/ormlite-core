@@ -1,5 +1,6 @@
 package com.j256.ormlite.stmt;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 import com.j256.ormlite.dao.CloseableIterator;
@@ -7,6 +8,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
+import com.j256.ormlite.misc.IOUtils;
 import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
@@ -81,7 +83,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 			result = results.next();
 		}
 		if (!result) {
-			close();
+			IOUtils.closeThrowSqlException(this, "iterator");
 		}
 		alreadyMoved = true;
 		return result;
@@ -236,7 +238,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 		}
 	}
 
-	public void close() throws SQLException {
+	public void close() throws IOException {
 		if (!closed) {
 			compiledStmt.close();
 			closed = true;
@@ -244,16 +246,16 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 			if (statement != null) {
 				logger.debug("closed iterator @{} after {} rows", hashCode(), rowC);
 			}
-			connectionSource.releaseConnection(connection);
+			try {
+				connectionSource.releaseConnection(connection);
+			} catch (SQLException e) {
+				throw new IOException("could not release connection", e);
+			}
 		}
 	}
 
 	public void closeQuietly() {
-		try {
-			close();
-		} catch (SQLException e) {
-			// ignore it
-		}
+		IOUtils.closeQuietly(this);
 	}
 
 	public DatabaseResults getRawResults() {

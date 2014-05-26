@@ -59,8 +59,8 @@ import java.sql.SQLException;
 public interface DatabaseConnectionProxyFactory {
 
 	/**
-	 * Create a proxy database connection that may extend {@link DatabaseConnectionProxy}. This method should instatiate
-	 * the proxy and set the real-connection on it.
+	 * Create a proxy database connection that may extend {@link DatabaseConnectionProxy}. This method should
+	 * instantiate the proxy and set the real-connection on it.
 	 */
 	public DatabaseConnection createProxy(DatabaseConnection realConnection) throws SQLException;
 }

@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.logger.Log.Level;
+import com.j256.ormlite.misc.IOUtils;
 import com.j256.ormlite.stmt.ArgumentHolder;
 import com.j256.ormlite.stmt.PreparedDelete;
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -111,7 +112,7 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 			return stmt;
 		} finally {
 			if (!ok) {
-				stmt.close();
+				IOUtils.closeThrowSqlException(stmt, "statement");
 			}
 		}
 	}

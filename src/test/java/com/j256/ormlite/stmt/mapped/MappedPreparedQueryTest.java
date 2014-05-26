@@ -12,6 +12,7 @@ import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.misc.IOUtils;
 import com.j256.ormlite.stmt.ArgumentHolder;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.CompiledStatement;
@@ -97,9 +98,7 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 			}
 			assertEquals(expectedNum, fooC);
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			IOUtils.closeThrowSqlException(stmt, "compiled statement");
 			connectionSource.releaseConnection(conn);
 		}
 	}

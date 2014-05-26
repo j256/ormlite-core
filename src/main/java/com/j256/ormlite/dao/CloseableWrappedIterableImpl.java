@@ -1,6 +1,8 @@
 package com.j256.ormlite.dao;
 
-import java.sql.SQLException;
+import java.io.IOException;
+
+import com.j256.ormlite.misc.IOUtils;
 
 /**
  * Class which is used to help folks use for loops but still close at the end. This is a wrapper to allow multiple
@@ -23,17 +25,12 @@ public class CloseableWrappedIterableImpl<T> implements CloseableWrappedIterable
 	}
 
 	public CloseableIterator<T> closeableIterator() {
-		try {
-			// close an existing iterator, if any
-			close();
-		} catch (SQLException e) {
-			// ignored
-		}
+		IOUtils.closeQuietly(this);
 		iterator = iterable.closeableIterator();
 		return iterator;
 	}
 
-	public void close() throws SQLException {
+	public void close() throws IOException {
 		if (iterator != null) {
 			iterator.close();
 			iterator = null;

@@ -20,15 +20,19 @@ public class DatabaseConnectionProxyTest {
 		DatabaseConnection conn = createMock(DatabaseConnection.class);
 		boolean supported = true;
 		expect(conn.isAutoCommitSupported()).andReturn(supported);
+		conn.close();
 		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(conn);
 		replay(conn);
 		assertEquals(supported, proxy.isAutoCommitSupported());
+		proxy.close();
 		verify(conn);
 	}
 
 	@Test
 	public void testIsAutoCommitSupportedNull() throws Exception {
-		assertFalse(new DatabaseConnectionProxy(null).isAutoCommitSupported());
+		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(null);
+		assertFalse(proxy.isAutoCommitSupported());
+		proxy.close();
 	}
 
 	@Test
@@ -36,15 +40,19 @@ public class DatabaseConnectionProxyTest {
 		DatabaseConnection conn = createMock(DatabaseConnection.class);
 		boolean autoCommit = false;
 		expect(conn.isAutoCommit()).andReturn(autoCommit);
+		conn.close();
 		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(conn);
 		replay(conn);
 		assertEquals(autoCommit, proxy.isAutoCommit());
+		proxy.close();
 		verify(conn);
 	}
 
 	@Test
 	public void testIsAutoCommitNull() throws Exception {
-		assertFalse(new DatabaseConnectionProxy(null).isAutoCommit());
+		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(null);
+		assertFalse(proxy.isAutoCommit());
+		proxy.close();
 	}
 
 	@Test
@@ -52,15 +60,19 @@ public class DatabaseConnectionProxyTest {
 		DatabaseConnection conn = createMock(DatabaseConnection.class);
 		boolean autoCommit = false;
 		conn.setAutoCommit(autoCommit);
+		conn.close();
 		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(conn);
 		replay(conn);
 		proxy.setAutoCommit(autoCommit);
+		proxy.close();
 		verify(conn);
 	}
 
 	@Test
 	public void testSetAutoCommitNull() throws Exception {
-		new DatabaseConnectionProxy(null).setAutoCommit(false);
+		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(null);
+		proxy.setAutoCommit(false);
+		proxy.close();
 	}
 
 	@Test
@@ -68,45 +80,57 @@ public class DatabaseConnectionProxyTest {
 		DatabaseConnection conn = createMock(DatabaseConnection.class);
 		String name = "savepoint";
 		expect(conn.setSavePoint(name)).andReturn(null);
+		conn.close();
 		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(conn);
 		replay(conn);
 		proxy.setSavePoint(name);
+		proxy.close();
 		verify(conn);
 	}
 
 	@Test
 	public void testSetSavePointNull() throws Exception {
-		assertNull(new DatabaseConnectionProxy(null).setSavePoint("name"));
+		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(null);
+		assertNull(proxy.setSavePoint("name"));
+		proxy.close();
 	}
 
 	@Test
 	public void testCommit() throws Exception {
 		DatabaseConnection conn = createMock(DatabaseConnection.class);
 		conn.commit(null);
+		conn.close();
 		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(conn);
 		replay(conn);
 		proxy.commit(null);
+		proxy.close();
 		verify(conn);
 	}
 
 	@Test
 	public void testCommitNull() throws Exception {
-		new DatabaseConnectionProxy(null).commit(null);
+		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(null);
+		proxy.commit(null);
+		proxy.close();
 	}
 
 	@Test
 	public void testRollback() throws Exception {
 		DatabaseConnection conn = createMock(DatabaseConnection.class);
 		conn.rollback(null);
+		conn.close();
 		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(conn);
 		replay(conn);
 		proxy.rollback(null);
+		proxy.close();
 		verify(conn);
 	}
 
 	@Test
 	public void testRollbackNull() throws Exception {
-		new DatabaseConnectionProxy(null).rollback(null);
+		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(null);
+		proxy.rollback(null);
+		proxy.close();
 	}
 
 	@Test
@@ -115,15 +139,19 @@ public class DatabaseConnectionProxyTest {
 		String statement = "select foo from bar";
 		int result = 1312321;
 		expect(conn.executeStatement(statement, 0)).andReturn(result);
+		conn.close();
 		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(conn);
 		replay(conn);
 		assertEquals(result, proxy.executeStatement(statement, 0));
+		proxy.close();
 		verify(conn);
 	}
 
 	@Test
 	public void testExecuteStatementNull() throws Exception {
-		assertEquals(0, new DatabaseConnectionProxy(null).executeStatement("statment", 0));
+		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(null);
+		assertEquals(0, proxy.executeStatement("statment", 0));
+		proxy.close();
 	}
 
 	@Test
@@ -133,15 +161,19 @@ public class DatabaseConnectionProxyTest {
 		StatementType type = StatementType.DELETE;
 		int flags = 11253123;
 		expect(conn.compileStatement(statement, type, null, flags)).andReturn(null);
+		conn.close();
 		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(conn);
 		replay(conn);
 		proxy.compileStatement(statement, type, null, flags);
+		proxy.close();
 		verify(conn);
 	}
 
 	@Test
 	public void testCompileStatementStringStatementTypeFieldTypeArrayIntNull() throws Exception {
-		assertNull(new DatabaseConnectionProxy(null).compileStatement("statment", StatementType.DELETE, null, 0));
+		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(null);
+		assertNull(proxy.compileStatement("statment", StatementType.DELETE, null, 0));
+		proxy.close();
 	}
 
 	@Test
@@ -150,15 +182,19 @@ public class DatabaseConnectionProxyTest {
 		String statement = "insert bar";
 		int result = 13712321;
 		expect(conn.insert(statement, null, null, null)).andReturn(result);
+		conn.close();
 		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(conn);
 		replay(conn);
 		assertEquals(result, proxy.insert(statement, null, null, null));
+		proxy.close();
 		verify(conn);
 	}
 
 	@Test
 	public void testInsertNull() throws Exception {
-		assertEquals(0, new DatabaseConnectionProxy(null).insert("statment", null, null, null));
+		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(null);
+		assertEquals(0, proxy.insert("statment", null, null, null));
+		proxy.close();
 	}
 
 	@Test
@@ -167,15 +203,19 @@ public class DatabaseConnectionProxyTest {
 		String statement = "insert bar";
 		int result = 13212321;
 		expect(conn.update(statement, null, null)).andReturn(result);
+		conn.close();
 		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(conn);
 		replay(conn);
 		assertEquals(result, proxy.update(statement, null, null));
+		proxy.close();
 		verify(conn);
 	}
 
 	@Test
 	public void testUpdateNull() throws Exception {
-		assertEquals(0, new DatabaseConnectionProxy(null).update("statment", null, null));
+		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(null);
+		assertEquals(0, proxy.update("statment", null, null));
+		proxy.close();
 	}
 
 	@Test
@@ -184,15 +224,19 @@ public class DatabaseConnectionProxyTest {
 		String statement = "insert bar";
 		int result = 13872321;
 		expect(conn.delete(statement, null, null)).andReturn(result);
+		conn.close();
 		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(conn);
 		replay(conn);
 		assertEquals(result, proxy.delete(statement, null, null));
+		proxy.close();
 		verify(conn);
 	}
 
 	@Test
 	public void testDeleteNull() throws Exception {
-		assertEquals(0, new DatabaseConnectionProxy(null).delete("statment", null, null));
+		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(null);
+		assertEquals(0, proxy.delete("statment", null, null));
+		proxy.close();
 	}
 
 	@Test
@@ -201,15 +245,19 @@ public class DatabaseConnectionProxyTest {
 		String statement = "insert bar";
 		Object result = new Object();
 		expect(conn.queryForOne(statement, null, null, null, null)).andReturn(result);
+		conn.close();
 		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(conn);
 		replay(conn);
 		assertEquals(result, proxy.queryForOne(statement, null, null, null, null));
+		proxy.close();
 		verify(conn);
 	}
 
 	@Test
 	public void testQueryForOneNull() throws Exception {
-		assertNull(new DatabaseConnectionProxy(null).queryForOne("statment", null, null, null, null));
+		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(null);
+		assertNull(proxy.queryForOne("statment", null, null, null, null));
+		proxy.close();
 	}
 
 	@Test
@@ -218,15 +266,19 @@ public class DatabaseConnectionProxyTest {
 		String statement = "select stuff from foo";
 		long result = 31231231241414L;
 		expect(conn.queryForLong(statement)).andReturn(result);
+		conn.close();
 		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(conn);
 		replay(conn);
 		assertEquals(result, proxy.queryForLong(statement));
+		proxy.close();
 		verify(conn);
 	}
 
 	@Test
 	public void testQueryForLongStringNull() throws Exception {
-		assertEquals(0, new DatabaseConnectionProxy(null).queryForLong("statment"));
+		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(null);
+		assertEquals(0, proxy.queryForLong("statment"));
+		proxy.close();
 	}
 
 	@Test
@@ -235,15 +287,19 @@ public class DatabaseConnectionProxyTest {
 		String statement = "select stuff from foo";
 		long result = 3123123124141413L;
 		expect(conn.queryForLong(statement, null, null)).andReturn(result);
+		conn.close();
 		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(conn);
 		replay(conn);
 		assertEquals(result, proxy.queryForLong(statement, null, null));
+		proxy.close();
 		verify(conn);
 	}
 
 	@Test
 	public void testQueryForLongStringObjectArrayFieldTypeArrayNull() throws Exception {
-		assertEquals(0, new DatabaseConnectionProxy(null).queryForLong("statment", null, null));
+		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(null);
+		assertEquals(0, proxy.queryForLong("statment", null, null));
+		proxy.close();
 	}
 
 	@Test
@@ -262,18 +318,22 @@ public class DatabaseConnectionProxyTest {
 	}
 
 	@Test
-	public void testCloseQuietly() {
+	public void testCloseQuietly() throws Exception {
 		DatabaseConnection conn = createMock(DatabaseConnection.class);
 		conn.closeQuietly();
+		conn.close();
 		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(conn);
 		replay(conn);
 		proxy.closeQuietly();
+		proxy.close();
 		verify(conn);
 	}
 
 	@Test
-	public void testCloseQuietlyNull() {
-		new DatabaseConnectionProxy(null).closeQuietly();
+	public void testCloseQuietlyNull() throws Exception {
+		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(null);
+		proxy.closeQuietly();
+		proxy.close();
 	}
 
 	@Test
@@ -281,15 +341,19 @@ public class DatabaseConnectionProxyTest {
 		DatabaseConnection conn = createMock(DatabaseConnection.class);
 		boolean closed = true;
 		expect(conn.isClosed()).andReturn(closed);
+		conn.close();
 		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(conn);
 		replay(conn);
 		assertEquals(closed, proxy.isClosed());
+		proxy.close();
 		verify(conn);
 	}
 
 	@Test
 	public void testIsClosedNull() throws Exception {
-		assertTrue(new DatabaseConnectionProxy(null).isClosed());
+		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(null);
+		assertTrue(proxy.isClosed());
+		proxy.close();
 	}
 
 	@Test
@@ -298,14 +362,18 @@ public class DatabaseConnectionProxyTest {
 		boolean tableExists = true;
 		String tableName = "fjewfjwef";
 		expect(conn.isTableExists(tableName)).andReturn(tableExists);
+		conn.close();
 		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(conn);
 		replay(conn);
 		assertEquals(tableExists, proxy.isTableExists(tableName));
+		proxy.close();
 		verify(conn);
 	}
 
 	@Test
 	public void testIsTableExistsNull() throws Exception {
-		assertFalse(new DatabaseConnectionProxy(null).isTableExists("foo"));
+		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(null);
+		assertFalse(proxy.isTableExists("foo"));
+		proxy.close();
 	}
 }

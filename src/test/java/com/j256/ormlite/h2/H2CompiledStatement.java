@@ -1,11 +1,13 @@
 package com.j256.ormlite.h2;
 
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
 
 import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.field.SqlType;
+import com.j256.ormlite.misc.IOUtils;
 import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.DatabaseResults;
 
@@ -43,16 +45,16 @@ public class H2CompiledStatement implements CompiledStatement {
 		return preparedStatement.getUpdateCount();
 	}
 
-	public void close() throws SQLException {
-		preparedStatement.close();
+	public void close() throws IOException {
+		try {
+			preparedStatement.close();
+		} catch (SQLException e) {
+			throw new IOException("could not close prepared statement", e);
+		}
 	}
 
 	public void closeQuietly() {
-		try {
-			close();
-		} catch (SQLException e) {
-			// ignored
-		}
+		IOUtils.closeQuietly(this);
 	}
 
 	public void cancel() throws SQLException {

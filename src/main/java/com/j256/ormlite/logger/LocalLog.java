@@ -14,6 +14,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import com.j256.ormlite.misc.IOUtils;
+
 /**
  * Class which implements our {@link Log} interface so we can bypass external logging classes if they are not available.
  * 
@@ -150,11 +152,7 @@ public class LocalLog implements Log {
 				System.err.println("IO exception reading the log properties file '" + LOCAL_LOG_PROPERTIES_FILE + "': "
 						+ e);
 			} finally {
-				try {
-					stream.close();
-				} catch (IOException e) {
-					// ignore close exception
-				}
+				IOUtils.closeQuietly(stream);
 			}
 		}
 		return levels;

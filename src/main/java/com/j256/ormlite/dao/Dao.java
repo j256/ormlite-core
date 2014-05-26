@@ -1,5 +1,6 @@
 package com.j256.ormlite.dao;
 
+import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.sql.SQLException;
@@ -430,7 +431,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * the {@link #getWrappedIterable()} method to get a wrapped iterable for each thread instead.
 	 * </p>
 	 */
-	public void closeLastIterator() throws SQLException;
+	public void closeLastIterator() throws IOException;
 
 	/**
 	 * Similar to the {@link #iterator(PreparedQuery)} except it returns a GenericRawResults object associated with the

@@ -6,6 +6,7 @@ import java.util.Collection;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.misc.IOUtils;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.SelectArg;
@@ -116,11 +117,7 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 			}
 			return changed;
 		} finally {
-			try {
-				iterator.close();
-			} catch (SQLException e) {
-				// ignored
-			}
+			IOUtils.closeQuietly(iterator);
 		}
 	}
 
@@ -140,11 +137,7 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 				iterator.remove();
 			}
 		} finally {
-			try {
-				iterator.close();
-			} catch (SQLException e) {
-				// ignored
-			}
+			IOUtils.closeQuietly(iterator);
 		}
 	}
 

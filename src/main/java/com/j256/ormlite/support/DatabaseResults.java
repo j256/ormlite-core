@@ -1,5 +1,6 @@
 package com.j256.ormlite.support;
 
+import java.io.Closeable;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -16,7 +17,7 @@ import com.j256.ormlite.dao.ObjectCache;
  * 
  * @author graywatson
  */
-public interface DatabaseResults {
+public interface DatabaseResults extends Closeable {
 
 	/**
 	 * Returns the number of columns in these results.
@@ -159,11 +160,6 @@ public interface DatabaseResults {
 	 * Returns the object cache that is associated with these results or null if none.
 	 */
 	public ObjectCache getObjectCache();
-
-	/**
-	 * Closes any underlying database connections.
-	 */
-	public void close() throws SQLException;
 
 	/**
 	 * Closes any underlying database connections but swallows any SQLExceptions.

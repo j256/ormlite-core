@@ -1,5 +1,6 @@
 package com.j256.ormlite.support;
 
+import java.io.Closeable;
 import java.sql.SQLException;
 
 import com.j256.ormlite.dao.ObjectCache;
@@ -10,7 +11,7 @@ import com.j256.ormlite.field.SqlType;
  * 
  * @author graywatson
  */
-public interface CompiledStatement {
+public interface CompiledStatement extends Closeable {
 
 	/**
 	 * Returns the number of columns in this statement.
@@ -36,11 +37,6 @@ public interface CompiledStatement {
 	 * Run the prepared execute statement returning the number of rows affected.
 	 */
 	public int runExecute() throws SQLException;
-
-	/**
-	 * Close the statement.
-	 */
-	public void close() throws SQLException;
 
 	/**
 	 * Close the statement but swallows any SQLExceptions.
