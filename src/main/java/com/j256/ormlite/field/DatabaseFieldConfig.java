@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.types.VoidType;
-import com.j256.ormlite.misc.JavaxPersistence;
+import com.j256.ormlite.misc.JavaxPersistenceConfigurer;
 import com.j256.ormlite.table.DatabaseTableConfig;
 
 /**
@@ -22,6 +22,8 @@ public class DatabaseFieldConfig {
 	public static final DataType DEFAULT_DATA_TYPE = DataType.UNKNOWN;
 	public static final boolean DEFAULT_CAN_BE_NULL = true;
 	public static final boolean DEFAULT_FOREIGN_COLLECTION_ORDER_ASCENDING = true;
+
+	private static JavaxPersistenceConfigurer javaxPersistenceConfigurer;
 
 	private String fieldName;
 	private String columnName;
@@ -63,6 +65,19 @@ public class DatabaseFieldConfig {
 	private String foreignCollectionOrderColumnName;
 	private boolean foreignCollectionOrderAscending = DEFAULT_FOREIGN_COLLECTION_ORDER_ASCENDING;
 	private String foreignCollectionForeignFieldName;
+
+	static {
+		try {
+			// see if we have this class at runtime
+			Class.forName("javax.persistence.Entity");
+			// if we do then get our JavaxPersistance class
+			Class<?> clazz = Class.forName("com.j256.ormlite.misc.JavaxPersistenceImpl");
+			javaxPersistenceConfigurer = (JavaxPersistenceConfigurer) clazz.getConstructor().newInstance();
+		} catch (Exception e) {
+			// no configurer
+			javaxPersistenceConfigurer = null;
+		}
+	}
 
 	public DatabaseFieldConfig() {
 		// for spring
@@ -527,10 +542,12 @@ public class DatabaseFieldConfig {
 		/*
 		 * NOTE: to remove javax.persistence usage, comment the following lines out
 		 */
-		DatabaseFieldConfig config = JavaxPersistence.createFieldConfig(databaseType, field);
-
-		// this can be null
-		return config;
+		if (javaxPersistenceConfigurer == null) {
+			return null;
+		} else {
+			// this can be null
+			return javaxPersistenceConfigurer.createFieldConfig(databaseType, field);
+		}
 	}
 
 	/**

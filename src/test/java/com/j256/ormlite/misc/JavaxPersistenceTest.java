@@ -40,7 +40,7 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 	public void testConversions() throws Exception {
 		Field[] fields = Javax.class.getDeclaredFields();
 		for (Field field : fields) {
-			DatabaseFieldConfig config = JavaxPersistence.createFieldConfig(databaseType, field);
+			DatabaseFieldConfig config = new JavaxPersistenceImpl().createFieldConfig(databaseType, field);
 			if (field.getName().equals("generatedId")) {
 				assertFalse(config.isId());
 				assertTrue(config.isGeneratedId());
@@ -210,8 +210,9 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 
 	@Test
 	public void testTableName() {
-		assertEquals(JAVAX_ENTITY_NAME, JavaxPersistence.getEntityName(Javax.class));
-		assertNull(JavaxPersistence.getEntityName(EntityNoName.class));
+		JavaxPersistenceConfigurer configurer = new JavaxPersistenceImpl();
+		assertEquals(JAVAX_ENTITY_NAME, configurer.getEntityName(Javax.class));
+		assertNull(configurer.getEntityName(EntityNoName.class));
 	}
 
 	@Test
@@ -219,7 +220,7 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 		Field[] fields = Javax.class.getDeclaredFields();
 		UpperCaseFieldDatabaseType ucDatabaseType = new UpperCaseFieldDatabaseType();
 		for (Field field : fields) {
-			DatabaseFieldConfig config = JavaxPersistence.createFieldConfig(ucDatabaseType, field);
+			DatabaseFieldConfig config = new JavaxPersistenceImpl().createFieldConfig(ucDatabaseType, field);
 			if (field.getName().equals("id")) {
 				assertTrue(config.isId());
 				assertFalse(config.isGeneratedId());

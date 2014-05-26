@@ -10,7 +10,7 @@ import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.misc.JavaxPersistence;
+import com.j256.ormlite.misc.JavaxPersistenceConfigurer;
 import com.j256.ormlite.support.ConnectionSource;
 
 /**
@@ -21,11 +21,26 @@ import com.j256.ormlite.support.ConnectionSource;
  */
 public class DatabaseTableConfig<T> {
 
+	private static JavaxPersistenceConfigurer javaxPersistenceConfigurer;
+
 	private Class<T> dataClass;
 	private String tableName;
 	private List<DatabaseFieldConfig> fieldConfigs;
 	private FieldType[] fieldTypes;
 	private Constructor<T> constructor;
+
+	static {
+		try {
+			// see if we have this class at runtime
+			Class.forName("javax.persistence.Entity");
+			// if we do then get our JavaxPersistance class
+			Class<?> clazz = Class.forName("com.j256.ormlite.misc.JavaxPersistenceImpl");
+			javaxPersistenceConfigurer = (JavaxPersistenceConfigurer) clazz.getConstructor().newInstance();
+		} catch (Exception e) {
+			// no configurer
+			javaxPersistenceConfigurer = null;
+		}
+	}
 
 	public DatabaseTableConfig() {
 		// for spring
@@ -154,15 +169,13 @@ public class DatabaseTableConfig<T> {
 		String name = null;
 		if (databaseTable != null && databaseTable.tableName() != null && databaseTable.tableName().length() > 0) {
 			name = databaseTable.tableName();
-		} else {
-			/*
-			 * NOTE: to remove javax.persistence usage, comment the following line out
-			 */
-			name = JavaxPersistence.getEntityName(clazz);
-			if (name == null) {
-				// if the name isn't specified, it is the class name lowercased
-				name = clazz.getSimpleName().toLowerCase();
-			}
+		}
+		if (name == null && javaxPersistenceConfigurer != null) {
+			name = javaxPersistenceConfigurer.getEntityName(clazz);
+		}
+		if (name == null) {
+			// if the name isn't specified, it is the class name lowercased
+			name = clazz.getSimpleName().toLowerCase();
 		}
 		return name;
 	}
