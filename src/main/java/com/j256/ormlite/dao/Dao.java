@@ -163,6 +163,16 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public int create(T data) throws SQLException;
 
 	/**
+	 * Just like {@link #create(Object)} but with a collection of objects. This will wrap the creates using the same
+	 * mechanism as {@link #callBatchTasks(Callable)}.
+	 * 
+	 * @param datas
+	 *            The collection of data items that we are creating in the database.
+	 * @return The number of rows updated in the database.
+	 */
+	public int create(Collection<T> datas) throws SQLException;
+
+	/**
 	 * This is a convenience method to creating a data item but only if the ID does not already exist in the table. This
 	 * extracts the id from the data parameter, does a {@link #queryForId(Object)} on it, returning the data if it
 	 * exists. If it does not exist {@link #create(Object)} will be called with the parameter.

@@ -2420,6 +2420,26 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertNotNull(result);
 	}
 
+	@Test
+	public void testCreateCollection() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		int numToCreate = 100;
+		List<Foo> fooList = new ArrayList<Foo>(numToCreate);
+		for (int i = 0; i < numToCreate; i++) {
+			Foo foo = new Foo();
+			foo.val = i;
+			fooList.add(foo);
+		}
+
+		// create them all at once
+		assertEquals(numToCreate, dao.create(fooList));
+
+		for (int i = 0; i < numToCreate; i++) {
+			Foo result = dao.queryForId(fooList.get(i).id);
+			assertEquals(i, result.val);
+		}
+	}
+
 	/* ============================================================================================== */
 
 	private String buildFooQueryAllString(Dao<Foo, Object> fooDao) throws SQLException {

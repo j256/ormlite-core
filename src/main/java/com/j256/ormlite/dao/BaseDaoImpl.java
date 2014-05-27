@@ -314,6 +314,30 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	public int create(Collection<T> datas) throws SQLException {
+		checkForInitialized();
+		DatabaseConnection connection = connectionSource.getReadWriteConnection();
+		boolean saved = false;
+		try {
+			saved = connectionSource.saveSpecialConnection(connection);
+			int modCount = 0;
+			for (T data : datas) {
+				if (data instanceof BaseDaoEnabled) {
+					@SuppressWarnings("unchecked")
+					BaseDaoEnabled<T, ID> daoEnabled = (BaseDaoEnabled<T, ID>) data;
+					daoEnabled.setDao(this);
+				}
+				modCount += statementExecutor.create(connection, data, objectCache);
+			}
+			return modCount;
+		} finally {
+			if (!saved) {
+				connectionSource.clearSpecialConnection(connection);
+			}
+			connectionSource.releaseConnection(connection);
+		}
+	}
+
 	public T createIfNotExists(T data) throws SQLException {
 		if (data == null) {
 			return null;
@@ -625,15 +649,18 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	public <CT> CT callBatchTasks(Callable<CT> callable) throws SQLException {
 		checkForInitialized();
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
+		boolean saved = false;
 		try {
 			/*
 			 * We need to save the connection because we are going to be disabling auto-commit on it and we don't want
 			 * pooled connection factories to give us another connection where auto-commit might still be enabled.
 			 */
-			boolean saved = connectionSource.saveSpecialConnection(connection);
+			saved = connectionSource.saveSpecialConnection(connection);
 			return statementExecutor.callBatchTasks(connection, saved, callable);
 		} finally {
-			connectionSource.clearSpecialConnection(connection);
+			if (!saved) {
+				connectionSource.clearSpecialConnection(connection);
+			}
 			connectionSource.releaseConnection(connection);
 		}
 	}
