@@ -65,7 +65,6 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	private String ifExistsQuery;
 	private FieldType[] ifExistsFieldTypes;
 	private RawRowMapper<T> rawRowMapper;
-	private final static SelectArg CONSTANT_SELECT_ARG = new SelectArg();
 
 	/**
 	 * Provides statements for various SQL operations.
@@ -580,8 +579,11 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		if (ifExistsQuery == null) {
 			QueryBuilder<T, ID> qb = new QueryBuilder<T, ID>(databaseType, tableInfo, dao);
 			qb.selectRaw("COUNT(*)");
-			// NOTE: bit of a hack here because the select arg is never used
-			qb.where().eq(tableInfo.getIdField().getColumnName(), CONSTANT_SELECT_ARG);
+			/*
+			 * NOTE: bit of a hack here because the select arg is never used but it _can't_ be a constant because we set
+			 * field-name and field-type on it.
+			 */
+			qb.where().eq(tableInfo.getIdField().getColumnName(), new SelectArg());
 			ifExistsQuery = qb.prepareStatementString();
 			ifExistsFieldTypes = new FieldType[] { tableInfo.getIdField() };
 		}
