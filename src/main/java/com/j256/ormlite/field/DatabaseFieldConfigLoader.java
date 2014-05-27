@@ -215,7 +215,7 @@ public class DatabaseFieldConfigLoader {
 			writer.append(FIELD_NAME_FOREIGN_AUTO_REFRESH).append('=').append("true");
 			writer.newLine();
 		}
-		if (config.getMaxForeignAutoRefreshLevel() != DatabaseField.NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED) {
+		if (config.getMaxForeignAutoRefreshLevel() != DatabaseFieldConfig.NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED) {
 			writer.append(FIELD_NAME_MAX_FOREIGN_AUTO_REFRESH_LEVEL)
 					.append('=')
 					.append(Integer.toString(config.getMaxForeignAutoRefreshLevel()));

@@ -268,9 +268,10 @@ public class FieldType {
 			throw new IllegalArgumentException("Field " + field.getName()
 					+ " is not a valid type to be a version field");
 		}
-		if (fieldConfig.getMaxForeignAutoRefreshLevel() > 0 && !fieldConfig.isForeignAutoRefresh()) {
-			throw new IllegalArgumentException("Field " + field.getName()
-					+ " has maxForeignAutoRefreshLevel set but not foreignAutoRefresh is false");
+		if (fieldConfig.getMaxForeignAutoRefreshLevel() != DatabaseFieldConfig.NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED
+				&& !fieldConfig.isForeignAutoRefresh()) {
+			throw new IllegalArgumentException("Field " + field.getName() + " has maxForeignAutoRefreshLevel set ("
+					+ fieldConfig.getMaxForeignAutoRefreshLevel() + ") but not foreignAutoRefresh is false");
 		}
 		assignDataType(databaseType, dataPersister);
 	}

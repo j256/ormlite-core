@@ -44,12 +44,6 @@ public @interface DatabaseField {
 	public static final String DEFAULT_STRING = "__ormlite__ no default value string was specified";
 
 	/**
-	 * If the {@link #maxForeignAutoRefreshLevel()} is set to this then it will be reset internally to be
-	 * {@link #DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL} if {@link #foreignAutoRefresh()} is set to true.
-	 */
-	public static final int NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED = -1;
-
-	/**
 	 * Default for the maxForeignAutoRefreshLevel.
 	 * 
 	 * @see #maxForeignAutoRefreshLevel()
@@ -235,10 +229,10 @@ public @interface DatabaseField {
 	 * 
 	 * <p>
 	 * <b>NOTE:</b> Increasing this value will result in more database transactions whenever you query for A, so use
-	 * carefully. Default value is {@link #DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL}.
+	 * carefully.
 	 * </p>
 	 */
-	int maxForeignAutoRefreshLevel() default NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED;
+	int maxForeignAutoRefreshLevel() default DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL;
 
 	/**
 	 * Allows you to set a custom persister class to handle this field. This class must have a getSingleton() static

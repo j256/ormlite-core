@@ -17,11 +17,13 @@ import com.j256.ormlite.table.DatabaseTableConfig;
  */
 public class DatabaseFieldConfig {
 
-	private static final int DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL = ForeignCollectionField.MAX_EAGER_LEVEL;
 	public static final Class<? extends DataPersister> DEFAULT_PERSISTER_CLASS = VoidType.class;
 	public static final DataType DEFAULT_DATA_TYPE = DataType.UNKNOWN;
 	public static final boolean DEFAULT_CAN_BE_NULL = true;
 	public static final boolean DEFAULT_FOREIGN_COLLECTION_ORDER_ASCENDING = true;
+	public static final int NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED = -1;
+
+	private static final int DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL = ForeignCollectionField.MAX_EAGER_LEVEL;
 
 	private static JavaxPersistenceConfigurer javaxPersistenceConfigurer;
 
@@ -49,7 +51,7 @@ public class DatabaseFieldConfig {
 	private boolean uniqueIndex;
 	private String uniqueIndexName;
 	private boolean foreignAutoRefresh;
-	private int maxForeignAutoRefreshLevel = DatabaseField.NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED;
+	private int maxForeignAutoRefreshLevel = NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED;
 	private Class<? extends DataPersister> persisterClass = DEFAULT_PERSISTER_CLASS;
 	private boolean allowGeneratedIdInsert;
 	private String columnDefinition;
@@ -639,7 +641,12 @@ public class DatabaseFieldConfig {
 		config.uniqueIndex = databaseField.uniqueIndex();
 		config.uniqueIndexName = valueIfNotBlank(databaseField.uniqueIndexName());
 		config.foreignAutoRefresh = databaseField.foreignAutoRefresh();
-		config.maxForeignAutoRefreshLevel = databaseField.maxForeignAutoRefreshLevel();
+		if (config.foreignAutoRefresh
+				|| databaseField.maxForeignAutoRefreshLevel() != DatabaseField.DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL) {
+			config.maxForeignAutoRefreshLevel = databaseField.maxForeignAutoRefreshLevel();
+		} else {
+			config.maxForeignAutoRefreshLevel = NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED;
+		}
 		config.persisterClass = databaseField.persisterClass();
 		config.allowGeneratedIdInsert = databaseField.allowGeneratedIdInsert();
 		config.columnDefinition = valueIfNotBlank(databaseField.columnDefinition());
@@ -658,8 +665,7 @@ public class DatabaseFieldConfig {
 		if (foreignColumnName != null) {
 			foreignAutoRefresh = true;
 		}
-		if (foreignAutoRefresh
-				&& maxForeignAutoRefreshLevel == DatabaseField.NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED) {
+		if (foreignAutoRefresh && maxForeignAutoRefreshLevel == NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED) {
 			maxForeignAutoRefreshLevel = DatabaseField.DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL;
 		}
 	}

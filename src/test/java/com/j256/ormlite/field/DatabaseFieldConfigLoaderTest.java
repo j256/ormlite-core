@@ -137,8 +137,6 @@ public class DatabaseFieldConfigLoaderTest {
 		checkConfigOutput(config, body, writer, buffer);
 		config.setForeignAutoRefresh(true);
 		body.append("foreignAutoRefresh=true").append(LINE_SEP);
-		checkConfigOutput(config, body, writer, buffer);
-
 		int maxForeign = 2112;
 		config.setMaxForeignAutoRefreshLevel(maxForeign);
 		body.append("maxForeignAutoRefreshLevel=").append(maxForeign).append(LINE_SEP);

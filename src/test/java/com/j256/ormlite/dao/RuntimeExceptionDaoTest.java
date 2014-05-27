@@ -495,9 +495,9 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
-		expect(dao.create(null)).andThrow(new SQLException("Testing catch"));
+		expect(dao.create((Foo) null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.create(null);
+		rtDao.create((Foo) null);
 		verify(dao);
 	}
 

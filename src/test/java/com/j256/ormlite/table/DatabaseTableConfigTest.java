@@ -81,7 +81,8 @@ public class DatabaseTableConfigTest {
 	public void testFieldConfigConstructor() throws SQLException {
 		List<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
 		fieldConfigs.add(new DatabaseFieldConfig("stuff", null, DataType.UNKNOWN, "", 0, true, false, false, null,
-				false, null, false, null, false, null, false, null, null, false, 0, 0));
+				false, null, false, null, false, null, false, null, null, false,
+				DatabaseFieldConfig.NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED, 0));
 		DatabaseTableConfig<DatabaseTableAnno> dbTableConf =
 				new DatabaseTableConfig<DatabaseTableAnno>(DatabaseTableAnno.class, fieldConfigs);
 		assertEquals(DatabaseTableAnno.class, dbTableConf.getDataClass());
@@ -99,7 +100,8 @@ public class DatabaseTableConfigTest {
 		dbTableConf.setTableName(TABLE_NAME);
 		List<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
 		fieldConfigs.add(new DatabaseFieldConfig("stuff", null, DataType.UNKNOWN, "", 0, true, false, false, null,
-				false, null, false, null, false, null, false, null, null, false, 0, 0));
+				false, null, false, null, false, null, false, null, null, false,
+				DatabaseFieldConfig.NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED, 0));
 		dbTableConf.setFieldConfigs(fieldConfigs);
 		dbTableConf.initialize();
 		assertEquals(DatabaseTableAnno.class, dbTableConf.getDataClass());
