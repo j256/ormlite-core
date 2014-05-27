@@ -231,6 +231,18 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	}
 
 	/**
+	 * @see Dao#create(Collection)
+	 */
+	public int create(Collection<T> datas) {
+		try {
+			return dao.create(datas);
+		} catch (SQLException e) {
+			logMessage(e, "create threw exception on: " + datas);
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
 	 * @see Dao#createIfNotExists(Object)
 	 */
 	public T createIfNotExists(T data) {
