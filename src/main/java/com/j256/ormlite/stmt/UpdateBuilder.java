@@ -43,7 +43,7 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * Add a column to be set to a value for UPDATE statements. This will generate something like columnName = 'value'
 	 * with the value escaped if necessary.
 	 */
-	public StatementBuilder<T, ID> updateColumnValue(String columnName, Object value) throws SQLException {
+	public UpdateBuilder<T, ID> updateColumnValue(String columnName, Object value) throws SQLException {
 		FieldType fieldType = verifyColumnName(columnName);
 		if (fieldType.isForeignCollection()) {
 			throw new SQLException("Can't update foreign colletion field: " + columnName);
@@ -62,7 +62,7 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * {@link #escapeColumnName(String)} or {@link #escapeColumnName(StringBuilder, String)} methods.
 	 * </p>
 	 */
-	public StatementBuilder<T, ID> updateColumnExpression(String columnName, String expression) throws SQLException {
+	public UpdateBuilder<T, ID> updateColumnExpression(String columnName, String expression) throws SQLException {
 		FieldType fieldType = verifyColumnName(columnName);
 		if (fieldType.isForeignCollection()) {
 			throw new SQLException("Can't update foreign colletion field: " + columnName);
@@ -82,7 +82,7 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 
 	/**
 	 * Same as {@link #escapeColumnName(StringBuilder, String)} but it will return the escaped string. The StringBuilder
-	 * method is more efficient since this method creates a {@link StatementBuilder} internally.
+	 * method is more efficient since this method creates a StringBuilder internally.
 	 */
 	public String escapeColumnName(String columnName) {
 		StringBuilder sb = new StringBuilder(columnName.length() + 4);
@@ -101,8 +101,7 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 
 	/**
 	 * Same as {@link #escapeValue(StringBuilder, String)} but it will return the escaped string. Numbers should not be
-	 * escaped. The StringBuilder method is more efficient since this method creates a {@link StatementBuilder}
-	 * internally.
+	 * escaped. The StringBuilder method is more efficient since this method creates a StringBuilder internally.
 	 */
 	public String escapeValue(String value) {
 		StringBuilder sb = new StringBuilder(value.length() + 4);
