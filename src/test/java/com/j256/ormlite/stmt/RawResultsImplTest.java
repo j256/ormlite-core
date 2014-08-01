@@ -4,12 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.GenericRawResults;
+import com.j256.ormlite.dao.RawRowMapper;
 
 public class RawResultsImplTest extends BaseCoreTest {
 
@@ -121,5 +123,27 @@ public class RawResultsImplTest extends BaseCoreTest {
 		} else {
 			assertEquals(foo2.val, max);
 		}
+	}
+
+	@Test
+	public void testCustomColumnNames() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		foo.val = 1213213;
+		assertEquals(1, dao.create(foo));
+		final String idName = "SOME_ID";
+		final String valName = "SOME_VAL";
+		final AtomicBoolean gotResult = new AtomicBoolean(false);
+		GenericRawResults<Void> results =
+				dao.queryRaw("select id as " + idName + ", val as " + valName + " from foo", new RawRowMapper<Void>() {
+					public Void mapRow(String[] columnNames, String[] resultColumns) {
+						assertEquals(idName, columnNames[0]);
+						assertEquals(valName, columnNames[1]);
+						gotResult.set(true);
+						return null;
+					}
+				});
+		results.close();
+		assertTrue(gotResult.get());
 	}
 }
