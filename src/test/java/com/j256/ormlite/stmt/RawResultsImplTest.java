@@ -134,15 +134,17 @@ public class RawResultsImplTest extends BaseCoreTest {
 		final String idName = "SOME_ID";
 		final String valName = "SOME_VAL";
 		final AtomicBoolean gotResult = new AtomicBoolean(false);
-		GenericRawResults<Void> results =
-				dao.queryRaw("select id as " + idName + ", val as " + valName + " from foo", new RawRowMapper<Void>() {
-					public Void mapRow(String[] columnNames, String[] resultColumns) {
-						assertEquals(idName, columnNames[0]);
-						assertEquals(valName, columnNames[1]);
-						gotResult.set(true);
-						return null;
-					}
-				});
+		GenericRawResults<Object> results =
+				dao.queryRaw("select id as " + idName + ", val as " + valName + " from foo",
+						new RawRowMapper<Object>() {
+							public Object mapRow(String[] columnNames, String[] resultColumns) {
+								assertEquals(idName, columnNames[0]);
+								assertEquals(valName, columnNames[1]);
+								gotResult.set(true);
+								return new Object();
+							}
+						});
+		assertEquals(1, results.getResults().size());
 		results.close();
 		assertTrue(gotResult.get());
 	}
