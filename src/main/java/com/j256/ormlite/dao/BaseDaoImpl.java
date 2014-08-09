@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
 
 import com.j256.ormlite.db.DatabaseType;
@@ -77,6 +78,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			};
 	private static ReferenceObjectCache defaultObjectCache;
 	private ObjectCache objectCache;
+	private Map<DaoObserver, Void> daoObserverMap;
 
 	/**
 	 * Construct our base DAO using Spring type wiring. The {@link ConnectionSource} must be set with the
@@ -819,6 +821,50 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
 	public T mapSelectStarRow(DatabaseResults results) throws SQLException {
 		return statementExecutor.getSelectStarRowMapper().mapRow(results);
+	}
+
+	public void notifyChanges() {
+		/*
+		 * We do have some race conditions here when one thread registers an observer and another thread does the
+		 * notification. But I think this is minimal risk.
+		 */
+		if (daoObserverMap == null) {
+			return;
+		}
+		List<DaoObserver> daoObserverList;
+		synchronized (daoObserverMap) {
+			// grab a copy of the observers so we don't hold the lock when we are notifying them
+			daoObserverList = new ArrayList<Dao.DaoObserver>(daoObserverMap.keySet());
+		}
+		for (DaoObserver daoObserver : daoObserverList) {
+			daoObserver.onChange();
+		}
+	}
+
+	public void registerObserver(DaoObserver observer) {
+		if (daoObserverMap == null) {
+			/*
+			 * We are doing this so no other systems need to pay the penalty for the new observer code. This seems like
+			 * it would be a double-check locking bug but I don't think so. We are still synchronizing on the map itself
+			 * before so there is no way for the map to be used when only partially constructed.
+			 */
+			synchronized (this) {
+				if (daoObserverMap == null) {
+					daoObserverMap = new WeakHashMap<Dao.DaoObserver, Void>();
+				}
+			}
+		}
+		synchronized (daoObserverMap) {
+			daoObserverMap.put(observer, null);
+		}
+	}
+
+	public void unregisterObserver(DaoObserver observer) {
+		if (daoObserverMap != null) {
+			synchronized (daoObserverMap) {
+				daoObserverMap.remove(observer);
+			}
+		}
 	}
 
 	public GenericRowMapper<T> getSelectStarRowMapper() throws SQLException {

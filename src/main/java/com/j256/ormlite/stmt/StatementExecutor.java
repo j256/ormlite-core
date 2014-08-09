@@ -65,6 +65,12 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	private String ifExistsQuery;
 	private FieldType[] ifExistsFieldTypes;
 	private RawRowMapper<T> rawRowMapper;
+	private final ThreadLocal<Boolean> localIsInBatchMode = new ThreadLocal<Boolean>() {
+		@Override
+		protected Boolean initialValue() {
+			return false;
+		}
+	};
 
 	/**
 	 * Provides statements for various SQL operations.
@@ -430,7 +436,11 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		if (mappedInsert == null) {
 			mappedInsert = MappedCreate.build(databaseType, tableInfo);
 		}
-		return mappedInsert.insert(databaseType, databaseConnection, data, objectCache);
+		int result = mappedInsert.insert(databaseType, databaseConnection, data, objectCache);
+		if (dao != null && !localIsInBatchMode.get()) {
+			dao.notifyChanges();
+		}
+		return result;
 	}
 
 	/**
@@ -440,7 +450,11 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		if (mappedUpdate == null) {
 			mappedUpdate = MappedUpdate.build(databaseType, tableInfo);
 		}
-		return mappedUpdate.update(databaseConnection, data, objectCache);
+		int result = mappedUpdate.update(databaseConnection, data, objectCache);
+		if (dao != null && !localIsInBatchMode.get()) {
+			dao.notifyChanges();
+		}
+		return result;
 	}
 
 	/**
@@ -451,7 +465,11 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		if (mappedUpdateId == null) {
 			mappedUpdateId = MappedUpdateId.build(databaseType, tableInfo);
 		}
-		return mappedUpdateId.execute(databaseConnection, data, newId, objectCache);
+		int result = mappedUpdateId.execute(databaseConnection, data, newId, objectCache);
+		if (dao != null && !localIsInBatchMode.get()) {
+			dao.notifyChanges();
+		}
+		return result;
 	}
 
 	/**
@@ -460,7 +478,11 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	public int update(DatabaseConnection databaseConnection, PreparedUpdate<T> preparedUpdate) throws SQLException {
 		CompiledStatement compiledStatement = preparedUpdate.compile(databaseConnection, StatementType.UPDATE);
 		try {
-			return compiledStatement.runUpdate();
+			int result = compiledStatement.runUpdate();
+			if (dao != null && !localIsInBatchMode.get()) {
+				dao.notifyChanges();
+			}
+			return result;
 		} finally {
 			IOUtils.closeThrowSqlException(compiledStatement, "compiled statement");
 		}
@@ -484,7 +506,11 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		if (mappedDelete == null) {
 			mappedDelete = MappedDelete.build(databaseType, tableInfo);
 		}
-		return mappedDelete.delete(databaseConnection, data, objectCache);
+		int result = mappedDelete.delete(databaseConnection, data, objectCache);
+		if (dao != null && !localIsInBatchMode.get()) {
+			dao.notifyChanges();
+		}
+		return result;
 	}
 
 	/**
@@ -503,7 +529,12 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	public int deleteObjects(DatabaseConnection databaseConnection, Collection<T> datas, ObjectCache objectCache)
 			throws SQLException {
 		// have to build this on the fly because the collection has variable number of args
-		return MappedDeleteCollection.deleteObjects(databaseType, tableInfo, databaseConnection, datas, objectCache);
+		int result =
+				MappedDeleteCollection.deleteObjects(databaseType, tableInfo, databaseConnection, datas, objectCache);
+		if (dao != null && !localIsInBatchMode.get()) {
+			dao.notifyChanges();
+		}
+		return result;
 	}
 
 	/**
@@ -512,7 +543,11 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	public int deleteIds(DatabaseConnection databaseConnection, Collection<ID> ids, ObjectCache objectCache)
 			throws SQLException {
 		// have to build this on the fly because the collection has variable number of args
-		return MappedDeleteCollection.deleteIds(databaseType, tableInfo, databaseConnection, ids, objectCache);
+		int result = MappedDeleteCollection.deleteIds(databaseType, tableInfo, databaseConnection, ids, objectCache);
+		if (dao != null && !localIsInBatchMode.get()) {
+			dao.notifyChanges();
+		}
+		return result;
 	}
 
 	/**
@@ -521,7 +556,11 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	public int delete(DatabaseConnection databaseConnection, PreparedDelete<T> preparedDelete) throws SQLException {
 		CompiledStatement compiledStatement = preparedDelete.compile(databaseConnection, StatementType.DELETE);
 		try {
-			return compiledStatement.runUpdate();
+			int result = compiledStatement.runUpdate();
+			if (dao != null && !localIsInBatchMode.get()) {
+				dao.notifyChanges();
+			}
+			return result;
 		} finally {
 			IOUtils.closeThrowSqlException(compiledStatement, "compiled statement");
 		}
@@ -531,6 +570,24 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 * Call batch tasks inside of a connection which may, or may not, have been "saved".
 	 */
 	public <CT> CT callBatchTasks(DatabaseConnection connection, boolean saved, Callable<CT> callable)
+			throws SQLException {
+		try {
+			/*
+			 * We are using a thread-local boolean to detect whether we are in the middle of running a number of
+			 * changes. This disables the dao change notification for every batched call.
+			 */
+			localIsInBatchMode.set(true);
+			return doCallBatchTasks(connection, saved, callable);
+		} finally {
+			localIsInBatchMode.set(false);
+			if (dao != null) {
+				// only at the end is the DAO notified of changes
+				dao.notifyChanges();
+			}
+		}
+	}
+
+	private <CT> CT doCallBatchTasks(DatabaseConnection connection, boolean saved, Callable<CT> callable)
 			throws SQLException {
 		if (databaseType.isBatchUseTransaction()) {
 			return TransactionManager.callInTransaction(connection, saved, databaseType, callable);

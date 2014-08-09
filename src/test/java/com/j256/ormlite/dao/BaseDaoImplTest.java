@@ -22,12 +22,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.h2.api.Trigger;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.Dao.CreateOrUpdateStatus;
+import com.j256.ormlite.dao.Dao.DaoObserver;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
@@ -2438,6 +2440,42 @@ public class BaseDaoImplTest extends BaseCoreTest {
 			Foo result = dao.queryForId(fooList.get(i).id);
 			assertEquals(i, result.val);
 		}
+	}
+
+	@Test
+	public void testDaoObserver() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+
+		final AtomicInteger changeCount = new AtomicInteger();
+		DaoObserver obverver = new DaoObserver() {
+			public void onChange() {
+				changeCount.incrementAndGet();
+			}
+		};
+		dao.registerObserver(obverver);
+
+		assertEquals(0, changeCount.get());
+		Foo foo = new Foo();
+		foo.val = 21312313;
+		assertEquals(1, dao.create(foo));
+		assertEquals(1, changeCount.get());
+
+		foo.val = foo.val + 1;
+		assertEquals(1, dao.create(foo));
+		assertEquals(2, changeCount.get());
+
+		// shouldn't change anything
+		dao.queryForAll();
+		assertEquals(2, changeCount.get());
+
+		assertEquals(1, dao.delete(foo));
+		assertEquals(3, changeCount.get());
+
+		dao.unregisterObserver(obverver);
+
+		assertEquals(1, dao.create(foo));
+		// shouldn't change not that we have removed the observer
+		assertEquals(3, changeCount.get());
 	}
 
 	/* ============================================================================================== */

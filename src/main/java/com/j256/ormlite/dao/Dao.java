@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
 
 import com.j256.ormlite.field.DataType;
@@ -812,6 +813,28 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public void setObjectFactory(ObjectFactory<T> objectFactory);
 
 	/**
+	 * Register an observer that will be called when data changes for this DAO. You should make a call to
+	 * {@link #unregisterObserver(DaoObserver)} to de-register the observer after you are done with it although it is
+	 * implemented using a {@link WeakHashMap} so it should be cleared if no other references exist to it.
+	 */
+	public void registerObserver(DaoObserver observer);
+
+	/**
+	 * Remove the observer from the registered list.
+	 */
+	public void unregisterObserver(DaoObserver observer);
+
+	/**
+	 * Notify any registered {@link DaoObserver}s that the underlying data may have changed. This is done automatically
+	 * when using {@link #create(Object)}, {@link #update(Object)}, or {@link #delete(Object)} type methods. Batch
+	 * methods will be notified once at the end of the batch, not for every statement in the batch.
+	 * 
+	 * NOTE: The {@link #updateRaw(String, String...)} and other raw methods will _not_ call notify automatically. You
+	 * will have to call this method yourself after you use the raw methods to change the entities.
+	 */
+	public void notifyChanges();
+
+	/**
 	 * Return class for the {@link Dao#createOrUpdate(Object)} method.
 	 */
 	public static class CreateOrUpdateStatus {
@@ -832,5 +855,16 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 		public int getNumLinesChanged() {
 			return numLinesChanged;
 		}
+	}
+
+	/**
+	 * Defines a class that can observe changes to entities managed by the DAO.
+	 */
+	public static interface DaoObserver {
+		/**
+		 * Called when entities possibly have changed in the DAO. This can be used to detect changes to the entities
+		 * managed by the DAO so that views can be updated.
+		 */
+		public void onChange();
 	}
 }

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 import com.j256.ormlite.dao.Dao.CreateOrUpdateStatus;
+import com.j256.ormlite.dao.Dao.DaoObserver;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.logger.Log.Level;
@@ -854,6 +855,18 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	 */
 	public ConnectionSource getConnectionSource() {
 		return dao.getConnectionSource();
+	}
+
+	public void registerObserver(DaoObserver observer) {
+		dao.registerObserver(observer);
+	}
+
+	public void unregisterObserver(DaoObserver observer) {
+		dao.unregisterObserver(observer);
+	}
+
+	public void notifyChanges() {
+		dao.notifyChanges();
 	}
 
 	private void logMessage(Exception e, String message) {
