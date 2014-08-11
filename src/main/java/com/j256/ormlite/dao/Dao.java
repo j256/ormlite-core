@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
 
 import com.j256.ormlite.field.DataType;
@@ -813,9 +812,8 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public void setObjectFactory(ObjectFactory<T> objectFactory);
 
 	/**
-	 * Register an observer that will be called when data changes for this DAO. You should make a call to
-	 * {@link #unregisterObserver(DaoObserver)} to de-register the observer after you are done with it although it is
-	 * implemented using a {@link WeakHashMap} so it should be cleared if no other references exist to it.
+	 * Register an observer that will be called when data changes for this DAO. You mustq make a call to
+	 * {@link #unregisterObserver(DaoObserver)} to de-register the observer after you are done with it.
 	 */
 	public void registerObserver(DaoObserver observer);
 
