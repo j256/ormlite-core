@@ -78,7 +78,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			};
 	private static ReferenceObjectCache defaultObjectCache;
 	private ObjectCache objectCache;
-	private Map<DaoObserver, Void> daoObserverMap;
+	private Map<DaoObserver, Boolean> daoObserverMap;
 
 	/**
 	 * Construct our base DAO using Spring type wiring. The {@link ConnectionSource} must be set with the
@@ -840,12 +840,12 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			 */
 			synchronized (this) {
 				if (daoObserverMap == null) {
-					daoObserverMap = new ConcurrentHashMap<Dao.DaoObserver, Void>();
+					daoObserverMap = new ConcurrentHashMap<Dao.DaoObserver, Boolean>();
 				}
 			}
 		}
 		// no values in the map
-		daoObserverMap.put(observer, null);
+		daoObserverMap.put(observer, true);
 	}
 
 	public void unregisterObserver(DaoObserver observer) {
