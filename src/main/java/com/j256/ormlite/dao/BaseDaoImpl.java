@@ -58,7 +58,15 @@ import com.j256.ormlite.table.TableInfo;
  */
 public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
-	private boolean initialized;
+	private static final ThreadLocal<List<BaseDaoImpl<?, ?>>> daoConfigLevelLocal =
+			new ThreadLocal<List<BaseDaoImpl<?, ?>>>() {
+				@Override
+				protected List<BaseDaoImpl<?, ?>> initialValue() {
+					return new ArrayList<BaseDaoImpl<?, ?>>(10);
+				}
+			};
+	private static ReferenceObjectCache defaultObjectCache;
+	private static Object constantObject = new Object();
 
 	protected StatementExecutor<T, ID> statementExecutor;
 	protected DatabaseType databaseType;
@@ -69,16 +77,9 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	protected CloseableIterator<T> lastIterator;
 	protected ObjectFactory<T> objectFactory;
 
-	private static final ThreadLocal<List<BaseDaoImpl<?, ?>>> daoConfigLevelLocal =
-			new ThreadLocal<List<BaseDaoImpl<?, ?>>>() {
-				@Override
-				protected List<BaseDaoImpl<?, ?>> initialValue() {
-					return new ArrayList<BaseDaoImpl<?, ?>>(10);
-				}
-			};
-	private static ReferenceObjectCache defaultObjectCache;
+	private boolean initialized;
 	private ObjectCache objectCache;
-	private Map<DaoObserver, Void> daoObserverMap;
+	private Map<DaoObserver, Object> daoObserverMap;
 
 	/**
 	 * Construct our base DAO using Spring type wiring. The {@link ConnectionSource} must be set with the
@@ -840,12 +841,12 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			 */
 			synchronized (this) {
 				if (daoObserverMap == null) {
-					daoObserverMap = new ConcurrentHashMap<Dao.DaoObserver, Void>();
+					daoObserverMap = new ConcurrentHashMap<Dao.DaoObserver, Object>();
 				}
 			}
 		}
 		// no values in the map
-		daoObserverMap.put(observer, null);
+		daoObserverMap.put(observer, constantObject);
 	}
 
 	public void unregisterObserver(DaoObserver observer) {
