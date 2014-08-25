@@ -11,6 +11,7 @@
 	* CORE: Added a Dao.create(Collection) method for bulk creation.  Thanks to Farrukh Najmi for the good idea.
 	* CORE: Fixed a bug with UpdateBuilder methods returning wrong type.  Thanks to Joseph Jones.  Bug #180.
 	* CORE: Fixed a bug with the raw results that they are not obeying the AS SQL.  Thanks to nonameplum.  Bug #183.
+	* CORE: Fixed a bug with ISNULL and ISNOTNULL which weren't working with serializable.  Thanks to andrew8er.  Bug #185.
 	* ANDROID: Fixed the string processing when persisting java.sql.Timestamp classes. Bug #163.
 	* ANDROID: Added initial take on Loader base classes from EgorAnd for newer Android versions.  Thanks much!!
 

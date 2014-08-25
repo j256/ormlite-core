@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -19,6 +20,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.db.BaseDatabaseType;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.field.SqlType;
@@ -1246,6 +1248,26 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		qb.prepare();
 	}
 
+	@Test
+	public void testRandomIsNull() throws Exception {
+		Dao<SeralizableNull, Integer> dao = createDao(SeralizableNull.class, true);
+		SeralizableNull sn1 = new SeralizableNull();
+		assertEquals(1, dao.create(sn1));
+		SeralizableNull sn2 = new SeralizableNull();
+		sn2.serializable = "wow";
+		assertEquals(1, dao.create(sn2));
+
+		List<SeralizableNull> results =
+				dao.queryBuilder().where().isNull(SeralizableNull.FIELD_NAME_SERIALIZABLE).query();
+		assertNotNull(results);
+		assertEquals(1, results.size());
+		assertEquals(sn1.id, results.get(0).id);
+		results = dao.queryBuilder().where().isNotNull(SeralizableNull.FIELD_NAME_SERIALIZABLE).query();
+		assertNotNull(results);
+		assertEquals(1, results.size());
+		assertEquals(sn2.id, results.get(0).id);
+	}
+
 	/* ======================================================================================================== */
 
 	private static class LimitInline extends BaseDatabaseType {
@@ -1394,5 +1416,13 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		public static final String FIELD_NAME_STUFF = "stuff";
 		@DatabaseField(columnName = FIELD_NAME_STUFF)
 		String stuff;
+	}
+
+	protected static class SeralizableNull {
+		public static final String FIELD_NAME_SERIALIZABLE = "serializable";
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(columnName = FIELD_NAME_SERIALIZABLE, dataType = DataType.SERIALIZABLE)
+		Serializable serializable;
 	}
 }

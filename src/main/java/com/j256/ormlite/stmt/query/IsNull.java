@@ -16,7 +16,7 @@ import com.j256.ormlite.stmt.Where;
 public class IsNull extends BaseComparison {
 
 	public IsNull(String columnName, FieldType fieldType) throws SQLException {
-		super(columnName, fieldType, null, true);
+		super(columnName, fieldType, null, false);
 	}
 
 	@Override
