@@ -156,7 +156,9 @@ public class FieldTypeTest extends BaseCoreTest {
 		final String nameArg = "zippy buzz";
 		final String nameResult = "blabber bling";
 		final AtomicBoolean resultToSqlArgCalled = new AtomicBoolean(false);
-		expect(databaseType.getFieldConverter(DataType.STRING.getDataPersister())).andReturn(new BaseFieldConverter() {
+		DataPersister stringPersister = DataType.STRING.getDataPersister();
+		expect(databaseType.getDataPersister(stringPersister)).andReturn(stringPersister);
+		expect(databaseType.getFieldConverter(stringPersister)).andReturn(new BaseFieldConverter() {
 			public SqlType getSqlType() {
 				return sqlType;
 			}
