@@ -2,18 +2,20 @@ package com.j256.ormlite.field.types;
 
 import java.sql.SQLException;
 
+import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
  * Booleans can be stored in the database as the character '1' '0'. You can change the characters by specifying a format
- * string. It must be a string with 2 characters. The first character is the value for TRUE, the second is FALSE.
+ * string. It must be a string with 2 characters. The first character is the value for TRUE, the second is FALSE. You
+ * must choose this DataType specifically with the {@link DatabaseField#dataType()} specifier.
  * 
  * <p>
  * 
  * <pre>
- * &#64;DatabaseField(format = "YN")
+ * &#64;DatabaseField(format = "YN", dataType = DataType.BOOLEAN_CHAR)
  * </pre>
  * 
  * </p>
@@ -33,7 +35,7 @@ public class BooleanCharType extends BooleanType {
 	}
 
 	public BooleanCharType() {
-		super(SqlType.STRING, new Class<?>[] { boolean.class });
+		super(SqlType.STRING, new Class<?>[0]);
 	}
 
 	@Override
