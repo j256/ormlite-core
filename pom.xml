@@ -41,6 +41,19 @@
 			<timezone>-5</timezone>
 		</developer>
 	</developers>
+	<properties>
+		<!-- default empty string that can be overridden on command line. due to surefire's parser bug, if we don't have this here 
+			and have any other characters where this is used, it'll get replaced with string "null" -->
+		<surefire.argLine />
+
+		<!-- external test package versions -->
+		<persistence-api-version>1.0</persistence-api-version>
+		<easymock-version>2.3</easymock-version>
+		<h2-version>1.2.128</h2-version>
+		<junit-version>4.8.1</junit-version>
+		<commons-lang-version>2.1</commons-lang-version>
+		<slf4j-version>1.7.2</slf4j-version>
+	</properties>
 	<profiles>
 		<profile>
 			<id>sf</id>
@@ -289,19 +302,19 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-	<properties>
-		<!-- default empty string that can be overridden on command line. due to surefire's parser bug, if we don't have this here 
-			and have any other characters where this is used, it'll get replaced with string "null" -->
-		<surefire.argLine />
-
-		<!-- external test package versions -->
-		<persistence-api-version>1.0</persistence-api-version>
-		<easymock-version>2.3</easymock-version>
-		<h2-version>1.2.128</h2-version>
-		<junit-version>4.8.1</junit-version>
-		<commons-lang-version>2.1</commons-lang-version>
-	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j-version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${slf4j-version}</version>
+			<scope>provided</scope>
+		</dependency>
 		<!-- =================================================================== -->
 		<!-- main dependencies -->
 		<!-- =================================================================== -->
