@@ -1035,7 +1035,7 @@ public class FieldType {
 	 * {@link #configDaoInformation} method can set the data-type.
 	 */
 	private void assignDataType(DatabaseType databaseType, DataPersister dataPersister) throws SQLException {
-		dataPersister = databaseType.getDataPersister(dataPersister);
+		dataPersister = databaseType.getDataPersister(dataPersister, this);
 		this.dataPersister = dataPersister;
 		if (dataPersister == null) {
 			if (!fieldConfig.isForeign() && !fieldConfig.isForeignCollection()) {
@@ -1045,7 +1045,7 @@ public class FieldType {
 			}
 			return;
 		}
-		this.fieldConverter = databaseType.getFieldConverter(dataPersister);
+		this.fieldConverter = databaseType.getFieldConverter(dataPersister, this);
 		if (this.isGeneratedId && !dataPersister.isValidGeneratedType()) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("Generated-id field '").append(field.getName());

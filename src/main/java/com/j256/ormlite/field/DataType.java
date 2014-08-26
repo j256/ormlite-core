@@ -6,7 +6,9 @@ import java.math.BigInteger;
 import com.j256.ormlite.field.types.BigDecimalNumericType;
 import com.j256.ormlite.field.types.BigDecimalStringType;
 import com.j256.ormlite.field.types.BigIntegerType;
+import com.j256.ormlite.field.types.BooleanIntegerType;
 import com.j256.ormlite.field.types.BooleanObjectType;
+import com.j256.ormlite.field.types.BooleanCharType;
 import com.j256.ormlite.field.types.BooleanType;
 import com.j256.ormlite.field.types.ByteArrayType;
 import com.j256.ormlite.field.types.ByteObjectType;
@@ -65,6 +67,14 @@ public enum DataType {
 	 * Persists the {@link Boolean} object Java class.
 	 */
 	BOOLEAN_OBJ(BooleanObjectType.getSingleton()),
+	/**
+	 * Persists the boolean Java primitive as a character in the database.
+	 */
+	BOOLEAN_CHAR(BooleanCharType.getSingleton()),
+	/**
+	 * Persists the boolean Java primitive as an integer in the database.
+	 */
+	BOOLEAN_INTEGER(BooleanIntegerType.getSingleton()),
 	/**
 	 * Persists the {@link java.util.Date} Java class.
 	 * 

@@ -157,30 +157,31 @@ public class FieldTypeTest extends BaseCoreTest {
 		final String nameResult = "blabber bling";
 		final AtomicBoolean resultToSqlArgCalled = new AtomicBoolean(false);
 		DataPersister stringPersister = DataType.STRING.getDataPersister();
-		expect(databaseType.getDataPersister(stringPersister)).andReturn(stringPersister);
-		expect(databaseType.getFieldConverter(stringPersister)).andReturn(new BaseFieldConverter() {
-			public SqlType getSqlType() {
-				return sqlType;
-			}
-			public Object parseDefaultString(FieldType fieldType, String defaultStr) {
-				return defaultStr;
-			}
-			public Object resultToSqlArg(FieldType fieldType, DatabaseResults resultSet, int columnPos) {
-				resultToSqlArgCalled.set(true);
-				return nameResult;
-			}
-			@Override
-			public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
-				return nameResult;
-			}
-			@Override
-			public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
-				return nameArg;
-			}
-			public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) {
-				return stringValue;
-			}
-		});
+		expect(databaseType.getDataPersister(isA(DataPersister.class), isA(FieldType.class))).andReturn(stringPersister);
+		expect(databaseType.getFieldConverter(isA(DataPersister.class), isA(FieldType.class))).andReturn(
+				new BaseFieldConverter() {
+					public SqlType getSqlType() {
+						return sqlType;
+					}
+					public Object parseDefaultString(FieldType fieldType, String defaultStr) {
+						return defaultStr;
+					}
+					public Object resultToSqlArg(FieldType fieldType, DatabaseResults resultSet, int columnPos) {
+						resultToSqlArgCalled.set(true);
+						return nameResult;
+					}
+					@Override
+					public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
+						return nameResult;
+					}
+					@Override
+					public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
+						return nameArg;
+					}
+					public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) {
+						return stringValue;
+					}
+				});
 		expect(databaseType.isEntityNamesMustBeUpCase()).andReturn(false);
 		replay(databaseType);
 		connectionSource.setDatabaseType(databaseType);

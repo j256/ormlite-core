@@ -72,7 +72,7 @@ public abstract class BaseSqliteDatabaseType extends BaseDatabaseType {
 	}
 
 	@Override
-	public FieldConverter getFieldConverter(DataPersister dataPersister) {
+	public FieldConverter getFieldConverter(DataPersister dataPersister, FieldType fieldType) {
 		// we are only overriding certain types
 		switch (dataPersister.getSqlType()) {
 			case BOOLEAN :
@@ -80,7 +80,7 @@ public abstract class BaseSqliteDatabaseType extends BaseDatabaseType {
 			case BIG_DECIMAL :
 				return BigDecimalStringType.getSingleton();
 			default :
-				return super.getFieldConverter(dataPersister);
+				return super.getFieldConverter(dataPersister, fieldType);
 		}
 	}
 

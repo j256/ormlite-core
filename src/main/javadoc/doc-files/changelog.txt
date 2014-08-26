@@ -13,6 +13,8 @@
 	* CORE: Fixed bug with the raw results that they are not obeying the AS SQL.  Thanks to nonameplum.  Bug #183.
 	* CORE: Fixed bug with ISNULL and ISNOTNULL which weren't working with serializable.  Thanks to andrew8er.  Bug #185.
 	* CORE: Fixed bug with dao.update() not setting the dao on BaseDaoEnabled instances. Thanks to Carlos Fonseca. Bug #177.
+	* CORE: Added DataType.BOOLEAN_CHAR (to support '1' '0' or 't' 'f') and BOOLEAN_INTEGER.  Thanks to stew.
+	* JDBC: Possibly fixed some problems with the Oracle type with better boolean support.  Thanks to 51mon.
 	* ANDROID: Fixed the string processing when persisting java.sql.Timestamp classes. Bug #163.
 	* ANDROID: Added initial take on Loader base classes from EgorAnd for newer Android versions.  Thanks much!!
 	* ANDROID: Moved Slf4jLoggingLog from JDBC to CORE so Android users can use it.  Thanks to tonyxiao.
@@ -216,7 +218,8 @@
 	* CORE: Fixed a problem where default was canBeNull=false with javax persistence macros.  Thanks to A.  Bug #3410640.
 	* CORE: Removed the maxForeignLevel() field from @DatabaseField which was deprecated in 4.22.
 	* CORE: Added table and field configuration file reading and writing.
-	* CORE: Added implements Serializable to the foreign collection objects.  Thanks to Mariák Kálmán.  Bug #3411227. 
+	* CORE: Added implements Serializable to the foreign collection objects.  Thanks to Mariák Kálmán.  Bug #3411227.
+	* CORE: Added support for the MariaDB type.  Thanks to kratorius.
 	* ANDROID: Added field configuration utility to avoid Dao creation performance problems with annotations.  Thanks to Ian Dees.
 	* ANDROID: Added @DatabaseFieldSimple and other smaller annotations for speeding up Android configuration.
 	* ANDROID: Added SQLiteDatabase constructor to AndroidConnectionSource for external SQLite databases.  Thanks to Michael.
