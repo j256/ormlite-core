@@ -12,6 +12,7 @@ import static org.junit.Assert.fail;
 
 import java.sql.SQLException;
 import java.sql.Savepoint;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.junit.Test;
@@ -259,8 +260,8 @@ public class TransactionManagerTest extends BaseCoreTest {
 		TransactionManager mgr = new TransactionManager();
 		mgr.setConnectionSource(connectionSource);
 		mgr.initialize();
-		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
-		testTransactionManager(mgr, new Exception("What!!  I protest via an Exception!!"), fooDao);
+		final Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		testTransactionManager(mgr, new Exception("What!!  I protest via an Exception!!"), dao);
 	}
 
 	@Test
@@ -269,13 +270,42 @@ public class TransactionManagerTest extends BaseCoreTest {
 			return;
 		}
 		final TransactionManager mgr = new TransactionManager(connectionSource);
-		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
+		final Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		mgr.callInTransaction(new Callable<Void>() {
 			public Void call() throws Exception {
-				testTransactionManager(mgr, null, fooDao);
+				testTransactionManager(mgr, null, dao);
 				return null;
 			}
 		});
+	}
+
+	@Test
+	public void testTransactionWithinTransactionFails() throws Exception {
+		if (connectionSource == null) {
+			return;
+		}
+		final TransactionManager mgr = new TransactionManager(connectionSource);
+		final Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		try {
+			mgr.callInTransaction(new Callable<Void>() {
+				public Void call() throws Exception {
+					dao.create(new Foo());
+					mgr.callInTransaction(new Callable<Void>() {
+						public Void call() throws Exception {
+							dao.create(new Foo());
+							throw new SQLException("Exception ahoy!");
+						}
+					});
+					return null;
+				}
+			});
+			fail("Should have thrown");
+		} catch (SQLException se) {
+			// ignored
+		}
+		List<Foo> results = dao.queryForAll();
+		assertNotNull(results);
+		assertEquals(0, results.size());
 	}
 
 	private void testTransactionManager(TransactionManager mgr, final Exception exception,
