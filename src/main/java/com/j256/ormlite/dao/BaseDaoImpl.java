@@ -374,13 +374,17 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		// ignore updating a null object
 		if (data == null) {
 			return 0;
-		} else {
-			DatabaseConnection connection = connectionSource.getReadWriteConnection();
-			try {
-				return statementExecutor.update(connection, data, objectCache);
-			} finally {
-				connectionSource.releaseConnection(connection);
-			}
+		}
+		if (data instanceof BaseDaoEnabled) {
+			@SuppressWarnings("unchecked")
+			BaseDaoEnabled<T, ID> daoEnabled = (BaseDaoEnabled<T, ID>) data;
+			daoEnabled.setDao(this);
+		}
+		DatabaseConnection connection = connectionSource.getReadWriteConnection();
+		try {
+			return statementExecutor.update(connection, data, objectCache);
+		} finally {
+			connectionSource.releaseConnection(connection);
 		}
 	}
 
@@ -414,18 +418,17 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		// ignore refreshing a null object
 		if (data == null) {
 			return 0;
-		} else {
-			if (data instanceof BaseDaoEnabled) {
-				@SuppressWarnings("unchecked")
-				BaseDaoEnabled<T, ID> daoEnabled = (BaseDaoEnabled<T, ID>) data;
-				daoEnabled.setDao(this);
-			}
-			DatabaseConnection connection = connectionSource.getReadOnlyConnection();
-			try {
-				return statementExecutor.refresh(connection, data, objectCache);
-			} finally {
-				connectionSource.releaseConnection(connection);
-			}
+		}
+		if (data instanceof BaseDaoEnabled) {
+			@SuppressWarnings("unchecked")
+			BaseDaoEnabled<T, ID> daoEnabled = (BaseDaoEnabled<T, ID>) data;
+			daoEnabled.setDao(this);
+		}
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		try {
+			return statementExecutor.refresh(connection, data, objectCache);
+		} finally {
+			connectionSource.releaseConnection(connection);
 		}
 	}
 
