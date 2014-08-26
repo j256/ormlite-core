@@ -157,6 +157,10 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 		}
 	}
 
+	public Dao<T, ?> getDao() {
+		return dao;
+	}
+
 	protected PreparedQuery<T> getPreparedQuery() throws SQLException {
 		if (dao == null) {
 			return null;

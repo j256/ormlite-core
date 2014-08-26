@@ -136,4 +136,9 @@ public interface ForeignCollection<T> extends Collection<T>, CloseableIterable<T
 	 * @see Collection#add(Object)
 	 */
 	public boolean add(T obj);
+
+	/**
+	 * Return the DAO object associated with this foreign collection. For usage for those who know what they are doing.
+	 */
+	public Dao<T, ?> getDao();
 }
