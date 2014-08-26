@@ -271,7 +271,7 @@ public class FieldType {
 		if (fieldConfig.getMaxForeignAutoRefreshLevel() != DatabaseFieldConfig.NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED
 				&& !fieldConfig.isForeignAutoRefresh()) {
 			throw new IllegalArgumentException("Field " + field.getName() + " has maxForeignAutoRefreshLevel set ("
-					+ fieldConfig.getMaxForeignAutoRefreshLevel() + ") but not foreignAutoRefresh is false");
+					+ fieldConfig.getMaxForeignAutoRefreshLevel() + ") but foreignAutoRefresh is false");
 		}
 		assignDataType(databaseType, dataPersister);
 	}
