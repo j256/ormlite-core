@@ -84,12 +84,12 @@ public class LoggerFactory {
 	 * Type of internal logs supported. This is package permissions for testing.
 	 */
 	public enum LogType {
+		SLF4J("org.slf4j.LoggerFactory", "com.j256.ormlite.logger.Slf4jLoggingLog"),
 		/**
 		 * WARNING: Android log must be _before_ commons logging since Android provides commons logging but logging
 		 * messages are ignored that are sent there. Grrrrr.
 		 */
 		ANDROID("android.util.Log", "com.j256.ormlite.android.AndroidLog"),
-		SLF4J("org.slf4j.LoggerFactory", "com.j256.ormlite.logger.Slf4jLoggingLog"),
 		COMMONS_LOGGING("org.apache.commons.logging.LogFactory", "com.j256.ormlite.logger.CommonsLoggingLog"),
 		LOG4J2("org.apache.logging.log4j.LogManager", "com.j256.ormlite.logger.Log4j2Log"),
 		LOG4J("org.apache.log4j.Logger", "com.j256.ormlite.logger.Log4jLog"),
