@@ -82,7 +82,7 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 
 			// make sure we found the method in RuntimeExceptionDao
 			if (!found) {
-				failedMessages.add("Could not find Dao method: " + daoMethod);
+				failedMessages.add(RuntimeExceptionDao.class.getName() + " did not include method: " + daoMethod);
 			}
 		}
 
@@ -103,7 +103,7 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 			for (String message : failedMessages) {
 				System.err.println(message);
 			}
-			fail("See the console for details");
+			fail(failedMessages.get(0) + ", see the console for more");
 		}
 	}
 
