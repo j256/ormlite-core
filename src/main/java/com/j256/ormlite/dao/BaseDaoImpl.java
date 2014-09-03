@@ -66,7 +66,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 				}
 			};
 	private static ReferenceObjectCache defaultObjectCache;
-	private static Object constantObject = new Object();
+	private static final Object constantObject = new Object();
 
 	protected StatementExecutor<T, ID> statementExecutor;
 	protected DatabaseType databaseType;
