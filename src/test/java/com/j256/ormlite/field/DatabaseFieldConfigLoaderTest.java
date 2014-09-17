@@ -182,6 +182,11 @@ public class DatabaseFieldConfigLoaderTest {
 		body.append("readOnly=true").append(LINE_SEP);
 		checkConfigOutput(config, body, writer, buffer);
 
+        int since = 13212;
+        config.setSince(since);
+        body.append("since=").append(since).append(LINE_SEP);
+        checkConfigOutput(config, body, writer, buffer);
+
 		/*
 		 * Test foreign collection
 		 */

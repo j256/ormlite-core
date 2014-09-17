@@ -23,6 +23,7 @@ import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
@@ -440,6 +441,69 @@ public class TableUtilsTest extends BaseCoreTest {
 		assertEquals(0, fooDao.countOf());
 	}
 
+    @Test
+    public void testUpgradeTable() throws Exception {
+        Dao<LocalFoo, Integer> fooDao = createDao(LocalFoo.class, false);
+        // first we create the table
+        createTable(LocalFoo.class, false);
+        // test it out
+        assertEquals(0, fooDao.queryForAll().size());
+
+        // perform upgrade
+        TableUtils.upgradeTable(connectionSource, UpgradeFoo.class, UpgradeFoo.OLD_VERSION, UpgradeFoo.NEW_VERSION);
+
+        DatabaseTableConfig<UpgradeFoo> tableConfig = DatabaseTableConfig.fromClass(connectionSource, UpgradeFoo.class);
+        FieldType[] fieldTypes = tableConfig.getFieldTypes(connectionSource.getDatabaseType());
+
+        int foundColumn = 0;
+        int foundColumnRaw = 0;
+
+        //Check if new column is there
+        for (FieldType fieldType : fieldTypes) {
+            if (fieldType.getColumnName().equalsIgnoreCase(UpgradeFoo.UPGRADED_FIELD_NAME)) {
+                foundColumn++;
+                assertEquals(fieldType.getSince(), UpgradeFoo.NEW_VERSION);
+                break;
+            }
+        }
+
+        // raw query to retrieve column names
+        Dao<UpgradeFoo, Integer> fooUpgradeDao = createDao(UpgradeFoo.class, false);
+        fooUpgradeDao.create(new UpgradeFoo());
+
+        GenericRawResults<String[]> results = fooUpgradeDao.queryRaw("SELECT * FROM `"+tableConfig.getTableName()+"`");
+        String[] columnNames = results.getColumnNames();
+
+        for (String columnName : columnNames) {
+            if (columnName.equalsIgnoreCase(UpgradeFoo.UPGRADED_FIELD_NAME)) {
+                foundColumnRaw++;
+                break;
+            }
+        }
+
+        results.close();
+
+        dropTable(UpgradeFoo.class, true);
+
+        assertEquals(1, foundColumn);
+        assertEquals(1, foundColumnRaw);
+    }
+
+    @Test
+    public void testUpgradeTableSinceGreater() throws Exception {
+        Dao<LocalFoo, Integer> fooDao = createDao(LocalFoo.class, false);
+        // first we create the table
+        createTable(LocalFoo.class, false);
+
+        try {
+            TableUtils.upgradeTable(connectionSource, UpgradeFooSince.class, UpgradeFoo.OLD_VERSION, UpgradeFoo.NEW_VERSION);
+            fail("Should have thrown");
+        }
+        catch (SQLException e) {
+            // expected
+        }
+    }
+
 	/* ================================================================ */
 
 	private void testCreate(ConnectionSource connectionSource, DatabaseType databaseType, int rowN,
@@ -539,4 +603,22 @@ public class TableUtilsTest extends BaseCoreTest {
 		public UniqueIndex() {
 		}
 	}
+
+    @DatabaseTable(tableName = "localfoo")
+    protected static class UpgradeFoo extends LocalFoo {
+        public static final int OLD_VERSION = 1;
+        public static final int NEW_VERSION = 2;
+        public static final String UPGRADED_FIELD_NAME = "upgraded";
+        @DatabaseField(columnName = UPGRADED_FIELD_NAME, since = 2)
+        String upgraded;
+        @DatabaseField(since = 2)
+        boolean isUpgraded;
+    }
+
+    @DatabaseTable(tableName = "localfoo")
+    protected static class UpgradeFooSince extends LocalFoo {
+        public static final String UPGRADED_FIELD_NAME = "upgraded";
+        @DatabaseField(columnName = UPGRADED_FIELD_NAME, since = 3)
+        String upgraded;
+    }
 }
