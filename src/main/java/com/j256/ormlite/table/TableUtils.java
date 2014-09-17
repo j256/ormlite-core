@@ -520,4 +520,96 @@ public class TableUtils {
 		addCreateTableStatements(connectionSource.getDatabaseType(), tableInfo, statements, queriesAfter, ifNotExists);
 		return statements;
 	}
+
+    /**
+     * Issue the database statements to upgrade the table associated with a class.
+     * Use the since property on a DatabaseField to trigger the appropriate upgrade.
+     *
+     * @param connectionSource
+     *          Associated connection source.
+     * @param dataClass
+     *          The class for which table an upgrade will be performed
+     * @param oldVersion
+     *          Previous database version number
+     * @param newVersion
+     *          Newest database version number
+     * @return
+     *          The number of statements executed to do so.
+     * @throws SQLException
+     */
+    public static <T, ID> int upgradeTable(ConnectionSource connectionSource, Class<T> dataClass, int oldVersion, int newVersion)
+            throws SQLException {
+        Dao<T, ID> dao = DaoManager.createDao(connectionSource, dataClass);
+        if (dao instanceof BaseDaoImpl<?, ?>) {
+            return doUpgradeTable(connectionSource, ((BaseDaoImpl<?, ?>) dao).getTableInfo(), oldVersion, newVersion);
+        } else {
+            TableInfo<T, ID> tableInfo = new TableInfo<T, ID>(connectionSource, null, dataClass);
+            return doUpgradeTable(connectionSource, tableInfo, oldVersion, newVersion);
+        }
+    }
+
+    private static <T, ID> int doUpgradeTable(ConnectionSource connectionSource, TableInfo<T, ID> tableInfo, int oldVersion, int newVersion) throws SQLException {
+        DatabaseType databaseType = connectionSource.getDatabaseType();
+        logger.trace("{}: upgrading table: " + tableInfo.getTableName() + " from " + oldVersion + " -> " + newVersion + " {}");
+        List<String> statements = new ArrayList<String>();
+        List<String> queriesAfter = new ArrayList<String>();
+        addUpgradeTableStatements(databaseType, tableInfo, statements, queriesAfter, oldVersion, newVersion);
+        DatabaseConnection connection = connectionSource.getReadWriteConnection();
+        try {
+            int stmtC =
+                    doStatements(connection, "upgrade", statements, false, databaseType.isCreateTableReturnsNegative(),
+                            databaseType.isCreateTableReturnsZero());
+            stmtC += doCreateTestQueries(connection, databaseType, queriesAfter);
+            return stmtC;
+        } finally {
+            connectionSource.releaseConnection(connection);
+        }
+    }
+
+    private static <T, ID> void addUpgradeTableStatements(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
+            List<String> statements, List<String> queriesAfter,
+            int oldVersion, int newVersion)
+            throws SQLException {
+
+        StringBuilder sb = new StringBuilder(256);
+
+        List<String> additionalArgs = new ArrayList<String>();
+        List<String> statementsBefore = new ArrayList<String>();
+        List<String> statementsAfter = new ArrayList<String>();
+        // our statement will be set here later
+
+        for (FieldType fieldType : tableInfo.getFieldTypes()) {
+            int since = fieldType.getSince();
+
+            if (since > newVersion) {
+                throw new SQLException("Since is greater than current version number!");
+            }
+
+            if (oldVersion < since && newVersion >= since) {
+                sb.append("ALTER TABLE ");
+                databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
+                sb.append(" ADD COLUMN ");
+
+                String columnDefinition = fieldType.getColumnDefinition();
+                if (columnDefinition == null)
+                {
+                    // we have to call back to the database type for the specific create syntax
+                    databaseType.appendColumnArg(tableInfo.getTableName(), sb, fieldType, additionalArgs, statementsBefore,
+                            statementsAfter, queriesAfter);
+                    sb.append(";");
+                } else
+                {
+                    // hand defined field
+                    databaseType.appendEscapedEntityName(sb, fieldType.getColumnName());
+                    sb.append(columnDefinition).append(';');
+                }
+            }
+        }
+
+        statements.addAll(statementsBefore);
+        statements.add(sb.toString());
+        statements.addAll(statementsAfter);
+        addCreateIndexStatements(databaseType, tableInfo, statements, false, false);
+        addCreateIndexStatements(databaseType, tableInfo, statements, false, true);
+    }
 }

@@ -311,6 +311,11 @@ public @interface DatabaseField {
 	 */
 	boolean readOnly() default false;
 
+    /**
+     * Specify since which version number this field is introduced
+     */
+    int since() default 1;
+
 	/*
 	 * NOTE to developers: if you add fields here you have to add them to the DatabaseFieldConfig,
 	 * DatabaseFieldConfigLoader, DatabaseFieldConfigLoaderTest, and DatabaseTableConfigUtil.

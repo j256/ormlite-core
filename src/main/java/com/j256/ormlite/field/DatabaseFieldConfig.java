@@ -59,6 +59,7 @@ public class DatabaseFieldConfig {
 	private boolean version;
 	private String foreignColumnName;
 	private boolean readOnly;
+    private int since;
 	// foreign collection field information
 	private boolean foreignCollection;
 	private boolean foreignCollectionEager;
@@ -518,6 +519,14 @@ public class DatabaseFieldConfig {
 		this.readOnly = readOnly;
 	}
 
+    public int getSince() {
+        return since;
+    }
+
+    public void setSince(int since) {
+        this.since = since;
+    }
+
 	/**
 	 * Create and return a config converted from a {@link Field} that may have one of the following annotations:
 	 * {@link DatabaseField}, {@link ForeignCollectionField}, or javax.persistence...
@@ -654,6 +663,7 @@ public class DatabaseFieldConfig {
 		config.version = databaseField.version();
 		config.foreignColumnName = valueIfNotBlank(databaseField.foreignColumnName());
 		config.readOnly = databaseField.readOnly();
+        config.since = databaseField.since();
 
 		return config;
 	}
