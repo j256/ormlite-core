@@ -24,7 +24,7 @@ public class UuidType extends BaseDataType {
 	}
 
 	private UuidType() {
-		super(SqlType.STRING, new Class<?>[] { UUID.class });
+		super(SqlType.UUID, new Class<?>[] { UUID.class });
 	}
 
 	/**
