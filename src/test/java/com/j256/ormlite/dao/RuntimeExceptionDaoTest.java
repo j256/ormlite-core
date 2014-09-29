@@ -63,7 +63,7 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 			boolean found = false;
 
 			// coverage magic
-			if (daoMethod.getName().equals("$VRi")) {
+			if (daoMethod.getName().equals("$VRi") || daoMethod.getName().equals("spliterator") || daoMethod.getName().equals("forEach")) {
 				continue;
 			}
 
