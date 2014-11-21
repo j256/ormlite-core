@@ -10,7 +10,6 @@ import com.j256.ormlite.field.ForeignCollectionField;
  * Collection that is set on a field that as been marked with the {@link ForeignCollectionField} annotation when an
  * object is refreshed or queried (i.e. not created).
  * 
- * <p>
  * <blockquote>
  * 
  * <pre>
@@ -19,8 +18,6 @@ import com.j256.ormlite.field.ForeignCollectionField;
  * </pre>
  * 
  * </blockquote>
- * 
- * </p>
  * 
  * <p>
  * <b>NOTE:</b> If the collection has been marked as being "lazy" then just about all methods in this class result in a

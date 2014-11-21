@@ -15,7 +15,6 @@ import com.j256.ormlite.stmt.QueryBuilder;
  * Annotation that identifies a {@link ForeignCollection} field in a class that corresponds to objects in a foreign
  * table that match the foreign-id of the current class.
  * 
- * <p>
  * <blockquote>
  * 
  * <pre>
@@ -24,7 +23,6 @@ import com.j256.ormlite.stmt.QueryBuilder;
  * </pre>
  * 
  * </blockquote>
- * </p>
  * 
  * @author graywatson
  */

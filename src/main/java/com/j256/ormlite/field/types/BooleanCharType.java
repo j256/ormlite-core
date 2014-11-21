@@ -12,13 +12,9 @@ import com.j256.ormlite.support.DatabaseResults;
  * string. It must be a string with 2 characters. The first character is the value for TRUE, the second is FALSE. You
  * must choose this DataType specifically with the {@link DatabaseField#dataType()} specifier.
  * 
- * <p>
- * 
  * <pre>
  * &#64;DatabaseField(format = "YN", dataType = DataType.BOOLEAN_CHAR)
  * </pre>
- * 
- * </p>
  * 
  * Thanks much to stew.
  * 
