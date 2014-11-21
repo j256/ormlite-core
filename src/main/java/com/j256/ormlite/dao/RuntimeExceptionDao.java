@@ -31,13 +31,9 @@ import com.j256.ormlite.table.ObjectFactory;
  * Proxy to a {@link Dao} that wraps each Exception and rethrows it as RuntimeException. You can use this if your usage
  * pattern is to ignore all exceptions. That's not a pattern that I like so it's not the default.
  * 
- * <p>
- * 
  * <pre>
  * RuntimeExceptionDao&lt;Account, String&gt; accountDao = RuntimeExceptionDao.createDao(connectionSource, Account.class);
  * </pre>
- * 
- * </p>
  * 
  * @author graywatson
  */

@@ -17,12 +17,11 @@ import com.j256.ormlite.logger.Log.Level;
  * <p>
  * <b>NOTE:</b> When you are using the argArray methods, you should consider wrapping the call in an {@code if} so the
  * {@code Object[]} won't be created unnecessarily.
+ * </p>
  * 
  * <pre>
  * if (logger.isLevelEnabled(Level...)) ...
  * </pre>
- * 
- * </p>
  * 
  * @author graywatson
  */

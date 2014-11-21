@@ -138,7 +138,7 @@ public interface DatabaseConnection extends Closeable {
 	 *            The mapper to use to convert the row into the returned object.
 	 * @param objectCache
 	 *            Any object cache associated with the query or null if none.
-	 * @return The first data item returned by the query which can be cast to <T>, null if none, the object
+	 * @return The first data item returned by the query which can be cast to {@code <T>}, null if none, the object
 	 *         {@link #MORE_THAN_ONE} if more than one result was found.
 	 */
 	public <T> Object queryForOne(String statement, Object[] args, FieldType[] argfieldTypes,

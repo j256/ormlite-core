@@ -15,7 +15,6 @@ import com.j256.ormlite.field.types.VoidType;
  * Fields that are not to be persisted such as transient or other temporary fields probably should be ignored. For
  * example:
  * 
- * <p>
  * <blockquote>
  * 
  * <pre>
@@ -27,7 +26,6 @@ import com.j256.ormlite.field.types.VoidType;
  * </pre>
  * 
  * </blockquote>
- * </p>
  * 
  * <p>
  * <b> WARNING:</b> If you add any extra fields here, you will need to add them to {@link DatabaseFieldConfig},
@@ -262,8 +260,6 @@ public @interface DatabaseField {
 	 * this set to true will possibly be created via an internal DAO. By default you have to create the object using its
 	 * DAO directly. This only works if {@link #generatedId()} is also set to true.
 	 * 
-	 * <p>
-	 * 
 	 * <pre>
 	 * Order order1 = new Order();
 	 * // account1 has not been created in the db yet and it's id == null
@@ -271,8 +267,6 @@ public @interface DatabaseField {
 	 * // this will create order1 _and_ pass order1.account to the internal account dao.create().
 	 * orderDao.create(order1);
 	 * </pre>
-	 * 
-	 * </p>
 	 */
 	boolean foreignAutoCreate() default false;
 

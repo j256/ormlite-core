@@ -321,7 +321,6 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * This satisfies the {@link Iterable} interface for the class and allows you to iterate through the objects in the
 	 * table using SQL. You can use code similar to the following:
 	 * 
-	 * <p>
 	 * <blockquote>
 	 * 
 	 * <pre>
@@ -329,7 +328,6 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * </pre>
 	 * 
 	 * </blockquote>
-	 * </p>
 	 * 
 	 * <p>
 	 * <b>WARNING</b>: because the {@link Iterator#hasNext()}, {@link Iterator#next()}, etc. methods can only throw
@@ -371,7 +369,6 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * Same as {@link #iterator()} but with a prepared query parameter. See {@link #queryBuilder} for more information.
 	 * You use it like the following:
 	 * 
-	 * <p>
 	 * <blockquote>
 	 * 
 	 * <pre>
@@ -389,7 +386,6 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * </pre>
 	 * 
 	 * </blockquote>
-	 * </p>
 	 * 
 	 * @param preparedQuery
 	 *            Query used to iterate across a sub-set of the items in the database.
@@ -413,7 +409,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * <blockquote>
 	 * 
 	 * <pre>
-	 * CloseableWrappedIterable<Foo> wrappedIterable = fooDao.getWrappedIterable();
+	 * {@code CloseableWrappedIterable<Foo> wrappedIterable = fooDao.getWrappedIterable();}
 	 * try {
 	 *   for (Foo foo : wrappedIterable) {
 	 *       ...
@@ -455,19 +451,13 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * the structure of the QueryBuilder.
 	 * </p>
 	 * 
-	 * <p>
-	 * 
 	 * <pre>
 	 * QueryBuilder&lt;Account, Integer&gt; qb = accountDao.queryBuilder();
 	 * qb.where().ge(&quot;orderCount&quot;, 10);
 	 * results = accountDao.queryRaw(qb.prepareStatementString());
 	 * </pre>
 	 * 
-	 * </p>
-	 * 
 	 * If you want to use the QueryBuilder with arguments to the raw query then you should do something like:
-	 * 
-	 * <p>
 	 * 
 	 * <pre>
 	 * QueryBuilder&lt;Account, Integer&gt; qb = accountDao.queryBuilder();
@@ -476,8 +466,6 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * // the 10 at the end is an optional argument to fulfill the SelectArg above
 	 * results = accountDao.queryRaw(qb.prepareStatementString(), rawRowMapper, 10);
 	 * </pre>
-	 * 
-	 * </p>
 	 * 
 	 * <p>
 	 * <b>NOTE:</b> If you are using the {@link QueryBuilder#prepareStatementString()} to build your query, it may have

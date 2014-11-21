@@ -10,7 +10,7 @@ import java.io.IOException;
  * <blockquote>
  * 
  * <pre>
- * CloseableWrappedIterable<Foo> wrapperIterable = fooDao.getCloseableIterable();
+ * {@code CloseableWrappedIterable<Foo> wrapperIterable = fooDao.getCloseableIterable();}
  * try {
  *   for (Foo foo : wrapperIterable) {
  *       ...
