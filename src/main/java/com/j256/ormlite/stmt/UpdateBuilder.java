@@ -175,7 +175,8 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 	/**
 	 * Manually force table schema name to this query
 	 */
-	public void setSchema(String tableSchema) {
+	public UpdateBuilder<T, ID> setSchema(String tableSchema) {
 		this.tableSchema = tableSchema;
+		return this;
 	}
 }

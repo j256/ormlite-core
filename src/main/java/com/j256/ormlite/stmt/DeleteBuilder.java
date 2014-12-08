@@ -81,8 +81,10 @@ public class DeleteBuilder<T, ID> extends StatementBuilder<T, ID> {
 	
 	/**
 	 * Manually force table schema name to this query
+	 * @return 
 	 */
-	public void setSchema(String tableSchema) {
+	public DeleteBuilder<T, ID> setSchema(String tableSchema) {
 		this.tableSchema = tableSchema;
+		return this;
 	}
 }
