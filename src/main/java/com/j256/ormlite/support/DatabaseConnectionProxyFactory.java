@@ -51,7 +51,7 @@ import java.sql.SQLException;
  * </p>
  * 
  * <p>
- * To see a working example of the connection proxy, see the {@link DatabaseConnectionProxyFactoryTest}.
+ * To see a working example of the connection proxy, see the DatabaseConnectionProxyFactoryTest.
  * </p>
  * 
  * @author graywatson

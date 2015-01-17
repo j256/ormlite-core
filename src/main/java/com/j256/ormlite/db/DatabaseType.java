@@ -159,7 +159,7 @@ public interface DatabaseType {
 	public void appendCreateTableSuffix(StringBuilder sb);
 
 	/**
-	 * Returns true if a 'CREATE TABLE' statement should return 0. False if > 0.
+	 * Returns true if a 'CREATE TABLE' statement should return 0. False if &gt; 0.
 	 */
 	public boolean isCreateTableReturnsZero();
 

@@ -15,7 +15,7 @@ import com.j256.ormlite.support.DatabaseConnection;
 
 /**
  * Handler for our raw results objects which does the conversion for various different results: String[], Object[], and
- * user defined <T>.
+ * user defined T.
  * 
  * @author graywatson
  */

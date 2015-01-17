@@ -308,7 +308,7 @@ public class Where<T, ID> {
 	}
 
 	/**
-	 * Add a 'IS NOT NULL' clause so the column must not be null. '<>' NULL does not work.
+	 * Add a 'IS NOT NULL' clause so the column must not be null. '&lt;&gt;' NULL does not work.
 	 */
 	public Where<T, ID> isNotNull(String columnName) throws SQLException {
 		addClause(new IsNotNull(columnName, findColumnFieldType(columnName)));

@@ -413,7 +413,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * <blockquote>
 	 * 
 	 * <pre>
-	 * CloseableWrappedIterable<Foo> wrappedIterable = fooDao.getWrappedIterable();
+	 * CloseableWrappedIterable&lt;Foo&gt; wrappedIterable = fooDao.getWrappedIterable();
 	 * try {
 	 *   for (Foo foo : wrappedIterable) {
 	 *       ...
