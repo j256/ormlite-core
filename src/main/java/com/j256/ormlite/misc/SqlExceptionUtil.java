@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 /**
  * Utility class to help with SQLException throwing.
- *
+ * 
  * @author graywatson
  */
 public class SqlExceptionUtil {
@@ -20,13 +20,12 @@ public class SqlExceptionUtil {
 	 */
 	public static SQLException create(String message, Throwable cause) {
 		SQLException sqlException;
-
 		if (cause instanceof SQLException) {
+			// if the cause is another SQLException, pass alot of the SQL state
 			sqlException = new SQLException(message, ((SQLException) cause).getSQLState());
 		} else {
 			sqlException = new SQLException(message);
 		}
-
 		sqlException.initCause(cause);
 		return sqlException;
 	}
