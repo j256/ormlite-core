@@ -561,7 +561,16 @@ public class DatabaseFieldConfig {
 		String methodName = methodFromField(field, "get");
 		Method fieldGetMethod;
 		try {
-			fieldGetMethod = field.getDeclaringClass().getMethod(methodName);
+			try {
+				fieldGetMethod = field.getDeclaringClass().getMethod(methodName);
+			} catch (NoSuchMethodException nsme) {
+				if (field.getType() == Boolean.class || field.getType() == boolean.class) {
+					methodName = methodFromField(field, "is");
+					fieldGetMethod = field.getDeclaringClass().getMethod(methodName);
+				} else {
+					throw nsme;
+				}
+			}
 		} catch (Exception e) {
 			if (throwExceptions) {
 				throw new IllegalArgumentException("Could not find appropriate get method for " + field);

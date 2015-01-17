@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -289,6 +290,46 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 				fieldConfig.getUniqueIndexName(tableName));
 	}
 
+	@Test
+	public void testGetSetIs() throws Exception {
+		Field stuffField = BooleanGetSetIs.class.getDeclaredField("stuff");
+		DatabaseFieldConfig.findGetMethod(stuffField, true);
+		DatabaseFieldConfig.findSetMethod(stuffField, true);
+		Field boolField = BooleanGetSetIs.class.getDeclaredField("bool");
+		DatabaseFieldConfig.findGetMethod(boolField, true);
+		DatabaseFieldConfig.findSetMethod(boolField, true);
+	}
+
+	@Test
+	public void testGetSetIsErrors() throws Exception {
+		Field stuffField = BooleanGetSetIsButNoMethods.class.getDeclaredField("stuff");
+		try {
+			DatabaseFieldConfig.findGetMethod(stuffField, true);
+			fail("should have thrown");
+		} catch (IllegalArgumentException iae) {
+			// expected
+		}
+		try {
+			DatabaseFieldConfig.findSetMethod(stuffField, true);
+			fail("should have thrown");
+		} catch (IllegalArgumentException iae) {
+			// expected
+		}
+		Field boolField = BooleanGetSetIsButNoMethods.class.getDeclaredField("bool");
+		try {
+			DatabaseFieldConfig.findGetMethod(boolField, true);
+			fail("should have thrown");
+		} catch (IllegalArgumentException iae) {
+			// expected
+		}
+		try {
+			DatabaseFieldConfig.findSetMethod(boolField, true);
+			fail("should have thrown");
+		} catch (IllegalArgumentException iae) {
+			// expected
+		}
+	}
+
 	/* ================================================================================================ */
 
 	protected class Foo {
@@ -408,6 +449,36 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 		@DatabaseField
 		String none;
 		public DefaultString() {
+		}
+	}
+
+	protected static class BooleanGetSetIs {
+		@DatabaseField(useGetSet = true)
+		String stuff;
+		@DatabaseField(useGetSet = true)
+		boolean bool;
+		public BooleanGetSetIs() {
+		}
+		public String getStuff() {
+			return stuff;
+		}
+		public void setStuff(String stuff) {
+			this.stuff = stuff;
+		}
+		public boolean isBool() {
+			return bool;
+		}
+		public void setBool(boolean bool) {
+			this.bool = bool;
+		}
+	}
+
+	protected static class BooleanGetSetIsButNoMethods {
+		@DatabaseField(useGetSet = true)
+		String stuff;
+		@DatabaseField(useGetSet = true)
+		boolean bool;
+		public BooleanGetSetIsButNoMethods() {
 		}
 	}
 }

@@ -16,6 +16,7 @@
 	* CORE: Added DataType.BOOLEAN_CHAR (to support '1' '0' or 't' 'f') and BOOLEAN_INTEGER.  Thanks to stew.
 	* CORE: Fixed bug where dao.deleteById(...) was not being properly notified. Thanks to DanielJette. Bug #190.
 	* CORE: Added support for QueryBuilder.countOf("DISTINCT(field)").  Thanks to spacetime.
+	* CORE: Fixed bug where useGetSet did not understand isXxx() for boolean fields. Thanks to HeDYn. Bug #187.
 	* JDBC: Possibly fixed some problems with the Oracle type with better boolean support.  Thanks to 51mon.
 	* ANDROID: Fixed the string processing when persisting java.sql.Timestamp classes. Bug #163.
 	* ANDROID: Added initial take on Loader base classes from EgorAnd for newer Android versions.  Thanks much!!
