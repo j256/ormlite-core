@@ -1268,6 +1268,37 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(sn2.id, results.get(0).id);
 	}
 
+	@Test
+	public void testCountOf() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+
+		QueryBuilder<Foo, Integer> qb = dao.queryBuilder();
+		assertEquals(0, qb.countOf());
+
+		Foo foo1 = new Foo();
+		int val = 123213;
+		foo1.val = val;
+		assertEquals(1, dao.create(foo1));
+		assertEquals(1, qb.countOf());
+
+		Foo foo2 = new Foo();
+		foo2.val = val;
+		assertEquals(1, dao.create(foo2));
+		assertEquals(2, qb.countOf());
+
+		String distinct = "DISTINCT(" + Foo.VAL_COLUMN_NAME + ")";
+		assertEquals(1, qb.countOf(distinct));
+
+		qb.setCountOf(distinct);
+		assertEquals(1, dao.countOf(qb.prepare()));
+
+		distinct = "DISTINCT(" + Foo.ID_COLUMN_NAME + ")";
+		assertEquals(2, qb.countOf(distinct));
+
+		qb.setCountOf(distinct);
+		assertEquals(2, dao.countOf(qb.prepare()));
+	}
+
 	/* ======================================================================================================== */
 
 	private static class LimitInline extends BaseDatabaseType {

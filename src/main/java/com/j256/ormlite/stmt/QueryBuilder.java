@@ -40,7 +40,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	private List<OrderBy> orderByList;
 	private List<ColumnNameOrRawSql> groupByList;
 	private boolean isInnerQuery;
-	private boolean isCountOfQuery;
+	private String countOfQuery;
 	private String having;
 	private Long limit;
 	private Long offset;
@@ -68,7 +68,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * Return the number of selected columns in the query.
 	 */
 	int getSelectColumnCount() {
-		if (isCountOfQuery) {
+		if (countOfQuery != null) {
 			return 1;
 		} else if (selectList == null) {
 			return 0;
@@ -81,8 +81,8 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * Return the selected columns in the query or an empty list if none were specified.
 	 */
 	String getSelectColumnsAsString() {
-		if (isCountOfQuery) {
-			return "COUNT(*)";
+		if (countOfQuery != null) {
+			return "COUNT(" + countOfQuery + ")";
 		} else if (selectList == null) {
 			return "";
 		} else {
@@ -267,7 +267,17 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * To get the count-of directly, use {@link #countOf()}.
 	 */
 	public QueryBuilder<T, ID> setCountOf(boolean countOf) {
-		this.isCountOfQuery = countOf;
+		return setCountOf("*");
+	}
+
+	/**
+	 * Set the field that we are counting from the database. For example, you can
+	 * {@code qb.setCountOf("DISTINCT(fieldname)")}. This query can then be used by {@link Dao#countOf(PreparedQuery)}.
+	 * 
+	 * To get the count-of directly, use {@link #countOf(String)}.
+	 */
+	public QueryBuilder<T, ID> setCountOf(String countOfQuery) {
+		this.countOfQuery = countOfQuery;
 		return this;
 	}
 
@@ -398,16 +408,31 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * Sets the count-of flag using {@link #setCountOf(boolean)} to true and then calls
-	 * {@link Dao#countOf(PreparedQuery)}. It restores the previous count-of value before returning.
+	 * Returns the count of the number of rows in the table. This uses {@link #setCountOf(boolean)} to true and then
+	 * calls {@link Dao#countOf(PreparedQuery)}. It restores the previous count-of value before returning.
 	 */
 	public long countOf() throws SQLException {
-		boolean countOf = isCountOfQuery;
+		String countOfQuerySave = this.countOfQuery;
 		try {
 			setCountOf(true);
 			return dao.countOf(prepare());
 		} finally {
-			setCountOf(countOf);
+			setCountOf(countOfQuerySave);
+		}
+	}
+
+	/**
+	 * Returns the count of the number of rows that match a field so you can do
+	 * {@code qb.countOf("DISTINCT(fieldname)")}. This uses {@link #setCountOf(String)} and then calls
+	 * {@link Dao#countOf(PreparedQuery)}. It restores the previous count-of value before returning.
+	 */
+	public long countOf(String countOfQuery) throws SQLException {
+		String countOfQuerySave = this.countOfQuery;
+		try {
+			setCountOf(countOfQuery);
+			return dao.countOf(prepare());
+		} finally {
+			setCountOf(countOfQuerySave);
 		}
 	}
 
@@ -438,7 +463,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			groupByList = null;
 		}
 		isInnerQuery = false;
-		isCountOfQuery = false;
+		countOfQuery = null;
 		having = null;
 		limit = null;
 		offset = null;
@@ -464,12 +489,12 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		if (distinct) {
 			sb.append("DISTINCT ");
 		}
-		if (isCountOfQuery) {
-			type = StatementType.SELECT_LONG;
-			sb.append("COUNT(*) ");
-		} else {
+		if (countOfQuery == null) {
 			// type set in appendSelects depending on raw or not
 			appendSelects(sb);
+		} else {
+			type = StatementType.SELECT_LONG;
+			sb.append("COUNT(").append(countOfQuery).append(") ");
 		}
 		sb.append("FROM ");
 		databaseType.appendEscapedEntityName(sb, tableName);
