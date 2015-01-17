@@ -65,6 +65,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	private String ifExistsQuery;
 	private FieldType[] ifExistsFieldTypes;
 	private RawRowMapper<T> rawRowMapper;
+
 	private final ThreadLocal<Boolean> localIsInBatchMode = new ThreadLocal<Boolean>() {
 		@Override
 		protected Boolean initialValue() {
@@ -520,7 +521,11 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		if (mappedDelete == null) {
 			mappedDelete = MappedDelete.build(databaseType, tableInfo);
 		}
-		return mappedDelete.deleteById(databaseConnection, id, objectCache);
+		int result = mappedDelete.deleteById(databaseConnection, id, objectCache);
+		if (dao != null && !localIsInBatchMode.get()) {
+			dao.notifyChanges();
+		}
+		return result;
 	}
 
 	/**
