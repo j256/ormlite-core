@@ -3,6 +3,7 @@ package com.j256.ormlite.field;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
+import java.util.Locale;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.types.VoidType;
@@ -555,33 +556,27 @@ public class DatabaseFieldConfig {
 	/**
 	 * Find and return the appropriate getter method for field.
 	 * 
-	 * @return Get method or null if none found.
+	 * @return Get method or null (or throws IllegalArgumentException) if none found.
 	 */
-	public static Method findGetMethod(Field field, boolean throwExceptions) {
-		String methodName = methodFromField(field, "get");
+	public static Method findGetMethod(Field field, boolean throwExceptions) throws IllegalArgumentException {
 		Method fieldGetMethod;
-		try {
-			try {
-				fieldGetMethod = field.getDeclaringClass().getMethod(methodName);
-			} catch (NoSuchMethodException nsme) {
-				if (field.getType() == Boolean.class || field.getType() == boolean.class) {
-					methodName = methodFromField(field, "is");
-					fieldGetMethod = field.getDeclaringClass().getMethod(methodName);
-				} else {
-					throw nsme;
-				}
-			}
-		} catch (Exception e) {
-			if (throwExceptions) {
-				throw new IllegalArgumentException("Could not find appropriate get method for " + field);
-			} else {
-				return null;
-			}
+		if (Locale.ENGLISH.equals(Locale.getDefault())) {
+			fieldGetMethod =
+					findMethodFromNames(field, true, throwExceptions, methodFromField(field, "get", null),
+							methodFromField(field, "is", null));
+		} else {
+			fieldGetMethod =
+					findMethodFromNames(field, true, throwExceptions, methodFromField(field, "get", null),
+							methodFromField(field, "get", Locale.ENGLISH), methodFromField(field, "is", null),
+							methodFromField(field, "is", Locale.ENGLISH));
+		}
+		if (fieldGetMethod == null) {
+			return null;
 		}
 		if (fieldGetMethod.getReturnType() != field.getType()) {
 			if (throwExceptions) {
-				throw new IllegalArgumentException("Return type of get method " + methodName + " does not return "
-						+ field.getType());
+				throw new IllegalArgumentException("Return type of get method " + fieldGetMethod.getName()
+						+ " does not return " + field.getType());
 			} else {
 				return null;
 			}
@@ -592,24 +587,24 @@ public class DatabaseFieldConfig {
 	/**
 	 * Find and return the appropriate setter method for field.
 	 * 
-	 * @return Set method or null if none found.
+	 * @return Set method or null (or throws IllegalArgumentException) if none found.
 	 */
-	public static Method findSetMethod(Field field, boolean throwExceptions) {
-		String methodName = methodFromField(field, "set");
+	public static Method findSetMethod(Field field, boolean throwExceptions) throws IllegalArgumentException {
 		Method fieldSetMethod;
-		try {
-			fieldSetMethod = field.getDeclaringClass().getMethod(methodName, field.getType());
-		} catch (Exception e) {
-			if (throwExceptions) {
-				throw new IllegalArgumentException("Could not find appropriate set method for " + field);
-			} else {
-				return null;
-			}
+		if (Locale.ENGLISH.equals(Locale.getDefault())) {
+			fieldSetMethod = findMethodFromNames(field, false, throwExceptions, methodFromField(field, "set", null));
+		} else {
+			fieldSetMethod =
+					findMethodFromNames(field, false, throwExceptions, methodFromField(field, "set", null),
+							methodFromField(field, "set", Locale.ENGLISH));
+		}
+		if (fieldSetMethod == null) {
+			return null;
 		}
 		if (fieldSetMethod.getReturnType() != void.class) {
 			if (throwExceptions) {
-				throw new IllegalArgumentException("Return type of set method " + methodName + " returns "
-						+ fieldSetMethod.getReturnType() + " instead of void");
+				throw new IllegalArgumentException("Return type of set method " + fieldSetMethod.getName()
+						+ " returns " + fieldSetMethod.getReturnType() + " instead of void");
 			} else {
 				return null;
 			}
@@ -744,7 +739,44 @@ public class DatabaseFieldConfig {
 		}
 	}
 
-	private static String methodFromField(Field field, String prefix) {
-		return prefix + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
+	private static Method findMethodFromNames(Field field, boolean isGetMethod, boolean throwExceptions,
+			String... methodNames) {
+		NoSuchMethodException firstException = null;
+		for (String methodName : methodNames) {
+			try {
+				if (isGetMethod) {
+					// get method has no argument
+					return field.getDeclaringClass().getMethod(methodName);
+				} else {
+					// set method has same argument type as field
+					return field.getDeclaringClass().getMethod(methodName, field.getType());
+				}
+			} catch (NoSuchMethodException nsme) {
+				if (firstException == null) {
+					firstException = nsme;
+				}
+			}
+		}
+		if (throwExceptions) {
+			throw new IllegalArgumentException("Could not find appropriate " + (isGetMethod ? "get" : "set")
+					+ " method for " + field, firstException);
+		} else {
+			return null;
+		}
+	}
+
+	private static String methodFromField(Field field, String prefix, Locale locale) {
+		String name = field.getName();
+		String start = name.substring(0, 1);
+		if (locale == null) {
+			start = start.toUpperCase();
+		} else {
+			start = start.toUpperCase(locale);
+		}
+		StringBuilder sb = new StringBuilder();
+		sb.append(prefix);
+		sb.append(start);
+		sb.append(name, 1, name.length());
+		return sb.toString();
 	}
 }

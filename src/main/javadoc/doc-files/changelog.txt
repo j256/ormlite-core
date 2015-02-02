@@ -1,4 +1,4 @@
-4.49: 5/??/2014
+4.49: 2/??/2015
 	* CORE: A lot of changes making CloseableIterator extend java.io.Closeable for Java7 support. Thanks to livelazily.
 	* CORE: Added JOIN-ing between tables _without_ a foreign-object relationship.
 	* CORE: Really fix QueryBuilder.orderByRaw(...) and orderBy(...) mutually exclusivity. Thanks to Diederik. Bug #161.
@@ -17,6 +17,8 @@
 	* CORE: Fixed bug where dao.deleteById(...) was not being properly notified. Thanks to DanielJette. Bug #190.
 	* CORE: Added support for QueryBuilder.countOf("DISTINCT(field)").  Thanks to spacetime.
 	* CORE: Fixed bug where useGetSet did not understand isXxx() for boolean fields. Thanks to HeDYn. Bug #187.
+	* CORE: Added support for Java 8 methods.  Thanks to VincentFTS.
+	* CODE: Fixed finding of get/set/is methods if not in English locale.  Thanks to ChristianRuppert.  Bug #191. 
 	* JDBC: Possibly fixed some problems with the Oracle type with better boolean support.  Thanks to 51mon.
 	* ANDROID: Fixed the string processing when persisting java.sql.Timestamp classes. Bug #163.
 	* ANDROID: Added initial take on Loader base classes from EgorAnd for newer Android versions.  Thanks much!!
