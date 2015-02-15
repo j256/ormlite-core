@@ -649,7 +649,8 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			ifExistsQuery = qb.prepareStatementString();
 			ifExistsFieldTypes = new FieldType[] { tableInfo.getIdField() };
 		}
-		long count = connection.queryForLong(ifExistsQuery, new Object[] { id }, ifExistsFieldTypes);
+		Object idSqlArg = tableInfo.getIdField().convertJavaFieldToSqlArgValue(id);
+		long count = connection.queryForLong(ifExistsQuery, new Object[] { idSqlArg }, ifExistsFieldTypes);
 		logger.debug("query of '{}' returned {}", ifExistsQuery, count);
 		return (count != 0);
 	}

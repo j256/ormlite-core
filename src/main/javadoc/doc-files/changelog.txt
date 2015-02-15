@@ -19,6 +19,7 @@
 	* CORE: Fixed bug where useGetSet did not understand isXxx() for boolean fields. Thanks to HeDYn. Bug #187.
 	* CORE: Added support for Java 8 methods.  Thanks to VincentFTS.
 	* CODE: Fixed finding of get/set/is methods if not in English locale.  Thanks to ChristianRuppert.  Bug #191. 
+	* CODE: Fixed bug with Doa.createOrUpdate(...) and custom id types.  Thanks much to lstrzelecki.  Bug #193. 
 	* JDBC: Possibly fixed some problems with the Oracle type with better boolean support.  Thanks to 51mon.
 	* ANDROID: Fixed the string processing when persisting java.sql.Timestamp classes. Bug #163.
 	* ANDROID: Added initial take on Loader base classes from EgorAnd for newer Android versions.  Thanks much!!
