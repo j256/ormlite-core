@@ -115,5 +115,5 @@ public interface DataPersister extends FieldConverter {
 	/**
 	 * Move the current-value to the next value. Used for the version field.
 	 */
-	public Object moveToNextValue(Object currentValue);
+	public Object moveToNextValue(Object currentValue) throws SQLException;
 }

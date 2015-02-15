@@ -685,7 +685,7 @@ public class FieldType {
 	/**
 	 * Move the SQL value to the next one for version processing.
 	 */
-	public Object moveToNextValue(Object val) {
+	public Object moveToNextValue(Object val) throws SQLException {
 		if (dataPersister == null) {
 			return null;
 		} else {

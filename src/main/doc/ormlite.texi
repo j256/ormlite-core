@@ -7,8 +7,8 @@
 
 @c ----------------------------------------------------------------
 @set ormlite_version 4.49
-@set ormlite_year 2013
-@set ormlite_date December @value{ormlite_year}
+@set ormlite_year 2015
+@set ormlite_date February @value{ormlite_year}
 @set package ORMLite
 @c ----------------------------------------------------------------
 
@@ -680,7 +680,7 @@ ID of the foreign object which is recommended. For example, if you have an @code
 @emph{NOTE:} Setting this implies @code{foreignAutoRefresh} is also set to true because there is no way to refresh the
 object since the id field is not stored in the database. So when this is set, the field will be automatically refreshed
 in another database query.
-	
+
 @end table
 
 @c ----------------------------------------------------------------
@@ -4127,7 +4127,7 @@ account.orders.add(order1);
 Call this with true to enable an object cache for the DAO. Set to false to disable any caching.  @xref{Object Caches}.
 
 @item setObjectCache(ObjectCache objectCache);
-	
+
 Same as @code{setObjectCache(boolean)} except you specify the actual cache instance to use for the DAO.  This allows
 you to inject your own cache classes.  Call it with null to disable the cache.  @xref{Object Caches}.
 
@@ -4457,6 +4457,7 @@ dependency list.  In this example we are using MySQL but any of the supported JD
 <project>
     @dots{}
     <dependencies>
+        <!-- this has a dependency on ormlite-core -->
         <dependency>
             <groupId>com.j256.ormlite</groupId>
             <artifactId>ormlite-jdbc</artifactId>
@@ -4925,28 +4926,28 @@ All of the JDBC examples below depend on the H2 database which is a native Java 
 @item Simple, basic
 
 This is a simple application which performs database operations on a single class/table.  See the
-@uref{http://ormlite.com/docs/example-simple, source code in SVN}.
+@uref{http://ormlite.com/docs/example-simple, source code}.
 
 @cindex foreign objects example
 @anchor{foreign objects example}
 @item Foreign objects 
 
 This example shows how to use foreign objects.  @xref{Foreign Objects}.  See the 
-@uref{http://ormlite.com/docs/example-foreign, source code in SVN}.
+@uref{http://ormlite.com/docs/example-foreign, source code}.
 
 @cindex foreign collections example
 @anchor{foreign collections example}
 @item Foreign collections 
 
 This example shows how to use foreign collections.  @xref{Foreign Collection}.  See the
-@uref{http://ormlite.com/docs/example-foreign-collection, source code in SVN}.
+@uref{http://ormlite.com/docs/example-foreign-collection, source code}.
 
 @cindex field configuration example
 @anchor{field config example}
 @item Field configuration 
 
 This example shows how you can configure a class in ORMLite using Java code @emph{instead} of annotations.
-@xref{Class Configuration}.  See the @uref{http://ormlite.com/docs/example-config, source code in SVN}.
+@xref{Class Configuration}.  See the @uref{http://ormlite.com/docs/example-config, source code}.
 
 @cindex many to many example
 @anchor{many to many example}
@@ -4954,14 +4955,14 @@ This example shows how you can configure a class in ORMLite using Java code @emp
 
 This example is a bit more complicated with multiple tables and is designed for folks trying to model a many-to-many relationship.
 It has a join-table, foreign fields, and also utilizes inner queries.   See the @uref{http://ormlite.com/docs/example-many,
-source code in SVN}.
+source code}.
 
 @cindex spring example
 @anchor{spring example}
 @item Spring wiring
 
 To demonstrate how to use Spring wiring with ORMLite, this little program includes classes and XML configuration files.
-See the @uref{http://ormlite.com/docs/example-spring, source code in SVN}.
+See the @uref{http://ormlite.com/docs/example-spring, source code}.
 
 @cindex data persister example
 @cindex custom data persister example
@@ -4969,7 +4970,7 @@ See the @uref{http://ormlite.com/docs/example-spring, source code in SVN}.
 @item Data persister
 
 This example shows how to define custom data persisters with ORMLite which can change how data types are stored in the
-database.  See the @uref{http://ormlite.com/docs/example-data-persister, source code in SVN}.
+database.  See the @uref{http://ormlite.com/docs/example-data-persister, source code}.
 
 @end table
 
@@ -4979,7 +4980,7 @@ database.  See the @uref{http://ormlite.com/docs/example-data-persister, source 
 
 @cindex Android examples
 For Android developers, here some complete example application projects to help you get started.  See here for
-@uref{http://ormlite.com/android/examples/, tarballs of all of the packages} as well as svn links.
+@uref{http://ormlite.com/android/examples/, tarballs of all of the packages} as well as code links.
 
 @table @asis
 
@@ -5030,13 +5031,13 @@ Thanks much to them all.
 @item Kevin Galligan was the impetus and the author of a good bit of the Android compatible code.  He wrote the Android level support
 classes and did a ton of beta-testing of it.  He's also provided the initial Android examples.  See @uref{http://www.kagii.com/}.
 
+@item JC Romanda has been an excellent addition to the user base providing feedback, discovering and reporting bugs, providing patches
+for new features, testing new features before the release, and thinking a lot about how ORMLite can be extended and improved.
+
 @item Nelson Erb was our self-appointed documentation and testing volunteer for a year.  He did a great job summarizing sections of
 this document so we could create a better 'Getting Started' section.  He also fleshed out a bunch of unit tests to improve coverage.
 
 @item Craig Andrews and Pedro Velasco has been very quick with feedback, bug reports, feature requests and other help.
-
-@item JC Romanda has been an excellent addition to the user base providing feedback, discovering and reporting bugs, providing patches
-for new features, testing new features before the release, and thinking a lot about how ORMLite can be extended and improved.
 
 @item Jim Gloor was one of the Java gurus at a previous company.  His great object instincts and the JDBC code samples helped start this
 project.

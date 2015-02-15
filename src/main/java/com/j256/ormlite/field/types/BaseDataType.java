@@ -153,7 +153,13 @@ public abstract class BaseDataType extends BaseFieldConverter implements DataPer
 		return false;
 	}
 
-	public Object moveToNextValue(Object currentValue) {
+	/**
+	 * Move the current-value to the next value. Used for the version field.
+	 * 
+	 * @throws SQLException
+	 *             For sub-classes.
+	 */
+	public Object moveToNextValue(Object currentValue) throws SQLException {
 		return null;
 	}
 

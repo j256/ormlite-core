@@ -48,16 +48,7 @@ public class DateTimeType extends BaseDataType {
 
 	@Override
 	public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {
-		try {
-			Method method = getMillisMethod();
-			if (javaObject == null) {
-				return null;
-			} else {
-				return method.invoke(javaObject);
-			}
-		} catch (Exception e) {
-			throw SqlExceptionUtil.create("Could not use reflection to get millis from Joda DateTime: " + javaObject, e);
-		}
+		return extractMillis(javaObject);
 	}
 
 	@Override
@@ -72,12 +63,7 @@ public class DateTimeType extends BaseDataType {
 
 	@Override
 	public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
-		try {
-			Constructor<?> constructor = getConstructor();
-			return constructor.newInstance((Long) sqlArg);
-		} catch (Exception e) {
-			throw SqlExceptionUtil.create("Could not use reflection to construct a Joda DateTime", e);
-		}
+		return createInstance((Long) sqlArg);
 	}
 
 	@Override
@@ -100,20 +86,51 @@ public class DateTimeType extends BaseDataType {
 		}
 	}
 
-	private Method getMillisMethod() throws Exception {
-		if (getMillisMethod == null) {
-			Class<?> clazz = getDateTimeClass();
-			getMillisMethod = clazz.getMethod("getMillis");
-		}
-		return getMillisMethod;
+	@Override
+	public boolean isValidForVersion() {
+		return true;
 	}
 
-	private Constructor<?> getConstructor() throws Exception {
-		if (millisConstructor == null) {
-			Class<?> clazz = getDateTimeClass();
-			millisConstructor = clazz.getConstructor(long.class);
+	@Override
+	public Object moveToNextValue(Object currentValue) throws SQLException {
+		long newVal = System.currentTimeMillis();
+		if (currentValue == null) {
+			return createInstance(newVal);
 		}
-		return millisConstructor;
+		Long currentVal = extractMillis(currentValue);
+		if (newVal == currentVal) {
+			return createInstance(newVal + 1L);
+		} else {
+			return createInstance(newVal);
+		}
+	}
+
+	private Object createInstance(Long sqlArg) throws SQLException {
+		try {
+			if (millisConstructor == null) {
+				Class<?> clazz = getDateTimeClass();
+				millisConstructor = clazz.getConstructor(long.class);
+			}
+			return millisConstructor.newInstance(sqlArg);
+		} catch (Exception e) {
+			throw SqlExceptionUtil.create("Could not use reflection to construct a Joda DateTime", e);
+		}
+	}
+
+	private Long extractMillis(Object javaObject) throws SQLException {
+		try {
+			if (getMillisMethod == null) {
+				Class<?> clazz = getDateTimeClass();
+				getMillisMethod = clazz.getMethod("getMillis");
+			}
+			if (javaObject == null) {
+				return null;
+			} else {
+				return (Long) getMillisMethod.invoke(javaObject);
+			}
+		} catch (Exception e) {
+			throw SqlExceptionUtil.create("Could not use reflection to get millis from Joda DateTime: " + javaObject, e);
+		}
 	}
 
 	private Class<?> getDateTimeClass() throws ClassNotFoundException {
