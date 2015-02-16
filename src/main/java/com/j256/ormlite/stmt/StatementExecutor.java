@@ -8,6 +8,7 @@ import java.util.concurrent.Callable;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DatabaseResultsMapper;
 import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.dao.RawRowMapper;
@@ -371,6 +372,37 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			RawResultsImpl<Object[]> rawResults =
 					new RawResultsImpl<Object[]>(connectionSource, connection, query, Object[].class,
 							compiledStatement, new ObjectArrayRowMapper(columnTypes), objectCache);
+			compiledStatement = null;
+			connection = null;
+			return rawResults;
+		} finally {
+			IOUtils.closeThrowSqlException(compiledStatement, "compiled statement");
+			if (connection != null) {
+				connectionSource.releaseConnection(connection);
+			}
+		}
+	}
+
+	/**
+	 * Return a results object associated with an internal iterator is mapped by the user's rowMapper.
+	 */
+	public <UO> GenericRawResults<UO> queryRaw(ConnectionSource connectionSource, String query,
+			DatabaseResultsMapper<UO> mapper, String[] arguments, ObjectCache objectCache) throws SQLException {
+		logger.debug("executing raw query for: {}", query);
+		if (arguments.length > 0) {
+			// need to do the (Object) cast to force args to be a single object
+			logger.trace("query arguments: {}", (Object) arguments);
+		}
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		CompiledStatement compiledStatement = null;
+		try {
+			compiledStatement =
+					connection.compileStatement(query, StatementType.SELECT, noFieldTypes,
+							DatabaseConnection.DEFAULT_RESULT_FLAGS);
+			assignStatementArguments(compiledStatement, arguments);
+			RawResultsImpl<UO> rawResults =
+					new RawResultsImpl<UO>(connectionSource, connection, query, Object[].class, compiledStatement,
+							new UserDatabaseResultsMapper<UO>(mapper), objectCache);
 			compiledStatement = null;
 			connection = null;
 			return rawResults;
@@ -755,6 +787,22 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 				result[colC] = dataType.getDataPersister().resultToJava(null, results, colC);
 			}
 			return result;
+		}
+	}
+
+	/**
+	 * Mapper which uses the {@link DatabaseResults} directly.
+	 */
+	private static class UserDatabaseResultsMapper<UO> implements GenericRowMapper<UO> {
+
+		public final DatabaseResultsMapper<UO> mapper;
+
+		private UserDatabaseResultsMapper(DatabaseResultsMapper<UO> mapper) {
+			this.mapper = mapper;
+		}
+
+		public UO mapRow(DatabaseResults results) throws SQLException {
+			return mapper.mapRow(results);
 		}
 	}
 }

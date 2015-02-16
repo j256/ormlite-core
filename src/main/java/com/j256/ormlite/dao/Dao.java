@@ -514,6 +514,13 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 			throws SQLException;
 
 	/**
+	 * Similar to the {@link #queryRaw(String, RawRowMapper, String...)} but this iterator returns rows that you can map
+	 * yourself using {@link DatabaseResultsMapper}.
+	 */
+	public <UO> GenericRawResults<UO> queryRaw(String query, DatabaseResultsMapper<UO> mapper, String... arguments)
+			throws SQLException;
+
+	/**
 	 * Perform a raw query that returns a single value (usually an aggregate function like MAX or COUNT). If the query
 	 * does not return a single long value then it will throw a SQLException.
 	 */
