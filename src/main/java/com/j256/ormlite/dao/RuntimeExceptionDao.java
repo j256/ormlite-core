@@ -505,6 +505,18 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	}
 
 	/**
+	 * @see Dao#queryRaw(String, DatabaseResultsMapper, String...)
+	 */
+	public <UO> GenericRawResults<UO> queryRaw(String query, DatabaseResultsMapper<UO> mapper, String... arguments) {
+		try {
+			return dao.queryRaw(query, mapper, arguments);
+		} catch (SQLException e) {
+			logMessage(e, "queryRaw threw exception on: " + query);
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
 	 * @see Dao#executeRaw(String, String...)
 	 */
 	public int executeRaw(String statement, String... arguments) {
