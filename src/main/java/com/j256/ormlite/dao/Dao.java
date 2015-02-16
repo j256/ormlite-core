@@ -505,13 +505,23 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public <UO> GenericRawResults<UO> queryRaw(String query, DataType[] columnTypes, RawRowObjectMapper<UO> mapper,
 			String... arguments) throws SQLException;
 
-	/**
-	 * Similar to the {@link #queryRaw(String, String...)} but instead of an array of String results being returned by
-	 * the iterator, this uses the column-types parameter to return an array of Objects instead. The arguments are
-	 * optional but can be set with strings to expand ? type of SQL.
-	 */
+    /**
+     * Similar to the {@link #queryRaw(String, RawRowMapper, String...)}.
+     * For every result that is returned by the database, the
+     * {@link ResultSetMapper#mapRow(java.sql.ResultSet, java.sql.ResultSetMetaData)} method
+     * is called so you can convert the result columns into an object to be returned by the iterator. The arguments are
+     * optional but can be set with strings to expand ? type of SQL. For a simple implementation of a raw row mapper,
+     * see {@link #getRawRowMapper()}.
+     */
 	public GenericRawResults<Object[]> queryRaw(String query, DataType[] columnTypes, String... arguments)
 			throws SQLException;
+
+    /**
+     * Similar to the {@link #queryRaw(String, RawRowMapper, String...)} but this iterator returns row that you can map
+     * yourself using {@link com.j256.ormlite.dao.ResultSetMapper}.
+     */
+    public <UO> GenericRawResults<UO> queryRaw(String query, ResultSetMapper<UO> mapper, String... arguments)
+            throws SQLException;
 
 	/**
 	 * Perform a raw query that returns a single value (usually an aggregate function like MAX or COUNT). If the query

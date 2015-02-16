@@ -30,7 +30,11 @@ public class H2DatabaseResults implements DatabaseResults {
 		this.objectCache = objectCache;
 	}
 
-	public int getColumnCount() throws SQLException {
+    public ResultSet getResultSet() throws SQLException {
+        return resultSet;
+    }
+
+    public int getColumnCount() throws SQLException {
 		return metaData.getColumnCount();
 	}
 

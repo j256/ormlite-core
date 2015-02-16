@@ -3,6 +3,8 @@ package com.j256.ormlite.support;
 import java.io.Closeable;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
@@ -18,6 +20,11 @@ import com.j256.ormlite.dao.ObjectCache;
  * @author graywatson
  */
 public interface DatabaseResults extends Closeable {
+
+    /**
+     * Return {@link java.sql.ResultSet} in result.
+     */
+    public ResultSet getResultSet() throws SQLException;
 
 	/**
 	 * Returns the number of columns in these results.

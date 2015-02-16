@@ -6,12 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import com.j256.ormlite.dao.BaseDaoImpl;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.GenericRawResults;
-import com.j256.ormlite.dao.ObjectCache;
-import com.j256.ormlite.dao.RawRowMapper;
-import com.j256.ormlite.dao.RawRowObjectMapper;
+import com.j256.ormlite.dao.*;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.FieldType;
@@ -382,6 +377,39 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		}
 	}
 
+    /**
+     * Return a results object associated with an internal iterator is mapped by the user's rowMapper.
+     */
+    public <UO> GenericRawResults<UO> queryRaw(ConnectionSource connectionSource, String query,
+                                               ResultSetMapper<UO> rowMapper, String[] arguments, ObjectCache objectCache) throws SQLException {
+        logger.debug("executing raw query for: {}", query);
+        if (arguments.length > 0) {
+            // need to do the (Object) cast to force args to be a single object
+            logger.trace("query arguments: {}", (Object) arguments);
+        }
+        DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+        CompiledStatement compiledStatement = null;
+        try {
+            compiledStatement =
+                    connection.compileStatement(query, StatementType.SELECT, noFieldTypes,
+                            DatabaseConnection.DEFAULT_RESULT_FLAGS);
+            assignStatementArguments(compiledStatement, arguments);
+            RawResultsImpl<UO> rawResults =
+                    new RawResultsImpl<UO>(connectionSource, connection, query, String[].class, compiledStatement,
+                            new UserResultSetMapper<UO>(rowMapper), objectCache);
+            compiledStatement = null;
+            connection = null;
+            return rawResults;
+        } finally {
+            if (compiledStatement != null) {
+                compiledStatement.close();
+            }
+            if (connection != null) {
+                connectionSource.releaseConnection(connection);
+            }
+        }
+    }
+
 	/**
 	 * Return the number of rows affected.
 	 */
@@ -694,6 +722,19 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			return columnNames;
 		}
 	}
+
+    private static class UserResultSetMapper<UO> implements GenericRowMapper<UO> {
+
+        public final ResultSetMapper<UO> mapper;
+
+        private UserResultSetMapper(ResultSetMapper<UO> mapper) {
+            this.mapper = mapper;
+        }
+
+        public UO mapRow(DatabaseResults results) throws SQLException {
+            return mapper.mapRow(results.getResultSet());
+        }
+    }
 
 	/**
 	 * Map raw results to return a user object from an Object array.
