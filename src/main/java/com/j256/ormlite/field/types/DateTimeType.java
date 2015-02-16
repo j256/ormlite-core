@@ -30,7 +30,7 @@ public class DateTimeType extends BaseDataType {
 	private static final String[] associatedClassNames = new String[] { "org.joda.time.DateTime" };
 
 	private DateTimeType() {
-		super(SqlType.LONG, new Class<?>[0]);
+		super(SqlType.LONG);
 	}
 
 	protected DateTimeType(SqlType sqlType, Class<?>[] classes) {

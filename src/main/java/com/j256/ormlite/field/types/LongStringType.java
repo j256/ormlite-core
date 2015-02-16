@@ -16,7 +16,7 @@ public class LongStringType extends StringType {
 	}
 
 	private LongStringType() {
-		super(SqlType.LONG_STRING, new Class<?>[0]);
+		super(SqlType.LONG_STRING);
 	}
 
 	/**

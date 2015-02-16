@@ -188,6 +188,11 @@ public enum DataType {
 	 */
 	UUID(UuidType.getSingleton()),
 	/**
+	 * Persists the {@link java.util.UUID} Java class as a native UUID column which is only supported by a couple of
+	 * database types.
+	 */
+	UUID_NATIVE(UuidType.getSingleton()),
+	/**
 	 * Persists the {@link BigInteger} Java class.
 	 */
 	BIG_INTEGER(BigIntegerType.getSingleton()),

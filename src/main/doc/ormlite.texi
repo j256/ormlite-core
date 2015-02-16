@@ -1073,6 +1073,15 @@ The @code{java.util.UUID} class persisted as a @code{VARCHAR} type.  It saves it
 in which case whenever it is inserted, @code{java.util.UUID.randomUUID()} is called and set on the field.
 @xref{GeneratedId Column}.
 
+@anchor{UUID_NATIVE}
+@cindex UUID native db support
+@cindex UUID_NATIVE type
+@item UUID (DataType.UUID_NATIVE)
+
+You specify the @code{dataType} field (from the @code{@@DatabaseField} annotation) as a @code{DataType.UUID_NATIVE} 
+to persist a @code{UUID} in a database native column format.  This is only supported by a couple of different database
+types and is still inserted with JDBC as a string.
+
 @cindex BigIteger type
 @item BigInteger (DataType.BIG_INTEGER)
 
@@ -2053,6 +2062,35 @@ iterator, and any associated database connections, is closed.
 @emph{NOTE:} If you are using the @code{QueryBuilder#prepareStatementString()} method to build your query, the
 @code{QueryBuild} may have added the id column to the selected column list if the Dao object has an id you did not include
 it in the columns you selected. This means that your results may have one more column than you are expecting.
+
+@cindex ResultSet mapping
+@cindex DatabaseResults mapping
+@cindex raw row mapper
+Another way that you can map the results is by using a @code{DatabaseResultsMapper} object.  This will call the mapping object
+with the internal @code{DatabaseResults} object to map a row and output an object.  If you are using this with JDBC, then
+you you can case the @code{DatabaseResults} to be a @code{JdbcDatabaseResults}.  This will give you access to the
+@code{JdbcDatabaseResults.getResultSet()} method and the underlying JDBC result object.  For example:
+
+@example
+// return the orders with the sum of their amounts per account
+GenericRawResults<Foo> rawResults =
+  orderDao.queryRaw(
+    "select account_id,sum(amount) from orders group by account_id",
+    new RawRowMapper<Foo>() @{
+            public Foo mapRow(DatabaseResults results) @{
+                ResultSet resultSet = 
+                   ((JdbcDatabaseResults)results).getResultSet();
+                // now you can use the ResultSet to build Foo
+                @dots{}
+        @}
+    @});
+// page through the results
+for (Foo foo : rawResults) @{
+  System.out.println("Account-id " + foo.accountId + " has "
+    + foo.totalOrders + " total orders");
+@}
+rawResults.close();
+@end example
 
 @c ----------------------------------------------------------------
 @node Raw Updates, Raw Executes, Raw Queries, Raw Statements

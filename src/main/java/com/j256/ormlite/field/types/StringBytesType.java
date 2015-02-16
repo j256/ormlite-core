@@ -24,7 +24,7 @@ public class StringBytesType extends BaseDataType {
 	}
 
 	private StringBytesType() {
-		super(SqlType.BYTE_ARRAY, new Class<?>[0]);
+		super(SqlType.BYTE_ARRAY);
 	}
 
 	/**

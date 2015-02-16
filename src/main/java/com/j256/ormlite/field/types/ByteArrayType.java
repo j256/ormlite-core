@@ -21,7 +21,7 @@ public class ByteArrayType extends BaseDataType {
 	}
 
 	private ByteArrayType() {
-		super(SqlType.BYTE_ARRAY, new Class<?>[0]);
+		super(SqlType.BYTE_ARRAY);
 	}
 
 	/**

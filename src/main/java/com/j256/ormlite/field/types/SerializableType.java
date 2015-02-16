@@ -33,7 +33,7 @@ public class SerializableType extends BaseDataType {
 		 * NOTE: Serializable class should _not_ be in the list because _everything_ is serializable and we want to
 		 * force folks to use DataType.SERIALIZABLE -- especially for forwards compatibility.
 		 */
-		super(SqlType.SERIALIZABLE, new Class<?>[0]);
+		super(SqlType.SERIALIZABLE);
 	}
 
 	/**

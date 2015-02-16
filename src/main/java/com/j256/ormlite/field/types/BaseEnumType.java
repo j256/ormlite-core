@@ -17,6 +17,10 @@ public abstract class BaseEnumType extends BaseDataType {
 		super(sqlType, classes);
 	}
 
+	protected BaseEnumType(SqlType sqlType) {
+		super(sqlType);
+	}
+
 	protected static Enum<?> enumVal(FieldType fieldType, Object val, Enum<?> enumVal, Enum<?> unknownEnumVal)
 			throws SQLException {
 		if (enumVal != null) {

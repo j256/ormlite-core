@@ -27,6 +27,10 @@ public class BooleanObjectType extends BaseDataType {
 		super(sqlType, classes);
 	}
 
+	protected BooleanObjectType(SqlType sqlType) {
+		super(sqlType);
+	}
+
 	@Override
 	public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 		return Boolean.parseBoolean(defaultStr);

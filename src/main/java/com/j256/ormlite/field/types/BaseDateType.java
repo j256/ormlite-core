@@ -23,6 +23,10 @@ public abstract class BaseDateType extends BaseDataType {
 		super(sqlType, classes);
 	}
 
+	protected BaseDateType(SqlType sqlType) {
+		super(sqlType);
+	}
+
 	protected static DateStringFormatConfig convertDateStringConfig(FieldType fieldType,
 			DateStringFormatConfig defaultDateFormatConfig) {
 		if (fieldType == null) {

@@ -35,7 +35,7 @@ public class BooleanIntegerType extends BooleanType {
 	}
 
 	public BooleanIntegerType() {
-		super(SqlType.INTEGER, new Class<?>[0]);
+		super(SqlType.INTEGER);
 	}
 
 	@Override

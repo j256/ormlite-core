@@ -29,6 +29,10 @@ public class StringType extends BaseDataType {
 		super(sqlType, classes);
 	}
 
+	protected StringType(SqlType sqlType) {
+		super(sqlType);
+	}
+
 	@Override
 	public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 		return defaultStr;

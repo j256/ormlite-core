@@ -23,7 +23,7 @@ public class EnumIntegerType extends BaseEnumType {
 	}
 
 	private EnumIntegerType() {
-		super(SqlType.INTEGER, new Class<?>[0]);
+		super(SqlType.INTEGER);
 	}
 
 	/**

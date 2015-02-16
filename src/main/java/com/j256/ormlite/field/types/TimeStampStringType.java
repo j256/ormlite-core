@@ -22,7 +22,7 @@ public class TimeStampStringType extends DateStringType {
 	}
 
 	private TimeStampStringType() {
-		super(SqlType.STRING, new Class<?>[0]);
+		super(SqlType.STRING);
 	}
 
 	/**
