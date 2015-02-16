@@ -4,8 +4,6 @@ import java.sql.Driver;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.apache.commons.lang.NotImplementedException;
-
 import com.j256.ormlite.field.BaseFieldConverter;
 import com.j256.ormlite.field.DataPersister;
 import com.j256.ormlite.field.FieldConverter;
@@ -122,11 +120,11 @@ public abstract class BaseDatabaseType implements DatabaseType {
 			case BIG_DECIMAL :
 				appendBigDecimalNumericType(sb, fieldType, fieldWidth);
 				break;
-			
-			case UUID:
-				appendUUIDType(sb, fieldType, fieldWidth);
+
+			case UUID :
+				appendUuidType(sb, fieldType, fieldWidth);
 				break;
-				
+
 			case UNKNOWN :
 			default :
 				// shouldn't be able to get here unless we have a missing case
@@ -177,12 +175,13 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	}
 
 	/**
-	 * Output the SQL type for a Java UUID.
+	 * Output the SQL type for a Java UUID. This is used to support specific sub-class database types which support the
+	 * UUID type.
 	 */
-	protected void appendUUIDType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
-		throw new RuntimeException("UUID Is Database Specifc, Please Specify A Database Type");
+	protected void appendUuidType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
+		throw new UnsupportedOperationException("UUID is not supported by this database type");
 	}
-	
+
 	/**
 	 * Output the SQL type for a Java Long String.
 	 */
