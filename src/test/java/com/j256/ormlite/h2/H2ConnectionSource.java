@@ -85,6 +85,10 @@ public class H2ConnectionSource implements ConnectionSource {
 		return connection != null;
 	}
 
+	public boolean isSingleConnection() {
+		return true;
+	}
+
 	/**
 	 * Set to enable connection proxying. Set to null to disable.
 	 */

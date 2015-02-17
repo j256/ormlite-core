@@ -73,4 +73,11 @@ public interface ConnectionSource extends Closeable {
 	 * Return true if the connection source is open. Once {@link #close()} has been called, this should return false.
 	 */
 	public boolean isOpen();
+
+	/**
+	 * Return true if there is only one connection to the database being used by this connection-sourse. If true then
+	 * some synchronization will be enabled when using batch tasks. The user will also need to synchronize around some
+	 * of the transaction and auto-commit calls.
+	 */
+	public boolean isSingleConnection();
 }

@@ -57,6 +57,13 @@ import com.j256.ormlite.support.DatabaseConnection;
  * 
  * </blockquote>
  * 
+ * <p>
+ * WARNING: For most of the methods in this class, it is up to you to properly synchronize them if multiple threads are
+ * using a single database connection -- this includes a connection-source which works gives out a single-connection.
+ * The reason why this is necessary is that multiple operations are performed on the connection and race-conditions will
+ * exist with multiple threads working on the same connection.
+ * </p>
+ * 
  * @author graywatson
  */
 public class TransactionManager {
@@ -101,6 +108,13 @@ public class TransactionManager {
 	 * from the call method.
 	 * </p>
 	 * 
+	 * <p>
+	 * WARNING: it is up to you to properly synchronize around this method if multiple threads are using a
+	 * connection-source which works gives out a single-connection. The reason why this is necessary is that multiple
+	 * operations are performed on the connection and race-conditions will exist with multiple threads working on the
+	 * same connection.
+	 * </p>
+	 * 
 	 * @param callable
 	 *            Callable to execute inside of the transaction.
 	 * @return The object returned by the callable.
@@ -114,6 +128,13 @@ public class TransactionManager {
 
 	/**
 	 * Same as {@link #callInTransaction(Callable)} except as a static method with a connection source.
+	 * 
+	 * <p>
+	 * WARNING: it is up to you to properly synchronize around this method if multiple threads are using a
+	 * connection-source which works gives out a single-connection. The reason why this is necessary is that multiple
+	 * operations are performed on the connection and race-conditions will exist with multiple threads working on the
+	 * same connection.
+	 * </p>
 	 */
 	public static <T> T callInTransaction(final ConnectionSource connectionSource, final Callable<T> callable)
 			throws SQLException {
@@ -130,7 +151,14 @@ public class TransactionManager {
 	}
 
 	/**
-	 * Same as {@link #callInTransaction(Callable)} except as a static method on a connection.
+	 * Same as {@link #callInTransaction(Callable)} except as a static method on a connection with database-type.
+	 * 
+	 * <p>
+	 * WARNING: it is up to you to properly synchronize around this method if multiple threads are using the same
+	 * database connection or if your connection-source is single-connection. The reason why this is necessary is that
+	 * multiple operations are performed on the connection and race-conditions will exist with multiple threads working
+	 * on the same connection.
+	 * </p>
 	 */
 	public static <T> T callInTransaction(final DatabaseConnection connection, final DatabaseType databaseType,
 			final Callable<T> callable) throws SQLException {
@@ -138,21 +166,28 @@ public class TransactionManager {
 	}
 
 	/**
-	 * Same as {@link #callInTransaction(Callable)} except as a static method on a connection.
+	 * Same as {@link #callInTransaction(Callable)} except as a static method on a connection with database-type.
+	 * 
+	 * <p>
+	 * WARNING: it is up to you to properly synchronize around this method if multiple threads are using the same
+	 * database connection or if your connection-source is single-connection. The reason why this is necessary is that
+	 * multiple operations are performed on the connection and race-conditions will exist with multiple threads working
+	 * on the same connection.
+	 * </p>
 	 */
 	public static <T> T callInTransaction(final DatabaseConnection connection, boolean saved,
 			final DatabaseType databaseType, final Callable<T> callable) throws SQLException {
 
-		boolean autoCommitAtStart = false;
+		boolean restoreAutoCommit = false;
 		try {
 			boolean hasSavePoint = false;
 			Savepoint savePoint = null;
 			if (saved || databaseType.isNestedSavePointsSupported()) {
 				if (connection.isAutoCommitSupported()) {
-					autoCommitAtStart = connection.isAutoCommit();
-					if (autoCommitAtStart) {
+					if (connection.isAutoCommit()) {
 						// disable auto-commit mode if supported and enabled at start
 						connection.setAutoCommit(false);
+						restoreAutoCommit = true;
 						logger.debug("had to set auto-commit to false");
 					}
 				}
@@ -192,7 +227,7 @@ public class TransactionManager {
 				throw SqlExceptionUtil.create("Transaction callable threw non-SQL exception", e);
 			}
 		} finally {
-			if (autoCommitAtStart) {
+			if (restoreAutoCommit) {
 				// try to restore if we are in auto-commit mode
 				connection.setAutoCommit(true);
 				logger.debug("restored auto-commit to true");

@@ -133,6 +133,10 @@ public class WrappedConnectionSource implements ConnectionSource {
 		return cs.isOpen();
 	}
 
+	public boolean isSingleConnection() {
+		return cs.isSingleConnection();
+	}
+
 	public void setDatabaseType(DatabaseType databaseType) {
 		Method method;
 		try {

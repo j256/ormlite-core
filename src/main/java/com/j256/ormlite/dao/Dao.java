@@ -561,6 +561,13 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * the callable. Also, "commit()" is <i>not</i> called on the connection at all. If "auto-commit" is disabled then
 	 * this will leave it off and nothing will have been persisted.
 	 * </p>
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> Depending on your underlying database implementation and whether or not you are working with a
+	 * single database connection, this may synchronize internally to ensure that there are not race-conditions around
+	 * the transactions on the single connection. Android (for example) will synchronize. Also, you may also need to
+	 * synchronize calls to here and calls to {@link #setAutoCommit(DatabaseConnection, boolean)}.
+	 * </p>
 	 */
 	public <CT> CT callBatchTasks(Callable<CT> callable) throws Exception;
 
@@ -766,6 +773,13 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * <b>WARNING:</b> Chances are you should be using the {@link #callBatchTasks(Callable)} instead of this method
 	 * unless you know what you are doing.
 	 * </p>
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> Depending on your underlying database implementation and whether or not you are working with a
+	 * single database connection, you may need to synchronize calls to here and calls to
+	 * {@link #callBatchTasks(Callable)}, {@link #commit(DatabaseConnection)}, and {@link #rollBack(DatabaseConnection)}
+	 * .
+	 * </p>
 	 */
 	public void setAutoCommit(DatabaseConnection connection, boolean autoCommit) throws SQLException;
 
@@ -791,6 +805,13 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * <b>WARNING:</b> Chances are you should be using the {@link #callBatchTasks(Callable)} instead of this method
 	 * unless you know what you are doing.
 	 * </p>
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> Depending on your underlying database implementation and whether or not you are working with a
+	 * single database connection, you may need to synchronize calls to here and calls to
+	 * {@link #callBatchTasks(Callable)}, {@link #setAutoCommit(DatabaseConnection, boolean)}, and
+	 * {@link #rollBack(DatabaseConnection)}.
+	 * </p>
 	 */
 	public void commit(DatabaseConnection connection) throws SQLException;
 
@@ -803,6 +824,13 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * <p>
 	 * <b>WARNING:</b> Chances are you should be using the {@link #callBatchTasks(Callable)} instead of this method
 	 * unless you know what you are doing.
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> Depending on your underlying database implementation and whether or not you are working with a
+	 * single database connection, you may need to synchronize calls to here and calls to
+	 * {@link #callBatchTasks(Callable)}, {@link #setAutoCommit(DatabaseConnection, boolean)}, and
+	 * {@link #commit(DatabaseConnection)}.
 	 * </p>
 	 */
 	public void rollBack(DatabaseConnection connection) throws SQLException;

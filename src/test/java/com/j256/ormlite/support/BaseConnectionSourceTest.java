@@ -120,5 +120,9 @@ public class BaseConnectionSourceTest extends BaseCoreTest {
 		public boolean isOpen() {
 			return true;
 		}
+
+		public boolean isSingleConnection() {
+			return true;
+		}
 	}
 }

@@ -606,16 +606,36 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	/**
 	 * Call batch tasks inside of a connection which may, or may not, have been "saved".
 	 */
-	public <CT> CT callBatchTasks(DatabaseConnection connection, boolean saved, Callable<CT> callable)
-			throws SQLException {
+	public <CT> CT callBatchTasks(ConnectionSource connectionSource, Callable<CT> callable) throws SQLException {
+		if (connectionSource.isSingleConnection()) {
+			synchronized (this) {
+				return doCallBatchTasks(connectionSource, callable);
+			}
+		} else {
+			return doCallBatchTasks(connectionSource, callable);
+		}
+	}
+
+	private <CT> CT doCallBatchTasks(ConnectionSource connectionSource, Callable<CT> callable) throws SQLException {
+		boolean saved = false;
+		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		try {
 			/*
 			 * We are using a thread-local boolean to detect whether we are in the middle of running a number of
 			 * changes. This disables the dao change notification for every batched call.
 			 */
 			localIsInBatchMode.set(true);
+			/*
+			 * We need to save the connection because we are going to be disabling auto-commit on it and we don't want
+			 * pooled connection factories to give us another connection where auto-commit might still be enabled.
+			 */
+			saved = connectionSource.saveSpecialConnection(connection);
 			return doCallBatchTasks(connection, saved, callable);
 		} finally {
+			if (saved) {
+				connectionSource.clearSpecialConnection(connection);
+			}
+			connectionSource.releaseConnection(connection);
 			localIsInBatchMode.set(false);
 			if (dao != null) {
 				// only at the end is the DAO notified of changes
@@ -629,13 +649,13 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		if (databaseType.isBatchUseTransaction()) {
 			return TransactionManager.callInTransaction(connection, saved, databaseType, callable);
 		}
-		boolean autoCommitAtStart = false;
+		boolean resetAutoCommit = false;
 		try {
 			if (connection.isAutoCommitSupported()) {
-				autoCommitAtStart = connection.isAutoCommit();
-				if (autoCommitAtStart) {
+				if (connection.isAutoCommit()) {
 					// disable auto-commit mode if supported and enabled at start
 					connection.setAutoCommit(false);
+					resetAutoCommit = true;
 					logger.debug("disabled auto-commit on table {} before batch tasks", tableInfo.getTableName());
 				}
 			}
@@ -647,7 +667,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 				throw SqlExceptionUtil.create("Batch tasks callable threw non-SQL exception", e);
 			}
 		} finally {
-			if (autoCommitAtStart) {
+			if (resetAutoCommit) {
 				/**
 				 * Try to restore if we are in auto-commit mode.
 				 * 

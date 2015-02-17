@@ -22,8 +22,11 @@
 	* CORE: Fixed bug with Doa.createOrUpdate(...) and custom id types.  Thanks much to lstrzelecki.  Bug #193. 
 	* CORE: Added support for Joda DateTime to be able to be a version field.  Thanks much to outofrange.
 	* CORE: Added support for raw queries using the DatabaseResults in the mapper.  Thanks much to nonameplum.
+	* CORE: Fixed some problems with default-value parsing and handing with some complex types.
+	* CORE: Fixed synchronization problems with single connection ConnectionSource and Dao.callBatchTasks().  Bug #195.
 	* JDBC: Possibly fixed some problems with the Oracle type with better boolean support.  Thanks to 51mon.
 	* JDBC: Added support for UUID database fields for Postgres and MSSQL.  Use dataType = UUID_NATIVE.  Thanks to tsharp.
+	* JDBC: Added support for a JdbcConnectionSource that uses an existing database connection.  Thanks to natinusala.
 	* ANDROID: Fixed the string processing when persisting java.sql.Timestamp classes. Bug #163.
 	* ANDROID: Added initial take on Loader base classes from EgorAnd for newer Android versions.  Thanks much!!
 	* ANDROID: Moved Slf4jLoggingLog from JDBC to CORE so Android users can use it.  Thanks to tonyxiao.

@@ -96,6 +96,29 @@ public abstract class BaseConnectionSource implements ConnectionSource {
 		return cleared;
 	}
 
+	/**
+	 * Return true if the two connections seem to one one connection under the covers.
+	 */
+	protected boolean isSingleConnection(DatabaseConnection conn1, DatabaseConnection conn2) throws SQLException {
+		// initialize the connections auto-commit flags
+		conn1.setAutoCommit(true);
+		conn2.setAutoCommit(true);
+		try {
+			// change conn1's auto-commit to be false
+			conn1.setAutoCommit(false);
+			if (conn2.isAutoCommit()) {
+				// if the 2nd connection's auto-commit is still true then we have multiple connections
+				return false;
+			} else {
+				// if the 2nd connection's auto-commit is also false then we have a single connection
+				return true;
+			}
+		} finally {
+			// restore its auto-commit
+			conn1.setAutoCommit(true);
+		}
+	}
+
 	private static class NestedConnection {
 		public final DatabaseConnection connection;
 		private int nestedC;

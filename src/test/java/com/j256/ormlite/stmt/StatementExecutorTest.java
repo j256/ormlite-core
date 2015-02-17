@@ -20,6 +20,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.CompiledStatement;
+import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableInfo;
 
@@ -72,77 +73,134 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 	@Test
 	public void testCallBatchTasksNoAutoCommit() throws Exception {
 		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
+
+		ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		DatabaseConnection connection = createMock(DatabaseConnection.class);
+		expect(connectionSource.isSingleConnection()).andReturn(false);
+		expect(connectionSource.getReadWriteConnection()).andReturn(connection);
+		expect(connectionSource.saveSpecialConnection(connection)).andReturn(false);
+		connectionSource.releaseConnection(connection);
+
 		expect(connection.isAutoCommitSupported()).andReturn(false);
 		StatementExecutor<Foo, String> statementExec =
 				new StatementExecutor<Foo, String>(databaseType, tableInfo, null);
-		replay(connection);
+		replay(connectionSource, connection);
 		final AtomicBoolean called = new AtomicBoolean(false);
-		statementExec.callBatchTasks(connection, false, new Callable<Void>() {
+		statementExec.callBatchTasks(connectionSource, new Callable<Void>() {
 			public Void call() {
 				called.set(true);
 				return null;
 			}
 		});
 		assertTrue(called.get());
-		verify(connection);
+		verify(connectionSource, connection);
 	}
 
 	@Test
 	public void testCallBatchTasksAutoCommitFalse() throws Exception {
 		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
+
+		ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		DatabaseConnection connection = createMock(DatabaseConnection.class);
+		expect(connectionSource.isSingleConnection()).andReturn(false);
+		expect(connectionSource.getReadWriteConnection()).andReturn(connection);
+		expect(connectionSource.saveSpecialConnection(connection)).andReturn(false);
+		connectionSource.releaseConnection(connection);
+
 		expect(connection.isAutoCommitSupported()).andReturn(true);
 		expect(connection.isAutoCommit()).andReturn(false);
 		StatementExecutor<Foo, String> statementExec =
 				new StatementExecutor<Foo, String>(databaseType, tableInfo, null);
-		replay(connection);
+		replay(connectionSource, connection);
 		final AtomicBoolean called = new AtomicBoolean(false);
-		statementExec.callBatchTasks(connection, false, new Callable<Void>() {
+		statementExec.callBatchTasks(connectionSource, new Callable<Void>() {
 			public Void call() {
 				called.set(true);
 				return null;
 			}
 		});
 		assertTrue(called.get());
-		verify(connection);
+		verify(connectionSource, connection);
 	}
 
 	@Test
 	public void testCallBatchTasksAutoCommitTrue() throws Exception {
 		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
+
+		ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		DatabaseConnection connection = createMock(DatabaseConnection.class);
+		expect(connectionSource.isSingleConnection()).andReturn(false);
+		expect(connectionSource.getReadWriteConnection()).andReturn(connection);
+		expect(connectionSource.saveSpecialConnection(connection)).andReturn(false);
+		connectionSource.releaseConnection(connection);
+
 		expect(connection.isAutoCommitSupported()).andReturn(true);
 		expect(connection.isAutoCommit()).andReturn(true);
 		connection.setAutoCommit(false);
 		connection.setAutoCommit(true);
 		StatementExecutor<Foo, String> statementExec =
 				new StatementExecutor<Foo, String>(databaseType, tableInfo, null);
-		replay(connection);
+		replay(connectionSource, connection);
 		final AtomicBoolean called = new AtomicBoolean(false);
-		statementExec.callBatchTasks(connection, false, new Callable<Void>() {
+		statementExec.callBatchTasks(connectionSource, new Callable<Void>() {
 			public Void call() {
 				called.set(true);
 				return null;
 			}
 		});
 		assertTrue(called.get());
-		verify(connection);
+		verify(connectionSource, connection);
 	}
 
 	@Test
-	public void testCallBatchTasksAutoCommitTrueThrow() throws Exception {
+	public void testCallBatchTasksAutoCommitTrueSynchronized() throws Exception {
 		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
+
+		ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		DatabaseConnection connection = createMock(DatabaseConnection.class);
+		expect(connectionSource.isSingleConnection()).andReturn(true);
+		expect(connectionSource.getReadWriteConnection()).andReturn(connection);
+		expect(connectionSource.saveSpecialConnection(connection)).andReturn(false);
+		connectionSource.releaseConnection(connection);
+
 		expect(connection.isAutoCommitSupported()).andReturn(true);
 		expect(connection.isAutoCommit()).andReturn(true);
 		connection.setAutoCommit(false);
 		connection.setAutoCommit(true);
 		StatementExecutor<Foo, String> statementExec =
 				new StatementExecutor<Foo, String>(databaseType, tableInfo, null);
-		replay(connection);
+		replay(connectionSource, connection);
+		final AtomicBoolean called = new AtomicBoolean(false);
+		statementExec.callBatchTasks(connectionSource, new Callable<Void>() {
+			public Void call() {
+				called.set(true);
+				return null;
+			}
+		});
+		assertTrue(called.get());
+		verify(connectionSource, connection);
+	}
+
+	@Test
+	public void testCallBatchTasksAutoCommitTrueThrow() throws Exception {
+		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
+
+		ConnectionSource connectionSource = createMock(ConnectionSource.class);
+		DatabaseConnection connection = createMock(DatabaseConnection.class);
+		expect(connectionSource.isSingleConnection()).andReturn(false);
+		expect(connectionSource.getReadWriteConnection()).andReturn(connection);
+		expect(connectionSource.saveSpecialConnection(connection)).andReturn(false);
+		connectionSource.releaseConnection(connection);
+
+		expect(connection.isAutoCommitSupported()).andReturn(true);
+		expect(connection.isAutoCommit()).andReturn(true);
+		connection.setAutoCommit(false);
+		connection.setAutoCommit(true);
+		StatementExecutor<Foo, String> statementExec =
+				new StatementExecutor<Foo, String>(databaseType, tableInfo, null);
+		replay(connectionSource, connection);
 		try {
-			statementExec.callBatchTasks(connection, false, new Callable<Void>() {
+			statementExec.callBatchTasks(connectionSource, new Callable<Void>() {
 				public Void call() throws Exception {
 					throw new Exception("expected");
 				}
@@ -151,7 +209,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		} catch (Exception e) {
 			// expected
 		}
-		verify(connection);
+		verify(connectionSource, connection);
 	}
 
 	@Test(expected = SQLException.class)
