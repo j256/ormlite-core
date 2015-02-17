@@ -122,7 +122,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 				break;
 
 			case UUID :
-				appendUuidType(sb, fieldType, fieldWidth);
+				appendUuidNativeType(sb, fieldType, fieldWidth);
 				break;
 
 			case UNKNOWN :
@@ -178,7 +178,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	 * Output the SQL type for a Java UUID. This is used to support specific sub-class database types which support the
 	 * UUID type.
 	 */
-	protected void appendUuidType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
+	protected void appendUuidNativeType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		throw new UnsupportedOperationException("UUID is not supported by this database type");
 	}
 
