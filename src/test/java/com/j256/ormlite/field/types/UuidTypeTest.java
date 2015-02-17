@@ -18,6 +18,7 @@ import com.j256.ormlite.table.DatabaseTable;
 public class UuidTypeTest extends BaseTypeTest {
 
 	private static final String UUID_COLUMN = "uuid";
+	private static final String DEFAULT_VALUE = "afd72a39-005e-44ba-9e1e-02b856d4584d";
 
 	@Test
 	public void testUuid() throws Exception {
@@ -28,8 +29,8 @@ public class UuidTypeTest extends BaseTypeTest {
 		foo.uuid = val;
 		assertEquals(1, dao.create(foo));
 		String valStr = val.toString();
-		testType(dao, foo, clazz, val, val, valStr, valStr, DataType.UUID, UUID_COLUMN, true, true, true, false, false,
-				false, true, false);
+		testType(dao, foo, clazz, val, valStr, valStr, valStr, DataType.UUID, UUID_COLUMN, true, true, true, false,
+				false, false, true, false);
 	}
 
 	@Test
@@ -44,9 +45,28 @@ public class UuidTypeTest extends BaseTypeTest {
 		assertNull(uuidResult.uuid);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testUuidDefault() throws Exception {
-		createDao(UuidClassDefault.class, true);
+		System.out.println(UUID.randomUUID().toString());
+
+		Dao<UuidClassDefault, Object> dao = createDao(UuidClassDefault.class, true);
+		UuidClassDefault foo = new UuidClassDefault();
+		dao.create(foo);
+
+		assertNull(foo.uuid);
+		dao.refresh(foo);
+		assertNotNull(foo.uuid);
+		assertEquals(UUID.fromString(DEFAULT_VALUE), foo.uuid);
+	}
+
+	@Test(expected = SQLException.class)
+	public void testUuidInvalidDefault() throws Exception {
+		Dao<UuidClassInvalidDefault, Object> dao = createDao(UuidClassInvalidDefault.class, true);
+		UuidClassInvalidDefault foo = new UuidClassInvalidDefault();
+		dao.create(foo);
+
+		assertNull(foo.uuid);
+		dao.refresh(foo);
 	}
 
 	@Test(expected = SQLException.class)
@@ -97,9 +117,18 @@ public class UuidTypeTest extends BaseTypeTest {
 	protected static class UuidClassDefault {
 		@DatabaseField(generatedId = true)
 		int id;
-		@DatabaseField(defaultValue = "xxx")
+		@DatabaseField(defaultValue = DEFAULT_VALUE)
 		UUID uuid;
 		UuidClassDefault() {
+		}
+	}
+
+	protected static class UuidClassInvalidDefault {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(defaultValue = "xxx")
+		UUID uuid;
+		UuidClassInvalidDefault() {
 		}
 	}
 }

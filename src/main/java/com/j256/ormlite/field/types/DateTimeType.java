@@ -52,8 +52,13 @@ public class DateTimeType extends BaseDataType {
 	}
 
 	@Override
-	public Object parseDefaultString(FieldType fieldType, String defaultStr) {
-		return Long.parseLong(defaultStr);
+	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+		try {
+			return Long.parseLong(defaultStr);
+		} catch (NumberFormatException e) {
+			throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing default DateTime value: "
+					+ defaultStr, e);
+		}
 	}
 
 	@Override

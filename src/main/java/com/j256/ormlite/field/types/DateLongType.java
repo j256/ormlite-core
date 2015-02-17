@@ -68,11 +68,6 @@ public class DateLongType extends BaseDateType {
 	}
 
 	@Override
-	public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) {
-		return sqlArgToJava(fieldType, Long.parseLong(stringValue), columnPos);
-	}
-
-	@Override
 	public Class<?> getPrimaryClass() {
 		return Date.class;
 	}

@@ -84,11 +84,6 @@ public class EnumIntegerType extends BaseEnumType {
 	}
 
 	@Override
-	public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) throws SQLException {
-		return sqlArgToJava(fieldType, Integer.parseInt(stringValue), columnPos);
-	}
-
-	@Override
 	public Class<?> getPrimaryClass() {
 		return int.class;
 	}

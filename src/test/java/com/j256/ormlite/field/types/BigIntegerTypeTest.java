@@ -18,6 +18,7 @@ import com.j256.ormlite.table.DatabaseTable;
 public class BigIntegerTypeTest extends BaseTypeTest {
 
 	private final static String BIGINTEGER_COLUMN = "bigInteger";
+	private final static String DEFAULT_VALUE = "4724724378237982347983478932478923478934789342473892342789";
 
 	@Test
 	public void testBigInteger() throws Exception {
@@ -30,8 +31,8 @@ public class BigIntegerTypeTest extends BaseTypeTest {
 		LocalBigInteger foo = new LocalBigInteger();
 		foo.bigInteger = val;
 		assertEquals(1, dao.create(foo));
-		testType(dao, foo, clazz, val, val, val.toString(), valStr, DataType.BIG_INTEGER, BIGINTEGER_COLUMN, false,
-				false, true, false, false, false, true, false);
+		testType(dao, foo, clazz, val, valStr, valStr, valStr, DataType.BIG_INTEGER, BIGINTEGER_COLUMN, false, false,
+				true, false, false, false, true, false);
 	}
 
 	@Test(expected = SQLException.class)
@@ -63,6 +64,17 @@ public class BigIntegerTypeTest extends BaseTypeTest {
 	}
 
 	@Test
+	public void testDefaultValue() throws Exception {
+		Dao<BigIntegerDefaultValue, Object> dao = createDao(BigIntegerDefaultValue.class, true);
+		BigIntegerDefaultValue foo = new BigIntegerDefaultValue();
+		dao.create(foo);
+
+		assertNull(foo.bigInteger);
+		dao.refresh(foo);
+		assertEquals(new BigInteger(DEFAULT_VALUE), foo.bigInteger);
+	}
+
+	@Test
 	public void testCoverage() {
 		new BigIntegerType(SqlType.BIG_DECIMAL, new Class[0]);
 	}
@@ -82,5 +94,13 @@ public class BigIntegerTypeTest extends BaseTypeTest {
 	protected static class NotBigInteger {
 		@DatabaseField(columnName = BIGINTEGER_COLUMN)
 		String bigInteger;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class BigIntegerDefaultValue {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(columnName = BIGINTEGER_COLUMN, defaultValue = DEFAULT_VALUE)
+		BigInteger bigInteger;
 	}
 }

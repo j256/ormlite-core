@@ -37,7 +37,7 @@ public class BigIntegerType extends BaseDataType {
 	@Override
 	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 		try {
-			return new BigInteger(defaultStr);
+			return new BigInteger(defaultStr).toString();
 		} catch (IllegalArgumentException e) {
 			throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing default BigInteger string '"
 					+ defaultStr + "'", e);

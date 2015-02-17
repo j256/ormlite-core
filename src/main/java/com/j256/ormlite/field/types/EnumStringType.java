@@ -82,9 +82,4 @@ public class EnumStringType extends BaseEnumType {
 	public int getDefaultWidth() {
 		return DEFAULT_WIDTH;
 	}
-
-	@Override
-	public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) throws SQLException {
-		return sqlArgToJava(fieldType, stringValue, columnPos);
-	}
 }

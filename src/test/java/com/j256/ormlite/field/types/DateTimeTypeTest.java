@@ -19,7 +19,7 @@ public class DateTimeTypeTest {
 	}
 
 	@Test
-	public void testParseDefaultString() {
+	public void testParseDefaultString() throws SQLException {
 		Long value = 423424234234L;
 		assertEquals(value, DateTimeType.getSingleton().parseDefaultString(null, value.toString()));
 	}
