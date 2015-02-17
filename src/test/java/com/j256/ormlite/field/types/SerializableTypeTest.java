@@ -44,8 +44,8 @@ public class SerializableTypeTest extends BaseTypeTest {
 		LocalSerializable foo = new LocalSerializable();
 		foo.serializable = val;
 		assertEquals(1, dao.create(foo));
-		testType(dao, foo, clazz, val, val, sqlArg, valStr, DataType.SERIALIZABLE, SERIALIZABLE_COLUMN, false, false,
-				true, false, true, true, false, false);
+		testType(dao, foo, clazz, val, sqlArg, sqlArg, valStr, DataType.SERIALIZABLE, SERIALIZABLE_COLUMN, false,
+				false, true, false, true, true, false, false);
 	}
 
 	@Test

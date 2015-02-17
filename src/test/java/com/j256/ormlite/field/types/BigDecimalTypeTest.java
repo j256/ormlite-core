@@ -17,6 +17,7 @@ import com.j256.ormlite.table.DatabaseTable;
 public class BigDecimalTypeTest extends BaseTypeTest {
 
 	private final static String BIGDECIMAL_COLUMN = "bigDecimal";
+	private final static String DEFAULT_VALUE = "1.3452904234234732472343454353453453453453453453453453453";
 
 	@Test
 	public void testBigDecimal() throws Exception {
@@ -27,8 +28,8 @@ public class BigDecimalTypeTest extends BaseTypeTest {
 		LocalBigDecimal foo = new LocalBigDecimal();
 		foo.bigDecimal = val;
 		assertEquals(1, dao.create(foo));
-		testType(dao, foo, clazz, val, val, val.toString(), valStr, DataType.BIG_DECIMAL, BIGDECIMAL_COLUMN, false,
-				false, true, false, false, false, true, false);
+		testType(dao, foo, clazz, val, valStr, valStr, valStr, DataType.BIG_DECIMAL, BIGDECIMAL_COLUMN, false, false,
+				true, false, false, false, true, false);
 	}
 
 	@Test(expected = SQLException.class)
@@ -59,6 +60,17 @@ public class BigDecimalTypeTest extends BaseTypeTest {
 		dao.queryForAll();
 	}
 
+	@Test
+	public void testDefaultValue() throws Exception {
+		Dao<BigDecimalDefaultValue, Object> dao = createDao(BigDecimalDefaultValue.class, true);
+		BigDecimalDefaultValue foo = new BigDecimalDefaultValue();
+		dao.create(foo);
+
+		assertNull(foo.bigDecimal);
+		dao.refresh(foo);
+		assertEquals(new BigDecimal(DEFAULT_VALUE), foo.bigDecimal);
+	}
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalBigDecimal {
 		@DatabaseField(columnName = BIGDECIMAL_COLUMN)
@@ -74,5 +86,13 @@ public class BigDecimalTypeTest extends BaseTypeTest {
 	protected static class NotBigDecimal {
 		@DatabaseField(columnName = BIGDECIMAL_COLUMN)
 		String bigDecimal;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class BigDecimalDefaultValue {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(columnName = BIGDECIMAL_COLUMN, defaultValue = DEFAULT_VALUE)
+		BigDecimal bigDecimal;
 	}
 }

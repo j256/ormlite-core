@@ -23,8 +23,8 @@ public class StringBytesTypeTest extends BaseTypeTest {
 		foo.string = val;
 		assertEquals(1, dao.create(foo));
 		byte[] valBytes = val.getBytes("Unicode");
-		testType(dao, foo, clazz, val, val, valBytes, val, DataType.STRING_BYTES, STRING_COLUMN, false, false, true,
-				false, true, false, true, false);
+		testType(dao, foo, clazz, val, valBytes, valBytes, val, DataType.STRING_BYTES, STRING_COLUMN, false, false,
+				true, false, true, false, true, false);
 	}
 
 	@Test
@@ -35,8 +35,9 @@ public class StringBytesTypeTest extends BaseTypeTest {
 		LocalStringBytesUtf8 foo = new LocalStringBytesUtf8();
 		foo.string = val;
 		assertEquals(1, dao.create(foo));
-		testType(dao, foo, clazz, val, val, val.getBytes("UTF-8"), val, DataType.STRING_BYTES, STRING_COLUMN, false,
-				false, true, false, true, false, true, false);
+		byte[] valBytes = val.getBytes("UTF-8");
+		testType(dao, foo, clazz, val, valBytes, valBytes, val, DataType.STRING_BYTES, STRING_COLUMN, false, false,
+				true, false, true, false, true, false);
 	}
 
 	@Test

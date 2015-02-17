@@ -1,6 +1,7 @@
 package com.j256.ormlite.field.types;
 
 import java.lang.reflect.Field;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import com.j256.ormlite.field.FieldType;
@@ -40,6 +41,11 @@ public class SqlDateType extends DateType {
 	public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
 		Timestamp value = (Timestamp) sqlArg;
 		return new java.sql.Date(value.getTime());
+	}
+
+	@Override
+	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+		return sqlArgToJava(fieldType, super.parseDefaultString(fieldType, defaultStr), 0);
 	}
 
 	@Override

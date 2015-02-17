@@ -38,7 +38,7 @@ public class BigDecimalStringType extends BaseDataType {
 	@Override
 	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 		try {
-			return new BigDecimal(defaultStr);
+			return new BigDecimal(defaultStr).toString();
 		} catch (IllegalArgumentException e) {
 			throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing default BigDecimal string '"
 					+ defaultStr + "'", e);

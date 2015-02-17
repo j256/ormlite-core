@@ -35,6 +35,9 @@ public abstract class BaseTypeTest extends BaseCoreTest {
 		DataPersister dataPersister = dataType.getDataPersister();
 		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
 		CompiledStatement stmt = null;
+		if (sqlArg != null) {
+			assertEquals(defaultSqlVal.getClass(), sqlArg.getClass());
+		}
 		try {
 			stmt =
 					conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,

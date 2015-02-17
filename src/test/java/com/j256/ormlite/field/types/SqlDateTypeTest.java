@@ -3,7 +3,6 @@ package com.j256.ormlite.field.types;
 import static org.junit.Assert.assertEquals;
 
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
@@ -35,15 +34,14 @@ public class SqlDateTypeTest extends BaseTypeTest {
 		long millis = c.getTimeInMillis();
 
 		java.sql.Date val = new java.sql.Date(millis);
-		Timestamp defaultSqlVal = new java.sql.Timestamp(millis);
 		String format = "yyyy-MM-dd HH:mm:ss.S";
 		DateFormat dateFormat = new SimpleDateFormat(format);
 		String valStr = dateFormat.format(val);
 		LocalDate foo = new LocalDate();
 		foo.date = val;
 		assertEquals(1, dao.create(foo));
-		testType(dao, foo, clazz, val, defaultSqlVal, val, valStr, dataType, DATE_COLUMN, false, true, true, false,
-				true, false, true, false);
+		testType(dao, foo, clazz, val, val, val, valStr, dataType, DATE_COLUMN, false, true, true, false, true, false,
+				true, false);
 	}
 
 	@Test
