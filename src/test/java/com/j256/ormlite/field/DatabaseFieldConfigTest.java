@@ -254,7 +254,10 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 				fieldConfig.getMaxForeignAutoRefreshLevel());
 		int maxRefresh = 1432323;
 		fieldConfig.setMaxForeignAutoRefreshLevel(maxRefresh);
+		// need to do this to get auto-refresh
+		fieldConfig.setForeignAutoRefresh(true);
 		assertEquals(maxRefresh, fieldConfig.getMaxForeignAutoRefreshLevel());
+		fieldConfig.setForeignAutoRefresh(false);
 
 		assertFalse(fieldConfig.isForeignCollection());
 		boolean foreignCollection = true;

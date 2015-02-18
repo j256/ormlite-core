@@ -1343,6 +1343,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Foo foo = new Foo();
 		int val = 6389;
 		foo.val = val;
+		foo.stringField = "hello there";
 		assertEquals(1, fooDao.create(foo));
 
 		Foreign foreign = new Foreign();
@@ -1351,9 +1352,11 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 		Foreign foreign2 = foreignDao.queryForId(foreign.id);
 		assertNotNull(foreign2);
+		assertNotNull(foreign2.foo);
 		assertNotNull(foreign2.foo.id);
 		assertEquals(foo.id, foreign2.foo.id);
 		assertEquals(0, foreign2.foo.val);
+		assertNull(foreign2.foo.stringField);
 
 		assertEquals(1, fooDao.refresh(foreign2.foo));
 		assertEquals(val, foreign2.foo.val);
@@ -2320,6 +2323,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertNotNull(result);
 		assertNotNull(result.loop);
 		assertEquals(loop2.id, result.loop.id);
+		// level one
 		assertNotNull(result.loop.loop);
 		assertEquals(loop3.id, result.loop.loop.id);
 		assertNotNull(result.loop.loop.loop);

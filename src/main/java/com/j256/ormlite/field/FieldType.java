@@ -77,12 +77,11 @@ public class FieldType {
 	private BaseDaoImpl<?, ?> foreignDao;
 	private MappedQueryForId<Object, Object> mappedQueryForId;
 
-	private static final ThreadLocal<LevelCounters> threadLevelCounters = new ThreadLocal<LevelCounters>() {
-		@Override
-		protected LevelCounters initialValue() {
-			return new LevelCounters();
-		}
-	};
+	/**
+	 * ThreadLocal counters to detect initialization loops. Notice that there is _not_ an initValue() method on purpose.
+	 * We don't want to create these if we don't have to.
+	 */
+	private static final ThreadLocal<LevelCounters> threadLevelCounters = new ThreadLocal<LevelCounters>();
 
 	/**
 	 * You should use {@link FieldType#createFieldType} to instantiate one of these field if you have a {@link Field}.
@@ -528,49 +527,8 @@ public class FieldType {
 			if (cachedVal != null) {
 				val = cachedVal;
 			} else if (!parentObject) {
-				Object foreignObject;
-				LevelCounters levelCounters = threadLevelCounters.get();
-				// we record the current auto-refresh level which will be used along the way
-				if (levelCounters.autoRefreshLevel == 0) {
-					levelCounters.autoRefreshLevelMax = fieldConfig.getMaxForeignAutoRefreshLevel();
-				}
-				// if we have recursed the proper number of times, return a shell with just the id set
-				if (levelCounters.autoRefreshLevel >= levelCounters.autoRefreshLevelMax) {
-					// create a shell and assign its id field
-					foreignObject = foreignTableInfo.createObject();
-					foreignIdField.assignField(foreignObject, val, false, objectCache);
-				} else {
-					/*
-					 * We may not have a mapped query for id because we aren't auto-refreshing ourselves. But a parent
-					 * class may be auto-refreshing us with a level > 1 so we may need to build out query-for-id
-					 * optimization on the fly here.
-					 */
-					if (mappedQueryForId == null) {
-						@SuppressWarnings("unchecked")
-						MappedQueryForId<Object, Object> castMappedQueryForId =
-								(MappedQueryForId<Object, Object>) MappedQueryForId.build(
-										connectionSource.getDatabaseType(),
-										((BaseDaoImpl<?, ?>) foreignDao).getTableInfo(), foreignIdField);
-						mappedQueryForId = castMappedQueryForId;
-					}
-					levelCounters.autoRefreshLevel++;
-					try {
-						DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection();
-						try {
-							// recurse and get the sub-object
-							foreignObject = mappedQueryForId.execute(databaseConnection, val, objectCache);
-						} finally {
-							connectionSource.releaseConnection(databaseConnection);
-						}
-					} finally {
-						levelCounters.autoRefreshLevel--;
-						if (levelCounters.autoRefreshLevel <= 0) {
-							threadLevelCounters.remove();
-						}
-					}
-				}
 				// the value we are to assign to our field is now the foreign object itself
-				val = foreignObject;
+				val = createForeignObject(val, objectCache);
 			}
 		}
 
@@ -982,6 +940,69 @@ public class FieldType {
 	public String toString() {
 		return getClass().getSimpleName() + ":name=" + field.getName() + ",class="
 				+ field.getDeclaringClass().getSimpleName();
+	}
+
+	private Object createForeignObject(Object val, ObjectCache objectCache) throws SQLException {
+
+		// try to stop the level counters objects from being created
+		LevelCounters levelCounters = threadLevelCounters.get();
+		if (levelCounters == null) {
+			// only create a shell if we are not in auto-refresh mode
+			if (!fieldConfig.isForeignAutoRefresh()) {
+				return createForeignShell(val, objectCache);
+			}
+			levelCounters = new LevelCounters();
+			threadLevelCounters.set(levelCounters);
+		}
+
+		// we record the current auto-refresh level which will be used along the way
+		if (levelCounters.autoRefreshLevel == 0) {
+			// if we aren't in an auto-refresh loop then don't _start_ an new loop if auto-refresh is not configured
+			if (!fieldConfig.isForeignAutoRefresh()) {
+				return createForeignShell(val, objectCache);
+			}
+			levelCounters.autoRefreshLevelMax = fieldConfig.getMaxForeignAutoRefreshLevel();
+		}
+		// if we have recursed the proper number of times, return a shell with just the id set
+		if (levelCounters.autoRefreshLevel >= levelCounters.autoRefreshLevelMax) {
+			return createForeignShell(val, objectCache);
+		}
+
+		/*
+		 * We may not have a mapped query for id because we aren't auto-refreshing ourselves. But a parent class may be
+		 * auto-refreshing us with a level > 1 so we may need to build our query-for-id optimization on the fly here.
+		 */
+		if (mappedQueryForId == null) {
+			@SuppressWarnings("unchecked")
+			MappedQueryForId<Object, Object> castMappedQueryForId =
+					(MappedQueryForId<Object, Object>) MappedQueryForId.build(connectionSource.getDatabaseType(),
+							((BaseDaoImpl<?, ?>) foreignDao).getTableInfo(), foreignIdField);
+			mappedQueryForId = castMappedQueryForId;
+		}
+		levelCounters.autoRefreshLevel++;
+		try {
+			DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection();
+			try {
+				// recurse and get the sub-object
+				return mappedQueryForId.execute(databaseConnection, val, objectCache);
+			} finally {
+				connectionSource.releaseConnection(databaseConnection);
+			}
+		} finally {
+			levelCounters.autoRefreshLevel--;
+			if (levelCounters.autoRefreshLevel <= 0) {
+				threadLevelCounters.remove();
+			}
+		}
+	}
+
+	/**
+	 * Create a shell object and assign its id field.
+	 */
+	private Object createForeignShell(Object val, ObjectCache objectCache) throws SQLException {
+		Object foreignObject = foreignTableInfo.createObject();
+		foreignIdField.assignField(foreignObject, val, false, objectCache);
+		return foreignObject;
 	}
 
 	/**

@@ -17,6 +17,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -33,6 +34,7 @@ import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseResults;
+import com.j256.ormlite.table.DatabaseTableConfig;
 
 public class FieldTypeTest extends BaseCoreTest {
 
@@ -797,6 +799,66 @@ public class FieldTypeTest extends BaseCoreTest {
 		assertSame(foreign, result.foreign);
 	}
 
+	@Test
+	public void testForeignConfigured() throws Exception {
+
+		ArrayList<DatabaseFieldConfig> foreignFieldConfigs = new ArrayList<DatabaseFieldConfig>();
+		DatabaseFieldConfig fieldConfig = new DatabaseFieldConfig();
+		fieldConfig.setFieldName("id");
+		fieldConfig.setGeneratedId(true);
+		foreignFieldConfigs.add(fieldConfig);
+		fieldConfig = new DatabaseFieldConfig();
+		fieldConfig.setFieldName("stuff");
+		foreignFieldConfigs.add(fieldConfig);
+
+		DatabaseTableConfig<ForeignObjectNoAnnotations> foreignTableConfig =
+				new DatabaseTableConfig<ForeignObjectNoAnnotations>(ForeignObjectNoAnnotations.class,
+						foreignFieldConfigs);
+		Dao<ForeignObjectNoAnnotations, Integer> foreignDao = createDao(foreignTableConfig, true);
+
+		ArrayList<DatabaseFieldConfig> parentFieldConfigs = new ArrayList<DatabaseFieldConfig>();
+		fieldConfig = new DatabaseFieldConfig();
+		fieldConfig.setFieldName("id");
+		fieldConfig.setGeneratedId(true);
+		parentFieldConfigs.add(fieldConfig);
+		fieldConfig = new DatabaseFieldConfig();
+		fieldConfig.setFieldName("name");
+		parentFieldConfigs.add(fieldConfig);
+		fieldConfig = new DatabaseFieldConfig();
+		fieldConfig.setFieldName("foreign");
+		fieldConfig.setForeign(true);
+		fieldConfig.setForeignTableConfig(foreignTableConfig);
+		fieldConfig.setMaxForeignAutoRefreshLevel(2);
+		parentFieldConfigs.add(fieldConfig);
+
+		Dao<ObjectNoAnnotations, Integer> parentDao =
+				createDao(new DatabaseTableConfig<ObjectNoAnnotations>(ObjectNoAnnotations.class, parentFieldConfigs),
+						true);
+
+		ForeignObjectNoAnnotations foreign = new ForeignObjectNoAnnotations();
+		foreign.stuff = "hello";
+		foreignDao.create(foreign);
+
+		ObjectNoAnnotations parent = new ObjectNoAnnotations();
+		parent.name = "wow lookie";
+		parent.foreign = foreign;
+		parentDao.create(parent);
+
+		ForeignObjectNoAnnotations foreignResult = foreignDao.queryForId(foreign.id);
+		assertNotNull(foreignResult);
+		assertNotSame(foreign, foreignResult);
+		assertEquals(foreign.id, foreignResult.id);
+		assertEquals(foreign.stuff, foreignResult.stuff);
+
+		ObjectNoAnnotations parentResult = parentDao.queryForId(parent.id);
+		assertNotNull(parentResult);
+		assertEquals(parent.id, parentResult.id);
+		assertEquals(parent.name, parentResult.name);
+		assertNotNull(parentResult.foreign);
+		assertNotSame(foreign, parentResult.foreign);
+		assertEquals(foreign.id, parentResult.foreign.id);
+		assertNull(parentResult.foreign.stuff);
+	}
 	/* ========================================================================================================= */
 
 	protected static class LocalFoo {
@@ -1127,5 +1189,16 @@ public class FieldTypeTest extends BaseCoreTest {
 		public DefaultEmptyString() {
 			// for ormlite
 		}
+	}
+
+	protected static class ObjectNoAnnotations {
+		int id;
+		String name;
+		ForeignObjectNoAnnotations foreign;
+	}
+
+	protected static class ForeignObjectNoAnnotations {
+		int id;
+		String stuff;
 	}
 }

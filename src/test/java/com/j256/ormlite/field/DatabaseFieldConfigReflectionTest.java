@@ -74,6 +74,9 @@ public class DatabaseFieldConfigReflectionTest extends BaseCoreTest {
 		if (isObjectMethodName(methodName)) {
 			return;
 		}
+		if (methodName.equals("maxForeignAutoRefreshLevel")) {
+			return;
+		}
 		if (methodNamePrefix != null) {
 			methodName = methodNamePrefix + StringUtils.capitalize(methodName);
 		}

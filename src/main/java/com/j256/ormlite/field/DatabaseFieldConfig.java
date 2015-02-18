@@ -364,7 +364,15 @@ public class DatabaseFieldConfig {
 	}
 
 	public int getMaxForeignAutoRefreshLevel() {
-		return maxForeignAutoRefreshLevel;
+		/*
+		 * We need to do this because otherwise things that inject the default max-foreign-auto-refresh value (config
+		 * files, Android annotation hacks, etc) might turn on the auto-refresh by accident.
+		 */
+		if (foreignAutoRefresh) {
+			return maxForeignAutoRefreshLevel;
+		} else {
+			return NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED;
+		}
 	}
 
 	public void setMaxForeignAutoRefreshLevel(int maxForeignLevel) {
