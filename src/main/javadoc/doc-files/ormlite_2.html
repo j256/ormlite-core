@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on December 16, 2013 by texi2html 1.82
+<!-- Created on February 18, 2015 by texi2html 1.82
 texi2html was written by: 
             Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -565,7 +565,7 @@ ID of the foreign object which is recommended. For example, if you have an <code
 <p><em>NOTE:</em> Setting this implies <code>foreignAutoRefresh</code> is also set to true because there is no way to refresh the
 object since the id field is not stored in the database. So when this is set, the field will be automatically refreshed
 in another database query.
-</p>	
+</p>
 </dd>
 </dl>
 
@@ -1034,6 +1034,16 @@ used if an unknown value is found in the database. See <a href="#unknownEnumName
 <code>UUID.fromString(String)</code> method to convert it back again.  You can also mark a <code>UUID</code> field as being generated-id
 in which case whenever it is inserted, <code>java.util.UUID.randomUUID()</code> is called and set on the field.
 See section <a href="#GeneratedId-Column">Fields With generatedId</a>.
+</p>
+<p><a name="UUID_005fNATIVE"></a>
+<a name="index-UUID-native-db-support"></a>
+<a name="index-UUID_005fNATIVE-type"></a>
+</p></dd>
+<dt> <code>UUID (DataType.UUID_NATIVE)</code></dt>
+<dd>
+<p>You specify the <code>dataType</code> field (from the <code>@DatabaseField</code> annotation) as a <code>DataType.UUID_NATIVE</code> 
+to persist a <code>UUID</code> in a database native column format.  This is only supported by a couple of different database
+types and is still inserted with JDBC as a string.
 </p>
 <a name="index-BigIteger-type"></a>
 </dd>
@@ -2265,20 +2275,48 @@ rawResults.close();
 
 <p><em>NOTE</em>: The query and the resulting strings can be <em>very</em> database-type specific.  For example:
 </p><ol>
-<li> Certain databases need any column names specified in uppercase &ndash; others need lowercase.
+<li> Certain databases need all column names specified in uppercase &ndash; others need lowercase.
 </li><li> You may have to quote your column or table names if they are reserved words.
-</li><li> The resulting column names also could be uppercase or lowercase.
-</li><li> <code>select *</code> can return fields in different orders depending on the database type.
+</li><li> The resulting column names also could be uppercase or lowercase again depending on the database type.
+</li><li> <code>select *</code> can return fields in a different order than you expect.
 </li></ol>
 
 <p><em>NOTE</em>: Like other ORMLite iterators, you will need to make sure you iterate through all of the results
-to have the statement closed automatically.  You can also call the <code>GenericRawResults.close()</code> method to make sure the
+to have the statement closed automatically.  You can also call the <code>rawResults.close()</code> method to make sure the
 iterator, and any associated database connections, is closed.
 </p>
-<p><em>NOTE:</em> If you are using the <code>QueryBuilder#prepareStatementString()</code> method to build your query, it may have
-added the id column to the selected column list if the Dao object has an id you did not include it in the columns
-you selected. So your results might have one more column than you are expecting.
+<p><em>NOTE:</em> If you are using the <code>QueryBuilder#prepareStatementString()</code> method to build your query, the
+<code>QueryBuild</code> may have added the id column to the selected column list if the Dao object has an id you did not include
+it in the columns you selected. This means that your results may have one more column than you are expecting.
 </p>
+<a name="index-ResultSet-mapping"></a>
+<a name="index-DatabaseResults-mapping"></a>
+<a name="index-raw-row-mapper-1"></a>
+<p>Another way that you can map the results is by using a <code>DatabaseResultsMapper</code> object.  This will call the mapping object
+with the internal <code>DatabaseResults</code> object to map a row and output an object.  If you are using this with JDBC, then
+you you can case the <code>DatabaseResults</code> to be a <code>JdbcDatabaseResults</code>.  This will give you access to the
+<code>JdbcDatabaseResults.getResultSet()</code> method and the underlying JDBC result object.  For example:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">// return the orders with the sum of their amounts per account
+GenericRawResults&lt;Foo&gt; rawResults =
+  orderDao.queryRaw(
+    &quot;select account_id,sum(amount) from orders group by account_id&quot;,
+    new RawRowMapper&lt;Foo&gt;() {
+            public Foo mapRow(DatabaseResults results) {
+                ResultSet resultSet = 
+                   ((JdbcDatabaseResults)results).getResultSet();
+                // now you can use the ResultSet to build Foo
+                &hellip;
+        }
+    });
+// page through the results
+for (Foo foo : rawResults) {
+  System.out.println(&quot;Account-id &quot; + foo.accountId + &quot; has &quot;
+    + foo.totalOrders + &quot; total orders&quot;);
+}
+rawResults.close();
+</pre></td></tr></table>
+
 <hr size="6">
 <a name="Raw-Updates"></a>
 <table cellpadding="1" cellspacing="1" border="0">
@@ -2711,7 +2749,7 @@ then call the update method because then the object will not be found.
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>December 16, 2013</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>February 18, 2015</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
  </font>
  <br>
 

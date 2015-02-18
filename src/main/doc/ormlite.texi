@@ -4617,7 +4617,7 @@ You probably would not want to register the @code{MyDatePersister} above because
 persistence behavior for @emph{all} @code{Date} types.
 
 @c ----------------------------------------------------------------
-@node How to Upgrade, 4.45, Custom Persisters, Top
+@node How to Upgrade, 4.49, Custom Persisters, Top
 @chapter Upgrade From Old Versions
 
 @cindex upgrading from previous versions
@@ -4629,8 +4629,9 @@ However, sometimes when a new version is released, changes are made that require
 and rarely the on-disk database formats. 
 
 @menu
+* 4.49::                Notes about version 4.49
 * 4.45::                Upgrade to version 4.45
-* 4.43::                Problems With version 4.43
+* 4.43::                Problems with version 4.43
 * 4.37::                Upgrade to version 4.37
 * 4.30::                Upgrade to version 4.30
 * 4.20::                Upgrade to version 4.20
@@ -4642,7 +4643,31 @@ and rarely the on-disk database formats.
 @end menu
 
 @c ----------------------------------------------------------------
-@node 4.45, 4.43, How to Upgrade, How to Upgrade
+@node 4.49, 4.45, How to Upgrade, How to Upgrade
+@section Notes About Version 4.49
+
+The 4.49 release took a long time to put out unfortunately so it included a lot of changes, a couple of which need
+to be specifically enumerated.  For more details, please check the change-log.
+
+@itemize @bullet
+
+@item Due to a couple of reporting issues, it was determined that some sort of locking was needed to protect concurrent
+usage of @code{dao.callBatchTasks(...)} calls from multiple threads when dealing with a single database connection.  ORMLite
+now makes an attempt to detect a single-connection connection-source and will enforce locking so that only one batch
+task can be running at a time.
+
+@item A lot of changes were made to have @code{CloseableIterator} and other classes extend @code{java.io.Closeable}.  If
+you are extending any of these classes then you may have to tweak your code.
+
+@item We fixed a problem with the @code{maxForeignAutoRefreshLevel} configuration setting which was particularly impacting
+Android users.
+
+@end itemize
+
+Again, please check the change-log for the entire list.
+
+@c ----------------------------------------------------------------
+@node 4.45, 4.43, 4.49, How to Upgrade
 @section Upgrade to Version 4.45
 
 To fix the date-string format bug introduced in version 4.43, I've decided to revert back to the date-string of
@@ -5084,10 +5109,11 @@ project.
 @code{DAO} interface and the @code{BaseDaoImpl} where in some part modeled after his code.
 
 @c -----------------
-@c Extracted from the ChangeLog up through version 4.47
+@c Extracted from the ChangeLog up through version 4.49
 
-@item Thanks much to the following folks for their bug reports, unit test submissions, memory analysis, code samples, feature requests,
-improvements, and general feedback:
+@item Thanks much to the following folks for their bug reports, unit test submissions, memory analysis, code samples, feature
+requests, improvements, and general feedback:
+51mon,
 Adam Brown,
 AlexPal,
 Ali Aksakarya,
@@ -5095,21 +5121,30 @@ Andre,
 Andrea Sprega,
 Andreas,
 Andrew Sleeman,
+Andrew8er,
 Andrey,
+Anthony Whitlock,
 Bart,
 Ben Mosher,
 Candlejack,
+Carlos Fonseca,
 Casey,
 Chad Schultz,
 Chase,
 Chris Banes,
 Chris Nevill,
+Christian Ruppert,
 Dale Asberry,
 Daniel Colchete,
-Evan Grim.
+Daniel Jette,
+Diederik,
+Eric Fung,
+Evan Grim,
+Farrukh Najmi,
 Filipe Leandro,
 Flo,
 Guillermo Campelo,
+HeDYn,
 Howard Liberty,
 Ian Dees,
 Javier Hinmel,
@@ -5124,10 +5159,14 @@ John Kristian,
 Johny Jugianto,
 Jomble,
 Jonathan Caryl,
+Joseph Jones,
 Josh Guilfoyle,
 Kaan,
 Kyle Lampert,
 Larry Hamel,
+Lder,
+Livelazily,
+Lstrzelecki,
 Luke Meyer,
 ManosProm,
 Mariak Kalman,
@@ -5136,12 +5175,17 @@ Markus Wiederkehr,
 Mathias Lin,
 Micael Dahlgren,
 Michael,
+Michael Weimann,
 Ming Lin,
 Miroslav Nadhajsky,
 Mohammad Moghimi,
 Nathan Jones,
+Natinusala,
 Nick Campion,
+Nonameplum,
+Outofrange,
 Patras Vlad,
+Pavel Arnost,
 Patrick,
 Pedro Velasco,
 Rahan,
@@ -5153,25 +5197,30 @@ Roman Zimmer,
 Sebastian Roth,
 Skylar,
 Slava Tysianchuk,
+Spacetime,
 Stephen Couchman,
 Stew,
 Stewert,
 Timo,
 Tom Tantisalidchai,
 Tony,
+Tonyxiao,
+Tsharp,
+VincentFTS,
 Vladimir,
 Wayne Stidolph,
+Wener,
 Yossi Wasserman,
-birbird,
-coder sam,
-glenviewjeff,
-igromanru,
-jon,
-mjomble,
-nybblr,
-shikajiro,
-steffen,
-zachawilson
+Birbird,
+Coder sam,
+Glenviewjeff,
+Igromanru,
+Jon,
+Mjomble,
+Nybblr,
+Shikajiro,
+Steffen,
+Zachawilson
 .
 
 @end itemize

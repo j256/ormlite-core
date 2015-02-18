@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on December 16, 2013 by texi2html 1.82
+<!-- Created on February 18, 2015 by texi2html 1.82
 texi2html was written by: 
             Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -44,7 +44,7 @@ ul.toc {list-style: none}
 <a name="How-to-Upgrade"></a>
 <table cellpadding="1" cellspacing="1" border="0">
 <tr><td valign="middle" align="left">[<a href="ormlite_5.html#Custom-Persisters" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#g_t4_002e45" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left">[<a href="#g_t4_002e49" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="ormlite_5.html#Advanced" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="ormlite.html#Top" title="Up section"> Up </a>]</td>
@@ -70,32 +70,74 @@ However, sometimes when a new version is released, changes are made that require
 and rarely the on-disk database formats. 
 </p>
 <table class="menu" border="0" cellspacing="0">
-<tr><td align="left" valign="top"><a href="#g_t4_002e45">6.1 Upgrade to Version 4.45</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.45
+<tr><td align="left" valign="top"><a href="#g_t4_002e49">6.1 Notes About Version 4.49</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Notes about version 4.49
 </td></tr>
-<tr><td align="left" valign="top"><a href="#g_t4_002e43">6.2 Problems With Version 4.43</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Problems With version 4.43
+<tr><td align="left" valign="top"><a href="#g_t4_002e45">6.2 Upgrade to Version 4.45</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.45
 </td></tr>
-<tr><td align="left" valign="top"><a href="#g_t4_002e37">6.3 Upgrade to Version 4.37</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.37
+<tr><td align="left" valign="top"><a href="#g_t4_002e43">6.3 Problems With Version 4.43</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Problems with version 4.43
 </td></tr>
-<tr><td align="left" valign="top"><a href="#g_t4_002e30">6.4 Upgrade to Version 4.30</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.30
+<tr><td align="left" valign="top"><a href="#g_t4_002e37">6.4 Upgrade to Version 4.37</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.37
 </td></tr>
-<tr><td align="left" valign="top"><a href="#g_t4_002e20">6.5 Upgrade to Version 4.20</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.20
+<tr><td align="left" valign="top"><a href="#g_t4_002e30">6.5 Upgrade to Version 4.30</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.30
 </td></tr>
-<tr><td align="left" valign="top"><a href="#g_t4_002e14">6.6 Upgrade to Version 4.14</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.14
+<tr><td align="left" valign="top"><a href="#g_t4_002e20">6.6 Upgrade to Version 4.20</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.20
 </td></tr>
-<tr><td align="left" valign="top"><a href="#g_t4_002e10">6.7 Upgrade to Version 4.10</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.10
+<tr><td align="left" valign="top"><a href="#g_t4_002e14">6.7 Upgrade to Version 4.14</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.14
 </td></tr>
-<tr><td align="left" valign="top"><a href="#g_t4_002e0">6.8 Upgrade to Version 4.0</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Upgrade to version 4.0
+<tr><td align="left" valign="top"><a href="#g_t4_002e10">6.8 Upgrade to Version 4.10</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.10
 </td></tr>
-<tr><td align="left" valign="top"><a href="#g_t3_002e2">6.9 Upgrade to Version 3.2</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Upgrade to version 3.2
+<tr><td align="left" valign="top"><a href="#g_t4_002e0">6.9 Upgrade to Version 4.0</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Upgrade to version 4.0
 </td></tr>
-<tr><td align="left" valign="top"><a href="#g_t2_002e4">6.10 Upgrade to Version 2.4</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Upgrade to version 2.4
+<tr><td align="left" valign="top"><a href="#g_t3_002e2">6.10 Upgrade to Version 3.2</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Upgrade to version 3.2
+</td></tr>
+<tr><td align="left" valign="top"><a href="#g_t2_002e4">6.11 Upgrade to Version 2.4</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Upgrade to version 2.4
 </td></tr>
 </table>
 
 <hr size="6">
-<a name="g_t4_002e45"></a>
+<a name="g_t4_002e49"></a>
 <table cellpadding="1" cellspacing="1" border="0">
 <tr><td valign="middle" align="left">[<a href="#How-to-Upgrade" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#g_t4_002e45" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#How-to-Upgrade" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#How-to-Upgrade" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_7.html#Examples" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="ormlite.html#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_10.html#Index-of-Concepts" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<a name="Notes-About-Version-4_002e49"></a>
+<h2 class="section">6.1 Notes About Version 4.49</h2>
+
+<p>The 4.49 release took a long time to put out unfortunately so it included a lot of changes, a couple of which need
+to be specifically enumerated.  For more details, please check the change-log.
+</p>
+<ul>
+<li> Due to a couple of reporting issues, it was determined that some sort of locking was needed to protect concurrent
+usage of <code>dao.callBatchTasks(...)</code> calls from multiple threads when dealing with a single database connection.  ORMLite
+now makes an attempt to detect a single-connection connection-source and will enforce locking so that only one batch
+task can be running at a time.
+
+</li><li> A lot of changes were made to have <code>CloseableIterator</code> and other classes extend <code>java.io.Closeable</code>.  If
+you are extending any of these classes then you may have to tweak your code.
+
+</li><li> We fixed a problem with the <code>maxForeignAutoRefreshLevel</code> configuration setting which was particularly impacting
+Android users.
+
+</li></ul>
+
+<p>Again, please check the change-log for the entire list.
+</p>
+<hr size="6">
+<a name="g_t4_002e45"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#g_t4_002e49" title="Previous section in reading order"> &lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#g_t4_002e43" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#How-to-Upgrade" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
@@ -111,7 +153,7 @@ and rarely the on-disk database formats.
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <a name="Upgrade-to-Version-4_002e45"></a>
-<h2 class="section">6.1 Upgrade to Version 4.45</h2>
+<h2 class="section">6.2 Upgrade to Version 4.45</h2>
 
 <p>To fix the date-string format bug introduced in version 4.43, I&rsquo;ve decided to revert back to the date-string of
 <code>yyyy-MM-dd HH:mm:ss.SSSSSS</code> from the one introduced in 4.43 which was <code>yyyy-MM-dd HH:mm:ss.SSS</code>.  This means
@@ -153,7 +195,7 @@ the data.  Something like the following <code>UPDATE</code> statement should wor
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <a name="Problems-With-Version-4_002e43"></a>
-<h2 class="section">6.2 Problems With Version 4.43</h2>
+<h2 class="section">6.3 Problems With Version 4.43</h2>
 
 <p>In the process of looking into adding the timezone to the date-string, I made a change to the date-string format from
 <code>yyyy-MM-dd HH:mm:ss.SSSSSS</code> to <code>yyyy-MM-dd HH:mm:ss.SSS</code> &ndash; changing the milliseconds output from 6 digits to 3.
@@ -191,7 +233,7 @@ private Date date;
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <a name="Upgrade-to-Version-4_002e37"></a>
-<h2 class="section">6.3 Upgrade to Version 4.37</h2>
+<h2 class="section">6.4 Upgrade to Version 4.37</h2>
 
 <a name="index-Android-case-sensitive-columns"></a>
 <a name="index-case-sensitive-columns_002c-Android"></a>
@@ -243,7 +285,7 @@ not work without the case matching the database.   If you were building a custom
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <a name="Upgrade-to-Version-4_002e30"></a>
-<h2 class="section">6.4 Upgrade to Version 4.30</h2>
+<h2 class="section">6.5 Upgrade to Version 4.30</h2>
 
 <p>For Android users, in 4.30 we added some reflection hacks to make the processing of the <code>@DatabaseField</code> annotations
 a lot faster.  For this reason the following changes must be made:
@@ -293,7 +335,7 @@ they were also causing confusion.
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <a name="Upgrade-to-Version-4_002e20"></a>
-<h2 class="section">6.5 Upgrade to Version 4.20</h2>
+<h2 class="section">6.6 Upgrade to Version 4.20</h2>
 
 <p>In 4.20 we made a couple of changes that bear some note.
 </p>
@@ -333,7 +375,7 @@ folks on the user list who significantly helped with this process.
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <a name="Upgrade-to-Version-4_002e14"></a>
-<h2 class="section">6.6 Upgrade to Version 4.14</h2>
+<h2 class="section">6.7 Upgrade to Version 4.14</h2>
 
 <p>In 4.14 we added a <code>DatabaseType.BYTE_ARRAY</code> which stores <code>byte[]</code> directly.  See <a href="ormlite_2.html#BYTE_005fARRAY">BYTE_ARRAY</a>.  In the past, this array
 would have been stored as a serialized array of bytes.  To not break backwards compatibility with the database, fields with the
@@ -378,7 +420,7 @@ byte[] field;
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <a name="Upgrade-to-Version-4_002e10"></a>
-<h2 class="section">6.7 Upgrade to Version 4.10</h2>
+<h2 class="section">6.8 Upgrade to Version 4.10</h2>
 
 <p>4.10 was a reasonably large release containing some feature upgrades and some bug fixes.  No data formats were changed, however
 the following API code was altered:
@@ -415,7 +457,7 @@ package to work.
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <a name="Upgrade-to-Version-4_002e0"></a>
-<h2 class="section">6.8 Upgrade to Version 4.0</h2>
+<h2 class="section">6.9 Upgrade to Version 4.0</h2>
 
 <p>No data formats were changed, however the following API code was altered.  Removed any outside usage of the <code>DatabaseType</code> since
 the <code>ConnectionSource</code> now provides it.  Also added features to be able to prepare update and delete statements.  To provide
@@ -480,7 +522,7 @@ configurations.
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <a name="Upgrade-to-Version-3_002e2"></a>
-<h2 class="section">6.9 Upgrade to Version 3.2</h2>
+<h2 class="section">6.10 Upgrade to Version 3.2</h2>
 
 <p>The 3.2 release involved a <em>very</em> large code reorganization and migration.  There were no on-disk changes unless you somehow
 managed to get ORMLite working previously on Android.  The project was basically split into 3 pieces: core functionality, JDBC
@@ -534,7 +576,7 @@ the lack of detail here.
 <td valign="middle" align="left">[<a href="ormlite_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <a name="Upgrade-to-Version-2_002e4"></a>
-<h2 class="section">6.10 Upgrade to Version 2.4</h2>
+<h2 class="section">6.11 Upgrade to Version 2.4</h2>
 
 <p>A bug was fixed in 2.4 with how we were handling Derby and Hsqldb.  Both of these databases seem to be capitalizing table and field
 names in certain situations which meant that customized queries of ORMLite generated tables were affected.  In version 2.4,
@@ -558,7 +600,7 @@ uppercase.
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>December 16, 2013</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>February 18, 2015</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
  </font>
  <br>
 
