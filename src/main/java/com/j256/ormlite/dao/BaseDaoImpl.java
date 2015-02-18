@@ -327,7 +327,8 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			}
 		}
 		/*
-		 * This is a little strange in that  
+		 * This is a little strange in that we get the connection but then the call-batch-task saves another one. I
+		 * thought that it was an ok thing to do otherwise it made the call-batch-tasks more complicated.
 		 */
 		final DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		try {

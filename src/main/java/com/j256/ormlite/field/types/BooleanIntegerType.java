@@ -9,7 +9,7 @@ import com.j256.ormlite.support.DatabaseResults;
 
 /**
  * Booleans can be stored in the database as the integer column type and the value 1 (really non-0) for true and 0 for
- * false.  You must choose this DataType specifically with the {@link DatabaseField#dataType()} specifier.
+ * false. You must choose this DataType specifically with the {@link DatabaseField#dataType()} specifier.
  * 
  * <pre>
  * &#64;DatabaseField(dataType = DataType.BOOLEAN_INTEGER)
