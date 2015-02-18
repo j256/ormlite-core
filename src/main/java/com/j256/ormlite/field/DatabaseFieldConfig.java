@@ -24,7 +24,8 @@ public class DatabaseFieldConfig {
 	public static final boolean DEFAULT_FOREIGN_COLLECTION_ORDER_ASCENDING = true;
 	public static final int NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED = -1;
 
-	private static final int DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL = ForeignCollectionField.MAX_EAGER_LEVEL;
+	private static final int DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL =
+			ForeignCollectionField.DEFAULT_MAX_EAGER_LEVEL;
 
 	private static JavaxPersistenceConfigurer javaxPersistenceConfigurer;
 
@@ -712,7 +713,7 @@ public class DatabaseFieldConfig {
 		config.foreignCollectionEager = foreignCollection.eager();
 		@SuppressWarnings("deprecation")
 		int maxEagerLevel = foreignCollection.maxEagerForeignCollectionLevel();
-		if (maxEagerLevel != ForeignCollectionField.MAX_EAGER_LEVEL) {
+		if (maxEagerLevel != ForeignCollectionField.DEFAULT_MAX_EAGER_LEVEL) {
 			config.foreignCollectionMaxEagerLevel = maxEagerLevel;
 		} else {
 			config.foreignCollectionMaxEagerLevel = foreignCollection.maxEagerLevel();

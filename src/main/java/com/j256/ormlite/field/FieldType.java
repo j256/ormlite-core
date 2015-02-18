@@ -750,7 +750,19 @@ public class FieldType {
 					fieldConfig.getForeignCollectionOrderColumnName(), fieldConfig.isForeignCollectionOrderAscending());
 		}
 
+		// try not to create level counter objects unless we have to
 		LevelCounters levelCounters = threadLevelCounters.get();
+		if (levelCounters == null) {
+			if (fieldConfig.getForeignCollectionMaxEagerLevel() == 0) {
+				// then return a lazy collection instead
+				return new LazyForeignCollection<FT, FID>(castDao, parent, id, foreignFieldType,
+						fieldConfig.getForeignCollectionOrderColumnName(),
+						fieldConfig.isForeignCollectionOrderAscending());
+			}
+			levelCounters = new LevelCounters();
+			threadLevelCounters.set(levelCounters);
+		}
+
 		if (levelCounters.foreignCollectionLevel == 0) {
 			levelCounters.foreignCollectionLevelMax = fieldConfig.getForeignCollectionMaxEagerLevel();
 		}

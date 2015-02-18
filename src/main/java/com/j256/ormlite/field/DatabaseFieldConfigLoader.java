@@ -17,7 +17,8 @@ public class DatabaseFieldConfigLoader {
 	private static final String CONFIG_FILE_START_MARKER = "# --field-start--";
 	private static final String CONFIG_FILE_END_MARKER = "# --field-end--";
 
-	private static final int DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL = ForeignCollectionField.MAX_EAGER_LEVEL;
+	private static final int DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL =
+			ForeignCollectionField.DEFAULT_MAX_EAGER_LEVEL;
 	private static final DataPersister DEFAULT_DATA_PERSISTER =
 			DatabaseFieldConfig.DEFAULT_DATA_TYPE.getDataPersister();
 

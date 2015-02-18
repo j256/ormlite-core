@@ -29,7 +29,7 @@ public @interface ForeignCollectionField {
 	/**
 	 * @see #maxEagerForeignCollectionLevel()
 	 */
-	public static final int MAX_EAGER_LEVEL = 1;
+	public static final int DEFAULT_MAX_EAGER_LEVEL = 1;
 
 	/**
 	 * <p>
@@ -56,7 +56,7 @@ public @interface ForeignCollectionField {
 	 * @deprecated Should use {@link #maxEagerLevel()}
 	 */
 	@Deprecated
-	int maxEagerForeignCollectionLevel() default MAX_EAGER_LEVEL;
+	int maxEagerForeignCollectionLevel() default DEFAULT_MAX_EAGER_LEVEL;
 
 	/**
 	 * Set this to be the number of times to expand an eager foreign collection's foreign collection. If you query for A
@@ -65,7 +65,7 @@ public @interface ForeignCollectionField {
 	 * if you query for A, the collection of B will be eager fetched but each of the B objects will have a lazy
 	 * collection instead of an eager collection of C. It should be increased only if you know what you are doing.
 	 */
-	int maxEagerLevel() default MAX_EAGER_LEVEL;
+	int maxEagerLevel() default DEFAULT_MAX_EAGER_LEVEL;
 
 	/**
 	 * The name of the column. This is only used when you want to match the string passed to
