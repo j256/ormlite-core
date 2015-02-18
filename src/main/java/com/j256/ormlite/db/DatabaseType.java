@@ -164,7 +164,7 @@ public interface DatabaseType {
 	public boolean isCreateTableReturnsZero();
 
 	/**
-	 * Returns true if CREATE and DROP TABLE statements can return < 0 and still have worked. Gross!
+	 * Returns true if CREATE and DROP TABLE statements can return &lt; 0 and still have worked. Gross!
 	 */
 	public boolean isCreateTableReturnsNegative();
 
