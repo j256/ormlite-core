@@ -17,7 +17,9 @@ import java.util.regex.Pattern;
 import com.j256.ormlite.misc.IOUtils;
 
 /**
+ * <p>
  * Class which implements our {@link Log} interface so we can bypass external logging classes if they are not available.
+ * </p>
  * 
  * <p>
  * You can set the log level by setting the System.setProperty(LocalLog.LOCAL_LOG_LEVEL_PROPERTY, "trace"). Acceptable
@@ -27,6 +29,7 @@ import com.j256.ormlite.misc.IOUtils;
  * 
  * <p>
  * It also supports a file ormliteLocalLog.properties file which contains lines such as:
+ * </p>
  * 
  * <pre>
  * # regex-pattern = Level
@@ -35,8 +38,6 @@ import com.j256.ormlite.misc.IOUtils;
  * log4j\.logger\.com\.j256\.ormlite\.stmt\.mapped.MappedCreate=TRACE
  * log4j\.logger\.com\.j256\.ormlite\.stmt\.StatementExecutor=TRACE
  * </pre>
- * 
- * </p>
  * 
  * @author graywatson
  */

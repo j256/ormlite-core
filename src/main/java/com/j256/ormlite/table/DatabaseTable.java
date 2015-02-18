@@ -13,17 +13,11 @@ import com.j256.ormlite.dao.DaoManager;
  * change its default tableName. You specify this annotation above the classes that you want to persist to the database.
  * For example:
  * 
- * <p>
- * <blockquote>
- * 
  * <pre>
  * &#64;DatabaseTable(tableName = "accounts")
  * public class Account {
  *   ...
  * </pre>
- * 
- * </blockquote>
- * </p>
  * 
  * <p>
  * <b>NOTE:</b> Classes that are persisted using this package <i>must</i> have a no-argument constructor with at least

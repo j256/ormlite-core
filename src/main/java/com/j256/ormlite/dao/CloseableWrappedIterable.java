@@ -7,8 +7,6 @@ import java.io.IOException;
  * Extension to CloseableIterable which defines a class which has an iterator() method that returns a
  * {@link CloseableIterator} but also can be closed itself. This allows us to do something like this pattern:
  * 
- * <blockquote>
- * 
  * <pre>
  * CloseableWrappedIterable&lt;Foo&gt; wrapperIterable = fooDao.getCloseableIterable();
  * try {
@@ -19,8 +17,6 @@ import java.io.IOException;
  *   wrapperIterable.close();
  * }
  * </pre>
- * 
- * </blockquote>
  * 
  * @author graywatson
  */

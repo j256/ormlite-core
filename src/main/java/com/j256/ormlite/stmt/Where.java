@@ -25,8 +25,10 @@ import com.j256.ormlite.stmt.query.SimpleComparison;
 import com.j256.ormlite.table.TableInfo;
 
 /**
+ * <p>
  * Manages the various clauses that make up the WHERE part of a SQL statement. You get one of these when you call
  * {@link StatementBuilder#where} or you can set the where clause by calling {@link StatementBuilder#setWhere}.
+ * </p>
  * 
  * <p>
  * Here's a page with a <a href="http://www.w3schools.com/Sql/" >good tutorial of SQL commands</a>.
@@ -35,8 +37,6 @@ import com.j256.ormlite.table.TableInfo;
  * <p>
  * To create a query which looks up an account by name and password you would do the following:
  * </p>
- * 
- * <blockquote>
  * 
  * <pre>
  * QueryBuilder&lt;Account, String&gt; qb = accountDao.queryBuilder();
@@ -50,51 +50,35 @@ import com.j256.ormlite.table.TableInfo;
  * PreparedQuery&lt;Account, String&gt; preparedQuery = qb.prepareQuery();
  * </pre>
  * 
- * </blockquote>
- * 
  * <p>
  * In this example, the SQL query that will be generated will be approximately:
  * </p>
- * 
- * <blockquote>
  * 
  * <pre>
  * SELECT * FROM account WHERE (name = 'foo' AND passwd = '_secret')
  * </pre>
  * 
- * </blockquote>
- * 
  * <p>
  * If you'd rather chain the methods onto one line (like StringBuilder), this can also be written as:
  * </p>
- * 
- * <blockquote>
  * 
  * <pre>
  * queryBuilder.where().eq(Account.NAME_FIELD_NAME, &quot;foo&quot;).and().eq(Account.PASSWORD_FIELD_NAME, &quot;_secret&quot;);
  * </pre>
  * 
- * </blockquote>
- * 
  * <p>
  * If you'd rather use parens and the like then you can call:
  * </p>
- * 
- * <blockquote>
  * 
  * <pre>
  * Where where = queryBuilder.where();
  * where.and(where.eq(Account.NAME_FIELD_NAME, &quot;foo&quot;), where.eq(Account.PASSWORD_FIELD_NAME, &quot;_secret&quot;));
  * </pre>
  * 
- * </blockquote>
- * 
  * <p>
  * All three of the above call formats produce the same SQL. For complex queries that mix ANDs and ORs, the last format
  * will be necessary to get the grouping correct. For example, here's a complex query:
  * </p>
- * 
- * <blockquote>
  * 
  * <pre>
  * Where where = queryBuilder.where();
@@ -102,19 +86,13 @@ import com.j256.ormlite.table.TableInfo;
  * 		where.and(where.eq(Account.NAME_FIELD_NAME, &quot;bar&quot;), where.eq(Account.PASSWORD_FIELD_NAME, &quot;qwerty&quot;)));
  * </pre>
  * 
- * </blockquote>
- * 
  * <p>
  * This produces the following approximate SQL:
  * </p>
  * 
- * <blockquote>
- * 
  * <pre>
  * SELECT * FROM account WHERE ((name = 'foo' AND passwd = '_secret') OR (name = 'bar' AND passwd = 'qwerty'))
  * </pre>
- * 
- * </blockquote>
  * 
  * @author graywatson
  */

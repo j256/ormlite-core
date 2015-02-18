@@ -12,7 +12,9 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 
 /**
+ * <p>
  * Provides basic transaction support for a {@link ConnectionSource}.
+ * </p>
  * 
  * <p>
  * <b>NOTE:</b> For transactions to work, the database being used must support the functionality.
@@ -26,8 +28,7 @@ import com.j256.ormlite.support.DatabaseConnection;
  * <p>
  * You can call this as an instance with a new TransactionManager(dataSource); or you can call it as a static like the
  * below example:
- * 
- * <blockquote>
+ * </p>
  * 
  * <pre>
  * TransactionManager.callInTransaction(dataSource, new Callable&lt;Void&gt;() {
@@ -41,21 +42,15 @@ import com.j256.ormlite.support.DatabaseConnection;
  * });
  * </pre>
  * 
- * </blockquote>
- * 
  * <p>
  * For Spring wiring of a Transaction Manager bean, we would do something like the following:
  * </p>
- * 
- * <blockquote>
  * 
  * <pre>
  * &lt;bean id="transactionManager" class="com.j256.ormlite.misc.TransactionManager" init-method="initialize"&gt;
  * 	&lt;property name="dataSource" ref="dataSource" /&gt;
  * &lt;/bean&gt;
  * </pre>
- * 
- * </blockquote>
  * 
  * <p>
  * WARNING: For most of the methods in this class, it is up to you to properly synchronize them if multiple threads are

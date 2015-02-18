@@ -15,16 +15,10 @@ import com.j256.ormlite.stmt.QueryBuilder;
  * Annotation that identifies a {@link ForeignCollection} field in a class that corresponds to objects in a foreign
  * table that match the foreign-id of the current class.
  * 
- * <p>
- * <blockquote>
- * 
  * <pre>
  * &#064;ForeignCollection(id = true)
  * private ForeignCollection&lt;Order&gt; orders;
  * </pre>
- * 
- * </blockquote>
- * </p>
  * 
  * @author graywatson
  */
@@ -38,9 +32,11 @@ public @interface ForeignCollectionField {
 	public static final int MAX_EAGER_LEVEL = 1;
 
 	/**
+	 * <p>
 	 * Set to true if the collection is a an eager collection where all of the results should be retrieved when the
 	 * parent object is retrieved. Default is false (lazy) when the results will not be retrieved until you ask for the
 	 * iterator from the collection.
+	 * </p>
 	 * 
 	 * <p>
 	 * <b>NOTE:</b> If this is false (i.e. we have a lazy collection) then a connection is held open to the database as

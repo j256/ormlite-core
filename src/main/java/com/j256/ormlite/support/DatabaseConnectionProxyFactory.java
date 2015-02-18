@@ -11,8 +11,6 @@ import java.sql.SQLException;
  * logging, monitoring, or other reason. Something like:
  * </p>
  * 
- * <p>
- * 
  * <pre>
  * private static class MyConnectionProxy extends DatabaseConnectionProxy {
  * 	public ConnectionProxy(DatabaseConnection conn) {
@@ -27,13 +25,9 @@ import java.sql.SQLException;
  * }
  * </pre>
  * 
- * </p>
- * 
  * <p>
  * Then define your own factory which constructs instances of your proxy object. For example:
  * </p>
- * 
- * <p>
  * 
  * <pre>
  * JdbcConnectionSource.setDatabaseConnectionProxyFactory(new DatabaseConnectionProxyFactory() {
@@ -42,8 +36,6 @@ import java.sql.SQLException;
  * 	}
  * });
  * </pre>
- * 
- * </p>
  * 
  * <p>
  * You can also use the {@link ReflectionDatabaseConnectionProxyFactory} which takes a class and constructs your proxy

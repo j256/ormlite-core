@@ -321,15 +321,9 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * This satisfies the {@link Iterable} interface for the class and allows you to iterate through the objects in the
 	 * table using SQL. You can use code similar to the following:
 	 * 
-	 * <p>
-	 * <blockquote>
-	 * 
 	 * <pre>
 	 * for (Account account : accountDao) { ... }
 	 * </pre>
-	 * 
-	 * </blockquote>
-	 * </p>
 	 * 
 	 * <p>
 	 * <b>WARNING</b>: because the {@link Iterator#hasNext()}, {@link Iterator#next()}, etc. methods can only throw
@@ -371,9 +365,6 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * Same as {@link #iterator()} but with a prepared query parameter. See {@link #queryBuilder} for more information.
 	 * You use it like the following:
 	 * 
-	 * <p>
-	 * <blockquote>
-	 * 
 	 * <pre>
 	 * QueryBuilder&lt;Account, String&gt; qb = accountDao.queryBuilder();
 	 * ... custom query builder methods
@@ -387,9 +378,6 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 *     iterator.close();
 	 * }
 	 * </pre>
-	 * 
-	 * </blockquote>
-	 * </p>
 	 * 
 	 * @param preparedQuery
 	 *            Query used to iterate across a sub-set of the items in the database.
@@ -406,11 +394,11 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public CloseableIterator<T> iterator(PreparedQuery<T> preparedQuery, int resultFlags) throws SQLException;
 
 	/**
+	 * <p>
 	 * This makes a one time use iterable class that can be closed afterwards. The DAO itself is
 	 * {@link CloseableWrappedIterable} but multiple threads can each call this to get their own closeable iterable.
 	 * This allows you to do something like:
-	 * 
-	 * <blockquote>
+	 * </p>
 	 * 
 	 * <pre>
 	 * CloseableWrappedIterable&lt;Foo&gt; wrappedIterable = fooDao.getWrappedIterable();
@@ -422,8 +410,6 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 *   wrappedIterable.close();
 	 * }
 	 * </pre>
-	 * 
-	 * </blockquote>
 	 */
 	public CloseableWrappedIterable<T> getWrappedIterable();
 
@@ -444,18 +430,18 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public void closeLastIterator() throws IOException;
 
 	/**
+	 * <p>
 	 * Similar to the {@link #iterator(PreparedQuery)} except it returns a GenericRawResults object associated with the
 	 * SQL select query argument. Although you should use the {@link #iterator()} for most queries, this method allows
 	 * you to do special queries that aren't supported otherwise. Like the above iterator methods, you must call close
 	 * on the returned RawResults object once you are done with it. The arguments are optional but can be set with
 	 * strings to expand ? type of SQL.
+	 * </p>
 	 * 
 	 * <p>
 	 * You can use the {@link QueryBuilder#prepareStatementString()} method here if you want to build the query using
 	 * the structure of the QueryBuilder.
 	 * </p>
-	 * 
-	 * <p>
 	 * 
 	 * <pre>
 	 * QueryBuilder&lt;Account, Integer&gt; qb = accountDao.queryBuilder();
@@ -463,11 +449,9 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * results = accountDao.queryRaw(qb.prepareStatementString());
 	 * </pre>
 	 * 
-	 * </p>
-	 * 
-	 * If you want to use the QueryBuilder with arguments to the raw query then you should do something like:
-	 * 
 	 * <p>
+	 * If you want to use the QueryBuilder with arguments to the raw query then you should do something like:
+	 * </p>
 	 * 
 	 * <pre>
 	 * QueryBuilder&lt;Account, Integer&gt; qb = accountDao.queryBuilder();
@@ -476,8 +460,6 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * // the 10 at the end is an optional argument to fulfill the SelectArg above
 	 * results = accountDao.queryRaw(qb.prepareStatementString(), rawRowMapper, 10);
 	 * </pre>
-	 * 
-	 * </p>
 	 * 
 	 * <p>
 	 * <b>NOTE:</b> If you are using the {@link QueryBuilder#prepareStatementString()} to build your query, it may have
@@ -637,17 +619,23 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public long countOf(PreparedQuery<T> preparedQuery) throws SQLException;
 
 	/**
+	 * <p>
 	 * Creates an empty collection and assigns it to the appropriate field in the parent object. This allows you to add
 	 * things to the collection from the start.
+	 * </p>
 	 * 
+	 * <p>
 	 * For example let's say you have an Account which has the field:
+	 * </p>
 	 * 
 	 * <pre>
 	 * &#064;ForeignCollectionField(columnName = &quot;orders&quot;)
 	 * Collection&lt;Order&gt; orders;
 	 * </pre>
 	 * 
+	 * <p>
 	 * You would then call:
+	 * </p>
 	 * 
 	 * <pre>
 	 * accoundDao.assignEmptyForeignCollection(account, &quot;orders&quot;);

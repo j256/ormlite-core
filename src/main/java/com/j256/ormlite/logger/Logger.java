@@ -3,8 +3,10 @@ package com.j256.ormlite.logger;
 import com.j256.ormlite.logger.Log.Level;
 
 /**
+ * <p>
  * Class which wraps our {@link Log} interface and provides {} argument features like slf4j. It allows us to plug in
  * additional log systems if necessary.
+ * </p>
  * 
  * <p>
  * <b>NOTE:</b> We do the (msg, arg0), (msg, arg0, arg1), (msg, arg0, arg1, arg2), and (msg, argArray) patterns because
@@ -17,12 +19,11 @@ import com.j256.ormlite.logger.Log.Level;
  * <p>
  * <b>NOTE:</b> When you are using the argArray methods, you should consider wrapping the call in an {@code if} so the
  * {@code Object[]} won't be created unnecessarily.
+ * </p>
  * 
  * <pre>
  * if (logger.isLevelEnabled(Level...)) ...
  * </pre>
- * 
- * </p>
  * 
  * @author graywatson
  */

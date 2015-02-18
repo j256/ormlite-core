@@ -11,12 +11,11 @@ import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.types.VoidType;
 
 /**
+ * <p>
  * Annotation that identifies a field in a class that corresponds to a column in the database and will be persisted.
  * Fields that are not to be persisted such as transient or other temporary fields probably should be ignored. For
  * example:
- * 
- * <p>
- * <blockquote>
+ * </p>
  * 
  * <pre>
  * &#064;DatabaseField(id = true)
@@ -25,9 +24,6 @@ import com.j256.ormlite.field.types.VoidType;
  * &#064;DatabaseField(columnName = &quot;passwd&quot;, canBeNull = false)
  * private String password;
  * </pre>
- * 
- * </blockquote>
- * </p>
  * 
  * <p>
  * <b> WARNING:</b> If you add any extra fields here, you will need to add them to {@link DatabaseFieldConfig},
@@ -116,16 +112,16 @@ public @interface DatabaseField {
 	boolean foreign() default false;
 
 	/**
+	 * <p>
 	 * Package should use get...() and set...() to access the field value instead of the default direct field access via
 	 * reflection. This may be necessary if the object you are storing has protections around it.
+	 * </p>
 	 * 
 	 * <p>
 	 * <b>NOTE:</b> The name of the get method <i>must</i> match getXxx() where Xxx is the name of the field with the
 	 * first letter capitalized. The get <i>must</i> return a class which matches the field's. The set method
 	 * <i>must</i> match setXxx(), have a single argument whose class matches the field's, and return void. For example:
 	 * </p>
-	 * 
-	 * <blockquote>
 	 * 
 	 * <pre>
 	 * &#064;DatabaseField
@@ -139,8 +135,6 @@ public @interface DatabaseField {
 	 * 	this.orderCount = orderCount;
 	 * }
 	 * </pre>
-	 * 
-	 * </blockquote>
 	 */
 	boolean useGetSet() default false;
 
@@ -257,12 +251,12 @@ public @interface DatabaseField {
 	String columnDefinition() default "";
 
 	/**
+	 * <p>
 	 * Set this to be true (default false) to have the foreign field will be automagically created using its internal
 	 * DAO if the ID field is not set (null or 0). So when you call dao.create() on the parent object, any field with
 	 * this set to true will possibly be created via an internal DAO. By default you have to create the object using its
 	 * DAO directly. This only works if {@link #generatedId()} is also set to true.
-	 * 
-	 * <p>
+	 * </p>
 	 * 
 	 * <pre>
 	 * Order order1 = new Order();
@@ -271,8 +265,6 @@ public @interface DatabaseField {
 	 * // this will create order1 _and_ pass order1.account to the internal account dao.create().
 	 * orderDao.create(order1);
 	 * </pre>
-	 * 
-	 * </p>
 	 */
 	boolean foreignAutoCreate() default false;
 

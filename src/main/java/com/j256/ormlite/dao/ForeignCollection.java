@@ -7,20 +7,15 @@ import java.util.Collection;
 import com.j256.ormlite.field.ForeignCollectionField;
 
 /**
+ * <p>
  * Collection that is set on a field that as been marked with the {@link ForeignCollectionField} annotation when an
  * object is refreshed or queried (i.e. not created).
- * 
- * <p>
- * <blockquote>
+ * </p>
  * 
  * <pre>
  * &#064;ForeignCollectionField(eager = false)
  * private ForeignCollection&lt;Order&gt; orders;
  * </pre>
- * 
- * </blockquote>
- * 
- * </p>
  * 
  * <p>
  * <b>NOTE:</b> If the collection has been marked as being "lazy" then just about all methods in this class result in a
