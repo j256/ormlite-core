@@ -295,7 +295,7 @@ public class DatabaseFieldConfigLoaderTest extends BaseCoreTest {
 		DatabaseFieldConfig result =
 				DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(configString)));
 		assertEquals(fieldName, result.getFieldName());
-		assertEquals(OurEnum.FIRST, result.getUnknownEnumValue());
+		assertEquals(OurAnonymousEnum.ONE, result.getUnknownEnumValue());
 	}
 
 	private void checkConfigOutput(DatabaseFieldConfig config, StringBuilder body, StringWriter writer,
@@ -356,11 +356,29 @@ public class DatabaseFieldConfigLoaderTest extends BaseCoreTest {
 		;
 	}
 
+	private enum OurAnonymousEnum {
+		ONE() {
+			@Override
+			public void randomMethod() {
+				// no-op
+			}
+		},
+		TWO() {
+			@Override
+			public void randomMethod() {
+				// no-op
+			}
+		},
+		// end
+		;
+		public abstract void randomMethod();
+	}
+
 	protected class LocalEnumField {
 		@DatabaseField
 		int id;
-		@DatabaseField(unknownEnumName = "FIRST")
-		OurEnum ourEnum;
+		@DatabaseField(unknownEnumName = "ONE")
+		OurAnonymousEnum ourEnum;
 		public LocalEnumField() {
 			// for ormlite
 		}

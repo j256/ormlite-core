@@ -24,7 +24,8 @@
 	* CORE: Added support for raw queries using the DatabaseResults in the mapper.  Thanks much to nonameplum.
 	* CORE: Fixed some problems with default-value parsing and handing with some complex types.
 	* CORE: Fixed synchronization problems with single connection ConnectionSource and Dao.callBatchTasks().  Bug #195.
-	* CORE: Fixed bad bug where max-auto-refresh value enabled auto-refresh when programmatically configured.  Bug #196. 
+	* CORE: Fixed bad bug where max-auto-refresh value enabled auto-refresh when programmatically configured.  Bug #196.
+	* CORE: Fixed bug where unknown enum name was not working with anonymous enum types.  Thanks to jahd2602.  Bug #197. 
 	* JDBC: Possibly fixed some problems with the Oracle type with better boolean support.  Thanks to 51mon.
 	* JDBC: Added support for UUID database fields for Postgres and MSSQL.  Use dataType = UUID_NATIVE.  Thanks to tsharp.
 	* JDBC: Added support for a JdbcConnectionSource that uses an existing database connection.  Thanks to natinusala.

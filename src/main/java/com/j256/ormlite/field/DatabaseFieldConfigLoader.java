@@ -181,7 +181,7 @@ public class DatabaseFieldConfigLoader {
 		if (config.getUnknownEnumValue() != null) {
 			writer.append(FIELD_NAME_UNKNOWN_ENUM_VALUE)
 					.append('=')
-					.append(config.getUnknownEnumValue().getClass().getName())
+					.append(config.getUnknownEnumValue().getDeclaringClass().getName())
 					.append("#")
 					.append(config.getUnknownEnumValue().name());
 			writer.newLine();
