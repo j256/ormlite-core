@@ -2482,6 +2482,51 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(3, changeCount.get());
 	}
 
+	@Test
+	public void testQueryRawDataResultsMapper() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+
+		Foo foo1 = new Foo();
+		foo1.val = 1389183;
+		foo1.stringField = "hoifewhoifeqwih";
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		foo2.val = 133214433;
+		foo2.stringField = "hfeopuwgwhiih";
+		assertEquals(1, dao.create(foo2));
+
+		GenericRawResults<Foo> results = dao.queryRaw(dao.queryBuilder().prepareStatementString(), new ResultsMapper());
+		assertNotNull(results);
+		List<Foo> list = results.getResults();
+		assertNotNull(list);
+		assertEquals(2, list.size());
+
+		Foo foo = list.get(0);
+		assertNotSame(foo1, foo);
+		assertEquals(foo1.id, foo.id);
+		assertEquals(foo1.val, foo.val);
+		assertEquals(foo1.stringField, foo.stringField);
+
+		foo = list.get(1);
+		assertNotSame(foo2, foo);
+		assertEquals(foo2.id, foo.id);
+		assertEquals(foo2.val, foo.val);
+		assertEquals(foo2.stringField, foo.stringField);
+	}
+
+	@Test
+	@SuppressWarnings("deprecation")
+	public void testSetAutoCommit() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		boolean autoCommit = dao.isAutoCommit();
+		try {
+			dao.setAutoCommit(!autoCommit);
+			assertFalse(autoCommit == dao.isAutoCommit());
+		} finally {
+			dao.setAutoCommit(autoCommit);
+		}
+	}
+
 	/* ============================================================================================== */
 
 	private String buildFooQueryAllString(Dao<Foo, Object> fooDao) throws SQLException {
@@ -2500,6 +2545,23 @@ public class BaseDaoImplTest extends BaseCoreTest {
 					foo.id = Integer.parseInt(resultColumns[i]);
 				} else if (columnNames[i].equalsIgnoreCase(Foo.VAL_COLUMN_NAME)) {
 					foo.val = Integer.parseInt(resultColumns[i]);
+				}
+			}
+			return foo;
+		}
+	}
+
+	private static class ResultsMapper implements DatabaseResultsMapper<Foo> {
+		public Foo mapRow(DatabaseResults databaseResults) throws SQLException {
+			Foo foo = new Foo();
+			String[] columnNames = databaseResults.getColumnNames();
+			for (int i = 0; i < columnNames.length; i++) {
+				if (columnNames[i].equalsIgnoreCase(Foo.ID_COLUMN_NAME)) {
+					foo.id = databaseResults.getInt(i);
+				} else if (columnNames[i].equalsIgnoreCase(Foo.VAL_COLUMN_NAME)) {
+					foo.val = databaseResults.getInt(i);
+				} else if (columnNames[i].equalsIgnoreCase(Foo.STRING_COLUMN_NAME)) {
+					foo.stringField = databaseResults.getString(i);
 				}
 			}
 			return foo;
