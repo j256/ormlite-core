@@ -181,7 +181,7 @@ public class DatabaseFieldConfigLoader {
 		if (config.getUnknownEnumValue() != null) {
 			/**
 			 * NOTE: we need to use getDeclaringClass() below. If we use getClass() then for anonymous enum types, we
-			 * get an extraneous $1 in the class name. Did not know that. See Enum#getDeclaringClass().
+			 * get an extraneous $1 in the class name. Did not know that. See Enum#getDeclaringClass().  See bug #197.
 			 */
 			writer.append(FIELD_NAME_UNKNOWN_ENUM_VALUE)
 					.append('=')
