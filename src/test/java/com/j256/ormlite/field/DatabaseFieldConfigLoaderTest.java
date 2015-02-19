@@ -8,17 +8,22 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.lang.reflect.Field;
 import java.sql.SQLException;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.junit.Test;
 
-public class DatabaseFieldConfigLoaderTest {
+import com.j256.ormlite.BaseCoreTest;
+
+public class DatabaseFieldConfigLoaderTest extends BaseCoreTest {
 
 	private final static String LINE_SEP = System.getProperty("line.separator");
 
 	private final static String FIELD_START = "# --field-start--" + LINE_SEP;
 	private final static String FIELD_END = "# --field-end--" + LINE_SEP;
+
+	private static final String TABLE_NAME = "footable";
 
 	@Test
 	public void testConfigFile() throws Exception {
@@ -273,14 +278,25 @@ public class DatabaseFieldConfigLoaderTest {
 		DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value)));
 	}
 
-	private enum OurEnum {
-		FIRST,
-		SECOND,
-		// end
-		;
-	}
+	@Test
+	public void testLocalEnumClass() throws Exception {
+		String fieldName = "ourEnum";
+		Field field = LocalEnumField.class.getDeclaredField(fieldName);
+		String tableName = "foo";
+		DatabaseFieldConfig config = DatabaseFieldConfig.fromField(databaseType, tableName, field);
 
-	private static final String TABLE_NAME = "footable";
+		StringWriter writer = new StringWriter();
+		BufferedWriter bufferedWriter = new BufferedWriter(writer);
+		DatabaseFieldConfigLoader.write(bufferedWriter, config, tableName);
+		bufferedWriter.flush();
+
+		String configString = writer.toString();
+		System.out.println(configString);
+		DatabaseFieldConfig result =
+				DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(configString)));
+		assertEquals(fieldName, result.getFieldName());
+		assertEquals(OurEnum.FIRST, result.getUnknownEnumValue());
+	}
 
 	private void checkConfigOutput(DatabaseFieldConfig config, StringBuilder body, StringWriter writer,
 			BufferedWriter buffer) throws Exception {
@@ -295,7 +311,7 @@ public class DatabaseFieldConfigLoaderTest {
 		writer.getBuffer().setLength(0);
 	}
 
-	public static boolean isConfigEquals(DatabaseFieldConfig config1, DatabaseFieldConfig config2) {
+	private boolean isConfigEquals(DatabaseFieldConfig config1, DatabaseFieldConfig config2) {
 		EqualsBuilder eb = new EqualsBuilder();
 		eb.append(config1.getFieldName(), config2.getFieldName());
 		eb.append(config1.getColumnName(), config2.getColumnName());
@@ -331,5 +347,22 @@ public class DatabaseFieldConfigLoaderTest {
 		eb.append(config1.getForeignCollectionMaxEagerLevel(), config2.getForeignCollectionMaxEagerLevel());
 		eb.append(config1.getForeignCollectionForeignFieldName(), config2.getForeignCollectionForeignFieldName());
 		return eb.isEquals();
+	}
+
+	private enum OurEnum {
+		FIRST,
+		SECOND,
+		// end
+		;
+	}
+
+	protected class LocalEnumField {
+		@DatabaseField
+		int id;
+		@DatabaseField(unknownEnumName = "FIRST")
+		OurEnum ourEnum;
+		public LocalEnumField() {
+			// for ormlite
+		}
 	}
 }
