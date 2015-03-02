@@ -1299,6 +1299,30 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(2, dao.countOf(qb.prepare()));
 	}
 
+	@Test
+	public void testUtf8() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+
+		Foo foo1 = new Foo();
+		foo1.stringField = "اعصاب";
+		assertEquals(1, dao.create(foo1));
+
+		QueryBuilder<Foo, Integer> qb = dao.queryBuilder();
+
+		List<Foo> results = qb.where().like(Foo.STRING_COLUMN_NAME, foo1.stringField).query();
+		assertNotNull(results);
+		assertEquals(1, results.size());
+		assertEquals(foo1.id, results.get(0).id);
+		assertEquals(foo1.stringField, results.get(0).stringField);
+
+		qb.reset();
+		results = qb.where().like(Foo.STRING_COLUMN_NAME, new SelectArg(foo1.stringField)).query();
+		assertNotNull(results);
+		assertEquals(1, results.size());
+		assertEquals(foo1.id, results.get(0).id);
+		assertEquals(foo1.stringField, results.get(0).stringField);
+	}
+
 	/* ======================================================================================================== */
 
 	private static class LimitInline extends BaseDatabaseType {
