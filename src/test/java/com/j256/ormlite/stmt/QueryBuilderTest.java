@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.j256.ormlite.dao.CloseableIterator;
@@ -1218,12 +1217,11 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(sca2.id, results.get(1).id);
 	}
 
-	@Ignore("here to look at query output")
 	@Test
-	public void testSpecificJoinBug() throws Exception {
+	public void testSpecificJoinLoggingBug() throws Exception {
 		/*
 		 * Test trying to specifically reproduce a reported bug. The query built in the logs was enough to show that
-		 * either the bug has alreay been fixed or the test is not reproducing the problem adequately.
+		 * either the bug has already been fixed or the test is not reproducing the problem adequately.
 		 */
 
 		Dao<Category, Integer> categoryDao = createDao(Category.class, true);
