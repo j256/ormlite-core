@@ -151,7 +151,7 @@ public class LoggerFactory {
 		/**
 		 * Try to create the log from the class name which may throw.
 		 */
-		Log createLogFromClassName(String classLabel) throws Exception {
+		private Log createLogFromClassName(String classLabel) throws Exception {
 			Class<?> clazz = Class.forName(logClassName);
 			@SuppressWarnings("unchecked")
 			Constructor<Log> constructor = (Constructor<Log>) clazz.getConstructor(String.class);
