@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import com.j256.ormlite.dao.Dao.CreateOrUpdateStatus;
-import com.j256.ormlite.dao.Dao.DaoObserver;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.logger.Log.Level;
@@ -37,7 +35,7 @@ import com.j256.ormlite.table.ObjectFactory;
  * 
  * @author graywatson
  */
-public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
+public class RuntimeExceptionDao<T, ID> implements Dao<T, ID> {
 
 	/*
 	 * We use debug here because we don't want these messages to be logged by default. The user will need to turn on
