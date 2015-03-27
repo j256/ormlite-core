@@ -166,7 +166,7 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 				if (first) {
 					first = false;
 				} else {
-					sb.append(",");
+					sb.append(',');
 				}
 				appendFieldColumnName(databaseType, sb, fieldType, null);
 				argFieldTypes[argFieldC++] = fieldType;
@@ -180,11 +180,11 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 				if (first) {
 					first = false;
 				} else {
-					sb.append(",");
+					sb.append(',');
 				}
-				sb.append("?");
+				sb.append('?');
 			}
-			sb.append(")");
+			sb.append(')');
 		}
 		FieldType idField = tableInfo.getIdField();
 		String queryNext = buildQueryNextSequence(databaseType, idField);

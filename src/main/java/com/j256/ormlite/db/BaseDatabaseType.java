@@ -168,7 +168,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	 */
 	protected void appendStringType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		if (isVarcharFieldWidthSupported()) {
-			sb.append("VARCHAR(").append(fieldWidth).append(")");
+			sb.append("VARCHAR(").append(fieldWidth).append(')');
 		} else {
 			sb.append("VARCHAR");
 		}
@@ -520,7 +520,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		StringBuilder alterSb = new StringBuilder();
 		alterSb.append(" UNIQUE (");
 		appendEscapedEntityName(alterSb, fieldType.getColumnName());
-		alterSb.append(")");
+		alterSb.append(')');
 		additionalArgs.add(alterSb.toString());
 	}
 

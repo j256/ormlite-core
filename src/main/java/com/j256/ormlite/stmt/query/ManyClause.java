@@ -54,7 +54,7 @@ public class ManyClause implements Clause, NeedsFutureClause {
 
 	public void appendSql(DatabaseType databaseType, String tableName, StringBuilder sb,
 			List<ArgumentHolder> selectArgList) throws SQLException {
-		sb.append("(");
+		sb.append('(');
 		first.appendSql(databaseType, tableName, sb, selectArgList);
 		if (second != null) {
 			sb.append(operation);

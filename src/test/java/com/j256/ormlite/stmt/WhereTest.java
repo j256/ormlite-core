@@ -387,7 +387,7 @@ public class WhereTest extends BaseCoreTest {
 		StringBuilder whereSb = new StringBuilder();
 		where.appendSql(null, whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
-		sb.append("(");
+		sb.append('(');
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" = ").append(val);
 		sb.append(" AND ");
@@ -407,7 +407,7 @@ public class WhereTest extends BaseCoreTest {
 		StringBuilder whereSb = new StringBuilder();
 		where.appendSql(null, whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
-		sb.append("(");
+		sb.append('(');
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" = ").append(val);
 		sb.append(" OR ");
@@ -426,7 +426,7 @@ public class WhereTest extends BaseCoreTest {
 		StringBuilder whereSb = new StringBuilder();
 		where.appendSql(null, whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
-		sb.append("(");
+		sb.append('(');
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" = ").append(val);
 		sb.append(" OR ");
@@ -606,7 +606,7 @@ public class WhereTest extends BaseCoreTest {
 		StringBuilder whereSb = new StringBuilder();
 		where.appendSql(null, whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
-		sb.append("(");
+		sb.append('(');
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" = ").append(val);
 		sb.append(" AND ").append(raw).append(" ) ");
@@ -723,7 +723,7 @@ public class WhereTest extends BaseCoreTest {
 		StringBuilder whereSb = new StringBuilder();
 		where.appendSql(null, whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
-		sb.append("(");
+		sb.append('(');
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		// NOTE: they are done in reverse order
 		sb.append(" = ").append(val1);
@@ -748,7 +748,7 @@ public class WhereTest extends BaseCoreTest {
 		whereSb = new StringBuilder();
 		where.appendSql(null, whereSb, new ArrayList<ArgumentHolder>());
 		sb = new StringBuilder();
-		sb.append("(");
+		sb.append('(');
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		// NOTE: they are done in reverse order
 		sb.append(" = ").append(val1);
@@ -778,7 +778,7 @@ public class WhereTest extends BaseCoreTest {
 		StringBuilder whereSb = new StringBuilder();
 		where.appendSql(null, whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
-		sb.append("(");
+		sb.append('(');
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		// NOTE: they are done in reverse order
 		sb.append(" = ").append(val1);
@@ -803,7 +803,7 @@ public class WhereTest extends BaseCoreTest {
 		whereSb = new StringBuilder();
 		where.appendSql(null, whereSb, new ArrayList<ArgumentHolder>());
 		sb = new StringBuilder();
-		sb.append("(");
+		sb.append('(');
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		// NOTE: they are done in reverse order
 		sb.append(" = ").append(val1);
@@ -835,7 +835,7 @@ public class WhereTest extends BaseCoreTest {
 		StringBuilder whereSb = new StringBuilder();
 		where.appendSql(null, whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
-		sb.append("(");
+		sb.append('(');
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		// NOTE: they are done in reverse order
 		sb.append(" = ").append(val1);
@@ -858,7 +858,7 @@ public class WhereTest extends BaseCoreTest {
 		StringBuilder whereSb = new StringBuilder();
 		where.appendSql(null, whereSb, new ArrayList<ArgumentHolder>());
 		StringBuilder sb = new StringBuilder();
-		sb.append("(");
+		sb.append('(');
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		// NOTE: they are done in reverse order
 		sb.append(" = ").append(val1);

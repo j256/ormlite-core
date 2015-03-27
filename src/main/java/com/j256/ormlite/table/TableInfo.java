@@ -173,7 +173,7 @@ public class TableInfo<T, ID> {
 		StringBuilder sb = new StringBuilder(64);
 		sb.append(object.getClass().getSimpleName());
 		for (FieldType fieldType : fieldTypes) {
-			sb.append(' ').append(fieldType.getColumnName()).append("=");
+			sb.append(' ').append(fieldType.getColumnName()).append('=');
 			try {
 				sb.append(fieldType.extractJavaFieldValue(object));
 			} catch (Exception e) {
