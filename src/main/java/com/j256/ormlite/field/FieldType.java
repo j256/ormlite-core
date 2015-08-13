@@ -432,6 +432,13 @@ public class FieldType {
 		return field.getType();
 	}
 
+	/**
+	 * Return the generic type of the field associated with this field type.
+	 */
+	public Type getGenericType() {
+		return field.getGenericType();
+	}
+
 	public String getColumnName() {
 		return columnName;
 	}
