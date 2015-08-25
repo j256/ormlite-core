@@ -10,7 +10,7 @@ import com.j256.ormlite.support.DatabaseResults;
 
 /**
  * Type that persists a {@link BigInteger} object.
- * 
+ *
  * @author graywatson
  */
 public class BigIntegerType extends BaseDataType {
@@ -71,7 +71,17 @@ public class BigIntegerType extends BaseDataType {
 	}
 
 	@Override
-	public boolean isAppropriateId() {
+	public boolean isEscapedValue() {
 		return false;
+	}
+
+	@Override
+	public boolean isValidGeneratedType() {
+		return true;
+	}
+
+	@Override
+	public boolean isValidForVersion() {
+		return true;
 	}
 }
