@@ -26,7 +26,7 @@ public class ByteArrayTypeTest extends BaseTypeTest {
 		LocalByteArray foo = new LocalByteArray();
 		foo.byteField = val;
 		assertEquals(1, dao.create(foo));
-		testType(dao, foo, clazz, val, val, val, valStr, DataType.BYTE_ARRAY, BYTE_COLUMN, false, false, true, false,
+		testType(dao, foo, clazz, val, val, val, valStr, DataType.BYTE_ARRAY, BYTE_COLUMN, false, true, true, false,
 				true, false, true, false);
 	}
 
@@ -36,7 +36,7 @@ public class ByteArrayTypeTest extends BaseTypeTest {
 		Dao<LocalByteArray, Object> dao = createDao(clazz, true);
 		LocalByteArray foo = new LocalByteArray();
 		assertEquals(1, dao.create(new LocalByteArray()));
-		testType(dao, foo, clazz, null, null, null, null, DataType.BYTE_ARRAY, BYTE_COLUMN, false, false, true, false,
+		testType(dao, foo, clazz, null, null, null, null, DataType.BYTE_ARRAY, BYTE_COLUMN, false, true, true, false,
 				true, false, true, false);
 	}
 
