@@ -383,10 +383,10 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		int dotPos = name.indexOf('.');
 		if (0 < dotPos) {
 			sb.append(name.substring(0, dotPos));
-			sb.append('`').append('.').append('`');
+			sb.append("`.`");
 			sb.append(name.substring(1 + dotPos));
 		} else {
-			sb.append('`').append(name).append('`');
+			sb.append(name);
 		}
 		sb.append('`');
 	}
