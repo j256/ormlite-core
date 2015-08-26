@@ -66,7 +66,18 @@ public class BigIntegerType extends BaseDataType {
 	}
 
 	@Override
+	public Object moveToNextValue(Object currentValue) {
+		BigInteger oneBigInteger = new BigInteger("1");
+		if (currentValue == null) {
+			return oneBigInteger;
+		} else {
+			return ((BigInteger) currentValue).add(oneBigInteger);
+		}
+	}
+
+	@Override
 	public int getDefaultWidth() {
+		// Unsure if this is still correct in the case of BigInteger serving as an ID?
 		return DEFAULT_WIDTH;
 	}
 
