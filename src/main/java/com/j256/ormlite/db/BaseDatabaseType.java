@@ -17,12 +17,12 @@ import com.j256.ormlite.table.DatabaseTableConfig;
 /**
  * Base class for all of the {@link DatabaseType} classes that provide the per-database type functionality to create
  * tables and build queries.
- * 
+ *
  * <p>
  * Here's a good page which shows some of the <a href="http://troels.arvin.dk/db/rdbms/" >differences between SQL
  * databases</a>.
  * </p>
- * 
+ *
  * @author graywatson
  */
 public abstract class BaseDatabaseType implements DatabaseType {
@@ -287,7 +287,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	/**
 	 * Output the SQL necessary to configure a generated-id column. This may add to the before statements list or
 	 * additional arguments later.
-	 * 
+	 *
 	 * NOTE: Only one of configureGeneratedIdSequence, configureGeneratedId, or configureId will be called.
 	 */
 	protected void configureGeneratedIdSequence(StringBuilder sb, FieldType fieldType, List<String> statementsBefore,
@@ -299,7 +299,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	/**
 	 * Output the SQL necessary to configure a generated-id column. This may add to the before statements list or
 	 * additional arguments later.
-	 * 
+	 *
 	 * NOTE: Only one of configureGeneratedIdSequence, configureGeneratedId, or configureId will be called.
 	 */
 	protected void configureGeneratedId(String tableName, StringBuilder sb, FieldType fieldType,
@@ -312,7 +312,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	/**
 	 * Output the SQL necessary to configure an id column. This may add to the before statements list or additional
 	 * arguments later.
-	 * 
+	 *
 	 * NOTE: Only one of configureGeneratedIdSequence, configureGeneratedId, or configureId will be called.
 	 */
 	protected void configureId(StringBuilder sb, FieldType fieldType, List<String> statementsBefore,
@@ -379,7 +379,16 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	}
 
 	public void appendEscapedEntityName(StringBuilder sb, String name) {
-		sb.append('`').append(name).append('`');
+		sb.append('`');
+		int dotPos = name.indexOf('.');
+		if (0 < dotPos) {
+			sb.append(name.substring(0, dotPos));
+			sb.append('`').append('.').append('`');
+			sb.append(name.substring(1 + dotPos));
+		} else {
+			sb.append('`').append(name).append('`');
+		}
+		sb.append('`');
 	}
 
 	public String generateIdSequenceName(String tableName, FieldType idFieldType) {
