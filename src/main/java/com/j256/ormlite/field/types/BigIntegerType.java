@@ -1,12 +1,11 @@
 package com.j256.ormlite.field.types;
 
-import java.math.BigInteger;
-import java.sql.SQLException;
-
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
+import java.math.BigInteger;
+import java.sql.SQLException;
 
 /**
  * Type that persists a {@link BigInteger} object.
@@ -67,7 +66,7 @@ public class BigIntegerType extends BaseDataType {
 
 	@Override
 	public Object moveToNextValue(Object currentValue) {
-		BigInteger oneBigInteger = new BigInteger("1");
+		BigInteger oneBigInteger = BigInteger.ONE;
 		if (currentValue == null) {
 			return oneBigInteger;
 		} else {
