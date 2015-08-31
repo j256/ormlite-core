@@ -189,7 +189,7 @@
 						</goals>
 						<configuration>
 							<showPackage>false</showPackage>
-							<additionalparam>-tag inheritDoc:X</additionalparam>
+							<additionalparam>-tag inheritDoc:X -Xdoclint:none</additionalparam>
 						</configuration>
 					</execution>
 				</executions>
