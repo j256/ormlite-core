@@ -81,6 +81,11 @@ public class BigIntegerType extends BaseDataType {
 	}
 
 	@Override
+	public Object convertIdNumber(Number number) {
+		return (BigInteger) number;
+	}
+
+	@Override
 	public boolean isEscapedValue() {
 		return false;
 	}
