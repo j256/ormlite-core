@@ -1,4 +1,4 @@
-package com.j256.ormlite.field.types;
+  package com.j256.ormlite.field.types;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
@@ -82,7 +82,7 @@ public class BigIntegerType extends BaseDataType {
 
 	@Override
 	public Object convertIdNumber(Number number) {
-		return (BigInteger) number;
+		return number;
 	}
 
 	@Override
