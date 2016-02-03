@@ -851,7 +851,7 @@ results.  It is particularly useful if you are repositioning a database cursor e
 <dd>
 <p><em>WARNING:</em> This method is for advanced users only. It is only to support the <code>setAutoCommit(conn, boolean)</code>
 and other methods below. Chances are you should be using the <code>TransactionManager</code> class&rsquo; <code>callInTransaction(Callable)</code>
-method instead f this method unless you know what you are doing.
+method instead of this method unless you know what you are doing.
 </p>
 <p>This allocates a connection for this specific thread that will be used in all other DAO operations. The thread
 <em>must</em> call <code>endThreadConnection(conn)</code> once it is done with the connection. It is highly recommended that a
