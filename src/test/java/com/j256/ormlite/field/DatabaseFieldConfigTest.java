@@ -56,6 +56,11 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 		config.setWidth(width);
 		assertEquals(width, config.getWidth());
 
+        assertEquals(0, config.getSince());
+        int since = 21312312;
+        config.setSince(since);
+        assertEquals(since, config.getSince());
+
 		assertFalse(config.isId());
 		config.setId(true);
 		assertTrue(config.isId());

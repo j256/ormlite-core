@@ -104,6 +104,7 @@ public class DatabaseFieldConfigLoader {
 	private static final String FIELD_NAME_VERSION = "version";
 	private static final String FIELD_NAME_FOREIGN_COLUMN_NAME = "foreignColumnName";
 	private static final String FIELD_NAME_READ_ONLY = "readOnly";
+	private static final String FIELD_NAME_SINCE = "since";
 
 	private static final String FIELD_NAME_FOREIGN_COLLECTION = "foreignCollection";
 	private static final String FIELD_NAME_FOREIGN_COLLECTION_EAGER = "foreignCollectionEager";
@@ -255,6 +256,10 @@ public class DatabaseFieldConfigLoader {
 			writer.append(FIELD_NAME_READ_ONLY).append('=').append("true");
 			writer.newLine();
 		}
+        if (config.getSince() != 0) {
+            writer.append(FIELD_NAME_SINCE).append('=').append(Integer.toString(config.getSince()));
+            writer.newLine();
+        }
 
 		/*
 		 * Foreign collection settings:
@@ -398,7 +403,9 @@ public class DatabaseFieldConfigLoader {
 			config.setForeignColumnName(value);
 		} else if (field.equals(FIELD_NAME_READ_ONLY)) {
 			config.setReadOnly(Boolean.parseBoolean(value));
-		}
+		} else if (field.equals(FIELD_NAME_SINCE)) {
+            config.setSince(Integer.parseInt(value));
+        }
 		/**
 		 * foreign collection field information
 		 */

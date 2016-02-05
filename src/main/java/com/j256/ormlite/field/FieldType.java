@@ -862,6 +862,13 @@ public class FieldType {
 		return fieldConfig.isReadOnly();
 	}
 
+    /**
+     * Call through to {@link DatabaseFieldConfig#getSince()}
+     */
+    public int getSince() {
+        return fieldConfig.getSince();
+    }
+
 	/**
 	 * Return the value of field in the data argument if it is not the default value for the class. If it is the default
 	 * then null is returned.
