@@ -41,6 +41,7 @@ public class TransactionManagerTest extends BaseCoreTest {
 		replay(connectionSource, conn, savePoint);
 		TransactionManager tm = new TransactionManager(connectionSource);
 		tm.callInTransaction(new Callable<Void>() {
+			@Override
 			public Void call() {
 				return null;
 			}
@@ -63,6 +64,7 @@ public class TransactionManagerTest extends BaseCoreTest {
 		replay(connectionSource, conn);
 		TransactionManager tm = new TransactionManager(connectionSource);
 		tm.callInTransaction(new Callable<Void>() {
+			@Override
 			public Void call() {
 				return null;
 			}
@@ -88,6 +90,7 @@ public class TransactionManagerTest extends BaseCoreTest {
 		TransactionManager tm = new TransactionManager(connectionSource);
 		try {
 			tm.callInTransaction(new Callable<Void>() {
+				@Override
 				public Void call() throws Exception {
 					throw new SQLException("you better roll back!!");
 				}
@@ -115,6 +118,7 @@ public class TransactionManagerTest extends BaseCoreTest {
 		TransactionManager tm = new TransactionManager(connectionSource);
 		try {
 			tm.callInTransaction(new Callable<Void>() {
+				@Override
 				public Void call() throws Exception {
 					throw new SQLException("you better roll back!!");
 				}
@@ -144,6 +148,7 @@ public class TransactionManagerTest extends BaseCoreTest {
 		TransactionManager tm = new TransactionManager(connectionSource);
 		try {
 			tm.callInTransaction(new Callable<Void>() {
+				@Override
 				public Void call() throws Exception {
 					throw new Exception("you better roll back!!");
 				}
@@ -173,6 +178,7 @@ public class TransactionManagerTest extends BaseCoreTest {
 		replay(connectionSource, conn, savePoint);
 		TransactionManager tm = new TransactionManager(connectionSource);
 		tm.callInTransaction(new Callable<Void>() {
+			@Override
 			public Void call() {
 				return null;
 			}
@@ -200,6 +206,7 @@ public class TransactionManagerTest extends BaseCoreTest {
 		replay(connectionSource, conn, savePoint);
 		TransactionManager tm = new TransactionManager(connectionSource);
 		tm.callInTransaction(new Callable<Void>() {
+			@Override
 			public Void call() {
 				return null;
 			}
@@ -272,6 +279,7 @@ public class TransactionManagerTest extends BaseCoreTest {
 		final TransactionManager mgr = new TransactionManager(connectionSource);
 		final Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		mgr.callInTransaction(new Callable<Void>() {
+			@Override
 			public Void call() throws Exception {
 				testTransactionManager(mgr, null, dao);
 				return null;
@@ -288,9 +296,11 @@ public class TransactionManagerTest extends BaseCoreTest {
 		final Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		try {
 			mgr.callInTransaction(new Callable<Void>() {
+				@Override
 				public Void call() throws Exception {
 					dao.create(new Foo());
 					mgr.callInTransaction(new Callable<Void>() {
+						@Override
 						public Void call() throws Exception {
 							dao.create(new Foo());
 							throw new SQLException("Exception ahoy!");
@@ -317,6 +327,7 @@ public class TransactionManagerTest extends BaseCoreTest {
 		try {
 			final int ret = 13431231;
 			int returned = mgr.callInTransaction(new Callable<Integer>() {
+				@Override
 				public Integer call() throws Exception {
 					// we delete it inside a transaction
 					assertEquals(1, fooDao.delete(foo1));
