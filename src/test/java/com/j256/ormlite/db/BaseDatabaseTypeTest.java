@@ -51,7 +51,7 @@ public class BaseDatabaseTypeTest extends BaseCoreTest {
 
 	@Test
 	public void testUppercase() {
-		assertEquals("İ", "i".toUpperCase(Locale.forLanguageTag("tr-TR")));
+		assertEquals("İ", "i".toUpperCase(new Locale("tr", "TR")));
 	}
 
 	private static class TestDatabaseType extends BaseDatabaseType {
