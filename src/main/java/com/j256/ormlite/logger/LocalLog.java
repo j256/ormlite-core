@@ -129,14 +129,17 @@ public class LocalLog implements Log {
 		}
 	}
 
+	@Override
 	public boolean isLevelEnabled(Level level) {
 		return this.level.isEnabled(level);
 	}
 
+	@Override
 	public void log(Level level, String msg) {
 		printMessage(level, msg, null);
 	}
 
+	@Override
 	public void log(Level level, String msg, Throwable throwable) {
 		printMessage(level, msg, throwable);
 	}
