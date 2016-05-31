@@ -37,26 +37,32 @@ public class H2DatabaseConnection implements DatabaseConnection {
 		this.connection = connection;
 	}
 
+	@Override
 	public boolean isAutoCommitSupported() {
 		return true;
 	}
 
+	@Override
 	public boolean isAutoCommit() throws SQLException {
 		return connection.getAutoCommit();
 	}
 
+	@Override
 	public void setAutoCommit(boolean autoCommit) throws SQLException {
 		connection.setAutoCommit(autoCommit);
 	}
 
+	@Override
 	public Savepoint setSavePoint(String name) throws SQLException {
 		return connection.setSavepoint(name);
 	}
 
+	@Override
 	public void commit(Savepoint savePoint) throws SQLException {
 		connection.commit();
 	}
 
+	@Override
 	public void rollback(Savepoint savePoint) throws SQLException {
 		if (savePoint == null) {
 			connection.rollback();
@@ -65,6 +71,7 @@ public class H2DatabaseConnection implements DatabaseConnection {
 		}
 	}
 
+	@Override
 	public int executeStatement(String statementStr, int resultFlags) throws SQLException {
 		if (resultFlags == DatabaseConnection.DEFAULT_RESULT_FLAGS) {
 			resultFlags = ResultSet.TYPE_FORWARD_ONLY;
@@ -74,6 +81,7 @@ public class H2DatabaseConnection implements DatabaseConnection {
 		return statement.getUpdateCount();
 	}
 
+	@Override
 	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argFieldTypes,
 			int resultFlags) throws SQLException {
 		PreparedStatement stmt;
@@ -85,6 +93,7 @@ public class H2DatabaseConnection implements DatabaseConnection {
 		return new H2CompiledStatement(stmt);
 	}
 
+	@Override
 	public int insert(String statement, Object[] args, FieldType[] argFieldTypes, GeneratedKeyHolder keyHolder)
 			throws SQLException {
 		PreparedStatement stmt;
@@ -110,16 +119,19 @@ public class H2DatabaseConnection implements DatabaseConnection {
 		return rowN;
 	}
 
+	@Override
 	public int update(String statement, Object[] args, FieldType[] argFieldTypes) throws SQLException {
 		PreparedStatement stmt = connection.prepareStatement(statement);
 		statementSetArgs(stmt, args, argFieldTypes);
 		return stmt.executeUpdate();
 	}
 
+	@Override
 	public int delete(String statement, Object[] args, FieldType[] argFieldTypes) throws SQLException {
 		return update(statement, args, argFieldTypes);
 	}
 
+	@Override
 	public <T> Object queryForOne(String statement, Object[] args, FieldType[] argFieldTypes,
 			GenericRowMapper<T> rowMapper, ObjectCache objectCache) throws SQLException {
 		PreparedStatement stmt =
@@ -141,10 +153,12 @@ public class H2DatabaseConnection implements DatabaseConnection {
 		}
 	}
 
+	@Override
 	public long queryForLong(String statement) throws SQLException {
 		return queryForLong(statement, new Object[0], new FieldType[0]);
 	}
 
+	@Override
 	public long queryForLong(String statement, Object[] args, FieldType[] argFieldTypes) throws SQLException {
 		// don't care about the object cache here
 		Object result = queryForOne(statement, args, argFieldTypes, longWrapper, null);
@@ -157,6 +171,7 @@ public class H2DatabaseConnection implements DatabaseConnection {
 		}
 	}
 
+	@Override
 	public void close() throws IOException {
 		try {
 			connection.close();
@@ -165,14 +180,17 @@ public class H2DatabaseConnection implements DatabaseConnection {
 		}
 	}
 
+	@Override
 	public void closeQuietly() {
 		IOUtils.closeQuietly(this);
 	}
 
+	@Override
 	public boolean isClosed() throws SQLException {
 		return connection.isClosed();
 	}
 
+	@Override
 	public boolean isTableExists(String tableName) throws SQLException {
 		DatabaseMetaData metaData = connection.getMetaData();
 		ResultSet results = null;
@@ -228,6 +246,7 @@ public class H2DatabaseConnection implements DatabaseConnection {
 	}
 
 	private static class OneLongWrapper implements GenericRowMapper<Long> {
+		@Override
 		public Long mapRow(DatabaseResults rs) throws SQLException {
 			// maps the first column (sql #1)
 			return rs.getLong(0);

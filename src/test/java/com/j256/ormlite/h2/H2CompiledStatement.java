@@ -24,27 +24,33 @@ public class H2CompiledStatement implements CompiledStatement {
 		this.preparedStatement = preparedStatement;
 	}
 
+	@Override
 	public int getColumnCount() throws SQLException {
 		return preparedStatement.getMetaData().getColumnCount();
 	}
 
+	@Override
 	public String getColumnName(int column) throws SQLException {
 		return preparedStatement.getMetaData().getColumnName(column + 1);
 	}
 
+	@Override
 	public int runUpdate() throws SQLException {
 		return preparedStatement.executeUpdate();
 	}
 
+	@Override
 	public DatabaseResults runQuery(ObjectCache objectCache) throws SQLException {
 		return new H2DatabaseResults(preparedStatement.executeQuery(), objectCache);
 	}
 
+	@Override
 	public int runExecute() throws SQLException {
 		preparedStatement.execute();
 		return preparedStatement.getUpdateCount();
 	}
 
+	@Override
 	public void close() throws IOException {
 		try {
 			preparedStatement.close();
@@ -53,14 +59,17 @@ public class H2CompiledStatement implements CompiledStatement {
 		}
 	}
 
+	@Override
 	public void closeQuietly() {
 		IOUtils.closeQuietly(this);
 	}
 
+	@Override
 	public void cancel() throws SQLException {
 		preparedStatement.cancel();
 	}
 
+	@Override
 	public void setObject(int parameterIndex, Object obj, SqlType sqlType) throws SQLException {
 		if (obj == null) {
 			preparedStatement.setNull(parameterIndex + 1, sqlTypeToJdbcInt(sqlType));
@@ -69,10 +78,12 @@ public class H2CompiledStatement implements CompiledStatement {
 		}
 	}
 
+	@Override
 	public void setMaxRows(int max) throws SQLException {
 		preparedStatement.setMaxRows(max);
 	}
 
+	@Override
 	public void setQueryTimeout(long millis) throws SQLException {
 		preparedStatement.setQueryTimeout(Long.valueOf(millis).intValue() / 1000);
 	}

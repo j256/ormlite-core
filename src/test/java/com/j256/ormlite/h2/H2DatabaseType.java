@@ -20,6 +20,7 @@ public class H2DatabaseType extends BaseDatabaseType {
 		setDriver(DriverManager.getDriver(DATABASE_URL));
 	}
 
+	@Override
 	public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 		return dbTypePart.equals("h2");
 	}
@@ -29,6 +30,7 @@ public class H2DatabaseType extends BaseDatabaseType {
 		return "org.h2.Driver";
 	}
 
+	@Override
 	public String getDatabaseName() {
 		return "h2";
 	}

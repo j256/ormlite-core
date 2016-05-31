@@ -31,6 +31,7 @@ public class H2ConnectionSource implements ConnectionSource {
 		this.databaseUrl = databaseUrl;
 	}
 
+	@Override
 	public void close() throws IOException {
 		if (connection != null) {
 			connection.close();
@@ -38,14 +39,17 @@ public class H2ConnectionSource implements ConnectionSource {
 		}
 	}
 
+	@Override
 	public void closeQuietly() {
 		IOUtils.closeQuietly(this);
 	}
 
+	@Override
 	public DatabaseConnection getReadOnlyConnection() throws SQLException {
 		return getReadWriteConnection();
 	}
 
+	@Override
 	public DatabaseConnection getReadWriteConnection() throws SQLException {
 		if (connection == null) {
 			connection = new H2DatabaseConnection(DriverManager.getConnection(databaseUrl));
@@ -56,15 +60,18 @@ public class H2ConnectionSource implements ConnectionSource {
 		return connection;
 	}
 
+	@Override
 	public void releaseConnection(DatabaseConnection connection) {
 		// noop right now
 	}
 
+	@Override
 	public boolean saveSpecialConnection(DatabaseConnection connection) {
 		// noop since this is a single connection source
 		return true;
 	}
 
+	@Override
 	public void clearSpecialConnection(DatabaseConnection connection) {
 		// noop since this is a single connection source
 	}
@@ -73,18 +80,22 @@ public class H2ConnectionSource implements ConnectionSource {
 		this.databaseType = databaseType;
 	}
 
+	@Override
 	public DatabaseType getDatabaseType() {
 		return databaseType;
 	}
 
+	@Override
 	public DatabaseConnection getSpecialConnection() {
 		return null;
 	}
 
+	@Override
 	public boolean isOpen() {
 		return connection != null;
 	}
 
+	@Override
 	public boolean isSingleConnection() {
 		return true;
 	}
