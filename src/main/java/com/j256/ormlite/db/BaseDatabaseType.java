@@ -36,6 +36,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	 */
 	protected abstract String getDriverClassName();
 
+	@Override
 	public void loadDriver() throws SQLException {
 		String className = getDriverClassName();
 		if (className != null) {
@@ -49,10 +50,12 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		}
 	}
 
+	@Override
 	public void setDriver(Driver driver) {
 		this.driver = driver;
 	}
 
+	@Override
 	public void appendColumnArg(String tableName, StringBuilder sb, FieldType fieldType, List<String> additionalArgs,
 			List<String> statementsBefore, List<String> statementsAfter, List<String> queriesAfter)
 					throws SQLException {
@@ -322,6 +325,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		// default is noop since we do it at the end in appendPrimaryKeys()
 	}
 
+	@Override
 	public void addPrimaryKeySql(FieldType[] fieldTypes, List<String> additionalArgs, List<String> statementsBefore,
 			List<String> statementsAfter, List<String> queriesAfter) {
 		StringBuilder sb = null;
@@ -352,6 +356,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		return true;
 	}
 
+	@Override
 	public void addUniqueComboSql(FieldType[] fieldTypes, List<String> additionalArgs, List<String> statementsBefore,
 			List<String> statementsAfter, List<String> queriesAfter) {
 		StringBuilder sb = null;
@@ -372,14 +377,17 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		}
 	}
 
+	@Override
 	public void dropColumnArg(FieldType fieldType, List<String> statementsBefore, List<String> statementsAfter) {
 		// by default this is a noop
 	}
 
+	@Override
 	public void appendEscapedWord(StringBuilder sb, String word) {
 		sb.append('\'').append(word).append('\'');
 	}
 
+	@Override
 	public void appendEscapedEntityName(StringBuilder sb, String name) {
 		sb.append('`');
 		int dotPos = name.indexOf('.');
@@ -393,6 +401,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		sb.append('`');
 	}
 
+	@Override
 	public String generateIdSequenceName(String tableName, FieldType idFieldType) {
 		String name = tableName + DEFAULT_SEQUENCE_SUFFIX;
 		if (isEntityNamesMustBeUpCase()) {
@@ -402,72 +411,89 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		}
 	}
 
+	@Override
 	public String getCommentLinePrefix() {
 		return "-- ";
 	}
 
+	@Override
 	public DataPersister getDataPersister(DataPersister defaultPersister, FieldType fieldType) {
 		// default is noop
 		return defaultPersister;
 	}
 
+	@Override
 	public FieldConverter getFieldConverter(DataPersister dataPersister, FieldType fieldType) {
 		// default is to use the dataPersister itself
 		return dataPersister;
 	}
 
+	@Override
 	public boolean isIdSequenceNeeded() {
 		return false;
 	}
 
+	@Override
 	public boolean isVarcharFieldWidthSupported() {
 		return true;
 	}
 
+	@Override
 	public boolean isLimitSqlSupported() {
 		return true;
 	}
 
+	@Override
 	public boolean isOffsetSqlSupported() {
 		return true;
 	}
 
+	@Override
 	public boolean isOffsetLimitArgument() {
 		return false;
 	}
 
+	@Override
 	public boolean isLimitAfterSelect() {
 		return false;
 	}
 
+	@Override
 	public void appendLimitValue(StringBuilder sb, long limit, Long offset) {
 		sb.append("LIMIT ").append(limit).append(' ');
 	}
 
+	@Override
 	public void appendOffsetValue(StringBuilder sb, long offset) {
 		sb.append("OFFSET ").append(offset).append(' ');
 	}
 
+	@Override
 	public void appendSelectNextValFromSequence(StringBuilder sb, String sequenceName) {
 		// noop by default.
 	}
 
+	@Override
 	public void appendCreateTableSuffix(StringBuilder sb) {
 		// noop by default.
 	}
 
+	@Override
 	public boolean isCreateTableReturnsZero() {
 		return true;
 	}
 
+	@Override
 	public boolean isCreateTableReturnsNegative() {
 		return false;
 	}
 
+	@Override
 	public boolean isEntityNamesMustBeUpCase() {
 		return false;
 	}
 
+	@Override
 	public String upCaseEntityName(String entityName) {
 		/*
 		 * We are forcing the ENGLISH locale because of locale capitalizaton issues. In a couple of languages, the
@@ -477,34 +503,42 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		return entityName.toUpperCase(Locale.ENGLISH);
 	}
 
+	@Override
 	public boolean isNestedSavePointsSupported() {
 		return true;
 	}
 
+	@Override
 	public String getPingStatement() {
 		return "SELECT 1";
 	}
 
+	@Override
 	public boolean isBatchUseTransaction() {
 		return false;
 	}
 
+	@Override
 	public boolean isTruncateSupported() {
 		return false;
 	}
 
+	@Override
 	public boolean isCreateIfNotExistsSupported() {
 		return false;
 	}
 
+	@Override
 	public boolean isCreateIndexIfNotExistsSupported() {
 		return isCreateIfNotExistsSupported();
 	}
 
+	@Override
 	public boolean isSelectSequenceBeforeInsert() {
 		return false;
 	}
 
+	@Override
 	public boolean isAllowGeneratedIdInsertSupported() {
 		return true;
 	}
@@ -513,12 +547,14 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	 * @throws SQLException
 	 *             for sub classes.
 	 */
+	@Override
 	public <T> DatabaseTableConfig<T> extractDatabaseTableConfig(ConnectionSource connectionSource, Class<T> clazz)
 			throws SQLException {
 		// default is no default extractor
 		return null;
 	}
 
+	@Override
 	public void appendInsertNoColumns(StringBuilder sb) {
 		sb.append("() VALUES ()");
 	}
@@ -548,10 +584,12 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	 * Conversion to/from the Boolean Java field as a number because some databases like the true/false.
 	 */
 	protected static class BooleanNumberFieldConverter extends BaseFieldConverter {
+		@Override
 		public SqlType getSqlType() {
 			return SqlType.BOOLEAN;
 		}
 
+		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			boolean bool = (boolean) Boolean.parseBoolean(defaultStr);
 			return (bool ? Byte.valueOf((byte) 1) : Byte.valueOf((byte) 0));
@@ -563,6 +601,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 			return (bool ? Byte.valueOf((byte) 1) : Byte.valueOf((byte) 0));
 		}
 
+		@Override
 		public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			return results.getByte(columnPos);
 		}
@@ -573,6 +612,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 			return (arg == 1 ? (Boolean) true : (Boolean) false);
 		}
 
+		@Override
 		public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) {
 			return sqlArgToJava(fieldType, Byte.parseByte(stringValue), columnPos);
 		}
