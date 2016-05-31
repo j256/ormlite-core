@@ -20,6 +20,7 @@ public class RawRowMapperImpl<T, ID> implements RawRowMapper<T> {
 		this.tableInfo = tableInfo;
 	}
 
+	@Override
 	public T mapRow(String[] columnNames, String[] resultColumns) throws SQLException {
 		// create our object
 		T rowObj = tableInfo.createObject();

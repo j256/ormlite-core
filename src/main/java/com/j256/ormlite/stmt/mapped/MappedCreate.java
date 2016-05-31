@@ -261,6 +261,7 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 			return key;
 		}
 
+		@Override
 		public void addKey(Number key) throws SQLException {
 			if (this.key == null) {
 				this.key = key;

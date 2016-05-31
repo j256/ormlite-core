@@ -36,14 +36,17 @@ public class RawResultsImpl<T> implements GenericRawResults<T> {
 		this.columnNames = iterator.getRawResults().getColumnNames();
 	}
 
+	@Override
 	public int getNumberColumns() {
 		return columnNames.length;
 	}
 
+	@Override
 	public String[] getColumnNames() {
 		return columnNames;
 	}
 
+	@Override
 	public List<T> getResults() throws SQLException {
 		List<T> results = new ArrayList<T>();
 		try {
@@ -56,6 +59,7 @@ public class RawResultsImpl<T> implements GenericRawResults<T> {
 		}
 	}
 
+	@Override
 	public T getFirstResult() throws SQLException {
 		try {
 			if (iterator.hasNextThrow()) {
@@ -68,14 +72,17 @@ public class RawResultsImpl<T> implements GenericRawResults<T> {
 		}
 	}
 
+	@Override
 	public CloseableIterator<T> iterator() {
 		return iterator;
 	}
 
+	@Override
 	public CloseableIterator<T> closeableIterator() {
 		return iterator;
 	}
 
+	@Override
 	public void close() throws IOException {
 		if (iterator != null) {
 			iterator.close();

@@ -32,8 +32,10 @@ abstract class BaseComparison implements Comparison {
 		this.value = value;
 	}
 
+	@Override
 	public abstract void appendOperation(StringBuilder sb);
 
+	@Override
 	public void appendSql(DatabaseType databaseType, String tableName, StringBuilder sb, List<ArgumentHolder> argList)
 			throws SQLException {
 		if (tableName != null) {
@@ -47,10 +49,12 @@ abstract class BaseComparison implements Comparison {
 		appendValue(databaseType, sb, argList);
 	}
 
+	@Override
 	public String getColumnName() {
 		return columnName;
 	}
 
+	@Override
 	public void appendValue(DatabaseType databaseType, StringBuilder sb, List<ArgumentHolder> argList)
 			throws SQLException {
 		appendArgOrValue(databaseType, fieldType, sb, argList, value);

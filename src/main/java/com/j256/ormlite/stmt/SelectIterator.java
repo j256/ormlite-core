@@ -95,6 +95,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 	 * @throws IllegalStateException
 	 *             If there was a problem getting more results via SQL.
 	 */
+	@Override
 	public boolean hasNext() {
 		try {
 			return hasNextThrow();
@@ -106,6 +107,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 		}
 	}
 
+	@Override
 	public T first() throws SQLException {
 		if (closed) {
 			return null;
@@ -118,6 +120,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 		}
 	}
 
+	@Override
 	public T previous() throws SQLException {
 		if (closed) {
 			return null;
@@ -130,6 +133,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 		}
 	}
 
+	@Override
 	public T current() throws SQLException {
 		if (closed) {
 			return null;
@@ -141,6 +145,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 		}
 	}
 
+	@Override
 	public T nextThrow() throws SQLException {
 		if (closed) {
 			return null;
@@ -169,6 +174,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 	 * @throws IllegalStateException
 	 *             If there was a problem extracting the object from SQL.
 	 */
+	@Override
 	public T next() {
 		SQLException sqlException = null;
 		try {
@@ -185,6 +191,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 		throw new IllegalStateException("Could not get next result for " + dataClass, sqlException);
 	}
 
+	@Override
 	public T moveRelative(int offset) throws SQLException {
 		if (closed) {
 			return null;
@@ -228,6 +235,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 	 * @throws IllegalStateException
 	 *             If there was no previous next() call or if delete() throws a SQLException (set as the cause).
 	 */
+	@Override
 	public void remove() {
 		try {
 			removeThrow();
@@ -238,6 +246,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 		}
 	}
 
+	@Override
 	public void close() throws IOException {
 		if (!closed) {
 			compiledStmt.close();
@@ -254,14 +263,17 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 		}
 	}
 
+	@Override
 	public void closeQuietly() {
 		IOUtils.closeQuietly(this);
 	}
 
+	@Override
 	public DatabaseResults getRawResults() {
 		return results;
 	}
 
+	@Override
 	public void moveToNext() {
 		last = null;
 		first = false;

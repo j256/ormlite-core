@@ -37,10 +37,12 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 		this.type = type;
 	}
 
+	@Override
 	public CompiledStatement compile(DatabaseConnection databaseConnection, StatementType type) throws SQLException {
 		return compile(databaseConnection, type, DatabaseConnection.DEFAULT_RESULT_FLAGS);
 	}
 
+	@Override
 	public CompiledStatement compile(DatabaseConnection databaseConnection, StatementType type, int resultFlags)
 			throws SQLException {
 		if (this.type != type) {
@@ -53,14 +55,17 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 		return assignStatementArguments(stmt);
 	}
 
+	@Override
 	public String getStatement() {
 		return statement;
 	}
 
+	@Override
 	public StatementType getType() {
 		return type;
 	}
 
+	@Override
 	public void setArgumentHolderValue(int index, Object value) throws SQLException {
 		if (index < 0) {
 			throw new SQLException("argument holder index " + index + " must be >= 0");

@@ -33,6 +33,7 @@ public abstract class BaseArgumentHolder implements ArgumentHolder {
 	 */
 	protected abstract Object getValue();
 
+	@Override
 	public abstract void setValue(Object value);
 
 	/**
@@ -40,10 +41,12 @@ public abstract class BaseArgumentHolder implements ArgumentHolder {
 	 */
 	protected abstract boolean isValueSet();
 
+	@Override
 	public String getColumnName() {
 		return columnName;
 	}
 
+	@Override
 	public void setMetaInfo(String columnName) {
 		if (this.columnName == null) {
 			// not set yet
@@ -56,6 +59,7 @@ public abstract class BaseArgumentHolder implements ArgumentHolder {
 		this.columnName = columnName;
 	}
 
+	@Override
 	public void setMetaInfo(FieldType fieldType) {
 		if (this.fieldType == null) {
 			// not set yet
@@ -68,11 +72,13 @@ public abstract class BaseArgumentHolder implements ArgumentHolder {
 		this.fieldType = fieldType;
 	}
 
+	@Override
 	public void setMetaInfo(String columnName, FieldType fieldType) {
 		setMetaInfo(columnName);
 		setMetaInfo(fieldType);
 	}
 
+	@Override
 	public Object getSqlArgValue() throws SQLException {
 		if (!isValueSet()) {
 			throw new SQLException("Column value has not been set for " + columnName);
@@ -90,10 +96,12 @@ public abstract class BaseArgumentHolder implements ArgumentHolder {
 		}
 	}
 
+	@Override
 	public FieldType getFieldType() {
 		return fieldType;
 	}
 
+	@Override
 	public SqlType getSqlType() {
 		return sqlType;
 	}

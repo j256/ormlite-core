@@ -30,6 +30,7 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 		this.resultsFieldTypes = resultsFieldTypes;
 	}
 
+	@Override
 	public T mapRow(DatabaseResults results) throws SQLException {
 		Map<String, Integer> colPosMap;
 		if (columnPositions == null) {

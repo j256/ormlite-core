@@ -52,6 +52,7 @@ public class ManyClause implements Clause, NeedsFutureClause {
 		this.operation = operation;
 	}
 
+	@Override
 	public void appendSql(DatabaseType databaseType, String tableName, StringBuilder sb,
 			List<ArgumentHolder> selectArgList) throws SQLException {
 		sb.append('(');
@@ -71,6 +72,7 @@ public class ManyClause implements Clause, NeedsFutureClause {
 		sb.append(") ");
 	}
 
+	@Override
 	public void setMissingClause(Clause right) {
 		second = right;
 	}

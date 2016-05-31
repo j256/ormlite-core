@@ -33,6 +33,7 @@ public class Not implements Clause, NeedsFutureClause {
 		setMissingClause(clause);
 	}
 
+	@Override
 	public void setMissingClause(Clause clause) {
 		if (this.comparison != null) {
 			throw new IllegalArgumentException("NOT operation already has a comparison set");
@@ -45,6 +46,7 @@ public class Not implements Clause, NeedsFutureClause {
 		}
 	}
 
+	@Override
 	public void appendSql(DatabaseType databaseType, String tableName, StringBuilder sb,
 			List<ArgumentHolder> selectArgList) throws SQLException {
 		if (comparison == null && exists == null) {

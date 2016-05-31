@@ -681,6 +681,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		}
 	}
 
+	@Override
 	public String[] mapRow(DatabaseResults results) throws SQLException {
 		int columnN = results.getColumnCount();
 		String[] result = new String[columnN];
@@ -734,6 +735,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			this.stringRowMapper = stringMapper;
 		}
 
+		@Override
 		public UO mapRow(DatabaseResults results) throws SQLException {
 			String[] stringResults = stringRowMapper.mapRow(results);
 			return mapper.mapRow(getColumnNames(results), stringResults);
@@ -762,6 +764,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			this.columnTypes = columnTypes;
 		}
 
+		@Override
 		public UO mapRow(DatabaseResults results) throws SQLException {
 			int columnN = results.getColumnCount();
 			Object[] objectResults = new Object[columnN];
@@ -795,6 +798,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			this.columnTypes = columnTypes;
 		}
 
+		@Override
 		public Object[] mapRow(DatabaseResults results) throws SQLException {
 			int columnN = results.getColumnCount();
 			Object[] result = new Object[columnN];
@@ -822,6 +826,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			this.mapper = mapper;
 		}
 
+		@Override
 		public UO mapRow(DatabaseResults results) throws SQLException {
 			return mapper.mapRow(results);
 		}
