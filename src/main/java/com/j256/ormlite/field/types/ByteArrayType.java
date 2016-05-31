@@ -33,7 +33,7 @@ public class ByteArrayType extends BaseDataType {
 
 	@Override
 	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
-		throw new SQLException("byte[] type cannot have default values");
+		return defaultStr.getBytes();
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class ByteArrayType extends BaseDataType {
 
 	@Override
 	public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) throws SQLException {
-		throw new SQLException("byte[] type cannot be converted from string to Java");
+		return stringValue.getBytes();
 	}
 
 	@Override
