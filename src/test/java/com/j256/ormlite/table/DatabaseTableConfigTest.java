@@ -255,9 +255,11 @@ public class DatabaseTableConfigTest {
 		public String getDriverClassName() {
 			return "foo.bar.baz";
 		}
+		@Override
 		public String getDatabaseName() {
 			return "fake";
 		}
+		@Override
 		public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 			return false;
 		}

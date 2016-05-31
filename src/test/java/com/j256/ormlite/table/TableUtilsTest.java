@@ -77,6 +77,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		};
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		testCreate(connectionSource, databaseType, 0, false, queryAfter, new Callable<Integer>() {
+			@Override
 			public Integer call() throws Exception {
 				return TableUtils.createTable(connectionSource, LocalFoo.class);
 			}
@@ -87,6 +88,7 @@ public class TableUtilsTest extends BaseCoreTest {
 	public void testCreateTableThrow() throws Exception {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		testCreate(connectionSource, databaseType, 1, true, null, new Callable<Integer>() {
+			@Override
 			public Integer call() throws Exception {
 				return TableUtils.createTable(connectionSource, LocalFoo.class);
 			}
@@ -97,6 +99,7 @@ public class TableUtilsTest extends BaseCoreTest {
 	public void testCreateTableAboveZero() throws Exception {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		testCreate(connectionSource, databaseType, 1, false, null, new Callable<Integer>() {
+			@Override
 			public Integer call() throws Exception {
 				return TableUtils.createTable(connectionSource, LocalFoo.class);
 			}
@@ -107,6 +110,7 @@ public class TableUtilsTest extends BaseCoreTest {
 	public void testCreateTableBelowZero() throws Exception {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		testCreate(connectionSource, databaseType, -1, false, null, new Callable<Integer>() {
+			@Override
 			public Integer call() throws Exception {
 				return TableUtils.createTable(connectionSource, LocalFoo.class);
 			}
@@ -117,6 +121,7 @@ public class TableUtilsTest extends BaseCoreTest {
 	public void testCreateTableTableConfig() throws Exception {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		testCreate(connectionSource, databaseType, 0, false, null, new Callable<Integer>() {
+			@Override
 			public Integer call() throws Exception {
 				return (int) TableUtils.createTable(connectionSource,
 						DatabaseTableConfig.fromClass(connectionSource, LocalFoo.class));
@@ -128,6 +133,7 @@ public class TableUtilsTest extends BaseCoreTest {
 	public void testDropTable() throws Exception {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		testDrop(connectionSource, 0, false, new Callable<Integer>() {
+			@Override
 			public Integer call() throws Exception {
 				return (int) TableUtils.dropTable(connectionSource, LocalFoo.class, false);
 			}
@@ -138,6 +144,7 @@ public class TableUtilsTest extends BaseCoreTest {
 	public void testDropTableThrow() throws Exception {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		testDrop(connectionSource, 0, true, new Callable<Integer>() {
+			@Override
 			public Integer call() throws Exception {
 				return (int) TableUtils.dropTable(connectionSource, LocalFoo.class, false);
 			}
@@ -148,6 +155,7 @@ public class TableUtilsTest extends BaseCoreTest {
 	public void testDropTableThrowIgnore() throws Exception {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		testDrop(connectionSource, 0, true, new Callable<Integer>() {
+			@Override
 			public Integer call() throws Exception {
 				return (int) TableUtils.dropTable(connectionSource, LocalFoo.class, true);
 			}
@@ -158,6 +166,7 @@ public class TableUtilsTest extends BaseCoreTest {
 	public void testDropTableNegRows() throws Exception {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		testDrop(connectionSource, -1, false, new Callable<Integer>() {
+			@Override
 			public Integer call() throws Exception {
 				return (int) TableUtils.dropTable(connectionSource, LocalFoo.class, false);
 			}
@@ -168,6 +177,7 @@ public class TableUtilsTest extends BaseCoreTest {
 	public void testDropTableTableConfig() throws Exception {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		testDrop(connectionSource, 0, false, new Callable<Integer>() {
+			@Override
 			public Integer call() throws Exception {
 				return (int) TableUtils.dropTable(connectionSource,
 						DatabaseTableConfig.fromClass(connectionSource, LocalFoo.class), false);
@@ -185,6 +195,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		expect(conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class), anyInt())).andAnswer(
 				new IAnswer<CompiledStatement>() {
 					private int stmtC = 0;
+					@Override
 					public CompiledStatement answer() {
 						Object[] args = EasyMock.getCurrentArguments();
 						assertNotNull(args);
@@ -230,6 +241,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		expect(conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class), anyInt())).andAnswer(
 				new IAnswer<CompiledStatement>() {
 					private int stmtC = 0;
+					@Override
 					public CompiledStatement answer() {
 						Object[] args = EasyMock.getCurrentArguments();
 						assertNotNull(args);
@@ -276,6 +288,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		expect(conn.compileStatement(isA(String.class), isA(StatementType.class), isA(FieldType[].class), anyInt())).andAnswer(
 				new IAnswer<CompiledStatement>() {
 					private int stmtC = 0;
+					@Override
 					public CompiledStatement answer() {
 						Object[] args = EasyMock.getCurrentArguments();
 						assertNotNull(args);
