@@ -80,10 +80,12 @@ public class BaseConnectionSourceTest extends BaseCoreTest {
 
 	private class OurConnectionSource extends BaseConnectionSource {
 
+		@Override
 		public DatabaseConnection getReadOnlyConnection() {
 			return getReadWriteConnection();
 		}
 
+		@Override
 		public DatabaseConnection getReadWriteConnection() {
 			DatabaseConnection conn = getSavedConnection();
 			if (conn == null) {
@@ -93,34 +95,42 @@ public class BaseConnectionSourceTest extends BaseCoreTest {
 			}
 		}
 
+		@Override
 		public void releaseConnection(DatabaseConnection connection) {
 			// noop
 		}
 
+		@Override
 		public boolean saveSpecialConnection(DatabaseConnection connection) throws SQLException {
 			return saveSpecial(connection);
 		}
 
+		@Override
 		public void clearSpecialConnection(DatabaseConnection connection) {
 			clearSpecial(connection, logger);
 		}
 
+		@Override
 		public void close() {
 			// noop
 		}
 
+		@Override
 		public void closeQuietly() {
 			// noop
 		}
 
+		@Override
 		public DatabaseType getDatabaseType() {
 			return databaseType;
 		}
 
+		@Override
 		public boolean isOpen() {
 			return true;
 		}
 
+		@Override
 		public boolean isSingleConnection() {
 			return true;
 		}

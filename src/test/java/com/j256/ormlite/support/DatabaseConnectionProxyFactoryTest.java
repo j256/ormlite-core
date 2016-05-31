@@ -31,6 +31,7 @@ public class DatabaseConnectionProxyFactoryTest extends BaseCoreTest {
 		 * instances of our connection proxy.
 		 */
 		H2ConnectionSource.setDatabaseConnectionProxyFactory(new DatabaseConnectionProxyFactory() {
+			@Override
 			public DatabaseConnection createProxy(DatabaseConnection realConnection) {
 				return new ConnectionProxy(realConnection);
 			}
