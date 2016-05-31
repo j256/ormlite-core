@@ -1065,6 +1065,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		GenericRawResults<Foo> results =
 				dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME + " FROM FOO",
 						new RawRowMapper<Foo>() {
+							@Override
 							public Foo mapRow(String[] columnNames, String[] resultColumns) {
 								assertEquals(2, columnNames.length);
 								assertEquals(2, resultColumns.length);
@@ -1091,6 +1092,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		try {
 			conn.close();
 			dao.queryRaw("SELECT * FROM FOO", new RawRowMapper<Foo>() {
+				@Override
 				public Foo mapRow(String[] columnNames, String[] resultColumns) {
 					return null;
 				}
@@ -1118,6 +1120,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		GenericRawResults<Foo> results =
 				dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME + " FROM FOO WHERE "
 						+ Foo.ID_COLUMN_NAME + " = ?", new RawRowMapper<Foo>() {
+					@Override
 					public Foo mapRow(String[] columnNames, String[] resultColumns) {
 						assertEquals(2, columnNames.length);
 						assertEquals(2, resultColumns.length);
@@ -1281,6 +1284,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 		// this should be none
 		dao.callBatchTasks(new Callable<Void>() {
+			@Override
 			public Void call() throws Exception {
 				assertEquals(1, dao.create(foo1));
 				return null;
@@ -1297,6 +1301,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 		// this should be none
 		dao.callBatchTasks(new Callable<Void>() {
+			@Override
 			public Void call() throws Exception {
 				throw new Exception("for the hell of it");
 			}
@@ -1831,10 +1836,12 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	 */
 	public static class ExampleH2Trigger implements Trigger {
 		static int callC = 0;
+		@Override
 		public void init(Connection conn, String schemaName, String triggerName, String tableName, boolean before,
 				int type) {
 			// noop
 		}
+		@Override
 		public void fire(Connection conn, Object[] oldRow, Object[] newRow) {
 			callC++;
 		}
@@ -2452,6 +2459,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 		final AtomicInteger changeCount = new AtomicInteger();
 		DaoObserver obverver = new DaoObserver() {
+			@Override
 			public void onChange() {
 				changeCount.incrementAndGet();
 			}
@@ -2538,6 +2546,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	}
 
 	private static class Mapper implements RawRowMapper<Foo> {
+		@Override
 		public Foo mapRow(String[] columnNames, String[] resultColumns) {
 			Foo foo = new Foo();
 			for (int i = 0; i < columnNames.length; i++) {
@@ -2552,6 +2561,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	}
 
 	private static class ResultsMapper implements DatabaseResultsMapper<Foo> {
+		@Override
 		public Foo mapRow(DatabaseResults databaseResults) throws SQLException {
 			Foo foo = new Foo();
 			String[] columnNames = databaseResults.getColumnNames();
@@ -2861,6 +2871,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 		final List<Foo> fooList = new ArrayList<Foo>();
 
+		@Override
 		public Foo createObject(Constructor<Foo> construcor, Class<Foo> dataClass) {
 			Foo foo = new Foo();
 			fooList.add(foo);

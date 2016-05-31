@@ -90,6 +90,7 @@ public class RawRowMapperTest extends BaseCoreTest {
 	}
 
 	private static class IntMapper implements RawRowMapper<Integer> {
+		@Override
 		public Integer mapRow(String[] columnNames, String[] resultColumns) {
 			// may be more than 1 because of the id
 			assertTrue(resultColumns.length >= 1);
@@ -99,6 +100,7 @@ public class RawRowMapperTest extends BaseCoreTest {
 	}
 
 	private static class FooMapper implements RawRowMapper<Foo> {
+		@Override
 		public Foo mapRow(String[] columnNames, String[] resultColumns) {
 			// may be more than 1 because of the id
 			assertTrue(resultColumns.length >= 1);

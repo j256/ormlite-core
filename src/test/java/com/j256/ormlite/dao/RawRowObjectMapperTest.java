@@ -41,6 +41,7 @@ public class RawRowObjectMapperTest extends BaseCoreTest {
 	}
 
 	private static class FooObjectArrayMapper implements RawRowObjectMapper<Foo> {
+		@Override
 		public Foo mapRow(String[] columnNames, DataType[] dataTypes, Object[] resultColumns) {
 			// may be more than 1 because of the id
 			assertTrue(resultColumns.length >= 2);

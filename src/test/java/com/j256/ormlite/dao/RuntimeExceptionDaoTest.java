@@ -302,6 +302,7 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		GenericRawResults<String[]> rawResults = dao.queryRaw("select * from foo");
 		assertEquals(1, rawResults.getResults().size());
 		GenericRawResults<Foo> mappedResults = dao.queryRaw("select * from foo", new RawRowMapper<Foo>() {
+			@Override
 			public Foo mapRow(String[] columnNames, String[] resultColumns) {
 				Foo fooResult = new Foo();
 				for (int i = 0; i < resultColumns.length; i++) {
@@ -320,6 +321,7 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		assertEquals(0, dao.updateRaw("update foo set val = 100 where id = ?", Integer.toString(foo.id + 1)));
 		final String someVal = "fpowejfpjfwe";
 		assertEquals(someVal, dao.callBatchTasks(new Callable<String>() {
+			@Override
 			public String call() {
 				return someVal;
 			}
@@ -356,6 +358,7 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		dao.rollBack(conn);
 		dao.endThreadConnection(conn);
 		ObjectFactory<Foo> objectFactory = new ObjectFactory<Foo>() {
+			@Override
 			public Foo createObject(Constructor<Foo> construcor, Class<Foo> dataClass) {
 				return new Foo();
 			}
