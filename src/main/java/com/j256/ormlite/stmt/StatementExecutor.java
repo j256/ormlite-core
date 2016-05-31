@@ -102,6 +102,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		CompiledStatement compiledStatement = preparedStmt.compile(databaseConnection, StatementType.SELECT);
 		DatabaseResults results = null;
 		try {
+			compiledStatement.setMaxRows(1);
 			results = compiledStatement.runQuery(objectCache);
 			if (results.first()) {
 				logger.debug("query-for-first of '{}' returned at least 1 result", preparedStmt.getStatement());
