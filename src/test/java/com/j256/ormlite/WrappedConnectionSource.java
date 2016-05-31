@@ -29,6 +29,7 @@ public class WrappedConnectionSource implements ConnectionSource {
 		this.cs = cs;
 	}
 
+	@Override
 	public DatabaseConnection getReadOnlyConnection() throws SQLException {
 		DatabaseConnection connection = cs.getReadOnlyConnection();
 		getReleaseCount.incrementAndGet();
@@ -39,6 +40,7 @@ public class WrappedConnectionSource implements ConnectionSource {
 		return wrapped.getDatabaseConnectionProxy();
 	}
 
+	@Override
 	public DatabaseConnection getReadWriteConnection() throws SQLException {
 		DatabaseConnection connection = cs.getReadWriteConnection();
 		getReleaseCount.incrementAndGet();
@@ -50,6 +52,7 @@ public class WrappedConnectionSource implements ConnectionSource {
 		return connection;
 	}
 
+	@Override
 	public void releaseConnection(DatabaseConnection connection) throws SQLException {
 		WrappedConnection wrapped = wrappedConnections.remove(connection);
 		if (wrapped == null) {
@@ -66,6 +69,7 @@ public class WrappedConnectionSource implements ConnectionSource {
 		// System.err.println("released wrapped " + wrapped.hashCode() + ", count = " + getReleaseCount);
 	}
 
+	@Override
 	public void close() throws IOException {
 		cs.close();
 		if (!isOkay()) {
@@ -77,6 +81,7 @@ public class WrappedConnectionSource implements ConnectionSource {
 		wrappedConnections.clear();
 	}
 
+	@Override
 	public void closeQuietly() {
 		IOUtils.closeQuietly(this);
 	}
@@ -113,26 +118,32 @@ public class WrappedConnectionSource implements ConnectionSource {
 		}
 	}
 
+	@Override
 	public boolean saveSpecialConnection(DatabaseConnection connection) throws SQLException {
 		return cs.saveSpecialConnection(connection);
 	}
 
+	@Override
 	public void clearSpecialConnection(DatabaseConnection connection) {
 		cs.clearSpecialConnection(connection);
 	}
 
+	@Override
 	public DatabaseConnection getSpecialConnection() {
 		return cs.getSpecialConnection();
 	}
 
+	@Override
 	public DatabaseType getDatabaseType() {
 		return cs.getDatabaseType();
 	}
 
+	@Override
 	public boolean isOpen() {
 		return cs.isOpen();
 	}
 
+	@Override
 	public boolean isSingleConnection() {
 		return cs.isSingleConnection();
 	}

@@ -22,6 +22,7 @@ public class WrappedDatabaseConnection implements WrappedConnection, InvocationH
 				Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] { DatabaseConnection.class }, this);
 	}
 
+	@Override
 	public DatabaseConnection getDatabaseConnectionProxy() {
 		return (DatabaseConnection) connectionProxy;
 	}
@@ -30,6 +31,7 @@ public class WrappedDatabaseConnection implements WrappedConnection, InvocationH
 		return connection;
 	}
 
+	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		// System.err.println("Running method on Connection." + method.getName());
 		try {
@@ -46,6 +48,7 @@ public class WrappedDatabaseConnection implements WrappedConnection, InvocationH
 		}
 	}
 
+	@Override
 	public boolean isOkay() {
 		for (WrappedCompiledStatement wrappedStatement : wrappedStatements) {
 			if (!wrappedStatement.isOkay()) {
@@ -55,6 +58,7 @@ public class WrappedDatabaseConnection implements WrappedConnection, InvocationH
 		return true;
 	}
 
+	@Override
 	public void close() {
 		wrappedStatements.clear();
 	}
@@ -76,6 +80,7 @@ public class WrappedDatabaseConnection implements WrappedConnection, InvocationH
 			return (CompiledStatement) statementProxy;
 		}
 
+		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			// System.err.println("Running method on CompiledStatement." + method.getName());
 			try {
