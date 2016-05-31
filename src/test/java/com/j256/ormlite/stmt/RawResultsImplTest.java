@@ -137,6 +137,7 @@ public class RawResultsImplTest extends BaseCoreTest {
 		GenericRawResults<Object> results =
 				dao.queryRaw("select id as " + idName + ", val as " + valName + " from foo",
 						new RawRowMapper<Object>() {
+							@Override
 							public Object mapRow(String[] columnNames, String[] resultColumns) {
 								assertEquals(idName, columnNames[0]);
 								assertEquals(valName, columnNames[1]);

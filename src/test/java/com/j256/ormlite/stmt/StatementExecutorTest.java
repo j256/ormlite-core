@@ -87,6 +87,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		replay(connectionSource, connection);
 		final AtomicBoolean called = new AtomicBoolean(false);
 		statementExec.callBatchTasks(connectionSource, new Callable<Void>() {
+			@Override
 			public Void call() {
 				called.set(true);
 				return null;
@@ -114,6 +115,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		replay(connectionSource, connection);
 		final AtomicBoolean called = new AtomicBoolean(false);
 		statementExec.callBatchTasks(connectionSource, new Callable<Void>() {
+			@Override
 			public Void call() {
 				called.set(true);
 				return null;
@@ -143,6 +145,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		replay(connectionSource, connection);
 		final AtomicBoolean called = new AtomicBoolean(false);
 		statementExec.callBatchTasks(connectionSource, new Callable<Void>() {
+			@Override
 			public Void call() {
 				called.set(true);
 				return null;
@@ -172,6 +175,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		replay(connectionSource, connection);
 		final AtomicBoolean called = new AtomicBoolean(false);
 		statementExec.callBatchTasks(connectionSource, new Callable<Void>() {
+			@Override
 			public Void call() {
 				called.set(true);
 				return null;
@@ -201,6 +205,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		replay(connectionSource, connection);
 		try {
 			statementExec.callBatchTasks(connectionSource, new Callable<Void>() {
+				@Override
 				public Void call() throws Exception {
 					throw new Exception("expected");
 				}
@@ -268,6 +273,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		DatabaseConnection conn = dao.startThreadConnection();
 		try {
 			dao.callBatchTasks(new Callable<Void>() {
+				@Override
 				public Void call() throws Exception {
 					assertEquals(1, dao.create(foo1));
 					assertNotNull(dao.queryForId(foo1.id));

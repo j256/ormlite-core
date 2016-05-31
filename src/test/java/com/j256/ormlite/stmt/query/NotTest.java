@@ -20,13 +20,17 @@ public class NotTest extends BaseCoreStmtTest {
 	public void test() {
 		Not not = new Not();
 		Clause clause = new Comparison() {
+			@Override
 			public void appendOperation(StringBuilder sb) {
 			}
+			@Override
 			public void appendValue(DatabaseType databaseType, StringBuilder sb, List<ArgumentHolder> argList) {
 			}
+			@Override
 			public String getColumnName() {
 				return null;
 			}
+			@Override
 			public void appendSql(DatabaseType databaseType, String tableName, StringBuilder sb,
 					List<ArgumentHolder> argList) {
 			}

@@ -1324,6 +1324,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 	/* ======================================================================================================== */
 
 	private static class LimitInline extends BaseDatabaseType {
+		@Override
 		public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 			return true;
 		}
@@ -1331,6 +1332,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		protected String getDriverClassName() {
 			return "foo.bar.baz";
 		}
+		@Override
 		public String getDatabaseName() {
 			return "zipper";
 		}

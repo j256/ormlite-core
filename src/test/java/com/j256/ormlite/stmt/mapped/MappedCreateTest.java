@@ -47,6 +47,7 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 		databaseConnection.insert(isA(String.class), isA(Object[].class), isA(FieldType[].class),
 				isA(GeneratedKeyHolder.class));
 		expectLastCall().andAnswer(new IAnswer<Object>() {
+			@Override
 			public Integer answer() throws Throwable {
 				GeneratedKeyHolder keyHolder = (GeneratedKeyHolder) (LastControl.getCurrentArguments())[3];
 				keyHolder.addKey(2);
@@ -274,6 +275,7 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 		expect(
 				conn.insert(isA(String.class), isA(Object[].class), isA(FieldType[].class),
 						isA(GeneratedKeyHolder.class))).andAnswer(new IAnswer<Integer>() {
+			@Override
 			public Integer answer() throws Throwable {
 				GeneratedKeyHolder holder = (GeneratedKeyHolder) getCurrentArguments()[3];
 				holder.addKey((Integer) 1);
@@ -293,6 +295,7 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 		expect(
 				conn.insert(isA(String.class), isA(Object[].class), isA(FieldType[].class),
 						isA(GeneratedKeyHolder.class))).andAnswer(new IAnswer<Integer>() {
+			@Override
 			public Integer answer() throws Throwable {
 				GeneratedKeyHolder holder = (GeneratedKeyHolder) getCurrentArguments()[3];
 				holder.addKey((Integer) 0);
@@ -460,9 +463,11 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 		public String getDriverClassName() {
 			return "foo.bar.baz";
 		}
+		@Override
 		public String getDatabaseName() {
 			return "fake";
 		}
+		@Override
 		public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 			return false;
 		}

@@ -194,7 +194,11 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 		replay(stmt, results, cs);
 		SelectIterator<Foo, Integer> iterator =
 				new SelectIterator<Foo, Integer>(Foo.class, null, null, cs, null, stmt, "statement", null);
-		iterator.hasNext();
+		try {
+			iterator.hasNext();
+		} finally {
+			iterator.close();
+		}
 	}
 
 	@Test(expected = IllegalStateException.class)
@@ -212,7 +216,11 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 		replay(stmt, mapper, cs, results);
 		SelectIterator<Foo, Integer> iterator =
 				new SelectIterator<Foo, Integer>(Foo.class, null, mapper, cs, null, stmt, "statement", null);
-		iterator.next();
+		try {
+			iterator.hasNext();
+		} finally {
+			iterator.close();
+		}
 	}
 
 	@Test(expected = IllegalStateException.class)
@@ -234,9 +242,13 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 		replay(stmt, dao, results, mapper, cs);
 		SelectIterator<Foo, Integer> iterator =
 				new SelectIterator<Foo, Integer>(Foo.class, dao, mapper, cs, null, stmt, "statement", null);
-		iterator.hasNext();
-		iterator.next();
-		iterator.remove();
+		try {
+			iterator.hasNext();
+			iterator.next();
+			iterator.remove();
+		} finally {
+			iterator.close();
+		}
 	}
 
 	@Test
