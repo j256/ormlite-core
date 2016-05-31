@@ -31,6 +31,7 @@ import com.j256.ormlite.field.DatabaseFieldConfig;
  */
 public class JavaxPersistenceImpl implements JavaxPersistenceConfigurer {
 
+	@Override
 	public DatabaseFieldConfig createFieldConfig(DatabaseType databaseType, Field field) {
 		Column columnAnnotation = field.getAnnotation(Column.class);
 		Basic basicAnnotation = field.getAnnotation(Basic.class);
@@ -122,6 +123,7 @@ public class JavaxPersistenceImpl implements JavaxPersistenceConfigurer {
 		return config;
 	}
 
+	@Override
 	public String getEntityName(Class<?> clazz) {
 		Entity entityAnnotation = clazz.getAnnotation(Entity.class);
 		Table tableAnnotation = clazz.getAnnotation(Table.class);
