@@ -3,6 +3,7 @@ package com.j256.ormlite.stmt;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -208,10 +209,9 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 		CompiledStatement stmt = createMock(CompiledStatement.class);
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(stmt.runQuery(null)).andReturn(results);
-		expect(results.first()).andReturn(true);
+		expect(results.first()).andThrow(new SQLException("some result problem"));
 		@SuppressWarnings("unchecked")
 		GenericRowMapper<Foo> mapper = (GenericRowMapper<Foo>) createMock(GenericRowMapper.class);
-		expect(mapper.mapRow(results)).andThrow(new SQLException("some result problem"));
 		stmt.close();
 		replay(stmt, mapper, cs, results);
 		SelectIterator<Foo, Integer> iterator =
@@ -221,6 +221,7 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 		} finally {
 			iterator.close();
 		}
+		verify(stmt, mapper, cs, results);
 	}
 
 	@Test(expected = IllegalStateException.class)
