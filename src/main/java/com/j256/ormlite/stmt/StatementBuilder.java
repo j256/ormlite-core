@@ -48,8 +48,9 @@ public abstract class StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * Returns a {@link Where} object that should be used to add SQL where clauses to the statement. This will also
-	 * reset the where object so you can use the same query builder with a different where statement.
+	 * Creates and returns a new {@link Where} object for this QueryBulder that can be used to add WHERE clauses to
+	 * the SQL statement.  Only one {@link Where} object can be associated with a QueryBuilder at a time and calling
+	 * this method again creates a new {@link Where} object and resets the where information for this QueryBuilder.
 	 */
 	public Where<T, ID> where() {
 		where = new Where<T, ID>(tableInfo, this, databaseType);
