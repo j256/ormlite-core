@@ -1,6 +1,7 @@
 package com.j256.ormlite.field.types;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.math.BigInteger;
@@ -24,15 +25,14 @@ public class BigIntegerTypeTest extends BaseTypeTest {
 	public void testBigInteger() throws Exception {
 		Class<LocalBigInteger> clazz = LocalBigInteger.class;
 		Dao<LocalBigInteger, Object> dao = createDao(clazz, true);
-		BigInteger val =
-				new BigInteger(
-						"324234234234234234234234246467647647463345345435345345345345345345345345345345345346356524234234");
+		BigInteger val = new BigInteger(
+				"324234234234234234234234246467647647463345345435345345345345345345345345345345345346356524234234");
 		String valStr = val.toString();
 		LocalBigInteger foo = new LocalBigInteger();
 		foo.bigInteger = val;
 		assertEquals(1, dao.create(foo));
-		testType(dao, foo, clazz, val, valStr, valStr, valStr, DataType.BIG_INTEGER, BIGINTEGER_COLUMN, false, false,
-				true, false, false, false, true, false);
+		testType(dao, foo, clazz, val, valStr, valStr, valStr, DataType.BIG_INTEGER, BIGINTEGER_COLUMN, true, true,
+				true, false, false, false, true, true);
 	}
 
 	@Test(expected = SQLException.class)
@@ -75,6 +75,17 @@ public class BigIntegerTypeTest extends BaseTypeTest {
 	}
 
 	@Test
+	public void testBigIntegerId() throws Exception {
+		Dao<BigIntegerId, BigInteger> dao = createDao(BigIntegerId.class, true);
+		BigIntegerId foo = new BigIntegerId();
+		dao.create(foo);
+		assertEquals(BigInteger.ONE, foo.id);
+		BigIntegerId result = dao.queryForId(BigInteger.ONE);
+		assertNotNull(result);
+		assertEquals(foo.id, result.id);
+	}
+
+	@Test
 	public void testCoverage() {
 		new BigIntegerType(SqlType.BIG_DECIMAL, new Class[0]);
 	}
@@ -102,5 +113,11 @@ public class BigIntegerTypeTest extends BaseTypeTest {
 		int id;
 		@DatabaseField(columnName = BIGINTEGER_COLUMN, defaultValue = DEFAULT_VALUE)
 		BigInteger bigInteger;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class BigIntegerId {
+		@DatabaseField(generatedId = true)
+		BigInteger id;
 	}
 }

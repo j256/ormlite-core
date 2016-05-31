@@ -39,8 +39,8 @@ public class BigIntegerType extends BaseDataType {
 		try {
 			return new BigInteger(defaultStr).toString();
 		} catch (IllegalArgumentException e) {
-			throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing default BigInteger string '"
-					+ defaultStr + "'", e);
+			throw SqlExceptionUtil.create(
+					"Problems with field " + fieldType + " parsing default BigInteger string '" + defaultStr + "'", e);
 		}
 	}
 
@@ -54,8 +54,8 @@ public class BigIntegerType extends BaseDataType {
 		try {
 			return new BigInteger((String) sqlArg);
 		} catch (IllegalArgumentException e) {
-			throw SqlExceptionUtil.create("Problems with column " + columnPos + " parsing BigInteger string '" + sqlArg
-					+ "'", e);
+			throw SqlExceptionUtil
+					.create("Problems with column " + columnPos + " parsing BigInteger string '" + sqlArg + "'", e);
 		}
 	}
 
@@ -66,12 +66,26 @@ public class BigIntegerType extends BaseDataType {
 	}
 
 	@Override
-	public int getDefaultWidth() {
-		return DEFAULT_WIDTH;
+	public Object moveToNextValue(Object currentValue) {
+		if (currentValue == null) {
+			return BigInteger.ONE;
+		} else {
+			return ((BigInteger) currentValue).add(BigInteger.ONE);
+		}
 	}
 
 	@Override
-	public boolean isAppropriateId() {
-		return false;
+	public Object convertIdNumber(Number number) {
+		return BigInteger.valueOf(number.longValue());
+	}
+
+	@Override
+	public boolean isValidGeneratedType() {
+		return true;
+	}
+
+	@Override
+	public boolean isValidForVersion() {
+		return true;
 	}
 }
