@@ -33,6 +33,7 @@ public class ReflectionDatabaseConnectionProxyFactory implements DatabaseConnect
 		}
 	}
 
+	@Override
 	public DatabaseConnection createProxy(DatabaseConnection realConnection) throws SQLException {
 		try {
 			return constructor.newInstance(realConnection);

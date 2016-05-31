@@ -28,6 +28,7 @@ public class DatabaseConnectionProxy implements DatabaseConnection {
 		this.proxy = proxy;
 	}
 
+	@Override
 	public boolean isAutoCommitSupported() throws SQLException {
 		if (proxy == null) {
 			return false;
@@ -36,6 +37,7 @@ public class DatabaseConnectionProxy implements DatabaseConnection {
 		}
 	}
 
+	@Override
 	public boolean isAutoCommit() throws SQLException {
 		if (proxy == null) {
 			return false;
@@ -44,12 +46,14 @@ public class DatabaseConnectionProxy implements DatabaseConnection {
 		}
 	}
 
+	@Override
 	public void setAutoCommit(boolean autoCommit) throws SQLException {
 		if (proxy != null) {
 			proxy.setAutoCommit(autoCommit);
 		}
 	}
 
+	@Override
 	public Savepoint setSavePoint(String name) throws SQLException {
 		if (proxy == null) {
 			return null;
@@ -58,18 +62,21 @@ public class DatabaseConnectionProxy implements DatabaseConnection {
 		}
 	}
 
+	@Override
 	public void commit(Savepoint savePoint) throws SQLException {
 		if (proxy != null) {
 			proxy.commit(savePoint);
 		}
 	}
 
+	@Override
 	public void rollback(Savepoint savePoint) throws SQLException {
 		if (proxy != null) {
 			proxy.rollback(savePoint);
 		}
 	}
 
+	@Override
 	public int executeStatement(String statementStr, int resultFlags) throws SQLException {
 		if (proxy == null) {
 			return 0;
@@ -78,6 +85,7 @@ public class DatabaseConnectionProxy implements DatabaseConnection {
 		}
 	}
 
+	@Override
 	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argFieldTypes,
 			int resultFlags) throws SQLException {
 		if (proxy == null) {
@@ -87,6 +95,7 @@ public class DatabaseConnectionProxy implements DatabaseConnection {
 		}
 	}
 
+	@Override
 	public int insert(String statement, Object[] args, FieldType[] argfieldTypes, GeneratedKeyHolder keyHolder)
 			throws SQLException {
 		if (proxy == null) {
@@ -96,6 +105,7 @@ public class DatabaseConnectionProxy implements DatabaseConnection {
 		}
 	}
 
+	@Override
 	public int update(String statement, Object[] args, FieldType[] argfieldTypes) throws SQLException {
 		if (proxy == null) {
 			return 0;
@@ -104,6 +114,7 @@ public class DatabaseConnectionProxy implements DatabaseConnection {
 		}
 	}
 
+	@Override
 	public int delete(String statement, Object[] args, FieldType[] argfieldTypes) throws SQLException {
 		if (proxy == null) {
 			return 0;
@@ -112,6 +123,7 @@ public class DatabaseConnectionProxy implements DatabaseConnection {
 		}
 	}
 
+	@Override
 	public <T> Object queryForOne(String statement, Object[] args, FieldType[] argfieldTypes,
 			GenericRowMapper<T> rowMapper, ObjectCache objectCache) throws SQLException {
 		if (proxy == null) {
@@ -121,6 +133,7 @@ public class DatabaseConnectionProxy implements DatabaseConnection {
 		}
 	}
 
+	@Override
 	public long queryForLong(String statement) throws SQLException {
 		if (proxy == null) {
 			return 0;
@@ -129,6 +142,7 @@ public class DatabaseConnectionProxy implements DatabaseConnection {
 		}
 	}
 
+	@Override
 	public long queryForLong(String statement, Object[] args, FieldType[] argFieldTypes) throws SQLException {
 		if (proxy == null) {
 			return 0;
@@ -137,18 +151,21 @@ public class DatabaseConnectionProxy implements DatabaseConnection {
 		}
 	}
 
+	@Override
 	public void close() throws IOException {
 		if (proxy != null) {
 			proxy.close();
 		}
 	}
 
+	@Override
 	public void closeQuietly() {
 		if (proxy != null) {
 			proxy.closeQuietly();
 		}
 	}
 
+	@Override
 	public boolean isClosed() throws SQLException {
 		if (proxy == null) {
 			return true;
@@ -157,6 +174,7 @@ public class DatabaseConnectionProxy implements DatabaseConnection {
 		}
 	}
 
+	@Override
 	public boolean isTableExists(String tableName) throws SQLException {
 		if (proxy == null) {
 			return false;
