@@ -626,7 +626,7 @@ public class DatabaseFieldConfig {
 		DatabaseFieldConfig config = new DatabaseFieldConfig();
 		config.fieldName = field.getName();
 		if (databaseType.isEntityNamesMustBeUpCase()) {
-			config.fieldName = config.fieldName.toUpperCase();
+			config.fieldName = databaseType.upCaseEntityName(config.fieldName);
 		}
 		config.columnName = valueIfNotBlank(databaseField.columnName());
 		config.dataType = databaseField.dataType();
@@ -778,6 +778,7 @@ public class DatabaseFieldConfig {
 		String name = field.getName();
 		String start = name.substring(0, 1);
 		if (locale == null) {
+			// NOTE: this is not an entity to be capitalized with the database type, we are using default locale here
 			start = start.toUpperCase();
 		} else {
 			start = start.toUpperCase(locale);

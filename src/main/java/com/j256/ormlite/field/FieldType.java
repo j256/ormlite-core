@@ -21,6 +21,8 @@ import com.j256.ormlite.dao.LazyForeignCollection;
 import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.types.VoidType;
+import com.j256.ormlite.logger.Logger;
+import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.stmt.mapped.MappedQueryForId;
 import com.j256.ormlite.support.ConnectionSource;
@@ -83,6 +85,8 @@ public class FieldType {
 	 */
 	private static final ThreadLocal<LevelCounters> threadLevelCounters = new ThreadLocal<LevelCounters>();
 
+	private static final Logger logger = LoggerFactory.getLogger(FieldType.class);
+
 	/**
 	 * You should use {@link FieldType#createFieldType} to instantiate one of these field if you have a {@link Field}.
 	 */
@@ -108,8 +112,8 @@ public class FieldType {
 				try {
 					method = persisterClass.getDeclaredMethod("getSingleton");
 				} catch (Exception e) {
-					throw SqlExceptionUtil.create("Could not find getSingleton static method on class "
-							+ persisterClass, e);
+					throw SqlExceptionUtil
+							.create("Could not find getSingleton static method on class " + persisterClass, e);
 				}
 				Object result;
 				try {
@@ -121,14 +125,14 @@ public class FieldType {
 					throw SqlExceptionUtil.create("Could not run getSingleton method on class " + persisterClass, e);
 				}
 				if (result == null) {
-					throw new SQLException("Static getSingleton method should not return null on class "
-							+ persisterClass);
+					throw new SQLException(
+							"Static getSingleton method should not return null on class " + persisterClass);
 				}
 				try {
 					dataPersister = (DataPersister) result;
 				} catch (Exception e) {
-					throw SqlExceptionUtil.create(
-							"Could not cast result of static getSingleton method to DataPersister from class "
+					throw SqlExceptionUtil
+							.create("Could not cast result of static getSingleton method to DataPersister from class "
 									+ persisterClass, e);
 				}
 			}
@@ -150,8 +154,8 @@ public class FieldType {
 		String defaultFieldName = field.getName();
 		if (fieldConfig.isForeign() || fieldConfig.isForeignAutoRefresh() || foreignColumnName != null) {
 			if (dataPersister != null && dataPersister.isPrimitive()) {
-				throw new IllegalArgumentException("Field " + this + " is a primitive class " + clazz
-						+ " but marked as foreign");
+				throw new IllegalArgumentException(
+						"Field " + this + " is a primitive class " + clazz + " but marked as foreign");
 			}
 			if (foreignColumnName == null) {
 				defaultFieldName = defaultFieldName + FOREIGN_ID_FIELD_SUFFIX;
@@ -198,16 +202,16 @@ public class FieldType {
 		this.fieldConfig = fieldConfig;
 		if (fieldConfig.isId()) {
 			if (fieldConfig.isGeneratedId() || fieldConfig.getGeneratedIdSequence() != null) {
-				throw new IllegalArgumentException("Must specify one of id, generatedId, and generatedIdSequence with "
-						+ field.getName());
+				throw new IllegalArgumentException(
+						"Must specify one of id, generatedId, and generatedIdSequence with " + field.getName());
 			}
 			this.isId = true;
 			this.isGeneratedId = false;
 			this.generatedIdSequence = null;
 		} else if (fieldConfig.isGeneratedId()) {
 			if (fieldConfig.getGeneratedIdSequence() != null) {
-				throw new IllegalArgumentException("Must specify one of id, generatedId, and generatedIdSequence with "
-						+ field.getName());
+				throw new IllegalArgumentException(
+						"Must specify one of id, generatedId, and generatedIdSequence with " + field.getName());
 			}
 			this.isId = true;
 			this.isGeneratedId = true;
@@ -221,7 +225,7 @@ public class FieldType {
 			this.isGeneratedId = true;
 			String seqName = fieldConfig.getGeneratedIdSequence();
 			if (databaseType.isEntityNamesMustBeUpCase()) {
-				seqName = seqName.toUpperCase();
+				seqName = databaseType.upCaseEntityName(seqName);
 			}
 			this.generatedIdSequence = seqName;
 		} else {
@@ -248,24 +252,24 @@ public class FieldType {
 			this.fieldSetMethod = null;
 		}
 		if (fieldConfig.isAllowGeneratedIdInsert() && !fieldConfig.isGeneratedId()) {
-			throw new IllegalArgumentException("Field " + field.getName()
-					+ " must be a generated-id if allowGeneratedIdInsert = true");
+			throw new IllegalArgumentException(
+					"Field " + field.getName() + " must be a generated-id if allowGeneratedIdInsert = true");
 		}
 		if (fieldConfig.isForeignAutoRefresh() && !fieldConfig.isForeign()) {
-			throw new IllegalArgumentException("Field " + field.getName()
-					+ " must have foreign = true if foreignAutoRefresh = true");
+			throw new IllegalArgumentException(
+					"Field " + field.getName() + " must have foreign = true if foreignAutoRefresh = true");
 		}
 		if (fieldConfig.isForeignAutoCreate() && !fieldConfig.isForeign()) {
-			throw new IllegalArgumentException("Field " + field.getName()
-					+ " must have foreign = true if foreignAutoCreate = true");
+			throw new IllegalArgumentException(
+					"Field " + field.getName() + " must have foreign = true if foreignAutoCreate = true");
 		}
 		if (fieldConfig.getForeignColumnName() != null && !fieldConfig.isForeign()) {
-			throw new IllegalArgumentException("Field " + field.getName()
-					+ " must have foreign = true if foreignColumnName is set");
+			throw new IllegalArgumentException(
+					"Field " + field.getName() + " must have foreign = true if foreignColumnName is set");
 		}
 		if (fieldConfig.isVersion() && (dataPersister == null || !dataPersister.isValidForVersion())) {
-			throw new IllegalArgumentException("Field " + field.getName()
-					+ " is not a valid type to be a version field");
+			throw new IllegalArgumentException(
+					"Field " + field.getName() + " is not a valid type to be a version field");
 		}
 		assignDataType(databaseType, dataPersister);
 	}
@@ -306,20 +310,19 @@ public class FieldType {
 			} else {
 				foreignIdField = foreignTableInfo.getFieldTypeByColumnName(foreignColumnName);
 				if (foreignIdField == null) {
-					throw new IllegalArgumentException("Foreign field " + fieldClass + " does not have field named '"
-							+ foreignColumnName + "'");
+					throw new IllegalArgumentException(
+							"Foreign field " + fieldClass + " does not have field named '" + foreignColumnName + "'");
 				}
 			}
 			@SuppressWarnings("unchecked")
-			MappedQueryForId<Object, Object> castMappedQueryForId =
-					(MappedQueryForId<Object, Object>) MappedQueryForId.build(databaseType, foreignTableInfo,
-							foreignIdField);
+			MappedQueryForId<Object, Object> castMappedQueryForId = (MappedQueryForId<Object, Object>) MappedQueryForId
+					.build(databaseType, foreignTableInfo, foreignIdField);
 			mappedQueryForId = castMappedQueryForId;
 			foreignFieldType = null;
 		} else if (fieldConfig.isForeign()) {
 			if (this.dataPersister != null && this.dataPersister.isPrimitive()) {
-				throw new IllegalArgumentException("Field " + this + " is a primitive class " + fieldClass
-						+ " but marked as foreign");
+				throw new IllegalArgumentException(
+						"Field " + this + " is a primitive class " + fieldClass + " but marked as foreign");
 			}
 			DatabaseTableConfig<?> tableConfig = fieldConfig.getForeignTableConfig();
 			if (tableConfig != null) {
@@ -342,9 +345,9 @@ public class FieldType {
 				throw new IllegalArgumentException("Foreign field " + fieldClass + " does not have id field");
 			}
 			if (isForeignAutoCreate() && !foreignIdField.isGeneratedId()) {
-				throw new IllegalArgumentException("Field " + field.getName()
-						+ ", if foreignAutoCreate = true then class " + fieldClass.getSimpleName()
-						+ " must have id field with generatedId = true");
+				throw new IllegalArgumentException(
+						"Field " + field.getName() + ", if foreignAutoCreate = true then class "
+								+ fieldClass.getSimpleName() + " must have id field with generatedId = true");
 			}
 			foreignFieldType = null;
 			mappedQueryForId = null;
@@ -503,7 +506,10 @@ public class FieldType {
 	/**
 	 * Assign to the data object the val corresponding to the fieldType.
 	 */
-	public void assignField(Object data, Object val, boolean parentObject, ObjectCache objectCache) throws SQLException {
+	public void assignField(Object data, Object val, boolean parentObject, ObjectCache objectCache)
+			throws SQLException {
+		logger.error("assiging from data {}, val {}: {}", (data == null ? "null" : data.getClass()),
+				(val == null ? "null" : val.getClass()), val);
 		// if this is a foreign object then val is the foreign object's id val
 		if (foreignIdField != null && val != null) {
 			// get the current field value which is the foreign-id
@@ -536,18 +542,18 @@ public class FieldType {
 			try {
 				field.set(data, val);
 			} catch (IllegalArgumentException e) {
-				throw SqlExceptionUtil.create("Could not assign object '" + val + "' of type " + val.getClass()
-						+ " to field " + this, e);
+				throw SqlExceptionUtil.create(
+						"Could not assign object '" + val + "' of type " + val.getClass() + " to field " + this, e);
 			} catch (IllegalAccessException e) {
-				throw SqlExceptionUtil.create("Could not assign object '" + val + "' of type " + val.getClass()
-						+ "' to field " + this, e);
+				throw SqlExceptionUtil.create(
+						"Could not assign object '" + val + "' of type " + val.getClass() + "' to field " + this, e);
 			}
 		} else {
 			try {
 				fieldSetMethod.invoke(data, val);
 			} catch (Exception e) {
-				throw SqlExceptionUtil.create("Could not call " + fieldSetMethod + " on object with '" + val + "' for "
-						+ this, e);
+				throw SqlExceptionUtil
+						.create("Could not call " + fieldSetMethod + " on object with '" + val + "' for " + this, e);
 			}
 		}
 	}
@@ -803,8 +809,8 @@ public class FieldType {
 			}
 		} else if (dataPersister.isPrimitive()) {
 			if (fieldConfig.isThrowIfNull() && results.wasNull(dbColumnPos)) {
-				throw new SQLException("Results value for primitive field '" + field.getName()
-						+ "' was an invalid null value");
+				throw new SQLException(
+						"Results value for primitive field '" + field.getName() + "' was an invalid null value");
 			}
 		} else if (!fieldConverter.isStreamType() && results.wasNull(dbColumnPos)) {
 			// we can't check if we have a null if this is a stream type

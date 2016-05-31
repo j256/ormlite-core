@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import com.j256.ormlite.misc.IOUtils;
@@ -97,9 +98,15 @@ public class LocalLog implements Log {
 			} else {
 				Level matchedLevel;
 				try {
+					// try default locale first
 					matchedLevel = Level.valueOf(levelName.toUpperCase());
-				} catch (IllegalArgumentException e) {
-					throw new IllegalArgumentException("Level '" + levelName + "' was not found", e);
+				} catch (IllegalArgumentException e1) {
+					try {
+						// then try english locale
+						matchedLevel = Level.valueOf(levelName.toUpperCase(Locale.ENGLISH));
+					} catch (IllegalArgumentException e2) {
+						throw new IllegalArgumentException("Level '" + levelName + "' was not found", e2);
+					}
 				}
 				level = matchedLevel;
 			}
@@ -150,8 +157,8 @@ public class LocalLog implements Log {
 			try {
 				levels = configureClassLevels(stream);
 			} catch (IOException e) {
-				System.err.println("IO exception reading the log properties file '" + LOCAL_LOG_PROPERTIES_FILE + "': "
-						+ e);
+				System.err.println(
+						"IO exception reading the log properties file '" + LOCAL_LOG_PROPERTIES_FILE + "': " + e);
 			} finally {
 				IOUtils.closeQuietly(stream);
 			}
@@ -208,6 +215,7 @@ public class LocalLog implements Log {
 	private static class PatternLevel {
 		Pattern pattern;
 		Level level;
+
 		public PatternLevel(Pattern pattern, Level level) {
 			this.pattern = pattern;
 			this.level = level;

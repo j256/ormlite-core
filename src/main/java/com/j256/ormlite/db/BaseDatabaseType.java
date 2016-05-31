@@ -3,6 +3,7 @@ package com.j256.ormlite.db;
 import java.sql.Driver;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Locale;
 
 import com.j256.ormlite.field.BaseFieldConverter;
 import com.j256.ormlite.field.DataPersister;
@@ -53,7 +54,8 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	}
 
 	public void appendColumnArg(String tableName, StringBuilder sb, FieldType fieldType, List<String> additionalArgs,
-			List<String> statementsBefore, List<String> statementsAfter, List<String> queriesAfter) throws SQLException {
+			List<String> statementsBefore, List<String> statementsAfter, List<String> queriesAfter)
+					throws SQLException {
 		appendEscapedEntityName(sb, fieldType.getColumnName());
 		sb.append(' ');
 		DataPersister dataPersister = fieldType.getDataPersister();
@@ -65,68 +67,68 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		}
 		switch (dataPersister.getSqlType()) {
 
-			case STRING :
+			case STRING:
 				appendStringType(sb, fieldType, fieldWidth);
 				break;
 
-			case LONG_STRING :
+			case LONG_STRING:
 				appendLongStringType(sb, fieldType, fieldWidth);
 				break;
 
-			case BOOLEAN :
+			case BOOLEAN:
 				appendBooleanType(sb, fieldType, fieldWidth);
 				break;
 
-			case DATE :
+			case DATE:
 				appendDateType(sb, fieldType, fieldWidth);
 				break;
 
-			case CHAR :
+			case CHAR:
 				appendCharType(sb, fieldType, fieldWidth);
 				break;
 
-			case BYTE :
+			case BYTE:
 				appendByteType(sb, fieldType, fieldWidth);
 				break;
 
-			case BYTE_ARRAY :
+			case BYTE_ARRAY:
 				appendByteArrayType(sb, fieldType, fieldWidth);
 				break;
 
-			case SHORT :
+			case SHORT:
 				appendShortType(sb, fieldType, fieldWidth);
 				break;
 
-			case INTEGER :
+			case INTEGER:
 				appendIntegerType(sb, fieldType, fieldWidth);
 				break;
 
-			case LONG :
+			case LONG:
 				appendLongType(sb, fieldType, fieldWidth);
 				break;
 
-			case FLOAT :
+			case FLOAT:
 				appendFloatType(sb, fieldType, fieldWidth);
 				break;
 
-			case DOUBLE :
+			case DOUBLE:
 				appendDoubleType(sb, fieldType, fieldWidth);
 				break;
 
-			case SERIALIZABLE :
+			case SERIALIZABLE:
 				appendSerializableType(sb, fieldType, fieldWidth);
 				break;
 
-			case BIG_DECIMAL :
+			case BIG_DECIMAL:
 				appendBigDecimalNumericType(sb, fieldType, fieldWidth);
 				break;
 
-			case UUID :
+			case UUID:
 				appendUuidNativeType(sb, fieldType, fieldWidth);
 				break;
 
-			case UNKNOWN :
-			default :
+			case UNKNOWN:
+			default:
 				// shouldn't be able to get here unless we have a missing case
 				throw new IllegalArgumentException("Unknown SQL-type " + dataPersister.getSqlType());
 		}
@@ -292,8 +294,8 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	 */
 	protected void configureGeneratedIdSequence(StringBuilder sb, FieldType fieldType, List<String> statementsBefore,
 			List<String> additionalArgs, List<String> queriesAfter) throws SQLException {
-		throw new SQLException("GeneratedIdSequence is not supported by database " + getDatabaseName() + " for field "
-				+ fieldType);
+		throw new SQLException(
+				"GeneratedIdSequence is not supported by database " + getDatabaseName() + " for field " + fieldType);
 	}
 
 	/**
@@ -305,8 +307,8 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	protected void configureGeneratedId(String tableName, StringBuilder sb, FieldType fieldType,
 			List<String> statementsBefore, List<String> statementsAfter, List<String> additionalArgs,
 			List<String> queriesAfter) {
-		throw new IllegalStateException("GeneratedId is not supported by database " + getDatabaseName() + " for field "
-				+ fieldType);
+		throw new IllegalStateException(
+				"GeneratedId is not supported by database " + getDatabaseName() + " for field " + fieldType);
 	}
 
 	/**
@@ -394,7 +396,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	public String generateIdSequenceName(String tableName, FieldType idFieldType) {
 		String name = tableName + DEFAULT_SEQUENCE_SUFFIX;
 		if (isEntityNamesMustBeUpCase()) {
-			return name.toUpperCase();
+			return upCaseEntityName(name);
 		} else {
 			return name;
 		}
@@ -464,6 +466,15 @@ public abstract class BaseDatabaseType implements DatabaseType {
 
 	public boolean isEntityNamesMustBeUpCase() {
 		return false;
+	}
+
+	public String upCaseEntityName(String entityName) {
+		/*
+		 * We are forcing the ENGLISH locale because of locale capitalizaton issues. In a couple of languages, the
+		 * capital version of many letters is a letter that is incompatible with many SQL libraries. For example, in
+		 * Turkish (Locale.forLanguageTag("tr-TR")), "i".toUpperCase() returns "İ" which is a dotted uppercase i.
+		 */
+		return entityName.toUpperCase(Locale.ENGLISH);
 	}
 
 	public boolean isNestedSavePointsSupported() {
@@ -540,23 +551,28 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		public SqlType getSqlType() {
 			return SqlType.BOOLEAN;
 		}
+
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			boolean bool = (boolean) Boolean.parseBoolean(defaultStr);
 			return (bool ? Byte.valueOf((byte) 1) : Byte.valueOf((byte) 0));
 		}
+
 		@Override
 		public Object javaToSqlArg(FieldType fieldType, Object obj) {
 			Boolean bool = (Boolean) obj;
 			return (bool ? Byte.valueOf((byte) 1) : Byte.valueOf((byte) 0));
 		}
+
 		public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			return results.getByte(columnPos);
 		}
+
 		@Override
 		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
 			byte arg = (Byte) sqlArg;
 			return (arg == 1 ? (Boolean) true : (Boolean) false);
 		}
+
 		public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) {
 			return sqlArgToJava(fieldType, Byte.parseByte(stringValue), columnPos);
 		}

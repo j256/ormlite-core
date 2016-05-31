@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import org.junit.Test;
 
@@ -46,6 +47,11 @@ public class BaseDatabaseTypeTest extends BaseCoreTest {
 	@Test
 	public void testClassLookupByteArray() throws Exception {
 		assertNull(DataPersisterManager.lookupForField(SomeFields.class.getDeclaredField("byteArray")));
+	}
+
+	@Test
+	public void testUppercase() {
+		assertEquals("İ", "i".toUpperCase(Locale.forLanguageTag("tr-TR")));
 	}
 
 	private static class TestDatabaseType extends BaseDatabaseType {

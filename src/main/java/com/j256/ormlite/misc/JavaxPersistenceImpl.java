@@ -50,7 +50,7 @@ public class JavaxPersistenceImpl implements JavaxPersistenceConfigurer {
 		DatabaseFieldConfig config = new DatabaseFieldConfig();
 		String fieldName = field.getName();
 		if (databaseType.isEntityNamesMustBeUpCase()) {
-			fieldName = fieldName.toUpperCase();
+			fieldName = databaseType.upCaseEntityName(fieldName);
 		}
 		config.setFieldName(fieldName);
 

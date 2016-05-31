@@ -182,6 +182,12 @@ public interface DatabaseType {
 	public boolean isEntityNamesMustBeUpCase();
 
 	/**
+	 * Returns the uppercase version of an entity name. This is here in case someone wants to override the behavior of
+	 * the default method because of localization issues.
+	 */
+	public String upCaseEntityName(String entityName);
+
+	/**
 	 * Returns true if nested savePoints are supported, otherwise false.
 	 */
 	public boolean isNestedSavePointsSupported();

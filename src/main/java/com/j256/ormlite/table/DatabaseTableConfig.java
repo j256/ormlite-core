@@ -155,8 +155,9 @@ public class DatabaseTableConfig<T> {
 	public static <T> DatabaseTableConfig<T> fromClass(ConnectionSource connectionSource, Class<T> clazz)
 			throws SQLException {
 		String tableName = extractTableName(clazz);
-		if (connectionSource.getDatabaseType().isEntityNamesMustBeUpCase()) {
-			tableName = tableName.toUpperCase();
+		DatabaseType databaseType = connectionSource.getDatabaseType();
+		if (databaseType.isEntityNamesMustBeUpCase()) {
+			tableName = databaseType.upCaseEntityName(tableName);
 		}
 		return new DatabaseTableConfig<T>(clazz, tableName, extractFieldTypes(connectionSource, clazz, tableName));
 	}
