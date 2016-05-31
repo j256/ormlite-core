@@ -1,5 +1,7 @@
 package com.j256.ormlite.logger;
 
+import java.lang.reflect.Array;
+
 import com.j256.ormlite.logger.Log.Level;
 
 /**
@@ -604,13 +606,13 @@ public class Logger {
 			sb.append("null");
 		} else if (arg.getClass().isArray()) {
 			// we do a special thing if we have an array argument
-			Object[] array = (Object[]) arg;
 			sb.append('[');
-			for (int i = 0; i < array.length; i++) {
+			int length = Array.getLength(arg);
+			for (int i = 0; i < length; i++) {
 				if (i > 0) {
 					sb.append(", ");
 				}
-				sb.append(array[i]);
+				sb.append(Array.get(arg, i));
 			}
 			sb.append(']');
 		} else {
