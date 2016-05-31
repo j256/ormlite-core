@@ -57,11 +57,14 @@ public abstract class BaseDataType extends BaseFieldConverter implements DataPer
 		this.classes = NO_CLASSES;
 	}
 
+	@Override
 	public abstract Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException;
 
+	@Override
 	public abstract Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos)
 			throws SQLException;
 
+	@Override
 	public boolean isValidForField(Field field) {
 		if (classes.length == 0) {
 			// we can't figure out the types so we just say it is valid
@@ -76,6 +79,7 @@ public abstract class BaseDataType extends BaseFieldConverter implements DataPer
 		return false;
 	}
 
+	@Override
 	public Class<?> getPrimaryClass() {
 		if (classes.length == 0) {
 			return null;
@@ -88,68 +92,84 @@ public abstract class BaseDataType extends BaseFieldConverter implements DataPer
 	 * @throws SQLException
 	 *             If there are problems creating the config object. Needed for subclasses.
 	 */
+	@Override
 	public Object makeConfigObject(FieldType fieldType) throws SQLException {
 		return null;
 	}
 
+	@Override
 	public SqlType getSqlType() {
 		return sqlType;
 	}
 
+	@Override
 	public Class<?>[] getAssociatedClasses() {
 		return classes;
 	}
 
+	@Override
 	public String[] getAssociatedClassNames() {
 		return null;
 	}
 
+	@Override
 	public Object convertIdNumber(Number number) {
 		// by default the type cannot convert an id number
 		return null;
 	}
 
+	@Override
 	public boolean isValidGeneratedType() {
 		return false;
 	}
 
+	@Override
 	public boolean isEscapedDefaultValue() {
 		// default is to not escape the type if it is a number
 		return isEscapedValue();
 	}
 
+	@Override
 	public boolean isEscapedValue() {
 		return true;
 	}
 
+	@Override
 	public boolean isPrimitive() {
 		return false;
 	}
 
+	@Override
 	public boolean isComparable() {
 		return true;
 	}
 
+	@Override
 	public boolean isAppropriateId() {
 		return true;
 	}
 
+	@Override
 	public boolean isArgumentHolderRequired() {
 		return false;
 	}
 
+	@Override
 	public boolean isSelfGeneratedId() {
 		return false;
 	}
 
+	@Override
 	public Object generateId() {
 		throw new IllegalStateException("Should not have tried to generate this type");
 	}
 
+	@Override
 	public int getDefaultWidth() {
 		return 0;
 	}
 
+	@Override
 	public boolean dataIsEqual(Object fieldObj1, Object fieldObj2) {
 		if (fieldObj1 == null) {
 			return (fieldObj2 == null);
@@ -160,6 +180,7 @@ public abstract class BaseDataType extends BaseFieldConverter implements DataPer
 		}
 	}
 
+	@Override
 	public boolean isValidForVersion() {
 		return false;
 	}
@@ -170,10 +191,12 @@ public abstract class BaseDataType extends BaseFieldConverter implements DataPer
 	 * @throws SQLException
 	 *             For sub-classes.
 	 */
+	@Override
 	public Object moveToNextValue(Object currentValue) throws SQLException {
 		return null;
 	}
 
+	@Override
 	public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) throws SQLException {
 		return sqlArgToJava(fieldType, parseDefaultString(fieldType, stringValue), columnPos);
 	}
