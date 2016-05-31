@@ -201,21 +201,19 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 		fieldConfig = DatabaseFieldConfig.fromField(databaseType, tableName, fields[1]);
 		assertEquals(ComboIndex.INDEX_NAME, fieldConfig.getIndexName(tableName));
 	}
+
 	@Test
 	public void testDefaultValue() throws Exception {
-		DatabaseFieldConfig fieldConfig =
-				DatabaseFieldConfig.fromField(databaseType, "defaultstring",
-						DefaultString.class.getDeclaredField("stuff"));
+		DatabaseFieldConfig fieldConfig = DatabaseFieldConfig.fromField(databaseType, "defaultstring",
+				DefaultString.class.getDeclaredField("stuff"));
 		assertNotNull(fieldConfig.getDefaultValue());
 		assertEquals(DefaultString.STUFF_DEFAULT, fieldConfig.getDefaultValue());
-		fieldConfig =
-				DatabaseFieldConfig.fromField(databaseType, "defaultstring",
-						DefaultString.class.getDeclaredField("junk"));
+		fieldConfig = DatabaseFieldConfig.fromField(databaseType, "defaultstring",
+				DefaultString.class.getDeclaredField("junk"));
 		assertNotNull(fieldConfig.getDefaultValue());
 		assertEquals(DefaultString.JUNK_DEFAULT, fieldConfig.getDefaultValue());
-		fieldConfig =
-				DatabaseFieldConfig.fromField(databaseType, "defaultstring",
-						DefaultString.class.getDeclaredField("none"));
+		fieldConfig = DatabaseFieldConfig.fromField(databaseType, "defaultstring",
+				DefaultString.class.getDeclaredField("none"));
 		assertNull(fieldConfig.getDefaultValue());
 	}
 
@@ -274,6 +272,7 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 		fieldConfig.setForeignCollectionOrderColumnName(columnName);
 		assertEquals(columnName, fieldConfig.getForeignCollectionOrderColumnName());
 	}
+
 	@Test
 	public void testNotPersisted() throws Exception {
 		DatabaseFieldConfig fieldConfig =
@@ -388,9 +387,11 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 	protected class JavaxGetSet {
 		@Column
 		String id;
+
 		public String getId() {
 			return id;
 		}
+
 		public void setId(String id) {
 			this.id = id;
 		}
@@ -409,7 +410,9 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 
 	private enum OurEnum {
 		FIRST,
-		SECOND, ;
+		SECOND,
+		// end
+		;
 	}
 
 	private static class StubDatabaseType extends BaseDatabaseType {
@@ -417,9 +420,13 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 		public String getDriverClassName() {
 			return "foo.bar.baz";
 		}
+
+		@Override
 		public String getDatabaseName() {
 			return "fake";
 		}
+
+		@Override
 		public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 			return false;
 		}
@@ -428,6 +435,7 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 	protected static class Index {
 		@DatabaseField(index = true)
 		String stuff;
+
 		public Index() {
 		}
 	}
@@ -437,8 +445,10 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 		String stuff;
 		@DatabaseField(indexName = INDEX_NAME)
 		long junk;
+
 		public ComboIndex() {
 		}
+
 		public static final String INDEX_NAME = "stuffjunk";
 	}
 
@@ -451,6 +461,7 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 		String junk;
 		@DatabaseField
 		String none;
+
 		public DefaultString() {
 		}
 	}
@@ -460,17 +471,22 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 		String stuff;
 		@DatabaseField(useGetSet = true)
 		boolean bool;
+
 		public BooleanGetSetIs() {
 		}
+
 		public String getStuff() {
 			return stuff;
 		}
+
 		public void setStuff(String stuff) {
 			this.stuff = stuff;
 		}
+
 		public boolean isBool() {
 			return bool;
 		}
+
 		public void setBool(boolean bool) {
 			this.bool = bool;
 		}
@@ -481,6 +497,7 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 		String stuff;
 		@DatabaseField(useGetSet = true)
 		boolean bool;
+
 		public BooleanGetSetIsButNoMethods() {
 		}
 	}

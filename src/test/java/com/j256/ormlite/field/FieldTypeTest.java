@@ -162,12 +162,15 @@ public class FieldTypeTest extends BaseCoreTest {
 		expect(databaseType.getDataPersister(isA(DataPersister.class), isA(FieldType.class))).andReturn(stringPersister);
 		expect(databaseType.getFieldConverter(isA(DataPersister.class), isA(FieldType.class))).andReturn(
 				new BaseFieldConverter() {
+					@Override
 					public SqlType getSqlType() {
 						return sqlType;
 					}
+					@Override
 					public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 						return defaultStr;
 					}
+					@Override
 					public Object resultToSqlArg(FieldType fieldType, DatabaseResults resultSet, int columnPos) {
 						resultToSqlArgCalled.set(true);
 						return nameResult;
@@ -180,6 +183,7 @@ public class FieldTypeTest extends BaseCoreTest {
 					public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
 						return nameArg;
 					}
+					@Override
 					public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) {
 						return stringValue;
 					}
