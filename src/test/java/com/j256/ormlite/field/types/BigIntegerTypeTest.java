@@ -31,8 +31,8 @@ public class BigIntegerTypeTest extends BaseTypeTest {
 		LocalBigInteger foo = new LocalBigInteger();
 		foo.bigInteger = val;
 		assertEquals(1, dao.create(foo));
-		testType(dao, foo, clazz, val, valStr, valStr, valStr, DataType.BIG_INTEGER, BIGINTEGER_COLUMN, false, false,
-				true, false, false, false, true, false);
+		testType(dao, foo, clazz, val, valStr, valStr, valStr, DataType.BIG_INTEGER, BIGINTEGER_COLUMN, true, true,
+				false, false, false, false, true, false);
 	}
 
 	@Test(expected = SQLException.class)

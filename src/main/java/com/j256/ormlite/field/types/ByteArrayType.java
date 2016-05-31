@@ -9,7 +9,7 @@ import com.j256.ormlite.support.DatabaseResults;
 
 /**
  * Type that persists a byte[] object.
- * 
+ *
  * @author graywatson
  */
 public class ByteArrayType extends BaseDataType {
@@ -39,11 +39,6 @@ public class ByteArrayType extends BaseDataType {
 	@Override
 	public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 		return (byte[]) results.getBytes(columnPos);
-	}
-
-	@Override
-	public boolean isAppropriateId() {
-		return false;
 	}
 
 	@Override

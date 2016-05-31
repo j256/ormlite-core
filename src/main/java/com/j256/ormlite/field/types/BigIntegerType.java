@@ -1,16 +1,15 @@
-package com.j256.ormlite.field.types;
-
-import java.math.BigInteger;
-import java.sql.SQLException;
+  package com.j256.ormlite.field.types;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
+import java.math.BigInteger;
+import java.sql.SQLException;
 
 /**
  * Type that persists a {@link BigInteger} object.
- * 
+ *
  * @author graywatson
  */
 public class BigIntegerType extends BaseDataType {
@@ -66,12 +65,38 @@ public class BigIntegerType extends BaseDataType {
 	}
 
 	@Override
+	public Object moveToNextValue(Object currentValue) {
+		BigInteger oneBigInteger = BigInteger.ONE;
+		if (currentValue == null) {
+			return oneBigInteger;
+		} else {
+			return ((BigInteger) currentValue).add(oneBigInteger);
+		}
+	}
+
+	@Override
 	public int getDefaultWidth() {
+		// Unsure if this is still correct in the case of BigInteger serving as an ID?
 		return DEFAULT_WIDTH;
 	}
 
 	@Override
-	public boolean isAppropriateId() {
+	public Object convertIdNumber(Number number) {
+		return number;
+	}
+
+	@Override
+	public boolean isEscapedValue() {
 		return false;
+	}
+
+	@Override
+	public boolean isValidGeneratedType() {
+		return true;
+	}
+
+	@Override
+	public boolean isValidForVersion() {
+		return true;
 	}
 }

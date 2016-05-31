@@ -1,0 +1,21 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'com.j256.ormlite'
+version = '4.49-SNAPSHOT'
+
+description = """ORMLite Core"""
+
+configurations.all {
+}
+
+repositories {
+     maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+     maven { url "http://repo.maven.apache.org/maven2" }
+}
+
+dependencies {
+    compile(group: 'org.slf4j', name: 'slf4j-api', version:'1.7.2')
+    compile(group: 'org.slf4j', name: 'slf4j-log4j12', version:'1.7.2')
+    compile(group: 'javax.persistence', name: 'persistence-api', version:'1.0')
+}
