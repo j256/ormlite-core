@@ -7,7 +7,7 @@ import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.field.SqlType;
 
 /**
- * An internal reduction of the SQL PreparedStatment so we can implement its functionality outside of JDBC.
+ * An internal reduction of the SQL PreparedStatement so we can implement its functionality outside of JDBC.
  * 
  * @author graywatson
  */
