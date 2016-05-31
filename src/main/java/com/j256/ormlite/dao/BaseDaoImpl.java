@@ -220,6 +220,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public T queryForId(ID id) throws SQLException {
 		checkForInitialized();
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
@@ -230,6 +231,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public T queryForFirst(PreparedQuery<T> preparedQuery) throws SQLException {
 		checkForInitialized();
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
@@ -240,51 +242,62 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public List<T> queryForAll() throws SQLException {
 		checkForInitialized();
 		return statementExecutor.queryForAll(connectionSource, objectCache);
 	}
 
+	@Override
 	public List<T> queryForEq(String fieldName, Object value) throws SQLException {
 		return queryBuilder().where().eq(fieldName, value).query();
 	}
 
+	@Override
 	public QueryBuilder<T, ID> queryBuilder() {
 		checkForInitialized();
 		return new QueryBuilder<T, ID>(databaseType, tableInfo, this);
 	}
 
+	@Override
 	public UpdateBuilder<T, ID> updateBuilder() {
 		checkForInitialized();
 		return new UpdateBuilder<T, ID>(databaseType, tableInfo, this);
 	}
 
+	@Override
 	public DeleteBuilder<T, ID> deleteBuilder() {
 		checkForInitialized();
 		return new DeleteBuilder<T, ID>(databaseType, tableInfo, this);
 	}
 
+	@Override
 	public List<T> query(PreparedQuery<T> preparedQuery) throws SQLException {
 		checkForInitialized();
 		return statementExecutor.query(connectionSource, preparedQuery, objectCache);
 	}
 
+	@Override
 	public List<T> queryForMatching(T matchObj) throws SQLException {
 		return queryForMatching(matchObj, false);
 	}
 
+	@Override
 	public List<T> queryForMatchingArgs(T matchObj) throws SQLException {
 		return queryForMatching(matchObj, true);
 	}
 
+	@Override
 	public List<T> queryForFieldValues(Map<String, Object> fieldValues) throws SQLException {
 		return queryForFieldValues(fieldValues, false);
 	}
 
+	@Override
 	public List<T> queryForFieldValuesArgs(Map<String, Object> fieldValues) throws SQLException {
 		return queryForFieldValues(fieldValues, true);
 	}
 
+	@Override
 	public T queryForSameId(T data) throws SQLException {
 		checkForInitialized();
 		if (data == null) {
@@ -298,6 +311,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public int create(T data) throws SQLException {
 		checkForInitialized();
 		// ignore creating a null object
@@ -317,6 +331,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public int create(final Collection<T> datas) throws SQLException {
 		checkForInitialized();
 		for (T data : datas) {
@@ -333,6 +348,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		final DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		try {
 			return callBatchTasks(new Callable<Integer>() {
+				@Override
 				public Integer call() throws SQLException {
 					int modCount = 0;
 					for (T data : datas) {
@@ -346,6 +362,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public T createIfNotExists(T data) throws SQLException {
 		if (data == null) {
 			return null;
@@ -359,6 +376,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public CreateOrUpdateStatus createOrUpdate(T data) throws SQLException {
 		if (data == null) {
 			return new CreateOrUpdateStatus(false, false, 0);
@@ -374,6 +392,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public int update(T data) throws SQLException {
 		checkForInitialized();
 		// ignore updating a null object
@@ -393,6 +412,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public int updateId(T data, ID newId) throws SQLException {
 		checkForInitialized();
 		// ignore updating a null object
@@ -408,6 +428,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public int update(PreparedUpdate<T> preparedUpdate) throws SQLException {
 		checkForInitialized();
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
@@ -418,6 +439,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public int refresh(T data) throws SQLException {
 		checkForInitialized();
 		// ignore refreshing a null object
@@ -437,6 +459,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public int delete(T data) throws SQLException {
 		checkForInitialized();
 		// ignore deleting a null object
@@ -452,6 +475,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public int deleteById(ID id) throws SQLException {
 		checkForInitialized();
 		// ignore deleting a null id
@@ -467,6 +491,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public int delete(Collection<T> datas) throws SQLException {
 		checkForInitialized();
 		// ignore deleting a null object
@@ -482,6 +507,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public int deleteIds(Collection<ID> ids) throws SQLException {
 		checkForInitialized();
 		// ignore deleting a null object
@@ -497,6 +523,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public int delete(PreparedDelete<T> preparedDelete) throws SQLException {
 		checkForInitialized();
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
@@ -507,26 +534,32 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public CloseableIterator<T> iterator() {
 		return iterator(DatabaseConnection.DEFAULT_RESULT_FLAGS);
 	}
 
+	@Override
 	public CloseableIterator<T> closeableIterator() {
 		return iterator(DatabaseConnection.DEFAULT_RESULT_FLAGS);
 	}
 
+	@Override
 	public CloseableIterator<T> iterator(int resultFlags) {
 		checkForInitialized();
 		lastIterator = createIterator(resultFlags);
 		return lastIterator;
 	}
 
+	@Override
 	public CloseableWrappedIterable<T> getWrappedIterable() {
 		checkForInitialized();
 		return new CloseableWrappedIterableImpl<T>(new CloseableIterable<T>() {
+			@Override
 			public Iterator<T> iterator() {
 				return closeableIterator();
 			}
+			@Override
 			public CloseableIterator<T> closeableIterator() {
 				try {
 					return BaseDaoImpl.this.createIterator(DatabaseConnection.DEFAULT_RESULT_FLAGS);
@@ -537,12 +570,15 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		});
 	}
 
+	@Override
 	public CloseableWrappedIterable<T> getWrappedIterable(final PreparedQuery<T> preparedQuery) {
 		checkForInitialized();
 		return new CloseableWrappedIterableImpl<T>(new CloseableIterable<T>() {
+			@Override
 			public Iterator<T> iterator() {
 				return closeableIterator();
 			}
+			@Override
 			public CloseableIterator<T> closeableIterator() {
 				try {
 					return BaseDaoImpl.this.createIterator(preparedQuery, DatabaseConnection.DEFAULT_RESULT_FLAGS);
@@ -553,6 +589,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		});
 	}
 
+	@Override
 	public void closeLastIterator() throws IOException {
 		if (lastIterator != null) {
 			lastIterator.close();
@@ -560,16 +597,19 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public CloseableIterator<T> iterator(PreparedQuery<T> preparedQuery) throws SQLException {
 		return iterator(preparedQuery, DatabaseConnection.DEFAULT_RESULT_FLAGS);
 	}
 
+	@Override
 	public CloseableIterator<T> iterator(PreparedQuery<T> preparedQuery, int resultFlags) throws SQLException {
 		checkForInitialized();
 		lastIterator = createIterator(preparedQuery, resultFlags);
 		return lastIterator;
 	}
 
+	@Override
 	public GenericRawResults<String[]> queryRaw(String query, String... arguments) throws SQLException {
 		checkForInitialized();
 		try {
@@ -579,6 +619,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public <GR> GenericRawResults<GR> queryRaw(String query, RawRowMapper<GR> mapper, String... arguments)
 			throws SQLException {
 		checkForInitialized();
@@ -589,6 +630,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public <UO> GenericRawResults<UO> queryRaw(String query, DataType[] columnTypes, RawRowObjectMapper<UO> mapper,
 			String... arguments) throws SQLException {
 		checkForInitialized();
@@ -599,6 +641,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public GenericRawResults<Object[]> queryRaw(String query, DataType[] columnTypes, String... arguments)
 			throws SQLException {
 		checkForInitialized();
@@ -609,6 +652,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public <UO> GenericRawResults<UO> queryRaw(String query, DatabaseResultsMapper<UO> mapper, String... arguments)
 			throws SQLException {
 		checkForInitialized();
@@ -619,6 +663,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public long queryRawValue(String query, String... arguments) throws SQLException {
 		checkForInitialized();
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
@@ -631,6 +676,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public int executeRaw(String statement, String... arguments) throws SQLException {
 		checkForInitialized();
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
@@ -643,6 +689,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public int executeRawNoArgs(String statement) throws SQLException {
 		checkForInitialized();
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
@@ -655,6 +702,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public int updateRaw(String statement, String... arguments) throws SQLException {
 		checkForInitialized();
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
@@ -667,16 +715,19 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public <CT> CT callBatchTasks(Callable<CT> callable) throws SQLException {
 		checkForInitialized();
 		return statementExecutor.callBatchTasks(connectionSource, callable);
 	}
 
+	@Override
 	public String objectToString(T data) {
 		checkForInitialized();
 		return tableInfo.objectToString(data);
 	}
 
+	@Override
 	public boolean objectsEqual(T data1, T data2) throws SQLException {
 		checkForInitialized();
 		for (FieldType fieldType : tableInfo.getFieldTypes()) {
@@ -690,6 +741,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		return true;
 	}
 
+	@Override
 	public ID extractId(T data) throws SQLException {
 		checkForInitialized();
 		FieldType idField = tableInfo.getIdField();
@@ -701,10 +753,12 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		return id;
 	}
 
+	@Override
 	public Class<T> getDataClass() {
 		return dataClass;
 	}
 
+	@Override
 	public FieldType findForeignFieldType(Class<?> clazz) {
 		checkForInitialized();
 		for (FieldType fieldType : tableInfo.getFieldTypes()) {
@@ -715,10 +769,12 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		return null;
 	}
 
+	@Override
 	public boolean isUpdatable() {
 		return tableInfo.isUpdatable();
 	}
 
+	@Override
 	public boolean isTableExists() throws SQLException {
 		checkForInitialized();
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
@@ -729,6 +785,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public long countOf() throws SQLException {
 		checkForInitialized();
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
@@ -739,6 +796,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public long countOf(PreparedQuery<T> preparedQuery) throws SQLException {
 		checkForInitialized();
 		if (preparedQuery.getType() != StatementType.SELECT_LONG) {
@@ -753,14 +811,17 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public void assignEmptyForeignCollection(T parent, String fieldName) throws SQLException {
 		makeEmptyForeignCollection(parent, fieldName);
 	}
 
+	@Override
 	public <FT> ForeignCollection<FT> getEmptyForeignCollection(String fieldName) throws SQLException {
 		return makeEmptyForeignCollection(null, fieldName);
 	}
 
+	@Override
 	public void setObjectCache(boolean enabled) throws SQLException {
 		if (enabled) {
 			if (objectCache == null) {
@@ -784,6 +845,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public void setObjectCache(ObjectCache objectCache) throws SQLException {
 		if (objectCache == null) {
 			if (this.objectCache != null) {
@@ -804,10 +866,12 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public ObjectCache getObjectCache() {
 		return objectCache;
 	}
 
+	@Override
 	public void clearObjectCache() {
 		if (objectCache != null) {
 			objectCache.clear(dataClass);
@@ -824,10 +888,12 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public T mapSelectStarRow(DatabaseResults results) throws SQLException {
 		return statementExecutor.getSelectStarRowMapper().mapRow(results);
 	}
 
+	@Override
 	public void notifyChanges() {
 		if (daoObserverMap != null) {
 			for (DaoObserver daoObserver : daoObserverMap.keySet()) {
@@ -836,6 +902,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public void registerObserver(DaoObserver observer) {
 		if (daoObserverMap == null) {
 			/*
@@ -853,6 +920,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		daoObserverMap.put(observer, constantObject);
 	}
 
+	@Override
 	public void unregisterObserver(DaoObserver observer) {
 		if (daoObserverMap != null) {
 			synchronized (daoObserverMap) {
@@ -861,14 +929,17 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public GenericRowMapper<T> getSelectStarRowMapper() throws SQLException {
 		return statementExecutor.getSelectStarRowMapper();
 	}
 
+	@Override
 	public RawRowMapper<T> getRawRowMapper() {
 		return statementExecutor.getRawRowMapper();
 	}
 
+	@Override
 	public boolean idExists(ID id) throws SQLException {
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
 		try {
@@ -878,17 +949,20 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public DatabaseConnection startThreadConnection() throws SQLException {
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		connectionSource.saveSpecialConnection(connection);
 		return connection;
 	}
 
+	@Override
 	public void endThreadConnection(DatabaseConnection connection) throws SQLException {
 		connectionSource.clearSpecialConnection(connection);
 		connectionSource.releaseConnection(connection);
 	}
 
+	@Override
 	public void setAutoCommit(boolean autoCommit) throws SQLException {
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		try {
@@ -898,10 +972,12 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public void setAutoCommit(DatabaseConnection connection, boolean autoCommit) throws SQLException {
 		connection.setAutoCommit(autoCommit);
 	}
 
+	@Override
 	public boolean isAutoCommit() throws SQLException {
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		try {
@@ -911,14 +987,17 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	@Override
 	public boolean isAutoCommit(DatabaseConnection connection) throws SQLException {
 		return connection.isAutoCommit();
 	}
 
+	@Override
 	public void commit(DatabaseConnection connection) throws SQLException {
 		connection.commit(null);
 	}
 
+	@Override
 	public void rollBack(DatabaseConnection connection) throws SQLException {
 		connection.rollback(null);
 	}
@@ -927,6 +1006,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		return objectFactory;
 	}
 
+	@Override
 	public void setObjectFactory(ObjectFactory<T> objectFactory) {
 		checkForInitialized();
 		this.objectFactory = objectFactory;
@@ -946,6 +1026,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		return tableInfo;
 	}
 
+	@Override
 	public ConnectionSource getConnectionSource() {
 		return connectionSource;
 	}

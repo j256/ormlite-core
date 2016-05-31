@@ -44,33 +44,41 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 		}
 	}
 
+	@Override
 	public CloseableIterator<T> iterator() {
 		return iteratorThrow(DatabaseConnection.DEFAULT_RESULT_FLAGS);
 	}
 
+	@Override
 	public CloseableIterator<T> iterator(int flags) {
 		return iteratorThrow(flags);
 	}
 
+	@Override
 	public CloseableIterator<T> closeableIterator() {
 		return iteratorThrow(DatabaseConnection.DEFAULT_RESULT_FLAGS);
 	}
 
+	@Override
 	public CloseableIterator<T> closeableIterator(int flags) {
 		return iteratorThrow(DatabaseConnection.DEFAULT_RESULT_FLAGS);
 	}
 
+	@Override
 	public CloseableIterator<T> iteratorThrow() {
 		return iteratorThrow(DatabaseConnection.DEFAULT_RESULT_FLAGS);
 	}
 
+	@Override
 	public CloseableIterator<T> iteratorThrow(int flags) {
 		// we have to wrap the iterator since we are returning the List's iterator
 		return new CloseableIterator<T>() {
 			private int offset = -1;
+			@Override
 			public boolean hasNext() {
 				return (offset + 1 < results.size());
 			}
+			@Override
 			public T first() {
 				offset = 0;
 				if (offset >= results.size()) {
@@ -79,11 +87,13 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 					return results.get(0);
 				}
 			}
+			@Override
 			public T next() {
 				offset++;
 				// this should throw if OOB
 				return results.get(offset);
 			}
+			@Override
 			public T nextThrow() {
 				offset++;
 				if (offset >= results.size()) {
@@ -92,6 +102,7 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 					return results.get(offset);
 				}
 			}
+			@Override
 			public T current() {
 				if (offset < 0) {
 					offset = 0;
@@ -102,6 +113,7 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 					return results.get(offset);
 				}
 			}
+			@Override
 			public T previous() {
 				offset--;
 				if (offset < 0 || offset >= results.size()) {
@@ -110,6 +122,7 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 					return results.get(offset);
 				}
 			}
+			@Override
 			public T moveRelative(int relativeOffset) {
 				offset += relativeOffset;
 				if (offset < 0 || offset >= results.size()) {
@@ -118,6 +131,7 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 					return results.get(offset);
 				}
 			}
+			@Override
 			public void remove() {
 				if (offset < 0) {
 					throw new IllegalStateException("next() must be called before remove()");
@@ -136,63 +150,78 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 					}
 				}
 			}
+			@Override
 			public void close() {
 				// noop
 			}
+			@Override
 			public void closeQuietly() {
 				// noop
 			}
+			@Override
 			public DatabaseResults getRawResults() {
 				// no results object
 				return null;
 			}
+			@Override
 			public void moveToNext() {
 				offset++;
 			}
 		};
 	}
 
+	@Override
 	public CloseableWrappedIterable<T> getWrappedIterable() {
 		// since the iterators don't have any connections, the collection can be a wrapped iterable
 		return this;
 	}
 
+	@Override
 	public CloseableWrappedIterable<T> getWrappedIterable(int flags) {
 		return this;
 	}
 
+	@Override
 	public void close() {
 		// noop since the iterators aren't holding open a connection
 	}
 
+	@Override
 	public void closeLastIterator() {
 		// noop since the iterators aren't holding open a connection
 	}
 
+	@Override
 	public boolean isEager() {
 		return true;
 	}
 
+	@Override
 	public int size() {
 		return results.size();
 	}
 
+	@Override
 	public boolean isEmpty() {
 		return results.isEmpty();
 	}
 
+	@Override
 	public boolean contains(Object o) {
 		return results.contains(o);
 	}
 
+	@Override
 	public boolean containsAll(Collection<?> c) {
 		return results.containsAll(c);
 	}
 
+	@Override
 	public Object[] toArray() {
 		return results.toArray();
 	}
 
+	@Override
 	public <E> E[] toArray(E[] array) {
 		return results.toArray(array);
 	}
@@ -247,6 +276,7 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 		return super.retainAll(collection);
 	}
 
+	@Override
 	public int updateAll() throws SQLException {
 		int updatedC = 0;
 		for (T data : results) {
@@ -255,6 +285,7 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 		return updatedC;
 	}
 
+	@Override
 	public int refreshAll() throws SQLException {
 		int updatedC = 0;
 		for (T data : results) {
@@ -263,6 +294,7 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 		return updatedC;
 	}
 
+	@Override
 	public int refreshCollection() throws SQLException {
 		results = dao.query(getPreparedQuery());
 		return results.size();

@@ -50,6 +50,7 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 	 * 
 	 * @return Returns true if the item did not already exist in the collection otherwise false.
 	 */
+	@Override
 	public boolean add(T data) {
 		try {
 			return addElement(data);
@@ -63,6 +64,7 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 	 * 
 	 * @return Returns true if any of the items did not already exist in the collection otherwise false.
 	 */
+	@Override
 	public boolean addAll(Collection<? extends T> collection) {
 		boolean changed = false;
 		for (T data : collection) {
@@ -84,6 +86,7 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 	 * 
 	 * @return True if the item was found in the collection otherwise false.
 	 */
+	@Override
 	public abstract boolean remove(Object data);
 
 	/**
@@ -93,6 +96,7 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 	 * 
 	 * @return True if the item was found in the collection otherwise false.
 	 */
+	@Override
 	public abstract boolean removeAll(Collection<?> collection);
 
 	/**
@@ -101,6 +105,7 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 	 * 
 	 * @return Returns true of the collection was changed at all otherwise false.
 	 */
+	@Override
 	public boolean retainAll(Collection<?> collection) {
 		if (dao == null) {
 			return false;
@@ -126,6 +131,7 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 	 * from the associated database table. This is different from removing all of the elements in the table since this
 	 * iterator is across just one item's foreign objects.
 	 */
+	@Override
 	public void clear() {
 		if (dao == null) {
 			return;
@@ -141,6 +147,7 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 		}
 	}
 
+	@Override
 	public int update(T data) throws SQLException {
 		if (dao == null) {
 			return 0;
@@ -149,6 +156,7 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 		}
 	}
 
+	@Override
 	public int refresh(T data) throws SQLException {
 		if (dao == null) {
 			return 0;
@@ -157,6 +165,7 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 		}
 	}
 
+	@Override
 	public Dao<T, ?> getDao() {
 		return dao;
 	}

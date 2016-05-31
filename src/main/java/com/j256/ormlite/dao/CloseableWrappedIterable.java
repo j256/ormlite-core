@@ -25,5 +25,6 @@ public interface CloseableWrappedIterable<T> extends CloseableIterable<T>, Close
 	/**
 	 * This will close the last iterator returned by the {@link #iterator()} method.
 	 */
+	@Override
 	public void close() throws IOException;
 }

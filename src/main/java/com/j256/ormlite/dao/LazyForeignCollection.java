@@ -49,18 +49,22 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 	 * that the connection has been closed. You can also call {@link #closeLastIterator()} on the collection itself
 	 * which will close the last iterator returned. See the reentrant warning.
 	 */
+	@Override
 	public CloseableIterator<T> iterator() {
 		return closeableIterator(DatabaseConnection.DEFAULT_RESULT_FLAGS);
 	}
 
+	@Override
 	public CloseableIterator<T> iterator(int flags) {
 		return closeableIterator(flags);
 	}
 
+	@Override
 	public CloseableIterator<T> closeableIterator() {
 		return closeableIterator(DatabaseConnection.DEFAULT_RESULT_FLAGS);
 	}
 
+	@Override
 	public CloseableIterator<T> closeableIterator(int flags) {
 		try {
 			return iteratorThrow(flags);
@@ -69,24 +73,30 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 		}
 	}
 
+	@Override
 	public CloseableIterator<T> iteratorThrow() throws SQLException {
 		return iteratorThrow(DatabaseConnection.DEFAULT_RESULT_FLAGS);
 	}
 
+	@Override
 	public CloseableIterator<T> iteratorThrow(int flags) throws SQLException {
 		lastIterator = seperateIteratorThrow(flags);
 		return lastIterator;
 	}
 
+	@Override
 	public CloseableWrappedIterable<T> getWrappedIterable() {
 		return getWrappedIterable(DatabaseConnection.DEFAULT_RESULT_FLAGS);
 	}
 
+	@Override
 	public CloseableWrappedIterable<T> getWrappedIterable(final int flags) {
 		return new CloseableWrappedIterableImpl<T>(new CloseableIterable<T>() {
+			@Override
 			public CloseableIterator<T> iterator() {
 				return closeableIterator();
 			}
+			@Override
 			public CloseableIterator<T> closeableIterator() {
 				try {
 					return LazyForeignCollection.this.seperateIteratorThrow(flags);
@@ -97,6 +107,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 		});
 	}
 
+	@Override
 	public void closeLastIterator() throws IOException {
 		if (lastIterator != null) {
 			lastIterator.close();
@@ -104,10 +115,12 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 		}
 	}
 
+	@Override
 	public boolean isEager() {
 		return false;
 	}
 
+	@Override
 	public int size() {
 		CloseableIterator<T> iterator = iterator();
 		try {
@@ -122,6 +135,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 		}
 	}
 
+	@Override
 	public boolean isEmpty() {
 		CloseableIterator<T> iterator = iterator();
 		try {
@@ -131,6 +145,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 		}
 	}
 
+	@Override
 	public boolean contains(Object obj) {
 		CloseableIterator<T> iterator = iterator();
 		try {
@@ -145,6 +160,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 		}
 	}
 
+	@Override
 	public boolean containsAll(Collection<?> collection) {
 		Set<Object> leftOvers = new HashSet<Object>(collection);
 		CloseableIterator<T> iterator = iterator();
@@ -191,6 +207,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 		}
 	}
 
+	@Override
 	public Object[] toArray() {
 		List<T> items = new ArrayList<T>();
 		CloseableIterator<T> iterator = iterator();
@@ -204,6 +221,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 		}
 	}
 
+	@Override
 	public <E> E[] toArray(E[] array) {
 		List<E> items = null;
 		int itemC = 0;
@@ -239,14 +257,17 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 		}
 	}
 
+	@Override
 	public int updateAll() {
 		throw new UnsupportedOperationException("Cannot call updateAll() on a lazy collection.");
 	}
 
+	@Override
 	public int refreshAll() {
 		throw new UnsupportedOperationException("Cannot call updateAll() on a lazy collection.");
 	}
 
+	@Override
 	public int refreshCollection() {
 		// no-op for lazy collections
 		return 0;

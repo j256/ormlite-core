@@ -28,6 +28,7 @@ public class LruObjectCache implements ObjectCache {
 		this.capacity = capacity;
 	}
 
+	@Override
 	public synchronized <T> void registerClass(Class<T> clazz) {
 		Map<Object, Object> objectMap = classMaps.get(clazz);
 		if (objectMap == null) {
@@ -36,6 +37,7 @@ public class LruObjectCache implements ObjectCache {
 		}
 	}
 
+	@Override
 	public <T, ID> T get(Class<T> clazz, ID id) {
 		Map<Object, Object> objectMap = getMapForClass(clazz);
 		if (objectMap == null) {
@@ -47,6 +49,7 @@ public class LruObjectCache implements ObjectCache {
 		return castObj;
 	}
 
+	@Override
 	public <T, ID> void put(Class<T> clazz, ID id, T data) {
 		Map<Object, Object> objectMap = getMapForClass(clazz);
 		if (objectMap != null) {
@@ -54,6 +57,7 @@ public class LruObjectCache implements ObjectCache {
 		}
 	}
 
+	@Override
 	public <T> void clear(Class<T> clazz) {
 		Map<Object, Object> objectMap = getMapForClass(clazz);
 		if (objectMap != null) {
@@ -61,12 +65,14 @@ public class LruObjectCache implements ObjectCache {
 		}
 	}
 
+	@Override
 	public void clearAll() {
 		for (Map<Object, Object> objectMap : classMaps.values()) {
 			objectMap.clear();
 		}
 	}
 
+	@Override
 	public <T, ID> void remove(Class<T> clazz, ID id) {
 		Map<Object, Object> objectMap = getMapForClass(clazz);
 		if (objectMap != null) {
@@ -74,6 +80,7 @@ public class LruObjectCache implements ObjectCache {
 		}
 	}
 
+	@Override
 	public <T, ID> T updateId(Class<T> clazz, ID oldId, ID newId) {
 		Map<Object, Object> objectMap = getMapForClass(clazz);
 		if (objectMap == null) {
@@ -89,6 +96,7 @@ public class LruObjectCache implements ObjectCache {
 		return castObj;
 	}
 
+	@Override
 	public <T> int size(Class<T> clazz) {
 		Map<Object, Object> objectMap = getMapForClass(clazz);
 		if (objectMap == null) {
@@ -98,6 +106,7 @@ public class LruObjectCache implements ObjectCache {
 		}
 	}
 
+	@Override
 	public int sizeAll() {
 		int size = 0;
 		for (Map<Object, Object> objectMap : classMaps.values()) {

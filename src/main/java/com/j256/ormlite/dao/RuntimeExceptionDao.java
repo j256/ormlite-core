@@ -374,10 +374,12 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#iterator()
 	 */
+	@Override
 	public CloseableIterator<T> iterator() {
 		return dao.iterator();
 	}
 
+	@Override
 	public CloseableIterator<T> closeableIterator() {
 		return dao.closeableIterator();
 	}

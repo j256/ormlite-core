@@ -347,6 +347,7 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * @throws IllegalStateException
 	 *             When it encounters a SQLException or in other cases.
 	 */
+	@Override
 	public CloseableIterator<T> iterator();
 
 	/**

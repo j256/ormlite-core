@@ -130,6 +130,7 @@ public interface ForeignCollection<T> extends Collection<T>, CloseableIterable<T
 	 * 
 	 * @see Collection#add(Object)
 	 */
+	@Override
 	public boolean add(T obj);
 
 	/**

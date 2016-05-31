@@ -20,16 +20,19 @@ public class CloseableWrappedIterableImpl<T> implements CloseableWrappedIterable
 		this.iterable = iterable;
 	}
 
+	@Override
 	public CloseableIterator<T> iterator() {
 		return closeableIterator();
 	}
 
+	@Override
 	public CloseableIterator<T> closeableIterator() {
 		IOUtils.closeQuietly(this);
 		iterator = iterable.closeableIterator();
 		return iterator;
 	}
 
+	@Override
 	public void close() throws IOException {
 		if (iterator != null) {
 			iterator.close();
