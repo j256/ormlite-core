@@ -51,7 +51,19 @@ public class TableUtils {
 	 * @return The number of statements executed to do so.
 	 */
 	public static <T> int createTable(ConnectionSource connectionSource, Class<T> dataClass) throws SQLException {
-		return createTable(connectionSource, dataClass, false);
+		Dao<T, ?> dao = DaoManager.createDao(connectionSource, dataClass);
+		return doCreateTable(dao, false);
+	}
+
+	/**
+	 * Issue the database statements to create the table associated with a table configuration.
+	 * 
+	 * @param dao
+	 *            Associated dao.
+	 * @return The number of statements executed to do so.
+	 */
+	public static int createTable(Dao<?, ?> dao) throws SQLException {
+		return doCreateTable(dao, false);
 	}
 
 	/**
@@ -59,7 +71,8 @@ public class TableUtils {
 	 */
 	public static <T> int createTableIfNotExists(ConnectionSource connectionSource, Class<T> dataClass)
 			throws SQLException {
-		return createTable(connectionSource, dataClass, true);
+		Dao<T, ?> dao = DaoManager.createDao(connectionSource, dataClass);
+		return doCreateTable(dao, true);
 	}
 
 	/**
@@ -74,7 +87,8 @@ public class TableUtils {
 	 */
 	public static <T> int createTable(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig)
 			throws SQLException {
-		return createTable(connectionSource, tableConfig, false);
+		Dao<T, ?> dao = DaoManager.createDao(connectionSource, tableConfig);
+		return doCreateTable(dao, false);
 	}
 
 	/**
@@ -82,7 +96,8 @@ public class TableUtils {
 	 */
 	public static <T> int createTableIfNotExists(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig)
 			throws SQLException {
-		return createTable(connectionSource, tableConfig, true);
+		Dao<T, ?> dao = DaoManager.createDao(connectionSource, tableConfig);
+		return doCreateTable(dao, true);
 	}
 
 	/**
@@ -146,8 +161,21 @@ public class TableUtils {
 	 */
 	public static <T, ID> int dropTable(ConnectionSource connectionSource, Class<T> dataClass, boolean ignoreErrors)
 			throws SQLException {
-		DatabaseType databaseType = connectionSource.getDatabaseType();
 		Dao<T, ID> dao = DaoManager.createDao(connectionSource, dataClass);
+		return dropTable(dao, ignoreErrors);
+	}
+
+	/**
+	 * Issue the database statements to drop the table associated with a dao.
+	 * 
+	 * @param dao
+	 *            Associated dao.
+	 * @return The number of statements executed to do so.
+	 */
+	public static <T, ID> int dropTable(Dao<T, ID> dao, boolean ignoreErrors) throws SQLException {
+		ConnectionSource connectionSource = dao.getConnectionSource();
+		Class<T> dataClass = dao.getDataClass();
+		DatabaseType databaseType = connectionSource.getDatabaseType();
 		if (dao instanceof BaseDaoImpl<?, ?>) {
 			return doDropTable(databaseType, connectionSource, ((BaseDaoImpl<?, ?>) dao).getTableInfo(), ignoreErrors);
 		} else {
@@ -214,29 +242,6 @@ public class TableUtils {
 		return clearTable(connectionSource, tableConfig.getTableName());
 	}
 
-	private static <T, ID> int createTable(ConnectionSource connectionSource, Class<T> dataClass, boolean ifNotExists)
-			throws SQLException {
-		Dao<T, ID> dao = DaoManager.createDao(connectionSource, dataClass);
-		if (dao instanceof BaseDaoImpl<?, ?>) {
-			return doCreateTable(connectionSource, ((BaseDaoImpl<?, ?>) dao).getTableInfo(), ifNotExists);
-		} else {
-			TableInfo<T, ID> tableInfo = new TableInfo<T, ID>(connectionSource, null, dataClass);
-			return doCreateTable(connectionSource, tableInfo, ifNotExists);
-		}
-	}
-
-	private static <T, ID> int createTable(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig,
-			boolean ifNotExists) throws SQLException {
-		Dao<T, ID> dao = DaoManager.createDao(connectionSource, tableConfig);
-		if (dao instanceof BaseDaoImpl<?, ?>) {
-			return doCreateTable(connectionSource, ((BaseDaoImpl<?, ?>) dao).getTableInfo(), ifNotExists);
-		} else {
-			tableConfig.extractFieldTypes(connectionSource);
-			TableInfo<T, ID> tableInfo = new TableInfo<T, ID>(connectionSource.getDatabaseType(), null, tableConfig);
-			return doCreateTable(connectionSource, tableInfo, ifNotExists);
-		}
-	}
-
 	private static <T> int clearTable(ConnectionSource connectionSource, String tableName) throws SQLException {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		StringBuilder sb = new StringBuilder(48);
@@ -251,9 +256,8 @@ public class TableUtils {
 		CompiledStatement compiledStmt = null;
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		try {
-			compiledStmt =
-					connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes,
-							DatabaseConnection.DEFAULT_RESULT_FLAGS);
+			compiledStmt = connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes,
+					DatabaseConnection.DEFAULT_RESULT_FLAGS);
 			return compiledStmt.runExecute();
 		} finally {
 			IOUtils.closeThrowSqlException(compiledStmt, "compiled statement");
@@ -299,62 +303,6 @@ public class TableUtils {
 			statements.add(sb.toString());
 			sb.setLength(0);
 		}
-	}
-
-	/**
-	 * Generate and return the list of statements to create a database table and any associated features.
-	 */
-	private static <T, ID> void addCreateTableStatements(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
-			List<String> statements, List<String> queriesAfter, boolean ifNotExists) throws SQLException {
-		StringBuilder sb = new StringBuilder(256);
-		sb.append("CREATE TABLE ");
-		if (ifNotExists && databaseType.isCreateIfNotExistsSupported()) {
-			sb.append("IF NOT EXISTS ");
-		}
-		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
-		sb.append(" (");
-		List<String> additionalArgs = new ArrayList<String>();
-		List<String> statementsBefore = new ArrayList<String>();
-		List<String> statementsAfter = new ArrayList<String>();
-		// our statement will be set here later
-		boolean first = true;
-		for (FieldType fieldType : tableInfo.getFieldTypes()) {
-			// skip foreign collections
-			if (fieldType.isForeignCollection()) {
-				continue;
-			} else if (first) {
-				first = false;
-			} else {
-				sb.append(", ");
-			}
-			String columnDefinition = fieldType.getColumnDefinition();
-			if (columnDefinition == null) {
-				// we have to call back to the database type for the specific create syntax
-				databaseType.appendColumnArg(tableInfo.getTableName(), sb, fieldType, additionalArgs, statementsBefore,
-						statementsAfter, queriesAfter);
-			} else {
-				// hand defined field
-				databaseType.appendEscapedEntityName(sb, fieldType.getColumnName());
-				sb.append(' ').append(columnDefinition).append(' ');
-			}
-		}
-		// add any sql that sets any primary key fields
-		databaseType.addPrimaryKeySql(tableInfo.getFieldTypes(), additionalArgs, statementsBefore, statementsAfter,
-				queriesAfter);
-		// add any sql that sets any unique fields
-		databaseType.addUniqueComboSql(tableInfo.getFieldTypes(), additionalArgs, statementsBefore, statementsAfter,
-				queriesAfter);
-		for (String arg : additionalArgs) {
-			// we will have spat out one argument already so we don't have to do the first dance
-			sb.append(", ").append(arg);
-		}
-		sb.append(") ");
-		databaseType.appendCreateTableSuffix(sb);
-		statements.addAll(statementsBefore);
-		statements.add(sb.toString());
-		statements.addAll(statementsAfter);
-		addCreateIndexStatements(databaseType, tableInfo, statements, ifNotExists, false);
-		addCreateIndexStatements(databaseType, tableInfo, statements, ifNotExists, true);
 	}
 
 	private static <T, ID> void addCreateIndexStatements(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
@@ -429,6 +377,15 @@ public class TableUtils {
 		statements.addAll(statementsAfter);
 	}
 
+	private static <T, ID> int doCreateTable(Dao<T, ID> dao, boolean ifNotExists) throws SQLException {
+		if (dao instanceof BaseDaoImpl<?, ?>) {
+			return doCreateTable(dao.getConnectionSource(), ((BaseDaoImpl<?, ?>) dao).getTableInfo(), ifNotExists);
+		} else {
+			TableInfo<T, ID> tableInfo = new TableInfo<T, ID>(dao.getConnectionSource(), null, dao.getDataClass());
+			return doCreateTable(dao.getConnectionSource(), tableInfo, ifNotExists);
+		}
+	}
+
 	private static <T, ID> int doCreateTable(ConnectionSource connectionSource, TableInfo<T, ID> tableInfo,
 			boolean ifNotExists) throws SQLException {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
@@ -438,9 +395,8 @@ public class TableUtils {
 		addCreateTableStatements(databaseType, tableInfo, statements, queriesAfter, ifNotExists);
 		DatabaseConnection connection = connectionSource.getReadWriteConnection();
 		try {
-			int stmtC =
-					doStatements(connection, "create", statements, false, databaseType.isCreateTableReturnsNegative(),
-							databaseType.isCreateTableReturnsZero());
+			int stmtC = doStatements(connection, "create", statements, false,
+					databaseType.isCreateTableReturnsNegative(), databaseType.isCreateTableReturnsZero());
 			stmtC += doCreateTestQueries(connection, databaseType, queriesAfter);
 			return stmtC;
 		} finally {
@@ -455,9 +411,8 @@ public class TableUtils {
 			int rowC = 0;
 			CompiledStatement compiledStmt = null;
 			try {
-				compiledStmt =
-						connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes,
-								DatabaseConnection.DEFAULT_RESULT_FLAGS);
+				compiledStmt = connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes,
+						DatabaseConnection.DEFAULT_RESULT_FLAGS);
 				rowC = compiledStmt.runExecute();
 				logger.info("executed {} table statement changed {} rows: {}", label, rowC, statement);
 			} catch (SQLException e) {
@@ -472,8 +427,8 @@ public class TableUtils {
 			// sanity check
 			if (rowC < 0) {
 				if (!returnsNegative) {
-					throw new SQLException("SQL statement " + statement + " updated " + rowC
-							+ " rows, we were expecting >= 0");
+					throw new SQLException(
+							"SQL statement " + statement + " updated " + rowC + " rows, we were expecting >= 0");
 				}
 			} else if (rowC > 0 && expectingZero) {
 				throw new SQLException("SQL statement updated " + rowC + " rows, we were expecting == 0: " + statement);
@@ -490,9 +445,8 @@ public class TableUtils {
 		for (String query : queriesAfter) {
 			CompiledStatement compiledStmt = null;
 			try {
-				compiledStmt =
-						connection.compileStatement(query, StatementType.SELECT, noFieldTypes,
-								DatabaseConnection.DEFAULT_RESULT_FLAGS);
+				compiledStmt = connection.compileStatement(query, StatementType.SELECT, noFieldTypes,
+						DatabaseConnection.DEFAULT_RESULT_FLAGS);
 				// we don't care about an object cache here
 				DatabaseResults results = compiledStmt.runQuery(null);
 				int rowC = 0;
@@ -519,5 +473,61 @@ public class TableUtils {
 		List<String> queriesAfter = new ArrayList<String>();
 		addCreateTableStatements(connectionSource.getDatabaseType(), tableInfo, statements, queriesAfter, ifNotExists);
 		return statements;
+	}
+
+	/**
+	 * Generate and return the list of statements to create a database table and any associated features.
+	 */
+	private static <T, ID> void addCreateTableStatements(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
+			List<String> statements, List<String> queriesAfter, boolean ifNotExists) throws SQLException {
+		StringBuilder sb = new StringBuilder(256);
+		sb.append("CREATE TABLE ");
+		if (ifNotExists && databaseType.isCreateIfNotExistsSupported()) {
+			sb.append("IF NOT EXISTS ");
+		}
+		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
+		sb.append(" (");
+		List<String> additionalArgs = new ArrayList<String>();
+		List<String> statementsBefore = new ArrayList<String>();
+		List<String> statementsAfter = new ArrayList<String>();
+		// our statement will be set here later
+		boolean first = true;
+		for (FieldType fieldType : tableInfo.getFieldTypes()) {
+			// skip foreign collections
+			if (fieldType.isForeignCollection()) {
+				continue;
+			} else if (first) {
+				first = false;
+			} else {
+				sb.append(", ");
+			}
+			String columnDefinition = fieldType.getColumnDefinition();
+			if (columnDefinition == null) {
+				// we have to call back to the database type for the specific create syntax
+				databaseType.appendColumnArg(tableInfo.getTableName(), sb, fieldType, additionalArgs, statementsBefore,
+						statementsAfter, queriesAfter);
+			} else {
+				// hand defined field
+				databaseType.appendEscapedEntityName(sb, fieldType.getColumnName());
+				sb.append(' ').append(columnDefinition).append(' ');
+			}
+		}
+		// add any sql that sets any primary key fields
+		databaseType.addPrimaryKeySql(tableInfo.getFieldTypes(), additionalArgs, statementsBefore, statementsAfter,
+				queriesAfter);
+		// add any sql that sets any unique fields
+		databaseType.addUniqueComboSql(tableInfo.getFieldTypes(), additionalArgs, statementsBefore, statementsAfter,
+				queriesAfter);
+		for (String arg : additionalArgs) {
+			// we will have spat out one argument already so we don't have to do the first dance
+			sb.append(", ").append(arg);
+		}
+		sb.append(") ");
+		databaseType.appendCreateTableSuffix(sb);
+		statements.addAll(statementsBefore);
+		statements.add(sb.toString());
+		statements.addAll(statementsAfter);
+		addCreateIndexStatements(databaseType, tableInfo, statements, ifNotExists, false);
+		addCreateIndexStatements(databaseType, tableInfo, statements, ifNotExists, true);
 	}
 }
