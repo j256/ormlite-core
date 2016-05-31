@@ -72,6 +72,7 @@ public class BaseSqliteDatabaseTypeTest extends BaseCoreTest {
 	}
 
 	private static class OurSqliteDatabaseType extends BaseSqliteDatabaseType {
+		@Override
 		public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 			return false;
 		}
@@ -79,6 +80,7 @@ public class BaseSqliteDatabaseTypeTest extends BaseCoreTest {
 		protected String getDriverClassName() {
 			return null;
 		}
+		@Override
 		public String getDatabaseName() {
 			return "fake";
 		}

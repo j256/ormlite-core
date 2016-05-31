@@ -56,6 +56,7 @@ public class BaseDatabaseTypeTest extends BaseCoreTest {
 
 	private static class TestDatabaseType extends BaseDatabaseType {
 
+		@Override
 		public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 			return false;
 		}
@@ -65,6 +66,7 @@ public class BaseDatabaseTypeTest extends BaseCoreTest {
 			return "com.class.that.doesnt.exist";
 		}
 
+		@Override
 		public String getDatabaseName() {
 			return "foo";
 		}
