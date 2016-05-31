@@ -56,14 +56,12 @@ public class EnumStringTypeTest extends BaseTypeTest {
 		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
 		CompiledStatement stmt = null;
 		try {
-			stmt =
-					conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
-							DatabaseConnection.DEFAULT_RESULT_FLAGS);
+			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
+					DatabaseConnection.DEFAULT_RESULT_FLAGS);
 			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
-			assertEquals(val.toString(),
-					DataType.ENUM_STRING.getDataPersister()
-							.resultToJava(null, results, results.findColumn(ENUM_COLUMN)));
+			assertEquals(val.toString(), DataType.ENUM_STRING.getDataPersister().resultToJava(null, results,
+					results.findColumn(ENUM_COLUMN)));
 		} finally {
 			if (stmt != null) {
 				stmt.close();
@@ -141,6 +139,8 @@ public class EnumStringTypeTest extends BaseTypeTest {
 
 	private enum OurEnum {
 		FIRST,
-		SECOND, ;
+		SECOND,
+		// end
+		;
 	}
 }

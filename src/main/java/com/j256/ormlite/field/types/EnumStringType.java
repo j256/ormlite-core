@@ -9,7 +9,8 @@ import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
- * Type that persists an enum as its string value. You can also use the {@link EnumIntegerType}.
+ * Type that persists an enum as its string value produced by call @{link {@link Enum#name()}. You can also use the
+ * {@link EnumIntegerType}. If you want to use the {@link Enum#toString()} instead, see the {@link EnumToStringType}.
  * 
  * @author graywatson
  */
@@ -62,7 +63,7 @@ public class EnumStringType extends BaseEnumType {
 	@Override
 	public Object javaToSqlArg(FieldType fieldType, Object obj) {
 		Enum<?> enumVal = (Enum<?>) obj;
-		return enumVal.name();
+		return getEnumName(enumVal);
 	}
 
 	@Override
@@ -73,7 +74,7 @@ public class EnumStringType extends BaseEnumType {
 			throw new SQLException("Field " + fieldType + " improperly configured as type " + this);
 		}
 		for (Enum<?> enumVal : constants) {
-			enumStringMap.put(enumVal.name(), enumVal);
+			enumStringMap.put(getEnumName(enumVal), enumVal);
 		}
 		return enumStringMap;
 	}
@@ -81,5 +82,9 @@ public class EnumStringType extends BaseEnumType {
 	@Override
 	public int getDefaultWidth() {
 		return DEFAULT_WIDTH;
+	}
+
+	protected String getEnumName(Enum<?> enumVal) {
+		return enumVal.name();
 	}
 }

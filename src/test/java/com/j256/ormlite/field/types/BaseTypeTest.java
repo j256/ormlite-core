@@ -47,6 +47,7 @@ public abstract class BaseTypeTest extends BaseCoreTest {
 			int colNum = results.findColumn(columnName);
 			Field field = clazz.getDeclaredField(columnName);
 			FieldType fieldType = FieldType.createFieldType(connectionSource, TABLE_NAME, field, clazz);
+			assertEquals(dataType.getDataPersister(), fieldType.getDataPersister());
 			Class<?>[] classes = fieldType.getDataPersister().getAssociatedClasses();
 			if (classes.length > 0) {
 				assertTrue(classes[0].isAssignableFrom(fieldType.getType()));
@@ -70,7 +71,9 @@ public abstract class BaseTypeTest extends BaseCoreTest {
 					// expected
 				}
 			} else if (defaultValStr != null) {
-				assertEquals(defaultSqlVal, dataPersister.parseDefaultString(fieldType, defaultValStr));
+				Object parsedDefault = dataPersister.parseDefaultString(fieldType, defaultValStr);
+				assertEquals(defaultSqlVal.getClass(), parsedDefault.getClass());
+				assertEquals(defaultSqlVal, parsedDefault);
 			}
 			if (sqlArg == null) {
 				// noop

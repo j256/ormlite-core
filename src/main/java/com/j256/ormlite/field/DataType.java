@@ -23,6 +23,7 @@ import com.j256.ormlite.field.types.DoubleObjectType;
 import com.j256.ormlite.field.types.DoubleType;
 import com.j256.ormlite.field.types.EnumIntegerType;
 import com.j256.ormlite.field.types.EnumStringType;
+import com.j256.ormlite.field.types.EnumToStringType;
 import com.j256.ormlite.field.types.FloatObjectType;
 import com.j256.ormlite.field.types.FloatType;
 import com.j256.ormlite.field.types.IntType;
@@ -175,12 +176,18 @@ public enum DataType {
 	 */
 	SERIALIZABLE(SerializableType.getSingleton()),
 	/**
-	 * Persists an Enum Java class as its string value. You can also specify the {@link #ENUM_INTEGER} as the type.
+	 * Persists an Enum Java class as its string value produced by call @{link {@link Enum#name()}. You can also specify
+	 * the {@link #ENUM_INTEGER} or {@link #ENUM_TO_STRING} as the type.
 	 */
 	ENUM_STRING(EnumStringType.getSingleton()),
 	/**
-	 * Persists an Enum Java class as its ordinal integer value. You can also specify the {@link #ENUM_STRING} as the
-	 * type.
+	 * Persists an Enum Java class as its string value. You can also specify the {@link #ENUM_INTEGER} or
+	 * {@link #ENUM_STRING} as the type.
+	 */
+	ENUM_TO_STRING(EnumToStringType.getSingleton()),
+	/**
+	 * Persists an Enum Java class as its ordinal integer value. You can also specify the {@link #ENUM_STRING} or
+	 * {@link #ENUM_TO_STRING} as the type.
 	 */
 	ENUM_INTEGER(EnumIntegerType.getSingleton()),
 	/**
