@@ -2,9 +2,6 @@ package com.j256.ormlite.field.types;
 
 import static org.junit.Assert.assertEquals;
 
-import java.sql.SQLException;
-import java.util.Arrays;
-
 import org.junit.Test;
 
 import com.j256.ormlite.dao.Dao;
@@ -22,7 +19,7 @@ public class ByteArrayTypeTest extends BaseTypeTest {
 		Class<LocalByteArray> clazz = LocalByteArray.class;
 		Dao<LocalByteArray, Object> dao = createDao(clazz, true);
 		byte[] val = new byte[] { 123, 4, 124, 1, 0, 72 };
-		String valStr = Arrays.toString(val);
+		String valStr = new String(val);
 		LocalByteArray foo = new LocalByteArray();
 		foo.byteField = val;
 		assertEquals(1, dao.create(foo));
@@ -38,11 +35,6 @@ public class ByteArrayTypeTest extends BaseTypeTest {
 		assertEquals(1, dao.create(new LocalByteArray()));
 		testType(dao, foo, clazz, null, null, null, null, DataType.BYTE_ARRAY, BYTE_COLUMN, false, false, true, false,
 				true, false, true, false);
-	}
-
-	@Test(expected = SQLException.class)
-	public void testByteArrayParseDefault() throws Exception {
-		DataType.BYTE_ARRAY.getDataPersister().parseDefaultString(null, null);
 	}
 
 	@Test
