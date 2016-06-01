@@ -591,7 +591,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
-			boolean bool = (boolean) Boolean.parseBoolean(defaultStr);
+			boolean bool = Boolean.parseBoolean(defaultStr);
 			return (bool ? Byte.valueOf((byte) 1) : Byte.valueOf((byte) 0));
 		}
 
