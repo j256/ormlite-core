@@ -40,6 +40,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	private List<OrderBy> orderByList;
 	private List<ColumnNameOrRawSql> groupByList;
 	private boolean isInnerQuery;
+        private String alias;
 	private String countOfQuery;
 	private String having;
 	private Long limit;
@@ -100,6 +101,16 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	/**
+         * Add an alias for this table. In FROM clause, the table will use AS to define the alias, and qualified fields will
+         * be qualified using the alias instead of table name
+         *
+         */
+        public QueryBuilder<T, ID> as(String alias) {
+            this.alias = alias;
+            return this;
+        }
+
+        /**
 	 * Add columns to be returned by the SELECT query. If no columns are selected then all columns are returned by
 	 * default. For classes with id columns, the id column is added to the select list automagically. This can be called
 	 * multiple times to add more columns to select.
@@ -498,6 +509,9 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		}
 		sb.append("FROM ");
 		databaseType.appendEscapedEntityName(sb, tableName);
+                if (alias != null) {
+                    appendAlias(sb);
+                }
 		sb.append(' ');
 		if (joinList != null) {
 			appendJoinSql(sb);
@@ -648,12 +662,14 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		for (JoinInfo joinInfo : joinList) {
 			sb.append(joinInfo.type.sql).append(" JOIN ");
 			databaseType.appendEscapedEntityName(sb, joinInfo.queryBuilder.tableName);
+                        if (joinInfo.queryBuilder.alias != null)
+                            joinInfo.queryBuilder.appendAlias(sb);
 			sb.append(" ON ");
-			databaseType.appendEscapedEntityName(sb, tableName);
+                        this.appendTableQualifier(sb);
 			sb.append('.');
 			databaseType.appendEscapedEntityName(sb, joinInfo.localField.getColumnName());
 			sb.append(" = ");
-			databaseType.appendEscapedEntityName(sb, joinInfo.queryBuilder.tableName);
+                        joinInfo.queryBuilder.appendTableQualifier(sb);
 			sb.append('.');
 			databaseType.appendEscapedEntityName(sb, joinInfo.remoteField.getColumnName());
 			sb.append(' ');
@@ -664,6 +680,15 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		}
 	}
 
+        protected void appendTableQualifier(StringBuilder sb) {
+            databaseType.appendEscapedEntityName(sb, getTableName());
+        }
+
+        @Override
+        protected String getTableName() {
+            return alias == null ? tableName : alias;
+        }
+
 	private void appendSelects(StringBuilder sb) {
 		// the default
 		type = StatementType.SELECT;
@@ -671,7 +696,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		// if no columns were specified then * is the default
 		if (selectList == null) {
 			if (addTableName) {
-				databaseType.appendEscapedEntityName(sb, tableName);
+                                appendTableQualifier(sb);
 				sb.append('.');
 			}
 			sb.append("* ");
@@ -858,7 +883,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 
 	private void appendColumnName(StringBuilder sb, String columnName) {
 		if (addTableName) {
-			databaseType.appendEscapedEntityName(sb, tableName);
+                        appendTableQualifier(sb);
 			sb.append('.');
 		}
 		databaseType.appendEscapedEntityName(sb, columnName);
@@ -869,6 +894,11 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			sb.append("HAVING ").append(having).append(' ');
 		}
 	}
+
+        private void appendAlias(StringBuilder sb) {
+            sb.append(" AS ");
+            databaseType.appendEscapedEntityName(sb, alias);
+        }
 
 	/**
 	 * Encapsulates our join information.

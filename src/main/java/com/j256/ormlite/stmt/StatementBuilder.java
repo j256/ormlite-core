@@ -156,10 +156,14 @@ public abstract class StatementBuilder<T, ID> {
 			return operation == WhereOperation.FIRST;
 		}
 		operation.appendBefore(sb);
-		where.appendSql((addTableName ? tableName : null), sb, argList);
+                where.appendSql((addTableName ? getTableName() : null), sb, argList);
 		operation.appendAfter(sb);
 		return false;
 	}
+
+        protected String getTableName() {
+            return tableName;
+        }
 
 	/**
 	 * Append the end of our statement string to the StringBuilder.
