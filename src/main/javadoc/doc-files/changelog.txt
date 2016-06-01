@@ -41,6 +41,7 @@
 	* ANDROID: Added initial take on Loader base classes from EgorAnd for newer Android versions.  Thanks much!!
 	* ANDROID: Moved Slf4jLoggingLog from JDBC to CORE so Android users can use it.  Thanks to tonyxiao.
 	* ANDROID: Fixed problem with the maxForeignAutoRefreshLevel config setting.  Thanks to Eric Fung et al.  Bug #194.
+	* ANDROID: Removed deprecated methods: OpenHelperManager.release() and AndroidDatabaseResults(Cursor, boolean, ObjectCache).
 
 4.48: 12/16/2013
 	* CORE: Added support for tracking direct database connection activity with DatabaseConnectionProxy.
