@@ -408,22 +408,6 @@ public class DatabaseFieldConfig {
 		this.foreignCollectionMaxEagerLevel = foreignCollectionMaxEagerLevel;
 	}
 
-	/**
-	 * @deprecated Should use {@link #setForeignCollectionMaxEagerLevel(int)}
-	 */
-	@Deprecated
-	public void setMaxEagerForeignCollectionLevel(int maxEagerForeignCollectionLevel) {
-		this.foreignCollectionMaxEagerLevel = maxEagerForeignCollectionLevel;
-	}
-
-	/**
-	 * @deprecated Should use {@link #setForeignCollectionMaxEagerLevel(int)}
-	 */
-	@Deprecated
-	public void setForeignCollectionMaxEagerForeignCollectionLevel(int maxEagerForeignCollectionLevel) {
-		this.foreignCollectionMaxEagerLevel = maxEagerForeignCollectionLevel;
-	}
-
 	public String getForeignCollectionColumnName() {
 		return foreignCollectionColumnName;
 	}
@@ -434,14 +418,6 @@ public class DatabaseFieldConfig {
 
 	public String getForeignCollectionOrderColumnName() {
 		return foreignCollectionOrderColumnName;
-	}
-
-	/**
-	 * @deprecated You should use {@link #setForeignCollectionOrderColumnName(String)}
-	 */
-	@Deprecated
-	public void setForeignCollectionOrderColumn(String foreignCollectionOrderColumn) {
-		this.foreignCollectionOrderColumnName = foreignCollectionOrderColumn;
 	}
 
 	public void setForeignCollectionOrderColumnName(String foreignCollectionOrderColumn) {
@@ -458,14 +434,6 @@ public class DatabaseFieldConfig {
 
 	public String getForeignCollectionForeignFieldName() {
 		return foreignCollectionForeignFieldName;
-	}
-
-	/**
-	 * @deprecated You should use {@link #setForeignCollectionForeignFieldName(String)}
-	 */
-	@Deprecated
-	public void setForeignCollectionForeignColumnName(String foreignCollectionForeignColumnName) {
-		this.foreignCollectionForeignFieldName = foreignCollectionForeignColumnName;
 	}
 
 	public void setForeignCollectionForeignFieldName(String foreignCollectionForeignFieldName) {
@@ -711,24 +679,11 @@ public class DatabaseFieldConfig {
 		}
 		config.foreignCollection = true;
 		config.foreignCollectionEager = foreignCollection.eager();
-		@SuppressWarnings("deprecation")
-		int maxEagerLevel = foreignCollection.maxEagerForeignCollectionLevel();
-		if (maxEagerLevel != ForeignCollectionField.DEFAULT_MAX_EAGER_LEVEL) {
-			config.foreignCollectionMaxEagerLevel = maxEagerLevel;
-		} else {
-			config.foreignCollectionMaxEagerLevel = foreignCollection.maxEagerLevel();
-		}
+		config.foreignCollectionMaxEagerLevel = foreignCollection.maxEagerLevel();
 		config.foreignCollectionOrderColumnName = valueIfNotBlank(foreignCollection.orderColumnName());
 		config.foreignCollectionOrderAscending = foreignCollection.orderAscending();
 		config.foreignCollectionColumnName = valueIfNotBlank(foreignCollection.columnName());
-		String foreignFieldName = valueIfNotBlank(foreignCollection.foreignFieldName());
-		if (foreignFieldName == null) {
-			@SuppressWarnings("deprecation")
-			String foreignColumnName = valueIfNotBlank(foreignCollection.foreignColumnName());
-			config.foreignCollectionForeignFieldName = valueIfNotBlank(foreignColumnName);
-		} else {
-			config.foreignCollectionForeignFieldName = foreignFieldName;
-		}
+		config.foreignCollectionForeignFieldName = valueIfNotBlank(foreignCollection.foreignFieldName());
 		return config;
 	}
 

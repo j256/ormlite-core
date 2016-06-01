@@ -32,7 +32,13 @@
 	* CORE: Allow BigInteger to be an ID and version field by saving as string.  Thanks noordawod.
 	* CORE: Allow BYTE_ARRAY and STRING_BYTE_ARRAY data type to be ids and have default values.  Thanks noordawod.
 	* CORE: Added support for table aliasing.  Thanks much to p91paul.
-	* CORE: Removed deprecated methods: Dao.setAutoCommit(boolean), isAutoCommit(), QueryBuilder.clear(), limit(int), offset(int). 
+	* CORE: Removed deprecated methods: Dao.setAutoCommit(boolean), isAutoCommit()
+	* CORE: Removed deprecated methods: QueryBuilder.clear(), limit(int), offset(int) 
+	* CORE: Removed deprecated methods: ForeignCollectionField.maxEagerForeignCollectionLevel(), foreignColumnName() 
+	* CORE: Removed deprecated methods: DatabaseFieldConfig.setMaxEagerForeignCollectionLevel()
+	* CORE: Removed deprecated methods: DatabaseFieldConfig.setForeignCollectionMaxEagerForeignCollectionLevel()
+	* CORE: Removed deprecated methods: DatabaseFieldConfig.setForeignCollectionOrderColumn()
+	* CORE: Removed deprecated methods: DatabaseFieldConfig.setForeignCollectionForeignColumnName()
 	* JDBC: Possibly fixed some problems with the Oracle type with better boolean support.  Thanks to 51mon.
 	* JDBC: Added support for UUID database fields for Postgres and MSSQL.  Use dataType = UUID_NATIVE.  Thanks to tsharp.
 	* JDBC: Added support for a JdbcConnectionSource that uses an existing database connection.  Thanks to natinusala.

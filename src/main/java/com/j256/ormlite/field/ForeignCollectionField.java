@@ -53,12 +53,6 @@ public @interface ForeignCollectionField {
 	boolean eager() default false;
 
 	/**
-	 * @deprecated Should use {@link #maxEagerLevel()}
-	 */
-	@Deprecated
-	int maxEagerForeignCollectionLevel() default DEFAULT_MAX_EAGER_LEVEL;
-
-	/**
 	 * Set this to be the number of times to expand an eager foreign collection's foreign collection. If you query for A
 	 * and it has an eager foreign-collection of field B which has an eager foreign-collection of field C ..., then a
 	 * lot of database operations are going to happen whenever you query for A. By default this value is 1 meaning that
@@ -84,12 +78,6 @@ public @interface ForeignCollectionField {
 	 * default) or descending (false).
 	 */
 	boolean orderAscending() default true;
-
-	/**
-	 * @deprecated This has been renamed as {@link #foreignFieldName()} to make it more consistent to how it works.
-	 */
-	@Deprecated
-	String foreignColumnName() default "";
 
 	/**
 	 * Name of the _field_ (not the column name) in the class that the collection is holding that corresponds to the

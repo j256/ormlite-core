@@ -1498,7 +1498,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		String stuff;
 		@DatabaseField(foreign = true)
 		RecursiveReferenceEagerLevelTwo parent;
-		@ForeignCollectionField(eager = true, maxEagerForeignCollectionLevel = 2)
+		@ForeignCollectionField(eager = true, maxEagerLevel = 2)
 		ForeignCollection<RecursiveReferenceEagerLevelTwo> related;
 		protected RecursiveReferenceEagerLevelTwo() {
 		}
@@ -1511,7 +1511,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		String stuff;
 		@DatabaseField(foreign = true)
 		RecursiveReferenceEagerLevelZero parent;
-		@ForeignCollectionField(eager = true, maxEagerForeignCollectionLevel = 0)
+		@ForeignCollectionField(eager = true, maxEagerLevel = 0)
 		ForeignCollection<RecursiveReferenceEagerLevelZero> related;
 		protected RecursiveReferenceEagerLevelZero() {
 		}

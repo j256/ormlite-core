@@ -63,9 +63,7 @@ public class DatabaseFieldConfigReflectionTest extends BaseCoreTest {
 
 		// each field should have a setting
 		for (Method method : ForeignCollectionField.class.getMethods()) {
-			if (method.getAnnotation(Deprecated.class) == null) {
-				testMethod(method, "foreignCollection");
-			}
+			testMethod(method, "foreignCollection");
 		}
 	}
 
@@ -130,15 +128,13 @@ public class DatabaseFieldConfigReflectionTest extends BaseCoreTest {
 			methodName = methodNamePrefix + StringUtils.capitalize(methodName);
 		}
 		// test getter
-		if (method.getAnnotation(Deprecated.class) == null) {
-			if (method.getReturnType() == boolean.class) {
-				DatabaseFieldConfig.class.getMethod("is" + StringUtils.capitalize(methodName));
+		if (method.getReturnType() == boolean.class) {
+			DatabaseFieldConfig.class.getMethod("is" + StringUtils.capitalize(methodName));
+		} else {
+			if (getArg == null) {
+				DatabaseFieldConfig.class.getMethod("get" + StringUtils.capitalize(methodName));
 			} else {
-				if (getArg == null) {
-					DatabaseFieldConfig.class.getMethod("get" + StringUtils.capitalize(methodName));
-				} else {
-					DatabaseFieldConfig.class.getMethod("get" + StringUtils.capitalize(methodName), getArg);
-				}
+				DatabaseFieldConfig.class.getMethod("get" + StringUtils.capitalize(methodName), getArg);
 			}
 		}
 		// test setter
@@ -146,7 +142,7 @@ public class DatabaseFieldConfigReflectionTest extends BaseCoreTest {
 	}
 
 	private boolean isObjectMethodName(String name) {
-		return (name.equals("equals") || name.equals("toString") || name.equals("hashCode") || name.equals("annotationType"));
+		return (name.equals("equals") || name.equals("toString") || name.equals("hashCode")
+				|| name.equals("annotationType"));
 	}
-
 }
