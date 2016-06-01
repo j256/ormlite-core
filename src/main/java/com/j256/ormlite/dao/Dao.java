@@ -749,12 +749,6 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public void endThreadConnection(DatabaseConnection connection) throws SQLException;
 
 	/**
-	 * @deprecated You should use the {@link #setAutoCommit(DatabaseConnection, boolean)} method instead.
-	 */
-	@Deprecated
-	public void setAutoCommit(boolean autoCommit) throws SQLException;
-
-	/**
 	 * Set auto-commit mode to be true or false on the connection returned by the {@link #startThreadConnection()}. This
 	 * may not be supported by all database types.
 	 * 
@@ -771,12 +765,6 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * </p>
 	 */
 	public void setAutoCommit(DatabaseConnection connection, boolean autoCommit) throws SQLException;
-
-	/**
-	 * @deprecated You should use the {@link #isAutoCommit(DatabaseConnection)} method instead.
-	 */
-	@Deprecated
-	public boolean isAutoCommit() throws SQLException;
 
 	/**
 	 * Return true if the database connection returned by the {@link #startThreadConnection()} is in auto-commit mode

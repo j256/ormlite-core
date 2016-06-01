@@ -516,14 +516,6 @@ public class Where<T, ID> {
 	}
 
 	/**
-	 * @deprecated Should now use {@link #reset()}.
-	 */
-	@Deprecated
-	public Where<T, ID> clear() {
-		return reset();
-	}
-
-	/**
 	 * Reset the Where object so it can be re-used.
 	 */
 	public Where<T, ID> reset() {

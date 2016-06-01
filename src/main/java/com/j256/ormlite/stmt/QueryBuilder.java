@@ -219,27 +219,11 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * @deprecated Should use {@link #limit(Long)}
-	 */
-	@Deprecated
-	public QueryBuilder<T, ID> limit(int maxRows) {
-		return limit((long) maxRows);
-	}
-
-	/**
 	 * Limit the output to maxRows maximum number of rows. Set to null for no limit (the default).
 	 */
 	public QueryBuilder<T, ID> limit(Long maxRows) {
 		limit = maxRows;
 		return this;
-	}
-
-	/**
-	 * @deprecated Should use {@link #offset(Long)}
-	 */
-	@Deprecated
-	public QueryBuilder<T, ID> offset(int startRow) throws SQLException {
-		return offset((long) startRow);
 	}
 
 	/**
@@ -444,15 +428,6 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	public QueryBuilder<T, ID> setAlias(String alias) {
 		this.alias = alias;
 		return this;
-	}
-
-	/**
-	 * @deprecated Renamed to be {@link #reset()}.
-	 */
-	@Deprecated
-	@Override
-	public void clear() {
-		reset();
 	}
 
 	@Override

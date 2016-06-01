@@ -2522,19 +2522,6 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(foo2.stringField, foo.stringField);
 	}
 
-	@Test
-	@SuppressWarnings("deprecation")
-	public void testSetAutoCommit() throws Exception {
-		Dao<Foo, Integer> dao = createDao(Foo.class, true);
-		boolean autoCommit = dao.isAutoCommit();
-		try {
-			dao.setAutoCommit(!autoCommit);
-			assertFalse(autoCommit == dao.isAutoCommit());
-		} finally {
-			dao.setAutoCommit(autoCommit);
-		}
-	}
-
 	/* ============================================================================================== */
 
 	private String buildFooQueryAllString(Dao<Foo, Object> fooDao) throws SQLException {

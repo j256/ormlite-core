@@ -963,28 +963,8 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	@Override
-	public void setAutoCommit(boolean autoCommit) throws SQLException {
-		DatabaseConnection connection = connectionSource.getReadWriteConnection();
-		try {
-			setAutoCommit(connection, autoCommit);
-		} finally {
-			connectionSource.releaseConnection(connection);
-		}
-	}
-
-	@Override
 	public void setAutoCommit(DatabaseConnection connection, boolean autoCommit) throws SQLException {
 		connection.setAutoCommit(autoCommit);
-	}
-
-	@Override
-	public boolean isAutoCommit() throws SQLException {
-		DatabaseConnection connection = connectionSource.getReadWriteConnection();
-		try {
-			return isAutoCommit(connection);
-		} finally {
-			connectionSource.releaseConnection(connection);
-		}
 	}
 
 	@Override
