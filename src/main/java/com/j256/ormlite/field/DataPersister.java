@@ -36,7 +36,7 @@ public interface DataPersister extends FieldConverter {
 	public Object makeConfigObject(FieldType fieldType) throws SQLException;
 
 	/**
-	 * Convert a {@link Number} object to its primitive object suitable for assigning to an ID field.
+	 * Convert a {@link Number} object to its primitive object suitable for assigning to a java ID field.
 	 */
 	public Object convertIdNumber(Number number);
 
