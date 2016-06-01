@@ -48,9 +48,9 @@ public abstract class StatementBuilder<T, ID> {
 	}
 
 	/**
-	 * Creates and returns a new {@link Where} object for this QueryBulder that can be used to add WHERE clauses to
-	 * the SQL statement.  Only one {@link Where} object can be associated with a QueryBuilder at a time and calling
-	 * this method again creates a new {@link Where} object and resets the where information for this QueryBuilder.
+	 * Creates and returns a new {@link Where} object for this QueryBulder that can be used to add WHERE clauses to the
+	 * SQL statement. Only one {@link Where} object can be associated with a QueryBuilder at a time and calling this
+	 * method again creates a new {@link Where} object and resets the where information for this QueryBuilder.
 	 */
 	public Where<T, ID> where() {
 		where = new Where<T, ID>(tableInfo, this, databaseType);
@@ -75,7 +75,8 @@ public abstract class StatementBuilder<T, ID> {
 		String statement = buildStatementString(argList);
 		ArgumentHolder[] selectArgs = argList.toArray(new ArgumentHolder[argList.size()]);
 		FieldType[] resultFieldTypes = getResultFieldTypes();
-		FieldType[] argFieldTypes = new FieldType[argList.size()];;
+		FieldType[] argFieldTypes = new FieldType[argList.size()];
+		;
 		for (int selectC = 0; selectC < selectArgs.length; selectC++) {
 			argFieldTypes[selectC] = selectArgs[selectC].getFieldType();
 		}
@@ -156,14 +157,10 @@ public abstract class StatementBuilder<T, ID> {
 			return operation == WhereOperation.FIRST;
 		}
 		operation.appendBefore(sb);
-                where.appendSql((addTableName ? getTableName() : null), sb, argList);
+		where.appendSql((addTableName ? getTableName() : null), sb, argList);
 		operation.appendAfter(sb);
 		return false;
 	}
-
-        protected String getTableName() {
-            return tableName;
-        }
 
 	/**
 	 * Append the end of our statement string to the StringBuilder.
@@ -195,6 +192,10 @@ public abstract class StatementBuilder<T, ID> {
 		return tableInfo.getFieldTypeByColumnName(columnName);
 	}
 
+	protected String getTableName() {
+		return tableName;
+	}
+
 	/**
 	 * Return the type of the statement.
 	 */
@@ -216,7 +217,9 @@ public abstract class StatementBuilder<T, ID> {
 		UPDATE(true, false, true, false),
 		/** SQL statement in the form of DELETE ... */
 		DELETE(true, false, true, false),
-		/** SQL statement in the form of CREATE TABLE, ALTER TABLE, or something returning the number of rows affected */
+		/**
+		 * SQL statement in the form of CREATE TABLE, ALTER TABLE, or something returning the number of rows affected
+		 */
 		EXECUTE(false, false, false, true),
 		// end
 		;
