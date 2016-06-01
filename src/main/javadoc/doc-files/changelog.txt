@@ -36,6 +36,7 @@
 	* JDBC: Possibly fixed some problems with the Oracle type with better boolean support.  Thanks to 51mon.
 	* JDBC: Added support for UUID database fields for Postgres and MSSQL.  Use dataType = UUID_NATIVE.  Thanks to tsharp.
 	* JDBC: Added support for a JdbcConnectionSource that uses an existing database connection.  Thanks to natinusala.
+	* JDBC: Removed deprecated method: DataSourceConnectionSource.setUsesTransactions(boolean).
 	* ANDROID: Fixed the string processing when persisting java.sql.Timestamp classes. Bug #163.
 	* ANDROID: Added initial take on Loader base classes from EgorAnd for newer Android versions.  Thanks much!!
 	* ANDROID: Moved Slf4jLoggingLog from JDBC to CORE so Android users can use it.  Thanks to tonyxiao.
