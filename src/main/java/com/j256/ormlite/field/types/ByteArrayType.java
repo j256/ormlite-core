@@ -33,17 +33,16 @@ public class ByteArrayType extends BaseDataType {
 
 	@Override
 	public Object parseDefaultString(FieldType fieldType, String defaultStr) {
-		return defaultStr.getBytes();
+		if (defaultStr == null) {
+			return null;
+		} else {
+			return defaultStr.getBytes();
+		}
 	}
 
 	@Override
 	public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 		return (byte[]) results.getBytes(columnPos);
-	}
-
-	@Override
-	public boolean isAppropriateId() {
-		return false;
 	}
 
 	@Override

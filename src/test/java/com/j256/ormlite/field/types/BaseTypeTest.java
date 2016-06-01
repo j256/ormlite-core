@@ -39,9 +39,8 @@ public abstract class BaseTypeTest extends BaseCoreTest {
 			assertEquals(defaultSqlVal.getClass(), sqlArg.getClass());
 		}
 		try {
-			stmt =
-					conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
-							DatabaseConnection.DEFAULT_RESULT_FLAGS);
+			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
+					DatabaseConnection.DEFAULT_RESULT_FLAGS);
 			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
 			int colNum = results.findColumn(columnName);
@@ -62,8 +61,7 @@ public abstract class BaseTypeTest extends BaseCoreTest {
 				Object result = fieldType.resultToJava(results, colMap);
 				assertEquals(javaVal, result);
 			}
-			if (dataType == DataType.STRING_BYTES || dataType == DataType.BYTE_ARRAY
-					|| dataType == DataType.SERIALIZABLE) {
+			if (dataType == DataType.SERIALIZABLE) {
 				try {
 					dataPersister.parseDefaultString(fieldType, "");
 					fail("parseDefaultString should have thrown for " + dataType);
@@ -73,7 +71,11 @@ public abstract class BaseTypeTest extends BaseCoreTest {
 			} else if (defaultValStr != null) {
 				Object parsedDefault = dataPersister.parseDefaultString(fieldType, defaultValStr);
 				assertEquals(defaultSqlVal.getClass(), parsedDefault.getClass());
-				assertEquals(defaultSqlVal, parsedDefault);
+				if (dataType == DataType.BYTE_ARRAY || dataType == DataType.STRING_BYTES) {
+					assertTrue(Arrays.equals((byte[]) defaultSqlVal, (byte[]) parsedDefault));
+				} else {
+					assertEquals(defaultSqlVal, parsedDefault);
+				}
 			}
 			if (sqlArg == null) {
 				// noop

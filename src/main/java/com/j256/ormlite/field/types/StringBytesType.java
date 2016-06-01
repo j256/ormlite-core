@@ -36,7 +36,15 @@ public class StringBytesType extends BaseDataType {
 
 	@Override
 	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
-		throw new SQLException("String-bytes type cannot have default values");
+		if (defaultStr == null) {
+			return null;
+		} else {
+			try {
+				return defaultStr.getBytes(getCharsetName(fieldType));
+			} catch (UnsupportedEncodingException e) {
+				throw SqlExceptionUtil.create("Could not convert default string: " + defaultStr, e);
+			}
+		}
 	}
 
 	@Override
@@ -66,11 +74,6 @@ public class StringBytesType extends BaseDataType {
 		} catch (UnsupportedEncodingException e) {
 			throw SqlExceptionUtil.create("Could not convert string with charset name: " + charsetName, e);
 		}
-	}
-
-	@Override
-	public boolean isAppropriateId() {
-		return false;
 	}
 
 	@Override
