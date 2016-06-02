@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNull;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
-import com.j256.ormlite.dao.ForeignCollectionTest.Order;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 
@@ -15,7 +14,6 @@ public class ForeignObjectTest extends BaseCoreTest {
 
 	@Test
 	public void testQuestionAndAnswers() throws Exception {
-		createDao(Order.class, true);
 		Dao<Question, Object> questionDao = createDao(Question.class, true);
 		Dao<Answer, Object> answerDao = createDao(Answer.class, true);
 
@@ -58,6 +56,47 @@ public class ForeignObjectTest extends BaseCoreTest {
 		assertEquals(0, questionResult.bestAnswer.question.bestAnswer.val);
 	}
 
+	@Test
+	public void testCreateOrUpdate() throws Exception {
+		Dao<Question, Object> questionDao = createDao(Question.class, true);
+		Dao<Answer, Object> answerDao = createDao(Answer.class, true);
+
+		// not failed
+		Question question1 = new Question();
+		question1.name = "some question";
+
+		Answer answer1 = new Answer();
+		answer1.val = 1234313123;
+		assertEquals(1, answerDao.create(answer1));
+
+		question1.bestAnswer = answer1;
+		assertEquals(1, questionDao.create(question1));
+
+		questionDao.refresh(question1);
+		assertNotNull(question1.bestAnswer);
+
+		// create new question
+		Question question2 = new Question();
+		question2.name = "some question2";
+		assertEquals(1, questionDao.createOrUpdate(question2).getNumLinesChanged());
+
+		Answer answer2 = new Answer();
+		answer2.val = 87879723;
+		assertEquals(1, answerDao.create(answer2));
+
+		question2.bestAnswer = answer2;
+		assertEquals(1, questionDao.createOrUpdate(question2).getNumLinesChanged());
+
+		Question result = questionDao.queryForId(question2.id);
+		assertNotNull(result);
+		assertNotNull(result.bestAnswer);
+		assertEquals(answer2.id, result.bestAnswer.id);
+
+		questionDao.refresh(question2);
+		assertNotNull(question2.bestAnswer);
+		assertEquals(answer2.id, question2.bestAnswer.id);
+	}
+
 	protected static class Question {
 		@DatabaseField(generatedId = true)
 		int id;
@@ -67,6 +106,7 @@ public class ForeignObjectTest extends BaseCoreTest {
 		Answer bestAnswer;
 		@ForeignCollectionField(eager = true)
 		ForeignCollection<Answer> answers;
+
 		protected Question() {
 		}
 	}
@@ -78,6 +118,7 @@ public class ForeignObjectTest extends BaseCoreTest {
 		int val;
 		@DatabaseField(foreign = true, foreignAutoRefresh = true)
 		Question question;
+
 		protected Answer() {
 		}
 	}
