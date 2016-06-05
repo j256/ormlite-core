@@ -1,6 +1,7 @@
 package com.j256.ormlite.field.types;
 
 import java.lang.reflect.Field;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import com.j256.ormlite.field.FieldType;
@@ -43,6 +44,11 @@ public class SqlDateType extends DateType {
 	}
 
 	@Override
+	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+		return sqlArgToJava(fieldType, super.parseDefaultString(fieldType, defaultStr), 0);
+	}
+
+	@Override
 	public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
 		java.sql.Date date = (java.sql.Date) javaObject;
 		return new Timestamp(date.getTime());
@@ -51,6 +57,11 @@ public class SqlDateType extends DateType {
 	@Override
 	protected DateStringFormatConfig getDefaultDateFormatConfig() {
 		return sqlDateFormatConfig;
+	}
+
+	@Override
+	public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) {
+		return sqlArgToJava(fieldType, Timestamp.valueOf(stringValue), columnPos);
 	}
 
 	@Override
