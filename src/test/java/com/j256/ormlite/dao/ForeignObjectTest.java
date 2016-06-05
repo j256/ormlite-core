@@ -97,6 +97,22 @@ public class ForeignObjectTest extends BaseCoreTest {
 		assertEquals(answer2.id, question2.bestAnswer.id);
 	}
 
+	@Test
+	public void testForeignAutoCreate() throws Exception {
+		Dao<Parent, Long> parentDao = createDao(Parent.class, true);
+		createTable(Child.class, true);
+
+		Parent parent = new Parent();
+		Child child = new Child();
+		parent.child = child;
+
+		assertEquals(1, parentDao.create(parent));
+		Parent result = parentDao.queryForId(parent.id);
+		assertNotNull(result);
+		assertNotNull(result.child);
+		assertEquals(child.id, result.child.id);
+	}
+
 	protected static class Question {
 		@DatabaseField(generatedId = true)
 		int id;
@@ -106,9 +122,6 @@ public class ForeignObjectTest extends BaseCoreTest {
 		Answer bestAnswer;
 		@ForeignCollectionField(eager = true)
 		ForeignCollection<Answer> answers;
-
-		protected Question() {
-		}
 	}
 
 	protected static class Answer {
@@ -118,8 +131,22 @@ public class ForeignObjectTest extends BaseCoreTest {
 		int val;
 		@DatabaseField(foreign = true, foreignAutoRefresh = true)
 		Question question;
+	}
 
-		protected Answer() {
-		}
+	public static class Parent {
+		@DatabaseField(columnName = "_id", generatedId = true)
+		public long id;
+
+		@DatabaseField(columnName = "foreignId", foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true,
+				foreignColumnName = "api_id", canBeNull = false)
+		public Child child;
+	}
+
+	public static class Child {
+		@DatabaseField(columnName = "_id", generatedId = true)
+		public long id;
+
+		@DatabaseField(columnName = "api_id")
+		public long child_api_id;
 	}
 }
