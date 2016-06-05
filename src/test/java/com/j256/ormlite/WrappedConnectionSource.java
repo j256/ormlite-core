@@ -30,8 +30,8 @@ public class WrappedConnectionSource implements ConnectionSource {
 	}
 
 	@Override
-	public DatabaseConnection getReadOnlyConnection() throws SQLException {
-		DatabaseConnection connection = cs.getReadOnlyConnection();
+	public DatabaseConnection getReadOnlyConnection(String tableName) throws SQLException {
+		DatabaseConnection connection = cs.getReadOnlyConnection(tableName);
 		getReleaseCount.incrementAndGet();
 		WrappedConnection wrapped = wrapConnection(connection);
 		wrappedConnections.put(wrapped.getDatabaseConnectionProxy(), wrapped);
@@ -41,8 +41,8 @@ public class WrappedConnectionSource implements ConnectionSource {
 	}
 
 	@Override
-	public DatabaseConnection getReadWriteConnection() throws SQLException {
-		DatabaseConnection connection = cs.getReadWriteConnection();
+	public DatabaseConnection getReadWriteConnection(String tableName) throws SQLException {
+		DatabaseConnection connection = cs.getReadWriteConnection(tableName);
 		getReleaseCount.incrementAndGet();
 		WrappedConnection wrapped = wrapConnection(connection);
 		connection = wrapped.getDatabaseConnectionProxy();
@@ -129,8 +129,8 @@ public class WrappedConnectionSource implements ConnectionSource {
 	}
 
 	@Override
-	public DatabaseConnection getSpecialConnection() {
-		return cs.getSpecialConnection();
+	public DatabaseConnection getSpecialConnection(String tableName) {
+		return cs.getSpecialConnection(tableName);
 	}
 
 	@Override
@@ -139,13 +139,13 @@ public class WrappedConnectionSource implements ConnectionSource {
 	}
 
 	@Override
-	public boolean isOpen() {
-		return cs.isOpen();
+	public boolean isOpen(String tableName) {
+		return cs.isOpen(tableName);
 	}
 
 	@Override
-	public boolean isSingleConnection() {
-		return cs.isSingleConnection();
+	public boolean isSingleConnection(String tableName) {
+		return cs.isSingleConnection(tableName);
 	}
 
 	public void setDatabaseType(DatabaseType databaseType) {

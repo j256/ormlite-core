@@ -70,7 +70,7 @@ public class DateStringTypeTest extends BaseTypeTest {
 		LocalString foo = new LocalString();
 		foo.string = "not a date format";
 		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
+		DatabaseConnection conn = connectionSource.getReadOnlyConnection(FOO_TABLE_NAME);
 		CompiledStatement stmt = null;
 		try {
 			stmt =

@@ -1006,7 +1006,7 @@ public class FieldType {
 		}
 		levelCounters.autoRefreshLevel++;
 		try {
-			DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection();
+			DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection(tableName);
 			try {
 				// recurse and get the sub-object
 				return mappedQueryForId.execute(databaseConnection, val, objectCache);

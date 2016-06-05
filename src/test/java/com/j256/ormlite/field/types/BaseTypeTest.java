@@ -33,7 +33,7 @@ public abstract class BaseTypeTest extends BaseCoreTest {
 			boolean isAppropriateId, boolean isEscapedValue, boolean isPrimitive, boolean isSelectArgRequired,
 			boolean isStreamType, boolean isComparable, boolean isConvertableId) throws Exception {
 		DataPersister dataPersister = dataType.getDataPersister();
-		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
+		DatabaseConnection conn = connectionSource.getReadOnlyConnection(TABLE_NAME);
 		CompiledStatement stmt = null;
 		if (sqlArg != null) {
 			assertEquals(defaultSqlVal.getClass(), sqlArg.getClass());

@@ -86,7 +86,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		foo.equal = equal;
 		assertEquals(1, dao.create(foo));
 
-		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
 			dao.queryForId(foo.id);
@@ -113,7 +113,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	public void testCreateThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
-		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
 			dao.create(foo);
@@ -150,7 +150,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
 			dao.update(foo);
@@ -193,7 +193,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			// close connection
 			conn.close();
@@ -248,7 +248,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
 			UpdateBuilder<Foo, Integer> ub = dao.updateBuilder();
@@ -275,7 +275,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
 			dao.delete(foo);
@@ -316,7 +316,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
 			dao.deleteById(foo.id);
@@ -357,7 +357,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
 			List<Foo> foos = new ArrayList<Foo>();
@@ -418,7 +418,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
 			List<Integer> foos = new ArrayList<Integer>();
@@ -471,7 +471,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
 			dao.delete(dao.deleteBuilder().prepare());
@@ -506,7 +506,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
 			dao.refresh(foo);
@@ -576,7 +576,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		foo.equal = equal;
 		assertEquals(1, dao.create(foo));
 
-		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
 			dao.queryForFirst(dao.queryBuilder().prepare());
@@ -799,7 +799,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
 			dao.iterator();
@@ -842,7 +842,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
 			dao.iterator(dao.queryBuilder().prepare());
@@ -935,7 +935,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
 			dao.queryRaw("SELECT * FROM FOO");
@@ -1011,7 +1011,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
 			dao.queryRaw("SELECT * FROM FOO", new DataType[0]);
@@ -1088,7 +1088,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
 			dao.queryRaw("SELECT * FROM FOO", new RawRowMapper<Foo>() {
@@ -1157,7 +1157,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
 			dao.isTableExists();
@@ -1212,7 +1212,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
 			dao.updateRaw("DELETE FROM FOO");
@@ -1239,7 +1239,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
 			dao.executeRaw("TRUNCATE TABLE FOO");

@@ -65,7 +65,7 @@ public class SerializableTypeTest extends BaseTypeTest {
 		LocalSerializable foo = new LocalSerializable();
 		foo.serializable = null;
 		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
+		DatabaseConnection conn = connectionSource.getReadOnlyConnection(TABLE_NAME);
 		CompiledStatement stmt = null;
 		try {
 			stmt =
@@ -93,7 +93,7 @@ public class SerializableTypeTest extends BaseTypeTest {
 		LocalByteArray foo = new LocalByteArray();
 		foo.byteField = new byte[] { 1, 2, 3, 4, 5 };
 		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
+		DatabaseConnection conn = connectionSource.getReadOnlyConnection(TABLE_NAME);
 		CompiledStatement stmt = null;
 		try {
 			stmt =

@@ -25,18 +25,18 @@ public class BaseConnectionSourceTest extends BaseCoreTest {
 	public void testBasicStuff() throws Exception {
 		OurConnectionSource cs = new OurConnectionSource();
 		assertFalse(cs.isSavedConnection(createMock(DatabaseConnection.class)));
-		DatabaseConnection conn = cs.getReadOnlyConnection();
+		DatabaseConnection conn = cs.getReadOnlyConnection(null);
 		assertNotNull(conn);
-		assertNull(cs.getSpecialConnection());
+		assertNull(cs.getSpecialConnection(null));
 		cs.saveSpecialConnection(conn);
-		assertSame(conn, cs.getSpecialConnection());
+		assertSame(conn, cs.getSpecialConnection(null));
 		assertTrue(cs.isSavedConnection(conn));
 		assertFalse(cs.isSavedConnection(createMock(DatabaseConnection.class)));
-		DatabaseConnection conn2 = cs.getReadOnlyConnection();
+		DatabaseConnection conn2 = cs.getReadOnlyConnection(null);
 		assertSame(conn, conn2);
 		assertNotNull(conn2);
 		cs.clearSpecialConnection(conn);
-		assertNull(cs.getSpecialConnection());
+		assertNull(cs.getSpecialConnection(null));
 		assertFalse(cs.isSavedConnection(conn));
 		assertNull(cs.getSavedConnection());
 		cs.close();
@@ -45,18 +45,18 @@ public class BaseConnectionSourceTest extends BaseCoreTest {
 	@Test
 	public void testNestedSave() throws Exception {
 		OurConnectionSource cs = new OurConnectionSource();
-		DatabaseConnection conn = cs.getReadOnlyConnection();
+		DatabaseConnection conn = cs.getReadOnlyConnection(null);
 		cs.saveSpecialConnection(conn);
 		cs.saveSpecialConnection(conn);
 		cs.clearSpecialConnection(conn);
-		assertEquals(conn, cs.getSpecialConnection());
+		assertEquals(conn, cs.getSpecialConnection(null));
 		cs.close();
 	}
 
 	@Test(expected = SQLException.class)
 	public void testSaveDifferentConnection() throws Exception {
 		OurConnectionSource cs = new OurConnectionSource();
-		DatabaseConnection conn = cs.getReadOnlyConnection();
+		DatabaseConnection conn = cs.getReadOnlyConnection(null);
 		cs.saveSpecialConnection(conn);
 		cs.saveSpecialConnection(createMock(DatabaseConnection.class));
 		cs.close();
@@ -72,7 +72,7 @@ public class BaseConnectionSourceTest extends BaseCoreTest {
 	@Test
 	public void testClearDifferentConnection() throws Exception {
 		OurConnectionSource cs = new OurConnectionSource();
-		DatabaseConnection conn = cs.getReadOnlyConnection();
+		DatabaseConnection conn = cs.getReadOnlyConnection(null);
 		cs.saveSpecialConnection(conn);
 		cs.clearSpecialConnection(createMock(DatabaseConnection.class));
 		cs.close();
@@ -81,12 +81,12 @@ public class BaseConnectionSourceTest extends BaseCoreTest {
 	private class OurConnectionSource extends BaseConnectionSource {
 
 		@Override
-		public DatabaseConnection getReadOnlyConnection() {
-			return getReadWriteConnection();
+		public DatabaseConnection getReadOnlyConnection(String tableName) {
+			return getReadWriteConnection(tableName);
 		}
 
 		@Override
-		public DatabaseConnection getReadWriteConnection() {
+		public DatabaseConnection getReadWriteConnection(String tableName) {
 			DatabaseConnection conn = getSavedConnection();
 			if (conn == null) {
 				return createMock(DatabaseConnection.class);
@@ -126,12 +126,12 @@ public class BaseConnectionSourceTest extends BaseCoreTest {
 		}
 
 		@Override
-		public boolean isOpen() {
+		public boolean isOpen(String tableName) {
 			return true;
 		}
 
 		@Override
-		public boolean isSingleConnection() {
+		public boolean isSingleConnection(String tableName) {
 			return true;
 		}
 	}

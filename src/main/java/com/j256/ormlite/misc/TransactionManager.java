@@ -122,6 +122,20 @@ public class TransactionManager {
 	}
 
 	/**
+	 * Same as {@link #callInTransaction(Callable)} except as a this has a table-name specified.
+	 * 
+	 * <p>
+	 * WARNING: it is up to you to properly synchronize around this method if multiple threads are using a
+	 * connection-source which works gives out a single-connection. The reason why this is necessary is that multiple
+	 * operations are performed on the connection and race-conditions will exist with multiple threads working on the
+	 * same connection.
+	 * </p>
+	 */
+	public <T> T callInTransaction(String tableName, final Callable<T> callable) throws SQLException {
+		return callInTransaction(tableName, connectionSource, callable);
+	}
+
+	/**
 	 * Same as {@link #callInTransaction(Callable)} except as a static method with a connection source.
 	 * 
 	 * <p>
@@ -133,8 +147,23 @@ public class TransactionManager {
 	 */
 	public static <T> T callInTransaction(final ConnectionSource connectionSource, final Callable<T> callable)
 			throws SQLException {
+		return callInTransaction(null, connectionSource, callable);
+	}
 
-		DatabaseConnection connection = connectionSource.getReadWriteConnection();
+	/**
+	 * Same as {@link #callInTransaction(ConnectionSource, Callable)} except this has a table-name.
+	 * 
+	 * <p>
+	 * WARNING: it is up to you to properly synchronize around this method if multiple threads are using a
+	 * connection-source which works gives out a single-connection. The reason why this is necessary is that multiple
+	 * operations are performed on the connection and race-conditions will exist with multiple threads working on the
+	 * same connection.
+	 * </p>
+	 */
+	public static <T> T callInTransaction(String tableName, final ConnectionSource connectionSource,
+			final Callable<T> callable) throws SQLException {
+
+		DatabaseConnection connection = connectionSource.getReadWriteConnection(tableName);
 		try {
 			boolean saved = connectionSource.saveSpecialConnection(connection);
 			return callInTransaction(connection, saved, connectionSource.getDatabaseType(), callable);

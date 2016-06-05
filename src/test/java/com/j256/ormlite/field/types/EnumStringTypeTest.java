@@ -53,7 +53,7 @@ public class EnumStringTypeTest extends BaseTypeTest {
 		LocalEnumString foo = new LocalEnumString();
 		foo.ourEnum = val;
 		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
+		DatabaseConnection conn = connectionSource.getReadOnlyConnection(TABLE_NAME);
 		CompiledStatement stmt = null;
 		try {
 			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,

@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import com.j256.ormlite.dao.Dao.CreateOrUpdateStatus;
-import com.j256.ormlite.dao.Dao.DaoObserver;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.logger.Log.Level;
@@ -37,7 +35,7 @@ import com.j256.ormlite.table.ObjectFactory;
  * 
  * @author graywatson
  */
-public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
+public class RuntimeExceptionDao<T, ID> implements Dao<T, ID> {
 
 	/*
 	 * We use debug here because we don't want these messages to be logged by default. The user will need to turn on
@@ -77,6 +75,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#queryForId(Object)
 	 */
+	@Override
 	public T queryForId(ID id) {
 		try {
 			return dao.queryForId(id);
@@ -89,6 +88,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#queryForFirst(PreparedQuery)
 	 */
+	@Override
 	public T queryForFirst(PreparedQuery<T> preparedQuery) {
 		try {
 			return dao.queryForFirst(preparedQuery);
@@ -101,6 +101,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#queryForAll()
 	 */
+	@Override
 	public List<T> queryForAll() {
 		try {
 			return dao.queryForAll();
@@ -113,6 +114,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#queryForEq(String, Object)
 	 */
+	@Override
 	public List<T> queryForEq(String fieldName, Object value) {
 		try {
 			return dao.queryForEq(fieldName, value);
@@ -125,6 +127,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#queryForMatching(Object)
 	 */
+	@Override
 	public List<T> queryForMatching(T matchObj) {
 		try {
 			return dao.queryForMatching(matchObj);
@@ -137,6 +140,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#queryForMatchingArgs(Object)
 	 */
+	@Override
 	public List<T> queryForMatchingArgs(T matchObj) {
 		try {
 			return dao.queryForMatchingArgs(matchObj);
@@ -149,6 +153,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#queryForFieldValues(Map)
 	 */
+	@Override
 	public List<T> queryForFieldValues(Map<String, Object> fieldValues) {
 		try {
 			return dao.queryForFieldValues(fieldValues);
@@ -161,6 +166,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#queryForFieldValuesArgs(Map)
 	 */
+	@Override
 	public List<T> queryForFieldValuesArgs(Map<String, Object> fieldValues) {
 		try {
 			return dao.queryForFieldValuesArgs(fieldValues);
@@ -173,6 +179,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#queryForSameId(Object)
 	 */
+	@Override
 	public T queryForSameId(T data) {
 		try {
 			return dao.queryForSameId(data);
@@ -185,6 +192,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#queryBuilder()
 	 */
+	@Override
 	public QueryBuilder<T, ID> queryBuilder() {
 		return dao.queryBuilder();
 	}
@@ -192,6 +200,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#updateBuilder()
 	 */
+	@Override
 	public UpdateBuilder<T, ID> updateBuilder() {
 		return dao.updateBuilder();
 	}
@@ -199,6 +208,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#deleteBuilder()
 	 */
+	@Override
 	public DeleteBuilder<T, ID> deleteBuilder() {
 		return dao.deleteBuilder();
 	}
@@ -206,6 +216,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#query(PreparedQuery)
 	 */
+	@Override
 	public List<T> query(PreparedQuery<T> preparedQuery) {
 		try {
 			return dao.query(preparedQuery);
@@ -218,6 +229,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#create(Object)
 	 */
+	@Override
 	public int create(T data) {
 		try {
 			return dao.create(data);
@@ -230,6 +242,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#create(Collection)
 	 */
+	@Override
 	public int create(Collection<T> datas) {
 		try {
 			return dao.create(datas);
@@ -242,6 +255,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#createIfNotExists(Object)
 	 */
+	@Override
 	public T createIfNotExists(T data) {
 		try {
 			return dao.createIfNotExists(data);
@@ -254,6 +268,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#createOrUpdate(Object)
 	 */
+	@Override
 	public CreateOrUpdateStatus createOrUpdate(T data) {
 		try {
 			return dao.createOrUpdate(data);
@@ -266,6 +281,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#update(Object)
 	 */
+	@Override
 	public int update(T data) {
 		try {
 			return dao.update(data);
@@ -278,6 +294,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#updateId(Object, Object)
 	 */
+	@Override
 	public int updateId(T data, ID newId) {
 		try {
 			return dao.updateId(data, newId);
@@ -290,6 +307,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#update(PreparedUpdate)
 	 */
+	@Override
 	public int update(PreparedUpdate<T> preparedUpdate) {
 		try {
 			return dao.update(preparedUpdate);
@@ -302,6 +320,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#refresh(Object)
 	 */
+	@Override
 	public int refresh(T data) {
 		try {
 			return dao.refresh(data);
@@ -314,6 +333,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#delete(Object)
 	 */
+	@Override
 	public int delete(T data) {
 		try {
 			return dao.delete(data);
@@ -326,6 +346,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#deleteById(Object)
 	 */
+	@Override
 	public int deleteById(ID id) {
 		try {
 			return dao.deleteById(id);
@@ -338,6 +359,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#delete(Collection)
 	 */
+	@Override
 	public int delete(Collection<T> datas) {
 		try {
 			return dao.delete(datas);
@@ -350,6 +372,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#deleteIds(Collection)
 	 */
+	@Override
 	public int deleteIds(Collection<ID> ids) {
 		try {
 			return dao.deleteIds(ids);
@@ -362,6 +385,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#delete(PreparedDelete)
 	 */
+	@Override
 	public int delete(PreparedDelete<T> preparedDelete) {
 		try {
 			return dao.delete(preparedDelete);
@@ -387,6 +411,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#iterator(int)
 	 */
+	@Override
 	public CloseableIterator<T> iterator(int resultFlags) {
 		return dao.iterator(resultFlags);
 	}
@@ -394,6 +419,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#getWrappedIterable()
 	 */
+	@Override
 	public CloseableWrappedIterable<T> getWrappedIterable() {
 		return dao.getWrappedIterable();
 	}
@@ -401,6 +427,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#getWrappedIterable(PreparedQuery)
 	 */
+	@Override
 	public CloseableWrappedIterable<T> getWrappedIterable(PreparedQuery<T> preparedQuery) {
 		return dao.getWrappedIterable(preparedQuery);
 	}
@@ -408,6 +435,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#closeLastIterator()
 	 */
+	@Override
 	public void closeLastIterator() {
 		try {
 			dao.closeLastIterator();
@@ -420,6 +448,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#iterator(PreparedQuery)
 	 */
+	@Override
 	public CloseableIterator<T> iterator(PreparedQuery<T> preparedQuery) {
 		try {
 			return dao.iterator(preparedQuery);
@@ -432,6 +461,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#iterator(PreparedQuery, int)
 	 */
+	@Override
 	public CloseableIterator<T> iterator(PreparedQuery<T> preparedQuery, int resultFlags) {
 		try {
 			return dao.iterator(preparedQuery, resultFlags);
@@ -444,6 +474,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#queryRaw(String, String...)
 	 */
+	@Override
 	public GenericRawResults<String[]> queryRaw(String query, String... arguments) {
 		try {
 			return dao.queryRaw(query, arguments);
@@ -456,6 +487,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#queryRawValue(String, String...)
 	 */
+	@Override
 	public long queryRawValue(String query, String... arguments) {
 		try {
 			return dao.queryRawValue(query, arguments);
@@ -468,6 +500,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#queryRaw(String, RawRowMapper, String...)
 	 */
+	@Override
 	public <UO> GenericRawResults<UO> queryRaw(String query, RawRowMapper<UO> mapper, String... arguments) {
 		try {
 			return dao.queryRaw(query, mapper, arguments);
@@ -480,6 +513,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#queryRaw(String, DataType[], RawRowObjectMapper, String...)
 	 */
+	@Override
 	public <UO> GenericRawResults<UO> queryRaw(String query, DataType[] columnTypes, RawRowObjectMapper<UO> mapper,
 			String... arguments) {
 		try {
@@ -493,6 +527,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#queryRaw(String, DataType[], String...)
 	 */
+	@Override
 	public GenericRawResults<Object[]> queryRaw(String query, DataType[] columnTypes, String... arguments) {
 		try {
 			return dao.queryRaw(query, columnTypes, arguments);
@@ -505,6 +540,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#queryRaw(String, DatabaseResultsMapper, String...)
 	 */
+	@Override
 	public <UO> GenericRawResults<UO> queryRaw(String query, DatabaseResultsMapper<UO> mapper, String... arguments) {
 		try {
 			return dao.queryRaw(query, mapper, arguments);
@@ -517,6 +553,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#executeRaw(String, String...)
 	 */
+	@Override
 	public int executeRaw(String statement, String... arguments) {
 		try {
 			return dao.executeRaw(statement, arguments);
@@ -529,6 +566,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#executeRawNoArgs(String)
 	 */
+	@Override
 	public int executeRawNoArgs(String statement) {
 		try {
 			return dao.executeRawNoArgs(statement);
@@ -541,6 +579,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#updateRaw(String, String...)
 	 */
+	@Override
 	public int updateRaw(String statement, String... arguments) {
 		try {
 			return dao.updateRaw(statement, arguments);
@@ -553,6 +592,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#callBatchTasks(Callable)
 	 */
+	@Override
 	public <CT> CT callBatchTasks(Callable<CT> callable) {
 		try {
 			return dao.callBatchTasks(callable);
@@ -565,6 +605,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#objectToString(Object)
 	 */
+	@Override
 	public String objectToString(T data) {
 		return dao.objectToString(data);
 	}
@@ -572,6 +613,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#objectsEqual(Object, Object)
 	 */
+	@Override
 	public boolean objectsEqual(T data1, T data2) {
 		try {
 			return dao.objectsEqual(data1, data2);
@@ -584,6 +626,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#extractId(Object)
 	 */
+	@Override
 	public ID extractId(T data) {
 		try {
 			return dao.extractId(data);
@@ -596,6 +639,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#getDataClass()
 	 */
+	@Override
 	public Class<T> getDataClass() {
 		return dao.getDataClass();
 	}
@@ -603,6 +647,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#findForeignFieldType(Class)
 	 */
+	@Override
 	public FieldType findForeignFieldType(Class<?> clazz) {
 		return dao.findForeignFieldType(clazz);
 	}
@@ -610,6 +655,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#isUpdatable()
 	 */
+	@Override
 	public boolean isUpdatable() {
 		return dao.isUpdatable();
 	}
@@ -617,6 +663,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#isTableExists()
 	 */
+	@Override
 	public boolean isTableExists() {
 		try {
 			return dao.isTableExists();
@@ -629,6 +676,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#countOf()
 	 */
+	@Override
 	public long countOf() {
 		try {
 			return dao.countOf();
@@ -641,6 +689,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#countOf(PreparedQuery)
 	 */
+	@Override
 	public long countOf(PreparedQuery<T> preparedQuery) {
 		try {
 			return dao.countOf(preparedQuery);
@@ -653,6 +702,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#assignEmptyForeignCollection(Object, String)
 	 */
+	@Override
 	public void assignEmptyForeignCollection(T parent, String fieldName) {
 		try {
 			dao.assignEmptyForeignCollection(parent, fieldName);
@@ -665,6 +715,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#getEmptyForeignCollection(String)
 	 */
+	@Override
 	public <FT> ForeignCollection<FT> getEmptyForeignCollection(String fieldName) {
 		try {
 			return dao.getEmptyForeignCollection(fieldName);
@@ -677,6 +728,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#setObjectCache(boolean)
 	 */
+	@Override
 	public void setObjectCache(boolean enabled) {
 		try {
 			dao.setObjectCache(enabled);
@@ -689,6 +741,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#getObjectCache()
 	 */
+	@Override
 	public ObjectCache getObjectCache() {
 		return dao.getObjectCache();
 	}
@@ -696,6 +749,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#setObjectCache(ObjectCache)
 	 */
+	@Override
 	public void setObjectCache(ObjectCache objectCache) {
 		try {
 			dao.setObjectCache(objectCache);
@@ -708,6 +762,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#clearObjectCache()
 	 */
+	@Override
 	public void clearObjectCache() {
 		dao.clearObjectCache();
 	}
@@ -715,6 +770,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#mapSelectStarRow(DatabaseResults)
 	 */
+	@Override
 	public T mapSelectStarRow(DatabaseResults results) {
 		try {
 			return dao.mapSelectStarRow(results);
@@ -727,6 +783,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#getSelectStarRowMapper()
 	 */
+	@Override
 	public GenericRowMapper<T> getSelectStarRowMapper() {
 		try {
 			return dao.getSelectStarRowMapper();
@@ -739,6 +796,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#idExists(Object)
 	 */
+	@Override
 	public boolean idExists(ID id) {
 		try {
 			return dao.idExists(id);
@@ -751,6 +809,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#startThreadConnection()
 	 */
+	@Override
 	public DatabaseConnection startThreadConnection() {
 		try {
 			return dao.startThreadConnection();
@@ -763,6 +822,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#endThreadConnection(DatabaseConnection)
 	 */
+	@Override
 	public void endThreadConnection(DatabaseConnection connection) {
 		try {
 			dao.endThreadConnection(connection);
@@ -773,21 +833,9 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	}
 
 	/**
-	 * @see Dao#setAutoCommit(boolean)
-	 */
-	@Deprecated
-	public void setAutoCommit(boolean autoCommit) {
-		try {
-			dao.setAutoCommit(autoCommit);
-		} catch (SQLException e) {
-			logMessage(e, "setAutoCommit(" + autoCommit + ") threw exception");
-			throw new RuntimeException(e);
-		}
-	}
-
-	/**
 	 * @see Dao#setAutoCommit(DatabaseConnection, boolean)
 	 */
+	@Override
 	public void setAutoCommit(DatabaseConnection connection, boolean autoCommit) {
 		try {
 			dao.setAutoCommit(connection, autoCommit);
@@ -798,21 +846,9 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	}
 
 	/**
-	 * @see Dao#isAutoCommit()
-	 */
-	@Deprecated
-	public boolean isAutoCommit() {
-		try {
-			return dao.isAutoCommit();
-		} catch (SQLException e) {
-			logMessage(e, "isAutoCommit() threw exception");
-			throw new RuntimeException(e);
-		}
-	}
-
-	/**
 	 * @see Dao#isAutoCommit(DatabaseConnection)
 	 */
+	@Override
 	public boolean isAutoCommit(DatabaseConnection connection) {
 		try {
 			return dao.isAutoCommit(connection);
@@ -825,6 +861,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#commit(DatabaseConnection)
 	 */
+	@Override
 	public void commit(DatabaseConnection connection) {
 		try {
 			dao.commit(connection);
@@ -837,6 +874,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#rollBack(DatabaseConnection)
 	 */
+	@Override
 	public void rollBack(DatabaseConnection connection) {
 		try {
 			dao.rollBack(connection);
@@ -849,6 +887,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#setObjectFactory(ObjectFactory)
 	 */
+	@Override
 	public void setObjectFactory(ObjectFactory<T> objectFactory) {
 		dao.setObjectFactory(objectFactory);
 	}
@@ -856,6 +895,7 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#getRawRowMapper()
 	 */
+	@Override
 	public RawRowMapper<T> getRawRowMapper() {
 		return dao.getRawRowMapper();
 	}
@@ -863,20 +903,29 @@ public class RuntimeExceptionDao<T, ID> implements CloseableIterable<T> {
 	/**
 	 * @see Dao#getConnectionSource()
 	 */
+	@Override
 	public ConnectionSource getConnectionSource() {
 		return dao.getConnectionSource();
 	}
 
+	@Override
 	public void registerObserver(DaoObserver observer) {
 		dao.registerObserver(observer);
 	}
 
+	@Override
 	public void unregisterObserver(DaoObserver observer) {
 		dao.unregisterObserver(observer);
 	}
 
+	@Override
 	public void notifyChanges() {
 		dao.notifyChanges();
+	}
+
+	@Override
+	public String getTableName() {
+		return dao.getTableName();
 	}
 
 	private void logMessage(Exception e, String message) {

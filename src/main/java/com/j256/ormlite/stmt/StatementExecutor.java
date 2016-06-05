@@ -242,7 +242,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 */
 	public SelectIterator<T, ID> buildIterator(BaseDaoImpl<T, ID> classDao, ConnectionSource connectionSource,
 			PreparedStmt<T> preparedStmt, ObjectCache objectCache, int resultFlags) throws SQLException {
-		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection(tableInfo.getTableName());
 		CompiledStatement compiledStatement = null;
 		try {
 			compiledStatement = preparedStmt.compile(connection, StatementType.SELECT, resultFlags);
@@ -270,7 +270,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			// need to do the (Object) cast to force args to be a single object
 			logger.trace("query arguments: {}", (Object) arguments);
 		}
-		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection(tableInfo.getTableName());
 		CompiledStatement compiledStatement = null;
 		try {
 			compiledStatement =
@@ -301,7 +301,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			// need to do the (Object) cast to force args to be a single object
 			logger.trace("query arguments: {}", (Object) arguments);
 		}
-		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection(tableInfo.getTableName());
 		CompiledStatement compiledStatement = null;
 		try {
 			compiledStatement =
@@ -332,7 +332,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			// need to do the (Object) cast to force args to be a single object
 			logger.trace("query arguments: {}", (Object) arguments);
 		}
-		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection(tableInfo.getTableName());
 		CompiledStatement compiledStatement = null;
 		try {
 			compiledStatement =
@@ -363,7 +363,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			// need to do the (Object) cast to force args to be a single object
 			logger.trace("query arguments: {}", (Object) arguments);
 		}
-		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection(tableInfo.getTableName());
 		CompiledStatement compiledStatement = null;
 		try {
 			compiledStatement =
@@ -394,7 +394,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			// need to do the (Object) cast to force args to be a single object
 			logger.trace("query arguments: {}", (Object) arguments);
 		}
-		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection(tableInfo.getTableName());
 		CompiledStatement compiledStatement = null;
 		try {
 			compiledStatement =
@@ -608,7 +608,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 * Call batch tasks inside of a connection which may, or may not, have been "saved".
 	 */
 	public <CT> CT callBatchTasks(ConnectionSource connectionSource, Callable<CT> callable) throws SQLException {
-		if (connectionSource.isSingleConnection()) {
+		if (connectionSource.isSingleConnection(tableInfo.getTableName())) {
 			synchronized (this) {
 				return doCallBatchTasks(connectionSource, callable);
 			}
@@ -619,7 +619,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 
 	private <CT> CT doCallBatchTasks(ConnectionSource connectionSource, Callable<CT> callable) throws SQLException {
 		boolean saved = false;
-		DatabaseConnection connection = connectionSource.getReadWriteConnection();
+		DatabaseConnection connection = connectionSource.getReadWriteConnection(tableInfo.getTableName());
 		try {
 			/*
 			 * We are using a thread-local boolean to detect whether we are in the middle of running a number of

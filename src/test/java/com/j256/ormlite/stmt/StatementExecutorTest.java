@@ -76,8 +76,8 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 
 		ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		DatabaseConnection connection = createMock(DatabaseConnection.class);
-		expect(connectionSource.isSingleConnection()).andReturn(false);
-		expect(connectionSource.getReadWriteConnection()).andReturn(connection);
+		expect(connectionSource.isSingleConnection("foo")).andReturn(false);
+		expect(connectionSource.getReadWriteConnection("foo")).andReturn(connection);
 		expect(connectionSource.saveSpecialConnection(connection)).andReturn(false);
 		connectionSource.releaseConnection(connection);
 
@@ -103,8 +103,8 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 
 		ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		DatabaseConnection connection = createMock(DatabaseConnection.class);
-		expect(connectionSource.isSingleConnection()).andReturn(false);
-		expect(connectionSource.getReadWriteConnection()).andReturn(connection);
+		expect(connectionSource.isSingleConnection("foo")).andReturn(false);
+		expect(connectionSource.getReadWriteConnection("foo")).andReturn(connection);
 		expect(connectionSource.saveSpecialConnection(connection)).andReturn(false);
 		connectionSource.releaseConnection(connection);
 
@@ -131,8 +131,8 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 
 		ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		DatabaseConnection connection = createMock(DatabaseConnection.class);
-		expect(connectionSource.isSingleConnection()).andReturn(false);
-		expect(connectionSource.getReadWriteConnection()).andReturn(connection);
+		expect(connectionSource.isSingleConnection("foo")).andReturn(false);
+		expect(connectionSource.getReadWriteConnection("foo")).andReturn(connection);
 		expect(connectionSource.saveSpecialConnection(connection)).andReturn(false);
 		connectionSource.releaseConnection(connection);
 
@@ -161,8 +161,8 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 
 		ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		DatabaseConnection connection = createMock(DatabaseConnection.class);
-		expect(connectionSource.isSingleConnection()).andReturn(true);
-		expect(connectionSource.getReadWriteConnection()).andReturn(connection);
+		expect(connectionSource.isSingleConnection("foo")).andReturn(true);
+		expect(connectionSource.getReadWriteConnection("foo")).andReturn(connection);
 		expect(connectionSource.saveSpecialConnection(connection)).andReturn(false);
 		connectionSource.releaseConnection(connection);
 
@@ -191,8 +191,8 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 
 		ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		DatabaseConnection connection = createMock(DatabaseConnection.class);
-		expect(connectionSource.isSingleConnection()).andReturn(false);
-		expect(connectionSource.getReadWriteConnection()).andReturn(connection);
+		expect(connectionSource.isSingleConnection("foo")).andReturn(false);
+		expect(connectionSource.getReadWriteConnection("foo")).andReturn(connection);
 		expect(connectionSource.saveSpecialConnection(connection)).andReturn(false);
 		connectionSource.releaseConnection(connection);
 

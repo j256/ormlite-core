@@ -3,6 +3,7 @@ package com.j256.ormlite.field.types;
 import static org.junit.Assert.assertEquals;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -32,8 +33,9 @@ public class DateTypeTest extends BaseTypeTest {
 		LocalDate foo = new LocalDate();
 		foo.date = val;
 		assertEquals(1, dao.create(foo));
-		testType(dao, foo, clazz, val, val, val, valStr, DataType.DATE, DATE_COLUMN, false, true, true, false, true,
-				false, true, false);
+		Timestamp timestamp = new Timestamp(val.getTime());
+		testType(dao, foo, clazz, val, timestamp, timestamp, valStr, DataType.DATE, DATE_COLUMN, false, true, true,
+				false, true, false, true, false);
 	}
 
 	@Test

@@ -255,7 +255,7 @@ public class TableUtils {
 		String statement = sb.toString();
 		logger.info("clearing table '{}' with '{}", tableName, statement);
 		CompiledStatement compiledStmt = null;
-		DatabaseConnection connection = connectionSource.getReadWriteConnection();
+		DatabaseConnection connection = connectionSource.getReadWriteConnection(tableName);
 		try {
 			compiledStmt = connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes,
 					DatabaseConnection.DEFAULT_RESULT_FLAGS);
@@ -272,7 +272,7 @@ public class TableUtils {
 		List<String> statements = new ArrayList<String>();
 		addDropIndexStatements(databaseType, tableInfo, statements);
 		addDropTableStatements(databaseType, tableInfo, statements);
-		DatabaseConnection connection = connectionSource.getReadWriteConnection();
+		DatabaseConnection connection = connectionSource.getReadWriteConnection(tableInfo.getTableName());
 		try {
 			return doStatements(connection, "drop", statements, ignoreErrors,
 					databaseType.isCreateTableReturnsNegative(), false);
@@ -394,7 +394,7 @@ public class TableUtils {
 		List<String> statements = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();
 		addCreateTableStatements(databaseType, tableInfo, statements, queriesAfter, ifNotExists);
-		DatabaseConnection connection = connectionSource.getReadWriteConnection();
+		DatabaseConnection connection = connectionSource.getReadWriteConnection(tableInfo.getTableName());
 		try {
 			int stmtC = doStatements(connection, "create", statements, false,
 					databaseType.isCreateTableReturnsNegative(), databaseType.isCreateTableReturnsZero());

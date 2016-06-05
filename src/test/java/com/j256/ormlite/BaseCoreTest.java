@@ -12,10 +12,13 @@ import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.h2.H2ConnectionSource;
 import com.j256.ormlite.h2.H2DatabaseType;
+import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableUtils;
 
 public abstract class BaseCoreTest {
+
+	public static final String FOO_TABLE_NAME = "foo"; 
 
 	protected DatabaseType databaseType;
 	protected WrappedConnectionSource connectionSource;
@@ -43,6 +46,7 @@ public abstract class BaseCoreTest {
 		}
 	}
 
+	@DatabaseTable(tableName = FOO_TABLE_NAME)
 	protected static class Foo {
 		public static final String ID_COLUMN_NAME = "id";
 		public static final String VAL_COLUMN_NAME = "val";

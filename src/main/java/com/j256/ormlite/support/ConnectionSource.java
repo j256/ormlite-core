@@ -16,13 +16,13 @@ public interface ConnectionSource extends Closeable {
 	 * Return a database connection suitable for read-only operations. After you are done, you should call
 	 * {@link #releaseConnection(DatabaseConnection)}.
 	 */
-	public DatabaseConnection getReadOnlyConnection() throws SQLException;
+	public DatabaseConnection getReadOnlyConnection(String tableName) throws SQLException;
 
 	/**
 	 * Return a database connection suitable for read or write operations. After you are done, you should call
 	 * {@link #releaseConnection(DatabaseConnection)}.
 	 */
-	public DatabaseConnection getReadWriteConnection() throws SQLException;
+	public DatabaseConnection getReadWriteConnection(String tableName) throws SQLException;
 
 	/**
 	 * Release a database connection previously returned by {@link #getReadOnlyConnection()} or
@@ -57,7 +57,7 @@ public interface ConnectionSource extends Closeable {
 	/**
 	 * Return the currently saved connection or null if none.
 	 */
-	public DatabaseConnection getSpecialConnection();
+	public DatabaseConnection getSpecialConnection(String tableName);
 
 	/**
 	 * Close any outstanding database connections.
@@ -72,12 +72,12 @@ public interface ConnectionSource extends Closeable {
 	/**
 	 * Return true if the connection source is open. Once {@link #close()} has been called, this should return false.
 	 */
-	public boolean isOpen();
+	public boolean isOpen(String tableName);
 
 	/**
 	 * Return true if there is only one connection to the database being used by this connection-sourse. If true then
 	 * some synchronization will be enabled when using batch tasks. The user will also need to synchronize around some
 	 * of the transaction and auto-commit calls.
 	 */
-	public boolean isSingleConnection();
+	public boolean isSingleConnection(String tableName);
 }

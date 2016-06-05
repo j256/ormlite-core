@@ -37,7 +37,7 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 				new MappedPreparedStmt<LocalFoo, Integer>(tableInfo, null, new FieldType[0], tableInfo.getFieldTypes(),
 						new ArgumentHolder[0], null, StatementType.SELECT);
 
-		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
+		DatabaseConnection conn = connectionSource.getReadOnlyConnection(TABLE_NAME);
 		CompiledStatement stmt = null;
 		try {
 			stmt =
@@ -85,7 +85,7 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 
 	private void checkResults(List<LocalFoo> foos, MappedPreparedStmt<LocalFoo, Integer> preparedQuery, int expectedNum)
 			throws SQLException {
-		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
+		DatabaseConnection conn = connectionSource.getReadOnlyConnection(TABLE_NAME);
 		CompiledStatement stmt = null;
 		try {
 			stmt = preparedQuery.compile(conn, StatementType.SELECT);

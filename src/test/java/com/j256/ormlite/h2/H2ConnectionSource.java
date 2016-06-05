@@ -45,12 +45,12 @@ public class H2ConnectionSource implements ConnectionSource {
 	}
 
 	@Override
-	public DatabaseConnection getReadOnlyConnection() throws SQLException {
-		return getReadWriteConnection();
+	public DatabaseConnection getReadOnlyConnection(String tableName) throws SQLException {
+		return getReadWriteConnection(tableName);
 	}
 
 	@Override
-	public DatabaseConnection getReadWriteConnection() throws SQLException {
+	public DatabaseConnection getReadWriteConnection(String tableName) throws SQLException {
 		if (connection == null) {
 			connection = new H2DatabaseConnection(DriverManager.getConnection(databaseUrl));
 			if (connectionProxyFactory != null) {
@@ -86,17 +86,17 @@ public class H2ConnectionSource implements ConnectionSource {
 	}
 
 	@Override
-	public DatabaseConnection getSpecialConnection() {
+	public DatabaseConnection getSpecialConnection(String tableName) {
 		return null;
 	}
 
 	@Override
-	public boolean isOpen() {
+	public boolean isOpen(String tableName) {
 		return connection != null;
 	}
 
 	@Override
-	public boolean isSingleConnection() {
+	public boolean isSingleConnection(String tableName) {
 		return true;
 	}
 

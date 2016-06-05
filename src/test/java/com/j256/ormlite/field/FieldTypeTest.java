@@ -68,8 +68,8 @@ public class FieldTypeTest extends BaseCoreTest {
 		assertEquals(DataType.STRING.getDataPersister(), fieldType.getDataPersister());
 		assertEquals(RANK_WIDTH, fieldType.getWidth());
 
-		fieldType =
-				FieldType.createFieldType(connectionSource, LocalFoo.class.getSimpleName(), serialField, LocalFoo.class);
+		fieldType = FieldType.createFieldType(connectionSource, LocalFoo.class.getSimpleName(), serialField,
+				LocalFoo.class);
 		assertEquals(serialField.getName(), fieldType.getColumnName());
 		assertEquals(DataType.INTEGER_OBJ.getDataPersister(), fieldType.getDataPersister());
 		assertEquals(Integer.parseInt(SERIAL_DEFAULT_VALUE), fieldType.getDefaultValue());
@@ -110,9 +110,8 @@ public class FieldTypeTest extends BaseCoreTest {
 		Field[] fields = GeneratedIdSequence.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
 		connectionSource.setDatabaseType(new NeedsSequenceDatabaseType());
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, GeneratedIdSequence.class.getSimpleName(), fields[0],
-						GeneratedIdSequence.class);
+		FieldType fieldType = FieldType.createFieldType(connectionSource, GeneratedIdSequence.class.getSimpleName(),
+				fields[0], GeneratedIdSequence.class);
 		assertTrue(fieldType.isGeneratedIdSequence());
 		assertEquals(SEQ_NAME, fieldType.getGeneratedIdSequence());
 	}
@@ -122,9 +121,8 @@ public class FieldTypeTest extends BaseCoreTest {
 		Field[] fields = GeneratedIdSequence.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
 		connectionSource.setDatabaseType(new NeedsUppercaseSequenceDatabaseType());
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, GeneratedIdSequence.class.getSimpleName(), fields[0],
-						GeneratedIdSequence.class);
+		FieldType fieldType = FieldType.createFieldType(connectionSource, GeneratedIdSequence.class.getSimpleName(),
+				fields[0], GeneratedIdSequence.class);
 		assertTrue(fieldType.isGeneratedIdSequence());
 		assertEquals(SEQ_NAME.toUpperCase(), fieldType.getGeneratedIdSequence());
 	}
@@ -134,9 +132,8 @@ public class FieldTypeTest extends BaseCoreTest {
 		Field[] fields = GeneratedId.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
 		connectionSource.setDatabaseType(new NeedsSequenceDatabaseType());
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, GeneratedId.class.getSimpleName(), fields[0],
-						GeneratedId.class);
+		FieldType fieldType = FieldType.createFieldType(connectionSource, GeneratedId.class.getSimpleName(), fields[0],
+				GeneratedId.class);
 		assertTrue(fieldType.isGeneratedIdSequence());
 	}
 
@@ -159,30 +156,36 @@ public class FieldTypeTest extends BaseCoreTest {
 		final String nameResult = "blabber bling";
 		final AtomicBoolean resultToSqlArgCalled = new AtomicBoolean(false);
 		DataPersister stringPersister = DataType.STRING.getDataPersister();
-		expect(databaseType.getDataPersister(isA(DataPersister.class), isA(FieldType.class))).andReturn(stringPersister);
-		expect(databaseType.getFieldConverter(isA(DataPersister.class), isA(FieldType.class))).andReturn(
-				new BaseFieldConverter() {
+		expect(databaseType.getDataPersister(isA(DataPersister.class), isA(FieldType.class)))
+				.andReturn(stringPersister);
+		expect(databaseType.getFieldConverter(isA(DataPersister.class), isA(FieldType.class)))
+				.andReturn(new BaseFieldConverter() {
 					@Override
 					public SqlType getSqlType() {
 						return sqlType;
 					}
+
 					@Override
 					public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 						return defaultStr;
 					}
+
 					@Override
 					public Object resultToSqlArg(FieldType fieldType, DatabaseResults resultSet, int columnPos) {
 						resultToSqlArgCalled.set(true);
 						return nameResult;
 					}
+
 					@Override
 					public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
 						return nameResult;
 					}
+
 					@Override
 					public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
 						return nameArg;
 					}
+
 					@Override
 					public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) {
 						return stringValue;
@@ -220,17 +223,15 @@ public class FieldTypeTest extends BaseCoreTest {
 		Field nameField = fields[1];
 		Field bazField = fields[2];
 
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, ForeignParent.class.getSimpleName(), nameField,
-						ForeignParent.class);
+		FieldType fieldType = FieldType.createFieldType(connectionSource, ForeignParent.class.getSimpleName(),
+				nameField, ForeignParent.class);
 		assertEquals(nameField.getName(), fieldType.getColumnName());
 		assertEquals(DataType.STRING.getDataPersister(), fieldType.getDataPersister());
 		assertFalse(fieldType.isForeign());
 		assertEquals(0, fieldType.getWidth());
 
-		fieldType =
-				FieldType.createFieldType(connectionSource, ForeignParent.class.getSimpleName(), bazField,
-						ForeignParent.class);
+		fieldType = FieldType.createFieldType(connectionSource, ForeignParent.class.getSimpleName(), bazField,
+				ForeignParent.class);
 		fieldType.configDaoInformation(connectionSource, ForeignParent.class);
 		assertEquals(bazField.getName() + FieldType.FOREIGN_ID_FIELD_SUFFIX, fieldType.getColumnName());
 		// this is the type of the foreign object's id
@@ -252,9 +253,8 @@ public class FieldTypeTest extends BaseCoreTest {
 		Field[] fields = ForeignNoId.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
 		Field fooField = fields[0];
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, ForeignNoId.class.getSimpleName(), fooField,
-						ForeignNoId.class);
+		FieldType fieldType = FieldType.createFieldType(connectionSource, ForeignNoId.class.getSimpleName(), fooField,
+				ForeignNoId.class);
 		fieldType.configDaoInformation(connectionSource, ForeignNoId.class);
 	}
 
@@ -427,9 +427,8 @@ public class FieldTypeTest extends BaseCoreTest {
 		Field[] fields = ForeignParent.class.getDeclaredFields();
 		assertTrue(fields.length >= 3);
 		Field field = fields[2];
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, ForeignParent.class.getSimpleName(), field,
-						ForeignParent.class);
+		FieldType fieldType = FieldType.createFieldType(connectionSource, ForeignParent.class.getSimpleName(), field,
+				ForeignParent.class);
 		fieldType.configDaoInformation(connectionSource, ForeignParent.class);
 		assertTrue(fieldType.isForeign());
 		int id = 10;
@@ -482,9 +481,8 @@ public class FieldTypeTest extends BaseCoreTest {
 	@Test(expected = SQLException.class)
 	public void testNullPrimitiveThrow() throws Exception {
 		Field field = ThrowIfNullNonPrimitive.class.getDeclaredField("primitive");
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, ThrowIfNullNonPrimitive.class.getSimpleName(), field,
-						ThrowIfNullNonPrimitive.class);
+		FieldType fieldType = FieldType.createFieldType(connectionSource, ThrowIfNullNonPrimitive.class.getSimpleName(),
+				field, ThrowIfNullNonPrimitive.class);
 		DatabaseResults results = createMock(DatabaseResults.class);
 		int fieldNum = 1;
 		expect(results.findColumn(field.getName())).andReturn(fieldNum);
@@ -500,9 +498,8 @@ public class FieldTypeTest extends BaseCoreTest {
 		Field[] fields = SerializableField.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
 		Field field = fields[0];
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, SerializableField.class.getSimpleName(), field,
-						SerializableField.class);
+		FieldType fieldType = FieldType.createFieldType(connectionSource, SerializableField.class.getSimpleName(),
+				field, SerializableField.class);
 		DatabaseResults results = createMock(DatabaseResults.class);
 		int fieldNum = 1;
 		expect(results.findColumn(field.getName())).andReturn(fieldNum);
@@ -518,8 +515,8 @@ public class FieldTypeTest extends BaseCoreTest {
 		Field[] fields = InvalidType.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
 		Field field = fields[0];
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, InvalidType.class.getSimpleName(), field, InvalidType.class);
+		FieldType fieldType = FieldType.createFieldType(connectionSource, InvalidType.class.getSimpleName(), field,
+				InvalidType.class);
 		DatabaseResults results = createMock(DatabaseResults.class);
 		int fieldNum = 1;
 		expect(results.findColumn(field.getName())).andReturn(fieldNum);
@@ -546,9 +543,8 @@ public class FieldTypeTest extends BaseCoreTest {
 	@Test
 	public void testForeignIsSerializable() throws Exception {
 		Field field = ForeignAlsoSerializable.class.getDeclaredField("foo");
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, ForeignAlsoSerializable.class.getSimpleName(), field,
-						ForeignAlsoSerializable.class);
+		FieldType fieldType = FieldType.createFieldType(connectionSource, ForeignAlsoSerializable.class.getSimpleName(),
+				field, ForeignAlsoSerializable.class);
 		fieldType.configDaoInformation(connectionSource, ForeignAlsoSerializable.class);
 		assertTrue(fieldType.isForeign());
 	}
@@ -556,7 +552,8 @@ public class FieldTypeTest extends BaseCoreTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidEnumField() throws Exception {
 		Field field = InvalidEnumType.class.getDeclaredField("stuff");
-		FieldType.createFieldType(connectionSource, InvalidEnumType.class.getSimpleName(), field, InvalidEnumType.class);
+		FieldType.createFieldType(connectionSource, InvalidEnumType.class.getSimpleName(), field,
+				InvalidEnumType.class);
 	}
 
 	@Test
@@ -573,22 +570,20 @@ public class FieldTypeTest extends BaseCoreTest {
 		ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		DatabaseConnection connection = createMock(DatabaseConnection.class);
 		expect(connectionSource.getDatabaseType()).andReturn(databaseType).anyTimes();
-		expect(connectionSource.getReadOnlyConnection()).andReturn(connection);
+		expect(connectionSource.getReadOnlyConnection("ForeignAutoRefresh")).andReturn(connection);
 		ForeignForeign foreignForeign = new ForeignForeign();
 		String stuff = "21312j3213";
 		int id = 4123123;
 		foreignForeign.id = id;
 		foreignForeign.stuff = stuff;
-		expect(
-				connection.queryForOne(isA(String.class), isA(Object[].class), isA(FieldType[].class),
-						isA(GenericRowMapper.class), (ObjectCache) isNull())).andReturn(foreignForeign);
+		expect(connection.queryForOne(isA(String.class), isA(Object[].class), isA(FieldType[].class),
+				isA(GenericRowMapper.class), (ObjectCache) isNull())).andReturn(foreignForeign);
 		connectionSource.releaseConnection(connection);
 		DatabaseResults results = createMock(DatabaseResults.class);
 		ForeignAutoRefresh foreign = new ForeignAutoRefresh();
 		replay(results, connectionSource, connection);
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, ForeignAutoRefresh.class.getSimpleName(), field,
-						ForeignAutoRefresh.class);
+		FieldType fieldType = FieldType.createFieldType(connectionSource, ForeignAutoRefresh.class.getSimpleName(),
+				field, ForeignAutoRefresh.class);
 		fieldType.configDaoInformation(connectionSource, ForeignAutoRefresh.class);
 		assertNull(foreign.foreign);
 		fieldType.assignField(foreign, id, false, null);
@@ -631,65 +626,57 @@ public class FieldTypeTest extends BaseCoreTest {
 	public void testDefaultValues() throws Exception {
 		DefaultTypes defaultTypes = new DefaultTypes();
 		Field field = DefaultTypes.class.getDeclaredField("booleanField");
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field,
-						DefaultTypes.class);
+		FieldType fieldType = FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field,
+				DefaultTypes.class);
 		assertNull(fieldType.getFieldValueIfNotDefault(defaultTypes));
 		defaultTypes.booleanField = true;
 		assertEquals(defaultTypes.booleanField, fieldType.getFieldValueIfNotDefault(defaultTypes));
 
 		field = DefaultTypes.class.getDeclaredField("byteField");
-		fieldType =
-				FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field,
-						DefaultTypes.class);
+		fieldType = FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field,
+				DefaultTypes.class);
 		assertNull(fieldType.getFieldValueIfNotDefault(defaultTypes));
 		defaultTypes.byteField = 1;
 		assertEquals(defaultTypes.byteField, fieldType.getFieldValueIfNotDefault(defaultTypes));
 
 		field = DefaultTypes.class.getDeclaredField("charField");
-		fieldType =
-				FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field,
-						DefaultTypes.class);
+		fieldType = FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field,
+				DefaultTypes.class);
 		assertNull(fieldType.getFieldValueIfNotDefault(defaultTypes));
 		defaultTypes.charField = '1';
 		assertEquals(defaultTypes.charField, fieldType.getFieldValueIfNotDefault(defaultTypes));
 
 		field = DefaultTypes.class.getDeclaredField("shortField");
-		fieldType =
-				FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field,
-						DefaultTypes.class);
+		fieldType = FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field,
+				DefaultTypes.class);
 		assertNull(fieldType.getFieldValueIfNotDefault(defaultTypes));
 		defaultTypes.shortField = 32000;
 		assertEquals(defaultTypes.shortField, fieldType.getFieldValueIfNotDefault(defaultTypes));
 
 		field = DefaultTypes.class.getDeclaredField("intField");
-		fieldType =
-				FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field,
-						DefaultTypes.class);
+		fieldType = FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field,
+				DefaultTypes.class);
 		assertNull(fieldType.getFieldValueIfNotDefault(defaultTypes));
 		defaultTypes.intField = 1000000000;
 		assertEquals(defaultTypes.intField, fieldType.getFieldValueIfNotDefault(defaultTypes));
 
 		field = DefaultTypes.class.getDeclaredField("longField");
-		fieldType =
-				FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field,
-						DefaultTypes.class);
+		fieldType = FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field,
+				DefaultTypes.class);
 		assertNull(fieldType.getFieldValueIfNotDefault(defaultTypes));
 		defaultTypes.longField = 1000000000000000L;
 		assertEquals(defaultTypes.longField, fieldType.getFieldValueIfNotDefault(defaultTypes));
 
 		field = DefaultTypes.class.getDeclaredField("floatField");
-		fieldType =
-				FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field,
-						DefaultTypes.class);
+		fieldType = FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field,
+				DefaultTypes.class);
 		assertNull(fieldType.getFieldValueIfNotDefault(defaultTypes));
 		defaultTypes.floatField = 10.123213F;
 		assertEquals(defaultTypes.floatField, fieldType.getFieldValueIfNotDefault(defaultTypes));
 
 		field = DefaultTypes.class.getDeclaredField("doubleField");
-		fieldType =
-				FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field,
-						DefaultTypes.class);
+		fieldType = FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field,
+				DefaultTypes.class);
 		assertNull(fieldType.getFieldValueIfNotDefault(defaultTypes));
 		defaultTypes.doubleField = 102123123123.123213;
 		assertEquals(defaultTypes.doubleField, fieldType.getFieldValueIfNotDefault(defaultTypes));
@@ -698,20 +685,16 @@ public class FieldTypeTest extends BaseCoreTest {
 	@Test
 	public void testEquals() throws Exception {
 		Field field1 = DefaultTypes.class.getDeclaredField("booleanField");
-		FieldType fieldType1 =
-				FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field1,
-						DefaultTypes.class);
-		FieldType fieldType2 =
-				FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field1,
-						DefaultTypes.class);
+		FieldType fieldType1 = FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field1,
+				DefaultTypes.class);
+		FieldType fieldType2 = FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field1,
+				DefaultTypes.class);
 
 		Field field2 = DefaultTypes.class.getDeclaredField("byteField");
-		FieldType fieldType3 =
-				FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field2,
-						DefaultTypes.class);
-		FieldType fieldType4 =
-				FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field2,
-						DefaultTypes.class);
+		FieldType fieldType3 = FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field2,
+				DefaultTypes.class);
+		FieldType fieldType4 = FieldType.createFieldType(connectionSource, DefaultTypes.class.getSimpleName(), field2,
+				DefaultTypes.class);
 
 		assertTrue(fieldType1.equals(fieldType1));
 		assertTrue(fieldType2.equals(fieldType2));
@@ -764,9 +747,8 @@ public class FieldTypeTest extends BaseCoreTest {
 	@Test
 	public void testDefaultValueFieldTypeEmptyType() throws Exception {
 		Field field = DefaultEmptyString.class.getDeclaredField("defaultBlank");
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, DefaultEmptyString.class.getSimpleName(), field,
-						DefaultEmptyString.class);
+		FieldType fieldType = FieldType.createFieldType(connectionSource, DefaultEmptyString.class.getSimpleName(),
+				field, DefaultEmptyString.class);
 		assertEquals("", fieldType.getDefaultValue());
 	}
 
@@ -835,9 +817,8 @@ public class FieldTypeTest extends BaseCoreTest {
 		fieldConfig.setMaxForeignAutoRefreshLevel(2);
 		parentFieldConfigs.add(fieldConfig);
 
-		Dao<ObjectNoAnnotations, Integer> parentDao =
-				createDao(new DatabaseTableConfig<ObjectNoAnnotations>(ObjectNoAnnotations.class, parentFieldConfigs),
-						true);
+		Dao<ObjectNoAnnotations, Integer> parentDao = createDao(
+				new DatabaseTableConfig<ObjectNoAnnotations>(ObjectNoAnnotations.class, parentFieldConfigs), true);
 
 		ForeignObjectNoAnnotations foreign = new ForeignObjectNoAnnotations();
 		foreign.stuff = "hello";
@@ -988,6 +969,7 @@ public class FieldTypeTest extends BaseCoreTest {
 	protected static class GetSetGetWrongType {
 		@DatabaseField(id = true, useGetSet = true)
 		int id;
+
 		public long getId() {
 			return id;
 		}
@@ -996,6 +978,7 @@ public class FieldTypeTest extends BaseCoreTest {
 	protected static class GetSetNoSet {
 		@DatabaseField(id = true, useGetSet = true)
 		int id;
+
 		public int getId() {
 			return id;
 		}
@@ -1004,9 +987,11 @@ public class FieldTypeTest extends BaseCoreTest {
 	protected static class GetSetSetWrongType {
 		@DatabaseField(id = true, useGetSet = true)
 		int id;
+
 		public int getId() {
 			return id;
 		}
+
 		public void setId(long id) {
 			this.id = 0;
 		}
@@ -1015,9 +1000,11 @@ public class FieldTypeTest extends BaseCoreTest {
 	protected static class GetSetReturnNotVoid {
 		@DatabaseField(id = true, useGetSet = true)
 		int id;
+
 		public int getId() {
 			return id;
 		}
+
 		public int setId(int id) {
 			return this.id;
 		}
@@ -1026,9 +1013,11 @@ public class FieldTypeTest extends BaseCoreTest {
 	protected static class GetSet {
 		@DatabaseField(id = true, useGetSet = true)
 		int id;
+
 		public int getId() {
 			return id;
 		}
+
 		public void setId(int id) {
 			this.id = id;
 		}
@@ -1075,6 +1064,7 @@ public class FieldTypeTest extends BaseCoreTest {
 		int id;
 		@DatabaseField(foreign = true)
 		Recursive foreign;
+
 		public Recursive() {
 		}
 	}
@@ -1169,6 +1159,7 @@ public class FieldTypeTest extends BaseCoreTest {
 		public NeedsUppercaseSequenceDatabaseType() throws SQLException {
 			super();
 		}
+
 		@Override
 		public boolean isEntityNamesMustBeUpCase() {
 			return true;
@@ -1179,6 +1170,7 @@ public class FieldTypeTest extends BaseCoreTest {
 		public NeedsSequenceDatabaseType() throws SQLException {
 			super();
 		}
+
 		@Override
 		public boolean isIdSequenceNeeded() {
 			return true;
@@ -1190,6 +1182,7 @@ public class FieldTypeTest extends BaseCoreTest {
 		int id;
 		@DatabaseField(defaultValue = "")
 		String defaultBlank;
+
 		public DefaultEmptyString() {
 			// for ormlite
 		}

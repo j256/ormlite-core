@@ -835,6 +835,11 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public void unregisterObserver(DaoObserver observer);
 
 	/**
+	 * Return the name of the table that this DAO is handling.
+	 */
+	public String getTableName();
+
+	/**
 	 * Notify any registered {@link DaoObserver}s that the underlying data may have changed. This is done automatically
 	 * when using {@link #create(Object)}, {@link #update(Object)}, or {@link #delete(Object)} type methods. Batch
 	 * methods will be notified once at the end of the batch, not for every statement in the batch.
@@ -851,17 +856,21 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 		private boolean created;
 		private boolean updated;
 		private int numLinesChanged;
+
 		public CreateOrUpdateStatus(boolean created, boolean updated, int numberLinesChanged) {
 			this.created = created;
 			this.updated = updated;
 			this.numLinesChanged = numberLinesChanged;
 		}
+
 		public boolean isCreated() {
 			return created;
 		}
+
 		public boolean isUpdated() {
 			return updated;
 		}
+
 		public int getNumLinesChanged() {
 			return numLinesChanged;
 		}

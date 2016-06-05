@@ -52,7 +52,7 @@ public class EnumIntegerTypeTest extends BaseTypeTest {
 		LocalEnumInt foo = new LocalEnumInt();
 		foo.ourEnum = val;
 		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
+		DatabaseConnection conn = connectionSource.getReadOnlyConnection(FOO_TABLE_NAME);
 		CompiledStatement stmt = null;
 		try {
 			stmt =

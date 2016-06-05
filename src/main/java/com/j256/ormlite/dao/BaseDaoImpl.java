@@ -223,7 +223,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	@Override
 	public T queryForId(ID id) throws SQLException {
 		checkForInitialized();
-		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection(tableInfo.getTableName());
 		try {
 			return statementExecutor.queryForId(connection, id, objectCache);
 		} finally {
@@ -234,7 +234,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	@Override
 	public T queryForFirst(PreparedQuery<T> preparedQuery) throws SQLException {
 		checkForInitialized();
-		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection(tableInfo.getTableName());
 		try {
 			return statementExecutor.queryForFirst(connection, preparedQuery, objectCache);
 		} finally {
@@ -323,7 +323,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			BaseDaoEnabled<T, ID> daoEnabled = (BaseDaoEnabled<T, ID>) data;
 			daoEnabled.setDao(this);
 		}
-		DatabaseConnection connection = connectionSource.getReadWriteConnection();
+		DatabaseConnection connection = connectionSource.getReadWriteConnection(tableInfo.getTableName());
 		try {
 			return statementExecutor.create(connection, data, objectCache);
 		} finally {
@@ -345,7 +345,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		 * This is a little strange in that we get the connection but then the call-batch-task saves another one. I
 		 * thought that it was an ok thing to do otherwise it made the call-batch-tasks more complicated.
 		 */
-		final DatabaseConnection connection = connectionSource.getReadWriteConnection();
+		final DatabaseConnection connection = connectionSource.getReadWriteConnection(tableInfo.getTableName());
 		try {
 			return callBatchTasks(new Callable<Integer>() {
 				@Override
@@ -404,7 +404,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			BaseDaoEnabled<T, ID> daoEnabled = (BaseDaoEnabled<T, ID>) data;
 			daoEnabled.setDao(this);
 		}
-		DatabaseConnection connection = connectionSource.getReadWriteConnection();
+		DatabaseConnection connection = connectionSource.getReadWriteConnection(tableInfo.getTableName());
 		try {
 			return statementExecutor.update(connection, data, objectCache);
 		} finally {
@@ -419,7 +419,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		if (data == null) {
 			return 0;
 		} else {
-			DatabaseConnection connection = connectionSource.getReadWriteConnection();
+			DatabaseConnection connection = connectionSource.getReadWriteConnection(tableInfo.getTableName());
 			try {
 				return statementExecutor.updateId(connection, data, newId, objectCache);
 			} finally {
@@ -431,7 +431,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	@Override
 	public int update(PreparedUpdate<T> preparedUpdate) throws SQLException {
 		checkForInitialized();
-		DatabaseConnection connection = connectionSource.getReadWriteConnection();
+		DatabaseConnection connection = connectionSource.getReadWriteConnection(tableInfo.getTableName());
 		try {
 			return statementExecutor.update(connection, preparedUpdate);
 		} finally {
@@ -451,7 +451,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			BaseDaoEnabled<T, ID> daoEnabled = (BaseDaoEnabled<T, ID>) data;
 			daoEnabled.setDao(this);
 		}
-		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection(tableInfo.getTableName());
 		try {
 			return statementExecutor.refresh(connection, data, objectCache);
 		} finally {
@@ -466,7 +466,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		if (data == null) {
 			return 0;
 		} else {
-			DatabaseConnection connection = connectionSource.getReadWriteConnection();
+			DatabaseConnection connection = connectionSource.getReadWriteConnection(tableInfo.getTableName());
 			try {
 				return statementExecutor.delete(connection, data, objectCache);
 			} finally {
@@ -482,7 +482,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		if (id == null) {
 			return 0;
 		} else {
-			DatabaseConnection connection = connectionSource.getReadWriteConnection();
+			DatabaseConnection connection = connectionSource.getReadWriteConnection(tableInfo.getTableName());
 			try {
 				return statementExecutor.deleteById(connection, id, objectCache);
 			} finally {
@@ -498,7 +498,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		if (datas == null || datas.isEmpty()) {
 			return 0;
 		} else {
-			DatabaseConnection connection = connectionSource.getReadWriteConnection();
+			DatabaseConnection connection = connectionSource.getReadWriteConnection(tableInfo.getTableName());
 			try {
 				return statementExecutor.deleteObjects(connection, datas, objectCache);
 			} finally {
@@ -514,7 +514,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		if (ids == null || ids.isEmpty()) {
 			return 0;
 		} else {
-			DatabaseConnection connection = connectionSource.getReadWriteConnection();
+			DatabaseConnection connection = connectionSource.getReadWriteConnection(tableInfo.getTableName());
 			try {
 				return statementExecutor.deleteIds(connection, ids, objectCache);
 			} finally {
@@ -526,7 +526,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	@Override
 	public int delete(PreparedDelete<T> preparedDelete) throws SQLException {
 		checkForInitialized();
-		DatabaseConnection connection = connectionSource.getReadWriteConnection();
+		DatabaseConnection connection = connectionSource.getReadWriteConnection(tableInfo.getTableName());
 		try {
 			return statementExecutor.delete(connection, preparedDelete);
 		} finally {
@@ -666,7 +666,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	@Override
 	public long queryRawValue(String query, String... arguments) throws SQLException {
 		checkForInitialized();
-		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection(tableInfo.getTableName());
 		try {
 			return statementExecutor.queryForLong(connection, query, arguments);
 		} catch (SQLException e) {
@@ -679,7 +679,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	@Override
 	public int executeRaw(String statement, String... arguments) throws SQLException {
 		checkForInitialized();
-		DatabaseConnection connection = connectionSource.getReadWriteConnection();
+		DatabaseConnection connection = connectionSource.getReadWriteConnection(tableInfo.getTableName());
 		try {
 			return statementExecutor.executeRaw(connection, statement, arguments);
 		} catch (SQLException e) {
@@ -692,7 +692,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	@Override
 	public int executeRawNoArgs(String statement) throws SQLException {
 		checkForInitialized();
-		DatabaseConnection connection = connectionSource.getReadWriteConnection();
+		DatabaseConnection connection = connectionSource.getReadWriteConnection(tableInfo.getTableName());
 		try {
 			return statementExecutor.executeRawNoArgs(connection, statement);
 		} catch (SQLException e) {
@@ -705,7 +705,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	@Override
 	public int updateRaw(String statement, String... arguments) throws SQLException {
 		checkForInitialized();
-		DatabaseConnection connection = connectionSource.getReadWriteConnection();
+		DatabaseConnection connection = connectionSource.getReadWriteConnection(tableInfo.getTableName());
 		try {
 			return statementExecutor.updateRaw(connection, statement, arguments);
 		} catch (SQLException e) {
@@ -777,7 +777,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	@Override
 	public boolean isTableExists() throws SQLException {
 		checkForInitialized();
-		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection(tableInfo.getTableName());
 		try {
 			return connection.isTableExists(tableInfo.getTableName());
 		} finally {
@@ -788,7 +788,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	@Override
 	public long countOf() throws SQLException {
 		checkForInitialized();
-		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection(tableInfo.getTableName());
 		try {
 			return statementExecutor.queryForCountStar(connection);
 		} finally {
@@ -803,7 +803,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			throw new IllegalArgumentException("Prepared query is not of type " + StatementType.SELECT_LONG
 					+ ", you need to call QueryBuilder.setCountOf(true)");
 		}
-		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection(tableInfo.getTableName());
 		try {
 			return statementExecutor.queryForLong(connection, preparedQuery);
 		} finally {
@@ -941,7 +941,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
 	@Override
 	public boolean idExists(ID id) throws SQLException {
-		DatabaseConnection connection = connectionSource.getReadOnlyConnection();
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection(tableInfo.getTableName());
 		try {
 			return statementExecutor.ifExists(connection, id);
 		} finally {
@@ -951,7 +951,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
 	@Override
 	public DatabaseConnection startThreadConnection() throws SQLException {
-		DatabaseConnection connection = connectionSource.getReadWriteConnection();
+		DatabaseConnection connection = connectionSource.getReadWriteConnection(tableInfo.getTableName());
 		connectionSource.saveSpecialConnection(connection);
 		return connection;
 	}
@@ -1021,6 +1021,11 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	 */
 	public void setTableConfig(DatabaseTableConfig<T> tableConfig) {
 		this.tableConfig = tableConfig;
+	}
+
+	@Override
+	public String getTableName() {
+		return tableConfig.getTableName();
 	}
 
 	/**

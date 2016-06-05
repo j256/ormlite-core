@@ -330,7 +330,7 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		assertEquals(1, dao.countOf());
 		assertEquals(1, dao.countOf(dao.queryBuilder().setCountOf(true).prepare()));
 		PreparedQuery<Foo> prepared = dao.queryBuilder().prepare();
-		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
+		DatabaseConnection conn = connectionSource.getReadOnlyConnection(FOO_TABLE_NAME);
 		CompiledStatement compiled = null;
 		try {
 			compiled = prepared.compile(conn, StatementType.SELECT);

@@ -14,7 +14,7 @@ public abstract class BaseConnectionSource implements ConnectionSource {
 	private ThreadLocal<NestedConnection> specialConnection = new ThreadLocal<NestedConnection>();
 
 	@Override
-	public DatabaseConnection getSpecialConnection() {
+	public DatabaseConnection getSpecialConnection(String tableName) {
 		NestedConnection currentSaved = specialConnection.get();
 		if (currentSaved == null) {
 			return null;

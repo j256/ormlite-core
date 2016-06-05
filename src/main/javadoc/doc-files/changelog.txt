@@ -32,6 +32,7 @@
 	* CORE: Allow BigInteger to be an ID and version field by saving as string.  Thanks noordawod.
 	* CORE: Allow BYTE_ARRAY and STRING_BYTE_ARRAY data type to be ids and have default values.  Thanks noordawod.
 	* CORE: Added support for table aliasing.  Thanks much to p91paul.
+	* CORE: Added table-name for many ConnectionSource methods to allow sharding and other per-table operations.
 	* CORE: Removed deprecated methods: Dao.setAutoCommit(boolean), isAutoCommit()
 	* CORE: Removed deprecated methods: QueryBuilder.clear(), limit(int), offset(int) 
 	* CORE: Removed deprecated methods: ForeignCollectionField.maxEagerForeignCollectionLevel(), foreignColumnName() 
