@@ -1,6 +1,8 @@
 package com.j256.ormlite.field.types;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
@@ -38,6 +40,18 @@ public class ByteArrayTypeTest extends BaseTypeTest {
 	}
 
 	@Test
+	public void testByteArrayId() throws Exception {
+		Class<ByteArrayId> clazz = ByteArrayId.class;
+		Dao<ByteArrayId, Object> dao = createDao(clazz, true);
+		ByteArrayId foo = new ByteArrayId();
+		foo.id = new byte[] { 1, 2, 3, 4, 5 };
+		assertEquals(1, dao.create(foo));
+		ByteArrayId result = dao.queryForId(foo.id);
+		assertNotNull(result);
+		assertArrayEquals(foo.id, result.id);
+	}
+
+	@Test
 	public void testCoverage() {
 		new ByteArrayType(SqlType.BYTE_ARRAY, new Class[0]);
 	}
@@ -46,5 +60,11 @@ public class ByteArrayTypeTest extends BaseTypeTest {
 	protected static class LocalByteArray {
 		@DatabaseField(columnName = BYTE_COLUMN, dataType = DataType.BYTE_ARRAY)
 		byte[] byteField;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class ByteArrayId {
+		@DatabaseField(columnName = BYTE_COLUMN, dataType = DataType.BYTE_ARRAY, id = true)
+		byte[] id;
 	}
 }
