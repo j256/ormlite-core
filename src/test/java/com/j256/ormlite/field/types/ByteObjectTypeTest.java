@@ -23,7 +23,7 @@ public class ByteObjectTypeTest extends BaseTypeTest {
 		foo.byteField = val;
 		assertEquals(1, dao.create(foo));
 		testType(dao, foo, clazz, val, val, val, valStr, DataType.BYTE_OBJ, BYTE_COLUMN, false, true, false, false,
-				false, false, true, false);
+				false, false, true, true);
 	}
 
 	@Test
@@ -33,7 +33,7 @@ public class ByteObjectTypeTest extends BaseTypeTest {
 		LocalByteObj foo = new LocalByteObj();
 		assertEquals(1, dao.create(new LocalByteObj()));
 		testType(dao, foo, clazz, null, null, null, null, DataType.BYTE_OBJ, BYTE_COLUMN, false, true, false, false,
-				false, false, true, false);
+				false, false, true, true);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

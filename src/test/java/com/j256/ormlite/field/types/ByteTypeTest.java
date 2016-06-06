@@ -26,7 +26,7 @@ public class ByteTypeTest extends BaseTypeTest {
 		foo.byteField = val;
 		assertEquals(1, dao.create(foo));
 		testType(dao, foo, clazz, val, val, val, valStr, DataType.BYTE, BYTE_COLUMN, false, true, false, true, false,
-				false, true, false);
+				false, true, true);
 	}
 
 	@Test

@@ -24,7 +24,7 @@ public class ShortObjectTypeTest extends BaseTypeTest {
 		foo.shortField = val;
 		assertEquals(1, dao.create(foo));
 		testType(dao, foo, clazz, val, val, val, valStr, DataType.SHORT_OBJ, SHORT_COLUMN, false, true, false, false,
-				false, false, true, false);
+				false, false, true, true);
 	}
 
 	@Test
@@ -34,7 +34,7 @@ public class ShortObjectTypeTest extends BaseTypeTest {
 		LocalShortObj foo = new LocalShortObj();
 		assertEquals(1, dao.create(foo));
 		testType(dao, foo, clazz, null, null, null, null, DataType.SHORT_OBJ, SHORT_COLUMN, false, true, false, false,
-				false, false, true, false);
+				false, false, true, true);
 	}
 
 	@Test

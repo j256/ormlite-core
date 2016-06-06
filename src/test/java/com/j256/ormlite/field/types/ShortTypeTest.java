@@ -26,7 +26,7 @@ public class ShortTypeTest extends BaseTypeTest {
 		foo.shortField = val;
 		assertEquals(1, dao.create(foo));
 		testType(dao, foo, clazz, val, val, val, valStr, DataType.SHORT, SHORT_COLUMN, false, true, false, true, false,
-				false, true, false);
+				false, true, true);
 	}
 
 	@Test
