@@ -496,7 +496,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	@Override
 	public String upCaseEntityName(String entityName) {
 		/*
-		 * We are forcing the ENGLISH locale because of locale capitalizaton issues. In a couple of languages, the
+		 * We are forcing the ENGLISH locale because of locale capitalization issues. In a couple of languages, the
 		 * capital version of many letters is a letter that is incompatible with many SQL libraries. For example, in
 		 * Turkish (Locale.forLanguageTag("tr-TR")), "i".toUpperCase() returns "İ" which is a dotted uppercase i.
 		 */
