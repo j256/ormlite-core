@@ -3,6 +3,9 @@ package com.j256.ormlite.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
 
 import org.junit.Test;
 
@@ -113,6 +116,72 @@ public class ForeignObjectTest extends BaseCoreTest {
 		assertEquals(child.id, result.child.id);
 	}
 
+	@Test
+	public void testCreateOrUpdateMultiple() throws Exception {
+		Dao<Question, Integer> questionDao = createDao(Question.class, true);
+		Dao<Answer, Integer> answerDao = createDao(Answer.class, true);
+
+		Question question = new Question();
+		question.name = "some question";
+		assertEquals(1, questionDao.create(question));
+
+		Answer answer1 = new Answer();
+		answer1.val = 1;
+		answer1.question = question;
+		assertTrue(answerDao.createOrUpdate(answer1).isCreated());
+		Answer answer2 = new Answer();
+		answer2.val = 2;
+		answer2.question = question;
+		assertTrue(answerDao.createOrUpdate(answer2).isCreated());
+
+		List<Answer> results = answerDao.queryForAll();
+		assertNotNull(results);
+		assertEquals(2, results.size());
+		Answer result = results.get(0);
+		assertEquals(1, result.id);
+		assertNotNull(result.question);
+		assertEquals(question.id, result.question.id);
+		result = results.get(1);
+		assertEquals(2, result.id);
+		assertNotNull(result.question);
+		assertEquals(question.id, result.question.id);
+	}
+
+	@Test
+	public void testCreateOrUpdateMultiple2() throws Exception {
+		Dao<Child, Integer> childDao = createDao(Child.class, true);
+		Dao<Parent, Object> parentDao = createDao(Parent.class, true);
+
+		Child child = new Child();
+		child.api_id = 1;
+		// no create because of auto-create
+
+		Parent parent1 = new Parent();
+		parent1.child = child;
+		assertTrue(parentDao.createOrUpdate(parent1).isCreated());
+		Parent parent2 = new Parent();
+		parent2.child = child;
+		assertTrue(parentDao.createOrUpdate(parent2).isCreated());
+
+		List<Child> childResults = childDao.queryForAll();
+		assertNotNull(childResults);
+		assertEquals(1, childResults.size());
+
+		List<Parent> results = parentDao.queryForAll();
+		assertNotNull(results);
+		assertEquals(2, results.size());
+		Parent result = results.get(0);
+		assertEquals(1, result.id);
+		assertNotNull(result.child);
+		assertEquals(child.id, result.child.id);
+		result = results.get(1);
+		assertEquals(2, result.id);
+		assertNotNull(result.child);
+		assertEquals(child.id, result.child.id);
+	}
+
+	/* ====================================================== */
+
 	protected static class Question {
 		@DatabaseField(generatedId = true)
 		int id;
@@ -134,7 +203,7 @@ public class ForeignObjectTest extends BaseCoreTest {
 	}
 
 	public static class Parent {
-		@DatabaseField(columnName = "_id", generatedId = true)
+		@DatabaseField(generatedId = true)
 		public long id;
 
 		@DatabaseField(columnName = "foreignId", foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true,
@@ -143,10 +212,10 @@ public class ForeignObjectTest extends BaseCoreTest {
 	}
 
 	public static class Child {
-		@DatabaseField(columnName = "_id", generatedId = true)
+		@DatabaseField(generatedId = true)
 		public long id;
 
-		@DatabaseField(columnName = "api_id")
-		public long child_api_id;
+		@DatabaseField
+		public long api_id;
 	}
 }

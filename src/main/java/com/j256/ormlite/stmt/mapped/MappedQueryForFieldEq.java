@@ -9,15 +9,15 @@ import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableInfo;
 
 /**
- * Mapped statement for querying for an object by its ID.
+ * Mapped statement for querying for an object by a single field.
  * 
  * @author graywatson
  */
-public class MappedQueryForId<T, ID> extends BaseMappedQuery<T, ID> {
+public class MappedQueryForFieldEq<T, ID> extends BaseMappedQuery<T, ID> {
 
 	private final String label;
 
-	protected MappedQueryForId(TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes,
+	protected MappedQueryForFieldEq(TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes,
 			FieldType[] resultsFieldTypes, String label) {
 		super(tableInfo, statement, argFieldTypes, resultsFieldTypes);
 		this.label = label;
@@ -51,7 +51,7 @@ public class MappedQueryForId<T, ID> extends BaseMappedQuery<T, ID> {
 		return castResult;
 	}
 
-	public static <T, ID> MappedQueryForId<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
+	public static <T, ID> MappedQueryForFieldEq<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
 			FieldType idFieldType) throws SQLException {
 		if (idFieldType == null) {
 			idFieldType = tableInfo.getIdField();
@@ -61,7 +61,7 @@ public class MappedQueryForId<T, ID> extends BaseMappedQuery<T, ID> {
 			}
 		}
 		String statement = buildStatement(databaseType, tableInfo, idFieldType);
-		return new MappedQueryForId<T, ID>(tableInfo, statement, new FieldType[] { idFieldType },
+		return new MappedQueryForFieldEq<T, ID>(tableInfo, statement, new FieldType[] { idFieldType },
 				tableInfo.getFieldTypes(), "query-for-id");
 	}
 

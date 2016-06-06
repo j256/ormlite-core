@@ -13,7 +13,7 @@ import com.j256.ormlite.table.TableInfo;
  * 
  * @author graywatson
  */
-public class MappedRefresh<T, ID> extends MappedQueryForId<T, ID> {
+public class MappedRefresh<T, ID> extends MappedQueryForFieldEq<T, ID> {
 
 	private MappedRefresh(TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes,
 			FieldType[] resultFieldTypes) {

@@ -33,6 +33,7 @@
 	* CORE: Allow BYTE_ARRAY and STRING_BYTE_ARRAY data type to be ids and have default values.  Thanks noordawod.
 	* CORE: Added support for table aliasing.  Thanks much to p91paul.
 	* CORE: Added table-name for many ConnectionSource methods to allow sharding and other per-table operations.
+	* CORE: Fixed problems with using @DatabaseField(foreignColumnName).  Thanks to Knight704.
 	* CORE: Removed deprecated methods: Dao.setAutoCommit(boolean), isAutoCommit()
 	* CORE: Removed deprecated methods: QueryBuilder.clear(), limit(int), offset(int) 
 	* CORE: Removed deprecated methods: ForeignCollectionField.maxEagerForeignCollectionLevel(), foreignColumnName() 
@@ -44,6 +45,7 @@
 	* JDBC: Added support for UUID database fields for Postgres and MSSQL.  Use dataType = UUID_NATIVE.  Thanks to tsharp.
 	* JDBC: Added support for a JdbcConnectionSource that uses an existing database connection.  Thanks to natinusala.
 	* JDBC: Removed deprecated method: DataSourceConnectionSource.setUsesTransactions(boolean).
+	* JDBC: Removed deprecated method: JdbcPooledConnectionSource.setUsesTransactions(boolean).
 	* ANDROID: Fixed the string processing when persisting java.sql.Timestamp classes. Bug #163.
 	* ANDROID: Added initial take on Loader base classes from EgorAnd for newer Android versions.  Thanks much!!
 	* ANDROID: Moved Slf4jLoggingLog from JDBC to CORE so Android users can use it.  Thanks to tonyxiao.

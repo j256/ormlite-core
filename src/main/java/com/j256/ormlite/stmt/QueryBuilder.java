@@ -609,11 +609,11 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 */
 	private void matchJoinedFields(JoinInfo joinInfo, QueryBuilder<?, ?> joinedQueryBuilder) throws SQLException {
 		for (FieldType fieldType : tableInfo.getFieldTypes()) {
-			// if this is a foreign field and its foreign-id field is the same as the other's id
-			FieldType foreignIdField = fieldType.getForeignIdField();
-			if (fieldType.isForeign() && foreignIdField.equals(joinedQueryBuilder.tableInfo.getIdField())) {
+			// if this is a foreign field and its foreign field is the same as the other's id
+			FieldType foreignRefField = fieldType.getForeignRefField();
+			if (fieldType.isForeign() && foreignRefField.equals(joinedQueryBuilder.tableInfo.getIdField())) {
 				joinInfo.localField = fieldType;
-				joinInfo.remoteField = foreignIdField;
+				joinInfo.remoteField = foreignRefField;
 				return;
 			}
 		}

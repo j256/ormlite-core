@@ -89,8 +89,8 @@ public abstract class BaseArgumentHolder implements ArgumentHolder {
 		} else if (fieldType == null) {
 			return value;
 		} else if (fieldType.isForeign() && fieldType.getType() == value.getClass()) {
-			FieldType idFieldType = fieldType.getForeignIdField();
-			return idFieldType.extractJavaFieldValue(value);
+			FieldType refFieldType = fieldType.getForeignRefField();
+			return refFieldType.extractJavaFieldValue(value);
 		} else {
 			return fieldType.convertJavaFieldToSqlArgValue(value);
 		}

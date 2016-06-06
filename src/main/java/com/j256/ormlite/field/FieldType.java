@@ -24,7 +24,7 @@ import com.j256.ormlite.field.types.VoidType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.misc.SqlExceptionUtil;
-import com.j256.ormlite.stmt.mapped.MappedQueryForId;
+import com.j256.ormlite.stmt.mapped.MappedQueryForFieldEq;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseResults;
@@ -74,10 +74,11 @@ public class FieldType {
 
 	private FieldConverter fieldConverter;
 	private FieldType foreignIdField;
+	private FieldType foreignRefField;
 	private TableInfo<?, ?> foreignTableInfo;
 	private FieldType foreignFieldType;
 	private BaseDaoImpl<?, ?> foreignDao;
-	private MappedQueryForId<Object, Object> mappedQueryForId;
+	private MappedQueryForFieldEq<Object, Object> mappedQueryForForeignField;
 
 	/**
 	 * ThreadLocal counters to detect initialization loops. Notice that there is _not_ an initValue() method on purpose.
@@ -285,9 +286,10 @@ public class FieldType {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		TableInfo<?, ?> foreignTableInfo;
 		final FieldType foreignIdField;
+		final FieldType foreignRefField;
 		final FieldType foreignFieldType;
 		final BaseDaoImpl<?, ?> foreignDao;
-		final MappedQueryForId<Object, Object> mappedQueryForId;
+		final MappedQueryForFieldEq<Object, Object> mappedQueryForForeignField;
 
 		String foreignColumnName = fieldConfig.getForeignColumnName();
 		if (fieldConfig.isForeignAutoRefresh() || foreignColumnName != null) {
@@ -302,22 +304,24 @@ public class FieldType {
 				foreignDao = (BaseDaoImpl<?, ?>) DaoManager.createDao(connectionSource, tableConfig);
 				foreignTableInfo = foreignDao.getTableInfo();
 			}
+			foreignIdField = foreignTableInfo.getIdField();
+			if (foreignIdField == null) {
+				throw new IllegalArgumentException("Foreign field " + fieldClass + " does not have id field");
+			}
 			if (foreignColumnName == null) {
-				foreignIdField = foreignTableInfo.getIdField();
-				if (foreignIdField == null) {
-					throw new IllegalArgumentException("Foreign field " + fieldClass + " does not have id field");
-				}
+				foreignRefField = foreignIdField;
 			} else {
-				foreignIdField = foreignTableInfo.getFieldTypeByColumnName(foreignColumnName);
-				if (foreignIdField == null) {
+				foreignRefField = foreignTableInfo.getFieldTypeByColumnName(foreignColumnName);
+				if (foreignRefField == null) {
 					throw new IllegalArgumentException(
 							"Foreign field " + fieldClass + " does not have field named '" + foreignColumnName + "'");
 				}
 			}
 			@SuppressWarnings("unchecked")
-			MappedQueryForId<Object, Object> castMappedQueryForId = (MappedQueryForId<Object, Object>) MappedQueryForId
-					.build(databaseType, foreignTableInfo, foreignIdField);
-			mappedQueryForId = castMappedQueryForId;
+			MappedQueryForFieldEq<Object, Object> castMappedQueryForForeignField =
+					(MappedQueryForFieldEq<Object, Object>) MappedQueryForFieldEq.build(databaseType, foreignTableInfo,
+							foreignRefField);
+			mappedQueryForForeignField = castMappedQueryForForeignField;
 			foreignFieldType = null;
 		} else if (fieldConfig.isForeign()) {
 			if (this.dataPersister != null && this.dataPersister.isPrimitive()) {
@@ -344,13 +348,14 @@ public class FieldType {
 			if (foreignIdField == null) {
 				throw new IllegalArgumentException("Foreign field " + fieldClass + " does not have id field");
 			}
+			foreignRefField = foreignIdField;
 			if (isForeignAutoCreate() && !foreignIdField.isGeneratedId()) {
 				throw new IllegalArgumentException(
 						"Field " + field.getName() + ", if foreignAutoCreate = true then class "
 								+ fieldClass.getSimpleName() + " must have id field with generatedId = true");
 			}
 			foreignFieldType = null;
-			mappedQueryForId = null;
+			mappedQueryForForeignField = null;
 		} else if (fieldConfig.isForeignCollection()) {
 			if (fieldClass != Collection.class && !ForeignCollection.class.isAssignableFrom(fieldClass)) {
 				throw new SQLException("Field class for '" + field.getName() + "' must be of class "
@@ -394,25 +399,28 @@ public class FieldType {
 			foreignDao = foundDao;
 			foreignFieldType = findForeignFieldType(collectionClazz, parentClass, (BaseDaoImpl<?, ?>) foundDao);
 			foreignIdField = null;
+			foreignRefField = null;
 			foreignTableInfo = null;
-			mappedQueryForId = null;
+			mappedQueryForForeignField = null;
 		} else {
 			foreignTableInfo = null;
 			foreignIdField = null;
+			foreignRefField = null;
 			foreignFieldType = null;
 			foreignDao = null;
-			mappedQueryForId = null;
+			mappedQueryForForeignField = null;
 		}
 
-		this.mappedQueryForId = mappedQueryForId;
+		this.mappedQueryForForeignField = mappedQueryForForeignField;
 		this.foreignTableInfo = foreignTableInfo;
 		this.foreignFieldType = foreignFieldType;
 		this.foreignDao = foreignDao;
 		this.foreignIdField = foreignIdField;
+		this.foreignRefField = foreignRefField;
 
-		// we have to do this because if we habe a foreign field then our id type might have gone to an _id primitive
-		if (this.foreignIdField != null) {
-			assignDataType(databaseType, this.foreignIdField.getDataPersister());
+		// we have to do this because if we have a foreign field then our id type might have gone to an _id primitive
+		if (this.foreignRefField != null) {
+			assignDataType(databaseType, this.foreignRefField.getDataPersister());
 		}
 	}
 
@@ -518,15 +526,15 @@ public class FieldType {
 		logger.error("assiging from data {}, val {}: {}", (data == null ? "null" : data.getClass()),
 				(val == null ? "null" : val.getClass()), val);
 		// if this is a foreign object then val is the foreign object's id val
-		if (foreignIdField != null && val != null) {
+		if (foreignRefField != null && val != null) {
 			// get the current field value which is the foreign-id
-			Object foreignId = extractJavaFieldValue(data);
+			Object foreignRef = extractJavaFieldValue(data);
 			/*
 			 * See if we don't need to create a new foreign object. If we are refreshing and the id field has not
 			 * changed then there is no need to create a new foreign object and maybe lose previously refreshed field
 			 * information.
 			 */
-			if (foreignId != null && foreignId.equals(val)) {
+			if (foreignRef != null && foreignRef.equals(val)) {
 				return;
 			}
 			// awhitlock: raised as OrmLite issue: bug #122
@@ -611,9 +619,9 @@ public class FieldType {
 
 		Object val = extractRawJavaFieldValue(object);
 
-		// if this is a foreign object then we want its id field
-		if (foreignIdField != null && val != null) {
-			val = foreignIdField.extractRawJavaFieldValue(val);
+		// if this is a foreign object then we want its reference field
+		if (foreignRefField != null && val != null) {
+			val = foreignRefField.extractRawJavaFieldValue(val);
 		}
 
 		return val;
@@ -660,10 +668,17 @@ public class FieldType {
 	}
 
 	/**
-	 * Return the id field associated with the foreign object or null if none.
+	 * Return the id of the associated foreign object or null if none.
 	 */
 	public FieldType getForeignIdField() {
 		return foreignIdField;
+	}
+
+	/**
+	 * Return the field associated with the foreign object or null if none.
+	 */
+	public FieldType getForeignRefField() {
+		return foreignRefField;
 	}
 
 	/**
@@ -997,19 +1012,20 @@ public class FieldType {
 		 * We may not have a mapped query for id because we aren't auto-refreshing ourselves. But a parent class may be
 		 * auto-refreshing us with a level > 1 so we may need to build our query-for-id optimization on the fly here.
 		 */
-		if (mappedQueryForId == null) {
+		if (mappedQueryForForeignField == null) {
 			@SuppressWarnings("unchecked")
-			MappedQueryForId<Object, Object> castMappedQueryForId =
-					(MappedQueryForId<Object, Object>) MappedQueryForId.build(connectionSource.getDatabaseType(),
-							((BaseDaoImpl<?, ?>) foreignDao).getTableInfo(), foreignIdField);
-			mappedQueryForId = castMappedQueryForId;
+			MappedQueryForFieldEq<Object, Object> castMappedQueryForId =
+					(MappedQueryForFieldEq<Object, Object>) MappedQueryForFieldEq.build(
+							connectionSource.getDatabaseType(), ((BaseDaoImpl<?, ?>) foreignDao).getTableInfo(),
+							foreignIdField);
+			mappedQueryForForeignField = castMappedQueryForId;
 		}
 		levelCounters.autoRefreshLevel++;
 		try {
 			DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection(tableName);
 			try {
 				// recurse and get the sub-object
-				return mappedQueryForId.execute(databaseConnection, val, objectCache);
+				return mappedQueryForForeignField.execute(databaseConnection, val, objectCache);
 			} finally {
 				connectionSource.releaseConnection(databaseConnection);
 			}

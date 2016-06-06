@@ -26,7 +26,7 @@ import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.stmt.mapped.MappedCreate;
 import com.j256.ormlite.stmt.mapped.MappedDelete;
 import com.j256.ormlite.stmt.mapped.MappedDeleteCollection;
-import com.j256.ormlite.stmt.mapped.MappedQueryForId;
+import com.j256.ormlite.stmt.mapped.MappedQueryForFieldEq;
 import com.j256.ormlite.stmt.mapped.MappedRefresh;
 import com.j256.ormlite.stmt.mapped.MappedUpdate;
 import com.j256.ormlite.stmt.mapped.MappedUpdateId;
@@ -55,7 +55,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	private final DatabaseType databaseType;
 	private final TableInfo<T, ID> tableInfo;
 	private final Dao<T, ID> dao;
-	private MappedQueryForId<T, ID> mappedQueryForId;
+	private MappedQueryForFieldEq<T, ID> mappedQueryForId;
 	private PreparedQuery<T> preparedQueryForAll;
 	private MappedCreate<T, ID> mappedInsert;
 	private MappedUpdate<T, ID> mappedUpdate;
@@ -89,7 +89,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 */
 	public T queryForId(DatabaseConnection databaseConnection, ID id, ObjectCache objectCache) throws SQLException {
 		if (mappedQueryForId == null) {
-			mappedQueryForId = MappedQueryForId.build(databaseType, tableInfo, null);
+			mappedQueryForId = MappedQueryForFieldEq.build(databaseType, tableInfo, null);
 		}
 		return mappedQueryForId.execute(databaseConnection, id, objectCache);
 	}
