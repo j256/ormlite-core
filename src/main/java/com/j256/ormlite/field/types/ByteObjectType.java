@@ -38,6 +38,11 @@ public class ByteObjectType extends BaseDataType {
 	}
 
 	@Override
+	public Object convertIdNumber(Number number) {
+		return (Byte) number.byteValue();
+	}
+
+	@Override
 	public boolean isEscapedValue() {
 		return false;
 	}

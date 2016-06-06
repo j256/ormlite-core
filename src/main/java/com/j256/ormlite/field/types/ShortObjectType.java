@@ -38,6 +38,11 @@ public class ShortObjectType extends BaseDataType {
 	}
 
 	@Override
+	public Object convertIdNumber(Number number) {
+		return (Short) number.shortValue();
+	}
+
+	@Override
 	public boolean isEscapedValue() {
 		return false;
 	}
