@@ -6,9 +6,9 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set ormlite_version 4.49
-@set ormlite_year 2015
-@set ormlite_date February @value{ormlite_year}
+@set ormlite_version 5.0
+@set ormlite_year 2016
+@set ormlite_date June @value{ormlite_year}
 @set package ORMLite
 @c ----------------------------------------------------------------
 
@@ -4617,7 +4617,7 @@ You probably would not want to register the @code{MyDatePersister} above because
 persistence behavior for @emph{all} @code{Date} types.
 
 @c ----------------------------------------------------------------
-@node How to Upgrade, 4.49, Custom Persisters, Top
+@node How to Upgrade, 5.0, Custom Persisters, Top
 @chapter Upgrade From Old Versions
 
 @cindex upgrading from previous versions
@@ -4629,6 +4629,7 @@ However, sometimes when a new version is released, changes are made that require
 and rarely the on-disk database formats. 
 
 @menu
+* 5.0::                 Notes about version 5.0
 * 4.49::                Notes about version 4.49
 * 4.45::                Upgrade to version 4.45
 * 4.43::                Problems with version 4.43
@@ -4643,7 +4644,50 @@ and rarely the on-disk database formats.
 @end menu
 
 @c ----------------------------------------------------------------
-@node 4.49, 4.45, How to Upgrade, How to Upgrade
+@node 5.0, 4.49, How to Upgrade, How to Upgrade
+@section Notes About Version 5.0
+
+A number of things have changed and it's been a long time since the last published ORMLite release, so a .0 number
+on the release seemed to be warranted.  See the following details.
+
+@itemize @bullet
+
+@item ORMLite now requires Java 6 and no longer supports Java 5.  We also added @code{java.io.Closeable} support for Java
+7 and better support for Java 8 but they are not required.
+
+@item We used the native locale to do uppercase database entity names (tables and fields).  This
+sounds like a good idea until you realize that in Turkish, a uppercase i with a dot is a capital I with a dot which can
+be incompatible with databases that don't understand UTF8 names.  For this reason the default behavior is to do
+capitalization of entities using @code{Locale.ENGLISH}.  This means that your schema may need to change.  To go back
+to the old behavior, you should override the appropriate @code{DatabaseType} and override the
+@code{upCaseEntityName(String)} method.
+
+@item We've added the usage of the @code{java.io.Closeable} interface in a number of places for Java 7 support. This means
+that you may not get warnings about unclosed iterators and other things.  Watch for and pay attention to them.  They are
+important.  Java 7 is not required.
+
+@item To better support database partitioning, we made some changes to the @code{ConnectionSource} interface so now the
+table name is specified which allows the @code{ConnectionSource} to make decisions about which database to connect to
+depending on the table.
+
+@item We've removed a number of deprecated methods:
+
+@itemize
+@item Dao.setAutoCommit(boolean), isAutoCommit()
+@item QueryBuilder.clear(), limit(int), offset(int) 
+@item ForeignCollectionField.maxEagerForeignCollectionLevel(), foreignColumnName()
+@item DatabaseFieldConfig.setMaxEagerForeignCollectionLevel(), setForeignCollectionMaxEagerForeignCollectionLevel(),
+setForeignCollectionOrderColumn(), setForeignCollectionForeignColumnName()
+@item DataSourceConnectionSource.setUsesTransactions(boolean)
+@item JdbcPooledConnectionSource.setUsesTransactions(boolean)
+@item OpenHelperManager.release()
+@item AndroidDatabaseResults(Cursor, boolean, ObjectCache) constructor
+@end itemize
+
+@end itemize
+
+@c ----------------------------------------------------------------
+@node 4.49, 4.45, 5.0, How to Upgrade
 @section Notes About Version 4.49
 
 The 4.49 release took a long time to put out unfortunately so it included a lot of changes, a couple of which need

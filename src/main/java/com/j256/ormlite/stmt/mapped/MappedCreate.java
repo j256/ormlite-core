@@ -246,7 +246,7 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 	}
 
 	private void assignIdValue(T data, Number val, String label, ObjectCache objectCache) throws SQLException {
-		// better to do this in one please with consistent logging
+		// better to do this in one place with consistent logging
 		idField.assignIdValue(data, val, objectCache);
 		if (logger.isLevelEnabled(Level.DEBUG)) {
 			logger.debug("assigned id '{}' from {} to '{}' in {} object",

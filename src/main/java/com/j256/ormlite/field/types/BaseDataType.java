@@ -200,4 +200,10 @@ public abstract class BaseDataType extends BaseFieldConverter implements DataPer
 	public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) throws SQLException {
 		return sqlArgToJava(fieldType, parseDefaultString(fieldType, stringValue), columnPos);
 	}
+
+	@Override
+	public String getSqlOtherType() {
+		// here to be overridden by custom persisters
+		return null;
+	}
 }

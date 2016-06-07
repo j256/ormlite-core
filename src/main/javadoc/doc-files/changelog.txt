@@ -16,6 +16,7 @@
 	* CORE: Added support for BYTE_ARRAY and STRING_BYTE_ARRAY data type to be ids and have default values.  Thanks noordawod.
 	* CORE: Added support for table aliasing.  Thanks much to p91paul.
 	* CORE: Added table-name for many ConnectionSource methods to allow partitioning and other per-table operations.
+	* CORE: Added better support for per-database type object custom persisters.  Thanks to rzorzorzo.
 	* CORE: Fixed (really) QueryBuilder.orderByRaw(...) and orderBy(...) mutually exclusivity. Thanks to Diederik. Bug #161.
 	* CORE: Fixed a bug when we select columns on an entity without an id field.  Thanks to lder.
 	* CORE: Fixed a bug with building queries using selectRaw(...).  Bug #166.

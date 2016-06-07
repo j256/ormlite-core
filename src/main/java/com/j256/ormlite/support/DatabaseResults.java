@@ -152,6 +152,11 @@ public interface DatabaseResults extends Closeable {
 	public BigDecimal getBigDecimal(int columnIndex) throws SQLException;
 
 	/**
+	 * Returns the SQL object value from the results at the column index.
+	 */
+	public Object getObject(int columnIndex) throws SQLException;
+
+	/**
 	 * Returns true if the last object returned with the column index is null.
 	 */
 	public boolean wasNull(int columnIndex) throws SQLException;

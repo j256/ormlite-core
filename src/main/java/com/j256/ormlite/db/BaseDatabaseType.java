@@ -130,6 +130,13 @@ public abstract class BaseDatabaseType implements DatabaseType {
 				appendUuidNativeType(sb, fieldType, fieldWidth);
 				break;
 
+			case OTHER:
+				String sqlOtherType = dataPersister.getSqlOtherType();
+				if (sqlOtherType != null) {
+					sb.append(sqlOtherType);
+				}
+				break;
+
 			case UNKNOWN:
 			default:
 				// shouldn't be able to get here unless we have a missing case
