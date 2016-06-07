@@ -101,50 +101,51 @@ public class ForeignObjectTest extends BaseCoreTest {
 	}
 
 	@Test
+	public void testCreateOrUpdateLoop() throws Exception {
+		Dao<Question, Object> questionDao = createDao(Question.class, true);
+		Dao<Answer, Object> answerDao = createDao(Answer.class, true);
+
+		Answer answer = new Answer();
+		answer.val = 1234313123;
+		assertEquals(1, answerDao.create(answer));
+
+		Question[] questions = new Question[10];
+		for (int i = 0; i < questions.length; i++) {
+			// not failed
+			questions[i] = new Question();
+			questions[i].name = "name_" + i;
+			questions[i].bestAnswer = answer;
+			assertTrue(questionDao.createOrUpdate(questions[i]).isCreated());
+		}
+
+		for (int i = 0; i < questions.length; i++) {
+			// not failed
+			Question result = questionDao.queryForId(questions[i].id);
+			assertNotNull(result);
+			assertNotNull(result.bestAnswer);
+			assertEquals(answer.id, result.bestAnswer.id);
+		}
+	}
+
+	@Test
 	public void testForeignAutoCreate() throws Exception {
-		Dao<Parent, Long> parentDao = createDao(Parent.class, true);
-		createTable(Child.class, true);
+		Dao<Parent, Integer> parentDao = createDao(Parent.class, true);
+		Dao<Child, Integer> childDao = createDao(Child.class, true);
 
 		Parent parent = new Parent();
 		Child child = new Child();
 		parent.child = child;
+		// no create here, it's handled by auto-create
 
 		assertEquals(1, parentDao.create(parent));
 		Parent result = parentDao.queryForId(parent.id);
 		assertNotNull(result);
 		assertNotNull(result.child);
 		assertEquals(child.id, result.child.id);
-	}
 
-	@Test
-	public void testCreateOrUpdateMultiple() throws Exception {
-		Dao<Question, Integer> questionDao = createDao(Question.class, true);
-		Dao<Answer, Integer> answerDao = createDao(Answer.class, true);
-
-		Question question = new Question();
-		question.name = "some question";
-		assertEquals(1, questionDao.create(question));
-
-		Answer answer1 = new Answer();
-		answer1.val = 1;
-		answer1.question = question;
-		assertTrue(answerDao.createOrUpdate(answer1).isCreated());
-		Answer answer2 = new Answer();
-		answer2.val = 2;
-		answer2.question = question;
-		assertTrue(answerDao.createOrUpdate(answer2).isCreated());
-
-		List<Answer> results = answerDao.queryForAll();
-		assertNotNull(results);
-		assertEquals(2, results.size());
-		Answer result = results.get(0);
-		assertEquals(1, result.id);
-		assertNotNull(result.question);
-		assertEquals(question.id, result.question.id);
-		result = results.get(1);
-		assertEquals(2, result.id);
-		assertNotNull(result.question);
-		assertEquals(question.id, result.question.id);
+		Child childResult = childDao.queryForId(child.id);
+		assertNotNull(childResult);
+		assertEquals(child.id, childResult.id);
 	}
 
 	@Test
@@ -180,6 +181,38 @@ public class ForeignObjectTest extends BaseCoreTest {
 		assertEquals(child.id, result.child.id);
 	}
 
+	@Test
+	public void testCreateOrUpdateMultipleLoop() throws Exception {
+		Dao<Child, Integer> childDao = createDao(Child.class, true);
+		Dao<Parent, Object> parentDao = createDao(Parent.class, true);
+
+		Child child = new Child();
+		child.api_id = 1;
+		// no create because of auto-create
+
+		Parent[] parents = new Parent[10];
+		for (int i = 0; i < parents.length; i++) {
+			parents[i] = new Parent();
+			parents[i].child = child;
+			assertTrue(parentDao.createOrUpdate(parents[i]).isCreated());
+		}
+
+		List<Child> childResults = childDao.queryForAll();
+		assertNotNull(childResults);
+		assertEquals(1, childResults.size());
+
+		List<Parent> results = parentDao.queryForAll();
+		assertNotNull(results);
+		assertEquals(10, results.size());
+
+		for (int i = 0; i < parents.length; i++) {
+			Parent result = parentDao.queryForId(parents[i].id);
+			assertNotNull(result);
+			assertNotNull(result.child);
+			assertEquals(child.id, result.child.id);
+		}
+	}
+
 	/* ====================================================== */
 
 	protected static class Question {
@@ -204,7 +237,7 @@ public class ForeignObjectTest extends BaseCoreTest {
 
 	public static class Parent {
 		@DatabaseField(generatedId = true)
-		public long id;
+		public int id;
 
 		@DatabaseField(columnName = "foreignId", foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true,
 				foreignColumnName = "api_id", canBeNull = false)
@@ -213,9 +246,9 @@ public class ForeignObjectTest extends BaseCoreTest {
 
 	public static class Child {
 		@DatabaseField(generatedId = true)
-		public long id;
+		public int id;
 
 		@DatabaseField
-		public long api_id;
+		public int api_id;
 	}
 }
