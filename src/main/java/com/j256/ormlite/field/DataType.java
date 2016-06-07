@@ -212,9 +212,9 @@ public enum DataType {
 	 */
 	BIG_DECIMAL_NUMERIC(BigDecimalNumericType.getSingleton()),
 	/**
-	 * Persists the org.joda.time.DateTime type with reflection since we don't want to add the dependency. Because this
-	 * class uses reflection, you have to specify this using {@link DatabaseField#dataType()}. It won't be detected
-	 * automatically.
+	 * Persists the org.joda.time.DateTime type as a long integer. This uses reflection since we don't want to add the
+	 * dependency. Because of this, you have to specify this using {@link DatabaseField#dataType()}. It won't be
+	 * detected automatically.
 	 */
 	DATE_TIME(DateTimeType.getSingleton()),
 	/**
