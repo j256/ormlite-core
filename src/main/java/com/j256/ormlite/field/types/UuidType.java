@@ -9,7 +9,8 @@ import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
- * Type that persists a {@link UUID} object.
+ * Type that persists a {@link UUID} object using a database String. This is not to be confused with the native UUID
+ * types supported by some databases.
  * 
  * @author graywatson
  */
@@ -54,8 +55,8 @@ public class UuidType extends BaseDataType {
 		try {
 			return java.util.UUID.fromString(uuidStr);
 		} catch (IllegalArgumentException e) {
-			throw SqlExceptionUtil.create("Problems with column " + columnPos + " parsing UUID-string '" + uuidStr
-					+ "'", e);
+			throw SqlExceptionUtil
+					.create("Problems with column " + columnPos + " parsing UUID-string '" + uuidStr + "'", e);
 		}
 	}
 

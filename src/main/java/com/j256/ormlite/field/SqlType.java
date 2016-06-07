@@ -27,6 +27,7 @@ public enum SqlType {
 	SERIALIZABLE,
 	BLOB,
 	BIG_DECIMAL,
+	/** for native database UUIDs, not to be confused with Java's UUID */
 	UUID,
 	// for other types handled by custom persisters
 	OTHER,
