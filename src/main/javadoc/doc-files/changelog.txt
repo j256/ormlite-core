@@ -1,5 +1,7 @@
 5.0: 6/??/2016
 	* ALL: ORMLite has dropped support for Java 5.  Java 6 is now required.
+	* ALL: Added boolean argument to DatabaseConnection.compileStatement(...) to fix a cache bug.
+	* ALL: Changed DatabaseResults.getObjectCache() to be getObjectCacheForRetrieve() and getObjectCacheForStore().
 	* CORE: Added JOIN-ing between tables _without_ a foreign-object relationship.
 	* CORE: Added TimeStampStringType to support Android timestamps.
 	* CORE: Added the ability to override the DataPersister as well as the FieldConverter.
@@ -36,6 +38,7 @@
 	* CORE: Fixed a bug where the logger did not handle an array of primitives correctly.
 	* CORE: Fixed problem with capitalization of entities in non-english locales.  ENGLISH now the default.
 	* CORE: Fixed problems with using @DatabaseField(foreignColumnName).  Thanks to Knight704.
+	* CORE: Fixed problem with storing partially formed objects in the cache because of select arguments.  Thanks to pimduin.
 	* CORE: Removed deprecated methods: Dao.setAutoCommit(boolean), isAutoCommit()
 	* CORE: Removed deprecated methods: QueryBuilder.clear(), limit(int), offset(int) 
 	* CORE: Removed deprecated methods: ForeignCollectionField.maxEagerForeignCollectionLevel(), foreignColumnName() 

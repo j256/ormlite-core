@@ -78,9 +78,11 @@ public interface DatabaseConnection extends Closeable {
 	 * @param resultFlags
 	 *            Allows specification of some result flags. This is dependent on the backend and database type. Set to
 	 *            {@link #DEFAULT_RESULT_FLAGS} for the internal default.
+	 * @param cacheStore
+	 *            Cache can store results from this statement.
 	 */
 	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argFieldTypes,
-			int resultFlags) throws SQLException;
+			int resultFlags, boolean cacheStore) throws SQLException;
 
 	/**
 	 * Perform a SQL update while with the associated SQL statement, arguments, and types. This will possibly return

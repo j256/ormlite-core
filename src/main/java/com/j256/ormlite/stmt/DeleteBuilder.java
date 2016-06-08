@@ -30,7 +30,7 @@ public class DeleteBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * the where or make other calls you will need to re-call this method to re-prepare the statement for execution.
 	 */
 	public PreparedDelete<T> prepare() throws SQLException {
-		return super.prepareStatement(null);
+		return super.prepareStatement(null, false);
 	}
 
 	/**

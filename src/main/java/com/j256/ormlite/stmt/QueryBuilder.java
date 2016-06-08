@@ -97,7 +97,9 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * this method to re-prepare the statement for execution.
 	 */
 	public PreparedQuery<T> prepare() throws SQLException {
-		return super.prepareStatement(limit);
+		// we only store things in the cache if there was not selects specified
+		boolean cacheStore = (selectList == null);
+		return super.prepareStatement(limit, cacheStore);
 	}
 
 	/**

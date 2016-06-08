@@ -470,7 +470,7 @@ public class Where<T, ID> {
 	 * A short-cut for calling {@link QueryBuilder#prepare()}.
 	 */
 	public PreparedQuery<T> prepare() throws SQLException {
-		return statementBuilder.prepareStatement(null);
+		return statementBuilder.prepareStatement(null, false);
 	}
 
 	/**

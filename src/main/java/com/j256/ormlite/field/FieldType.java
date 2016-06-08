@@ -23,6 +23,7 @@ import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.types.VoidType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
+import com.j256.ormlite.logger.Log.Level;
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.stmt.mapped.MappedQueryForFieldEq;
 import com.j256.ormlite.support.ConnectionSource;
@@ -523,8 +524,10 @@ public class FieldType {
 	 */
 	public void assignField(Object data, Object val, boolean parentObject, ObjectCache objectCache)
 			throws SQLException {
-		logger.error("assiging from data {}, val {}: {}", (data == null ? "null" : data.getClass()),
-				(val == null ? "null" : val.getClass()), val);
+		if (logger.isLevelEnabled(Level.TRACE)) {
+			logger.trace("assiging from data {}, val {}: {}", (data == null ? "null" : data.getClass()),
+					(val == null ? "null" : val.getClass()), val);
+		}
 		// if this is a foreign object then val is the foreign object's id val
 		if (foreignRefField != null && val != null) {
 			// get the current field value which is the foreign-id

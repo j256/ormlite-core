@@ -23,11 +23,13 @@ public class H2DatabaseResults implements DatabaseResults {
 	private final ResultSet resultSet;
 	private final ResultSetMetaData metaData;
 	private final ObjectCache objectCache;
+	private final boolean cacheStore;
 
-	public H2DatabaseResults(ResultSet resultSet, ObjectCache objectCache) throws SQLException {
+	public H2DatabaseResults(ResultSet resultSet, ObjectCache objectCache, boolean cacheStore) throws SQLException {
 		this.resultSet = resultSet;
 		this.metaData = resultSet.getMetaData();
 		this.objectCache = objectCache;
+		this.cacheStore = cacheStore;
 	}
 
 	@Override
@@ -168,8 +170,17 @@ public class H2DatabaseResults implements DatabaseResults {
 	}
 
 	@Override
-	public ObjectCache getObjectCache() {
+	public ObjectCache getObjectCacheForRetrieve() {
 		return objectCache;
+	}
+
+	@Override
+	public ObjectCache getObjectCacheForStore() {
+		if (cacheStore) {
+			return objectCache;
+		} else {
+			return null;
+		}
 	}
 
 	@Override

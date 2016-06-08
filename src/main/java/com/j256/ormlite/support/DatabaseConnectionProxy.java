@@ -87,11 +87,11 @@ public class DatabaseConnectionProxy implements DatabaseConnection {
 
 	@Override
 	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argFieldTypes,
-			int resultFlags) throws SQLException {
+			int resultFlags, boolean cacheStore) throws SQLException {
 		if (proxy == null) {
 			return null;
 		} else {
-			return proxy.compileStatement(statement, type, argFieldTypes, resultFlags);
+			return proxy.compileStatement(statement, type, argFieldTypes, resultFlags, cacheStore);
 		}
 	}
 

@@ -39,7 +39,7 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 			colPosMap = columnPositions;
 		}
 
-		ObjectCache objectCache = results.getObjectCache();
+		ObjectCache objectCache = results.getObjectCacheForRetrieve();
 		if (objectCache != null) {
 			Object id = idField.resultToJava(results, colPosMap);
 			T cachedInstance = objectCache.get(clazz, id);
@@ -71,7 +71,7 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 				} else {
 					fieldType.assignField(instance, val, false, objectCache);
 				}
-				if (fieldType == idField) {
+				if (fieldType.isId()) {
 					id = val;
 				}
 			}
@@ -88,6 +88,7 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 			}
 		}
 		// if we have a cache and we have an id then add it to the cache
+		objectCache = results.getObjectCacheForStore();
 		if (objectCache != null && id != null) {
 			objectCache.put(clazz, id, instance);
 		}

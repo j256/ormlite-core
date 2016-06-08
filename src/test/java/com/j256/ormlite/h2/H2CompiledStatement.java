@@ -18,10 +18,12 @@ import com.j256.ormlite.support.DatabaseResults;
  */
 public class H2CompiledStatement implements CompiledStatement {
 
-	private PreparedStatement preparedStatement;
+	private final PreparedStatement preparedStatement;
+	private final boolean cacheStore;
 
-	public H2CompiledStatement(PreparedStatement preparedStatement) {
+	public H2CompiledStatement(PreparedStatement preparedStatement, boolean cacheStore) {
 		this.preparedStatement = preparedStatement;
+		this.cacheStore = cacheStore;
 	}
 
 	@Override
@@ -41,7 +43,7 @@ public class H2CompiledStatement implements CompiledStatement {
 
 	@Override
 	public DatabaseResults runQuery(ObjectCache objectCache) throws SQLException {
-		return new H2DatabaseResults(preparedStatement.executeQuery(), objectCache);
+		return new H2DatabaseResults(preparedStatement.executeQuery(), objectCache, cacheStore);
 	}
 
 	@Override
@@ -90,38 +92,38 @@ public class H2CompiledStatement implements CompiledStatement {
 
 	public static int sqlTypeToJdbcInt(SqlType sqlType) {
 		switch (sqlType) {
-			case STRING :
+			case STRING:
 				return Types.VARCHAR;
-			case LONG_STRING :
+			case LONG_STRING:
 				return Types.LONGVARCHAR;
-			case DATE :
+			case DATE:
 				return Types.TIMESTAMP;
-			case BOOLEAN :
+			case BOOLEAN:
 				return Types.BOOLEAN;
-			case CHAR :
+			case CHAR:
 				return Types.CHAR;
-			case BYTE :
+			case BYTE:
 				return Types.TINYINT;
-			case BYTE_ARRAY :
+			case BYTE_ARRAY:
 				return Types.VARBINARY;
-			case SHORT :
+			case SHORT:
 				return Types.SMALLINT;
-			case INTEGER :
+			case INTEGER:
 				return Types.INTEGER;
-			case LONG :
+			case LONG:
 				// Types.DECIMAL, Types.NUMERIC
 				return Types.BIGINT;
-			case FLOAT :
+			case FLOAT:
 				return Types.FLOAT;
-			case DOUBLE :
+			case DOUBLE:
 				return Types.DOUBLE;
-			case SERIALIZABLE :
+			case SERIALIZABLE:
 				return Types.VARBINARY;
-			case BLOB :
+			case BLOB:
 				return Types.BLOB;
-			case BIG_DECIMAL :
+			case BIG_DECIMAL:
 				return Types.NUMERIC;
-			default :
+			default:
 				throw new IllegalArgumentException("No JDBC mapping for unknown SqlType " + sqlType);
 		}
 	}

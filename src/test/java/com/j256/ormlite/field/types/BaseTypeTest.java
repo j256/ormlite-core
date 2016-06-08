@@ -40,7 +40,7 @@ public abstract class BaseTypeTest extends BaseCoreTest {
 		}
 		try {
 			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
-					DatabaseConnection.DEFAULT_RESULT_FLAGS);
+					DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
 			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
 			int colNum = results.findColumn(columnName);

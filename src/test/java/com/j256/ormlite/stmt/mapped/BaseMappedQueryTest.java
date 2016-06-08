@@ -1,7 +1,9 @@
 package com.j256.ormlite.stmt.mapped;
 
 import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
@@ -14,6 +16,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.BaseCoreStmtTest;
@@ -33,7 +36,8 @@ public class BaseMappedQueryTest extends BaseCoreStmtTest {
 		};
 		DatabaseResults results = createMock(DatabaseResults.class);
 		int colN = 1;
-		expect(results.getObjectCache()).andReturn(null);
+		expect(results.getObjectCacheForRetrieve()).andReturn(null);
+		expect(results.getObjectCacheForStore()).andReturn(null);
 		expect(results.findColumn(Foo.ID_COLUMN_NAME)).andReturn(colN);
 		int id = 63365;
 		expect(results.getInt(colN)).andReturn(id);
@@ -42,6 +46,34 @@ public class BaseMappedQueryTest extends BaseCoreStmtTest {
 		assertNotNull(baseFoo);
 		assertEquals(id, baseFoo.id);
 		verify(results);
+	}
+
+	@Test
+	public void testMappedQueryCached() throws Exception {
+		Field field = Foo.class.getDeclaredField(Foo.ID_COLUMN_NAME);
+		String tableName = "basefoo";
+		FieldType[] resultFieldTypes =
+				new FieldType[] { FieldType.createFieldType(connectionSource, tableName, field, Foo.class) };
+		BaseMappedQuery<Foo, Integer> baseMappedQuery = new BaseMappedQuery<Foo, Integer>(baseFooTableInfo,
+				"select * from " + tableName, new FieldType[0], resultFieldTypes) {
+		};
+		DatabaseResults results = createMock(DatabaseResults.class);
+		int colN = 1;
+		ObjectCache objectCache = createMock(ObjectCache.class);
+		expect(results.getObjectCacheForRetrieve()).andReturn(objectCache);
+		int id = 63365;
+		expect(results.getInt(colN)).andReturn(id);
+		expect(objectCache.get(Foo.class, id)).andReturn(null);
+		objectCache.put(eq(Foo.class), eq(id), isA(Foo.class));
+		expect(results.getObjectCacheForStore()).andReturn(objectCache);
+		expect(results.findColumn(Foo.ID_COLUMN_NAME)).andReturn(colN);
+		expect(results.getInt(colN)).andReturn(id);
+
+		replay(results, objectCache);
+		Foo baseFoo = baseMappedQuery.mapRow(results);
+		assertNotNull(baseFoo);
+		assertEquals(id, baseFoo.id);
+		verify(results, objectCache);
 	}
 
 	@Test

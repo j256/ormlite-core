@@ -21,20 +21,23 @@ import com.j256.ormlite.table.TableInfo;
  * 
  * @author graywatson
  */
-public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements PreparedQuery<T>, PreparedDelete<T>,
-		PreparedUpdate<T> {
+public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID>
+		implements PreparedQuery<T>, PreparedDelete<T>, PreparedUpdate<T> {
 
 	private final ArgumentHolder[] argHolders;
 	private final Long limit;
 	private final StatementType type;
+	private final boolean cacheStore;
 
 	public MappedPreparedStmt(TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes,
-			FieldType[] resultFieldTypes, ArgumentHolder[] argHolders, Long limit, StatementType type) {
+			FieldType[] resultFieldTypes, ArgumentHolder[] argHolders, Long limit, StatementType type,
+			boolean cacheStore) {
 		super(tableInfo, statement, argFieldTypes, resultFieldTypes);
 		this.argHolders = argHolders;
 		// this is an Integer because it may be null
 		this.limit = limit;
 		this.type = type;
+		this.cacheStore = cacheStore;
 	}
 
 	@Override
@@ -46,11 +49,11 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID> implements
 	public CompiledStatement compile(DatabaseConnection databaseConnection, StatementType type, int resultFlags)
 			throws SQLException {
 		if (this.type != type) {
-			throw new SQLException("Could not compile this " + this.type
-					+ " statement since the caller is expecting a " + type
-					+ " statement.  Check your QueryBuilder methods.");
+			throw new SQLException("Could not compile this " + this.type + " statement since the caller is expecting a "
+					+ type + " statement.  Check your QueryBuilder methods.");
 		}
-		CompiledStatement stmt = databaseConnection.compileStatement(statement, type, argFieldTypes, resultFlags);
+		CompiledStatement stmt =
+				databaseConnection.compileStatement(statement, type, argFieldTypes, resultFlags, cacheStore);
 		// this may return null if the stmt had to be closed
 		return assignStatementArguments(stmt);
 	}

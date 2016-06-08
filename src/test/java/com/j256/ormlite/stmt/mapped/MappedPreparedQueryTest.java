@@ -33,16 +33,14 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 
 		TableInfo<LocalFoo, Integer> tableInfo =
 				new TableInfo<LocalFoo, Integer>(connectionSource, null, LocalFoo.class);
-		MappedPreparedStmt<LocalFoo, Integer> rowMapper =
-				new MappedPreparedStmt<LocalFoo, Integer>(tableInfo, null, new FieldType[0], tableInfo.getFieldTypes(),
-						new ArgumentHolder[0], null, StatementType.SELECT);
+		MappedPreparedStmt<LocalFoo, Integer> rowMapper = new MappedPreparedStmt<LocalFoo, Integer>(tableInfo, null,
+				new FieldType[0], tableInfo.getFieldTypes(), new ArgumentHolder[0], null, StatementType.SELECT, false);
 
 		DatabaseConnection conn = connectionSource.getReadOnlyConnection(TABLE_NAME);
 		CompiledStatement stmt = null;
 		try {
-			stmt =
-					conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, new FieldType[0],
-							DatabaseConnection.DEFAULT_RESULT_FLAGS);
+			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, new FieldType[0],
+					DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
 
 			DatabaseResults results = stmt.runQuery(null);
 			while (results.next()) {
@@ -74,12 +72,11 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 				new TableInfo<LocalFoo, Integer>(connectionSource, null, LocalFoo.class);
 		MappedPreparedStmt<LocalFoo, Integer> preparedQuery =
 				new MappedPreparedStmt<LocalFoo, Integer>(tableInfo, "select * from " + TABLE_NAME, new FieldType[0],
-						tableInfo.getFieldTypes(), new ArgumentHolder[0], 1L, StatementType.SELECT);
+						tableInfo.getFieldTypes(), new ArgumentHolder[0], 1L, StatementType.SELECT, false);
 
 		checkResults(foos, preparedQuery, 1);
-		preparedQuery =
-				new MappedPreparedStmt<LocalFoo, Integer>(tableInfo, "select * from " + TABLE_NAME, new FieldType[0],
-						tableInfo.getFieldTypes(), new ArgumentHolder[0], null, StatementType.SELECT);
+		preparedQuery = new MappedPreparedStmt<LocalFoo, Integer>(tableInfo, "select * from " + TABLE_NAME,
+				new FieldType[0], tableInfo.getFieldTypes(), new ArgumentHolder[0], null, StatementType.SELECT, false);
 		checkResults(foos, preparedQuery, 2);
 	}
 
@@ -105,9 +102,9 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testObjectNoConstructor() throws SQLException {
-		new MappedPreparedStmt<NoConstructor, Void>(new TableInfo<NoConstructor, Void>(connectionSource, null,
-				NoConstructor.class), null, new FieldType[0], new FieldType[0], new ArgumentHolder[0], null,
-				StatementType.SELECT);
+		new MappedPreparedStmt<NoConstructor, Void>(
+				new TableInfo<NoConstructor, Void>(connectionSource, null, NoConstructor.class), null, new FieldType[0],
+				new FieldType[0], new ArgumentHolder[0], null, StatementType.SELECT, false);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
@@ -121,6 +118,7 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 	protected static class NoConstructor {
 		@DatabaseField
 		String id;
+
 		NoConstructor(int someField) {
 			// to stop the default no-arg constructor
 		}

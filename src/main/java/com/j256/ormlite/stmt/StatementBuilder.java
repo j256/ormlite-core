@@ -70,7 +70,7 @@ public abstract class StatementBuilder<T, ID> {
 	 * @param limit
 	 *            Limit for queries. Can be null if none.
 	 */
-	protected MappedPreparedStmt<T, ID> prepareStatement(Long limit) throws SQLException {
+	protected MappedPreparedStmt<T, ID> prepareStatement(Long limit, boolean cacheStore) throws SQLException {
 		List<ArgumentHolder> argList = new ArrayList<ArgumentHolder>();
 		String statement = buildStatementString(argList);
 		ArgumentHolder[] selectArgs = argList.toArray(new ArgumentHolder[argList.size()]);
@@ -83,7 +83,7 @@ public abstract class StatementBuilder<T, ID> {
 			throw new IllegalStateException("Building a statement from a " + type + " statement is not allowed");
 		}
 		return new MappedPreparedStmt<T, ID>(tableInfo, statement, argFieldTypes, resultFieldTypes, selectArgs,
-				(databaseType.isLimitSqlSupported() ? null : limit), type);
+				(databaseType.isLimitSqlSupported() ? null : limit), type, cacheStore);
 	}
 
 	/**

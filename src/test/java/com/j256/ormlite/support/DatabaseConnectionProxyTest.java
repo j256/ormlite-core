@@ -160,11 +160,11 @@ public class DatabaseConnectionProxyTest {
 		String statement = "select foo from bar";
 		StatementType type = StatementType.DELETE;
 		int flags = 11253123;
-		expect(conn.compileStatement(statement, type, null, flags)).andReturn(null);
+		expect(conn.compileStatement(statement, type, null, flags, false)).andReturn(null);
 		conn.close();
 		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(conn);
 		replay(conn);
-		proxy.compileStatement(statement, type, null, flags);
+		proxy.compileStatement(statement, type, null, flags, false);
 		proxy.close();
 		verify(conn);
 	}
@@ -172,7 +172,7 @@ public class DatabaseConnectionProxyTest {
 	@Test
 	public void testCompileStatementStringStatementTypeFieldTypeArrayIntNull() throws Exception {
 		DatabaseConnectionProxy proxy = new DatabaseConnectionProxy(null);
-		assertNull(proxy.compileStatement("statment", StatementType.DELETE, null, 0));
+		assertNull(proxy.compileStatement("statment", StatementType.DELETE, null, 0, false));
 		proxy.close();
 	}
 

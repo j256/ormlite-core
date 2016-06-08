@@ -258,7 +258,7 @@ public class TableUtils {
 		DatabaseConnection connection = connectionSource.getReadWriteConnection(tableName);
 		try {
 			compiledStmt = connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes,
-					DatabaseConnection.DEFAULT_RESULT_FLAGS);
+					DatabaseConnection.DEFAULT_RESULT_FLAGS, false);
 			return compiledStmt.runExecute();
 		} finally {
 			IOUtils.closeThrowSqlException(compiledStmt, "compiled statement");
@@ -413,7 +413,7 @@ public class TableUtils {
 			CompiledStatement compiledStmt = null;
 			try {
 				compiledStmt = connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes,
-						DatabaseConnection.DEFAULT_RESULT_FLAGS);
+						DatabaseConnection.DEFAULT_RESULT_FLAGS, false);
 				rowC = compiledStmt.runExecute();
 				logger.info("executed {} table statement changed {} rows: {}", label, rowC, statement);
 			} catch (SQLException e) {
@@ -447,7 +447,7 @@ public class TableUtils {
 			CompiledStatement compiledStmt = null;
 			try {
 				compiledStmt = connection.compileStatement(query, StatementType.SELECT, noFieldTypes,
-						DatabaseConnection.DEFAULT_RESULT_FLAGS);
+						DatabaseConnection.DEFAULT_RESULT_FLAGS, false);
 				// we don't care about an object cache here
 				DatabaseResults results = compiledStmt.runQuery(null);
 				int rowC = 0;

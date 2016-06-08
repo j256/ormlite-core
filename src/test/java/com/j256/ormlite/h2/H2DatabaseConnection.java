@@ -83,14 +83,14 @@ public class H2DatabaseConnection implements DatabaseConnection {
 
 	@Override
 	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argFieldTypes,
-			int resultFlags) throws SQLException {
+			int resultFlags, boolean cacheStore) throws SQLException {
 		PreparedStatement stmt;
 		if (resultFlags == DatabaseConnection.DEFAULT_RESULT_FLAGS) {
 			stmt = connection.prepareStatement(statement, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 		} else {
 			stmt = connection.prepareStatement(statement, resultFlags, ResultSet.CONCUR_READ_ONLY);
 		}
-		return new H2CompiledStatement(stmt);
+		return new H2CompiledStatement(stmt, cacheStore);
 	}
 
 	@Override
@@ -139,7 +139,7 @@ public class H2DatabaseConnection implements DatabaseConnection {
 		if (args != null) {
 			statementSetArgs(stmt, args, argFieldTypes);
 		}
-		DatabaseResults results = new H2DatabaseResults(stmt.executeQuery(), objectCache);
+		DatabaseResults results = new H2DatabaseResults(stmt.executeQuery(), objectCache, true);
 		if (!results.next()) {
 			// no results at all
 			IOUtils.closeThrowSqlException(results, "results");
