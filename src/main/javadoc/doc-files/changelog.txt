@@ -40,7 +40,7 @@
 	* CORE: Fixed problems with using @DatabaseField(foreignColumnName).  Thanks to Knight704.
 	* CORE: Fixed problem with storing partially formed objects in the cache because of select arguments.  Thanks to pimduin.
 	* CORE: Removed deprecated methods: Dao.setAutoCommit(boolean), isAutoCommit()
-	* CORE: Removed deprecated methods: QueryBuilder.clear(), limit(int), offset(int) 
+	* CORE: Removed deprecated methods: QueryBuilder.clear(), limit(int), offset(int), use long versions of methods
 	* CORE: Removed deprecated methods: ForeignCollectionField.maxEagerForeignCollectionLevel(), foreignColumnName() 
 	* CORE: Removed deprecated methods: DatabaseFieldConfig.setMaxEagerForeignCollectionLevel()
 	* CORE: Removed deprecated methods: DatabaseFieldConfig.setForeignCollectionMaxEagerForeignCollectionLevel()
@@ -55,6 +55,7 @@
 	* ANDROID: Added better support for Slf4jLoggingLog from JDBC to CORE so Android users can use it.  Thanks to tonyxiao.
 	* ANDROID: Fixed the string processing when persisting java.sql.Timestamp classes. Bug #163.
 	* ANDROID: Fixed problem with the maxForeignAutoRefreshLevel config setting.  Thanks to Eric Fung et al.  Bug #194.
+	* ANDROID: Fixed possible problem with queryForFirst() and improper LIMIT implementation.
 	* ANDROID: Removed deprecated methods: OpenHelperManager.release() and AndroidDatabaseResults(Cursor, boolean, ObjectCache).
 
 4.48: 12/16/2013
