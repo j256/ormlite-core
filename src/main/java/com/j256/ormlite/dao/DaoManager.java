@@ -38,8 +38,7 @@ public class DaoManager {
 	 * Helper method to create a DAO object without having to define a class. This checks to see if the DAO has already
 	 * been created. If not then it is a call through to {@link BaseDaoImpl#createDao(ConnectionSource, Class)}.
 	 */
-	public synchronized static <D extends Dao<T, ?>, T> D createDao(ConnectionSource connectionSource, Class<T> clazz)
-			throws SQLException {
+	public synchronized static <D extends Dao<?, ?>> D createDao(ConnectionSource connectionSource, Class<?> clazz) throws SQLException {
 		if (connectionSource == null) {
 			throw new IllegalArgumentException("connectionSource argument cannot be null");
 		}
@@ -64,8 +63,8 @@ public class DaoManager {
 				|| databaseTable.daoClass() == BaseDaoImpl.class) {
 			// see if the database type has some special table config extract method (Android)
 			DatabaseType databaseType = connectionSource.getDatabaseType();
-			DatabaseTableConfig<T> config = databaseType.extractDatabaseTableConfig(connectionSource, clazz);
-			Dao<T, ?> daoTmp;
+			DatabaseTableConfig<?> config = databaseType.extractDatabaseTableConfig(connectionSource, clazz);
+			Dao<?, ?> daoTmp;
 			if (config == null) {
 				daoTmp = BaseDaoImpl.createDao(connectionSource, clazz);
 			} else {
@@ -105,7 +104,7 @@ public class DaoManager {
 	/**
 	 * Helper method to lookup a DAO if it has already been associated with the class. Otherwise this returns null.
 	 */
-	public synchronized static <D extends Dao<T, ?>, T> D lookupDao(ConnectionSource connectionSource, Class<T> clazz) {
+	public synchronized static <D extends Dao<?, ?>> D lookupDao(ConnectionSource	connectionSource, Class<?> clazz) {
 		if (connectionSource == null) {
 			throw new IllegalArgumentException("connectionSource argument cannot be null");
 		}
@@ -121,8 +120,7 @@ public class DaoManager {
 	 * been created. If not then it is a call through to
 	 * {@link BaseDaoImpl#createDao(ConnectionSource, DatabaseTableConfig)}.
 	 */
-	public synchronized static <D extends Dao<T, ?>, T> D createDao(ConnectionSource connectionSource,
-			DatabaseTableConfig<T> tableConfig) throws SQLException {
+	public synchronized static <D extends Dao<?, ?>> D createDao(ConnectionSource connectionSource, DatabaseTableConfig<?> tableConfig) throws SQLException {
 		if (connectionSource == null) {
 			throw new IllegalArgumentException("connectionSource argument cannot be null");
 		}
@@ -133,8 +131,7 @@ public class DaoManager {
 	 * Helper method to lookup a DAO if it has already been associated with the table-config. Otherwise this returns
 	 * null.
 	 */
-	public synchronized static <D extends Dao<T, ?>, T> D lookupDao(ConnectionSource connectionSource,
-			DatabaseTableConfig<T> tableConfig) {
+	public synchronized static <D extends Dao<?, ?>> D lookupDao(ConnectionSource connectionSource, DatabaseTableConfig<?> tableConfig) {
 		if (connectionSource == null) {
 			throw new IllegalArgumentException("connectionSource argument cannot be null");
 		}
@@ -263,7 +260,7 @@ public class DaoManager {
 		tableConfigMap.put(key, dao);
 	}
 
-	private static <T> Dao<?, ?> lookupDao(ClassConnectionSource key) {
+	private static Dao<?, ?> lookupDao(ClassConnectionSource key) {
 		if (classMap == null) {
 			classMap = new HashMap<ClassConnectionSource, Dao<?, ?>>();
 		}
@@ -275,7 +272,7 @@ public class DaoManager {
 		}
 	}
 
-	private static <T> Dao<?, ?> lookupDao(TableConfigConnectionSource key) {
+	private static Dao<?, ?> lookupDao(TableConfigConnectionSource key) {
 		if (tableConfigMap == null) {
 			tableConfigMap = new HashMap<TableConfigConnectionSource, Dao<?, ?>>();
 		}
@@ -309,28 +306,29 @@ public class DaoManager {
 	/**
 	 * Creates the DAO if we have config information cached and caches the DAO.
 	 */
-	private static <D, T> D createDaoFromConfig(ConnectionSource connectionSource, Class<T> clazz) throws SQLException {
+	private static <D extends Dao<?, ?>> D createDaoFromConfig(ConnectionSource connectionSource, Class<?> clazz)
+					throws SQLException {
 		// no loaded configs
 		if (configMap == null) {
 			return null;
 		}
 
 		@SuppressWarnings("unchecked")
-		DatabaseTableConfig<T> config = (DatabaseTableConfig<T>) configMap.get(clazz);
+		DatabaseTableConfig<?> config = (DatabaseTableConfig<?>) configMap.get(clazz);
 		// if we don't config information cached return null
 		if (config == null) {
 			return null;
 		}
 
 		// else create a DAO using configuration
-		Dao<T, ?> configedDao = doCreateDao(connectionSource, config);
+		Dao<?, ?> configedDao = doCreateDao(connectionSource, config);
 		@SuppressWarnings("unchecked")
 		D castDao = (D) configedDao;
 		return castDao;
 	}
 
-	private static <D extends Dao<T, ?>, T> D doCreateDao(ConnectionSource connectionSource,
-			DatabaseTableConfig<T> tableConfig) throws SQLException {
+	private static <D extends Dao<?, ?>> D doCreateDao(ConnectionSource connectionSource,
+			DatabaseTableConfig<?> tableConfig) throws SQLException {
 		TableConfigConnectionSource tableKey = new TableConfigConnectionSource(connectionSource, tableConfig);
 		// look up in the table map
 		Dao<?, ?> dao = lookupDao(tableKey);
@@ -341,7 +339,7 @@ public class DaoManager {
 		}
 
 		// now look it up in the class map
-		Class<T> dataClass = tableConfig.getDataClass();
+		Class<?> dataClass = tableConfig.getDataClass();
 		ClassConnectionSource classKey = new ClassConnectionSource(connectionSource, dataClass);
 		dao = lookupDao(classKey);
 		if (dao != null) {
@@ -356,7 +354,7 @@ public class DaoManager {
 		DatabaseTable databaseTable = tableConfig.getDataClass().getAnnotation(DatabaseTable.class);
 		if (databaseTable == null || databaseTable.daoClass() == Void.class
 				|| databaseTable.daoClass() == BaseDaoImpl.class) {
-			Dao<T, ?> daoTmp = BaseDaoImpl.createDao(connectionSource, tableConfig);
+			Dao<?, ?> daoTmp = BaseDaoImpl.createDao(connectionSource, tableConfig);
 			dao = daoTmp;
 		} else {
 			Class<?> daoClass = databaseTable.daoClass();
