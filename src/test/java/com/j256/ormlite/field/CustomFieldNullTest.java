@@ -1,5 +1,7 @@
 package com.j256.ormlite.field;
 
+import static org.junit.Assert.assertEquals;
+
 import java.sql.SQLException;
 import java.util.List;
 
@@ -7,11 +9,9 @@ import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.field.types.StringType;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTable;
-import com.j256.ormlite.table.TableUtils;
 
 /**
  * Interesting test that checks for handling of null results in a customer persister. Thanks to Harshit Mittal.
@@ -20,20 +20,24 @@ import com.j256.ormlite.table.TableUtils;
  */
 public class CustomFieldNullTest extends BaseCoreTest {
 
-	@Test
-	public void testCustomNullHandler() throws SQLException {
+	private static final String FOO_TABLE_NAME = "foo";
 
-		TableUtils.createTableIfNotExists(connectionSource, Foo.class);
-		Dao<Foo, Long> dao = DaoManager.createDao(connectionSource, Foo.class);
+	@Test
+	public void testCustomNullHandler() throws Exception {
+
+		Dao<Foo, Long> dao = createDao(Foo.class, true);
+
 		Foo foo = new Foo();
-		dao.create(foo);
+		assertEquals(1, dao.create(foo));
 
 		List<Foo> results = dao.queryForAll();
 		for (Foo result : results) {
 			System.out.println("Result value = '" + result.getValue() + "', length = " + result.getValue().length());
 		}
 
-		dao.executeRaw("INSERT INTO a (id, value) VALUES (NULL, NULL)");
+		// try to use insert nulls directly
+		dao.executeRaw("INSERT INTO " + FOO_TABLE_NAME + " (" + Foo.ID_FIELD + "," + Foo.VALUE_FIELD
+				+ ") VALUES (NULL, NULL)");
 
 		results = dao.queryForAll();
 		for (Foo result : results) {
@@ -42,17 +46,20 @@ public class CustomFieldNullTest extends BaseCoreTest {
 
 	}
 
-	@DatabaseTable(tableName = "a")
+	@DatabaseTable(tableName = FOO_TABLE_NAME)
 	private static class Foo {
 
-		@DatabaseField(generatedId = true, columnName = "id")
+		public static final String ID_FIELD = "id";
+		public static final String VALUE_FIELD = "value";
+
+		@DatabaseField(generatedId = true, columnName = ID_FIELD)
 		private long id;
 
-		@DatabaseField(columnName = "value", persisterClass = StringPropertyPersister.class)
-		private final StringProperty value;
+		@DatabaseField(columnName = VALUE_FIELD, persisterClass = SimplePropertyPersister.class)
+		private final SimpleProperty value;
 
 		protected Foo() {
-			value = new SimpleStringProperty();
+			value = new SimpleProperty();
 		}
 
 		public String getValue() {
@@ -60,26 +67,25 @@ public class CustomFieldNullTest extends BaseCoreTest {
 		}
 	}
 
-	private static class StringPropertyPersister extends StringType {
+	/**
+	 * Customer persister.
+	 */
+	private static class SimplePropertyPersister extends StringType {
 
-		private static final StringPropertyPersister INSTANCE = new StringPropertyPersister();
+		private static final SimplePropertyPersister INSTANCE = new SimplePropertyPersister();
 
-		private StringPropertyPersister() {
-			super(SqlType.STRING, new Class<?>[] { StringProperty.class });
+		private SimplePropertyPersister() {
+			super(SqlType.STRING, new Class<?>[] { SimpleProperty.class });
 		}
 
-		public static StringPropertyPersister getSingleton() {
+		public static SimplePropertyPersister getSingleton() {
 			return INSTANCE;
 		}
 
 		@Override
 		public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
-			if (javaObject == null) {
-				return "";
-			} else {
-				StringProperty property = (StringProperty) javaObject;
-				return property.getValue();
-			}
+			SimpleProperty property = (SimpleProperty) javaObject;
+			return property.getValue();
 		}
 
 		@Override
@@ -98,29 +104,24 @@ public class CustomFieldNullTest extends BaseCoreTest {
 		@Override
 		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
 			if (sqlArg == null) {
-				return new SimpleStringProperty("");
+				return new SimpleProperty("");
 			} else {
-				return new SimpleStringProperty((String) sqlArg);
+				return new SimpleProperty((String) sqlArg);
 			}
 		}
 	}
 
-	private static interface StringProperty {
-		public String getValue();
-	}
-
-	private static class SimpleStringProperty implements StringProperty {
+	private static class SimpleProperty {
 		String value;
 
-		public SimpleStringProperty() {
+		public SimpleProperty() {
 			this.value = null;
 		}
 
-		public SimpleStringProperty(String value) {
+		public SimpleProperty(String value) {
 			this.value = value;
 		}
 
-		@Override
 		public String getValue() {
 			return value;
 		}
