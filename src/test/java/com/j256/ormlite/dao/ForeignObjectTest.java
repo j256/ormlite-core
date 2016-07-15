@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
@@ -164,9 +165,7 @@ public class ForeignObjectTest extends BaseCoreTest {
 		parent2.child = child;
 		assertTrue(parentDao.createOrUpdate(parent2).isCreated());
 
-		List<Child> childResults = childDao.queryForAll();
-		assertNotNull(childResults);
-		assertEquals(1, childResults.size());
+		assertEquals(1, childDao.countOf());
 
 		List<Parent> results = parentDao.queryForAll();
 		assertNotNull(results);
@@ -197,13 +196,8 @@ public class ForeignObjectTest extends BaseCoreTest {
 			assertTrue(parentDao.createOrUpdate(parents[i]).isCreated());
 		}
 
-		List<Child> childResults = childDao.queryForAll();
-		assertNotNull(childResults);
-		assertEquals(1, childResults.size());
-
-		List<Parent> results = parentDao.queryForAll();
-		assertNotNull(results);
-		assertEquals(10, results.size());
+		assertEquals(1, childDao.countOf());
+		assertEquals(10, parentDao.countOf());
 
 		for (int i = 0; i < parents.length; i++) {
 			Parent result = parentDao.queryForId(parents[i].id);
@@ -211,6 +205,61 @@ public class ForeignObjectTest extends BaseCoreTest {
 			assertNotNull(result.child);
 			assertEquals(child.id, result.child.id);
 		}
+	}
+
+	@Test
+	public void testCreateOrUpdateMultipleLoopManualId() throws Exception {
+		Dao<Child, Integer> childDao = createDao(Child.class, true);
+		Dao<Parent, Object> parentDao = createDao(Parent.class, true);
+
+		// should have no entries
+		assertEquals(0, childDao.countOf());
+
+		Parent[] parents = new Parent[10];
+		for (int i = 0; i < parents.length; i++) {
+			parents[i] = new Parent();
+			Child child = new Child();
+			child.id = i + 1;
+			parents[i].child = child;
+			assertTrue(parentDao.createOrUpdate(parents[i]).isCreated());
+		}
+
+		assertEquals(0, childDao.countOf());
+		assertEquals(10, parentDao.countOf());
+	}
+
+	@Test
+	public void testCreateOrUpdateManualId() throws Exception {
+		Dao<Child, Integer> childDao = createDao(Child.class, true);
+		Dao<Parent, Object> parentDao = createDao(Parent.class, true);
+
+		// this group doesn't exists in database
+		Child child1 = new Child();
+		child1.id = 1;
+
+		List<Parent> parents = new ArrayList<Parent>();
+		for (int i = 0; i < 5; i++) {
+			Parent parent = new Parent();
+			parent.child = child1;
+			parents.add(parent);
+		}
+
+		// this group doesn't exists in database
+		Child child2 = new Child();
+		child2.id = 2;
+
+		for (int i = 0; i < 5; i++) {
+			Parent parent = new Parent();
+			parent.child = child2;
+			parents.add(parent);
+		}
+
+		for (Parent parent : parents) {
+			assertTrue(parentDao.createOrUpdate(parent).isCreated());
+		}
+
+		assertEquals(0, childDao.countOf());
+		assertEquals(parents.size(), parentDao.countOf());
 	}
 
 	/* ====================================================== */

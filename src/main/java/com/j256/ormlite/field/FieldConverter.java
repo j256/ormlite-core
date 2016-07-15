@@ -17,6 +17,8 @@ public interface FieldConverter {
 
 	/**
 	 * Convert a default string object and return the appropriate argument to a SQL insert or update statement.
+	 * 
+	 * @return Result object to insert if the field is not specified or null if none.
 	 */
 	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException;
 

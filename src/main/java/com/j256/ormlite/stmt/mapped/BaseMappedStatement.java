@@ -44,7 +44,8 @@ public abstract class BaseMappedStatement<T, ID> {
 			} else {
 				objects[i] = fieldType.extractJavaFieldToSqlArgValue(data);
 			}
-			if (objects[i] == null && fieldType.getDefaultValue() != null) {
+			if (objects[i] == null) {
+				// NOTE: the default value could be null as well
 				objects[i] = fieldType.getDefaultValue();
 			}
 		}

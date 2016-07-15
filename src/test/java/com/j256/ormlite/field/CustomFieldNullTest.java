@@ -55,7 +55,7 @@ public class CustomFieldNullTest extends BaseCoreTest {
 		@DatabaseField(generatedId = true, columnName = ID_FIELD)
 		private long id;
 
-		@DatabaseField(columnName = VALUE_FIELD, persisterClass = SimplePropertyPersister.class)
+		@DatabaseField(columnName = VALUE_FIELD, persisterClass = SimplePropertyPersister.class, defaultValue = "")
 		private final SimpleProperty value;
 
 		protected Foo() {
@@ -80,6 +80,11 @@ public class CustomFieldNullTest extends BaseCoreTest {
 
 		public static SimplePropertyPersister getSingleton() {
 			return INSTANCE;
+		}
+		
+		@Override
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
+			return super.parseDefaultString(fieldType, defaultStr);
 		}
 
 		@Override

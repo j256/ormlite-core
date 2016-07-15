@@ -7,7 +7,6 @@ import com.j256.ormlite.field.BaseFieldConverter;
 import com.j256.ormlite.field.DataPersister;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.support.DatabaseResults;
 
 /**
  * Base data type that defines the default persistance methods for the various data types.
@@ -56,13 +55,6 @@ public abstract class BaseDataType extends BaseFieldConverter implements DataPer
 		this.sqlType = sqlType;
 		this.classes = NO_CLASSES;
 	}
-
-	@Override
-	public abstract Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException;
-
-	@Override
-	public abstract Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos)
-			throws SQLException;
 
 	@Override
 	public boolean isValidForField(Field field) {

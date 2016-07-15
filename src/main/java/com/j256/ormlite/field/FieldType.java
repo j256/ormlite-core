@@ -21,9 +21,9 @@ import com.j256.ormlite.dao.LazyForeignCollection;
 import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.types.VoidType;
+import com.j256.ormlite.logger.Log.Level;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
-import com.j256.ormlite.logger.Log.Level;
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.stmt.mapped.MappedQueryForFieldEq;
 import com.j256.ormlite.support.ConnectionSource;
@@ -468,7 +468,8 @@ public class FieldType {
 	}
 
 	/**
-	 * Return the default value as parsed from the {@link DatabaseFieldConfig#getDefaultValue()}.
+	 * Return the default value as parsed from the {@link DatabaseFieldConfig#getDefaultValue()} or null if no default
+	 * value.
 	 */
 	public Object getDefaultValue() {
 		return defaultValue;
@@ -641,6 +642,10 @@ public class FieldType {
 	 * Convert a field value to something suitable to be stored in the database.
 	 */
 	public Object convertJavaFieldToSqlArgValue(Object fieldVal) throws SQLException {
+		/*
+		 * Limitation here. Some people may want to override the null with their own value in the converter but we
+		 * currently don't allow that. Specifying a default value I guess is a better mechanism.
+		 */
 		if (fieldVal == null) {
 			return null;
 		} else {
@@ -821,13 +826,24 @@ public class FieldType {
 			dbColumnPos = results.findColumn(columnName);
 			columnPositions.put(columnName, dbColumnPos);
 		}
+
+		/*
+		 * Subtle problem here. If the field is a foreign-field and/or a primitive and the value was null then we get 0
+		 * from results.getInt() which mirrors the ResultSet. We have to specifically test to see if we have a null
+		 * result with results.wasNull(...) afterwards so we return a null value to not create the sub-object or turn a
+		 * Integer field into 0 instead of null.
+		 * 
+		 * But this presents a limitation. Sometimes people want to convert a result field value that is stored in the
+		 * database as null into a non-null value when it comes out of the database. There is no way to do that because
+		 * of the results.wasNull(...) checks after the fact then override the non-null value from the converter.
+		 */
 		@SuppressWarnings("unchecked")
 		T converted = (T) fieldConverter.resultToJava(this, results, dbColumnPos);
 		if (fieldConfig.isForeign()) {
 			/*
-			 * Subtle problem here. If your foreign field is a primitive and the value was null then this would return 0
-			 * from getInt(). We have to specifically test to see if we have a foreign field so if it is null we return
-			 * a null value to not create the sub-object.
+			 * If your foreign field is a primitive and the value was null then this would return 0 from
+			 * results.getInt(). We have to specifically test to see if we have a foreign field so if it is null we
+			 * return a null value to not create the sub-object.
 			 */
 			if (results.wasNull(dbColumnPos)) {
 				return null;
