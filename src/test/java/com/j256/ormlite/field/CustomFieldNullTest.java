@@ -83,11 +83,6 @@ public class CustomFieldNullTest extends BaseCoreTest {
 		}
 		
 		@Override
-		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
-			return super.parseDefaultString(fieldType, defaultStr);
-		}
-
-		@Override
 		public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
 			SimpleProperty property = (SimpleProperty) javaObject;
 			return property.getValue();
