@@ -98,7 +98,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 */
 	public PreparedQuery<T> prepare() throws SQLException {
 		// we only store things in the cache if there was not selects specified
-		boolean cacheStore = (resultFieldTypes == tableInfo.getFieldTypes());
+		boolean cacheStore = (selectList == null);
 		return super.prepareStatement(limit, cacheStore);
 	}
 

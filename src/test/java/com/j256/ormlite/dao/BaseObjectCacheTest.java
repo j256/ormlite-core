@@ -164,12 +164,13 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 
 		List<Foo> results = dao.queryForAll();
 		assertEquals(1, results.size());
+		assertEquals(foo.id, results.get(0).id);
 		assertNotSame(foo, results.get(0));
 
 		Foo foo2 = dao.queryForId(foo.id);
 		assertNotNull(foo2);
+		assertEquals(foo.id, results.get(0).id);
 		assertSame(results.get(0), foo2);
-
 	}
 
 	@Test
@@ -270,6 +271,7 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 		int notId;
 		@DatabaseField
 		String stuff;
+
 		public NoId() {
 		}
 	}
@@ -279,6 +281,7 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 		int id;
 		@DatabaseField
 		String stuff;
+
 		public WithId() {
 		}
 	}
@@ -288,6 +291,7 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 		int id;
 		@DatabaseField(foreign = true, foreignAutoRefresh = true)
 		Child child;
+
 		public Parent() {
 		}
 	}
@@ -297,6 +301,7 @@ public abstract class BaseObjectCacheTest extends BaseCoreTest {
 		int id;
 		@ForeignCollectionField
 		ForeignCollection<Parent> parents;
+
 		public Child() {
 		}
 	}
