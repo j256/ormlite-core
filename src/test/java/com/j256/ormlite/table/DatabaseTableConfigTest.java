@@ -94,6 +94,15 @@ public class DatabaseTableConfigTest {
 	}
 
 	@Test
+	public void testFieldConfigConstructorDataType() {
+		DataType dataType = DataType.BIG_DECIMAL;
+		DatabaseFieldConfig config = new DatabaseFieldConfig("stuff", null, dataType, null, 0, true, false, false, null,
+				false, null, false, null, false, null, false, null, null, false,
+				DatabaseFieldConfig.NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED, 0);
+		assertEquals(dataType, config.getDataType());
+	}
+
+	@Test
 	public void testSetFieldConfigs() throws SQLException {
 		DatabaseTableConfig<DatabaseTableAnno> dbTableConf = new DatabaseTableConfig<DatabaseTableAnno>();
 		dbTableConf.setDataClass(DatabaseTableAnno.class);
@@ -255,10 +264,12 @@ public class DatabaseTableConfigTest {
 		public String getDriverClassName() {
 			return "foo.bar.baz";
 		}
+
 		@Override
 		public String getDatabaseName() {
 			return "fake";
 		}
+
 		@Override
 		public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 			return false;
@@ -268,6 +279,7 @@ public class DatabaseTableConfigTest {
 	protected static class Base {
 		@DatabaseField(id = true)
 		int id;
+
 		public Base() {
 			// for ormlite
 		}
@@ -276,6 +288,7 @@ public class DatabaseTableConfigTest {
 	protected static class Sub extends Base {
 		@DatabaseField
 		String stuff;
+
 		public Sub() {
 			// for ormlite
 		}
@@ -283,6 +296,7 @@ public class DatabaseTableConfigTest {
 
 	protected static class BaseWithoutAnno {
 		int id;
+
 		public BaseWithoutAnno() {
 			// for ormlite
 		}
@@ -290,6 +304,7 @@ public class DatabaseTableConfigTest {
 
 	protected static class SubWithoutAnno extends BaseWithoutAnno {
 		String stuff;
+
 		public SubWithoutAnno() {
 			// for ormlite
 		}

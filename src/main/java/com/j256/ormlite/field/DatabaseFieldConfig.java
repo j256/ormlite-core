@@ -98,7 +98,7 @@ public class DatabaseFieldConfig {
 			boolean autoRefresh, int maxForeignAutoRefreshLevel, int maxForeignCollectionLevel) {
 		this.fieldName = fieldName;
 		this.columnName = columnName;
-		this.dataType = DataType.UNKNOWN;
+		this.dataType = dataType;
 		this.defaultValue = defaultValue;
 		this.width = width;
 		this.canBeNull = canBeNull;
