@@ -8,7 +8,7 @@
 @c ----------------------------------------------------------------
 @set ormlite_version 5.0
 @set ormlite_year 2016
-@set ormlite_date June @value{ormlite_year}
+@set ormlite_date July @value{ormlite_year}
 @set package ORMLite
 @c ----------------------------------------------------------------
 
@@ -4669,6 +4669,10 @@ important.  Java 7 is not required.
 @item To better support database partitioning, we made some changes to the @code{ConnectionSource} interface so now the
 table name is specified which allows the @code{ConnectionSource} to make decisions about which database to connect to
 depending on the table.
+
+@item We've made changes to Android to better support the @code{java.sql.Timestamp} and @code{java.sql.Date} as strings
+in the database.  If you were using this types before you may have to add a @code{persisterClass = TimeStampType.class}
+or  @code{SqlDateType.class}.
 
 @item We've removed a number of deprecated methods:
 
