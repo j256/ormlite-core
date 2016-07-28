@@ -25,14 +25,14 @@ public interface ConnectionSource extends Closeable {
 	public DatabaseConnection getReadWriteConnection(String tableName) throws SQLException;
 
 	/**
-	 * Release a database connection previously returned by {@link #getReadOnlyConnection()} or
-	 * {@link #getReadWriteConnection()}.
+	 * Release a database connection previously returned by {@link #getReadOnlyConnection(String)} or
+	 * {@link #getReadWriteConnection(String)}.
 	 */
 	public void releaseConnection(DatabaseConnection connection) throws SQLException;
 
 	/**
-	 * Save this connection and return it for all calls to {@link #getReadOnlyConnection()} and
-	 * {@link #getReadWriteConnection()} unless the {@link #clearSpecialConnection(DatabaseConnection)} method is
+	 * Save this connection and return it for all calls to {@link #getReadOnlyConnection(String)} and
+	 * {@link #getReadWriteConnection(String)} unless the {@link #clearSpecialConnection(DatabaseConnection)} method is
 	 * called, all This is used by the transaction mechanism since since all operations within a transaction must
 	 * operate on the same connection. It is also used by the Android code during initialization.
 	 * 

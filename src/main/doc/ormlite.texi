@@ -4652,8 +4652,7 @@ on the release seemed to be warranted.  See the following details.
 
 @itemize @bullet
 
-@item ORMLite now requires Java 6 and no longer supports Java 5.  We also added @code{java.io.Closeable} support for Java
-7 and better support for Java 8 but they are not required.
+@item ORMLite now requires Java 6 and no longer supports Java 5.
 
 @item We used the native locale to do uppercase database entity names (tables and fields).  This
 sounds like a good idea until you realize that in Turkish, a uppercase i with a dot is a capital I with a dot which can

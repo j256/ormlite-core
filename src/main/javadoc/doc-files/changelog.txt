@@ -1,4 +1,4 @@
-5.0: 6/??/2016
+5.0: 6/27/2016
 	* ALL: ORMLite has dropped support for Java 5.  Java 6 is now required.
 	* ALL: Added boolean argument to DatabaseConnection.compileStatement(...) to fix a cache bug.
 	* ALL: Changed DatabaseResults.getObjectCache() to be getObjectCacheForRetrieve() and getObjectCacheForStore().

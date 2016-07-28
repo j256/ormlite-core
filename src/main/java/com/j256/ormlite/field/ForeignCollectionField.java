@@ -27,7 +27,7 @@ import com.j256.ormlite.stmt.QueryBuilder;
 public @interface ForeignCollectionField {
 
 	/**
-	 * @see #maxEagerForeignCollectionLevel()
+	 * @see #maxEagerLevel()
 	 */
 	public static final int DEFAULT_MAX_EAGER_LEVEL = 1;
 
