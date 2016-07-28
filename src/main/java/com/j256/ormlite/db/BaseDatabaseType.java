@@ -398,7 +398,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	public void appendEscapedEntityName(StringBuilder sb, String name) {
 		sb.append('`');
 		int dotPos = name.indexOf('.');
-		if (0 < dotPos) {
+		if (dotPos > 0) {
 			sb.append(name.substring(0, dotPos));
 			sb.append("`.`");
 			sb.append(name.substring(1 + dotPos));
