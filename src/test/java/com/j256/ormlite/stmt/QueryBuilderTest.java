@@ -484,6 +484,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(2, fooDao.countOf(fooQb.prepare()));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testMixAndOrInline() throws Exception {
 		Dao<Foo, String> dao = createDao(Foo.class, true);
@@ -497,6 +498,9 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		foo2.stringField = foo1.stringField + "zap";
 		assertEquals(1, dao.create(foo2));
 
+		/*
+		 * Inline
+		 */
 		QueryBuilder<Foo, String> qb = dao.queryBuilder();
 		Where<Foo, String> where = qb.where();
 		where.eq(Foo.VAL_COLUMN_NAME, foo1.val)
@@ -506,6 +510,52 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 				.eq(Foo.STRING_COLUMN_NAME, foo2.stringField);
 
 		List<Foo> results = dao.queryForAll();
+		assertEquals(2, results.size());
+		assertEquals(foo1.id, results.get(0).id);
+		assertEquals(foo2.id, results.get(1).id);
+
+		/*
+		 * Arguments
+		 */
+		qb = dao.queryBuilder();
+		where = qb.where();
+		where.and(where.eq(Foo.VAL_COLUMN_NAME, foo1.val), //
+				where.or(where.eq(Foo.STRING_COLUMN_NAME, foo1.stringField), //
+						where.eq(Foo.STRING_COLUMN_NAME, foo2.stringField)));
+
+		results = dao.queryForAll();
+		assertEquals(2, results.size());
+		assertEquals(foo1.id, results.get(0).id);
+		assertEquals(foo2.id, results.get(1).id);
+
+		/*
+		 * Multiple lines
+		 */
+		qb = dao.queryBuilder();
+		where = qb.where();
+		where.eq(Foo.VAL_COLUMN_NAME, foo1.val);
+		where.and();
+		where.eq(Foo.STRING_COLUMN_NAME, foo1.stringField);
+		where.or();
+		where.eq(Foo.STRING_COLUMN_NAME, foo2.stringField);
+
+		results = dao.queryForAll();
+		assertEquals(2, results.size());
+		assertEquals(foo1.id, results.get(0).id);
+		assertEquals(foo2.id, results.get(1).id);
+
+		/*
+		 * Postfix
+		 */
+		qb = dao.queryBuilder();
+		where = qb.where();
+		where.eq(Foo.VAL_COLUMN_NAME, foo1.val);
+		where.eq(Foo.STRING_COLUMN_NAME, foo1.stringField);
+		where.eq(Foo.STRING_COLUMN_NAME, foo2.stringField);
+		where.or(2);
+		where.and(2);
+
+		results = dao.queryForAll();
 		assertEquals(2, results.size());
 		assertEquals(foo1.id, results.get(0).id);
 		assertEquals(foo2.id, results.get(1).id);
