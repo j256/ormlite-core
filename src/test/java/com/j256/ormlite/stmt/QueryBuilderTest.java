@@ -328,10 +328,9 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		foo2.val = 5;
 		foo2.equal = 7;
 		assertEquals(1, dao.create(foo2));
-		List<Foo> results =
-				dao.queryBuilder()
-						.orderByRaw("(" + Foo.VAL_COLUMN_NAME + "+" + Foo.EQUAL_COLUMN_NAME + ") DESC")
-						.query();
+		List<Foo> results = dao.queryBuilder()
+				.orderByRaw("(" + Foo.VAL_COLUMN_NAME + "+" + Foo.EQUAL_COLUMN_NAME + ") DESC")
+				.query();
 		assertEquals(2, results.size());
 		assertEquals(foo2.id, results.get(0).id);
 		assertEquals(foo1.id, results.get(1).id);
@@ -346,17 +345,15 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		Foo foo2 = new Foo();
 		foo2.val = 2;
 		assertEquals(1, dao.create(foo2));
-		List<Foo> results =
-				dao.queryBuilder()
-						.orderByRaw("(" + Foo.VAL_COLUMN_NAME + " = ? ) DESC", new SelectArg(SqlType.INTEGER, 2))
-						.query();
+		List<Foo> results = dao.queryBuilder()
+				.orderByRaw("(" + Foo.VAL_COLUMN_NAME + " = ? ) DESC", new SelectArg(SqlType.INTEGER, 2))
+				.query();
 		assertEquals(2, results.size());
 		assertEquals(foo2.id, results.get(0).id);
 		assertEquals(foo1.id, results.get(1).id);
-		results =
-				dao.queryBuilder()
-						.orderByRaw("(" + Foo.VAL_COLUMN_NAME + " = ? )", new SelectArg(SqlType.INTEGER, 2))
-						.query();
+		results = dao.queryBuilder()
+				.orderByRaw("(" + Foo.VAL_COLUMN_NAME + " = ? )", new SelectArg(SqlType.INTEGER, 2))
+				.query();
 		assertEquals(2, results.size());
 		assertEquals(foo1.id, results.get(0).id);
 		assertEquals(foo2.id, results.get(1).id);
@@ -377,30 +374,27 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		foo3.val = 7;
 		foo3.equal = 5;
 		assertEquals(1, dao.create(foo3));
-		List<Foo> results =
-				dao.queryBuilder()
-						.orderByRaw("(" + Foo.VAL_COLUMN_NAME + "+" + Foo.EQUAL_COLUMN_NAME + ") DESC")
-						.query();
+		List<Foo> results = dao.queryBuilder()
+				.orderByRaw("(" + Foo.VAL_COLUMN_NAME + "+" + Foo.EQUAL_COLUMN_NAME + ") DESC")
+				.query();
 		assertEquals(3, results.size());
 		assertEquals(foo2.id, results.get(0).id);
 		assertEquals(foo3.id, results.get(1).id);
 		assertEquals(foo1.id, results.get(2).id);
 
-		results =
-				dao.queryBuilder()
-						.orderByRaw("(" + Foo.VAL_COLUMN_NAME + "+" + Foo.EQUAL_COLUMN_NAME + ") DESC")
-						.orderBy(Foo.VAL_COLUMN_NAME, false)
-						.query();
+		results = dao.queryBuilder()
+				.orderByRaw("(" + Foo.VAL_COLUMN_NAME + "+" + Foo.EQUAL_COLUMN_NAME + ") DESC")
+				.orderBy(Foo.VAL_COLUMN_NAME, false)
+				.query();
 		assertEquals(3, results.size());
 		assertEquals(foo3.id, results.get(0).id);
 		assertEquals(foo2.id, results.get(1).id);
 		assertEquals(foo1.id, results.get(2).id);
 
-		results =
-				dao.queryBuilder()
-						.orderBy(Foo.VAL_COLUMN_NAME, true)
-						.orderByRaw("(" + Foo.VAL_COLUMN_NAME + "+" + Foo.EQUAL_COLUMN_NAME + ") DESC")
-						.query();
+		results = dao.queryBuilder()
+				.orderBy(Foo.VAL_COLUMN_NAME, true)
+				.orderByRaw("(" + Foo.VAL_COLUMN_NAME + "+" + Foo.EQUAL_COLUMN_NAME + ") DESC")
+				.query();
 		assertEquals(3, results.size());
 		assertEquals(foo1.id, results.get(0).id);
 		assertEquals(foo2.id, results.get(1).id);
@@ -488,6 +482,33 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 
 		fooQb.setCountOf(true);
 		assertEquals(2, fooDao.countOf(fooQb.prepare()));
+	}
+
+	@Test
+	public void testMixAndOrInline() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+
+		Foo foo1 = new Foo();
+		foo1.val = 10;
+		foo1.stringField = "zip";
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		foo2.val = foo1.val;
+		foo2.stringField = foo1.stringField + "zap";
+		assertEquals(1, dao.create(foo2));
+
+		QueryBuilder<Foo, String> qb = dao.queryBuilder();
+		Where<Foo, String> where = qb.where();
+		where.eq(Foo.VAL_COLUMN_NAME, foo1.val)
+				.and()
+				.eq(Foo.STRING_COLUMN_NAME, foo1.stringField)
+				.or()
+				.eq(Foo.STRING_COLUMN_NAME, foo2.stringField);
+
+		List<Foo> results = dao.queryForAll();
+		assertEquals(2, results.size());
+		assertEquals(foo1.id, results.get(0).id);
+		assertEquals(foo2.id, results.get(1).id);
 	}
 
 	@Test
@@ -1328,10 +1349,12 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 			return true;
 		}
+
 		@Override
 		protected String getDriverClassName() {
 			return "foo.bar.baz";
 		}
+
 		@Override
 		public String getDatabaseName() {
 			return "zipper";
@@ -1345,6 +1368,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		int id;
 		@DatabaseField(columnName = VAL_FIELD)
 		int val;
+
 		public Bar() {
 		}
 	}
@@ -1362,6 +1386,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		int val;
 		@DatabaseField(foreign = true, columnName = BAR_FIELD)
 		Bar bar;
+
 		public Baz() {
 		}
 	}
@@ -1373,6 +1398,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		int id;
 		@DatabaseField(foreign = true, columnName = BAZ_FIELD)
 		Baz baz;
+
 		public Bing() {
 		}
 	}
@@ -1383,6 +1409,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		int id;
 		@DatabaseField(columnName = FIELD_NAME_GROUP)
 		String group;
+
 		public Reserved() {
 		}
 	}
@@ -1397,6 +1424,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		String str1;
 		@DatabaseField(columnName = STR2_FIELD)
 		String str2;
+
 		public StringColumnArg() {
 		}
 	}
@@ -1408,6 +1436,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		int id;
 		@DatabaseField(columnName = VAL_FIELD)
 		int val;
+
 		public One() {
 		}
 	}
@@ -1425,6 +1454,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		One one;
 		@DatabaseField(foreign = true)
 		Bar bar;
+
 		public Two() {
 		}
 	}
