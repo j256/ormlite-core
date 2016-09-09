@@ -18,22 +18,22 @@ import com.j256.ormlite.support.DatabaseResults;
  * @author Noor Dawod, noor@fineswap.com
  * @since September 9, 2016
  */
-public class DateIntType extends BaseDateType {
+public class DateIntegerType extends BaseDateType {
 
-	private static final DateIntType singleTon = new DateIntType();
+	private static final DateIntegerType singleTon = new DateIntegerType();
 
-	public static DateIntType getSingleton() {
+	public static DateIntegerType getSingleton() {
 		return singleTon;
 	}
 
-	private DateIntType() {
+	private DateIntegerType() {
 		super(SqlType.INTEGER);
 	}
 
 	/**
 	 * Here for others to subclass.
 	 */
-	protected DateIntType(SqlType sqlType, Class<?>[] classes) {
+	protected DateIntegerType(SqlType sqlType, Class<?>[] classes) {
 		super(sqlType, classes);
 	}
 

@@ -16,7 +16,7 @@ import com.j256.ormlite.field.types.ByteType;
 import com.j256.ormlite.field.types.CharType;
 import com.j256.ormlite.field.types.CharacterObjectType;
 import com.j256.ormlite.field.types.DateLongType;
-import com.j256.ormlite.field.types.DateIntType;
+import com.j256.ormlite.field.types.DateIntegerType;
 import com.j256.ormlite.field.types.DateStringType;
 import com.j256.ormlite.field.types.DateTimeType;
 import com.j256.ormlite.field.types.DateType;
@@ -104,7 +104,7 @@ public enum DataType {
 	 * NOTE: This is <i>not</i> the same as the {@link java.sql.Date} class.
 	 * </p>
 	 */
-	DATE_INT(DateIntType.getSingleton()),
+	DATE_INTEGER(DateIntegerType.getSingleton()),
 	/**
 	 * Persists the {@link java.util.Date} Java class as a string of a format. By default this will use {@link #DATE} so
 	 * you will need to specify this using {@link DatabaseField#dataType()}.
