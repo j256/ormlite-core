@@ -110,7 +110,7 @@ public class Where<T, ID> {
 	private int clauseStackLevel;
 	private NeedsFutureClause needsFuture = null;
 
-	Where(TableInfo<T, ID> tableInfo, StatementBuilder<T, ID> statementBuilder, DatabaseType databaseType) {
+	protected Where(TableInfo<T, ID> tableInfo, StatementBuilder<T, ID> statementBuilder, DatabaseType databaseType) {
 		// limit the constructor scope
 		this.tableInfo = tableInfo;
 		this.statementBuilder = statementBuilder;
