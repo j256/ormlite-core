@@ -1156,6 +1156,10 @@ public class FieldType {
 	}
 
 	private static class LevelCounters {
+		
+		LevelCounters() {
+		}
+		
 		// current auto-refresh recursion level
 		int autoRefreshLevel;
 		// maximum auto-refresh recursion level

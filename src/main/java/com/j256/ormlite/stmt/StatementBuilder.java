@@ -253,7 +253,7 @@ public abstract class StatementBuilder<T, ID> {
 		private final String statement;
 		private final List<ArgumentHolder> argList;
 
-		private StatementInfo(String statement, List<ArgumentHolder> argList) {
+		StatementInfo(String statement, List<ArgumentHolder> argList) {
 			this.argList = argList;
 			this.statement = statement;
 		}
