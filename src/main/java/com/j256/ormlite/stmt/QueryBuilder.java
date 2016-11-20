@@ -881,7 +881,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	/**
 	 * Encapsulates our join information.
 	 */
-	private class JoinInfo {
+	private static class JoinInfo {
 		final JoinType type;
 		final QueryBuilder<?, ?> queryBuilder;
 		FieldType localField;
@@ -944,7 +944,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		// end
 		;
 
-		private String sql;
+		final String sql;
 
 		private JoinType(String sql) {
 			this.sql = sql;
@@ -963,7 +963,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		// end
 		;
 
-		private WhereOperation whereOperation;
+		final WhereOperation whereOperation;
 
 		private JoinWhereOperation(WhereOperation whereOperation) {
 			this.whereOperation = whereOperation;
