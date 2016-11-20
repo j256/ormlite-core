@@ -31,6 +31,7 @@ import com.j256.ormlite.field.types.IntegerObjectType;
 import com.j256.ormlite.field.types.LongObjectType;
 import com.j256.ormlite.field.types.LongStringType;
 import com.j256.ormlite.field.types.LongType;
+import com.j256.ormlite.field.types.NativeUuidType;
 import com.j256.ormlite.field.types.SerializableType;
 import com.j256.ormlite.field.types.ShortObjectType;
 import com.j256.ormlite.field.types.ShortType;
@@ -198,7 +199,7 @@ public enum DataType {
 	 * Persists the {@link java.util.UUID} Java class as a native UUID column which is only supported by a couple of
 	 * database types.
 	 */
-	UUID_NATIVE(UuidType.getSingleton()),
+	UUID_NATIVE(NativeUuidType.getSingleton()),
 	/**
 	 * Persists the {@link BigInteger} Java class.
 	 */

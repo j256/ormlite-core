@@ -1,3 +1,6 @@
+5.1: ?/??/2016
+	* JDBC: Fixed problem with UUID native type not using the correct persister.  Thanks Bo98. 
+
 5.0: 6/27/2016
 	* ALL: ORMLite has dropped support for Java 5.  Java 6 is now required.
 	* ALL: Added boolean argument to DatabaseConnection.compileStatement(...) to fix a cache bug.
