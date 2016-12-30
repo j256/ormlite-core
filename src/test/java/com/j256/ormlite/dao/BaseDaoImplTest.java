@@ -2522,6 +2522,13 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(foo2.stringField, foo.stringField);
 	}
 
+	@Test
+	public void testGetTableName() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+
+		assertEquals(FOO_TABLE_NAME, dao.getTableName());
+	}
+
 	/* ============================================================================================== */
 
 	private String buildFooQueryAllString(Dao<Foo, Object> fooDao) throws SQLException {

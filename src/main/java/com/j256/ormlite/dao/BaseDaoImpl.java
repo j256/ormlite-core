@@ -1025,7 +1025,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
 	@Override
 	public String getTableName() {
-		return tableConfig.getTableName();
+		return tableInfo.getTableName();
 	}
 
 	/**
