@@ -10,7 +10,8 @@ import com.j256.ormlite.logger.Log.Level;
  * 
  * <p>
  * To set the logger to a particular type, set the system property ("com.j256.ormlite.logger.type") contained in
- * {@link #LOG_TYPE_SYSTEM_PROPERTY} to be one of the values in LogType enum.
+ * {@link #LOG_TYPE_SYSTEM_PROPERTY} ("com.j256.ormlite.logger.type") to be one of the values in
+ * {@link LoggerFactory.LogType} enum.
  * </p>
  */
 public class LoggerFactory {
@@ -66,8 +67,8 @@ public class LoggerFactory {
 				return LogType.valueOf(logTypeString);
 			} catch (IllegalArgumentException e) {
 				Log log = new LocalLog(LoggerFactory.class.getName());
-				log.log(Level.WARNING, "Could not find valid log-type from system property '"
-						+ LOG_TYPE_SYSTEM_PROPERTY + "', value '" + logTypeString + "'");
+				log.log(Level.WARNING, "Could not find valid log-type from system property '" + LOG_TYPE_SYSTEM_PROPERTY
+						+ "', value '" + logTypeString + "'");
 			}
 		}
 
@@ -93,18 +94,21 @@ public class LoggerFactory {
 		COMMONS_LOGGING("org.apache.commons.logging.LogFactory", "com.j256.ormlite.logger.CommonsLoggingLog"),
 		LOG4J2("org.apache.logging.log4j.LogManager", "com.j256.ormlite.logger.Log4j2Log"),
 		LOG4J("org.apache.log4j.Logger", "com.j256.ormlite.logger.Log4jLog"),
-		// this should always be at the end, arguments are unused
+		// this should always be at the end as the fall-back, so it's always available
 		LOCAL(LocalLog.class.getName(), LocalLog.class.getName()) {
 			@Override
 			public Log createLog(String classLabel) {
 				return new LocalLog(classLabel);
 			}
+
 			@Override
 			public boolean isAvailable() {
 				// always available
 				return true;
 			}
 		},
+		// we put this down here because it's always available but we rarely want to use it
+		JAVA_UTIL("java.util.logging.Logger", "com.j256.ormlite.logger.JavaUtilLog"),
 		// end
 		;
 
@@ -159,7 +163,8 @@ public class LoggerFactory {
 		}
 
 		/**
-		 * This is package permissions for testing purposes.
+		 * Is this class available meaning that we should use this logger. This is package permissions for testing
+		 * purposes.
 		 */
 		boolean isAvailableTestClass() {
 			try {
