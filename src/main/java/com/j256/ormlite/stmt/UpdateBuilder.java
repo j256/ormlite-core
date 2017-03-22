@@ -26,9 +26,15 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 
 	private List<Clause> updateClauseList = null;
 	// NOTE: anything added here should be added to the clear() method below
+	private String tableSchema;
 
 	public UpdateBuilder(DatabaseType databaseType, TableInfo<T, ID> tableInfo, Dao<T, ID> dao) {
 		super(databaseType, tableInfo, dao, StatementType.UPDATE);
+	}
+	
+	public UpdateBuilder(DatabaseType databaseType, TableInfo<T, ID> tableInfo, Dao<T, ID> dao, String schema) {
+		super(databaseType, tableInfo, dao, StatementType.UPDATE);
+		this.tableSchema = schema; 
 	}
 
 	/**
@@ -128,6 +134,10 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 			throw new IllegalArgumentException("UPDATE statements must have at least one SET column");
 		}
 		sb.append("UPDATE ");
+		if (this.tableSchema != null){
+			databaseType.appendEscapedEntityName(sb, tableSchema);
+			sb.append(".");
+		}
 		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
 		sb.append(" SET ");
 		boolean first = true;
@@ -151,5 +161,12 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 			updateClauseList = new ArrayList<Clause>();
 		}
 		updateClauseList.add(clause);
+	}
+	
+	/**
+	 * Manually force table schema name to this query
+	 */
+	public void setSchema(String tableSchema) {
+		this.tableSchema = tableSchema;
 	}
 }

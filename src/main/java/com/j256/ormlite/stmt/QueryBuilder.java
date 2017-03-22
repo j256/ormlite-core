@@ -46,6 +46,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	private Long limit;
 	private Long offset;
 	private List<JoinInfo> joinList;
+	private String tableSchema;
 
 	// NOTE: anything added here should be added to the clear() method below
 
@@ -53,6 +54,13 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		super(databaseType, tableInfo, dao, StatementType.SELECT);
 		this.idField = tableInfo.getIdField();
 		this.selectIdColumn = (idField != null);
+	}
+	
+	public QueryBuilder(DatabaseType databaseType, TableInfo<T, ID> tableInfo, Dao<T, ID> dao, String tableSchema) {
+		super(databaseType, tableInfo, dao, StatementType.SELECT);
+		this.idField = tableInfo.getIdField();
+		this.selectIdColumn = (idField != null);
+		this.tableSchema = tableSchema;
 	}
 
 	/**
@@ -485,6 +493,10 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			sb.append("COUNT(").append(countOfQuery).append(") ");
 		}
 		sb.append("FROM ");
+		if (tableSchema != null){
+			databaseType.appendEscapedEntityName(sb, tableSchema);
+			sb.append(".");
+		}
 		databaseType.appendEscapedEntityName(sb, tableName);
 		if (alias != null) {
 			appendAlias(sb);
@@ -968,5 +980,12 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		private JoinWhereOperation(WhereOperation whereOperation) {
 			this.whereOperation = whereOperation;
 		}
+	}
+
+	/**
+	 * Manually force table schema name to this query
+	 */
+	public void setSchema(String tableSchema) {
+		this.tableSchema = tableSchema;
 	}
 }
