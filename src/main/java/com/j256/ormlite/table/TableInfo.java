@@ -3,6 +3,7 @@ package com.j256.ormlite.table;
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
@@ -136,11 +137,11 @@ public class TableInfo<T, ID> {
 			// build our alias map if we need it
 			Map<String, FieldType> map = new HashMap<String, FieldType>();
 			for (FieldType fieldType : fieldTypes) {
-				map.put(fieldType.getColumnName().toLowerCase(), fieldType);
+				map.put(fieldType.getColumnName().toLowerCase(Locale.ENGLISH), fieldType);
 			}
 			fieldNameMap = map;
 		}
-		FieldType fieldType = fieldNameMap.get(columnName.toLowerCase());
+		FieldType fieldType = fieldNameMap.get(columnName.toLowerCase(Locale.ENGLISH));
 		// if column name is found, return it
 		if (fieldType != null) {
 			return fieldType;
