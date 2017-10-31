@@ -79,7 +79,7 @@ Gray Watson @uref{http://256.com/gray/}
 * How to Upgrade::              Upgrading from a previous version.
 * Examples::                    Usage examples to help you get started.
 * Contributions::               Contributions from others who helped.
-* License::                     Open Source license for the project.
+* License::                     ISC Open Source license for the project.
 * Index of Concepts::           Index of concepts in the manual.
 @end menu
 
@@ -2248,6 +2248,7 @@ public class Account @{
 @}
 @end example
 
+@cindex ForeignCollectionField annotation
 @anchor{ForeignCollectionField}
 In the above example, the @code{@@ForeignCollectionField} annotation marks that the @code{orders} field is a collection of the orders
 that match the account.  The field type of @code{orders} must be either @code{ForeignCollection<T>} or @code{Collection<T>} -- no
@@ -5276,9 +5277,10 @@ Thanks much to them all.
 
 @c ----------------------------------------------------------------
 @node License, Index of Concepts, Contributions, Top
-@chapter Open Source License
+@chapter ISC Open Source License
 
 @cindex license
+@cindex isc license
 @cindex open source license
 This document is part of the ORMLite project.
 
@@ -5291,7 +5293,7 @@ DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING F
 WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE
 USE OR PERFORMANCE OF THIS SOFTWARE.
 
-The author may be contacted via @uref{http://ormlite.com/}
+The author may be contacted via the @uref{http://ormlite.com/, ORMLite home page}.
 
 @c ----------------------------------------------------------------
 @node Index of Concepts,, License, Top
