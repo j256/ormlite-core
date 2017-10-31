@@ -81,8 +81,9 @@ public @interface ForeignCollectionField {
 
 	/**
 	 * Name of the _field_ (not the column name) in the class that the collection is holding that corresponds to the
-	 * collection. This is needed if there are two foreign fields in the class in the collection (such as a tree
-	 * structure) and you want to identify which column you want in this collection.
+	 * entity which holds the collection. This is needed if there are two foreign fields in the class in the collection
+	 * (such as a tree structure) and you want to identify which column identifies the "owner" of the foreign class.
+	 * This should be a field with the same type as the one which has the collection.
 	 * 
 	 * <p>
 	 * <b>WARNING:</b> Due to some internal complexities, this it field/member name in the class and _not_ the

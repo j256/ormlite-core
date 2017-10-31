@@ -69,6 +69,7 @@ public class DatabaseFieldConfig {
 	private String foreignCollectionOrderColumnName;
 	private boolean foreignCollectionOrderAscending = DEFAULT_FOREIGN_COLLECTION_ORDER_ASCENDING;
 	private String foreignCollectionForeignFieldName;
+	private String fullColumnDefinition;
 
 	static {
 		try {
@@ -93,9 +94,9 @@ public class DatabaseFieldConfig {
 
 	public DatabaseFieldConfig(String fieldName, String columnName, DataType dataType, String defaultValue, int width,
 			boolean canBeNull, boolean id, boolean generatedId, String generatedIdSequence, boolean foreign,
-			DatabaseTableConfig<?> foreignTableConfig, boolean useGetSet, Enum<?> unknownEnumValue,
-			boolean throwIfNull, String format, boolean unique, String indexName, String uniqueIndexName,
-			boolean autoRefresh, int maxForeignAutoRefreshLevel, int maxForeignCollectionLevel) {
+			DatabaseTableConfig<?> foreignTableConfig, boolean useGetSet, Enum<?> unknownEnumValue, boolean throwIfNull,
+			String format, boolean unique, String indexName, String uniqueIndexName, boolean autoRefresh,
+			int maxForeignAutoRefreshLevel, int maxForeignCollectionLevel) {
 		this.fieldName = fieldName;
 		this.columnName = columnName;
 		this.dataType = dataType;
@@ -464,6 +465,14 @@ public class DatabaseFieldConfig {
 		this.columnDefinition = columnDefinition;
 	}
 
+	public String getFullColumnDefinition() {
+		return fullColumnDefinition;
+	}
+
+	public void setFullColumnDefinition(String fullColumnDefinition) {
+		this.fullColumnDefinition = fullColumnDefinition;
+	}
+
 	public boolean isForeignAutoCreate() {
 		return foreignAutoCreate;
 	}
@@ -538,14 +547,12 @@ public class DatabaseFieldConfig {
 	public static Method findGetMethod(Field field, boolean throwExceptions) throws IllegalArgumentException {
 		Method fieldGetMethod;
 		if (Locale.ENGLISH.equals(Locale.getDefault())) {
-			fieldGetMethod =
-					findMethodFromNames(field, true, throwExceptions, methodFromField(field, "get", null),
-							methodFromField(field, "is", null));
+			fieldGetMethod = findMethodFromNames(field, true, throwExceptions, methodFromField(field, "get", null),
+					methodFromField(field, "is", null));
 		} else {
-			fieldGetMethod =
-					findMethodFromNames(field, true, throwExceptions, methodFromField(field, "get", null),
-							methodFromField(field, "get", Locale.ENGLISH), methodFromField(field, "is", null),
-							methodFromField(field, "is", Locale.ENGLISH));
+			fieldGetMethod = findMethodFromNames(field, true, throwExceptions, methodFromField(field, "get", null),
+					methodFromField(field, "get", Locale.ENGLISH), methodFromField(field, "is", null),
+					methodFromField(field, "is", Locale.ENGLISH));
 		}
 		if (fieldGetMethod == null) {
 			return null;
@@ -571,17 +578,16 @@ public class DatabaseFieldConfig {
 		if (Locale.ENGLISH.equals(Locale.getDefault())) {
 			fieldSetMethod = findMethodFromNames(field, false, throwExceptions, methodFromField(field, "set", null));
 		} else {
-			fieldSetMethod =
-					findMethodFromNames(field, false, throwExceptions, methodFromField(field, "set", null),
-							methodFromField(field, "set", Locale.ENGLISH));
+			fieldSetMethod = findMethodFromNames(field, false, throwExceptions, methodFromField(field, "set", null),
+					methodFromField(field, "set", Locale.ENGLISH));
 		}
 		if (fieldSetMethod == null) {
 			return null;
 		}
 		if (fieldSetMethod.getReturnType() != void.class) {
 			if (throwExceptions) {
-				throw new IllegalArgumentException("Return type of set method " + fieldSetMethod.getName()
-						+ " returns " + fieldSetMethod.getReturnType() + " instead of void");
+				throw new IllegalArgumentException("Return type of set method " + fieldSetMethod.getName() + " returns "
+						+ fieldSetMethod.getReturnType() + " instead of void");
 			} else {
 				return null;
 			}
@@ -635,6 +641,7 @@ public class DatabaseFieldConfig {
 		config.version = databaseField.version();
 		config.foreignColumnName = valueIfNotBlank(databaseField.foreignColumnName());
 		config.readOnly = databaseField.readOnly();
+		config.fullColumnDefinition = valueIfNotBlank(databaseField.fullColumnDefinition());
 
 		return config;
 	}
@@ -722,8 +729,9 @@ public class DatabaseFieldConfig {
 			}
 		}
 		if (throwExceptions) {
-			throw new IllegalArgumentException("Could not find appropriate " + (isGetMethod ? "get" : "set")
-					+ " method for " + field, firstException);
+			throw new IllegalArgumentException(
+					"Could not find appropriate " + (isGetMethod ? "get" : "set") + " method for " + field,
+					firstException);
 		} else {
 			return null;
 		}

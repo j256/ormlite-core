@@ -246,7 +246,8 @@ public @interface DatabaseField {
 
 	/**
 	 * Specify the SQL necessary to create this field in the database. This can be used if you need to tune the schema
-	 * to enable some per-database feature or to override the default SQL generated.
+	 * to enable some per-database feature or to override the default SQL generated. See {@link #fullColumnDefinition()}
+	 * .
 	 */
 	String columnDefinition() default "";
 
@@ -302,6 +303,15 @@ public @interface DatabaseField {
 	 * however it will be ignored during insert/create statements.
 	 */
 	boolean readOnly() default false;
+
+	/**
+	 * Specify the SQL necessary to create this field in the database including the column name, which should be
+	 * properly escaped and in proper case depending on your database type. This can be used if you need to fully
+	 * describe the schema to enable some per-database feature or to override the default SQL generated. The
+	 * {@link #columnDefinition()} should be used instead of this unless your database type needs to wrap the field name
+	 * somehow when defining the field.
+	 */
+	String fullColumnDefinition() default "";
 
 	/*
 	 * NOTE to developers: if you add fields here you have to add them to the DatabaseFieldConfig,

@@ -164,6 +164,11 @@ public class DatabaseFieldConfigLoaderTest extends BaseCoreTest {
 		body.append("columnDefinition=").append(columnDefinition).append(LINE_SEP);
 		checkConfigOutput(config, body, writer, buffer);
 
+		String fullColumnDefinition = "fullColumnDef";
+		config.setFullColumnDefinition(fullColumnDefinition);
+		body.append("fullColumnDefinition=").append(fullColumnDefinition).append(LINE_SEP);
+		checkConfigOutput(config, body, writer, buffer);
+
 		config.setForeignAutoCreate(false);
 		checkConfigOutput(config, body, writer, buffer);
 		config.setForeignAutoCreate(true);

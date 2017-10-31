@@ -148,8 +148,8 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
 		databaseType = connectionSource.getDatabaseType();
 		if (databaseType == null) {
-			throw new IllegalStateException("connectionSource is getting a null DatabaseType in "
-					+ getClass().getSimpleName());
+			throw new IllegalStateException(
+					"connectionSource is getting a null DatabaseType in " + getClass().getSimpleName());
 		}
 		if (tableConfig == null) {
 			tableInfo = new TableInfo<T, ID>(connectionSource, this, dataClass);
@@ -559,6 +559,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			public Iterator<T> iterator() {
 				return closeableIterator();
 			}
+
 			@Override
 			public CloseableIterator<T> closeableIterator() {
 				try {
@@ -578,6 +579,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			public Iterator<T> iterator() {
 				return closeableIterator();
 			}
+
 			@Override
 			public CloseableIterator<T> closeableIterator() {
 				try {
@@ -1083,7 +1085,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		throw new IllegalArgumentException("Could not find a field named " + fieldName);
 	}
 
-	CloseableIterator<T> createIterator(int resultFlags) {
+	private CloseableIterator<T> createIterator(int resultFlags) {
 		try {
 			SelectIterator<T, ID> iterator =
 					statementExecutor.buildIterator(this, connectionSource, resultFlags, objectCache);
@@ -1093,7 +1095,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
-	CloseableIterator<T> createIterator(PreparedQuery<T> preparedQuery, int resultFlags) throws SQLException {
+	private CloseableIterator<T> createIterator(PreparedQuery<T> preparedQuery, int resultFlags) throws SQLException {
 		try {
 			SelectIterator<T, ID> iterator =
 					statementExecutor.buildIterator(this, connectionSource, preparedQuery, objectCache, resultFlags);
