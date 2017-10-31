@@ -363,7 +363,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	@Override
-	public T createIfNotExists(T data) throws SQLException {
+	public synchronized T createIfNotExists(T data) throws SQLException {
 		if (data == null) {
 			return null;
 		}
@@ -377,7 +377,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	@Override
-	public CreateOrUpdateStatus createOrUpdate(T data) throws SQLException {
+	public synchronized CreateOrUpdateStatus createOrUpdate(T data) throws SQLException {
 		if (data == null) {
 			return new CreateOrUpdateStatus(false, false, 0);
 		}
