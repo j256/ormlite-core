@@ -1,5 +1,6 @@
 5.1: ?/??/2016
 	* CORE: Added @DatabaseField(fullColumnDefinition) for fully describing a column as opposed to columnDefinition.
+	* CORE: Added synchronized keyword to BaseDaoImpl.createOrUpdate() and createIfNotExists().
 	* JDBC: Fixed problem with UUID native type not using the correct persister.  Thanks Bo98. 
 
 5.0: 6/27/2016

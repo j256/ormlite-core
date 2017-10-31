@@ -177,6 +177,11 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * extracts the id from the data parameter, does a {@link #queryForId(Object)} on it, returning the data if it
 	 * exists. If it does not exist {@link #create(Object)} will be called with the parameter.
 	 * 
+	 * <p>
+	 * <b>NOTE:</b> This method is synchronized because otherwise race conditions would be encountered if this is used
+	 * by multiple threads.
+	 * </p>
+	 * 
 	 * @return Either the data parameter if it was inserted (now with the ID field set via the create method) or the
 	 *         data element that existed already in the database.
 	 */
@@ -188,6 +193,11 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * then all of the columns in the database will be updated from the fields in the data parameter. If the id is null
 	 * (or 0 or some other default value) or doesn't exist in the database then the object will be created in the
 	 * database. This also means that your data item <i>must</i> have an id field defined.
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> This method is synchronized because otherwise race conditions would be encountered if this is used
+	 * by multiple threads.
+	 * </p>
 	 * 
 	 * @return Status object with the number of rows changed and whether an insert or update was performed.
 	 */
