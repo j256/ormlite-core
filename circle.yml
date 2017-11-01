@@ -10,5 +10,6 @@ test:
 
 deployment:
   main:
+    branch: master
     commands:
       - mvn -s .circleci.settings.xml -DskipTests deploy
