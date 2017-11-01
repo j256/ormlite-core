@@ -92,6 +92,56 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>testing</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<distributionManagement>
+				<snapshotRepository>
+					<id>j256</id>
+					<url>s3://j256/maven/snapshot</url>
+				</snapshotRepository>
+				<repository>
+					<id>j256</id>
+					<url>s3://j256/maven/release</url>
+				</repository>
+			</distributionManagement>
+			<repositories>
+				<repository>
+					<id>j256</id>
+					<url>s3://j256/maven/release</url>
+				</repository>
+			</repositories>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.1</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>${gpgPhase}</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<keyname>D3412AC1</keyname>
+						</configuration>
+					</plugin>
+				</plugins>
+				<extensions>
+					<extension>
+						<groupId>org.springframework.build</groupId>
+						<artifactId>aws-maven</artifactId>
+						<version>5.0.0.RELEASE</version>
+					</extension>
+				</extensions>
+			</build>
+		</profile>
 	</profiles>
 	<build>
 		<finalName>ormlite-core</finalName>
