@@ -6,7 +6,8 @@ databases via JDBC will need to download the [ormlite-jdbc](https://github.com/j
 users should download the [ormlite-android](https://github.com/j256/ormlite-android) package as well as this core package.
 
 * For more information, visit the [ORMLite home page](http://ormlite.com/).	
-* Online documentation can be found off the home page.  Here's the [getting started docs](http://ormlite.com/docs/getting-started).  Here are the [code Javadocs](http://ormlite.com/javadoc/ormlite-core/).
+* Online documentation can be found off the home page.  Here's the [getting started information](http://ormlite.com/docs/getting-started).
+Here are the [Javadocs for the code](http://ormlite.com/javadoc/ormlite-core/).
 * Browse the code on the [git repository](https://github.com/j256/ormlite-core).  [![CircleCI](https://circleci.com/gh/j256/ormlite-core.svg?style=svg)](https://circleci.com/gh/j256/ormlite-core) [![CodeCov](https://img.shields.io/codecov/c/github/j256/ormlite-core.svg)](https://codecov.io/github/j256/ormlite-core/)
 * Maven packages are published via [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.j256.ormlite/ormlite-core/badge.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/com.j256.ormlite/ormlite-core/)
 * I've published a [number of example programs](http://ormlite.com/docs/examples).

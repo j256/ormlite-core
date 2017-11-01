@@ -8,6 +8,7 @@ test:
     - mvn jacoco:report
     - bash <(curl -s https://codecov.io/bash)
 
+# deploys whenever we check into master to our s3 snapshot repo so ormlite-jdbc can run its tests
 deployment:
   main:
     branch: master
