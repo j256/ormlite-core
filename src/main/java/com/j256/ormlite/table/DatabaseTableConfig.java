@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
@@ -176,7 +177,7 @@ public class DatabaseTableConfig<T> {
 		}
 		if (name == null) {
 			// if the name isn't specified, it is the class name lowercased
-			name = clazz.getSimpleName().toLowerCase();
+			name = clazz.getSimpleName().toLowerCase(Locale.ENGLISH);
 		}
 		return name;
 	}
