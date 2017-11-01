@@ -3,6 +3,10 @@ machine:
   java:
     version: openjdk7
 
+dependencies:
+  override:
+    - mvn dependency:go-offline compile
+
 test:
   post:
     - mvn jacoco:report
