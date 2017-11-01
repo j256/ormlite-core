@@ -3,13 +3,7 @@ machine:
   java:
     version: openjdk7
 
-dependencies:
-  override:
-    - mvn -DskipTests clean install dependency:resolve-plugins dependency:go-offline
-
 test:
-  override:
-    - mvn -o surefire:test
   post:
     - mvn jacoco:report
     - bash <(curl -s https://codecov.io/bash)
