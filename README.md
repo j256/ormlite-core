@@ -13,18 +13,18 @@ users should download the [ormlite-android](https://github.com/j256/ormlite-andr
 
 ORMLite is easy to use and provides the following features:
 
-* Setup your classes by simply adding Java annotations.
-* Powerful abstract Database Access Object (DAO) classes.
-* Flexible QueryBuilder to easily construct simple and complex queries.
+* Setup your classes by simply adding [Java annotations](http://ormlite.com/docs/annotations).
+* Powerful abstract [Database Access Object (DAO) classes](http://ormlite.com/docs/dao-setup).
+* Flexible [query builder](http://ormlite.com/docs/query-builder) to easily construct simple and complex queries.
 * Supports MySQL, Postgres, Microsoft SQL Server, H2, Derby, HSQLDB, and Sqlite and can be extended to additional databases relatively easily.
 * Provisional support for DB2, Oracle, ODBC, and Netezza. Contact the author if your database type is not supported.
 * Handles "compiled" SQL statements for repetitive query tasks.
-* Supports "foreign" objects with the class field being the object but an id stored in the database table.
-* Basic support for database transactions.
+* Supports ["foreign" objects](http://ormlite.com/docs/foreign-object) with the class field being the object but an id stored in the database table.
+* Basic support for [database transactions](http://ormlite.com/docs/transactions).
 * Auto generates SQL to create and drop database tables.
-* Spring configuration support for DOAs and class configurations.
-* Support for configuring of tables and fields without annotations.
-* Supports native calls to Android SQLite database APIs
+* [Spring configuration support](http://ormlite.com/docs/spring) for DOAs and class configurations.
+* Support for [configuring of tables](http://ormlite.com/docs/table-config) and fields without annotations.
+* Supports native calls to [Android SQLite database APIs](http://ormlite.com/docs/android).
 
 Enjoy, Gray Watson
 
