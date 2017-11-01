@@ -45,6 +45,7 @@
 		<!-- default empty string that can be overridden on command line. due to surefire's parser bug, if we don't have this here 
 			and have any other characters where this is used, it'll get replaced with string "null" -->
 		<surefire.argLine />
+		<disableDoclint />
 
 		<!-- external test package versions -->
 		<persistence-api-version>1.0</persistence-api-version>
@@ -145,6 +146,15 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>disable-java8-doclint</id>
+			<activation>
+				<jdk>[1.8,)</jdk>
+			</activation>
+			<properties>
+				<disableDoclint>-Xdoclint:none</disableDoclint>
+			</properties>
+		</profile>
 	</profiles>
 	<build>
 		<finalName>ormlite-core</finalName>
@@ -207,7 +217,7 @@
 						</goals>
 						<configuration>
 							<showPackage>false</showPackage>
-							<additionalparam>-tag inheritDoc:X</additionalparam>
+							<additionalparam>-tag inheritDoc:X ${disableDoclint}</additionalparam>
 						</configuration>
 					</execution>
 				</executions>
@@ -218,7 +228,7 @@
 						&lt;a
 						href="http://creativecommons.org/licenses/by-sa/3.0/" &gt;Creative Commons Attribution-Share Alike 3.0 License.
 						&lt;/a&gt; </bottom>
-					<additionalparam>-tag inheritDoc:X</additionalparam>
+					<additionalparam>-tag inheritDoc:X ${disableDoclint}</additionalparam>
 					<excludePackageNames>
 						com.j256.ormlite.stmt.query,
 						com.j256.ormlite.stmt.mapped,
