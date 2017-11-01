@@ -2,9 +2,9 @@
 	xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
 	<servers>
 		<server>
-			<id>j256</id>
-			<username>${env.J256_MAVEN_ACCESS_KEY}</username>
-			<password>${env.J256_MAVEN_SECRET_KEY}</password>
+			<id>j256.com</id>
+			<username>${J256_MAVEN_ACCESS_KEY}</username>
+			<password>${J256_MAVEN_SECRET_KEY}</password>
 		</server>
 	</servers>
 </settings>

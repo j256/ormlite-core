@@ -99,18 +99,18 @@
 			</activation>
 			<distributionManagement>
 				<snapshotRepository>
-					<id>j256</id>
-					<url>s3://j256/maven/snapshot</url>
+					<id>j256.com</id>
+					<url>s3://j256.com/maven/snapshot</url>
 				</snapshotRepository>
 				<repository>
-					<id>j256</id>
-					<url>s3://j256/maven/release</url>
+					<id>j256.com</id>
+					<url>s3://j256.com/maven/release</url>
 				</repository>
 			</distributionManagement>
 			<repositories>
 				<repository>
-					<id>j256</id>
-					<url>s3://j256/maven/release</url>
+					<id>j256.com</id>
+					<url>s3://j256.com/maven/release</url>
 				</repository>
 			</repositories>
 			<build>
