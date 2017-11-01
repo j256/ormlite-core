@@ -33,7 +33,7 @@ public class LoggerFactoryTest {
 	@Test
 	public void testLogTypeIsAvailable() {
 		assertFalse(LoggerFactory.LogType.ANDROID.isAvailable());
-		assertFalse(LoggerFactory.LogType.COMMONS_LOGGING.isAvailable());
+		assertTrue(LoggerFactory.LogType.COMMONS_LOGGING.isAvailable());
 		assertFalse(LoggerFactory.LogType.LOG4J.isAvailable());
 		assertTrue(LoggerFactory.LogType.LOCAL.isAvailable());
 		assertTrue(LoggerFactory.LogType.LOCAL.isAvailableTestClass());
@@ -46,9 +46,7 @@ public class LoggerFactoryTest {
 		log = LoggerFactory.LogType.ANDROID.createLog(getClass().getName());
 		assertTrue(log instanceof LocalLog);
 		log = LoggerFactory.LogType.COMMONS_LOGGING.createLog(getClass().getName());
-		assertTrue(log instanceof LocalLog);
-		log = LoggerFactory.LogType.COMMONS_LOGGING.createLog(getClass().getName());
-		assertTrue(log instanceof LocalLog);
+		assertTrue(log instanceof CommonsLoggingLog);
 		log = LoggerFactory.LogType.LOG4J.createLog(getClass().getName());
 		assertTrue(log instanceof LocalLog);
 		log = LoggerFactory.LogType.LOG4J.createLog(getClass().getName());
