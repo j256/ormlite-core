@@ -52,45 +52,10 @@
 		<h2-version>1.2.128</h2-version>
 		<junit-version>4.8.1</junit-version>
 		<commons-lang-version>2.1</commons-lang-version>
+		<commons-logging-version>1.1.1</commons-logging-version>
 		<slf4j-version>1.7.2</slf4j-version>
 	</properties>
 	<profiles>
-		<profile>
-			<id>sf</id>
-			<distributionManagement>
-				<repository>
-					<id>sourceforge</id>
-					<name>SourceForge</name>
-					<url>sftp://graywatson,ormlite@frs.sourceforge.net:/home/frs/project/ormlite/releases</url>
-				</repository>
-				<snapshotRepository>
-					<id>sourceforge</id>
-					<name>SourceForge</name>
-					<url>sftp://graywatson,ormlite@frs.sourceforge.net:/home/frs/project/ormlite/snapshots</url>
-				</snapshotRepository>
-			</distributionManagement>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.1</version>
-						<executions>
-							<execution>
-								<id>sign-artifacts</id>
-								<phase>${gpgPhase}</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<keyname>D3412AC1</keyname>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
 		<profile>
 			<id>st</id>
 			<distributionManagement>
@@ -207,11 +172,6 @@
 						com.j256.ormlite.stmt.raw
 					</excludePackageNames>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.4</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -374,6 +334,12 @@
 			<artifactId>commons-lang</artifactId>
 			<version>${commons-lang-version}</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>${commons-logging-version}</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>
