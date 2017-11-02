@@ -959,9 +959,8 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		QueryBuilder<Foo, Integer> queryBuilder = dao.queryBuilder();
 		queryBuilder.where().eq(Foo.ID_COLUMN_NAME, foo1.id);
 
-		GenericRawResults<String[]> results =
-				dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME + " FROM FOO WHERE "
-						+ Foo.ID_COLUMN_NAME + " = ?", Integer.toString(foo2.id));
+		GenericRawResults<String[]> results = dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME
+				+ " FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", Integer.toString(foo2.id));
 		assertEquals(2, results.getNumberColumns());
 		String[] names = results.getColumnNames();
 		assertEquals(2, names.length);
@@ -1036,9 +1035,10 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		queryBuilder.where().eq(Foo.ID_COLUMN_NAME, foo1.id);
 
 		GenericRawResults<Object[]> results =
-				dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME + " FROM FOO WHERE "
-						+ Foo.ID_COLUMN_NAME + " = ?", new DataType[] { DataType.STRING, DataType.INTEGER },
-						Integer.toString(foo2.id));
+				dao.queryRaw(
+						"SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME + " FROM FOO WHERE "
+								+ Foo.ID_COLUMN_NAME + " = ?",
+						new DataType[] { DataType.STRING, DataType.INTEGER }, Integer.toString(foo2.id));
 		List<Object[]> resultList = results.getResults();
 		assertEquals(1, resultList.size());
 		Object[] row = resultList.get(0);
@@ -1062,19 +1062,18 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		QueryBuilder<Foo, Integer> queryBuilder = dao.queryBuilder();
 		queryBuilder.where().eq(Foo.ID_COLUMN_NAME, foo1.id);
 
-		GenericRawResults<Foo> results =
-				dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME + " FROM FOO",
-						new RawRowMapper<Foo>() {
-							@Override
-							public Foo mapRow(String[] columnNames, String[] resultColumns) {
-								assertEquals(2, columnNames.length);
-								assertEquals(2, resultColumns.length);
-								Foo foo = new Foo();
-								foo.id = Integer.parseInt(resultColumns[0]);
-								foo.equal = Integer.parseInt(resultColumns[1]);
-								return foo;
-							}
-						});
+		GenericRawResults<Foo> results = dao.queryRaw(
+				"SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME + " FROM FOO", new RawRowMapper<Foo>() {
+					@Override
+					public Foo mapRow(String[] columnNames, String[] resultColumns) {
+						assertEquals(2, columnNames.length);
+						assertEquals(2, resultColumns.length);
+						Foo foo = new Foo();
+						foo.id = Integer.parseInt(resultColumns[0]);
+						foo.equal = Integer.parseInt(resultColumns[1]);
+						return foo;
+					}
+				});
 		List<Foo> resultList = results.getResults();
 		assertEquals(2, resultList.size());
 		assertEquals(foo1.id, resultList.get(0).id);
@@ -1117,9 +1116,8 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		QueryBuilder<Foo, Integer> queryBuilder = dao.queryBuilder();
 		queryBuilder.where().eq(Foo.ID_COLUMN_NAME, foo1.id);
 
-		GenericRawResults<Foo> results =
-				dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME + " FROM FOO WHERE "
-						+ Foo.ID_COLUMN_NAME + " = ?", new RawRowMapper<Foo>() {
+		GenericRawResults<Foo> results = dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME
+				+ " FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", new RawRowMapper<Foo>() {
 					@Override
 					public Foo mapRow(String[] columnNames, String[] resultColumns) {
 						assertEquals(2, columnNames.length);
@@ -1836,11 +1834,13 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	 */
 	public static class ExampleH2Trigger implements Trigger {
 		static int callC = 0;
+
 		@Override
 		public void init(Connection conn, String schemaName, String triggerName, String tableName, boolean before,
 				int type) {
 			// noop
 		}
+
 		@Override
 		public void fire(Connection conn, Object[] oldRow, Object[] newRow) {
 			callC++;
@@ -2273,13 +2273,12 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	public void testJeremyNull() throws Exception {
 		Jeremy1 loop1 = new Jeremy1();
 		Dao<Jeremy2, Long> dao = createDao(Jeremy2.class, true);
-		List<Jeremy2> bars =
-				dao.queryBuilder()
-						.where()
-						.eq(Jeremy2.LOOP1_COLUMN_NAME, loop1)
-						.and()
-						.eq(Jeremy2.OTHER_COLUMN_NAME, "someValue")
-						.query();
+		List<Jeremy2> bars = dao.queryBuilder()
+				.where()
+				.eq(Jeremy2.LOOP1_COLUMN_NAME, loop1)
+				.and()
+				.eq(Jeremy2.OTHER_COLUMN_NAME, "someValue")
+				.query();
 		assertEquals(0, bars.size());
 	}
 
@@ -2525,17 +2524,15 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	@Test
 	public void testGetTableName() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
-
 		assertEquals(FOO_TABLE_NAME, dao.getTableName());
 	}
 
 	/* ============================================================================================== */
 
 	private String buildFooQueryAllString(Dao<Foo, Object> fooDao) throws SQLException {
-		String queryString =
-				fooDao.queryBuilder()
-						.selectColumns(Foo.ID_COLUMN_NAME, Foo.EQUAL_COLUMN_NAME, Foo.VAL_COLUMN_NAME)
-						.prepareStatementString();
+		String queryString = fooDao.queryBuilder()
+				.selectColumns(Foo.ID_COLUMN_NAME, Foo.EQUAL_COLUMN_NAME, Foo.VAL_COLUMN_NAME)
+				.prepareStatementString();
 		return queryString;
 	}
 
@@ -2579,6 +2576,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		public int id;
 		@DatabaseField(foreign = true, canBeNull = false)
 		public Foo foo;
+
 		public ForeignNotNull() {
 		}
 	}
@@ -2589,6 +2587,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		public int id;
 		@DatabaseField
 		public String stuff;
+
 		public One() {
 		}
 	}
@@ -2599,6 +2598,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		public int id;
 		@DatabaseField
 		public String stuff;
+
 		public Two() {
 		}
 	}
@@ -2608,6 +2608,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		public UUID id;
 		@DatabaseField
 		public String stuff;
+
 		public UuidGeneratedId() {
 		}
 	}
@@ -2617,6 +2618,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		public UUID id;
 		@DatabaseField
 		public String stuff;
+
 		public UuidId() {
 		}
 	}
@@ -2626,6 +2628,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		public int id;
 		@DatabaseField(foreign = true, foreignAutoRefresh = true)
 		public Foo foo;
+
 		public ForeignAutoRefresh() {
 		}
 	}
@@ -2635,6 +2638,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		public int id;
 		@DatabaseField(foreign = true, foreignAutoRefresh = false)
 		public Foo foo;
+
 		public ForeignAutoRefreshFalse() {
 		}
 	}
@@ -2643,6 +2647,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		public int id;
 		@DatabaseField(foreign = true, foreignAutoRefresh = true)
 		public ForeignCollectionAutoRefresh foo;
+
 		public ForeignAutoRefresh2() {
 		}
 	}
@@ -2652,6 +2657,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		public int id;
 		@ForeignCollectionField
 		public ForeignCollection<ForeignAutoRefresh2> foreignAutoRefresh;
+
 		public ForeignCollectionAutoRefresh() {
 		}
 	}
@@ -2693,6 +2699,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		public Integer id;
 		@DatabaseField
 		public String stuff;
+
 		public CreateOrUpdateObjectId() {
 		}
 	}
@@ -2702,6 +2709,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		public int id;
 		@DatabaseField(columnDefinition = "VARCHAR(200)")
 		public String stuff;
+
 		public ColumnDefinition() {
 		}
 	}
@@ -2715,6 +2723,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		public Date date1;
 		@DatabaseField(columnName = FIELD_NAME_DATE2)
 		public Date date2;
+
 		public TwoDates() {
 		}
 	}
@@ -2725,6 +2734,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		public int id;
 		@DatabaseField(foreign = true, columnName = FIELD_NAME_ONE)
 		public One one;
+
 		public ForeignIntId() {
 		}
 	}
@@ -2735,6 +2745,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		public int id;
 		@DatabaseField
 		public String stuff;
+
 		public BaseEntity() {
 		}
 	}
@@ -2743,6 +2754,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	protected static class SubEntity extends BaseEntity {
 		@DatabaseField
 		public String otherStuff;
+
 		public SubEntity() {
 		}
 	}
@@ -2752,6 +2764,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		int id;
 		@DatabaseField(foreign = true, foreignColumnName = ForeignColumnNameForeign.FIELD_NAME)
 		ForeignColumnNameForeign foreign;
+
 		public ForeignColumnName() {
 		}
 	}
@@ -2762,6 +2775,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		int id;
 		@DatabaseField
 		String name;
+
 		public ForeignColumnNameForeign() {
 		}
 	}
@@ -2771,6 +2785,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		int id;
 		@ForeignCollectionField(eager = false)
 		ForeignCollection<Jeremy2> bars;
+
 		public Jeremy1() {
 		}
 	}
@@ -2784,6 +2799,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Jeremy1 loop1;
 		@DatabaseField(columnName = OTHER_COLUMN_NAME)
 		String other;
+
 		public Jeremy2() {
 		}
 	}
@@ -2793,6 +2809,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		int id;
 		@ForeignCollectionField(eager = false)
 		ForeignCollection<ForeignCollectionComparison2> foos;
+
 		public ForeignCollectionComparison() {
 		}
 	}
@@ -2802,6 +2819,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		int id;
 		@DatabaseField(foreign = true)
 		ForeignCollectionComparison foreign;
+
 		public ForeignCollectionComparison2() {
 		}
 	}
@@ -2811,6 +2829,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		int id;
 		@DatabaseField(dataType = DataType.SERIALIZABLE)
 		java.sql.Timestamp timestamp;
+
 		public TimeStampSerializable() {
 		}
 	}
@@ -2820,6 +2839,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		int id;
 		@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 2)
 		ForeignLoop2 loop;
+
 		public ForeignLoop1() {
 		}
 	}
@@ -2829,6 +2849,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		int id;
 		@DatabaseField(foreign = true)
 		ForeignLoop3 loop;
+
 		public ForeignLoop2() {
 		}
 	}
@@ -2838,6 +2859,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		int id;
 		@DatabaseField(foreign = true)
 		ForeignLoop4 loop;
+
 		public ForeignLoop3() {
 		}
 	}
@@ -2847,6 +2869,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		int id;
 		@DatabaseField
 		String stuff;
+
 		public ForeignLoop4() {
 		}
 	}
@@ -2854,6 +2877,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	protected static class FewFields {
 		@DatabaseField(generatedId = true)
 		int id;
+
 		public FewFields() {
 		}
 	}
