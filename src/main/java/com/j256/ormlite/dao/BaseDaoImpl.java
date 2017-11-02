@@ -78,6 +78,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	protected ObjectFactory<T> objectFactory;
 
 	private boolean initialized;
+	// NOTE: package perms to removed synthetic accessor
 	ObjectCache objectCache;
 	private Map<DaoObserver, Object> daoObserverMap;
 
@@ -1085,7 +1086,10 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		throw new IllegalArgumentException("Could not find a field named " + fieldName);
 	}
 
-	private CloseableIterator<T> createIterator(int resultFlags) {
+	/**
+	 * NOTE: package perms to removed synthetic accessor
+	 */
+	CloseableIterator<T> createIterator(int resultFlags) {
 		try {
 			SelectIterator<T, ID> iterator =
 					statementExecutor.buildIterator(this, connectionSource, resultFlags, objectCache);
@@ -1095,7 +1099,10 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 	}
 
-	private CloseableIterator<T> createIterator(PreparedQuery<T> preparedQuery, int resultFlags) throws SQLException {
+	/**
+	 * NOTE: package perms to removed synthetic accessor
+	 */
+	CloseableIterator<T> createIterator(PreparedQuery<T> preparedQuery, int resultFlags) throws SQLException {
 		try {
 			SelectIterator<T, ID> iterator =
 					statementExecutor.buildIterator(this, connectionSource, preparedQuery, objectCache, resultFlags);
