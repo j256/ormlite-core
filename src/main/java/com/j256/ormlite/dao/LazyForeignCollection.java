@@ -299,6 +299,9 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 		return super.hashCode();
 	}
 
+	/**
+	 * NOTE: package perms to removed synthetic accessor
+	 */
 	CloseableIterator<T> seperateIteratorThrow(int flags) throws SQLException {
 		// check state to make sure we have a DAO in case we have a deserialized collection
 		if (dao == null) {

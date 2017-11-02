@@ -1156,10 +1156,11 @@ public class FieldType {
 	}
 
 	private static class LevelCounters {
-		
+
 		LevelCounters() {
+			// NOTE: package perms to removed synthetic accessor
 		}
-		
+
 		// current auto-refresh recursion level
 		int autoRefreshLevel;
 		// maximum auto-refresh recursion level

@@ -9,7 +9,7 @@ import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
- * Persists the {@link java.util.Date} Java class as integer seconds since epoch.
+ * Persists the {@link java.util.Date} Java class as integer seconds (not milliseconds) since epoch.
  *
  * <p>
  * NOTE: This is <i>not</i> the same as the {@link java.sql.Date} class.
@@ -42,8 +42,8 @@ public class DateIntegerType extends BaseDateType {
 		try {
 			return Integer.parseInt(defaultStr);
 		} catch (NumberFormatException e) {
-			throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing default date-integer value: "
-					+ defaultStr, e);
+			throw SqlExceptionUtil.create(
+					"Problems with field " + fieldType + " parsing default date-integer value: " + defaultStr, e);
 		}
 	}
 
@@ -60,7 +60,7 @@ public class DateIntegerType extends BaseDateType {
 	@Override
 	public Object javaToSqlArg(FieldType fieldType, Object obj) {
 		Date date = (Date) obj;
-		return (int)(date.getTime() / 1000);
+		return (int) (date.getTime() / 1000);
 	}
 
 	@Override
