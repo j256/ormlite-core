@@ -523,9 +523,9 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	@Override
 	protected void appendStatementEnd(StringBuilder sb, List<ArgumentHolder> argList) throws SQLException {
 		// 'group by' comes before 'order by'
-		appendGroupBys(sb);
-		appendHaving(sb);
-		appendOrderBys(sb, argList);
+		maybeAppendGroupBys(sb);
+		maybeAppendHaving(sb);
+		maybeAppendOrderBys(sb, argList);
 		if (!databaseType.isLimitAfterSelect()) {
 			appendLimit(sb);
 		}
@@ -761,35 +761,28 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			databaseType.appendOffsetValue(sb, offset);
 		}
 	}
-    
-    private void appendGroupBys(StringBuilder sb){
-        appendGroupBys(sb, true);
-    }
 
-	private boolean appendGroupBys(StringBuilder sb, boolean first) {
-		if (hasGroupStuff()) {
-			writeGroupBys(sb, first);
+	private void maybeAppendGroupBys(StringBuilder sb) {
+		maybeAppendGroupBys(sb, true);
+	}
+
+	private boolean maybeAppendGroupBys(StringBuilder sb, boolean first) {
+		if (groupByList != null && !groupByList.isEmpty()) {
+			appendGroupBys(sb, first);
 			first = false;
 		}
-		/*
-		 * NOTE: this may not be legal and doesn't seem to work with some database types but we'll check this out
-		 * anyway.
-		 */
+		// NOTE: this doesn't seem to work with some database types but we will check for sub-queries anyway
 		if (joinList != null) {
 			for (JoinInfo joinInfo : joinList) {
 				if (joinInfo.queryBuilder != null) {
-					first = joinInfo.queryBuilder.appendGroupBys(sb, first);
+					first = joinInfo.queryBuilder.maybeAppendGroupBys(sb, first);
 				}
 			}
 		}
 		return first;
 	}
 
-	private boolean hasGroupStuff() {
-		return (groupByList != null && !groupByList.isEmpty());
-	}
-
-	private void writeGroupBys(StringBuilder sb, boolean first) {
+	private void appendGroupBys(StringBuilder sb, boolean first) {
 		if (first) {
 			sb.append("GROUP BY ");
 		}
@@ -807,35 +800,28 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		}
 		sb.append(' ');
 	}
-    
-    private void appendOrderBys(StringBuilder sb, List<ArgumentHolder> argList){
-        appendOrderBys(sb, true, argList);
-    }
 
-	private boolean appendOrderBys(StringBuilder sb, boolean first, List<ArgumentHolder> argList) {
-		if (hasOrderStuff()) {
-			writeOrderBys(sb, first, argList);
+	private void maybeAppendOrderBys(StringBuilder sb, List<ArgumentHolder> argList) {
+		maybeAppendOrderBys(sb, argList, true);
+	}
+
+	private boolean maybeAppendOrderBys(StringBuilder sb, List<ArgumentHolder> argList, boolean first) {
+		if (orderByList != null && !orderByList.isEmpty()) {
+			appendOrderBys(sb, first, argList);
 			first = false;
 		}
-		/*
-		 * NOTE: this may not be necessary since the inner results aren't at all returned but we'll leave this code here
-		 * anyway.
-		 */
+		// NOTE: this doesn't seem to work with some database types but we will check for sub-queries anyway
 		if (joinList != null) {
 			for (JoinInfo joinInfo : joinList) {
 				if (joinInfo.queryBuilder != null) {
-					first = joinInfo.queryBuilder.appendOrderBys(sb, first, argList);
+					first = joinInfo.queryBuilder.maybeAppendOrderBys(sb, argList, first);
 				}
 			}
 		}
-        return first;
+		return first;
 	}
 
-	private boolean hasOrderStuff() {
-		return (orderByList != null && !orderByList.isEmpty());
-	}
-
-	private void writeOrderBys(StringBuilder sb, boolean first, List<ArgumentHolder> argList) {
+	private void appendOrderBys(StringBuilder sb, boolean first, List<ArgumentHolder> argList) {
 		if (first) {
 			sb.append("ORDER BY ");
 		}
@@ -873,7 +859,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		databaseType.appendEscapedEntityName(sb, columnName);
 	}
 
-	private void appendHaving(StringBuilder sb) {
+	private void maybeAppendHaving(StringBuilder sb) {
 		if (having != null) {
 			sb.append("HAVING ").append(having).append(' ');
 		}

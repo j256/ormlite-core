@@ -1392,6 +1392,65 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(foo.stringField, results.get(0).stringField);
 	}
 
+	@Test
+	public void testOrdersInMultiQueryBuilder() throws Exception {
+		Dao<Bar, Integer> barDao = createDao(Bar.class, true);
+		Dao<Baz, Integer> bazDao = createDao(Baz.class, true);
+		Dao<Bing, Integer> bingDao = createDao(Bing.class, true);
+
+		Bar bar1 = new Bar();
+		bar1.val = 1;
+		assertEquals(1, barDao.create(bar1));
+		Bar bar2 = new Bar();
+		bar2.val = 3;
+		assertEquals(1, barDao.create(bar2));
+		Bar bar3 = new Bar();
+		bar3.val = 2;
+		assertEquals(1, barDao.create(bar3));
+
+		Baz baz1 = new Baz();
+		baz1.bar = bar1;
+		baz1.val = 2;
+		assertEquals(1, bazDao.create(baz1));
+		Baz baz2 = new Baz();
+		baz2.bar = bar2;
+		baz2.val = 2;
+		assertEquals(1, bazDao.create(baz2));
+		Baz baz3 = new Baz();
+		baz3.bar = bar3;
+		baz3.val = 1;
+		assertEquals(1, bazDao.create(baz3));
+
+		Bing bing1 = new Bing();
+		bing1.baz = baz1;
+		assertEquals(1, bingDao.create(bing1));
+		Bing bing2 = new Bing();
+		bing2.baz = baz2;
+		assertEquals(1, bingDao.create(bing2));
+		Bing bing3 = new Bing();
+		bing3.baz = baz3;
+		assertEquals(1, bingDao.create(bing3));
+
+		QueryBuilder<Bar, Integer> barQb = barDao.queryBuilder();
+		barQb.orderBy(Bar.VAL_FIELD, true);
+
+		QueryBuilder<Baz, Integer> bazQb = bazDao.queryBuilder();
+		assertEquals(3, bazQb.query().size());
+		bazQb.orderBy(Baz.VAL_FIELD, true);
+		bazQb.join(barQb);
+
+		List<Bing> results = bingDao.queryBuilder().join(bazQb).query();
+		assertEquals(3, results.size());
+		assertEquals(bing3.id, results.get(0).id);
+		assertEquals(baz3.id, results.get(0).baz.id);
+		bazDao.refresh(results.get(0).baz);
+		assertEquals(bar3.id, results.get(0).baz.bar.id);
+		bazDao.refresh(results.get(1).baz);
+		assertEquals(bar1.id, results.get(1).baz.bar.id);
+		bazDao.refresh(results.get(2).baz);
+		assertEquals(bar2.id, results.get(2).baz.bar.id);
+	}
+
 	/* ======================================================================================================== */
 
 	private static class LimitInline extends BaseDatabaseType {
