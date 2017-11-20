@@ -71,7 +71,8 @@ public class EnumStringType extends BaseEnumType {
 		Map<String, Enum<?>> enumStringMap = new HashMap<String, Enum<?>>();
 		Enum<?>[] constants = (Enum<?>[]) fieldType.getType().getEnumConstants();
 		if (constants == null) {
-			throw new SQLException("Field " + fieldType + " improperly configured as type " + this);
+			throw new SQLException(
+					"Could not get enum-constants for field " + fieldType + ", not an enum or maybe generic?");
 		}
 		for (Enum<?> enumVal : constants) {
 			enumStringMap.put(getEnumName(enumVal), enumVal);

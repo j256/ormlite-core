@@ -112,6 +112,11 @@ public class EnumStringTypeTest extends BaseTypeTest {
 		new EnumStringType(SqlType.STRING, new Class[0]);
 	}
 
+	@Test(expected = SQLException.class)
+	public void testGenericEnum() throws Exception {
+		createDao(InvalidGenericEnumField.class, true);
+	}
+
 	/* ================================================================================ */
 
 	@DatabaseTable(tableName = TABLE_NAME)
@@ -135,6 +140,12 @@ public class EnumStringTypeTest extends BaseTypeTest {
 	protected static class NotEnum {
 		@DatabaseField(dataType = DataType.ENUM_STRING)
 		String notEnum;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class InvalidGenericEnumField<T extends Enum<T>> {
+		@DatabaseField(columnName = ENUM_COLUMN)
+		T ourEnum;
 	}
 
 	private enum OurEnum {

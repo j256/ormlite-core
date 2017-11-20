@@ -1,9 +1,10 @@
 5.1: ?/??/2016
 	* CORE: Added @DatabaseField(fullColumnDefinition) for fully describing a column as opposed to columnDefinition.
 	* CORE: Added synchronized keyword to BaseDaoImpl.createOrUpdate() and createIfNotExists().
+	* CORE: Added date integer date support.  Thanks to noordawod.
 	* CORE: Fixed but with get table name not using TableInfo.  Thanks to 0xabadea.
 	* CORE: Fixed handling of field capitalization which was screwing up Turkish fields.  Thanks to folkyatina.
-	* CORE: Added date integer date support.  Thanks to noordawod. 
+	* CORE: Fixed handling of joined queries with orders and group bys.  Thanks much to p91paul.
 	* JDBC: Fixed problem with UUID native type not using the correct persister.  Thanks to Bo98.
 
 5.0: 6/27/2016
