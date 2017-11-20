@@ -45,11 +45,6 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 		this.parent = parent;
 	}
 
-	/**
-	 * Add an element to the collection. This will also add the item to the associated database table.
-	 * 
-	 * @return Returns true if the item did not already exist in the collection otherwise false.
-	 */
 	@Override
 	public boolean add(T data) {
 		try {
