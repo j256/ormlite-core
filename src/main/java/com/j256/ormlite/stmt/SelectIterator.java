@@ -204,6 +204,19 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 		}
 	}
 
+	@Override
+	public T moveAbsolute(int position) throws SQLException {
+		if (closed) {
+			return null;
+		}
+		first = false;
+		if (results.moveAbsolute(position)) {
+			return getCurrent();
+		} else {
+			return null;
+		}
+	}
+
 	/**
 	 * Removes the last object returned by next() by calling delete on the dao associated with the object.
 	 * 

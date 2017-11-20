@@ -68,6 +68,17 @@ public interface CloseableIterator<T> extends Iterator<T>, Closeable {
 	 * 
 	 * @param offset
 	 *            Number of rows to move. Positive moves forward in the results. Negative moves backwards.
+	 * @return The object at the new position or null of none.
 	 */
 	public T moveRelative(int offset) throws SQLException;
+
+	/**
+	 * Move an absolute position in the list and return that result or null if none. This may not be supported depending
+	 * on your database.
+	 * 
+	 * @param position
+	 *            Row number in the result list to move to.
+	 * @return The object at the new position or null of none.
+	 */
+	public T moveAbsolute(int position) throws SQLException;
 }
