@@ -2527,6 +2527,42 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(FOO_TABLE_NAME, dao.getTableName());
 	}
 
+	@Test
+	public void testIteratorBug() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+
+		Foo foo1 = new Foo();
+		foo1.val = 1389183;
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		foo2.val = 133214433;
+		assertEquals(1, dao.create(foo2));
+		Foo foo3 = new Foo();
+		foo3.val = 3232;
+		assertEquals(1, dao.create(foo3));
+
+		assertEquals(3, dao.countOf());
+
+		// This is working fine.
+		CloseableIterator<Foo> iterator = dao.queryBuilder().iterator();
+		try {
+			assertEquals(foo1, iterator.first());
+			assertEquals(foo2, iterator.nextThrow());
+			assertEquals(foo3, iterator.nextThrow());
+		} finally {
+			iterator.closeQuietly();
+		}
+
+		iterator = dao.queryBuilder().iterator();
+		try {
+			// skip over foo1
+			assertEquals(foo2, iterator.moveAbsolute(2));
+			assertEquals(foo3, iterator.nextThrow());
+		} finally {
+			iterator.closeQuietly();
+		}
+	}
+
 	/* ============================================================================================== */
 
 	private String buildFooQueryAllString(Dao<Foo, Object> fooDao) throws SQLException {

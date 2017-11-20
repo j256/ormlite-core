@@ -2,6 +2,7 @@
 	* CORE: Added @DatabaseField(fullColumnDefinition) for fully describing a column as opposed to columnDefinition.
 	* CORE: Added synchronized keyword to BaseDaoImpl.createOrUpdate() and createIfNotExists().
 	* CORE: Added date integer date support.  Thanks to noordawod.
+	* CORE: Added support for CloseableIterator.moveAbsolute(...).  Thanks to renaudcerrato.
 	* CORE: Fixed but with get table name not using TableInfo.  Thanks to 0xabadea.
 	* CORE: Fixed handling of field capitalization which was screwing up Turkish fields.  Thanks to folkyatina.
 	* CORE: Fixed handling of joined queries with orders and group bys.  Thanks much to p91paul.

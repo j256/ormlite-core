@@ -25,7 +25,8 @@ public interface CloseableIterator<T> extends Iterator<T>, Closeable {
 
 	/**
 	 * Return the underlying database results object if any. May return null. This should not be used unless you know
-	 * what you are doing.
+	 * what you are doing. For example, if you shift the cursor in the raw-results, this could cause problems when you
+	 * come back here to go the next result.
 	 */
 	public DatabaseResults getRawResults();
 
@@ -68,6 +69,19 @@ public interface CloseableIterator<T> extends Iterator<T>, Closeable {
 	 * 
 	 * @param offset
 	 *            Number of rows to move. Positive moves forward in the results. Negative moves backwards.
+	 * @return The object at the new position or null of none.
 	 */
 	public T moveRelative(int offset) throws SQLException;
+
+	/**
+	 * Move to an absolute position in the list and return that result or null if none. This may not be supported
+	 * depending on your database or depending on the type of iterator and where you are moving. For example, in
+	 * JDBC-land, often the iterator created can only move forward and will throw an exception if you attempt to move to
+	 * an absolute position behind the current position.
+	 * 
+	 * @param position
+	 *            Row number in the result list to move to.
+	 * @return The object at the new position or null of none.
+	 */
+	public T moveAbsolute(int position) throws SQLException;
 }

@@ -17,8 +17,8 @@ import com.j256.ormlite.support.DatabaseResults;
  * 
  * @author graywatson
  */
-public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> implements CloseableWrappedIterable<T>,
-		Serializable {
+public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID>
+		implements CloseableWrappedIterable<T>, Serializable {
 
 	private static final long serialVersionUID = -2523335606983317721L;
 
@@ -74,10 +74,12 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 		// we have to wrap the iterator since we are returning the List's iterator
 		return new CloseableIterator<T>() {
 			private int offset = -1;
+
 			@Override
 			public boolean hasNext() {
 				return (offset + 1 < results.size());
 			}
+
 			@Override
 			public T first() {
 				offset = 0;
@@ -87,12 +89,14 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 					return results.get(0);
 				}
 			}
+
 			@Override
 			public T next() {
 				offset++;
 				// this should throw if OOB
 				return results.get(offset);
 			}
+
 			@Override
 			public T nextThrow() {
 				offset++;
@@ -102,6 +106,7 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 					return results.get(offset);
 				}
 			}
+
 			@Override
 			public T current() {
 				if (offset < 0) {
@@ -113,6 +118,7 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 					return results.get(offset);
 				}
 			}
+
 			@Override
 			public T previous() {
 				offset--;
@@ -122,6 +128,7 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 					return results.get(offset);
 				}
 			}
+
 			@Override
 			public T moveRelative(int relativeOffset) {
 				offset += relativeOffset;
@@ -131,6 +138,17 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 					return results.get(offset);
 				}
 			}
+
+			@Override
+			public T moveAbsolute(int position) {
+				offset = position;
+				if (offset < 0 || offset >= results.size()) {
+					return null;
+				} else {
+					return results.get(offset);
+				}
+			}
+
 			@Override
 			public void remove() {
 				if (offset < 0) {
@@ -150,19 +168,23 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID> 
 					}
 				}
 			}
+
 			@Override
 			public void close() {
 				// noop
 			}
+
 			@Override
 			public void closeQuietly() {
 				// noop
 			}
+
 			@Override
 			public DatabaseResults getRawResults() {
 				// no results object
 				return null;
 			}
+
 			@Override
 			public void moveToNext() {
 				offset++;
