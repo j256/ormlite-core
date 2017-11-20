@@ -523,9 +523,9 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	@Override
 	protected void appendStatementEnd(StringBuilder sb, List<ArgumentHolder> argList) throws SQLException {
 		// 'group by' comes before 'order by'
-		maybeAppendGroupBys(sb);
+		maybeAppendGroupBys(sb, true);
 		maybeAppendHaving(sb);
-		maybeAppendOrderBys(sb, argList);
+		maybeAppendOrderBys(sb, argList, true);
 		if (!databaseType.isLimitAfterSelect()) {
 			appendLimit(sb);
 		}
@@ -762,10 +762,6 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		}
 	}
 
-	private void maybeAppendGroupBys(StringBuilder sb) {
-		maybeAppendGroupBys(sb, true);
-	}
-
 	private boolean maybeAppendGroupBys(StringBuilder sb, boolean first) {
 		if (groupByList != null && !groupByList.isEmpty()) {
 			appendGroupBys(sb, first);
@@ -799,10 +795,6 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			}
 		}
 		sb.append(' ');
-	}
-
-	private void maybeAppendOrderBys(StringBuilder sb, List<ArgumentHolder> argList) {
-		maybeAppendOrderBys(sb, argList, true);
 	}
 
 	private boolean maybeAppendOrderBys(StringBuilder sb, List<ArgumentHolder> argList, boolean first) {
