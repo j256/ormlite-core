@@ -140,6 +140,20 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 	}
 
 	@Test
+	public void testAlias() throws Exception {
+		QueryBuilder<Foo, Integer> qb = new QueryBuilder<Foo, Integer>(databaseType, baseFooTableInfo, null);
+		String alias = "zing";
+		qb.setAlias(alias);
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT * FROM ");
+		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
+		sb.append(" AS ");
+		databaseType.appendEscapedEntityName(sb, alias);
+		sb.append(' ');
+		assertEquals(sb.toString(), qb.prepareStatementString());
+	}
+
+	@Test
 	public void testOrderByDesc() throws Exception {
 		QueryBuilder<Foo, Integer> qb = new QueryBuilder<Foo, Integer>(databaseType, baseFooTableInfo, null);
 		String field = Foo.VAL_COLUMN_NAME;
@@ -151,6 +165,20 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		databaseType.appendEscapedEntityName(sb, field);
 		sb.append(" DESC ");
 		assertEquals(sb.toString(), qb.prepareStatementString());
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testOrderByForeignCollection() throws Exception {
+		Dao<Project, Integer> dao = createDao(Project.class, false);
+		QueryBuilder<Project, Integer> qb = dao.queryBuilder();
+		qb.orderBy("categories", false);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testGroupByForeignCollection() throws Exception {
+		Dao<Project, Integer> dao = createDao(Project.class, false);
+		QueryBuilder<Project, Integer> qb = dao.queryBuilder();
+		qb.groupBy("categories");
 	}
 
 	@Test
@@ -470,7 +498,11 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(1, fooDao.create(foo3));
 
 		QueryBuilder<Bar, String> barQb = barDao.queryBuilder();
+		assertEquals(0, barQb.getSelectColumnCount());
+		assertEquals("", barQb.getSelectColumnsAsString());
 		barQb.selectColumns(Bar.ID_FIELD);
+		assertEquals(1, barQb.getSelectColumnCount());
+		assertEquals('[' + Bar.ID_FIELD + ']', barQb.getSelectColumnsAsString());
 		barQb.where().eq(Bar.VAL_FIELD, val);
 
 		QueryBuilder<Foo, String> fooQb = fooDao.queryBuilder();
@@ -481,6 +513,8 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		fooQb.where().in(Foo.ID_COLUMN_NAME, idList).and().in(Foo.VAL_COLUMN_NAME, barQb);
 
 		fooQb.setCountOf(true);
+		assertEquals(1, fooQb.getSelectColumnCount());
+		assertEquals("COUNT(*)", fooQb.getSelectColumnsAsString());
 		assertEquals(2, fooDao.countOf(fooQb.prepare()));
 	}
 

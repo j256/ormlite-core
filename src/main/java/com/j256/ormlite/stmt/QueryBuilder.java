@@ -154,7 +154,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	public QueryBuilder<T, ID> groupBy(String columnName) {
 		FieldType fieldType = verifyColumnName(columnName);
 		if (fieldType.isForeignCollection()) {
-			throw new IllegalArgumentException("Can't groupBy foreign colletion field: " + columnName);
+			throw new IllegalArgumentException("Can't groupBy foreign collection field: " + columnName);
 		}
 		addGroupBy(ColumnNameOrRawSql.withColumnName(columnName));
 		return this;
@@ -175,7 +175,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	public QueryBuilder<T, ID> orderBy(String columnName, boolean ascending) {
 		FieldType fieldType = verifyColumnName(columnName);
 		if (fieldType.isForeignCollection()) {
-			throw new IllegalArgumentException("Can't orderBy foreign colletion field: " + columnName);
+			throw new IllegalArgumentException("Can't orderBy foreign collection field: " + columnName);
 		}
 		addOrderBy(new OrderBy(columnName, ascending));
 		return this;
@@ -770,9 +770,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		// NOTE: this doesn't seem to work with some database types but we will check for sub-queries anyway
 		if (joinList != null) {
 			for (JoinInfo joinInfo : joinList) {
-				if (joinInfo.queryBuilder != null) {
-					first = joinInfo.queryBuilder.maybeAppendGroupBys(sb, first);
-				}
+				first = joinInfo.queryBuilder.maybeAppendGroupBys(sb, first);
 			}
 		}
 		return first;
@@ -805,9 +803,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		// NOTE: this doesn't seem to work with some database types but we will check for sub-queries anyway
 		if (joinList != null) {
 			for (JoinInfo joinInfo : joinList) {
-				if (joinInfo.queryBuilder != null) {
-					first = joinInfo.queryBuilder.maybeAppendOrderBys(sb, argList, first);
-				}
+				first = joinInfo.queryBuilder.maybeAppendOrderBys(sb, argList, first);
 			}
 		}
 		return first;
