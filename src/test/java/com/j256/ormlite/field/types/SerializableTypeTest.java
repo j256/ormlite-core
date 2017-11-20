@@ -44,8 +44,8 @@ public class SerializableTypeTest extends BaseTypeTest {
 		LocalSerializable foo = new LocalSerializable();
 		foo.serializable = val;
 		assertEquals(1, dao.create(foo));
-		testType(dao, foo, clazz, val, sqlArg, sqlArg, valStr, DataType.SERIALIZABLE, SERIALIZABLE_COLUMN, false,
-				false, true, false, true, true, false, false);
+		testType(dao, foo, clazz, val, sqlArg, sqlArg, valStr, DataType.SERIALIZABLE, SERIALIZABLE_COLUMN, false, false,
+				true, false, true, true, false, false);
 	}
 
 	@Test
@@ -68,14 +68,12 @@ public class SerializableTypeTest extends BaseTypeTest {
 		DatabaseConnection conn = connectionSource.getReadOnlyConnection(TABLE_NAME);
 		CompiledStatement stmt = null;
 		try {
-			stmt =
-					conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
-							DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
+			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
+					DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
 			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
-			FieldType fieldType =
-					FieldType.createFieldType(connectionSource, TABLE_NAME,
-							clazz.getDeclaredField(SERIALIZABLE_COLUMN), clazz);
+			FieldType fieldType = FieldType.createFieldType(connectionSource, TABLE_NAME,
+					clazz.getDeclaredField(SERIALIZABLE_COLUMN), clazz);
 			assertNull(DataType.SERIALIZABLE.getDataPersister().resultToJava(fieldType, results,
 					results.findColumn(SERIALIZABLE_COLUMN)));
 		} finally {
@@ -96,14 +94,12 @@ public class SerializableTypeTest extends BaseTypeTest {
 		DatabaseConnection conn = connectionSource.getReadOnlyConnection(TABLE_NAME);
 		CompiledStatement stmt = null;
 		try {
-			stmt =
-					conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
-							DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
+			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
+					DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
 			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
-			FieldType fieldType =
-					FieldType.createFieldType(connectionSource, TABLE_NAME,
-							LocalSerializable.class.getDeclaredField(SERIALIZABLE_COLUMN), LocalSerializable.class);
+			FieldType fieldType = FieldType.createFieldType(connectionSource, TABLE_NAME,
+					LocalSerializable.class.getDeclaredField(SERIALIZABLE_COLUMN), LocalSerializable.class);
 			DataType.SERIALIZABLE.getDataPersister().resultToJava(fieldType, results, results.findColumn(BYTE_COLUMN));
 		} finally {
 			if (stmt != null) {
@@ -164,7 +160,7 @@ public class SerializableTypeTest extends BaseTypeTest {
 		createDao(SerializedCollection.class, false);
 	}
 
-	/* ------------------------------------------------------------------------------------ */
+	/* ============================================================================================ */
 
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalSerializable {
@@ -184,6 +180,7 @@ public class SerializableTypeTest extends BaseTypeTest {
 		public int id;
 		@DatabaseField(dataType = DataType.SERIALIZABLE, columnName = SERIALIZED_FIELD_NAME)
 		public SerializedField serialized;
+
 		public SerializedUpdate() {
 		}
 	}
@@ -191,6 +188,7 @@ public class SerializableTypeTest extends BaseTypeTest {
 	protected static class SerializedField implements Serializable {
 		private static final long serialVersionUID = 4531762180289888888L;
 		String foo;
+
 		public SerializedField(String foo) {
 			this.foo = foo;
 		}
@@ -202,6 +200,7 @@ public class SerializableTypeTest extends BaseTypeTest {
 		public int id;
 		@DatabaseField(columnName = SERIALIZED_FIELD_NAME, persisterClass = LocalSerializableType.class)
 		public Collection<String> serialized;
+
 		public SerializedCollection() {
 		}
 	}

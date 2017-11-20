@@ -55,6 +55,8 @@ public class StringBytesTypeTest extends BaseTypeTest {
 		new StringBytesType(SqlType.BYTE_ARRAY, new Class[0]);
 	}
 
+	/* ============================================================================================ */
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalStringBytes {
 		@DatabaseField(columnName = STRING_COLUMN, dataType = DataType.STRING_BYTES)

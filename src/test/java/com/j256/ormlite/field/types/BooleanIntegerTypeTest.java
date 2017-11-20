@@ -26,6 +26,8 @@ public class BooleanIntegerTypeTest extends BaseTypeTest {
 				true, false, false, true, false);
 	}
 
+	/* ============================================================================================ */
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalBooleanInteger {
 		@DatabaseField(columnName = BOOLEAN_COLUMN, dataType = DataType.BOOLEAN_INTEGER)

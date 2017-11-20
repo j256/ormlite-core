@@ -48,6 +48,8 @@ public class ShortObjectTypeTest extends BaseTypeTest {
 		assertEquals(Short.valueOf((short) 2), foo.version);
 	}
 
+	/* ============================================================================================ */
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalShortObj {
 		@DatabaseField(columnName = SHORT_COLUMN)

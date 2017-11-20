@@ -40,8 +40,8 @@ public class EnumIntegerTypeTest extends BaseTypeTest {
 		Dao<LocalEnumInt, Object> dao = createDao(clazz, true);
 		LocalEnumInt foo = new LocalEnumInt();
 		assertEquals(1, dao.create(foo));
-		testType(dao, foo, clazz, null, null, null, null, DataType.ENUM_INTEGER, ENUM_COLUMN, false, true, false,
-				false, false, false, true, false);
+		testType(dao, foo, clazz, null, null, null, null, DataType.ENUM_INTEGER, ENUM_COLUMN, false, true, false, false,
+				false, false, true, false);
 	}
 
 	@Test
@@ -55,15 +55,12 @@ public class EnumIntegerTypeTest extends BaseTypeTest {
 		DatabaseConnection conn = connectionSource.getReadOnlyConnection(FOO_TABLE_NAME);
 		CompiledStatement stmt = null;
 		try {
-			stmt =
-					conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
-							DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
+			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
+					DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
 			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
-			assertEquals(
-					val.ordinal(),
-					DataType.ENUM_INTEGER.getDataPersister().resultToJava(null, results,
-							results.findColumn(ENUM_COLUMN)));
+			assertEquals(val.ordinal(), DataType.ENUM_INTEGER.getDataPersister().resultToJava(null, results,
+					results.findColumn(ENUM_COLUMN)));
 		} finally {
 			if (stmt != null) {
 				stmt.close();
@@ -87,6 +84,8 @@ public class EnumIntegerTypeTest extends BaseTypeTest {
 		new EnumIntegerType(SqlType.INTEGER, new Class[0]);
 	}
 
+	/* ============================================================================================ */
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalEnumInt {
 		@DatabaseField(columnName = ENUM_COLUMN, dataType = DataType.ENUM_INTEGER)
@@ -95,7 +94,7 @@ public class EnumIntegerTypeTest extends BaseTypeTest {
 
 	private enum OurEnum {
 		FIRST,
-		SECOND, ;
+		SECOND,;
 	}
 
 	protected static class EnumDefault {

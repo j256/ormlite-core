@@ -32,9 +32,11 @@ public class DoubleObjectTypeTest extends BaseTypeTest {
 		Dao<LocalDoubleObj, Object> dao = createDao(clazz, true);
 		LocalDoubleObj foo = new LocalDoubleObj();
 		assertEquals(1, dao.create(foo));
-		testType(dao, foo, clazz, null, null, null, null, DataType.DOUBLE_OBJ, DOUBLE_COLUMN, false, true, false,
-				false, false, false, true, false);
+		testType(dao, foo, clazz, null, null, null, null, DataType.DOUBLE_OBJ, DOUBLE_COLUMN, false, true, false, false,
+				false, false, true, false);
 	}
+
+	/* ============================================================================================ */
 
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalDoubleObj {

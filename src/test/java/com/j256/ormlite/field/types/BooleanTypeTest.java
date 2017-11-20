@@ -47,6 +47,8 @@ public class BooleanTypeTest extends BaseTypeTest {
 		new BooleanType(SqlType.BOOLEAN, new Class[0]);
 	}
 
+	/* ============================================================================================ */
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalBoolean {
 		@DatabaseField(columnName = BOOLEAN_COLUMN)

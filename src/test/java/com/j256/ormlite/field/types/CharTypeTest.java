@@ -40,6 +40,8 @@ public class CharTypeTest extends BaseTypeTest {
 		new CharType(SqlType.CHAR, new Class[0]);
 	}
 
+	/* ============================================================================================ */
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalChar {
 		@DatabaseField(columnName = CHAR_COLUMN)
@@ -52,6 +54,7 @@ public class CharTypeTest extends BaseTypeTest {
 		int id;
 		@DatabaseField(columnName = CHAR_COLUMN)
 		char charField;
+
 		PostgresCharNull() {
 		}
 	}

@@ -46,6 +46,8 @@ public class ShortTypeTest extends BaseTypeTest {
 		new ShortType(SqlType.SHORT, new Class[0]);
 	}
 
+	/* ============================================================================================ */
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalShort {
 		@DatabaseField(columnName = SHORT_COLUMN)

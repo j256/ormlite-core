@@ -53,6 +53,8 @@ public class IntTypeTest extends BaseTypeTest {
 		new IntType(SqlType.INTEGER, new Class[0]);
 	}
 
+	/* ============================================================================================ */
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalIntObj {
 		@DatabaseField(columnName = INT_COLUMN)

@@ -36,6 +36,8 @@ public class IntegerObjectTypeTest extends BaseTypeTest {
 				false, false, true, true);
 	}
 
+	/* ============================================================================================ */
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalIntObj {
 		@DatabaseField(columnName = INT_COLUMN)

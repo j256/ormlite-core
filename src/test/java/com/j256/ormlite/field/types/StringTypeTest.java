@@ -26,6 +26,8 @@ public class StringTypeTest extends BaseTypeTest {
 				false, false, true, false);
 	}
 
+	/* ============================================================================================ */
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalString {
 		@DatabaseField(columnName = STRING_COLUMN)

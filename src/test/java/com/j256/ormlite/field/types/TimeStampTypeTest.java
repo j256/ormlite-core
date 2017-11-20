@@ -54,9 +54,8 @@ public class TimeStampTypeTest extends BaseTypeTest {
 
 	@Test(expected = SQLException.class)
 	public void testTimeStampParseInvalid() throws Exception {
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, TABLE_NAME,
-						LocalTimeStamp.class.getDeclaredField(TIME_STAMP_COLUMN), LocalTimeStamp.class);
+		FieldType fieldType = FieldType.createFieldType(connectionSource, TABLE_NAME,
+				LocalTimeStamp.class.getDeclaredField(TIME_STAMP_COLUMN), LocalTimeStamp.class);
 		dataType.getDataPersister().parseDefaultString(fieldType, "not valid date string");
 	}
 
@@ -111,7 +110,7 @@ public class TimeStampTypeTest extends BaseTypeTest {
 		assertTrue(result.timestamp.before(after));
 	}
 
-	/* =================================================================================== */
+	/* ============================================================================================ */
 
 	@DatabaseTable
 	protected static class InvalidDate {
@@ -149,12 +148,15 @@ public class TimeStampTypeTest extends BaseTypeTest {
 	protected static class LocalCurrentTimeStampType extends TimeStampType {
 		private static final LocalCurrentTimeStampType singleton = new LocalCurrentTimeStampType();
 		private String defaultStr;
+
 		public LocalCurrentTimeStampType() {
 			super(SqlType.DATE, new Class<?>[] { java.sql.Timestamp.class });
 		}
+
 		public static LocalCurrentTimeStampType getSingleton() {
 			return singleton;
 		}
+
 		@Override
 		public boolean isEscapedDefaultValue() {
 			if ("CURRENT_TIMESTAMP()".equals(defaultStr)) {
@@ -163,6 +165,7 @@ public class TimeStampTypeTest extends BaseTypeTest {
 				return super.isEscapedDefaultValue();
 			}
 		}
+
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 			this.defaultStr = defaultStr;

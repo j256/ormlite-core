@@ -90,6 +90,8 @@ public class BigIntegerTypeTest extends BaseTypeTest {
 		new BigIntegerType(SqlType.BIG_DECIMAL, new Class[0]);
 	}
 
+	/* ============================================================================================ */
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalBigInteger {
 		@DatabaseField(columnName = BIGINTEGER_COLUMN)

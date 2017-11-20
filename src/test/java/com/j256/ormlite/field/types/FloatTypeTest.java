@@ -46,6 +46,8 @@ public class FloatTypeTest extends BaseTypeTest {
 		new FloatType(SqlType.FLOAT, new Class[0]);
 	}
 
+	/* ============================================================================================ */
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalFloat {
 		@DatabaseField(columnName = FLOAT_COLUMN)

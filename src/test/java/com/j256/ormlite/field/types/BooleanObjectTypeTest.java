@@ -36,6 +36,8 @@ public class BooleanObjectTypeTest extends BaseTypeTest {
 				false, false, false, true, false);
 	}
 
+	/* ============================================================================================ */
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalBooleanObj {
 		@DatabaseField(columnName = BOOLEAN_COLUMN)

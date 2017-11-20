@@ -57,9 +57,8 @@ public class DateStringTypeTest extends BaseTypeTest {
 
 	@Test(expected = SQLException.class)
 	public void testDateStringParseInvalid() throws Exception {
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, TABLE_NAME,
-						LocalDateString.class.getDeclaredField(DATE_COLUMN), LocalDateString.class);
+		FieldType fieldType = FieldType.createFieldType(connectionSource, TABLE_NAME,
+				LocalDateString.class.getDeclaredField(DATE_COLUMN), LocalDateString.class);
 		DataType.DATE_STRING.getDataPersister().parseDefaultString(fieldType, "not valid date string");
 	}
 
@@ -73,9 +72,8 @@ public class DateStringTypeTest extends BaseTypeTest {
 		DatabaseConnection conn = connectionSource.getReadOnlyConnection(FOO_TABLE_NAME);
 		CompiledStatement stmt = null;
 		try {
-			stmt =
-					conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
-							DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
+			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
+					DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
 			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
 			int colNum = results.findColumn(STRING_COLUMN);
@@ -159,6 +157,8 @@ public class DateStringTypeTest extends BaseTypeTest {
 		assertEquals(result.stuff, newVersionDate.stuff);
 		assertTrue(newVersionDate.date.after(date));
 	}
+
+	/* ============================================================================================ */
 
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalDateString {

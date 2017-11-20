@@ -85,6 +85,8 @@ public class UuidTypeTest extends BaseTypeTest {
 		new UuidType(SqlType.STRING, new Class[0]);
 	}
 
+	/* ============================================================================================ */
+
 	private static final String UUID_FILE_NAME = "uuid";
 	private static final String UUID_TABLE_NAME = "uuidandstring";
 
@@ -100,6 +102,7 @@ public class UuidTypeTest extends BaseTypeTest {
 		int id;
 		@DatabaseField(columnName = UUID_FILE_NAME)
 		UUID uuid;
+
 		UuidClass() {
 		}
 	}
@@ -110,6 +113,7 @@ public class UuidTypeTest extends BaseTypeTest {
 		int id;
 		@DatabaseField(columnName = UUID_FILE_NAME)
 		String uuid;
+
 		UuidString() {
 		}
 	}
@@ -119,6 +123,7 @@ public class UuidTypeTest extends BaseTypeTest {
 		int id;
 		@DatabaseField(defaultValue = DEFAULT_VALUE)
 		UUID uuid;
+
 		UuidClassDefault() {
 		}
 	}
@@ -128,6 +133,7 @@ public class UuidTypeTest extends BaseTypeTest {
 		int id;
 		@DatabaseField(defaultValue = "xxx")
 		UUID uuid;
+
 		UuidClassInvalidDefault() {
 		}
 	}

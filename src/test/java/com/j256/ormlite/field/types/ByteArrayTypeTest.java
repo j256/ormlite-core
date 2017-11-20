@@ -56,6 +56,8 @@ public class ByteArrayTypeTest extends BaseTypeTest {
 		new ByteArrayType(SqlType.BYTE_ARRAY, new Class[0]);
 	}
 
+	/* ============================================================================================ */
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalByteArray {
 		@DatabaseField(columnName = BYTE_COLUMN, dataType = DataType.BYTE_ARRAY)

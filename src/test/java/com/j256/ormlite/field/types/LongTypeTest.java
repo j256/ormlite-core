@@ -52,6 +52,8 @@ public class LongTypeTest extends BaseTypeTest {
 		new LongType(SqlType.LONG, new Class[0]);
 	}
 
+	/* ============================================================================================ */
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalLong {
 		@DatabaseField(columnName = LONG_COLUMN)

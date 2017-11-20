@@ -71,6 +71,8 @@ public class BigDecimalTypeTest extends BaseTypeTest {
 		assertEquals(new BigDecimal(DEFAULT_VALUE), foo.bigDecimal);
 	}
 
+	/* ============================================================================================ */
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalBigDecimal {
 		@DatabaseField(columnName = BIGDECIMAL_COLUMN)

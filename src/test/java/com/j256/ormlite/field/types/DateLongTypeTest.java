@@ -44,9 +44,8 @@ public class DateLongTypeTest extends BaseTypeTest {
 
 	@Test(expected = SQLException.class)
 	public void testDateLongParseInvalid() throws Exception {
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, TABLE_NAME,
-						LocalDateLong.class.getDeclaredField(DATE_COLUMN), LocalDateLong.class);
+		FieldType fieldType = FieldType.createFieldType(connectionSource, TABLE_NAME,
+				LocalDateLong.class.getDeclaredField(DATE_COLUMN), LocalDateLong.class);
 		DataType.DATE_LONG.getDataPersister().parseDefaultString(fieldType, "not valid long number");
 	}
 
@@ -54,6 +53,8 @@ public class DateLongTypeTest extends BaseTypeTest {
 	public void testCoverage() {
 		new DateLongType(SqlType.LONG, new Class[0]);
 	}
+
+	/* ============================================================================================ */
 
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalDateLong {

@@ -48,6 +48,8 @@ public class LongObjectTypeTest extends BaseTypeTest {
 		assertEquals(Long.valueOf(2), foo.version);
 	}
 
+	/* ============================================================================================ */
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalLongObj {
 		@DatabaseField(columnName = LONG_COLUMN)

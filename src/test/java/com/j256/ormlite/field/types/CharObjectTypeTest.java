@@ -43,6 +43,8 @@ public class CharObjectTypeTest extends BaseTypeTest {
 		createDao(InvalidDefault.class, true);
 	}
 
+	/* ============================================================================================ */
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalCharObj {
 		@DatabaseField(columnName = CHAR_COLUMN)

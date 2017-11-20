@@ -74,6 +74,8 @@ public class DateIntegerTypeTest extends BaseTypeTest {
 		new DateIntegerType(SqlType.INTEGER, new Class[0]);
 	}
 
+	/* ============================================================================================ */
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalDateInteger {
 		@DatabaseField(columnName = DATE_COLUMN, dataType = DataType.DATE_INTEGER)

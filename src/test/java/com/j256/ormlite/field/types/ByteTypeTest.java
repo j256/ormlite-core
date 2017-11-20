@@ -46,6 +46,8 @@ public class ByteTypeTest extends BaseTypeTest {
 		new ByteType(SqlType.BYTE, new Class[0]);
 	}
 
+	/* ============================================================================================ */
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalByte {
 		@DatabaseField(columnName = BYTE_COLUMN)

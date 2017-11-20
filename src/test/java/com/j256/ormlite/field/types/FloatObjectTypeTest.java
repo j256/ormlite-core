@@ -36,6 +36,8 @@ public class FloatObjectTypeTest extends BaseTypeTest {
 				false, false, true, false);
 	}
 
+	/* ============================================================================================ */
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalFloatObj {
 		@DatabaseField(columnName = FLOAT_COLUMN)

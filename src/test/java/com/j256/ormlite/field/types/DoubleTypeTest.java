@@ -46,6 +46,8 @@ public class DoubleTypeTest extends BaseTypeTest {
 		new DoubleType(SqlType.DOUBLE, new Class[0]);
 	}
 
+	/* ============================================================================================ */
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalDouble {
 		@DatabaseField(columnName = DOUBLE_COLUMN)

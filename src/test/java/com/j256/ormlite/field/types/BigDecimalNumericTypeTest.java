@@ -65,6 +65,8 @@ public class BigDecimalNumericTypeTest extends BaseTypeTest {
 		new BigDecimalNumericType(SqlType.BIG_DECIMAL, new Class[0]);
 	}
 
+	/* ============================================================================================ */
+
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalBigDecimalNumeric {
 		@DatabaseField(columnName = BIGDECIMAL_COLUMN, dataType = DataType.BIG_DECIMAL_NUMERIC)
