@@ -243,6 +243,27 @@ public class TableUtils {
 		return clearTable(connectionSource, tableConfig.getTableName());
 	}
 
+
+	/**
+	 * Create table indexes if they do not already exist. This is not supported by all databases.
+	 */
+	public static <T> void createIndexIfNotExists(ConnectionSource connectionSource, Class<T> dataClass)
+			throws SQLException {
+		Dao<T, ?> dao = DaoManager.createDao(connectionSource, dataClass);
+		doCreateIndex(dao, true);
+	}
+
+	private static <T, ID> void doCreateIndex(Dao<T, ID> dao, boolean ifNotExists) throws SQLException {
+		if (dao instanceof BaseDaoImpl<?, ?>) {
+			addCreateIndexStatements(dao.getConnectionSource().getDatabaseType(), ((BaseDaoImpl<?, ?>) dao).getTableInfo(), new ArrayList<String>(), ifNotExists, false);
+			addCreateIndexStatements(dao.getConnectionSource().getDatabaseType(), ((BaseDaoImpl<?, ?>) dao).getTableInfo(), new ArrayList<String>(), ifNotExists, true);
+		} else {
+			TableInfo<T, ID> tableInfo = new TableInfo<T, ID>(dao.getConnectionSource(), null, dao.getDataClass());
+			addCreateIndexStatements(dao.getConnectionSource().getDatabaseType(), tableInfo, new ArrayList<String>(), ifNotExists, false);
+			addCreateIndexStatements(dao.getConnectionSource().getDatabaseType(), tableInfo, new ArrayList<String>(), ifNotExists, true);
+		}
+	}
+
 	private static <T> int clearTable(ConnectionSource connectionSource, String tableName) throws SQLException {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		StringBuilder sb = new StringBuilder(48);
