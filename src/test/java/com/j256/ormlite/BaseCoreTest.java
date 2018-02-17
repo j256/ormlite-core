@@ -18,7 +18,7 @@ import com.j256.ormlite.table.TableUtils;
 
 public abstract class BaseCoreTest {
 
-	public static final String FOO_TABLE_NAME = "foo"; 
+	public static final String FOO_TABLE_NAME = "foo";
 
 	protected DatabaseType databaseType;
 	protected WrappedConnectionSource connectionSource;
@@ -40,6 +40,7 @@ public abstract class BaseCoreTest {
 		public LimitAfterSelectDatabaseType() throws SQLException {
 			super();
 		}
+
 		@Override
 		public boolean isLimitAfterSelect() {
 			return true;
@@ -60,18 +61,22 @@ public abstract class BaseCoreTest {
 		public int equal;
 		@DatabaseField(columnName = STRING_COLUMN_NAME)
 		public String stringField;
+
 		public Foo() {
 		}
+
 		@Override
 		public String toString() {
 			return "Foo:" + id;
 		}
+
 		@Override
 		public boolean equals(Object other) {
 			if (other == null || other.getClass() != getClass())
 				return false;
 			return id == ((Foo) other).id;
 		}
+
 		@Override
 		public int hashCode() {
 			return id;
@@ -84,6 +89,7 @@ public abstract class BaseCoreTest {
 		public int id;
 		@DatabaseField(foreign = true, columnName = FOO_COLUMN_NAME)
 		public Foo foo;
+
 		public Foreign() {
 		}
 	}

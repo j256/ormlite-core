@@ -8,10 +8,12 @@ import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.sql.SQLException;
 import java.sql.Savepoint;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -341,6 +343,31 @@ public class TransactionManagerTest extends BaseCoreTest {
 		List<Foo> results = dao.queryForAll();
 		assertNotNull(results);
 		assertEquals(0, results.size());
+	}
+
+	@Test
+	public void testConnectionLeakCreateList() throws Exception {
+		final Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		final List<Foo> list = new ArrayList<Foo>();
+		Foo foo1 = new Foo();
+		foo1.val = 1;
+		list.add(foo1);
+		Foo foo2 = new Foo();
+		foo2.val = 2;
+		list.add(foo2);
+		Foo foo3 = new Foo();
+		foo3.val = 3;
+		list.add(foo3);
+		assertTrue(connectionSource.isOkay());
+		assertEquals(0, connectionSource.getConnectionCount());
+		TransactionManager.callInTransaction(connectionSource, new Callable<Boolean>() {
+			@Override
+			public Boolean call() throws Exception {
+				return dao.create(list) >= 0;
+			}
+		});
+		assertTrue(connectionSource.isOkay());
+		assertEquals(0, connectionSource.getConnectionCount());
 	}
 
 	private void testTransactionManager(TransactionManager mgr, final Exception exception,

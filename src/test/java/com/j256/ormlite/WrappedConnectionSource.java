@@ -19,7 +19,7 @@ import com.j256.ormlite.support.DatabaseConnection;
  */
 public class WrappedConnectionSource implements ConnectionSource {
 
-	private AtomicInteger getReleaseCount = new AtomicInteger(0);
+	private AtomicInteger connectionCount = new AtomicInteger(0);
 	protected boolean nextForceOkay = false;
 	protected ConnectionSource cs;
 	private final Map<DatabaseConnection, WrappedConnection> wrappedConnections =
@@ -32,7 +32,7 @@ public class WrappedConnectionSource implements ConnectionSource {
 	@Override
 	public DatabaseConnection getReadOnlyConnection(String tableName) throws SQLException {
 		DatabaseConnection connection = cs.getReadOnlyConnection(tableName);
-		getReleaseCount.incrementAndGet();
+		connectionCount.incrementAndGet();
 		WrappedConnection wrapped = wrapConnection(connection);
 		wrappedConnections.put(wrapped.getDatabaseConnectionProxy(), wrapped);
 		// System.err.println("got wrapped " + wrapped.hashCode() + ", count = " + getReleaseCount);
@@ -43,7 +43,7 @@ public class WrappedConnectionSource implements ConnectionSource {
 	@Override
 	public DatabaseConnection getReadWriteConnection(String tableName) throws SQLException {
 		DatabaseConnection connection = cs.getReadWriteConnection(tableName);
-		getReleaseCount.incrementAndGet();
+		connectionCount.incrementAndGet();
 		WrappedConnection wrapped = wrapConnection(connection);
 		connection = wrapped.getDatabaseConnectionProxy();
 		wrappedConnections.put(connection, wrapped);
@@ -65,7 +65,7 @@ public class WrappedConnectionSource implements ConnectionSource {
 			throw new SQLException("Wrapped connection was not okay when released");
 		}
 		cs.releaseConnection(wrapped.getDatabaseConnectionProxy());
-		getReleaseCount.decrementAndGet();
+		connectionCount.decrementAndGet();
 		// System.err.println("released wrapped " + wrapped.hashCode() + ", count = " + getReleaseCount);
 	}
 
@@ -102,8 +102,8 @@ public class WrappedConnectionSource implements ConnectionSource {
 		if (nextForceOkay) {
 			nextForceOkay = false;
 			return true;
-		} else if (getReleaseCount.get() != 0) {
-			System.err.println("isOkay, get/release count is " + getReleaseCount.get());
+		} else if (connectionCount.get() != 0) {
+			System.err.println("isOkay, get/release count is " + connectionCount.get());
 			for (WrappedConnection wrapped : wrappedConnections.values()) {
 				System.err.println("  still have wrapped " + wrapped.hashCode());
 			}
@@ -156,5 +156,9 @@ public class WrappedConnectionSource implements ConnectionSource {
 		} catch (Exception e) {
 			throw new RuntimeException("Could not set database type", e);
 		}
+	}
+
+	public int getConnectionCount() {
+		return connectionCount.get();
 	}
 }
