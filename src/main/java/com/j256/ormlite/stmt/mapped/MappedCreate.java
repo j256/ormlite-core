@@ -90,8 +90,9 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 			try {
 				rowC = databaseConnection.insert(statement, args, argFieldTypes, keyHolder);
 			} catch (SQLException e) {
-				logger.debug("insert data with statement '{}' and {} args, threw exception: {}", statement,
-						args.length, e);
+				// NOTE: don't log full exception here
+				logger.debug("insert data with statement '{}' and {} args, threw exception: {}", statement, args.length,
+						e);
 				if (args.length > 0) {
 					// need to do the (Object) cast to force args to be a single object
 					logger.trace("insert arguments: {}", (Object) args);
@@ -211,7 +212,8 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 		} else if (databaseType.isIdSequenceNeeded() && databaseType.isSelectSequenceBeforeInsert()) {
 			// we need to query for the next value from the sequence and the idField is inserted afterwards
 			return true;
-		} else if (fieldType.isGeneratedId() && !fieldType.isSelfGeneratedId() && !fieldType.isAllowGeneratedIdInsert()) {
+		} else if (fieldType.isGeneratedId() && !fieldType.isSelfGeneratedId()
+				&& !fieldType.isAllowGeneratedIdInsert()) {
 			// skip generated-id fields because they will be auto-inserted
 			return false;
 		} else {
