@@ -67,7 +67,15 @@ public class TransactionManager {
 	private static final String SAVE_POINT_PREFIX = "ORMLITE";
 
 	private ConnectionSource connectionSource;
-	private static AtomicInteger savePointCounter = new AtomicInteger();
+	private static final AtomicInteger savePointCounter = new AtomicInteger();
+	/** used to track our transaction level so we know when we are in the commit-able outer transaction */
+	private static final ThreadLocal<TransactionLevel> transactionLevelThreadLocal =
+			new ThreadLocal<TransactionLevel>() {
+				@Override
+				protected TransactionLevel initialValue() {
+					return new TransactionLevel();
+				}
+			};
 
 	/**
 	 * Constructor for Spring type wiring if you are using the set methods.
@@ -203,6 +211,7 @@ public class TransactionManager {
 			final DatabaseType databaseType, final Callable<T> callable) throws SQLException {
 
 		boolean restoreAutoCommit = false;
+		TransactionLevel levelCount = transactionLevelThreadLocal.get();
 		try {
 			boolean hasSavePoint = false;
 			Savepoint savePoint = null;
@@ -212,24 +221,33 @@ public class TransactionManager {
 						// disable auto-commit mode if supported and enabled at start
 						connection.setAutoCommit(false);
 						restoreAutoCommit = true;
-						logger.debug("had to set auto-commit to false");
+						logger.trace("had to set auto-commit to false");
 					}
 				}
 				savePoint = connection.setSavePoint(SAVE_POINT_PREFIX + savePointCounter.incrementAndGet());
 				if (savePoint == null) {
-					logger.debug("started savePoint transaction");
+					logger.trace("started savePoint transaction");
 				} else {
-					logger.debug("started savePoint transaction {}", savePoint.getSavepointName());
+					logger.trace("started savePoint transaction {}", savePoint.getSavepointName());
 				}
 				hasSavePoint = true;
 			}
 			try {
+				levelCount.incrementAndGet();
 				T result = callable.call();
 				if (hasSavePoint) {
-					commit(connection, savePoint);
+					// only commit if we have reached the end of our transaction stack
+					if (levelCount.decrementAndGet() <= 0) {
+						commit(connection, savePoint);
+						transactionLevelThreadLocal.remove();
+					} else {
+						// otherwise we just release the savepoint
+						release(connection, savePoint);
+					}
 				}
 				return result;
 			} catch (SQLException e) {
+				levelCount.decrementAndGet();
 				if (hasSavePoint) {
 					try {
 						rollBack(connection, savePoint);
@@ -240,6 +258,7 @@ public class TransactionManager {
 				}
 				throw e;
 			} catch (Exception e) {
+				levelCount.decrementAndGet();
 				if (hasSavePoint) {
 					try {
 						rollBack(connection, savePoint);
@@ -254,7 +273,7 @@ public class TransactionManager {
 			if (restoreAutoCommit) {
 				// try to restore if we are in auto-commit mode
 				connection.setAutoCommit(true);
-				logger.debug("restored auto-commit to true");
+				logger.trace("restored auto-commit to true");
 			}
 		}
 	}
@@ -267,9 +286,19 @@ public class TransactionManager {
 		String name = (savePoint == null ? null : savePoint.getSavepointName());
 		connection.commit(savePoint);
 		if (name == null) {
-			logger.debug("committed savePoint transaction");
+			logger.trace("committed savePoint transaction");
 		} else {
-			logger.debug("committed savePoint transaction {}", name);
+			logger.trace("committed savePoint transaction {}", name);
+		}
+	}
+
+	private static void release(DatabaseConnection connection, Savepoint savePoint) throws SQLException {
+		String name = (savePoint == null ? null : savePoint.getSavepointName());
+		connection.releaseSavePoint(savePoint);
+		if (name == null) {
+			logger.trace("released savePoint transaction");
+		} else {
+			logger.trace("released savePoint transaction {}", name);
 		}
 	}
 
@@ -277,9 +306,24 @@ public class TransactionManager {
 		String name = (savePoint == null ? null : savePoint.getSavepointName());
 		connection.rollback(savePoint);
 		if (name == null) {
-			logger.debug("rolled back savePoint transaction");
+			logger.trace("rolled back savePoint transaction");
 		} else {
-			logger.debug("rolled back savePoint transaction {}", name);
+			logger.trace("rolled back savePoint transaction {}", name);
+		}
+	}
+
+	/**
+	 * Mutable int for tracking transaction level.
+	 */
+	private static class TransactionLevel {
+		int counter;
+
+		int incrementAndGet() {
+			return ++counter;
+		}
+
+		int decrementAndGet() {
+			return --counter;
 		}
 	}
 }

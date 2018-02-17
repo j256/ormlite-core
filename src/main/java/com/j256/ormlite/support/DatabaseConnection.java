@@ -64,6 +64,14 @@ public interface DatabaseConnection extends Closeable {
 	public void rollback(Savepoint savePoint) throws SQLException;
 
 	/**
+	 * Release a savepoint when we reach the end of a transaction but not the most outer one.
+	 * 
+	 * @param savePoint
+	 *            That was returned by setSavePoint previously or null if none.
+	 */
+	public void releaseSavePoint(Savepoint savePoint) throws SQLException;
+
+	/**
 	 * Execute a statement directly on the connection.
 	 * 
 	 * @param resultFlags
