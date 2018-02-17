@@ -2281,6 +2281,25 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(FOO_TABLE_NAME, dao.getTableName());
 	}
 
+	@Test
+	public void testIntegerFieldNull() throws Exception {
+		Dao<DateAutoCreate, Integer> dao = createDao(DateAutoCreate.class, true);
+		DateAutoCreate foo = new DateAutoCreate();
+
+		Date before = new Date();
+		assertEquals(1, dao.create(foo));
+		Date after = new Date();
+
+		DateAutoCreate result = dao.queryForId(foo.id);
+		assertNotNull(result);
+
+		assertNotNull(result.createdDate);
+		// !after the before time means <= before
+		assertTrue(!before.after(result.createdDate));
+		// !before the after time means >= after
+		assertTrue(!after.before(result.createdDate));
+	}
+
 	/* ============================================================================================== */
 
 	private static class ResultsMapper implements DatabaseResultsMapper<Foo> {
@@ -2615,6 +2634,17 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	}
 
 	protected static class ForeignSubClass extends ForeignIntId {
+	}
+
+	protected static class DateAutoCreate {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL", readOnly = true,
+				canBeNull = false)
+		Date createdDate;
+
+		public DateAutoCreate() {
+		}
 	}
 
 	public static class FooFactory implements ObjectFactory<Foo> {
