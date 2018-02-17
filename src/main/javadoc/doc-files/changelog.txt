@@ -6,6 +6,7 @@
 	* CORE: Fixed but with get table name not using TableInfo.  Thanks to 0xabadea.
 	* CORE: Fixed handling of field capitalization which was screwing up Turkish fields.  Thanks to folkyatina.
 	* CORE: Fixed handling of joined queries with orders and group bys.  Thanks much to p91paul.
+	* CORE: Fixed bad bug with committing of inner transactions innappropriately.  Thanks much to maroux.
 	* JDBC: Fixed problem with UUID native type not using the correct persister.  Thanks to Bo98.
 
 5.0: 6/27/2016

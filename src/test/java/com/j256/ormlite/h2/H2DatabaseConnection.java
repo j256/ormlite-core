@@ -72,6 +72,11 @@ public class H2DatabaseConnection implements DatabaseConnection {
 	}
 
 	@Override
+	public void releaseSavePoint(Savepoint savePoint) throws SQLException {
+		connection.releaseSavepoint(savePoint);
+	}
+
+	@Override
 	public int executeStatement(String statementStr, int resultFlags) throws SQLException {
 		if (resultFlags == DatabaseConnection.DEFAULT_RESULT_FLAGS) {
 			resultFlags = ResultSet.TYPE_FORWARD_ONLY;
@@ -222,18 +227,19 @@ public class H2DatabaseConnection implements DatabaseConnection {
 			throws SQLException {
 		int typeVal = metaData.getColumnType(columnIndex);
 		switch (typeVal) {
-			case Types.BIGINT :
-			case Types.DECIMAL :
-			case Types.NUMERIC :
+			case Types.BIGINT:
+			case Types.DECIMAL:
+			case Types.NUMERIC:
 				return (Number) resultSet.getLong(columnIndex);
-			case Types.INTEGER :
+			case Types.INTEGER:
 				return (Number) resultSet.getInt(columnIndex);
-			default :
+			default:
 				throw new SQLException("Unknown DataType for typeVal " + typeVal + " in column " + columnIndex);
 		}
 	}
 
-	private void statementSetArgs(PreparedStatement stmt, Object[] args, FieldType[] argFieldTypes) throws SQLException {
+	private void statementSetArgs(PreparedStatement stmt, Object[] args, FieldType[] argFieldTypes)
+			throws SQLException {
 		for (int i = 0; i < args.length; i++) {
 			Object arg = args[i];
 			int typeVal = H2CompiledStatement.sqlTypeToJdbcInt(argFieldTypes[i].getSqlType());

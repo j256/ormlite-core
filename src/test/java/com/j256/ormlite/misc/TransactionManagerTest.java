@@ -370,6 +370,38 @@ public class TransactionManagerTest extends BaseCoreTest {
 		assertEquals(0, connectionSource.getConnectionCount());
 	}
 
+	@Test
+	public void testNestedTransactions() throws Exception {
+		final Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		final Foo foo = new Foo();
+		assertEquals(1, dao.create(foo));
+
+		Foo result = dao.queryForId(foo.id);
+		assertNotNull(result);
+
+		try {
+			TransactionManager.callInTransaction(connectionSource, new Callable<Void>() {
+				@Override
+				public Void call() throws Exception {
+					TransactionManager.callInTransaction(connectionSource, new Callable<Void>() {
+						@Override
+						public Void call() throws Exception {
+							dao.delete(foo);
+							return null;
+						}
+					});
+					throw new SQLException();
+				}
+			});
+			fail("Should have thrown");
+		} catch (SQLException se) {
+			// expected
+		}
+
+		result = dao.queryForId(foo.id);
+		assertNotNull(result);
+	}
+
 	private void testTransactionManager(TransactionManager mgr, final Exception exception,
 			final Dao<Foo, Integer> fooDao) throws Exception {
 		final Foo foo1 = new Foo();

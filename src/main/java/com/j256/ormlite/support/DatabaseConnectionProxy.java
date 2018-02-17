@@ -77,6 +77,13 @@ public class DatabaseConnectionProxy implements DatabaseConnection {
 	}
 
 	@Override
+	public void releaseSavePoint(Savepoint savePoint) throws SQLException {
+		if (proxy != null) {
+			proxy.releaseSavePoint(savePoint);
+		}
+	}
+
+	@Override
 	public int executeStatement(String statementStr, int resultFlags) throws SQLException {
 		if (proxy == null) {
 			return 0;
