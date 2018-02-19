@@ -24,7 +24,7 @@ public class DatabaseTableConfig<T> {
 
 	private static JavaxPersistenceConfigurer javaxPersistenceConfigurer;
 
-	// optional database type
+	// optional database type, may be null
 	private DatabaseType databaseType;
 	private Class<T> dataClass;
 	private String tableName;
@@ -68,6 +68,7 @@ public class DatabaseTableConfig<T> {
 
 	private DatabaseTableConfig(DatabaseType databaseType, Class<T> dataClass, String tableName,
 			FieldType[] fieldTypes) {
+		// NOTE: databaseType may be null
 		this.databaseType = databaseType;
 		this.dataClass = dataClass;
 		this.tableName = tableName;
