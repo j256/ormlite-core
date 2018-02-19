@@ -188,6 +188,29 @@ public interface DatabaseType {
 	public String upCaseEntityName(String entityName);
 
 	/**
+	 * Returns the uppercase version of a string for generating and matching fields and methods. This is here in case
+	 * someone wants to override the behavior of the default locale because of localization issues around
+	 * capitalization.
+	 * 
+	 * @param string
+	 *            String to up case.
+	 * @param forceEnglish
+	 *            Set to true to use the English locale otherwise false to use the default local one.
+	 */
+	public String upCaseString(String string, boolean forceEnglish);
+
+	/**
+	 * Returns the lowercase version of a string for generating and fields and methods. This is here in case someone
+	 * wants to override the behavior of the default locale because of localization issues around capitalization.
+	 * 
+	 * @param string
+	 *            String to down case.
+	 * @param forceEnglish
+	 *            Set to true to use the English locale otherwise false to use the default local one.
+	 */
+	public String downCaseString(String string, boolean forceEnglish);
+
+	/**
 	 * Returns true if nested savePoints are supported, otherwise false.
 	 */
 	public boolean isNestedSavePointsSupported();

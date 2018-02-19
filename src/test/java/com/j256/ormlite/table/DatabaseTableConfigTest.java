@@ -84,7 +84,7 @@ public class DatabaseTableConfigTest {
 				false, null, false, null, false, null, false, null, null, false,
 				DatabaseFieldConfig.NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED, 0));
 		DatabaseTableConfig<DatabaseTableAnno> dbTableConf =
-				new DatabaseTableConfig<DatabaseTableAnno>(DatabaseTableAnno.class, fieldConfigs);
+				new DatabaseTableConfig<DatabaseTableAnno>(databaseType, DatabaseTableAnno.class, fieldConfigs);
 		assertEquals(DatabaseTableAnno.class, dbTableConf.getDataClass());
 		assertEquals(TABLE_NAME, dbTableConf.getTableName());
 		dbTableConf.extractFieldTypes(connectionSource);
@@ -193,7 +193,7 @@ public class DatabaseTableConfigTest {
 		fieldConfigs.add(new DatabaseFieldConfig("stuff"));
 
 		DatabaseTableConfig<SubWithoutAnno> dbTableConf =
-				new DatabaseTableConfig<SubWithoutAnno>(SubWithoutAnno.class, fieldConfigs);
+				new DatabaseTableConfig<SubWithoutAnno>(databaseType, SubWithoutAnno.class, fieldConfigs);
 		dbTableConf.extractFieldTypes(connectionSource);
 
 		FieldType[] fieldTypes = dbTableConf.getFieldTypes(databaseType);

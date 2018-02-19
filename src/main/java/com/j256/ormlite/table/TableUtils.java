@@ -222,8 +222,8 @@ public class TableUtils {
 	 * </p>
 	 */
 	public static <T> int clearTable(ConnectionSource connectionSource, Class<T> dataClass) throws SQLException {
-		String tableName = DatabaseTableConfig.extractTableName(dataClass);
 		DatabaseType databaseType = connectionSource.getDatabaseType();
+		String tableName = DatabaseTableConfig.extractTableName(databaseType, dataClass);
 		if (databaseType.isEntityNamesMustBeUpCase()) {
 			tableName = databaseType.upCaseEntityName(tableName);
 		}

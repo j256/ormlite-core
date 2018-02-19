@@ -1358,7 +1358,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 				fieldConfigs.add(fieldConfig);
 			}
 		}
-		DatabaseTableConfig<Account> tableConfig = new DatabaseTableConfig<Account>(Account.class, fieldConfigs);
+		DatabaseTableConfig<Account> tableConfig = new DatabaseTableConfig<Account>(databaseType, Account.class, fieldConfigs);
 		Dao<Account, Integer> accountDao = createDao(tableConfig, true);
 		return accountDao;
 	}

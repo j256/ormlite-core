@@ -58,7 +58,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	@Override
 	public void appendColumnArg(String tableName, StringBuilder sb, FieldType fieldType, List<String> additionalArgs,
 			List<String> statementsBefore, List<String> statementsAfter, List<String> queriesAfter)
-					throws SQLException {
+			throws SQLException {
 		appendEscapedEntityName(sb, fieldType.getColumnName());
 		sb.append(' ');
 		DataPersister dataPersister = fieldType.getDataPersister();
@@ -502,12 +502,38 @@ public abstract class BaseDatabaseType implements DatabaseType {
 
 	@Override
 	public String upCaseEntityName(String entityName) {
+		return upCaseString(entityName, true);
+	}
+
+	@Override
+	public String upCaseString(String string, boolean forceEnglish) {
+		if (forceEnglish) {
+			/*
+			 * We are forcing the ENGLISH locale because of language capitalization issues. In a couple of languages,
+			 * the capital version of many letters is a letter that is incompatible with many SQL libraries. For
+			 * example, in Turkish (Locale.forLanguageTag("tr-TR")), "i".toUpperCase() returns "İ" which is a dotted
+			 * uppercase i.
+			 */
+			return string.toUpperCase(Locale.ENGLISH);
+		} else {
+			/*
+			 * When we are trying to match certain methods, sometimes we need to check for the default locale case and
+			 * then check for the English variant.
+			 */
+			return string.toUpperCase();
+		}
+	}
+
+	@Override
+	public String downCaseString(String string, boolean forceEnglish) {
 		/*
-		 * We are forcing the ENGLISH locale because of locale capitalization issues. In a couple of languages, the
-		 * capital version of many letters is a letter that is incompatible with many SQL libraries. For example, in
-		 * Turkish (Locale.forLanguageTag("tr-TR")), "i".toUpperCase() returns "İ" which is a dotted uppercase i.
+		 * See upCaseString(...) for details about the complexities here.
 		 */
-		return entityName.toUpperCase(Locale.ENGLISH);
+		if (forceEnglish) {
+			return string.toLowerCase(Locale.ENGLISH);
+		} else {
+			return string.toLowerCase();
+		}
 	}
 
 	@Override

@@ -239,8 +239,8 @@ public class FieldType {
 			throw new IllegalArgumentException("Id field " + field.getName() + " cannot also be a foreign object");
 		}
 		if (fieldConfig.isUseGetSet()) {
-			this.fieldGetMethod = DatabaseFieldConfig.findGetMethod(field, true);
-			this.fieldSetMethod = DatabaseFieldConfig.findSetMethod(field, true);
+			this.fieldGetMethod = DatabaseFieldConfig.findGetMethod(field, databaseType, true);
+			this.fieldSetMethod = DatabaseFieldConfig.findSetMethod(field, databaseType, true);
 		} else {
 			if (!field.isAccessible()) {
 				try {

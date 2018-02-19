@@ -31,7 +31,7 @@ public class DaoManagerTest extends BaseCoreTest {
 	public void testCreateClass() throws Exception {
 		testClass(Foo.class);
 		DatabaseTableConfig<Foo> tableConfig =
-				new DatabaseTableConfig<Foo>(Foo.class, Arrays.asList(new DatabaseFieldConfig("id", null,
+				new DatabaseTableConfig<Foo>(databaseType, Foo.class, Arrays.asList(new DatabaseFieldConfig("id", null,
 						DataType.UNKNOWN, null, 0, false, false, false, null, false, null, false, null, false, null,
 						false, null, null, false, DatabaseFieldConfig.NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED, 0)));
 		testTable(tableConfig);
@@ -75,7 +75,7 @@ public class DaoManagerTest extends BaseCoreTest {
 	@Test
 	public void testRegisterDaoTable() throws Exception {
 		DatabaseTableConfig<Bar> tableConfig =
-				new DatabaseTableConfig<Bar>(Bar.class, Arrays.asList(new DatabaseFieldConfig("foo", null,
+				new DatabaseTableConfig<Bar>(databaseType, Bar.class, Arrays.asList(new DatabaseFieldConfig("foo", null,
 						DataType.UNKNOWN, null, 0, false, false, false, null, false, null, false, null, false, null,
 						false, null, null, false, DatabaseFieldConfig.NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED, 0)));
 		Dao<Bar, Void> dao = DaoManager.lookupDao(connectionSource, tableConfig);
@@ -93,15 +93,15 @@ public class DaoManagerTest extends BaseCoreTest {
 
 	@Test
 	public void testLookupTableDaoUnknown() {
-		assertNull(DaoManager.lookupDao(connectionSource, new DatabaseTableConfig<DaoManagerTest>(DaoManagerTest.class,
-				new ArrayList<DatabaseFieldConfig>())));
+		assertNull(DaoManager.lookupDao(connectionSource, new DatabaseTableConfig<DaoManagerTest>(databaseType,
+				DaoManagerTest.class, new ArrayList<DatabaseFieldConfig>())));
 	}
 
 	@Test
 	public void testDaoClassBaseDaoImpl() throws Exception {
 		testClass(Bar.class);
 		DatabaseTableConfig<Bar> tableConfig =
-				new DatabaseTableConfig<Bar>(Bar.class, Arrays.asList(new DatabaseFieldConfig("foo", null,
+				new DatabaseTableConfig<Bar>(databaseType, Bar.class, Arrays.asList(new DatabaseFieldConfig("foo", null,
 						DataType.UNKNOWN, null, 0, false, false, false, null, false, null, false, null, false, null,
 						false, null, null, false, DatabaseFieldConfig.NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED, 0)));
 		testTable(tableConfig);
@@ -111,7 +111,7 @@ public class DaoManagerTest extends BaseCoreTest {
 	public void testDaoClassDifferentDao() throws Exception {
 		testClass(Baz.class);
 		DatabaseTableConfig<Baz> tableConfig =
-				new DatabaseTableConfig<Baz>(Baz.class, Arrays.asList(new DatabaseFieldConfig("foo", null,
+				new DatabaseTableConfig<Baz>(databaseType, Baz.class, Arrays.asList(new DatabaseFieldConfig("foo", null,
 						DataType.UNKNOWN, null, 0, false, false, false, null, false, null, false, null, false, null,
 						false, null, null, false, DatabaseFieldConfig.NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED, 0)));
 		testTable(tableConfig);
@@ -126,8 +126,8 @@ public class DaoManagerTest extends BaseCoreTest {
 			// expected
 		}
 		DatabaseTableConfig<PrivateConstructor> tableConfig =
-				new DatabaseTableConfig<PrivateConstructor>(PrivateConstructor.class,
-						Arrays.asList(new DatabaseFieldConfig("foo", null, DataType.UNKNOWN, null, 0, false, false,
+				new DatabaseTableConfig<PrivateConstructor>(databaseType,
+						PrivateConstructor.class, Arrays.asList(new DatabaseFieldConfig("foo", null, DataType.UNKNOWN, null, 0, false, false,
 								false, null, false, null, false, null, false, null, false, null, null, false,
 								DatabaseField.DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL, 0)));
 		try {
@@ -147,7 +147,7 @@ public class DaoManagerTest extends BaseCoreTest {
 			// expected
 		}
 		DatabaseTableConfig<ConstructorFail> tableConfig =
-				new DatabaseTableConfig<ConstructorFail>(ConstructorFail.class, Arrays.asList(new DatabaseFieldConfig(
+				new DatabaseTableConfig<ConstructorFail>(databaseType, ConstructorFail.class, Arrays.asList(new DatabaseFieldConfig(
 						"foo", null, DataType.UNKNOWN, null, 0, false, false, false, null, false, null, false, null,
 						false, null, false, null, null, false, 0, 0)));
 		try {
@@ -162,7 +162,7 @@ public class DaoManagerTest extends BaseCoreTest {
 	public void testDaoClassGenericDao() throws Exception {
 		testClass(GenericBar.class);
 		DatabaseTableConfig<GenericBar> tableConfig =
-				new DatabaseTableConfig<GenericBar>(GenericBar.class, Arrays.asList(new DatabaseFieldConfig("foo",
+				new DatabaseTableConfig<GenericBar>(databaseType, GenericBar.class, Arrays.asList(new DatabaseFieldConfig("foo",
 						null, DataType.UNKNOWN, null, 0, false, false, false, null, false, null, false, null, false,
 						null, false, null, null, false,
 						DatabaseFieldConfig.NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED, 0)));
@@ -173,7 +173,7 @@ public class DaoManagerTest extends BaseCoreTest {
 	public void testDaoClassGenericDaoWithId() throws Exception {
 		testClass(GenericBaz.class);
 		DatabaseTableConfig<GenericBaz> tableConfig =
-				new DatabaseTableConfig<GenericBaz>(GenericBaz.class, Arrays.asList(new DatabaseFieldConfig("foo",
+				new DatabaseTableConfig<GenericBaz>(databaseType, GenericBaz.class, Arrays.asList(new DatabaseFieldConfig("foo",
 						null, DataType.UNKNOWN, null, 0, false, false, false, null, false, null, false, null, false,
 						null, false, null, null, false,
 						DatabaseFieldConfig.NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED, 0)));
