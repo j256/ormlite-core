@@ -193,7 +193,7 @@ public interface DatabaseType {
 	 * capitalization.
 	 * 
 	 * @param string
-	 *            String to capitalize.
+	 *            String to up case.
 	 * @param forceEnglish
 	 *            Set to true to use the English locale otherwise false to use the default local one.
 	 */
@@ -204,7 +204,7 @@ public interface DatabaseType {
 	 * wants to override the behavior of the default locale because of localization issues around capitalization.
 	 * 
 	 * @param string
-	 *            String to capitalize.
+	 *            String to down case.
 	 * @param forceEnglish
 	 *            Set to true to use the English locale otherwise false to use the default local one.
 	 */
