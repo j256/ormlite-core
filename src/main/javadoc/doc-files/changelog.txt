@@ -1,4 +1,4 @@
-5.1: ?/??/2016
+5.1: 2/18/2019
 	* CORE: Added @DatabaseField(fullColumnDefinition) for fully describing a column as opposed to columnDefinition.
 	* CORE: Added synchronized keyword to BaseDaoImpl.createOrUpdate() and createIfNotExists().
 	* CORE: Added integer date support.  Thanks to noordawod.
@@ -6,8 +6,9 @@
 	* CORE: Fixed but with get table name not using TableInfo.  Thanks to 0xabadea.
 	* CORE: Fixed handling of field capitalization which was screwing up Turkish fields.  Thanks to folkyatina.
 	* CORE: Fixed handling of joined queries with orders and group bys.  Thanks much to p91paul.
-	* CORE: Fixed bad bug with committing of inner transactions innappropriately.  Thanks much to maroux.
+	* CORE: Fixed bad bug with committing of inner transactions inappropriately.  Thanks much to maroux.
 	* JDBC: Fixed problem with UUID native type not using the correct persister.  Thanks to Bo98.
+	* ANDROID: Added field sorting for more deterministic output.  Thanks to @jibidus.
 
 5.0: 6/27/2016
 	* ALL: ORMLite has dropped support for Java 5.  Java 6 is now required.

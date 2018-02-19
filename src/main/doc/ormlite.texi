@@ -4646,7 +4646,7 @@ You probably would not want to register the @code{MyDatePersister} above because
 persistence behavior for @emph{all} @code{Date} types.
 
 @c ----------------------------------------------------------------
-@node How to Upgrade, 5.0, Custom Persisters, Top
+@node How to Upgrade, 5.1, Custom Persisters, Top
 @chapter Upgrade From Old Versions
 
 @cindex upgrading from previous versions
@@ -4658,6 +4658,7 @@ However, sometimes when a new version is released, changes are made that require
 and rarely the on-disk database formats. 
 
 @menu
+* 5.1::                 Notes about version 5.1
 * 5.0::                 Notes about version 5.0
 * 4.49::                Notes about version 4.49
 * 4.45::                Upgrade to version 4.45
@@ -4673,7 +4674,27 @@ and rarely the on-disk database formats.
 @end menu
 
 @c ----------------------------------------------------------------
-@node 5.0, 4.49, How to Upgrade, How to Upgrade
+@node 5.1, 5.0, How to Upgrade, How to Upgrade
+@section Notes About Version 5.1
+
+In version 5.0, we moved to using English for the field and method name capitalization because of problems with how
+certain languages capitalize certain characters.  Some of the capitalization points were missed however and this
+version fixes a couple of additional spots where field and method capitalization was still using the default locale.
+
+If you want ORMLite to use the old way to keep compatibility, you should generate your connection source with a custom
+database type that uses your default locale by overriding the following methods:
+
+@itemize @bullet
+@item @code{upCaseEntityName(String)}
+@item @code{upCaseString(String, boolean)}
+@item @code{downCaseString(String, boolean)}
+@end itemize
+
+These methods should just return @code{string.toUpper()} or @code{string.toLower()} which will use your default
+locale.  You can also specify a specific locale if necessary.
+
+@c ----------------------------------------------------------------
+@node 5.0, 4.49, 5.1, How to Upgrade
 @section Notes About Version 5.0
 
 A number of things have changed and it's been a long time since the last published ORMLite release, so a .0 number
