@@ -3,7 +3,6 @@ package com.j256.ormlite.table;
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
@@ -29,6 +28,7 @@ public class TableInfo<T, ID> {
 
 	private static final FieldType[] NO_FOREIGN_COLLECTIONS = new FieldType[0];
 
+	private final DatabaseType databaseType;
 	private final BaseDaoImpl<T, ID> baseDaoImpl;
 	private final Class<T> dataClass;
 	private final String tableName;
@@ -67,6 +67,7 @@ public class TableInfo<T, ID> {
 	 */
 	public TableInfo(DatabaseType databaseType, BaseDaoImpl<T, ID> baseDaoImpl, DatabaseTableConfig<T> tableConfig)
 			throws SQLException {
+		this.databaseType = databaseType;
 		this.baseDaoImpl = baseDaoImpl;
 		this.dataClass = tableConfig.getDataClass();
 		this.tableName = tableConfig.getTableName();
@@ -137,11 +138,11 @@ public class TableInfo<T, ID> {
 			// build our alias map if we need it
 			Map<String, FieldType> map = new HashMap<String, FieldType>();
 			for (FieldType fieldType : fieldTypes) {
-				map.put(fieldType.getColumnName().toLowerCase(Locale.ENGLISH), fieldType);
+				map.put(databaseType.downCaseString(fieldType.getColumnName(), true), fieldType);
 			}
 			fieldNameMap = map;
 		}
-		FieldType fieldType = fieldNameMap.get(columnName.toLowerCase(Locale.ENGLISH));
+		FieldType fieldType = fieldNameMap.get(databaseType.downCaseString(columnName, true));
 		// if column name is found, return it
 		if (fieldType != null) {
 			return fieldType;

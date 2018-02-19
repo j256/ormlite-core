@@ -24,6 +24,8 @@ public class DatabaseTableConfig<T> {
 
 	private static JavaxPersistenceConfigurer javaxPersistenceConfigurer;
 
+	// optional database type
+	private DatabaseType databaseType;
 	private Class<T> dataClass;
 	private String tableName;
 	private List<DatabaseFieldConfig> fieldConfigs;
@@ -51,8 +53,8 @@ public class DatabaseTableConfig<T> {
 	 * Setup a table config associated with the dataClass and field configurations. The table-name will be extracted
 	 * from the dataClass.
 	 */
-	public DatabaseTableConfig(Class<T> dataClass, List<DatabaseFieldConfig> fieldConfigs) {
-		this(dataClass, extractTableName(dataClass), fieldConfigs);
+	public DatabaseTableConfig(DatabaseType databaseType, Class<T> dataClass, List<DatabaseFieldConfig> fieldConfigs) {
+		this(dataClass, extractTableName(databaseType, dataClass), fieldConfigs);
 	}
 
 	/**
@@ -64,7 +66,9 @@ public class DatabaseTableConfig<T> {
 		this.fieldConfigs = fieldConfigs;
 	}
 
-	private DatabaseTableConfig(Class<T> dataClass, String tableName, FieldType[] fieldTypes) {
+	private DatabaseTableConfig(DatabaseType databaseType, Class<T> dataClass, String tableName,
+			FieldType[] fieldTypes) {
+		this.databaseType = databaseType;
 		this.dataClass = dataClass;
 		this.tableName = tableName;
 		this.fieldTypes = fieldTypes;
@@ -78,8 +82,15 @@ public class DatabaseTableConfig<T> {
 			throw new IllegalStateException("dataClass was never set on " + getClass().getSimpleName());
 		}
 		if (tableName == null) {
-			tableName = extractTableName(dataClass);
+			tableName = extractTableName(databaseType, dataClass);
 		}
+	}
+
+	/**
+	 * Optional setting. This is here so we can control the lowercasing of the table name in the database-type.
+	 */
+	public void setDatabaseType(DatabaseType databaseType) {
+		this.databaseType = databaseType;
 	}
 
 	public Class<T> getDataClass() {
@@ -155,18 +166,19 @@ public class DatabaseTableConfig<T> {
 	 */
 	public static <T> DatabaseTableConfig<T> fromClass(ConnectionSource connectionSource, Class<T> clazz)
 			throws SQLException {
-		String tableName = extractTableName(clazz);
 		DatabaseType databaseType = connectionSource.getDatabaseType();
+		String tableName = extractTableName(databaseType, clazz);
 		if (databaseType.isEntityNamesMustBeUpCase()) {
 			tableName = databaseType.upCaseEntityName(tableName);
 		}
-		return new DatabaseTableConfig<T>(clazz, tableName, extractFieldTypes(connectionSource, clazz, tableName));
+		return new DatabaseTableConfig<T>(databaseType, clazz, tableName,
+				extractFieldTypes(connectionSource, clazz, tableName));
 	}
 
 	/**
 	 * Extract and return the table name for a class.
 	 */
-	public static <T> String extractTableName(Class<T> clazz) {
+	public static <T> String extractTableName(DatabaseType databaseType, Class<T> clazz) {
 		DatabaseTable databaseTable = clazz.getAnnotation(DatabaseTable.class);
 		String name = null;
 		if (databaseTable != null && databaseTable.tableName() != null && databaseTable.tableName().length() > 0) {
@@ -177,7 +189,12 @@ public class DatabaseTableConfig<T> {
 		}
 		if (name == null) {
 			// if the name isn't specified, it is the class name lowercased
-			name = clazz.getSimpleName().toLowerCase(Locale.ENGLISH);
+			if (databaseType == null) {
+				// database-type is optional so if it is not specified we just use english
+				name = clazz.getSimpleName().toLowerCase(Locale.ENGLISH);
+			} else {
+				name = databaseType.downCaseString(clazz.getSimpleName(), true);
+			}
 		}
 		return name;
 	}
@@ -210,13 +227,13 @@ public class DatabaseTableConfig<T> {
 		if (dataClass.getEnclosingClass() == null) {
 			throw new IllegalArgumentException("Can't find a no-arg constructor for " + dataClass);
 		} else {
-			throw new IllegalArgumentException("Can't find a no-arg constructor for " + dataClass
-					+ ".  Missing static on inner class?");
+			throw new IllegalArgumentException(
+					"Can't find a no-arg constructor for " + dataClass + ".  Missing static on inner class?");
 		}
 	}
 
-	private static <T> FieldType[] extractFieldTypes(ConnectionSource connectionSource, Class<T> clazz, String tableName)
-			throws SQLException {
+	private static <T> FieldType[] extractFieldTypes(ConnectionSource connectionSource, Class<T> clazz,
+			String tableName) throws SQLException {
 		List<FieldType> fieldTypes = new ArrayList<FieldType>();
 		for (Class<?> classWalk = clazz; classWalk != null; classWalk = classWalk.getSuperclass()) {
 			for (Field field : classWalk.getDeclaredFields()) {
@@ -227,8 +244,8 @@ public class DatabaseTableConfig<T> {
 			}
 		}
 		if (fieldTypes.isEmpty()) {
-			throw new IllegalArgumentException("No fields have a " + DatabaseField.class.getSimpleName()
-					+ " annotation in " + clazz);
+			throw new IllegalArgumentException(
+					"No fields have a " + DatabaseField.class.getSimpleName() + " annotation in " + clazz);
 		}
 		return fieldTypes.toArray(new FieldType[fieldTypes.size()]);
 	}

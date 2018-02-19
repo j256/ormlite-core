@@ -798,8 +798,8 @@ public class FieldTypeTest extends BaseCoreTest {
 		foreignFieldConfigs.add(fieldConfig);
 
 		DatabaseTableConfig<ForeignObjectNoAnnotations> foreignTableConfig =
-				new DatabaseTableConfig<ForeignObjectNoAnnotations>(ForeignObjectNoAnnotations.class,
-						foreignFieldConfigs);
+				new DatabaseTableConfig<ForeignObjectNoAnnotations>(databaseType,
+						ForeignObjectNoAnnotations.class, foreignFieldConfigs);
 		Dao<ForeignObjectNoAnnotations, Integer> foreignDao = createDao(foreignTableConfig, true);
 
 		ArrayList<DatabaseFieldConfig> parentFieldConfigs = new ArrayList<DatabaseFieldConfig>();
@@ -818,7 +818,7 @@ public class FieldTypeTest extends BaseCoreTest {
 		parentFieldConfigs.add(fieldConfig);
 
 		Dao<ObjectNoAnnotations, Integer> parentDao = createDao(
-				new DatabaseTableConfig<ObjectNoAnnotations>(ObjectNoAnnotations.class, parentFieldConfigs), true);
+				new DatabaseTableConfig<ObjectNoAnnotations>(databaseType, ObjectNoAnnotations.class, parentFieldConfigs), true);
 
 		ForeignObjectNoAnnotations foreign = new ForeignObjectNoAnnotations();
 		foreign.stuff = "hello";

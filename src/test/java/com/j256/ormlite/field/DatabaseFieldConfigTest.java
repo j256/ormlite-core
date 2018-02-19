@@ -295,37 +295,37 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 	@Test
 	public void testGetSetIs() throws Exception {
 		Field stuffField = BooleanGetSetIs.class.getDeclaredField("stuff");
-		DatabaseFieldConfig.findGetMethod(stuffField, true);
-		DatabaseFieldConfig.findSetMethod(stuffField, true);
+		DatabaseFieldConfig.findGetMethod(stuffField, databaseType, true);
+		DatabaseFieldConfig.findSetMethod(stuffField, databaseType, true);
 		Field boolField = BooleanGetSetIs.class.getDeclaredField("bool");
-		DatabaseFieldConfig.findGetMethod(boolField, true);
-		DatabaseFieldConfig.findSetMethod(boolField, true);
+		DatabaseFieldConfig.findGetMethod(boolField, databaseType, true);
+		DatabaseFieldConfig.findSetMethod(boolField, databaseType, true);
 	}
 
 	@Test
 	public void testGetSetIsErrors() throws Exception {
 		Field stuffField = BooleanGetSetIsButNoMethods.class.getDeclaredField("stuff");
 		try {
-			DatabaseFieldConfig.findGetMethod(stuffField, true);
+			DatabaseFieldConfig.findGetMethod(stuffField, databaseType, true);
 			fail("should have thrown");
 		} catch (IllegalArgumentException iae) {
 			// expected
 		}
 		try {
-			DatabaseFieldConfig.findSetMethod(stuffField, true);
+			DatabaseFieldConfig.findSetMethod(stuffField, databaseType, true);
 			fail("should have thrown");
 		} catch (IllegalArgumentException iae) {
 			// expected
 		}
 		Field boolField = BooleanGetSetIsButNoMethods.class.getDeclaredField("bool");
 		try {
-			DatabaseFieldConfig.findGetMethod(boolField, true);
+			DatabaseFieldConfig.findGetMethod(boolField, databaseType, true);
 			fail("should have thrown");
 		} catch (IllegalArgumentException iae) {
 			// expected
 		}
 		try {
-			DatabaseFieldConfig.findSetMethod(boolField, true);
+			DatabaseFieldConfig.findSetMethod(boolField, databaseType, true);
 			fail("should have thrown");
 		} catch (IllegalArgumentException iae) {
 			// expected

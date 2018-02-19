@@ -3,7 +3,6 @@ package com.j256.ormlite.field;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
-import java.util.Locale;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.types.VoidType;
@@ -544,16 +543,11 @@ public class DatabaseFieldConfig {
 	 * 
 	 * @return Get method or null (or throws IllegalArgumentException) if none found.
 	 */
-	public static Method findGetMethod(Field field, boolean throwExceptions) throws IllegalArgumentException {
-		Method fieldGetMethod;
-		if (Locale.ENGLISH.equals(Locale.getDefault())) {
-			fieldGetMethod = findMethodFromNames(field, true, throwExceptions, methodFromField(field, "get", null),
-					methodFromField(field, "is", null));
-		} else {
-			fieldGetMethod = findMethodFromNames(field, true, throwExceptions, methodFromField(field, "get", null),
-					methodFromField(field, "get", Locale.ENGLISH), methodFromField(field, "is", null),
-					methodFromField(field, "is", Locale.ENGLISH));
-		}
+	public static Method findGetMethod(Field field, DatabaseType databaseType, boolean throwExceptions)
+			throws IllegalArgumentException {
+		Method fieldGetMethod = findMethodFromNames(field, true, throwExceptions,
+				methodFromField(field, "get", databaseType, true), methodFromField(field, "get", databaseType, false),
+				methodFromField(field, "is", databaseType, true), methodFromField(field, "is", databaseType, false));
 		if (fieldGetMethod == null) {
 			return null;
 		}
@@ -573,14 +567,10 @@ public class DatabaseFieldConfig {
 	 * 
 	 * @return Set method or null (or throws IllegalArgumentException) if none found.
 	 */
-	public static Method findSetMethod(Field field, boolean throwExceptions) throws IllegalArgumentException {
-		Method fieldSetMethod;
-		if (Locale.ENGLISH.equals(Locale.getDefault())) {
-			fieldSetMethod = findMethodFromNames(field, false, throwExceptions, methodFromField(field, "set", null));
-		} else {
-			fieldSetMethod = findMethodFromNames(field, false, throwExceptions, methodFromField(field, "set", null),
-					methodFromField(field, "set", Locale.ENGLISH));
-		}
+	public static Method findSetMethod(Field field, DatabaseType databaseType, boolean throwExceptions)
+			throws IllegalArgumentException {
+		Method fieldSetMethod = findMethodFromNames(field, false, throwExceptions,
+				methodFromField(field, "set", databaseType, true), methodFromField(field, "set", databaseType, false));
 		if (fieldSetMethod == null) {
 			return null;
 		}
@@ -737,15 +727,11 @@ public class DatabaseFieldConfig {
 		}
 	}
 
-	private static String methodFromField(Field field, String prefix, Locale locale) {
+	private static String methodFromField(Field field, String prefix, DatabaseType databaseType,
+			boolean forceEnglish) {
 		String name = field.getName();
 		String start = name.substring(0, 1);
-		if (locale == null) {
-			// NOTE: this is not an entity to be capitalized with the database type, we are using default locale here
-			start = start.toUpperCase();
-		} else {
-			start = start.toUpperCase(locale);
-		}
+		start = databaseType.upCaseString(start, forceEnglish);
 		StringBuilder sb = new StringBuilder();
 		sb.append(prefix);
 		sb.append(start);
