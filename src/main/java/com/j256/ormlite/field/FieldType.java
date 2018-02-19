@@ -147,7 +147,7 @@ public class FieldType {
 				sb.append(" is not valid for type ").append(dataPersister);
 				Class<?> primaryClass = dataPersister.getPrimaryClass();
 				if (primaryClass != null) {
-					sb.append(", maybe should be " + primaryClass);
+					sb.append(", maybe should be ").append(primaryClass);
 				}
 				throw new IllegalArgumentException(sb.toString());
 			}
