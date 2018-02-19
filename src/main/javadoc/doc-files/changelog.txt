@@ -1,4 +1,4 @@
-5.1: 2/18/2019
+5.1: 2/19/2019
 	* CORE: Added @DatabaseField(fullColumnDefinition) for fully describing a column as opposed to columnDefinition.
 	* CORE: Added synchronized keyword to BaseDaoImpl.createOrUpdate() and createIfNotExists().
 	* CORE: Added integer date support.  Thanks to noordawod.
