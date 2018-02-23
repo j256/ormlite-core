@@ -5,10 +5,11 @@
 	* CORE: Added support for CloseableIterator.moveAbsolute(...).  Thanks to renaudcerrato.
 	* CORE: Fixed but with get table name not using TableInfo.  Thanks to 0xabadea.
 	* CORE: Fixed handling of field capitalization which was screwing up Turkish fields.  Thanks to folkyatina.
-	* CORE: Fixed handling of joined queries with orders and group bys.  Thanks much to p91paul.
+	* CORE: Fixed handling of joined queries with orders and group by's.  Thanks much to p91paul.
 	* CORE: Fixed bad bug with committing of inner transactions inappropriately.  Thanks much to maroux.
+	* CORE: Normalized all of the up/down case usage to the DatabaseType so it can be overridden.
 	* JDBC: Fixed problem with UUID native type not using the correct persister.  Thanks to Bo98.
-	* ANDROID: Added field sorting for more deterministic output.  Thanks to @jibidus.
+	* ANDROID: Added field sorting for more deterministic config file output.  Thanks to jibidus.
 
 5.0: 6/27/2016
 	* ALL: ORMLite has dropped support for Java 5.  Java 6 is now required.
@@ -228,7 +229,7 @@
 	* JDBC: Added better SQL logging to JDBC connections.
 
 4.30: 11/10/2011 (svn r2156)
-	* CORE: Added ability to specify ForeignCollection columns in selectColumns(). Thanks to @Timo. Bug #3428751.
+	* CORE: Added ability to specify ForeignCollection columns in selectColumns(). Thanks to Timo. Bug #3428751.
 	* CORE: Added two new Dao methods: mapSelectStarRow and getSelectStarRowMapper for easier mapping of results.
 	* CORE: Deprecated the @DatabaseFieldSimple and other smaller annotations that were causing confusion.  Sorry.
 	* CORE: Fixed config loader support for foreignAutoCreate and version fields.  Thanks to Chase.  Bug #3433599.
