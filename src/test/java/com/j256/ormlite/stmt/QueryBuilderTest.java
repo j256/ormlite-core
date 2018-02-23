@@ -1241,6 +1241,49 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 	}
 
 	@Test
+	public void testQueryColumnsPlusQueryRawMax() throws Exception {
+		Dao<Foo, Object> dao = createDao(Foo.class, true);
+
+		Foo foo1 = new Foo();
+		foo1.stringField = "1";
+		foo1.val = 10;
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		foo2.stringField = "1";
+		foo2.val = 20;
+		assertEquals(1, dao.create(foo2));
+		Foo foo3 = new Foo();
+		foo3.stringField = "2";
+		foo3.val = 40;
+		assertEquals(1, dao.create(foo3));
+		Foo foo4 = new Foo();
+		foo4.stringField = "2";
+		foo4.val = 30;
+		assertEquals(1, dao.create(foo4));
+
+		QueryBuilder<Foo, Object> qb = dao.queryBuilder();
+		qb.selectColumns(Foo.STRING_COLUMN_NAME);
+		qb.selectRaw("MAX(val) AS val");
+		qb.groupBy(Foo.STRING_COLUMN_NAME);
+		GenericRawResults<Foo> results = dao.queryRaw(qb.prepareStatementString(), dao.getRawRowMapper());
+		assertNotNull(results);
+		CloseableIterator<Foo> iterator = results.closeableIterator();
+		try {
+			assertTrue(iterator.hasNext());
+			Foo result = iterator.next();
+			assertEquals(foo2.val, result.val);
+			assertEquals(foo2.stringField, result.stringField);
+			assertTrue(iterator.hasNext());
+			result = iterator.next();
+			assertEquals(foo3.val, result.val);
+			assertEquals(foo3.stringField, result.stringField);
+			assertFalse(iterator.hasNext());
+		} finally {
+			iterator.close();
+		}
+	}
+
+	@Test
 	public void testJoinTwoColumns() throws Exception {
 		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		Dao<StringColumnArg, Integer> scaDao = createDao(StringColumnArg.class, true);
