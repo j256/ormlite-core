@@ -108,7 +108,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 				logger.debug("query-for-first of '{}' returned at least 1 result", preparedStmt.getStatement());
 				return preparedStmt.mapRow(results);
 			} else {
-				logger.debug("query-for-first of '{}' returned at 0 results", preparedStmt.getStatement());
+				logger.debug("query-for-first of '{}' returned 0 results", preparedStmt.getStatement());
 				return null;
 			}
 		} finally {

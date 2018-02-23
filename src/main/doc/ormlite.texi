@@ -487,12 +487,13 @@ the annotation on all of your fields but turn off the writing of some of them to
 @cindex format, field
 @item format
 
-This allows you to specify format information of a particular field.  Right now this is only applicable for the following
-types:
+This allows you to specify format information of a particular field.  Right now this is only applicable for a couple
+of types including:
 
 @itemize @bullet
 @item @code{DATE_STRING} for specifying the format of the date string stored in the database  
 @item @code{STRING_BYTES} for specifying the @code{Charset} used to encode the string as an array of bytes
+@item @code{BOOLEAN_CHAR} for specifying characters representing the true and false values in the database. 
 @end itemize 
 
 @cindex unique constraint

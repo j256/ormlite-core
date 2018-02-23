@@ -98,8 +98,8 @@ public enum DataType {
 	DATE_LONG(DateLongType.getSingleton()),
 
 	/**
-	 * Persists the {@link java.util.Date} Java class as int seconds since epoch. By default this will use
-	 * {@link #DATE} so you will need to specify this using {@link DatabaseField#dataType()}.
+	 * Persists the {@link java.util.Date} Java class as int seconds since epoch. By default this will use {@link #DATE}
+	 * so you will need to specify this using {@link DatabaseField#dataType()}.
 	 *
 	 * <p>
 	 * NOTE: This is <i>not</i> the same as the {@link java.sql.Date} class.
@@ -188,13 +188,17 @@ public enum DataType {
 	 */
 	SERIALIZABLE(SerializableType.getSingleton()),
 	/**
-	 * Persists an Enum Java class as its string value produced by call @{link {@link Enum#name()}. You can also specify
-	 * the {@link #ENUM_INTEGER} or {@link #ENUM_TO_STRING} as the type.
+	 * See {@link #ENUM_NAME}
 	 */
 	ENUM_STRING(EnumStringType.getSingleton()),
 	/**
-	 * Persists an Enum Java class as its string value. You can also specify the {@link #ENUM_INTEGER} or
-	 * {@link #ENUM_STRING} as the type.
+	 * Persists an Enum Java class as its name produced by call @{link {@link Enum#name()}. You can also specify the
+	 * {@link #ENUM_INTEGER} or {@link #ENUM_TO_STRING} as the type.
+	 */
+	ENUM_NAME(EnumStringType.getSingleton()),
+	/**
+	 * Persists an Enum Java class as its string value produced by call @{link {@link Enum#toString()}. You can also
+	 * specify the {@link #ENUM_INTEGER} or {@link #ENUM_STRING} as the type.
 	 */
 	ENUM_TO_STRING(EnumToStringType.getSingleton()),
 	/**
