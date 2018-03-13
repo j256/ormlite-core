@@ -343,8 +343,8 @@ public class FieldTypeTest extends BaseCoreTest {
 		assertEquals(id2, fieldType.extractJavaFieldToSqlArgValue(getSet));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testFIeldSetNull() throws Exception {
+	@Test(expected = SQLException.class)
+	public void testFieldSetNull() throws Exception {
 		Field field = LocalFoo.class.getDeclaredField("intLong");
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, LocalFoo.class.getSimpleName(), field, LocalFoo.class);
