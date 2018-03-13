@@ -561,8 +561,12 @@ public class FieldType {
 			try {
 				field.set(data, val);
 			} catch (IllegalArgumentException e) {
-				throw SqlExceptionUtil.create(
-						"Could not assign object '" + val + "' of type " + val.getClass() + " to field " + this, e);
+				if (val == null) {
+					throw SqlExceptionUtil.create("Could not assign object '" + val + "' to field " + this, e);
+				} else {
+					throw SqlExceptionUtil.create(
+							"Could not assign object '" + val + "' of type " + val.getClass() + " to field " + this, e);
+				}
 			} catch (IllegalAccessException e) {
 				throw SqlExceptionUtil.create(
 						"Could not assign object '" + val + "' of type " + val.getClass() + "' to field " + this, e);
