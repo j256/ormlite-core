@@ -344,6 +344,22 @@ public class FieldTypeTest extends BaseCoreTest {
 	}
 
 	@Test(expected = SQLException.class)
+	public void testFieldSetNull() throws Exception {
+		Field field = LocalFoo.class.getDeclaredField("intLong");
+		FieldType fieldType =
+				FieldType.createFieldType(connectionSource, LocalFoo.class.getSimpleName(), field, LocalFoo.class);
+		LocalFoo foo = new LocalFoo();
+		long value1 = 13413123123L;
+		foo.intLong = value1;
+		assertEquals(foo.intLong, fieldType.extractJavaFieldToSqlArgValue(foo));
+		long value2 = 5223423434L;
+		fieldType.assignField(foo, value2, false, null);
+		assertEquals(value2, foo.intLong);
+		// this should throw a illegal argument exception _not_ a NPE, thanks @hrach
+		fieldType.assignField(foo, null, false, null);
+	}
+
+	@Test(expected = SQLException.class)
 	public void testGetWrongObject() throws Exception {
 		Field[] fields = GetSet.class.getDeclaredFields();
 		assertTrue(fields.length >= 1);
@@ -798,8 +814,8 @@ public class FieldTypeTest extends BaseCoreTest {
 		foreignFieldConfigs.add(fieldConfig);
 
 		DatabaseTableConfig<ForeignObjectNoAnnotations> foreignTableConfig =
-				new DatabaseTableConfig<ForeignObjectNoAnnotations>(databaseType,
-						ForeignObjectNoAnnotations.class, foreignFieldConfigs);
+				new DatabaseTableConfig<ForeignObjectNoAnnotations>(databaseType, ForeignObjectNoAnnotations.class,
+						foreignFieldConfigs);
 		Dao<ForeignObjectNoAnnotations, Integer> foreignDao = createDao(foreignTableConfig, true);
 
 		ArrayList<DatabaseFieldConfig> parentFieldConfigs = new ArrayList<DatabaseFieldConfig>();
@@ -817,8 +833,9 @@ public class FieldTypeTest extends BaseCoreTest {
 		fieldConfig.setMaxForeignAutoRefreshLevel(2);
 		parentFieldConfigs.add(fieldConfig);
 
-		Dao<ObjectNoAnnotations, Integer> parentDao = createDao(
-				new DatabaseTableConfig<ObjectNoAnnotations>(databaseType, ObjectNoAnnotations.class, parentFieldConfigs), true);
+		Dao<ObjectNoAnnotations, Integer> parentDao =
+				createDao(new DatabaseTableConfig<ObjectNoAnnotations>(databaseType, ObjectNoAnnotations.class,
+						parentFieldConfigs), true);
 
 		ForeignObjectNoAnnotations foreign = new ForeignObjectNoAnnotations();
 		foreign.stuff = "hello";

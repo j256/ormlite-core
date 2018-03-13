@@ -1,3 +1,6 @@
+5.2: X/YY/2019
+	* CORE: Fixed problem with null field assignment causing a NPE in the resulting message.  Thanks to hrach.
+
 5.1: 2/19/2019
 	* CORE: Added @DatabaseField(fullColumnDefinition) for fully describing a column as opposed to columnDefinition.
 	* CORE: Added synchronized keyword to BaseDaoImpl.createOrUpdate() and createIfNotExists().
