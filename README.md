@@ -9,6 +9,7 @@ users should download the [ormlite-android](https://github.com/j256/ormlite-andr
 * Online documentation can be found off the home page.  Here's the [getting started information](http://ormlite.com/docs/getting-started).
 Here are the [Javadocs for the code](http://ormlite.com/javadoc/ormlite-core/).
 * Browse the code on the [git repository](https://github.com/j256/ormlite-core).  [![CircleCI](https://circleci.com/gh/j256/ormlite-core.svg?style=svg)](https://circleci.com/gh/j256/ormlite-core) [![CodeCov](https://img.shields.io/codecov/c/github/j256/ormlite-core.svg)](https://codecov.io/github/j256/ormlite-core/)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/12a02113a0764ce1be87dca5aa847cd6)](https://www.codacy.com/app/j256/ormlite-core?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=j256/ormlite-core&amp;utm_campaign=Badge_Grade)
 * Maven packages are published via [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.j256.ormlite/ormlite-core/badge.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/com.j256.ormlite/ormlite-core/)
 * I've published a [number of example programs](http://ormlite.com/docs/examples).
 
