@@ -281,8 +281,8 @@
 				</executions>
 				<configuration>
 					<ignoreMissingFile>false</ignoreMissingFile>
-					<file>src/main/java/com/j256/ormlite/misc/VersionUtils.java</file>
-					<outputFile>src/main/java/com/j256/ormlite/misc/VersionUtils.java</outputFile>
+					<file>src/main/java/com/j256/ormlite/core/misc/VersionUtils.java</file>
+					<outputFile>src/main/java/com/j256/ormlite/core/misc/VersionUtils.java</outputFile>
 					<regex>true</regex>
 					<token>(VERSION__).*(__)</token>
 					<value>$1${version}$2</value>
