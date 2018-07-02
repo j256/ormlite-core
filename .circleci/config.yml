@@ -7,7 +7,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: j256-simplecsv-{{ checksum "pom.xml" }}
+          key: j256-ormlite-core-{{ checksum "pom.xml" }}
       - run:
           name: Get maven project dependencies
           command: mvn -U dependency:go-offline compile
@@ -15,7 +15,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.m2
-          key: j256-simplecsv-{{ checksum "pom.xml" }}
+          key: j256-ormlite-core-{{ checksum "pom.xml" }}
       - run:
           name: mvn package
           command: mvn package
