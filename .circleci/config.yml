@@ -31,4 +31,4 @@ jobs:
       # deploys whenever we check into master to our s3 snapshot repo so ormlite-jdbc can run its tests
       - run:
           name: mvn deploy
-          command: mvn -DskipTests deploy
+          command: mvn -Ptesting -DskipTests deploy
