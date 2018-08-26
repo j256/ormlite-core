@@ -1,18 +1,22 @@
 package com.j256.ormlite.field.types;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.Arrays;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
+import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
  * Type that persists a byte[] object.
- * 
+ *
  * @author graywatson
  */
 public class ByteArrayType extends BaseDataType {
+
+	private static final String DEFAULT_STRING_BYTES_CHARSET_NAME = "Unicode";
 
 	private static final ByteArrayType singleTon = new ByteArrayType();
 
@@ -32,11 +36,15 @@ public class ByteArrayType extends BaseDataType {
 	}
 
 	@Override
-	public Object parseDefaultString(FieldType fieldType, String defaultStr) {
+	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 		if (defaultStr == null) {
 			return null;
 		} else {
-			return defaultStr.getBytes();
+			try {
+				return defaultStr.getBytes(getCharsetName(fieldType));
+			} catch (UnsupportedEncodingException e) {
+				throw SqlExceptionUtil.create("Could not convert default string: " + defaultStr, e);
+			}
 		}
 	}
 
@@ -62,12 +70,24 @@ public class ByteArrayType extends BaseDataType {
 	}
 
 	@Override
-	public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) {
-		return stringValue.getBytes();
+	public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) throws SQLException {
+		try {
+			return stringValue.getBytes(getCharsetName(fieldType));
+		} catch (UnsupportedEncodingException e) {
+			throw SqlExceptionUtil.create("Could not convert default string: " + stringValue, e);
+		}
 	}
 
 	@Override
 	public Class<?> getPrimaryClass() {
 		return byte[].class;
+	}
+
+	private String getCharsetName(FieldType fieldType) {
+		if (fieldType == null || fieldType.getFormat() == null) {
+			return DEFAULT_STRING_BYTES_CHARSET_NAME;
+		} else {
+			return fieldType.getFormat();
+		}
 	}
 }
