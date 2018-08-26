@@ -6,6 +6,7 @@ import java.math.BigInteger;
 import com.j256.ormlite.field.types.BigDecimalNumericType;
 import com.j256.ormlite.field.types.BigDecimalStringType;
 import com.j256.ormlite.field.types.BigIntegerType;
+import com.j256.ormlite.field.types.BinaryType;
 import com.j256.ormlite.field.types.BooleanCharType;
 import com.j256.ormlite.field.types.BooleanIntegerType;
 import com.j256.ormlite.field.types.BooleanObjectType;
@@ -44,7 +45,7 @@ import com.j256.ormlite.field.types.UuidType;
 
 /**
  * Data type enumeration that corresponds to a {@link DataPersister}.
- * 
+ *
  * @author graywatson
  */
 public enum DataType {
@@ -80,7 +81,7 @@ public enum DataType {
 	BOOLEAN_INTEGER(BooleanIntegerType.getSingleton()),
 	/**
 	 * Persists the {@link java.util.Date} Java class.
-	 * 
+	 *
 	 * <p>
 	 * NOTE: This is <i>not</i> the same as the {@link java.sql.Date} class.
 	 * </p>
@@ -90,7 +91,7 @@ public enum DataType {
 	/**
 	 * Persists the {@link java.util.Date} Java class as long milliseconds since epoch. By default this will use
 	 * {@link #DATE} so you will need to specify this using {@link DatabaseField#dataType()}.
-	 * 
+	 *
 	 * <p>
 	 * NOTE: This is <i>not</i> the same as the {@link java.sql.Date} class.
 	 * </p>
@@ -109,11 +110,11 @@ public enum DataType {
 	/**
 	 * Persists the {@link java.util.Date} Java class as a string of a format. By default this will use {@link #DATE} so
 	 * you will need to specify this using {@link DatabaseField#dataType()}.
-	 * 
+	 *
 	 * <p>
 	 * NOTE: This is <i>not</i> the same as the {@link java.sql.Date} class.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>WARNING:</b> Because of SimpleDateFormat not being reentrant, this has to do some synchronization with every
 	 * data in/out unfortunately.
@@ -137,6 +138,11 @@ public enum DataType {
 	 * using {@link DatabaseField#dataType()}. It won't be detected automatically.
 	 */
 	BYTE_ARRAY(ByteArrayType.getSingleton()),
+	/**
+	 * Persists a binary byte[] array type. Because of some backwards compatibility issues, you will need to specify
+         * this using {@link DatabaseField#dataType()}. It won't be detected automatically.
+	 */
+	BINARY_OBJ(BinaryType.getSingleton()),
 	/**
 	 * Persists the {@link Byte} object Java class.
 	 */
@@ -235,7 +241,7 @@ public enum DataType {
 	DATE_TIME(DateTimeType.getSingleton()),
 	/**
 	 * Persists the {@link java.sql.Date} Java class.
-	 * 
+	 *
 	 * <p>
 	 * NOTE: If you want to use the {@link java.util.Date} class then use {@link #DATE} which is recommended instead.
 	 * </p>
