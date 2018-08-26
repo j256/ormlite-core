@@ -13,7 +13,7 @@ import com.j256.ormlite.support.DatabaseResults;
 
 /**
  * H2 compiled statement.
- * 
+ *
  * @author graywatson
  */
 public class H2CompiledStatement implements CompiledStatement {
@@ -104,6 +104,8 @@ public class H2CompiledStatement implements CompiledStatement {
 				return Types.CHAR;
 			case BYTE:
 				return Types.TINYINT;
+			case BINARY_OBJ:
+				return Types.VARBINARY;
 			case BYTE_ARRAY:
 				return Types.VARBINARY;
 			case SHORT:
