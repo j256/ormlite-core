@@ -16,8 +16,6 @@ import com.j256.ormlite.support.DatabaseResults;
  */
 public class ByteArrayType extends BaseDataType {
 
-	private static final String DEFAULT_STRING_BYTES_CHARSET_NAME = "Unicode";
-
 	private static final ByteArrayType singleTon = new ByteArrayType();
 
 	public static ByteArrayType getSingleton() {
@@ -37,15 +35,7 @@ public class ByteArrayType extends BaseDataType {
 
 	@Override
 	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
-		if (defaultStr == null) {
-			return null;
-		} else {
-			try {
-				return defaultStr.getBytes(getCharsetName(fieldType));
-			} catch (UnsupportedEncodingException e) {
-				throw SqlExceptionUtil.create("Could not convert default string: " + defaultStr, e);
-			}
-		}
+		return defaultStr == null ? null : getBytesImpl(fieldType, defaultStr);
 	}
 
 	@Override
@@ -71,11 +61,7 @@ public class ByteArrayType extends BaseDataType {
 
 	@Override
 	public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) throws SQLException {
-		try {
-			return stringValue.getBytes(getCharsetName(fieldType));
-		} catch (UnsupportedEncodingException e) {
-			throw SqlExceptionUtil.create("Could not convert default string: " + stringValue, e);
-		}
+		return getBytesImpl(fieldType, stringValue);
 	}
 
 	@Override
@@ -83,11 +69,15 @@ public class ByteArrayType extends BaseDataType {
 		return byte[].class;
 	}
 
-	private String getCharsetName(FieldType fieldType) {
+	private Object getBytesImpl(FieldType fieldType, String stringValue) throws SQLException {
 		if (fieldType == null || fieldType.getFormat() == null) {
-			return DEFAULT_STRING_BYTES_CHARSET_NAME;
+			return stringValue.getBytes();
 		} else {
-			return fieldType.getFormat();
+			try {
+				return stringValue.getBytes(fieldType.getFormat());
+			} catch (UnsupportedEncodingException e) {
+				throw SqlExceptionUtil.create("Could not convert default string: " + stringValue, e);
+			}
 		}
 	}
 }
