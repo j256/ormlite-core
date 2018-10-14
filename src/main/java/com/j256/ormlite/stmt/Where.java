@@ -535,6 +535,19 @@ public class Where<T, ID> {
 		appendSql(null, sb, new ArrayList<ArgumentHolder>());
 		return sb.toString();
 	}
+		
+	/**
+	 * Returns the {@link QueryBuilder} used to create this Where, if present
+	 *
+	 * @returns the QueryBuilder object
+	 */
+	public QueryBuilder<T, ID> queryBuilder() throws SQLException {
+		if (statementBuilder instanceof QueryBuilder) {
+			return (QueryBuilder<T, ID>) statementBuilder;
+		} else {
+			throw new SQLException("Cannot cast " + statementBuilder.getType() + " to QueryBuilder");
+		}
+	}
 
 	/**
 	 * Used by the internal classes to add the where SQL to the {@link StringBuilder}.
@@ -566,19 +579,6 @@ public class Where<T, ID> {
 		} else {
 			Clause clause = peek();
 			return "where clause: " + clause;
-		}
-	}
-	
-	/**
-	 * Returns the {@link QueryBuilder} used to create this Where, if present
-	 *
-	 * @returns the QueryBuilder object
-	 */
-	public QueryBuilder<T, ID> queryBuilder() throws SQLException {
-		if (statementBuilder instanceof QueryBuilder) {
-			return (QueryBuilder<T, ID>) statementBuilder;
-		} else {
-			throw new SQLException("Cannot cast " + statementBuilder.getType() + " to QueryBuilder");
 		}
 	}
 
