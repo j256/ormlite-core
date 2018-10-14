@@ -568,6 +568,19 @@ public class Where<T, ID> {
 			return "where clause: " + clause;
 		}
 	}
+	
+	/**
+	 * Returns the {@link QueryBuilder} used to create this Where, if present
+	 *
+	 * @returns the QueryBuilder object
+	 */
+	public QueryBuilder<T, ID> queryBuilder() throws SQLException {
+		if (statementBuilder instanceof QueryBuilder) {
+			return (QueryBuilder<T, ID>) statementBuilder;
+		} else {
+			throw new SQLException("Cannot cast " + statementBuilder.getType() + " to QueryBuilder");
+		}
+	}
 
 	private QueryBuilder<T, ID> checkQueryBuilderMethod(String methodName) throws SQLException {
 		if (statementBuilder instanceof QueryBuilder) {
