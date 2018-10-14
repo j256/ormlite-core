@@ -1,15 +1,17 @@
 package com.j256.ormlite.field.types;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.Arrays;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
+import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
  * Type that persists a byte[] object.
- * 
+ *
  * @author graywatson
  */
 public class ByteArrayType extends BaseDataType {
@@ -32,12 +34,8 @@ public class ByteArrayType extends BaseDataType {
 	}
 
 	@Override
-	public Object parseDefaultString(FieldType fieldType, String defaultStr) {
-		if (defaultStr == null) {
-			return null;
-		} else {
-			return defaultStr.getBytes();
-		}
+	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+		return defaultStr == null ? null : getBytesImpl(fieldType, defaultStr);
 	}
 
 	@Override
@@ -62,12 +60,24 @@ public class ByteArrayType extends BaseDataType {
 	}
 
 	@Override
-	public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) {
-		return stringValue.getBytes();
+	public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) throws SQLException {
+		return getBytesImpl(fieldType, stringValue);
 	}
 
 	@Override
 	public Class<?> getPrimaryClass() {
 		return byte[].class;
+	}
+
+	private Object getBytesImpl(FieldType fieldType, String stringValue) throws SQLException {
+		if (fieldType == null || fieldType.getFormat() == null) {
+			return stringValue.getBytes();
+		} else {
+			try {
+				return stringValue.getBytes(fieldType.getFormat());
+			} catch (UnsupportedEncodingException e) {
+				throw SqlExceptionUtil.create("Could not convert default string: " + stringValue, e);
+			}
+		}
 	}
 }
