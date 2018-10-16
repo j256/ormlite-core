@@ -4,9 +4,8 @@ import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.logger.Logger;
@@ -32,7 +31,6 @@ public class DaoManager {
 
 	private static Map<Class<?>, DatabaseTableConfig<?>> configMap = null;
 	private static Map<ClassConnectionSource, Dao<?, ?>> classMap = null;
-	private static Map<ConnectionSource, Set<Class<?>>> connectionClassMap = null;
 	private static Map<TableConfigConnectionSource, Dao<?, ?>> tableConfigMap = null;
 
 	private static Logger logger = LoggerFactory.getLogger(DaoManager.class);
@@ -232,10 +230,6 @@ public class DaoManager {
 			classMap.clear();
 			classMap = null;
 		}
-		if (connectionClassMap != null) {
-			connectionClassMap.clear();
-			connectionClassMap = null;
-		}
 		if (tableConfigMap != null) {
 			tableConfigMap.clear();
 			tableConfigMap = null;
@@ -265,38 +259,20 @@ public class DaoManager {
 			classMap = new HashMap<ClassConnectionSource, Dao<?, ?>>();
 		}
 		classMap.put(key, dao);
-		if (connectionClassMap == null) {
-			connectionClassMap = new HashMap<ConnectionSource, Set<Class<?>>>();
-		}
-		Set<Class<?>> daoClasses = connectionClassMap.get(key.connectionSource);
-		if (daoClasses == null) {
-			daoClasses = new HashSet<Class<?>>();
-			connectionClassMap.put(key.connectionSource, daoClasses);
-		}
-		daoClasses.add(key.clazz);
 	}
 
 	private static void removeDaoToClassMap(ClassConnectionSource key) {
 		if (classMap != null) {
 			classMap.remove(key);
 		}
-		if (connectionClassMap != null) {
-			Set<Class<?>> daoClasses = connectionClassMap.get(key.connectionSource);
-			if(daoClasses != null){
-				daoClasses.remove(key.clazz);
-				if(daoClasses.isEmpty()){
-					connectionClassMap.remove(key.connectionSource);
-				}
-			}
-		}
 	}
 
 	private static void removeDaosFromConnectionClassMap(ConnectionSource connectionSource) {
-		if (connectionClassMap != null) {
-			Set<Class<?>> daoClasses = connectionClassMap.remove(connectionSource);
-			if (daoClasses != null) {
-				for (Class<?> clazz : daoClasses) {
-					removeDaoToClassMap(new ClassConnectionSource(connectionSource, clazz));
+		if (classMap != null) {
+			Iterator<ClassConnectionSource> classIterator = classMap.keySet().iterator();
+			while (classIterator.hasNext()) {
+				if(classIterator.next().connectionSource == connectionSource){
+					classIterator.remove();
 				}
 			}
 		}
