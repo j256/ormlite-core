@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import com.j256.ormlite.db.DatabaseType;
@@ -179,9 +180,19 @@ public class DaoManager {
 		if (connectionSource == null) {
 			throw new IllegalArgumentException("connectionSource argument cannot be null");
 		}
-		removeDaoToClassMap(new ClassConnectionSource(connectionSource, dao.getDataClass()), dao);
+		removeDaoToClassMap(new ClassConnectionSource(connectionSource, dao.getDataClass()));
 	}
 
+	/**
+	 * Remove all DAOs from the cache for the connection source.
+	 */
+	public static synchronized void unregisterDaos(ConnectionSource connectionSource) {
+		if (connectionSource == null) {
+			throw new IllegalArgumentException("connectionSource argument cannot be null");
+		}
+		removeDaosFromConnectionClassMap(connectionSource);
+	}
+	
 	/**
 	 * Same as {@link #registerDao(ConnectionSource, Dao)} but this allows you to register it just with its
 	 * {@link DatabaseTableConfig}. This allows multiple versions of the DAO to be configured if necessary.
@@ -250,12 +261,23 @@ public class DaoManager {
 		classMap.put(key, dao);
 	}
 
-	private static void removeDaoToClassMap(ClassConnectionSource key, Dao<?, ?> dao) {
+	private static void removeDaoToClassMap(ClassConnectionSource key) {
 		if (classMap != null) {
 			classMap.remove(key);
 		}
 	}
 
+	private static void removeDaosFromConnectionClassMap(ConnectionSource connectionSource) {
+		if (classMap != null) {
+			Iterator<ClassConnectionSource> classIterator = classMap.keySet().iterator();
+			while (classIterator.hasNext()) {
+				if(classIterator.next().connectionSource == connectionSource){
+					classIterator.remove();
+				}
+			}
+		}
+	}
+	
 	private static void addDaoToTableMap(TableConfigConnectionSource key, Dao<?, ?> dao) {
 		if (tableConfigMap == null) {
 			tableConfigMap = new HashMap<TableConfigConnectionSource, Dao<?, ?>>();
