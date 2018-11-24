@@ -25,6 +25,8 @@ import com.j256.ormlite.table.TableInfo;
 public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 
 	private List<Clause> updateClauseList = null;
+	private Long limit;
+	
 	// NOTE: anything added here should be added to the clear() method below
 
 	public UpdateBuilder(DatabaseType databaseType, TableInfo<T, ID> tableInfo, Dao<T, ID> dao) {
@@ -36,7 +38,7 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 	 * the where or make other calls you will need to re-call this method to re-prepare the statement for execution.
 	 */
 	public PreparedUpdate<T> prepare() throws SQLException {
-		return super.prepareStatement(null, false);
+		return super.prepareStatement(limit, false);
 	}
 
 	/**
@@ -108,6 +110,14 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 		databaseType.appendEscapedWord(sb, value);
 		return sb.toString();
 	}
+	
+	/**
+	 * Limit the output to maxRows maximum number of rows. Set to null for no limit (the default).
+	 */
+	public UpdateBuilder<T, ID> limit(Long maxRows) {
+		limit = maxRows;
+		return this;
+	}
 
 	/**
 	 * A short cut to {@link Dao#update(PreparedUpdate)}.
@@ -119,6 +129,7 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 	@Override
 	public void reset() {
 		super.reset();
+		limit = null;
 		updateClauseList = null;
 	}
 
@@ -128,6 +139,9 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 			throw new IllegalArgumentException("UPDATE statements must have at least one SET column");
 		}
 		sb.append("UPDATE ");
+		if (databaseType.isLimitAfterSelect()) {
+			appendLimit(sb);
+		}
 		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
 		sb.append(" SET ");
 		boolean first = true;
@@ -143,7 +157,9 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 
 	@Override
 	protected void appendStatementEnd(StringBuilder sb, List<ArgumentHolder> argList) {
-		// noop
+		if (!databaseType.isLimitAfterSelect()) {
+			appendLimit(sb);
+		}
 	}
 
 	private void addUpdateColumnToList(String columnName, Clause clause) {
@@ -151,5 +167,11 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 			updateClauseList = new ArrayList<Clause>();
 		}
 		updateClauseList.add(clause);
+	}
+	
+	private void appendLimit(StringBuilder sb) {
+		if (limit != null && databaseType.isLimitSqlSupported()) {
+			databaseType.appendLimitValue(sb, limit, null);
+		}
 	}
 }
