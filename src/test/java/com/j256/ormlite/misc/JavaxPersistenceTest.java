@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
+import java.util.Collection;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -18,6 +19,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Version;
 
@@ -32,6 +34,7 @@ import com.j256.ormlite.h2.H2DatabaseType;
 public class JavaxPersistenceTest extends BaseCoreTest {
 
 	private static final String STUFF_FIELD_NAME = "notstuff";
+	private static final String MAPPED_BY_FIELD_NAME = "notmappedby";
 	private static final String JOIN_FIELD_NAME = "notjoinfield";
 	private static final String JAVAX_ENTITY_NAME = "notjavax";
 	private static final String COLUMN_DEFINITION = "column definition";
@@ -82,6 +85,7 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 				assertFalse(config.isId());
 				assertFalse(config.isGeneratedId());
 				assertTrue(config.isForeign());
+				assertFalse(config.isForeignCollection());
 				assertFalse(config.isUnique());
 				assertTrue(config.isCanBeNull());
 				assertFalse(config.isVersion());
@@ -93,6 +97,7 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 				assertFalse(config.isId());
 				assertFalse(config.isGeneratedId());
 				assertTrue(config.isForeign());
+				assertFalse(config.isForeignCollection());
 				assertFalse(config.isUnique());
 				assertTrue(config.isCanBeNull());
 				assertFalse(config.isVersion());
@@ -100,10 +105,37 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 				assertEquals(field.getName(), config.getFieldName());
 				assertNull(config.getColumnName());
 				assertNull(config.getColumnDefinition());
+			} else if (field.getName().equals("foreignOneToMany")) {
+				assertFalse(config.isId());
+				assertFalse(config.isGeneratedId());
+				assertFalse(config.isForeign());
+				assertTrue(config.isForeignCollection());
+				assertFalse(config.isUnique());
+				assertTrue(config.isCanBeNull());
+				assertFalse(config.isVersion());
+				assertNull(config.getDataPersister());
+				assertEquals(field.getName(), config.getFieldName());
+				assertNull(config.getForeignCollectionForeignFieldName());
+				assertNull(config.getColumnName());
+				assertNull(config.getColumnDefinition());
+			} else if (field.getName().equals("mappedByField")) {
+				assertFalse(config.isId());
+				assertFalse(config.isGeneratedId());
+				assertFalse(config.isForeign());
+				assertTrue(config.isForeignCollection());
+				assertFalse(config.isUnique());
+				assertTrue(config.isCanBeNull());
+				assertFalse(config.isVersion());
+				assertNull(config.getDataPersister());
+				assertEquals(field.getName(), config.getFieldName());
+				assertEquals(MAPPED_BY_FIELD_NAME, config.getForeignCollectionForeignFieldName());
+				assertNull(config.getColumnName());
+				assertNull(config.getColumnDefinition());
 			} else if (field.getName().equals("joinFieldName")) {
 				assertFalse(config.isId());
 				assertFalse(config.isGeneratedId());
 				assertTrue(config.isForeign());
+				assertFalse(config.isForeignCollection());
 				assertFalse(config.isUnique());
 				assertTrue(config.isCanBeNull());
 				assertFalse(config.isVersion());
@@ -141,6 +173,7 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 				assertFalse(config.isId());
 				assertFalse(config.isGeneratedId());
 				assertTrue(config.isForeign());
+				assertFalse(config.isForeignCollection());
 				assertTrue(config.isUnique());
 				assertTrue(config.isCanBeNull());
 				assertFalse(config.isVersion());
@@ -150,6 +183,7 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 				assertFalse(config.isId());
 				assertFalse(config.isGeneratedId());
 				assertTrue(config.isForeign());
+				assertFalse(config.isForeignCollection());
 				assertFalse(config.isUnique());
 				assertFalse(config.isCanBeNull());
 				assertFalse(config.isVersion());
@@ -247,6 +281,10 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 		Foreign foreignManyToOne;
 		@OneToOne
 		Foreign foreignOneToOne;
+		@OneToMany
+		Collection<Foreign> foreignOneToMany;
+		@OneToMany(mappedBy = MAPPED_BY_FIELD_NAME)
+		Collection<Foreign> mappedByField;
 		@ManyToOne
 		@JoinColumn(name = JOIN_FIELD_NAME)
 		Foreign joinFieldName;

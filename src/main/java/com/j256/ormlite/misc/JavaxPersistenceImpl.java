@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -38,13 +39,15 @@ public class JavaxPersistenceImpl implements JavaxPersistenceConfigurer {
 		Id idAnnotation = field.getAnnotation(Id.class);
 		GeneratedValue generatedValueAnnotation = field.getAnnotation(GeneratedValue.class);
 		OneToOne oneToOneAnnotation = field.getAnnotation(OneToOne.class);
+		OneToMany oneToManyAnnotation = field.getAnnotation(OneToMany.class);
 		ManyToOne manyToOneAnnotation = field.getAnnotation(ManyToOne.class);
 		JoinColumn joinColumnAnnotation = field.getAnnotation(JoinColumn.class);
 		Enumerated enumeratedAnnotation = field.getAnnotation(Enumerated.class);
 		Version versionAnnotation = field.getAnnotation(Version.class);
 
 		if (columnAnnotation == null && basicAnnotation == null && idAnnotation == null && oneToOneAnnotation == null
-				&& manyToOneAnnotation == null && enumeratedAnnotation == null && versionAnnotation == null) {
+				&& oneToManyAnnotation == null &&  manyToOneAnnotation == null && enumeratedAnnotation == null
+				&& versionAnnotation == null) {
 			return null;
 		}
 
@@ -77,7 +80,19 @@ public class JavaxPersistenceImpl implements JavaxPersistenceConfigurer {
 				config.setGeneratedId(true);
 			}
 		}
-		if (oneToOneAnnotation != null || manyToOneAnnotation != null) {
+		if (oneToManyAnnotation != null) {
+			config.setForeignCollection(true);
+
+			String mappedBy = oneToManyAnnotation.mappedBy();
+			if (stringNotEmpty(mappedBy)) {
+				config.setForeignCollectionForeignFieldName(mappedBy);
+			}
+
+			FetchType fetchType = oneToManyAnnotation.fetch();
+			if (fetchType == FetchType.EAGER) {
+				config.setForeignCollectionEager(true);
+			}
+		} else if (oneToOneAnnotation != null || manyToOneAnnotation != null) {
 			// if we have a collection then make it a foreign collection
 			if (Collection.class.isAssignableFrom(field.getType())
 					|| ForeignCollection.class.isAssignableFrom(field.getType())) {
