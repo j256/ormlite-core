@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.*;
 
 import com.j256.ormlite.dao.ObjectCache;
 
@@ -140,6 +141,31 @@ public interface DatabaseResults extends Closeable {
 	 * Returns the SQL timestamp value from the results at the column index.
 	 */
 	public Timestamp getTimestamp(int columnIndex) throws SQLException;
+
+	/**
+	 * Returns the LocalDate value from the results at the column index
+	 */
+	public LocalDate getLocalDate(int columnIndex) throws SQLException;
+
+	/**
+	 * Returns the LocalTime value from the results at the column index.
+	 */
+	public LocalTime getLocalTime(int columnIndex) throws SQLException;
+
+	/**
+	 * Returns the LocalDateTime value from the results at the column index.
+	 */
+	public LocalDateTime getLocalDateTime(int columnIndex) throws SQLException;
+
+	/**
+	 * Returns the OffsetTime value from the results at the column index.
+	 */
+	public OffsetTime getOffsetTime(int columnIndex) throws SQLException;
+
+	/**
+	 * Returns the OffsetDateTime value from the results at the column index.
+	 */
+	public OffsetDateTime getOffsetDateTime(int columnIndex) throws SQLException;
 
 	/**
 	 * Returns an input stream for a blob value from the results at the column index.
