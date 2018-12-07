@@ -55,6 +55,11 @@ public class H2DatabaseType extends BaseDatabaseType {
 	}
 
 	@Override
+	public void appendOffsetTimeType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
+		sb.append("TIMESTAMP WITH TIME ZONE");
+	}
+
+	@Override
 	protected void configureGeneratedId(String tableName, StringBuilder sb, FieldType fieldType,
 			List<String> statementsBefore, List<String> statementsAfter, List<String> additionalArgs,
 			List<String> queriesAfter) {

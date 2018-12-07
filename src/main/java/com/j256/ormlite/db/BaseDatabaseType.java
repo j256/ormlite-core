@@ -86,6 +86,26 @@ public abstract class BaseDatabaseType implements DatabaseType {
 				appendDateType(sb, fieldType, fieldWidth);
 				break;
 
+			case LOCAL_DATE:
+				appendLocalDateType(sb, fieldType, fieldWidth);
+				break;
+
+			case LOCAL_TIME:
+				appendLocalTimeType(sb, fieldType, fieldWidth);
+				break;
+
+			case LOCAL_DATE_TIME:
+				appendLocalDateTimeType(sb, fieldType, fieldWidth);
+				break;
+
+			case OFFSET_TIME:
+				appendOffsetTimeType(sb, fieldType, fieldWidth);
+				break;
+
+			case OFFSET_DATE_TIME:
+				appendOffsetDateTimeType(sb, fieldType, fieldWidth);
+				break;
+
 			case CHAR:
 				appendCharType(sb, fieldType, fieldWidth);
 				break;
@@ -206,6 +226,41 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	 */
 	protected void appendDateType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("TIMESTAMP");
+	}
+
+	/**
+	 * Output the SQL type for a Java LocalDate.
+	 */
+	protected void appendLocalDateType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
+		sb.append("DATE");
+	}
+
+	/**
+	 * Output the SQL type for a Java LocalTime.
+	 */
+	protected void appendLocalTimeType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
+		sb.append("TIME");
+	}
+
+	/**
+	 * Output the SQL type for a Java LocalDateTime.
+	 */
+	protected void appendLocalDateTimeType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
+		sb.append("TIMESTAMP");
+	}
+
+	/**
+	 * Output the SQL type for a Java OffsetTime.
+	 */
+	protected void appendOffsetTimeType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
+		sb.append("TIME WITH TIME ZONE");
+	}
+
+	/**
+	 * Output the SQL type for a Java OffsetDateTime or Instant.
+	 */
+	protected void appendOffsetDateTimeType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
+		sb.append("TIMESTAMP WITH TIME ZONE");
 	}
 
 	/**

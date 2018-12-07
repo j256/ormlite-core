@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.*;
 
 import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.misc.IOUtils;
@@ -147,6 +148,31 @@ public class H2DatabaseResults implements DatabaseResults {
 	@Override
 	public Timestamp getTimestamp(int columnIndex) throws SQLException {
 		return resultSet.getTimestamp(columnIndex + 1);
+	}
+
+	@Override
+	public LocalDate getLocalDate(int columnIndex) throws SQLException {
+		return resultSet.getObject(columnIndex + 1, LocalDate.class);
+	}
+
+	@Override
+	public LocalTime getLocalTime(int columnIndex) throws SQLException {
+		return resultSet.getObject(columnIndex + 1, LocalTime.class);
+	}
+
+	@Override
+	public LocalDateTime getLocalDateTime(int columnIndex) throws SQLException {
+		return resultSet.getObject(columnIndex + 1, LocalDateTime.class);
+	}
+
+	@Override
+	public OffsetTime getOffsetTime(int columnIndex) throws SQLException {
+		return resultSet.getObject(columnIndex + 1, OffsetTime.class);
+	}
+
+	@Override
+	public OffsetDateTime getOffsetDateTime(int columnIndex) throws SQLException {
+		return resultSet.getObject(columnIndex + 1, OffsetDateTime.class);
 	}
 
 	@Override

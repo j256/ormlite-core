@@ -98,6 +98,16 @@ public class H2CompiledStatement implements CompiledStatement {
 				return Types.LONGVARCHAR;
 			case DATE:
 				return Types.TIMESTAMP;
+			case LOCAL_DATE:
+				return Types.DATE;
+			case LOCAL_TIME:
+				return Types.TIME;
+			case LOCAL_DATE_TIME:
+				return Types.TIMESTAMP;
+			case OFFSET_TIME:
+				return Types.TIME_WITH_TIMEZONE;
+			case OFFSET_DATE_TIME:
+				return Types.TIMESTAMP_WITH_TIMEZONE;
 			case BOOLEAN:
 				return Types.BOOLEAN;
 			case CHAR:
