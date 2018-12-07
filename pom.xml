@@ -285,7 +285,7 @@
 					<outputFile>src/main/java/com/j256/ormlite/misc/VersionUtils.java</outputFile>
 					<regex>true</regex>
 					<token>(VERSION__).*(__)</token>
-					<value>$1${version}$2</value>
+					<value>$1${project.version}$2</value>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -306,6 +306,14 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.22.1</version>
+				<configuration>
+					<useSystemClassLoader>false</useSystemClassLoader>
+				</configuration>
 			</plugin>
 		</plugins>
 		<pluginManagement>
@@ -360,9 +368,7 @@
 		</extensions>
 	</build>
 	<dependencies>
-		<!-- =================================================================== -->
 		<!-- provided dependencies for optional features -->
-		<!-- =================================================================== -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -387,9 +393,8 @@
 			<version>${commons-logging-version}</version>
 			<scope>provided</scope>
 		</dependency>
-		<!-- =================================================================== -->
+
 		<!-- test dependencies -->
-		<!-- =================================================================== -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
