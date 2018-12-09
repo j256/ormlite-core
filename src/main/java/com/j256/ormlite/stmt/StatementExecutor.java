@@ -618,9 +618,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			saved = connectionSource.saveSpecialConnection(connection);
 			return doCallBatchTasks(connection, saved, callable);
 		} finally {
-			if (saved) {
-				connectionSource.clearSpecialConnection(connection);
-			}
+			connectionSource.clearSpecialConnection(connection);
 			connectionSource.releaseConnection(connection);
 			localIsInBatchMode.set(false);
 			if (dao != null) {

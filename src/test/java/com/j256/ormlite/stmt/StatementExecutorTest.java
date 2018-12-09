@@ -79,6 +79,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		expect(connectionSource.isSingleConnection("foo")).andReturn(false);
 		expect(connectionSource.getReadWriteConnection("foo")).andReturn(connection);
 		expect(connectionSource.saveSpecialConnection(connection)).andReturn(false);
+		connectionSource.clearSpecialConnection(connection);
 		connectionSource.releaseConnection(connection);
 
 		expect(connection.isAutoCommitSupported()).andReturn(false);
@@ -106,6 +107,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		expect(connectionSource.isSingleConnection("foo")).andReturn(false);
 		expect(connectionSource.getReadWriteConnection("foo")).andReturn(connection);
 		expect(connectionSource.saveSpecialConnection(connection)).andReturn(false);
+		connectionSource.clearSpecialConnection(connection);
 		connectionSource.releaseConnection(connection);
 
 		expect(connection.isAutoCommitSupported()).andReturn(true);
@@ -134,6 +136,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		expect(connectionSource.isSingleConnection("foo")).andReturn(false);
 		expect(connectionSource.getReadWriteConnection("foo")).andReturn(connection);
 		expect(connectionSource.saveSpecialConnection(connection)).andReturn(false);
+		connectionSource.clearSpecialConnection(connection);
 		connectionSource.releaseConnection(connection);
 
 		expect(connection.isAutoCommitSupported()).andReturn(true);
@@ -164,6 +167,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		expect(connectionSource.isSingleConnection("foo")).andReturn(true);
 		expect(connectionSource.getReadWriteConnection("foo")).andReturn(connection);
 		expect(connectionSource.saveSpecialConnection(connection)).andReturn(false);
+		connectionSource.clearSpecialConnection(connection);
 		connectionSource.releaseConnection(connection);
 
 		expect(connection.isAutoCommitSupported()).andReturn(true);
@@ -194,6 +198,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		expect(connectionSource.isSingleConnection("foo")).andReturn(false);
 		expect(connectionSource.getReadWriteConnection("foo")).andReturn(connection);
 		expect(connectionSource.saveSpecialConnection(connection)).andReturn(false);
+		connectionSource.clearSpecialConnection(connection);
 		connectionSource.releaseConnection(connection);
 
 		expect(connection.isAutoCommitSupported()).andReturn(true);
