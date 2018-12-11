@@ -5,10 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.j256.ormlite.db.BaseDatabaseType;
-import com.j256.ormlite.field.DataPersister;
-import com.j256.ormlite.field.DataType;
-import com.j256.ormlite.field.FieldConverter;
-import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.field.*;
 import com.j256.ormlite.field.types.OffsetTimeType;
 
 /**
@@ -79,7 +76,7 @@ public class H2DatabaseType extends BaseDatabaseType {
 	@Override
 	public FieldConverter getFieldConverter(DataPersister dataPersister, FieldType fieldType) {
 		// H2 doesn't support TIME WITH TIME ZONE
-		if (fieldType.getDataPersister() instanceof OffsetTimeType)
+		if (dataPersister.getSqlType() == SqlType.OFFSET_TIME)
 			return DataType.OFFSET_TIME_SQL.getDataPersister();
 		// default is to use the dataPersister itself
 		return dataPersister;
