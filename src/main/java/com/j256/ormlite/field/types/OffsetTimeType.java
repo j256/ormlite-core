@@ -31,7 +31,7 @@ public class OffsetTimeType extends BaseDataType {
     @Override
     public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
         try {
-            return OffsetTime.parse(defaultStr, DateTimeFormatter.ofPattern("HH:mm:ssx"));
+            return OffsetTime.parse(defaultStr, DateTimeFormatter.ofPattern("HH:mm:ss[.SSS]x"));
         } catch (NumberFormatException e) {
             throw SqlExceptionUtil.create("Problems with field " + fieldType +
                     " parsing default LocalDateTime value: " + defaultStr, e);

@@ -2,7 +2,6 @@ package com.j256.ormlite.field.types;
 
 import static org.junit.Assert.assertEquals;
 
-import java.sql.SQLException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;

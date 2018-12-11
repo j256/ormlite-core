@@ -1642,12 +1642,10 @@ public class BaseDaoImplTest extends BaseCoreTest {
 			callC++;
 		}
 
-		@Override
 		public void close() {
 
 		}
 
-		@Override
 		public void remove() {
 
 		}

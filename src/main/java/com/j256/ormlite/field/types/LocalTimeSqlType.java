@@ -33,7 +33,7 @@ public class LocalTimeSqlType extends BaseDataType {
     @Override
     public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
         try {
-            return LocalTime.parse(defaultStr, DateTimeFormatter.ofPattern("HH:mm:ss.SSSSSS"));
+            return Time.valueOf(LocalTime.parse(defaultStr, DateTimeFormatter.ofPattern("HH:mm:ss[.SSSSSS]")));
         } catch (NumberFormatException e) {
             throw SqlExceptionUtil.create("Problems with field " + fieldType +
                     " parsing default LocalTime value: " + defaultStr, e);
@@ -42,7 +42,7 @@ public class LocalTimeSqlType extends BaseDataType {
 
     @Override
     public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-        return results.getTime(columnPos).toLocalTime();
+        return results.getTime(columnPos);
     }
 
     @Override

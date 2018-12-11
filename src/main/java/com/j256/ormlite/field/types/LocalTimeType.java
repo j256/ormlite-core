@@ -31,7 +31,7 @@ public class LocalTimeType extends BaseDataType {
     @Override
     public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
         try {
-            return LocalTime.parse(defaultStr, DateTimeFormatter.ofPattern("HH:mm:ss"));
+            return LocalTime.parse(defaultStr, DateTimeFormatter.ofPattern("HH:mm:ss[.SSSSSS]"));
         } catch (NumberFormatException e) {
             throw SqlExceptionUtil.create("Problems with field " + fieldType +
                     " parsing default LocalDateTime value: " + defaultStr, e);

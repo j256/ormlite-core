@@ -2,11 +2,9 @@ package com.j256.ormlite.field.types;
 
 import static org.junit.Assert.assertEquals;
 
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.time.temporal.ChronoUnit;
 
 import org.junit.Test;
 
@@ -25,7 +23,7 @@ public class LocalDateTimeTypeTest extends BaseTypeTest {
         Class<DateTimeTable> clazz = DateTimeTable.class;
         Dao<DateTimeTable, Object> dao = createDao(clazz, true);
         LocalDateTime val = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
         String valStr = formatter.format(val);
         DateTimeTable foo = new DateTimeTable();
         foo.dateTime = val;

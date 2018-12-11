@@ -33,7 +33,7 @@ public class LocalDateSqlType extends BaseDataType {
     @Override
     public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
         try {
-            return LocalDate.parse(defaultStr, DateTimeFormatter.ISO_LOCAL_DATE);
+            return Date.valueOf(LocalDate.parse(defaultStr, DateTimeFormatter.ISO_LOCAL_DATE));
         } catch (NumberFormatException e) {
             throw SqlExceptionUtil.create("Problems with field " + fieldType +
                     " parsing default LocalDate value: " + defaultStr, e);
@@ -42,19 +42,19 @@ public class LocalDateSqlType extends BaseDataType {
 
     @Override
     public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-        return results.getDate(columnPos).toLocalDate();
-    }
-
-    @Override
-    public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
-        Date value = (Date) sqlArg;
-        return value.toLocalDate();
+        return results.getDate(columnPos);
     }
 
     @Override
     public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
         LocalDate date = (LocalDate) javaObject;
         return Date.valueOf(date);
+    }
+
+    @Override
+    public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
+        Date date = (Date) sqlArg;
+        return date.toLocalDate();
     }
 
     @Override

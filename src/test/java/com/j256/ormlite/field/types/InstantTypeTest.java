@@ -2,11 +2,11 @@ package com.j256.ormlite.field.types;
 
 import static org.junit.Assert.assertEquals;
 
-import java.sql.SQLException;
 import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.time.temporal.ChronoUnit;
 
 import org.junit.Test;
 
@@ -24,14 +24,15 @@ public class InstantTypeTest extends BaseTypeTest {
     public void testInstant() throws Exception {
         Class<InstantTable> clazz = InstantTable.class;
         Dao<InstantTable, Object> dao = createDao(clazz, true);
-        Instant val = Instant.now().truncatedTo(ChronoUnit.MILLIS);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
-        String valStr = val.toString();
+        Instant val = Instant.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss[.SSS]x");
+        OffsetDateTime val2 = OffsetDateTime.ofInstant(val, ZoneOffset.UTC);
+        String valStr = formatter.format(val2);
         InstantTable foo = new InstantTable();
         foo.instant = val;
         assertEquals(1, dao.create(foo));
 
-        testType(dao, foo, clazz, val, val, val, valStr, DataType.INSTANT, INSTANT_COLUMN, false,
+        testType(dao, foo, clazz, val, val2, val2, valStr, DataType.INSTANT, INSTANT_COLUMN, false,
                 true, true, false, true, false,
                 true, false);
     }

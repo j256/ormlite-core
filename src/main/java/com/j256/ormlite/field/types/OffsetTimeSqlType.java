@@ -2,9 +2,9 @@ package com.j256.ormlite.field.types;
 
 import java.lang.reflect.Field;
 import java.sql.SQLException;
-import java.time.Instant;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.OffsetTime;
 import java.time.format.DateTimeFormatter;
 
 import com.j256.ormlite.field.FieldType;
@@ -17,18 +17,18 @@ import com.j256.ormlite.support.DatabaseResults;
  *
  * @author graynk
  */
-public class InstantType extends BaseDataType {
+public class OffsetTimeSqlType extends BaseDataType {
 
-    private static final InstantType singleton = new InstantType();
-    public static InstantType getSingleton() {
+    private static final OffsetTimeSqlType singleton = new OffsetTimeSqlType();
+    public static OffsetTimeSqlType getSingleton() {
         try {
-            Class.forName("java.time.Instant", false, null);
+            Class.forName("java.time.OffsetTime", false, null);
         } catch (ClassNotFoundException e) {
             return null; // No java.time on classpath;
         }
         return singleton; }
-    private InstantType() { super(SqlType.OFFSET_DATE_TIME, new Class<?>[] { Instant.class }); }
-    protected InstantType(SqlType sqlType, Class<?>[] classes) { super(sqlType, classes); }
+    private OffsetTimeSqlType() { super(SqlType.OFFSET_DATE_TIME, new Class<?>[] { OffsetTime.class }); }
+    protected OffsetTimeSqlType(SqlType sqlType, Class<?>[] classes) { super(sqlType, classes); }
 
     @Override
     public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
@@ -48,13 +48,13 @@ public class InstantType extends BaseDataType {
     @Override
     public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
         OffsetDateTime value = (OffsetDateTime) sqlArg;
-        return value.toInstant();
+        return value.toOffsetTime();
     }
 
     @Override
     public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
-        Instant instant = (Instant) javaObject;
-        return OffsetDateTime.ofInstant(instant, ZoneOffset.UTC);
+        OffsetTime time = (OffsetTime) javaObject;
+        return time.atDate(LocalDate.ofEpochDay(0));
     }
 
     @Override
@@ -64,13 +64,13 @@ public class InstantType extends BaseDataType {
 
     @Override
     public Object moveToNextValue(Object currentValue) {
-        Instant datetime = (Instant) currentValue;
-        return datetime.plusNanos(1);
+        OffsetTime time = (OffsetTime) currentValue;
+        return time.plusNanos(1);
     }
 
     @Override
     public boolean isValidForField(Field field) {
-        return (field.getType() == Instant.class);
+        return (field.getType() == OffsetTime.class);
     }
 
     @Override

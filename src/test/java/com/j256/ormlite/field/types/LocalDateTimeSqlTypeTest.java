@@ -2,11 +2,10 @@ package com.j256.ormlite.field.types;
 
 import static org.junit.Assert.assertEquals;
 
-import java.sql.SQLException;
-import java.time.OffsetDateTime;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.time.temporal.ChronoUnit;
 
 import org.junit.Test;
 
@@ -16,7 +15,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.table.DatabaseTable;
 
-public class OffsetDateTimeTypeTest extends BaseTypeTest {
+public class LocalDateTimeSqlTypeTest extends BaseTypeTest {
 
     private static final String DATE_TIME_COLUMN = "dateTime";
 
@@ -24,16 +23,15 @@ public class OffsetDateTimeTypeTest extends BaseTypeTest {
     public void testDateTime() throws Exception {
         Class<DateTimeTable> clazz = DateTimeTable.class;
         Dao<DateTimeTable, Object> dao = createDao(clazz, true);
-        OffsetDateTime val = OffsetDateTime.now().truncatedTo(ChronoUnit.MILLIS);
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss[.SSS]x");
+        LocalDateTime val = LocalDateTime.now();
+        Timestamp val2 = Timestamp.valueOf(val);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
         String valStr = formatter.format(val);
-
         DateTimeTable foo = new DateTimeTable();
         foo.dateTime = val;
         assertEquals(1, dao.create(foo));
 
-        testType(dao, foo, clazz, val, val, val, valStr, DataType.OFFSET_DATE_TIME, DATE_TIME_COLUMN, false,
+        testType(dao, foo, clazz, val, val2, val2, valStr, DataType.LOCAL_DATE_TIME_SQL, DATE_TIME_COLUMN, false,
                 true, true, false, true, false,
                 true, false);
     }
@@ -44,7 +42,7 @@ public class OffsetDateTimeTypeTest extends BaseTypeTest {
         Dao<DateTimeTable, Object> dao = createDao(clazz, true);
         DateTimeTable foo = new DateTimeTable();
         assertEquals(1, dao.create(foo));
-        testType(dao, foo, clazz, null, null, null, null, DataType.OFFSET_DATE_TIME,
+        testType(dao, foo, clazz, null, null, null, null, DataType.LOCAL_DATE_TIME_SQL,
                 DATE_TIME_COLUMN,
                 false, true, true, false, true,
                 false, true, false);
@@ -54,7 +52,7 @@ public class OffsetDateTimeTypeTest extends BaseTypeTest {
     public void testDateParseInvalid() throws Exception {
         FieldType fieldType = FieldType.createFieldType(connectionSource, TABLE_NAME,
                 DateTimeTable.class.getDeclaredField(DATE_TIME_COLUMN), DateTimeTable.class);
-        DataType.OFFSET_DATE_TIME.getDataPersister().parseDefaultString(fieldType, "not valid datetime string");
+        DataType.LOCAL_DATE_TIME.getDataPersister().parseDefaultString(fieldType, "not valid datetime string");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -67,13 +65,13 @@ public class OffsetDateTimeTypeTest extends BaseTypeTest {
 
     @DatabaseTable
     protected static class InvalidDate {
-        @DatabaseField(dataType = DataType.OFFSET_DATE_TIME)
+        @DatabaseField(dataType = DataType.LOCAL_DATE_TIME_SQL)
         String notDateTime;
     }
 
     @DatabaseTable(tableName = TABLE_NAME)
     protected static class DateTimeTable {
-        @DatabaseField(columnName = DATE_TIME_COLUMN)
-        OffsetDateTime dateTime;
+        @DatabaseField(columnName = DATE_TIME_COLUMN, dataType = DataType.LOCAL_DATE_TIME_SQL)
+        LocalDateTime dateTime;
     }
 }

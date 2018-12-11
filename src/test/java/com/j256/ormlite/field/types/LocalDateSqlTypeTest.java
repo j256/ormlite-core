@@ -2,6 +2,7 @@ package com.j256.ormlite.field.types;
 
 import static org.junit.Assert.assertEquals;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -14,7 +15,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.table.DatabaseTable;
 
-public class LocalDateTypeTest extends BaseTypeTest {
+public class LocalDateSqlTypeTest extends BaseTypeTest {
 
     private static final String DATE_COLUMN = "date";
 
@@ -23,14 +24,14 @@ public class LocalDateTypeTest extends BaseTypeTest {
         Class<DateTable> clazz = DateTable.class;
         Dao<DateTable, Object> dao = createDao(clazz, true);
         LocalDate val = LocalDate.now();
-        LocalDate val2 = LocalDate.now();
+        Date val2 = Date.valueOf(val);
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
         String valStr = formatter.format(val);
         DateTable foo = new DateTable();
         foo.date = val;
         assertEquals(1, dao.create(foo));
 
-        testType(dao, foo, clazz, val, val2, val2, valStr, DataType.LOCAL_DATE, DATE_COLUMN, false,
+        testType(dao, foo, clazz, val, val2, val2, valStr, DataType.LOCAL_DATE_SQL, DATE_COLUMN, false,
                 true, true, false, true, false,
                 true, false);
     }
@@ -41,7 +42,7 @@ public class LocalDateTypeTest extends BaseTypeTest {
         Dao<DateTable, Object> dao = createDao(clazz, true);
         DateTable foo = new DateTable();
         assertEquals(1, dao.create(foo));
-        testType(dao, foo, clazz, null, null, null, null, DataType.LOCAL_DATE, DATE_COLUMN,
+        testType(dao, foo, clazz, null, null, null, null, DataType.LOCAL_DATE_SQL, DATE_COLUMN,
                 false, true, true, false, true,
                 false, true, false);
     }
@@ -63,13 +64,13 @@ public class LocalDateTypeTest extends BaseTypeTest {
 
     @DatabaseTable
     protected static class InvalidDate {
-        @DatabaseField(dataType = DataType.LOCAL_DATE)
+        @DatabaseField(dataType = DataType.LOCAL_DATE_SQL)
         String notDate;
     }
 
     @DatabaseTable(tableName = TABLE_NAME)
     protected static class DateTable {
-        @DatabaseField(columnName = DATE_COLUMN)
+        @DatabaseField(columnName = DATE_COLUMN, dataType = DataType.LOCAL_DATE_SQL)
         LocalDate date;
     }
 }
