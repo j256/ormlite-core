@@ -3,11 +3,7 @@ package com.j256.ormlite.h2;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.sql.Blob;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.time.*;
 
 import com.j256.ormlite.dao.ObjectCache;
@@ -148,6 +144,16 @@ public class H2DatabaseResults implements DatabaseResults {
 	@Override
 	public Timestamp getTimestamp(int columnIndex) throws SQLException {
 		return resultSet.getTimestamp(columnIndex + 1);
+	}
+
+	@Override
+	public Time getTime(int columnIndex) throws SQLException {
+		return resultSet.getTime(columnIndex + 1);
+	}
+
+	@Override
+	public Date getDate(int columnIndex) throws SQLException {
+		return resultSet.getDate(columnIndex + 1);
 	}
 
 	@Override

@@ -3,7 +3,9 @@ package com.j256.ormlite.support;
 import java.io.Closeable;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.*;
 
@@ -141,6 +143,16 @@ public interface DatabaseResults extends Closeable {
 	 * Returns the SQL timestamp value from the results at the column index.
 	 */
 	public Timestamp getTimestamp(int columnIndex) throws SQLException;
+
+	/**
+	 * Returns the SQL date value from the results at the column index.
+	 */
+	public Date getDate(int columnIndex) throws SQLException;
+
+	/**
+	 * Returns the SQL time value from the results at the column index.
+	 */
+	public Time getTime(int columnIndex) throws SQLException;
 
 	/**
 	 * Returns the LocalDate value from the results at the column index

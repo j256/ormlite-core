@@ -1,6 +1,9 @@
 package com.j256.ormlite.field.types;
 
+import java.lang.reflect.Field;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
@@ -8,63 +11,37 @@ import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
- * A custom persister that is able to store the java.time.LocalDateTime class in the database as Date object.
+ * A custom persister that is able to store the java.time.LocalDate class in the database as Date object.
  *
  * @author graynk
  */
-public class LocalDateTimeType extends BaseDataType {
+public class LocalDateType extends BaseDataType {
 
-    private static final LocalDateTimeType singleton = new LocalDateTimeType();
-    public static LocalDateTimeType getSingleton() { return singleton; }
-    private LocalDateTimeType() { super(SqlType.LONG); }
-
-    protected LocalDateTimeType(SqlType sqlType, Class<?>[] classes) {
-        super(sqlType, classes);
+    private static final LocalDateType singleton = new LocalDateType();
+    public static LocalDateType getSingleton() {
+        try {
+            Class.forName("java.time.LocalDate", false, null);
+        } catch (ClassNotFoundException e) {
+            return null; // No java.time on classpath;
+        }
+        return singleton;
     }
-
-    @Override
-    public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {
-        return extractMillis(javaObject);
-    }
+    private LocalDateType() { super(SqlType.LOCAL_DATE, new Class<?>[] { LocalDate.class }); }
+    protected LocalDateType(SqlType sqlType, Class<?>[] classes) { super(sqlType, classes); }
 
     @Override
     public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
         try {
-            return Long.parseLong(defaultStr);
+            return LocalDate.parse(defaultStr, DateTimeFormatter.ISO_LOCAL_DATE);
         } catch (NumberFormatException e) {
-            throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing default DateTime value: "
-                    + defaultStr, e);
+            throw SqlExceptionUtil.create("Problems with field " + fieldType +
+                    " parsing default LocalDate value: " + defaultStr, e);
         }
     }
 
     @Override
     public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-        return results.getLong(columnPos);
-    }
-
-    @Override
-    public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
-        return createInstance((Long) sqlArg);
-    }
-
-    @Override
-    public boolean isEscapedValue() {
-        return false;
-    }
-
-    @Override
-    public boolean isAppropriateId() {
-        return false;
-    }
-
-    @Override
-    public Class<?> getPrimaryClass() {
-        try {
-            return getDateTimeClass();
-        } catch (ClassNotFoundException e) {
-            // ignore the exception
-            return null;
-        }
+        return results.getLocalDate(columnPos);
     }
 
     @Override
@@ -73,51 +50,18 @@ public class LocalDateTimeType extends BaseDataType {
     }
 
     @Override
-    public Object moveToNextValue(Object currentValue) throws SQLException {
-        long newVal = System.currentTimeMillis();
-        if (currentValue == null) {
-            return createInstance(newVal);
-        }
-        Long currentVal = extractMillis(currentValue);
-        if (newVal == currentVal) {
-            return createInstance(newVal + 1L);
-        } else {
-            return createInstance(newVal);
-        }
+    public Object moveToNextValue(Object currentValue) {
+        LocalDate date = (LocalDate) currentValue;
+        return date.plusDays(1);
     }
 
-    private Object createInstance(Long sqlArg) throws SQLException {
-        try {
-            if (millisConstructor == null) {
-                Class<?> clazz = getDateTimeClass();
-                millisConstructor = clazz.getConstructor(long.class);
-            }
-            return millisConstructor.newInstance(sqlArg);
-        } catch (Exception e) {
-            throw SqlExceptionUtil.create("Could not use reflection to construct a Joda DateTime", e);
-        }
+    @Override
+    public boolean isArgumentHolderRequired() {
+        return true;
     }
 
-    private Long extractMillis(Object javaObject) throws SQLException {
-        try {
-            if (getMillisMethod == null) {
-                Class<?> clazz = getDateTimeClass();
-                getMillisMethod = clazz.getMethod("getMillis");
-            }
-            if (javaObject == null) {
-                return null;
-            } else {
-                return (Long) getMillisMethod.invoke(javaObject);
-            }
-        } catch (Exception e) {
-            throw SqlExceptionUtil.create("Could not use reflection to get millis from Joda DateTime: " + javaObject, e);
-        }
-    }
-
-    private Class<?> getDateTimeClass() throws ClassNotFoundException {
-        if (dateTimeClass == null) {
-            dateTimeClass = Class.forName("org.joda.time.DateTime");
-        }
-        return dateTimeClass;
+    @Override
+    public boolean isValidForField(Field field) {
+        return (field.getType() == LocalDate.class);
     }
 }

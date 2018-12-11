@@ -1,10 +1,9 @@
 package com.j256.ormlite.field.types;
 
 import java.lang.reflect.Field;
+import java.sql.Date;
 import java.sql.SQLException;
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import com.j256.ormlite.field.FieldType;
@@ -17,44 +16,45 @@ import com.j256.ormlite.support.DatabaseResults;
  *
  * @author graynk
  */
-public class InstantType extends BaseDataType {
+public class LocalDateSqlType extends BaseDataType {
 
-    private static final InstantType singleton = new InstantType();
-    public static InstantType getSingleton() {
+    private static final LocalDateSqlType singleton = new LocalDateSqlType();
+    public static LocalDateSqlType getSingleton() {
         try {
-            Class.forName("java.time.Instant", false, null);
+            Class.forName("java.time.LocalDate", false, null);
         } catch (ClassNotFoundException e) {
             return null; // No java.time on classpath;
         }
-        return singleton; }
-    private InstantType() { super(SqlType.OFFSET_DATE_TIME, new Class<?>[] { Instant.class }); }
-    protected InstantType(SqlType sqlType, Class<?>[] classes) { super(sqlType, classes); }
+        return singleton;
+    }
+    private LocalDateSqlType() { super(SqlType.LOCAL_DATE, new Class<?>[] { LocalDate.class }); }
+    protected LocalDateSqlType(SqlType sqlType, Class<?>[] classes) { super(sqlType, classes); }
 
     @Override
     public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
         try {
-            return OffsetDateTime.parse(defaultStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.Sx")).toInstant();
+            return LocalDate.parse(defaultStr, DateTimeFormatter.ISO_LOCAL_DATE);
         } catch (NumberFormatException e) {
             throw SqlExceptionUtil.create("Problems with field " + fieldType +
-                    " parsing default LocalDateTime value: " + defaultStr, e);
+                    " parsing default LocalDate value: " + defaultStr, e);
         }
     }
 
     @Override
     public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-        return results.getOffsetDateTime(columnPos);
+        return results.getDate(columnPos).toLocalDate();
     }
 
     @Override
     public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
-        OffsetDateTime value = (OffsetDateTime) sqlArg;
-        return value.toInstant();
+        Date value = (Date) sqlArg;
+        return value.toLocalDate();
     }
 
     @Override
     public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
-        Instant instant = (Instant) javaObject;
-        return OffsetDateTime.ofInstant(instant, ZoneOffset.UTC);
+        LocalDate date = (LocalDate) javaObject;
+        return Date.valueOf(date);
     }
 
     @Override
@@ -64,17 +64,17 @@ public class InstantType extends BaseDataType {
 
     @Override
     public Object moveToNextValue(Object currentValue) {
-        Instant datetime = (Instant) currentValue;
-        return datetime.plusNanos(1);
-    }
-
-    @Override
-    public boolean isValidForField(Field field) {
-        return (field.getType() == Instant.class);
+        LocalDate date = (LocalDate) currentValue;
+        return date.plusDays(1);
     }
 
     @Override
     public boolean isArgumentHolderRequired() {
         return true;
+    }
+
+    @Override
+    public boolean isValidForField(Field field) {
+        return (field.getType() == LocalDate.class);
     }
 }
