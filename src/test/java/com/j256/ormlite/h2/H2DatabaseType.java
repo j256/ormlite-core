@@ -5,8 +5,11 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.j256.ormlite.db.BaseDatabaseType;
-import com.j256.ormlite.field.*;
-import com.j256.ormlite.field.types.OffsetTimeType;
+import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.field.SqlType;
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DataPersister;
+import com.j256.ormlite.field.FieldConverter;
 
 /**
  * H2 database type.

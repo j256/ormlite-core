@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 import com.j256.ormlite.field.FieldType;
@@ -19,14 +19,18 @@ import com.j256.ormlite.support.DatabaseResults;
  */
 public class InstantType extends BaseDataType {
 
-    private static final InstantType singleton = new InstantType();
+    private static InstantType singleton;
     public static InstantType getSingleton() {
-        try {
-            Class.forName("java.time.Instant", false, null);
-        } catch (ClassNotFoundException e) {
-            return null; // No java.time on classpath;
+        if (singleton == null) {
+            try {
+                Class.forName("java.time.Instant", false, null);
+                singleton = new InstantType();
+            } catch (ClassNotFoundException e) {
+                return null; // No java.time on classpath;
+            }
         }
-        return singleton; }
+        return singleton;
+    }
     private InstantType() { super(SqlType.OFFSET_DATE_TIME, new Class<?>[] { Instant.class }); }
     protected InstantType(SqlType sqlType, Class<?>[] classes) { super(sqlType, classes); }
 
@@ -54,7 +58,8 @@ public class InstantType extends BaseDataType {
     @Override
     public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
         Instant instant = (Instant) javaObject;
-        return OffsetDateTime.ofInstant(instant, ZoneOffset.UTC);
+        // ZoneOffset.UTC is evaluated at InstantType creation, fails on Java 6. Using ZoneId.of() instead
+        return OffsetDateTime.ofInstant(instant, ZoneId.of("UTC"));
     }
 
     @Override

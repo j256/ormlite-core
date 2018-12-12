@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.time.OffsetTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.time.temporal.ChronoUnit;
 
 import org.junit.Test;
 

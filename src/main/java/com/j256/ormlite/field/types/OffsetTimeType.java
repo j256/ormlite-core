@@ -17,14 +17,18 @@ import com.j256.ormlite.support.DatabaseResults;
  */
 public class OffsetTimeType extends BaseDataType {
 
-    private static final OffsetTimeType singleton = new OffsetTimeType();
+    private static OffsetTimeType singleton;
     public static OffsetTimeType getSingleton() {
-        try {
-            Class.forName("java.time.OffsetTime", false, null);
-        } catch (ClassNotFoundException e) {
-            return null; // No java.time on classpath;
+        if (singleton == null) {
+            try {
+                Class.forName("java.time.OffsetTime", false, null);
+                singleton = new OffsetTimeType();
+            } catch (ClassNotFoundException e) {
+                return null; // No java.time on classpath;
+            }
         }
-        return singleton; }
+        return singleton;
+    }
     private OffsetTimeType() { super(SqlType.OFFSET_TIME, new Class<?>[] { OffsetTime.class }); }
     protected OffsetTimeType(SqlType sqlType, Class<?>[] classes) { super(sqlType, classes); }
 

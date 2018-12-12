@@ -17,12 +17,15 @@ import com.j256.ormlite.support.DatabaseResults;
  */
 public class LocalDateTimeType extends BaseDataType {
 
-    private static final LocalDateTimeType singleton = new LocalDateTimeType();
+    private static LocalDateTimeType singleton;
     public static LocalDateTimeType getSingleton() {
-        try {
-            Class.forName("java.time.LocalDateTime", false, null);
-        } catch (ClassNotFoundException e) {
-            return null; // No java.time on classpath;
+        if (singleton == null) {
+            try {
+                Class.forName("java.time.LocalDateTime", false, null);
+                singleton = new LocalDateTimeType();
+            } catch (ClassNotFoundException e) {
+                return null; // No java.time on classpath;
+            }
         }
         return singleton;
     }

@@ -18,12 +18,15 @@ import com.j256.ormlite.support.DatabaseResults;
  */
 public class LocalDateSqlType extends BaseDataType {
 
-    private static final LocalDateSqlType singleton = new LocalDateSqlType();
+    private static LocalDateSqlType singleton;
     public static LocalDateSqlType getSingleton() {
-        try {
-            Class.forName("java.time.LocalDate", false, null);
-        } catch (ClassNotFoundException e) {
-            return null; // No java.time on classpath;
+        if (singleton == null) {
+            try {
+                Class.forName("java.time.LocalDate", false, null);
+                singleton = new LocalDateSqlType();
+            } catch (ClassNotFoundException e) {
+                return null; // No java.time on classpath;
+            }
         }
         return singleton;
     }
