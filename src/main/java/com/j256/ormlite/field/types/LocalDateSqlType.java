@@ -16,7 +16,7 @@ import com.j256.ormlite.support.DatabaseResults;
  *
  * @author graynk
  */
-public class LocalDateSqlType extends BaseDataType {
+public class LocalDateSqlType extends LocalDateType {
 
     private static LocalDateSqlType singleton;
     public static LocalDateSqlType getSingleton() {
@@ -58,26 +58,5 @@ public class LocalDateSqlType extends BaseDataType {
     public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
         Date date = (Date) sqlArg;
         return date.toLocalDate();
-    }
-
-    @Override
-    public boolean isValidForVersion() {
-        return true;
-    }
-
-    @Override
-    public Object moveToNextValue(Object currentValue) {
-        LocalDate date = (LocalDate) currentValue;
-        return date.plusDays(1);
-    }
-
-    @Override
-    public boolean isArgumentHolderRequired() {
-        return true;
-    }
-
-    @Override
-    public boolean isValidForField(Field field) {
-        return (field.getType() == LocalDate.class);
     }
 }

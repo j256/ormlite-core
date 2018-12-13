@@ -23,7 +23,7 @@ public class OffsetTimeTypeTest extends BaseTypeTest {
         Class<TimeTable> clazz = TimeTable.class;
         Dao<TimeTable, Object> dao = createDao(clazz, true);
         OffsetTime val = OffsetTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss[.SSS]x");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss[.SSSSSS]x");
         String valStr = formatter.format(val);
         TimeTable foo = new TimeTable();
         foo.time = val;

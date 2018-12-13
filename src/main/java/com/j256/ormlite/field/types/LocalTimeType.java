@@ -15,7 +15,7 @@ import com.j256.ormlite.support.DatabaseResults;
  *
  * @author graynk
  */
-public class LocalTimeType extends BaseDataType {
+public class LocalTimeType extends BaseLocalDateType {
 
     private static LocalTimeType singleton;
     public static LocalTimeType getSingleton() {
@@ -38,18 +38,13 @@ public class LocalTimeType extends BaseDataType {
             return LocalTime.parse(defaultStr, DateTimeFormatter.ofPattern("HH:mm:ss[.SSSSSS]"));
         } catch (NumberFormatException e) {
             throw SqlExceptionUtil.create("Problems with field " + fieldType +
-                    " parsing default LocalDateTime value: " + defaultStr, e);
+                    " parsing default LocalTime value: " + defaultStr, e);
         }
     }
 
     @Override
     public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
         return results.getLocalTime(columnPos);
-    }
-
-    @Override
-    public boolean isValidForVersion() {
-        return true;
     }
 
     @Override
@@ -61,10 +56,5 @@ public class LocalTimeType extends BaseDataType {
     @Override
     public boolean isValidForField(Field field) {
         return (field.getType() == LocalTime.class);
-    }
-
-    @Override
-    public boolean isArgumentHolderRequired() {
-        return true;
     }
 }

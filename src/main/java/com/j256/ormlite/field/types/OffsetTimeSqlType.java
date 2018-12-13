@@ -17,7 +17,7 @@ import com.j256.ormlite.support.DatabaseResults;
  *
  * @author graynk
  */
-public class OffsetTimeSqlType extends BaseDataType {
+public class OffsetTimeSqlType extends OffsetTimeType {
 
     private static OffsetTimeSqlType singleton;
     public static OffsetTimeSqlType getSingleton() {
@@ -40,7 +40,7 @@ public class OffsetTimeSqlType extends BaseDataType {
             return OffsetDateTime.parse(defaultStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss[.SSS]x"));
         } catch (NumberFormatException e) {
             throw SqlExceptionUtil.create("Problems with field " + fieldType +
-                    " parsing default LocalDateTime value: " + defaultStr, e);
+                    " parsing default OffsetTime value: " + defaultStr, e);
         }
     }
 
@@ -59,26 +59,5 @@ public class OffsetTimeSqlType extends BaseDataType {
     public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
         OffsetTime time = (OffsetTime) javaObject;
         return time.atDate(LocalDate.ofEpochDay(0));
-    }
-
-    @Override
-    public boolean isValidForVersion() {
-        return true;
-    }
-
-    @Override
-    public Object moveToNextValue(Object currentValue) {
-        OffsetTime time = (OffsetTime) currentValue;
-        return time.plusNanos(1);
-    }
-
-    @Override
-    public boolean isValidForField(Field field) {
-        return (field.getType() == OffsetTime.class);
-    }
-
-    @Override
-    public boolean isArgumentHolderRequired() {
-        return true;
     }
 }

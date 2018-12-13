@@ -17,7 +17,7 @@ import com.j256.ormlite.support.DatabaseResults;
  *
  * @author graynk
  */
-public class InstantType extends BaseDataType {
+public class InstantType extends BaseLocalDateType {
 
     private static InstantType singleton;
     public static InstantType getSingleton() {
@@ -40,7 +40,7 @@ public class InstantType extends BaseDataType {
             return OffsetDateTime.parse(defaultStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss[.SSS]x"));
         } catch (NumberFormatException e) {
             throw SqlExceptionUtil.create("Problems with field " + fieldType +
-                    " parsing default LocalDateTime value: " + defaultStr, e);
+                    " parsing default Instant value: " + defaultStr, e);
         }
     }
 
@@ -63,11 +63,6 @@ public class InstantType extends BaseDataType {
     }
 
     @Override
-    public boolean isValidForVersion() {
-        return true;
-    }
-
-    @Override
     public Object moveToNextValue(Object currentValue) {
         Instant datetime = (Instant) currentValue;
         return datetime.plusNanos(1);
@@ -76,10 +71,5 @@ public class InstantType extends BaseDataType {
     @Override
     public boolean isValidForField(Field field) {
         return (field.getType() == Instant.class);
-    }
-
-    @Override
-    public boolean isArgumentHolderRequired() {
-        return true;
     }
 }

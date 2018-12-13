@@ -24,7 +24,7 @@ public class LocalTimeTypeTest extends BaseTypeTest {
         Class<TimeTable> clazz = TimeTable.class;
         Dao<TimeTable, Object> dao = createDao(clazz, true);
         LocalTime val = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSSSSS");
         String valStr = formatter.format(val);
         TimeTable foo = new TimeTable();
         foo.time = val;

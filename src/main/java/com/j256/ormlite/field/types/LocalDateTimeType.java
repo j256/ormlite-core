@@ -15,7 +15,7 @@ import com.j256.ormlite.support.DatabaseResults;
  *
  * @author graynk
  */
-public class LocalDateTimeType extends BaseDataType {
+public class LocalDateTimeType extends BaseLocalDateType {
 
     private static LocalDateTimeType singleton;
     public static LocalDateTimeType getSingleton() {
@@ -48,11 +48,6 @@ public class LocalDateTimeType extends BaseDataType {
     }
 
     @Override
-    public boolean isValidForVersion() {
-        return true;
-    }
-
-    @Override
     public Object moveToNextValue(Object currentValue) {
         LocalDateTime datetime = (LocalDateTime) currentValue;
         return datetime.plusNanos(1);
@@ -61,10 +56,5 @@ public class LocalDateTimeType extends BaseDataType {
     @Override
     public boolean isValidForField(Field field) {
         return (field.getType() == LocalDateTime.class);
-    }
-
-    @Override
-    public boolean isArgumentHolderRequired() {
-        return true;
     }
 }
