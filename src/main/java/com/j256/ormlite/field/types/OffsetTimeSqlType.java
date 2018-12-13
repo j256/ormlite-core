@@ -31,7 +31,7 @@ public class OffsetTimeSqlType extends OffsetTimeType {
         }
         return singleton;
     }
-    private OffsetTimeSqlType() { super(SqlType.OFFSET_DATE_TIME, new Class<?>[] { OffsetTime.class }); }
+    private OffsetTimeSqlType() { super(SqlType.OFFSET_DATE_TIME); }
     protected OffsetTimeSqlType(SqlType sqlType, Class<?>[] classes) { super(sqlType, classes); }
 
     @Override

@@ -30,7 +30,7 @@ public class LocalDateTimeSqlType extends LocalDateTimeType {
         }
         return singleton;
     }
-    private LocalDateTimeSqlType() { super(SqlType.LOCAL_DATE_TIME, new Class<?>[] { LocalDateTime.class }); }
+    private LocalDateTimeSqlType() { super(SqlType.LOCAL_DATE_TIME); }
     protected LocalDateTimeSqlType(SqlType sqlType, Class<?>[] classes) { super(sqlType, classes); }
 
     @Override

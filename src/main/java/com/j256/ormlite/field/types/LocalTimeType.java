@@ -31,6 +31,7 @@ public class LocalTimeType extends BaseLocalDateType {
     }
     private LocalTimeType() { super(SqlType.LOCAL_TIME, new Class<?>[] { LocalTime.class }); }
     protected LocalTimeType(SqlType sqlType, Class<?>[] classes) { super(sqlType, classes); }
+    protected LocalTimeType(SqlType sqlType) { super(sqlType); }
 
     @Override
     public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {

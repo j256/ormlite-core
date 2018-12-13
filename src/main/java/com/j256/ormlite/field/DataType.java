@@ -260,30 +260,6 @@ public enum DataType {
 	 */
 	UNKNOWN(null),
 	/**
-	 * Persists the {@link java.time.LocalDate} Java class. By default this will use
-	 * {@link #LOCAL_DATE} so you will need to specify this using {@link DatabaseField#dataType()}.
-	 *
-	 */
-	LOCAL_DATE_SQL(LocalDateSqlType.getSingleton()),
-	/**
-	 * Persists the {@link java.time.LocalTime} Java class. By default this will use
-	 * {@link #LOCAL_TIME} so you will need to specify this using {@link DatabaseField#dataType()}.
-	 *
-	 */
-	LOCAL_TIME_SQL(LocalTimeSqlType.getSingleton()),
-	/**
-	 * Persists the {@link java.time.LocalDateTime} Java class. By default this will use
-	 * {@link #LOCAL_DATE_TIME} so you will need to specify this using {@link DatabaseField#dataType()}.
-	 *
-	 */
-	LOCAL_DATE_TIME_SQL(LocalDateTimeSqlType.getSingleton()),
-	/**
-	 * Persists the {@link java.time.OffsetTime} Java class. By default this will use
-	 * {@link #OFFSET_TIME} so you will need to specify this using {@link DatabaseField#dataType()}.
-	 *
-	 */
-	OFFSET_TIME_SQL(OffsetTimeSqlType.getSingleton()),
-	/**
 	 * Persists the {@link java.time.LocalDate} Java class.
 	 *
 	 */
@@ -313,6 +289,30 @@ public enum DataType {
 	 *
 	 */
 	INSTANT(InstantType.getSingleton()),
+	/**
+	 * Persists the {@link java.time.LocalDate} Java class. By default this will use
+	 * {@link #LOCAL_DATE} so you will need to specify this using {@link DatabaseField#dataType()}.
+	 *
+	 */
+	LOCAL_DATE_SQL(LocalDateSqlType.getSingleton()),
+	/**
+	 * Persists the {@link java.time.LocalTime} Java class. By default this will use
+	 * {@link #LOCAL_TIME} so you will need to specify this using {@link DatabaseField#dataType()}.
+	 *
+	 */
+	LOCAL_TIME_SQL(LocalTimeSqlType.getSingleton()),
+	/**
+	 * Persists the {@link java.time.LocalDateTime} Java class. By default this will use
+	 * {@link #LOCAL_DATE_TIME} so you will need to specify this using {@link DatabaseField#dataType()}.
+	 *
+	 */
+	LOCAL_DATE_TIME_SQL(LocalDateTimeSqlType.getSingleton()),
+	/**
+	 * Persists the {@link java.time.OffsetTime} Java class. By default this will use
+	 * {@link #OFFSET_TIME} so you will need to specify this using {@link DatabaseField#dataType()}.
+	 *
+	 */
+	OFFSET_TIME_SQL(OffsetTimeSqlType.getSingleton()),
 	// end
 	;
 

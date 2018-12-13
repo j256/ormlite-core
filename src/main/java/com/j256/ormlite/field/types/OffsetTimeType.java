@@ -31,6 +31,7 @@ public class OffsetTimeType extends BaseLocalDateType {
     }
     private OffsetTimeType() { super(SqlType.OFFSET_TIME, new Class<?>[] { OffsetTime.class }); }
     protected OffsetTimeType(SqlType sqlType, Class<?>[] classes) { super(sqlType, classes); }
+    protected OffsetTimeType(SqlType sqlType) { super(sqlType); }
 
     @Override
     public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
