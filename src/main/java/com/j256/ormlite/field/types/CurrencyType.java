@@ -38,10 +38,7 @@ public class CurrencyPersister extends BaseDataType {
   }
 
   @Override
-  public Object javaToSqlArg(
-    final FieldType fieldType,
-    final Object javaObject
-  ) throws SQLException {
+  public Object javaToSqlArg(final FieldType fieldType, final Object javaObject) throws SQLException {
     final Currency currency = (Currency) javaObject;
     return currency.getCurrencyCode();
   }
