@@ -13,24 +13,16 @@ import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
- * A custom persister that is able to store the java.time.LocalDate class in the database as Date object.
+ * A custom persister that is able to store the java.time.Instant class in the database as Timestamp With Timezone object.
+ * This class does not have a SQL backup counter-part, the database should support JDBC 4.2 for it to be used.
+ * Instant is also not a part of JDBC specification, persister converts Instant to OffsetDateTime with timezone fixed at UTC
  *
  * @author graynk
  */
 public class InstantType extends BaseLocalDateType {
 
-    private static InstantType singleton;
-    public static InstantType getSingleton() {
-        if (singleton == null) {
-            try {
-                Class.forName("java.time.Instant", false, null);
-                singleton = new InstantType();
-            } catch (ClassNotFoundException e) {
-                return null; // No java.time on classpath;
-            }
-        }
-        return singleton;
-    }
+    private static final InstantType singleton = isJavaTimeSupported() ? new InstantType() : null;
+    public static InstantType getSingleton() { return singleton; }
     private InstantType() { super(SqlType.OFFSET_DATE_TIME, new Class<?>[] { Instant.class }); }
     protected InstantType(SqlType sqlType, Class<?>[] classes) { super(sqlType, classes); }
 

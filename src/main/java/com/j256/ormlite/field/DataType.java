@@ -50,7 +50,7 @@ import com.j256.ormlite.field.types.InstantType;
 import com.j256.ormlite.field.types.LocalDateSqlType;
 import com.j256.ormlite.field.types.LocalTimeSqlType;
 import com.j256.ormlite.field.types.LocalDateTimeSqlType;
-import com.j256.ormlite.field.types.OffsetTimeSqlType;
+import com.j256.ormlite.field.types.OffsetTimeCompatType;
 
 /**
  * Data type enumeration that corresponds to a {@link DataPersister}.
@@ -312,7 +312,7 @@ public enum DataType {
 	 * {@link #OFFSET_TIME} so you will need to specify this using {@link DatabaseField#dataType()}.
 	 *
 	 */
-	OFFSET_TIME_SQL(OffsetTimeSqlType.getSingleton()),
+	OFFSET_TIME_COMPAT(OffsetTimeCompatType.getSingleton()),
 	// end
 	;
 

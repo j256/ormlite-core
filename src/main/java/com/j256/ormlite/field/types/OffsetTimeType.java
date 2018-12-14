@@ -11,24 +11,15 @@ import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
- * A custom persister that is able to store the java.time.LocalDate class in the database as Date object.
+ * A custom persister that is able to store the java.time.OffsetTime class in the database as Time With Time Zone object.
+ * This class does not have a SQL backup counter-part, the database should support JDBC 4.2 for it to be used.
  *
  * @author graynk
  */
 public class OffsetTimeType extends BaseLocalDateType {
 
-    private static OffsetTimeType singleton;
-    public static OffsetTimeType getSingleton() {
-        if (singleton == null) {
-            try {
-                Class.forName("java.time.OffsetTime", false, null);
-                singleton = new OffsetTimeType();
-            } catch (ClassNotFoundException e) {
-                return null; // No java.time on classpath;
-            }
-        }
-        return singleton;
-    }
+    private static final OffsetTimeType singleton = isJavaTimeSupported() ? new OffsetTimeType() : null;
+    public static OffsetTimeType getSingleton() { return singleton; }
     private OffsetTimeType() { super(SqlType.OFFSET_TIME, new Class<?>[] { OffsetTime.class }); }
     protected OffsetTimeType(SqlType sqlType, Class<?>[] classes) { super(sqlType, classes); }
     protected OffsetTimeType(SqlType sqlType) { super(sqlType); }

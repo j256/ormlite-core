@@ -32,7 +32,7 @@ public class OffsetTimeSqlTypeTest extends BaseTypeTest {
         foo.time = val;
         assertEquals(1, dao.create(foo));
 
-        testType(dao, foo, clazz, val, val2, val2, valStr, DataType.OFFSET_TIME_SQL, TIME_COLUMN, false,
+        testType(dao, foo, clazz, val, val2, val2, valStr, DataType.OFFSET_TIME_COMPAT, TIME_COLUMN, false,
                 true, true, false, true, false,
                 true, false);
     }
@@ -43,7 +43,7 @@ public class OffsetTimeSqlTypeTest extends BaseTypeTest {
         Dao<TimeTable, Object> dao = createDao(clazz, true);
         TimeTable foo = new TimeTable();
         assertEquals(1, dao.create(foo));
-        testType(dao, foo, clazz, null, null, null, null, DataType.OFFSET_TIME_SQL, TIME_COLUMN,
+        testType(dao, foo, clazz, null, null, null, null, DataType.OFFSET_TIME_COMPAT, TIME_COLUMN,
                 false, true, true, false, true,
                 false, true, false);
     }
@@ -52,7 +52,7 @@ public class OffsetTimeSqlTypeTest extends BaseTypeTest {
     public void testDateParseInvalid() throws Exception {
         FieldType fieldType = FieldType.createFieldType(connectionSource, TABLE_NAME,
                 TimeTable.class.getDeclaredField(TIME_COLUMN), TimeTable.class);
-        DataType.OFFSET_TIME_SQL.getDataPersister().parseDefaultString(fieldType, "not valid time string");
+        DataType.OFFSET_TIME_COMPAT.getDataPersister().parseDefaultString(fieldType, "not valid time string");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -65,13 +65,13 @@ public class OffsetTimeSqlTypeTest extends BaseTypeTest {
 
     @DatabaseTable
     protected static class InvalidDate {
-        @DatabaseField(dataType = DataType.OFFSET_TIME_SQL)
+        @DatabaseField(dataType = DataType.OFFSET_TIME_COMPAT)
         String notTime;
     }
 
     @DatabaseTable(tableName = TABLE_NAME)
     protected static class TimeTable {
-        @DatabaseField(columnName = TIME_COLUMN, dataType = DataType.OFFSET_TIME_SQL)
+        @DatabaseField(columnName = TIME_COLUMN, dataType = DataType.OFFSET_TIME_COMPAT)
         OffsetTime time;
     }
 }

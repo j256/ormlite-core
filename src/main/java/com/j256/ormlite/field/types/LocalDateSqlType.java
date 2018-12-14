@@ -1,6 +1,5 @@
 package com.j256.ormlite.field.types;
 
-import java.lang.reflect.Field;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -13,23 +12,15 @@ import com.j256.ormlite.support.DatabaseResults;
 
 /**
  * A custom persister that is able to store the java.time.LocalDate class in the database as Date object.
+ * This class should be used only when database used does not support JDBC 4.2, since it converts java.time.LocalDate
+ * to java.sql.Date.
  *
  * @author graynk
  */
 public class LocalDateSqlType extends LocalDateType {
 
-    private static LocalDateSqlType singleton;
-    public static LocalDateSqlType getSingleton() {
-        if (singleton == null) {
-            try {
-                Class.forName("java.time.LocalDate", false, null);
-                singleton = new LocalDateSqlType();
-            } catch (ClassNotFoundException e) {
-                return null; // No java.time on classpath;
-            }
-        }
-        return singleton;
-    }
+    private static LocalDateSqlType singleton = isJavaTimeSupported() ? new LocalDateSqlType() : null;
+    public static LocalDateSqlType getSingleton() { return singleton; }
     private LocalDateSqlType() { super(SqlType.LOCAL_DATE); }
     protected LocalDateSqlType(SqlType sqlType, Class<?>[] classes) { super(sqlType, classes); }
 

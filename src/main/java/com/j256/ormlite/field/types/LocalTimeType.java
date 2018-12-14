@@ -11,24 +11,14 @@ import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
- * A custom persister that is able to store the java.time.LocalDate class in the database as Date object.
+ * A custom persister that is able to store the java.time.LocalTime class in the database as Time object.
  *
  * @author graynk
  */
 public class LocalTimeType extends BaseLocalDateType {
 
-    private static LocalTimeType singleton;
-    public static LocalTimeType getSingleton() {
-        if (singleton == null) {
-            try {
-                Class.forName("java.time.LocalTime", false, null);
-                singleton = new LocalTimeType();
-            } catch (ClassNotFoundException e) {
-                return null; // No java.time on classpath;
-            }
-        }
-        return singleton;
-    }
+    private static final LocalTimeType singleton = isJavaTimeSupported() ? new LocalTimeType() : null;
+    public static LocalTimeType getSingleton() { return singleton; }
     private LocalTimeType() { super(SqlType.LOCAL_TIME, new Class<?>[] { LocalTime.class }); }
     protected LocalTimeType(SqlType sqlType, Class<?>[] classes) { super(sqlType, classes); }
     protected LocalTimeType(SqlType sqlType) { super(sqlType); }

@@ -1,6 +1,5 @@
 package com.j256.ormlite.field.types;
 
-import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -13,23 +12,15 @@ import com.j256.ormlite.support.DatabaseResults;
 
 /**
  * A custom persister that is able to store the java.time.LocalDateTime class in the database as Timestamp object.
+ * This class should be used only when database used does not support JDBC 4.2, since it converts java.time.LocalDateTime
+ * to java.sql.Timestamp.
  *
  * @author graynk
  */
 public class LocalDateTimeSqlType extends LocalDateTimeType {
 
-    private static LocalDateTimeSqlType singleton;
-    public static LocalDateTimeSqlType getSingleton() {
-        if (singleton == null) {
-            try {
-                Class.forName("java.time.LocalDateTime", false, null);
-                singleton = new LocalDateTimeSqlType();
-            } catch (ClassNotFoundException e) {
-                return null; // No java.time on classpath;
-            }
-        }
-        return singleton;
-    }
+    private static final LocalDateTimeSqlType singleton = isJavaTimeSupported() ? new LocalDateTimeSqlType() : null;
+    public static LocalDateTimeSqlType getSingleton() { return singleton; }
     private LocalDateTimeSqlType() { super(SqlType.LOCAL_DATE_TIME); }
     protected LocalDateTimeSqlType(SqlType sqlType, Class<?>[] classes) { super(sqlType, classes); }
 
