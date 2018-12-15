@@ -80,15 +80,6 @@ public abstract class BaseDataType extends BaseFieldConverter implements DataPer
 		}
 	}
 
-	/**
-	 * @throws SQLException
-	 *             If there are problems creating the config object. Needed for subclasses.
-	 */
-	@Override
-	public Object makeConfigObject(FieldType fieldType) throws SQLException {
-		return null;
-	}
-
 	@Override
 	public SqlType getSqlType() {
 		return sqlType;

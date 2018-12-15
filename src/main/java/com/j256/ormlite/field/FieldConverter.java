@@ -72,4 +72,13 @@ public interface FieldConverter {
 	 * Convert a string result value to the related Java field.
 	 */
 	public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) throws SQLException;
+
+	/**
+	 * This makes a configuration object for the data-type or returns null if none. The object can be accessed later via
+	 * {@link FieldType#getDataTypeConfigObj()}.
+	 *
+	 * @throws SQLException
+	 *             If there are problems creating the config object. Needed for subclasses.
+	 */
+	public Object makeConfigObject(FieldType fieldType) throws SQLException;
 }
