@@ -54,7 +54,7 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 			} else if (idField.isGeneratedId()) {
 				if (assignId) {
 					// get the id back from the database
-					keyHolder = new KeyHolder();
+					keyHolder = new KeyHolder(idField.getColumnName());
 				}
 			} else {
 				// the id should have been set by the caller already
@@ -257,7 +257,17 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 	}
 
 	private static class KeyHolder implements GeneratedKeyHolder {
+		String columnName;
 		Number key;
+
+		public KeyHolder(String columnName) {
+			this.columnName = columnName;
+		}
+
+		@Override
+		public String getColumnName() {
+			return this.columnName;
+		}
 
 		public Number getKey() {
 			return key;

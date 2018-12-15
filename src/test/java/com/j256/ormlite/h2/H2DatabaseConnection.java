@@ -105,7 +105,7 @@ public class H2DatabaseConnection implements DatabaseConnection {
 		if (keyHolder == null) {
 			stmt = connection.prepareStatement(statement);
 		} else {
-			stmt = connection.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+			stmt = connection.prepareStatement(statement, new String[] { keyHolder.getColumnName() });
 		}
 		statementSetArgs(stmt, args, argFieldTypes);
 		int rowN = stmt.executeUpdate();

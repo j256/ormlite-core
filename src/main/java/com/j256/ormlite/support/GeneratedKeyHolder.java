@@ -10,6 +10,11 @@ import java.sql.SQLException;
 public interface GeneratedKeyHolder {
 
 	/**
+	 * Return the name of the generated column we are interested in.
+	 */
+	public String getColumnName();
+
+	/**
 	 * Add the key number on the key holder. May be called multiple times.
 	 */
 	public void addKey(Number key) throws SQLException;
