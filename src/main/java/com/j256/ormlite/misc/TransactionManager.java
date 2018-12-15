@@ -235,9 +235,10 @@ public class TransactionManager {
 			try {
 				levelCount.incrementAndGet();
 				T result = callable.call();
+				int level = levelCount.decrementAndGet();
 				if (hasSavePoint) {
 					// only commit if we have reached the end of our transaction stack
-					if (levelCount.decrementAndGet() <= 0) {
+					if (level <= 0) {
 						commit(connection, savePoint);
 						transactionLevelThreadLocal.remove();
 					} else {
