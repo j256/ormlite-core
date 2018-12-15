@@ -226,7 +226,7 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 
 	@Test
 	public void testBooleanConverterGetSqlType() {
-		assertEquals(SqlType.BOOLEAN, booleanFieldConverter.getSqlType());
+		assertEquals(SqlType.BYTE, booleanFieldConverter.getSqlType());
 	}
 
 	@Test
