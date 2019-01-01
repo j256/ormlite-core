@@ -602,7 +602,6 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	}
 
 	private <CT> CT doCallBatchTasks(ConnectionSource connectionSource, Callable<CT> callable) throws SQLException {
-		boolean saved = false;
 		DatabaseConnection connection = connectionSource.getReadWriteConnection(tableInfo.getTableName());
 		try {
 			/*
@@ -614,9 +613,10 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			 * We need to save the connection because we are going to be disabling auto-commit on it and we don't want
 			 * pooled connection factories to give us another connection where auto-commit might still be enabled.
 			 */
-			saved = connectionSource.saveSpecialConnection(connection);
+			boolean saved = connectionSource.saveSpecialConnection(connection);
 			return doCallBatchTasks(connection, saved, callable);
 		} finally {
+			// even if the save-special returned false, we need to clear it to decrement the usage counter
 			connectionSource.clearSpecialConnection(connection);
 			connectionSource.releaseConnection(connection);
 			localIsInBatchMode.set(false);
