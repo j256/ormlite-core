@@ -26,8 +26,8 @@ public class H2DatabaseType extends BaseDatabaseType {
 	}
 
 	@Override
-	protected String getDriverClassName() {
-		return "org.h2.Driver";
+	protected String[] getDriverClassNames() {
+		return new String[] { "org.h2.Driver" };
 	}
 
 	@Override

@@ -43,7 +43,7 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 	}
 
 	@Test
-	public void testLoadDriver() throws Exception {
+	public void testLoadDriver() {
 		databaseType.loadDriver();
 	}
 
@@ -300,8 +300,8 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 
 	private static class OurDbType extends BaseDatabaseType {
 		@Override
-		public String getDriverClassName() {
-			return "driver.class";
+		protected String[] getDriverClassNames() {
+			return new String[] { "driver.class" };
 		}
 
 		@Override

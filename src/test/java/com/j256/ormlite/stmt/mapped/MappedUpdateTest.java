@@ -67,8 +67,8 @@ public class MappedUpdateTest extends BaseCoreTest {
 
 	private static class StubDatabaseType extends BaseDatabaseType {
 		@Override
-		public String getDriverClassName() {
-			return "foo.bar.baz";
+		protected String[] getDriverClassNames() {
+			return new String[] { "foo.bar.baz" };
 		}
 
 		@Override

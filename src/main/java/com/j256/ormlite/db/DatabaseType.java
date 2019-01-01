@@ -28,10 +28,9 @@ public interface DatabaseType {
 	/**
 	 * Load the driver class associated with this database so it can wire itself into JDBC.
 	 * 
-	 * @throws SQLException
-	 *             If the driver class is not available in the classpath.
+	 * @return True if a driver was loaded otherwise false.
 	 */
-	public void loadDriver() throws SQLException;
+	public boolean loadDriver();
 
 	/**
 	 * Set the driver instance on the database type.

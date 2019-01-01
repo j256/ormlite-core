@@ -324,8 +324,9 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 			}
 		});
 
+		// make sure the delete happened
 		assertNull(dao.queryForId(foo.id));
-
+		// make sure there is no special connection
 		assertNull(cs.getSpecialConnection(dao.getTableName()));
 	}
 
