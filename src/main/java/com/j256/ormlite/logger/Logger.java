@@ -612,7 +612,8 @@ public class Logger {
 				if (i > 0) {
 					sb.append(", ");
 				}
-				sb.append(Array.get(arg, i));
+				// goes recursive in case we have an array of arrays
+				appendArg(sb, Array.get(arg, i));
 			}
 			sb.append(']');
 		} else {
