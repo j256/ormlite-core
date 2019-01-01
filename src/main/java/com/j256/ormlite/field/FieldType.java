@@ -1168,7 +1168,7 @@ public class FieldType {
 			throw new SQLException("Field '" + field.getName() + "' is of data type " + dataPersister
 					+ " which cannot be the ID field");
 		}
-		this.dataTypeConfigObj = dataPersister.makeConfigObject(this);
+		this.dataTypeConfigObj = fieldConverter.makeConfigObject(this);
 		String defaultStr = fieldConfig.getDefaultValue();
 		if (defaultStr == null) {
 			this.defaultValue = null;

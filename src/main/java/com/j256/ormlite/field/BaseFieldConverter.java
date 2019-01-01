@@ -45,4 +45,9 @@ public abstract class BaseFieldConverter implements FieldConverter {
 	public boolean isStreamType() {
 		return false;
 	}
+
+	@Override
+	public Object makeConfigObject(FieldType fieldType) throws SQLException {
+		return null;
+	}
 }
