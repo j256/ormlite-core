@@ -235,30 +235,25 @@ public class TransactionManager {
 			try {
 				levelCount.incrementAndGet();
 				T result = callable.call();
+				int level = levelCount.decrementAndGet();
+				if (level <= 0) {
+					transactionLevelThreadLocal.remove();
+					levelCount = null;
+				}
 				if (hasSavePoint) {
 					// only commit if we have reached the end of our transaction stack
-					if (levelCount.decrementAndGet() <= 0) {
+					if (level <= 0) {
 						commit(connection, savePoint);
-						transactionLevelThreadLocal.remove();
 					} else {
 						// otherwise we just release the savepoint
 						release(connection, savePoint);
 					}
 				}
 				return result;
-			} catch (SQLException e) {
-				levelCount.decrementAndGet();
-				if (hasSavePoint) {
-					try {
-						rollBack(connection, savePoint);
-					} catch (SQLException e2) {
-						logger.error(e, "after commit exception, rolling back to save-point also threw exception");
-						// we continue to throw the commit exception
-					}
-				}
-				throw e;
 			} catch (Exception e) {
-				levelCount.decrementAndGet();
+				if (levelCount != null && levelCount.decrementAndGet() <= 0) {
+					transactionLevelThreadLocal.remove();
+				}
 				if (hasSavePoint) {
 					try {
 						rollBack(connection, savePoint);
@@ -267,7 +262,11 @@ public class TransactionManager {
 						// we continue to throw the commit exception
 					}
 				}
-				throw SqlExceptionUtil.create("Transaction callable threw non-SQL exception", e);
+				if (e instanceof SQLException) {
+					throw (SQLException) e;
+				} else {
+					throw SqlExceptionUtil.create("Transaction callable threw non-SQL exception", e);
+				}
 			}
 		} finally {
 			if (restoreAutoCommit) {
