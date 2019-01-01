@@ -17,9 +17,9 @@ public class RawRowMapperImpl<T, ID> implements RawRowMapper<T> {
 	private final Dao<T, ID> dao;
 	private final TableInfo<T, ID> tableInfo;
 
-	public RawRowMapperImpl(Dao<T, ID> dao, TableInfo<T, ID> tableInfo) {
+	public RawRowMapperImpl(Dao<T, ID> dao) {
 		this.dao = dao;
-		this.tableInfo = tableInfo;
+		this.tableInfo = dao.getTableInfo();
 	}
 
 	@Override

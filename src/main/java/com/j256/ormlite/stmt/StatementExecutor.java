@@ -230,7 +230,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 */
 	public RawRowMapper<T> getRawRowMapper() {
 		if (rawRowMapper == null) {
-			rawRowMapper = new RawRowMapperImpl<T, ID>(dao, tableInfo);
+			rawRowMapper = new RawRowMapperImpl<T, ID>(dao);
 		}
 		return rawRowMapper;
 	}
