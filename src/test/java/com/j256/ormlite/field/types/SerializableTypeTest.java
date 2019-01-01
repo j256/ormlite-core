@@ -72,7 +72,7 @@ public class SerializableTypeTest extends BaseTypeTest {
 					DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
 			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
-			FieldType fieldType = FieldType.createFieldType(connectionSource, TABLE_NAME,
+			FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME,
 					clazz.getDeclaredField(SERIALIZABLE_COLUMN), clazz);
 			assertNull(DataType.SERIALIZABLE.getDataPersister().resultToJava(fieldType, results,
 					results.findColumn(SERIALIZABLE_COLUMN)));
@@ -98,7 +98,7 @@ public class SerializableTypeTest extends BaseTypeTest {
 					DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
 			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
-			FieldType fieldType = FieldType.createFieldType(connectionSource, TABLE_NAME,
+			FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME,
 					LocalSerializable.class.getDeclaredField(SERIALIZABLE_COLUMN), LocalSerializable.class);
 			DataType.SERIALIZABLE.getDataPersister().resultToJava(fieldType, results, results.findColumn(BYTE_COLUMN));
 		} finally {

@@ -38,10 +38,10 @@ public class DatabaseTableConfigTest {
 	@Test
 	public void testDatabaseTableConfig() throws SQLException {
 		DatabaseTableConfig<DatabaseTableAnno> dbTableConf =
-				DatabaseTableConfig.fromClass(connectionSource, DatabaseTableAnno.class);
+				DatabaseTableConfig.fromClass(databaseType, DatabaseTableAnno.class);
 		assertEquals(DatabaseTableAnno.class, dbTableConf.getDataClass());
 		assertEquals(TABLE_NAME, dbTableConf.getTableName());
-		dbTableConf.extractFieldTypes(connectionSource);
+		dbTableConf.extractFieldTypes(databaseType);
 		FieldType[] fieldTypes = dbTableConf.getFieldTypes(databaseType);
 		assertEquals(1, fieldTypes.length);
 		assertEquals("stuff", fieldTypes[0].getColumnName());
@@ -49,7 +49,7 @@ public class DatabaseTableConfigTest {
 
 	@Test
 	public void testDatabaseTableWithEntity() throws SQLException {
-		DatabaseTableConfig<EntityAnno> dbTableConf = DatabaseTableConfig.fromClass(connectionSource, EntityAnno.class);
+		DatabaseTableConfig<EntityAnno> dbTableConf = DatabaseTableConfig.fromClass(databaseType, EntityAnno.class);
 		assertEquals(EntityAnno.class, dbTableConf.getDataClass());
 		assertEquals(TABLE_NAME, dbTableConf.getTableName());
 	}
@@ -62,7 +62,7 @@ public class DatabaseTableConfigTest {
 		dbTableConf.initialize();
 		assertEquals(DatabaseTableAnno.class, dbTableConf.getDataClass());
 		assertEquals(TABLE_NAME, dbTableConf.getTableName());
-		dbTableConf.extractFieldTypes(connectionSource);
+		dbTableConf.extractFieldTypes(databaseType);
 		FieldType[] fieldTypes = dbTableConf.getFieldTypes(databaseType);
 		assertEquals(1, fieldTypes.length);
 		assertEquals("stuff", fieldTypes[0].getColumnName());
@@ -87,7 +87,7 @@ public class DatabaseTableConfigTest {
 				new DatabaseTableConfig<DatabaseTableAnno>(databaseType, DatabaseTableAnno.class, fieldConfigs);
 		assertEquals(DatabaseTableAnno.class, dbTableConf.getDataClass());
 		assertEquals(TABLE_NAME, dbTableConf.getTableName());
-		dbTableConf.extractFieldTypes(connectionSource);
+		dbTableConf.extractFieldTypes(databaseType);
 		FieldType[] fieldTypes = dbTableConf.getFieldTypes(databaseType);
 		assertEquals(1, fieldTypes.length);
 		assertEquals("stuff", fieldTypes[0].getColumnName());
@@ -115,7 +115,7 @@ public class DatabaseTableConfigTest {
 		dbTableConf.initialize();
 		assertEquals(DatabaseTableAnno.class, dbTableConf.getDataClass());
 		assertEquals(TABLE_NAME, dbTableConf.getTableName());
-		dbTableConf.extractFieldTypes(connectionSource);
+		dbTableConf.extractFieldTypes(databaseType);
 		FieldType[] fieldTypes = dbTableConf.getFieldTypes(databaseType);
 		assertEquals(1, fieldTypes.length);
 		assertEquals("stuff", fieldTypes[0].getColumnName());
@@ -133,7 +133,7 @@ public class DatabaseTableConfigTest {
 		dbTableConf.initialize();
 		assertEquals(DatabaseTableAnno.class, dbTableConf.getDataClass());
 		assertEquals(TABLE_NAME, dbTableConf.getTableName());
-		dbTableConf.extractFieldTypes(connectionSource);
+		dbTableConf.extractFieldTypes(databaseType);
 	}
 
 	@Test(expected = SQLException.class)
@@ -143,7 +143,7 @@ public class DatabaseTableConfigTest {
 		dbTableConf.setTableName(TABLE_NAME);
 		dbTableConf.setFieldConfigs(new ArrayList<DatabaseFieldConfig>());
 		dbTableConf.initialize();
-		dbTableConf.extractFieldTypes(connectionSource);
+		dbTableConf.extractFieldTypes(databaseType);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -151,7 +151,7 @@ public class DatabaseTableConfigTest {
 		DatabaseTableConfig<NoFields> dbTableConf = new DatabaseTableConfig<NoFields>();
 		dbTableConf.setDataClass(NoFields.class);
 		dbTableConf.initialize();
-		dbTableConf.extractFieldTypes(connectionSource);
+		dbTableConf.extractFieldTypes(databaseType);
 	}
 
 	@Test(expected = IllegalStateException.class)
@@ -165,7 +165,7 @@ public class DatabaseTableConfigTest {
 		DatabaseTableConfig<Sub> dbTableConf = new DatabaseTableConfig<Sub>();
 		dbTableConf.setDataClass(Sub.class);
 		dbTableConf.initialize();
-		dbTableConf.extractFieldTypes(connectionSource);
+		dbTableConf.extractFieldTypes(databaseType);
 		FieldType[] fieldTypes = dbTableConf.getFieldTypes(databaseType);
 		assertEquals(2, fieldTypes.length);
 		boolean seeId = false;
@@ -194,7 +194,7 @@ public class DatabaseTableConfigTest {
 
 		DatabaseTableConfig<SubWithoutAnno> dbTableConf =
 				new DatabaseTableConfig<SubWithoutAnno>(databaseType, SubWithoutAnno.class, fieldConfigs);
-		dbTableConf.extractFieldTypes(connectionSource);
+		dbTableConf.extractFieldTypes(databaseType);
 
 		FieldType[] fieldTypes = dbTableConf.getFieldTypes(databaseType);
 		assertTrue(fieldTypes.length >= 2);
@@ -233,11 +233,6 @@ public class DatabaseTableConfigTest {
 	@Test(expected = SQLException.class)
 	public void testNoFields() throws SQLException {
 		new DatabaseTableConfig<DatabaseTableAnno>().getFieldTypes(databaseType);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testNoConstructor() throws SQLException {
-		DatabaseTableConfig.fromClass(connectionSource, NoConstructor.class).getConstructor();
 	}
 
 	/* ======================================================================================= */

@@ -19,20 +19,21 @@ public class MappedQueryForIdTest extends BaseCoreStmtTest {
 
 	@Test(expected = SQLException.class)
 	public void testQueryNoId() throws Exception {
-		StatementExecutor<NoId, String> se =
-				new StatementExecutor<NoId, String>(databaseType, new TableInfo<NoId, String>(connectionSource, null,
-						NoId.class), null);
+		StatementExecutor<NoId, String> se = new StatementExecutor<NoId, String>(databaseType,
+				new TableInfo<NoId, String>(databaseType, NoId.class), null);
 		se.queryForId(null, "1", null);
 	}
 
 	@Test(expected = SQLException.class)
 	public void testNoIdBuildUpdater() throws Exception {
-		MappedUpdate.build(databaseType, new TableInfo<NoId, Void>(connectionSource, null, NoId.class));
+		Dao<NoId, Void> dao = createDao(NoId.class, false);
+		MappedUpdate.build(dao, new TableInfo<NoId, Void>(databaseType, NoId.class));
 	}
 
 	@Test(expected = SQLException.class)
 	public void testNoIdBuildQueryForId() throws Exception {
-		MappedQueryForFieldEq.build(databaseType, new TableInfo<NoId, Void>(connectionSource, null, NoId.class), null);
+		Dao<NoId, Void> dao = createDao(NoId.class, false);
+		MappedQueryForFieldEq.build(dao, new TableInfo<NoId, Void>(databaseType, NoId.class), null);
 	}
 
 	@Test
@@ -138,10 +139,5 @@ public class MappedQueryForIdTest extends BaseCoreStmtTest {
 		public String id;
 		@DatabaseField(id = true)
 		public String stuff;
-	}
-
-	protected static class NoId {
-		@DatabaseField
-		String id;
 	}
 }

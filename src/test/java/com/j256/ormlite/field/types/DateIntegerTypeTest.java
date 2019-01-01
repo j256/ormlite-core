@@ -64,7 +64,7 @@ public class DateIntegerTypeTest extends BaseTypeTest {
 
 	@Test(expected = SQLException.class)
 	public void testDateIntegerParseInvalid() throws Exception {
-		FieldType fieldType = FieldType.createFieldType(connectionSource, TABLE_NAME,
+		FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME,
 				LocalDateInteger.class.getDeclaredField(DATE_COLUMN), LocalDateInteger.class);
 		DataType.DATE_INTEGER.getDataPersister().parseDefaultString(fieldType, "not valid int number");
 	}

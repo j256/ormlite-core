@@ -185,9 +185,8 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 
 	@Test
 	public void testBooleanConverterJavaToArg() throws Exception {
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, "foo", ManyFields.class.getDeclaredField("bool"),
-						ManyFields.class);
+		FieldType fieldType = FieldType.createFieldType(databaseType, "foo", ManyFields.class.getDeclaredField("bool"),
+				ManyFields.class);
 		assertEquals(Byte.valueOf((byte) 1), booleanFieldConverter.javaToSqlArg(fieldType, Boolean.TRUE));
 		assertEquals(Byte.valueOf((byte) 0), booleanFieldConverter.javaToSqlArg(fieldType, Boolean.FALSE));
 	}
@@ -200,9 +199,8 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 		expect(results.getByte(1)).andReturn((byte) 1);
 		expect(results.getByte(2)).andReturn((byte) 0);
 		replay(results);
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, "foo", ManyFields.class.getDeclaredField("bool"),
-						ManyFields.class);
+		FieldType fieldType = FieldType.createFieldType(databaseType, "foo", ManyFields.class.getDeclaredField("bool"),
+				ManyFields.class);
 		assertEquals(first, booleanFieldConverter.resultToJava(fieldType, results, 1));
 		assertEquals(second, booleanFieldConverter.resultToJava(fieldType, results, 2));
 		verify(results);
@@ -210,9 +208,8 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 
 	@Test
 	public void testBooleanConverterParseDefaultString() throws Exception {
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, "foo", ManyFields.class.getDeclaredField("bool"),
-						ManyFields.class);
+		FieldType fieldType = FieldType.createFieldType(databaseType, "foo", ManyFields.class.getDeclaredField("bool"),
+				ManyFields.class);
 		assertEquals(Byte.valueOf((byte) 1),
 				booleanFieldConverter.parseDefaultString(fieldType, Boolean.TRUE.toString()));
 		assertEquals(Byte.valueOf((byte) 0),
@@ -247,7 +244,8 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 	@Test
 	public void testGenerateIdSequenceName() {
 		String table = "foo";
-		assertEquals(table + BaseDatabaseType.DEFAULT_SEQUENCE_SUFFIX, databaseType.generateIdSequenceName(table, null));
+		assertEquals(table + BaseDatabaseType.DEFAULT_SEQUENCE_SUFFIX,
+				databaseType.generateIdSequenceName(table, null));
 	}
 
 	@Test
@@ -281,7 +279,9 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 		assertEquals("LIMIT " + limit + " ", sb.toString());
 	}
 
-	/* ================================================================================================================ */
+	/*
+	 * ================================================================================================================
+	 */
 
 	private void testFooColumn(DatabaseType databaseType, String fieldName, String expected) throws Exception {
 		StringBuilder sb = new StringBuilder();
@@ -289,9 +289,8 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 		List<String> stmtsBefore = new ArrayList<String>();
 		List<String> stmtsAfter = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, "foo", ManyFields.class.getDeclaredField(fieldName),
-						ManyFields.class);
+		FieldType fieldType = FieldType.createFieldType(databaseType, "foo",
+				ManyFields.class.getDeclaredField(fieldName), ManyFields.class);
 		databaseType.appendColumnArg(null, sb, fieldType, additionalArgs, stmtsBefore, stmtsAfter, queriesAfter);
 		StringBuilder expectedSb = new StringBuilder();
 		databaseType.appendEscapedEntityName(expectedSb, fieldName);
@@ -304,10 +303,12 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 		public String getDriverClassName() {
 			return "driver.class";
 		}
+
 		@Override
 		public String getDatabaseName() {
 			return "fake";
 		}
+
 		@Override
 		public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 			return false;
@@ -330,12 +331,14 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 
 	private static class OurDbTypeGeneratedId extends OurDbType {
 		FieldType fieldType;
+
 		@Override
 		protected void configureGeneratedId(String tableName, StringBuilder sb, FieldType fieldType,
 				List<String> statementsBefore, List<String> statementsAfter, List<String> additionalArgs,
 				List<String> queriesAfter) {
 			this.fieldType = fieldType;
 		}
+
 		@Override
 		protected void configureGeneratedIdSequence(StringBuilder sb, FieldType fieldType,
 				List<String> statementsBefore, List<String> additionalArgs, List<String> queriesAfter) {

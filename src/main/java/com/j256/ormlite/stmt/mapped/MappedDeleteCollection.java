@@ -3,6 +3,7 @@ package com.j256.ormlite.stmt.mapped;
 import java.sql.SQLException;
 import java.util.Collection;
 
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
@@ -17,18 +18,18 @@ import com.j256.ormlite.table.TableInfo;
  */
 public class MappedDeleteCollection<T, ID> extends BaseMappedStatement<T, ID> {
 
-	private MappedDeleteCollection(TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes) {
-		super(tableInfo, statement, argFieldTypes);
+	private MappedDeleteCollection(Dao<T, ID> dao, TableInfo<T, ID> tableInfo, String statement,
+			FieldType[] argFieldTypes) {
+		super(dao, tableInfo, statement, argFieldTypes);
 	}
 
 	/**
 	 * Delete all of the objects in the collection. This builds a {@link MappedDeleteCollection} on the fly because the
 	 * datas could be variable sized.
 	 */
-	public static <T, ID> int deleteObjects(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
+	public static <T, ID> int deleteObjects(Dao<T, ID> dao, TableInfo<T, ID> tableInfo,
 			DatabaseConnection databaseConnection, Collection<T> datas, ObjectCache objectCache) throws SQLException {
-		MappedDeleteCollection<T, ID> deleteCollection =
-				MappedDeleteCollection.build(databaseType, tableInfo, datas.size());
+		MappedDeleteCollection<T, ID> deleteCollection = MappedDeleteCollection.build(dao, tableInfo, datas.size());
 		Object[] fieldObjects = new Object[datas.size()];
 		FieldType idField = tableInfo.getIdField();
 		int objC = 0;
@@ -43,10 +44,9 @@ public class MappedDeleteCollection<T, ID> extends BaseMappedStatement<T, ID> {
 	 * Delete all of the objects in the collection. This builds a {@link MappedDeleteCollection} on the fly because the
 	 * ids could be variable sized.
 	 */
-	public static <T, ID> int deleteIds(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
+	public static <T, ID> int deleteIds(Dao<T, ID> dao, TableInfo<T, ID> tableInfo,
 			DatabaseConnection databaseConnection, Collection<ID> ids, ObjectCache objectCache) throws SQLException {
-		MappedDeleteCollection<T, ID> deleteCollection =
-				MappedDeleteCollection.build(databaseType, tableInfo, ids.size());
+		MappedDeleteCollection<T, ID> deleteCollection = MappedDeleteCollection.build(dao, tableInfo, ids.size());
 		Object[] fieldObjects = new Object[ids.size()];
 		FieldType idField = tableInfo.getIdField();
 		int objC = 0;
@@ -60,22 +60,24 @@ public class MappedDeleteCollection<T, ID> extends BaseMappedStatement<T, ID> {
 	/**
 	 * This is private because the execute is the only method that should be called here.
 	 */
-	private static <T, ID> MappedDeleteCollection<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
-			int dataSize) throws SQLException {
+	private static <T, ID> MappedDeleteCollection<T, ID> build(Dao<T, ID> dao, TableInfo<T, ID> tableInfo, int dataSize)
+			throws SQLException {
 		FieldType idField = tableInfo.getIdField();
 		if (idField == null) {
-			throw new SQLException("Cannot delete " + tableInfo.getDataClass()
-					+ " because it doesn't have an id field defined");
+			throw new SQLException(
+					"Cannot delete " + tableInfo.getDataClass() + " because it doesn't have an id field defined");
 		}
 		StringBuilder sb = new StringBuilder(128);
+		DatabaseType databaseType = dao.getConnectionSource().getDatabaseType();
 		appendTableName(databaseType, sb, "DELETE FROM ", tableInfo.getTableName());
 		FieldType[] argFieldTypes = new FieldType[dataSize];
 		appendWhereIds(databaseType, idField, sb, dataSize, argFieldTypes);
-		return new MappedDeleteCollection<T, ID>(tableInfo, sb.toString(), argFieldTypes);
+		return new MappedDeleteCollection<T, ID>(dao, tableInfo, sb.toString(), argFieldTypes);
 	}
 
 	private static <T, ID> int updateRows(DatabaseConnection databaseConnection, Class<T> clazz,
-			MappedDeleteCollection<T, ID> deleteCollection, Object[] args, ObjectCache objectCache) throws SQLException {
+			MappedDeleteCollection<T, ID> deleteCollection, Object[] args, ObjectCache objectCache)
+			throws SQLException {
 		try {
 			int rowC = databaseConnection.delete(deleteCollection.statement, args, deleteCollection.argFieldTypes);
 			if (rowC > 0 && objectCache != null) {

@@ -58,7 +58,7 @@ public class SqlDateTypeTest extends BaseTypeTest {
 
 	@Test(expected = SQLException.class)
 	public void testSqlDateParseInvalid() throws Exception {
-		FieldType fieldType = FieldType.createFieldType(connectionSource, TABLE_NAME,
+		FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME,
 				LocalDate.class.getDeclaredField(DATE_COLUMN), LocalDate.class);
 		dataType.getDataPersister().parseDefaultString(fieldType, "not valid date string");
 	}
@@ -70,7 +70,7 @@ public class SqlDateTypeTest extends BaseTypeTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidDateField() throws Exception {
-		FieldType.createFieldType(connectionSource, TABLE_NAME, InvalidDate.class.getDeclaredField("notDate"),
+		FieldType.createFieldType(databaseType, TABLE_NAME, InvalidDate.class.getDeclaredField("notDate"),
 				LocalDate.class);
 	}
 

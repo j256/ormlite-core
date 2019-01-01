@@ -288,7 +288,8 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testPrepareStatement() throws Exception {
-		QueryBuilder<Foo, Integer> qb = new QueryBuilder<Foo, Integer>(databaseType, baseFooTableInfo, null);
+		Dao<Foo, Integer> dao = createDao(Foo.class, false);
+		QueryBuilder<Foo, Integer> qb = new QueryBuilder<Foo, Integer>(databaseType, baseFooTableInfo, dao);
 		PreparedQuery<Foo> stmt = qb.prepare();
 		stmt.getStatement();
 		StringBuilder sb = new StringBuilder();
@@ -300,7 +301,8 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testLimitInline() throws Exception {
-		QueryBuilder<Foo, Integer> qb = new QueryBuilder<Foo, Integer>(new LimitInline(), baseFooTableInfo, null);
+		Dao<Foo, Integer> dao = createDao(Foo.class, false);
+		QueryBuilder<Foo, Integer> qb = new QueryBuilder<Foo, Integer>(new LimitInline(), baseFooTableInfo, dao);
 		long limit = 213;
 		qb.limit(limit);
 		PreparedQuery<Foo> stmt = qb.prepare();
@@ -314,7 +316,8 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testOffsetAndLimit() throws Exception {
-		QueryBuilder<Foo, Integer> qb = new QueryBuilder<Foo, Integer>(new LimitInline(), baseFooTableInfo, null);
+		Dao<Foo, Integer> dao = createDao(Foo.class, false);
+		QueryBuilder<Foo, Integer> qb = new QueryBuilder<Foo, Integer>(new LimitInline(), baseFooTableInfo, dao);
 		long offset = 200;
 		long limit = 213;
 		qb.offset(offset);

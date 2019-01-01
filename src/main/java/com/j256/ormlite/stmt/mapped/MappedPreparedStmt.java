@@ -2,6 +2,7 @@ package com.j256.ormlite.stmt.mapped;
 
 import java.sql.SQLException;
 
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.logger.Log.Level;
@@ -29,10 +30,10 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID>
 	private final StatementType type;
 	private final boolean cacheStore;
 
-	public MappedPreparedStmt(TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes,
+	public MappedPreparedStmt(Dao<T, ID> dao, TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes,
 			FieldType[] resultFieldTypes, ArgumentHolder[] argHolders, Long limit, StatementType type,
 			boolean cacheStore) {
-		super(tableInfo, statement, argFieldTypes, resultFieldTypes);
+		super(dao, tableInfo, statement, argFieldTypes, resultFieldTypes);
 		this.argHolders = argHolders;
 		// this is an Integer because it may be null
 		this.limit = limit;

@@ -30,7 +30,6 @@ public class DatabaseTableConfig<T> {
 	private String tableName;
 	private List<DatabaseFieldConfig> fieldConfigs;
 	private FieldType[] fieldTypes;
-	private Constructor<T> constructor;
 
 	static {
 		try {
@@ -121,12 +120,12 @@ public class DatabaseTableConfig<T> {
 	/**
 	 * Extract the field types from the fieldConfigs if they have not already been configured.
 	 */
-	public void extractFieldTypes(ConnectionSource connectionSource) throws SQLException {
+	public void extractFieldTypes(DatabaseType databaseType) throws SQLException {
 		if (fieldTypes == null) {
 			if (fieldConfigs == null) {
-				fieldTypes = extractFieldTypes(connectionSource, dataClass, tableName);
+				fieldTypes = extractFieldTypes(databaseType, dataClass, tableName);
 			} else {
-				fieldTypes = convertFieldConfigs(connectionSource, tableName, fieldConfigs);
+				fieldTypes = convertFieldConfigs(databaseType, tableName, fieldConfigs);
 			}
 		}
 	}
@@ -146,34 +145,32 @@ public class DatabaseTableConfig<T> {
 	}
 
 	/**
-	 * Return the constructor for this class. If not constructor has been set on the class then it will be found on the
-	 * class through reflection.
+	 * @deprecated 
 	 */
-	public Constructor<T> getConstructor() {
-		if (constructor == null) {
-			constructor = findNoArgConstructor(dataClass);
-		}
-		return constructor;
+	@Deprecated
+	public void setConstructor(Constructor<T> constructor) {
 	}
 
-	// @NotRequired
-	public void setConstructor(Constructor<T> constructor) {
-		this.constructor = constructor;
+	/**
+	 * @deprecated Use {@link #fromClass(DatabaseType, Class)}
+	 */
+	@Deprecated
+	public static <T> DatabaseTableConfig<T> fromClass(ConnectionSource connectionSource, Class<T> clazz)
+			throws SQLException {
+		return fromClass(connectionSource.getDatabaseType(), clazz);
 	}
 
 	/**
 	 * Extract the DatabaseTableConfig for a particular class by looking for class and field annotations. This is used
 	 * by internal classes to configure a class.
 	 */
-	public static <T> DatabaseTableConfig<T> fromClass(ConnectionSource connectionSource, Class<T> clazz)
-			throws SQLException {
-		DatabaseType databaseType = connectionSource.getDatabaseType();
+	public static <T> DatabaseTableConfig<T> fromClass(DatabaseType databaseType, Class<T> clazz) throws SQLException {
 		String tableName = extractTableName(databaseType, clazz);
 		if (databaseType.isEntityNamesMustBeUpCase()) {
 			tableName = databaseType.upCaseEntityName(tableName);
 		}
 		return new DatabaseTableConfig<T>(databaseType, clazz, tableName,
-				extractFieldTypes(connectionSource, clazz, tableName));
+				extractFieldTypes(databaseType, clazz, tableName));
 	}
 
 	/**
@@ -200,45 +197,12 @@ public class DatabaseTableConfig<T> {
 		return name;
 	}
 
-	/**
-	 * Locate the no arg constructor for the class.
-	 */
-	public static <T> Constructor<T> findNoArgConstructor(Class<T> dataClass) {
-		Constructor<T>[] constructors;
-		try {
-			@SuppressWarnings("unchecked")
-			Constructor<T>[] consts = (Constructor<T>[]) dataClass.getDeclaredConstructors();
-			// i do this [grossness] to be able to move the Suppress inside the method
-			constructors = consts;
-		} catch (Exception e) {
-			throw new IllegalArgumentException("Can't lookup declared constructors for " + dataClass, e);
-		}
-		for (Constructor<T> con : constructors) {
-			if (con.getParameterTypes().length == 0) {
-				if (!con.isAccessible()) {
-					try {
-						con.setAccessible(true);
-					} catch (SecurityException e) {
-						throw new IllegalArgumentException("Could not open access to constructor for " + dataClass);
-					}
-				}
-				return con;
-			}
-		}
-		if (dataClass.getEnclosingClass() == null) {
-			throw new IllegalArgumentException("Can't find a no-arg constructor for " + dataClass);
-		} else {
-			throw new IllegalArgumentException(
-					"Can't find a no-arg constructor for " + dataClass + ".  Missing static on inner class?");
-		}
-	}
-
-	private static <T> FieldType[] extractFieldTypes(ConnectionSource connectionSource, Class<T> clazz,
-			String tableName) throws SQLException {
+	private static <T> FieldType[] extractFieldTypes(DatabaseType databaseType, Class<T> clazz, String tableName)
+			throws SQLException {
 		List<FieldType> fieldTypes = new ArrayList<FieldType>();
 		for (Class<?> classWalk = clazz; classWalk != null; classWalk = classWalk.getSuperclass()) {
 			for (Field field : classWalk.getDeclaredFields()) {
-				FieldType fieldType = FieldType.createFieldType(connectionSource, tableName, field, clazz);
+				FieldType fieldType = FieldType.createFieldType(databaseType, tableName, field, clazz);
 				if (fieldType != null) {
 					fieldTypes.add(fieldType);
 				}
@@ -251,7 +215,7 @@ public class DatabaseTableConfig<T> {
 		return fieldTypes.toArray(new FieldType[fieldTypes.size()]);
 	}
 
-	private FieldType[] convertFieldConfigs(ConnectionSource connectionSource, String tableName,
+	private FieldType[] convertFieldConfigs(DatabaseType databaseType, String tableName,
 			List<DatabaseFieldConfig> fieldConfigs) throws SQLException {
 		List<FieldType> fieldTypes = new ArrayList<FieldType>();
 		for (DatabaseFieldConfig fieldConfig : fieldConfigs) {
@@ -266,7 +230,7 @@ public class DatabaseTableConfig<T> {
 					continue;
 				}
 				if (field != null) {
-					fieldType = new FieldType(connectionSource, tableName, field, fieldConfig, dataClass);
+					fieldType = new FieldType(databaseType, tableName, field, fieldConfig, dataClass);
 					break;
 				}
 			}

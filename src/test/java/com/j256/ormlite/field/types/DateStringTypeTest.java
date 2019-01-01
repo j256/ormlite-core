@@ -57,7 +57,7 @@ public class DateStringTypeTest extends BaseTypeTest {
 
 	@Test(expected = SQLException.class)
 	public void testDateStringParseInvalid() throws Exception {
-		FieldType fieldType = FieldType.createFieldType(connectionSource, TABLE_NAME,
+		FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME,
 				LocalDateString.class.getDeclaredField(DATE_COLUMN), LocalDateString.class);
 		DataType.DATE_STRING.getDataPersister().parseDefaultString(fieldType, "not valid date string");
 	}

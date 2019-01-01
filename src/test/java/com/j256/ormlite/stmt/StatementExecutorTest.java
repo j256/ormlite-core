@@ -28,7 +28,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testUpdateThrow() throws Exception {
-		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
+		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(databaseType, Foo.class);
 		DatabaseConnection connection = createMock(DatabaseConnection.class);
 		@SuppressWarnings("unchecked")
 		PreparedUpdate<Foo> update = createMock(PreparedUpdate.class);
@@ -50,7 +50,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testDeleteThrow() throws Exception {
-		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
+		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(databaseType, Foo.class);
 		DatabaseConnection connection = createMock(DatabaseConnection.class);
 		@SuppressWarnings("unchecked")
 		PreparedDelete<Foo> delete = createMock(PreparedDelete.class);
@@ -72,7 +72,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testCallBatchTasksNoAutoCommit() throws Exception {
-		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
+		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(databaseType, Foo.class);
 
 		ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		DatabaseConnection connection = createMock(DatabaseConnection.class);
@@ -99,7 +99,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testCallBatchTasksAutoCommitFalse() throws Exception {
-		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
+		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(databaseType, Foo.class);
 
 		ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		DatabaseConnection connection = createMock(DatabaseConnection.class);
@@ -127,7 +127,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testCallBatchTasksAutoCommitTrue() throws Exception {
-		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
+		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(databaseType, Foo.class);
 
 		ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		DatabaseConnection connection = createMock(DatabaseConnection.class);
@@ -157,7 +157,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testCallBatchTasksAutoCommitTrueSynchronized() throws Exception {
-		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
+		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(databaseType, Foo.class);
 
 		ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		DatabaseConnection connection = createMock(DatabaseConnection.class);
@@ -187,7 +187,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testCallBatchTasksAutoCommitTrueThrow() throws Exception {
-		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
+		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(databaseType, Foo.class);
 
 		ConnectionSource connectionSource = createMock(ConnectionSource.class);
 		DatabaseConnection connection = createMock(DatabaseConnection.class);

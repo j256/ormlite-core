@@ -57,7 +57,6 @@ public class FieldType {
 	private static float DEFAULT_VALUE_FLOAT;
 	private static double DEFAULT_VALUE_DOUBLE;
 
-	private final ConnectionSource connectionSource;
 	private final String tableName;
 	private final Field field;
 	private final String columnName;
@@ -76,10 +75,9 @@ public class FieldType {
 	private FieldConverter fieldConverter;
 	private FieldType foreignIdField;
 	private FieldType foreignRefField;
-	private TableInfo<?, ?> foreignTableInfo;
 	private FieldType foreignFieldType;
-	private BaseDaoImpl<?, ?> foreignDao;
-	private MappedQueryForFieldEq<Object, Object> mappedQueryForForeignField;
+	private Dao<?, ?> foreignDao;
+	private MappedQueryForFieldEq<?, ?> mappedQueryForForeignField;
 
 	/**
 	 * ThreadLocal counters to detect initialization loops. Notice that there is _not_ an initValue() method on purpose.
@@ -92,11 +90,10 @@ public class FieldType {
 	/**
 	 * You should use {@link FieldType#createFieldType} to instantiate one of these field if you have a {@link Field}.
 	 */
-	public FieldType(ConnectionSource connectionSource, String tableName, Field field, DatabaseFieldConfig fieldConfig,
+	public FieldType(DatabaseType databaseType, String tableName, Field field, DatabaseFieldConfig fieldConfig,
 			Class<?> parentClass) throws SQLException {
-		this.connectionSource = connectionSource;
+
 		this.tableName = tableName;
-		DatabaseType databaseType = connectionSource.getDatabaseType();
 		this.field = field;
 		this.parentClass = parentClass;
 
@@ -282,28 +279,33 @@ public class FieldType {
 	 * 
 	 * @see BaseDaoImpl#initialize()
 	 */
-	public void configDaoInformation(ConnectionSource connectionSource, Class<?> parentClass) throws SQLException {
+	public <FT, FID> void configDaoInformation(ConnectionSource connectionSource, Class<?> parentClass)
+			throws SQLException {
 		Class<?> fieldClass = field.getType();
 		DatabaseType databaseType = connectionSource.getDatabaseType();
-		TableInfo<?, ?> foreignTableInfo;
 		final FieldType foreignIdField;
 		final FieldType foreignRefField;
 		final FieldType foreignFieldType;
-		final BaseDaoImpl<?, ?> foreignDao;
-		final MappedQueryForFieldEq<Object, Object> mappedQueryForForeignField;
+		final Dao<FT, FID> foreignDao;
+		final MappedQueryForFieldEq<FT, FID> mappedQueryForForeignField;
 
 		String foreignColumnName = fieldConfig.getForeignColumnName();
 		if (fieldConfig.isForeignAutoRefresh() || foreignColumnName != null) {
 			DatabaseTableConfig<?> tableConfig = fieldConfig.getForeignTableConfig();
+			TableInfo<FT, FID> foreignTableInfo;
 			if (tableConfig == null) {
 				// NOTE: the cast is necessary for maven
-				foreignDao = (BaseDaoImpl<?, ?>) DaoManager.createDao(connectionSource, fieldClass);
+				@SuppressWarnings("unchecked")
+				Dao<FT, FID> castDao = (Dao<FT, FID>) DaoManager.createDao(connectionSource, fieldClass);
+				foreignDao = castDao;
 				foreignTableInfo = foreignDao.getTableInfo();
 			} else {
-				tableConfig.extractFieldTypes(connectionSource);
+				tableConfig.extractFieldTypes(databaseType);
 				// NOTE: the cast is necessary for maven
-				foreignDao = (BaseDaoImpl<?, ?>) DaoManager.createDao(connectionSource, tableConfig);
-				foreignTableInfo = foreignDao.getTableInfo();
+				@SuppressWarnings("unchecked")
+				Dao<FT, FID> castDao = (Dao<FT, FID>) DaoManager.createDao(connectionSource, tableConfig);
+				foreignDao = castDao;
+				foreignTableInfo = castDao.getTableInfo();
 			}
 			foreignIdField = foreignTableInfo.getIdField();
 			if (foreignIdField == null) {
@@ -318,10 +320,8 @@ public class FieldType {
 							"Foreign field " + fieldClass + " does not have field named '" + foreignColumnName + "'");
 				}
 			}
-			@SuppressWarnings("unchecked")
-			MappedQueryForFieldEq<Object, Object> castMappedQueryForForeignField =
-					(MappedQueryForFieldEq<Object, Object>) MappedQueryForFieldEq.build(databaseType, foreignTableInfo,
-							foreignRefField);
+			MappedQueryForFieldEq<FT, FID> castMappedQueryForForeignField =
+					MappedQueryForFieldEq.build(foreignDao, foreignTableInfo, foreignRefField);
 			mappedQueryForForeignField = castMappedQueryForForeignField;
 			foreignFieldType = null;
 		} else if (fieldConfig.isForeign()) {
@@ -331,9 +331,11 @@ public class FieldType {
 			}
 			DatabaseTableConfig<?> tableConfig = fieldConfig.getForeignTableConfig();
 			if (tableConfig != null) {
-				tableConfig.extractFieldTypes(connectionSource);
+				tableConfig.extractFieldTypes(databaseType);
 				// NOTE: the cast is necessary for maven
-				foreignDao = (BaseDaoImpl<?, ?>) DaoManager.createDao(connectionSource, tableConfig);
+				@SuppressWarnings("unchecked")
+				Dao<FT, FID> castDao = (Dao<FT, FID>) DaoManager.createDao(connectionSource, tableConfig);
+				foreignDao = castDao;
 			} else {
 				/*
 				 * Initially we were only doing this just for BaseDaoEnabled.class and isForeignAutoCreate(). But we
@@ -342,9 +344,11 @@ public class FieldType {
 				 * allows us to make use of any table configs.
 				 */
 				// NOTE: the cast is necessary for maven
-				foreignDao = (BaseDaoImpl<?, ?>) DaoManager.createDao(connectionSource, fieldClass);
+				@SuppressWarnings("unchecked")
+				Dao<FT, FID> castDao = (Dao<FT, FID>) DaoManager.createDao(connectionSource, fieldClass);
+				foreignDao = castDao;
 			}
-			foreignTableInfo = foreignDao.getTableInfo();
+			TableInfo<FT, FID> foreignTableInfo = foreignDao.getTableInfo();
 			foreignIdField = foreignTableInfo.getIdField();
 			if (foreignIdField == null) {
 				throw new IllegalArgumentException("Foreign field " + fieldClass + " does not have id field");
@@ -383,28 +387,24 @@ public class FieldType {
 						+ "' must be a parameterized Collection whose generic argument is an entity class not: "
 						+ genericArguments[0]);
 			}
-			Class<?> collectionClazz = (Class<?>) genericArguments[0];
-			DatabaseTableConfig<?> tableConfig = fieldConfig.getForeignTableConfig();
-			BaseDaoImpl<Object, Object> foundDao;
+			@SuppressWarnings("unchecked")
+			Class<FT> collectionClazz = (Class<FT>) genericArguments[0];
+			@SuppressWarnings("unchecked")
+			DatabaseTableConfig<FT> tableConfig = (DatabaseTableConfig<FT>) fieldConfig.getForeignTableConfig();
+			Dao<FT, FID> foundDao;
 			if (tableConfig == null) {
-				@SuppressWarnings("unchecked")
-				BaseDaoImpl<Object, Object> castDao =
-						(BaseDaoImpl<Object, Object>) DaoManager.createDao(connectionSource, collectionClazz);
+				Dao<FT, FID> castDao = DaoManager.createDao(connectionSource, collectionClazz);
 				foundDao = castDao;
 			} else {
-				@SuppressWarnings("unchecked")
-				BaseDaoImpl<Object, Object> castDao =
-						(BaseDaoImpl<Object, Object>) DaoManager.createDao(connectionSource, tableConfig);
+				Dao<FT, FID> castDao = DaoManager.createDao(connectionSource, tableConfig);
 				foundDao = castDao;
 			}
 			foreignDao = foundDao;
-			foreignFieldType = findForeignFieldType(collectionClazz, parentClass, (BaseDaoImpl<?, ?>) foundDao);
+			foreignFieldType = findForeignFieldType(collectionClazz, parentClass, foundDao);
 			foreignIdField = null;
 			foreignRefField = null;
-			foreignTableInfo = null;
 			mappedQueryForForeignField = null;
 		} else {
-			foreignTableInfo = null;
 			foreignIdField = null;
 			foreignRefField = null;
 			foreignFieldType = null;
@@ -413,7 +413,6 @@ public class FieldType {
 		}
 
 		this.mappedQueryForForeignField = mappedQueryForForeignField;
-		this.foreignTableInfo = foreignTableInfo;
 		this.foreignFieldType = foreignFieldType;
 		this.foreignDao = foreignDao;
 		this.foreignIdField = foreignIdField;
@@ -523,8 +522,9 @@ public class FieldType {
 	/**
 	 * Assign to the data object the val corresponding to the fieldType.
 	 */
-	public void assignField(Object data, Object val, boolean parentObject, ObjectCache objectCache)
-			throws SQLException {
+	public void assignField(ConnectionSource connectionSource, Object data, Object val, boolean parentObject,
+			ObjectCache objectCache) throws SQLException {
+
 		if (logger.isLevelEnabled(Level.TRACE)) {
 			logger.trace("assiging from data {}, val {}: {}", (data == null ? "null" : data.getClass()),
 					(val == null ? "null" : val.getClass()), val);
@@ -553,7 +553,7 @@ public class FieldType {
 				val = cachedVal;
 			} else if (!parentObject) {
 				// the value we are to assign to our field is now the foreign object itself
-				val = createForeignObject(val, objectCache);
+				val = createForeignObject(connectionSource, val, objectCache);
 			}
 		}
 
@@ -584,12 +584,13 @@ public class FieldType {
 	/**
 	 * Assign an ID value to this field.
 	 */
-	public Object assignIdValue(Object data, Number val, ObjectCache objectCache) throws SQLException {
+	public Object assignIdValue(ConnectionSource connectionSource, Object data, Number val, ObjectCache objectCache)
+			throws SQLException {
 		Object idVal = dataPersister.convertIdNumber(val);
 		if (idVal == null) {
 			throw new SQLException("Invalid class " + dataPersister + " for sequence-id " + this);
 		} else {
-			assignField(data, idVal, false, objectCache);
+			assignField(connectionSource, data, idVal, false, objectCache);
 			return idVal;
 		}
 	}
@@ -971,16 +972,24 @@ public class FieldType {
 	}
 
 	/**
-	 * Return An instantiated {@link FieldType} or null if the field does not have a {@link DatabaseField} annotation.
+	 * @deprecated Use {@link #createFieldType(DatabaseType, String, Field, Class)}.
 	 */
+	@Deprecated
 	public static FieldType createFieldType(ConnectionSource connectionSource, String tableName, Field field,
 			Class<?> parentClass) throws SQLException {
-		DatabaseType databaseType = connectionSource.getDatabaseType();
+		return createFieldType(connectionSource.getDatabaseType(), tableName, field, parentClass);
+	}
+
+	/**
+	 * Return An instantiated {@link FieldType} or null if the field does not have a {@link DatabaseField} annotation.
+	 */
+	public static FieldType createFieldType(DatabaseType databaseType, String tableName, Field field,
+			Class<?> parentClass) throws SQLException {
 		DatabaseFieldConfig fieldConfig = DatabaseFieldConfig.fromField(databaseType, tableName, field);
 		if (fieldConfig == null) {
 			return null;
 		} else {
-			return new FieldType(connectionSource, tableName, field, fieldConfig, parentClass);
+			return new FieldType(databaseType, tableName, field, fieldConfig, parentClass);
 		}
 	}
 
@@ -1005,14 +1014,15 @@ public class FieldType {
 				+ field.getDeclaringClass().getSimpleName();
 	}
 
-	private Object createForeignObject(Object val, ObjectCache objectCache) throws SQLException {
+	private Object createForeignObject(ConnectionSource connectionSource, Object val, ObjectCache objectCache)
+			throws SQLException {
 
 		// try to stop the level counters objects from being created
 		LevelCounters levelCounters = threadLevelCounters.get();
 		if (levelCounters == null) {
 			// only create a shell if we are not in auto-refresh mode
 			if (!fieldConfig.isForeignAutoRefresh()) {
-				return createForeignShell(val, objectCache);
+				return createForeignShell(connectionSource, val, objectCache);
 			}
 			levelCounters = new LevelCounters();
 			threadLevelCounters.set(levelCounters);
@@ -1022,13 +1032,13 @@ public class FieldType {
 		if (levelCounters.autoRefreshLevel == 0) {
 			// if we aren't in an auto-refresh loop then don't _start_ an new loop if auto-refresh is not configured
 			if (!fieldConfig.isForeignAutoRefresh()) {
-				return createForeignShell(val, objectCache);
+				return createForeignShell(connectionSource, val, objectCache);
 			}
 			levelCounters.autoRefreshLevelMax = fieldConfig.getMaxForeignAutoRefreshLevel();
 		}
 		// if we have recursed the proper number of times, return a shell with just the id set
 		if (levelCounters.autoRefreshLevel >= levelCounters.autoRefreshLevelMax) {
-			return createForeignShell(val, objectCache);
+			return createForeignShell(connectionSource, val, objectCache);
 		}
 
 		/*
@@ -1037,10 +1047,9 @@ public class FieldType {
 		 */
 		if (mappedQueryForForeignField == null) {
 			@SuppressWarnings("unchecked")
+			Dao<Object, Object> castDao = (Dao<Object, Object>) foreignDao;
 			MappedQueryForFieldEq<Object, Object> castMappedQueryForId =
-					(MappedQueryForFieldEq<Object, Object>) MappedQueryForFieldEq.build(
-							connectionSource.getDatabaseType(), ((BaseDaoImpl<?, ?>) foreignDao).getTableInfo(),
-							foreignIdField);
+					MappedQueryForFieldEq.build(castDao, castDao.getTableInfo(), foreignIdField);
 			mappedQueryForForeignField = castMappedQueryForId;
 		}
 		levelCounters.autoRefreshLevel++;
@@ -1048,7 +1057,10 @@ public class FieldType {
 			DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection(tableName);
 			try {
 				// recurse and get the sub-object
-				return mappedQueryForForeignField.execute(databaseConnection, val, objectCache);
+				@SuppressWarnings("unchecked")
+				MappedQueryForFieldEq<Object, Object> castMappedQueryForForeignField =
+						(MappedQueryForFieldEq<Object, Object>) mappedQueryForForeignField;
+				return castMappedQueryForForeignField.execute(databaseConnection, val, objectCache);
 			} finally {
 				connectionSource.releaseConnection(databaseConnection);
 			}
@@ -1063,9 +1075,12 @@ public class FieldType {
 	/**
 	 * Create a shell object and assign its id field.
 	 */
-	private Object createForeignShell(Object val, ObjectCache objectCache) throws SQLException {
-		Object foreignObject = foreignTableInfo.createObject();
-		foreignIdField.assignField(foreignObject, val, false, objectCache);
+	private <FT, FID> FT createForeignShell(ConnectionSource connectionSource, Object val, ObjectCache objectCache)
+			throws SQLException {
+		@SuppressWarnings("unchecked")
+		Dao<FT, FID> castDao = (Dao<FT, FID>) foreignDao;
+		FT foreignObject = castDao.createObjectInstance();
+		foreignIdField.assignField(connectionSource, foreignObject, val, false, objectCache);
 		return foreignObject;
 	}
 
@@ -1085,7 +1100,7 @@ public class FieldType {
 	 * If we have a class Foo with a collection of Bar's then we go through Bar's DAO looking for a Foo field. We need
 	 * this field to build the query that is able to find all Bar's that have foo_id that matches our id.
 	 */
-	private FieldType findForeignFieldType(Class<?> clazz, Class<?> foreignClass, BaseDaoImpl<?, ?> foreignDao)
+	private FieldType findForeignFieldType(Class<?> clazz, Class<?> foreignClass, Dao<?, ?> foreignDao)
 			throws SQLException {
 		String foreignColumnName = fieldConfig.getForeignCollectionForeignFieldName();
 		for (FieldType fieldType : foreignDao.getTableInfo().getFieldTypes()) {

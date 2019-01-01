@@ -27,14 +27,14 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 
 	@Test
 	public void testMapRow() throws Exception {
-		Dao<LocalFoo, Object> fooDao = createDao(LocalFoo.class, true);
+		Dao<LocalFoo, Integer> fooDao = createDao(LocalFoo.class, true);
 		LocalFoo foo1 = new LocalFoo();
 		fooDao.create(foo1);
 
-		TableInfo<LocalFoo, Integer> tableInfo =
-				new TableInfo<LocalFoo, Integer>(connectionSource, null, LocalFoo.class);
-		MappedPreparedStmt<LocalFoo, Integer> rowMapper = new MappedPreparedStmt<LocalFoo, Integer>(tableInfo, null,
-				new FieldType[0], tableInfo.getFieldTypes(), new ArgumentHolder[0], null, StatementType.SELECT, false);
+		TableInfo<LocalFoo, Integer> tableInfo = new TableInfo<LocalFoo, Integer>(databaseType, LocalFoo.class);
+		MappedPreparedStmt<LocalFoo, Integer> rowMapper =
+				new MappedPreparedStmt<LocalFoo, Integer>(fooDao, tableInfo, null, new FieldType[0],
+						tableInfo.getFieldTypes(), new ArgumentHolder[0], null, StatementType.SELECT, false);
 
 		DatabaseConnection conn = connectionSource.getReadOnlyConnection(TABLE_NAME);
 		CompiledStatement stmt = null;
@@ -57,7 +57,7 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 
 	@Test
 	public void testLimit() throws Exception {
-		Dao<LocalFoo, Object> fooDao = createDao(LocalFoo.class, true);
+		Dao<LocalFoo, Integer> fooDao = createDao(LocalFoo.class, true);
 		List<LocalFoo> foos = new ArrayList<LocalFoo>();
 		LocalFoo foo = new LocalFoo();
 		// create foo #1
@@ -68,14 +68,13 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 		fooDao.create(foo);
 		foos.add(foo);
 
-		TableInfo<LocalFoo, Integer> tableInfo =
-				new TableInfo<LocalFoo, Integer>(connectionSource, null, LocalFoo.class);
-		MappedPreparedStmt<LocalFoo, Integer> preparedQuery =
-				new MappedPreparedStmt<LocalFoo, Integer>(tableInfo, "select * from " + TABLE_NAME, new FieldType[0],
-						tableInfo.getFieldTypes(), new ArgumentHolder[0], 1L, StatementType.SELECT, false);
+		TableInfo<LocalFoo, Integer> tableInfo = new TableInfo<LocalFoo, Integer>(databaseType, LocalFoo.class);
+		MappedPreparedStmt<LocalFoo, Integer> preparedQuery = new MappedPreparedStmt<LocalFoo, Integer>(fooDao,
+				tableInfo, "select * from " + TABLE_NAME, new FieldType[0], tableInfo.getFieldTypes(),
+				new ArgumentHolder[0], 1L, StatementType.SELECT, false);
 
 		checkResults(foos, preparedQuery, 1);
-		preparedQuery = new MappedPreparedStmt<LocalFoo, Integer>(tableInfo, "select * from " + TABLE_NAME,
+		preparedQuery = new MappedPreparedStmt<LocalFoo, Integer>(fooDao, tableInfo, "select * from " + TABLE_NAME,
 				new FieldType[0], tableInfo.getFieldTypes(), new ArgumentHolder[0], null, StatementType.SELECT, false);
 		checkResults(foos, preparedQuery, 2);
 	}
@@ -101,10 +100,12 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testObjectNoConstructor() throws SQLException {
-		new MappedPreparedStmt<NoConstructor, Void>(
-				new TableInfo<NoConstructor, Void>(connectionSource, null, NoConstructor.class), null, new FieldType[0],
-				new FieldType[0], new ArgumentHolder[0], null, StatementType.SELECT, false);
+	public void testObjectNoConstructor() throws Exception {
+		TableInfo<NoConstructor, Void> tableInfo =
+				new TableInfo<NoConstructor, Void>(databaseType, NoConstructor.class);
+		Dao<NoConstructor, Void> dao = createDao(NoConstructor.class, false);
+		new MappedPreparedStmt<NoConstructor, Void>(dao, tableInfo, null, new FieldType[0], new FieldType[0],
+				new ArgumentHolder[0], null, StatementType.SELECT, false);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

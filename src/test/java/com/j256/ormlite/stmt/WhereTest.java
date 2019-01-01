@@ -32,9 +32,8 @@ public class WhereTest extends BaseCoreTest {
 		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		assertTrue(where.toString().contains("empty where clause"));
 		String value = "bar";
-		FieldType numberFieldType =
-				FieldType.createFieldType(connectionSource, "foo", Foo.class.getDeclaredField(Foo.VAL_COLUMN_NAME),
-						Foo.class);
+		FieldType numberFieldType = FieldType.createFieldType(databaseType, "foo",
+				Foo.class.getDeclaredField(Foo.VAL_COLUMN_NAME), Foo.class);
 		SimpleComparison eq =
 				new SimpleComparison(Foo.VAL_COLUMN_NAME, numberFieldType, value, SimpleComparison.EQUAL_TO_OPERATION);
 		where.eq(Foo.VAL_COLUMN_NAME, value);
@@ -450,8 +449,7 @@ public class WhereTest extends BaseCoreTest {
 	@Test
 	public void testIdEq() throws Exception {
 		Where<FooId, Integer> where =
-				new Where<FooId, Integer>(new TableInfo<FooId, Integer>(connectionSource, null, FooId.class), null,
-						databaseType);
+				new Where<FooId, Integer>(new TableInfo<FooId, Integer>(databaseType, FooId.class), null, databaseType);
 		int val = 112;
 		where.idEq(val);
 		StringBuilder whereSb = new StringBuilder();
@@ -465,8 +463,8 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test(expected = SQLException.class)
 	public void testIdEqNoId() throws Exception {
-		new Where<FooNoId, Integer>(new TableInfo<FooNoId, Integer>(connectionSource, null, FooNoId.class), null,
-				databaseType).idEq(100);
+		new Where<FooNoId, Integer>(new TableInfo<FooNoId, Integer>(databaseType, FooNoId.class), null, databaseType)
+				.idEq(100);
 	}
 
 	@Test
@@ -475,8 +473,7 @@ public class WhereTest extends BaseCoreTest {
 		int id = 112132;
 		foo.id = id;
 		Where<FooId, Integer> where =
-				new Where<FooId, Integer>(new TableInfo<FooId, Integer>(connectionSource, null, FooId.class), null,
-						databaseType);
+				new Where<FooId, Integer>(new TableInfo<FooId, Integer>(databaseType, FooId.class), null, databaseType);
 		BaseDaoImpl<FooId, Integer> fooDao = new BaseDaoImpl<FooId, Integer>(connectionSource, FooId.class) {
 		};
 		where.idEq(fooDao, foo);
@@ -491,15 +488,14 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test(expected = SQLException.class)
 	public void testIdEqObjectIdNoId() throws Exception {
-		new Where<FooNoId, Integer>(new TableInfo<FooNoId, Integer>(connectionSource, null, FooNoId.class), null,
-				databaseType).idEq(new BaseDaoImpl<FooNoId, Integer>(connectionSource, FooNoId.class) {
-		}, new FooNoId());
+		new Where<FooNoId, Integer>(new TableInfo<FooNoId, Integer>(databaseType, FooNoId.class), null, databaseType)
+				.idEq(new BaseDaoImpl<FooNoId, Integer>(connectionSource, FooNoId.class) {
+				}, new FooNoId());
 	}
 
 	@Test
 	public void testInSubQuery() throws Exception {
-		TableInfo<ForeignFoo, Integer> tableInfo =
-				new TableInfo<ForeignFoo, Integer>(connectionSource, null, ForeignFoo.class);
+		TableInfo<ForeignFoo, Integer> tableInfo = new TableInfo<ForeignFoo, Integer>(databaseType, ForeignFoo.class);
 		Where<ForeignFoo, Integer> where = new Where<ForeignFoo, Integer>(tableInfo, null, databaseType);
 		BaseDaoImpl<ForeignFoo, Integer> foreignDao =
 				new BaseDaoImpl<ForeignFoo, Integer>(connectionSource, ForeignFoo.class) {
@@ -545,8 +541,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test(expected = SQLException.class)
 	public void testInSubQueryToManySubColumns() throws Exception {
-		TableInfo<ForeignFoo, Integer> tableInfo =
-				new TableInfo<ForeignFoo, Integer>(connectionSource, null, ForeignFoo.class);
+		TableInfo<ForeignFoo, Integer> tableInfo = new TableInfo<ForeignFoo, Integer>(databaseType, ForeignFoo.class);
 		Where<ForeignFoo, Integer> where = new Where<ForeignFoo, Integer>(tableInfo, null, databaseType);
 		BaseDaoImpl<ForeignFoo, Integer> foreignDao =
 				new BaseDaoImpl<ForeignFoo, Integer>(connectionSource, ForeignFoo.class) {
@@ -558,8 +553,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testExistsSubQuery() throws Exception {
-		TableInfo<ForeignFoo, Integer> tableInfo =
-				new TableInfo<ForeignFoo, Integer>(connectionSource, null, ForeignFoo.class);
+		TableInfo<ForeignFoo, Integer> tableInfo = new TableInfo<ForeignFoo, Integer>(databaseType, ForeignFoo.class);
 		Where<ForeignFoo, Integer> where = new Where<ForeignFoo, Integer>(tableInfo, null, databaseType);
 		BaseDaoImpl<ForeignFoo, Integer> foreignDao =
 				new BaseDaoImpl<ForeignFoo, Integer>(connectionSource, ForeignFoo.class) {
@@ -578,8 +572,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testNotExistsSubQuery() throws Exception {
-		TableInfo<ForeignFoo, Integer> tableInfo =
-				new TableInfo<ForeignFoo, Integer>(connectionSource, null, ForeignFoo.class);
+		TableInfo<ForeignFoo, Integer> tableInfo = new TableInfo<ForeignFoo, Integer>(databaseType, ForeignFoo.class);
 		Where<ForeignFoo, Integer> where = new Where<ForeignFoo, Integer>(tableInfo, null, databaseType);
 		BaseDaoImpl<ForeignFoo, Integer> foreignDao =
 				new BaseDaoImpl<ForeignFoo, Integer>(connectionSource, ForeignFoo.class) {
@@ -598,7 +591,7 @@ public class WhereTest extends BaseCoreTest {
 
 	@Test
 	public void testRaw() throws Exception {
-		TableInfo<Foo, Integer> tableInfo = new TableInfo<Foo, Integer>(connectionSource, null, Foo.class);
+		TableInfo<Foo, Integer> tableInfo = new TableInfo<Foo, Integer>(databaseType, Foo.class);
 		Where<Foo, Integer> where = new Where<Foo, Integer>(tableInfo, null, databaseType);
 		String raw = "VAL = 1";
 		int val = 17;
@@ -870,18 +863,24 @@ public class WhereTest extends BaseCoreTest {
 	public void testInnerQuerySubQueryWhere() throws Exception {
 		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 
-		fooDao.queryBuilder().where().in(Foo.ID_COLUMN_NAME,
-		// this is a problem because eq() returns a Where not a QueryBuilder
-				fooDao.queryBuilder().selectColumns(Foo.ID_COLUMN_NAME).where().eq(Foo.ID_COLUMN_NAME, 1)).query();
+		fooDao.queryBuilder()
+				.where()
+				.in(Foo.ID_COLUMN_NAME,
+						// this is a problem because eq() returns a Where not a QueryBuilder
+						fooDao.queryBuilder().selectColumns(Foo.ID_COLUMN_NAME).where().eq(Foo.ID_COLUMN_NAME, 1))
+				.query();
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testInnerQuerySubQueryPrepared() throws Exception {
 		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 
-		fooDao.queryBuilder().where().in(Foo.ID_COLUMN_NAME,
-		// this is a problem because prepare() returns a PreparedStmt not a QueryBuilder
-				fooDao.queryBuilder().selectColumns(Foo.ID_COLUMN_NAME).prepare()).query();
+		fooDao.queryBuilder()
+				.where()
+				.in(Foo.ID_COLUMN_NAME,
+						// this is a problem because prepare() returns a PreparedStmt not a QueryBuilder
+						fooDao.queryBuilder().selectColumns(Foo.ID_COLUMN_NAME).prepare())
+				.query();
 	}
 
 	@Test
@@ -911,12 +910,13 @@ public class WhereTest extends BaseCoreTest {
 	}
 
 	private TableInfo<Foo, String> createTableInfo() throws SQLException {
-		return new TableInfo<Foo, String>(connectionSource, null, Foo.class);
+		return new TableInfo<Foo, String>(databaseType, Foo.class);
 	}
 
 	protected static class FooNoId {
 		@DatabaseField(columnName = STRING_COLUMN_NAME)
 		String string;
+
 		FooNoId() {
 		}
 	}
@@ -926,6 +926,7 @@ public class WhereTest extends BaseCoreTest {
 		int id;
 		@DatabaseField(columnName = STRING_COLUMN_NAME)
 		String string;
+
 		FooId() {
 		}
 	}
@@ -935,6 +936,7 @@ public class WhereTest extends BaseCoreTest {
 		int id;
 		@DatabaseField(foreign = true, columnName = FOREIGN_COLUMN_NAME)
 		FooId foo;
+
 		ForeignFoo() {
 		}
 	}
@@ -945,6 +947,7 @@ public class WhereTest extends BaseCoreTest {
 		int id;
 		@DatabaseField(columnName = DATE_COLUMN_NAME, dataType = DataType.DATE_LONG)
 		Date date;
+
 		DateBetween() {
 		}
 	}

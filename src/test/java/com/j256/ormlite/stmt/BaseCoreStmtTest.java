@@ -24,17 +24,17 @@ public abstract class BaseCoreStmtTest extends BaseCoreTest {
 
 		Field field = Foo.class.getDeclaredField("stringField");
 		assertEquals(String.class, field.getType());
-		stringFieldType = FieldType.createFieldType(connectionSource, "BaseFoo", field, Foo.class);
+		stringFieldType = FieldType.createFieldType(databaseType, "BaseFoo", field, Foo.class);
 		stringFieldType.configDaoInformation(connectionSource, Foo.class);
 		field = Foo.class.getDeclaredField("val");
 		assertEquals(int.class, field.getType());
-		numberFieldType = FieldType.createFieldType(connectionSource, "BaseFoo", field, Foo.class);
+		numberFieldType = FieldType.createFieldType(databaseType, "BaseFoo", field, Foo.class);
 		numberFieldType.configDaoInformation(connectionSource, Foo.class);
 		field = Foreign.class.getDeclaredField("foo");
 		assertEquals(Foo.class, field.getType());
-		foreignFieldType = FieldType.createFieldType(connectionSource, "BaseFoo", field, Foreign.class);
+		foreignFieldType = FieldType.createFieldType(databaseType, "BaseFoo", field, Foreign.class);
 		foreignFieldType.configDaoInformation(connectionSource, Foreign.class);
 
-		baseFooTableInfo = new TableInfo<Foo, Integer>(connectionSource, null, Foo.class);
+		baseFooTableInfo = new TableInfo<Foo, Integer>(databaseType, Foo.class);
 	}
 }

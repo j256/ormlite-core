@@ -2,7 +2,6 @@ package com.j256.ormlite.table;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -25,27 +24,27 @@ public class TableInfoTest extends BaseCoreTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testTableInfo() throws SQLException {
-		new TableInfo<NoFieldAnnotations, Void>(connectionSource, null, NoFieldAnnotations.class);
+		new TableInfo<NoFieldAnnotations, Void>(databaseType, NoFieldAnnotations.class);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testNoNoArgConstructor() throws SQLException {
-		new TableInfo<NoNoArgConstructor, Void>(connectionSource, null, NoNoArgConstructor.class);
+		new TableInfo<NoNoArgConstructor, Void>(databaseType, NoNoArgConstructor.class);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testObjectNoFields() throws SQLException {
-		new TableInfo<NoFields, Void>(connectionSource, null, NoFields.class);
+		new TableInfo<NoFields, Void>(databaseType, NoFields.class);
 	}
 
 	@Test(expected = SQLException.class)
 	public void testObjectDoubleId() throws SQLException {
-		new TableInfo<DoubleId, String>(connectionSource, null, DoubleId.class);
+		new TableInfo<DoubleId, String>(databaseType, DoubleId.class);
 	}
 
 	@Test
 	public void testBasic() throws SQLException {
-		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
+		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(databaseType, Foo.class);
 		assertEquals(Foo.class, tableInfo.getDataClass());
 		assertEquals(TABLE_NAME, tableInfo.getTableName());
 		assertEquals(COLUMN_NAME, tableInfo.getIdField().getColumnName());
@@ -60,36 +59,28 @@ public class TableInfoTest extends BaseCoreTest {
 		Foo foo = new Foo();
 		foo.id = id;
 		assertEquals(id, foo.id);
-		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
+		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(databaseType, Foo.class);
 		assertTrue(tableInfo.objectToString(foo).contains(id));
 	}
 
 	@Test
 	public void testNoTableNameInAnnotation() throws Exception {
 		TableInfo<NoTableNameAnnotation, Void> tableInfo =
-				new TableInfo<NoTableNameAnnotation, Void>(connectionSource, null, NoTableNameAnnotation.class);
+				new TableInfo<NoTableNameAnnotation, Void>(databaseType, NoTableNameAnnotation.class);
 		assertEquals(NoTableNameAnnotation.class.getSimpleName().toLowerCase(), tableInfo.getTableName());
 	}
 
 	@Test(expected = SQLException.class)
 	public void testZeroFieldConfigsSpecified() throws Exception {
-		DatabaseTableConfig<NoTableNameAnnotation> tableConfig =
-				new DatabaseTableConfig<NoTableNameAnnotation>(databaseType,
-						NoTableNameAnnotation.class, new ArrayList<DatabaseFieldConfig>());
-		tableConfig.extractFieldTypes(connectionSource);
-		new TableInfo<NoTableNameAnnotation, Void>(databaseType, null, tableConfig);
-	}
-
-	@Test
-	public void testConstruct() throws Exception {
-		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
-		Foo foo = tableInfo.createObject();
-		assertNotNull(foo);
+		DatabaseTableConfig<NoTableNameAnnotation> tableConfig = new DatabaseTableConfig<NoTableNameAnnotation>(
+				databaseType, NoTableNameAnnotation.class, new ArrayList<DatabaseFieldConfig>());
+		tableConfig.extractFieldTypes(databaseType);
+		new TableInfo<NoTableNameAnnotation, Void>(databaseType, tableConfig);
 	}
 
 	@Test
 	public void testUnknownForeignField() throws Exception {
-		TableInfo<Foreign, Void> tableInfo = new TableInfo<Foreign, Void>(connectionSource, null, Foreign.class);
+		TableInfo<Foreign, Void> tableInfo = new TableInfo<Foreign, Void>(databaseType, Foreign.class);
 		try {
 			tableInfo.getFieldTypeByColumnName("foo");
 			fail("expected exception");
@@ -123,7 +114,9 @@ public class TableInfoTest extends BaseCoreTest {
 		assertFalse(tableInfo.hasColumnName("not this name"));
 	}
 
-	/* ================================================================================================================ */
+	/*
+	 * ================================================================================================================
+	 */
 
 	protected static class NoFieldAnnotations {
 		String id;
@@ -162,6 +155,7 @@ public class TableInfoTest extends BaseCoreTest {
 		public static final String FOREIGN_FIELD_NAME = "fooblah";
 		@DatabaseField(foreign = true, columnName = FOREIGN_FIELD_NAME)
 		public Foo foo;
+
 		public Foreign() {
 		}
 	}
@@ -169,9 +163,11 @@ public class TableInfoTest extends BaseCoreTest {
 	private static class PrivateConstructor {
 		@DatabaseField(id = true)
 		int id;
+
 		private PrivateConstructor() {
 			// make it private
 		}
+
 		public static PrivateConstructor makeOne(int id) {
 			PrivateConstructor pack = new PrivateConstructor();
 			pack.id = id;

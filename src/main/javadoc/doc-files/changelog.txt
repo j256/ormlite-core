@@ -1,4 +1,6 @@
 5.2: X/YY/2018
+	* CORE: Added BaseSchemaUtil to print out the schema statements necessary to create a table.
+	* CORE: Significant refactoring to make FieldType and TableInfo not depend on Dao or ConnectionSource.
 	* CORE: Fixed problem with null field assignment causing a NPE in the resulting message.  Thanks to hrach.
 	* CORE: Fixed possible problems with the transaction level thread-local not being handled right.
 	* CORE: Added support for @DatabaseField(readOnly) boolean for returning non-column fields.

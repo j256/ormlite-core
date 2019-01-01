@@ -656,7 +656,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testTableConfig() throws Exception {
-		DatabaseTableConfig<Foo> config = DatabaseTableConfig.fromClass(connectionSource, Foo.class);
+		DatabaseTableConfig<Foo> config = DatabaseTableConfig.fromClass(databaseType, Foo.class);
 		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(connectionSource, config) {
 		};
 		assertSame(config, dao.getTableConfig());
@@ -664,7 +664,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testSetters() throws Exception {
-		DatabaseTableConfig<Foo> config = DatabaseTableConfig.fromClass(connectionSource, Foo.class);
+		DatabaseTableConfig<Foo> config = DatabaseTableConfig.fromClass(databaseType, Foo.class);
 		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		dao.setTableConfig(config);
@@ -2300,6 +2300,18 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertTrue(!after.before(result.createdDate));
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void testNoConstructor() throws SQLException {
+		createDao(NoNoArgConstructor.class, false);
+	}
+
+	@Test
+	public void testConstruct() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, false);
+		Foo foo = dao.createObjectInstance();
+		assertNotNull(foo);
+	}
+
 	/* ============================================================================================== */
 
 	private static class ResultsMapper implements DatabaseResultsMapper<Foo> {
@@ -2644,6 +2656,11 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Date createdDate;
 
 		public DateAutoCreate() {
+		}
+	}
+
+	protected static class NoNoArgConstructor {
+		public NoNoArgConstructor(String stuff) {
 		}
 	}
 

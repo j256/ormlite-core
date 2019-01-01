@@ -54,7 +54,7 @@ public class TimeStampTypeTest extends BaseTypeTest {
 
 	@Test(expected = SQLException.class)
 	public void testTimeStampParseInvalid() throws Exception {
-		FieldType fieldType = FieldType.createFieldType(connectionSource, TABLE_NAME,
+		FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME,
 				LocalTimeStamp.class.getDeclaredField(TIME_STAMP_COLUMN), LocalTimeStamp.class);
 		dataType.getDataPersister().parseDefaultString(fieldType, "not valid date string");
 	}
@@ -66,7 +66,7 @@ public class TimeStampTypeTest extends BaseTypeTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidDateField() throws Exception {
-		FieldType.createFieldType(connectionSource, TABLE_NAME, InvalidDate.class.getDeclaredField("invalidType"),
+		FieldType.createFieldType(databaseType, TABLE_NAME, InvalidDate.class.getDeclaredField("invalidType"),
 				LocalDate.class);
 	}
 

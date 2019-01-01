@@ -82,7 +82,7 @@ public abstract class StatementBuilder<T, ID> {
 		if (!type.isOkForStatementBuilder()) {
 			throw new IllegalStateException("Building a statement from a " + type + " statement is not allowed");
 		}
-		return new MappedPreparedStmt<T, ID>(tableInfo, statement, argFieldTypes, resultFieldTypes, selectArgs,
+		return new MappedPreparedStmt<T, ID>(dao, tableInfo, statement, argFieldTypes, resultFieldTypes, selectArgs,
 				(databaseType.isLimitSqlSupported() ? null : limit), type, cacheStore);
 	}
 

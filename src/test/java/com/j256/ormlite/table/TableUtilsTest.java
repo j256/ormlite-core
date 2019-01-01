@@ -47,7 +47,7 @@ public class TableUtilsTest extends BaseCoreTest {
 
 	@Test
 	public void testCreateStatements() throws Exception {
-		List<String> stmts = TableUtils.getCreateTableStatements(connectionSource, LocalFoo.class);
+		List<String> stmts = TableUtils.getCreateTableStatements(databaseType, LocalFoo.class);
 		assertEquals(1, stmts.size());
 		assertEquals(expectedCreateStatement(), stmts.get(0));
 	}
@@ -55,7 +55,7 @@ public class TableUtilsTest extends BaseCoreTest {
 	@Test
 	public void testCreateStatementsTableConfig() throws Exception {
 		List<String> stmts = TableUtils.getCreateTableStatements(connectionSource,
-				DatabaseTableConfig.fromClass(connectionSource, LocalFoo.class));
+				DatabaseTableConfig.fromClass(databaseType, LocalFoo.class));
 		assertEquals(1, stmts.size());
 		assertEquals(expectedCreateStatement(), stmts.get(0));
 	}
@@ -124,7 +124,7 @@ public class TableUtilsTest extends BaseCoreTest {
 			@Override
 			public Integer call() throws Exception {
 				return (int) TableUtils.createTable(connectionSource,
-						DatabaseTableConfig.fromClass(connectionSource, LocalFoo.class));
+						DatabaseTableConfig.fromClass(databaseType, LocalFoo.class));
 			}
 		});
 	}
@@ -180,7 +180,7 @@ public class TableUtilsTest extends BaseCoreTest {
 			@Override
 			public Integer call() throws Exception {
 				return (int) TableUtils.dropTable(connectionSource,
-						DatabaseTableConfig.fromClass(connectionSource, LocalFoo.class), false);
+						DatabaseTableConfig.fromClass(databaseType, LocalFoo.class), false);
 			}
 		});
 	}
@@ -447,7 +447,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		} catch (Exception e) {
 			// ignored
 		}
-		DatabaseTableConfig<LocalFoo> tableConfig = DatabaseTableConfig.fromClass(connectionSource, LocalFoo.class);
+		DatabaseTableConfig<LocalFoo> tableConfig = DatabaseTableConfig.fromClass(databaseType, LocalFoo.class);
 		TableUtils.createTableIfNotExists(connectionSource, tableConfig);
 		assertEquals(0, fooDao.countOf());
 		// should not throw
@@ -486,7 +486,7 @@ public class TableUtilsTest extends BaseCoreTest {
 
 	private void testStatement(String tableName, ConnectionSource connectionSource, DatabaseType databaseType,
 			String statement, String queryAfter, int rowN, boolean throwExecute, Callable<Integer> callable)
-					throws Exception {
+			throws Exception {
 		DatabaseConnection conn = createMock(DatabaseConnection.class);
 		CompiledStatement stmt = createMock(CompiledStatement.class);
 		DatabaseResults results = null;

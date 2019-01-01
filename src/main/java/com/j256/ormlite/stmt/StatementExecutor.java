@@ -89,7 +89,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 */
 	public T queryForId(DatabaseConnection databaseConnection, ID id, ObjectCache objectCache) throws SQLException {
 		if (mappedQueryForId == null) {
-			mappedQueryForId = MappedQueryForFieldEq.build(databaseType, tableInfo, null);
+			mappedQueryForId = MappedQueryForFieldEq.build(dao, tableInfo, null);
 		}
 		return mappedQueryForId.execute(databaseConnection, id, objectCache);
 	}
@@ -230,7 +230,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 */
 	public RawRowMapper<T> getRawRowMapper() {
 		if (rawRowMapper == null) {
-			rawRowMapper = new RawRowMapperImpl<T, ID>(tableInfo);
+			rawRowMapper = new RawRowMapperImpl<T, ID>(dao, tableInfo);
 		}
 		return rawRowMapper;
 	}
@@ -453,7 +453,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 */
 	public int create(DatabaseConnection databaseConnection, T data, ObjectCache objectCache) throws SQLException {
 		if (mappedInsert == null) {
-			mappedInsert = MappedCreate.build(databaseType, tableInfo);
+			mappedInsert = MappedCreate.build(dao, tableInfo);
 		}
 		int result = mappedInsert.insert(databaseType, databaseConnection, data, objectCache);
 		if (dao != null && !localIsInBatchMode.get()) {
@@ -467,7 +467,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 */
 	public int update(DatabaseConnection databaseConnection, T data, ObjectCache objectCache) throws SQLException {
 		if (mappedUpdate == null) {
-			mappedUpdate = MappedUpdate.build(databaseType, tableInfo);
+			mappedUpdate = MappedUpdate.build(dao, tableInfo);
 		}
 		int result = mappedUpdate.update(databaseConnection, data, objectCache);
 		if (dao != null && !localIsInBatchMode.get()) {
@@ -482,7 +482,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	public int updateId(DatabaseConnection databaseConnection, T data, ID newId, ObjectCache objectCache)
 			throws SQLException {
 		if (mappedUpdateId == null) {
-			mappedUpdateId = MappedUpdateId.build(databaseType, tableInfo);
+			mappedUpdateId = MappedUpdateId.build(dao, tableInfo);
 		}
 		int result = mappedUpdateId.execute(databaseConnection, data, newId, objectCache);
 		if (dao != null && !localIsInBatchMode.get()) {
@@ -513,7 +513,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 */
 	public int refresh(DatabaseConnection databaseConnection, T data, ObjectCache objectCache) throws SQLException {
 		if (mappedRefresh == null) {
-			mappedRefresh = MappedRefresh.build(databaseType, tableInfo);
+			mappedRefresh = MappedRefresh.build(dao, tableInfo);
 		}
 		return mappedRefresh.executeRefresh(databaseConnection, data, objectCache);
 	}
@@ -523,7 +523,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 */
 	public int delete(DatabaseConnection databaseConnection, T data, ObjectCache objectCache) throws SQLException {
 		if (mappedDelete == null) {
-			mappedDelete = MappedDelete.build(databaseType, tableInfo);
+			mappedDelete = MappedDelete.build(dao, tableInfo);
 		}
 		int result = mappedDelete.delete(databaseConnection, data, objectCache);
 		if (dao != null && !localIsInBatchMode.get()) {
@@ -537,7 +537,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 */
 	public int deleteById(DatabaseConnection databaseConnection, ID id, ObjectCache objectCache) throws SQLException {
 		if (mappedDelete == null) {
-			mappedDelete = MappedDelete.build(databaseType, tableInfo);
+			mappedDelete = MappedDelete.build(dao, tableInfo);
 		}
 		int result = mappedDelete.deleteById(databaseConnection, id, objectCache);
 		if (dao != null && !localIsInBatchMode.get()) {
@@ -552,8 +552,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	public int deleteObjects(DatabaseConnection databaseConnection, Collection<T> datas, ObjectCache objectCache)
 			throws SQLException {
 		// have to build this on the fly because the collection has variable number of args
-		int result =
-				MappedDeleteCollection.deleteObjects(databaseType, tableInfo, databaseConnection, datas, objectCache);
+		int result = MappedDeleteCollection.deleteObjects(dao, tableInfo, databaseConnection, datas, objectCache);
 		if (dao != null && !localIsInBatchMode.get()) {
 			dao.notifyChanges();
 		}
@@ -566,7 +565,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	public int deleteIds(DatabaseConnection databaseConnection, Collection<ID> ids, ObjectCache objectCache)
 			throws SQLException {
 		// have to build this on the fly because the collection has variable number of args
-		int result = MappedDeleteCollection.deleteIds(databaseType, tableInfo, databaseConnection, ids, objectCache);
+		int result = MappedDeleteCollection.deleteIds(dao, tableInfo, databaseConnection, ids, objectCache);
 		if (dao != null && !localIsInBatchMode.get()) {
 			dao.notifyChanges();
 		}

@@ -19,7 +19,8 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testPrepareStatementUpdateValueString() throws Exception {
-		UpdateBuilder<Foo, Integer> stmtb = new UpdateBuilder<Foo, Integer>(databaseType, baseFooTableInfo, null);
+		Dao<Foo, Integer> dao = createDao(Foo.class, false);
+		UpdateBuilder<Foo, Integer> stmtb = new UpdateBuilder<Foo, Integer>(databaseType, baseFooTableInfo, dao);
 		int idVal = 1312;
 		stmtb.updateColumnValue(Foo.ID_COLUMN_NAME, idVal);
 		PreparedUpdate<Foo> stmt = stmtb.prepare();
@@ -35,7 +36,8 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testPrepareStatementUpdateValueNumber() throws Exception {
-		UpdateBuilder<Foo, Integer> stmtb = new UpdateBuilder<Foo, Integer>(databaseType, baseFooTableInfo, null);
+		Dao<Foo, Integer> dao = createDao(Foo.class, false);
+		UpdateBuilder<Foo, Integer> stmtb = new UpdateBuilder<Foo, Integer>(databaseType, baseFooTableInfo, dao);
 		int idVal = 13123;
 		stmtb.updateColumnValue(Foo.VAL_COLUMN_NAME, idVal);
 		PreparedUpdate<Foo> stmt = stmtb.prepare();
@@ -108,20 +110,16 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 	@Test(expected = SQLException.class)
 	public void testUpdateForeignCollection() throws Exception {
 		UpdateBuilder<OurForeignCollection, Integer> stmtb =
-				new UpdateBuilder<OurForeignCollection, Integer>(
-						databaseType,
-						new TableInfo<OurForeignCollection, Integer>(connectionSource, null, OurForeignCollection.class),
-						null);
+				new UpdateBuilder<OurForeignCollection, Integer>(databaseType,
+						new TableInfo<OurForeignCollection, Integer>(databaseType, OurForeignCollection.class), null);
 		stmtb.updateColumnValue(OurForeignCollection.FOOS_FIELD_NAME, null);
 	}
 
 	@Test(expected = SQLException.class)
 	public void testUpdateForeignCollectionColumnExpression() throws Exception {
 		UpdateBuilder<OurForeignCollection, Integer> stmtb =
-				new UpdateBuilder<OurForeignCollection, Integer>(
-						databaseType,
-						new TableInfo<OurForeignCollection, Integer>(connectionSource, null, OurForeignCollection.class),
-						null);
+				new UpdateBuilder<OurForeignCollection, Integer>(databaseType,
+						new TableInfo<OurForeignCollection, Integer>(databaseType, OurForeignCollection.class), null);
 		stmtb.updateColumnExpression(OurForeignCollection.FOOS_FIELD_NAME, "1");
 	}
 
@@ -137,8 +135,7 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 		UpdateDate updateDate = new UpdateDate();
 		updateDate.date = new Date();
 		assertEquals(1, dao.create(updateDate));
-		TableInfo<UpdateDate, Integer> tableInfo =
-				new TableInfo<UpdateDate, Integer>(connectionSource, null, UpdateDate.class);
+		TableInfo<UpdateDate, Integer> tableInfo = new TableInfo<UpdateDate, Integer>(databaseType, UpdateDate.class);
 		UpdateBuilder<UpdateDate, Integer> stmtb = new UpdateBuilder<UpdateDate, Integer>(databaseType, tableInfo, dao);
 		Date newDate = new Date(System.currentTimeMillis() + 10);
 		stmtb.updateColumnValue(UpdateDate.DATE_FIELD, newDate);
@@ -236,6 +233,7 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 		String stuff;
 		@ForeignCollectionField
 		ForeignCollection<OurForeign> foos;
+
 		public OurForeignCollection() {
 		}
 	}
@@ -245,6 +243,7 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 		int id;
 		@DatabaseField(foreign = true)
 		OurForeignCollection foreign;
+
 		public OurForeign() {
 		}
 	}
@@ -255,6 +254,7 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 		int id;
 		@DatabaseField(columnName = DATE_FIELD)
 		Date date;
+
 		public UpdateDate() {
 		}
 	}

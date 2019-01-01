@@ -14,16 +14,18 @@ import com.j256.ormlite.table.TableInfo;
  */
 public class RawRowMapperImpl<T, ID> implements RawRowMapper<T> {
 
+	private final Dao<T, ID> dao;
 	private final TableInfo<T, ID> tableInfo;
 
-	public RawRowMapperImpl(TableInfo<T, ID> tableInfo) {
+	public RawRowMapperImpl(Dao<T, ID> dao, TableInfo<T, ID> tableInfo) {
+		this.dao = dao;
 		this.tableInfo = tableInfo;
 	}
 
 	@Override
 	public T mapRow(String[] columnNames, String[] resultColumns) throws SQLException {
 		// create our object
-		T rowObj = tableInfo.createObject();
+		T rowObj = dao.createObjectInstance();
 		for (int i = 0; i < columnNames.length; i++) {
 			// sanity check, prolly will never happen but let's be careful out there
 			if (i >= resultColumns.length) {
@@ -33,7 +35,7 @@ public class RawRowMapperImpl<T, ID> implements RawRowMapper<T> {
 			FieldType fieldType = tableInfo.getFieldTypeByColumnName(columnNames[i]);
 			Object fieldObj = fieldType.convertStringToJavaField(resultColumns[i], i);
 			// assign it to the row object
-			fieldType.assignField(rowObj, fieldObj, false, null);
+			fieldType.assignField(dao.getConnectionSource(), rowObj, fieldObj, false, null);
 		}
 		return rowObj;
 	}

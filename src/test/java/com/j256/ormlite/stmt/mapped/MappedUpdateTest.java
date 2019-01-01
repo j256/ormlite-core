@@ -9,6 +9,8 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 
+import com.j256.ormlite.BaseCoreTest;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.BaseDatabaseType;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
@@ -16,7 +18,7 @@ import com.j256.ormlite.stmt.StatementExecutor;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableInfo;
 
-public class MappedUpdateTest {
+public class MappedUpdateTest extends BaseCoreTest {
 
 	private final DatabaseType databaseType = new StubDatabaseType();
 	private final ConnectionSource connectionSource;
@@ -29,19 +31,18 @@ public class MappedUpdateTest {
 
 	@Test(expected = SQLException.class)
 	public void testUpdateNoId() throws Exception {
-		StatementExecutor<NoId, String> se =
-				new StatementExecutor<NoId, String>(databaseType, new TableInfo<NoId, String>(connectionSource, null,
-						NoId.class), null);
+		StatementExecutor<NoId, String> se = new StatementExecutor<NoId, String>(databaseType,
+				new TableInfo<NoId, String>(databaseType, NoId.class), null);
 		NoId noId = new NoId();
-		noId.id = "1";
+		noId.stuff = "1";
 		se.update(null, noId, null);
 	}
 
 	@Test
 	public void testUpdateJustId() throws Exception {
-		StatementExecutor<JustId, Integer> se =
-				new StatementExecutor<JustId, Integer>(databaseType, new TableInfo<JustId, Integer>(connectionSource,
-						null, JustId.class), null);
+		Dao<JustId, Integer> dao = createDao(JustId.class, false);
+		StatementExecutor<JustId, Integer> se = new StatementExecutor<JustId, Integer>(databaseType,
+				new TableInfo<JustId, Integer>(databaseType, JustId.class), dao);
 		JustId justId = new JustId();
 		justId.id = 1;
 		assertEquals(0, se.update(null, justId, null));
@@ -49,17 +50,14 @@ public class MappedUpdateTest {
 
 	@Test(expected = SQLException.class)
 	public void testNoIdBuildUpdater() throws Exception {
-		MappedUpdate.build(databaseType, new TableInfo<NoId, Void>(connectionSource, null, NoId.class));
+		Dao<NoId, Void> dao = createDao(NoId.class, false);
+		MappedUpdate.build(dao, new TableInfo<NoId, Void>(databaseType, NoId.class));
 	}
 
 	@Test(expected = SQLException.class)
 	public void testJustIdBuildUpdater() throws Exception {
-		MappedUpdate.build(databaseType, new TableInfo<NoId, Void>(connectionSource, null, NoId.class));
-	}
-
-	protected static class NoId {
-		@DatabaseField
-		String id;
+		Dao<NoId, Void> dao = createDao(NoId.class, false);
+		MappedUpdate.build(dao, new TableInfo<NoId, Void>(databaseType, NoId.class));
 	}
 
 	protected static class JustId {
@@ -72,10 +70,12 @@ public class MappedUpdateTest {
 		public String getDriverClassName() {
 			return "foo.bar.baz";
 		}
+
 		@Override
 		public String getDatabaseName() {
 			return "fake";
 		}
+
 		@Override
 		public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 			return false;
