@@ -6,9 +6,11 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
@@ -17,12 +19,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.Test;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.h2.H2ConnectionSource;
+import com.j256.ormlite.logger.Logger;
+import com.j256.ormlite.logger.LoggerFactory;
+import com.j256.ormlite.misc.TransactionManager;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
+import com.j256.ormlite.support.BaseConnectionSource;
 import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableInfo;
+import com.j256.ormlite.table.TableUtils;
 
 public class StatementExecutorTest extends BaseCoreStmtTest {
 
@@ -79,6 +89,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		expect(connectionSource.isSingleConnection("foo")).andReturn(false);
 		expect(connectionSource.getReadWriteConnection("foo")).andReturn(connection);
 		expect(connectionSource.saveSpecialConnection(connection)).andReturn(false);
+		connectionSource.clearSpecialConnection(connection);
 		connectionSource.releaseConnection(connection);
 
 		expect(connection.isAutoCommitSupported()).andReturn(false);
@@ -106,6 +117,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		expect(connectionSource.isSingleConnection("foo")).andReturn(false);
 		expect(connectionSource.getReadWriteConnection("foo")).andReturn(connection);
 		expect(connectionSource.saveSpecialConnection(connection)).andReturn(false);
+		connectionSource.clearSpecialConnection(connection);
 		connectionSource.releaseConnection(connection);
 
 		expect(connection.isAutoCommitSupported()).andReturn(true);
@@ -134,6 +146,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		expect(connectionSource.isSingleConnection("foo")).andReturn(false);
 		expect(connectionSource.getReadWriteConnection("foo")).andReturn(connection);
 		expect(connectionSource.saveSpecialConnection(connection)).andReturn(false);
+		connectionSource.clearSpecialConnection(connection);
 		connectionSource.releaseConnection(connection);
 
 		expect(connection.isAutoCommitSupported()).andReturn(true);
@@ -164,6 +177,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		expect(connectionSource.isSingleConnection("foo")).andReturn(true);
 		expect(connectionSource.getReadWriteConnection("foo")).andReturn(connection);
 		expect(connectionSource.saveSpecialConnection(connection)).andReturn(false);
+		connectionSource.clearSpecialConnection(connection);
 		connectionSource.releaseConnection(connection);
 
 		expect(connection.isAutoCommitSupported()).andReturn(true);
@@ -194,6 +208,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		expect(connectionSource.isSingleConnection("foo")).andReturn(false);
 		expect(connectionSource.getReadWriteConnection("foo")).andReturn(connection);
 		expect(connectionSource.saveSpecialConnection(connection)).andReturn(false);
+		connectionSource.clearSpecialConnection(connection);
 		connectionSource.releaseConnection(connection);
 
 		expect(connection.isAutoCommitSupported()).andReturn(true);
@@ -287,8 +302,105 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		}
 	}
 
+	@Test
+	public void testCallBatchTasksNestedInTransaction() throws Exception {
+		SpecialConnectionSource cs = new SpecialConnectionSource(new H2ConnectionSource());
+		final Dao<Foo, Integer> dao = DaoManager.createDao(cs, Foo.class);
+		TableUtils.createTable(cs, Foo.class);
+		final Foo foo = new Foo();
+		assertEquals(1, dao.create(foo));
+
+		TransactionManager.callInTransaction(cs, new Callable<Void>() {
+			@Override
+			public Void call() throws Exception {
+				dao.callBatchTasks(new Callable<Void>() {
+					@Override
+					public Void call() throws Exception {
+						dao.delete(foo);
+						return null;
+					}
+				});
+				return null;
+			}
+		});
+
+		assertNull(dao.queryForId(foo.id));
+
+		assertNull(cs.getSpecialConnection(dao.getTableName()));
+	}
+
 	protected static class NoId {
 		@DatabaseField
 		String stuff;
+	}
+
+	private static class SpecialConnectionSource extends BaseConnectionSource {
+
+		private Logger logger = LoggerFactory.getLogger(getClass());
+		private ConnectionSource connectionSource;
+
+		SpecialConnectionSource(ConnectionSource connectionSource) {
+			this.connectionSource = connectionSource;
+		}
+
+		@Override
+		public DatabaseConnection getReadOnlyConnection(String tableName) throws SQLException {
+			DatabaseConnection conn = getSavedConnection();
+			if (conn == null) {
+				return connectionSource.getReadOnlyConnection(tableName);
+			} else {
+				return conn;
+			}
+		}
+
+		@Override
+		public DatabaseConnection getReadWriteConnection(String tableName) throws SQLException {
+			DatabaseConnection conn = getSavedConnection();
+			if (conn == null) {
+				return connectionSource.getReadWriteConnection(tableName);
+			} else {
+				return conn;
+			}
+		}
+
+		@Override
+		public void releaseConnection(DatabaseConnection connection) throws SQLException {
+			connectionSource.releaseConnection(connection);
+		}
+
+		@Override
+		public boolean saveSpecialConnection(DatabaseConnection connection) throws SQLException {
+			return saveSpecial(connection);
+		}
+
+		@Override
+		public void clearSpecialConnection(DatabaseConnection connection) {
+			clearSpecial(connection, logger);
+		}
+
+		@Override
+		public void closeQuietly() {
+			connectionSource.closeQuietly();
+		}
+
+		@Override
+		public DatabaseType getDatabaseType() {
+			return connectionSource.getDatabaseType();
+		}
+
+		@Override
+		public boolean isOpen(String tableName) {
+			return connectionSource.isOpen(tableName);
+		}
+
+		@Override
+		public boolean isSingleConnection(String tableName) {
+			return connectionSource.isSingleConnection(tableName);
+		}
+
+		@Override
+		public void close() throws IOException {
+			connectionSource.close();
+		}
 	}
 }
