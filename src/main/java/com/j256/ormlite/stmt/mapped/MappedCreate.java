@@ -260,7 +260,8 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 	}
 
 	private static class KeyHolder implements GeneratedKeyHolder {
-		String columnName;
+
+		final String columnName;
 		Number key;
 
 		public KeyHolder(String columnName) {
@@ -281,7 +282,8 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 			if (this.key == null) {
 				this.key = key;
 			} else {
-				throw new SQLException("generated key has already been set to " + this.key + ", now set to " + key);
+				throw new SQLException(
+						"generated key has already been set to " + this.key + ", trying now to set to " + key);
 			}
 		}
 	}
