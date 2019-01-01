@@ -1,7 +1,8 @@
-5.2: X/YY/2019
+5.2: X/YY/2018
 	* CORE: Fixed problem with null field assignment causing a NPE in the resulting message.  Thanks to hrach.
+	* CORE: Added support for @DatabaseField(readOnly) boolean for returning non-column fields.
 
-5.1: 2/19/2019
+5.1: 2/19/2018
 	* CORE: Added @DatabaseField(fullColumnDefinition) for fully describing a column as opposed to columnDefinition.
 	* CORE: Added synchronized keyword to BaseDaoImpl.createOrUpdate() and createIfNotExists().
 	* CORE: Added integer date support.  Thanks to noordawod.
