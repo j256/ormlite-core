@@ -239,7 +239,7 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	/**
 	 * Output the SQL type for a Java integer.
 	 */
-	private void appendIntegerType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
+	protected void appendIntegerType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("INTEGER");
 	}
 
@@ -253,14 +253,14 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	/**
 	 * Output the SQL type for a Java float.
 	 */
-	private void appendFloatType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
+	protected void appendFloatType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("FLOAT");
 	}
 
 	/**
 	 * Output the SQL type for a Java double.
 	 */
-	private void appendDoubleType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
+	protected void appendDoubleType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("DOUBLE PRECISION");
 	}
 
