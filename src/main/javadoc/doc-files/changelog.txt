@@ -1,5 +1,6 @@
 5.2: X/YY/2018
 	* CORE: Fixed problem with null field assignment causing a NPE in the resulting message.  Thanks to hrach.
+	* CORE: Fixed possible problems with the transaction level thread-local not being handled right.
 	* CORE: Added support for @DatabaseField(readOnly) boolean for returning non-column fields.
 
 5.1: 2/19/2018
