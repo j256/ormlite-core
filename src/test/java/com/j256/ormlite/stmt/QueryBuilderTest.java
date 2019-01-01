@@ -1528,6 +1528,33 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(bar2.id, results.get(2).baz.bar.id);
 	}
 
+	@Test
+	public void testCountInReadOnlyField() throws Exception {
+		Dao<AsField, Integer> dao = createDao(AsField.class, true);
+
+		AsField foo1 = new AsField();
+		int val1 = 123213;
+		foo1.val = val1;
+		assertEquals(1, dao.create(foo1));
+
+		AsField foo2 = new AsField();
+		int val2 = 122433213;
+		foo2.val = val2;
+		assertEquals(1, dao.create(foo2));
+
+		QueryBuilder<AsField, Integer> qb = dao.queryBuilder();
+		qb.selectRaw("*");
+		int val3 = 12;
+		qb.selectRaw(val3 + " AS " + AsField.SUM_FIELD);
+
+		List<AsField> results = dao.queryRaw(qb.prepareStatementString(), dao.getRawRowMapper()).getResults();
+		assertEquals(2, results.size());
+		assertEquals(val1, (int) results.get(0).val);
+		assertEquals(val3, (int) results.get(0).sum);
+		assertEquals(val2, (int) results.get(1).val);
+		assertEquals(val3, (int) results.get(1).sum);
+	}
+
 	/* ======================================================================================================== */
 
 	private static class LimitInline extends BaseDatabaseType {
@@ -1642,6 +1669,20 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		Bar bar;
 
 		public Two() {
+		}
+	}
+
+	protected static class AsField {
+		public static final String VAL_FIELD = "val";
+		public static final String SUM_FIELD = "sum";
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(columnName = VAL_FIELD)
+		int val;
+		@DatabaseField(readOnly = true, columnName = SUM_FIELD)
+		Integer sum;
+
+		public AsField() {
 		}
 	}
 
