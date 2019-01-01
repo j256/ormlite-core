@@ -1065,8 +1065,8 @@ not be auto-detected.  @xref{DatabaseField dataType}.
 Image image;
 @end example
 
-@cindex Enum name
 @cindex Enum string
+@cindex Enum name
 @cindex enumerated types
 @anchor{datatype enum string}
 @anchor{datatype enum name}
