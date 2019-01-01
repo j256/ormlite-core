@@ -10,6 +10,7 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Constructor;
@@ -455,6 +456,22 @@ public class TableUtilsTest extends BaseCoreTest {
 		assertEquals(0, fooDao.countOf());
 	}
 
+	@Test
+	public void testColumnDefinition() throws Exception {
+		List<String> statements = TableUtils.getCreateTableStatements(databaseType, ColumnDefinition.class);
+		assertEquals(1, statements.size());
+		StringBuilder sb = new StringBuilder();
+		databaseType.appendEscapedEntityName(sb, ColumnDefinition.FIELD_ID);
+		assertTrue(statements.get(0).contains(sb + " " + ColumnDefinition.DEFINITION));
+	}
+
+	@Test
+	public void testFullColumnDefinition() throws Exception {
+		List<String> statements = TableUtils.getCreateTableStatements(databaseType, FullColumnDefinition.class);
+		assertEquals(1, statements.size());
+		assertTrue(statements.get(0).contains(FullColumnDefinition.FULL_DEFINITION));
+	}
+
 	/* ================================================================ */
 
 	private void testCreate(String tableName, ConnectionSource connectionSource, DatabaseType databaseType, int rowN,
@@ -557,5 +574,20 @@ public class TableUtilsTest extends BaseCoreTest {
 
 		public UniqueIndex() {
 		}
+	}
+
+	protected static class ColumnDefinition {
+		public static final String DEFINITION = "253789r23hr23ig";
+		public static final String FIELD_ID = "id";
+
+		@DatabaseField(columnName = FIELD_ID, columnDefinition = DEFINITION)
+		String id;
+	}
+
+	protected static class FullColumnDefinition {
+		public static final String FULL_DEFINITION = "jpfewpjfewjfwejfopwejfwefjewf";
+
+		@DatabaseField(fullColumnDefinition = FULL_DEFINITION)
+		String id;
 	}
 }

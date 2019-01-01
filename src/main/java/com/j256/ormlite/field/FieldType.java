@@ -880,10 +880,16 @@ public class FieldType {
 	}
 
 	/**
-	 * Call through to {@link DatabaseFieldConfig#getColumnDefinition()}
+	 * Call through to {@link DatabaseFieldConfig#getColumnDefinition()} and
+	 * {@link DatabaseFieldConfig#getFullColumnDefinition()}.
 	 */
 	public String getColumnDefinition() {
-		return fieldConfig.getColumnDefinition();
+		String full = fieldConfig.getFullColumnDefinition();
+		if (full == null) {
+			return fieldConfig.getColumnDefinition();
+		} else {
+			return full;
+		}
 	}
 
 	/**
