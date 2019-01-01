@@ -1065,18 +1065,28 @@ not be auto-detected.  @xref{DatabaseField dataType}.
 Image image;
 @end example
 
+@cindex Enum name
 @cindex Enum string
 @cindex enumerated types
 @anchor{datatype enum string}
-@item enum or Enum (DataType.ENUM_STRING)
+@anchor{datatype enum name}
+@item enum or Enum (DataType.ENUM_NAME)
 
 Persisted by default as the enumerated value's string @emph{name} as a @code{VARCHAR} type.  The string name is the
 default (and recommended over ENUM_INTEGER) because it allows you to add additional enums anywhere in the list
-without worrying about having to convert data later.
+without worrying about having to convert data later.  Formerly called @code{ENUM_STRING}.
 
 @cindex unknownEnumName
 You can also also specify an @emph{unknownEnumName} name with the @code{@@DatabaseField} annotation which will be
 used if an unknown value is found in the database. @xref{unknownEnumName}. 
+
+@cindex Enum to-string
+@cindex enumerated types
+@anchor{datatype enum tostring}
+@item enum or Enum (DataType.ENUM_TO_STRING)
+
+Similar to @code{ENUM_STRING} but this is persisted by default as the value from the enum's @code{toString()} method
+as opposed to its @emph{name} as a @code{VARCHAR} type.
 
 @cindex Enum integer
 @cindex enumerated types
@@ -1084,7 +1094,7 @@ used if an unknown value is found in the database. @xref{unknownEnumName}.
 @item enum or Enum (DataType.ENUM_INTEGER)
 
 You specify the @code{dataType} field (from the @code{@@DatabaseField} annotation) as a @code{DataType.ENUM_INTEGER} in
-which case the @code{ordinal} of the enum value will be stored as an @code{INTEGER}.  The name (ENUM_STRING) is the
+which case the @code{ordinal} of the enum value will be stored as an @code{INTEGER}.  The name (ENUM_NAME) is the
 default (and recommended) because it allows you to add additional enums anywhere in the list without worrying about
 having to convert data later.  If you insert (or remove) an enum from the list that is being stored as a number, then
 old data will be un-persisted incorrectly.
@@ -4149,8 +4159,7 @@ will try to use a database transaction to speed up the tasks.
 give any performance improvement.
 
 @example
-accountDao.callBatchTasks(connectionSource,
-  new Callable<Void>() @{
+accountDao.callBatchTasks(new Callable<Void>() @{
     public Void call() throws SQLException @{
         // insert a number of accounts at once
         for (Account account : accountsToInsert) @{
