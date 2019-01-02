@@ -938,11 +938,11 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testIsTableExists() throws Exception {
-		Dao<Foo, Integer> dao = createDao(Foo.class, false);
+		Dao<TableExists, Integer> dao = createDao(TableExists.class, false);
 		assertFalse(dao.isTableExists());
-		TableUtils.createTable(connectionSource, Foo.class);
+		TableUtils.createTable(connectionSource, TableExists.class);
 		assertTrue(dao.isTableExists());
-		TableUtils.dropTable(connectionSource, Foo.class, true);
+		TableUtils.dropTable(connectionSource, TableExists.class, true);
 		assertFalse(dao.isTableExists());
 	}
 
@@ -2661,6 +2661,14 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	protected static class NoNoArgConstructor {
 		public NoNoArgConstructor(String stuff) {
+		}
+	}
+
+	protected static class TableExists {
+		@DatabaseField(generatedId = true)
+		int id;
+
+		public TableExists() {
 		}
 	}
 
