@@ -2,6 +2,7 @@ package com.j256.ormlite.stmt.mapped;
 
 import java.sql.SQLException;
 
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
@@ -22,9 +23,9 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 	private String dataClassName;
 	private int versionFieldTypeIndex;
 
-	private MappedCreate(TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes,
+	private MappedCreate(Dao<T, ID> dao, TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes,
 			String queryNextSequenceStmt, int versionFieldTypeIndex) {
-		super(tableInfo, statement, argFieldTypes);
+		super(dao, tableInfo, statement, argFieldTypes);
 		this.dataClassName = tableInfo.getDataClass().getSimpleName();
 		this.queryNextSequenceStmt = queryNextSequenceStmt;
 		this.versionFieldTypeIndex = versionFieldTypeIndex;
@@ -45,7 +46,7 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 			}
 			if (idField.isSelfGeneratedId() && idField.isGeneratedId()) {
 				if (assignId) {
-					idField.assignField(data, idField.generateId(), false, objectCache);
+					idField.assignField(connectionSource, data, idField.generateId(), false, objectCache);
 				}
 			} else if (idField.isGeneratedIdSequence() && databaseType.isSelectSequenceBeforeInsert()) {
 				if (assignId) {
@@ -54,7 +55,7 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 			} else if (idField.isGeneratedId()) {
 				if (assignId) {
 					// get the id back from the database
-					keyHolder = new KeyHolder();
+					keyHolder = new KeyHolder(idField.getColumnName());
 				}
 			} else {
 				// the id should have been set by the caller already
@@ -106,7 +107,8 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 			}
 			if (rowC > 0) {
 				if (versionDefaultValue != null) {
-					argFieldTypes[versionFieldTypeIndex].assignField(data, versionDefaultValue, false, null);
+					argFieldTypes[versionFieldTypeIndex].assignField(connectionSource, data, versionDefaultValue, false,
+							null);
 				}
 				if (keyHolder != null) {
 					// assign the key returned by the database to the object's id field after it was inserted
@@ -139,7 +141,8 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 		}
 	}
 
-	public static <T, ID> MappedCreate<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo) {
+	public static <T, ID> MappedCreate<T, ID> build(Dao<T, ID> dao, TableInfo<T, ID> tableInfo) {
+		DatabaseType databaseType = dao.getConnectionSource().getDatabaseType();
 		StringBuilder sb = new StringBuilder(128);
 		appendTableName(databaseType, sb, "INSERT INTO ", tableInfo.getTableName());
 		int argFieldC = 0;
@@ -189,7 +192,7 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 		}
 		FieldType idField = tableInfo.getIdField();
 		String queryNext = buildQueryNextSequence(databaseType, idField);
-		return new MappedCreate<T, ID>(tableInfo, sb.toString(), argFieldTypes, queryNext, versionFieldTypeIndex);
+		return new MappedCreate<T, ID>(dao, tableInfo, sb.toString(), argFieldTypes, queryNext, versionFieldTypeIndex);
 	}
 
 	private boolean foreignCollectionsAreAssigned(FieldType[] foreignCollections, Object data) throws SQLException {
@@ -249,7 +252,7 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 
 	private void assignIdValue(T data, Number val, String label, ObjectCache objectCache) throws SQLException {
 		// better to do this in one place with consistent logging
-		idField.assignIdValue(data, val, objectCache);
+		idField.assignIdValue(connectionSource, data, val, objectCache);
 		if (logger.isLevelEnabled(Level.DEBUG)) {
 			logger.debug("assigned id '{}' from {} to '{}' in {} object",
 					new Object[] { val, label, idField.getFieldName(), dataClassName });
@@ -257,7 +260,18 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 	}
 
 	private static class KeyHolder implements GeneratedKeyHolder {
+
+		final String columnName;
 		Number key;
+
+		public KeyHolder(String columnName) {
+			this.columnName = columnName;
+		}
+
+		@Override
+		public String getColumnName() {
+			return this.columnName;
+		}
 
 		public Number getKey() {
 			return key;
@@ -268,7 +282,8 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 			if (this.key == null) {
 				this.key = key;
 			} else {
-				throw new SQLException("generated key has already been set to " + this.key + ", now set to " + key);
+				throw new SQLException(
+						"generated key has already been set to " + this.key + ", trying now to set to " + key);
 			}
 		}
 	}

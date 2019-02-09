@@ -191,7 +191,7 @@ public abstract class BaseForeignCollection<T, ID> implements ForeignCollection<
 			return false;
 		}
 		if (parent != null && foreignFieldType.getFieldValueIfNotDefault(data) == null) {
-			foreignFieldType.assignField(data, parent, true, null);
+			foreignFieldType.assignField(dao.getConnectionSource(), data, parent, true, null);
 		}
 		dao.create(data);
 		return true;

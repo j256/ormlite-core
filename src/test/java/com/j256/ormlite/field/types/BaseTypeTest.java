@@ -45,7 +45,7 @@ public abstract class BaseTypeTest extends BaseCoreTest {
 			assertTrue(results.next());
 			int colNum = results.findColumn(columnName);
 			Field field = clazz.getDeclaredField(columnName);
-			FieldType fieldType = FieldType.createFieldType(connectionSource, TABLE_NAME, field, clazz);
+			FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME, field, clazz);
 			assertEquals(dataType.getDataPersister(), fieldType.getDataPersister());
 			Class<?>[] classes = fieldType.getDataPersister().getAssociatedClasses();
 			if (classes.length > 0) {

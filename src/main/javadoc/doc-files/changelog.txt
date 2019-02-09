@@ -1,8 +1,18 @@
 5.2: X/YY/2019
-	* CORE: Fixed problem with null field assignment causing a NPE in the resulting message.  Thanks to hrach.
-
-5.1: 2/19/2019
+	* CORE: Added support for @DatabaseField(readOnly) boolean for returning non-column fields.
 	* CORE: Added @DatabaseField(fullColumnDefinition) for fully describing a column as opposed to columnDefinition.
+	* CORE: Added BaseSchemaUtil to print out the schema statements necessary to create a table.
+	* CORE: Added the ability for users to set a character set for byte array type.  Thanks to noordawod.
+	* CORE: Moved from using RETURN_GENERATED_KEYS to named columns for generated ids to be more compatible.  Thanks to Bo98.
+	* CORE: Significant refactoring to make FieldType and TableInfo not depend on Dao or ConnectionSource.
+	* CORE: Improved memory usage by unregistering DAOs associated to a connection source.  Thanks to bosborn.
+	* CORE: Fixed problem with null field assignment causing a NPE in the resulting message.  Thanks to hrach.
+	* CORE: Fixed problems with the transaction level thread-local not being handled right.  Thanks to Bo98.
+	* CORE: Fixed @DatabaseField(fullColumnDefinition) which was completely broken.  Thanks to ethanmdavidson.
+	* CORE: Fixed default width not being applied for BigInteger.  Thanks to Bo98.
+	* CORE: Fixed the default mysql driver and made driver loaded more forgiving.  Thanks to zanella.
+
+5.1: 2/19/2018
 	* CORE: Added synchronized keyword to BaseDaoImpl.createOrUpdate() and createIfNotExists().
 	* CORE: Added integer date support.  Thanks to noordawod.
 	* CORE: Added support for CloseableIterator.moveAbsolute(...).  Thanks to renaudcerrato.

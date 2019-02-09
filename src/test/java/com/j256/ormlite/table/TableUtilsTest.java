@@ -10,6 +10,7 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Constructor;
@@ -47,7 +48,7 @@ public class TableUtilsTest extends BaseCoreTest {
 
 	@Test
 	public void testCreateStatements() throws Exception {
-		List<String> stmts = TableUtils.getCreateTableStatements(connectionSource, LocalFoo.class);
+		List<String> stmts = TableUtils.getCreateTableStatements(databaseType, LocalFoo.class);
 		assertEquals(1, stmts.size());
 		assertEquals(expectedCreateStatement(), stmts.get(0));
 	}
@@ -55,7 +56,7 @@ public class TableUtilsTest extends BaseCoreTest {
 	@Test
 	public void testCreateStatementsTableConfig() throws Exception {
 		List<String> stmts = TableUtils.getCreateTableStatements(connectionSource,
-				DatabaseTableConfig.fromClass(connectionSource, LocalFoo.class));
+				DatabaseTableConfig.fromClass(databaseType, LocalFoo.class));
 		assertEquals(1, stmts.size());
 		assertEquals(expectedCreateStatement(), stmts.get(0));
 	}
@@ -124,7 +125,7 @@ public class TableUtilsTest extends BaseCoreTest {
 			@Override
 			public Integer call() throws Exception {
 				return (int) TableUtils.createTable(connectionSource,
-						DatabaseTableConfig.fromClass(connectionSource, LocalFoo.class));
+						DatabaseTableConfig.fromClass(databaseType, LocalFoo.class));
 			}
 		});
 	}
@@ -180,7 +181,7 @@ public class TableUtilsTest extends BaseCoreTest {
 			@Override
 			public Integer call() throws Exception {
 				return (int) TableUtils.dropTable(connectionSource,
-						DatabaseTableConfig.fromClass(connectionSource, LocalFoo.class), false);
+						DatabaseTableConfig.fromClass(databaseType, LocalFoo.class), false);
 			}
 		});
 	}
@@ -447,12 +448,28 @@ public class TableUtilsTest extends BaseCoreTest {
 		} catch (Exception e) {
 			// ignored
 		}
-		DatabaseTableConfig<LocalFoo> tableConfig = DatabaseTableConfig.fromClass(connectionSource, LocalFoo.class);
+		DatabaseTableConfig<LocalFoo> tableConfig = DatabaseTableConfig.fromClass(databaseType, LocalFoo.class);
 		TableUtils.createTableIfNotExists(connectionSource, tableConfig);
 		assertEquals(0, fooDao.countOf());
 		// should not throw
 		TableUtils.createTableIfNotExists(connectionSource, tableConfig);
 		assertEquals(0, fooDao.countOf());
+	}
+
+	@Test
+	public void testColumnDefinition() throws Exception {
+		List<String> statements = TableUtils.getCreateTableStatements(databaseType, ColumnDefinition.class);
+		assertEquals(1, statements.size());
+		StringBuilder sb = new StringBuilder();
+		databaseType.appendEscapedEntityName(sb, ColumnDefinition.FIELD_ID);
+		assertTrue(statements.get(0).contains(sb + " " + ColumnDefinition.DEFINITION));
+	}
+
+	@Test
+	public void testFullColumnDefinition() throws Exception {
+		List<String> statements = TableUtils.getCreateTableStatements(databaseType, FullColumnDefinition.class);
+		assertEquals(1, statements.size());
+		assertTrue(statements.get(0).contains(FullColumnDefinition.FULL_DEFINITION));
 	}
 
 	/* ================================================================ */
@@ -486,7 +503,7 @@ public class TableUtilsTest extends BaseCoreTest {
 
 	private void testStatement(String tableName, ConnectionSource connectionSource, DatabaseType databaseType,
 			String statement, String queryAfter, int rowN, boolean throwExecute, Callable<Integer> callable)
-					throws Exception {
+			throws Exception {
 		DatabaseConnection conn = createMock(DatabaseConnection.class);
 		CompiledStatement stmt = createMock(CompiledStatement.class);
 		DatabaseResults results = null;
@@ -557,5 +574,20 @@ public class TableUtilsTest extends BaseCoreTest {
 
 		public UniqueIndex() {
 		}
+	}
+
+	protected static class ColumnDefinition {
+		public static final String DEFINITION = "253789r23hr23ig";
+		public static final String FIELD_ID = "id";
+
+		@DatabaseField(columnName = FIELD_ID, columnDefinition = DEFINITION)
+		String id;
+	}
+
+	protected static class FullColumnDefinition {
+		public static final String FULL_DEFINITION = "jpfewpjfewjfwejfopwejfwefjewf";
+
+		@DatabaseField(fullColumnDefinition = FULL_DEFINITION)
+		String id;
 	}
 }

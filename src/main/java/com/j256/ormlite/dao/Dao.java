@@ -26,6 +26,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.ObjectFactory;
+import com.j256.ormlite.table.TableInfo;
 
 /**
  * The definition of the Database Access Objects that handle the reading and writing a class from the database. Kudos to
@@ -858,6 +859,16 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * will have to call this method yourself after you use the raw methods to change the entities.
 	 */
 	public void notifyChanges();
+
+	/**
+	 * Instantiate an instance of the object that this dao manages.
+	 */
+	public T createObjectInstance() throws SQLException;
+
+	/**
+	 * Get the table information associated with the class that this dao manages.
+	 */
+	public TableInfo<T, ID> getTableInfo();
 
 	/**
 	 * Return class for the {@link Dao#createOrUpdate(Object)} method.

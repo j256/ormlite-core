@@ -29,9 +29,10 @@ public class BaseMappedQueryTest extends BaseCoreStmtTest {
 	public void testMappedQuery() throws Exception {
 		Field field = Foo.class.getDeclaredField(Foo.ID_COLUMN_NAME);
 		String tableName = "basefoo";
+		Dao<Foo, Integer> dao = createDao(Foo.class, false);
 		FieldType[] resultFieldTypes =
-				new FieldType[] { FieldType.createFieldType(connectionSource, tableName, field, Foo.class) };
-		BaseMappedQuery<Foo, Integer> baseMappedQuery = new BaseMappedQuery<Foo, Integer>(baseFooTableInfo,
+				new FieldType[] { FieldType.createFieldType(databaseType, tableName, field, Foo.class) };
+		BaseMappedQuery<Foo, Integer> baseMappedQuery = new BaseMappedQuery<Foo, Integer>(dao, baseFooTableInfo,
 				"select * from " + tableName, new FieldType[0], resultFieldTypes) {
 		};
 		DatabaseResults results = createMock(DatabaseResults.class);
@@ -53,8 +54,9 @@ public class BaseMappedQueryTest extends BaseCoreStmtTest {
 		Field field = Foo.class.getDeclaredField(Foo.ID_COLUMN_NAME);
 		String tableName = "basefoo";
 		FieldType[] resultFieldTypes =
-				new FieldType[] { FieldType.createFieldType(connectionSource, tableName, field, Foo.class) };
-		BaseMappedQuery<Foo, Integer> baseMappedQuery = new BaseMappedQuery<Foo, Integer>(baseFooTableInfo,
+				new FieldType[] { FieldType.createFieldType(databaseType, tableName, field, Foo.class) };
+		Dao<Foo, Integer> dao = createDao(Foo.class, false);
+		BaseMappedQuery<Foo, Integer> baseMappedQuery = new BaseMappedQuery<Foo, Integer>(dao, baseFooTableInfo,
 				"select * from " + tableName, new FieldType[0], resultFieldTypes) {
 		};
 		DatabaseResults results = createMock(DatabaseResults.class);

@@ -3,10 +3,12 @@ package com.j256.ormlite.stmt.mapped;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
+import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableInfo;
 
 /**
@@ -18,13 +20,18 @@ public abstract class BaseMappedStatement<T, ID> {
 
 	protected static Logger logger = LoggerFactory.getLogger(BaseMappedStatement.class);
 
+	protected final Dao<T, ID> dao;
+	protected final ConnectionSource connectionSource;
 	protected final TableInfo<T, ID> tableInfo;
 	protected final Class<T> clazz;
 	protected final FieldType idField;
 	protected final String statement;
 	protected final FieldType[] argFieldTypes;
 
-	protected BaseMappedStatement(TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes) {
+	protected BaseMappedStatement(Dao<T, ID> dao, TableInfo<T, ID> tableInfo, String statement,
+			FieldType[] argFieldTypes) {
+		this.dao = dao;
+		this.connectionSource = dao.getConnectionSource();
 		this.tableInfo = tableInfo;
 		this.clazz = tableInfo.getDataClass();
 		this.idField = tableInfo.getIdField();

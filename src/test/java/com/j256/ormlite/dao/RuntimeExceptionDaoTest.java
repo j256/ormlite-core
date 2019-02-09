@@ -379,8 +379,7 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 	public void testCreateDaoTableConfig() throws Exception {
 		createDao(Foo.class, true);
 		RuntimeExceptionDao<Foo, String> dao =
-				RuntimeExceptionDao.createDao(connectionSource,
-						DatabaseTableConfig.fromClass(connectionSource, Foo.class));
+				RuntimeExceptionDao.createDao(connectionSource, DatabaseTableConfig.fromClass(databaseType, Foo.class));
 		assertEquals(0, dao.countOf());
 	}
 

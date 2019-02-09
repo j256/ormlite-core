@@ -208,9 +208,8 @@ public class LoggerTest {
 			method.invoke(logger, pattern, arg0, arg1);
 			verify(mockLog);
 
-			method =
-					Logger.class.getMethod(getNameFromLevel(level), Throwable.class, String.class, Object.class,
-							Object.class);
+			method = Logger.class.getMethod(getNameFromLevel(level), Throwable.class, String.class, Object.class,
+					Object.class);
 			reset(mockLog);
 			expect(mockLog.isLevelEnabled(level)).andReturn(true);
 			mockLog.log(level, result, throwable);
@@ -243,9 +242,8 @@ public class LoggerTest {
 		String result = msg + "0" + arg0 + "01" + arg1 + "12" + arg2 + "2";
 		String pattern = msg + "0{}01{}12{}2";
 		for (Level level : Level.values()) {
-			Method method =
-					Logger.class.getMethod(getNameFromLevel(level), String.class, Object.class, Object.class,
-							Object.class);
+			Method method = Logger.class.getMethod(getNameFromLevel(level), String.class, Object.class, Object.class,
+					Object.class);
 			reset(mockLog);
 			expect(mockLog.isLevelEnabled(level)).andReturn(true);
 			mockLog.log(level, result);
@@ -253,9 +251,8 @@ public class LoggerTest {
 			method.invoke(logger, pattern, arg0, arg1, arg2);
 			verify(mockLog);
 
-			method =
-					Logger.class.getMethod(getNameFromLevel(level), Throwable.class, String.class, Object.class,
-							Object.class, Object.class);
+			method = Logger.class.getMethod(getNameFromLevel(level), Throwable.class, String.class, Object.class,
+					Object.class, Object.class);
 			reset(mockLog);
 			expect(mockLog.isLevelEnabled(level)).andReturn(true);
 			mockLog.log(level, result, throwable);
@@ -322,13 +319,89 @@ public class LoggerTest {
 		}
 	}
 
+	@Test
+	public void testMessageArgPrimitiveArray() throws Exception {
+		byte[] argArray = new byte[] { 1, 2, 30 };
+		String result = "12" + Arrays.toString(argArray) + "34";
+		String pattern = "12{}34";
+		for (Level level : Level.values()) {
+			Method method = Logger.class.getMethod(getNameFromLevel(level), String.class, Object.class);
+			reset(mockLog);
+			expect(mockLog.isLevelEnabled(level)).andReturn(true);
+			mockLog.log(level, result);
+			replay(mockLog);
+			method.invoke(logger, pattern, argArray);
+			verify(mockLog);
+
+			method = Logger.class.getMethod(getNameFromLevel(level), Throwable.class, String.class, Object.class);
+			reset(mockLog);
+			expect(mockLog.isLevelEnabled(level)).andReturn(true);
+			mockLog.log(level, result, throwable);
+			replay(mockLog);
+			method.invoke(logger, throwable, pattern, argArray);
+			verify(mockLog);
+
+			reset(mockLog);
+			expect(mockLog.isLevelEnabled(level)).andReturn(true);
+			mockLog.log(level, result);
+			replay(mockLog);
+			logger.log(level, pattern, argArray);
+			verify(mockLog);
+
+			reset(mockLog);
+			expect(mockLog.isLevelEnabled(level)).andReturn(true);
+			mockLog.log(level, result, throwable);
+			replay(mockLog);
+			logger.log(level, throwable, pattern, argArray);
+			verify(mockLog);
+		}
+	}
+
+	@Test
+	public void testMessageArrayOfArrays() throws Exception {
+		Object[] argArray = new Object[] { new byte[] { 1 }, new byte[] { 1, 2 }, new byte[] { 1, 2, 30 } };
+		String result = "12" + Arrays.deepToString(argArray) + "34";
+		String pattern = "12{}34";
+		for (Level level : Level.values()) {
+			Method method = Logger.class.getMethod(getNameFromLevel(level), String.class, Object.class);
+			reset(mockLog);
+			expect(mockLog.isLevelEnabled(level)).andReturn(true);
+			mockLog.log(level, result);
+			replay(mockLog);
+			method.invoke(logger, pattern, argArray);
+			verify(mockLog);
+
+			method = Logger.class.getMethod(getNameFromLevel(level), Throwable.class, String.class, Object.class);
+			reset(mockLog);
+			expect(mockLog.isLevelEnabled(level)).andReturn(true);
+			mockLog.log(level, result, throwable);
+			replay(mockLog);
+			method.invoke(logger, throwable, pattern, argArray);
+			verify(mockLog);
+
+			reset(mockLog);
+			expect(mockLog.isLevelEnabled(level)).andReturn(true);
+			mockLog.log(level, result);
+			replay(mockLog);
+			logger.log(level, pattern, (Object) argArray);
+			verify(mockLog);
+
+			reset(mockLog);
+			expect(mockLog.isLevelEnabled(level)).andReturn(true);
+			mockLog.log(level, result, throwable);
+			replay(mockLog);
+			logger.log(level, throwable, pattern, (Object) argArray);
+			verify(mockLog);
+		}
+	}
+
 	private String getNameFromLevel(Level level) {
 		String name;
 		switch (level) {
-			case WARNING :
+			case WARNING:
 				name = "warn";
 				break;
-			default :
+			default:
 				name = level.name().toLowerCase();
 				break;
 		}
@@ -371,7 +444,8 @@ public class LoggerTest {
 				method.invoke(logger, "msg {}", new ToStringThrow());
 				fail("Should have thrown");
 			} catch (InvocationTargetException e) {
-				assertTrue("should have thrown an IllegalStateException", e.getCause() instanceof IllegalStateException);
+				assertTrue("should have thrown an IllegalStateException",
+						e.getCause() instanceof IllegalStateException);
 			}
 			verify(mockLog);
 		}
@@ -397,6 +471,7 @@ public class LoggerTest {
 
 	private static class Foo {
 		final static String TO_STRING = "foo to string";
+
 		@Override
 		public String toString() {
 			return TO_STRING;

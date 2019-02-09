@@ -19,10 +19,15 @@ import com.j256.ormlite.table.TableUtils;
 public abstract class BaseCoreTest {
 
 	public static final String FOO_TABLE_NAME = "foo";
+	public static final String NOID_TABLE_NAME = "noid";
 
 	protected DatabaseType databaseType;
 	protected WrappedConnectionSource connectionSource;
 
+	/**
+	 * @throws Exception
+	 *             For sub-classes.
+	 */
 	@Before
 	public void before() throws Exception {
 		connectionSource = new WrappedConnectionSource(new H2ConnectionSource());
@@ -34,6 +39,63 @@ public abstract class BaseCoreTest {
 	public void after() throws Exception {
 		connectionSource.close();
 		connectionSource = null;
+	}
+
+	protected <T, ID> Dao<T, ID> createDao(Class<T> clazz, boolean createTable) throws SQLException {
+		if (connectionSource == null) {
+			throw new SQLException("Connection source is null");
+		}
+		@SuppressWarnings("unchecked")
+		BaseDaoImpl<T, ID> dao = (BaseDaoImpl<T, ID>) DaoManager.createDao(connectionSource, clazz);
+		return configDao(dao, createTable);
+	}
+
+	protected <T, ID> Dao<T, ID> createDao(DatabaseTableConfig<T> tableConfig, boolean createTable)
+			throws SQLException {
+		if (connectionSource == null) {
+			throw new SQLException("Connection source is null");
+		}
+		@SuppressWarnings("unchecked")
+		BaseDaoImpl<T, ID> dao = (BaseDaoImpl<T, ID>) DaoManager.createDao(connectionSource, tableConfig);
+		return configDao(dao, createTable);
+	}
+
+	protected <T> void createTable(Class<T> clazz, boolean dropAtEnd) throws SQLException {
+		createTable(DatabaseTableConfig.fromClass(databaseType, clazz), dropAtEnd);
+	}
+
+	protected <T> void createTable(DatabaseTableConfig<T> tableConfig, boolean dropAtEnd) throws SQLException {
+		try {
+			// first we drop it in case it existed before
+			dropTable(tableConfig, true);
+		} catch (SQLException ignored) {
+			// ignore any errors about missing tables
+		}
+		TableUtils.createTable(connectionSource, tableConfig);
+	}
+
+	protected <T> void dropTable(Class<T> clazz, boolean ignoreErrors) throws SQLException {
+		// drop the table and ignore any errors along the way
+		TableUtils.dropTable(connectionSource, clazz, ignoreErrors);
+	}
+
+	protected <T> void dropTable(DatabaseTableConfig<T> tableConfig, boolean ignoreErrors) throws SQLException {
+		// drop the table and ignore any errors along the way
+		TableUtils.dropTable(connectionSource, tableConfig, ignoreErrors);
+	}
+
+	private <T, ID> Dao<T, ID> configDao(BaseDaoImpl<T, ID> dao, boolean createTable) throws SQLException {
+		if (connectionSource == null) {
+			throw new SQLException("Connection source is null");
+		}
+		if (createTable) {
+			DatabaseTableConfig<T> tableConfig = dao.getTableConfig();
+			if (tableConfig == null) {
+				tableConfig = DatabaseTableConfig.fromClass(databaseType, dao.getDataClass());
+			}
+			createTable(tableConfig, true);
+		}
+		return dao;
 	}
 
 	protected static class LimitAfterSelectDatabaseType extends H2DatabaseType {
@@ -94,59 +156,12 @@ public abstract class BaseCoreTest {
 		}
 	}
 
-	protected <T, ID> Dao<T, ID> createDao(Class<T> clazz, boolean createTable) throws Exception {
-		if (connectionSource == null) {
-			throw new SQLException("Connection source is null");
+	@DatabaseTable(tableName = NOID_TABLE_NAME)
+	protected static class NoId {
+		@DatabaseField
+		public String stuff;
+
+		public NoId() {
 		}
-		@SuppressWarnings("unchecked")
-		BaseDaoImpl<T, ID> dao = (BaseDaoImpl<T, ID>) DaoManager.createDao(connectionSource, clazz);
-		return configDao(dao, createTable);
-	}
-
-	protected <T, ID> Dao<T, ID> createDao(DatabaseTableConfig<T> tableConfig, boolean createTable) throws Exception {
-		if (connectionSource == null) {
-			throw new SQLException("Connection source is null");
-		}
-		@SuppressWarnings("unchecked")
-		BaseDaoImpl<T, ID> dao = (BaseDaoImpl<T, ID>) DaoManager.createDao(connectionSource, tableConfig);
-		return configDao(dao, createTable);
-	}
-
-	protected <T> void createTable(Class<T> clazz, boolean dropAtEnd) throws Exception {
-		createTable(DatabaseTableConfig.fromClass(connectionSource, clazz), dropAtEnd);
-	}
-
-	protected <T> void createTable(DatabaseTableConfig<T> tableConfig, boolean dropAtEnd) throws Exception {
-		try {
-			// first we drop it in case it existed before
-			dropTable(tableConfig, true);
-		} catch (SQLException ignored) {
-			// ignore any errors about missing tables
-		}
-		TableUtils.createTable(connectionSource, tableConfig);
-	}
-
-	protected <T> void dropTable(Class<T> clazz, boolean ignoreErrors) throws Exception {
-		// drop the table and ignore any errors along the way
-		TableUtils.dropTable(connectionSource, clazz, ignoreErrors);
-	}
-
-	protected <T> void dropTable(DatabaseTableConfig<T> tableConfig, boolean ignoreErrors) throws Exception {
-		// drop the table and ignore any errors along the way
-		TableUtils.dropTable(connectionSource, tableConfig, ignoreErrors);
-	}
-
-	private <T, ID> Dao<T, ID> configDao(BaseDaoImpl<T, ID> dao, boolean createTable) throws Exception {
-		if (connectionSource == null) {
-			throw new SQLException("Connection source is null");
-		}
-		if (createTable) {
-			DatabaseTableConfig<T> tableConfig = dao.getTableConfig();
-			if (tableConfig == null) {
-				tableConfig = DatabaseTableConfig.fromClass(connectionSource, dao.getDataClass());
-			}
-			createTable(tableConfig, true);
-		}
-		return dao;
 	}
 }

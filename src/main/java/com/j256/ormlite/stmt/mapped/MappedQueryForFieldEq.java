@@ -2,6 +2,7 @@ package com.j256.ormlite.stmt.mapped;
 
 import java.sql.SQLException;
 
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
@@ -17,9 +18,9 @@ public class MappedQueryForFieldEq<T, ID> extends BaseMappedQuery<T, ID> {
 
 	private final String label;
 
-	protected MappedQueryForFieldEq(TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes,
-			FieldType[] resultsFieldTypes, String label) {
-		super(tableInfo, statement, argFieldTypes, resultsFieldTypes);
+	protected MappedQueryForFieldEq(Dao<T, ID> dao, TableInfo<T, ID> tableInfo, String statement,
+			FieldType[] argFieldTypes, FieldType[] resultsFieldTypes, String label) {
+		super(dao, tableInfo, statement, argFieldTypes, resultsFieldTypes);
 		this.label = label;
 	}
 
@@ -51,7 +52,7 @@ public class MappedQueryForFieldEq<T, ID> extends BaseMappedQuery<T, ID> {
 		return castResult;
 	}
 
-	public static <T, ID> MappedQueryForFieldEq<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
+	public static <T, ID> MappedQueryForFieldEq<T, ID> build(Dao<T, ID> dao, TableInfo<T, ID> tableInfo,
 			FieldType idFieldType) throws SQLException {
 		if (idFieldType == null) {
 			idFieldType = tableInfo.getIdField();
@@ -60,8 +61,9 @@ public class MappedQueryForFieldEq<T, ID> extends BaseMappedQuery<T, ID> {
 						+ " because it doesn't have an id field");
 			}
 		}
+		DatabaseType databaseType = dao.getConnectionSource().getDatabaseType();
 		String statement = buildStatement(databaseType, tableInfo, idFieldType);
-		return new MappedQueryForFieldEq<T, ID>(tableInfo, statement, new FieldType[] { idFieldType },
+		return new MappedQueryForFieldEq<T, ID>(dao, tableInfo, statement, new FieldType[] { idFieldType },
 				tableInfo.getFieldTypes(), "query-for-id");
 	}
 

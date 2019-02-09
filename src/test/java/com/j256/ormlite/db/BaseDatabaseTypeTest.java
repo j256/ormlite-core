@@ -1,11 +1,11 @@
 package com.j256.ormlite.db;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -16,9 +16,9 @@ import com.j256.ormlite.field.DataPersisterManager;
 
 public class BaseDatabaseTypeTest extends BaseCoreTest {
 
-	@Test(expected = SQLException.class)
-	public void testDriverNotFound() throws SQLException {
-		new TestDatabaseType().loadDriver();
+	@Test
+	public void testDriverNotFound() {
+		assertFalse(new TestDatabaseType().loadDriver());
 	}
 
 	@Test(expected = IllegalStateException.class)
@@ -62,8 +62,8 @@ public class BaseDatabaseTypeTest extends BaseCoreTest {
 		}
 
 		@Override
-		protected String getDriverClassName() {
-			return "com.class.that.doesnt.exist";
+		protected String[] getDriverClassNames() {
+			return new String[] { "com.class.that.doesnt.exist" };
 		}
 
 		@Override

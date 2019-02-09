@@ -44,7 +44,7 @@ public class DateLongTypeTest extends BaseTypeTest {
 
 	@Test(expected = SQLException.class)
 	public void testDateLongParseInvalid() throws Exception {
-		FieldType fieldType = FieldType.createFieldType(connectionSource, TABLE_NAME,
+		FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME,
 				LocalDateLong.class.getDeclaredField(DATE_COLUMN), LocalDateLong.class);
 		DataType.DATE_LONG.getDataPersister().parseDefaultString(fieldType, "not valid long number");
 	}

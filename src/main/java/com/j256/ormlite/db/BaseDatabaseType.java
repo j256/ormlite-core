@@ -10,7 +10,8 @@ import com.j256.ormlite.field.DataPersister;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.misc.SqlExceptionUtil;
+import com.j256.ormlite.logger.Logger;
+import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTableConfig;
@@ -30,24 +31,47 @@ public abstract class BaseDatabaseType implements DatabaseType {
 
 	protected static String DEFAULT_SEQUENCE_SUFFIX = "_id_seq";
 	protected Driver driver;
+	protected Logger logger = LoggerFactory.getLogger(getClass());
 
 	/**
-	 * Return the name of the driver class associated with this database type.
+	 * @deprecated Use {@link #getDriverClassNames()}.
 	 */
-	protected abstract String getDriverClassName();
+	@Deprecated
+	protected String getDriverClassName() {
+		// default is none to let the SPI or other mechanism do the load
+		return null;
+	}
+
+	/**
+	 * Return the name of the driver(s) class associated with this database type. They will be tried in order until one
+	 * class is found.
+	 */
+	protected String[] getDriverClassNames() {
+		String className = getDriverClassName();
+		if (className == null) {
+			return new String[0];
+		} else {
+			return new String[] { className };
+		}
+	}
 
 	@Override
-	public void loadDriver() throws SQLException {
-		String className = getDriverClassName();
-		if (className != null) {
+	public boolean loadDriver() {
+		for (String className : getDriverClassNames()) {
+			if (className == null) {
+				continue;
+			}
 			// this instantiates the driver class which wires in the JDBC glue
 			try {
 				Class.forName(className);
+				return true;
 			} catch (ClassNotFoundException e) {
-				throw SqlExceptionUtil.create("Driver class was not found for " + getDatabaseName()
-						+ " database.  Missing jar with class " + className + ".", e);
+				// print warning if a class has not been loaded
+				logger.warn("Driver class was not found for " + getDatabaseName() + " database.  Class not found: "
+						+ className, e);
 			}
 		}
+		return false;
 	}
 
 	@Override

@@ -88,4 +88,9 @@ public class BigIntegerType extends BaseDataType {
 	public boolean isValidForVersion() {
 		return true;
 	}
+
+	@Override
+	public int getDefaultWidth() {
+		return DEFAULT_WIDTH;
+	}
 }

@@ -1,6 +1,5 @@
 package com.j256.ormlite.table;
 
-import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,8 +9,6 @@ import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.misc.BaseDaoEnabled;
-import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.ConnectionSource;
 
 /**
@@ -29,30 +26,21 @@ public class TableInfo<T, ID> {
 	private static final FieldType[] NO_FOREIGN_COLLECTIONS = new FieldType[0];
 
 	private final DatabaseType databaseType;
-	private final BaseDaoImpl<T, ID> baseDaoImpl;
 	private final Class<T> dataClass;
 	private final String tableName;
 	private final FieldType[] fieldTypes;
 	private final FieldType[] foreignCollections;
 	private final FieldType idField;
-	private final Constructor<T> constructor;
 	private final boolean foreignAutoCreate;
 	private Map<String, FieldType> fieldNameMap;
 
 	/**
-	 * Creates a holder of information about a table/class.
-	 * 
-	 * @param connectionSource
-	 *            Source of our database connections.
-	 * @param baseDaoImpl
-	 *            Associated BaseDaoImpl.
-	 * @param dataClass
-	 *            Class that we are holding information about.
+	 * @deprecated Use {@link #TableInfo(DatabaseType, Class)}
 	 */
+	@Deprecated
 	public TableInfo(ConnectionSource connectionSource, BaseDaoImpl<T, ID> baseDaoImpl, Class<T> dataClass)
 			throws SQLException {
-		this(connectionSource.getDatabaseType(), baseDaoImpl,
-				DatabaseTableConfig.fromClass(connectionSource, dataClass));
+		this(connectionSource.getDatabaseType(), dataClass);
 	}
 
 	/**
@@ -60,15 +48,33 @@ public class TableInfo<T, ID> {
 	 * 
 	 * @param databaseType
 	 *            Database type we are storing the class in.
-	 * @param baseDaoImpl
-	 *            Associated BaseDaoImpl.
+	 * @param dataClass
+	 *            Class that we are holding information about.
+	 */
+	public TableInfo(DatabaseType databaseType, Class<T> dataClass) throws SQLException {
+		this(databaseType, DatabaseTableConfig.fromClass(databaseType, dataClass));
+	}
+
+	/**
+	 * @deprecated Use {@link #TableInfo(DatabaseType, DatabaseTableConfig)}
+	 */
+	@Deprecated
+	public TableInfo(DatabaseType databaseType, BaseDaoImpl<T, ID> baseDaoImpl, DatabaseTableConfig<T> tableConfig)
+			throws SQLException {
+		this(databaseType, tableConfig);
+	}
+
+	/**
+	 * Creates a holder of information about a table/class.
+	 * 
+	 * @param databaseType
+	 *            Database type we are storing the class in.
 	 * @param tableConfig
 	 *            Configuration for our table.
 	 */
-	public TableInfo(DatabaseType databaseType, BaseDaoImpl<T, ID> baseDaoImpl, DatabaseTableConfig<T> tableConfig)
-			throws SQLException {
+	public TableInfo(DatabaseType databaseType, DatabaseTableConfig<T> tableConfig) throws SQLException {
+
 		this.databaseType = databaseType;
-		this.baseDaoImpl = baseDaoImpl;
 		this.dataClass = tableConfig.getDataClass();
 		this.tableName = tableConfig.getTableName();
 		this.fieldTypes = tableConfig.getFieldTypes(databaseType);
@@ -93,7 +99,6 @@ public class TableInfo<T, ID> {
 		}
 		// can be null if there is no id field
 		this.idField = findIdFieldType;
-		this.constructor = tableConfig.getConstructor();
 		this.foreignAutoCreate = foreignAutoCreate;
 		if (foreignCollectionCount == 0) {
 			this.foreignCollections = NO_FOREIGN_COLLECTIONS;
@@ -164,10 +169,6 @@ public class TableInfo<T, ID> {
 		return idField;
 	}
 
-	public Constructor<T> getConstructor() {
-		return constructor;
-	}
-
 	/**
 	 * Return a string representation of the object.
 	 */
@@ -183,28 +184,6 @@ public class TableInfo<T, ID> {
 			}
 		}
 		return sb.toString();
-	}
-
-	/**
-	 * Create and return an object of this type using our reflection constructor.
-	 */
-	public T createObject() throws SQLException {
-		try {
-			T instance;
-			ObjectFactory<T> factory = null;
-			if (baseDaoImpl != null) {
-				factory = baseDaoImpl.getObjectFactory();
-			}
-			if (factory == null) {
-				instance = constructor.newInstance();
-			} else {
-				instance = factory.createObject(constructor, baseDaoImpl.getDataClass());
-			}
-			wireNewInstance(baseDaoImpl, instance);
-			return instance;
-		} catch (Exception e) {
-			throw SqlExceptionUtil.create("Could not create object for " + constructor.getDeclaringClass(), e);
-		}
 	}
 
 	/**
@@ -240,13 +219,5 @@ public class TableInfo<T, ID> {
 			}
 		}
 		return false;
-	}
-
-	private static <T, ID> void wireNewInstance(BaseDaoImpl<T, ID> baseDaoImpl, T instance) {
-		if (instance instanceof BaseDaoEnabled) {
-			@SuppressWarnings("unchecked")
-			BaseDaoEnabled<T, ID> daoEnabled = (BaseDaoEnabled<T, ID>) instance;
-			daoEnabled.setDao(baseDaoImpl);
-		}
 	}
 }

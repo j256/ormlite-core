@@ -1,6 +1,7 @@
 package com.j256.ormlite.dao;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -71,6 +72,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	protected StatementExecutor<T, ID> statementExecutor;
 	protected DatabaseType databaseType;
 	protected final Class<T> dataClass;
+	protected Constructor<T> constructor;
 	protected DatabaseTableConfig<T> tableConfig;
 	protected TableInfo<T, ID> tableInfo;
 	protected ConnectionSource connectionSource;
@@ -128,6 +130,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			throws SQLException {
 		this.dataClass = dataClass;
 		this.tableConfig = tableConfig;
+		this.constructor = findNoArgConstructor(dataClass);
 		if (connectionSource != null) {
 			this.connectionSource = connectionSource;
 			initialize();
@@ -153,10 +156,10 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 					"connectionSource is getting a null DatabaseType in " + getClass().getSimpleName());
 		}
 		if (tableConfig == null) {
-			tableInfo = new TableInfo<T, ID>(connectionSource, this, dataClass);
+			tableInfo = new TableInfo<T, ID>(databaseType, dataClass);
 		} else {
-			tableConfig.extractFieldTypes(connectionSource);
-			tableInfo = new TableInfo<T, ID>(databaseType, this, tableConfig);
+			tableConfig.extractFieldTypes(databaseType);
+			tableInfo = new TableInfo<T, ID>(databaseType, tableConfig);
 		}
 		statementExecutor = new StatementExecutor<T, ID>(databaseType, tableInfo, this);
 
@@ -985,8 +988,20 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		connection.rollback(null);
 	}
 
-	public ObjectFactory<T> getObjectFactory() {
-		return objectFactory;
+	@Override
+	public T createObjectInstance() throws SQLException {
+		try {
+			T instance;
+			if (objectFactory == null) {
+				instance = constructor.newInstance();
+			} else {
+				instance = objectFactory.createObject(constructor, dataClass);
+			}
+			wireNewInstance(instance);
+			return instance;
+		} catch (Exception e) {
+			throw SqlExceptionUtil.create("Could not create object for " + constructor.getDeclaringClass(), e);
+		}
 	}
 
 	@Override
@@ -1005,6 +1020,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	/**
 	 * Used by internal classes to get the table information structure for the Dao's class.
 	 */
+	@Override
 	public TableInfo<T, ID> getTableInfo() {
 		return tableInfo;
 	}
@@ -1078,7 +1094,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 				@SuppressWarnings("unchecked")
 				ForeignCollection<FT> collection = (ForeignCollection<FT>) fieldType.buildForeignCollection(parent, id);
 				if (parent != null) {
-					fieldType.assignField(parent, collection, true, null);
+					fieldType.assignField(connectionSource, parent, collection, true, null);
 				}
 				return collection;
 			}
@@ -1151,6 +1167,47 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		} else {
 			where.and(fieldValues.size());
 			return qb.query();
+		}
+	}
+
+	/**
+	 * Locate the no arg constructor for the class.
+	 */
+	private Constructor<T> findNoArgConstructor(Class<T> dataClass) {
+		Constructor<T>[] constructors;
+		try {
+			@SuppressWarnings("unchecked")
+			Constructor<T>[] consts = (Constructor<T>[]) dataClass.getDeclaredConstructors();
+			// i do this [grossness] to be able to move the Suppress inside the method
+			constructors = consts;
+		} catch (Exception e) {
+			throw new IllegalArgumentException("Can't lookup declared constructors for " + dataClass, e);
+		}
+		for (Constructor<T> con : constructors) {
+			if (con.getParameterTypes().length == 0) {
+				if (!con.isAccessible()) {
+					try {
+						con.setAccessible(true);
+					} catch (SecurityException e) {
+						throw new IllegalArgumentException("Could not open access to constructor for " + dataClass);
+					}
+				}
+				return con;
+			}
+		}
+		if (dataClass.getEnclosingClass() == null) {
+			throw new IllegalArgumentException("Can't find a no-arg constructor for " + dataClass);
+		} else {
+			throw new IllegalArgumentException(
+					"Can't find a no-arg constructor for " + dataClass + ".  Missing static on inner class?");
+		}
+	}
+
+	private void wireNewInstance(T instance) {
+		if (instance instanceof BaseDaoEnabled) {
+			@SuppressWarnings("unchecked")
+			BaseDaoEnabled<T, ID> daoEnabled = (BaseDaoEnabled<T, ID>) instance;
+			daoEnabled.setDao(this);
 		}
 	}
 }

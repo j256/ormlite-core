@@ -8,17 +8,16 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 
+import com.j256.ormlite.BaseCoreTest;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.BaseDatabaseType;
 import com.j256.ormlite.db.DatabaseType;
-import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.stmt.StatementExecutor;
 import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.TableInfo;
 
-public class MappedDeleteTest {
+public class MappedDeleteTest extends BaseCoreTest {
 
-	private static final String NOID_TABLE_NAME = "noid";
 	private final DatabaseType databaseType = new StubDatabaseType();
 	private final ConnectionSource connectionSource;
 
@@ -31,7 +30,7 @@ public class MappedDeleteTest {
 	@Test(expected = SQLException.class)
 	public void testDeleteNoId() throws Exception {
 		StatementExecutor<NoId, Void> se = new StatementExecutor<NoId, Void>(databaseType,
-				new TableInfo<NoId, Void>(connectionSource, null, NoId.class), null);
+				new TableInfo<NoId, Void>(databaseType, NoId.class), null);
 		NoId noId = new NoId();
 		noId.stuff = "1";
 		ConnectionSource connectionSource = createMock(ConnectionSource.class);
@@ -42,19 +41,14 @@ public class MappedDeleteTest {
 
 	@Test(expected = SQLException.class)
 	public void testNoIdBuildDelete() throws Exception {
-		MappedDelete.build(databaseType, new TableInfo<NoId, Void>(connectionSource, null, NoId.class));
-	}
-
-	@DatabaseTable(tableName = NOID_TABLE_NAME)
-	protected static class NoId {
-		@DatabaseField
-		String stuff;
+		Dao<NoId, Void> dao = createDao(NoId.class, false);
+		MappedDelete.build(dao, new TableInfo<NoId, Void>(databaseType, NoId.class));
 	}
 
 	private static class StubDatabaseType extends BaseDatabaseType {
 		@Override
-		public String getDriverClassName() {
-			return "foo.bar.baz";
+		protected String[] getDriverClassNames() {
+			return new String[] { "foo.bar.baz" };
 		}
 
 		@Override

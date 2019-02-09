@@ -2,6 +2,7 @@ package com.j256.ormlite.stmt.mapped;
 
 import java.sql.SQLException;
 
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
@@ -16,8 +17,8 @@ import com.j256.ormlite.table.TableInfo;
  */
 public class MappedUpdateId<T, ID> extends BaseMappedStatement<T, ID> {
 
-	private MappedUpdateId(TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes) {
-		super(tableInfo, statement, argFieldTypes);
+	private MappedUpdateId(Dao<T, ID> dao, TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes) {
+		super(dao, tableInfo, statement, argFieldTypes);
 	}
 
 	/**
@@ -35,11 +36,11 @@ public class MappedUpdateId<T, ID> extends BaseMappedStatement<T, ID> {
 					T obj = objectCache.updateId(clazz, oldId, newId);
 					if (obj != null && obj != data) {
 						// if our cached value is not the data that will be updated then we need to update it specially
-						idField.assignField(obj, newId, false, objectCache);
+						idField.assignField(connectionSource, obj, newId, false, objectCache);
 					}
 				}
 				// adjust the object to assign the new id
-				idField.assignField(data, newId, false, objectCache);
+				idField.assignField(connectionSource, data, newId, false, objectCache);
 			}
 			logger.debug("updating-id with statement '{}' and {} args, changed {} rows", statement, args.length, rowC);
 			if (args.length > 0) {
@@ -52,20 +53,20 @@ public class MappedUpdateId<T, ID> extends BaseMappedStatement<T, ID> {
 		}
 	}
 
-	public static <T, ID> MappedUpdateId<T, ID> build(DatabaseType databaseType, TableInfo<T, ID> tableInfo)
-			throws SQLException {
+	public static <T, ID> MappedUpdateId<T, ID> build(Dao<T, ID> dao, TableInfo<T, ID> tableInfo) throws SQLException {
 		FieldType idField = tableInfo.getIdField();
 		if (idField == null) {
-			throw new SQLException("Cannot update-id in " + tableInfo.getDataClass()
-					+ " because it doesn't have an id field");
+			throw new SQLException(
+					"Cannot update-id in " + tableInfo.getDataClass() + " because it doesn't have an id field");
 		}
 		StringBuilder sb = new StringBuilder(64);
+		DatabaseType databaseType = dao.getConnectionSource().getDatabaseType();
 		appendTableName(databaseType, sb, "UPDATE ", tableInfo.getTableName());
 		sb.append("SET ");
 		appendFieldColumnName(databaseType, sb, idField, null);
 		sb.append("= ? ");
 		appendWhereFieldEq(databaseType, idField, sb, null);
-		return new MappedUpdateId<T, ID>(tableInfo, sb.toString(), new FieldType[] { idField, idField });
+		return new MappedUpdateId<T, ID>(dao, tableInfo, sb.toString(), new FieldType[] { idField, idField });
 	}
 
 	/**

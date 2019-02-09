@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.j256.ormlite.dao.BaseForeignCollection;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.GenericRowMapper;
@@ -24,9 +25,9 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 	private Object parent = null;
 	private Object parentId = null;
 
-	protected BaseMappedQuery(TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes,
+	protected BaseMappedQuery(Dao<T, ID> dao, TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes,
 			FieldType[] resultsFieldTypes) {
-		super(tableInfo, statement, argFieldTypes);
+		super(dao, tableInfo, statement, argFieldTypes);
 		this.resultsFieldTypes = resultsFieldTypes;
 	}
 
@@ -50,7 +51,7 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 		}
 
 		// create our instance
-		T instance = tableInfo.createObject();
+		T instance = dao.createObjectInstance();
 		// populate its fields
 		Object id = null;
 		boolean foreignCollections = false;
@@ -67,9 +68,9 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 				 */
 				if (val != null && parent != null && fieldType.getField().getType() == parent.getClass()
 						&& val.equals(parentId)) {
-					fieldType.assignField(instance, parent, true, objectCache);
+					fieldType.assignField(connectionSource, instance, parent, true, objectCache);
 				} else {
-					fieldType.assignField(instance, val, false, objectCache);
+					fieldType.assignField(connectionSource, instance, val, false, objectCache);
 				}
 				if (fieldType.isId()) {
 					id = val;
@@ -82,7 +83,7 @@ public abstract class BaseMappedQuery<T, ID> extends BaseMappedStatement<T, ID> 
 				if (fieldType.isForeignCollection()) {
 					BaseForeignCollection<?, ?> collection = fieldType.buildForeignCollection(instance, id);
 					if (collection != null) {
-						fieldType.assignField(instance, collection, false, objectCache);
+						fieldType.assignField(connectionSource, instance, collection, false, objectCache);
 					}
 				}
 			}

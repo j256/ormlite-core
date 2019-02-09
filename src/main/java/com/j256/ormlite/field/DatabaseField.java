@@ -310,7 +310,8 @@ public @interface DatabaseField {
 	 * Specify the SQL necessary to create this field in the database including the column name, which should be
 	 * properly escaped and in proper case depending on your database type. This can be used if you need to fully
 	 * describe the schema to enable some per-database feature or to override the default SQL generated. If you just
-	 * need to specify the schema for a column then the {@link #columnDefinition()} should be used instead.
+	 * need to specify the schema for a column then the {@link #columnDefinition()} should be used instead. This is used
+	 * if both this and {@link #columnDefinition()} are specified.
 	 */
 	String fullColumnDefinition() default "";
 

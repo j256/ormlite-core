@@ -119,7 +119,7 @@ public class BaseComparisonTest extends BaseCoreStmtTest {
 	public void testForeignIdNull() throws Exception {
 		StringBuilder sb = new StringBuilder();
 		Field field = ForeignNull.class.getDeclaredField("foreign");
-		FieldType fieldType = FieldType.createFieldType(connectionSource, "BaseFoo", field, ForeignNull.class);
+		FieldType fieldType = FieldType.createFieldType(databaseType, "BaseFoo", field, ForeignNull.class);
 		fieldType.configDaoInformation(connectionSource, ForeignNull.class);
 		ForeignNullForeign foo = new ForeignNullForeign();
 		foo.id = null;
@@ -131,6 +131,7 @@ public class BaseComparisonTest extends BaseCoreStmtTest {
 		String id;
 		@DatabaseField(foreign = true)
 		ForeignNullForeign foreign;
+
 		public ForeignNull() {
 		}
 	}
@@ -138,6 +139,7 @@ public class BaseComparisonTest extends BaseCoreStmtTest {
 	protected static class ForeignNullForeign {
 		@DatabaseField(id = true)
 		String id;
+
 		public ForeignNullForeign() {
 		}
 	}

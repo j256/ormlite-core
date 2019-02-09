@@ -24,6 +24,7 @@ import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.ObjectFactory;
+import com.j256.ormlite.table.TableInfo;
 
 /**
  * Proxy to a {@link Dao} that wraps each Exception and rethrows it as RuntimeException. You can use this if your usage
@@ -926,6 +927,21 @@ public class RuntimeExceptionDao<T, ID> implements Dao<T, ID> {
 	@Override
 	public String getTableName() {
 		return dao.getTableName();
+	}
+
+	@Override
+	public T createObjectInstance() {
+		try {
+			return dao.createObjectInstance();
+		} catch (SQLException e) {
+			logMessage(e, "createObjectInstance() threw exception");
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public TableInfo<T, ID> getTableInfo() {
+		return dao.getTableInfo();
 	}
 
 	private void logMessage(Exception e, String message) {
