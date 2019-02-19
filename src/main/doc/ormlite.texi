@@ -68,7 +68,7 @@ There is also a @uref{http://ormlite.com/docs/ormlite.pdf, PDF version of this d
 There is also a @uref{http://ormlite.com/docs/ormlite.html, HTML version of this documentation}.
 @end iftex
 
-Gray Watson @uref{http://256.com/gray/}
+Gray Watson @uref{http://256stuff.com/gray/}
 
 @menu
 * Getting Started::             Getting started with ORMLite.
@@ -5342,6 +5342,8 @@ Thanks much to them all.
 @cindex isc license
 @cindex open source license
 This document is part of the ORMLite project.
+
+Copyright @value{ormlite_year}, Gray Watson
 
 Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby
 granted, provided that this permission notice appear in all copies.

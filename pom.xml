@@ -30,9 +30,6 @@
 		<developer>
 			<id>gray</id>
 			<name>Gray Watson</name>
-			<url>http://256.com/gray/</url>
-			<organization>256.com</organization>
-			<organizationUrl>http://256.com/</organizationUrl>
 			<roles>
 				<role>architect</role>
 				<role>developer</role>
