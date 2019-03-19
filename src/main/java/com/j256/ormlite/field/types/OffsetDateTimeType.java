@@ -3,7 +3,8 @@ package com.j256.ormlite.field.types;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
@@ -26,7 +27,11 @@ public class OffsetDateTimeType extends BaseLocalDateType {
     @Override
     public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
         try {
-            return OffsetDateTime.parse(defaultStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss[.SSS]x"));
+            return OffsetDateTime.parse(defaultStr, new DateTimeFormatterBuilder()
+                    .appendPattern("yyyy-MM-dd HH:mm:ss")
+                    .appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true)
+                    .appendPattern("x")
+                    .toFormatter());
         } catch (NumberFormatException e) {
             throw SqlExceptionUtil.create("Problems with field " + fieldType +
                     " parsing default OffsetDateTime value: " + defaultStr, e);

@@ -4,7 +4,8 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
-import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
@@ -28,7 +29,12 @@ public class OffsetTimeCompatType extends OffsetTimeType {
     @Override
     public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
         try {
-            return OffsetDateTime.parse(defaultStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss[.SSS]x"));
+            OffsetTime time = OffsetTime.parse(defaultStr, new DateTimeFormatterBuilder()
+                    .appendPattern("[yyyy-MM-dd ]HH:mm:ss")
+                    .appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true)
+                    .appendPattern("x")
+                    .toFormatter());
+            return javaToSqlArg(fieldType, time);
         } catch (NumberFormatException e) {
             throw SqlExceptionUtil.create("Problems with field " + fieldType +
                     " parsing default OffsetTime value: " + defaultStr, e);

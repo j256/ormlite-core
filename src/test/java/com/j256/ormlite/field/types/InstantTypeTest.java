@@ -7,6 +7,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 
 import org.junit.Test;
 
@@ -24,7 +25,7 @@ public class InstantTypeTest extends BaseTypeTest {
     public void testInstant() throws Exception {
         Class<InstantTable> clazz = InstantTable.class;
         Dao<InstantTable, Object> dao = createDao(clazz, true);
-        Instant val = Instant.now();
+        Instant val = Instant.now().truncatedTo(ChronoUnit.MILLIS);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss[.SSS]x");
         OffsetDateTime val2 = OffsetDateTime.ofInstant(val, ZoneOffset.UTC);
         String valStr = formatter.format(val2);

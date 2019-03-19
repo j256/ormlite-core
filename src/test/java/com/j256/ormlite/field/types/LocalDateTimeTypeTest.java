@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 
 import org.junit.Test;
 
@@ -22,7 +23,7 @@ public class LocalDateTimeTypeTest extends BaseTypeTest {
     public void testDateTime() throws Exception {
         Class<DateTimeTable> clazz = DateTimeTable.class;
         Dao<DateTimeTable, Object> dao = createDao(clazz, true);
-        LocalDateTime val = LocalDateTime.now();
+        LocalDateTime val = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
         String valStr = formatter.format(val);
         DateTimeTable foo = new DateTimeTable();

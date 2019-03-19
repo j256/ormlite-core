@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.time.OffsetTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 
 import org.junit.Test;
 
@@ -22,8 +23,8 @@ public class OffsetTimeTypeTest extends BaseTypeTest {
     public void testTime() throws Exception {
         Class<TimeTable> clazz = TimeTable.class;
         Dao<TimeTable, Object> dao = createDao(clazz, true);
-        OffsetTime val = OffsetTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss[.SSSSSS]x");
+        OffsetTime val = OffsetTime.now().truncatedTo(ChronoUnit.MILLIS);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss[.SSS]x");
         String valStr = formatter.format(val);
         TimeTable foo = new TimeTable();
         foo.time = val;

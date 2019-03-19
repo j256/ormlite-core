@@ -1,16 +1,12 @@
 package com.j256.ormlite.field.types;
 
 import java.lang.reflect.Field;
-import java.sql.SQLException;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.misc.SqlExceptionUtil;
-import com.j256.ormlite.support.DatabaseResults;
 
 /**
  * A custom persister that is able to store the java.time.Instant class in the database as Timestamp With Timezone object.
@@ -19,27 +15,12 @@ import com.j256.ormlite.support.DatabaseResults;
  *
  * @author graynk
  */
-public class InstantType extends BaseLocalDateType {
+public class InstantType extends OffsetDateTimeType {
 
     private static final InstantType singleton = isJavaTimeSupported() ? new InstantType() : null;
     public static InstantType getSingleton() { return singleton; }
     private InstantType() { super(SqlType.OFFSET_DATE_TIME, new Class<?>[] { Instant.class }); }
     protected InstantType(SqlType sqlType, Class<?>[] classes) { super(sqlType, classes); }
-
-    @Override
-    public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
-        try {
-            return OffsetDateTime.parse(defaultStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss[.SSS]x"));
-        } catch (NumberFormatException e) {
-            throw SqlExceptionUtil.create("Problems with field " + fieldType +
-                    " parsing default Instant value: " + defaultStr, e);
-        }
-    }
-
-    @Override
-    public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-        return results.getOffsetDateTime(columnPos);
-    }
 
     @Override
     public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {

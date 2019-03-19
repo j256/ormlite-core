@@ -7,6 +7,7 @@ import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 
 import org.junit.Test;
 
@@ -16,7 +17,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.table.DatabaseTable;
 
-public class OffsetTimeSqlTypeTest extends BaseTypeTest {
+public class OffsetTimeCompatTypeTest extends BaseTypeTest {
 
     private static final String TIME_COLUMN = "time";
 
@@ -24,7 +25,7 @@ public class OffsetTimeSqlTypeTest extends BaseTypeTest {
     public void testTime() throws Exception {
         Class<TimeTable> clazz = TimeTable.class;
         Dao<TimeTable, Object> dao = createDao(clazz, true);
-        OffsetTime val = OffsetTime.now();
+        OffsetTime val = OffsetTime.now().truncatedTo(ChronoUnit.MILLIS);
         OffsetDateTime val2 = val.atDate(LocalDate.ofEpochDay(0));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss[.SSS]x");
         String valStr = formatter.format(val2);

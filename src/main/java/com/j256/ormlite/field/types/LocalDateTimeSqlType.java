@@ -3,11 +3,9 @@ package com.j256.ormlite.field.types;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
@@ -26,12 +24,7 @@ public class LocalDateTimeSqlType extends LocalDateTimeType {
 
     @Override
     public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
-        try {
-            return Timestamp.valueOf(LocalDateTime.parse(defaultStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss[.SSS]")));
-        } catch (NumberFormatException e) {
-            throw SqlExceptionUtil.create("Problems with field " + fieldType +
-                    " parsing default LocalDateTime value: " + defaultStr, e);
-        }
+        return Timestamp.valueOf((LocalDateTime) super.parseDefaultString(fieldType, defaultStr));
     }
 
     @Override
