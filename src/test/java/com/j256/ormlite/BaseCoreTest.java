@@ -2,6 +2,7 @@ package com.j256.ormlite;
 
 import java.sql.SQLException;
 
+import com.j256.ormlite.table.SchemaUtils;
 import org.junit.After;
 import org.junit.Before;
 
@@ -74,6 +75,10 @@ public abstract class BaseCoreTest {
 		TableUtils.createTable(connectionSource, tableConfig);
 	}
 
+	protected <T> void createSchema(DatabaseTableConfig<T> tableConfig) throws SQLException {
+		SchemaUtils.createSchema(connectionSource, tableConfig.getSchemaName());
+	}
+
 	protected <T> void dropTable(Class<T> clazz, boolean ignoreErrors) throws SQLException {
 		// drop the table and ignore any errors along the way
 		TableUtils.dropTable(connectionSource, clazz, ignoreErrors);
@@ -92,6 +97,9 @@ public abstract class BaseCoreTest {
 			DatabaseTableConfig<T> tableConfig = dao.getTableConfig();
 			if (tableConfig == null) {
 				tableConfig = DatabaseTableConfig.fromClass(databaseType, dao.getDataClass());
+			}
+			if (tableConfig.getSchemaName() != null && tableConfig.getSchemaName().length() > 0){
+				createSchema(tableConfig);
 			}
 			createTable(tableConfig, true);
 		}
@@ -145,6 +153,42 @@ public abstract class BaseCoreTest {
 		}
 	}
 
+	@DatabaseTable(schemaName = "FOO_SCHEMA", tableName = FOO_TABLE_NAME)
+	protected static class SchemaFoo {
+		public static final String ID_COLUMN_NAME = "id";
+		public static final String VAL_COLUMN_NAME = "val";
+		public static final String EQUAL_COLUMN_NAME = "equal";
+		public static final String STRING_COLUMN_NAME = "string";
+		@DatabaseField(generatedId = true, columnName = ID_COLUMN_NAME)
+		public int id;
+		@DatabaseField(columnName = VAL_COLUMN_NAME)
+		public int val;
+		@DatabaseField(columnName = EQUAL_COLUMN_NAME)
+		public int equal;
+		@DatabaseField(columnName = STRING_COLUMN_NAME)
+		public String stringField;
+
+		public SchemaFoo() {
+		}
+
+		@Override
+		public String toString() {
+			return "Foo:" + id;
+		}
+
+		@Override
+		public boolean equals(Object other) {
+			if (other == null || other.getClass() != getClass())
+				return false;
+			return id == ((Foo) other).id;
+		}
+
+		@Override
+		public int hashCode() {
+			return id;
+		}
+	}
+
 	protected static class Foreign {
 		public static final String FOO_COLUMN_NAME = "foo_id";
 		@DatabaseField(generatedId = true)
@@ -153,6 +197,17 @@ public abstract class BaseCoreTest {
 		public Foo foo;
 
 		public Foreign() {
+		}
+	}
+
+	protected static class ForeignSchemaFoo {
+		public static final String FOO_COLUMN_NAME = "foo_id";
+		@DatabaseField(generatedId = true)
+		public int id;
+		@DatabaseField(foreign = true, columnName = FOO_COLUMN_NAME)
+		public SchemaFoo foo;
+
+		public ForeignSchemaFoo() {
 		}
 	}
 

@@ -29,7 +29,7 @@ public class MappedDelete<T, ID> extends BaseMappedStatement<T, ID> {
 		}
 		StringBuilder sb = new StringBuilder(64);
 		DatabaseType databaseType = dao.getConnectionSource().getDatabaseType();
-		appendTableName(databaseType, sb, "DELETE FROM ", tableInfo.getTableName());
+		appendTableName(databaseType, sb, "DELETE FROM ", tableInfo);
 		appendWhereFieldEq(databaseType, idField, sb, null);
 		return new MappedDelete<T, ID>(dao, tableInfo, sb.toString(), new FieldType[] { idField });
 	}

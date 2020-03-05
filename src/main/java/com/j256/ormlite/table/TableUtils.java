@@ -100,6 +100,7 @@ public class TableUtils {
 		return doCreateTable(dao, true);
 	}
 
+
 	/**
 	 * @deprecated Use {@link #getCreateTableStatements(DatabaseType, Class)}.
 	 */
@@ -232,10 +233,11 @@ public class TableUtils {
 	public static <T> int clearTable(ConnectionSource connectionSource, Class<T> dataClass) throws SQLException {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		String tableName = DatabaseTableConfig.extractTableName(databaseType, dataClass);
+		String schemaName = DatabaseTableConfig.extractSchemaName(dataClass);
 		if (databaseType.isEntityNamesMustBeUpCase()) {
 			tableName = databaseType.upCaseEntityName(tableName);
 		}
-		return clearTable(connectionSource, tableName);
+		return clearTable(connectionSource, schemaName, tableName);
 	}
 
 	/**
@@ -248,16 +250,20 @@ public class TableUtils {
 	 */
 	public static <T> int clearTable(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig)
 			throws SQLException {
-		return clearTable(connectionSource, tableConfig.getTableName());
+		return clearTable(connectionSource, tableConfig.getSchemaName(), tableConfig.getTableName());
 	}
 
-	private static <T> int clearTable(ConnectionSource connectionSource, String tableName) throws SQLException {
+	private static <T> int clearTable(ConnectionSource connectionSource, String schemaName, String tableName) throws SQLException {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		StringBuilder sb = new StringBuilder(48);
 		if (databaseType.isTruncateSupported()) {
 			sb.append("TRUNCATE TABLE ");
 		} else {
 			sb.append("DELETE FROM ");
+		}
+		if (schemaName != null && schemaName.length() > 0){
+			databaseType.appendEscapedEntityName(sb, schemaName);
+			sb.append(".");
 		}
 		databaseType.appendEscapedEntityName(sb, tableName);
 		String statement = sb.toString();
@@ -328,6 +334,10 @@ public class TableUtils {
 			logger.info("dropping table '{}'", tableInfo.getTableName());
 		}
 		sb.append("DROP TABLE ");
+		if (tableInfo.getSchemaName() != null && tableInfo.getSchemaName().length() > 0){
+			databaseType.appendEscapedEntityName(sb, tableInfo.getSchemaName());
+			sb.append(".");
+		}
 		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
 		sb.append(' ');
 		statements.addAll(statementsBefore);
@@ -447,6 +457,10 @@ public class TableUtils {
 		sb.append("CREATE TABLE ");
 		if (ifNotExists && databaseType.isCreateIfNotExistsSupported()) {
 			sb.append("IF NOT EXISTS ");
+		}
+		if (tableInfo.getSchemaName() != null && tableInfo.getSchemaName().length() > 0){
+			databaseType.appendEscapedEntityName(sb, tableInfo.getSchemaName());
+			sb.append(".");
 		}
 		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
 		sb.append(" (");

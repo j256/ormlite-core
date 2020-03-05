@@ -128,6 +128,10 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 			throw new IllegalArgumentException("UPDATE statements must have at least one SET column");
 		}
 		sb.append("UPDATE ");
+		if (tableInfo.getSchemaName() != null && tableInfo.getSchemaName().length() > 0){
+			databaseType.appendEscapedEntityName(sb, tableInfo.getSchemaName());
+			sb.append(".");
+		}
 		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
 		sb.append(" SET ");
 		boolean first = true;

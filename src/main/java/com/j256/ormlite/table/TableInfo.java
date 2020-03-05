@@ -27,6 +27,7 @@ public class TableInfo<T, ID> {
 
 	private final DatabaseType databaseType;
 	private final Class<T> dataClass;
+	private final String schemaName;
 	private final String tableName;
 	private final FieldType[] fieldTypes;
 	private final FieldType[] foreignCollections;
@@ -76,6 +77,7 @@ public class TableInfo<T, ID> {
 
 		this.databaseType = databaseType;
 		this.dataClass = tableConfig.getDataClass();
+		this.schemaName = tableConfig.getSchemaName();
 		this.tableName = tableConfig.getTableName();
 		this.fieldTypes = tableConfig.getFieldTypes(databaseType);
 		// find the id field
@@ -126,6 +128,10 @@ public class TableInfo<T, ID> {
 	 */
 	public String getTableName() {
 		return tableName;
+	}
+
+	public String getSchemaName() {
+		return schemaName;
 	}
 
 	/**

@@ -510,12 +510,27 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	}
 
 	@Override
+	public void appendCreateSchemaSuffix(StringBuilder sb) {
+		// noop by default.
+	}
+
+	@Override
 	public boolean isCreateTableReturnsZero() {
 		return true;
 	}
 
 	@Override
+	public boolean isCreateSchemaReturnsZero() {
+		return true;
+	}
+
+	@Override
 	public boolean isCreateTableReturnsNegative() {
+		return false;
+	}
+
+	@Override
+	public boolean isCreateSchemaReturnsNegative() {
 		return false;
 	}
 
@@ -587,6 +602,11 @@ public abstract class BaseDatabaseType implements DatabaseType {
 
 	@Override
 	public boolean isCreateIndexIfNotExistsSupported() {
+		return isCreateIfNotExistsSupported();
+	}
+
+	@Override
+	public boolean isCreateSchemaIfNotExistsSupported() {
 		return isCreateIfNotExistsSupported();
 	}
 

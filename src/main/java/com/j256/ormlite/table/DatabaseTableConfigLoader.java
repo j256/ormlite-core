@@ -99,6 +99,7 @@ public class DatabaseTableConfigLoader {
 	// field names in the config file
 	private static final String FIELD_NAME_DATA_CLASS = "dataClass";
 	private static final String FIELD_NAME_TABLE_NAME = "tableName";
+	private static final String FIELD_NAME_SCHEMA_NAME = "schemaName";
 
 	/**
 	 * Write the config to the writer.
@@ -109,6 +110,10 @@ public class DatabaseTableConfigLoader {
 		writer.newLine();
 		if (config.getDataClass() != null) {
 			writer.append(FIELD_NAME_DATA_CLASS).append('=').append(config.getDataClass().getName());
+			writer.newLine();
+		}
+		if (config.getSchemaName() != null) {
+			writer.append(FIELD_NAME_SCHEMA_NAME).append('=').append(config.getSchemaName());
 			writer.newLine();
 		}
 		if (config.getTableName() != null) {
@@ -142,6 +147,8 @@ public class DatabaseTableConfigLoader {
 			}
 		} else if (field.equals(FIELD_NAME_TABLE_NAME)) {
 			config.setTableName(value);
+		} else if (field.equals(FIELD_NAME_SCHEMA_NAME)){
+			config.setSchemaName(value);
 		}
 	}
 

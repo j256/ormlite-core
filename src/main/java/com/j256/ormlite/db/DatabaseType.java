@@ -158,14 +158,29 @@ public interface DatabaseType {
 	public void appendCreateTableSuffix(StringBuilder sb);
 
 	/**
+	 * Append the SQL necessary to properly finish a CREATE SCHEMA line.
+	 */
+	public void appendCreateSchemaSuffix(StringBuilder sb);
+
+	/**
 	 * Returns true if a 'CREATE TABLE' statement should return 0. False if &gt; 0.
 	 */
 	public boolean isCreateTableReturnsZero();
 
 	/**
+	 * Returns true if a 'CREATE SCHEMA' statement should return 0. False if &gt; 0.
+	 */
+	public boolean isCreateSchemaReturnsZero();
+
+	/**
 	 * Returns true if CREATE and DROP TABLE statements can return &lt; 0 and still have worked. Gross!
 	 */
 	public boolean isCreateTableReturnsNegative();
+
+	/**
+	 * Returns true if CREATE and DROP SCHEMA statements can return &lt; 0 and still have worked. Gross!
+	 */
+	public boolean isCreateSchemaReturnsNegative();
 
 	/**
 	 * Returns true if table and field names should be made uppercase.
@@ -241,6 +256,12 @@ public interface DatabaseType {
 	 * {@link #isCreateIfNotExistsSupported()}.
 	 */
 	public boolean isCreateIndexIfNotExistsSupported();
+
+	/**
+	 * Does the database support the "CREATE SCHEMA IF NOT EXISTS" SQL construct. By default this just calls
+	 * {@link #isCreateIfNotExistsSupported()}.
+	 */
+	public boolean isCreateSchemaIfNotExistsSupported();
 
 	/**
 	 * Returns true if we have to select the value of the sequence before we insert a new data row.

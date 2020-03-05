@@ -35,7 +35,7 @@ public class MappedUpdate<T, ID> extends BaseMappedStatement<T, ID> {
 		}
 		StringBuilder sb = new StringBuilder(64);
 		DatabaseType databaseType = dao.getConnectionSource().getDatabaseType();
-		appendTableName(databaseType, sb, "UPDATE ", tableInfo.getTableName());
+		appendTableName(databaseType, sb, "UPDATE ", tableInfo);
 		boolean first = true;
 		int argFieldC = 0;
 		FieldType versionFieldType = null;

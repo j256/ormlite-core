@@ -28,6 +28,7 @@ public class DatabaseTableConfig<T> {
 	private DatabaseType databaseType;
 	private Class<T> dataClass;
 	private String tableName;
+	private String schemaName;
 	private List<DatabaseFieldConfig> fieldConfigs;
 	private FieldType[] fieldTypes;
 
@@ -53,23 +54,25 @@ public class DatabaseTableConfig<T> {
 	 * from the dataClass.
 	 */
 	public DatabaseTableConfig(DatabaseType databaseType, Class<T> dataClass, List<DatabaseFieldConfig> fieldConfigs) {
-		this(dataClass, extractTableName(databaseType, dataClass), fieldConfigs);
+		this(dataClass, extractSchemaName(dataClass), extractTableName(databaseType, dataClass), fieldConfigs);
 	}
 
 	/**
 	 * Setup a table config associated with the dataClass, table-name, and field configurations.
 	 */
-	public DatabaseTableConfig(Class<T> dataClass, String tableName, List<DatabaseFieldConfig> fieldConfigs) {
+	public DatabaseTableConfig(Class<T> dataClass, String schemaName, String tableName, List<DatabaseFieldConfig> fieldConfigs) {
 		this.dataClass = dataClass;
+		this.schemaName = schemaName;
 		this.tableName = tableName;
 		this.fieldConfigs = fieldConfigs;
 	}
 
-	private DatabaseTableConfig(DatabaseType databaseType, Class<T> dataClass, String tableName,
+	private DatabaseTableConfig(DatabaseType databaseType, Class<T> dataClass, String schemaName, String tableName,
 			FieldType[] fieldTypes) {
 		// NOTE: databaseType may be null
 		this.databaseType = databaseType;
 		this.dataClass = dataClass;
+		this.schemaName = schemaName;
 		this.tableName = tableName;
 		this.fieldTypes = fieldTypes;
 	}
@@ -106,11 +109,19 @@ public class DatabaseTableConfig<T> {
 		return tableName;
 	}
 
+	public String getSchemaName() {
+		return schemaName;
+	}
+
 	/**
 	 * Set the table name. If not specified then the name is gotten from the class name.
 	 */
 	public void setTableName(String tableName) {
 		this.tableName = tableName;
+	}
+
+	public void setSchemaName(String schemaName) {
+		this.schemaName = schemaName;
 	}
 
 	public void setFieldConfigs(List<DatabaseFieldConfig> fieldConfigs) {
@@ -166,10 +177,12 @@ public class DatabaseTableConfig<T> {
 	 */
 	public static <T> DatabaseTableConfig<T> fromClass(DatabaseType databaseType, Class<T> clazz) throws SQLException {
 		String tableName = extractTableName(databaseType, clazz);
+		String schemaName = extractSchemaName(clazz);
 		if (databaseType.isEntityNamesMustBeUpCase()) {
 			tableName = databaseType.upCaseEntityName(tableName);
+			schemaName = databaseType.upCaseEntityName(schemaName);
 		}
-		return new DatabaseTableConfig<T>(databaseType, clazz, tableName,
+		return new DatabaseTableConfig<T>(databaseType, clazz, schemaName, tableName,
 				extractFieldTypes(databaseType, clazz, tableName));
 	}
 
@@ -195,6 +208,15 @@ public class DatabaseTableConfig<T> {
 			}
 		}
 		return name;
+	}
+
+	public static <T> String extractSchemaName(Class<T> clazz) {
+		DatabaseTable databaseTable = clazz.getAnnotation(DatabaseTable.class);
+		if (databaseTable != null && databaseTable.schemaName() != null && databaseTable.schemaName().length() > 0) {
+			return databaseTable.schemaName();
+		} else {
+			return "";
+		}
 	}
 
 	private static <T> FieldType[] extractFieldTypes(DatabaseType databaseType, Class<T> clazz, String tableName)
