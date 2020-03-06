@@ -31,7 +31,7 @@ public class BooleanCharType extends BooleanType {
 	}
 
 	public BooleanCharType() {
-		super(SqlType.STRING);
+		super(SqlType.CHAR);
 	}
 
 	@Override
