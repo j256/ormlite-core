@@ -130,7 +130,7 @@ public class UpdateBuilder<T, ID> extends StatementBuilder<T, ID> {
 		sb.append("UPDATE ");
 		if (tableInfo.getSchemaName() != null && tableInfo.getSchemaName().length() > 0){
 			databaseType.appendEscapedEntityName(sb, tableInfo.getSchemaName());
-			sb.append(".");
+			sb.append('.');
 		}
 		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
 		sb.append(" SET ");

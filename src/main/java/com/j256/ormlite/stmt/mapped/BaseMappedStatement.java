@@ -88,7 +88,7 @@ public abstract class BaseMappedStatement<T, ID> {
 		}
 		if (tableInfo.getSchemaName() != null && tableInfo.getSchemaName().length() > 0){
 			databaseType.appendEscapedEntityName(sb, tableInfo.getSchemaName());
-			sb.append(".");
+			sb.append('.');
 		}
 		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
 		sb.append(' ');

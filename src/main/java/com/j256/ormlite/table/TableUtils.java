@@ -253,7 +253,7 @@ public class TableUtils {
 		}
 		if (schemaName != null && schemaName.length() > 0){
 			databaseType.appendEscapedEntityName(sb, schemaName);
-			sb.append(".");
+			sb.append('.');
 		}
 		databaseType.appendEscapedEntityName(sb, tableName);
 		String statement = sb.toString();
@@ -326,7 +326,7 @@ public class TableUtils {
 		sb.append("DROP TABLE ");
 		if (tableInfo.getSchemaName() != null && tableInfo.getSchemaName().length() > 0){
 			databaseType.appendEscapedEntityName(sb, tableInfo.getSchemaName());
-			sb.append(".");
+			sb.append('.');
 		}
 		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
 		sb.append(' ');
@@ -450,7 +450,7 @@ public class TableUtils {
 		}
 		if (tableInfo.getSchemaName() != null && tableInfo.getSchemaName().length() > 0){
 			databaseType.appendEscapedEntityName(sb, tableInfo.getSchemaName());
-			sb.append(".");
+			sb.append('.');
 		}
 		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
 		sb.append(" (");

@@ -487,7 +487,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 		sb.append("FROM ");
 		if (tableInfo.getSchemaName() != null && tableInfo.getSchemaName().length() > 0){
 			databaseType.appendEscapedEntityName(sb, tableInfo.getSchemaName());
-			sb.append(".");
+			sb.append('.');
 		}
 		databaseType.appendEscapedEntityName(sb, tableName);
 		if (alias != null) {
@@ -657,7 +657,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			sb.append(joinInfo.type.sql).append(" JOIN ");
 			if (joinInfo.queryBuilder.tableInfo.getSchemaName() != null && joinInfo.queryBuilder.tableInfo.getSchemaName().length() > 0){
 				databaseType.appendEscapedEntityName(sb, joinInfo.queryBuilder.tableInfo.getSchemaName());
-				sb.append(".");
+				sb.append('.');
 			}
 			databaseType.appendEscapedEntityName(sb, joinInfo.queryBuilder.tableName);
 			if (joinInfo.queryBuilder.alias != null) {

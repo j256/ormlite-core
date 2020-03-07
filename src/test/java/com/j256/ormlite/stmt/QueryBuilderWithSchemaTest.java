@@ -29,7 +29,7 @@ public class QueryBuilderWithSchemaTest extends BaseCoreStmtTest {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT * FROM ");
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getSchemaName());
-		sb.append(".");
+		sb.append('.');
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getTableName());
 		sb.append(' ');
 		assertEquals(sb.toString(), qb.prepareStatementString());
@@ -51,7 +51,7 @@ public class QueryBuilderWithSchemaTest extends BaseCoreStmtTest {
 		databaseType.appendEscapedEntityName(sb, column2);
 		sb.append(" FROM ");
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getSchemaName());
-		sb.append(".");
+		sb.append('.');
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getTableName());
 		sb.append(' ');
 		assertEquals(sb.toString(), qb.prepareStatementString());
@@ -76,7 +76,7 @@ public class QueryBuilderWithSchemaTest extends BaseCoreStmtTest {
 		databaseType.appendEscapedEntityName(sb, idColumn);
 		sb.append(" FROM ");
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getSchemaName());
-		sb.append(".");
+		sb.append('.');
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getTableName());
 		sb.append(' ');
 		assertEquals(sb.toString(), qb.prepareStatementString());
@@ -100,7 +100,7 @@ public class QueryBuilderWithSchemaTest extends BaseCoreStmtTest {
 		databaseType.appendEscapedEntityName(sb, column2);
 		sb.append(" FROM ");
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getSchemaName());
-		sb.append(".");
+		sb.append('.');
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getTableName());
 		sb.append(' ');
 		assertEquals(sb.toString(), qb.prepareStatementString());
@@ -116,7 +116,7 @@ public class QueryBuilderWithSchemaTest extends BaseCoreStmtTest {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT * FROM ");
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getSchemaName());
-		sb.append(".");
+		sb.append('.');
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getTableName());
 		sb.append(" GROUP BY ");
 		databaseType.appendEscapedEntityName(sb, field1);
@@ -136,7 +136,7 @@ public class QueryBuilderWithSchemaTest extends BaseCoreStmtTest {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT * FROM ");
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getSchemaName());
-		sb.append(".");
+		sb.append('.');
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getTableName());
 		sb.append(" ORDER BY ");
 		databaseType.appendEscapedEntityName(sb, field1);
@@ -154,7 +154,7 @@ public class QueryBuilderWithSchemaTest extends BaseCoreStmtTest {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT * FROM ");
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getSchemaName());
-		sb.append(".");
+		sb.append('.');
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getTableName());
 		sb.append(" AS ");
 		databaseType.appendEscapedEntityName(sb, alias);
@@ -170,7 +170,7 @@ public class QueryBuilderWithSchemaTest extends BaseCoreStmtTest {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT * FROM ");
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getSchemaName());
-		sb.append(".");
+		sb.append('.');
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getTableName());
 		sb.append(" ORDER BY ");
 		databaseType.appendEscapedEntityName(sb, field);
@@ -199,7 +199,7 @@ public class QueryBuilderWithSchemaTest extends BaseCoreStmtTest {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT DISTINCT * FROM ");
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getSchemaName());
-		sb.append(".");
+		sb.append('.');
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getTableName());
 		sb.append(' ');
 		assertEquals(sb.toString(), qb.prepareStatementString());
@@ -213,7 +213,7 @@ public class QueryBuilderWithSchemaTest extends BaseCoreStmtTest {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT * FROM ");
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getSchemaName());
-		sb.append(".");
+		sb.append('.');
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getTableName());
 		sb.append(" LIMIT ").append(limit).append(' ');
 		assertEquals(sb.toString(), qb.prepareStatementString());
@@ -229,7 +229,7 @@ public class QueryBuilderWithSchemaTest extends BaseCoreStmtTest {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT * FROM ");
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getSchemaName());
-		sb.append(".");
+		sb.append('.');
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getTableName());
 		sb.append(" LIMIT ").append(offset).append(',').append(limit).append(' ');
 		assertEquals(sb.toString(), qb.prepareStatementString());
@@ -265,7 +265,7 @@ public class QueryBuilderWithSchemaTest extends BaseCoreStmtTest {
 		sb.append("SELECT LIMIT ").append(limit);
 		sb.append(" * FROM ");
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getSchemaName());
-		sb.append(".");
+		sb.append('.');
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getTableName());
 		sb.append(' ');
 		assertEquals(sb.toString(), qb.prepareStatementString());
@@ -280,7 +280,7 @@ public class QueryBuilderWithSchemaTest extends BaseCoreStmtTest {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT * FROM ");
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getSchemaName());
-		sb.append(".");
+		sb.append('.');
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getTableName());
 		sb.append(" WHERE ");
 		databaseType.appendEscapedEntityName(sb, SchemaFoo.ID_COLUMN_NAME);
@@ -297,7 +297,7 @@ public class QueryBuilderWithSchemaTest extends BaseCoreStmtTest {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT * FROM ");
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getSchemaName());
-		sb.append(".");
+		sb.append('.');
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getTableName());
 		sb.append(" WHERE ");
 		databaseType.appendEscapedEntityName(sb, SchemaFoo.ID_COLUMN_NAME);
@@ -318,7 +318,7 @@ public class QueryBuilderWithSchemaTest extends BaseCoreStmtTest {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT * FROM ");
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getSchemaName());
-		sb.append(".");
+		sb.append('.');
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getTableName());
 		sb.append(' ');
 		assertEquals(sb.toString(), qb.prepareStatementString());
@@ -335,7 +335,7 @@ public class QueryBuilderWithSchemaTest extends BaseCoreStmtTest {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT * FROM ");
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getSchemaName());
-		sb.append(".");
+		sb.append('.');
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getTableName());
 		sb.append(" LIMIT ").append(limit).append(' ');
 		assertEquals(sb.toString(), qb.prepareStatementString());
@@ -354,7 +354,7 @@ public class QueryBuilderWithSchemaTest extends BaseCoreStmtTest {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT * FROM ");
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getSchemaName());
-		sb.append(".");
+		sb.append('.');
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getTableName());
 		sb.append(" LIMIT ").append(limit);
 		sb.append(" OFFSET ").append(offset).append(' ');

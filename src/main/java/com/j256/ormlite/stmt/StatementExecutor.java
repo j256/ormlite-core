@@ -135,7 +135,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			sb.append("SELECT COUNT(*) FROM ");
 			if (tableInfo.getSchemaName() != null && tableInfo.getSchemaName().length() > 0){
 				databaseType.appendEscapedEntityName(sb, tableInfo.getSchemaName());
-				sb.append(".");
+				sb.append('.');
 			}
 			databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
 			countStarQuery = sb.toString();
