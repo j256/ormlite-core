@@ -212,10 +212,10 @@ public class DatabaseTableConfig<T> {
 
 	public static <T> String extractSchemaName(Class<T> clazz) {
 		DatabaseTable databaseTable = clazz.getAnnotation(DatabaseTable.class);
-		if (databaseTable != null && databaseTable.schemaName() != null && databaseTable.schemaName().length() > 0) {
+		if (databaseTable != null && databaseTable.schemaName().length() > 0) {
 			return databaseTable.schemaName();
 		} else {
-			return "";
+			return null;
 		}
 	}
 

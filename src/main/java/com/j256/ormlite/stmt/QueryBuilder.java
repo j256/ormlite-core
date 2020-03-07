@@ -546,7 +546,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	protected void appendTableQualifier(StringBuilder sb) {
 		if (tableInfo.getSchemaName() != null && tableInfo.getSchemaName().length() > 0){
 			databaseType.appendEscapedEntityName(sb, tableInfo.getSchemaName());
-			sb.append(".");
+			sb.append('.');
 		}
 		databaseType.appendEscapedEntityName(sb, getTableName());
 	}

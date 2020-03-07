@@ -21,8 +21,6 @@ import java.util.*;
 
 /**
  * Couple utility methods for the creating, dropping, and maintenance of schemas.
- *
- * @author graywatson
  */
 public class SchemaUtils {
 
