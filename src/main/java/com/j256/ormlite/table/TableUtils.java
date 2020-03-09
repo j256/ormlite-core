@@ -100,6 +100,16 @@ public class TableUtils {
 		return doCreateTable(dao, true);
 	}
 
+
+	/**
+	 * @deprecated Use {@link #getCreateTableStatements(DatabaseType, Class)}.
+	 */
+	@Deprecated
+	public static <T, ID> List<String> getCreateTableStatements(ConnectionSource connectionSource, Class<T> dataClass)
+			throws SQLException {
+		return getCreateTableStatements(connectionSource.getDatabaseType(), dataClass);
+	}
+
 	/**
 	 * Return an list of SQL statements that need to be run to create a table. To do the work of creating, you should
 	 * call {@link #createTable}.
