@@ -83,7 +83,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 		CloseableIterator<T> li = seperateIteratorThrow(flags);
 		lastIterator = li;
 		//Make sure we return the local variable instead of the field.
-		//Otherwise, concurrent projects have a problme.
+		//Otherwise, concurrent projects have a problem.
 		return li;
 	}
 
