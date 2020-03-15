@@ -80,8 +80,11 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 
 	@Override
 	public CloseableIterator<T> iteratorThrow(int flags) throws SQLException {
-		lastIterator = seperateIteratorThrow(flags);
-		return lastIterator;
+		CloseableIterator<T> li = seperateIteratorThrow(flags);
+		lastIterator = li;
+		//Make sure we return the local variable instead of the field.
+		//Otherwise, concurrent projects have a problem.
+		return li;
 	}
 
 	@Override
