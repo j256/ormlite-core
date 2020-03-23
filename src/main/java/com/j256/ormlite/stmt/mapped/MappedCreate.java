@@ -144,7 +144,7 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 	public static <T, ID> MappedCreate<T, ID> build(Dao<T, ID> dao, TableInfo<T, ID> tableInfo) {
 		DatabaseType databaseType = dao.getConnectionSource().getDatabaseType();
 		StringBuilder sb = new StringBuilder(128);
-		appendTableName(databaseType, sb, "INSERT INTO ", tableInfo.getTableName());
+		appendTableName(databaseType, sb, "INSERT INTO ", tableInfo);
 		int argFieldC = 0;
 		int versionFieldTypeIndex = -1;
 		// first we count up how many arguments we are going to have

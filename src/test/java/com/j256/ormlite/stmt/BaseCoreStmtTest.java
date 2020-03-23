@@ -13,6 +13,7 @@ import com.j256.ormlite.table.TableInfo;
 public abstract class BaseCoreStmtTest extends BaseCoreTest {
 
 	protected TableInfo<Foo, Integer> baseFooTableInfo;
+	protected TableInfo<SchemaFoo, Integer> baseSchemaFooTableInfo;
 	protected FieldType numberFieldType;
 	protected FieldType stringFieldType;
 	protected FieldType foreignFieldType;
@@ -36,5 +37,6 @@ public abstract class BaseCoreStmtTest extends BaseCoreTest {
 		foreignFieldType.configDaoInformation(connectionSource, Foreign.class);
 
 		baseFooTableInfo = new TableInfo<Foo, Integer>(databaseType, Foo.class);
+		baseSchemaFooTableInfo = new TableInfo<SchemaFoo, Integer>(databaseType, SchemaFoo.class);
 	}
 }

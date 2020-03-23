@@ -485,6 +485,10 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			sb.append("COUNT(").append(countOfQuery).append(") ");
 		}
 		sb.append("FROM ");
+		if (tableInfo.getSchemaName() != null && tableInfo.getSchemaName().length() > 0){
+			databaseType.appendEscapedEntityName(sb, tableInfo.getSchemaName());
+			sb.append('.');
+		}
 		databaseType.appendEscapedEntityName(sb, tableName);
 		if (alias != null) {
 			appendAlias(sb);
@@ -540,6 +544,10 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	protected void appendTableQualifier(StringBuilder sb) {
+		if (tableInfo.getSchemaName() != null && tableInfo.getSchemaName().length() > 0){
+			databaseType.appendEscapedEntityName(sb, tableInfo.getSchemaName());
+			sb.append('.');
+		}
 		databaseType.appendEscapedEntityName(sb, getTableName());
 	}
 
@@ -647,6 +655,10 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	private void appendJoinSql(StringBuilder sb) {
 		for (JoinInfo joinInfo : joinList) {
 			sb.append(joinInfo.type.sql).append(" JOIN ");
+			if (joinInfo.queryBuilder.tableInfo.getSchemaName() != null && joinInfo.queryBuilder.tableInfo.getSchemaName().length() > 0){
+				databaseType.appendEscapedEntityName(sb, joinInfo.queryBuilder.tableInfo.getSchemaName());
+				sb.append('.');
+			}
 			databaseType.appendEscapedEntityName(sb, joinInfo.queryBuilder.tableName);
 			if (joinInfo.queryBuilder.alias != null) {
 				joinInfo.queryBuilder.appendAlias(sb);

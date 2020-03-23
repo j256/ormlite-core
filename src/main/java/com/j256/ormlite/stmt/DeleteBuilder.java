@@ -49,6 +49,10 @@ public class DeleteBuilder<T, ID> extends StatementBuilder<T, ID> {
 	@Override
 	protected void appendStatementStart(StringBuilder sb, List<ArgumentHolder> argList) {
 		sb.append("DELETE FROM ");
+		if (tableInfo.getSchemaName() != null && tableInfo.getSchemaName().length() > 0){
+			databaseType.appendEscapedEntityName(sb, tableInfo.getSchemaName());
+			sb.append('.');
+		}
 		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
 		sb.append(' ');
 	}

@@ -1,0 +1,64 @@
+package com.j256.ormlite.stmt;
+
+import com.j256.ormlite.dao.Dao;
+import org.junit.Test;
+
+import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.List;
+
+import static org.junit.Assert.*;
+
+public class QueryBuilderWithSchemaTest extends BaseCoreStmtTest {
+
+	@Test
+	public void testSelectAll() throws Exception {
+		QueryBuilder<SchemaFoo, Integer> qb = new QueryBuilder<SchemaFoo, Integer>(databaseType, baseSchemaFooTableInfo, null);
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT * FROM ");
+		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getSchemaName());
+		sb.append('.');
+		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getTableName());
+		sb.append(' ');
+		assertEquals(sb.toString(), qb.prepareStatementString());
+	}
+
+	@Test
+	public void testAlias() throws Exception {
+		QueryBuilder<SchemaFoo, Integer> qb = new QueryBuilder<SchemaFoo, Integer>(databaseType, baseSchemaFooTableInfo, null);
+		String alias = "zing";
+		qb.setAlias(alias);
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT * FROM ");
+		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getSchemaName());
+		sb.append('.');
+		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getTableName());
+		sb.append(" AS ");
+		databaseType.appendEscapedEntityName(sb, alias);
+		sb.append(' ');
+		assertEquals(sb.toString(), qb.prepareStatementString());
+	}
+
+	@Test(expected = SQLException.class)
+	public void testQueryRawColumnsNotQuery() throws Exception {
+		Dao<SchemaFoo, String> dao = createDao(SchemaFoo.class, true);
+		QueryBuilder<SchemaFoo, String> qb = dao.queryBuilder();
+		qb.selectRaw("COUNT(*)");
+		// we can't get SchemaFoo objects with the COUNT(*)
+		dao.query(qb.prepare());
+	}
+
+	@Test
+	public void testClear() throws Exception {
+		Dao<SchemaFoo, String> dao = createDao(SchemaFoo.class, false);
+		QueryBuilder<SchemaFoo, String> qb = dao.queryBuilder();
+		qb.selectColumns(SchemaFoo.VAL_COLUMN_NAME);
+		qb.groupBy(SchemaFoo.VAL_COLUMN_NAME);
+		qb.having("COUNT(VAL) > 1");
+		qb.where().eq(SchemaFoo.ID_COLUMN_NAME, 1);
+		qb.reset();
+		assertEquals("SELECT * FROM `FOO_SCHEMA`.`foo` ", qb.prepareStatementString());
+	}
+
+
+}

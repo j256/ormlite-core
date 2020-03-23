@@ -71,7 +71,7 @@ public class MappedQueryForFieldEq<T, ID> extends BaseMappedQuery<T, ID> {
 			FieldType idFieldType) {
 		// build the select statement by hand
 		StringBuilder sb = new StringBuilder(64);
-		appendTableName(databaseType, sb, "SELECT * FROM ", tableInfo.getTableName());
+		appendTableName(databaseType, sb, "SELECT * FROM ", tableInfo);
 		appendWhereFieldEq(databaseType, idFieldType, sb, null);
 		return sb.toString();
 	}
