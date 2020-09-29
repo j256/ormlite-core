@@ -26,7 +26,7 @@ public abstract class BaseSchemaUtils {
 		for (Class<?> clazz : getClasses()) {
 			List<String> statements = TableUtils.getCreateTableStatements(getDatabaseType(), clazz);
 			for (String statement : statements) {
-				System.out.println(statement);
+				System.out.println(statement + ";");
 			}
 		}
 	}
