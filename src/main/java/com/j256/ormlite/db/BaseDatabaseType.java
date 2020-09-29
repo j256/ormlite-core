@@ -5,15 +5,12 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Locale;
 
-import com.j256.ormlite.field.BaseFieldConverter;
 import com.j256.ormlite.field.DataPersister;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTableConfig;
 
 /**
@@ -655,43 +652,5 @@ public abstract class BaseDatabaseType implements DatabaseType {
 		appendEscapedEntityName(alterSb, fieldType.getColumnName());
 		alterSb.append(')');
 		additionalArgs.add(alterSb.toString());
-	}
-
-	/**
-	 * Conversion to/from the Boolean Java field as a number because some databases like the true/false.
-	 */
-	protected static class BooleanNumberFieldConverter extends BaseFieldConverter {
-		@Override
-		public SqlType getSqlType() {
-			return SqlType.BYTE;
-		}
-
-		@Override
-		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
-			boolean bool = Boolean.parseBoolean(defaultStr);
-			return (bool ? Byte.valueOf((byte) 1) : Byte.valueOf((byte) 0));
-		}
-
-		@Override
-		public Object javaToSqlArg(FieldType fieldType, Object obj) {
-			Boolean bool = (Boolean) obj;
-			return (bool ? Byte.valueOf((byte) 1) : Byte.valueOf((byte) 0));
-		}
-
-		@Override
-		public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-			return results.getByte(columnPos);
-		}
-
-		@Override
-		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
-			byte arg = (Byte) sqlArg;
-			return (arg == 1 ? (Boolean) true : (Boolean) false);
-		}
-
-		@Override
-		public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) {
-			return sqlArgToJava(fieldType, Byte.parseByte(stringValue), columnPos);
-		}
 	}
 }

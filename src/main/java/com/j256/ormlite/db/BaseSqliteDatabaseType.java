@@ -6,6 +6,7 @@ import com.j256.ormlite.field.DataPersister;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
+import com.j256.ormlite.field.converter.BooleanNumberFieldConverter;
 import com.j256.ormlite.field.types.BigDecimalStringType;
 
 /**

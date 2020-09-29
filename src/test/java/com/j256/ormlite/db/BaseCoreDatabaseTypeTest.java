@@ -19,12 +19,12 @@ import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.TestUtils;
-import com.j256.ormlite.db.BaseDatabaseType.BooleanNumberFieldConverter;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
+import com.j256.ormlite.field.converter.BooleanNumberFieldConverter;
 import com.j256.ormlite.field.types.DateStringType;
 import com.j256.ormlite.field.types.EnumStringType;
 import com.j256.ormlite.field.types.StringType;

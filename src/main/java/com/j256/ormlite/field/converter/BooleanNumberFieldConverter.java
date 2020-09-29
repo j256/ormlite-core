@@ -14,7 +14,7 @@ public class BooleanNumberFieldConverter extends BaseFieldConverter {
 
 	@Override
 	public SqlType getSqlType() {
-		return SqlType.BOOLEAN;
+		return SqlType.BYTE;
 	}
 
 	@Override
