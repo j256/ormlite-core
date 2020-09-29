@@ -3,6 +3,7 @@ package com.j256.ormlite.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -1556,6 +1557,53 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(val3, (int) results.get(0).sum);
 		assertEquals(val2, (int) results.get(1).val);
 		assertEquals(val3, (int) results.get(1).sum);
+	}
+
+	@Test
+	public void testOrderByNull() throws SQLException {
+
+		Dao<TestObject, String> testDao = createDao(TestObject.class, true);
+
+		QueryBuilder<TestObject, String> qb = testDao.queryBuilder();
+		String column = "testColumn";
+		SelectArg selectArg = new SelectArg(SqlType.STRING, column);
+
+		/*
+		 * JavaDoc for orderByRaw: "args Optional arguments that correspond to any ? specified in the rawSql. Each of
+		 * the arguments must have the sql-type set."
+		 * 
+		 * passing "? IS NULL ASC" as a rawSql and selectArg as an argument should, based on the javadocs, produce the
+		 * query below: "SELECT `testColumn` FROM `testobject` GROUP BY `testColumn` ORDER BY `testColumn` IS NULL ASC"
+		 * 
+		 * Instead the query still contains the ? character: SELECT `testColumn` FROM `testobject` GROUP BY `testColumn`
+		 * ORDER BY ? IS NULL ASC
+		 */
+		qb.selectColumns(column).groupBy(column).orderByRaw("? IS NULL DESC", selectArg);
+
+		// assertEquals("SELECT `testColumn` FROM `testobject` GROUP BY `testColumn` ORDER BY ? IS NULL ",
+		// qb.prepareStatementString());
+		testDao.create(new TestObject("not-null1"));
+		testDao.create(new TestObject());
+		testDao.create(new TestObject("not-null2"));
+		testDao.create(new TestObject());
+		testDao.create(new TestObject("not-null3"));
+		List<TestObject> results = qb.query();
+		assertNotNull(results);
+		assertEquals(4, results.size());
+		assertNull(results.get(0).testColumn);
+	}
+
+	private static class TestObject {
+		@DatabaseField
+		private String testColumn;
+
+		public TestObject() {
+			// for ormlite
+		}
+
+		public TestObject(String testColumn) {
+			this.testColumn = testColumn;
+		}
 	}
 
 	/* ======================================================================================================== */

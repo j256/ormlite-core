@@ -1,13 +1,12 @@
 package com.j256.ormlite.stmt;
 
-import com.j256.ormlite.dao.Dao;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.sql.SQLException;
-import java.util.Iterator;
-import java.util.List;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
+
+import com.j256.ormlite.dao.Dao;
 
 public class QueryBuilderWithSchemaTest extends BaseCoreStmtTest {
 
