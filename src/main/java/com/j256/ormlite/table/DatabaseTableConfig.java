@@ -191,7 +191,9 @@ public class DatabaseTableConfig<T> {
 		String schemaName = extractSchemaName(clazz);
 		if (databaseType.isEntityNamesMustBeUpCase()) {
 			tableName = databaseType.upCaseEntityName(tableName);
-			schemaName = databaseType.upCaseEntityName(schemaName);
+			if (schemaName != null) {
+				schemaName = databaseType.upCaseEntityName(schemaName);
+			}
 		}
 		return new DatabaseTableConfig<T>(databaseType, clazz, schemaName, tableName,
 				extractFieldTypes(databaseType, clazz, tableName));
