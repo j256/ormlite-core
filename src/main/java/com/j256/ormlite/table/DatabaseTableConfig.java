@@ -60,7 +60,18 @@ public class DatabaseTableConfig<T> {
 	/**
 	 * Setup a table config associated with the dataClass, table-name, and field configurations.
 	 */
-	public DatabaseTableConfig(Class<T> dataClass, String schemaName, String tableName, List<DatabaseFieldConfig> fieldConfigs) {
+	public DatabaseTableConfig(Class<T> dataClass, String tableName, List<DatabaseFieldConfig> fieldConfigs) {
+		this.dataClass = dataClass;
+		this.schemaName = null;
+		this.tableName = tableName;
+		this.fieldConfigs = fieldConfigs;
+	}
+
+	/**
+	 * Setup a table config associated with the dataClass, schema-name, table-name, and field configurations.
+	 */
+	public DatabaseTableConfig(Class<T> dataClass, String schemaName, String tableName,
+			List<DatabaseFieldConfig> fieldConfigs) {
 		this.dataClass = dataClass;
 		this.schemaName = schemaName;
 		this.tableName = tableName;
@@ -156,7 +167,7 @@ public class DatabaseTableConfig<T> {
 	}
 
 	/**
-	 * @deprecated 
+	 * @deprecated
 	 */
 	@Deprecated
 	public void setConstructor(Constructor<T> constructor) {
