@@ -46,6 +46,12 @@ public abstract class BaseFieldConverter implements FieldConverter {
 		return false;
 	}
 
+	/**
+	 * @See {@link FieldConverter#makeConfigObject(FieldType)}.
+	 *
+	 * @throws SQLException
+	 *             If there are problems creating the config object. Needed for subclasses.
+	 */
 	@Override
 	public Object makeConfigObject(FieldType fieldType) throws SQLException {
 		return null;
