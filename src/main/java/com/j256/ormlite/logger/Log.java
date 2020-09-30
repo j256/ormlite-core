@@ -38,6 +38,8 @@ public interface Log {
 		ERROR(5),
 		/** severe fatal messages */
 		FATAL(6),
+		/** for turning off all log messages */
+		OFF(7),
 		// end
 		;
 
@@ -53,7 +55,7 @@ public interface Log {
 		 * false.
 		 */
 		public boolean isEnabled(Level otherLevel) {
-			return level <= otherLevel.level;
+			return (this != Level.OFF && otherLevel != Level.OFF && level <= otherLevel.level);
 		}
 	}
 }

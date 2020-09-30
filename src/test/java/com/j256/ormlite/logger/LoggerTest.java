@@ -121,6 +121,9 @@ public class LoggerTest {
 	public void testMessage() throws Exception {
 		String msg = "ooooooh";
 		for (Level level : Level.values()) {
+			if (level == Level.OFF) {
+				continue;
+			}
 			Method method = Logger.class.getMethod(getNameFromLevel(level), String.class);
 			reset(mockLog);
 			expect(mockLog.isLevelEnabled(level)).andReturn(true);
@@ -160,6 +163,9 @@ public class LoggerTest {
 		String result = msg + arg0;
 		String pattern = msg + "{}";
 		for (Level level : Level.values()) {
+			if (level == Level.OFF) {
+				continue;
+			}
 			Method method = Logger.class.getMethod(getNameFromLevel(level), String.class, Object.class);
 			reset(mockLog);
 			expect(mockLog.isLevelEnabled(level)).andReturn(true);
@@ -200,6 +206,9 @@ public class LoggerTest {
 		String result = msg + "0" + arg0 + "01" + arg1 + "1";
 		String pattern = msg + "0{}01{}1";
 		for (Level level : Level.values()) {
+			if (level == Level.OFF) {
+				continue;
+			}
 			Method method = Logger.class.getMethod(getNameFromLevel(level), String.class, Object.class, Object.class);
 			reset(mockLog);
 			expect(mockLog.isLevelEnabled(level)).andReturn(true);
@@ -242,6 +251,9 @@ public class LoggerTest {
 		String result = msg + "0" + arg0 + "01" + arg1 + "12" + arg2 + "2";
 		String pattern = msg + "0{}01{}12{}2";
 		for (Level level : Level.values()) {
+			if (level == Level.OFF) {
+				continue;
+			}
 			Method method = Logger.class.getMethod(getNameFromLevel(level), String.class, Object.class, Object.class,
 					Object.class);
 			reset(mockLog);
@@ -287,6 +299,9 @@ public class LoggerTest {
 		String result = msg + "0" + arg0 + "01" + arg1 + "12" + arg2 + "23" + arg3 + "3";
 		String pattern = msg + "0{}01{}12{}23{}3";
 		for (Level level : Level.values()) {
+			if (level == Level.OFF) {
+				continue;
+			}
 			Method method = Logger.class.getMethod(getNameFromLevel(level), String.class, Object[].class);
 			reset(mockLog);
 			expect(mockLog.isLevelEnabled(level)).andReturn(true);
@@ -325,6 +340,9 @@ public class LoggerTest {
 		String result = "12" + Arrays.toString(argArray) + "34";
 		String pattern = "12{}34";
 		for (Level level : Level.values()) {
+			if (level == Level.OFF) {
+				continue;
+			}
 			Method method = Logger.class.getMethod(getNameFromLevel(level), String.class, Object.class);
 			reset(mockLog);
 			expect(mockLog.isLevelEnabled(level)).andReturn(true);
@@ -363,6 +381,9 @@ public class LoggerTest {
 		String result = "12" + Arrays.deepToString(argArray) + "34";
 		String pattern = "12{}34";
 		for (Level level : Level.values()) {
+			if (level == Level.OFF) {
+				continue;
+			}
 			Method method = Logger.class.getMethod(getNameFromLevel(level), String.class, Object.class);
 			reset(mockLog);
 			expect(mockLog.isLevelEnabled(level)).andReturn(true);
@@ -424,6 +445,9 @@ public class LoggerTest {
 	@Test
 	public void testShouldNotCallToString() throws Exception {
 		for (Level level : Level.values()) {
+			if (level == Level.OFF) {
+				continue;
+			}
 			Method method = Logger.class.getMethod(getNameFromLevel(level), String.class, Object.class);
 			reset(mockLog);
 			expect(mockLog.isLevelEnabled(level)).andReturn(false);
@@ -436,6 +460,9 @@ public class LoggerTest {
 	@Test
 	public void testShouldCallToString() throws Exception {
 		for (Level level : Level.values()) {
+			if (level == Level.OFF) {
+				continue;
+			}
 			Method method = Logger.class.getMethod(getNameFromLevel(level), String.class, Object.class);
 			reset(mockLog);
 			expect(mockLog.isLevelEnabled(level)).andReturn(true);
@@ -466,6 +493,28 @@ public class LoggerTest {
 		mockLog.log(Level.INFO, result, throwable);
 		replay(mockLog);
 		logger.info(throwable, pattern, (Object) argArray);
+		verify(mockLog);
+	}
+
+	@Test
+	public void testGlobalLevel() {
+		String msg1 = "123";
+		String msg2 = "this should not show up";
+		String msg3 = "this should show up";
+		reset(mockLog);
+		expect(mockLog.isLevelEnabled(Level.INFO)).andReturn(true);
+		mockLog.log(Level.INFO, msg1);
+		// no msg2
+		expect(mockLog.isLevelEnabled(Level.DEBUG)).andReturn(true);
+		mockLog.log(Level.DEBUG, msg3);
+		replay(mockLog);
+		logger.info(msg1);
+		Logger.setGlobalLogLevel(Level.OFF);
+		logger.fatal(msg2);
+		Logger.setGlobalLogLevel(Level.INFO);
+		logger.debug(msg2);
+		Logger.setGlobalLogLevel(null);
+		logger.debug(msg3);
 		verify(mockLog);
 	}
 

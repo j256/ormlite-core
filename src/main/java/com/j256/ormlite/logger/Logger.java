@@ -35,9 +35,19 @@ public class Logger {
 	private final static Object UNKNOWN_ARG = new Object();
 	private final static int DEFAULT_FULL_MESSAGE_LENGTH = 128;
 	private final Log log;
+	private static Level globalLevel;
 
 	public Logger(Log log) {
 		this.log = log;
+	}
+
+	/**
+	 * Set the log level for all of the loggers. This should be done very early in your application's main or launch
+	 * methods. It allows you to set a filter on all log messages. Set to null to disable any global log level filtering
+	 * of messages and go back to the per-log level matching.
+	 */
+	public static void setGlobalLogLevel(Level level) {
+		Logger.globalLevel = level;
 	}
 
 	/**
@@ -539,7 +549,9 @@ public class Logger {
 
 	private void logIfEnabled(Level level, Throwable throwable, String msg, Object arg0, Object arg1, Object arg2,
 			Object[] argArray) {
-		if (log.isLevelEnabled(level)) {
+		if (globalLevel != null && !globalLevel.isEnabled(level)) {
+			// don't log the message if the global-level is set and not enabled
+		} else if (log.isLevelEnabled(level)) {
 			String fullMsg = buildFullMessage(msg, arg0, arg1, arg2, argArray);
 			if (throwable == null) {
 				log.log(level, fullMsg);
