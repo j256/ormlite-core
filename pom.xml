@@ -48,7 +48,7 @@
 		<persistence-api-version>1.0</persistence-api-version>
 		<easymock-version>3.4</easymock-version>
 		<h2-version>1.2.128</h2-version>
-		<junit-version>4.8.1</junit-version>
+		<junit-version>4.13.1</junit-version>
 		<commons-lang-version>2.1</commons-lang-version>
 		<commons-logging-version>1.1.1</commons-logging-version>
 		<slf4j-version>1.7.2</slf4j-version>
