@@ -41,6 +41,16 @@ import com.j256.ormlite.field.types.StringBytesType;
 import com.j256.ormlite.field.types.StringType;
 import com.j256.ormlite.field.types.TimeStampType;
 import com.j256.ormlite.field.types.UuidType;
+import com.j256.ormlite.field.types.LocalDateType;
+import com.j256.ormlite.field.types.LocalTimeType;
+import com.j256.ormlite.field.types.LocalDateTimeType;
+import com.j256.ormlite.field.types.OffsetTimeType;
+import com.j256.ormlite.field.types.OffsetDateTimeType;
+import com.j256.ormlite.field.types.InstantType;
+import com.j256.ormlite.field.types.LocalDateSqlType;
+import com.j256.ormlite.field.types.LocalTimeSqlType;
+import com.j256.ormlite.field.types.LocalDateTimeSqlType;
+import com.j256.ormlite.field.types.OffsetTimeCompatType;
 
 /**
  * Data type enumeration that corresponds to a {@link DataPersister}.
@@ -249,6 +259,60 @@ public enum DataType {
 	 * Marker for fields that are unknown.
 	 */
 	UNKNOWN(null),
+	/**
+	 * Persists the {@link java.time.LocalDate} Java class.
+	 *
+	 */
+	LOCAL_DATE(LocalDateType.getSingleton()),
+	/**
+	 * Persists the {@link java.time.LocalTime} Java class.
+	 *
+	 */
+	LOCAL_TIME(LocalTimeType.getSingleton()),
+	/**
+	 * Persists the {@link java.time.LocalDateTime} Java class.
+	 *
+	 */
+	LOCAL_DATE_TIME(LocalDateTimeType.getSingleton()),
+	/**
+	 * Persists the {@link java.time.OffsetTime} Java class.
+	 *
+	 */
+	OFFSET_TIME(OffsetTimeType.getSingleton()),
+	/**
+	 * Persists the {@link java.time.OffsetDateTime} Java class.
+	 *
+	 */
+	OFFSET_DATE_TIME(OffsetDateTimeType.getSingleton()),
+	/**
+	 * Persists the {@link java.time.Instant} Java class.
+	 *
+	 */
+	INSTANT(InstantType.getSingleton()),
+	/**
+	 * Persists the {@link java.time.LocalDate} Java class. By default this will use
+	 * {@link #LOCAL_DATE} so you will need to specify this using {@link DatabaseField#dataType()}.
+	 *
+	 */
+	LOCAL_DATE_SQL(LocalDateSqlType.getSingleton()),
+	/**
+	 * Persists the {@link java.time.LocalTime} Java class. By default this will use
+	 * {@link #LOCAL_TIME} so you will need to specify this using {@link DatabaseField#dataType()}.
+	 *
+	 */
+	LOCAL_TIME_SQL(LocalTimeSqlType.getSingleton()),
+	/**
+	 * Persists the {@link java.time.LocalDateTime} Java class. By default this will use
+	 * {@link #LOCAL_DATE_TIME} so you will need to specify this using {@link DatabaseField#dataType()}.
+	 *
+	 */
+	LOCAL_DATE_TIME_SQL(LocalDateTimeSqlType.getSingleton()),
+	/**
+	 * Persists the {@link java.time.OffsetTime} Java class. By default this will use
+	 * {@link #OFFSET_TIME} so you will need to specify this using {@link DatabaseField#dataType()}.
+	 *
+	 */
+	OFFSET_TIME_COMPAT(OffsetTimeCompatType.getSingleton()),
 	// end
 	;
 

@@ -32,6 +32,12 @@ public enum SqlType {
 	// for other types handled by custom persisters
 	OTHER,
 	UNKNOWN,
+	// java.time
+	LOCAL_DATE,
+	LOCAL_TIME,
+	LOCAL_DATE_TIME,
+	OFFSET_TIME,
+	OFFSET_DATE_TIME,
 	// end
 	;
 }

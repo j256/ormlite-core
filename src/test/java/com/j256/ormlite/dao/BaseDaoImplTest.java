@@ -1641,6 +1641,14 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		public void fire(Connection conn, Object[] oldRow, Object[] newRow) {
 			callC++;
 		}
+
+		public void close() {
+
+		}
+
+		public void remove() {
+
+		}
 	}
 
 	@Test
