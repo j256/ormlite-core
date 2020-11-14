@@ -4702,12 +4702,12 @@ and rarely the on-disk database formats.
 
 @c ----------------------------------------------------------------
 @node 5.2, 5.1, How to Upgrade, How to Upgrade
-@section Notes About Version 5.1
+@section Notes About Version 5.2
 
-In version 5.2, we fixed an issue with some SQL types.  The boolean number type now correctly uses the @code{BOOLEAN}
-SQL type instead of @code{BYTE}.  The  boolean character type now correctly uses the @code{CHAR} SQL type instead of
-@code{STRING}.  Although we don't anticipate any issues with this, the developers thought it prudent to mention it in
-case it causes compatibility issues.  
+In version 5.2, we fixed issues with the boolean SQL types.  The boolean number type now correctly uses the
+@code{BOOLEAN} SQL type instead of @code{BYTE}.  The  boolean character type now correctly uses the @code{CHAR} SQL
+type instead of @code{STRING}.  Although we don't anticipate any issues with this, the developers thought it prudent
+to mention it in case it causes compatibility issues.  
 
 We also did refactoring in the @code{ormlite-jdbc} jar by renaming a number of types so it could be fulling Java9 
 compliant.  Before there were overlapping packages.  Now all code in the @code{ormlite-jdbc} is under the 
