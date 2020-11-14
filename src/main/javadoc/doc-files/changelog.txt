@@ -1,8 +1,10 @@
-5.2: X/YY/2019
+5.2: 11/14/2020
+	* JDBC: Refactored the JDBC package to make it java9 compliant by moving all classes under jdbc subpackage.
 	* CORE: Added support for @DatabaseField(readOnly) boolean for returning non-column fields.
 	* CORE: Added @DatabaseField(fullColumnDefinition) for fully describing a column as opposed to columnDefinition.
 	* CORE: Added BaseSchemaUtil to print out the schema statements necessary to create a table.
 	* CORE: Added the ability for users to set a character set for byte array type.  Thanks to noordawod.
+	* CORE: Added a Logger.setGlobalLogLevel(...) method to set a global filter on all log messages.
 	* CORE: Moved from using RETURN_GENERATED_KEYS to named columns for generated ids to be more compatible.  Thanks to Bo98.
 	* CORE: Significant refactoring to make FieldType and TableInfo not depend on Dao or ConnectionSource.
 	* CORE: Improved memory usage by unregistering DAOs associated to a connection source.  Thanks to bosborn.
@@ -11,6 +13,9 @@
 	* CORE: Fixed @DatabaseField(fullColumnDefinition) which was completely broken.  Thanks to ethanmdavidson.
 	* CORE: Fixed default width not being applied for BigInteger.  Thanks to Bo98.
 	* CORE: Fixed the default mysql driver and made driver loaded more forgiving.  Thanks to zanella.
+	* CORE: Fixed a couple of incorrect SqlTypes in field converters.  Thanks to Bo98.
+	* CORE: Support schema name qualifiers for tables.  Th anks to Fedor Bobin.
+	* CORE: Fixed concurrency issues when using iterators.  Thanks to MarcMil.
 
 5.1: 2/19/2018
 	* CORE: Added synchronized keyword to BaseDaoImpl.createOrUpdate() and createIfNotExists().

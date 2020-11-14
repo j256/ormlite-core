@@ -6,9 +6,9 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set ormlite_version 5.1
-@set ormlite_year 2018
-@set ormlite_date February @value{ormlite_year}
+@set ormlite_version 5.2
+@set ormlite_year 2020
+@set ormlite_date November @value{ormlite_year}
 @set package ORMLite
 @c ----------------------------------------------------------------
 
@@ -4345,7 +4345,23 @@ com\.j256\.ormlite\.stmt\.StatementExecutor = TRACE
 
 @emph{NOTE:} You should escape any period characters with a single backslash unless they are part of a regex match.
 
-For logging with Android, @xref{Android Logging}.
+@cindex global log level
+@cindex log messages, filter
+@cindex filter log messages
+For all of the logging implementations, you can use the @code{Logger.setGlobalLogLevel(...)} method to filter all log
+messages.  The argument you pass in filters out any messages to less important levels.  You should call that method
+in the @code{main(...)} method or as early in your application as possible.
+
+@example
+// filter out TRACE messages only
+Logger.setGlobalLogLevel(Level.DEBUG);
+// only allow error or fatal messages
+Logger.setGlobalLogLevel(Level.ERROR);
+// turn off all log messages
+Logger.setGlobalLogLevel(Level.OFF);
+@end example
+
+For logging with Android, @xref{Android Logging}.  
 
 @c ----------------------------------------------------------------
 @node Dependencies, Transactions, Logging, Advanced
