@@ -4672,7 +4672,7 @@ You probably would not want to register the @code{MyDatePersister} above because
 persistence behavior for @emph{all} @code{Date} types.
 
 @c ----------------------------------------------------------------
-@node How to Upgrade, 5.1, Custom Persisters, Top
+@node How to Upgrade, 5.2, Custom Persisters, Top
 @chapter Upgrade From Old Versions
 
 @cindex upgrading from previous versions
@@ -4684,6 +4684,7 @@ However, sometimes when a new version is released, changes are made that require
 and rarely the on-disk database formats. 
 
 @menu
+* 5.2::                 Notes about version 5.2
 * 5.1::                 Notes about version 5.1
 * 5.0::                 Notes about version 5.0
 * 4.49::                Notes about version 4.49
@@ -4700,7 +4701,21 @@ and rarely the on-disk database formats.
 @end menu
 
 @c ----------------------------------------------------------------
-@node 5.1, 5.0, How to Upgrade, How to Upgrade
+@node 5.2, 5.1, How to Upgrade, How to Upgrade
+@section Notes About Version 5.1
+
+In version 5.2, we fixed an issue with some SQL types.  The boolean number type now correctly uses the @code{BOOLEAN}
+SQL type instead of @code{BYTE}.  The  boolean character type now correctly uses the @code{CHAR} SQL type instead of
+@code{STRING}.  Although we don't anticipate any issues with this, the developers thought it prudent to mention it in
+case it causes compatibility issues.  
+
+We also did refactoring in the @code{ormlite-jdbc} jar by renaming a number of types so it could be fulling Java9 
+compliant.  Before there were overlapping packages.  Now all code in the @code{ormlite-jdbc} is under the 
+@code{com.j256.ormlite.jdbc} package.   You may need to edit your imports if you were refering to any of these
+classes.
+
+@c ----------------------------------------------------------------
+@node 5.1, 5.0, 5.2, How to Upgrade
 @section Notes About Version 5.1
 
 In version 5.0, we moved to using English for the field and method name capitalization because of problems with how
