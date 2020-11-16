@@ -1,3 +1,7 @@
+5.3: ??/??/2020
+	* CORE: More improvements to the TransactionManager connection and savepoint handling.
+	* JDBC: Update the DB2 driver class.  Thanks to mauro-palumbo. 
+
 5.2: 11/14/2020
 	* JDBC: Refactored the JDBC package to make it java9 compliant by moving all classes under jdbc subpackage.
 	* CORE: Added support for @DatabaseField(readOnly) boolean for returning non-column fields.

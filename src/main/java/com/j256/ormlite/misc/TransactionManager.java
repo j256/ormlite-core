@@ -162,7 +162,7 @@ public class TransactionManager {
 	 * Same as {@link #callInTransaction(ConnectionSource, Callable)} except this has a table-name.
 	 * 
 	 * <p>
-	 * WARNING: it is up to you to properly synchronize around this method if multiple threads are using a
+	 * WARNING: it is up to the caller to properly synchronize around this method if multiple threads are using a
 	 * connection-source which works gives out a single-connection. The reason why this is necessary is that multiple
 	 * operations are performed on the connection and race-conditions will exist with multiple threads working on the
 	 * same connection.
@@ -172,12 +172,15 @@ public class TransactionManager {
 			final Callable<T> callable) throws SQLException {
 
 		DatabaseConnection connection = connectionSource.getReadWriteConnection(tableName);
+		boolean saved = false;
 		try {
-			boolean saved = connectionSource.saveSpecialConnection(connection);
+			saved = connectionSource.saveSpecialConnection(connection);
 			return callInTransaction(connection, saved, connectionSource.getDatabaseType(), callable);
 		} finally {
 			// we should clear aggressively
-			connectionSource.clearSpecialConnection(connection);
+			if (saved) {
+				connectionSource.clearSpecialConnection(connection);
+			}
 			connectionSource.releaseConnection(connection);
 		}
 	}
@@ -186,7 +189,7 @@ public class TransactionManager {
 	 * Same as {@link #callInTransaction(Callable)} except as a static method on a connection with database-type.
 	 * 
 	 * <p>
-	 * WARNING: it is up to you to properly synchronize around this method if multiple threads are using the same
+	 * WARNING: it is up to the caller to properly synchronize around this method if multiple threads are using the same
 	 * database connection or if your connection-source is single-connection. The reason why this is necessary is that
 	 * multiple operations are performed on the connection and race-conditions will exist with multiple threads working
 	 * on the same connection.
@@ -216,13 +219,11 @@ public class TransactionManager {
 			boolean hasSavePoint = false;
 			Savepoint savePoint = null;
 			if (saved || databaseType.isNestedSavePointsSupported()) {
-				if (connection.isAutoCommitSupported()) {
-					if (connection.isAutoCommit()) {
-						// disable auto-commit mode if supported and enabled at start
-						connection.setAutoCommit(false);
-						restoreAutoCommit = true;
-						logger.trace("had to set auto-commit to false");
-					}
+				if (connection.isAutoCommitSupported() && connection.isAutoCommit()) {
+					// disable auto-commit mode if supported and enabled at start
+					connection.setAutoCommit(false);
+					restoreAutoCommit = true;
+					logger.trace("had to set auto-commit to false");
 				}
 				savePoint = connection.setSavePoint(SAVE_POINT_PREFIX + savePointCounter.incrementAndGet());
 				if (savePoint == null) {
@@ -236,9 +237,10 @@ public class TransactionManager {
 				levelCount.incrementAndGet();
 				T result = callable.call();
 				int level = levelCount.decrementAndGet();
+				// we do this here in case the commit or release throws below
+				levelCount = null;
 				if (level <= 0) {
 					transactionLevelThreadLocal.remove();
-					levelCount = null;
 				}
 				if (hasSavePoint) {
 					// only commit if we have reached the end of our transaction stack
