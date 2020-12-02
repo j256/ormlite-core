@@ -1,6 +1,7 @@
 package com.j256.ormlite.support;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 
@@ -187,6 +188,15 @@ public class DatabaseConnectionProxy implements DatabaseConnection {
 			return false;
 		} else {
 			return proxy.isTableExists(tableName);
+		}
+	}
+
+	@Override
+	public Connection getUnderlyingConnection() {
+		if (proxy == null) {
+			return null;
+		} else {
+			return proxy.getUnderlyingConnection();
 		}
 	}
 }

@@ -220,6 +220,11 @@ public class H2DatabaseConnection implements DatabaseConnection {
 		}
 	}
 
+	@Override
+	public Connection getUnderlyingConnection() {
+		return connection;
+	}
+
 	/**
 	 * Return the id associated with the column.
 	 */
