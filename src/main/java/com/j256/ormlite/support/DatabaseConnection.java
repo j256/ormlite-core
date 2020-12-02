@@ -1,6 +1,7 @@
 package com.j256.ormlite.support;
 
 import java.io.Closeable;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 
@@ -188,4 +189,10 @@ public interface DatabaseConnection extends Closeable {
 	 * Return true if the table exists in the database.
 	 */
 	public boolean isTableExists(String tableName) throws SQLException;
+
+	/**
+	 * Return the underlying database connection so that per-connection calls can be made on it as necessary. This may
+	 * not be supported depending on your database type.
+	 */
+	public Connection getUnderlyingConnection();
 }
