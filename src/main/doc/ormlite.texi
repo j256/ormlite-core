@@ -5385,8 +5385,6 @@ DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING F
 WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE
 USE OR PERFORMANCE OF THIS SOFTWARE.
 
-The author may be contacted via the @uref{http://ormlite.com/, ORMLite home page}.
-
 @c ----------------------------------------------------------------
 @node Index of Concepts,, License, Top
 @unnumbered Index of Concepts
