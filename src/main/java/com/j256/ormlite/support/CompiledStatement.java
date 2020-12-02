@@ -76,4 +76,9 @@ public interface CompiledStatement extends Closeable {
 	 * </p>
 	 */
 	public void setQueryTimeout(long millis) throws SQLException;
+
+	/**
+	 * Return the underlying SQL statement.
+	 */
+	public String getStatement();
 }

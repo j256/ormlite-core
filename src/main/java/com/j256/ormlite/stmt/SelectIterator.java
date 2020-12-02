@@ -35,7 +35,6 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 	private final CompiledStatement compiledStmt;
 	private final DatabaseResults results;
 	private final GenericRowMapper<T> rowMapper;
-	private final String statement;
 	private boolean first = true;
 	private boolean closed;
 	private boolean alreadyMoved;
@@ -47,7 +46,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 	 */
 	public SelectIterator(Class<?> dataClass, Dao<T, ID> classDao, GenericRowMapper<T> rowMapper,
 			ConnectionSource connectionSource, DatabaseConnection connection, CompiledStatement compiledStmt,
-			String statement, ObjectCache objectCache) throws SQLException {
+			ObjectCache objectCache) throws SQLException {
 		this.dataClass = dataClass;
 		this.classDao = classDao;
 		this.rowMapper = rowMapper;
@@ -55,10 +54,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 		this.connection = connection;
 		this.compiledStmt = compiledStmt;
 		this.results = compiledStmt.runQuery(objectCache);
-		this.statement = statement;
-		if (statement != null) {
-			logger.debug("starting iterator @{} for '{}'", hashCode(), statement);
-		}
+		logger.debug("starting iterator @{} for '{}'", hashCode(), compiledStmt);
 	}
 
 	/**
@@ -227,8 +223,8 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 	 */
 	public void removeThrow() throws SQLException {
 		if (last == null) {
-			throw new IllegalStateException("No last " + dataClass
-					+ " object to remove. Must be called after a call to next.");
+			throw new IllegalStateException(
+					"No last " + dataClass + " object to remove. Must be called after a call to next.");
 		}
 		if (classDao == null) {
 			// we may never be able to get here since it should only be null for queryForAll methods
@@ -265,9 +261,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 			compiledStmt.close();
 			closed = true;
 			last = null;
-			if (statement != null) {
-				logger.debug("closed iterator @{} after {} rows", hashCode(), rowC);
-			}
+			logger.debug("closed iterator @{} after {} rows", hashCode(), rowC);
 			try {
 				connectionSource.releaseConnection(connection);
 			} catch (SQLException e) {

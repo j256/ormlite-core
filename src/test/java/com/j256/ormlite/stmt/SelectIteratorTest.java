@@ -189,12 +189,13 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 		cs.releaseConnection(null);
 		CompiledStatement stmt = createMock(CompiledStatement.class);
 		DatabaseResults results = createMock(DatabaseResults.class);
+		expect(stmt.getStatement()).andReturn("statement");
 		expect(stmt.runQuery(null)).andReturn(results);
 		expect(results.first()).andThrow(new SQLException("some database problem"));
 		stmt.close();
 		replay(stmt, results, cs);
 		SelectIterator<Foo, Integer> iterator =
-				new SelectIterator<Foo, Integer>(Foo.class, null, null, cs, null, stmt, "statement", null);
+				new SelectIterator<Foo, Integer>(Foo.class, null, null, cs, null, stmt, null);
 		try {
 			iterator.hasNext();
 		} finally {
@@ -208,6 +209,7 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 		cs.releaseConnection(null);
 		CompiledStatement stmt = createMock(CompiledStatement.class);
 		DatabaseResults results = createMock(DatabaseResults.class);
+		expect(stmt.getStatement()).andReturn("statement");
 		expect(stmt.runQuery(null)).andReturn(results);
 		expect(results.first()).andThrow(new SQLException("some result problem"));
 		@SuppressWarnings("unchecked")
@@ -215,7 +217,7 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 		stmt.close();
 		replay(stmt, mapper, cs, results);
 		SelectIterator<Foo, Integer> iterator =
-				new SelectIterator<Foo, Integer>(Foo.class, null, mapper, cs, null, stmt, "statement", null);
+				new SelectIterator<Foo, Integer>(Foo.class, null, mapper, cs, null, stmt, null);
 		try {
 			iterator.hasNext();
 		} finally {
@@ -231,6 +233,7 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 		CompiledStatement stmt = createMock(CompiledStatement.class);
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(results.first()).andReturn(true);
+		expect(stmt.getStatement()).andReturn("statement");
 		expect(stmt.runQuery(null)).andReturn(results);
 		@SuppressWarnings("unchecked")
 		GenericRowMapper<Foo> mapper = (GenericRowMapper<Foo>) createMock(GenericRowMapper.class);
@@ -242,7 +245,7 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 		stmt.close();
 		replay(stmt, dao, results, mapper, cs);
 		SelectIterator<Foo, Integer> iterator =
-				new SelectIterator<Foo, Integer>(Foo.class, dao, mapper, cs, null, stmt, "statement", null);
+				new SelectIterator<Foo, Integer>(Foo.class, dao, mapper, cs, null, stmt, null);
 		try {
 			iterator.hasNext();
 			iterator.next();

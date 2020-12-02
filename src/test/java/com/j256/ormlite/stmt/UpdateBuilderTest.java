@@ -23,8 +23,6 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 		UpdateBuilder<Foo, Integer> stmtb = new UpdateBuilder<Foo, Integer>(databaseType, baseFooTableInfo, dao);
 		int idVal = 1312;
 		stmtb.updateColumnValue(Foo.ID_COLUMN_NAME, idVal);
-		PreparedUpdate<Foo> stmt = stmtb.prepare();
-		stmt.getStatement();
 		StringBuilder sb = new StringBuilder();
 		sb.append("UPDATE ");
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
@@ -40,8 +38,6 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 		UpdateBuilder<Foo, Integer> stmtb = new UpdateBuilder<Foo, Integer>(databaseType, baseFooTableInfo, dao);
 		int idVal = 13123;
 		stmtb.updateColumnValue(Foo.VAL_COLUMN_NAME, idVal);
-		PreparedUpdate<Foo> stmt = stmtb.prepare();
-		stmt.getStatement();
 		StringBuilder sb = new StringBuilder();
 		sb.append("UPDATE ");
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());

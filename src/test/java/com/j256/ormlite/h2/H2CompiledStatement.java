@@ -19,10 +19,12 @@ import com.j256.ormlite.support.DatabaseResults;
 public class H2CompiledStatement implements CompiledStatement {
 
 	private final PreparedStatement preparedStatement;
+	private final String statement;
 	private final boolean cacheStore;
 
-	public H2CompiledStatement(PreparedStatement preparedStatement, boolean cacheStore) {
+	public H2CompiledStatement(PreparedStatement preparedStatement, String statement, boolean cacheStore) {
 		this.preparedStatement = preparedStatement;
+		this.statement = statement;
 		this.cacheStore = cacheStore;
 	}
 
@@ -90,6 +92,11 @@ public class H2CompiledStatement implements CompiledStatement {
 		preparedStatement.setQueryTimeout(Long.valueOf(millis).intValue() / 1000);
 	}
 
+	@Override
+	public String getStatement() {
+		return statement;
+	}
+
 	public static int sqlTypeToJdbcInt(SqlType sqlType) {
 		switch (sqlType) {
 			case STRING:
@@ -126,5 +133,10 @@ public class H2CompiledStatement implements CompiledStatement {
 			default:
 				throw new IllegalArgumentException("No JDBC mapping for unknown SqlType " + sqlType);
 		}
+	}
+
+	@Override
+	public String toString() {
+		return statement;
 	}
 }

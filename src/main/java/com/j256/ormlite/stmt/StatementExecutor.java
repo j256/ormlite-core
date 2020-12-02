@@ -105,10 +105,12 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			compiledStatement.setMaxRows(1);
 			results = compiledStatement.runQuery(objectCache);
 			if (results.first()) {
-				logger.debug("query-for-first of '{}' returned at least 1 result", preparedStmt.getStatement());
+				logger.debug("query-for-first of '{}' with {} args returned at least 1 result", preparedStmt,
+						preparedStmt.getNumArgs());
 				return preparedStmt.mapRow(results);
 			} else {
-				logger.debug("query-for-first of '{}' returned 0 results", preparedStmt.getStatement());
+				logger.debug("query-for-first of '{}' with {} args returned 0 results", preparedStmt,
+						preparedStmt.getNumArgs());
 				return null;
 			}
 		} finally {
@@ -133,7 +135,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		if (countStarQuery == null) {
 			StringBuilder sb = new StringBuilder(64);
 			sb.append("SELECT COUNT(*) FROM ");
-			if (tableInfo.getSchemaName() != null && tableInfo.getSchemaName().length() > 0){
+			if (tableInfo.getSchemaName() != null && tableInfo.getSchemaName().length() > 0) {
 				databaseType.appendEscapedEntityName(sb, tableInfo.getSchemaName());
 				sb.append('.');
 			}
@@ -156,7 +158,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			if (results.first()) {
 				return results.getLong(0);
 			} else {
-				throw new SQLException("No result found in queryForLong: " + preparedStmt.getStatement());
+				throw new SQLException("No result found in queryForLong: " + preparedStmt);
 			}
 		} finally {
 			IOUtils.closeThrowSqlException(results, "results");
@@ -205,7 +207,8 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			while (iterator.hasNextThrow()) {
 				results.add(iterator.nextThrow());
 			}
-			logger.debug("query of '{}' returned {} results", preparedStmt.getStatement(), results.size());
+			logger.debug("query of '{}' with {} args returned {} results", preparedStmt, preparedStmt.getNumArgs(),
+					results.size());
 			return results;
 		} finally {
 			IOUtils.closeThrowSqlException(iterator, "iterator");
@@ -249,7 +252,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		try {
 			compiledStatement = preparedStmt.compile(connection, StatementType.SELECT, resultFlags);
 			SelectIterator<T, ID> iterator = new SelectIterator<T, ID>(tableInfo.getDataClass(), classDao, preparedStmt,
-					connectionSource, connection, compiledStatement, preparedStmt.getStatement(), objectCache);
+					connectionSource, connection, compiledStatement, objectCache);
 			connection = null;
 			compiledStatement = null;
 			return iterator;
@@ -277,7 +280,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			compiledStatement = connection.compileStatement(query, StatementType.SELECT, noFieldTypes,
 					DatabaseConnection.DEFAULT_RESULT_FLAGS, false);
 			assignStatementArguments(compiledStatement, arguments);
-			GenericRawResults<String[]> rawResults = new RawResultsImpl<String[]>(connectionSource, connection, query,
+			GenericRawResults<String[]> rawResults = new RawResultsImpl<String[]>(connectionSource, connection,
 					String[].class, compiledStatement, this, objectCache);
 			compiledStatement = null;
 			connection = null;
@@ -306,7 +309,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			compiledStatement = connection.compileStatement(query, StatementType.SELECT, noFieldTypes,
 					DatabaseConnection.DEFAULT_RESULT_FLAGS, false);
 			assignStatementArguments(compiledStatement, arguments);
-			RawResultsImpl<UO> rawResults = new RawResultsImpl<UO>(connectionSource, connection, query, String[].class,
+			RawResultsImpl<UO> rawResults = new RawResultsImpl<UO>(connectionSource, connection, String[].class,
 					compiledStatement, new UserRawRowMapper<UO>(rowMapper, this), objectCache);
 			compiledStatement = null;
 			connection = null;
@@ -335,7 +338,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			compiledStatement = connection.compileStatement(query, StatementType.SELECT, noFieldTypes,
 					DatabaseConnection.DEFAULT_RESULT_FLAGS, false);
 			assignStatementArguments(compiledStatement, arguments);
-			RawResultsImpl<UO> rawResults = new RawResultsImpl<UO>(connectionSource, connection, query, String[].class,
+			RawResultsImpl<UO> rawResults = new RawResultsImpl<UO>(connectionSource, connection, String[].class,
 					compiledStatement, new UserRawRowObjectMapper<UO>(rowMapper, columnTypes), objectCache);
 			compiledStatement = null;
 			connection = null;
@@ -364,7 +367,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			compiledStatement = connection.compileStatement(query, StatementType.SELECT, noFieldTypes,
 					DatabaseConnection.DEFAULT_RESULT_FLAGS, false);
 			assignStatementArguments(compiledStatement, arguments);
-			RawResultsImpl<Object[]> rawResults = new RawResultsImpl<Object[]>(connectionSource, connection, query,
+			RawResultsImpl<Object[]> rawResults = new RawResultsImpl<Object[]>(connectionSource, connection,
 					Object[].class, compiledStatement, new ObjectArrayRowMapper(columnTypes), objectCache);
 			compiledStatement = null;
 			connection = null;
@@ -393,7 +396,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			compiledStatement = connection.compileStatement(query, StatementType.SELECT, noFieldTypes,
 					DatabaseConnection.DEFAULT_RESULT_FLAGS, false);
 			assignStatementArguments(compiledStatement, arguments);
-			RawResultsImpl<UO> rawResults = new RawResultsImpl<UO>(connectionSource, connection, query, Object[].class,
+			RawResultsImpl<UO> rawResults = new RawResultsImpl<UO>(connectionSource, connection, Object[].class,
 					compiledStatement, new UserDatabaseResultsMapper<UO>(mapper), objectCache);
 			compiledStatement = null;
 			connection = null;

@@ -81,6 +81,15 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID>
 		argHolders[index].setValue(value);
 	}
 
+	@Override
+	public int getNumArgs() {
+		if (argHolders == null) {
+			return 0;
+		} else {
+			return argHolders.length;
+		}
+	}
+
 	/**
 	 * Assign arguments to the statement.
 	 * 
