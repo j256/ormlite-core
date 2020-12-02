@@ -52,4 +52,9 @@ public interface PreparedStmt<T> extends GenericRowMapper<T> {
 	 *            Object to set in the argument holder.
 	 */
 	public void setArgumentHolderValue(int index, Object value) throws SQLException;
+
+	/**
+	 * Return the number of associated arguments with the statement.
+	 */
+	public int getNumArgs();
 }

@@ -291,8 +291,6 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 	public void testPrepareStatement() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, false);
 		QueryBuilder<Foo, Integer> qb = new QueryBuilder<Foo, Integer>(databaseType, baseFooTableInfo, dao);
-		PreparedQuery<Foo> stmt = qb.prepare();
-		stmt.getStatement();
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT * FROM ");
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
@@ -306,8 +304,6 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		QueryBuilder<Foo, Integer> qb = new QueryBuilder<Foo, Integer>(new LimitInline(), baseFooTableInfo, dao);
 		long limit = 213;
 		qb.limit(limit);
-		PreparedQuery<Foo> stmt = qb.prepare();
-		stmt.getStatement();
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT * FROM ");
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
@@ -323,8 +319,6 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		long limit = 213;
 		qb.offset(offset);
 		qb.limit(limit);
-		PreparedQuery<Foo> stmt = qb.prepare();
-		stmt.getStatement();
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT * FROM ");
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());

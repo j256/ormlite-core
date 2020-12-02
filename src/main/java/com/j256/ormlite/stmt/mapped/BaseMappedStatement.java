@@ -105,6 +105,6 @@ public abstract class BaseMappedStatement<T, ID> {
 
 	@Override
 	public String toString() {
-		return "MappedStatement: " + statement;
+		return statement;
 	}
 }

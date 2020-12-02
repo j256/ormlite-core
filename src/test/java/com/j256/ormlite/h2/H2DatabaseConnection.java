@@ -95,7 +95,7 @@ public class H2DatabaseConnection implements DatabaseConnection {
 		} else {
 			stmt = connection.prepareStatement(statement, resultFlags, ResultSet.CONCUR_READ_ONLY);
 		}
-		return new H2CompiledStatement(stmt, cacheStore);
+		return new H2CompiledStatement(stmt, statement, cacheStore);
 	}
 
 	@Override

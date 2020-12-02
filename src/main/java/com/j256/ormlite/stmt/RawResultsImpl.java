@@ -24,12 +24,11 @@ public class RawResultsImpl<T> implements GenericRawResults<T> {
 	private SelectIterator<T, Void> iterator;
 	private final String[] columnNames;
 
-	public RawResultsImpl(ConnectionSource connectionSource, DatabaseConnection connection, String query,
-			Class<?> clazz, CompiledStatement compiledStmt, GenericRowMapper<T> rowMapper, ObjectCache objectCache)
+	public RawResultsImpl(ConnectionSource connectionSource, DatabaseConnection connection, Class<?> clazz,
+			CompiledStatement compiledStmt, GenericRowMapper<T> rowMapper, ObjectCache objectCache)
 			throws SQLException {
-		iterator =
-				new SelectIterator<T, Void>(clazz, null, rowMapper, connectionSource, connection, compiledStmt, query,
-						objectCache);
+		iterator = new SelectIterator<T, Void>(clazz, null, rowMapper, connectionSource, connection, compiledStmt,
+				objectCache);
 		/*
 		 * NOTE: we _have_ to get these here before the results object is closed if there are no results
 		 */
