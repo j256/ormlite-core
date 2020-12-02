@@ -32,6 +32,8 @@ public class OrderBySelectArgTest extends BaseCoreTest {
 
 		SelectArg selectArg = new SelectArg(SqlType.STRING, COLUMN_NAME);
 		QueryBuilder<TestObject, String> qb = testDao.queryBuilder();
+		
+		// specify the column name as a raw SelectArg
 		qb.selectColumns(COLUMN_NAME).groupBy(COLUMN_NAME).orderByRaw("? IS NULL ASC", selectArg);
 
 		List<TestObject> results1 = qb.query();
@@ -40,7 +42,7 @@ public class OrderBySelectArgTest extends BaseCoreTest {
 		// reset for another test query
 		qb.reset();
 
-		// testColumn is now hardcoded
+		// here we hardcode the column-name into the query
 		qb.selectColumns(COLUMN_NAME).groupBy(COLUMN_NAME).orderByRaw("`" + COLUMN_NAME + "` IS NULL ASC");
 
 		List<TestObject> results2 = qb.query();
