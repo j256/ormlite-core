@@ -24,7 +24,10 @@ import com.j256.ormlite.table.TableInfo;
  */
 public abstract class StatementBuilder<T, ID> {
 
-	private static Logger logger = LoggerFactory.getLogger(StatementBuilder.class);
+	private static final ArgumentHolder[] EMPTY_ARGUMENT_HOLDERS = new ArgumentHolder[0];
+	private static final FieldType[] EMPTY_FIELD_TYPES = new FieldType[0];
+
+	private static final Logger logger = LoggerFactory.getLogger(StatementBuilder.class);
 
 	protected final TableInfo<T, ID> tableInfo;
 	protected final String tableName;
@@ -73,15 +76,23 @@ public abstract class StatementBuilder<T, ID> {
 	protected MappedPreparedStmt<T, ID> prepareStatement(Long limit, boolean cacheStore) throws SQLException {
 		List<ArgumentHolder> argList = new ArrayList<ArgumentHolder>();
 		String statement = buildStatementString(argList);
-		ArgumentHolder[] selectArgs = argList.toArray(new ArgumentHolder[argList.size()]);
-		FieldType[] resultFieldTypes = getResultFieldTypes();
-		FieldType[] argFieldTypes = new FieldType[argList.size()];
-		for (int selectC = 0; selectC < selectArgs.length; selectC++) {
-			argFieldTypes[selectC] = selectArgs[selectC].getFieldType();
-		}
 		if (!type.isOkForStatementBuilder()) {
-			throw new IllegalStateException("Building a statement from a " + type + " statement is not allowed");
+			throw new IllegalStateException(
+					"Building a statement from a " + type + " statement is not allowed: " + statement);
 		}
+		ArgumentHolder[] selectArgs;
+		FieldType[] argFieldTypes;
+		if (argList.isEmpty()) {
+			selectArgs = EMPTY_ARGUMENT_HOLDERS;
+			argFieldTypes = EMPTY_FIELD_TYPES;
+		} else {
+			selectArgs = argList.toArray(new ArgumentHolder[argList.size()]);
+			argFieldTypes = new FieldType[argList.size()];
+			for (int selectC = 0; selectC < selectArgs.length; selectC++) {
+				argFieldTypes[selectC] = selectArgs[selectC].getFieldType();
+			}
+		}
+		FieldType[] resultFieldTypes = getResultFieldTypes();
 		return new MappedPreparedStmt<T, ID>(dao, tableInfo, statement, argFieldTypes, resultFieldTypes, selectArgs,
 				(databaseType.isLimitSqlSupported() ? null : limit), type, cacheStore);
 	}
