@@ -2782,6 +2782,18 @@ specified since the offset is an argument of the limit.
 Add "ORDER BY" clause to the SQL query statement to order the results by the specified column name.  Use the ascending
 boolean to get a ascending or descending order.  This can be called multiple times to group by multiple columns.
 
+@cindex order by nulls first
+@item orderByNullsFirst(String columnName, boolean ascending)
+
+Add "ORDER BY" clause to the SQL query statement with a column-name and ascending (if true) with a NULLS FIRST
+qualifier. This may not be supported by all database types.
+
+@cindex order by nulls last
+@item orderByNullsLast(String columnName, boolean ascending)
+
+Add "ORDER BY" clause to the SQL query statement with a column-name and ascending (if true) with a NULLS LAST
+qualifier. This may not be supported by all database types.
+
 @cindex order by raw SQL
 @item orderByRaw(String sql)
 

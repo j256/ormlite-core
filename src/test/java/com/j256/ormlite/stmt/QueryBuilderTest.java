@@ -1,5 +1,6 @@
 package com.j256.ormlite.stmt;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -1587,6 +1588,45 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertNull(results.get(0).testColumn);
 	}
 
+	@Test
+	public void testOrdersNullsFirstLast() throws Exception {
+		Dao<TestObject, Void> dao = createDao(TestObject.class, true);
+
+		TestObject obj1 = new TestObject("a");
+		TestObject obj2 = new TestObject("g");
+		TestObject obj3 = new TestObject("n");
+		TestObject obj4 = new TestObject("y");
+		TestObject obj5 = new TestObject("z");
+		TestObject objNull = new TestObject(null);
+
+		dao.create(obj3);
+		dao.create(objNull);
+		dao.create(obj5);
+		dao.create(objNull);
+		dao.create(obj1);
+		dao.create(objNull);
+		dao.create(obj2);
+		dao.create(objNull);
+		dao.create(obj3);
+		dao.create(objNull);
+		dao.create(obj4);
+
+		QueryBuilder<TestObject, Void> qb = dao.queryBuilder();
+		List<TestObject> results = qb.orderByNullsFirst("testColumn", true).groupBy("testColumn").query();
+		assertEquals(results.size(), 6);
+		assertArrayEquals(new TestObject[] { objNull, obj1, obj2, obj3, obj4, obj5 },
+				results.toArray(new TestObject[results.size()]));
+
+		qb.reset();
+
+		results = qb.orderByNullsLast("testColumn", true).groupBy("testColumn").query();
+		assertEquals(results.size(), 6);
+		assertArrayEquals(new TestObject[] { obj1, obj2, obj3, obj4, obj5, objNull },
+				results.toArray(new TestObject[results.size()]));
+	}
+
+	/* ======================================================================================================== */
+
 	private static class TestObject {
 		@DatabaseField
 		private String testColumn;
@@ -1598,9 +1638,25 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		public TestObject(String testColumn) {
 			this.testColumn = testColumn;
 		}
-	}
 
-	/* ======================================================================================================== */
+		@Override
+		public int hashCode() {
+			return ((testColumn == null) ? 0 : testColumn.hashCode());
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null || getClass() != obj.getClass()) {
+				return false;
+			}
+			TestObject other = (TestObject) obj;
+			if (testColumn == null) {
+				return (other.testColumn == null);
+			} else {
+				return testColumn.equals(other.testColumn);
+			}
+		}
+	}
 
 	private static class LimitInline extends BaseDatabaseType {
 		@Override

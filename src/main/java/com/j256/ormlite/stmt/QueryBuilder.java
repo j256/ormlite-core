@@ -182,6 +182,24 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	/**
+	 * Add "ORDER BY" clause to the SQL query statement with a column-name and ascending (if true) with a NULLS FIRST
+	 * qualifier. This may not be supported by all database types.
+	 */
+	public QueryBuilder<T, ID> orderByNullsFirst(String columnName, boolean ascending) {
+		addOrderBy(new OrderBy(columnName, ascending, true));
+		return this;
+	}
+
+	/**
+	 * Add "ORDER BY" clause to the SQL query statement with a column-name and ascending (if true) with a NULLS LAST
+	 * qualifier. This may not be supported by all database types.
+	 */
+	public QueryBuilder<T, ID> orderByNullsLast(String columnName, boolean ascending) {
+		addOrderBy(new OrderBy(columnName, ascending, false));
+		return this;
+	}
+
+	/**
 	 * Add raw SQL "ORDER BY" clause to the SQL query statement.
 	 * 
 	 * @param rawSql
@@ -485,7 +503,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 			sb.append("COUNT(").append(countOfQuery).append(") ");
 		}
 		sb.append("FROM ");
-		if (tableInfo.getSchemaName() != null && tableInfo.getSchemaName().length() > 0){
+		if (tableInfo.getSchemaName() != null && tableInfo.getSchemaName().length() > 0) {
 			databaseType.appendEscapedEntityName(sb, tableInfo.getSchemaName());
 			sb.append('.');
 		}
@@ -544,7 +562,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	protected void appendTableQualifier(StringBuilder sb) {
-		if (tableInfo.getSchemaName() != null && tableInfo.getSchemaName().length() > 0){
+		if (tableInfo.getSchemaName() != null && tableInfo.getSchemaName().length() > 0) {
 			databaseType.appendEscapedEntityName(sb, tableInfo.getSchemaName());
 			sb.append('.');
 		}
@@ -655,7 +673,8 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	private void appendJoinSql(StringBuilder sb) {
 		for (JoinInfo joinInfo : joinList) {
 			sb.append(joinInfo.type.sql).append(" JOIN ");
-			if (joinInfo.queryBuilder.tableInfo.getSchemaName() != null && joinInfo.queryBuilder.tableInfo.getSchemaName().length() > 0){
+			if (joinInfo.queryBuilder.tableInfo.getSchemaName() != null
+					&& joinInfo.queryBuilder.tableInfo.getSchemaName().length() > 0) {
 				databaseType.appendEscapedEntityName(sb, joinInfo.queryBuilder.tableInfo.getSchemaName());
 				sb.append('.');
 			}
@@ -838,6 +857,11 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 					// sb.append(" ASC");
 				} else {
 					sb.append(" DESC");
+				}
+				if (orderBy.isNullsFirst()) {
+					sb.append(" NULLS FIRST");
+				} else if (orderBy.isNullsLast()) {
+					sb.append(" NULLS LAST");
 				}
 			} else {
 				sb.append(orderBy.getRawSql());

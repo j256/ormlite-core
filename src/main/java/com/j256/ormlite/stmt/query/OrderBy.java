@@ -15,19 +15,29 @@ public class OrderBy {
 	private final boolean ascending;
 	private final String rawSql;
 	private final ArgumentHolder[] orderByArgs;
+	private final boolean nullsFirst;
+	private final boolean nullsLast;
 
 	public OrderBy(String columnName, boolean ascending) {
-		this.columnName = columnName;
-		this.ascending = ascending;
-		this.rawSql = null;
-		this.orderByArgs = null;
+		this(columnName, ascending, null, null, false, false);
+	}
+
+	public OrderBy(String columnName, boolean ascending, boolean nullsFirst) {
+		this(columnName, ascending, null, null, nullsFirst, !nullsFirst);
 	}
 
 	public OrderBy(String rawSql, ArgumentHolder[] orderByArgs) {
-		this.columnName = null;
-		this.ascending = true;
+		this(null, true, rawSql, orderByArgs, false, false);
+	}
+
+	private OrderBy(String columnName, boolean ascending, String rawSql, ArgumentHolder[] orderByArgs,
+			boolean nullsFirst, boolean nullsLast) {
+		this.columnName = columnName;
+		this.ascending = ascending;
 		this.rawSql = rawSql;
 		this.orderByArgs = orderByArgs;
+		this.nullsFirst = nullsFirst;
+		this.nullsLast = nullsLast;
 	}
 
 	public String getColumnName() {
@@ -44,5 +54,13 @@ public class OrderBy {
 
 	public ArgumentHolder[] getOrderByArgs() {
 		return orderByArgs;
+	}
+
+	public boolean isNullsFirst() {
+		return nullsFirst;
+	}
+
+	public boolean isNullsLast() {
+		return nullsLast;
 	}
 }
