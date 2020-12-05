@@ -12,16 +12,16 @@
 	* CORE: Added BaseSchemaUtil to print out the schema statements necessary to create a table.
 	* CORE: Added the ability for users to set a character set for byte array type.  Thanks to noordawod.
 	* CORE: Added a Logger.setGlobalLogLevel(...) method to set a global filter on all log messages.
-	* CORE: Moved from using RETURN_GENERATED_KEYS to named columns for generated ids to be more compatible.  Thanks to Bo98.
+	* CORE: Moved from RETURN_GENERATED_KEYS to named columns for generated ids to be more compatible.  Thanks to Bo98.
 	* CORE: Significant refactoring to make FieldType and TableInfo not depend on Dao or ConnectionSource.
 	* CORE: Improved memory usage by unregistering DAOs associated to a connection source.  Thanks to bosborn.
 	* CORE: Fixed problem with null field assignment causing a NPE in the resulting message.  Thanks to hrach.
 	* CORE: Fixed problems with the transaction level thread-local not being handled right.  Thanks to Bo98.
 	* CORE: Fixed @DatabaseField(fullColumnDefinition) which was completely broken.  Thanks to ethanmdavidson.
 	* CORE: Fixed default width not being applied for BigInteger.  Thanks to Bo98.
-	* CORE: Fixed the default mysql driver and made driver loaded more forgiving.  Thanks to zanella.
+	* CORE: Fixed the default mysql driver and made driver loading more forgiving.  Thanks to zanella.
 	* CORE: Fixed a couple of incorrect SqlTypes in field converters.  Thanks to Bo98.
-	* CORE: Support schema name qualifiers for tables.  Th anks to Fedor Bobin.
+	* CORE: Support schema name qualifiers for tables.  Thanks to Fedor Bobin.
 	* CORE: Fixed concurrency issues when using iterators.  Thanks to MarcMil.
 
 5.1: 2/19/2018
@@ -44,27 +44,27 @@
 	* CORE: Added TimeStampStringType to support Android timestamps.
 	* CORE: Added the ability to override the DataPersister as well as the FieldConverter.
 	* CORE: Added support for the @Table entity from javax.persistence annotations. Thanks to wener. Bug #174.
-	* CORE: Added used of java.io.Closeable to support CloseableIterator and other features for Java7 support. Thanks to livelazily.
+	* CORE: Added used of java.io.Closeable to support CloseableIterator and other Java7 support. Thanks to livelazily.
 	* CORE: Added Dao.create(Collection) method for bulk creation.  Thanks to Farrukh Najmi for the good idea.
 	* CORE: Added DataType.BOOLEAN_CHAR (to support '1' '0' or 't' 'f') and BOOLEAN_INTEGER.  Thanks to stew.
 	* CORE: Added support for QueryBuilder.countOf("DISTINCT(field)").  Thanks to spacetime.
 	* CORE: Added support for Java 8 methods.  Thanks to VincentFTS.
 	* CORE: Added support for Joda DateTime to be able to be a version field.  Thanks much to outofrange.
 	* CORE: Added support for raw queries using the DatabaseResults in the mapper.  Thanks much to nonameplum.
-	* CORE: Added support for the ENUM_TO_STRING type which persists Enum.toString() instead of name().  Thanks jiajia-li.
+	* CORE: Added support for ENUM_TO_STRING type which persists Enum.toString() instead of name().  Thanks jiajia-li.
 	* CORE: Added support for BigInteger to be an ID and version field by saving as string.  Thanks noordawod.
-	* CORE: Added support for BYTE_ARRAY and STRING_BYTE_ARRAY data type to be ids and have default values.  Thanks noordawod.
+	* CORE: Added support for BYTE_ARRAY and STRING_BYTE_ARRAY data type for ids and default values.  Thanks noordawod.
 	* CORE: Added support for table aliasing.  Thanks much to p91paul.
 	* CORE: Added table-name for many ConnectionSource methods to allow partitioning and other per-table operations.
 	* CORE: Added better support for per-database type object custom persisters.  Thanks to rzorzorzo.
-	* CORE: Fixed (really) QueryBuilder.orderByRaw(...) and orderBy(...) mutually exclusivity. Thanks to Diederik. Bug #161.
+	* CORE: Fixed (really) QueryBuilder.orderByRaw(...), orderBy(...) mutually exclusivity. Thanks to Diederik. Bug #161.
 	* CORE: Fixed a bug when we select columns on an entity without an id field.  Thanks to lder.
 	* CORE: Fixed a bug with building queries using selectRaw(...).  Bug #166.
 	* CORE: Fixed the javax.persistence annotation processing and revamped it to use the annotations directly.
 	* CORE: Fixed bug with UpdateBuilder methods returning wrong type.  Thanks to Joseph Jones.  Bug #180.
 	* CORE: Fixed bug with the raw results that they are not obeying the AS SQL.  Thanks to nonameplum.  Bug #183.
 	* CORE: Fixed bug with ISNULL and ISNOTNULL which weren't working with serializable.  Thanks to andrew8er.  Bug #185.
-	* CORE: Fixed bug with dao.update() not setting the dao on BaseDaoEnabled instances. Thanks to Carlos Fonseca. Bug #177.
+	* CORE: Fixed bug with dao.update() not setting dao on BaseDaoEnabled instances. Thanks to Carlos Fonseca. Bug #177.
 	* CORE: Fixed bug where dao.deleteById(...) was not being properly notified. Thanks to Daniel Jette. Bug #190.
 	* CORE: Fixed bug where useGetSet did not understand isXxx() for boolean fields. Thanks to HeDYn. Bug #187.
 	* CORE: Fixed finding of get/set/is methods if not in English locale.  Thanks to Christian Ruppert.  Bug #191.
@@ -76,8 +76,8 @@
 	* CORE: Fixed a bug where the logger did not handle an array of primitives correctly.
 	* CORE: Fixed problem with capitalization of entities in non-english locales.  ENGLISH now the default.
 	* CORE: Fixed problems with using @DatabaseField(foreignColumnName).  Thanks to Knight704.
-	* CORE: Fixed problem with storing partially formed objects in the cache because of select arguments.  Thanks to pimduin.
-	* CORE: Fixed a bug in the DatabaseFieldConfig constructor where it was ignoring the DataType param.  Thanks to magicgoose.
+	* CORE: Fixed problem with storing partially formed objects in cache because of select arguments.  Thanks to pimduin.
+	* CORE: Fixed a bug in DatabaseFieldConfig constructor where it was ignoring DataType param.  Thanks to magicgoose.
 	* CORE: Removed deprecated methods: Dao.setAutoCommit(boolean), isAutoCommit()
 	* CORE: Removed deprecated methods: QueryBuilder.clear(), limit(int), offset(int), use long versions of methods
 	* CORE: Removed deprecated methods: ForeignCollectionField.maxEagerForeignCollectionLevel(), foreignColumnName() 
@@ -85,17 +85,17 @@
 	* CORE: Removed deprecated methods: DatabaseFieldConfig.setForeignCollectionMaxEagerForeignCollectionLevel()
 	* CORE: Removed deprecated methods: DatabaseFieldConfig.setForeignCollectionOrderColumn()
 	* CORE: Removed deprecated methods: DatabaseFieldConfig.setForeignCollectionForeignColumnName()
-	* JDBC: Added support for UUID database fields for Postgres and MSSQL.  Use dataType = UUID_NATIVE.  Thanks to tsharp.
+	* JDBC: Added support for UUID database fields for Postgres, MSSQL.  Use dataType = UUID_NATIVE.  Thanks to tsharp.
 	* JDBC: Added support for a JdbcConnectionSource that uses an existing database connection.  Thanks to natinusala.
 	* JDBC: Fixed (possibly) some problems with the Oracle type with better boolean support.  Thanks to 51mon.
 	* JDBC: Removed deprecated method: DataSourceConnectionSource.setUsesTransactions(boolean).
 	* JDBC: Removed deprecated method: JdbcPooledConnectionSource.setUsesTransactions(boolean).
 	* ANDROID: Added initial take on Loader base classes from EgorAnd for newer Android versions.  Thanks much!!
-	* ANDROID: Added better support for Slf4jLoggingLog from JDBC to CORE so Android users can use it.  Thanks to tonyxiao.
+	* ANDROID: Added better support for Slf4jLoggingLog from JDBC to CORE for Android users.  Thanks to tonyxiao.
 	* ANDROID: Fixed the string processing when persisting java.sql.Timestamp and java.sql.Date classes. Bug #163.
 	* ANDROID: Fixed problem with the maxForeignAutoRefreshLevel config setting.  Thanks to Eric Fung et al.  Bug #194.
 	* ANDROID: Fixed possible problem with queryForFirst() and improper LIMIT implementation.
-	* ANDROID: Removed deprecated methods: OpenHelperManager.release() and AndroidDatabaseResults(Cursor, boolean, ObjectCache).
+	* ANDROID: Removed deprecated methods: OpenHelperManager.release(), AndroidDatabaseResults(Cursor, boolean, ObjectCache).
 
 4.48: 12/16/2013
 	* CORE: Added support for tracking direct database connection activity with DatabaseConnectionProxy.
