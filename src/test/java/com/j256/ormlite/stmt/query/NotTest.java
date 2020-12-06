@@ -48,7 +48,7 @@ public class NotTest extends BaseCoreStmtTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testBaseNotClause() {
 		Not not = new Not();
-		not.setMissingClause(new ManyClause((Clause) null, "AND"));
+		not.setMissingClause(new ManyClause((Clause) null, ManyClause.AND_OPERATION));
 	}
 
 	@Test
