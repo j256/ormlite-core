@@ -16,8 +16,10 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.db.BaseDatabaseType;
@@ -25,8 +27,11 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.field.SqlType;
+import com.j256.ormlite.h2.H2ConnectionSource;
+import com.j256.ormlite.h2.H2DatabaseType;
 import com.j256.ormlite.stmt.QueryBuilder.JoinType;
 import com.j256.ormlite.stmt.QueryBuilder.JoinWhereOperation;
+import com.j256.ormlite.support.ConnectionSource;
 
 public class QueryBuilderTest extends BaseCoreStmtTest {
 
@@ -316,6 +321,22 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		sb.append(" LIMIT ").append(limit);
 		sb.append(" OFFSET ").append(offset);
 		assertEquals(sb.toString(), qb.prepareStatementString());
+	}
+
+	@Test(expected = SQLException.class)
+	public void testOffsetThrows() throws Exception {
+		H2DatabaseType ourType = new H2DatabaseType() {
+			@Override
+			public boolean isOffsetSqlSupported() {
+				return false;
+			}
+		};
+		ConnectionSource ourSource = new H2ConnectionSource(ourType);
+		@SuppressWarnings("unchecked")
+		BaseDaoImpl<Foo, Integer> dao = (BaseDaoImpl<Foo, Integer>) DaoManager.createDao(ourSource, Foo.class);
+		configDao(dao, true);
+		QueryBuilder<Foo, Integer> qb = dao.queryBuilder();
+		qb.offset(200L);
 	}
 
 	@Test
@@ -1664,6 +1685,54 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals("SELECT * FROM `foo` WHERE ((`val` = 10 OR `val` = 11) AND `val` = 12)",
 				qb.prepareStatementString());
 		where.reset();
+	}
+
+	@Test
+	public void testQueryRaw() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		foo.stringField = "zipper";
+		dao.create(foo);
+		QueryBuilder<Foo, Integer> qb = dao.queryBuilder();
+		assertEquals(1, qb.countOf());
+		GenericRawResults<String[]> results = qb.queryRaw();
+		List<String[]> stringResults = results.getResults();
+		assertEquals(1, stringResults.size());
+		assertEquals(Integer.toString(foo.id), stringResults.get(0)[0]);
+		assertEquals(foo.stringField, stringResults.get(0)[3]);
+	}
+
+	@Test
+	public void testQueryRawFirst() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		foo.stringField = "zipper";
+		dao.create(foo);
+		QueryBuilder<Foo, Integer> qb = dao.queryBuilder();
+		assertEquals(1, qb.countOf());
+		String[] result = qb.queryRawFirst();
+		assertEquals(4, result.length);
+		assertEquals(Integer.toString(foo.id), result[0]);
+		assertEquals(foo.stringField, result[3]);
+	}
+
+	@Test
+	public void testGroupByRaw() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		foo1.stringField = "zipper";
+		dao.create(foo1);
+		Foo foo2 = new Foo();
+		foo2.stringField = "foo";
+		dao.create(foo2);
+		Foo foo3 = new Foo();
+		foo3.stringField = "zipper";
+		dao.create(foo3);
+		QueryBuilder<Foo, Integer> qb = dao.queryBuilder();
+		qb.selectColumns(Foo.STRING_COLUMN_NAME);
+		qb.groupByRaw(Foo.STRING_COLUMN_NAME);
+		List<Foo> results = qb.query();
+		assertEquals(2, results.size());
 	}
 
 	/* ======================================================================================================== */

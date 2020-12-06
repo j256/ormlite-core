@@ -232,7 +232,7 @@ public class FieldType {
 			this.isGeneratedId = false;
 			this.generatedIdSequence = null;
 		}
-		if (this.isId && (fieldConfig.isForeign() || fieldConfig.isForeignAutoRefresh())) {
+		if (this.isId && fieldConfig.isForeign()) {
 			throw new IllegalArgumentException("Id field " + field.getName() + " cannot also be a foreign object");
 		}
 		if (fieldConfig.isUseGetSet()) {
@@ -254,6 +254,10 @@ public class FieldType {
 			throw new IllegalArgumentException(
 					"Field " + field.getName() + " must be a generated-id if allowGeneratedIdInsert = true");
 		}
+		if (fieldConfig.getForeignColumnName() != null && !fieldConfig.isForeign()) {
+			throw new IllegalArgumentException(
+					"Field " + field.getName() + " must have foreign = true if foreignColumnName is set");
+		}
 		if (fieldConfig.isForeignAutoRefresh() && !fieldConfig.isForeign()) {
 			throw new IllegalArgumentException(
 					"Field " + field.getName() + " must have foreign = true if foreignAutoRefresh = true");
@@ -261,10 +265,6 @@ public class FieldType {
 		if (fieldConfig.isForeignAutoCreate() && !fieldConfig.isForeign()) {
 			throw new IllegalArgumentException(
 					"Field " + field.getName() + " must have foreign = true if foreignAutoCreate = true");
-		}
-		if (fieldConfig.getForeignColumnName() != null && !fieldConfig.isForeign()) {
-			throw new IllegalArgumentException(
-					"Field " + field.getName() + " must have foreign = true if foreignColumnName is set");
 		}
 		if (fieldConfig.isVersion() && (dataPersister == null || !dataPersister.isValidForVersion())) {
 			throw new IllegalArgumentException(
@@ -1112,11 +1112,6 @@ public class FieldType {
 		for (FieldType fieldType : foreignDao.getTableInfo().getFieldTypes()) {
 			if (fieldType.getType() == foreignClass
 					&& (foreignColumnName == null || fieldType.getField().getName().equals(foreignColumnName))) {
-				if (!fieldType.fieldConfig.isForeign() && !fieldType.fieldConfig.isForeignAutoRefresh()) {
-					// this may never be reached
-					throw new SQLException("Foreign collection object " + clazz + " for field '" + field.getName()
-							+ "' contains a field of class " + foreignClass + " but it's not foreign");
-				}
 				return fieldType;
 			}
 		}

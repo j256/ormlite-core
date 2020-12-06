@@ -2,7 +2,6 @@ package com.j256.ormlite;
 
 import java.sql.SQLException;
 
-import com.j256.ormlite.table.SchemaUtils;
 import org.junit.After;
 import org.junit.Before;
 
@@ -13,8 +12,10 @@ import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.h2.H2ConnectionSource;
 import com.j256.ormlite.h2.H2DatabaseType;
+import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.DatabaseTableConfig;
+import com.j256.ormlite.table.SchemaUtils;
 import com.j256.ormlite.table.TableUtils;
 
 public abstract class BaseCoreTest {
@@ -46,6 +47,13 @@ public abstract class BaseCoreTest {
 		if (connectionSource == null) {
 			throw new SQLException("Connection source is null");
 		}
+		@SuppressWarnings("unchecked")
+		BaseDaoImpl<T, ID> dao = (BaseDaoImpl<T, ID>) DaoManager.createDao(connectionSource, clazz);
+		return configDao(dao, createTable);
+	}
+
+	protected <T, ID> Dao<T, ID> createDao(ConnectionSource connectionSource, Class<T> clazz, boolean createTable)
+			throws SQLException {
 		@SuppressWarnings("unchecked")
 		BaseDaoImpl<T, ID> dao = (BaseDaoImpl<T, ID>) DaoManager.createDao(connectionSource, clazz);
 		return configDao(dao, createTable);
@@ -89,7 +97,7 @@ public abstract class BaseCoreTest {
 		TableUtils.dropTable(connectionSource, tableConfig, ignoreErrors);
 	}
 
-	private <T, ID> Dao<T, ID> configDao(BaseDaoImpl<T, ID> dao, boolean createTable) throws SQLException {
+	protected <T, ID> Dao<T, ID> configDao(BaseDaoImpl<T, ID> dao, boolean createTable) throws SQLException {
 		if (connectionSource == null) {
 			throw new SQLException("Connection source is null");
 		}
@@ -98,7 +106,7 @@ public abstract class BaseCoreTest {
 			if (tableConfig == null) {
 				tableConfig = DatabaseTableConfig.fromClass(databaseType, dao.getDataClass());
 			}
-			if (tableConfig.getSchemaName() != null && tableConfig.getSchemaName().length() > 0){
+			if (tableConfig.getSchemaName() != null && tableConfig.getSchemaName().length() > 0) {
 				createSchema(tableConfig);
 			}
 			createTable(tableConfig, true);

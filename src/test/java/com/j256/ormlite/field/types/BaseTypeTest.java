@@ -84,14 +84,14 @@ public abstract class BaseTypeTest extends BaseCoreTest {
 			} else {
 				assertEquals(sqlArg, dataPersister.javaToSqlArg(fieldType, javaVal));
 			}
-			assertEquals(isValidGeneratedType, dataPersister.isValidGeneratedType());
-			assertEquals(isAppropriateId, dataPersister.isAppropriateId());
-			assertEquals(isEscapedValue, dataPersister.isEscapedValue());
-			assertEquals(isEscapedValue, dataPersister.isEscapedDefaultValue());
-			assertEquals(isPrimitive, dataPersister.isPrimitive());
-			assertEquals(isSelectArgRequired, dataPersister.isArgumentHolderRequired());
-			assertEquals(isStreamType, dataPersister.isStreamType());
-			assertEquals(isComparable, dataPersister.isComparable());
+			assertEquals("is-valid-generated", isValidGeneratedType, dataPersister.isValidGeneratedType());
+			assertEquals("is-appropriate-id", isAppropriateId, dataPersister.isAppropriateId());
+			assertEquals("is-escaped-value", isEscapedValue, dataPersister.isEscapedValue());
+			assertEquals("is-escaped-default-value", isEscapedValue, dataPersister.isEscapedDefaultValue());
+			assertEquals("is-primitive", isPrimitive, dataPersister.isPrimitive());
+			assertEquals("select-arg required", isSelectArgRequired, dataPersister.isArgumentHolderRequired());
+			assertEquals("is-stream", isStreamType, dataPersister.isStreamType());
+			assertEquals("is-comparable", isComparable, dataPersister.isComparable());
 			if (isConvertableId) {
 				assertNotNull(dataPersister.convertIdNumber(10));
 			} else {

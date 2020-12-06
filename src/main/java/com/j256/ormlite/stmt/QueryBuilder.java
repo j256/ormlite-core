@@ -794,7 +794,7 @@ public class QueryBuilder<T, ID> extends StatementBuilder<T, ID> {
 	}
 
 	private boolean maybeAppendGroupBys(StringBuilder sb, boolean first) {
-		if (groupByList != null && !groupByList.isEmpty()) {
+		if (groupByList != null) {
 			appendGroupBys(sb, first);
 			first = false;
 		}

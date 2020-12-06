@@ -17,16 +17,21 @@ import com.j256.ormlite.support.DatabaseConnectionProxyFactory;
  */
 public class H2ConnectionSource implements ConnectionSource {
 
-	public DatabaseType databaseType = new H2DatabaseType();
+	public DatabaseType databaseType;
 	private DatabaseConnection connection = null;
 	private final String databaseUrl;
 	private static DatabaseConnectionProxyFactory connectionProxyFactory;
 
 	public H2ConnectionSource() throws SQLException {
-		this(H2DatabaseType.DATABASE_URL);
+		this(new H2DatabaseType(), H2DatabaseType.DATABASE_URL);
 	}
 
-	public H2ConnectionSource(String databaseUrl) throws SQLException {
+	public H2ConnectionSource(DatabaseType databaseType) {
+		this(databaseType, H2DatabaseType.DATABASE_URL);
+	}
+
+	private H2ConnectionSource(DatabaseType databaseType, String databaseUrl) {
+		this.databaseType = databaseType;
 		databaseType.loadDriver();
 		this.databaseUrl = databaseUrl;
 	}

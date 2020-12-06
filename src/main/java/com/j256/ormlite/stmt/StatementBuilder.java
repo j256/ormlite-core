@@ -76,10 +76,6 @@ public abstract class StatementBuilder<T, ID> {
 	protected MappedPreparedStmt<T, ID> prepareStatement(Long limit, boolean cacheStore) throws SQLException {
 		List<ArgumentHolder> argList = new ArrayList<ArgumentHolder>();
 		String statement = buildStatementString(argList);
-		if (!type.isOkForStatementBuilder()) {
-			throw new IllegalStateException(
-					"Building a statement from a " + type + " statement is not allowed: " + statement);
-		}
 		ArgumentHolder[] selectArgs;
 		FieldType[] argFieldTypes;
 		if (argList.isEmpty()) {
