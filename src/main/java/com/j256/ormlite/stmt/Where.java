@@ -605,7 +605,7 @@ public class Where<T, ID> {
 		}
 
 		// we don't pop here because we may want to run the query multiple times
-		peek().appendSql(databaseType, tableName, sb, columnArgList);
+		peek().appendSql(databaseType, tableName, sb, columnArgList, null);
 	}
 
 	@Override

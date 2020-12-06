@@ -191,8 +191,8 @@ public interface DatabaseConnection extends Closeable {
 	public boolean isTableExists(String tableName) throws SQLException;
 
 	/**
-	 * Return the underlying database connection so that per-connection calls can be made on it as necessary. This may
-	 * not be supported depending on your database type.
+	 * Return the underlying database connection so that per-connection calls can be made on it as necessary. This is
+	 * not supported under Android.
 	 */
 	public Connection getUnderlyingConnection();
 }

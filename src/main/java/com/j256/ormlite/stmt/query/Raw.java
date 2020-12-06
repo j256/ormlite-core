@@ -21,7 +21,8 @@ public class Raw implements Clause {
 	}
 
 	@Override
-	public void appendSql(DatabaseType databaseType, String tableName, StringBuilder sb, List<ArgumentHolder> argList) {
+	public void appendSql(DatabaseType databaseType, String tableName, StringBuilder sb, List<ArgumentHolder> argList,
+			Clause outer) {
 		sb.append(statement);
 		sb.append(' ');
 		for (ArgumentHolder arg : args) {

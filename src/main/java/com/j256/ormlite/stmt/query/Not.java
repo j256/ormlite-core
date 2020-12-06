@@ -48,14 +48,14 @@ public class Not implements Clause, NeedsFutureClause {
 
 	@Override
 	public void appendSql(DatabaseType databaseType, String tableName, StringBuilder sb,
-			List<ArgumentHolder> selectArgList) throws SQLException {
+			List<ArgumentHolder> selectArgList, Clause outer) throws SQLException {
 		if (comparison == null && exists == null) {
 			throw new IllegalStateException("Clause has not been set in NOT operation");
 		}
 		// this generates: (NOT 'x' = 123 )
 		if (comparison == null) {
 			sb.append("(NOT ");
-			exists.appendSql(databaseType, tableName, sb, selectArgList);
+			exists.appendSql(databaseType, tableName, sb, selectArgList, outer);
 		} else {
 			sb.append("(NOT ");
 			if (tableName != null) {

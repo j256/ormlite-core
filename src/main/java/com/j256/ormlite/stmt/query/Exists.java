@@ -22,8 +22,8 @@ public class Exists implements Clause {
 	}
 
 	@Override
-	public void appendSql(DatabaseType databaseType, String tableName, StringBuilder sb, List<ArgumentHolder> argList)
-			throws SQLException {
+	public void appendSql(DatabaseType databaseType, String tableName, StringBuilder sb, List<ArgumentHolder> argList,
+			Clause outer) throws SQLException {
 		sb.append("EXISTS (");
 		subQueryBuilder.appendStatementString(sb, argList);
 		sb.append(") ");
