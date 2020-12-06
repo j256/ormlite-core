@@ -130,6 +130,9 @@ public class TableInfo<T, ID> {
 		return tableName;
 	}
 
+	/**
+	 * Return the name of the schema or null if none. 
+	 */
 	public String getSchemaName() {
 		return schemaName;
 	}
