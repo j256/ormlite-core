@@ -468,28 +468,29 @@ public class FieldTypeTest extends BaseCoreTest {
 
 	@Test(expected = SQLException.class)
 	public void testGeneratedIdDefaultValue() throws Exception {
-		Field[] fields = GeneratedIdDefault.class.getDeclaredFields();
+		Class<GeneratedIdDefault> clazz = GeneratedIdDefault.class;
+		Field[] fields = clazz.getDeclaredFields();
 		assertTrue(fields.length >= 1);
 		Field idField = fields[0];
-		FieldType.createFieldType(databaseType, GeneratedIdDefault.class.getSimpleName(), idField,
-				GeneratedIdDefault.class);
+		FieldType.createFieldType(databaseType, clazz.getSimpleName(), idField, clazz);
 	}
 
 	@Test(expected = SQLException.class)
 	public void testThrowIfNullNotPrimitive() throws Exception {
-		Field[] fields = ThrowIfNullNonPrimitive.class.getDeclaredFields();
+		Class<ThrowIfNullNonPrimitive> clazz = ThrowIfNullNonPrimitive.class;
+		Field[] fields = clazz.getDeclaredFields();
 		assertTrue(fields.length >= 1);
 		Field field = fields[0];
-		FieldType.createFieldType(databaseType, ThrowIfNullNonPrimitive.class.getSimpleName(), field,
-				ThrowIfNullNonPrimitive.class);
+		FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
 	}
 
 	@Test(expected = SQLException.class)
 	public void testBadDateDefaultValue() throws Exception {
-		Field[] fields = DateDefaultBad.class.getDeclaredFields();
+		Class<DateDefaultBad> clazz = DateDefaultBad.class;
+		Field[] fields = clazz.getDeclaredFields();
 		assertTrue(fields.length >= 1);
 		Field field = fields[0];
-		FieldType.createFieldType(databaseType, DateDefaultBad.class.getSimpleName(), field, DateDefaultBad.class);
+		FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
 	}
 
 	@Test(expected = SQLException.class)
@@ -556,24 +557,26 @@ public class FieldTypeTest extends BaseCoreTest {
 
 	@Test
 	public void testForeignIsSerializable() throws Exception {
-		Field field = ForeignAlsoSerializable.class.getDeclaredField("foo");
-		FieldType fieldType = FieldType.createFieldType(databaseType, ForeignAlsoSerializable.class.getSimpleName(),
-				field, ForeignAlsoSerializable.class);
-		fieldType.configDaoInformation(connectionSource, ForeignAlsoSerializable.class);
+		Class<ForeignAlsoSerializable> clazz = ForeignAlsoSerializable.class;
+		Field field = clazz.getDeclaredField("foo");
+		FieldType fieldType = FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
+		fieldType.configDaoInformation(connectionSource, clazz);
 		assertTrue(fieldType.isForeign());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidEnumField() throws Exception {
-		Field field = InvalidEnumType.class.getDeclaredField("stuff");
-		FieldType.createFieldType(databaseType, InvalidEnumType.class.getSimpleName(), field, InvalidEnumType.class);
+		Class<InvalidEnumType> clazz = InvalidEnumType.class;
+		Field field = clazz.getDeclaredField("stuff");
+		FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
 	}
 
 	@Test
 	public void testRecursiveForeign() throws Exception {
-		Field field = Recursive.class.getDeclaredField("foreign");
+		Class<Recursive> clazz = Recursive.class;
+		Field field = clazz.getDeclaredField("foreign");
 		// this will throw without the recursive fix
-		FieldType.createFieldType(databaseType, Recursive.class.getSimpleName(), field, Recursive.class);
+		FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -606,33 +609,48 @@ public class FieldTypeTest extends BaseCoreTest {
 		verify(results, connectionSource, connection);
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void testForeignAutoRefreshOnNormalField() throws Exception {
+		Class<ForeignAutoRefreshWrong> clazz = ForeignAutoRefreshWrong.class;
+		Field[] fields = clazz.getDeclaredFields();
+		FieldType.createFieldType(databaseType, clazz.getSimpleName(), fields[0], clazz);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testForeignColumnOnNormalField() throws Exception {
+		Class<ForeignColumnNameWrong> clazz = ForeignColumnNameWrong.class;
+		Field[] fields = clazz.getDeclaredFields();
+		FieldType.createFieldType(databaseType, clazz.getSimpleName(), fields[0], clazz);
+	}
+
 	@Test(expected = SQLException.class)
 	public void testSerializableNoDataType() throws Exception {
-		Field field = SerializableNoDataType.class.getDeclaredField("serial");
+		Class<SerializableNoDataType> clazz = SerializableNoDataType.class;
+		Field field = clazz.getDeclaredField("serial");
 		// this will throw without the recursive fix
-		FieldType.createFieldType(databaseType, SerializableNoDataType.class.getSimpleName(), field,
-				SerializableNoDataType.class);
+		FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
 	}
 
 	@Test(expected = SQLException.class)
 	public void testByteArrayNoDataType() throws Exception {
-		Field field = ByteArrayNoDataType.class.getDeclaredField("bytes");
+		Class<ByteArrayNoDataType> clazz = ByteArrayNoDataType.class;
+		Field field = clazz.getDeclaredField("bytes");
 		// this will throw without the recursive fix
-		FieldType.createFieldType(databaseType, ByteArrayNoDataType.class.getSimpleName(), field,
-				ByteArrayNoDataType.class);
+		FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
 	}
 
 	@Test(expected = SQLException.class)
 	public void testForeignCollectionNoGeneric() throws Exception {
-		Field field = ForeignCollectionNoGeneric.class.getDeclaredField("foreignStuff");
-		FieldType.createFieldType(databaseType, ForeignCollectionNoGeneric.class.getSimpleName(), field,
-				ForeignCollectionNoGeneric.class);
+		Class<ForeignCollectionNoGeneric> clazz = ForeignCollectionNoGeneric.class;
+		Field field = clazz.getDeclaredField("foreignStuff");
+		FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
 	}
 
 	@Test(expected = SQLException.class)
 	public void testImproperId() throws Exception {
-		Field field = ImproperIdType.class.getDeclaredField("id");
-		FieldType.createFieldType(databaseType, ImproperIdType.class.getSimpleName(), field, ImproperIdType.class);
+		Class<ImproperIdType> clazz = ImproperIdType.class;
+		Field field = clazz.getDeclaredField("id");
+		FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
 	}
 
 	@Test
@@ -730,16 +748,16 @@ public class FieldTypeTest extends BaseCoreTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testAllowGeneratedIdInsertPrimitive() throws Exception {
-		Field field = AllowGeneratedIdNotGeneratedId.class.getDeclaredField("stuff");
-		FieldType.createFieldType(databaseType, AllowGeneratedIdNotGeneratedId.class.getSimpleName(), field,
-				AllowGeneratedIdNotGeneratedId.class);
+		Class<AllowGeneratedIdNotGeneratedId> clazz = AllowGeneratedIdNotGeneratedId.class;
+		Field field = clazz.getDeclaredField("stuff");
+		FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testVersionFieldWrongType() throws Exception {
-		Field field = VersionFieldWrongType.class.getDeclaredField("version");
-		FieldType.createFieldType(databaseType, AllowGeneratedIdNotGeneratedId.class.getSimpleName(), field,
-				AllowGeneratedIdNotGeneratedId.class);
+		Class<VersionFieldWrongType> clazz = VersionFieldWrongType.class;
+		Field field = clazz.getDeclaredField("version");
+		FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -759,9 +777,9 @@ public class FieldTypeTest extends BaseCoreTest {
 
 	@Test
 	public void testDefaultValueFieldTypeEmptyType() throws Exception {
-		Field field = DefaultEmptyString.class.getDeclaredField("defaultBlank");
-		FieldType fieldType = FieldType.createFieldType(databaseType, DefaultEmptyString.class.getSimpleName(), field,
-				DefaultEmptyString.class);
+		Class<DefaultEmptyString> clazz = DefaultEmptyString.class;
+		Field field = clazz.getDeclaredField("defaultBlank");
+		FieldType fieldType = FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
 		assertEquals("", fieldType.getDefaultValue());
 	}
 
@@ -858,6 +876,7 @@ public class FieldTypeTest extends BaseCoreTest {
 		assertEquals(foreign.id, parentResult.foreign.id);
 		assertNull(parentResult.foreign.stuff);
 	}
+
 	/* ========================================================================================================= */
 
 	protected static class LocalFoo {
@@ -942,6 +961,16 @@ public class FieldTypeTest extends BaseCoreTest {
 		String name;
 		@DatabaseField(foreign = true, foreignAutoRefresh = true)
 		ForeignForeign foreign;
+	}
+
+	protected static class ForeignAutoRefreshWrong {
+		@DatabaseField(foreignAutoRefresh = true)
+		String notForeign;
+	}
+
+	protected static class ForeignColumnNameWrong {
+		@DatabaseField(foreignColumnName = "zip")
+		String notForeign;
 	}
 
 	protected static class ForeignPrimitive {
