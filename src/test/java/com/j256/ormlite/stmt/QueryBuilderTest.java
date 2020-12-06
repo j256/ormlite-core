@@ -1650,6 +1650,20 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 				qb.prepareStatementString());
 		where.reset();
 
+		where.and( //
+				where.and( //
+						where.eq(Foo.VAL_COLUMN_NAME, 10), where.eq(Foo.VAL_COLUMN_NAME, 11) //
+				), //
+				where.and( //
+						where.or(where.eq(Foo.VAL_COLUMN_NAME, 12), where.eq(Foo.VAL_COLUMN_NAME, 13)), //
+						where.eq(Foo.VAL_COLUMN_NAME, 14) //
+				) //
+		);
+		assertEquals(
+				"SELECT * FROM `foo` WHERE (`val` = 10 AND `val` = 11 AND (`val` = 12 OR `val` = 13 ) AND `val` = 14 ) ",
+				qb.prepareStatementString());
+		where.reset();
+
 		where.and(where.or(where.eq(Foo.VAL_COLUMN_NAME, 10), where.eq(Foo.VAL_COLUMN_NAME, 11)),
 				where.eq(Foo.VAL_COLUMN_NAME, 12));
 		assertEquals("SELECT * FROM `foo` WHERE ((`val` = 10 OR `val` = 11 ) AND `val` = 12 ) ",
