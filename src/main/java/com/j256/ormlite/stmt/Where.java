@@ -134,6 +134,24 @@ public class Where<T, ID> {
 	}
 
 	/**
+	 * AND operation which takes 2 arguments and AND's them together.
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> There is no guarantee of the order of the clauses that are generated in the final query.
+	 * </p>
+	 * <p>
+	 * <b>NOTE:</b> I can't remove the generics code warning that can be associated with this method. You can instead
+	 * use the {@link #and(int)} method.
+	 * </p>
+	 */
+	public Where<T, ID> and(Where<T, ID> first, Where<T, ID> second) {
+		Clause secondClause = pop("AND");
+		Clause firstClause = pop("AND");
+		addClause(new ManyClause(firstClause, secondClause, null, ManyClause.AND_OPERATION));
+		return this;
+	}
+
+	/**
 	 * AND operation which takes 2 (or more) arguments and AND's them together.
 	 * 
 	 * <p>
@@ -363,6 +381,24 @@ public class Where<T, ID> {
 
 	/**
 	 * OR operation which takes 2 arguments and OR's them together.
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> There is no guarantee of the order of the clauses that are generated in the final query.
+	 * </p>
+	 * <p>
+	 * <b>NOTE:</b> I can't remove the generics code warning that can be associated with this method. You can instead
+	 * use the {@link #or(int)} method.
+	 * </p>
+	 */
+	public Where<T, ID> or(Where<T, ID> left, Where<T, ID> right) {
+		Clause secondClause = pop("OR");
+		Clause firstClause = pop("OR");
+		addClause(new ManyClause(firstClause, secondClause, null, ManyClause.OR_OPERATION));
+		return this;
+	}
+
+	/**
+	 * OR operation which takes 2 (or more) arguments and OR's them together.
 	 * 
 	 * <p>
 	 * <b>NOTE:</b> There is no guarantee of the order of the clauses that are generated in the final query.
@@ -627,15 +663,13 @@ public class Where<T, ID> {
 	}
 
 	private Clause[] buildClauseArray(Where<T, ID>[] others, String label) {
-		Clause[] clauses;
-		if (others.length == 0) {
-			clauses = null;
-		} else {
-			clauses = new Clause[others.length];
-			// fill in reverse order
-			for (int i = others.length - 1; i >= 0; i--) {
-				clauses[i] = pop(label);
-			}
+		if (others == null || others.length == 0) {
+			return null;
+		}
+		Clause[] clauses = new Clause[others.length];
+		// fill in reverse order
+		for (int i = others.length - 1; i >= 0; i--) {
+			clauses[i] = pop(label);
 		}
 		return clauses;
 	}
