@@ -127,7 +127,7 @@ public class Where<T, ID> {
 	 * AND operation which takes the previous clause and the next clause and AND's them together.
 	 */
 	public Where<T, ID> and() {
-		ManyClause clause = new ManyClause(pop("AND"), ManyClause.AND_OPERATION);
+		ManyClause clause = new ManyClause(pop("AND"), ManyClause.Operation.AND);
 		push(clause);
 		addNeedsFuture(clause);
 		return this;
@@ -147,7 +147,7 @@ public class Where<T, ID> {
 	public Where<T, ID> and(Where<T, ID> first, Where<T, ID> second) {
 		Clause secondClause = pop("AND");
 		Clause firstClause = pop("AND");
-		addClause(new ManyClause(firstClause, secondClause, null, ManyClause.AND_OPERATION));
+		addClause(new ManyClause(firstClause, secondClause, null, ManyClause.Operation.AND));
 		return this;
 	}
 
@@ -166,7 +166,7 @@ public class Where<T, ID> {
 		Clause[] clauses = buildClauseArray(others, "AND");
 		Clause secondClause = pop("AND");
 		Clause firstClause = pop("AND");
-		addClause(new ManyClause(firstClause, secondClause, clauses, ManyClause.AND_OPERATION));
+		addClause(new ManyClause(firstClause, secondClause, clauses, ManyClause.Operation.AND));
 		return this;
 	}
 
@@ -191,7 +191,7 @@ public class Where<T, ID> {
 		for (int i = numClauses - 1; i >= 0; i--) {
 			clauses[i] = pop("AND");
 		}
-		addClause(new ManyClause(clauses, ManyClause.AND_OPERATION));
+		addClause(new ManyClause(clauses, ManyClause.Operation.AND));
 		return this;
 	}
 
@@ -373,7 +373,7 @@ public class Where<T, ID> {
 	 * OR operation which takes the previous clause and the next clause and OR's them together.
 	 */
 	public Where<T, ID> or() {
-		ManyClause clause = new ManyClause(pop("OR"), ManyClause.OR_OPERATION);
+		ManyClause clause = new ManyClause(pop("OR"), ManyClause.Operation.OR);
 		push(clause);
 		addNeedsFuture(clause);
 		return this;
@@ -393,7 +393,7 @@ public class Where<T, ID> {
 	public Where<T, ID> or(Where<T, ID> left, Where<T, ID> right) {
 		Clause secondClause = pop("OR");
 		Clause firstClause = pop("OR");
-		addClause(new ManyClause(firstClause, secondClause, null, ManyClause.OR_OPERATION));
+		addClause(new ManyClause(firstClause, secondClause, null, ManyClause.Operation.OR));
 		return this;
 	}
 
@@ -412,7 +412,7 @@ public class Where<T, ID> {
 		Clause[] clauses = buildClauseArray(others, "OR");
 		Clause secondClause = pop("OR");
 		Clause firstClause = pop("OR");
-		addClause(new ManyClause(firstClause, secondClause, clauses, ManyClause.OR_OPERATION));
+		addClause(new ManyClause(firstClause, secondClause, clauses, ManyClause.Operation.OR));
 		return this;
 	}
 
@@ -437,7 +437,7 @@ public class Where<T, ID> {
 		for (int i = numClauses - 1; i >= 0; i--) {
 			clauses[i] = pop("OR");
 		}
-		addClause(new ManyClause(clauses, ManyClause.OR_OPERATION));
+		addClause(new ManyClause(clauses, ManyClause.Operation.OR));
 		return this;
 	}
 
