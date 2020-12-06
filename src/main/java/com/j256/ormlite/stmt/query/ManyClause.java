@@ -13,16 +13,13 @@ import com.j256.ormlite.stmt.ArgumentHolder;
  */
 public class ManyClause implements Clause, NeedsFutureClause {
 
-	public static final String AND_OPERATION = "AND";
-	public static final String OR_OPERATION = "OR";
-
 	private final Clause first;
 	private Clause second;
 	private final Clause[] others;
 	private final int startOthersAt;
-	private final String operation;
+	private final Operation operation;
 
-	public ManyClause(Clause first, String operation) {
+	public ManyClause(Clause first, Operation operation) {
 		this.first = first;
 		// second will be set later
 		this.second = null;
@@ -31,7 +28,7 @@ public class ManyClause implements Clause, NeedsFutureClause {
 		this.operation = operation;
 	}
 
-	public ManyClause(Clause first, Clause second, Clause[] others, String operation) {
+	public ManyClause(Clause first, Clause second, Clause[] others, Operation operation) {
 		this.first = first;
 		this.second = second;
 		this.others = others;
@@ -39,7 +36,7 @@ public class ManyClause implements Clause, NeedsFutureClause {
 		this.operation = operation;
 	}
 
-	public ManyClause(Clause[] others, String operation) {
+	public ManyClause(Clause[] others, Operation operation) {
 		this.first = others[0];
 		if (others.length < 2) {
 			this.second = null;
@@ -58,13 +55,13 @@ public class ManyClause implements Clause, NeedsFutureClause {
 		sb.append('(');
 		first.appendSql(databaseType, tableName, sb, selectArgList);
 		if (second != null) {
-			sb.append(operation);
+			sb.append(operation.sql);
 			sb.append(' ');
 			second.appendSql(databaseType, tableName, sb, selectArgList);
 		}
 		if (others != null) {
 			for (int i = startOthersAt; i < others.length; i++) {
-				sb.append(operation);
+				sb.append(operation.sql);
 				sb.append(' ');
 				others[i].appendSql(databaseType, tableName, sb, selectArgList);
 			}
@@ -75,5 +72,20 @@ public class ManyClause implements Clause, NeedsFutureClause {
 	@Override
 	public void setMissingClause(Clause right) {
 		second = right;
+	}
+
+	/**
+	 * Type of operation for the many clause.
+	 */
+	public static enum Operation {
+		AND("AND"),
+		OR("OR"),
+		// end
+		;
+		public final String sql;
+
+		private Operation(String sql) {
+			this.sql = sql;
+		}
 	}
 }
