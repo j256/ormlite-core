@@ -517,7 +517,6 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(2, fooDao.countOf(fooQb.prepare()));
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testMixAndOrInline() throws Exception {
 		Dao<Foo, String> dao = createDao(Foo.class, true);

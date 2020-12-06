@@ -109,7 +109,6 @@ public class WhereTest extends BaseCoreTest {
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testAndRemoveClauses() throws Exception {
 		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
@@ -416,7 +415,6 @@ public class WhereTest extends BaseCoreTest {
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testOrAbsorb() throws Exception {
 		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
