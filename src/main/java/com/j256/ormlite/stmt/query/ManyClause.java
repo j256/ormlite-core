@@ -51,22 +51,29 @@ public class ManyClause implements Clause, NeedsFutureClause {
 
 	@Override
 	public void appendSql(DatabaseType databaseType, String tableName, StringBuilder sb,
-			List<ArgumentHolder> selectArgList) throws SQLException {
-		sb.append('(');
-		first.appendSql(databaseType, tableName, sb, selectArgList);
+			List<ArgumentHolder> selectArgList, Clause outer) throws SQLException {
+
+		// if the outer is a ManyClause and has the same operation as us then we don't need parens
+		boolean outerSame = (outer instanceof ManyClause && ((ManyClause) outer).operation == operation);
+		if (!outerSame) {
+			sb.append('(');
+		}
+		first.appendSql(databaseType, tableName, sb, selectArgList, this);
 		if (second != null) {
 			sb.append(operation.sql);
 			sb.append(' ');
-			second.appendSql(databaseType, tableName, sb, selectArgList);
+			second.appendSql(databaseType, tableName, sb, selectArgList, this);
 		}
 		if (others != null) {
 			for (int i = startOthersAt; i < others.length; i++) {
 				sb.append(operation.sql);
 				sb.append(' ');
-				others[i].appendSql(databaseType, tableName, sb, selectArgList);
+				others[i].appendSql(databaseType, tableName, sb, selectArgList, this);
 			}
 		}
-		sb.append(") ");
+		if (!outerSame) {
+			sb.append(") ");
+		}
 	}
 
 	@Override

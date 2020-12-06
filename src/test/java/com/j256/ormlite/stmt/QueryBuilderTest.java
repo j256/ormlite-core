@@ -1624,6 +1624,58 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 				results.toArray(new TestObject[results.size()]));
 	}
 
+	@Test
+	public void testReducedParens() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, false);
+		QueryBuilder<Foo, Integer> qb = dao.queryBuilder();
+		Where<Foo, Integer> where = qb.where();
+
+		where.eq(Foo.VAL_COLUMN_NAME, 10);
+		assertEquals("SELECT * FROM `foo` WHERE `val` = 10 ", qb.prepareStatementString());
+		where.reset();
+
+		where.and(where.eq(Foo.VAL_COLUMN_NAME, 10), where.eq(Foo.VAL_COLUMN_NAME, 11));
+		assertEquals("SELECT * FROM `foo` WHERE (`val` = 10 AND `val` = 11 ) ", qb.prepareStatementString());
+		where.reset();
+
+		where.and(where.and(where.eq(Foo.VAL_COLUMN_NAME, 10), where.eq(Foo.VAL_COLUMN_NAME, 11)),
+				where.eq(Foo.VAL_COLUMN_NAME, 12));
+		assertEquals("SELECT * FROM `foo` WHERE (`val` = 10 AND `val` = 11 AND `val` = 12 ) ",
+				qb.prepareStatementString());
+		where.reset();
+
+		where.and(where.and(where.eq(Foo.VAL_COLUMN_NAME, 10), where.eq(Foo.VAL_COLUMN_NAME, 11)),
+				where.and(where.eq(Foo.VAL_COLUMN_NAME, 12), where.eq(Foo.VAL_COLUMN_NAME, 13)));
+		assertEquals("SELECT * FROM `foo` WHERE (`val` = 10 AND `val` = 11 AND `val` = 12 AND `val` = 13 ) ",
+				qb.prepareStatementString());
+		where.reset();
+
+		where.and( //
+				where.and( // inner AND
+						where.eq(Foo.VAL_COLUMN_NAME, 10), where.eq(Foo.VAL_COLUMN_NAME, 11) //
+				), //
+				where.and( // and another one
+						where.or( //
+								where.or( // inner OR
+										where.eq(Foo.VAL_COLUMN_NAME, 12), where.eq(Foo.VAL_COLUMN_NAME, 13) //
+								), //
+								where.eq(Foo.VAL_COLUMN_NAME, 14) //
+						), //
+						where.eq(Foo.VAL_COLUMN_NAME, 15) //
+				) //
+		);
+		assertEquals(
+				"SELECT * FROM `foo` WHERE (`val` = 10 AND `val` = 11 AND (`val` = 12 OR `val` = 13 OR `val` = 14 ) AND `val` = 15 ) ",
+				qb.prepareStatementString());
+		where.reset();
+
+		where.and(where.or(where.eq(Foo.VAL_COLUMN_NAME, 10), where.eq(Foo.VAL_COLUMN_NAME, 11)),
+				where.eq(Foo.VAL_COLUMN_NAME, 12));
+		assertEquals("SELECT * FROM `foo` WHERE ((`val` = 10 OR `val` = 11 ) AND `val` = 12 ) ",
+				qb.prepareStatementString());
+		where.reset();
+	}
+
 	/* ======================================================================================================== */
 
 	private static class TestObject {

@@ -36,8 +36,8 @@ abstract class BaseComparison implements Comparison {
 	public abstract void appendOperation(StringBuilder sb);
 
 	@Override
-	public void appendSql(DatabaseType databaseType, String tableName, StringBuilder sb, List<ArgumentHolder> argList)
-			throws SQLException {
+	public void appendSql(DatabaseType databaseType, String tableName, StringBuilder sb, List<ArgumentHolder> argList,
+			Clause outer) throws SQLException {
 		if (tableName != null) {
 			databaseType.appendEscapedEntityName(sb, tableName);
 			sb.append('.');
@@ -108,9 +108,9 @@ abstract class BaseComparison implements Comparison {
 			String value = fieldType.convertJavaFieldToSqlArgValue(argOrValue).toString();
 			if (value.length() > 0) {
 				if (NUMBER_CHARACTERS.indexOf(value.charAt(0)) < 0) {
-					throw new SQLException("Foreign field " + fieldType
-							+ " does not seem to be producing a numerical value '" + value
-							+ "'. Maybe you are passing the wrong object to comparison: " + this);
+					throw new SQLException(
+							"Foreign field " + fieldType + " does not seem to be producing a numerical value '" + value
+									+ "'. Maybe you are passing the wrong object to comparison: " + this);
 				}
 			}
 			sb.append(value);
