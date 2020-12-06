@@ -2,7 +2,7 @@
 	* CORE: More improvements to the TransactionManager connection and savepoint handling.
 	* CORE: Added a getInternalConnection() method to DatabaseConnection to access underlying objects.
 	* CORE: Added support for ORDER BY ... NULLS FIRST and LAST.  May not be supported by all database types.
-	* CORE: Added optimization to AND and OR queries to reduce the parens in the genrated query.  Thanks to devjta.
+	* CORE: Added optimization to AND and OR queries to reduce the parens in the generated query.  Thanks to devjta.
 	* JDBC: Update the DB2 driver class.  Thanks to mauro-palumbo.
 	* JDBC: Added support for create table if not exists for HSQLDB versions 2.3.X and greater.  Thanks to lukewhitt.
 
