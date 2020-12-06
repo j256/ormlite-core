@@ -18,7 +18,6 @@ public class QueryBuilderWithSchemaTest extends BaseCoreStmtTest {
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getSchemaName());
 		sb.append('.');
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getTableName());
-		sb.append(' ');
 		assertEquals(sb.toString(), qb.prepareStatementString());
 	}
 
@@ -34,7 +33,6 @@ public class QueryBuilderWithSchemaTest extends BaseCoreStmtTest {
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getTableName());
 		sb.append(" AS ");
 		databaseType.appendEscapedEntityName(sb, alias);
-		sb.append(' ');
 		assertEquals(sb.toString(), qb.prepareStatementString());
 	}
 
@@ -56,7 +54,7 @@ public class QueryBuilderWithSchemaTest extends BaseCoreStmtTest {
 		qb.having("COUNT(VAL) > 1");
 		qb.where().eq(SchemaFoo.ID_COLUMN_NAME, 1);
 		qb.reset();
-		assertEquals("SELECT * FROM `FOO_SCHEMA`.`foo` ", qb.prepareStatementString());
+		assertEquals("SELECT * FROM `FOO_SCHEMA`.`foo`", qb.prepareStatementString());
 	}
 
 

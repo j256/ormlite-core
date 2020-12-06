@@ -28,7 +28,7 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
 		sb.append(" SET ");
 		databaseType.appendEscapedEntityName(sb, Foo.ID_COLUMN_NAME);
-		sb.append(" = ").append(idVal).append(' ');
+		sb.append(" = ").append(idVal);
 		assertEquals(sb.toString(), stmtb.prepareStatementString());
 	}
 
@@ -43,7 +43,7 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
 		sb.append(" SET ");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
-		sb.append(" = ").append(idVal).append(' ');
+		sb.append(" = ").append(idVal);
 		assertEquals(sb.toString(), stmtb.prepareStatementString());
 	}
 
@@ -67,7 +67,7 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 		sb.append(expression);
 		sb.append(" WHERE ");
 		databaseType.appendEscapedEntityName(sb, Foo.ID_COLUMN_NAME);
-		sb.append(" = ").append(idVal).append(' ');
+		sb.append(" = ").append(idVal);
 		assertEquals(sb.toString(), stmtb.prepareStatementString());
 	}
 
@@ -93,7 +93,6 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" = ");
 		databaseType.appendEscapedWord(sb, expression);
-		sb.append(' ');
 		assertEquals(sb.toString(), stmtb.prepareStatementString());
 
 		StringBuilder whereBuilder = new StringBuilder();

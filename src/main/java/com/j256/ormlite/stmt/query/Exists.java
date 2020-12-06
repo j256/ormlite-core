@@ -26,6 +26,11 @@ public class Exists implements Clause {
 			Clause outer) throws SQLException {
 		sb.append("EXISTS (");
 		subQueryBuilder.appendStatementString(sb, argList);
+		// cut off a trailing space if there is one
+		int len = sb.length();
+		if (len > 0 && sb.charAt(len - 1) == ' ') {
+			sb.setLength(len - 1);
+		}
 		sb.append(") ");
 	}
 }

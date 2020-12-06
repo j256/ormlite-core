@@ -36,7 +36,6 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT * FROM ");
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
-		sb.append(' ');
 		assertEquals(sb.toString(), qb.prepareStatementString());
 	}
 
@@ -56,7 +55,6 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		databaseType.appendEscapedEntityName(sb, column2);
 		sb.append(" FROM ");
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
-		sb.append(' ');
 		assertEquals(sb.toString(), qb.prepareStatementString());
 	}
 
@@ -79,7 +77,6 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		databaseType.appendEscapedEntityName(sb, idColumn);
 		sb.append(" FROM ");
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
-		sb.append(' ');
 		assertEquals(sb.toString(), qb.prepareStatementString());
 	}
 
@@ -101,7 +98,6 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		databaseType.appendEscapedEntityName(sb, column2);
 		sb.append(" FROM ");
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
-		sb.append(' ');
 		assertEquals(sb.toString(), qb.prepareStatementString());
 	}
 
@@ -119,7 +115,6 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		databaseType.appendEscapedEntityName(sb, field1);
 		sb.append(',');
 		databaseType.appendEscapedEntityName(sb, field2);
-		sb.append(' ');
 		assertEquals(sb.toString(), qb.prepareStatementString());
 	}
 
@@ -137,7 +132,6 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		databaseType.appendEscapedEntityName(sb, field1);
 		sb.append(',');
 		databaseType.appendEscapedEntityName(sb, field2);
-		sb.append(' ');
 		assertEquals(sb.toString(), qb.prepareStatementString());
 	}
 
@@ -151,7 +145,6 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
 		sb.append(" AS ");
 		databaseType.appendEscapedEntityName(sb, alias);
-		sb.append(' ');
 		assertEquals(sb.toString(), qb.prepareStatementString());
 	}
 
@@ -165,7 +158,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
 		sb.append(" ORDER BY ");
 		databaseType.appendEscapedEntityName(sb, field);
-		sb.append(" DESC ");
+		sb.append(" DESC");
 		assertEquals(sb.toString(), qb.prepareStatementString());
 	}
 
@@ -190,7 +183,6 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT DISTINCT * FROM ");
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
-		sb.append(' ');
 		assertEquals(sb.toString(), qb.prepareStatementString());
 	}
 
@@ -202,7 +194,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT * FROM ");
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
-		sb.append(" LIMIT ").append(limit).append(' ');
+		sb.append(" LIMIT ").append(limit);
 		assertEquals(sb.toString(), qb.prepareStatementString());
 	}
 
@@ -216,7 +208,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT * FROM ");
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
-		sb.append(" LIMIT ").append(offset).append(',').append(limit).append(' ');
+		sb.append(" LIMIT ").append(offset).append(',').append(limit);
 		assertEquals(sb.toString(), qb.prepareStatementString());
 	}
 
@@ -250,7 +242,6 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		sb.append("SELECT LIMIT ").append(limit);
 		sb.append(" * FROM ");
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
-		sb.append(' ');
 		assertEquals(sb.toString(), qb.prepareStatementString());
 	}
 
@@ -265,7 +256,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
 		sb.append(" WHERE ");
 		databaseType.appendEscapedEntityName(sb, Foo.ID_COLUMN_NAME);
-		sb.append(" = ").append(val).append(' ');
+		sb.append(" = ").append(val);
 		assertEquals(sb.toString(), qb.prepareStatementString());
 	}
 
@@ -280,7 +271,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
 		sb.append(" WHERE ");
 		databaseType.appendEscapedEntityName(sb, Foo.ID_COLUMN_NAME);
-		sb.append(" = ? ");
+		sb.append(" = ?");
 		assertEquals(sb.toString(), qb.prepareStatementString());
 
 		// set the where to the previous where
@@ -295,7 +286,6 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT * FROM ");
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
-		sb.append(' ');
 		assertEquals(sb.toString(), qb.prepareStatementString());
 	}
 
@@ -308,7 +298,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT * FROM ");
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
-		sb.append(" LIMIT ").append(limit).append(' ');
+		sb.append(" LIMIT ").append(limit);
 		assertEquals(sb.toString(), qb.prepareStatementString());
 	}
 
@@ -324,7 +314,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		sb.append("SELECT * FROM ");
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
 		sb.append(" LIMIT ").append(limit);
-		sb.append(" OFFSET ").append(offset).append(' ');
+		sb.append(" OFFSET ").append(offset);
 		assertEquals(sb.toString(), qb.prepareStatementString());
 	}
 
@@ -470,7 +460,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		qb.having("COUNT(VAL) > 1");
 		qb.where().eq(Foo.ID_COLUMN_NAME, 1);
 		qb.reset();
-		assertEquals("SELECT * FROM `foo` ", qb.prepareStatementString());
+		assertEquals("SELECT * FROM `foo`", qb.prepareStatementString());
 	}
 
 	@Test
@@ -1631,22 +1621,22 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		Where<Foo, Integer> where = qb.where();
 
 		where.eq(Foo.VAL_COLUMN_NAME, 10);
-		assertEquals("SELECT * FROM `foo` WHERE `val` = 10 ", qb.prepareStatementString());
+		assertEquals("SELECT * FROM `foo` WHERE `val` = 10", qb.prepareStatementString());
 		where.reset();
 
 		where.and(where.eq(Foo.VAL_COLUMN_NAME, 10), where.eq(Foo.VAL_COLUMN_NAME, 11));
-		assertEquals("SELECT * FROM `foo` WHERE (`val` = 10 AND `val` = 11 ) ", qb.prepareStatementString());
+		assertEquals("SELECT * FROM `foo` WHERE (`val` = 10 AND `val` = 11)", qb.prepareStatementString());
 		where.reset();
 
 		where.and(where.and(where.eq(Foo.VAL_COLUMN_NAME, 10), where.eq(Foo.VAL_COLUMN_NAME, 11)),
 				where.eq(Foo.VAL_COLUMN_NAME, 12));
-		assertEquals("SELECT * FROM `foo` WHERE (`val` = 10 AND `val` = 11 AND `val` = 12 ) ",
+		assertEquals("SELECT * FROM `foo` WHERE (`val` = 10 AND `val` = 11 AND `val` = 12)",
 				qb.prepareStatementString());
 		where.reset();
 
 		where.and(where.and(where.eq(Foo.VAL_COLUMN_NAME, 10), where.eq(Foo.VAL_COLUMN_NAME, 11)),
 				where.and(where.eq(Foo.VAL_COLUMN_NAME, 12), where.eq(Foo.VAL_COLUMN_NAME, 13)));
-		assertEquals("SELECT * FROM `foo` WHERE (`val` = 10 AND `val` = 11 AND `val` = 12 AND `val` = 13 ) ",
+		assertEquals("SELECT * FROM `foo` WHERE (`val` = 10 AND `val` = 11 AND `val` = 12 AND `val` = 13)",
 				qb.prepareStatementString());
 		where.reset();
 
@@ -1665,13 +1655,13 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 				) //
 		);
 		assertEquals(
-				"SELECT * FROM `foo` WHERE (`val` = 10 AND `val` = 11 AND (`val` = 12 OR `val` = 13 OR `val` = 14 ) AND `val` = 15 ) ",
+				"SELECT * FROM `foo` WHERE (`val` = 10 AND `val` = 11 AND (`val` = 12 OR `val` = 13 OR `val` = 14) AND `val` = 15)",
 				qb.prepareStatementString());
 		where.reset();
 
 		where.and(where.or(where.eq(Foo.VAL_COLUMN_NAME, 10), where.eq(Foo.VAL_COLUMN_NAME, 11)),
 				where.eq(Foo.VAL_COLUMN_NAME, 12));
-		assertEquals("SELECT * FROM `foo` WHERE ((`val` = 10 OR `val` = 11 ) AND `val` = 12 ) ",
+		assertEquals("SELECT * FROM `foo` WHERE ((`val` = 10 OR `val` = 11) AND `val` = 12)",
 				qb.prepareStatementString());
 		where.reset();
 	}

@@ -53,11 +53,10 @@ public class Not implements Clause, NeedsFutureClause {
 			throw new IllegalStateException("Clause has not been set in NOT operation");
 		}
 		// this generates: (NOT 'x' = 123 )
+		sb.append("(NOT ");
 		if (comparison == null) {
-			sb.append("(NOT ");
 			exists.appendSql(databaseType, tableName, sb, selectArgList, outer);
 		} else {
-			sb.append("(NOT ");
 			if (tableName != null) {
 				databaseType.appendEscapedEntityName(sb, tableName);
 				sb.append('.');
@@ -66,6 +65,11 @@ public class Not implements Clause, NeedsFutureClause {
 			sb.append(' ');
 			comparison.appendOperation(sb);
 			comparison.appendValue(databaseType, sb, selectArgList);
+		}
+		// cut off a trailing space if there is one
+		int len = sb.length();
+		if (len > 0 && sb.charAt(len - 1) == ' ') {
+			sb.setLength(len - 1);
 		}
 		sb.append(") ");
 	}
