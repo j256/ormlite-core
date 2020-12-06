@@ -105,7 +105,7 @@ public class WhereTest extends BaseCoreTest {
 		sb.append(" AND ");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" = ").append(val);
-		sb.append(" ) ");
+		sb.append(") ");
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
@@ -123,7 +123,7 @@ public class WhereTest extends BaseCoreTest {
 		sb.append(" AND ");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" = ").append(val);
-		sb.append(" ) ");
+		sb.append(") ");
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
@@ -201,7 +201,7 @@ public class WhereTest extends BaseCoreTest {
 		StringBuilder sb = new StringBuilder();
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" IN (");
-		sb.append(val).append(" ) ");
+		sb.append(val).append(") ");
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
@@ -244,9 +244,9 @@ public class WhereTest extends BaseCoreTest {
 		sb.append(" IN (");
 		for (int valC = 0; valC < vals.length; valC++) {
 			if (valC > 0) {
-				sb.append(',');
+				sb.append(", ");
 			}
-			sb.append(vals[valC]).append(' ');
+			sb.append(vals[valC]);
 		}
 		sb.append(") ");
 		assertEquals(sb.toString(), whereSb.toString());
@@ -268,9 +268,9 @@ public class WhereTest extends BaseCoreTest {
 		sb.append(" IN (");
 		for (int valC = 0; valC < vals.size(); valC++) {
 			if (valC > 0) {
-				sb.append(',');
+				sb.append(", ");
 			}
-			sb.append(vals.get(valC)).append(' ');
+			sb.append(vals.get(valC));
 		}
 		sb.append(") ");
 		assertEquals(sb.toString(), whereSb.toString());
@@ -333,7 +333,7 @@ public class WhereTest extends BaseCoreTest {
 		sb.append("(NOT ");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" LIKE ");
-		sb.append(val).append(" ) ");
+		sb.append(val).append(") ");
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
@@ -371,7 +371,7 @@ public class WhereTest extends BaseCoreTest {
 		sb.append("(NOT ");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" LIKE ");
-		sb.append(val).append(" ) ");
+		sb.append(val).append(") ");
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
@@ -391,7 +391,7 @@ public class WhereTest extends BaseCoreTest {
 		sb.append(" AND ");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" = ").append(val);
-		sb.append(" ) ");
+		sb.append(") ");
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
@@ -411,7 +411,7 @@ public class WhereTest extends BaseCoreTest {
 		sb.append(" OR ");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" = ").append(val);
-		sb.append(" ) ");
+		sb.append(") ");
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
@@ -429,7 +429,7 @@ public class WhereTest extends BaseCoreTest {
 		sb.append(" OR ");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" = ").append(val);
-		sb.append(" ) ");
+		sb.append(") ");
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
@@ -510,7 +510,7 @@ public class WhereTest extends BaseCoreTest {
 		databaseType.appendEscapedEntityName(sb, ID_COLUMN_NAME);
 		sb.append(" FROM ");
 		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
-		sb.append(" ) ");
+		sb.append(") ");
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
@@ -564,7 +564,7 @@ public class WhereTest extends BaseCoreTest {
 		sb.append("EXISTS (");
 		sb.append("SELECT * FROM ");
 		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
-		sb.append(" ) ");
+		sb.append(") ");
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
@@ -583,7 +583,7 @@ public class WhereTest extends BaseCoreTest {
 		sb.append("(NOT EXISTS (");
 		sb.append("SELECT * FROM ");
 		databaseType.appendEscapedEntityName(sb, tableInfo.getTableName());
-		sb.append(" ) ) ");
+		sb.append(")) ");
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
@@ -600,7 +600,7 @@ public class WhereTest extends BaseCoreTest {
 		sb.append('(');
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" = ").append(val);
-		sb.append(" AND ").append(raw).append(" ) ");
+		sb.append(" AND ").append(raw).append(") ");
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
@@ -663,8 +663,9 @@ public class WhereTest extends BaseCoreTest {
 		assertEquals(1, dao.create(foo));
 
 		QueryBuilder<Foo, Integer> qb = dao.queryBuilder();
-		qb.where().raw(Foo.ID_COLUMN_NAME + " = ? and " + val + " = ?", new SelectArg(SqlType.STRING, foo.id),
-				new SelectArg(SqlType.INTEGER, val));
+		qb.where()
+				.raw(Foo.ID_COLUMN_NAME + " = ? and " + val + " = ?", new SelectArg(SqlType.STRING, foo.id),
+						new SelectArg(SqlType.INTEGER, val));
 		List<Foo> results = qb.query();
 		assertNotNull(results);
 		assertEquals(1, results.size());
@@ -727,7 +728,7 @@ public class WhereTest extends BaseCoreTest {
 		sb.append(" AND ");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" = ").append(val4);
-		sb.append(" ) ");
+		sb.append(") ");
 		assertEquals(sb.toString(), whereSb.toString());
 
 		where.reset();
@@ -752,7 +753,7 @@ public class WhereTest extends BaseCoreTest {
 		sb.append(" AND ");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" = ").append(val4);
-		sb.append(" ) ");
+		sb.append(") ");
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
@@ -782,7 +783,7 @@ public class WhereTest extends BaseCoreTest {
 		sb.append(" OR ");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" = ").append(val4);
-		sb.append(" ) ");
+		sb.append(") ");
 		assertEquals(sb.toString(), whereSb.toString());
 
 		where = new Where<Foo, String>(createTableInfo(), null, databaseType);
@@ -807,7 +808,7 @@ public class WhereTest extends BaseCoreTest {
 		sb.append(" OR ");
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		sb.append(" = ").append(val4);
-		sb.append(" ) ");
+		sb.append(") ");
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
@@ -830,7 +831,7 @@ public class WhereTest extends BaseCoreTest {
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		// NOTE: they are done in reverse order
 		sb.append(" = ").append(val1);
-		sb.append(" ) ");
+		sb.append(") ");
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
@@ -853,7 +854,7 @@ public class WhereTest extends BaseCoreTest {
 		databaseType.appendEscapedEntityName(sb, Foo.VAL_COLUMN_NAME);
 		// NOTE: they are done in reverse order
 		sb.append(" = ").append(val1);
-		sb.append(" ) ");
+		sb.append(") ");
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 

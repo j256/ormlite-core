@@ -125,6 +125,11 @@ public abstract class StatementBuilder<T, ID> {
 	protected String buildStatementString(List<ArgumentHolder> argList) throws SQLException {
 		StringBuilder sb = new StringBuilder(128);
 		appendStatementString(sb, argList);
+		int len = sb.length();
+		// cut off a trailing space if there is one
+		if (len > 0 && sb.charAt(len - 1) == ' ') {
+			sb.setLength(len - 1);
+		}
 		String statement = sb.toString();
 		logger.debug("built statement {}", statement);
 		return statement;

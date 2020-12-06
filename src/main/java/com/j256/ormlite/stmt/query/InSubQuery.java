@@ -50,6 +50,11 @@ public class InSubQuery extends BaseComparison {
 			throw new SQLException("Outer column " + fieldType + " is not the same type as inner column "
 					+ resultFieldTypes[0]);
 		}
+		// cut off a trailing space if there is one
+		int len = sb.length();
+		if (len > 0 && sb.charAt(len - 1) == ' ') {
+			sb.setLength(len - 1);
+		}
 		sb.append(") ");
 	}
 }

@@ -53,10 +53,15 @@ public class In extends BaseComparison {
 			if (first) {
 				first = false;
 			} else {
-				sb.append(',');
+				sb.append(", ");
 			}
 			// for each of our arguments, add it to the output
 			super.appendArgOrValue(databaseType, fieldType, sb, columnArgList, value);
+			// cut off a trailing space if there is one
+			int len = sb.length();
+			if (len > 0 && sb.charAt(len - 1) == ' ') {
+				sb.setLength(len - 1);
+			}
 		}
 		sb.append(") ");
 	}

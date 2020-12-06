@@ -33,10 +33,10 @@ public class InTest extends BaseCoreStmtTest {
 		StringBuilder sb = new StringBuilder();
 		in.appendValue(null, sb, new ArrayList<ArgumentHolder>());
 		String[] args = sb.toString().split(",");
-		assertEquals("(" + objList.get(0) + " ", args[0]);
+		assertEquals("(" + objList.get(0), args[0]);
 		for (int i = 1; i < numArgs - 1; i++) {
-			assertEquals(objList.get(i) + " ", args[i]);
+			assertEquals(" " + objList.get(i), args[i]);
 		}
-		assertEquals(objList.get(numArgs - 1) + " ) ", args[numArgs - 1]);
+		assertEquals(" " + objList.get(numArgs - 1) + ") ", args[numArgs - 1]);
 	}
 }

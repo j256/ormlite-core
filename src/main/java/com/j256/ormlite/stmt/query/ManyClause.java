@@ -72,6 +72,11 @@ public class ManyClause implements Clause, NeedsFutureClause {
 			}
 		}
 		if (!outerSame) {
+			// cut off a trailing space if there is one
+			int len = sb.length();
+			if (len > 0 && sb.charAt(len - 1) == ' ') {
+				sb.setLength(len - 1);
+			}
 			sb.append(") ");
 		}
 	}

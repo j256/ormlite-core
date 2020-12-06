@@ -25,7 +25,7 @@ import com.j256.ormlite.field.DatabaseFieldConfig;
 
 /**
  * Class for isolating the detection of the javax.persistence annotations. This used to be a hard dependency but it has
- * become optinal/test since we use reflection here.
+ * become optional/test since we use reflection here.
  * 
  * @author graywatson
  */

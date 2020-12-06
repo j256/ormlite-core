@@ -16,7 +16,6 @@ public class DeleteBuilderTest extends BaseCoreStmtTest {
 		StringBuilder sb = new StringBuilder();
 		sb.append("DELETE FROM ");
 		databaseType.appendEscapedEntityName(sb, baseFooTableInfo.getTableName());
-		sb.append(' ');
 		assertEquals(sb.toString(), stmtb.prepareStatementString());
 	}
 
