@@ -16,8 +16,8 @@ import com.j256.ormlite.field.SqlType;
  */
 public abstract class BaseDateType extends BaseDataType {
 
-	protected static final DateStringFormatConfig defaultDateFormatConfig = new DateStringFormatConfig(
-			"yyyy-MM-dd HH:mm:ss.SSSSSS");
+	protected static final DateStringFormatConfig defaultDateFormatConfig =
+			new DateStringFormatConfig("yyyy-MM-dd HH:mm:ss.SSSSSS");
 
 	protected BaseDateType(SqlType sqlType, Class<?>[] classes) {
 		super(sqlType, classes);
@@ -53,19 +53,19 @@ public abstract class BaseDateType extends BaseDataType {
 	}
 
 	protected static class DateStringFormatConfig {
-		private final ThreadLocal<DateFormat> threadLocal = new ThreadLocal<DateFormat>() {
-			@Override
-			protected DateFormat initialValue() {
-				return new SimpleDateFormat(dateFormatStr);
-			}
-		};
-		final String dateFormatStr;
+		private final String dateFormatStr;
+		// used with clone
+		private final SimpleDateFormat dateFormat;
+
 		public DateStringFormatConfig(String dateFormatStr) {
 			this.dateFormatStr = dateFormatStr;
+			this.dateFormat = new SimpleDateFormat(dateFormatStr);
 		}
+
 		public DateFormat getDateFormat() {
-			return threadLocal.get();
+			return (DateFormat) dateFormat.clone();
 		}
+
 		@Override
 		public String toString() {
 			return dateFormatStr;
