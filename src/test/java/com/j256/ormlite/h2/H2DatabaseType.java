@@ -8,7 +8,9 @@ import com.j256.ormlite.db.BaseDatabaseType;
 import com.j256.ormlite.field.FieldType;
 
 /**
- * H2 database type.
+ * H2 database type for testing purposes.
+ * 
+ * NOTE: if this is updated, the ormlite-jdbc one should be as well.
  * 
  * @author graywatson
  */
@@ -36,8 +38,11 @@ public class H2DatabaseType extends BaseDatabaseType {
 	}
 
 	@Override
-	public boolean isOffsetLimitArgument() {
-		return true;
+	protected void configureGeneratedId(String tableName, StringBuilder sb, FieldType fieldType,
+			List<String> statementsBefore, List<String> statementsAfter, List<String> additionalArgs,
+			List<String> queriesAfter) {
+		sb.append("AUTO_INCREMENT ");
+		configureId(sb, fieldType, statementsBefore, additionalArgs, queriesAfter);
 	}
 
 	@Override
@@ -50,20 +55,27 @@ public class H2DatabaseType extends BaseDatabaseType {
 	}
 
 	@Override
+	public boolean isOffsetLimitArgument() {
+		return true;
+	}
+
+	@Override
 	public void appendOffsetValue(StringBuilder sb, long offset) {
 		throw new IllegalStateException("Offset is part of the LIMIT in database type " + getClass());
 	}
 
 	@Override
-	protected void configureGeneratedId(String tableName, StringBuilder sb, FieldType fieldType,
-			List<String> statementsBefore, List<String> statementsAfter, List<String> additionalArgs,
-			List<String> queriesAfter) {
-		sb.append("AUTO_INCREMENT ");
-		configureId(sb, fieldType, statementsBefore, additionalArgs, queriesAfter);
+	public boolean isTruncateSupported() {
+		return true;
 	}
 
 	@Override
 	public boolean isCreateIfNotExistsSupported() {
+		return true;
+	}
+
+	@Override
+	public boolean isLimitAfterUpdateSupported() {
 		return true;
 	}
 }
