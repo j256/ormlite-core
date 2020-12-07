@@ -55,7 +55,7 @@ public abstract class BaseDateType extends BaseDataType {
 	protected static class DateStringFormatConfig {
 		private final String dateFormatStr;
 		// used with clone
-		private final SimpleDateFormat dateFormat;
+		private final DateFormat dateFormat;
 
 		public DateStringFormatConfig(String dateFormatStr) {
 			this.dateFormatStr = dateFormatStr;
