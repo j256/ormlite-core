@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.sql.SQLException;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
@@ -13,6 +14,16 @@ import com.j256.ormlite.h2.H2DatabaseType;
 
 public class SchemaUtilsTest extends BaseCoreTest {
 
+	private final static String SCHEMA_NAME = "schema";
+
+	@Override
+	@Before
+	public void before() throws Exception {
+		super.before();
+		SchemaUtils.dropSchema(connectionSource, Schema.class, true);
+		SchemaUtils.dropSchema(connectionSource, SCHEMA_NAME, true);
+	}
+
 	@Test
 	public void testCreateSchema() throws SQLException {
 		assertTrue(SchemaUtils.createSchema(connectionSource, Schema.class) > 0);
@@ -20,7 +31,7 @@ public class SchemaUtilsTest extends BaseCoreTest {
 
 	@Test
 	public void testCreateSchemaName() throws SQLException {
-		assertTrue(SchemaUtils.createSchema(connectionSource, "schema") > 0);
+		assertTrue(SchemaUtils.createSchema(connectionSource, SCHEMA_NAME) > 0);
 	}
 
 	@Test
@@ -32,12 +43,12 @@ public class SchemaUtilsTest extends BaseCoreTest {
 	@Test
 	public void testCreateIfNotExists() throws SQLException {
 		assertTrue(SchemaUtils.createSchemaIfNotExists(connectionSource, Schema.class) > 0);
-		assertTrue(SchemaUtils.createSchemaIfNotExists(connectionSource, "schema") > 0);
+		assertTrue(SchemaUtils.createSchemaIfNotExists(connectionSource, SCHEMA_NAME) > 0);
 	}
 
 	@Test
 	public void testCreateSchemaStatements() throws SQLException {
-		assertTrue(SchemaUtils.getCreateSchemaStatements(new H2DatabaseType(), "schema").size() > 0);
+		assertTrue(SchemaUtils.getCreateSchemaStatements(new H2DatabaseType(), SCHEMA_NAME).size() > 0);
 	}
 
 	@Test
@@ -54,7 +65,7 @@ public class SchemaUtilsTest extends BaseCoreTest {
 		SchemaUtils.dropSchema(connectionSource, Schema.class, false);
 	}
 
-	@DatabaseTable(tableName = "table", schemaName = "schema")
+	@DatabaseTable(tableName = "table", schemaName = SCHEMA_NAME)
 	protected static class Schema {
 		@DatabaseField(generatedId = true)
 		public int id;
