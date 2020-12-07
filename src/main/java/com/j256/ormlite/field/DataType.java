@@ -15,8 +15,8 @@ import com.j256.ormlite.field.types.ByteObjectType;
 import com.j256.ormlite.field.types.ByteType;
 import com.j256.ormlite.field.types.CharType;
 import com.j256.ormlite.field.types.CharacterObjectType;
-import com.j256.ormlite.field.types.DateLongType;
 import com.j256.ormlite.field.types.DateIntegerType;
+import com.j256.ormlite.field.types.DateLongType;
 import com.j256.ormlite.field.types.DateStringType;
 import com.j256.ormlite.field.types.DateTimeType;
 import com.j256.ormlite.field.types.DateType;
@@ -39,6 +39,7 @@ import com.j256.ormlite.field.types.ShortType;
 import com.j256.ormlite.field.types.SqlDateType;
 import com.j256.ormlite.field.types.StringBytesType;
 import com.j256.ormlite.field.types.StringType;
+import com.j256.ormlite.field.types.TimeStampStringType;
 import com.j256.ormlite.field.types.TimeStampType;
 import com.j256.ormlite.field.types.UuidType;
 
@@ -242,9 +243,13 @@ public enum DataType {
 	 */
 	SQL_DATE(SqlDateType.getSingleton()),
 	/**
-	 * Persists the {@link java.sql.Timestamp} Java class. The {@link #DATE} type is recommended instead.
+	 * Persists the {@link java.sql.Timestamp} Java class.
 	 */
 	TIME_STAMP(TimeStampType.getSingleton()),
+	/**
+	 * Persists the {@link java.sql.Timestamp} Java class as a string of a format.
+	 */
+	TIME_STAMP_STRING(TimeStampStringType.getSingleton()),
 	/**
 	 * Marker for fields that are unknown.
 	 */

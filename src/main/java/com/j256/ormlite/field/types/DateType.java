@@ -40,8 +40,8 @@ public class DateType extends BaseDateType {
 		try {
 			return new Timestamp(parseDateString(dateFormatConfig, defaultStr).getTime());
 		} catch (ParseException e) {
-			throw SqlExceptionUtil.create("Problems parsing default date string '" + defaultStr + "' using '"
-					+ dateFormatConfig + '\'', e);
+			throw SqlExceptionUtil.create(
+					"Problems parsing default date string '" + defaultStr + "' using '" + dateFormatConfig + '\'', e);
 		}
 	}
 
@@ -64,6 +64,7 @@ public class DateType extends BaseDateType {
 
 	@Override
 	public boolean isArgumentHolderRequired() {
+		// NOTE: is this correct?
 		return true;
 	}
 
