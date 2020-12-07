@@ -1166,6 +1166,20 @@ Persisted as SQL type @code{TIMESTAMP}.
 
 @emph{NOTE:} It is recommended that you use the @code{java.util.Date} class instead which is the @code{DataType.DATE} type.
 
+@cindex Timestamp, SQL string type
+@cindex SQL Timestamp string type
+@item java.sql.Timestamp (DataType.TIME_STAMP_STRING)
+
+Persisted as SQL type @code{TIMESTAMP}.
+
+You can also specify the @code{dataType} field to the @code{@@DatabaseField} annotation as a
+@code{DataType.TIME_STAMP_STRING} in which case the date will be stored as a string in
+@code{yyyy-MM-dd HH:mm:ss.SSSSSS} format.  You can use the @code{format} field in @code{DatabaseField} to set the
+time-stamp to another format.
+
+@emph{NOTE:} It is recommended that you use the @code{java.util.Date} class instead which is the
+@code{DataType.DATE_STRING} type.  See also @code{DATE_STRING}.
+
 @end table
 
 @emph{NOTE:} ORMLite also supports the concept of foreign objects where the id of another object is

@@ -4,6 +4,7 @@
 	* CORE: Added support for ORDER BY ... NULLS FIRST and LAST.  May not be supported by all database types.
 	* CORE: Added optimization to AND and OR queries to reduce the parens in the generated query.  Thanks to devjta.
 	* CORE: Removed some extraneous spaces from generated queries.
+	* CORE: Added missing wiring for the TIME_STAMP_STRING data type for storing Timestamp type as a string.
 	* JDBC: Update the DB2 driver class.  Thanks to mauro-palumbo.
 	* JDBC: Added support for create table if not exists for HSQLDB versions 2.3.X and greater.  Thanks to lukewhitt.
 

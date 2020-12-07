@@ -1,6 +1,8 @@
 package com.j256.ormlite.field.types;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -61,6 +63,19 @@ public class DateTypeTest extends BaseTypeTest {
 				LocalDate.class);
 	}
 
+	@Test
+	public void testDateVersion() throws Exception {
+		Class<LocalDateVersion> clazz = LocalDateVersion.class;
+		Dao<LocalDateVersion, Object> dao = createDao(clazz, true);
+		LocalDateVersion foo = new LocalDateVersion();
+		long before = System.currentTimeMillis();
+		assertEquals(1, dao.create(foo));
+		long after = System.currentTimeMillis();
+		assertNotNull(foo.date);
+		assertTrue(foo.date.getTime() >= before);
+		assertTrue(foo.date.getTime() <= after);
+	}
+
 	/* ============================================================================================ */
 
 	@DatabaseTable
@@ -72,6 +87,12 @@ public class DateTypeTest extends BaseTypeTest {
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalDate {
 		@DatabaseField(columnName = DATE_COLUMN)
+		java.util.Date date;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalDateVersion {
+		@DatabaseField(columnName = DATE_COLUMN, version = true)
 		java.util.Date date;
 	}
 }
