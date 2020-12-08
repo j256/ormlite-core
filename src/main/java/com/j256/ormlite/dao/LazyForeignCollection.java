@@ -82,8 +82,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 	public CloseableIterator<T> iteratorThrow(int flags) throws SQLException {
 		CloseableIterator<T> li = seperateIteratorThrow(flags);
 		lastIterator = li;
-		//Make sure we return the local variable instead of the field.
-		//Otherwise, concurrent projects have a problem.
+		// make sure we return the local variable instead of the field for concurrency reasons
 		return li;
 	}
 
@@ -99,6 +98,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 			public CloseableIterator<T> iterator() {
 				return closeableIterator();
 			}
+
 			@Override
 			public CloseableIterator<T> closeableIterator() {
 				try {
@@ -210,18 +210,28 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 		}
 	}
 
-	@Override
-	public Object[] toArray() {
+	/**
+	 * Return a list of items from the database. This uses the iterator to walk through the table.
+	 * 
+	 * NOTE: that changes to this list are _not_ replicated to the database.
+	 */
+	public List<T> toList() {
 		List<T> items = new ArrayList<T>();
 		CloseableIterator<T> iterator = iterator();
 		try {
 			while (iterator.hasNext()) {
 				items.add(iterator.next());
 			}
-			return items.toArray();
+			return items;
 		} finally {
 			IOUtils.closeQuietly(iterator);
 		}
+	}
+
+	@Override
+	public Object[] toArray() {
+		List<T> items = toList();
+		return items.toArray();
 	}
 
 	@Override
