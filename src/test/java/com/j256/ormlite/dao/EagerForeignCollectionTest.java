@@ -5,6 +5,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.util.Collections;
+import java.util.ListIterator;
 
 import org.junit.Test;
 
@@ -87,11 +91,74 @@ public class EagerForeignCollectionTest extends BaseCoreTest {
 		}
 	}
 
+	@Test
+	public void testListMethods() throws Exception {
+		Dao<Eager, Integer> eagerDao = createDao(Eager.class, true);
+		Dao<Foreign, Integer> foreignDao = createDao(Foreign.class, true);
+		Eager eager = new Eager();
+		assertEquals(1, eagerDao.create(eager));
+
+		Foreign f0 = new Foreign();
+		f0.eager = eager;
+		foreignDao.create(f0);
+		// and another one
+		Foreign f1 = new Foreign();
+		f1.eager = eager;
+		foreignDao.create(f1);
+		// and another one
+		Foreign f2 = new Foreign();
+		f2.eager = eager;
+		foreignDao.create(f2);
+
+		Eager result = eagerDao.queryForId(eager.id);
+		assertNotNull(result.foreignCollection);
+
+		try {
+			result.foreignCollection.addAll(0, Collections.<Foreign> emptyList());
+			fail("should have thrown UnsupportedOperationException");
+		} catch (UnsupportedOperationException use) {
+			// expected
+		}
+		assertEquals(f0.id, result.foreignCollection.get(0).id);
+		try {
+			result.foreignCollection.set(0, null);
+			fail("should have thrown UnsupportedOperationException");
+		} catch (UnsupportedOperationException use) {
+			// expected
+		}
+		assertEquals(0, result.foreignCollection.indexOf(f0));
+		assertEquals(f0.id, result.foreignCollection.remove(0).id);
+		assertEquals(-1, result.foreignCollection.indexOf(f0));
+		assertEquals(0, result.foreignCollection.lastIndexOf(f1));
+		assertEquals(1, result.foreignCollection.subList(1, 2).size());
+		try {
+			result.foreignCollection.add(0, null);
+			fail("should have thrown UnsupportedOperationException");
+		} catch (UnsupportedOperationException use) {
+			// expected
+		}
+
+		ListIterator<Foreign> iterator = result.foreignCollection.listIterator();
+		assertTrue(iterator.hasNext());
+		assertEquals(f1.id, iterator.next().id);
+		assertTrue(iterator.hasNext());
+		assertEquals(f2.id, iterator.next().id);
+		assertTrue(iterator.hasPrevious());
+		assertEquals(f2.id, iterator.previous().id);
+		assertEquals(f1.id, iterator.previous().id);
+
+		iterator = result.foreignCollection.listIterator(1);
+		assertTrue(iterator.hasNext());
+		assertEquals(f2.id, iterator.next().id);
+		assertFalse(iterator.hasNext());
+	}
+
 	protected static class Eager {
 		@DatabaseField(generatedId = true)
 		int id;
 		@ForeignCollectionField(eager = true)
-		ForeignCollection<Foreign> foreignCollection;
+		EagerForeignCollection<Foreign, Integer> foreignCollection;
+
 		public Eager() {
 		}
 	}
@@ -103,7 +170,21 @@ public class EagerForeignCollectionTest extends BaseCoreTest {
 		Eager eager;
 		@DatabaseField
 		String stuff;
+
 		public Foreign() {
+		}
+
+		@Override
+		public int hashCode() {
+			return id;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null || getClass() != obj.getClass()) {
+				return false;
+			}
+			return (id == ((Foreign) obj).id);
 		}
 	}
 }
