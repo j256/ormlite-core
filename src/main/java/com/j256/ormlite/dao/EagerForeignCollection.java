@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.ListIterator;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -18,7 +19,7 @@ import com.j256.ormlite.support.DatabaseResults;
  * @author graywatson
  */
 public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID>
-		implements CloseableWrappedIterable<T>, Serializable {
+		implements CloseableWrappedIterable<T>, Serializable, List<T> {
 
 	private static final long serialVersionUID = -2523335606983317721L;
 
@@ -320,6 +321,71 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID>
 	public int refreshCollection() throws SQLException {
 		results = dao.query(getPreparedQuery());
 		return results.size();
+	}
+
+	@Override
+	public boolean addAll(int index, Collection<? extends T> c) {
+		throw new UnsupportedOperationException(
+				"addAll() at an index is not supported by foreign-collections, use addAll()");
+	}
+
+	@Override
+	public T get(int index) {
+		return results.get(index);
+	}
+
+	@Override
+	public T set(int index, T element) {
+		throw new UnsupportedOperationException(
+				"setting an element at an index is not supported by foreign-collections, use update");
+	}
+
+	@Override
+	public void add(int index, T element) {
+		throw new UnsupportedOperationException(
+				"adding an element at an index is not supported by foreign-collections");
+	}
+
+	@Override
+	public T remove(int index) {
+		T result = results.get(0);
+		remove(result);
+		return result;
+	}
+
+	@Override
+	public int indexOf(Object element) {
+		return results.indexOf(element);
+	}
+
+	@Override
+	public int lastIndexOf(Object element) {
+		return results.lastIndexOf(element);
+	}
+
+	/**
+	 * NOTE: changes to the iterator are _not_ replicated to the foreign collection.
+	 * 
+	 * @see List#listIterator()
+	 */
+	@Override
+	public ListIterator<T> listIterator() {
+		return results.listIterator();
+	}
+
+	/**
+	 * NOTE: changes to the iterator are _not_ replicated to the foreign collection.
+	 * 
+	 * @see List#listIterator(int)
+	 */
+	@Override
+	public ListIterator<T> listIterator(int index) {
+		return results.listIterator(index);
+	}
+
+	@Override
+	public List<T> subList(int fromIndex, int toIndex) {
+		return results.subList(fromIndex, toIndex);
 	}
 
 	/**

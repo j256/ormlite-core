@@ -17,7 +17,12 @@ public class LazyForeignCollectionTest extends BaseCoreTest {
 	public void test() throws Exception {
 		Dao<Lazy, Integer> lazyDao = createDao(Lazy.class, true);
 		Lazy lazy = new Lazy();
-		assertEquals(1, lazyDao.create(lazy));
+		lazyDao.create(lazy);
+
+		Dao<Foreign, Integer> foreignDao = createDao(Foreign.class, true);
+		Foreign foreign1 = new Foreign();
+		foreign1.lazy = lazy;
+		foreignDao.create(foreign1);
 
 		Lazy result = lazyDao.queryForId(lazy.id);
 		assertNotNull(result.foreign);
@@ -38,13 +43,18 @@ public class LazyForeignCollectionTest extends BaseCoreTest {
 			// expected
 		}
 		assertEquals(0, result.foreign.refreshCollection());
+
+		assertEquals(1, result.foreign.toArray().length);
+		assertEquals(1, result.foreign.toArray(new Foreign[0]).length);
+		assertEquals(1, result.foreign.toList().size());
 	}
 
 	protected static class Lazy {
 		@DatabaseField(generatedId = true)
 		int id;
 		@ForeignCollectionField
-		ForeignCollection<Foreign> foreign;
+		LazyForeignCollection<Foreign, Integer> foreign;
+
 		public Lazy() {
 		}
 	}
@@ -54,6 +64,7 @@ public class LazyForeignCollectionTest extends BaseCoreTest {
 		int id;
 		@DatabaseField(foreign = true)
 		Lazy lazy;
+
 		public Foreign() {
 		}
 	}
