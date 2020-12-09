@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on November 14, 2020 by texi2html 1.82
+<!-- Created on December 8, 2020 by texi2html 1.82
 texi2html was written by: 
             Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -51,7 +51,7 @@ ul.toc {list-style: none}
 <a name="ORMLite"></a>
 <h1 class="settitle">ORMLite</h1>
 
-<p>Version 5.2 &ndash; November 2020
+<p>Version 5.3 &ndash; December 2020
 </p>
 <a name="index-introduction"></a>
 <a name="index-author"></a>
@@ -164,9 +164,9 @@ specific page after reading these pages here. See section <a href="#Use-With-And
 <p>To get started with ORMLite, you will need to download the jar files.  The <a href="http://ormlite.com/releases/">ORMLite release page</a>
 is the default repository but the jars are also available from the <a href="http://repo1.maven.org/maven2/com/j256/ormlite/">central maven repository</a> and from <a href="http://sourceforge.net/projects/ormlite/files/">Sourceforge</a>.
 </p>
-<p>Users that are connecting to SQL databases via JDBC connections will need to download the <code>ormlite-jdbc-5.2.jar</code>
-and <code>ormlite-core-5.2.jar</code> files.  For use with Android applications, you should download the
-<code>ormlite-android-5.2.jar</code> and <code>ormlite-core-5.2.jar</code> files instead.  For either JDBC or
+<p>Users that are connecting to SQL databases via JDBC connections will need to download the <code>ormlite-jdbc-5.3.jar</code>
+and <code>ormlite-core-5.3.jar</code> files.  For use with Android applications, you should download the
+<code>ormlite-android-5.3.jar</code> and <code>ormlite-core-5.3.jar</code> files instead.  For either JDBC or
 Android you will also need the ormlite-core release which has the ORMLite backend implementations.  ORMLite does not have
 any required external dependencies although there are some <em>optional</em> packages that you may want to use.  See section <a href="#Dependencies">External Dependencies</a>.  The
 code works with Java 5 or later.
@@ -1241,9 +1241,6 @@ in which case the date will be stored as a string in <code>yyyy-MM-dd HH:mm:ss.S
 </p>
 <p><em>NOTE:</em> Certain databases only provide seconds resolution so the milliseconds will be 0.
 </p>
-<p><em>NOTE:</em> Because of reentrant issues with <code>SimpleDateFormat</code>, thread locals are used to access the formatters
-every time a <code>DATE_STRING</code> date is converted to/from the database.
-</p>
 <a name="index-byte"></a>
 <p><a name="datatype-byte"></a>
 </p></dd>
@@ -1446,6 +1443,21 @@ See <a href="#custom-data-persister">custom data persister</a>.
 <p>Persisted as SQL type <code>TIMESTAMP</code>.
 </p>
 <p><em>NOTE:</em> It is recommended that you use the <code>java.util.Date</code> class instead which is the <code>DataType.DATE</code> type.
+</p>
+<a name="index-Timestamp_002c-SQL-string-type"></a>
+<a name="index-SQL-Timestamp-string-type"></a>
+</dd>
+<dt> <code>java.sql.Timestamp (DataType.TIME_STAMP_STRING)</code></dt>
+<dd>
+<p>Persisted as SQL type <code>TIMESTAMP</code>.
+</p>
+<p>You can also specify the <code>dataType</code> field to the <code>@DatabaseField</code> annotation as a
+<code>DataType.TIME_STAMP_STRING</code> in which case the date will be stored as a string in
+<code>yyyy-MM-dd HH:mm:ss.SSSSSS</code> format.  You can use the <code>format</code> field in <code>DatabaseField</code> to set the
+time-stamp to another format.
+</p>
+<p><em>NOTE:</em> It is recommended that you use the <code>java.util.Date</code> class instead which is the
+<code>DataType.DATE_STRING</code> type.  See also <code>DATE_STRING</code>.
 </p>
 </dd>
 </dl>
@@ -3488,6 +3500,20 @@ specified since the offset is an argument of the limit.
 <dd>
 <p>Add &quot;ORDER BY&quot; clause to the SQL query statement to order the results by the specified column name.  Use the ascending
 boolean to get a ascending or descending order.  This can be called multiple times to group by multiple columns.
+</p>
+<a name="index-order-by-nulls-first"></a>
+</dd>
+<dt> <code>orderByNullsFirst(String columnName, boolean ascending)</code></dt>
+<dd>
+<p>Add &quot;ORDER BY&quot; clause to the SQL query statement with a column-name and ascending (if true) with a NULLS FIRST
+qualifier. This may not be supported by all database types.
+</p>
+<a name="index-order-by-nulls-last"></a>
+</dd>
+<dt> <code>orderByNullsLast(String columnName, boolean ascending)</code></dt>
+<dd>
+<p>Add &quot;ORDER BY&quot; clause to the SQL query statement with a column-name and ascending (if true) with a NULLS LAST
+qualifier. This may not be supported by all database types.
 </p>
 <a name="index-order-by-raw-SQL"></a>
 </dd>
@@ -5709,7 +5735,7 @@ dependency list.  In this example we are using MySQL but any of the supported JD
         &lt;dependency&gt;
             &lt;groupId&gt;com.j256.ormlite&lt;/groupId&gt;
             &lt;artifactId&gt;ormlite-jdbc&lt;/artifactId&gt;
-            &lt;version&gt;5.2&lt;/version&gt;
+            &lt;version&gt;5.3&lt;/version&gt;
         &lt;/dependency&gt;
         &lt;!-- You will need to add some sort of database driver too.
              In this example we've used MySQL. --&gt;
@@ -6920,8 +6946,6 @@ DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING F
 WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE
 USE OR PERFORMANCE OF THIS SOFTWARE.
 </p>
-<p>The author may be contacted via the <a href="http://ormlite.com/">ORMLite home page</a>.
-</p>
 <hr size="6">
 <a name="Index-of-Concepts"></a>
 <table cellpadding="1" cellspacing="1" border="0">
@@ -7434,6 +7458,8 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-OR_002c-SQL">OR, SQL</a></td><td valign="top"><a href="#Where-Capabilities">3.5 Where Capabilities</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Oracle-database">Oracle database</a></td><td valign="top"><a href="#Database-Notes">2.5 Supported Databases</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-order-by-columns">order by columns</a></td><td valign="top"><a href="#QueryBuilder-Capabilities">3.4 QueryBuilder Capabilities</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-order-by-nulls-first">order by nulls first</a></td><td valign="top"><a href="#QueryBuilder-Capabilities">3.4 QueryBuilder Capabilities</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-order-by-nulls-last">order by nulls last</a></td><td valign="top"><a href="#QueryBuilder-Capabilities">3.4 QueryBuilder Capabilities</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-order-by-raw-SQL">order by raw SQL</a></td><td valign="top"><a href="#QueryBuilder-Capabilities">3.4 QueryBuilder Capabilities</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ORDER-BY_002c-SQL">ORDER BY, SQL</a></td><td valign="top"><a href="#Building-Queries">3.2 Building Queries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ordered-foreign-collection">ordered foreign collection</a></td><td valign="top"><a href="#Foreign-Collection">2.13 Foreign Collections</a></td></tr>
@@ -7541,6 +7567,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-SQL-injection-bugs">SQL injection bugs</a></td><td valign="top"><a href="#Select-Arguments">3.6 Using Select Arguments</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-SQL-Server-database">SQL Server database</a></td><td valign="top"><a href="#Database-Notes">2.5 Supported Databases</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-SQL-statements_002c-raw">SQL statements, raw</a></td><td valign="top"><a href="#Raw-Statements">2.11 Issuing Raw SQL Statements</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-SQL-Timestamp-string-type">SQL Timestamp string type</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-SQL-Timestamp-type">SQL Timestamp type</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-SQL-type">SQL type</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-SQLExceptionDao">SQLExceptionDao</a></td><td valign="top"><a href="#RuntimeExceptionDao">4.4 Runtime Versus SQL Exceptions</a></td></tr>
@@ -7568,6 +7595,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-TableUtils">TableUtils</a></td><td valign="top"><a href="#TableUtils">2.7.1 TableUtils Class</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-throwIfNull">throwIfNull</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-time-row-last-modified">time row last modified</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Timestamp_002c-SQL-string-type">Timestamp, SQL string type</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Timestamp_002c-SQL-type">Timestamp, SQL type</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-TransactionManager">TransactionManager</a></td><td valign="top"><a href="#Transactions">5.7 Using Database Transactions</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-transactions">transactions</a></td><td valign="top"><a href="#Transactions">5.7 Using Database Transactions</a></td></tr>
@@ -7820,7 +7848,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 </tr></table>
 <h1>About This Document</h1>
 <p>
-  This document was generated by <em>Gray Watson</em> on <em>November 14, 2020</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>December 8, 2020</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
 </p>
 <p>
   The buttons in the navigation panels have the following meaning:
@@ -7922,7 +7950,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <hr size="1">
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>November 14, 2020</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>December 8, 2020</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
  </font>
  <br>
 
