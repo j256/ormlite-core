@@ -4369,8 +4369,10 @@ com\.j256\.ormlite\.stmt\.StatementExecutor = TRACE
 @emph{NOTE:} You should escape any period characters with a single backslash unless they are part of a regex match.
 
 @cindex global log level
-@cindex log messages, filter
+@cindex log messages, disable
 @cindex filter log messages
+@cindex disable all log messages
+@cindex ignore all log messages
 For all of the logging implementations, you can use the @code{Logger.setGlobalLogLevel(...)} method to filter all log
 messages.  The argument you pass in filters out any messages to less important levels.  You should call that method
 in the @code{main(...)} method or as early in your application as possible.
@@ -4383,6 +4385,19 @@ Logger.setGlobalLogLevel(Level.ERROR);
 // turn off all log messages
 Logger.setGlobalLogLevel(Level.OFF);
 @end example
+
+@cindex other loggers
+@cindex logging, custom implemenations
+@cindex custom logging
+@cindex null logging implementation
+@cindex dev-null logging implementation
+@cindex logging factory
+You can also implement your own logging implementation by using the @code{LoggerFactory.setLogFactory(...)} method.
+The the factory needs to implement a @code{Log createLog(String)} method and the @code{Log} class only has a couple
+methods to test the log level and log messages with optional throwables.
+
+You can use the @code{NullLogFactory} as another way to disable all log messages by sending them to @code{NullLog}
+which ignores all log calls.
 
 For logging with Android, @xref{Android Logging}.  
 

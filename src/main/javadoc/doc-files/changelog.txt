@@ -1,3 +1,6 @@
+5.4: ??/??/2020
+	* CORE: Added LoggerFactory.setLogFactory() for supporting other log implementations and added NullLog. 
+
 5.3: 12/8/2020
 	* CORE: More improvements to the TransactionManager connection and savepoint handling.
 	* CORE: Added a getInternalConnection() method to DatabaseConnection to access underlying objects.
