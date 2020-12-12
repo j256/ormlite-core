@@ -547,6 +547,13 @@ public class Logger {
 		logIfEnabled(level, throwable, msg, UNKNOWN_ARG, UNKNOWN_ARG, UNKNOWN_ARG, argArray);
 	}
 
+	/**
+	 * Get the underlying Log implementation for testing purposes.
+	 */
+	public Log getLog() {
+		return log;
+	}
+
 	private void logIfEnabled(Level level, Throwable throwable, String msg, Object arg0, Object arg1, Object arg2,
 			Object[] argArray) {
 		if (globalLevel != null && !globalLevel.isEnabled(level)) {

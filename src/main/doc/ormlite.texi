@@ -4388,7 +4388,6 @@ Logger.setGlobalLogLevel(Level.OFF);
 
 @cindex other loggers
 @cindex logging, custom implemenations
-@cindex custom logging
 @cindex null logging implementation
 @cindex dev-null logging implementation
 @cindex logging factory
