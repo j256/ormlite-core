@@ -17,7 +17,7 @@ import com.j256.ormlite.logger.Log.Level;
 public class LoggerFactory {
 
 	public static final String LOG_TYPE_SYSTEM_PROPERTY = "com.j256.ormlite.logger.type";
-	private static LogType logType;
+	private static LogFactory logFactory;
 
 	/**
 	 * For static calls only.
@@ -33,13 +33,21 @@ public class LoggerFactory {
 	}
 
 	/**
+	 * Set the log factory to be a specific instance. This allows you to easily redirect log messages to your own
+	 * {@link Log} implementation.
+	 */
+	public static void setLogFactory(LogFactory logFactory) {
+		LoggerFactory.logFactory = logFactory;
+	}
+
+	/**
 	 * Return a logger associated with a particular class name.
 	 */
 	public static Logger getLogger(String className) {
-		if (logType == null) {
-			logType = findLogType();
+		if (logFactory == null) {
+			logFactory = findLogFactory();
 		}
-		return new Logger(logType.createLog(className));
+		return new Logger(logFactory.createLog(className));
 	}
 
 	/**
@@ -56,9 +64,9 @@ public class LoggerFactory {
 	}
 
 	/**
-	 * Return the most appropriate log type. This should _never_ return null.
+	 * Return the most appropriate log factory. This should _never_ return null.
 	 */
-	private static LogType findLogType() {
+	private static LogFactory findLogFactory() {
 
 		// see if the log-type was specified as a system property
 		String logTypeString = System.getProperty(LOG_TYPE_SYSTEM_PROPERTY);
@@ -77,14 +85,24 @@ public class LoggerFactory {
 				return logType;
 			}
 		}
-		// fall back is always LOCAL, never reached
+		// fall back is always LOCAL, probably never reached
 		return LogType.LOCAL;
+	}
+
+	/**
+	 * Log factory for generating Log instances.
+	 */
+	public interface LogFactory {
+		/**
+		 * Create a log implementation from the class-label.
+		 */
+		public Log createLog(String classLabel);
 	}
 
 	/**
 	 * Type of internal logs supported. This is package permissions for testing.
 	 */
-	public enum LogType {
+	public enum LogType implements LogFactory {
 		SLF4J("org.slf4j.LoggerFactory", "com.j256.ormlite.logger.Slf4jLoggingLog"),
 		/**
 		 * WARNING: Android log must be _before_ commons logging since Android provides commons logging but logging
@@ -109,6 +127,18 @@ public class LoggerFactory {
 		},
 		// we put this down here because it's always available but we rarely want to use it
 		JAVA_UTIL("java.util.logging.Logger", "com.j256.ormlite.logger.JavaUtilLog"),
+		NULL(NullLog.class.getName(), NullLog.class.getName()) {
+			@Override
+			public Log createLog(String classLabel) {
+				return new NullLog(classLabel);
+			}
+
+			@Override
+			public boolean isAvailable() {
+				// never chosen automatically
+				return false;
+			}
+		},
 		// end
 		;
 
@@ -120,9 +150,7 @@ public class LoggerFactory {
 			this.logClassName = logClassName;
 		}
 
-		/**
-		 * Create and return a Log class for this type.
-		 */
+		@Override
 		public Log createLog(String classLabel) {
 			try {
 				return createLogFromClassName(classLabel);
@@ -136,7 +164,8 @@ public class LoggerFactory {
 		}
 
 		/**
-		 * Return true if the log class is available.
+		 * Return true if the log class is available. This typically is testing to see if a class is available on the
+		 * classpath.
 		 */
 		public boolean isAvailable() {
 			if (!isAvailableTestClass()) {

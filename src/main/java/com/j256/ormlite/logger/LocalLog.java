@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
+import com.j256.ormlite.logger.LoggerFactory.LogFactory;
 import com.j256.ormlite.misc.IOUtils;
 
 /**
@@ -208,6 +209,17 @@ public class LocalLog implements Log {
 		printStream.println(sb.toString());
 		if (throwable != null) {
 			throwable.printStackTrace(printStream);
+		}
+	}
+
+	/**
+	 * Internal factory for LocalLog instances. This can be used with the
+	 * {@link LoggerFactory#setLogFactory(LogFactory)} method to send all log messages to a file.
+	 */
+	public static class LocalLogFactory implements LogFactory {
+		@Override
+		public Log createLog(String classLabel) {
+			return new LocalLog(classLabel);
 		}
 	}
 
