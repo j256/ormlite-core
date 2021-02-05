@@ -10,7 +10,7 @@ jobs:
           key: j256-ormlite-core-{{ checksum "pom.xml" }}
       - run:
           name: Get maven project dependencies
-          command: mvn -U dependency:go-offline compile
+          command: mvn -U -DskipTests clean install dependency:resolve-plugins dependency:go-offline
       # save the project dependencies
       - save_cache:
           paths:
