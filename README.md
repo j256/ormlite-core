@@ -9,7 +9,7 @@ users should download the [ormlite-android](https://github.com/j256/ormlite-andr
 * Online documentation can be found off the home page.  Here's the [getting started information](http://ormlite.com/docs/getting-started).
 Here are the [Javadocs for the code](http://ormlite.com/javadoc/ormlite-core/).
 * Browse the code on the [git repository](https://github.com/j256/ormlite-core).  [![CircleCI](https://circleci.com/gh/j256/ormlite-core.svg?style=svg)](https://circleci.com/gh/j256/ormlite-core) [![CodeCov](https://img.shields.io/codecov/c/github/j256/ormlite-core.svg)](https://codecov.io/github/j256/ormlite-core/)
-* Maven packages are published via [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.j256.ormlite/ormlite-core/badge.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/com.j256.ormlite/ormlite-core/)
+* Maven packages are published via [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.j256.ormlite/ormlite-core/badge.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/com.j256.ormlite/ormlite-core/) [![javadoc](https://javadoc.io/badge2/com.j256.ormlite/ormlite-core/javadoc.svg)](https://javadoc.io/doc/com.j256.ormlite/ormlite-core)
 * I've published a [number of example programs](http://ormlite.com/docs/examples).
 
 ORMLite is easy to use and provides the following features:
