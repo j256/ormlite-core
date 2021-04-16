@@ -49,14 +49,14 @@ public abstract class BaseCoreTest {
 		}
 		@SuppressWarnings("unchecked")
 		BaseDaoImpl<T, ID> dao = (BaseDaoImpl<T, ID>) DaoManager.createDao(connectionSource, clazz);
-		return configDao(dao, createTable);
+		return configDao(connectionSource, dao, createTable);
 	}
 
 	protected <T, ID> Dao<T, ID> createDao(ConnectionSource connectionSource, Class<T> clazz, boolean createTable)
 			throws SQLException {
 		@SuppressWarnings("unchecked")
 		BaseDaoImpl<T, ID> dao = (BaseDaoImpl<T, ID>) DaoManager.createDao(connectionSource, clazz);
-		return configDao(dao, createTable);
+		return configDao(connectionSource, dao, createTable);
 	}
 
 	protected <T, ID> Dao<T, ID> createDao(DatabaseTableConfig<T> tableConfig, boolean createTable)
@@ -66,25 +66,11 @@ public abstract class BaseCoreTest {
 		}
 		@SuppressWarnings("unchecked")
 		BaseDaoImpl<T, ID> dao = (BaseDaoImpl<T, ID>) DaoManager.createDao(connectionSource, tableConfig);
-		return configDao(dao, createTable);
+		return configDao(connectionSource, dao, createTable);
 	}
 
 	protected <T> void createTable(Class<T> clazz, boolean dropAtEnd) throws SQLException {
-		createTable(DatabaseTableConfig.fromClass(databaseType, clazz), dropAtEnd);
-	}
-
-	protected <T> void createTable(DatabaseTableConfig<T> tableConfig, boolean dropAtEnd) throws SQLException {
-		try {
-			// first we drop it in case it existed before
-			dropTable(tableConfig, true);
-		} catch (SQLException ignored) {
-			// ignore any errors about missing tables
-		}
-		TableUtils.createTable(connectionSource, tableConfig);
-	}
-
-	protected <T> void createSchema(DatabaseTableConfig<T> tableConfig) throws SQLException {
-		SchemaUtils.createSchema(connectionSource, tableConfig.getSchemaName());
+		createTable(connectionSource, DatabaseTableConfig.fromClass(databaseType, clazz), dropAtEnd);
 	}
 
 	protected <T> void dropTable(Class<T> clazz, boolean ignoreErrors) throws SQLException {
@@ -92,12 +78,12 @@ public abstract class BaseCoreTest {
 		TableUtils.dropTable(connectionSource, clazz, ignoreErrors);
 	}
 
-	protected <T> void dropTable(DatabaseTableConfig<T> tableConfig, boolean ignoreErrors) throws SQLException {
-		// drop the table and ignore any errors along the way
-		TableUtils.dropTable(connectionSource, tableConfig, ignoreErrors);
+	protected <T, ID> Dao<T, ID> configDao(BaseDaoImpl<T, ID> dao, boolean createTable) throws SQLException {
+		return configDao(connectionSource, dao, createTable);
 	}
 
-	protected <T, ID> Dao<T, ID> configDao(BaseDaoImpl<T, ID> dao, boolean createTable) throws SQLException {
+	protected <T, ID> Dao<T, ID> configDao(ConnectionSource connectionSource, BaseDaoImpl<T, ID> dao,
+			boolean createTable) throws SQLException {
 		if (connectionSource == null) {
 			throw new SQLException("Connection source is null");
 		}
@@ -107,14 +93,27 @@ public abstract class BaseCoreTest {
 				tableConfig = DatabaseTableConfig.fromClass(databaseType, dao.getDataClass());
 			}
 			if (tableConfig.getSchemaName() != null && tableConfig.getSchemaName().length() > 0) {
-				createSchema(tableConfig);
+				SchemaUtils.createSchema(connectionSource, tableConfig.getSchemaName());
 			}
-			createTable(tableConfig, true);
+			createTable(connectionSource, tableConfig, true);
 		}
 		return dao;
 	}
 
+	private <T> void createTable(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig,
+			boolean dropAtEnd) throws SQLException {
+		try {
+			// first we drop it in case it existed before
+			TableUtils.dropTable(connectionSource, tableConfig, true);
+		} catch (SQLException ignored) {
+			// ignore any errors about missing tables
+		}
+		TableUtils.createTable(connectionSource, tableConfig);
+	}
+
 	protected static class LimitAfterSelectDatabaseType extends H2DatabaseType {
+
+		// needed for exception
 		public LimitAfterSelectDatabaseType() throws SQLException {
 			super();
 		}
