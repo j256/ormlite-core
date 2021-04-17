@@ -34,6 +34,7 @@ notice and this permission notice are preserved on all copies.
 @end iftex
 
 @c ----------------------------------------------------------------
+
 @node Top, Getting Started, (dir), (dir)
 @top ORMLite
 @everyheading @thischapter @| @thispage @| @today{}
@@ -3637,7 +3638,8 @@ manually.
 @node Spring Configuration, Class Configuration, Advanced, Advanced
 @section Spring Configuration
 
-@cindex spring framework
+@cindex spring framework, using with
+@cindex using spring framework
 @cindex configuration with Spring
 ORMLite contains some classes which make it easy to configure the various database classes using
 the @uref{http://www.springsource.org/, Spring Framework}.
