@@ -4,14 +4,12 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import com.j256.ormlite.logger.Log.Level;
+public abstract class BaseLogBackendTest {
 
-public abstract class BaseLogTest {
+	private final LogBackend log;
 
-	private final Log log;
-
-	protected BaseLogTest(Log log) {
-		this.log = log;
+	protected BaseLogBackendTest(LogBackendFactory factory) {
+		this.log = factory.createLogBackend(getClass().getSimpleName());
 	}
 
 	@Test

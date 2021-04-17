@@ -1,5 +1,8 @@
 5.4: ??/??/2020
-	* CORE: Added LoggerFactory.setLogFactory() for supporting other log implementations and added NullLog. 
+	* CORE: Added LoggerFactory.setLogFactory() for supporting other log implementations and added NullLog.
+	* JDBC: Added setLoginTimeoutSecs(...) method to set the underlying DriverManager for the connection sources.
+	* JDBC: Fixed NPE in JdbcSingleConnectionSource because of early initialization.  Thanks to Nexxxt99.
+	* CORE: Migrated the internal logging code to SimpleLoging.
 
 5.3: 12/8/2020
 	* CORE: More improvements to the TransactionManager connection and savepoint handling.

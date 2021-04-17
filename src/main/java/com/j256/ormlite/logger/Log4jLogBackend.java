@@ -1,17 +1,15 @@
 package com.j256.ormlite.logger;
 
-import com.j256.ormlite.logger.Log;
-
 /**
- * Class which implements our {@link com.j256.ormlite.logger.Log} interface by delegating to Apache Log4j.
+ * Log backend that delegates to Apache Log4j.
  * 
  * @author graywatson
  */
-public class Log4jLog implements Log {
+public class Log4jLogBackend implements LogBackend {
 
 	private final org.apache.log4j.Logger logger;
 
-	public Log4jLog(String className) {
+	public Log4jLogBackend(String className) {
 		this.logger = org.apache.log4j.Logger.getLogger(className);
 	}
 
@@ -30,22 +28,32 @@ public class Log4jLog implements Log {
 		logger.log(levelToLog4jLevel(level), msg, t);
 	}
 
-	private org.apache.log4j.Level levelToLog4jLevel(com.j256.ormlite.logger.Log.Level level) {
+	private org.apache.log4j.Level levelToLog4jLevel(Level level) {
 		switch (level) {
 			case TRACE:
 				return org.apache.log4j.Level.TRACE;
 			case DEBUG:
 				return org.apache.log4j.Level.DEBUG;
-			case INFO:
-				return org.apache.log4j.Level.INFO;
+			/* INFO below */
 			case WARNING:
 				return org.apache.log4j.Level.WARN;
 			case ERROR:
 				return org.apache.log4j.Level.ERROR;
 			case FATAL:
 				return org.apache.log4j.Level.FATAL;
+			case INFO:
 			default:
 				return org.apache.log4j.Level.INFO;
+		}
+	}
+
+	/**
+	 * Factory for generating Log4jLogBackend instances.
+	 */
+	public static class Log4jLogBackendFactory implements LogBackendFactory {
+		@Override
+		public LogBackend createLogBackend(String classLabel) {
+			return new Log4jLogBackend(classLabel);
 		}
 	}
 }

@@ -1,34 +1,34 @@
 package com.j256.ormlite.logger;
 
 /**
- * Class which implements our Log interface by delegating to the Apache commons logging classes.
+ * Log backend that delegating to the Apache commons logging classes.
  * 
  * @author graywatson
  */
-public class CommonsLoggingLog implements Log {
+public class CommonsLoggingLogBackend implements LogBackend {
 
 	private final org.apache.commons.logging.Log log;
 
-	public CommonsLoggingLog(String className) {
+	public CommonsLoggingLogBackend(String className) {
 		this.log = org.apache.commons.logging.LogFactory.getLog(className);
 	}
 
 	@Override
 	public boolean isLevelEnabled(Level level) {
 		switch (level) {
-			case TRACE :
+			case TRACE:
 				return log.isTraceEnabled();
-			case DEBUG :
+			case DEBUG:
 				return log.isDebugEnabled();
-			case INFO :
-				return log.isInfoEnabled();
-			case WARNING :
+			/* INFO below */
+			case WARNING:
 				return log.isWarnEnabled();
-			case ERROR :
+			case ERROR:
 				return log.isErrorEnabled();
-			case FATAL :
+			case FATAL:
 				return log.isFatalEnabled();
-			default :
+			case INFO:
+			default:
 				return log.isInfoEnabled();
 		}
 	}
@@ -36,25 +36,24 @@ public class CommonsLoggingLog implements Log {
 	@Override
 	public void log(Level level, String msg) {
 		switch (level) {
-			case TRACE :
+			case TRACE:
 				log.trace(msg);
 				break;
-			case DEBUG :
+			case DEBUG:
 				log.debug(msg);
 				break;
-			case INFO :
-				log.info(msg);
-				break;
-			case WARNING :
+			/* INFO below */
+			case WARNING:
 				log.warn(msg);
 				break;
-			case ERROR :
+			case ERROR:
 				log.error(msg);
 				break;
-			case FATAL :
+			case FATAL:
 				log.fatal(msg);
 				break;
-			default :
+			case INFO:
+			default:
 				log.info(msg);
 				break;
 		}
@@ -63,27 +62,36 @@ public class CommonsLoggingLog implements Log {
 	@Override
 	public void log(Level level, String msg, Throwable t) {
 		switch (level) {
-			case TRACE :
+			case TRACE:
 				log.trace(msg, t);
 				break;
-			case DEBUG :
+			case DEBUG:
 				log.debug(msg, t);
 				break;
-			case INFO :
-				log.info(msg, t);
-				break;
-			case WARNING :
+			/* INFO below */
+			case WARNING:
 				log.warn(msg, t);
 				break;
-			case ERROR :
+			case ERROR:
 				log.error(msg, t);
 				break;
-			case FATAL :
+			case FATAL:
 				log.fatal(msg, t);
 				break;
-			default :
+			case INFO:
+			default:
 				log.info(msg, t);
 				break;
+		}
+	}
+
+	/**
+	 * Factory for generating CommonsLoggingLogBackend instances.
+	 */
+	public static class CommonsLoggingLogBackendFactory implements LogBackendFactory {
+		@Override
+		public LogBackend createLogBackend(String classLabel) {
+			return new CommonsLoggingLogBackend(classLabel);
 		}
 	}
 }
