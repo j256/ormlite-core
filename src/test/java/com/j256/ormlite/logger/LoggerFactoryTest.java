@@ -35,7 +35,7 @@ public class LoggerFactoryTest {
 
 	@Test
 	public void testLogTypes() {
-		checkLog(LogBackendType.SLF4J, Slf4jLoggingLogBackend.class, false);
+		checkLog(LogBackendType.SLF4J, Slf4jLoggingLogBackend.class, true);
 		checkLog(LogBackendType.ANDROID, LocalLogBackend.class, false);
 		checkLog(LogBackendType.COMMONS_LOGGING, CommonsLoggingLogBackend.class, true);
 		checkLog(LogBackendType.LOG4J2, Log4j2LogBackend.class, true);
