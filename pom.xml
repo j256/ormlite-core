@@ -75,11 +75,10 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.1</version>
+						<version>1.6</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
-								<phase>${gpgPhase}</phase>
 								<goals>
 									<goal>sign</goal>
 								</goals>
@@ -128,11 +127,10 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.1</version>
+						<version>1.6</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
-								<phase>${gpgPhase}</phase>
 								<goals>
 									<goal>sign</goal>
 								</goals>
@@ -175,7 +173,7 @@
 				<configuration>
 					<mavenExecutorId>forked-path</mavenExecutorId>
 					<useReleaseProfile>false</useReleaseProfile>
-					<arguments>-Psonatype-oss-release -DgpgPhase=${gpgPhase} -Dgpg.passphrase=${gpg.passphrase}</arguments>
+					<arguments>-Psonatype-oss-release</arguments>
 				</configuration>
 			</plugin>
 			<plugin>
