@@ -15,18 +15,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
-import com.j256.ormlite.logger.LoggerFactory.LogFactory;
-import com.j256.ormlite.misc.IOUtils;
-
 /**
- * <p>
- * Class which implements our {@link Log} interface so we can bypass external logging classes if they are not available.
- * </p>
+ * Log backend that uses logging classes if they are not available.
  * 
  * <p>
- * You can set the log level by setting the System.setProperty(LocalLog.LOCAL_LOG_LEVEL_PROPERTY, "trace"). Acceptable
- * values are: TRACE, DEBUG, INFO, WARN, ERROR, and FATAL. You can also redirect the log to a file by setting the
- * System.setProperty(LocalLog.LOCAL_LOG_FILE_PROPERTY, "log.out"). Otherwise, log output will go to stdout.
+ * You can set the log level by setting the System.setProperty(LocalLogBackend.LOCAL_LOG_LEVEL_PROPERTY, "trace").
+ * Acceptable values are: TRACE, DEBUG, INFO, WARN, ERROR, and FATAL. You can also redirect the log to a file by setting
+ * the System.setProperty(LocalLogBackend.LOCAL_LOG_FILE_PROPERTY, "log.out"). Otherwise, log output will go to stdout.
  * </p>
  * 
  * <p>
@@ -35,18 +30,18 @@ import com.j256.ormlite.misc.IOUtils;
  * 
  * <pre>
  * # regex-pattern = Level
- * log4j\.logger\.com\.j256\.ormlite.*=DEBUG
- * log4j\.logger\.com\.j256\.ormlite\.stmt\.mapped.BaseMappedStatement=TRACE
- * log4j\.logger\.com\.j256\.ormlite\.stmt\.mapped.MappedCreate=TRACE
- * log4j\.logger\.com\.j256\.ormlite\.stmt\.StatementExecutor=TRACE
+ * com\.foo\.yourclass.*=DEBUG
+ * com\.foo\.yourclass\.BaseMappedStatement=TRACE
+ * com\.foo\.yourclass\.MappedCreate=TRACE
+ * com\.foo\.yourclass\.StatementExecutor=TRACE
  * </pre>
  * 
  * @author graywatson
  */
-public class LocalLog implements Log {
+public class LocalLogBackend implements LogBackend {
 
-	public static final String LOCAL_LOG_LEVEL_PROPERTY = "com.j256.ormlite.logger.level";
-	public static final String LOCAL_LOG_FILE_PROPERTY = "com.j256.ormlite.logger.file";
+	public static final String LOCAL_LOG_LEVEL_PROPERTY = "com.j256.simplelogging.level";
+	public static final String LOCAL_LOG_FILE_PROPERTY = "com.j256.simplelogging.file";
 	public static final String LOCAL_LOG_PROPERTIES_FILE = "/ormliteLocalLog.properties";
 
 	private static final Level DEFAULT_LEVEL = Level.DEBUG;
@@ -59,7 +54,7 @@ public class LocalLog implements Log {
 	private final Level level;
 
 	static {
-		InputStream stream = LocalLog.class.getResourceAsStream(LOCAL_LOG_PROPERTIES_FILE);
+		InputStream stream = LocalLogBackend.class.getResourceAsStream(LOCAL_LOG_PROPERTIES_FILE);
 		List<PatternLevel> levels = readLevelResourceFile(stream);
 		classLevels = levels;
 
@@ -71,7 +66,7 @@ public class LocalLog implements Log {
 		openLogFile(logPath);
 	}
 
-	public LocalLog(String className) {
+	public LocalLogBackend(String className) {
 		// get the last part of the class name
 		this.className = LoggerFactory.getSimpleClassName(className);
 
@@ -160,7 +155,13 @@ public class LocalLog implements Log {
 				System.err.println(
 						"IO exception reading the log properties file '" + LOCAL_LOG_PROPERTIES_FILE + "': " + e);
 			} finally {
-				IOUtils.closeQuietly(stream);
+				if (stream != null) {
+					try {
+						stream.close();
+					} catch (IOException e) {
+						// ignored
+					}
+				}
 			}
 		}
 		return levels;
@@ -213,13 +214,13 @@ public class LocalLog implements Log {
 	}
 
 	/**
-	 * Internal factory for LocalLog instances. This can be used with the
-	 * {@link LoggerFactory#setLogFactory(LogFactory)} method to send all log messages to a file.
+	 * Internal factory for LocalLogBackend instances. This can be used with the
+	 * {@link LoggerFactory#setLogBackendFactory(LogBackendFactory)} method to send all log messages to a file.
 	 */
-	public static class LocalLogFactory implements LogFactory {
+	public static class LocalLogBackendFactory implements LogBackendFactory {
 		@Override
-		public Log createLog(String classLabel) {
-			return new LocalLog(classLabel);
+		public LogBackend createLogBackend(String classLabel) {
+			return new LocalLogBackend(classLabel);
 		}
 	}
 

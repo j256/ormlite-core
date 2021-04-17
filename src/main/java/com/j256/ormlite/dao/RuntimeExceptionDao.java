@@ -9,7 +9,7 @@ import java.util.concurrent.Callable;
 
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.logger.Log.Level;
+import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.stmt.DeleteBuilder;

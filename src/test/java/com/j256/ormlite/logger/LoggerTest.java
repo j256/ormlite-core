@@ -16,17 +16,15 @@ import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.j256.ormlite.logger.Log.Level;
-
 public class LoggerTest {
 
 	private Logger logger;
-	private Log mockLog;
+	private LogBackend mockLog;
 	private Throwable throwable = new Throwable();
 
 	@Before
 	public void before() {
-		mockLog = createMock(Log.class);
+		mockLog = createMock(LogBackend.class);
 		logger = new Logger(mockLog);
 	}
 
@@ -79,10 +77,12 @@ public class LoggerTest {
 	public void testToManyArgs() {
 		String start = "yyy ";
 		String arg = "x";
-		expect(mockLog.isLevelEnabled(Level.TRACE)).andReturn(true);
+		expect(mockLog.isLevelEnabled(Level.TRACE)).andReturn(true).times(2);
+		mockLog.log(Level.TRACE, start + arg);
 		mockLog.log(Level.TRACE, start + arg);
 		replay(mockLog);
-		logger.trace(start + "{}", arg);
+		logger.trace(start + "{}{}{}{}{}", arg);
+		logger.trace(start + "{}{}{}{}{}", new Object[] { arg });
 		verify(mockLog);
 	}
 
@@ -284,6 +284,53 @@ public class LoggerTest {
 			mockLog.log(level, result, throwable);
 			replay(mockLog);
 			logger.log(level, throwable, pattern, arg0, arg1, arg2);
+			verify(mockLog);
+		}
+	}
+
+	@Test
+	public void testMessageArg0Arg1Arg2Arg3() throws Exception {
+		String msg = "123 ";
+		Object arg0 = "wow";
+		Object arg1 = "zebra";
+		Object arg2 = "wanker";
+		Object arg3 = "yowza";
+		String result = msg + "0" + arg0 + "01" + arg1 + "12" + arg2 + "23" + arg3 + "3";
+		String pattern = msg + "0{}01{}12{}23{}3";
+		for (Level level : Level.values()) {
+			if (level == Level.OFF) {
+				continue;
+			}
+			Method method = Logger.class.getMethod(getNameFromLevel(level), String.class, Object.class, Object.class,
+					Object.class, Object.class);
+			reset(mockLog);
+			expect(mockLog.isLevelEnabled(level)).andReturn(true);
+			mockLog.log(level, result);
+			replay(mockLog);
+			method.invoke(logger, pattern, arg0, arg1, arg2, arg3);
+			verify(mockLog);
+
+			method = Logger.class.getMethod(getNameFromLevel(level), Throwable.class, String.class, Object.class,
+					Object.class, Object.class, Object.class);
+			reset(mockLog);
+			expect(mockLog.isLevelEnabled(level)).andReturn(true);
+			mockLog.log(level, result, throwable);
+			replay(mockLog);
+			method.invoke(logger, throwable, pattern, arg0, arg1, arg2, arg3);
+			verify(mockLog);
+
+			reset(mockLog);
+			expect(mockLog.isLevelEnabled(level)).andReturn(true);
+			mockLog.log(level, result);
+			replay(mockLog);
+			logger.log(level, pattern, arg0, arg1, arg2, arg3);
+			verify(mockLog);
+
+			reset(mockLog);
+			expect(mockLog.isLevelEnabled(level)).andReturn(true);
+			mockLog.log(level, result, throwable);
+			replay(mockLog);
+			logger.log(level, throwable, pattern, arg0, arg1, arg2, arg3);
 			verify(mockLog);
 		}
 	}
@@ -501,20 +548,26 @@ public class LoggerTest {
 		String msg1 = "123";
 		String msg2 = "this should not show up";
 		String msg3 = "this should show up";
+		String msg4 = "this should show up too";
 		reset(mockLog);
 		expect(mockLog.isLevelEnabled(Level.INFO)).andReturn(true);
 		mockLog.log(Level.INFO, msg1);
 		// no msg2
+		expect(mockLog.isLevelEnabled(Level.INFO)).andReturn(true);
+		mockLog.log(Level.INFO, msg3);
 		expect(mockLog.isLevelEnabled(Level.DEBUG)).andReturn(true);
-		mockLog.log(Level.DEBUG, msg3);
+		mockLog.log(Level.DEBUG, msg4);
 		replay(mockLog);
 		logger.info(msg1);
 		Logger.setGlobalLogLevel(Level.OFF);
 		logger.fatal(msg2);
 		Logger.setGlobalLogLevel(Level.INFO);
+		// global log does not match this so it should not be shown
 		logger.debug(msg2);
+		// global log matches info so this should be shown
+		logger.info(msg3);
 		Logger.setGlobalLogLevel(null);
-		logger.debug(msg3);
+		logger.debug(msg4);
 		verify(mockLog);
 	}
 

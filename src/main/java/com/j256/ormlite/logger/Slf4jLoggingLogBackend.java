@@ -1,18 +1,16 @@
 package com.j256.ormlite.logger;
 
-import com.j256.ormlite.logger.Log;
-
 /**
- * Class which implements our {@link com.j256.ormlite.logger.Log} interface by delegating to Apache Log4j2.
+ * Log backend that delegates to slf4j.
  * 
  * @author graywatson
  */
-public class Log4j2Log implements Log {
+public class Slf4jLoggingLogBackend implements LogBackend {
 
-	private final org.apache.logging.log4j.Logger logger;
+	private final org.slf4j.Logger logger;
 
-	public Log4j2Log(String className) {
-		this.logger = org.apache.logging.log4j.LogManager.getLogger(className);
+	public Slf4jLoggingLogBackend(org.slf4j.Logger logger) {
+		this.logger = logger;
 	}
 
 	@Override
@@ -22,14 +20,14 @@ public class Log4j2Log implements Log {
 				return logger.isTraceEnabled();
 			case DEBUG:
 				return logger.isDebugEnabled();
-			case INFO:
-				return logger.isInfoEnabled();
+			/* INFO below */
 			case WARNING:
 				return logger.isWarnEnabled();
 			case ERROR:
 				return logger.isErrorEnabled();
 			case FATAL:
-				return logger.isFatalEnabled();
+				return logger.isErrorEnabled();
+			case INFO:
 			default:
 				return logger.isInfoEnabled();
 		}
@@ -44,9 +42,7 @@ public class Log4j2Log implements Log {
 			case DEBUG:
 				logger.debug(msg);
 				break;
-			case INFO:
-				logger.info(msg);
-				break;
+			/* INFO below */
 			case WARNING:
 				logger.warn(msg);
 				break;
@@ -54,8 +50,9 @@ public class Log4j2Log implements Log {
 				logger.error(msg);
 				break;
 			case FATAL:
-				logger.fatal(msg);
+				logger.error(msg);
 				break;
+			case INFO:
 			default:
 				logger.info(msg);
 				break;
@@ -71,9 +68,7 @@ public class Log4j2Log implements Log {
 			case DEBUG:
 				logger.debug(msg, t);
 				break;
-			case INFO:
-				logger.info(msg, t);
-				break;
+			/* INFO below */
 			case WARNING:
 				logger.warn(msg, t);
 				break;
@@ -81,11 +76,30 @@ public class Log4j2Log implements Log {
 				logger.error(msg, t);
 				break;
 			case FATAL:
-				logger.fatal(msg, t);
+				// no level higher than error
+				logger.error(msg, t);
 				break;
+			case INFO:
 			default:
 				logger.info(msg, t);
 				break;
+		}
+	}
+
+	/**
+	 * Factory for generating Slf4jLoggingLogBackend instances.
+	 */
+	public static class Slf4jLoggingLogBackendFactory implements LogBackendFactory {
+
+		private final org.slf4j.ILoggerFactory factory;
+
+		public Slf4jLoggingLogBackendFactory() {
+			this.factory = org.slf4j.LoggerFactory.getILoggerFactory();
+		}
+
+		@Override
+		public LogBackend createLogBackend(String classLabel) {
+			return new Slf4jLoggingLogBackend(factory.getLogger(classLabel));
 		}
 	}
 }
