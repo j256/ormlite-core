@@ -27,7 +27,7 @@ import com.j256.ormlite.support.DatabaseResults;
 
 /**
  * Couple utility methods for the creating, dropping, and maintenance of tables.
- * 
+ *
  * @author graywatson
  */
 public class TableUtils {
@@ -43,7 +43,7 @@ public class TableUtils {
 
 	/**
 	 * Issue the database statements to create the table associated with a class.
-	 * 
+	 *
 	 * @param connectionSource
 	 *            Associated connection source.
 	 * @param dataClass
@@ -57,7 +57,7 @@ public class TableUtils {
 
 	/**
 	 * Issue the database statements to create the table associated with a table configuration.
-	 * 
+	 *
 	 * @param dao
 	 *            Associated dao.
 	 * @return The number of statements executed to do so.
@@ -75,9 +75,18 @@ public class TableUtils {
 		return doCreateTable(dao, true);
 	}
 
+    /**
+     * Create a table if it does not already exist. This is not supported by all databases.
+     */
+    public static <T> int createTableIfNotExists(ConnectionSource connectionSource, Class<T> dataClass, boolean logDetails)
+            throws SQLException {
+        Dao<T, ?> dao = DaoManager.createDao(connectionSource, dataClass);
+        return doCreateTable(dao, true, logDetails);
+    }
+
 	/**
 	 * Issue the database statements to create the table associated with a table configuration.
-	 * 
+	 *
 	 * @param connectionSource
 	 *            connectionSource Associated connection source.
 	 * @param tableConfig
@@ -113,7 +122,7 @@ public class TableUtils {
 	/**
 	 * Return an list of SQL statements that need to be run to create a table. To do the work of creating, you should
 	 * call {@link #createTable}.
-	 * 
+	 *
 	 * @param connectionSource
 	 *            Our connect source which is used to get the database type, not to apply the creates.
 	 * @param tableConfig
@@ -137,7 +146,7 @@ public class TableUtils {
 	/**
 	 * Return an list of SQL statements that need to be run to create a table. To do the work of creating, you should
 	 * call {@link #createTable}.
-	 * 
+	 *
 	 * @param databaseType
 	 *            The type of database which will be executing the create table statements.
 	 * @param tableConfig
@@ -155,11 +164,11 @@ public class TableUtils {
 
 	/**
 	 * Issue the database statements to drop the table associated with a class.
-	 * 
+	 *
 	 * <p>
 	 * <b>WARNING:</b> This is [obviously] very destructive and is unrecoverable.
 	 * </p>
-	 * 
+	 *
 	 * @param connectionSource
 	 *            Associated connection source.
 	 * @param dataClass
@@ -176,7 +185,7 @@ public class TableUtils {
 
 	/**
 	 * Issue the database statements to drop the table associated with a dao.
-	 * 
+	 *
 	 * @param dao
 	 *            Associated dao.
 	 * @return The number of statements executed to do so.
@@ -195,11 +204,11 @@ public class TableUtils {
 
 	/**
 	 * Issue the database statements to drop the table associated with a table configuration.
-	 * 
+	 *
 	 * <p>
 	 * <b>WARNING:</b> This is [obviously] very destructive and is unrecoverable.
 	 * </p>
-	 * 
+	 *
 	 * @param connectionSource
 	 *            Associated connection source.
 	 * @param tableConfig
@@ -225,7 +234,7 @@ public class TableUtils {
 	/**
 	 * Clear all data out of the table. For certain database types and with large sized tables, which may take a long
 	 * time. In some configurations, it may be faster to drop and re-create the table.
-	 * 
+	 *
 	 * <p>
 	 * <b>WARNING:</b> This is [obviously] very destructive and is unrecoverable.
 	 * </p>
@@ -243,7 +252,7 @@ public class TableUtils {
 	/**
 	 * Clear all data out of the table. For certain database types and with large sized tables, which may take a long
 	 * time. In some configurations, it may be faster to drop and re-create the table.
-	 * 
+	 *
 	 * <p>
 	 * <b>WARNING:</b> This is [obviously] very destructive and is unrecoverable.
 	 * </p>
@@ -346,22 +355,31 @@ public class TableUtils {
 	}
 
 	private static <T, ID> int doCreateTable(Dao<T, ID> dao, boolean ifNotExists) throws SQLException {
+		return doCreateTable(dao, ifNotExists, true);
+	}
+
+	private static <T, ID> int doCreateTable(Dao<T, ID> dao, boolean ifNotExists, boolean logDetails) throws SQLException {
 		ConnectionSource connectionSource = dao.getConnectionSource();
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		if (dao instanceof BaseDaoImpl<?, ?>) {
-			return doCreateTable(connectionSource, ((BaseDaoImpl<?, ?>) dao).getTableInfo(), ifNotExists);
+			return doCreateTable(connectionSource, ((BaseDaoImpl<?, ?>) dao).getTableInfo(), ifNotExists, logDetails);
 		} else {
 			TableInfo<T, ID> tableInfo = new TableInfo<T, ID>(databaseType, dao.getDataClass());
-			return doCreateTable(connectionSource, tableInfo, ifNotExists);
+			return doCreateTable(connectionSource, tableInfo, ifNotExists, logDetails);
 		}
 	}
 
 	private static <T, ID> int doCreateTable(ConnectionSource connectionSource, TableInfo<T, ID> tableInfo,
 			boolean ifNotExists) throws SQLException {
+		return doCreateTable(connectionSource, tableInfo, ifNotExists, true);
+	}
+
+	private static <T, ID> int doCreateTable(ConnectionSource connectionSource, TableInfo<T, ID> tableInfo,
+											 boolean ifNotExists, boolean logDetails) throws SQLException {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		List<String> statements = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();
-		addCreateTableStatements(databaseType, tableInfo, statements, queriesAfter, ifNotExists, true);
+		addCreateTableStatements(databaseType, tableInfo, statements, queriesAfter, ifNotExists, logDetails);
 		DatabaseConnection connection = connectionSource.getReadWriteConnection(tableInfo.getTableName());
 		try {
 			int stmtC = doStatements(connection, "create", statements, false,
