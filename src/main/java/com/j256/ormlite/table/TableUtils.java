@@ -370,11 +370,6 @@ public class TableUtils {
 	}
 
 	private static <T, ID> int doCreateTable(ConnectionSource connectionSource, TableInfo<T, ID> tableInfo,
-			boolean ifNotExists) throws SQLException {
-		return doCreateTable(connectionSource, tableInfo, ifNotExists, true);
-	}
-
-	private static <T, ID> int doCreateTable(ConnectionSource connectionSource, TableInfo<T, ID> tableInfo,
 											 boolean ifNotExists, boolean logDetails) throws SQLException {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		List<String> statements = new ArrayList<String>();
@@ -383,7 +378,7 @@ public class TableUtils {
 		DatabaseConnection connection = connectionSource.getReadWriteConnection(tableInfo.getTableName());
 		try {
 			int stmtC = doStatements(connection, "create", statements, false,
-					databaseType.isCreateTableReturnsNegative(), databaseType.isCreateTableReturnsZero());
+					databaseType.isCreateTableReturnsNegative(), databaseType.isCreateTableReturnsZero(), logDetails);
 			stmtC += doCreateTestQueries(connection, databaseType, queriesAfter);
 			return stmtC;
 		} finally {
@@ -393,6 +388,11 @@ public class TableUtils {
 
 	private static int doStatements(DatabaseConnection connection, String label, Collection<String> statements,
 			boolean ignoreErrors, boolean returnsNegative, boolean expectingZero) throws SQLException {
+	    return doStatements(connection, label, statements, ignoreErrors, returnsNegative, expectingZero, true);
+	}
+
+	private static int doStatements(DatabaseConnection connection, String label, Collection<String> statements,
+									boolean ignoreErrors, boolean returnsNegative, boolean expectingZero, boolean logDetails) throws SQLException {
 		int stmtC = 0;
 		for (String statement : statements) {
 			int rowC = 0;
@@ -401,9 +401,11 @@ public class TableUtils {
 				compiledStmt = connection.compileStatement(statement, StatementType.EXECUTE, noFieldTypes,
 						DatabaseConnection.DEFAULT_RESULT_FLAGS, false);
 				rowC = compiledStmt.runExecute();
-				logger.info("executed {} table statement changed {} rows: {}", label, rowC, statement);
+				if(logDetails) {
+					logger.info("executed {} table statement changed {} rows: {}", label, rowC, statement);
+				}
 			} catch (SQLException e) {
-				if (ignoreErrors) {
+				if (ignoreErrors && logDetails) {
 					logger.info("ignoring {} error '{}' for statement: {}", label, e, statement);
 				} else {
 					throw SqlExceptionUtil.create("SQL statement failed: " + statement, e);
