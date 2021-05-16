@@ -231,23 +231,17 @@ public class TableUtils {
 		}
 	}
 
-	/**
-	 * Clear all data out of the table. For certain database types and with large sized tables, which may take a long
-	 * time. In some configurations, it may be faster to drop and re-create the table.
-	 *
-	 * <p>
-	 * <b>WARNING:</b> This is [obviously] very destructive and is unrecoverable.
-	 * </p>
-	 */
-	public static <T> int clearTable(ConnectionSource connectionSource, Class<T> dataClass) throws SQLException {
-		DatabaseType databaseType = connectionSource.getDatabaseType();
-		String tableName = DatabaseTableConfig.extractTableName(databaseType, dataClass);
-		String schemaName = DatabaseTableConfig.extractSchemaName(dataClass);
-		if (databaseType.isEntityNamesMustBeUpCase()) {
-			tableName = databaseType.upCaseEntityName(tableName);
-		}
-		return clearTable(connectionSource, schemaName, tableName);
-	}
+    /**
+     * Clear all data out of the table. For certain database types and with large sized tables, which may take a long
+     * time. In some configurations, it may be faster to drop and re-create the table.
+     *
+     * <p>
+     * <b>WARNING:</b> This is [obviously] very destructive and is unrecoverable.
+     * </p>
+     */
+    public static <T> int clearTable(ConnectionSource connectionSource, Class<T> dataClass) throws SQLException {
+        return clearTable(connectionSource, dataClass, true);
+    }
 
 	/**
 	 * Clear all data out of the table. For certain database types and with large sized tables, which may take a long
@@ -259,10 +253,41 @@ public class TableUtils {
 	 */
 	public static <T> int clearTable(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig)
 			throws SQLException {
-		return clearTable(connectionSource, tableConfig.getSchemaName(), tableConfig.getTableName());
+		return clearTable(connectionSource, tableConfig, true);
 	}
 
-	private static <T> int clearTable(ConnectionSource connectionSource, String schemaName, String tableName) throws SQLException {
+    /**
+     * Clear all data out of the table. For certain database types and with large sized tables, which may take a long
+     * time. In some configurations, it may be faster to drop and re-create the table.
+     *
+     * <p>
+     * <b>WARNING:</b> This is [obviously] very destructive and is unrecoverable.
+     * </p>
+     */
+    public static <T> int clearTable(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig, boolean logDetails)
+            throws SQLException {
+        return clearTable(connectionSource, tableConfig.getSchemaName(), tableConfig.getTableName(), logDetails);
+    }
+
+    /**
+     * Clear all data out of the table. For certain database types and with large sized tables, which may take a long
+     * time. In some configurations, it may be faster to drop and re-create the table.
+     *
+     * <p>
+     * <b>WARNING:</b> This is [obviously] very destructive and is unrecoverable.
+     * </p>
+     */
+    public static <T> int clearTable(ConnectionSource connectionSource, Class<T> dataClass, boolean logDetails) throws SQLException {
+        DatabaseType databaseType = connectionSource.getDatabaseType();
+        String tableName = DatabaseTableConfig.extractTableName(databaseType, dataClass);
+        String schemaName = DatabaseTableConfig.extractSchemaName(dataClass);
+        if (databaseType.isEntityNamesMustBeUpCase()) {
+            tableName = databaseType.upCaseEntityName(tableName);
+        }
+        return clearTable(connectionSource, schemaName, tableName, logDetails);
+    }
+
+	private static <T> int clearTable(ConnectionSource connectionSource, String schemaName, String tableName, boolean logDetails) throws SQLException {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		StringBuilder sb = new StringBuilder(48);
 		if (databaseType.isTruncateSupported()) {
@@ -276,7 +301,7 @@ public class TableUtils {
 		}
 		databaseType.appendEscapedEntityName(sb, tableName);
 		String statement = sb.toString();
-		logger.info("clearing table '{}' with '{}", tableName, statement);
+		if (logDetails) logger.info("clearing table '{}' with '{}", tableName, statement);
 		CompiledStatement compiledStmt = null;
 		DatabaseConnection connection = connectionSource.getReadWriteConnection(tableName);
 		try {
