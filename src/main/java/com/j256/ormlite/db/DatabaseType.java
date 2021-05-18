@@ -291,4 +291,9 @@ public interface DatabaseType {
 	 * Append the SQL necessary to properly finish a "INSERT INTO xxx" line when there are no arguments.
 	 */
 	public void appendInsertNoColumns(StringBuilder sb);
+
+	/**
+	 * Returns true if the sequence names need to be lowercased.
+	 */
+	public boolean isSequenceNamesMustBeLowerCase();
 }

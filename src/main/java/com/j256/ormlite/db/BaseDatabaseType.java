@@ -432,7 +432,9 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	@Override
 	public String generateIdSequenceName(String tableName, FieldType idFieldType) {
 		String name = tableName + DEFAULT_SEQUENCE_SUFFIX;
-		if (isEntityNamesMustBeUpCase()) {
+		if (isSequenceNamesMustBeLowerCase()) {
+			return downCaseString(name, true);
+		} else if (isEntityNamesMustBeUpCase()) {
 			return upCaseEntityName(name);
 		} else {
 			return name;
@@ -631,6 +633,11 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	@Override
 	public void appendInsertNoColumns(StringBuilder sb) {
 		sb.append("() VALUES ()");
+	}
+
+	@Override
+	public boolean isSequenceNamesMustBeLowerCase() {
+		return false;
 	}
 
 	/**

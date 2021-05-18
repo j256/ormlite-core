@@ -79,6 +79,7 @@
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
+								<phase>${gpgPhase}</phase>
 								<goals>
 									<goal>sign</goal>
 								</goals>
@@ -131,6 +132,7 @@
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
+								<phase>${gpgPhase}</phase>
 								<goals>
 									<goal>sign</goal>
 								</goals>
@@ -173,7 +175,7 @@
 				<configuration>
 					<mavenExecutorId>forked-path</mavenExecutorId>
 					<useReleaseProfile>false</useReleaseProfile>
-					<arguments>-Psonatype-oss-release</arguments>
+					<arguments>-Psonatype-oss-release -DgpgPhase=${gpgPhase} -Dgpg.passphrase=${gpg.passphrase}</arguments>
 				</configuration>
 			</plugin>
 			<plugin>
