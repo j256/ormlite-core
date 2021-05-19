@@ -67,11 +67,4 @@ public class DateType extends BaseDateType {
 		// NOTE: is this correct?
 		return true;
 	}
-
-	/**
-	 * Return the default date format configuration.
-	 */
-	protected DateStringFormatConfig getDefaultDateFormatConfig() {
-		return defaultDateFormatConfig;
-	}
 }
