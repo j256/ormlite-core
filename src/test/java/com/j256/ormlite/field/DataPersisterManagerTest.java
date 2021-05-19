@@ -81,6 +81,7 @@ public class DataPersisterManagerTest extends BaseCoreTest {
 		int id;
 		@DatabaseField
 		StoredClass storedClass;
+
 		PersistedStored() {
 		}
 	}
@@ -90,6 +91,7 @@ public class DataPersisterManagerTest extends BaseCoreTest {
 		int id;
 		@DatabaseField(persisterClass = StoredClassPersister.class)
 		StoredClass storedClass;
+
 		PersistedStoredPersister() {
 		}
 	}
@@ -99,12 +101,14 @@ public class DataPersisterManagerTest extends BaseCoreTest {
 		int id;
 		@DatabaseField(persisterClass = NoGetSingletonPersister.class)
 		StoredClass storedClass;
+
 		PersistedStoredBadPersister() {
 		}
 	}
 
 	private static class StoredClass {
 		String stuff;
+
 		public StoredClass(String stuff) {
 			this.stuff = stuff;
 		}
@@ -114,22 +118,27 @@ public class DataPersisterManagerTest extends BaseCoreTest {
 		private NoGetSingletonPersister() {
 			super(null, new Class[] { StoredClass.class });
 		}
+
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return null;
 		}
+
 		@Override
 		public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) {
 			return null;
 		}
+
 		@Override
 		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
 			return null;
 		}
+
 		@Override
 		public Object javaToSqlArg(FieldType fieldType, Object obj) {
 			return null;
 		}
+
 		@Override
 		public boolean isValidForField(Field field) {
 			return false;
@@ -138,26 +147,32 @@ public class DataPersisterManagerTest extends BaseCoreTest {
 
 	private static class StoredClassPersister extends BaseDataType {
 		private static final StoredClassPersister singleton = new StoredClassPersister();
+
 		@SuppressWarnings("unused")
 		public static StoredClassPersister getSingleton() {
 			return singleton;
 		}
+
 		public StoredClassPersister() {
 			super(SqlType.STRING, new Class[] { StoredClass.class });
 		}
+
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 			throw new SQLException("Default string doesn't work");
 		}
+
 		@Override
 		public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			return results.getString(columnPos);
 		}
+
 		@Override
 		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
 			String value = (String) sqlArg;
 			return new StoredClass(value);
 		}
+
 		@Override
 		public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
 			if (javaObject == null) {
@@ -166,9 +181,15 @@ public class DataPersisterManagerTest extends BaseCoreTest {
 				return ((StoredClass) javaObject).stuff;
 			}
 		}
+
 		@Override
 		public boolean isValidForField(Field field) {
 			return field.getType() == StoredClass.class;
+		}
+
+		@Override
+		public int getDefaultWidth() {
+			return 100;
 		}
 	}
 
@@ -177,6 +198,7 @@ public class DataPersisterManagerTest extends BaseCoreTest {
 		int id;
 		@DatabaseField
 		SomeEnum someEnum;
+
 		PersistedDataType() {
 		}
 	}
@@ -190,22 +212,27 @@ public class DataPersisterManagerTest extends BaseCoreTest {
 
 	private static class EnumConstantPersister extends BaseDataType {
 		public static final SomeEnum CONSTANT_VALUE = SomeEnum.FIRST;
+
 		public EnumConstantPersister() {
 			super(SqlType.STRING, new Class[] {});
 		}
+
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 			throw new SQLException("Default string doesn't work");
 		}
+
 		@Override
 		public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) {
 			return CONSTANT_VALUE;
 		}
+
 		@Override
 		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
 			// constant for testing
 			return CONSTANT_VALUE;
 		}
+
 		@Override
 		public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
 			if (javaObject == null) {
@@ -214,10 +241,16 @@ public class DataPersisterManagerTest extends BaseCoreTest {
 				return javaObject.toString();
 			}
 		}
+
 		@Override
 		public boolean isValidForField(Field field) {
 			// this matches all enums
 			return field.getType().isEnum();
+		}
+
+		@Override
+		public int getDefaultWidth() {
+			return 100;
 		}
 	}
 }

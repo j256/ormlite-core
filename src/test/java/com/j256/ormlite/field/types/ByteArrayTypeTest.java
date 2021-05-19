@@ -1,8 +1,6 @@
 package com.j256.ormlite.field.types;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
@@ -37,18 +35,6 @@ public class ByteArrayTypeTest extends BaseTypeTest {
 		assertEquals(1, dao.create(new LocalByteArray()));
 		testType(dao, foo, clazz, null, null, null, null, DataType.BYTE_ARRAY, BYTE_COLUMN, false, true, true, false,
 				true, false, true, false);
-	}
-
-	@Test
-	public void testByteArrayId() throws Exception {
-		Class<ByteArrayId> clazz = ByteArrayId.class;
-		Dao<ByteArrayId, Object> dao = createDao(clazz, true);
-		ByteArrayId foo = new ByteArrayId();
-		foo.id = new byte[] { 1, 2, 3, 4, 5 };
-		assertEquals(1, dao.create(foo));
-		ByteArrayId result = dao.queryForId(foo.id);
-		assertNotNull(result);
-		assertArrayEquals(foo.id, result.id);
 	}
 
 	@Test

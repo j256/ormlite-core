@@ -1,7 +1,6 @@
 package com.j256.ormlite.field.types;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.math.BigInteger;
@@ -75,17 +74,6 @@ public class BigIntegerTypeTest extends BaseTypeTest {
 	}
 
 	@Test
-	public void testBigIntegerId() throws Exception {
-		Dao<BigIntegerId, BigInteger> dao = createDao(BigIntegerId.class, true);
-		BigIntegerId foo = new BigIntegerId();
-		dao.create(foo);
-		assertEquals(BigInteger.ONE, foo.id);
-		BigIntegerId result = dao.queryForId(BigInteger.ONE);
-		assertNotNull(result);
-		assertEquals(foo.id, result.id);
-	}
-
-	@Test
 	public void testCoverage() {
 		new BigIntegerType(SqlType.BIG_DECIMAL, new Class[0]);
 	}
@@ -115,11 +103,5 @@ public class BigIntegerTypeTest extends BaseTypeTest {
 		int id;
 		@DatabaseField(columnName = BIGINTEGER_COLUMN, defaultValue = DEFAULT_VALUE)
 		BigInteger bigInteger;
-	}
-
-	@DatabaseTable(tableName = TABLE_NAME)
-	protected static class BigIntegerId {
-		@DatabaseField(generatedId = true)
-		BigInteger id;
 	}
 }

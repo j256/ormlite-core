@@ -16,8 +16,10 @@ import com.j256.ormlite.field.SqlType;
  */
 public abstract class BaseDateType extends BaseDataType {
 
-	protected static final DateStringFormatConfig defaultDateFormatConfig =
+	private static final DateStringFormatConfig DEFAULT_DATE_FORMAT_CONFIG =
 			new DateStringFormatConfig("yyyy-MM-dd HH:mm:ss.SSSSSS");
+	private static final DateStringFormatConfig NO_MILLIS_DATE_FORMAT_CONFIG =
+			new DateStringFormatConfig("yyyy-MM-dd HH:mm:ss");
 
 	protected BaseDateType(SqlType sqlType, Class<?>[] classes) {
 		super(sqlType, classes);
@@ -41,13 +43,13 @@ public abstract class BaseDateType extends BaseDataType {
 	}
 
 	protected static Date parseDateString(DateStringFormatConfig formatConfig, String dateStr) throws ParseException {
-		DateFormat dateFormat = formatConfig.getDateFormat();
+		DateFormat dateFormat = conditionalFormat(formatConfig, dateStr);
 		return dateFormat.parse(dateStr);
 	}
 
 	protected static String normalizeDateString(DateStringFormatConfig formatConfig, String dateStr)
 			throws ParseException {
-		DateFormat dateFormat = formatConfig.getDateFormat();
+		DateFormat dateFormat = conditionalFormat(formatConfig, dateStr);
 		Date date = dateFormat.parse(dateStr);
 		return dateFormat.format(date);
 	}
@@ -92,5 +94,25 @@ public abstract class BaseDateType extends BaseDataType {
 	@Override
 	public boolean isValidForField(Field field) {
 		return (field.getType() == Date.class);
+	}
+
+	/**
+	 * Get the default date format configuration.
+	 */
+	protected DateStringFormatConfig getDefaultDateFormatConfig() {
+		return DEFAULT_DATE_FORMAT_CONFIG;
+	}
+
+	/**
+	 * Bit of a hack here. If they aren't specifying a custom format then we check the date-string to see if it has a
+	 * period. If it has no period then we switch to the no-millis pattern. This is necessary because most databases
+	 * support the .SSSSSS format but h2 dropped the millis because of SQL compliance in 1.4.something.
+	 */
+	private static DateFormat conditionalFormat(DateStringFormatConfig formatConfig, String dateStr) {
+		if (formatConfig == DEFAULT_DATE_FORMAT_CONFIG && dateStr.indexOf('.') < 0) {
+			return NO_MILLIS_DATE_FORMAT_CONFIG.dateFormat;
+		} else {
+			return formatConfig.dateFormat;
+		}
 	}
 }

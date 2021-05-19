@@ -39,7 +39,7 @@ public class DateStringType extends BaseDateType {
 
 	@Override
 	public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
-		DateStringFormatConfig formatConfig = convertDateStringConfig(fieldType, defaultDateFormatConfig);
+		DateStringFormatConfig formatConfig = convertDateStringConfig(fieldType, getDefaultDateFormatConfig());
 		try {
 			// we parse to make sure it works and then format it again
 			return normalizeDateString(formatConfig, defaultStr);
@@ -57,7 +57,7 @@ public class DateStringType extends BaseDateType {
 	@Override
 	public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
 		String value = (String) sqlArg;
-		DateStringFormatConfig formatConfig = convertDateStringConfig(fieldType, defaultDateFormatConfig);
+		DateStringFormatConfig formatConfig = convertDateStringConfig(fieldType, getDefaultDateFormatConfig());
 		try {
 			return parseDateString(formatConfig, value);
 		} catch (ParseException e) {
@@ -68,7 +68,7 @@ public class DateStringType extends BaseDateType {
 
 	@Override
 	public Object javaToSqlArg(FieldType fieldType, Object obj) {
-		DateFormat dateFormat = convertDateStringConfig(fieldType, defaultDateFormatConfig).getDateFormat();
+		DateFormat dateFormat = convertDateStringConfig(fieldType, getDefaultDateFormatConfig()).getDateFormat();
 		return dateFormat.format((Date) obj);
 	}
 
@@ -76,7 +76,7 @@ public class DateStringType extends BaseDateType {
 	public Object makeConfigObject(FieldType fieldType) {
 		String format = fieldType.getFormat();
 		if (format == null) {
-			return defaultDateFormatConfig;
+			return getDefaultDateFormatConfig();
 		} else {
 			return new DateStringFormatConfig(format);
 		}

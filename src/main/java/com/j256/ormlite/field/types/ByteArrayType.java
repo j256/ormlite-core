@@ -69,6 +69,14 @@ public class ByteArrayType extends BaseDataType {
 		return byte[].class;
 	}
 
+	@Override
+	public boolean isAppropriateId() {
+		/*
+		 * NOTE: this really should be false but is still true for backwards compatibility.
+		 */
+		return true;
+	}
+
 	private Object getBytesImpl(FieldType fieldType, String stringValue) throws SQLException {
 		if (fieldType == null || fieldType.getFormat() == null) {
 			return stringValue.getBytes();
