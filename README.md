@@ -59,6 +59,18 @@ The following is a quick code example to give you a taste on how to use the libr
     // close the connection source
     connectionSource.close();
 
+# Maven Configuration
+
+* Maven packages are published via [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.j256.ormlite/ormlite-core/badge.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/com.j256.ormlite/ormlite-core/) [![javadoc](https://javadoc.io/badge2/com.j256.ormlite/ormlite-core/javadoc.svg)](https://javadoc.io/doc/com.j256.ormlite/ormlite-core)
+
+``` xml
+<dependency>
+	<groupId>com.j256.ormlite</groupId>
+	<artifactId>ormlite-core</artifactId>
+	<version>5.4</version>
+</dependency>
+```
+
 # ChangeLog Release Notes
 
 See the [ChangeLog.txt file](src/main/javadoc/doc-files/changelog.txt).

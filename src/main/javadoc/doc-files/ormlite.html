@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on December 8, 2020 by texi2html 1.82
+<!-- Created on May 18, 2021 by texi2html 1.82
 texi2html was written by: 
             Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -51,7 +51,7 @@ ul.toc {list-style: none}
 <a name="ORMLite"></a>
 <h1 class="settitle">ORMLite</h1>
 
-<p>Version 5.3 &ndash; December 2020
+<p>Version 5.4 &ndash; May 2021
 </p>
 <a name="index-introduction"></a>
 <a name="index-author"></a>
@@ -164,9 +164,9 @@ specific page after reading these pages here. See section <a href="#Use-With-And
 <p>To get started with ORMLite, you will need to download the jar files.  The <a href="http://ormlite.com/releases/">ORMLite release page</a>
 is the default repository but the jars are also available from the <a href="http://repo1.maven.org/maven2/com/j256/ormlite/">central maven repository</a> and from <a href="http://sourceforge.net/projects/ormlite/files/">Sourceforge</a>.
 </p>
-<p>Users that are connecting to SQL databases via JDBC connections will need to download the <code>ormlite-jdbc-5.3.jar</code>
-and <code>ormlite-core-5.3.jar</code> files.  For use with Android applications, you should download the
-<code>ormlite-android-5.3.jar</code> and <code>ormlite-core-5.3.jar</code> files instead.  For either JDBC or
+<p>Users that are connecting to SQL databases via JDBC connections will need to download the <code>ormlite-jdbc-5.4.jar</code>
+and <code>ormlite-core-5.4.jar</code> files.  For use with Android applications, you should download the
+<code>ormlite-android-5.4.jar</code> and <code>ormlite-core-5.4.jar</code> files instead.  For either JDBC or
 Android you will also need the ormlite-core release which has the ORMLite backend implementations.  ORMLite does not have
 any required external dependencies although there are some <em>optional</em> packages that you may want to use.  See section <a href="#Dependencies">External Dependencies</a>.  The
 code works with Java 5 or later.
@@ -4591,7 +4591,8 @@ manually.
 <a name="Spring-Configuration-1"></a>
 <h2 class="section">5.1 Spring Configuration</h2>
 
-<a name="index-spring-framework"></a>
+<a name="index-spring-framework_002c-using-with"></a>
+<a name="index-using-spring-framework"></a>
 <a name="index-configuration-with-Spring"></a>
 <p>ORMLite contains some classes which make it easy to configure the various database classes using
 the <a href="http://www.springsource.org/">Spring Framework</a>.
@@ -5462,8 +5463,10 @@ com\.j256\.ormlite\.stmt\.StatementExecutor = TRACE
 <p><em>NOTE:</em> You should escape any period characters with a single backslash unless they are part of a regex match.
 </p>
 <a name="index-global-log-level"></a>
-<a name="index-log-messages_002c-filter"></a>
+<a name="index-log-messages_002c-disable"></a>
 <a name="index-filter-log-messages"></a>
+<a name="index-disable-all-log-messages"></a>
+<a name="index-ignore-all-log-messages"></a>
 <p>For all of the logging implementations, you can use the <code>Logger.setGlobalLogLevel(...)</code> method to filter all log
 messages.  The argument you pass in filters out any messages to less important levels.  You should call that method
 in the <code>main(...)</code> method or as early in your application as possible.
@@ -5476,6 +5479,18 @@ Logger.setGlobalLogLevel(Level.ERROR);
 Logger.setGlobalLogLevel(Level.OFF);
 </pre></td></tr></table>
 
+<a name="index-other-loggers"></a>
+<a name="index-logging_002c-custom-implemenations"></a>
+<a name="index-null-logging-implementation"></a>
+<a name="index-dev_002dnull-logging-implementation"></a>
+<a name="index-logging-factory"></a>
+<p>You can also implement your own logging implementation by using the <code>LoggerFactory.setLogFactory(...)</code> method.
+The the factory needs to implement a <code>Log createLog(String)</code> method and the <code>Log</code> class only has a couple
+methods to test the log level and log messages with optional throwables.
+</p>
+<p>You can use the <code>NullLogFactory</code> as another way to disable all log messages by sending them to <code>NullLog</code>
+which ignores all log calls.
+</p>
 <p>For logging with Android, See section <a href="#Android-Logging">Android Logging</a>.  
 </p>
 <hr size="6">
@@ -5735,7 +5750,7 @@ dependency list.  In this example we are using MySQL but any of the supported JD
         &lt;dependency&gt;
             &lt;groupId&gt;com.j256.ormlite&lt;/groupId&gt;
             &lt;artifactId&gt;ormlite-jdbc&lt;/artifactId&gt;
-            &lt;version&gt;5.3&lt;/version&gt;
+            &lt;version&gt;5.4&lt;/version&gt;
         &lt;/dependency&gt;
         &lt;!-- You will need to add some sort of database driver too.
              In this example we've used MySQL. --&gt;
@@ -6935,7 +6950,7 @@ Zachawilson
 <a name="index-open-source-license"></a>
 <p>This document is part of the ORMLite project.
 </p>
-<p>Copyright 2020, Gray Watson
+<p>Copyright 2021, Gray Watson
 </p>
 <p>Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby
 granted, provided that this permission notice appear in all copies.
@@ -7224,7 +7239,9 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-deleting-by-ID">deleting by ID</a></td><td valign="top"><a href="#DAO-Methods">5.4 DAO Methods</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Derby-database">Derby database</a></td><td valign="top"><a href="#Database-Notes">2.5 Supported Databases</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-destroy-data-source">destroy data source</a></td><td valign="top"><a href="#Connection-Source">2.3 Connection Sources</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-dev_002dnull-logging-implementation">dev-null logging implementation</a></td><td valign="top"><a href="#Logging">5.5 ORMLite Logging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-different-databases">different databases</a></td><td valign="top"><a href="#Database-Notes">2.5 Supported Databases</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-disable-all-log-messages">disable all log messages</a></td><td valign="top"><a href="#Logging">5.5 ORMLite Logging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-distinct">distinct</a></td><td valign="top"><a href="#QueryBuilder-Capabilities">3.4 QueryBuilder Capabilities</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-does-id-exist-already">does id exist already</a></td><td valign="top"><a href="#DAO-Methods">5.4 DAO Methods</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-don_0027t-insert-field">don&rsquo;t insert field</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
@@ -7336,6 +7353,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-identity-columns">identity columns</a></td><td valign="top"><a href="#Identity-Columns">2.8 Identity Columns</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-identity-field">identity field</a></td><td valign="top"><a href="#Id-Column">2.8.1 Fields With id</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-if-id-exists">if id exists</a></td><td valign="top"><a href="#DAO-Methods">5.4 DAO Methods</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ignore-all-log-messages">ignore all log messages</a></td><td valign="top"><a href="#Logging">5.5 ORMLite Logging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ignored-by-insert">ignored by insert</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-IN-sub_002dquery_002c-SQL">IN sub-query, SQL</a></td><td valign="top"><a href="#Where-Capabilities">3.5 Where Capabilities</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-IN_002c-SQL">IN, SQL</a></td><td valign="top"><a href="#Where-Capabilities">3.5 Where Capabilities</a></td></tr>
@@ -7396,11 +7414,13 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-limiting-eager-foreign-collections">limiting eager foreign collections</a></td><td valign="top"><a href="#Foreign-Collection">2.13 Foreign Collections</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-limiting-foreign-auto_002drefresh-levels">limiting foreign auto-refresh levels</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-list-of-objects">list of objects</a></td><td valign="top"><a href="#Foreign-Collection">2.13 Foreign Collections</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-log-messages_002c-filter">log messages, filter</a></td><td valign="top"><a href="#Logging">5.5 ORMLite Logging</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-log-messages_002c-disable">log messages, disable</a></td><td valign="top"><a href="#Logging">5.5 ORMLite Logging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-log4j-properties-file">log4j properties file</a></td><td valign="top"><a href="#Logging">5.5 ORMLite Logging</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-logging-factory">logging factory</a></td><td valign="top"><a href="#Logging">5.5 ORMLite Logging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-logging-information">logging information</a></td><td valign="top"><a href="#Logging">5.5 ORMLite Logging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-logging-sql-arguments">logging sql arguments</a></td><td valign="top"><a href="#Logging">5.5 ORMLite Logging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-logging-under-Android">logging under Android</a></td><td valign="top"><a href="#Android-Logging">4.3 Android Logging</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-logging_002c-custom-implemenations">logging, custom implemenations</a></td><td valign="top"><a href="#Logging">5.5 ORMLite Logging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-long">long</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-long-string">long string</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-LRU-cache">LRU cache</a></td><td valign="top"><a href="#Object-Caches">5.8 Object Caches</a></td></tr>
@@ -7440,6 +7460,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-NOT_002c-SQL">NOT, SQL</a></td><td valign="top"><a href="#Where-Capabilities">3.5 Where Capabilities</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-null-comparison_002c-SQL">null comparison, SQL</a></td><td valign="top"><a href="#Where-Capabilities">3.5 Where Capabilities</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-null-comparison_002c-SQL-1">null comparison, SQL</a></td><td valign="top"><a href="#Where-Capabilities">3.5 Where Capabilities</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-null-logging-implementation">null logging implementation</a></td><td valign="top"><a href="#Logging">5.5 ORMLite Logging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-null-value-allowed">null value allowed</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-null-value-allowed-1">null value allowed</a></td><td valign="top"><a href="#Javax-Persistence-Annotations">2.1.2 Using javax.persistence Annotations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-null-values-and-primitives">null values and primitives</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
@@ -7464,6 +7485,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-ORDER-BY_002c-SQL">ORDER BY, SQL</a></td><td valign="top"><a href="#Building-Queries">3.2 Building Queries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ordered-foreign-collection">ordered foreign collection</a></td><td valign="top"><a href="#Foreign-Collection">2.13 Foreign Collections</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-other-data-sources">other data sources</a></td><td valign="top"><a href="#Connection-Source">2.3 Connection Sources</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-other-loggers">other loggers</a></td><td valign="top"><a href="#Logging">5.5 ORMLite Logging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-overriding-how-data-is-stored">overriding how data is stored</a></td><td valign="top"><a href="#Custom-Persisters">5.11 Custom Data Type Persisters</a></td></tr>
 <tr><td colspan="3"> <hr></td></tr>
 <tr><th><a name="Index-of-Concepts-1_cp_letter-P">P</a></th><td></td><td></td></tr>
@@ -7559,7 +7581,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-soft-reference-cache">soft reference cache</a></td><td valign="top"><a href="#Object-Caches">5.8 Object Caches</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-spring-example">spring example</a></td><td valign="top"><a href="#JDBC-Examples">7.1 JDBC Examples</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-spring-examples">spring examples</a></td><td valign="top"><a href="#Spring-Configuration">5.1 Spring Configuration</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-spring-framework">spring framework</a></td><td valign="top"><a href="#Spring-Configuration">5.1 Spring Configuration</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-spring-framework_002c-using-with">spring framework, using with</a></td><td valign="top"><a href="#Spring-Configuration">5.1 Spring Configuration</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-spring-wire-a-class">spring wire a class</a></td><td valign="top"><a href="#Class-Configuration">5.2 Class Configuration</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-sql-_003f">sql ?</a></td><td valign="top"><a href="#Select-Arguments">3.6 Using Select Arguments</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-sql-argument-logging">sql argument logging</a></td><td valign="top"><a href="#Logging">5.5 ORMLite Logging</a></td></tr>
@@ -7629,6 +7651,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-use-with-external-data-source">use with external data source</a></td><td valign="top"><a href="#Connection-Source">2.3 Connection Sources</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-useGetSet">useGetSet</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-using-get-and-set-methods">using get and set methods</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-using-spring-framework">using spring framework</a></td><td valign="top"><a href="#Spring-Configuration">5.1 Spring Configuration</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-using-the-DAOs">using the DAOs</a></td><td valign="top"><a href="#DAO-Usage">2.9 DAO Usage</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-UUID-native-db-support">UUID native db support</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-UUID-type">UUID type</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
@@ -7848,7 +7871,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 </tr></table>
 <h1>About This Document</h1>
 <p>
-  This document was generated by <em>Gray Watson</em> on <em>December 8, 2020</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>May 18, 2021</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
 </p>
 <p>
   The buttons in the navigation panels have the following meaning:
@@ -7950,7 +7973,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <hr size="1">
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>December 8, 2020</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>May 18, 2021</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
  </font>
  <br>
 

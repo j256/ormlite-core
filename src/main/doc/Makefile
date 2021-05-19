@@ -4,7 +4,7 @@ TEXI = $(PKG).texi
 REMOTE ?= doc-host
 REMOTE_DIR = remote_texi
 
-all : $(DOCS)
+all : $(DOCS) install
 
 install : $(DOCS)
 	cp $(PKG)/* $(PKG).pdf ../javadoc/doc-files

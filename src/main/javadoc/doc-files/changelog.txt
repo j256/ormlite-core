@@ -1,10 +1,10 @@
-5.4: ??/??/2020
+5.4: 5/18/2021
 	* CORE: Added LoggerFactory.setLogFactory() for supporting other log implementations and added NullLog.
 	* CORE: Migrated the internal logging code to SimpleLogging.
-	* CORE: Updated H2 version which shook lose a couple of issues in tests.
+	* CORE: Updated H2 version which shook lose a couple of issues in tests and core support.
 	* CORE: Added UPDATE and DELETE database-dependent support for TOP and LIMIT.  Thanks to juur.
 	* JDBC: Fixed NPE in JdbcSingleConnectionSource because of early initialization.  Thanks to Nexxxt99.
-	* JDBC: Fixed problem in Postgresql where mixed case sequence names aren't handled.  Thanks to Nick.
+	* JDBC: Fixed problem in Postgresql where mixed case sequence names aren't handled right.  Thanks to Nick.
 	* JDBC: Added database dependent login-timeout seconds setting to the JdbcConnectionSource. 
 
 5.3: 12/8/2020
