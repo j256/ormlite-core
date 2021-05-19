@@ -1,6 +1,7 @@
 package com.j256.ormlite.stmt;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -218,6 +219,26 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 		result = dao.queryForId(foo.id);
 		assertNotNull(result);
 		assertNull(result.stringField);
+	}
+
+	@Test
+	public void testUpdateLimit() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		int num = 3;
+		for (int i = 0; i < num; i++) {
+			dao.create(new Foo());
+		}
+		long limit = 2;
+		String val = "hello";
+		assertEquals(limit, dao.updateBuilder().updateColumnValue(Foo.STRING_COLUMN_NAME, val).limit(limit).update());
+		int count = 0;
+		for (Foo result : dao.queryForAll()) {
+			if (val.equals(result.stringField)) {
+				count++;
+			}
+		}
+		assertEquals(limit, count);
+		assertNotEquals(num, count);
 	}
 
 	protected static class OurForeignCollection {
