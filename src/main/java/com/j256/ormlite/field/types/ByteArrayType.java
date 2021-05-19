@@ -71,7 +71,10 @@ public class ByteArrayType extends BaseDataType {
 
 	@Override
 	public boolean isAppropriateId() {
-		return false;
+		/*
+		 * NOTE: this really should be false but is still true for backwards compatibility.
+		 */
+		return true;
 	}
 
 	private Object getBytesImpl(FieldType fieldType, String stringValue) throws SQLException {
