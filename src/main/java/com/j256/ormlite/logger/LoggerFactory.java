@@ -6,7 +6,7 @@ package com.j256.ormlite.logger;
  * 
  * <p>
  * To set the logger to a particular type, set the system property ("com.j256.simplelogger.backend") contained in
- * {@link #LOG_TYPE_SYSTEM_PROPERTY} to be name of one of the enumerated types in {@link LoggerFactory.LogBackendType}.
+ * {@link #LOG_TYPE_SYSTEM_PROPERTY} to be name of one of the enumerated types in {@link LogBackendType}.
  * </p>
  */
 public class LoggerFactory {

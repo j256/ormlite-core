@@ -574,8 +574,6 @@ public class Where<T, ID> {
 		
 	/**
 	 * Returns the {@link QueryBuilder} used to create this Where, if present
-	 *
-	 * @returns the QueryBuilder object
 	 */
 	public QueryBuilder<T, ID> queryBuilder() throws SQLException {
 		if (statementBuilder instanceof QueryBuilder) {

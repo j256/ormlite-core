@@ -140,9 +140,8 @@ public class TableUtils {
 	 * 
 	 * @param databaseType
 	 *            The type of database which will be executing the create table statements.
-	 * @param tableConfig
-	 *            Hand or spring wired table configuration. If null then the class must have {@link DatabaseField}
-	 *            annotations.
+	 * @param dataClass
+	 *            Class of the entity to create statements that will create the table.
 	 * @return A list of table create statements.
 	 */
 	public static <T> List<String> getCreateTableStatements(DatabaseType databaseType, Class<T> dataClass)
