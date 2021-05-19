@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.j256.ormlite</groupId>
 	<artifactId>ormlite-core</artifactId>
-	<version>5.5-SNAPSHOT</version>
+	<version>5.4-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>ORMLite Core</name>
 	<url>https://ormlite.com/</url>
@@ -79,7 +79,6 @@
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
-								<phase>${gpgPhase}</phase>
 								<goals>
 									<goal>sign</goal>
 								</goals>
@@ -132,6 +131,7 @@
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
+								<!-- need the phrase here for ci -->
 								<phase>${gpgPhase}</phase>
 								<goals>
 									<goal>sign</goal>
