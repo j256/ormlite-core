@@ -45,7 +45,7 @@ public class CurrencyType extends BaseDataType {
 	@Override
 	public Object parseDefaultString(final FieldType fieldType, final String defaultStr) throws SQLException {
 		try {
-			return Currency.getInstance(defaultStr);
+			return Currency.getInstance(defaultStr).getCurrencyCode();
 		} catch (IllegalArgumentException iae) {
 			throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing default Currency '", iae);
 		}
@@ -67,5 +67,10 @@ public class CurrencyType extends BaseDataType {
 			throw SqlExceptionUtil
 					.create("Problems with column " + columnPos + " parsing Currency '" + currencyStr + "'", iae);
 		}
+	}
+
+	@Override
+	public boolean isAppropriateId() {
+		return false;
 	}
 }
