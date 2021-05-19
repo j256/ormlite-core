@@ -489,8 +489,40 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	}
 
 	@Override
+	public boolean isLimitAfterUpdateSupported() {
+		return false;
+	}
+
+	@Override
+	public boolean isLimitUpdateAtEndSupported() {
+		return false;
+	}
+
+	@Override
+	public boolean isLimitAfterDeleteSupported() {
+		return false;
+	}
+
+	@Override
+	public boolean isLimitDeleteAtEndSupported() {
+		return false;
+	}
+
+	@Override
 	public void appendLimitValue(StringBuilder sb, long limit, Long offset) {
 		sb.append("LIMIT ").append(limit).append(' ');
+	}
+
+	@Override
+	public void appendUpdateLimitValue(StringBuilder sb, long limit) {
+		// default is same as query LIMIT
+		appendLimitValue(sb, limit, null);
+	}
+
+	@Override
+	public void appendDeleteLimitValue(StringBuilder sb, long limit) {
+		// default is same as query LIMIT
+		appendLimitValue(sb, limit, null);
 	}
 
 	@Override

@@ -16,6 +16,10 @@ import com.j256.ormlite.field.FieldType;
  */
 public class H2DatabaseType extends BaseDatabaseType {
 
+	private final static String DATABASE_URL_PORTION = "h2";
+	private final static String DRIVER_CLASS_NAME = "org.h2.Driver";
+	private final static String DATABASE_NAME = "H2";
+
 	public static final String DATABASE_URL = "jdbc:h2:mem:h2testdatabase";
 
 	public H2DatabaseType() throws SQLException {
@@ -24,17 +28,17 @@ public class H2DatabaseType extends BaseDatabaseType {
 
 	@Override
 	public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
-		return dbTypePart.equals("h2");
+		return DATABASE_URL_PORTION.equals(dbTypePart);
 	}
 
 	@Override
 	protected String[] getDriverClassNames() {
-		return new String[] { "org.h2.Driver" };
+		return new String[] { DRIVER_CLASS_NAME };
 	}
 
 	@Override
 	public String getDatabaseName() {
-		return "h2";
+		return DATABASE_NAME;
 	}
 
 	@Override
@@ -71,6 +75,16 @@ public class H2DatabaseType extends BaseDatabaseType {
 
 	@Override
 	public boolean isCreateIfNotExistsSupported() {
+		return true;
+	}
+
+	@Override
+	public boolean isLimitUpdateAtEndSupported() {
+		return true;
+	}
+
+	@Override
+	public boolean isLimitDeleteAtEndSupported() {
 		return true;
 	}
 }

@@ -1,6 +1,7 @@
 package com.j256.ormlite.stmt;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -37,5 +38,19 @@ public class DeleteBuilderTest extends BaseCoreStmtTest {
 		db.where().eq(Foo.VAL_COLUMN_NAME, foo.val);
 		assertEquals(1, db.delete());
 		assertNull(dao.queryForId(foo.id));
+	}
+
+	@Test
+	public void testUpdateLimit() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		int num = 3;
+		for (int i = 0; i < num; i++) {
+			dao.create(new Foo());
+		}
+		long limit = 2;
+		assertEquals(limit, dao.deleteBuilder().limit(limit).delete());
+		int count = (int) dao.countOf();
+		assertEquals(num - limit, count);
+		assertNotEquals(num, count);
 	}
 }

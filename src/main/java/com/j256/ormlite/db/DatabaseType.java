@@ -124,11 +124,43 @@ public interface DatabaseType {
 	public boolean isLimitAfterSelect();
 
 	/**
+	 * Return true if LIMIT is supported after the UPDATE command.
+	 */
+	public boolean isLimitAfterUpdateSupported();
+
+	/**
+	 * Return true if LIMIT is supported at the end of the UPDATE statement.
+	 */
+	public boolean isLimitUpdateAtEndSupported();
+
+	/**
+	 * Return true if LIMIT is supported after the DELETE command.
+	 */
+	public boolean isLimitAfterDeleteSupported();
+
+	/**
+	 * Return true if LIMIT is supported at the end of the DELETE statement.
+	 */
+	public boolean isLimitDeleteAtEndSupported();
+
+	/**
 	 * Append to the string builder the necessary SQL to limit the results to a certain number. With some database
 	 * types, the offset is an argument to the LIMIT so the offset value (which could be null or not) is passed in. The
 	 * database type can choose to ignore it.
 	 */
 	public void appendLimitValue(StringBuilder sb, long limit, Long offset);
+
+	/**
+	 * Append to the string builder the necessary SQL to limit the updated rows to a certain number. With some database
+	 * types, the limit value needs to be in parenthesis. The database type can choose to ignore it.
+	 */
+	public void appendUpdateLimitValue(StringBuilder sb, long limit);
+
+	/**
+	 * Append to the string builder the necessary SQL to limit the deleted rows to a certain number. With some database
+	 * types, the limit value needs to be in parenthesis. The database type can choose to ignore it.
+	 */
+	public void appendDeleteLimitValue(StringBuilder sb, long limit);
 
 	/**
 	 * Return true if the database supports the OFFSET SQL command in some form.
