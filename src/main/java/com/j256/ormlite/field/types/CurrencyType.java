@@ -5,7 +5,6 @@ import java.util.Currency;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.field.types.BaseDataType;
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
 
@@ -14,21 +13,21 @@ import com.j256.ormlite.support.DatabaseResults;
  * 
  * @author Ian Kirk
  */
-public class CurrencyPersister extends BaseDataType {
+public class CurrencyType extends BaseDataType {
 
-	public static int DEFAULT_WIDTH = 3;
+	public static int DEFAULT_WIDTH = 30;
 
-	private static final CurrencyPersister singleTon = new CurrencyPersister();
+	private static final CurrencyType singleTon = new CurrencyType();
 
-	public static CurrencyPersister getSingleton() {
+	public static CurrencyType getSingleton() {
 		return singleTon;
 	}
 
-	public CurrencyPersister() {
-		super(SqlType.STRING);
+	public CurrencyType() {
+		super(SqlType.STRING, new Class<?>[] { Currency.class });
 	}
 
-	public CurrencyPersister(final SqlType sqlType, final Class<?>[] classes) {
+	public CurrencyType(final SqlType sqlType, final Class<?>[] classes) {
 		super(sqlType, classes);
 	}
 
@@ -38,7 +37,7 @@ public class CurrencyPersister extends BaseDataType {
 	}
 
 	@Override
-	public Object javaToSqlArg(final FieldType fieldType, final Object javaObject) throws SQLException {
+	public Object javaToSqlArg(final FieldType fieldType, final Object javaObject) {
 		final Currency currency = (Currency) javaObject;
 		return currency.getCurrencyCode();
 	}
@@ -47,26 +46,26 @@ public class CurrencyPersister extends BaseDataType {
 	public Object parseDefaultString(final FieldType fieldType, final String defaultStr) throws SQLException {
 		try {
 			return Currency.getInstance(defaultStr);
-		} catch (NullPointerException|IllegalArgumentException e) {
-			throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing default Country string '"
-					, e);
+		} catch (IllegalArgumentException iae) {
+			throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing default Currency '", iae);
 		}
 	}
 
 	@Override
-	public Object resultToSqlArg(final FieldType fieldType, final DatabaseResults results, final int columnPos) throws SQLException {
+	public Object resultToSqlArg(final FieldType fieldType, final DatabaseResults results, final int columnPos)
+			throws SQLException {
 		return results.getString(columnPos);
 	}
 
 	@Override
-	public Object sqlArgToJava(final FieldType fieldType, final Object sqlArg, final int columnPos) throws SQLException {
+	public Object sqlArgToJava(final FieldType fieldType, final Object sqlArg, final int columnPos)
+			throws SQLException {
 		final String currencyStr = (String) sqlArg;
-
 		try {
 			return Currency.getInstance(currencyStr);
-		} catch (NullPointerException | IllegalArgumentException e) {
-			throw SqlExceptionUtil.create("Problems with column " + columnPos + " parsing Currency-string '" + currencyStr 
-					+ "'", e);
+		} catch (IllegalArgumentException iae) {
+			throw SqlExceptionUtil
+					.create("Problems with column " + columnPos + " parsing Currency '" + currencyStr + "'", iae);
 		}
 	}
 }

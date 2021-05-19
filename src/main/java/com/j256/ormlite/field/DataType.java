@@ -15,6 +15,7 @@ import com.j256.ormlite.field.types.ByteObjectType;
 import com.j256.ormlite.field.types.ByteType;
 import com.j256.ormlite.field.types.CharType;
 import com.j256.ormlite.field.types.CharacterObjectType;
+import com.j256.ormlite.field.types.CurrencyType;
 import com.j256.ormlite.field.types.DateIntegerType;
 import com.j256.ormlite.field.types.DateLongType;
 import com.j256.ormlite.field.types.DateStringType;
@@ -250,6 +251,10 @@ public enum DataType {
 	 * Persists the {@link java.sql.Timestamp} Java class as a string of a format.
 	 */
 	TIME_STAMP_STRING(TimeStampStringType.getSingleton()),
+	/**
+	 * Persists the {@link java.util.Currency} Java class.
+	 */
+	CURRENCY(CurrencyType.getSingleton()),
 	/**
 	 * Marker for fields that are unknown.
 	 */
