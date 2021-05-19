@@ -364,28 +364,28 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 	public void testMoveNone() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 
-		CloseableIterator<Foo> iterator = dao.iterator();
+		CloseableIterator<Foo> iterator = dao.iterator(ResultSet.TYPE_SCROLL_INSENSITIVE);
 		try {
 			assertNull(iterator.current());
 		} finally {
 			iterator.close();
 		}
 
-		iterator = dao.iterator();
+		iterator = dao.iterator(ResultSet.TYPE_SCROLL_INSENSITIVE);
 		try {
 			assertNull(iterator.previous());
 		} finally {
 			iterator.close();
 		}
 
-		iterator = dao.iterator();
+		iterator = dao.iterator(ResultSet.TYPE_SCROLL_INSENSITIVE);
 		try {
 			assertNull(iterator.moveRelative(1));
 		} finally {
 			iterator.close();
 		}
 
-		iterator = dao.iterator();
+		iterator = dao.iterator(ResultSet.TYPE_SCROLL_INSENSITIVE);
 		try {
 			assertNull(iterator.nextThrow());
 		} finally {
