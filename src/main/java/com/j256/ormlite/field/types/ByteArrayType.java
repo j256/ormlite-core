@@ -69,6 +69,11 @@ public class ByteArrayType extends BaseDataType {
 		return byte[].class;
 	}
 
+	@Override
+	public boolean isAppropriateId() {
+		return false;
+	}
+
 	private Object getBytesImpl(FieldType fieldType, String stringValue) throws SQLException {
 		if (fieldType == null || fieldType.getFormat() == null) {
 			return stringValue.getBytes();
