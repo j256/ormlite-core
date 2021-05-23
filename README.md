@@ -67,7 +67,7 @@ Maven packages are published via [![Maven Central](https://maven-badges.herokuap
 <dependency>
 	<groupId>com.j256.ormlite</groupId>
 	<artifactId>ormlite-core</artifactId>
-	<version>5.4</version>
+	<version>5.5</version>
 </dependency>
 ```
 

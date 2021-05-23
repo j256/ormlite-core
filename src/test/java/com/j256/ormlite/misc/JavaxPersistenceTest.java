@@ -26,6 +26,7 @@ import javax.persistence.Version;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseFieldConfig;
 import com.j256.ormlite.field.types.EnumIntegerType;
 import com.j256.ormlite.field.types.EnumStringType;
@@ -263,6 +264,11 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 		}
 	}
 
+	@Test
+	public void testSerializableClass() throws SQLException {
+		Dao<SerializableStuff, Integer> dao = createDao(SerializableStuff.class, true);
+	}
+
 	/* ======================================================================================================= */
 
 	@Entity(name = JAVAX_ENTITY_NAME)
@@ -310,6 +316,7 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 		int basic;
 		@Basic(optional = false)
 		String basicNotOptional;
+
 		public Javax() {
 		}
 	}
@@ -321,6 +328,7 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 	protected static class SerialField implements Serializable {
 		private static final long serialVersionUID = -3883857119616908868L;
 		String stuff;
+
 		public SerialField() {
 		}
 	}
@@ -349,5 +357,20 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 		public boolean isEntityNamesMustBeUpCase() {
 			return true;
 		}
+	}
+
+	@Entity
+	private static class SerializableStuff {
+		@Id
+		@GeneratedValue
+		int id;
+		@Column
+		SerializableClass stuff;
+	}
+
+	private static class SerializableClass implements Serializable {
+		private static final long serialVersionUID = -6203522605272351584L;
+		int field1;
+		int field2;
 	}
 }

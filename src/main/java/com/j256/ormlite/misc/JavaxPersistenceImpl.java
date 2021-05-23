@@ -46,7 +46,7 @@ public class JavaxPersistenceImpl implements JavaxPersistenceConfigurer {
 		Version versionAnnotation = field.getAnnotation(Version.class);
 
 		if (columnAnnotation == null && basicAnnotation == null && idAnnotation == null && oneToOneAnnotation == null
-				&& oneToManyAnnotation == null &&  manyToOneAnnotation == null && enumeratedAnnotation == null
+				&& oneToManyAnnotation == null && manyToOneAnnotation == null && enumeratedAnnotation == null
 				&& versionAnnotation == null) {
 			return null;
 		}
