@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.j256.ormlite</groupId>
 	<artifactId>ormlite-core</artifactId>
-	<version>5.5-SNAPSHOT</version>
+	<version>5.5</version>
 	<packaging>jar</packaging>
 	<name>ORMLite Core</name>
 	<url>https://ormlite.com/</url>
