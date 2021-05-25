@@ -69,6 +69,7 @@ public class DatabaseFieldConfig {
 	private boolean foreignCollectionOrderAscending = DEFAULT_FOREIGN_COLLECTION_ORDER_ASCENDING;
 	private String foreignCollectionForeignFieldName;
 	private String fullColumnDefinition;
+	private boolean javaxEntity;
 
 	static {
 		try {
@@ -504,6 +505,14 @@ public class DatabaseFieldConfig {
 		this.readOnly = readOnly;
 	}
 
+	public boolean isJavaxEntity() {
+		return javaxEntity;
+	}
+
+	public void setJavaxEntity(boolean javaxEntity) {
+		this.javaxEntity = javaxEntity;
+	}
+
 	/**
 	 * Create and return a config converted from a {@link Field} that may have one of the following annotations:
 	 * {@link DatabaseField}, {@link ForeignCollectionField}, or javax.persistence...
@@ -727,8 +736,7 @@ public class DatabaseFieldConfig {
 		}
 	}
 
-	private static String methodFromField(Field field, String prefix, DatabaseType databaseType,
-			boolean forceEnglish) {
+	private static String methodFromField(Field field, String prefix, DatabaseType databaseType, boolean forceEnglish) {
 		String name = field.getName();
 		String start = name.substring(0, 1);
 		start = databaseType.upCaseString(start, forceEnglish);

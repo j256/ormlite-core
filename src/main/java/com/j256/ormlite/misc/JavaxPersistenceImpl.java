@@ -52,6 +52,8 @@ public class JavaxPersistenceImpl implements JavaxPersistenceConfigurer {
 		}
 
 		DatabaseFieldConfig config = new DatabaseFieldConfig();
+		config.setJavaxEntity(true);
+
 		String fieldName = field.getName();
 		if (databaseType.isEntityNamesMustBeUpCase()) {
 			fieldName = databaseType.upCaseEntityName(fieldName);

@@ -2,6 +2,7 @@ package com.j256.ormlite.misc;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -23,7 +24,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Version;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
@@ -266,10 +266,21 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 	}
 
 	@Test
-	@Ignore("Doesn't work")
 	public void testSerializableClass() throws SQLException {
 		@SuppressWarnings("unused")
-		Dao<SerializableStuff, Integer> dao = createDao(SerializableStuff.class, true);
+		Dao<SerializableWrapper, Integer> dao = createDao(SerializableWrapper.class, true);
+		SerializableStuff stuff = new SerializableStuff();
+		stuff.field1 = 12345;
+		stuff.field2 = "oejwepfjw";
+		SerializableWrapper wrapper = new SerializableWrapper();
+		wrapper.stuff = stuff;
+
+		assertEquals(1, dao.create(wrapper));
+
+		SerializableWrapper result = dao.queryForId(wrapper.id);
+		assertNotNull(result);
+		assertEquals(wrapper.id, result.id);
+		assertEquals(wrapper.stuff, result.stuff);
 	}
 
 	/* ======================================================================================================= */
@@ -363,17 +374,45 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 	}
 
 	@Entity
-	private static class SerializableStuff {
+	private static class SerializableWrapper {
 		@Id
 		@GeneratedValue
 		int id;
 		@Column
-		SerializableClass stuff;
+		SerializableStuff stuff;
 	}
 
-	private static class SerializableClass implements Serializable {
+	@Entity
+	private static class SerializableStuff implements Serializable {
 		private static final long serialVersionUID = -6203522605272351584L;
+		@Column
 		int field1;
-		int field2;
+		@Column
+		String field2;
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + field1;
+			result = prime * result + ((field2 == null) ? 0 : field2.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null || getClass() != obj.getClass()) {
+				return false;
+			}
+			SerializableStuff other = (SerializableStuff) obj;
+			if (field1 != other.field1) {
+				return false;
+			}
+			if (field2 == null) {
+				return (other.field2 == null);
+			} else {
+				return (field2.equals(other.field2));
+			}
+		}
 	}
 }
