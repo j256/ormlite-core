@@ -20,6 +20,7 @@ import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.dao.LazyForeignCollection;
 import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.db.DatabaseType;
+import com.j256.ormlite.field.types.SerializableType;
 import com.j256.ormlite.field.types.VoidType;
 import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.logger.Logger;
@@ -185,9 +186,14 @@ public class FieldType {
 				throw new SQLException("ORMLite does not know how to store " + clazz + " for field '" + field.getName()
 						+ "'. byte[] fields must specify dataType=DataType.BYTE_ARRAY or SERIALIZABLE");
 			} else if (Serializable.class.isAssignableFrom(clazz)) {
-				throw new SQLException("ORMLite does not know how to store " + clazz + " for field '" + field.getName()
-						+ "'.  Use another class, custom persister, or to serialize it use "
-						+ "dataType=DataType.SERIALIZABLE");
+				if (fieldConfig.isJavaxEntity()) {
+					// special case here -- allow @Entity to store implements Serializable
+					dataPersister = SerializableType.getSingleton();
+				} else {
+					throw new SQLException("ORMLite does not know how to store " + clazz + " for field '"
+							+ field.getName() + "'.  Use another class, custom persister, or to serialize it use "
+							+ "dataType=DataType.SERIALIZABLE");
+				}
 			} else {
 				throw new IllegalArgumentException("ORMLite does not know how to store " + clazz + " for field "
 						+ field.getName() + ". Use another class or a custom persister.");
