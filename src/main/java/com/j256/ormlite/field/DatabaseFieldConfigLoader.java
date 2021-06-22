@@ -19,6 +19,7 @@ public class DatabaseFieldConfigLoader {
 
 	private static final int DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL =
 			ForeignCollectionField.DEFAULT_MAX_EAGER_LEVEL;
+	private static final DataType DEFAULT_DATA_TYPE = DatabaseFieldConfig.DEFAULT_DATA_TYPE;
 	private static final DataPersister DEFAULT_DATA_PERSISTER =
 			DatabaseFieldConfig.DEFAULT_DATA_TYPE.getDataPersister();
 
@@ -77,6 +78,7 @@ public class DatabaseFieldConfigLoader {
 
 	private static final String FIELD_NAME_FIELD_NAME = "fieldName";
 	private static final String FIELD_NAME_COLUMN_NAME = "columnName";
+	private static final String FIELD_NAME_DATA_TYPE = "dataType";
 	private static final String FIELD_NAME_DATA_PERSISTER = "dataPersister";
 	private static final String FIELD_NAME_DEFAULT_VALUE = "defaultValue";
 	private static final String FIELD_NAME_WIDTH = "width";
@@ -87,6 +89,7 @@ public class DatabaseFieldConfigLoader {
 	private static final String FIELD_NAME_FOREIGN = "foreign";
 	private static final String FIELD_NAME_USE_GET_SET = "useGetSet";
 	private static final String FIELD_NAME_UNKNOWN_ENUM_VALUE = "unknownEnumValue";
+	private static final String FIELD_NAME_PERSISTED = "persisted";
 	private static final String FIELD_NAME_THROW_IF_NULL = "throwIfNull";
 	private static final String FIELD_NAME_FORMAT = "format";
 	private static final String FIELD_NAME_UNIQUE = "unique";
@@ -132,6 +135,10 @@ public class DatabaseFieldConfigLoader {
 		}
 		if (config.getColumnName() != null) {
 			writer.append(FIELD_NAME_COLUMN_NAME).append('=').append(config.getColumnName());
+			writer.newLine();
+		}
+		if (config.getDataType() != DEFAULT_DATA_TYPE) {
+			writer.append(FIELD_NAME_DATA_TYPE).append('=').append(config.getDataType().name());
 			writer.newLine();
 		}
 		if (config.getDataPersister() != DEFAULT_DATA_PERSISTER) {
@@ -183,7 +190,7 @@ public class DatabaseFieldConfigLoader {
 		if (config.getUnknownEnumValue() != null) {
 			/**
 			 * NOTE: we need to use getDeclaringClass() below. If we use getClass() then for anonymous enum types, we
-			 * get an extraneous $1 in the class name. Did not know that. See Enum#getDeclaringClass().  See bug #197.
+			 * get an extraneous $1 in the class name. Did not know that. See Enum#getDeclaringClass(). See bug #197.
 			 */
 			writer.append(FIELD_NAME_UNKNOWN_ENUM_VALUE)
 					.append('=')
@@ -194,6 +201,10 @@ public class DatabaseFieldConfigLoader {
 		}
 		if (config.isThrowIfNull()) {
 			writer.append(FIELD_NAME_THROW_IF_NULL).append('=').append("true");
+			writer.newLine();
+		}
+		if (config.isPersisted() != DatabaseFieldConfig.DEFAULT_PERSISTED) {
+			writer.append(FIELD_NAME_PERSISTED).append('=').append(Boolean.toString(config.isPersisted()));
 			writer.newLine();
 		}
 		if (config.getFormat() != null) {
@@ -295,7 +306,8 @@ public class DatabaseFieldConfigLoader {
 					.append(config.getForeignCollectionOrderColumnName());
 			writer.newLine();
 		}
-		if (config.isForeignCollectionOrderAscending() != DatabaseFieldConfig.DEFAULT_FOREIGN_COLLECTION_ORDER_ASCENDING) {
+		if (config
+				.isForeignCollectionOrderAscending() != DatabaseFieldConfig.DEFAULT_FOREIGN_COLLECTION_ORDER_ASCENDING) {
 			writer.append(FIELD_NAME_FOREIGN_COLLECTION_ORDER_ASCENDING)
 					.append('=')
 					.append(Boolean.toString(config.isForeignCollectionOrderAscending()));
@@ -320,6 +332,8 @@ public class DatabaseFieldConfigLoader {
 			config.setFieldName(value);
 		} else if (field.equals(FIELD_NAME_COLUMN_NAME)) {
 			config.setColumnName(value);
+		} else if (field.equals(FIELD_NAME_DATA_TYPE)) {
+			config.setDataType(DataType.valueOf(value));
 		} else if (field.equals(FIELD_NAME_DATA_PERSISTER)) {
 			config.setDataPersister(DataType.valueOf(value).getDataPersister());
 		} else if (field.equals(FIELD_NAME_DEFAULT_VALUE)) {
@@ -368,6 +382,8 @@ public class DatabaseFieldConfigLoader {
 			}
 		} else if (field.equals(FIELD_NAME_THROW_IF_NULL)) {
 			config.setThrowIfNull(Boolean.parseBoolean(value));
+		} else if (field.equals(FIELD_NAME_PERSISTED)) {
+			config.setPersisted(Boolean.parseBoolean(value));
 		} else if (field.equals(FIELD_NAME_FORMAT)) {
 			config.setFormat(value);
 		} else if (field.equals(FIELD_NAME_UNIQUE)) {

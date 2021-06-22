@@ -2,7 +2,6 @@ package com.j256.ormlite.field;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -11,7 +10,6 @@ import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
@@ -312,46 +310,45 @@ public class DatabaseFieldConfigLoaderTest extends BaseCoreTest {
 		assertEquals(output.toString(), writer.toString());
 		StringReader reader = new StringReader(writer.toString());
 		DatabaseFieldConfig configCopy = DatabaseFieldConfigLoader.fromReader(new BufferedReader(reader));
-		assertTrue(isConfigEquals(config, configCopy));
+		testConfigEquals(config, configCopy);
 		writer.getBuffer().setLength(0);
 	}
 
-	private boolean isConfigEquals(DatabaseFieldConfig config1, DatabaseFieldConfig config2) {
-		EqualsBuilder eb = new EqualsBuilder();
-		eb.append(config1.getFieldName(), config2.getFieldName());
-		eb.append(config1.getColumnName(), config2.getColumnName());
-		eb.append(config1.getDataPersister(), config2.getDataPersister());
-		eb.append(config1.getDefaultValue(), config2.getDefaultValue());
-		eb.append(config1.getWidth(), config2.getWidth());
-		eb.append(config1.isCanBeNull(), config2.isCanBeNull());
-		eb.append(config1.isId(), config2.isId());
-		eb.append(config1.isGeneratedId(), config2.isGeneratedId());
-		eb.append(config1.getGeneratedIdSequence(), config2.getGeneratedIdSequence());
-		eb.append(config1.isForeign(), config2.isForeign());
-		eb.append(config1.getForeignTableConfig(), config2.getForeignTableConfig());
-		eb.append(config1.isUseGetSet(), config2.isUseGetSet());
-		eb.append(config1.getUnknownEnumValue(), config2.getUnknownEnumValue());
-		eb.append(config1.isThrowIfNull(), config2.isThrowIfNull());
-		eb.append(config1.isPersisted(), config2.isPersisted());
-		eb.append(config1.getFormat(), config2.getFormat());
-		eb.append(config1.isUnique(), config2.isUnique());
-		eb.append(config1.isUniqueCombo(), config2.isUniqueCombo());
-		eb.append(config1.getIndexName(TABLE_NAME), config2.getIndexName(TABLE_NAME));
-		eb.append(config1.getUniqueIndexName(TABLE_NAME), config2.getUniqueIndexName(TABLE_NAME));
-		eb.append(config1.isForeignAutoRefresh(), config2.isForeignAutoRefresh());
-		eb.append(config1.getMaxForeignAutoRefreshLevel(), config2.getMaxForeignAutoRefreshLevel());
-		eb.append(config1.getPersisterClass(), config2.getPersisterClass());
-		eb.append(config1.isAllowGeneratedIdInsert(), config2.isAllowGeneratedIdInsert());
-		eb.append(config1.getColumnDefinition(), config2.getColumnDefinition());
-		eb.append(config1.isForeignAutoCreate(), config2.isForeignAutoCreate());
-		eb.append(config1.isVersion(), config2.isVersion());
+	private void testConfigEquals(DatabaseFieldConfig config1, DatabaseFieldConfig config2) {
+		assertEquals(config1.getFieldName(), config2.getFieldName());
+		assertEquals(config1.getColumnName(), config2.getColumnName());
+		assertEquals(config1.getDataType(), config2.getDataType());
+		assertEquals(config1.getDataPersister(), config2.getDataPersister());
+		assertEquals(config1.getDefaultValue(), config2.getDefaultValue());
+		assertEquals(config1.getWidth(), config2.getWidth());
+		assertEquals(config1.isCanBeNull(), config2.isCanBeNull());
+		assertEquals(config1.isId(), config2.isId());
+		assertEquals(config1.isGeneratedId(), config2.isGeneratedId());
+		assertEquals(config1.getGeneratedIdSequence(), config2.getGeneratedIdSequence());
+		assertEquals(config1.isForeign(), config2.isForeign());
+		assertEquals(config1.getForeignTableConfig(), config2.getForeignTableConfig());
+		assertEquals(config1.isUseGetSet(), config2.isUseGetSet());
+		assertEquals(config1.getUnknownEnumValue(), config2.getUnknownEnumValue());
+		assertEquals(config1.isThrowIfNull(), config2.isThrowIfNull());
+		assertEquals(config1.isPersisted(), config2.isPersisted());
+		assertEquals(config1.getFormat(), config2.getFormat());
+		assertEquals(config1.isUnique(), config2.isUnique());
+		assertEquals(config1.isUniqueCombo(), config2.isUniqueCombo());
+		assertEquals(config1.getIndexName(TABLE_NAME), config2.getIndexName(TABLE_NAME));
+		assertEquals(config1.getUniqueIndexName(TABLE_NAME), config2.getUniqueIndexName(TABLE_NAME));
+		assertEquals(config1.isForeignAutoRefresh(), config2.isForeignAutoRefresh());
+		assertEquals(config1.getMaxForeignAutoRefreshLevel(), config2.getMaxForeignAutoRefreshLevel());
+		assertEquals(config1.getPersisterClass(), config2.getPersisterClass());
+		assertEquals(config1.isAllowGeneratedIdInsert(), config2.isAllowGeneratedIdInsert());
+		assertEquals(config1.getColumnDefinition(), config2.getColumnDefinition());
+		assertEquals(config1.isForeignAutoCreate(), config2.isForeignAutoCreate());
+		assertEquals(config1.isVersion(), config2.isVersion());
 		// foreign collections
-		eb.append(config1.isForeignCollection(), config2.isForeignCollection());
-		eb.append(config1.isForeignCollectionEager(), config2.isForeignCollectionEager());
-		eb.append(config1.getForeignCollectionOrderColumnName(), config2.getForeignCollectionOrderColumnName());
-		eb.append(config1.getForeignCollectionMaxEagerLevel(), config2.getForeignCollectionMaxEagerLevel());
-		eb.append(config1.getForeignCollectionForeignFieldName(), config2.getForeignCollectionForeignFieldName());
-		return eb.isEquals();
+		assertEquals(config1.isForeignCollection(), config2.isForeignCollection());
+		assertEquals(config1.isForeignCollectionEager(), config2.isForeignCollectionEager());
+		assertEquals(config1.getForeignCollectionOrderColumnName(), config2.getForeignCollectionOrderColumnName());
+		assertEquals(config1.getForeignCollectionMaxEagerLevel(), config2.getForeignCollectionMaxEagerLevel());
+		assertEquals(config1.getForeignCollectionForeignFieldName(), config2.getForeignCollectionForeignFieldName());
 	}
 
 	private enum OurEnum {
@@ -376,6 +373,7 @@ public class DatabaseFieldConfigLoaderTest extends BaseCoreTest {
 		},
 		// end
 		;
+
 		public abstract void randomMethod();
 	}
 
@@ -384,6 +382,7 @@ public class DatabaseFieldConfigLoaderTest extends BaseCoreTest {
 		int id;
 		@DatabaseField(unknownEnumName = "ONE")
 		OurAnonymousEnum ourEnum;
+
 		public LocalEnumField() {
 			// for ormlite
 		}
