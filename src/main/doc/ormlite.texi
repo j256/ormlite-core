@@ -1422,17 +1422,18 @@ No special instructions.
 @cindex Netezza database
 @item Netezza
 
-As of August 2011, the driver should be considered alpha and possibly with bugs.  I do not currently have access to a server running a
-Netezza database. We will try to keep this driver up to date with the help of contributors.  Thanks to Richard Kooijman for the
-driver. Please contact us if you want to help with development of this driver.
+There is some support for Netezza although it should be considered beta and possibly with bugs.  I do not currently have
+access to a server running a Netezza database. We will try to keep this driver up to date with the help of contributors.
+Thanks to Richard Kooijman for the driver. Please contact us if you want to help with development of this driver.
   
 @cindex ODBC database
 @cindex Microsoft ODBC database
 @item ODBC
 
-As of August 2011, the driver should be considered alpha and possibly with bugs.  I do not have access to a server running Microsoft's
-Open Database Connectivity.  We will try to keep this driver up to date with the help of contributors.  Thanks to Dale Asberry for
-the driver.  Please contact us if you want to help with development of this driver.
+There also some support for ODBC although it should be considered beta and possibly with bugs.  I do not have access to
+a server running Microsoft's Open Database Connectivity.  We will try to keep this driver up to date with the help of
+contributors.  Thanks to Dale Asberry for the driver.  Please contact us if you want to help with development of this
+driver.
 
 @cindex DB2 database
 @item DB2
@@ -3356,9 +3357,6 @@ especially in @code{Method.equals()}.  Because annotations use this method, look
 often garbage collecting thousands of objects and megabytes of space.  Android knows about the issues and a fix has been made but we have
 no idea when these performance improvements will make it into an Android release.
 
-We have made a couple of changes in ORMLite to help work around this issue.  Firstly, we added some reflection hacks to work around
-these problems in the short run.  Annotations using this mechanism run 20 times faster than with the native Android calls.
-
 With a little bit of work (and some caveats), you can remove all annotation work from your application and make DAO creation
 an extremely fast operation.  ORMLite supports the loading of the data configurations from a text configuration file.
 When a DAO is created, these configurations will be used, removing the need for any annotation method calls entirely.
@@ -3412,7 +3410,7 @@ The config file generated should look something like:
 
 @example
 #
-# generated on 2011/09/15 01:42:02
+# generated on 2020/09/15 01:42:02
 #
 # --table-start--
 dataClass=com.example.helloandroid.SimpleData
@@ -4492,9 +4490,8 @@ you are looking for performance of a large number of operations. @xref{callBatch
 @cindex level 1 cache
 @cindex weak reference cache
 
-As of September 2011, one of the newer features in ORMLite is the ability to enable an object cache for a DAO.  The object
-cache keeps an internal collection of objects that have been created or queried and will return a reference to the same
-object if it is handled in the future.  
+ORMLite supports the ability to enable a basic object cache for a DAO.  The object cache keeps an internal collection of
+objects that have been created or queried and will return a reference to the same object if it is handled in the future.  
 
 For example:
 
