@@ -3,7 +3,6 @@ package com.j256.ormlite.field.types;
 import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.j256.ormlite.field.FieldType;
@@ -54,26 +53,6 @@ public abstract class BaseDateType extends BaseDataType {
 		return dateFormat.format(date);
 	}
 
-	protected static class DateStringFormatConfig {
-		private final String dateFormatStr;
-		// used with clone
-		private final DateFormat dateFormat;
-
-		public DateStringFormatConfig(String dateFormatStr) {
-			this.dateFormatStr = dateFormatStr;
-			this.dateFormat = new SimpleDateFormat(dateFormatStr);
-		}
-
-		public DateFormat getDateFormat() {
-			return (DateFormat) dateFormat.clone();
-		}
-
-		@Override
-		public String toString() {
-			return dateFormatStr;
-		}
-	}
-
 	@Override
 	public boolean isValidForVersion() {
 		return true;
@@ -106,13 +85,13 @@ public abstract class BaseDateType extends BaseDataType {
 	/**
 	 * Bit of a hack here. If they aren't specifying a custom format then we check the date-string to see if it has a
 	 * period. If it has no period then we switch to the no-millis pattern. This is necessary because most databases
-	 * support the .SSSSSS format but h2 dropped the millis because of SQL compliance in 1.4.something.
+	 * support the .SSSSSS format but H2 dropped the millis because of SQL compliance in 1.4.something.
 	 */
 	private static DateFormat conditionalFormat(DateStringFormatConfig formatConfig, String dateStr) {
 		if (formatConfig == DEFAULT_DATE_FORMAT_CONFIG && dateStr.indexOf('.') < 0) {
-			return NO_MILLIS_DATE_FORMAT_CONFIG.dateFormat;
+			return NO_MILLIS_DATE_FORMAT_CONFIG.getDateFormat();
 		} else {
-			return formatConfig.dateFormat;
+			return formatConfig.getDateFormat();
 		}
 	}
 }
