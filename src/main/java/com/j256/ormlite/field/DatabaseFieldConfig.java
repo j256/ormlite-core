@@ -21,10 +21,9 @@ public class DatabaseFieldConfig {
 	public static final DataType DEFAULT_DATA_TYPE = DataType.UNKNOWN;
 	public static final boolean DEFAULT_CAN_BE_NULL = true;
 	public static final boolean DEFAULT_FOREIGN_COLLECTION_ORDER_ASCENDING = true;
+	public static final boolean DEFAULT_PERSISTED = true;
 	public static final int NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED = -1;
-
-	private static final int DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL =
-			ForeignCollectionField.DEFAULT_MAX_EAGER_LEVEL;
+	public static final int DEFAULT_MAX_EAGER_FOREIGN_COLLECTION_LEVEL = ForeignCollectionField.DEFAULT_MAX_EAGER_LEVEL;
 
 	private static JavaxPersistenceConfigurer javaxPersistenceConfigurer;
 
@@ -43,7 +42,7 @@ public class DatabaseFieldConfig {
 	private boolean useGetSet;
 	private Enum<?> unknownEnumValue;
 	private boolean throwIfNull;
-	private boolean persisted = true;
+	private boolean persisted = DEFAULT_PERSISTED;
 	private String format;
 	private boolean unique;
 	private boolean uniqueCombo;
