@@ -1,6 +1,7 @@
 5.6: ?/?/2021
 	* CORE: Added support for @Entity storing of Serializable types.  Thanks to arn-cpu.
-	* ANDROID: Removed the reflection hack support for pre-ice-cream-sandwich annotation performance hacks.
+	* CORE: Fixed a bug with nonreentrant handling of DateFormat.  Thanks to Bob Lacatena.
+	* ANDROID: Removed the reflection hack support for pre-ice-cream-sandwich annotation performance.
 
 5.5: 5/23/2021
 	* CORE: Added support for java.util.Currency.  Thanks to juur. 
