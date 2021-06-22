@@ -10,16 +10,24 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
+import com.j256.ormlite.LockedConnectionSource;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
+import com.j256.ormlite.h2.H2ConnectionSource;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.CompiledStatement;
+import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTable;
@@ -158,10 +166,52 @@ public class DateStringTypeTest extends BaseTypeTest {
 		assertTrue(newVersionDate.date.after(date));
 	}
 
+	@Test
+	public void testThreads() throws Exception {
+		ExecutorService pool = Executors.newCachedThreadPool();
+
+		ConnectionSource connectionSource = new LockedConnectionSource(new H2ConnectionSource());
+		final Dao<LocalDateString, Object> dao1 = createDao(connectionSource, LocalDateString.class, true);
+		final Dao<DateStringFormat, Object> dao2 = createDao(connectionSource, DateStringFormat.class, true);
+
+		final Random random = new Random();
+		for (int i = 0; i < 100; i++) {
+			pool.submit(new Callable<Void>() {
+				@Override
+				public Void call() throws SQLException {
+					for (int i = 0; i < 10000; i++) {
+						if (i % 2 == 0) {
+							DateStringFormat dsf = new DateStringFormat();
+							dsf.date = new Date(random.nextLong());
+							assertEquals(1, dao2.create(dsf));
+							DateStringFormat result = dao2.queryForId(dsf.id);
+							assertNotNull(result);
+							assertEquals(dsf.date, result.date);
+						} else {
+							LocalDateString lds = new LocalDateString();
+							lds.date = new Date(random.nextLong());
+							assertEquals(1, dao1.create(lds));
+							LocalDateString result = dao1.queryForId(lds.id);
+							assertNotNull(result);
+							assertEquals(lds.date, result.date);
+						}
+					}
+					return null;
+				}
+			});
+		}
+
+		pool.shutdown();
+		pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+		connectionSource.close();
+	}
+
 	/* ============================================================================================ */
 
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalDateString {
+		@DatabaseField(generatedId = true)
+		int id;
 		@DatabaseField(columnName = DATE_COLUMN, dataType = DataType.DATE_STRING)
 		Date date;
 	}
@@ -188,7 +238,9 @@ public class DateStringTypeTest extends BaseTypeTest {
 
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class DateStringFormat {
-		@DatabaseField(columnName = DATE_COLUMN, dataType = DataType.DATE_STRING, format = "yyyy-MM-dd")
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(columnName = DATE_COLUMN, dataType = DataType.DATE_STRING, format = "dd-MM-yyyy")
 		Date date;
 	}
 
