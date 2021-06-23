@@ -1,6 +1,6 @@
 5.6: 6/22/2021
 	* CORE: Added support for @Entity storing of Serializable types.  Thanks to arn-cpu.
-	* CORE: Fixed a bug with nonreentrant handling of DateFormat.  Thanks to Bob Lacatena.
+	* CORE: Fixed a bug with nonreentrant handling of DateFormat with the string date types.  Thanks to Bob Lacatena.
 	* ANDROID: Removed the reflection hack support for pre-ice-cream-sandwich annotation performance.
 
 5.5: 5/23/2021
@@ -120,6 +120,8 @@
 	* ANDROID: Fixed problem with the maxForeignAutoRefreshLevel config setting.  Thanks to Eric Fung et al.  Bug #194.
 	* ANDROID: Fixed possible problem with queryForFirst() and improper LIMIT implementation.
 	* ANDROID: Removed deprecated methods: OpenHelperManager.release(), AndroidDatabaseResults(Cursor, boolean, ObjectCache).
+
+------------------------------------------------------------------------------------------------------------------------
 
 4.48: 12/16/2013
 	* CORE: Added support for tracking direct database connection activity with DatabaseConnectionProxy.
