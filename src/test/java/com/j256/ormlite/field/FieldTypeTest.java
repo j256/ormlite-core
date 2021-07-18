@@ -21,7 +21,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-
+import java.util.Arrays;
+import java.util.Comparator;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
@@ -439,8 +440,17 @@ public class FieldTypeTest extends BaseCoreTest {
 	@Test
 	public void testAssignForeign() throws Exception {
 		Field[] fields = ForeignParent.class.getDeclaredFields();
+		Field[] sortedfields = ForeignParent.class.getDeclaredFields();
+		Arrays.sort(sortedfields, new Comparator<Field>() {
+			public int compare(Field a, Field b) {
+				return a.getName().compareTo(b.getName());
+			}
+		});
+		fields = sortedfields;
+
 		assertTrue(fields.length >= 3);
-		Field field = fields[2];
+		Field field = fields[0];
+
 		FieldType fieldType = FieldType.createFieldType(databaseType, ForeignParent.class.getSimpleName(), field,
 				ForeignParent.class);
 		fieldType.configDaoInformation(connectionSource, ForeignParent.class);
