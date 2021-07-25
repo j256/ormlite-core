@@ -82,9 +82,17 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 		assertTrue(config.isUseGetSet());
 	}
 
+	public static Field[] getDeclaredFieldsWithNames(Class clazz, String... names) throws Exception {
+		Field[] fields = new Field[names.length];
+		for (int i = 0; i < names.length; i++) {
+			fields[i] = clazz.getDeclaredField(names[i]);
+		}
+		return fields;
+	}
+
 	@Test
 	public void testFromDbField() throws Exception {
-		Field[] fields = Foo.class.getDeclaredFields();
+		Field[] fields = getDeclaredFieldsWithNames(Foo.class, "field");
 		assertTrue(fields.length >= 1);
 		DatabaseFieldConfig config = DatabaseFieldConfig.fromField(databaseType, "foo", fields[0]);
 		assertNotNull(config);
@@ -97,7 +105,7 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 
 	@Test
 	public void testJavaxAnnotations() throws Exception {
-		Field[] fields = JavaxAnno.class.getDeclaredFields();
+		Field[] fields = getDeclaredFieldsWithNames(JavaxAnno.class, "notColumn", "id", "stuff", "length", "nullable", "foo", "foo2");
 		assertTrue(fields.length >= 7);
 
 		// not a column
@@ -142,7 +150,7 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 
 	@Test
 	public void testJavaxJustId() throws Exception {
-		Field[] fields = JavaxAnnoJustId.class.getDeclaredFields();
+		Field[] fields = getDeclaredFieldsWithNames(JavaxAnnoJustId.class, "id");
 		assertTrue(fields.length >= 1);
 
 		DatabaseFieldConfig config = DatabaseFieldConfig.fromField(databaseType, "foo", fields[0]);
@@ -155,7 +163,7 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 
 	@Test
 	public void testJavaxGetSet() throws Exception {
-		Field[] fields = JavaxGetSet.class.getDeclaredFields();
+		Field[] fields = getDeclaredFieldsWithNames(JavaxGetSet.class, "id");
 		assertTrue(fields.length >= 1);
 
 		DatabaseFieldConfig config = DatabaseFieldConfig.fromField(databaseType, "foo", fields[0]);
@@ -166,7 +174,7 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 
 	@Test
 	public void testJavaxUnique() throws Exception {
-		Field[] fields = JavaxUnique.class.getDeclaredFields();
+		Field[] fields = getDeclaredFieldsWithNames(JavaxUnique.class, "id");
 		assertTrue(fields.length >= 1);
 
 		DatabaseFieldConfig config = DatabaseFieldConfig.fromField(databaseType, "foo", fields[0]);
@@ -177,7 +185,7 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testUnknownEnumVal() throws Exception {
-		Field[] fields = BadUnknownVal.class.getDeclaredFields();
+		Field[] fields = getDeclaredFieldsWithNames(BadUnknownVal.class, "ourEnum");
 		assertTrue(fields.length >= 1);
 		DatabaseFieldConfig.fromField(databaseType, "foo", fields[0]);
 	}
@@ -193,7 +201,7 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 
 	@Test
 	public void testComboIndex() throws Exception {
-		Field[] fields = ComboIndex.class.getDeclaredFields();
+		Field[] fields = getDeclaredFieldsWithNames(ComboIndex.class, "stuff", "junk");
 		assertTrue(fields.length >= 2);
 		DatabaseFieldConfig fieldConfig = DatabaseFieldConfig.fromField(databaseType, "foo", fields[0]);
 		String tableName = "foo";
