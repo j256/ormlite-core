@@ -11,6 +11,7 @@ import static org.junit.Assert.fail;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -1698,7 +1699,8 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		GenericRawResults<String[]> results = qb.queryRaw();
 		List<String[]> stringResults = results.getResults();
 		assertEquals(1, stringResults.size());
-		assertEquals(Integer.toString(foo.id), stringResults.get(0)[0]);
+		Arrays.sort(stringResults.get(0));
+		assertEquals(Integer.toString(foo.id), stringResults.get(0)[2]);
 		assertEquals(foo.stringField, stringResults.get(0)[3]);
 	}
 
