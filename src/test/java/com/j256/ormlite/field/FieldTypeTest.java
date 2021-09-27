@@ -18,6 +18,8 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -390,8 +392,13 @@ public class FieldTypeTest extends BaseCoreTest {
 	@Test
 	public void testSetValueField() throws Exception {
 		Field[] fields = LocalFoo.class.getDeclaredFields();
+		Arrays.sort(fields, new Comparator<Field>() {
+			public int compare(Field a, Field b) {
+			return a.getName().compareTo(b.getName());
+			}
+			});
 		assertTrue(fields.length >= 4);
-		Field nameField = fields[0];
+		Field nameField = fields[1];
 		FieldType fieldType =
 				FieldType.createFieldType(databaseType, LocalFoo.class.getSimpleName(), nameField, LocalFoo.class);
 		LocalFoo foo = new LocalFoo();
