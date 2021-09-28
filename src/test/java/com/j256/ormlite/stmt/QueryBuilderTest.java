@@ -1713,8 +1713,9 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		QueryBuilder<Foo, Integer> qb = dao.queryBuilder();
 		assertEquals(1, qb.countOf());
 		String[] result = qb.queryRawFirst();
+		Arrays.sort(result);
 		assertEquals(4, result.length);
-		assertEquals(Integer.toString(foo.id), result[0]);
+		assertEquals(Integer.toString(foo.id), result[2]);
 		assertEquals(foo.stringField, result[3]);
 	}
 
