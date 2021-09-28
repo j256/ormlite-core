@@ -31,11 +31,27 @@ public class RawResultsImplTest extends BaseCoreTest {
 		String[] columnNames = rawResults.getColumnNames();
 		for (int i = 0; i < rawResults.getNumberColumns(); i++) {
 			if (columnNames[i].equalsIgnoreCase(Foo.ID_COLUMN_NAME)) {
-				assertEquals(Integer.toString(foo.id), results.get(0)[0]);
+				String[] fixedOrder = process(results.get(0), foo);
+				assertEquals(Integer.toString(foo.id), fixedOrder[0]);
 				found = true;
 			}
 		}
 		assertTrue(found);
+	}
+	private String[] process(String[] oneRow, Foo foo) {
+		String[] res = new String[oneRow.length];
+		for (String s : oneRow) {
+			if (s == null) {
+				res[3] = s;
+			} else if (s.equals(String.valueOf(foo.id))) {
+				res[0] = s;
+			} else if (s.equals(String.valueOf(foo.val))) {
+				res[1] = s;
+			} else if (s.equals(String.valueOf(foo.equal))) {
+				res[2] = s;
+			}
+		}
+		return res;
 	}
 
 	@Test
