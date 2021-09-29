@@ -103,13 +103,16 @@ public class DatabaseConnectionProxyFactoryTest extends BaseCoreTest {
 		public int insert(String statement, Object[] args, FieldType[] argfieldTypes, GeneratedKeyHolder keyHolder)
 				throws SQLException {
 			// just record the first argument to the insert which for Foo should be the 'val' field
-			Map<String, Object> columnName2val = new HashMap<String, Object>();
+			int valIdx = 0;
 			for (int i = 0; i < argfieldTypes.length; ++i) {
-				columnName2val.put(argfieldTypes[i].getColumnName(), args[i]);
+				if (argfieldTypes[i].getColumnName().equals("val")) {
+					valIdx = i;
+					break;
+				}
 			}
-			lastValue = (Integer) columnName2val.get("val");
+			lastValue = (Integer) args[valIdx];
 			if (lastValue == TEST_CHANGE_FROM) {
-				args[0] = TEST_CHANGE_TO;
+				args[valIdx] = TEST_CHANGE_TO;
 			}
 			return super.insert(statement, args, argfieldTypes, keyHolder);
 		}
