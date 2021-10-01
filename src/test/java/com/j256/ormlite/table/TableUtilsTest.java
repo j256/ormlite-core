@@ -15,7 +15,9 @@ import static org.junit.Assert.fail;
 
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -50,7 +52,7 @@ public class TableUtilsTest extends BaseCoreTest {
 	public void testCreateStatements() throws Exception {
 		List<String> stmts = TableUtils.getCreateTableStatements(databaseType, LocalFoo.class);
 		assertEquals(1, stmts.size());
-		assertEquals(expectedCreateStatement(), stmts.get(0));
+		assertTrue(expectedCreateStatementSet().contains(stmts.get(0)));
 	}
 
 	@Test
@@ -58,7 +60,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		List<String> stmts = TableUtils.getCreateTableStatements(connectionSource,
 				DatabaseTableConfig.fromClass(databaseType, LocalFoo.class));
 		assertEquals(1, stmts.size());
-		assertEquals(expectedCreateStatement(), stmts.get(0));
+		assertTrue(expectedCreateStatementSet().contains(stmts.get(0)));
 	}
 
 	@Test
@@ -478,6 +480,29 @@ public class TableUtilsTest extends BaseCoreTest {
 			boolean throwExecute, String queryAfter, Callable<Integer> callable) throws Exception {
 		testStatement(tableName, connectionSource, databaseType, expectedCreateStatement(), queryAfter, rowN,
 				throwExecute, callable);
+	}
+
+	private Set<String> expectedCreateStatementSet() {
+		Set<String> allPossibleStatement = new HashSet<String>();
+		StringBuilder sb = new StringBuilder();
+		sb.append("CREATE TABLE ");
+		databaseType.appendEscapedEntityName(sb, "localfoo");
+		sb.append(" (");
+		databaseType.appendEscapedEntityName(sb, LocalFoo.ID_FIELD_NAME);
+		sb.append(" INTEGER , ");
+		databaseType.appendEscapedEntityName(sb, LocalFoo.NAME_FIELD_NAME);
+		sb.append(" VARCHAR(255) ) ");
+		allPossibleStatement.add(sb.toString());
+		sb = new StringBuilder();
+		sb.append("CREATE TABLE ");
+		databaseType.appendEscapedEntityName(sb, "localfoo");
+		sb.append(" (");
+		databaseType.appendEscapedEntityName(sb, LocalFoo.NAME_FIELD_NAME);
+		sb.append(" VARCHAR(255) ) ");
+		databaseType.appendEscapedEntityName(sb, LocalFoo.ID_FIELD_NAME);
+		sb.append(" INTEGER , ");
+		allPossibleStatement.add(sb.toString());
+		return allPossibleStatement;
 	}
 
 	private String expectedCreateStatement() {
