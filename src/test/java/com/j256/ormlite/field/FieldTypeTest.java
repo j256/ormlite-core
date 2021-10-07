@@ -394,11 +394,11 @@ public class FieldTypeTest extends BaseCoreTest {
 		Field[] fields = LocalFoo.class.getDeclaredFields();
 		Arrays.sort(fields, new Comparator<Field>() {
 			public int compare(Field a, Field b) {
-				return a.getName().compareTo(b.getName());
+				return b.getName().compareTo(a.getName());
 			}
 		});
 		assertTrue(fields.length >= 4);
-		Field nameField = fields[1];
+		Field nameField = fields[2];
 		FieldType fieldType =
 				FieldType.createFieldType(databaseType, LocalFoo.class.getSimpleName(), nameField, LocalFoo.class);
 		LocalFoo foo = new LocalFoo();
