@@ -1,6 +1,7 @@
 package com.j256.ormlite.table;
 
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +34,7 @@ public class TableInfo<T, ID> {
 	private final FieldType[] foreignCollections;
 	private final FieldType idField;
 	private final boolean foreignAutoCreate;
-	private Map<String, FieldType> fieldNameMap;
+	private final Map<String, FieldType> fieldNameMap;
 
 	/**
 	 * @deprecated Use {@link #TableInfo(DatabaseType, Class)}
@@ -84,6 +85,7 @@ public class TableInfo<T, ID> {
 		FieldType findIdFieldType = null;
 		boolean foreignAutoCreate = false;
 		int foreignCollectionCount = 0;
+		Map<String, FieldType> mutableFieldNameMap = new HashMap<String, FieldType>();
 		for (FieldType fieldType : fieldTypes) {
 			if (fieldType.isId() || fieldType.isGeneratedId() || fieldType.isGeneratedIdSequence()) {
 				if (findIdFieldType != null) {
@@ -98,7 +100,9 @@ public class TableInfo<T, ID> {
 			if (fieldType.isForeignCollection()) {
 				foreignCollectionCount++;
 			}
+			mutableFieldNameMap.put(databaseType.downCaseString(fieldType.getColumnName(), true), fieldType);
 		}
+		this.fieldNameMap = Collections.unmodifiableMap(mutableFieldNameMap);
 		// can be null if there is no id field
 		this.idField = findIdFieldType;
 		this.foreignAutoCreate = foreignAutoCreate;
@@ -148,14 +152,6 @@ public class TableInfo<T, ID> {
 	 * Return the {@link FieldType} associated with the columnName.
 	 */
 	public FieldType getFieldTypeByColumnName(String columnName) {
-		if (fieldNameMap == null) {
-			// build our alias map if we need it
-			Map<String, FieldType> map = new HashMap<String, FieldType>();
-			for (FieldType fieldType : fieldTypes) {
-				map.put(databaseType.downCaseString(fieldType.getColumnName(), true), fieldType);
-			}
-			fieldNameMap = map;
-		}
 		FieldType fieldType = fieldNameMap.get(databaseType.downCaseString(columnName, true));
 		// if column name is found, return it
 		if (fieldType != null) {
