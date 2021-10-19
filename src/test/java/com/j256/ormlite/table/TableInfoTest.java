@@ -81,12 +81,13 @@ public class TableInfoTest extends BaseCoreTest {
 	@Test
 	public void testUnknownForeignField() throws Exception {
 		TableInfo<Foreign, Void> tableInfo = new TableInfo<Foreign, Void>(databaseType, Foreign.class);
+		String wrongName = "foo";
 		try {
-			tableInfo.getFieldTypeByColumnName("foo");
+			tableInfo.getFieldTypeByColumnName(wrongName);
 			fail("expected exception");
 		} catch (IllegalArgumentException e) {
 			assertTrue(e.getMessage().contains("'" + Foreign.FOREIGN_FIELD_NAME + "'"));
-			assertTrue(e.getMessage().contains("'foo'"));
+			assertTrue(e.getMessage().contains("'" + wrongName + "'"));
 		}
 	}
 
