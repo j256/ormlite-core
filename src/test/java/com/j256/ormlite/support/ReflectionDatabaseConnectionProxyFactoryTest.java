@@ -3,6 +3,8 @@ package com.j256.ormlite.support;
 import static org.junit.Assert.assertEquals;
 
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -63,7 +65,14 @@ public class ReflectionDatabaseConnectionProxyFactoryTest extends BaseCoreTest {
 		public int insert(String statement, Object[] args, FieldType[] argfieldTypes, GeneratedKeyHolder keyHolder)
 				throws SQLException {
 			// change the first argument which should be the 'val' field
-			args[0] = (Integer) args[0] + VALUE_INCREMENT;
+			int valIdx = 0;
+			for (int i = 0; i < argfieldTypes.length; ++i) {
+				if (argfieldTypes[i].getColumnName().equals("val")) {
+					valIdx = i;
+					break;
+				}
+			}
+			args[valIdx] = (Integer) args[valIdx] + VALUE_INCREMENT;
 			insertCount++;
 			return super.insert(statement, args, argfieldTypes, keyHolder);
 		}
