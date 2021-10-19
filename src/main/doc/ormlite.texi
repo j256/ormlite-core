@@ -3125,6 +3125,9 @@ Convenience method to generate the iterator for the query.  Same as @code{queryB
 @cindex query arguments
 @cindex select arguments
 @cindex arguments to queries
+@cindex argument placeholders
+@cindex placeholders, argument
+@cindex question marks, queries
 @cindex sql ?
 Select Arguments are arguments that are used in WHERE operations can be specified directly as value arguments (as in the
 above examples) or as a @code{SelectArg} object.  SelectArgs are used to set the value of an argument at a later time --
@@ -3155,14 +3158,15 @@ accounts = accountDao.query(preparedQuery);
 @cindex string quoting in queries
 @cindex escaping arguments
 @cindex SQL injection bugs
-It is a common problem for people to try to build queries or other statements with arguments that contain quote characters.
-These quotes can clash with the auto-generated SQL and result in syntax errors.  In these cases a @code{SelectArg} is required.
-In addition, if you are passing in arguments from user-input, you can use @code{SelectArg} to protect yourself from SQL
-injection security problems.  Lastly, certain data types use an internal @code{SelectArg} object because the string value
-of the object does not reliably match the database form of the object -- @code{java.util.Date} is one example of such a type.
+It is a common problem for people to try to build queries or other statements with arguments that contain quote
+characters.  These quotes can clash with the auto-generated SQL and result in syntax errors.  In these cases a
+@code{SelectArg} is required.  If you are passing in arguments from any user-input, you can use @code{SelectArg} to
+protect yourself from these so called SQL injection security problems.  Lastly, certain data types use an internal
+@code{SelectArg} object because the string value of the object does not reliably match the database form of the object
+-- @code{java.util.Date} is one example of such a type.
 
-@emph{NOTE:} @code{SelectArg} objects have protection against being used in more than one column name.  You must instantiate
-a new object if you want to use a @code{SelectArg} with another column.
+@emph{NOTE:} @code{SelectArg} objects have protection against being used in more than one column name.  You must
+instantiate a new object if you want to use a @code{SelectArg} with another column.
 
 @c ----------------------------------------------------------------
 @node Column Arguments, Join Queries, Select Arguments, Statement Builder
