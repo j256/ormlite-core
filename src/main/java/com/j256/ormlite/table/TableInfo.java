@@ -162,8 +162,8 @@ public class TableInfo<T, ID> {
 		for (FieldType fieldType2 : fieldTypes) {
 			if (fieldType2.getFieldName().equals(downColumnName)) {
 				throw new IllegalArgumentException("Unknown column-name '" + downColumnName
-						+ "', maybe you used field-name '" + fieldType2.getFieldName() + "' from table '" + tableName
-						+ "' with columns: " + fieldNameMap.keySet());
+						+ "', maybe you used field-name instead of column-name '" + fieldType2.getColumnName()
+						+ "' from table '" + tableName + "' with columns: " + fieldNameMap.keySet());
 			}
 		}
 		throw new IllegalArgumentException("Unknown column-name '" + columnName + "' in table '" + tableName
