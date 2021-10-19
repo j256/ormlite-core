@@ -153,20 +153,22 @@ public class TableInfo<T, ID> {
 	 */
 	public FieldType getFieldTypeByColumnName(String columnName) {
 		String downColumnName = databaseType.downCaseString(columnName, true);
-		FieldType fieldType = fieldNameMap.get(downColumnName);
+		FieldType match = fieldNameMap.get(downColumnName);
 		// if column name is found, return it
-		if (fieldType != null) {
-			return fieldType;
+		if (match != null) {
+			return match;
 		}
 		// look to see if someone is using the field-name instead of column-name
-		for (FieldType fieldType2 : fieldTypes) {
-			if (fieldType2.getFieldName().equals(downColumnName)) {
+		for (FieldType fieldType : fieldTypes) {
+			String downFieldName = databaseType.downCaseString(fieldType.getFieldName(), true);
+			if (downFieldName.equals(downColumnName)) {
+				String downFieldColumnName = databaseType.downCaseString(fieldType.getColumnName(), true);
 				throw new IllegalArgumentException("Unknown column-name '" + downColumnName
-						+ "', maybe you used field-name instead of column-name '" + fieldType2.getColumnName()
-						+ "' from table '" + tableName + "' with columns: " + fieldNameMap.keySet());
+						+ "', maybe field-name instead of column-name '" + downFieldColumnName + "' from table '"
+						+ tableName + "' with columns: " + fieldNameMap.keySet());
 			}
 		}
-		throw new IllegalArgumentException("Unknown column-name '" + columnName + "' in table '" + tableName
+		throw new IllegalArgumentException("Unknown column-name '" + downColumnName + "' in table '" + tableName
 				+ "' with columns: " + fieldNameMap.keySet());
 	}
 
