@@ -50,7 +50,7 @@ public class TableUtilsTest extends BaseCoreTest {
 	public void testCreateStatements() throws Exception {
 		List<String> stmts = TableUtils.getCreateTableStatements(databaseType, LocalFoo.class);
 		assertEquals(1, stmts.size());
-		assertEquals(expectedCreateStatement(), stmts.get(0));
+		checkCreateStatement(stmts.get(0));
 	}
 
 	@Test
@@ -58,7 +58,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		List<String> stmts = TableUtils.getCreateTableStatements(connectionSource,
 				DatabaseTableConfig.fromClass(databaseType, LocalFoo.class));
 		assertEquals(1, stmts.size());
-		assertEquals(expectedCreateStatement(), stmts.get(0));
+		checkCreateStatement(stmts.get(0));
 	}
 
 	@Test
@@ -476,20 +476,28 @@ public class TableUtilsTest extends BaseCoreTest {
 
 	private void testCreate(String tableName, ConnectionSource connectionSource, DatabaseType databaseType, int rowN,
 			boolean throwExecute, String queryAfter, Callable<Integer> callable) throws Exception {
-		testStatement(tableName, connectionSource, databaseType, expectedCreateStatement(), queryAfter, rowN,
-				throwExecute, callable);
+		testStatement(tableName, connectionSource, databaseType, queryAfter, rowN, throwExecute, callable);
 	}
 
-	private String expectedCreateStatement() {
+	private void checkCreateStatement(String statement) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("CREATE TABLE ");
 		databaseType.appendEscapedEntityName(sb, "localfoo");
 		sb.append(" (");
+		assertTrue(statement.startsWith(sb.toString()));
+
+		// field names can be in differenrt orders so be agnostic
+		sb.setLength(0);
 		databaseType.appendEscapedEntityName(sb, LocalFoo.ID_FIELD_NAME);
-		sb.append(" INTEGER , ");
+		sb.append(" INTEGER ");
+		assertTrue(statement + " should have the id field", statement.contains(sb.toString()));
+
+		sb.setLength(0);
 		databaseType.appendEscapedEntityName(sb, LocalFoo.NAME_FIELD_NAME);
-		sb.append(" VARCHAR(255) ) ");
-		return sb.toString();
+		sb.append(" VARCHAR(255) ");
+		assertTrue(statement.contains(sb.toString()));
+
+		assertTrue(statement.endsWith(" ) "));
 	}
 
 	private void testDrop(String tableName, ConnectionSource connectionSource, int rowN, boolean throwExecute,
@@ -498,12 +506,11 @@ public class TableUtilsTest extends BaseCoreTest {
 		sb.append("DROP TABLE ");
 		databaseType.appendEscapedEntityName(sb, "foo");
 		sb.append(' ');
-		testStatement(tableName, connectionSource, databaseType, sb.toString(), null, rowN, throwExecute, callable);
+		testStatement(tableName, connectionSource, databaseType, null, rowN, throwExecute, callable);
 	}
 
 	private void testStatement(String tableName, ConnectionSource connectionSource, DatabaseType databaseType,
-			String statement, String queryAfter, int rowN, boolean throwExecute, Callable<Integer> callable)
-			throws Exception {
+			String queryAfter, int rowN, boolean throwExecute, Callable<Integer> callable) throws Exception {
 		DatabaseConnection conn = createMock(DatabaseConnection.class);
 		CompiledStatement stmt = createMock(CompiledStatement.class);
 		DatabaseResults results = null;

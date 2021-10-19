@@ -5,8 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.junit.AfterClass;
 import org.junit.Test;
@@ -96,23 +94,23 @@ public class DatabaseConnectionProxyFactoryTest extends BaseCoreTest {
 	 */
 	private static class ConnectionProxy extends DatabaseConnectionProxy {
 		static int lastValue;
+
 		public ConnectionProxy(DatabaseConnection conn) {
 			super(conn);
 		}
+
 		@Override
 		public int insert(String statement, Object[] args, FieldType[] argfieldTypes, GeneratedKeyHolder keyHolder)
 				throws SQLException {
-			// just record the first argument to the insert which for Foo should be the 'val' field
-			int valIdx = 0;
+			// just record the val field argument to the insert
 			for (int i = 0; i < argfieldTypes.length; ++i) {
-				if (argfieldTypes[i].getColumnName().equals("val")) {
-					valIdx = i;
+				if (argfieldTypes[i].getColumnName().equals(Foo.VAL_COLUMN_NAME)) {
+					lastValue = (Integer) args[i];
+					if (lastValue == TEST_CHANGE_FROM) {
+						args[i] = TEST_CHANGE_TO;
+					}
 					break;
 				}
-			}
-			lastValue = (Integer) args[valIdx];
-			if (lastValue == TEST_CHANGE_FROM) {
-				args[valIdx] = TEST_CHANGE_TO;
 			}
 			return super.insert(statement, args, argfieldTypes, keyHolder);
 		}
