@@ -72,15 +72,15 @@ public class RawRowMapperTest extends BaseCoreTest {
 			for (int count = 0; results.next(); count++) {
 				Foo foo = dao.mapSelectStarRow(results);
 				switch (count) {
-					case 0 :
+					case 0:
 						assertEquals(foo1.id, foo.id);
 						assertEquals(foo1.val, foo.val);
 						break;
-					case 1 :
+					case 1:
 						assertEquals(foo2.id, foo.id);
 						assertEquals(foo2.val, foo.val);
 						break;
-					default :
+					default:
 						fail("Unknown entry in list");
 				}
 			}

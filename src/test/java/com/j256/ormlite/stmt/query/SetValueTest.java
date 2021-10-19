@@ -64,6 +64,7 @@ public class SetValueTest extends BaseCoreTest {
 		public int id;
 		@DatabaseField(dataType = DataType.SERIALIZABLE)
 		public Serializable stuff;
+
 		public TestSerial() {
 		}
 	}

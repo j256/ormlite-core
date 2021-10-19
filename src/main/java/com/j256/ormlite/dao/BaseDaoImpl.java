@@ -551,9 +551,9 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	@Override
 	public CloseableIterator<T> iterator(int resultFlags) {
 		checkForInitialized();
-		CloseableIterator<T> li = createIterator(resultFlags);
-		lastIterator = li;
-		return li; //make sure we return the newly created iterator and not the field!
+		CloseableIterator<T> iterator = createIterator(resultFlags);
+		lastIterator = iterator;
+		return iterator; // make sure we return the newly created iterator and not the field!
 	}
 
 	@Override
@@ -614,7 +614,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		checkForInitialized();
 		CloseableIterator<T> li = createIterator(preparedQuery, resultFlags);
 		lastIterator = li;
-		return li; //make sure we return the newly created iterator and not the field!
+		return li; // make sure we return the newly created iterator and not the field!
 	}
 
 	@Override

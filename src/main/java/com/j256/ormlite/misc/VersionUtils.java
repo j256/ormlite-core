@@ -51,16 +51,16 @@ public class VersionUtils {
 	private static void logVersionWarnings(String label1, String version1, String label2, String version2) {
 		if (version1 == null) {
 			if (version2 != null) {
-				warning(null, "Unknown version", " for {}, version for {} is '{}'", new Object[] { label1, label2,
-						version2 });
+				warning(null, "Unknown version", " for {}, version for {} is '{}'",
+						new Object[] { label1, label2, version2 });
 			}
 		} else {
 			if (version2 == null) {
-				warning(null, "Unknown version", " for {}, version for {} is '{}'", new Object[] { label2, label1,
-						version1 });
+				warning(null, "Unknown version", " for {}, version for {} is '{}'",
+						new Object[] { label2, label1, version1 });
 			} else if (!version1.equals(version2)) {
-				warning(null, "Mismatched versions", ": {} is '{}', while {} is '{}'", new Object[] { label1, version1,
-						label2, version2 });
+				warning(null, "Mismatched versions", ": {} is '{}', while {} is '{}'",
+						new Object[] { label1, version1, label2, version2 });
 			}
 		}
 	}

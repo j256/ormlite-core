@@ -27,9 +27,8 @@ public class RawRowObjectMapperTest extends BaseCoreTest {
 
 		QueryBuilder<Foo, Object> qb = dao.queryBuilder();
 		qb.selectColumns(Foo.ID_COLUMN_NAME, Foo.VAL_COLUMN_NAME, Foo.STRING_COLUMN_NAME);
-		GenericRawResults<Foo> rawResults =
-				dao.queryRaw(qb.prepareStatementString(), new DataType[] { DataType.INTEGER, DataType.INTEGER,
-						DataType.STRING }, new FooObjectArrayMapper());
+		GenericRawResults<Foo> rawResults = dao.queryRaw(qb.prepareStatementString(),
+				new DataType[] { DataType.INTEGER, DataType.INTEGER, DataType.STRING }, new FooObjectArrayMapper());
 		List<Foo> results = rawResults.getResults();
 		assertEquals(2, results.size());
 		assertEquals(foo1.id, results.get(0).id);

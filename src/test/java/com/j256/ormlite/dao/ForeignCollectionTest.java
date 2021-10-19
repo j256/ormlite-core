@@ -129,13 +129,13 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		for (OrderOrdered order : accountResult.orders) {
 			orderC++;
 			switch (orderC) {
-				case 1 :
+				case 1:
 					assertEquals(val2, order.val);
 					break;
-				case 2 :
+				case 2:
 					assertEquals(val3, order.val);
 					break;
-				case 3 :
+				case 3:
 					assertEquals(val1, order.val);
 					break;
 			}
@@ -177,13 +177,13 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		for (OrderOrderedDesc order : accountResult.orders) {
 			orderC++;
 			switch (orderC) {
-				case 1 :
+				case 1:
 					assertEquals(val1, order.val);
 					break;
-				case 2 :
+				case 2:
 					assertEquals(val3, order.val);
 					break;
-				case 3 :
+				case 3:
 					assertEquals(val2, order.val);
 					break;
 			}
@@ -461,23 +461,21 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertNotNull(results.get(0).orders);
 		assertEquals(1, results.get(0).orders.size());
 
-		results =
-				accountDao.queryBuilder()
-						.selectColumns(Account.ID_FIELD_NAME, Account.NAME_FIELD_NAME)
-						.where()
-						.eq(Account.ID_FIELD_NAME, account.id)
-						.query();
+		results = accountDao.queryBuilder()
+				.selectColumns(Account.ID_FIELD_NAME, Account.NAME_FIELD_NAME)
+				.where()
+				.eq(Account.ID_FIELD_NAME, account.id)
+				.query();
 		assertEquals(1, results.size());
 		assertEquals(account.name, results.get(0).name);
 		// null because the orders are not in the select columns
 		assertNull(results.get(0).orders);
 
-		results =
-				accountDao.queryBuilder()
-						.selectColumns(Account.ID_FIELD_NAME, Account.NAME_FIELD_NAME, Account.ORDERS_FIELD_NAME)
-						.where()
-						.eq(Account.ID_FIELD_NAME, account.id)
-						.query();
+		results = accountDao.queryBuilder()
+				.selectColumns(Account.ID_FIELD_NAME, Account.NAME_FIELD_NAME, Account.ORDERS_FIELD_NAME)
+				.where()
+				.eq(Account.ID_FIELD_NAME, account.id)
+				.query();
 		assertEquals(1, results.size());
 		assertEquals(account.name, results.get(0).name);
 		assertNotNull(results.get(0).orders);
@@ -1102,10 +1100,10 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		for (Order order : accountResult.orders) {
 			orderC++;
 			switch (orderC) {
-				case 1 :
+				case 1:
 					assertEquals(val1, order.val);
 					break;
-				case 2 :
+				case 2:
 					assertEquals(val2, order.val);
 					break;
 			}
@@ -1148,10 +1146,10 @@ public class ForeignCollectionTest extends BaseCoreTest {
 			for (Order order : wrapped) {
 				orderC++;
 				switch (orderC) {
-					case 1 :
+					case 1:
 						assertEquals(val1, order.val);
 						break;
-					case 2 :
+					case 2:
 						assertEquals(val2, order.val);
 						break;
 				}
@@ -1193,16 +1191,16 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		for (Order order : accountResult.orders) {
 			orderC++;
 			switch (orderC) {
-				case 1 :
+				case 1:
 					assertEquals(val1, order.val);
 					break;
-				case 2 :
+				case 2:
 					assertEquals(val2, order.val);
 					break;
-				case 3 :
+				case 3:
 					assertEquals(val5, order.val);
 					break;
-				case 4 :
+				case 4:
 					assertEquals(val6, order.val);
 					break;
 			}
@@ -1218,10 +1216,10 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		for (Order order : accountResult.orders) {
 			orderC++;
 			switch (orderC) {
-				case 1 :
+				case 1:
 					assertEquals(val1, order.val);
 					break;
-				case 2 :
+				case 2:
 					assertEquals(val2, order.val);
 					break;
 			}
@@ -1233,7 +1231,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		for (Order order : accountResult.orders) {
 			orderC++;
 			switch (orderC) {
-				case 1 :
+				case 1:
 					assertEquals(val1, order.val);
 					break;
 			}
@@ -1256,13 +1254,13 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		for (Order order : accountResult.orders) {
 			orderC++;
 			switch (orderC) {
-				case 1 :
+				case 1:
 					assertEquals(val1, order.val);
 					break;
-				case 2 :
+				case 2:
 					assertEquals(val2, order.val);
 					break;
-				case 3 :
+				case 3:
 					if ((!gotOrder5) && order.val == val5) {
 						gotOrder5 = true;
 					} else if ((!gotOrder6) && order.val == val6) {
@@ -1271,7 +1269,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 						fail("Should have gotten order5 or order6");
 					}
 					break;
-				case 4 :
+				case 4:
 					if ((!gotOrder5) && order.val == val5) {
 						gotOrder5 = true;
 					} else if ((!gotOrder6) && order.val == val6) {
@@ -1358,7 +1356,8 @@ public class ForeignCollectionTest extends BaseCoreTest {
 				fieldConfigs.add(fieldConfig);
 			}
 		}
-		DatabaseTableConfig<Account> tableConfig = new DatabaseTableConfig<Account>(databaseType, Account.class, fieldConfigs);
+		DatabaseTableConfig<Account> tableConfig =
+				new DatabaseTableConfig<Account>(databaseType, Account.class, fieldConfigs);
 		Dao<Account, Integer> accountDao = createDao(tableConfig, true);
 		return accountDao;
 	}
@@ -1376,6 +1375,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		String name;
 		@ForeignCollectionField(eager = true, columnName = ORDERS_FIELD_NAME)
 		ForeignCollection<Order> orders;
+
 		protected Account() {
 		}
 	}
@@ -1389,8 +1389,10 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		int val;
 		@DatabaseField(foreign = true, columnName = ACCOUNT_FIELD_NAME)
 		Account account;
+
 		protected Order() {
 		}
+
 		@Override
 		public boolean equals(Object obj) {
 			if (obj == null || obj.getClass() != getClass()) {
@@ -1398,6 +1400,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 			}
 			return id == ((Order) obj).id;
 		}
+
 		@Override
 		public int hashCode() {
 			return id;
@@ -1413,6 +1416,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		Answer bestAnswer;
 		@ForeignCollectionField(eager = true)
 		ForeignCollection<Answer> answers;
+
 		protected Question() {
 		}
 	}
@@ -1424,6 +1428,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		int val;
 		@DatabaseField(foreign = true, foreignAutoRefresh = true)
 		Question question;
+
 		protected Answer() {
 		}
 	}
@@ -1433,6 +1438,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		int id;
 		@ForeignCollectionField(eager = true)
 		List<Order> orders;
+
 		protected NoProperCollection() {
 		}
 	}
@@ -1443,6 +1449,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		@SuppressWarnings("rawtypes")
 		@ForeignCollectionField(eager = true)
 		Collection orders;
+
 		protected NotParamaterized() {
 		}
 	}
@@ -1452,6 +1459,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		int id;
 		@ForeignCollectionField(eager = true)
 		Collection<Order> orders;
+
 		protected NoForeign() {
 		}
 	}
@@ -1461,6 +1469,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		int id;
 		@DatabaseField(foreign = true, foreignAutoRefresh = true)
 		Account account;
+
 		protected ForeignAutoRefresh() {
 		}
 	}
@@ -1474,6 +1483,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		RecursiveReference parent;
 		@ForeignCollectionField
 		ForeignCollection<RecursiveReference> related;
+
 		protected RecursiveReference() {
 		}
 	}
@@ -1487,6 +1497,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		RecursiveReferenceEager parent;
 		@ForeignCollectionField(eager = true)
 		ForeignCollection<RecursiveReferenceEager> related;
+
 		protected RecursiveReferenceEager() {
 		}
 	}
@@ -1500,6 +1511,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		RecursiveReferenceEagerLevelTwo parent;
 		@ForeignCollectionField(eager = true, maxEagerLevel = 2)
 		ForeignCollection<RecursiveReferenceEagerLevelTwo> related;
+
 		protected RecursiveReferenceEagerLevelTwo() {
 		}
 	}
@@ -1513,6 +1525,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		RecursiveReferenceEagerLevelZero parent;
 		@ForeignCollectionField(eager = true, maxEagerLevel = 0)
 		ForeignCollection<RecursiveReferenceEagerLevelZero> related;
+
 		protected RecursiveReferenceEagerLevelZero() {
 		}
 	}
@@ -1522,6 +1535,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		int id;
 		@ForeignCollectionField
 		ForeignCollection<CollectionWithCollection2> related;
+
 		protected CollectionWithCollection1() {
 		}
 	}
@@ -1533,6 +1547,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		CollectionWithCollection1 collectionWithCollection1;
 		@ForeignCollectionField
 		ForeignCollection<CollectionWithCollection3> related;
+
 		protected CollectionWithCollection2() {
 		}
 	}
@@ -1542,6 +1557,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		int id;
 		@DatabaseField(foreign = true)
 		CollectionWithCollection2 collectionWithCollection2;
+
 		protected CollectionWithCollection3() {
 		}
 	}
@@ -1555,6 +1571,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		@ForeignCollectionField(eager = true, columnName = ORDERS_FIELD_NAME,
 				orderColumnName = OrderOrdered.VAL_FIELD_NAME)
 		ForeignCollection<OrderOrdered> orders;
+
 		protected AccountOrdered() {
 		}
 	}
@@ -1568,6 +1585,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		int val;
 		@DatabaseField(foreign = true, columnName = ACCOUNT_FIELD_NAME)
 		AccountOrdered account;
+
 		protected OrderOrdered() {
 		}
 	}
@@ -1581,6 +1599,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		@ForeignCollectionField(eager = true, columnName = ORDERS_FIELD_NAME,
 				orderColumnName = OrderOrdered.VAL_FIELD_NAME, orderAscending = false)
 		ForeignCollection<OrderOrderedDesc> orders;
+
 		protected AccountOrderedDesc() {
 		}
 	}
@@ -1594,6 +1613,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		int val;
 		@DatabaseField(foreign = true, columnName = ACCOUNT_FIELD_NAME)
 		AccountOrderedDesc account;
+
 		protected OrderOrderedDesc() {
 		}
 	}
@@ -1607,12 +1627,15 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		ForeignCollection<EagerConnection> froms;
 		@ForeignCollectionField(eager = true, foreignFieldName = "to")
 		ForeignCollection<EagerConnection> tos;
+
 		public EagerNode() {
 		}
+
 		@Override
 		public int hashCode() {
 			return id;
 		}
+
 		@Override
 		public boolean equals(Object obj) {
 			if (obj == null || getClass() != obj.getClass()) {
@@ -1620,6 +1643,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 			}
 			return id == ((EagerNode) obj).id;
 		}
+
 		@Override
 		public String toString() {
 			return getClass().getSimpleName() + " #" + id;
@@ -1635,12 +1659,15 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		EagerNode from;
 		@DatabaseField(foreign = true)
 		EagerNode to;
+
 		public EagerConnection() {
 		}
+
 		@Override
 		public int hashCode() {
 			return id;
 		}
+
 		@Override
 		public boolean equals(Object obj) {
 			if (obj == null || getClass() != obj.getClass()) {
@@ -1648,6 +1675,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 			}
 			return id == ((EagerConnection) obj).id;
 		}
+
 		@Override
 		public String toString() {
 			return getClass().getSimpleName() + " #" + id;
@@ -1663,12 +1691,15 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		ForeignCollection<LazyConnection> froms;
 		@ForeignCollectionField(eager = false, foreignFieldName = "to")
 		ForeignCollection<LazyConnection> tos;
+
 		public LazyNode() {
 		}
+
 		@Override
 		public int hashCode() {
 			return id;
 		}
+
 		@Override
 		public boolean equals(Object obj) {
 			if (obj == null || getClass() != obj.getClass()) {
@@ -1676,6 +1707,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 			}
 			return id == ((LazyNode) obj).id;
 		}
+
 		@Override
 		public String toString() {
 			return getClass().getSimpleName() + " #" + id;
@@ -1691,12 +1723,15 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		LazyNode from;
 		@DatabaseField(foreign = true)
 		LazyNode to;
+
 		public LazyConnection() {
 		}
+
 		@Override
 		public int hashCode() {
 			return id;
 		}
+
 		@Override
 		public boolean equals(Object obj) {
 			if (obj == null || getClass() != obj.getClass()) {
@@ -1704,6 +1739,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 			}
 			return id == ((LazyConnection) obj).id;
 		}
+
 		@Override
 		public String toString() {
 			return getClass().getSimpleName() + " #" + id;
@@ -1715,6 +1751,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		int id;
 		@ForeignCollectionField(eager = true, foreignFieldName = "unknowncolumn")
 		ForeignCollection<InvalidColumnName> froms;
+
 		public InvalidColumnNameForeign() {
 		}
 	}
@@ -1724,6 +1761,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		int id;
 		@DatabaseField(foreign = true)
 		InvalidColumnNameForeign foreign;
+
 		public InvalidColumnName() {
 		}
 	}
@@ -1733,6 +1771,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		int id;
 		@ForeignCollectionField(eager = false)
 		ForeignCollection<Second> seconds;
+
 		public First() {
 		}
 	}
@@ -1744,6 +1783,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		First first;
 		@ForeignCollectionField(eager = false)
 		ForeignCollection<Third> thirds;
+
 		public Second() {
 		}
 	}
@@ -1755,6 +1795,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		Second second;
 		@DatabaseField
 		String stuff;
+
 		public Third() {
 		}
 	}
@@ -1768,6 +1809,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		ForeignFieldNameForeign foreign1;
 		@DatabaseField(foreign = true, columnName = "f2")
 		ForeignFieldNameForeign foreign2;
+
 		public ForeignFieldName() {
 		}
 	}
@@ -1781,6 +1823,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		ForeignCollection<ForeignFieldName> f1s;
 		@ForeignCollectionField(foreignFieldName = "foreign2")
 		ForeignCollection<ForeignFieldName> f2s;
+
 		public ForeignFieldNameForeign() {
 		}
 	}
@@ -1792,6 +1835,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		String stuff;
 		@DatabaseField(foreign = true/* , foreignAutoRefresh = true */)
 		ForeignAutoRefreshSameCollection foreign;
+
 		public ForeignAutoRefreshSame() {
 		}
 	}
@@ -1803,6 +1847,7 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		int val;
 		@ForeignCollectionField(eager = true)
 		ForeignCollection<ForeignAutoRefreshSame> collection;
+
 		public ForeignAutoRefreshSameCollection() {
 		}
 	}

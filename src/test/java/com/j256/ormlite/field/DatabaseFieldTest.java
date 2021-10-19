@@ -27,6 +27,7 @@ public class DatabaseFieldTest extends BaseCoreTest {
 	private static class Base {
 		@DatabaseField(id = true)
 		int id;
+
 		public Base() {
 			// for ormlite
 		}
@@ -35,6 +36,7 @@ public class DatabaseFieldTest extends BaseCoreTest {
 	private static class Sub extends Base {
 		@DatabaseField
 		String stuff;
+
 		public Sub() {
 			// for ormlite
 		}

@@ -23,13 +23,16 @@ public class NotTest extends BaseCoreStmtTest {
 			@Override
 			public void appendOperation(StringBuilder sb) {
 			}
+
 			@Override
 			public void appendValue(DatabaseType databaseType, StringBuilder sb, List<ArgumentHolder> argList) {
 			}
+
 			@Override
 			public String getColumnName() {
 				return null;
 			}
+
 			@Override
 			public void appendSql(DatabaseType databaseType, String tableName, StringBuilder sb,
 					List<ArgumentHolder> argList, Clause outer) {

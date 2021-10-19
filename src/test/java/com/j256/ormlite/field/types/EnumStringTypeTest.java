@@ -60,8 +60,8 @@ public class EnumStringTypeTest extends BaseTypeTest {
 					DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
 			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
-			assertEquals(val.toString(), DataType.ENUM_STRING.getDataPersister().resultToJava(null, results,
-					results.findColumn(ENUM_COLUMN)));
+			assertEquals(val.toString(), DataType.ENUM_STRING.getDataPersister()
+					.resultToJava(null, results, results.findColumn(ENUM_COLUMN)));
 		} finally {
 			if (stmt != null) {
 				stmt.close();

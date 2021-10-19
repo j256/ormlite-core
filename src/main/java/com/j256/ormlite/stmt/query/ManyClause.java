@@ -94,6 +94,7 @@ public class ManyClause implements Clause, NeedsFutureClause {
 		OR("OR"),
 		// end
 		;
+
 		public final String sql;
 
 		private Operation(String sql) {

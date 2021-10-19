@@ -483,7 +483,8 @@ public class Where<T, ID> {
 			String columnName = arg.getColumnName();
 			if (columnName == null) {
 				if (arg.getSqlType() == null) {
-					throw new IllegalArgumentException("Either the column name or SqlType must be set on each argument");
+					throw new IllegalArgumentException(
+							"Either the column name or SqlType must be set on each argument");
 				}
 			} else {
 				arg.setMetaInfo(findColumnFieldType(columnName));
@@ -571,7 +572,7 @@ public class Where<T, ID> {
 		appendSql(null, sb, new ArrayList<ArgumentHolder>());
 		return sb.toString();
 	}
-		
+
 	/**
 	 * Returns the {@link QueryBuilder} used to create this Where, if present
 	 */
@@ -620,16 +621,16 @@ public class Where<T, ID> {
 		if (statementBuilder instanceof QueryBuilder) {
 			return (QueryBuilder<T, ID>) statementBuilder;
 		} else {
-			throw new SQLException("Cannot call " + methodName + " on a statement of type "
-					+ statementBuilder.getType());
+			throw new SQLException(
+					"Cannot call " + methodName + " on a statement of type " + statementBuilder.getType());
 		}
 	}
 
 	private Where<T, ID> in(boolean in, String columnName, Object... objects) throws SQLException {
 		if (objects.length == 1) {
 			if (objects[0].getClass().isArray()) {
-				throw new IllegalArgumentException("Object argument to " + (in ? "IN" : "notId")
-						+ " seems to be an array within an array");
+				throw new IllegalArgumentException(
+						"Object argument to " + (in ? "IN" : "notId") + " seems to be an array within an array");
 			}
 			if (objects[0] instanceof Where) {
 				throw new IllegalArgumentException("Object argument to " + (in ? "IN" : "notId")
@@ -655,8 +656,8 @@ public class Where<T, ID> {
 		}
 		// we do this to turn off the automatic addition of the ID column in the select column list
 		subQueryBuilder.enableInnerQuery();
-		addClause(new InSubQuery(columnName, findColumnFieldType(columnName), new InternalQueryBuilderWrapper(
-				subQueryBuilder), in));
+		addClause(new InSubQuery(columnName, findColumnFieldType(columnName),
+				new InternalQueryBuilderWrapper(subQueryBuilder), in));
 		return this;
 	}
 
@@ -674,8 +675,8 @@ public class Where<T, ID> {
 
 	private void addNeedsFuture(NeedsFutureClause clause) {
 		if (needsFuture != null) {
-			throw new IllegalStateException(needsFuture + " is already waiting for a future clause, can't add: "
-					+ clause);
+			throw new IllegalStateException(
+					needsFuture + " is already waiting for a future clause, can't add: " + clause);
 		}
 		needsFuture = clause;
 	}
@@ -712,8 +713,8 @@ public class Where<T, ID> {
 
 	private Clause pop(String label) {
 		if (clauseStackLevel == 0) {
-			throw new IllegalStateException("Expecting there to be a clause already defined for '" + label
-					+ "' operation");
+			throw new IllegalStateException(
+					"Expecting there to be a clause already defined for '" + label + "' operation");
 		}
 		Clause clause = clauseStack[--clauseStackLevel];
 		// to help gc

@@ -81,7 +81,7 @@ public class CustomFieldNullTest extends BaseCoreTest {
 		public static SimplePropertyPersister getSingleton() {
 			return INSTANCE;
 		}
-		
+
 		@Override
 		public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
 			SimpleProperty property = (SimpleProperty) javaObject;

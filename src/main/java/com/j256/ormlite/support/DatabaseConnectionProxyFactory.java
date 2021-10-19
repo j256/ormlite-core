@@ -4,7 +4,8 @@ import java.sql.SQLException;
 
 /**
  * Defines a class that creates connection proxies. This can be set on the {@code JdbcConnectionSource} or
- * {@code  AndroidConnectionSource} using the {@code setDatabaseConnectionProxyFactory(...)} static method on each class.
+ * {@code  AndroidConnectionSource} using the {@code setDatabaseConnectionProxyFactory(...)} static method on each
+ * class.
  * 
  * <p>
  * Typically you create a subclass of {@link DatabaseConnectionProxy} and override the methods that you want to wrap for

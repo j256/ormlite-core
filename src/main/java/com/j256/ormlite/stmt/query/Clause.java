@@ -19,7 +19,7 @@ public interface Clause {
 	 * @param tableName
 	 *            Name of the table to prepend to any column names or null to be ignored.
 	 * @param outer
-	 *            Outer clause used for query generation optimization.  May be null.
+	 *            Outer clause used for query generation optimization. May be null.
 	 */
 	public void appendSql(DatabaseType databaseType, String tableName, StringBuilder sb, List<ArgumentHolder> argList,
 			Clause outer) throws SQLException;

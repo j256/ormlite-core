@@ -186,7 +186,7 @@ public class CloseableIteratorTest extends BaseCoreTest {
 		Dao<Foo, Object> fooDao = createDao(Foo.class, true);
 		final Foo foo = new Foo();
 		foo.val = 1313131;
-	
+
 		String queryString = buildFooQueryAllString(fooDao);
 		Mapper mapper = new Mapper();
 		GenericRawResults<Foo> rawResults = fooDao.queryRaw(queryString, mapper);

@@ -127,8 +127,8 @@ public class BaseMappedQueryTest extends BaseCoreStmtTest {
 		assertNull(result.text);
 
 		// fetch the same object again, this time asking for the text column as well
-		qb = dao.queryBuilder().selectColumns(CacheWithSelectColumns.COLUMN_NAME_ID,
-				CacheWithSelectColumns.COLUMN_NAME_TEXT);
+		qb = dao.queryBuilder()
+				.selectColumns(CacheWithSelectColumns.COLUMN_NAME_ID, CacheWithSelectColumns.COLUMN_NAME_TEXT);
 		result = qb.queryForFirst();
 		assertNotNull(result);
 		assertEquals(foo.text, result.text);

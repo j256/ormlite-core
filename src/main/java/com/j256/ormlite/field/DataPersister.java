@@ -112,7 +112,7 @@ public interface DataPersister extends FieldConverter {
 	public Object moveToNextValue(Object currentValue) throws SQLException;
 
 	/**
-	 * Get the type that should be used when defining this 
+	 * Get the type that should be used when defining this.
 	 */
 	public String getSqlOtherType();
 }

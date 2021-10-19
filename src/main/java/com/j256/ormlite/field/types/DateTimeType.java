@@ -56,8 +56,8 @@ public class DateTimeType extends BaseDataType {
 		try {
 			return Long.parseLong(defaultStr);
 		} catch (NumberFormatException e) {
-			throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing default DateTime value: "
-					+ defaultStr, e);
+			throw SqlExceptionUtil
+					.create("Problems with field " + fieldType + " parsing default DateTime value: " + defaultStr, e);
 		}
 	}
 
@@ -134,7 +134,8 @@ public class DateTimeType extends BaseDataType {
 				return (Long) getMillisMethod.invoke(javaObject);
 			}
 		} catch (Exception e) {
-			throw SqlExceptionUtil.create("Could not use reflection to get millis from Joda DateTime: " + javaObject, e);
+			throw SqlExceptionUtil.create("Could not use reflection to get millis from Joda DateTime: " + javaObject,
+					e);
 		}
 	}
 

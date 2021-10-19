@@ -39,8 +39,8 @@ public class BigDecimalNumericType extends BaseDataType {
 		try {
 			return new BigDecimal(defaultStr);
 		} catch (IllegalArgumentException e) {
-			throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing default BigDecimal string '"
-					+ defaultStr + "'", e);
+			throw SqlExceptionUtil.create(
+					"Problems with field " + fieldType + " parsing default BigDecimal string '" + defaultStr + "'", e);
 		}
 	}
 

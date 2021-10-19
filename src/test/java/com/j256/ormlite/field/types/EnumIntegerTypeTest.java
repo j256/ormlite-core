@@ -59,8 +59,8 @@ public class EnumIntegerTypeTest extends BaseTypeTest {
 					DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
 			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
-			assertEquals(val.ordinal(), DataType.ENUM_INTEGER.getDataPersister().resultToJava(null, results,
-					results.findColumn(ENUM_COLUMN)));
+			assertEquals(val.ordinal(), DataType.ENUM_INTEGER.getDataPersister()
+					.resultToJava(null, results, results.findColumn(ENUM_COLUMN)));
 		} finally {
 			if (stmt != null) {
 				stmt.close();

@@ -41,8 +41,8 @@ public class DateLongType extends BaseDateType {
 		try {
 			return Long.parseLong(defaultStr);
 		} catch (NumberFormatException e) {
-			throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing default date-long value: "
-					+ defaultStr, e);
+			throw SqlExceptionUtil
+					.create("Problems with field " + fieldType + " parsing default date-long value: " + defaultStr, e);
 		}
 	}
 

@@ -40,8 +40,8 @@ public class BigDecimalStringType extends BaseDataType {
 		try {
 			return new BigDecimal(defaultStr).toString();
 		} catch (IllegalArgumentException e) {
-			throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing default BigDecimal string '"
-					+ defaultStr + "'", e);
+			throw SqlExceptionUtil.create(
+					"Problems with field " + fieldType + " parsing default BigDecimal string '" + defaultStr + "'", e);
 		}
 	}
 
@@ -55,8 +55,8 @@ public class BigDecimalStringType extends BaseDataType {
 		try {
 			return new BigDecimal((String) sqlArg);
 		} catch (IllegalArgumentException e) {
-			throw SqlExceptionUtil.create("Problems with column " + columnPos + " parsing BigDecimal string '" + sqlArg
-					+ "'", e);
+			throw SqlExceptionUtil
+					.create("Problems with column " + columnPos + " parsing BigDecimal string '" + sqlArg + "'", e);
 		}
 	}
 

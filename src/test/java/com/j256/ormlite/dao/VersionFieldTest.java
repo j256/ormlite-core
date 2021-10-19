@@ -124,6 +124,7 @@ public class VersionFieldTest extends BaseCoreTest {
 		public int version;
 		@DatabaseField
 		String stuff2;
+
 		public VersionField() {
 		}
 	}
@@ -137,6 +138,7 @@ public class VersionFieldTest extends BaseCoreTest {
 		public Date version;
 		@DatabaseField
 		String stuff2;
+
 		public VersionFieldDate() {
 		}
 	}
@@ -150,6 +152,7 @@ public class VersionFieldTest extends BaseCoreTest {
 		public Date version;
 		@DatabaseField
 		String stuff2;
+
 		public VersionFieldDateLong() {
 		}
 	}
@@ -163,6 +166,7 @@ public class VersionFieldTest extends BaseCoreTest {
 		public Date version;
 		@DatabaseField
 		String stuff2;
+
 		public VersionFieldDateString() {
 		}
 	}

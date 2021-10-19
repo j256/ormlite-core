@@ -76,11 +76,11 @@ public abstract class BaseSqliteDatabaseType extends BaseDatabaseType {
 	public FieldConverter getFieldConverter(DataPersister dataPersister, FieldType fieldType) {
 		// we are only overriding certain types
 		switch (dataPersister.getSqlType()) {
-			case BOOLEAN :
+			case BOOLEAN:
 				return booleanConverter;
-			case BIG_DECIMAL :
+			case BIG_DECIMAL:
 				return BigDecimalStringType.getSingleton();
-			default :
+			default:
 				return super.getFieldConverter(dataPersister, fieldType);
 		}
 	}

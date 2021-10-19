@@ -28,8 +28,8 @@ public class ReflectionDatabaseConnectionProxyFactory implements DatabaseConnect
 		try {
 			this.constructor = proxyClass.getConstructor(DatabaseConnection.class);
 		} catch (Exception e) {
-			throw new IllegalArgumentException("Could not find constructor with DatabaseConnection argument in "
-					+ proxyClass);
+			throw new IllegalArgumentException(
+					"Could not find constructor with DatabaseConnection argument in " + proxyClass);
 		}
 	}
 

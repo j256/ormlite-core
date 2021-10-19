@@ -13,6 +13,7 @@ import com.j256.ormlite.field.DatabaseField;
 public class NoConstructor {
 	@DatabaseField
 	String stuff;
+
 	public NoConstructor(String notNoArg) {
 	}
 }

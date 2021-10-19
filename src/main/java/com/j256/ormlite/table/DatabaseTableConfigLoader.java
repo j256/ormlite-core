@@ -104,8 +104,8 @@ public class DatabaseTableConfigLoader {
 	/**
 	 * Write the config to the writer.
 	 */
-	private static <T> void writeConfig(BufferedWriter writer, DatabaseTableConfig<T> config) throws IOException,
-			SQLException {
+	private static <T> void writeConfig(BufferedWriter writer, DatabaseTableConfig<T> config)
+			throws IOException, SQLException {
 		writer.append(CONFIG_FILE_START_MARKER);
 		writer.newLine();
 		if (config.getDataClass() != null) {
@@ -147,7 +147,7 @@ public class DatabaseTableConfigLoader {
 			}
 		} else if (field.equals(FIELD_NAME_TABLE_NAME)) {
 			config.setTableName(value);
-		} else if (field.equals(FIELD_NAME_SCHEMA_NAME)){
+		} else if (field.equals(FIELD_NAME_SCHEMA_NAME)) {
 			config.setSchemaName(value);
 		}
 	}

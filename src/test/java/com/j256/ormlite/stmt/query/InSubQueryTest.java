@@ -47,6 +47,7 @@ public class InSubQueryTest extends BaseCoreTest {
 	protected static class FooId {
 		@DatabaseField(id = true, columnName = ID_COLUMN_NAME)
 		int id;
+
 		FooId() {
 		}
 	}
@@ -58,6 +59,7 @@ public class InSubQueryTest extends BaseCoreTest {
 		String stuff;
 		@DatabaseField(foreign = true, columnName = FOREIGN_COLUMN_NAME)
 		FooId foo;
+
 		ForeignFoo() {
 		}
 	}

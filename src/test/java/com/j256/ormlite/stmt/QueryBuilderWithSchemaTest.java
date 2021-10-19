@@ -12,7 +12,8 @@ public class QueryBuilderWithSchemaTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testSelectAll() throws Exception {
-		QueryBuilder<SchemaFoo, Integer> qb = new QueryBuilder<SchemaFoo, Integer>(databaseType, baseSchemaFooTableInfo, null);
+		QueryBuilder<SchemaFoo, Integer> qb =
+				new QueryBuilder<SchemaFoo, Integer>(databaseType, baseSchemaFooTableInfo, null);
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT * FROM ");
 		databaseType.appendEscapedEntityName(sb, baseSchemaFooTableInfo.getSchemaName());
@@ -23,7 +24,8 @@ public class QueryBuilderWithSchemaTest extends BaseCoreStmtTest {
 
 	@Test
 	public void testAlias() throws Exception {
-		QueryBuilder<SchemaFoo, Integer> qb = new QueryBuilder<SchemaFoo, Integer>(databaseType, baseSchemaFooTableInfo, null);
+		QueryBuilder<SchemaFoo, Integer> qb =
+				new QueryBuilder<SchemaFoo, Integer>(databaseType, baseSchemaFooTableInfo, null);
 		String alias = "zing";
 		qb.setAlias(alias);
 		StringBuilder sb = new StringBuilder();
@@ -56,6 +58,5 @@ public class QueryBuilderWithSchemaTest extends BaseCoreStmtTest {
 		qb.reset();
 		assertEquals("SELECT * FROM `FOO_SCHEMA`.`foo`", qb.prepareStatementString());
 	}
-
 
 }

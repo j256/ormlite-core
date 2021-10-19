@@ -42,7 +42,8 @@ public class Not implements Clause, NeedsFutureClause {
 		} else if (clause instanceof Exists) {
 			this.exists = (Exists) clause;
 		} else {
-			throw new IllegalArgumentException("NOT operation can only work with comparison SQL clauses, not " + clause);
+			throw new IllegalArgumentException(
+					"NOT operation can only work with comparison SQL clauses, not " + clause);
 		}
 	}
 

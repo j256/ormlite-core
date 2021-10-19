@@ -71,9 +71,8 @@ public class WrappedDatabaseConnection implements WrappedConnection, InvocationH
 
 		public WrappedCompiledStatement(CompiledStatement compiledStatement) {
 			this.compiledStatement = compiledStatement;
-			this.statementProxy =
-					Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] { CompiledStatement.class },
-							this);
+			this.statementProxy = Proxy.newProxyInstance(getClass().getClassLoader(),
+					new Class<?>[] { CompiledStatement.class }, this);
 		}
 
 		public CompiledStatement getPreparedStatement() {

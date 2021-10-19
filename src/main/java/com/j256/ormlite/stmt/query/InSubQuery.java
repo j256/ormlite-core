@@ -44,11 +44,11 @@ public class InSubQuery extends BaseComparison {
 		if (resultFieldTypes == null) {
 			// we assume that if someone is doing a raw select, they know what they are doing
 		} else if (resultFieldTypes.length != 1) {
-			throw new SQLException("There must be only 1 result column in sub-query but we found "
-					+ resultFieldTypes.length);
+			throw new SQLException(
+					"There must be only 1 result column in sub-query but we found " + resultFieldTypes.length);
 		} else if (fieldType.getSqlType() != resultFieldTypes[0].getSqlType()) {
-			throw new SQLException("Outer column " + fieldType + " is not the same type as inner column "
-					+ resultFieldTypes[0]);
+			throw new SQLException(
+					"Outer column " + fieldType + " is not the same type as inner column " + resultFieldTypes[0]);
 		}
 		// cut off a trailing space if there is one
 		int len = sb.length();

@@ -73,7 +73,6 @@ public abstract class BaseMappedStatement<T, ID> {
 		sb.append("= ?");
 	}
 
-
 	static void appendTableName(DatabaseType databaseType, StringBuilder sb, String prefix, String tableName) {
 		if (prefix != null) {
 			sb.append(prefix);
@@ -86,7 +85,7 @@ public abstract class BaseMappedStatement<T, ID> {
 		if (prefix != null) {
 			sb.append(prefix);
 		}
-		if (tableInfo.getSchemaName() != null && tableInfo.getSchemaName().length() > 0){
+		if (tableInfo.getSchemaName() != null && tableInfo.getSchemaName().length() > 0) {
 			databaseType.appendEscapedEntityName(sb, tableInfo.getSchemaName());
 			sb.append('.');
 		}

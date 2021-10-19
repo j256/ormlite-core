@@ -144,6 +144,7 @@ public class BaseDaoEnabledTest extends BaseCoreTest {
 		public int id;
 		@DatabaseField
 		public String stuff;
+
 		public One() {
 		}
 	}
@@ -153,6 +154,7 @@ public class BaseDaoEnabledTest extends BaseCoreTest {
 		public int id;
 		@DatabaseField(foreign = true)
 		public One one;
+
 		public ForeignDaoEnabled() {
 		}
 	}

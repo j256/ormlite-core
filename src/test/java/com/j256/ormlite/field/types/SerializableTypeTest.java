@@ -74,8 +74,8 @@ public class SerializableTypeTest extends BaseTypeTest {
 			assertTrue(results.next());
 			FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME,
 					clazz.getDeclaredField(SERIALIZABLE_COLUMN), clazz);
-			assertNull(DataType.SERIALIZABLE.getDataPersister().resultToJava(fieldType, results,
-					results.findColumn(SERIALIZABLE_COLUMN)));
+			assertNull(DataType.SERIALIZABLE.getDataPersister()
+					.resultToJava(fieldType, results, results.findColumn(SERIALIZABLE_COLUMN)));
 		} finally {
 			if (stmt != null) {
 				stmt.close();

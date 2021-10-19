@@ -192,7 +192,7 @@ public class DaoManager {
 		}
 		removeDaosFromConnectionClassMap(connectionSource);
 	}
-	
+
 	/**
 	 * Same as {@link #registerDao(ConnectionSource, Dao)} but this allows you to register it just with its
 	 * {@link DatabaseTableConfig}. This allows multiple versions of the DAO to be configured if necessary.
@@ -271,13 +271,13 @@ public class DaoManager {
 		if (classMap != null) {
 			Iterator<ClassConnectionSource> classIterator = classMap.keySet().iterator();
 			while (classIterator.hasNext()) {
-				if(classIterator.next().connectionSource == connectionSource){
+				if (classIterator.next().connectionSource == connectionSource) {
 					classIterator.remove();
 				}
 			}
 		}
 	}
-	
+
 	private static void addDaoToTableMap(TableConfigConnectionSource key, Dao<?, ?> dao) {
 		if (tableConfigMap == null) {
 			tableConfigMap = new HashMap<TableConfigConnectionSource, Dao<?, ?>>();
@@ -415,10 +415,12 @@ public class DaoManager {
 	private static class ClassConnectionSource {
 		ConnectionSource connectionSource;
 		Class<?> clazz;
+
 		public ClassConnectionSource(ConnectionSource connectionSource, Class<?> clazz) {
 			this.connectionSource = connectionSource;
 			this.clazz = clazz;
 		}
+
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -426,6 +428,7 @@ public class DaoManager {
 			result = prime * result + connectionSource.hashCode();
 			return result;
 		}
+
 		@Override
 		public boolean equals(Object obj) {
 			if (obj == null || getClass() != obj.getClass()) {
@@ -448,10 +451,12 @@ public class DaoManager {
 	private static class TableConfigConnectionSource {
 		ConnectionSource connectionSource;
 		DatabaseTableConfig<?> tableConfig;
+
 		public TableConfigConnectionSource(ConnectionSource connectionSource, DatabaseTableConfig<?> tableConfig) {
 			this.connectionSource = connectionSource;
 			this.tableConfig = tableConfig;
 		}
+
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -459,6 +464,7 @@ public class DaoManager {
 			result = prime * result + connectionSource.hashCode();
 			return result;
 		}
+
 		@Override
 		public boolean equals(Object obj) {
 			if (obj == null || getClass() != obj.getClass()) {

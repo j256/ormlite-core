@@ -57,6 +57,7 @@ public class ThreadLocalSelectArg extends BaseArgumentHolder {
 	 */
 	private static class ValueWrapper {
 		Object value;
+
 		public ValueWrapper(Object value) {
 			this.value = value;
 		}

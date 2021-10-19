@@ -100,7 +100,6 @@ public class TableUtils {
 		return doCreateTable(dao, true);
 	}
 
-
 	/**
 	 * @deprecated Use {@link #getCreateTableStatements(DatabaseType, Class)}.
 	 */
@@ -252,7 +251,8 @@ public class TableUtils {
 		return clearTable(connectionSource, tableConfig.getSchemaName(), tableConfig.getTableName());
 	}
 
-	private static <T> int clearTable(ConnectionSource connectionSource, String schemaName, String tableName) throws SQLException {
+	private static <T> int clearTable(ConnectionSource connectionSource, String schemaName, String tableName)
+			throws SQLException {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		StringBuilder sb = new StringBuilder(48);
 		if (databaseType.isTruncateSupported()) {
@@ -260,7 +260,7 @@ public class TableUtils {
 		} else {
 			sb.append("DELETE FROM ");
 		}
-		if (schemaName != null && schemaName.length() > 0){
+		if (schemaName != null && schemaName.length() > 0) {
 			databaseType.appendEscapedEntityName(sb, schemaName);
 			sb.append('.');
 		}
@@ -333,7 +333,7 @@ public class TableUtils {
 			logger.info("dropping table '{}'", tableInfo.getTableName());
 		}
 		sb.append("DROP TABLE ");
-		if (tableInfo.getSchemaName() != null && tableInfo.getSchemaName().length() > 0){
+		if (tableInfo.getSchemaName() != null && tableInfo.getSchemaName().length() > 0) {
 			databaseType.appendEscapedEntityName(sb, tableInfo.getSchemaName());
 			sb.append('.');
 		}
@@ -457,7 +457,7 @@ public class TableUtils {
 		if (ifNotExists && databaseType.isCreateIfNotExistsSupported()) {
 			sb.append("IF NOT EXISTS ");
 		}
-		if (tableInfo.getSchemaName() != null && tableInfo.getSchemaName().length() > 0){
+		if (tableInfo.getSchemaName() != null && tableInfo.getSchemaName().length() > 0) {
 			databaseType.appendEscapedEntityName(sb, tableInfo.getSchemaName());
 			sb.append('.');
 		}

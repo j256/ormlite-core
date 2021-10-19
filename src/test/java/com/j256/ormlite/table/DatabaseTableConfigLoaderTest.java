@@ -76,9 +76,8 @@ public class DatabaseTableConfigLoaderTest {
 		value.append("# --field-end--").append(LINE_SEP);
 		value.append("# --table-fields-end--").append(LINE_SEP);
 		value.append(TABLE_END);
-		List<DatabaseTableConfig<?>> tables =
-				DatabaseTableConfigLoader.loadDatabaseConfigFromReader(new BufferedReader(new StringReader(
-						value.toString())));
+		List<DatabaseTableConfig<?>> tables = DatabaseTableConfigLoader
+				.loadDatabaseConfigFromReader(new BufferedReader(new StringReader(value.toString())));
 		assertEquals(1, tables.size());
 		assertEquals(tableName, tables.get(0).getTableName());
 		DatabaseTableConfig<?> config = tables.get(0);
@@ -119,9 +118,8 @@ public class DatabaseTableConfigLoaderTest {
 		value.append("fieldName=xxx").append(LINE_SEP);
 		value.append("# --field-end--").append(LINE_SEP);
 		value.append("# --field-start--").append(LINE_SEP);
-		List<DatabaseTableConfig<?>> tables =
-				DatabaseTableConfigLoader.loadDatabaseConfigFromReader(new BufferedReader(new StringReader(
-						value.toString())));
+		List<DatabaseTableConfig<?>> tables = DatabaseTableConfigLoader
+				.loadDatabaseConfigFromReader(new BufferedReader(new StringReader(value.toString())));
 		assertEquals(1, tables.size());
 		DatabaseTableConfig<?> config = tables.get(0);
 		List<DatabaseFieldConfig> fields = config.getFieldConfigs();
@@ -157,6 +155,7 @@ public class DatabaseTableConfigLoaderTest {
 
 	protected static class Foo {
 		int id;
+
 		public Foo() {
 		}
 	}
