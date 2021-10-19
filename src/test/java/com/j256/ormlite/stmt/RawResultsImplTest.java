@@ -31,7 +31,7 @@ public class RawResultsImplTest extends BaseCoreTest {
 		String[] columnNames = rawResults.getColumnNames();
 		for (int i = 0; i < rawResults.getNumberColumns(); i++) {
 			if (columnNames[i].equalsIgnoreCase(Foo.ID_COLUMN_NAME)) {
-				assertEquals(Integer.toString(foo.id), results.get(0)[0]);
+				assertEquals(Integer.toString(foo.id), results.get(i)[0]);
 				found = true;
 			}
 		}
@@ -134,17 +134,16 @@ public class RawResultsImplTest extends BaseCoreTest {
 		final String idName = "SOME_ID";
 		final String valName = "SOME_VAL";
 		final AtomicBoolean gotResult = new AtomicBoolean(false);
-		GenericRawResults<Object> results =
-				dao.queryRaw("select id as " + idName + ", val as " + valName + " from foo",
-						new RawRowMapper<Object>() {
-							@Override
-							public Object mapRow(String[] columnNames, String[] resultColumns) {
-								assertEquals(idName, columnNames[0]);
-								assertEquals(valName, columnNames[1]);
-								gotResult.set(true);
-								return new Object();
-							}
-						});
+		GenericRawResults<Object> results = dao.queryRaw("select id as " + idName + ", val as " + valName + " from foo",
+				new RawRowMapper<Object>() {
+					@Override
+					public Object mapRow(String[] columnNames, String[] resultColumns) {
+						assertEquals(idName, columnNames[0]);
+						assertEquals(valName, columnNames[1]);
+						gotResult.set(true);
+						return new Object();
+					}
+				});
 		assertEquals(1, results.getResults().size());
 		results.close();
 		assertTrue(gotResult.get());

@@ -1,3 +1,7 @@
+5.7: ?/??/2021
+	* CORE: Fixed possible thread issue around field-name lookups under Android.  Thanks to @dlew.
+	* CORE: Fixed a number of flaky tests based on field order. Thanks to @CharlesZKQ, @NanaOkada, @hwang-pku, @chimo173.
+
 5.6: 6/22/2021
 	* CORE: Added support for @Entity storing of Serializable types.  Thanks to arn-cpu.
 	* CORE: Fixed a bug with nonreentrant handling of DateFormat with the string date types.  Thanks to Bob Lacatena.

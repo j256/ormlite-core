@@ -1698,8 +1698,8 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		GenericRawResults<String[]> results = qb.queryRaw();
 		List<String[]> stringResults = results.getResults();
 		assertEquals(1, stringResults.size());
-		assertEquals(Integer.toString(foo.id), stringResults.get(0)[0]);
-		assertEquals(foo.stringField, stringResults.get(0)[3]);
+		assertEquals(Integer.toString(foo.id), getResultColumn(results, stringResults, Foo.ID_COLUMN_NAME));
+		assertEquals(foo.stringField, getResultColumn(results, stringResults, Foo.STRING_COLUMN_NAME));
 	}
 
 	@Test
@@ -1733,6 +1733,18 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		qb.groupByRaw(Foo.STRING_COLUMN_NAME);
 		List<Foo> results = qb.query();
 		assertEquals(2, results.size());
+	}
+
+	private String getResultColumn(GenericRawResults<String[]> results, List<String[]> stringResults,
+			String columnName) {
+		String[] columnNames = results.getColumnNames();
+		for (int i = 0; i < results.getNumberColumns(); i++) {
+			if (columnName.equalsIgnoreCase(columnNames[i])) {
+				return stringResults.get(0)[i];
+			}
+		}
+		fail("Could not find column named '" + columnName + "'");
+		return null;
 	}
 
 	/* ======================================================================================================== */
