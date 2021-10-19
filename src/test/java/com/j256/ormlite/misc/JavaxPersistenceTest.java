@@ -43,8 +43,7 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 
 	@Test
 	public void testConversions() throws Exception {
-		Field[] fields = Javax.class.getDeclaredFields();
-		for (Field field : fields) {
+		for (Field field : Javax.class.getDeclaredFields()) {
 			DatabaseFieldConfig config = new JavaxPersistenceImpl().createFieldConfig(databaseType, field);
 			if (field.getName().equals("generatedId")) {
 				assertFalse(config.isId());
@@ -253,9 +252,8 @@ public class JavaxPersistenceTest extends BaseCoreTest {
 
 	@Test
 	public void testUpperCaseFieldNames() throws Exception {
-		Field[] fields = Javax.class.getDeclaredFields();
 		UpperCaseFieldDatabaseType ucDatabaseType = new UpperCaseFieldDatabaseType();
-		for (Field field : fields) {
+		for (Field field : Javax.class.getDeclaredFields()) {
 			DatabaseFieldConfig config = new JavaxPersistenceImpl().createFieldConfig(ucDatabaseType, field);
 			if (field.getName().equals("id")) {
 				assertTrue(config.isId());
