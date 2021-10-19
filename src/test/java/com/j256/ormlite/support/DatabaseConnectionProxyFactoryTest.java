@@ -5,6 +5,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.AfterClass;
 import org.junit.Test;
@@ -101,9 +103,16 @@ public class DatabaseConnectionProxyFactoryTest extends BaseCoreTest {
 		public int insert(String statement, Object[] args, FieldType[] argfieldTypes, GeneratedKeyHolder keyHolder)
 				throws SQLException {
 			// just record the first argument to the insert which for Foo should be the 'val' field
-			lastValue = (Integer) args[0];
+			int valIdx = 0;
+			for (int i = 0; i < argfieldTypes.length; ++i) {
+				if (argfieldTypes[i].getColumnName().equals("val")) {
+					valIdx = i;
+					break;
+				}
+			}
+			lastValue = (Integer) args[valIdx];
 			if (lastValue == TEST_CHANGE_FROM) {
-				args[0] = TEST_CHANGE_TO;
+				args[valIdx] = TEST_CHANGE_TO;
 			}
 			return super.insert(statement, args, argfieldTypes, keyHolder);
 		}
