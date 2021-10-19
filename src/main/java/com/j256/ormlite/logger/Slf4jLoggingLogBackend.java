@@ -1,5 +1,7 @@
 package com.j256.ormlite.logger;
 
+import org.slf4j.ILoggerFactory;
+
 /**
  * Log backend that delegates to slf4j.
  * 
@@ -91,7 +93,7 @@ public class Slf4jLoggingLogBackend implements LogBackend {
 	 */
 	public static class Slf4jLoggingLogBackendFactory implements LogBackendFactory {
 
-		private final org.slf4j.ILoggerFactory factory;
+		private final ILoggerFactory factory;
 
 		public Slf4jLoggingLogBackendFactory() {
 			this.factory = org.slf4j.LoggerFactory.getILoggerFactory();

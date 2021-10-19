@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
 /**
@@ -218,9 +219,25 @@ public class LocalLogBackend implements LogBackend {
 	 * {@link LoggerFactory#setLogBackendFactory(LogBackendFactory)} method to send all log messages to a file.
 	 */
 	public static class LocalLogBackendFactory implements LogBackendFactory {
+
+		private final AtomicReference<String> queuedWarning = new AtomicReference<String>();
+
+		public LocalLogBackendFactory() {
+		}
+
+		public LocalLogBackendFactory(String queuedWarning) {
+			this.queuedWarning.set(queuedWarning);
+		}
+
 		@Override
 		public LogBackend createLogBackend(String classLabel) {
-			return new LocalLogBackend(classLabel);
+			LocalLogBackend backend = new LocalLogBackend(classLabel);
+			String queuedWarning = this.queuedWarning.getAndSet(null);
+			if (queuedWarning != null) {
+				// if we had a queued warning message then emit it the first time we create a backend
+				backend.log(Level.WARNING, queuedWarning);
+			}
+			return backend;
 		}
 	}
 

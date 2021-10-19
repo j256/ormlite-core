@@ -31,7 +31,7 @@ public enum Level {
 	 * Return whether or not a level argument is enabled for this level value. So,
 	 * {@code Level.INFO.isEnabled(Level.WARN)} returns true because if INFO level is enabled, WARN messages are
 	 * displayed but {@code Level.INFO.isEnabled(Level.DEBUG)} returns false because if INFO level is enabled, DEBUG
-	 * messages are not displayed.
+	 * messages are not displayed. If this or the other level is OFF then false is returned.
 	 */
 	public boolean isEnabled(Level otherLevel) {
 		return (this != Level.OFF && otherLevel != Level.OFF && value <= otherLevel.value);

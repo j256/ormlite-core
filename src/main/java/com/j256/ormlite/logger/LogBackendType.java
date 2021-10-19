@@ -12,7 +12,7 @@ public enum LogBackendType implements LogBackendFactory {
 	/**
 	 * SLF4J which is often paired with logback. See: http://www.slf4j.org/
 	 */
-	SLF4J("com.j256.ormlite.logger.Slf4jLoggingLogBackend$Slf4jLoggingLogBackendFactory"),
+	SLF4J("com.j256.simplelogging.backend.Slf4jLoggingLogBackend$Slf4jLoggingLogBackendFactory"),
 	/**
 	 * Android Log mechanism. See: https://developer.android.com/reference/android/util/Log
 	 * 
@@ -21,23 +21,27 @@ public enum LogBackendType implements LogBackendFactory {
 	 * are ignored that are sent there. Grrrrr.
 	 * </p>
 	 */
-	ANDROID("com.j256.ormlite.android.AndroidLogBackend$AndroidLogBackendFactory"),
+	ANDROID("com.j256.simplelogging.backend.AndroidLogBackend$AndroidLogBackendFactory"),
 	/**
 	 * Logback direct. See: http://logback.qos.ch/
 	 */
-	LOGBACK("com.j256.ormlite.logger.LogbackLogBackend$LogbackLogBackendFactory"),
+	LOGBACK("com.j256.simplelogging.backend.LogbackLogBackend$LogbackLogBackendFactory"),
 	/**
 	 * Apache commons logging. See https://commons.apache.org/proper/commons-logging/
 	 */
-	COMMONS_LOGGING("com.j256.ormlite.logger.CommonsLoggingLogBackend$CommonsLoggingLogBackendFactory"),
+	COMMONS_LOGGING("com.j256.simplelogging.backend.CommonsLoggingLogBackend$CommonsLoggingLogBackendFactory"),
 	/**
 	 * Version 2 of the log4j package. See https://logging.apache.org/log4j/2.x/
 	 */
-	LOG4J2("com.j256.ormlite.logger.Log4j2LogBackend$Log4j2LogBackendFactory"),
+	LOG4J2("com.j256.simplelogging.backend.Log4j2LogBackend$Log4j2LogBackendFactory"),
 	/**
 	 * Old version of the log4j package. See https://logging.apache.org/log4j/2.x/
 	 */
-	LOG4J("com.j256.ormlite.logger.Log4jLogBackend$Log4jLogBackendFactory"),
+	LOG4J("com.j256.simplelogging.backend.Log4jLogBackend$Log4jLogBackendFactory"),
+	/**
+	 * Support for the logger available inside AWS lambda SDK.
+	 */
+	LAMBDA("com.j256.simplelogging.backend.LambdaLoggerLogBackend$LambdaLoggerLogBackendFactory"),
 	/**
 	 * Local simple log backend that writes to a output file.
 	 * 
@@ -51,11 +55,11 @@ public enum LogBackendType implements LogBackendFactory {
 	 */
 	CONSOLE(new ConsoleLogBackendFactory()),
 	/**
-	 * Internal JVM logging implementation almost always available. See We put this below the LOCAL log because it's
-	 * always available but we don't want to auto-detect it. See:
+	 * Internal JVM logging implementation almost always available. We put this below the LOCAL log because it's always
+	 * available but we don't want to auto-detect it. See:
 	 * https://docs.oracle.com/javase/7/docs/api/java/util/logging/package-summary.html
 	 */
-	JAVA_UTIL("com.j256.ormlite.logger.JavaUtilLogBackend$JavaUtilLogBackendFactory"),
+	JAVA_UTIL("com.j256.simplelogging.backend.JavaUtilLogBackend$JavaUtilLogBackendFactory"),
 	/**
 	 * Logging backend which ignores all messages. Used to disable all logging. This is never chosen automatically.
 	 */
@@ -84,10 +88,11 @@ public enum LogBackendType implements LogBackendFactory {
 	 */
 	public boolean isAvailable() {
 		/*
-		 * If this is LOCAL then it is always available. NULL is never available. If it is another LogBackendType then
-		 * we might have defaulted to using the local-log backend if it was not available.
+		 * If this is LogBackendType.LOCAL then it is always available. LogBackendType.NULL is never available. If it is
+		 * another LogBackendType then we might have defaulted to using the local-log backend if it was not available.
 		 */
-		return (this == LOCAL || (this != NULL && !(factory instanceof LocalLogBackendFactory)));
+		return (this == LogBackendType.LOCAL
+				|| (this != LogBackendType.NULL && !(factory instanceof LocalLogBackendFactory)));
 	}
 
 	/**
@@ -101,11 +106,14 @@ public enum LogBackendType implements LogBackendFactory {
 			factory.createLogBackend("test").isLevelEnabled(Level.INFO);
 			return factory;
 		} catch (Throwable th) {
-			// we catch throwable here because we could get linkage errors
-			LogBackend backend = new LocalLogBackend(LogBackendType.class.getSimpleName() + "." + this);
-			backend.log(Level.WARNING, "Unable to get new instance of class " + factoryClassName
-					+ ", so had to use local log: " + th.getMessage());
-			return new LocalLogBackendFactory();
+			/*
+			 * We catch throwable here because we could get linkage errors. We don't immediately report on this issue
+			 * because this log factory will most likely never be used. If it is, the first thing that the factory will
+			 * so is use the first LogBackend generated to log this warning.
+			 */
+			String queuedWarning = "Unable to create instance of class " + factoryClassName + " for log type " + this
+					+ ", using local log: " + th.getMessage();
+			return new LocalLogBackendFactory(queuedWarning);
 		}
 	}
 }
