@@ -12,7 +12,7 @@ public enum LogBackendType implements LogBackendFactory {
 	/**
 	 * SLF4J which is often paired with logback. See: http://www.slf4j.org/
 	 */
-	SLF4J("com.j256.simplelogging.backend.Slf4jLoggingLogBackend$Slf4jLoggingLogBackendFactory"),
+	SLF4J("com.j256.ormlite.logger.Slf4jLoggingLogBackend$Slf4jLoggingLogBackendFactory"),
 	/**
 	 * Android Log mechanism. See: https://developer.android.com/reference/android/util/Log
 	 * 
@@ -21,27 +21,23 @@ public enum LogBackendType implements LogBackendFactory {
 	 * are ignored that are sent there. Grrrrr.
 	 * </p>
 	 */
-	ANDROID("com.j256.simplelogging.backend.AndroidLogBackend$AndroidLogBackendFactory"),
+	ANDROID("com.j256.ormlite.android.AndroidLogBackend$AndroidLogBackendFactory"),
 	/**
 	 * Logback direct. See: http://logback.qos.ch/
 	 */
-	LOGBACK("com.j256.simplelogging.backend.LogbackLogBackend$LogbackLogBackendFactory"),
+	LOGBACK("com.j256.ormlite.logger.LogbackLogBackend$LogbackLogBackendFactory"),
 	/**
 	 * Apache commons logging. See https://commons.apache.org/proper/commons-logging/
 	 */
-	COMMONS_LOGGING("com.j256.simplelogging.backend.CommonsLoggingLogBackend$CommonsLoggingLogBackendFactory"),
+	COMMONS_LOGGING("com.j256.ormlite.logger.CommonsLoggingLogBackend$CommonsLoggingLogBackendFactory"),
 	/**
 	 * Version 2 of the log4j package. See https://logging.apache.org/log4j/2.x/
 	 */
-	LOG4J2("com.j256.simplelogging.backend.Log4j2LogBackend$Log4j2LogBackendFactory"),
+	LOG4J2("com.j256.ormlite.logger.Log4j2LogBackend$Log4j2LogBackendFactory"),
 	/**
 	 * Old version of the log4j package. See https://logging.apache.org/log4j/2.x/
 	 */
-	LOG4J("com.j256.simplelogging.backend.Log4jLogBackend$Log4jLogBackendFactory"),
-	/**
-	 * Support for the logger available inside AWS lambda SDK.
-	 */
-	LAMBDA("com.j256.simplelogging.backend.LambdaLoggerLogBackend$LambdaLoggerLogBackendFactory"),
+	LOG4J("com.j256.ormlite.logger.Log4jLogBackend$Log4jLogBackendFactory"),
 	/**
 	 * Local simple log backend that writes to a output file.
 	 * 
@@ -59,7 +55,7 @@ public enum LogBackendType implements LogBackendFactory {
 	 * available but we don't want to auto-detect it. See:
 	 * https://docs.oracle.com/javase/7/docs/api/java/util/logging/package-summary.html
 	 */
-	JAVA_UTIL("com.j256.simplelogging.backend.JavaUtilLogBackend$JavaUtilLogBackendFactory"),
+	JAVA_UTIL("com.j256.ormlite.logger.JavaUtilLogBackend$JavaUtilLogBackendFactory"),
 	/**
 	 * Logging backend which ignores all messages. Used to disable all logging. This is never chosen automatically.
 	 */
