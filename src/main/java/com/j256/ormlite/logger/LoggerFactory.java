@@ -6,7 +6,8 @@ package com.j256.ormlite.logger;
  * 
  * <p>
  * To set the logger to a particular type, set the system property ("com.j256.simplelogger.backend") contained in
- * {@link #LOG_TYPE_SYSTEM_PROPERTY} to be name of one of the enumerated types in {@link LogBackendType}.
+ * {@link #LOG_TYPE_SYSTEM_PROPERTY} to be name of one of the enumerated types in {@link LoggerFactory.LogBackendType}.
+ * You can also call {@link #setLogBackendType(LogBackendType)} or {@link #setLogBackendFactory(LogBackendFactory)}.
  * </p>
  */
 public class LoggerFactory {
@@ -58,7 +59,7 @@ public class LoggerFactory {
 	 * the type are not available from the classpath.
 	 * 
 	 * @throws IllegalArgumentException
-	 *             If the logging type is not available most likely because classes are missing from the classpath.
+	 *             If the logging type is not available, most likely because classes are missing from the classpath.
 	 */
 	public static void setLogBackendType(LogBackendType type) {
 		if (type.isAvailable()) {
@@ -103,7 +104,7 @@ public class LoggerFactory {
 				return logType;
 			}
 		}
-		// fall back is always LOCAL, probably never reached
+		// fall back is always LOCAL, probably never reached because local is in the list above
 		return LogBackendType.LOCAL;
 	}
 }

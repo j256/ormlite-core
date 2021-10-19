@@ -32,9 +32,12 @@ public class NullLogBackend implements LogBackend {
 	 * {@link LoggerFactory#setLogBackendFactory(LogBackendFactory)} method to completely disable all logging.
 	 */
 	public static class NullLogBackendFactory implements LogBackendFactory {
+
+		private static final NullLogBackend singleton = new NullLogBackend();
+
 		@Override
 		public LogBackend createLogBackend(String classLabel) {
-			return new NullLogBackend();
+			return singleton;
 		}
 	}
 }

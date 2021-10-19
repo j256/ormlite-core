@@ -51,8 +51,8 @@ public enum LogBackendType implements LogBackendFactory {
 	 */
 	CONSOLE(new ConsoleLogBackendFactory()),
 	/**
-	 * Internal JVM logging implementation almost always available. See We put this below the LOCAL log because it's
-	 * always available but we don't want to auto-detect it. See:
+	 * Internal JVM logging implementation almost always available. We put this below the LOCAL log because it's always
+	 * available but we don't want to auto-detect it. See:
 	 * https://docs.oracle.com/javase/7/docs/api/java/util/logging/package-summary.html
 	 */
 	JAVA_UTIL("com.j256.ormlite.logger.JavaUtilLogBackend$JavaUtilLogBackendFactory"),
@@ -84,10 +84,11 @@ public enum LogBackendType implements LogBackendFactory {
 	 */
 	public boolean isAvailable() {
 		/*
-		 * If this is LOCAL then it is always available. NULL is never available. If it is another LogBackendType then
-		 * we might have defaulted to using the local-log backend if it was not available.
+		 * If this is LogBackendType.LOCAL then it is always available. LogBackendType.NULL is never available. If it is
+		 * another LogBackendType then we might have defaulted to using the local-log backend if it was not available.
 		 */
-		return (this == LOCAL || (this != NULL && !(factory instanceof LocalLogBackendFactory)));
+		return (this == LogBackendType.LOCAL
+				|| (this != LogBackendType.NULL && !(factory instanceof LocalLogBackendFactory)));
 	}
 
 	/**
@@ -101,11 +102,14 @@ public enum LogBackendType implements LogBackendFactory {
 			factory.createLogBackend("test").isLevelEnabled(Level.INFO);
 			return factory;
 		} catch (Throwable th) {
-			// we catch throwable here because we could get linkage errors
-			LogBackend backend = new LocalLogBackend(LogBackendType.class.getSimpleName() + "." + this);
-			backend.log(Level.WARNING, "Unable to get new instance of class " + factoryClassName
-					+ ", so had to use local log: " + th.getMessage());
-			return new LocalLogBackendFactory();
+			/*
+			 * We catch throwable here because we could get linkage errors. We don't immediately report on this issue
+			 * because this log factory will most likely never be used. If it is, the first thing that the factory will
+			 * so is use the first LogBackend generated to log this warning.
+			 */
+			String queuedWarning = "Unable to create instance of class " + factoryClassName + " for log type " + this
+					+ ", using local log: " + th.getMessage();
+			return new LocalLogBackendFactory(queuedWarning);
 		}
 	}
 }
