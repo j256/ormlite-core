@@ -1,6 +1,8 @@
 5.7: ?/??/2021
 	* CORE: Fixed possible thread issue around field-name lookups.  Thanks to @dlew.
-	* CORE: Fixed a number of flaky tests based on field order. Thanks to @CharlesZKQ, @NanaOkada, @hwang-pku, @chimo173.
+	* CORE: Fixed a number of flaky tests based on field order. Thanks @CharlesZKQ, @NanaOkada, @hwang-pku, @chimo173.
+	* CORE: Upgraded SimpleLogging code to fix annoying startup messages.  Thanks to @JayDi85. 
+	* ANDROID: Added support for using executeUpdateDelete() in newer Android libs.  Thanks to @WonShaw. 
 
 5.6: 6/22/2021
 	* CORE: Added support for @Entity storing of Serializable types.  Thanks to arn-cpu.
