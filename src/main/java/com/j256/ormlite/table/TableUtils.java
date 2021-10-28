@@ -101,12 +101,22 @@ public class TableUtils {
 	}
 
 	/**
-	 * @deprecated Use {@link #getCreateTableStatements(DatabaseType, Class)}.
+	 * Return an list of SQL statements that need to be run to create a table. To do the work of creating, you should
+	 * call {@link #createTable}.
+	 * 
+	 * @param connectionSource
+	 *            Our connect source which is used to get the database type, not to apply the creates.
+	 * @param dataClass
+	 *            Class of the entity to create statements that will create the table.
+	 * @return A list of table create statements.
 	 */
-	@Deprecated
 	public static <T, ID> List<String> getCreateTableStatements(ConnectionSource connectionSource, Class<T> dataClass)
 			throws SQLException {
-		return getCreateTableStatements(connectionSource.getDatabaseType(), dataClass);
+		List<String> statementList = new ArrayList<String>();
+		Dao<T, ?> dao = DaoManager.createDao(connectionSource, dataClass);
+		addCreateTableStatements(connectionSource.getDatabaseType(), dao.getTableInfo(), statementList, statementList,
+				false, false);
+		return statementList;
 	}
 
 	/**
@@ -134,15 +144,11 @@ public class TableUtils {
 	}
 
 	/**
-	 * Return an list of SQL statements that need to be run to create a table. To do the work of creating, you should
-	 * call {@link #createTable}.
+	 * This method does not properly handle complex types, especially anything with foreign objects.
 	 * 
-	 * @param databaseType
-	 *            The type of database which will be executing the create table statements.
-	 * @param dataClass
-	 *            Class of the entity to create statements that will create the table.
-	 * @return A list of table create statements.
+	 * @deprecated Please use {@link #getCreateTableStatements(ConnectionSource, Class)}.
 	 */
+	@Deprecated
 	public static <T> List<String> getCreateTableStatements(DatabaseType databaseType, Class<T> dataClass)
 			throws SQLException {
 		List<String> statementList = new ArrayList<String>();
@@ -344,23 +350,23 @@ public class TableUtils {
 		statements.addAll(statementsAfter);
 	}
 
-	private static <T, ID> int doCreateTable(Dao<T, ID> dao, boolean ifNotExists) throws SQLException {
+	private static <T, ID> int doCreateTable(Dao<T, ID> dao, boolean createIfNotExists) throws SQLException {
 		ConnectionSource connectionSource = dao.getConnectionSource();
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		if (dao instanceof BaseDaoImpl<?, ?>) {
-			return doCreateTable(connectionSource, ((BaseDaoImpl<?, ?>) dao).getTableInfo(), ifNotExists);
+			return doCreateTable(connectionSource, ((BaseDaoImpl<?, ?>) dao).getTableInfo(), createIfNotExists);
 		} else {
 			TableInfo<T, ID> tableInfo = new TableInfo<T, ID>(databaseType, dao.getDataClass());
-			return doCreateTable(connectionSource, tableInfo, ifNotExists);
+			return doCreateTable(connectionSource, tableInfo, createIfNotExists);
 		}
 	}
 
 	private static <T, ID> int doCreateTable(ConnectionSource connectionSource, TableInfo<T, ID> tableInfo,
-			boolean ifNotExists) throws SQLException {
+			boolean createIfNotExists) throws SQLException {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		List<String> statements = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();
-		addCreateTableStatements(databaseType, tableInfo, statements, queriesAfter, ifNotExists, true);
+		addCreateTableStatements(databaseType, tableInfo, statements, queriesAfter, createIfNotExists, true);
 		DatabaseConnection connection = connectionSource.getReadWriteConnection(tableInfo.getTableName());
 		try {
 			int stmtC = doStatements(connection, "create", statements, false,
@@ -436,10 +442,10 @@ public class TableUtils {
 	}
 
 	private static <T, ID> List<String> addCreateTableStatements(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
-			boolean ifNotExists, boolean logDetails) throws SQLException {
+			boolean createIfNotExists, boolean logDetails) throws SQLException {
 		List<String> statements = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();
-		addCreateTableStatements(databaseType, tableInfo, statements, queriesAfter, ifNotExists, logDetails);
+		addCreateTableStatements(databaseType, tableInfo, statements, queriesAfter, createIfNotExists, logDetails);
 		return statements;
 	}
 
@@ -447,14 +453,14 @@ public class TableUtils {
 	 * Generate and return the list of statements to create a database table and any associated features.
 	 */
 	private static <T, ID> void addCreateTableStatements(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
-			List<String> statements, List<String> queriesAfter, boolean ifNotExists, boolean logDetails)
+			List<String> statements, List<String> queriesAfter, boolean createIfNotExists, boolean logDetails)
 			throws SQLException {
 		StringBuilder sb = new StringBuilder(256);
 		if (logDetails) {
 			logger.info("creating table '{}'", tableInfo.getTableName());
 		}
 		sb.append("CREATE TABLE ");
-		if (ifNotExists && databaseType.isCreateIfNotExistsSupported()) {
+		if (createIfNotExists && databaseType.isCreateIfNotExistsSupported()) {
 			sb.append("IF NOT EXISTS ");
 		}
 		if (tableInfo.getSchemaName() != null && tableInfo.getSchemaName().length() > 0) {
@@ -503,12 +509,12 @@ public class TableUtils {
 		statements.addAll(statementsBefore);
 		statements.add(sb.toString());
 		statements.addAll(statementsAfter);
-		addCreateIndexStatements(databaseType, tableInfo, statements, ifNotExists, false, logDetails);
-		addCreateIndexStatements(databaseType, tableInfo, statements, ifNotExists, true, logDetails);
+		addCreateIndexStatements(databaseType, tableInfo, statements, createIfNotExists, false, logDetails);
+		addCreateIndexStatements(databaseType, tableInfo, statements, createIfNotExists, true, logDetails);
 	}
 
 	private static <T, ID> void addCreateIndexStatements(DatabaseType databaseType, TableInfo<T, ID> tableInfo,
-			List<String> statements, boolean ifNotExists, boolean unique, boolean logDetails) {
+			List<String> statements, boolean createIfNotExists, boolean unique, boolean logDetails) {
 		// run through and look for index annotations
 		Map<String, List<String>> indexMap = new HashMap<String, List<String>>();
 		for (FieldType fieldType : tableInfo.getFieldTypes()) {
@@ -540,7 +546,7 @@ public class TableUtils {
 				sb.append("UNIQUE ");
 			}
 			sb.append("INDEX ");
-			if (ifNotExists && databaseType.isCreateIndexIfNotExistsSupported()) {
+			if (createIfNotExists && databaseType.isCreateIndexIfNotExistsSupported()) {
 				sb.append("IF NOT EXISTS ");
 			}
 			databaseType.appendEscapedEntityName(sb, indexEntry.getKey());

@@ -48,7 +48,7 @@ public class TableUtilsTest extends BaseCoreTest {
 
 	@Test
 	public void testCreateStatements() throws Exception {
-		List<String> stmts = TableUtils.getCreateTableStatements(databaseType, LocalFoo.class);
+		List<String> stmts = TableUtils.getCreateTableStatements(connectionSource, LocalFoo.class);
 		assertEquals(1, stmts.size());
 		checkCreateStatement(stmts.get(0));
 	}
@@ -458,7 +458,7 @@ public class TableUtilsTest extends BaseCoreTest {
 
 	@Test
 	public void testColumnDefinition() throws Exception {
-		List<String> statements = TableUtils.getCreateTableStatements(databaseType, ColumnDefinition.class);
+		List<String> statements = TableUtils.getCreateTableStatements(connectionSource, ColumnDefinition.class);
 		assertEquals(1, statements.size());
 		StringBuilder sb = new StringBuilder();
 		databaseType.appendEscapedEntityName(sb, ColumnDefinition.FIELD_ID);
@@ -467,9 +467,24 @@ public class TableUtilsTest extends BaseCoreTest {
 
 	@Test
 	public void testFullColumnDefinition() throws Exception {
-		List<String> statements = TableUtils.getCreateTableStatements(databaseType, FullColumnDefinition.class);
+		List<String> statements = TableUtils.getCreateTableStatements(connectionSource, FullColumnDefinition.class);
 		assertEquals(1, statements.size());
 		assertTrue(statements.get(0).contains(FullColumnDefinition.FULL_DEFINITION));
+	}
+
+	@SuppressWarnings("deprecation")
+	@Test
+	public void testRecursiveType() throws Exception {
+		try {
+			TableUtils.getCreateTableStatements(databaseType, ForeignType.class);
+			fail("this was supposed to fail");
+		} catch (Exception e) {
+			// yeah it doesn't work because the resuling TableInfo wasn't initialized properly
+		}
+
+		List<String> statements = TableUtils.getCreateTableStatements(connectionSource, ForeignType.class);
+		assertEquals(1, statements.size());
+		assertTrue(statements.get(0).contains(ForeignType.FULL_DEFINITION));
 	}
 
 	/* ================================================================ */
@@ -486,7 +501,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		sb.append(" (");
 		assertTrue(statement.startsWith(sb.toString()));
 
-		// field names can be in differenrt orders so be agnostic
+		// field names can be in different orders so be agnostic
 		sb.setLength(0);
 		databaseType.appendEscapedEntityName(sb, LocalFoo.ID_FIELD_NAME);
 		sb.append(" INTEGER ");
@@ -596,5 +611,22 @@ public class TableUtilsTest extends BaseCoreTest {
 
 		@DatabaseField(fullColumnDefinition = FULL_DEFINITION)
 		String id;
+	}
+
+	/**
+	 * This was needed because it exposed an issue when we were allowing table create statements to be generated with
+	 * just a DatabaseType instead of a ConnectionSource.
+	 */
+	protected static class ForeignType {
+		public static final String FULL_DEFINITION = "niwggpowejfjowepfewjfew";
+
+		@DatabaseField(generatedId = true, fullColumnDefinition = FULL_DEFINITION)
+		int id;
+
+		@DatabaseField(foreign = true)
+		Foo foreign;
+
+		public ForeignType() {
+		}
 	}
 }
