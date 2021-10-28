@@ -101,12 +101,23 @@ public class TableUtils {
 	}
 
 	/**
-	 * @deprecated Use {@link #getCreateTableStatements(DatabaseType, Class)}.
+	 * Return an list of SQL statements that need to be run to create a table. To do the work of creating, you should
+	 * call {@link #createTable}.
+	 * 
+	 * @param connectionSource
+	 *            Our connect source which is used to get the database type, not to apply the creates.
+	 * @param dataClass
+	 *            Class of the entity to create statements that will create the table.
+	 * @return A list of table create statements.
 	 */
-	@Deprecated
 	public static <T, ID> List<String> getCreateTableStatements(ConnectionSource connectionSource, Class<T> dataClass)
 			throws SQLException {
-		return getCreateTableStatements(connectionSource.getDatabaseType(), dataClass);
+		List<String> statementList = new ArrayList<String>();
+		Dao<T, ?> dao = DaoManager.createDao(connectionSource, dataClass);
+		addCreateTableStatements(connectionSource.getDatabaseType(), dao.getTableInfo(), statementList, statementList,
+				false, false);
+		return statementList;
+
 	}
 
 	/**
@@ -134,15 +145,11 @@ public class TableUtils {
 	}
 
 	/**
-	 * Return an list of SQL statements that need to be run to create a table. To do the work of creating, you should
-	 * call {@link #createTable}.
+	 * This method does not properly handle complex types, especially anything with foreign objects.
 	 * 
-	 * @param databaseType
-	 *            The type of database which will be executing the create table statements.
-	 * @param dataClass
-	 *            Class of the entity to create statements that will create the table.
-	 * @return A list of table create statements.
+	 * @deprecated Please use {@link #getCreateTableStatements(ConnectionSource, Class)}.
 	 */
+	@Deprecated
 	public static <T> List<String> getCreateTableStatements(DatabaseType databaseType, Class<T> dataClass)
 			throws SQLException {
 		List<String> statementList = new ArrayList<String>();
