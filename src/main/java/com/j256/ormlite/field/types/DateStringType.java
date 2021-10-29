@@ -22,8 +22,8 @@ public class DateStringType extends BaseDateType {
 
 	public static int DEFAULT_WIDTH = 50;
 
-	// pattern which supports a {TZ XXX} prefix to the simple-date-format
-	private static final Pattern FORMAT_PATTERN = Pattern.compile("(\\{TZ\\s+([^}]+)\\})?(.*)");
+	// pattern which supports a {TZ ZZZ} prefix to the simple-date-format
+	private static final Pattern FORMAT_PATTERN = Pattern.compile("\\{TZ\\s+([^}]+)\\}(.*)");
 
 	private static final DateStringType singleTon = new DateStringType();
 
@@ -85,15 +85,16 @@ public class DateStringType extends BaseDateType {
 			return getDefaultDateFormatConfig();
 		}
 		TimeZone timeZone = null;
+		// see if the format has the {TZ ZZZ} prefix
 		Matcher matcher = FORMAT_PATTERN.matcher(format);
 		if (matcher.matches()) {
-			String zone = matcher.group(2);
+			String zone = matcher.group(1);
 			if (zone != null && !zone.isEmpty()) {
 				// this returns the default if not found
 				timeZone = TimeZone.getTimeZone(zone);
 			}
 			// the rest of the format is the simple-date-format
-			format = matcher.group(3);
+			format = matcher.group(2);
 		}
 
 		return new DateStringFormatConfig(format, timeZone);

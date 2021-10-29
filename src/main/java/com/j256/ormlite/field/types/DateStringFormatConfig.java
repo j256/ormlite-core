@@ -22,8 +22,8 @@ public class DateStringFormatConfig {
 
 	public DateStringFormatConfig(String dateFormatStr, TimeZone timeZone) {
 		this.dateFormatStr = dateFormatStr;
-		this.timeZone = timeZone;
 		this.dateFormat = new SimpleDateFormat(dateFormatStr);
+		this.timeZone = timeZone;
 	}
 
 	public DateFormat getDateFormat() {
