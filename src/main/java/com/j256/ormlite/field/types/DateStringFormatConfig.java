@@ -2,6 +2,7 @@ package com.j256.ormlite.field.types;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 /**
  * Date string format config that is it's own class to force the hiding of the DateFormat.
@@ -13,14 +14,24 @@ public class DateStringFormatConfig {
 	private final String dateFormatStr;
 	// used with clone
 	private final DateFormat dateFormat;
+	private final TimeZone timeZone;
 
 	public DateStringFormatConfig(String dateFormatStr) {
+		this(dateFormatStr, null);
+	}
+
+	public DateStringFormatConfig(String dateFormatStr, TimeZone timeZone) {
 		this.dateFormatStr = dateFormatStr;
+		this.timeZone = timeZone;
 		this.dateFormat = new SimpleDateFormat(dateFormatStr);
 	}
 
 	public DateFormat getDateFormat() {
-		return (DateFormat) dateFormat.clone();
+		DateFormat formatToUse = (DateFormat) dateFormat.clone();
+		if (timeZone != null) {
+			formatToUse.setTimeZone(timeZone);
+		}
+		return formatToUse;
 	}
 
 	@Override

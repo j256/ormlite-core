@@ -1153,6 +1153,11 @@ You can also specify the @code{dataType} field to the @code{@@DatabaseField} ann
 in which case the date will be stored as a string in @code{yyyy-MM-dd HH:mm:ss.SSSSSS} format.  You can use the
 @code{format} field in @code{DatabaseField} to set the date to another format.  See also @code{DATE} and @code{DATE_LONG}.
 
+@cindex timezone date string
+@cindex date string, timezone
+@emph{NOTE:} The @code{format} field can start with the special string @code{\{TZ XXX\}} which can be used to specify
+the timezone that should be used to store data in the database.  For example: @code{\{TZ GMT\}yyyy-MM-dd HH:mm:ss}.
+
 @emph{NOTE:} This is a different class from @code{java.sql.Date} which is handled by @code{DataType.SQL_DATE}.
 
 @emph{NOTE:} Certain databases only provide seconds resolution so the milliseconds will be 0.
