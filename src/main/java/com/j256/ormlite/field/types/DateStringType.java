@@ -23,7 +23,7 @@ public class DateStringType extends BaseDateType {
 	public static int DEFAULT_WIDTH = 50;
 
 	// pattern which supports a {TZ XXX} prefix to the simple-date-format
-	private static final Pattern FORMAT_PATTERN = Pattern.compile("([{]TZ\s+([^}]+)[}])?(.*)");
+	private static final Pattern FORMAT_PATTERN = Pattern.compile("(\\{TZ\\s+([^}]+)\\})?(.*)");
 
 	private static final DateStringType singleTon = new DateStringType();
 
