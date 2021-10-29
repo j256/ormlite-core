@@ -2,6 +2,7 @@ package com.j256.ormlite.field.types;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -11,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.TimeZone;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -36,6 +38,8 @@ public class DateStringTypeTest extends BaseTypeTest {
 
 	private static final String DATE_COLUMN = "date";
 	private static final String STRING_COLUMN = "string";
+	private static final String TIME_ZONE_NAME = "GMT";
+	private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
 	@Test
 	public void testDateString() throws Exception {
@@ -104,6 +108,40 @@ public class DateStringTypeTest extends BaseTypeTest {
 		List<DateStringFormat> results = dao.queryForAll();
 		assertEquals(1, results.size());
 		assertEquals(dateStringFormat.date, results.get(0).date);
+	}
+
+	@Test
+	public void testDateStringFormatWithTimeZone() throws Exception {
+		Dao<DateStringFormatWithTimeZone, Object> daoWith = createDao(DateStringFormatWithTimeZone.class, true);
+		DateStringFormatWithTimeZone dateStringFormat = new DateStringFormatWithTimeZone();
+		String dateTime = "2012-09-01 13:12:23";
+		SimpleDateFormat format = new SimpleDateFormat(DATE_TIME_FORMAT);
+		// should be in the local timezone
+		Date localDate = format.parse(dateTime);
+		format.setTimeZone(TimeZone.getTimeZone(TIME_ZONE_NAME));
+		// should be in the GMT timezone
+		Date zoneDate = format.parse(dateTime);
+		dateStringFormat.date = localDate;
+		assertEquals(1, daoWith.create(dateStringFormat));
+
+		List<DateStringFormatWithTimeZone> resultsWith = daoWith.queryForAll();
+		assertEquals(1, resultsWith.size());
+		assertEquals(localDate, resultsWith.get(0).date);
+
+		// now lookup the date in the same table but in the local timezone
+		Dao<DateStringFormatWithoutTimeZone, Object> daoWithout =
+				createDao(DateStringFormatWithoutTimeZone.class, false);
+		List<DateStringFormatWithoutTimeZone> resultsWithout = daoWithout.queryForAll();
+		assertEquals(1, resultsWithout.size());
+
+		// see if the local date
+		if (zoneDate.equals(localDate)) {
+			// this is running in GMT
+			assertEquals(localDate, resultsWithout.get(0).date);
+		} else {
+			// otherwise it shouldn't match
+			assertNotEquals(localDate, resultsWithout.get(0).date);
+		}
 	}
 
 	@Test
@@ -248,5 +286,22 @@ public class DateStringTypeTest extends BaseTypeTest {
 	protected static class LocalString {
 		@DatabaseField(columnName = STRING_COLUMN)
 		String string;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class DateStringFormatWithTimeZone {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(columnName = DATE_COLUMN, dataType = DataType.DATE_STRING,
+				format = "{TZ " + TIME_ZONE_NAME + "}" + DATE_TIME_FORMAT)
+		Date date;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class DateStringFormatWithoutTimeZone {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(columnName = DATE_COLUMN, dataType = DataType.DATE_STRING, format = DATE_TIME_FORMAT)
+		Date date;
 	}
 }
