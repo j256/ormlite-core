@@ -1155,8 +1155,8 @@ in which case the date will be stored as a string in @code{yyyy-MM-dd HH:mm:ss.S
 
 @cindex timezone date string
 @cindex date string, timezone
-@emph{NOTE:} The @code{format} field can start with the special string @code{\{TZ XXX\}} which can be used to specify
-the timezone that should be used to store data in the database.  For example: @code{\{TZ GMT\}yyyy-MM-dd HH:mm:ss}.
+@emph{NOTE:} The @code{format} field can start with the special string @code{@{TZ XXX@}} which can be used to specify
+the timezone that should be used to store data in the database.  For example: @code{@{TZ GMT@}yyyy-MM-dd HH:mm:ss}.
 
 @emph{NOTE:} This is a different class from @code{java.sql.Date} which is handled by @code{DataType.SQL_DATE}.
 
