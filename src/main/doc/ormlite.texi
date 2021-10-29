@@ -942,42 +942,15 @@ of this type may not be possible depending on the database type.
 
 Persisted as SQL type @code{BOOLEAN}.
 
-@cindex Date
-@cindex java date
-@anchor{datatype date}
-@item java.util.Date (DataType.DATE)
+@cindex boolean character
+@item boolean or Boolean (DataType.BOOLEAN or DataType.BOOLEAN_OBJ) as a character
 
-Persisted as SQL type @code{TIMESTAMP}.  This type automatically uses an internal @code{?} argument because the string
-format of it is unreliable to match the database format.  @xref{Select Arguments}.  See also @code{DATE_LONG} and
-@code{DATE_STRING}.
+Persisted as SQL type @code{BOOLEAN}.
 
-@emph{NOTE:} This is a different class from @code{java.sql.Date} which is handled by @code{DataType.SQL_DATE}.
+@cindex boolean integer
+@item boolean or Boolean (DataType.BOOLEAN or DataType.BOOLEAN_OBJ) as an integer
 
-@emph{NOTE:} Certain databases only provide seconds resolution so the milliseconds will be 0.
-
-@cindex java long date
-@anchor{datatype date long}
-@item java.util.Date (DataType.DATE_LONG)
-
-You can also specify the @code{dataType} field to the @code{@@DatabaseField} annotation as a @code{DataType.DATE_LONG}
-in which case the milliseconds value of the @code{Date} will be stored as an LONG.  See also @code{DATE} and @code{DATE_STRING}.
-
-@emph{NOTE:} This is a different class from @code{java.sql.Date} which is handled by @code{DataType.SQL_DATE}.
-
-@emph{NOTE:} Certain databases only provide seconds resolution so the milliseconds will be 0.
-
-@cindex java string date
-@cindex date formats
-@anchor{datatype date string}
-@item java.util.Date (DATE_STRING)
-
-You can also specify the @code{dataType} field to the @code{@@DatabaseField} annotation as a @code{DataType.DATE_STRING}
-in which case the date will be stored as a string in @code{yyyy-MM-dd HH:mm:ss.SSSSSS} format.  You can use the
-@code{format} field in @code{DatabaseField} to set the date to another format.  See also @code{DATE} and @code{DATE_LONG}.
-
-@emph{NOTE:} This is a different class from @code{java.sql.Date} which is handled by @code{DataType.SQL_DATE}.
-
-@emph{NOTE:} Certain databases only provide seconds resolution so the milliseconds will be 0.
+Persisted as SQL type @code{INTEGER}.  False is 0 and every other value is true.
 
 @cindex byte
 @anchor{datatype byte}
@@ -1138,9 +1111,60 @@ You specify the @code{dataType} field (from the @code{@@DatabaseField} annotatio
 in which case a @code{java.math.BigDecimal} field will be persisted as a @code{NUMERIC} type.  This is only supported by some
 database types and with various default precision settings.  Android should use the default @code{DataType.BIG_DECIMAL}.
 
+@cindex Date
+@cindex java date
+@cindex date, java
+@anchor{datatype date}
+@item java.util.Date (DataType.DATE)
+
+Persisted as SQL type @code{TIMESTAMP}.  This type automatically uses an internal @code{?} argument because the string
+format of it is unreliable to match the database format.  @xref{Select Arguments}.  See also @code{DATE_LONG} and
+@code{DATE_STRING}.
+
+@emph{NOTE:} This is a different class from @code{java.sql.Date} which is handled by @code{DataType.SQL_DATE}.
+
+@emph{NOTE:} Certain databases only provide seconds resolution so the milliseconds will be 0.
+
+@cindex java long date
+@cindex date, java long
+@anchor{datatype date long}
+@item java.util.Date (DataType.DATE_LONG)
+
+You can also specify the @code{dataType} field to the @code{@@DatabaseField} annotation as a @code{DataType.DATE_LONG}
+in which case the milliseconds value of the @code{Date} will be stored as an LONG.  See also @code{DATE} and @code{DATE_STRING}.
+
+@emph{NOTE:} This is a different class from @code{java.sql.Date} which is handled by @code{DataType.SQL_DATE}.
+
+@emph{NOTE:} Certain databases only provide seconds resolution so the milliseconds will be 0.
+
+@cindex Date integer
+@cindex java date integer
+@cindex date, java integer
+@item java.util.Date (DataType.DATE_INTEGER)
+
+Persisted as SQL type @code{INTEGER}.  This stores the date as integer seconds since epoch.
+
+@cindex java string date
+@cindex date formats
+@anchor{datatype date string}
+@item java.util.Date (DATE_STRING)
+
+You can also specify the @code{dataType} field to the @code{@@DatabaseField} annotation as a @code{DataType.DATE_STRING}
+in which case the date will be stored as a string in @code{yyyy-MM-dd HH:mm:ss.SSSSSS} format.  You can use the
+@code{format} field in @code{DatabaseField} to set the date to another format.  See also @code{DATE} and @code{DATE_LONG}.
+
+@cindex timezone date string
+@cindex date string, timezone
+@emph{NOTE:} The @code{format} field can start with the special string @code{\{TZ XXX\}} which can be used to specify
+the timezone that should be used to store data in the database.  For example: @code{\{TZ GMT\}yyyy-MM-dd HH:mm:ss}.
+
+@emph{NOTE:} This is a different class from @code{java.sql.Date} which is handled by @code{DataType.SQL_DATE}.
+
+@emph{NOTE:} Certain databases only provide seconds resolution so the milliseconds will be 0.
+
 @cindex DateTime Joda type
 @cindex Joda DateTime type
-@item DateTime (DataType.DATE_TIME)
+@item org.joda.time.DateTime (DataType.DATE_TIME)
 
 This stores the Joda @code{DateTime} into the database as long epoch millis.  This persister uses reflection to avoid
 setting up a dependency with Joda jars.  You can define a custom data persister if you want to natively use the class. 
@@ -1177,6 +1201,12 @@ time-stamp to another format.
 
 @emph{NOTE:} It is recommended that you use the @code{java.util.Date} class instead which is the
 @code{DataType.DATE_STRING} type.  See also @code{DATE_STRING}.
+
+@cindex Currency
+@cindex SQL Timestamp type
+@item java.util.Currency (DataType.CURRENCY)
+
+Persisted as SQL type @code{STRING}.
 
 @end table
 
