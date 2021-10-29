@@ -80,59 +80,6 @@ public enum DataType {
 	 * Persists the boolean Java primitive as an integer in the database.
 	 */
 	BOOLEAN_INTEGER(BooleanIntegerType.getSingleton()),
-	/**
-	 * Persists the {@link java.util.Date} Java class.
-	 * 
-	 * <p>
-	 * NOTE: This is <i>not</i> the same as the {@link java.sql.Date} class.
-	 * </p>
-	 */
-	DATE(DateType.getSingleton()),
-
-	/**
-	 * Persists the {@link java.util.Date} Java class as long milliseconds since epoch. By default this will use
-	 * {@link #DATE} so you will need to specify this using {@link DatabaseField#dataType()}.
-	 * 
-	 * <p>
-	 * NOTE: This is <i>not</i> the same as the {@link java.sql.Date} class.
-	 * </p>
-	 */
-	DATE_LONG(DateLongType.getSingleton()),
-
-	/**
-	 * Persists the {@link java.util.Date} Java class as int seconds since epoch. By default this will use {@link #DATE}
-	 * so you will need to specify this using {@link DatabaseField#dataType()}.
-	 *
-	 * <p>
-	 * NOTE: This is <i>not</i> the same as the {@link java.sql.Date} class.
-	 * </p>
-	 */
-	DATE_INTEGER(DateIntegerType.getSingleton()),
-	/**
-	 * Persists the {@link java.util.Date} Java class as a string of a format. By default this will use {@link #DATE} so
-	 * you will need to specify this using {@link DatabaseField#dataType()}.
-	 * 
-	 * <p>
-	 * NOTE: This is <i>not</i> the same as the {@link java.sql.Date} class.
-	 * </p>
-	 * 
-	 * <p>
-	 * <b>WARNING:</b> Because of SimpleDateFormat not being reentrant, this has to do some synchronization with every
-	 * data in/out unfortunately.
-	 * </p>
-	 */
-	DATE_STRING(DateStringType.getSingleton()),
-	/**
-	 * Persists the char primitive.
-	 */
-	CHAR(CharType.getSingleton()),
-	/**
-	 * Persists the {@link Character} object Java class.
-	 */
-	CHAR_OBJ(CharacterObjectType.getSingleton()),
-	/**
-	 * Persists the byte primitive.
-	 */
 	BYTE(ByteType.getSingleton()),
 	/**
 	 * Persists the byte[] array type. Because of some backwards compatibility issues, you will need to specify this
@@ -143,6 +90,14 @@ public enum DataType {
 	 * Persists the {@link Byte} object Java class.
 	 */
 	BYTE_OBJ(ByteObjectType.getSingleton()),
+	/**
+	 * Persists the char primitive.
+	 */
+	CHAR(CharType.getSingleton()),
+	/**
+	 * Persists the {@link Character} object Java class.
+	 */
+	CHAR_OBJ(CharacterObjectType.getSingleton()),
 	/**
 	 * Persists the short primitive.
 	 */
@@ -229,6 +184,49 @@ public enum DataType {
 	 * Persists the {@link BigDecimal} Java class as a SQL NUMERIC.
 	 */
 	BIG_DECIMAL_NUMERIC(BigDecimalNumericType.getSingleton()),
+	/**
+	 * Persists the {@link java.util.Date} Java class.
+	 * 
+	 * <p>
+	 * NOTE: This is <i>not</i> the same as the {@link java.sql.Date} class.
+	 * </p>
+	 */
+	DATE(DateType.getSingleton()),
+	/**
+	 * Persists the {@link java.util.Date} Java class as long milliseconds since epoch. By default this will use
+	 * {@link #DATE} so you will need to specify this using {@link DatabaseField#dataType()}.
+	 * 
+	 * <p>
+	 * NOTE: This is <i>not</i> the same as the {@link java.sql.Date} class.
+	 * </p>
+	 */
+	DATE_LONG(DateLongType.getSingleton()),
+	/**
+	 * Persists the {@link java.util.Date} Java class as int seconds since epoch. By default this will use {@link #DATE}
+	 * so you will need to specify this using {@link DatabaseField#dataType()}.
+	 *
+	 * <p>
+	 * NOTE: This is <i>not</i> the same as the {@link java.sql.Date} class.
+	 * </p>
+	 */
+	DATE_INTEGER(DateIntegerType.getSingleton()),
+	/**
+	 * Persists the {@link java.util.Date} Java class as a string of a format. By default this will use {@link #DATE} so
+	 * you will need to specify this using {@link DatabaseField#dataType()}.
+	 * 
+	 * <p>
+	 * NOTE: This is <i>not</i> the same as the {@link java.sql.Date} class.
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>WARNING:</b> Because of SimpleDateFormat not being reentrant, this has to do some synchronization with every
+	 * data in/out unfortunately.
+	 * </p>
+	 */
+	DATE_STRING(DateStringType.getSingleton()),
+	/**
+	 * Persists the byte primitive.
+	 */
 	/**
 	 * Persists the org.joda.time.DateTime type as a long integer. This uses reflection since we don't want to add the
 	 * dependency. Because of this, you have to specify this using {@link DatabaseField#dataType()}. It won't be
