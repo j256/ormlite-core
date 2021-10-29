@@ -4,6 +4,9 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
@@ -18,6 +21,9 @@ import com.j256.ormlite.support.DatabaseResults;
 public class DateStringType extends BaseDateType {
 
 	public static int DEFAULT_WIDTH = 50;
+
+	// pattern which supports a {TZ XXX} prefix to the simple-date-format
+	private static final Pattern FORMAT_PATTERN = Pattern.compile("(\\{TZ\\s+([^}]+)\\})?(.*)");
 
 	private static final DateStringType singleTon = new DateStringType();
 
@@ -77,9 +83,20 @@ public class DateStringType extends BaseDateType {
 		String format = fieldType.getFormat();
 		if (format == null) {
 			return getDefaultDateFormatConfig();
-		} else {
-			return new DateStringFormatConfig(format);
 		}
+		TimeZone timeZone = null;
+		Matcher matcher = FORMAT_PATTERN.matcher(format);
+		if (matcher.matches()) {
+			String zone = matcher.group(2);
+			if (zone != null && !zone.isEmpty()) {
+				// this returns the default if not found
+				timeZone = TimeZone.getTimeZone(zone);
+			}
+			// the rest of the format is the simple-date-format
+			format = matcher.group(3);
+		}
+
+		return new DateStringFormatConfig(format, timeZone);
 	}
 
 	@Override
