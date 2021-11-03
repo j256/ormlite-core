@@ -248,12 +248,16 @@ public class TableUtilsTest extends BaseCoreTest {
 						Object[] args = EasyMock.getCurrentArguments();
 						assertNotNull(args);
 						assertEquals("was expecting a call with 5 args", 5, args.length);
+						String statement = (String) args[0];
 						if (stmtC == 0) {
-							assertEquals("CREATE TABLE `comboindex` (`stuff` VARCHAR(255) , `junk` BIGINT ) ", args[0]);
+							assertTrue(statement.startsWith("CREATE TABLE `comboindex` ("));
+							assertTrue(statement.contains("`stuff` VARCHAR(255) "));
+							assertTrue(statement.contains("`junk` BIGINT "));
 						} else if (stmtC == 1) {
-							assertEquals(
-									"CREATE INDEX `" + ComboIndex.INDEX_NAME + "` ON `comboindex` ( `stuff`, `junk` )",
-									args[0]);
+							assertTrue(statement
+									.startsWith("CREATE INDEX `" + ComboIndex.INDEX_NAME + "` ON `comboindex` ( "));
+							assertTrue(statement.contains("`stuff`"));
+							assertTrue(statement.contains("`junk`"));
 						} else if (stmtC == 2) {
 							assertEquals("DROP INDEX `" + ComboIndex.INDEX_NAME + "`", args[0]);
 						} else if (stmtC == 3) {
