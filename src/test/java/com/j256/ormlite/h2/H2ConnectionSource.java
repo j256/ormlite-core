@@ -66,8 +66,10 @@ public class H2ConnectionSource implements ConnectionSource {
 	}
 
 	@Override
-	public void releaseConnection(DatabaseConnection connection) {
-		// noop right now
+	public void releaseConnection(DatabaseConnection connection) throws SQLException {
+		if (connection != this.connection) {
+			throw new SQLException("unknown connection released: " + connection);
+		}
 	}
 
 	@Override

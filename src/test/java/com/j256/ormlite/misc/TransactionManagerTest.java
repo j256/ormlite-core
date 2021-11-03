@@ -359,7 +359,7 @@ public class TransactionManagerTest extends BaseCoreTest {
 		Foo foo3 = new Foo();
 		foo3.val = 3;
 		list.add(foo3);
-		assertTrue(connectionSource.isOkay());
+		assertTrue(connectionSource.isEverythingClosed());
 		assertEquals(0, connectionSource.getConnectionCount());
 		TransactionManager.callInTransaction(connectionSource, new Callable<Boolean>() {
 			@Override
@@ -367,7 +367,7 @@ public class TransactionManagerTest extends BaseCoreTest {
 				return dao.create(list) >= 0;
 			}
 		});
-		assertTrue(connectionSource.isOkay());
+		assertTrue(connectionSource.isEverythingClosed());
 		assertEquals(0, connectionSource.getConnectionCount());
 	}
 

@@ -37,34 +37,35 @@ public class WrappedConnectionSource implements ConnectionSource {
 	public DatabaseConnection getReadOnlyConnection(String tableName) throws SQLException {
 		DatabaseConnection connection = cs.getReadOnlyConnection(tableName);
 		connectionCount.incrementAndGet();
-		WrappedDatabaseConnection wrapped = wrapConnection(connection);
-		wrappedConnections.put(wrapped.getDatabaseConnection(), wrapped);
+		WrappedDatabaseConnection wrapped = new WrappedDatabaseConnection(connection);
+		DatabaseConnection proxy = wrapped.getDatabaseConnectionProxy();
+		wrappedConnections.put(proxy, wrapped);
 		logger.trace("{}: got wrapped read-only DatabaseConnection '{}', count = {}", this, wrapped, connectionCount);
-		return wrapped.getDatabaseConnection();
+		return proxy;
 	}
 
 	@Override
 	public DatabaseConnection getReadWriteConnection(String tableName) throws SQLException {
 		DatabaseConnection connection = cs.getReadWriteConnection(tableName);
 		connectionCount.incrementAndGet();
-		WrappedDatabaseConnection wrapped = wrapConnection(connection);
-		connection = wrapped.getDatabaseConnection();
-		wrappedConnections.put(connection, wrapped);
+		WrappedDatabaseConnection wrapped = new WrappedDatabaseConnection(connection);
+		DatabaseConnection proxy = wrapped.getDatabaseConnectionProxy();
+		wrappedConnections.put(proxy, wrapped);
 		logger.trace("{}: got wrapped read-write DatabaseConnection '{}', count = {}", this, wrapped, connectionCount);
-		return connection;
+		return proxy;
 	}
 
 	@Override
-	public void releaseConnection(DatabaseConnection connection) throws SQLException {
-		WrappedDatabaseConnection wrapped = wrappedConnections.remove(connection);
+	public void releaseConnection(DatabaseConnection proxy) throws SQLException {
+		WrappedDatabaseConnection wrapped = wrappedConnections.remove(proxy);
 		if (wrapped == null) {
 			if (nextForceOkay) {
 				return;
 			} else {
-				throw new SQLException("Tried to release unknown connection");
+				throw new SQLException("Tried to release unknown connection: " + proxy);
 			}
-		} else if (!wrapped.isOkay()) {
-			throw new SQLException("Wrapped connection was not okay when released");
+		} else if (!wrapped.isAllStatementsClosed()) {
+			throw new SQLException("Wrapped connection had open statements when released: " + wrapped);
 		}
 		cs.releaseConnection(wrapped.getDatabaseConnection());
 		connectionCount.decrementAndGet();
@@ -74,8 +75,8 @@ public class WrappedConnectionSource implements ConnectionSource {
 	@Override
 	public void close() throws IOException {
 		cs.close();
-		if (!isOkay()) {
-			throw new IOException("Wrapped connection was not okay on close");
+		if (!isEverythingClosed()) {
+			throw new IOException("Wrapped connections were not fully closed when connection-source closed");
 		}
 		for (WrappedDatabaseConnection wrapped : wrappedConnections.values()) {
 			wrapped.close();
@@ -88,11 +89,6 @@ public class WrappedConnectionSource implements ConnectionSource {
 		IOUtils.closeQuietly(this);
 	}
 
-	protected WrappedDatabaseConnection wrapConnection(DatabaseConnection connection) {
-		WrappedDatabaseConnection wrapped = new WrappedDatabaseConnection(connection, DatabaseConnection.class);
-		return wrapped;
-	}
-
 	/**
 	 * Used if we want to forcefully close a connection source without throwing errors.
 	 */
@@ -100,19 +96,19 @@ public class WrappedConnectionSource implements ConnectionSource {
 		nextForceOkay = true;
 	}
 
-	public boolean isOkay() {
+	public boolean isEverythingClosed() {
 		if (nextForceOkay) {
 			nextForceOkay = false;
 			return true;
 		} else if (connectionCount.get() != 0) {
-			logger.error("{}: ConnectionSource is not ok, connection-count = {}", this, connectionCount);
+			logger.error("{}: ConnectionSource has {} open connections", this, connectionCount);
 			for (WrappedDatabaseConnection wrapped : wrappedConnections.values()) {
 				logger.error("{}: still has wrapped DatabaseConnection '{}'", this, wrapped);
 			}
 			return false;
 		} else {
 			for (WrappedDatabaseConnection wrapped : wrappedConnections.values()) {
-				if (!wrapped.isOkay()) {
+				if (!wrapped.isAllStatementsClosed()) {
 					return false;
 				}
 			}
