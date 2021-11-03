@@ -59,7 +59,7 @@ public class WrappedDatabaseConnection implements InvocationHandler {
 		try {
 			Object obj = method.invoke(getUnderlyingConnection(), args);
 			if (method.getName().equals("compileStatement") && obj instanceof CompiledStatement) {
-				WrappedStatement wrappedStatement = new WrappedStatement(obj, CompiledStatement.class);
+				WrappedStatement wrappedStatement = new WrappedStatement(obj, getStatementClass());
 				wrappedStatements.add(wrappedStatement);
 				logger.trace("{}: connection is wrapping CompiledStatement: {}", this, obj);
 				obj = wrappedStatement.getPreparedStatement();
