@@ -7,6 +7,7 @@ import java.lang.reflect.Proxy;
 
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
+import com.j256.ormlite.support.CompiledStatement;
 
 /**
  * Wrapped statement so we can ensure we properly close all statements.
@@ -17,23 +18,23 @@ public class WrappedStatement implements InvocationHandler {
 
 	private static final Logger logger = LoggerFactory.getLogger(WrappedStatement.class);
 
-	private final Object statementProxy;
-	private final Object statement;
+	private final CompiledStatement statement;
+	private final CompiledStatement statementProxy;
 	private boolean closeCalled;
 
-	public WrappedStatement(Object statement, Class<?> statementClass) {
+	public WrappedStatement(CompiledStatement statement) {
 		this.statement = statement;
-		this.statementProxy =
-				Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] { statementClass }, this);
+		this.statementProxy = (CompiledStatement) Proxy.newProxyInstance(getClass().getClassLoader(),
+				new Class<?>[] { CompiledStatement.class }, this);
 	}
 
-	public Object getPreparedStatement() {
+	public CompiledStatement getStatementProxy() {
 		return statementProxy;
 	}
 
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-		logger.trace("{}: running method on CompiledStatement: {}", this, method.getName());
+		logger.trace("{}: running method on statement: {}", this, method.getName());
 		try {
 			Object obj = method.invoke(statement, args);
 			if (method.getName().equals("close")) {
@@ -46,7 +47,7 @@ public class WrappedStatement implements InvocationHandler {
 		}
 	}
 
-	public boolean isOkay() {
+	public boolean isClosed() {
 		if (closeCalled) {
 			return true;
 		} else {
