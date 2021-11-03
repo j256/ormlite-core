@@ -1712,8 +1712,17 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(1, qb.countOf());
 		String[] result = qb.queryRawFirst();
 		assertEquals(4, result.length);
-		assertEquals(Integer.toString(foo.id), result[0]);
-		assertEquals(foo.stringField, result[3]);
+		boolean idFound = false;
+		boolean stringFound = false;
+		for (int i = 0; i < result.length; i++) {
+			if (Integer.toString(foo.id).equals(result[i])) {
+				idFound = true;
+			} else if (foo.stringField.equals(result[i])) {
+				stringFound = true;
+			}
+		}
+		assertTrue("should have found the id field", idFound);
+		assertTrue("should have found the string field", stringFound);
 	}
 
 	@Test
