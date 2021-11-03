@@ -27,15 +27,15 @@ public class RawResultsImplTest extends BaseCoreTest {
 		GenericRawResults<String[]> rawResults = dao.queryRaw(qb.prepareStatementString(), Integer.toString(foo.val));
 		List<String[]> results = rawResults.getResults();
 		assertEquals(1, results.size());
-		boolean found = false;
 		String[] columnNames = rawResults.getColumnNames();
+		int idColumnIndex = -1;
 		for (int i = 0; i < rawResults.getNumberColumns(); i++) {
 			if (columnNames[i].equalsIgnoreCase(Foo.ID_COLUMN_NAME)) {
-				assertEquals(Integer.toString(foo.id), results.get(i)[0]);
-				found = true;
+				idColumnIndex = i;
 			}
 		}
-		assertTrue(found);
+		assertTrue(idColumnIndex >= 0);
+		assertEquals(Integer.toString(foo.id), results.get(0)[idColumnIndex]);
 	}
 
 	@Test
