@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DataType;
@@ -82,7 +83,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	private boolean initialized;
 	// NOTE: package perms to removed synthetic accessor
 	ObjectCache objectCache;
-	private Map<DaoObserver, Object> daoObserverMap;
+	private ConcurrentMap<DaoObserver, Object> daoObserverMap;
 
 	/**
 	 * Construct our base DAO using Spring type wiring. The {@link ConnectionSource} must be set with the
