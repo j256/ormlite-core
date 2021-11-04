@@ -36,11 +36,11 @@ public class WrappedStatement implements InvocationHandler {
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		logger.trace("{}: running method on statement: {}", this, method.getName());
 		try {
-			Object obj = method.invoke(statement, args);
+			Object result = method.invoke(statement, args);
 			if (method.getName().equals("close")) {
 				closeCalled = true;
 			}
-			return obj;
+			return result;
 		} catch (InvocationTargetException e) {
 			// pass on the exception
 			throw e.getTargetException();

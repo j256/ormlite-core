@@ -68,6 +68,7 @@ public class WrappedConnectionSource implements ConnectionSource {
 			throw new SQLException("Wrapped connection had open statements when released: " + wrapped);
 		}
 		cs.releaseConnection(wrapped.getDatabaseConnection());
+		wrapped.close();
 		connectionCount.decrementAndGet();
 		logger.trace("{}: released wrapped DatabaseConnection '{}', count = {}", this, wrapped, connectionCount);
 	}

@@ -44,14 +44,14 @@ public class WrappedDatabaseConnection implements InvocationHandler {
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		logger.trace("{}: running method on connection: {}", this, method.getName());
 		try {
-			Object obj = method.invoke(connection, args);
-			if (method.getName().equals("compileStatement") && obj instanceof CompiledStatement) {
-				WrappedStatement wrappedStatement = new WrappedStatement((CompiledStatement) obj);
+			Object result = method.invoke(connection, args);
+			if (method.getName().equals("compileStatement") && result instanceof CompiledStatement) {
+				WrappedStatement wrappedStatement = new WrappedStatement((CompiledStatement) result);
 				wrappedStatements.add(wrappedStatement);
-				logger.trace("{}: connection is wrapping statement: {}", this, obj);
-				obj = wrappedStatement.getStatementProxy();
+				logger.trace("{}: connection is wrapping statement: {}", this, result);
+				result = wrappedStatement.getStatementProxy();
 			}
-			return obj;
+			return result;
 		} catch (InvocationTargetException e) {
 			// pass on the exception
 			throw e.getTargetException();

@@ -1,8 +1,9 @@
 5.7: ?/??/2021
 	* CORE: Fixed possible thread issue around field-name lookups.  Thanks to dlew.
-	* CORE: Fixed a number of flaky tests based on field order. Thanks CharlesZKQ, NanaOkada, hwang-pku, chimo173.
+	* CORE: Fixed a number of flaky tests based on field order. Thanks CharlesZKQ, NanaOkada, hwang-pku, and chimo173.
 	* CORE: Upgraded SimpleLogging code to fix annoying startup messages.  Thanks to JayDi85.
-	* CORE: Removed getCreateTableStatements(DatabaseType, ...).  ConnectionSource now required.  Thanks to blacatena.
+	* CORE: Removed broken getCreateTableStatements(DatabaseType, ...). ConnectionSource needed. Thanks to blacatena.
+	* CORE: Added WrappedConnectionSource and other support classes for tracing unclosed connections and statements.
 	* ANDROID: Fixed bug in number rows affected with executeUpdateDelete() in newer API versions.  Thanks to WonShaw.
 
 5.6: 6/22/2021
