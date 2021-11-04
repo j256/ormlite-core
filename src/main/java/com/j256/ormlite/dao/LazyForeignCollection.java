@@ -339,6 +339,11 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
         }
     }
 
+	@Override
+	public Stream<T> parallelStream() {
+		return stream();
+	}
+
     @Override
     public CloseableSpliterator<T> spliterator() {
         final CloseableIterator<T> iterator = iterator();
