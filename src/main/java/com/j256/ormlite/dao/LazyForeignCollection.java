@@ -8,6 +8,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -19,12 +21,12 @@ import com.j256.ormlite.support.DatabaseConnection;
  * object is refreshed or queried (i.e. not created). Most of the methods here require a pass through the database.
  * Operations such as size() therefore should most likely not be used because of their expense. Chances are you only
  * want to use the {@link #iterator()}, {@link #toArray()}, and {@link #toArray(Object[])} methods.
- * 
+ *
  * <p>
  * <b>WARNING:</b> Most likely for(;;) loops should not be used here since we need to be careful about closing the
  * iterator.
  * </p>
- * 
+ *
  * @author graywatson
  */
 public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> implements Serializable {
@@ -212,7 +214,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 
 	/**
 	 * Return a list of items from the database. This uses the iterator to walk through the table.
-	 * 
+	 *
 	 * NOTE: that changes to this list are _not_ replicated to the database.
 	 */
 	public List<T> toList() {
@@ -288,7 +290,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 
 	/**
 	 * This is just a call to {@link Object#equals(Object)}.
-	 * 
+	 *
 	 * <p>
 	 * NOTE: This method is here for documentation purposes because {@link EagerForeignCollection#equals(Object)} is
 	 * defined.
@@ -301,7 +303,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 
 	/**
 	 * This is just a call to {@link Object#hashCode()}.
-	 * 
+	 *
 	 * <p>
 	 * NOTE: This method is here for documentation purposes because {@link EagerForeignCollection#equals(Object)} is
 	 * defined.
@@ -325,4 +327,27 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 			return dao.iterator(getPreparedQuery(), flags);
 		}
 	}
+
+    @Override
+    public Stream<T> stream() {
+        final CloseableSpliterator<T> spliterator = spliterator();
+        try {
+            return StreamSupport.stream(spliterator, false).onClose(spliterator::closeQuietly);
+        } catch (Error | RuntimeException e) {
+            spliterator.closeQuietly();
+            throw e;
+        }
+    }
+
+    @Override
+    public CloseableSpliterator<T> spliterator() {
+        final CloseableIterator<T> iterator = iterator();
+        try {
+            return new CloseableSpliteratorImpl<>(iterator);
+        } catch (Error | RuntimeException e) {
+            iterator.closeQuietly();
+            throw e;
+        }
+    }
+
 }
