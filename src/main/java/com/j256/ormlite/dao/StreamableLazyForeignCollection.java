@@ -29,8 +29,12 @@ import com.j256.ormlite.misc.IOUtils;
  * characteristic enabled which implies that the collection is in memory and it is cheap to estimate its size -- with a
  * lazy collection, this can be very expensive and it causes the collection to be iterated across an additional time
  * unnecessarily. Also, the {@link Stream} returned from the {@link #stream()} method registers a
- * {@link Stream#onClose()} runnable to ensure that the iterator is properly closed once the {@link Stream#close()}
- * method is called.
+ * {@link Stream#onClose(Runnable)} runnable to ensure that the iterator is properly closed once the
+ * {@link Stream#close()} method is called.
+ * </p>
+ * 
+ * <p>
+ * WARNING: because we are currently building with a JDK before 8, this class cannot be unit tested.
  * </p>
  * 
  * @author graywatson
