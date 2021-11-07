@@ -70,7 +70,7 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 					|| daoMethod.getName().equals("forEach") /* java 8 method */) {
 				continue;
 			}
-
+			
 			Iterator<Method> runtimeIterator = runtimeMethods.iterator();
 			while (runtimeIterator.hasNext()) {
 				Method runtimeMethod = runtimeIterator.next();
@@ -86,7 +86,12 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 
 			// make sure we found the method in RuntimeExceptionDao
 			if (!found) {
-				failedMessages.add(RuntimeExceptionDao.class.getName() + " did not include method: " + daoMethod);
+				if (daoMethod.getName().equals("iterator") && daoMethod.getParameterTypes().length == 0) {
+					// skip this because it is an attempt to override the return of Iterable.iterator()
+				} else {
+					failedMessages.add(RuntimeExceptionDao.class.getName() + " did not include method '" + daoMethod
+							+ "', with params: " + Arrays.toString(daoMethod.getParameterTypes()));
+				}
 			}
 		}
 

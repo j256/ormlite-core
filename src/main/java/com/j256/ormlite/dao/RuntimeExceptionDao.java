@@ -404,6 +404,9 @@ public class RuntimeExceptionDao<T, ID> implements Dao<T, ID> {
 		return dao.iterator();
 	}
 
+	/**
+	 * @see Dao#closeableIterator()
+	 */
 	@Override
 	public CloseableIterator<T> closeableIterator() {
 		return dao.closeableIterator();
@@ -909,26 +912,41 @@ public class RuntimeExceptionDao<T, ID> implements Dao<T, ID> {
 		return dao.getConnectionSource();
 	}
 
+	/**
+	 * @see Dao#registerObserver(com.j256.ormlite.dao.Dao.DaoObserver)
+	 */
 	@Override
 	public void registerObserver(DaoObserver observer) {
 		dao.registerObserver(observer);
 	}
 
+	/**
+	 * @see Dao#unregisterObserver(com.j256.ormlite.dao.Dao.DaoObserver)
+	 */
 	@Override
 	public void unregisterObserver(DaoObserver observer) {
 		dao.unregisterObserver(observer);
 	}
 
+	/**
+	 * @see Dao#notifyChanges()
+	 */
 	@Override
 	public void notifyChanges() {
 		dao.notifyChanges();
 	}
 
+	/**
+	 * @see Dao#getTableName()
+	 */
 	@Override
 	public String getTableName() {
 		return dao.getTableName();
 	}
 
+	/**
+	 * @see Dao#createObjectInstance()
+	 */
 	@Override
 	public T createObjectInstance() {
 		try {
@@ -939,6 +957,9 @@ public class RuntimeExceptionDao<T, ID> implements Dao<T, ID> {
 		}
 	}
 
+	/**
+	 * @see Dao#getTableInfo()
+	 */
 	@Override
 	public TableInfo<T, ID> getTableInfo() {
 		return dao.getTableInfo();
