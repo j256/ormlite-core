@@ -10,7 +10,7 @@ import com.j256.ormlite.logger.LoggerFactory;
  */
 public class VersionUtils {
 
-	private static final String CORE_VERSION = "VERSION__5.6__";
+	private static final String CORE_VERSION = "VERSION__5.7-SNAPSHOT__";
 
 	private static Logger logger;
 	private static boolean thrownOnErrors = false;
