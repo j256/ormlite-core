@@ -3,6 +3,8 @@ package com.j256.ormlite.logger;
 /**
  * Log backend that writes to the console.
  * 
+ * From SimpleLogging: https://github.com/j256/simplelogging
+ *
  * @author graywatson
  */
 public class ConsoleLogBackend implements LogBackend {

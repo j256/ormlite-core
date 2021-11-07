@@ -3,6 +3,8 @@ package com.j256.ormlite.logger;
 /**
  * Log backend that delegates to Apache Log4j.
  * 
+ * From SimpleLogging: https://github.com/j256/simplelogging
+ *
  * @author graywatson
  */
 public class Log4jLogBackend implements LogBackend {

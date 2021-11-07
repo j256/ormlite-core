@@ -6,6 +6,8 @@ import java.io.StringWriter;
 /**
  * Some common utility methods.
  * 
+ * From SimpleLogging: https://github.com/j256/simplelogging
+ *
  * @author graywatson
  */
 public class LogBackendUtil {

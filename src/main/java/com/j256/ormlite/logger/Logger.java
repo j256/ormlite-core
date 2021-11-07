@@ -3,11 +3,11 @@ package com.j256.ormlite.logger;
 import java.lang.reflect.Array;
 
 /**
- * <p>
  * Class which wraps our {@link LogBackend} interface and provides {} argument features like slf4j. It allows us to plug
  * in additional log backends if necessary.
- * </p>
- * 
+ *
+ * From SimpleLogging: https://github.com/j256/simplelogging
+ *
  * <p>
  * <b>NOTE:</b> We do the (msg, arg0), (msg, arg0, arg1), (msg, arg0, arg1, arg2), (msg, arg0, arg1, arg2, arg3), and
  * (msg, argArray) patterns because if we do ... for everything, we will get a new Object[] each log call which we don't

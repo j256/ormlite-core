@@ -2,6 +2,10 @@ package com.j256.ormlite.logger;
 
 /**
  * Factory for generating LogBackend instances.
+ * 
+ * From SimpleLogging: https://github.com/j256/simplelogging
+ *
+ * @author graywatson
  */
 public interface LogBackendFactory {
 

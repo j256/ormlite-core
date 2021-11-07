@@ -2,6 +2,10 @@ package com.j256.ormlite.logger;
 
 /**
  * Level of log messages being sent.
+ *
+ * From SimpleLogging: https://github.com/j256/simplelogging
+ *
+ * @author graywatson
  */
 public enum Level {
 	/** for tracing messages that are very verbose, such as the protocol level */

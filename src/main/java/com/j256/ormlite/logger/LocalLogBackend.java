@@ -19,6 +19,8 @@ import java.util.regex.Pattern;
 /**
  * Log backend that uses logging classes if they are not available.
  * 
+ * From SimpleLogging: https://github.com/j256/simplelogging
+ *
  * <p>
  * You can set the log level by setting the System.setProperty(LocalLogBackend.LOCAL_LOG_LEVEL_PROPERTY, "trace").
  * Acceptable values are: TRACE, DEBUG, INFO, WARN, ERROR, and FATAL. You can also redirect the log to a file by setting

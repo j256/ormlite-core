@@ -3,6 +3,8 @@ package com.j256.ormlite.logger;
 /**
  * Log backend that ignores all log requests.
  * 
+ * From SimpleLogging: https://github.com/j256/simplelogging
+ *
  * @author graywatson
  */
 public class NullLogBackend implements LogBackend {

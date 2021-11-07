@@ -4,6 +4,8 @@ package com.j256.ormlite.logger;
  * Log backend that writes to java.util.log. This will never be chosen by default because it should always in the
  * classpath, but can be injected if someone really wants it.
  * 
+ * From SimpleLogging: https://github.com/j256/simplelogging
+ *
  * @author graywatson
  */
 public class JavaUtilLogBackend implements LogBackend {

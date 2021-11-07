@@ -3,6 +3,8 @@ package com.j256.ormlite.logger;
 /**
  * Class which fronts various log backend implementations which may or may not be in the classpath.
  * 
+ * From SimpleLogging: https://github.com/j256/simplelogging
+ *
  * @author graywatson
  */
 public interface LogBackend {
