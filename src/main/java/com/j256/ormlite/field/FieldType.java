@@ -17,6 +17,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.dao.EagerForeignCollection;
 import com.j256.ormlite.dao.ForeignCollection;
+import com.j256.ormlite.dao.StreamableLazyForeignCollection;
 import com.j256.ormlite.dao.LazyForeignCollection;
 import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.db.DatabaseType;
@@ -79,6 +80,7 @@ public class FieldType {
 	private FieldType foreignFieldType;
 	private Dao<?, ?> foreignDao;
 	private MappedQueryForFieldEq<?, ?> mappedQueryForForeignField;
+	private static boolean hasStreamClass;
 
 	/**
 	 * ThreadLocal counters to detect initialization loops. Notice that there is _not_ an initValue() method on purpose.
@@ -87,6 +89,19 @@ public class FieldType {
 	private static final ThreadLocal<LevelCounters> threadLevelCounters = new ThreadLocal<LevelCounters>();
 
 	private static final Logger logger = LoggerFactory.getLogger(FieldType.class);
+
+	static {
+		try {
+			/*
+			 * See if we have the JDK8+ stream class via reflection which then allows us to use the {@link
+			 * StreamableLazyForeignCollection}
+			 */
+			Class.forName("java.util.stream.Stream");
+			hasStreamClass = true;
+		} catch (Exception e) {
+			hasStreamClass = false;
+		}
+	}
 
 	/**
 	 * You should use {@link FieldType#createFieldType} to instantiate one of these field if you have a {@link Field}.
@@ -793,7 +808,7 @@ public class FieldType {
 		Dao<FT, FID> castDao = (Dao<FT, FID>) foreignDao;
 		if (!fieldConfig.isForeignCollectionEager()) {
 			// we know this won't go recursive so no need for the counters
-			return new LazyForeignCollection<FT, FID>(castDao, parent, id, foreignFieldType,
+			return createLazyForeignCollection(castDao, parent, id, foreignFieldType,
 					fieldConfig.getForeignCollectionOrderColumnName(), fieldConfig.isForeignCollectionOrderAscending());
 		}
 
@@ -802,7 +817,7 @@ public class FieldType {
 		if (levelCounters == null) {
 			if (fieldConfig.getForeignCollectionMaxEagerLevel() == 0) {
 				// then return a lazy collection instead
-				return new LazyForeignCollection<FT, FID>(castDao, parent, id, foreignFieldType,
+				return createLazyForeignCollection(castDao, parent, id, foreignFieldType,
 						fieldConfig.getForeignCollectionOrderColumnName(),
 						fieldConfig.isForeignCollectionOrderAscending());
 			}
@@ -816,7 +831,7 @@ public class FieldType {
 		// are we over our level limit?
 		if (levelCounters.foreignCollectionLevel >= levelCounters.foreignCollectionLevelMax) {
 			// then return a lazy collection instead
-			return new LazyForeignCollection<FT, FID>(castDao, parent, id, foreignFieldType,
+			return createLazyForeignCollection(castDao, parent, id, foreignFieldType,
 					fieldConfig.getForeignCollectionOrderColumnName(), fieldConfig.isForeignCollectionOrderAscending());
 		}
 		levelCounters.foreignCollectionLevel++;
@@ -1178,6 +1193,17 @@ public class FieldType {
 					+ defaultStr + "'");
 		} else {
 			this.defaultValue = this.fieldConverter.parseDefaultString(this, defaultStr);
+		}
+	}
+
+	private <FT, FID> LazyForeignCollection<FT, FID> createLazyForeignCollection(Dao<FT, FID> castDao, Object parent,
+			Object parentId, FieldType foreignFieldType, String orderColumn, boolean orderAscending) {
+		if (hasStreamClass) {
+			return new StreamableLazyForeignCollection<FT, FID>(castDao, parent, parentId, foreignFieldType,
+					orderColumn, orderAscending);
+		} else {
+			return new LazyForeignCollection<FT, FID>(castDao, parent, parentId, foreignFieldType, orderColumn,
+					orderAscending);
 		}
 	}
 
