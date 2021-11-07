@@ -9,11 +9,14 @@ import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.misc.IOUtils;
 
 /**
- * Lazy foreign collection class that only works with JDK8+ because of the Stream usage. Fortuitously this can be
- * compiled under JDK6 even with the unknown imports as long as it doesn't use lambdas or any other language features.
- * This allows ORMLite to stay compatible with Java6 class files but provide better stream support for Java8+.
+ * Lazy foreign collection that provides better support for {@link Stream}s if running with JDK8+. Fortuitously this can
+ * be compiled under JDK6 even with the unknown imports as long as the code doesn't use lambdas or any newer language
+ * features. This allows ORMLite to stay compatible with older class files but still provide better stream support for
+ * Java8+.
  * 
+ * <p>
  * We are trying to fix the below code issue where Account.orders is a {@link LazyForeignCollection}.
+ * </p>
  * 
  * <pre>
  * try (Stream<Document> stream = account.getOrders().stream();) {
@@ -22,12 +25,12 @@ import com.j256.ormlite.misc.IOUtils;
  * </pre>
  * 
  * <p>
- * Without this class, the spliterator that is created by the {@link #spliterator()} method has the
- * {@link Spliterator#SIZED} characteristic enabled implying that the collection is in memory and it is cheap to
- * estimate its size -- with a lazy collection, this can be very expensive causing the collection to be walked once
- * unnecessarily. Also, this class returns a {@link Stream} from the {@link #stream()} method that uses a
- * {@link CloseableWrappedIterable} and registers a {@link Stream#onClose()} runnable to ensure that the iterator is
- * properly closed once the {@link Stream#close()} method is called.
+ * Without this class, the spliterator that is returned by {@link #spliterator()} has the {@link Spliterator#SIZED}
+ * characteristic enabled which implies that the collection is in memory and it is cheap to estimate its size -- with a
+ * lazy collection, this can be very expensive and it causes the collection to be iterated across an additional time
+ * unnecessarily. Also, the {@link Stream} returned from the {@link #stream()} method registers a
+ * {@link Stream#onClose()} runnable to ensure that the iterator is properly closed once the {@link Stream#close()}
+ * method is called.
  * </p>
  * 
  * @author graywatson
@@ -48,17 +51,16 @@ public class StreamableLazyForeignCollection<T, ID> extends LazyForeignCollectio
 
 	@Override
 	public Stream<T> stream() {
-		final CloseableWrappedIterableImpl<T> iterable = new CloseableWrappedIterableImpl<T>(this);
+		final CloseableIterator<T> iterator = closeableIterator();
 		/*
-		 * NOTE: we have to use the Runnable here because this has to compile via the JDK6 compiler which doesn't
-		 * understand lambdas but which seems to ignore the missing imports only available under JDK8+.
+		 * NOTE: we have to use a Runnable here because was want to compile via the JDK6 compiler which doesn't
+		 * understand lambdas.
 		 */
-		return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterable.iterator(), 0), false)
-				.onClose(new Runnable() {
-					@Override
-					public void run() {
-						IOUtils.closeQuietly(iterable);
-					}
-				});
+		return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, 0), false).onClose(new Runnable() {
+			@Override
+			public void run() {
+				IOUtils.closeQuietly(iterator);
+			}
+		});
 	}
 }
