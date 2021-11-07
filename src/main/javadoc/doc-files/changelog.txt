@@ -4,6 +4,7 @@
 	* CORE: Upgraded SimpleLogging code to fix annoying startup messages.  Thanks to JayDi85.
 	* CORE: Removed broken getCreateTableStatements(DatabaseType, ...). ConnectionSource needed. Thanks to blacatena.
 	* CORE: Added WrappedConnectionSource and other support classes for tracing unclosed connections and statements.
+	* CORE: Added better support for JDK8+ streams with lazy foreign collections.  Thanks to zhemaituk.
 	* ANDROID: Fixed bug in number rows affected with executeUpdateDelete() in newer API versions.  Thanks to WonShaw.
 
 5.6: 6/22/2021
