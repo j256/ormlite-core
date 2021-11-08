@@ -1,6 +1,5 @@
 package com.j256.ormlite.misc;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -77,7 +76,7 @@ public class WrappedConnectionSource implements ConnectionSource {
 	public void close() throws Exception {
 		cs.close();
 		if (!isEverythingClosed()) {
-			throw new IOException("Wrapped connections were not fully closed when connection-source closed");
+			throw new SQLException("Wrapped connections were not fully closed when connection-source closed");
 		}
 		for (WrappedDatabaseConnection wrapped : wrappedConnections.values()) {
 			wrapped.close();

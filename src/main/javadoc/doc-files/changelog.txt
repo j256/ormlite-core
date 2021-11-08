@@ -1,6 +1,6 @@
 6.0: ?/?/2021
 	* CORE: Moved to support for java 7.  Dropped support for Java 6.
-	* CORE: Migrated to supporting AutoCloseable.  Due to this, close() methods now throw Exception not IOException.
+	* CORE: Migrated to supporting AutoCloseable.  Most close() methods now throw Exception not IOException.
 
 5.7: 11/7/2021
 	* CORE: Fixed possible thread issue around field-name lookups.  Thanks to dlew.
