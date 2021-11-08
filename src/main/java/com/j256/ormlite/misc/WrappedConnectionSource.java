@@ -74,7 +74,7 @@ public class WrappedConnectionSource implements ConnectionSource {
 	}
 
 	@Override
-	public void close() throws IOException {
+	public void close() throws Exception {
 		cs.close();
 		if (!isEverythingClosed()) {
 			throw new IOException("Wrapped connections were not fully closed when connection-source closed");

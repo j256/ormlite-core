@@ -1,6 +1,5 @@
 package com.j256.ormlite.dao;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
@@ -443,7 +442,7 @@ public class RuntimeExceptionDao<T, ID> implements Dao<T, ID> {
 	public void closeLastIterator() {
 		try {
 			dao.closeLastIterator();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logMessage(e, "closeLastIterator threw exception");
 			throw new RuntimeException(e);
 		}

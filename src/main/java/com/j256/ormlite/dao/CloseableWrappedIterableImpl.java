@@ -1,7 +1,5 @@
 package com.j256.ormlite.dao;
 
-import java.io.IOException;
-
 import com.j256.ormlite.misc.IOUtils;
 
 /**
@@ -33,7 +31,7 @@ public class CloseableWrappedIterableImpl<T> implements CloseableWrappedIterable
 	}
 
 	@Override
-	public void close() throws IOException {
+	public void close() throws Exception {
 		if (iterator != null) {
 			iterator.close();
 			iterator = null;

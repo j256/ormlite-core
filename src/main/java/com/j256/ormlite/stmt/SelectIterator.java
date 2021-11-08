@@ -256,7 +256,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 	}
 
 	@Override
-	public void close() throws IOException {
+	public void close() throws Exception {
 		if (!closed) {
 			compiledStmt.close();
 			closed = true;

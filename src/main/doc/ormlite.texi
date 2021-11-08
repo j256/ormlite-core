@@ -6,9 +6,9 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set ormlite_version 5.6
+@set ormlite_version 6.0
 @set ormlite_year 2021
-@set ormlite_date June @value{ormlite_year}
+@set ormlite_date November @value{ormlite_year}
 @set package ORMLite
 @c ----------------------------------------------------------------
 
@@ -3407,7 +3407,7 @@ public class DatabaseConfigUtil extends OrmLiteConfigUtil @{
 @item You will need to run this utility locally on your development box (not in an Android device), whenever you make a change to one of
 your data classes.  This means that right now, this @emph{must} be done by hand to keep the configuration file in sync with your database
 classes.  To run the utility you will need to use the local Java runtime environment (JRE).  Under eclipse, edit the "Run Configuration" for
-the utility, select the JRE tab, and select an alternative JRE (1.5 or 1.6).  Your project's JRE should be undefined since it is an Android
+the utility, select the JRE tab, and select an alternative JRE (1.7 or above).  Your project's JRE should be undefined since it is an Android
 application.  You'll also need to remove the Android bootstrap entry from the Classpath tab.
 
 @item By default this utility will look in the current directory and below in files ending in @code{.java} for the existence of one of the
@@ -4737,7 +4737,7 @@ You probably would not want to register the @code{MyDatePersister} above because
 persistence behavior for @emph{all} @code{Date} types.
 
 @c ----------------------------------------------------------------
-@node How to Upgrade, 5.2, Custom Persisters, Top
+@node How to Upgrade, 6.0, Custom Persisters, Top
 @chapter Upgrade From Old Versions
 
 @cindex upgrading from previous versions
@@ -4749,6 +4749,7 @@ However, sometimes when a new version is released, changes are made that require
 and rarely the on-disk database formats. 
 
 @menu
+* 6.0::                 Notes about version 6.0
 * 5.2::                 Notes about version 5.2
 * 5.1::                 Notes about version 5.1
 * 5.0::                 Notes about version 5.0
@@ -4766,7 +4767,19 @@ and rarely the on-disk database formats.
 @end menu
 
 @c ----------------------------------------------------------------
-@node 5.2, 5.1, How to Upgrade, How to Upgrade
+@node 6.0, 5.2, How to Upgrade, How to Upgrade
+@section Notes About Version 6.0
+
+ORMLite now requires Java 7 and no longer supports Java 6.  This means that a number of the different close
+methods now throw @code{Exception} instead of @code{IOException} to match @code{AutoCloseable.close()}.
+
+Also added some provisional @code{Stream} support to lazy foreign collections to help with the proper closing
+of the underlying iterator and marking of it as unsized.
+
+Not a lot of other significant changes so the .0 version number is not otherwise warranted.
+
+@c ----------------------------------------------------------------
+@node 5.2, 5.1, 6.0, How to Upgrade
 @section Notes About Version 5.2
 
 In version 5.2, we fixed issues with the boolean SQL types.  The boolean number type now correctly uses the

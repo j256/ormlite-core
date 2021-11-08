@@ -1,6 +1,5 @@
 package com.j256.ormlite.support;
 
-import java.io.Closeable;
 import java.sql.SQLException;
 
 import com.j256.ormlite.dao.ObjectCache;
@@ -11,7 +10,7 @@ import com.j256.ormlite.field.SqlType;
  * 
  * @author graywatson
  */
-public interface CompiledStatement extends Closeable {
+public interface CompiledStatement extends AutoCloseable {
 
 	/**
 	 * Returns the number of columns in this statement.

@@ -1,6 +1,5 @@
 package com.j256.ormlite.dao;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -598,7 +597,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	@Override
-	public void closeLastIterator() throws IOException {
+	public void closeLastIterator() throws Exception {
 		if (lastIterator != null) {
 			lastIterator.close();
 			lastIterator = null;
