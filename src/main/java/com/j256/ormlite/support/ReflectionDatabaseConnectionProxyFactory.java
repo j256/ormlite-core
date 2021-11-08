@@ -3,8 +3,6 @@ package com.j256.ormlite.support;
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 
-import com.j256.ormlite.misc.SqlExceptionUtil;
-
 /**
  * Database connection proxy factory that uses reflection to create the proxied connection. The class in question should
  * have a constructor that takes a {@link DatabaseConnection} object.
@@ -38,7 +36,7 @@ public class ReflectionDatabaseConnectionProxyFactory implements DatabaseConnect
 		try {
 			return constructor.newInstance(realConnection);
 		} catch (Exception e) {
-			throw SqlExceptionUtil.create("Could not create a new instance of " + proxyClass, e);
+			throw new SQLException("Could not create a new instance of " + proxyClass, e);
 		}
 	}
 }

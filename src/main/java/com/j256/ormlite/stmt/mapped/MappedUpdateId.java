@@ -6,7 +6,6 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableInfo;
 
@@ -49,7 +48,7 @@ public class MappedUpdateId<T, ID> extends BaseMappedStatement<T, ID> {
 			}
 			return rowC;
 		} catch (SQLException e) {
-			throw SqlExceptionUtil.create("Unable to run update-id stmt on object " + data + ": " + statement, e);
+			throw new SQLException("Unable to run update-id stmt on object " + data + ": " + statement, e);
 		}
 	}
 

@@ -6,7 +6,6 @@ import java.text.ParseException;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
@@ -40,7 +39,7 @@ public class DateType extends BaseDateType {
 		try {
 			return new Timestamp(parseDateString(dateFormatConfig, defaultStr).getTime());
 		} catch (ParseException e) {
-			throw SqlExceptionUtil.create(
+			throw new SQLException(
 					"Problems parsing default date string '" + defaultStr + "' using '" + dateFormatConfig + '\'', e);
 		}
 	}

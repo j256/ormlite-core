@@ -17,16 +17,15 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.dao.EagerForeignCollection;
 import com.j256.ormlite.dao.ForeignCollection;
-import com.j256.ormlite.dao.StreamableLazyForeignCollection;
 import com.j256.ormlite.dao.LazyForeignCollection;
 import com.j256.ormlite.dao.ObjectCache;
+import com.j256.ormlite.dao.StreamableLazyForeignCollection;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.types.SerializableType;
 import com.j256.ormlite.field.types.VoidType;
 import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
-import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.stmt.mapped.MappedQueryForFieldEq;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
@@ -127,17 +126,16 @@ public class FieldType {
 				try {
 					method = persisterClass.getDeclaredMethod("getSingleton");
 				} catch (Exception e) {
-					throw SqlExceptionUtil
-							.create("Could not find getSingleton static method on class " + persisterClass, e);
+					throw new SQLException("Could not find getSingleton static method on class " + persisterClass, e);
 				}
 				Object result;
 				try {
 					result = method.invoke(null);
 				} catch (InvocationTargetException e) {
-					throw SqlExceptionUtil.create("Could not run getSingleton method on class " + persisterClass,
+					throw new SQLException("Could not run getSingleton method on class " + persisterClass,
 							e.getTargetException());
 				} catch (Exception e) {
-					throw SqlExceptionUtil.create("Could not run getSingleton method on class " + persisterClass, e);
+					throw new SQLException("Could not run getSingleton method on class " + persisterClass, e);
 				}
 				if (result == null) {
 					throw new SQLException(
@@ -146,8 +144,7 @@ public class FieldType {
 				try {
 					dataPersister = (DataPersister) result;
 				} catch (Exception e) {
-					throw SqlExceptionUtil
-							.create("Could not cast result of static getSingleton method to DataPersister from class "
+					throw new SQLException("Could not cast result of static getSingleton method to DataPersister from class "
 									+ persisterClass, e);
 				}
 			}
@@ -583,21 +580,20 @@ public class FieldType {
 				field.set(data, val);
 			} catch (IllegalArgumentException e) {
 				if (val == null) {
-					throw SqlExceptionUtil.create("Could not assign object '" + val + "' to field " + this, e);
+					throw new SQLException("Could not assign object '" + val + "' to field " + this, e);
 				} else {
-					throw SqlExceptionUtil.create(
+					throw new SQLException(
 							"Could not assign object '" + val + "' of type " + val.getClass() + " to field " + this, e);
 				}
 			} catch (IllegalAccessException e) {
-				throw SqlExceptionUtil.create(
+				throw new SQLException(
 						"Could not assign object '" + val + "' of type " + val.getClass() + "' to field " + this, e);
 			}
 		} else {
 			try {
 				fieldSetMethod.invoke(data, val);
 			} catch (Exception e) {
-				throw SqlExceptionUtil
-						.create("Could not call " + fieldSetMethod + " on object with '" + val + "' for " + this, e);
+				throw new SQLException("Could not call " + fieldSetMethod + " on object with '" + val + "' for " + this, e);
 			}
 		}
 	}
@@ -626,13 +622,13 @@ public class FieldType {
 				// field object may not be a T yet
 				val = field.get(object);
 			} catch (Exception e) {
-				throw SqlExceptionUtil.create("Could not get field value for " + this, e);
+				throw new SQLException("Could not get field value for " + this, e);
 			}
 		} else {
 			try {
 				val = fieldGetMethod.invoke(object);
 			} catch (Exception e) {
-				throw SqlExceptionUtil.create("Could not call " + fieldGetMethod + " for " + this, e);
+				throw new SQLException("Could not call " + fieldGetMethod + " for " + this, e);
 			}
 		}
 

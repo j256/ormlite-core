@@ -267,7 +267,7 @@ public class TransactionManager {
 				if (e instanceof SQLException) {
 					throw (SQLException) e;
 				} else {
-					throw SqlExceptionUtil.create("Transaction callable threw non-SQL exception", e);
+					throw new SQLException("Transaction callable threw non-SQL exception", e);
 				}
 			}
 		} finally {

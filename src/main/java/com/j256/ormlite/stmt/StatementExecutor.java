@@ -20,7 +20,6 @@ import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.misc.IOUtils;
-import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.misc.TransactionManager;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.stmt.mapped.MappedCreate;
@@ -654,7 +653,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 			} catch (SQLException e) {
 				throw e;
 			} catch (Exception e) {
-				throw SqlExceptionUtil.create("Batch tasks callable threw non-SQL exception", e);
+				throw new SQLException("Batch tasks callable threw non-SQL exception", e);
 			}
 		} finally {
 			if (resetAutoCommit) {

@@ -9,7 +9,6 @@ import java.util.List;
 
 import com.j256.ormlite.field.DatabaseFieldConfig;
 import com.j256.ormlite.field.DatabaseFieldConfigLoader;
-import com.j256.ormlite.misc.SqlExceptionUtil;
 
 /**
  * Database table configuration loader which reads and writes {@link DatabaseTableConfig} from a text file/stream.
@@ -51,7 +50,7 @@ public class DatabaseTableConfigLoader {
 			try {
 				line = reader.readLine();
 			} catch (IOException e) {
-				throw SqlExceptionUtil.create("Could not read DatabaseTableConfig from stream", e);
+				throw new SQLException("Could not read DatabaseTableConfig from stream", e);
 			}
 			if (line == null) {
 				break;
@@ -92,7 +91,7 @@ public class DatabaseTableConfigLoader {
 		try {
 			writeConfig(writer, config);
 		} catch (IOException e) {
-			throw SqlExceptionUtil.create("Could not write config to writer", e);
+			throw new SQLException("Could not write config to writer", e);
 		}
 	}
 
@@ -162,7 +161,7 @@ public class DatabaseTableConfigLoader {
 			try {
 				line = reader.readLine();
 			} catch (IOException e) {
-				throw SqlExceptionUtil.create("Could not read next field from config file", e);
+				throw new SQLException("Could not read next field from config file", e);
 			}
 			if (line == null || line.equals(CONFIG_FILE_FIELDS_END)) {
 				break;

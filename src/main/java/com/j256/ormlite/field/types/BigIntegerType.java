@@ -5,7 +5,6 @@ import java.sql.SQLException;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
@@ -39,7 +38,7 @@ public class BigIntegerType extends BaseDataType {
 		try {
 			return new BigInteger(defaultStr).toString();
 		} catch (IllegalArgumentException e) {
-			throw SqlExceptionUtil.create(
+			throw new SQLException(
 					"Problems with field " + fieldType + " parsing default BigInteger string '" + defaultStr + "'", e);
 		}
 	}
@@ -54,8 +53,8 @@ public class BigIntegerType extends BaseDataType {
 		try {
 			return new BigInteger((String) sqlArg);
 		} catch (IllegalArgumentException e) {
-			throw SqlExceptionUtil
-					.create("Problems with column " + columnPos + " parsing BigInteger string '" + sqlArg + "'", e);
+			throw new SQLException("Problems with column " + columnPos + " parsing BigInteger string '" + sqlArg + "'",
+					e);
 		}
 	}
 

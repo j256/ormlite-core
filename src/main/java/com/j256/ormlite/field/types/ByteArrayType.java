@@ -6,7 +6,6 @@ import java.util.Arrays;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
@@ -84,7 +83,7 @@ public class ByteArrayType extends BaseDataType {
 			try {
 				return stringValue.getBytes(fieldType.getFormat());
 			} catch (UnsupportedEncodingException e) {
-				throw SqlExceptionUtil.create("Could not convert default string: " + stringValue, e);
+				throw new SQLException("Could not convert default string: " + stringValue, e);
 			}
 		}
 	}
