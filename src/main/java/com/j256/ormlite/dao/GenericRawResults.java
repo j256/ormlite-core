@@ -1,6 +1,5 @@
 package com.j256.ormlite.dao;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -57,5 +56,5 @@ public interface GenericRawResults<T> extends CloseableWrappedIterable<T> {
 	 * {@link Dao#iterator()} or another iterator method was called.
 	 */
 	@Override
-	public void close() throws IOException;
+	public void close() throws Exception;
 }

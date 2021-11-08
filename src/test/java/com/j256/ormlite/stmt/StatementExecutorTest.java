@@ -10,7 +10,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
@@ -400,7 +399,7 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		}
 
 		@Override
-		public void close() throws IOException {
+		public void close() throws Exception {
 			connectionSource.close();
 		}
 	}

@@ -1,6 +1,5 @@
 package com.j256.ormlite.h2;
 
-import java.io.IOException;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
@@ -37,7 +36,7 @@ public class H2ConnectionSource implements ConnectionSource {
 	}
 
 	@Override
-	public void close() throws IOException {
+	public void close() throws Exception {
 		if (connection != null) {
 			connection.close();
 			connection = null;
