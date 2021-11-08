@@ -4750,6 +4750,7 @@ and rarely the on-disk database formats.
 
 @menu
 * 6.0::                 Notes about version 6.0
+* 5.7::                 Notes about version 5.7
 * 5.2::                 Notes about version 5.2
 * 5.1::                 Notes about version 5.1
 * 5.0::                 Notes about version 5.0
@@ -4767,16 +4768,19 @@ and rarely the on-disk database formats.
 @end menu
 
 @c ----------------------------------------------------------------
-@node 6.0, 5.2, How to Upgrade, How to Upgrade
+@node 6.0, 5.7, How to Upgrade, How to Upgrade
 @section Notes About Version 6.0
 
-ORMLite now requires Java 7 and no longer supports Java 6.  This means that a number of the different close
+ORMLite now requires Java 7 and no longer supports Java 6.  This allows us to change to using the
+@code{AutoCloseable} interface added in Java 7 which means that a number of the different close
 methods now throw @code{Exception} instead of @code{IOException} to match @code{AutoCloseable.close()}.
 
-Also added some provisional @code{Stream} support to lazy foreign collections to help with the proper closing
-of the underlying iterator and marking of it as unsized.
+@c ----------------------------------------------------------------
+@node 5.7, 5.2, 6.0, How to Upgrade
+@section Notes About Version 5.2
 
-Not a lot of other significant changes so the .0 version number is not otherwise warranted.
+Added some provisional @code{Stream} support to lazy foreign collections to help with the proper closing
+of the underlying iterator and marking of it as unsized.
 
 @c ----------------------------------------------------------------
 @node 5.2, 5.1, 6.0, How to Upgrade
