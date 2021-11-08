@@ -162,7 +162,8 @@ public class Where<T, ID> {
 	 * use the {@link #and(int)} method.
 	 * </p>
 	 */
-	public Where<T, ID> and(Where<T, ID> first, Where<T, ID> second, Where<T, ID>... others) {
+	public Where<T, ID> and(Where<T, ID> first, Where<T, ID> second,
+			@SuppressWarnings("unchecked") Where<T, ID>... others) {
 		Clause[] clauses = buildClauseArray(others, "AND");
 		Clause secondClause = pop("AND");
 		Clause firstClause = pop("AND");
@@ -408,7 +409,8 @@ public class Where<T, ID> {
 	 * use the {@link #or(int)} method.
 	 * </p>
 	 */
-	public Where<T, ID> or(Where<T, ID> left, Where<T, ID> right, Where<T, ID>... others) {
+	public Where<T, ID> or(Where<T, ID> left, Where<T, ID> right,
+			@SuppressWarnings("unchecked") Where<T, ID>... others) {
 		Clause[] clauses = buildClauseArray(others, "OR");
 		Clause secondClause = pop("OR");
 		Clause firstClause = pop("OR");

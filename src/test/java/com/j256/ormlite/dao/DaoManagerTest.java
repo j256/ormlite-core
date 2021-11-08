@@ -199,7 +199,6 @@ public class DaoManagerTest extends BaseCoreTest {
 		 * The answer was to do a better job of pre-caching the DAOs in the DaoManager.
 		 */
 		DatabaseTableConfig<SelfReference> config = DatabaseTableConfig.fromClass(databaseType, SelfReference.class);
-		@SuppressWarnings("unchecked")
 		List<DatabaseTableConfig<?>> configs = new ArrayList<DatabaseTableConfig<?>>(Arrays.asList(config));
 		DaoManager.addCachedDatabaseConfigs(configs);
 		// this used to throw an exception
@@ -211,7 +210,6 @@ public class DaoManagerTest extends BaseCoreTest {
 		DaoManager.clearCache();
 		DatabaseTableConfig<LoopOne> config1 = DatabaseTableConfig.fromClass(databaseType, LoopOne.class);
 		DatabaseTableConfig<LoopTwo> config2 = DatabaseTableConfig.fromClass(databaseType, LoopTwo.class);
-		@SuppressWarnings("unchecked")
 		List<DatabaseTableConfig<?>> configs = new ArrayList<DatabaseTableConfig<?>>(Arrays.asList(config1, config2));
 		DaoManager.addCachedDatabaseConfigs(configs);
 		assertNotNull(DaoManager.createDao(connectionSource, LoopOne.class));
@@ -229,7 +227,6 @@ public class DaoManagerTest extends BaseCoreTest {
 				DatabaseTableConfig.fromClass(databaseType, MoreComplexLoopThree.class);
 		DatabaseTableConfig<MoreComplexLoopFour> config4 =
 				DatabaseTableConfig.fromClass(databaseType, MoreComplexLoopFour.class);
-		@SuppressWarnings("unchecked")
 		List<DatabaseTableConfig<?>> configs =
 				new ArrayList<DatabaseTableConfig<?>>(Arrays.asList(config1, config2, config3, config4));
 		DaoManager.addCachedDatabaseConfigs(configs);
