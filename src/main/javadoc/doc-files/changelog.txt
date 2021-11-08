@@ -1,9 +1,9 @@
 6.0: ?/?/2021
-	* CORE: Moved to support for java 7.  Dropped support for Java 6.
+	* CORE: Added support for java 7.  Dropped support for Java 6.
 	* CORE: Migrated to supporting AutoCloseable.  Most close() methods now throw Exception not IOException.
 	* CORE: Removed SqlExceptionUtil which hasn't been needed since Java 6.
-	* JDBC: jar now includes the -core jar.  No need to import ormlite-core anymore.
-	* ANDROID: jar now includes the -core jar.  No need to import ormlite-core anymore.
+	* JDBC: ormlite-jdbc jar now includes the -core jar.  No need to import ormlite-core anymore.
+	* ANDROID: ormlite-android jar now includes the -core jar.  No need to import ormlite-core anymore.
 
 5.7: 11/7/2021
 	* CORE: Fixed possible thread issue around field-name lookups.  Thanks to dlew.
