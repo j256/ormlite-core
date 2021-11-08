@@ -4777,7 +4777,7 @@ methods now throw @code{Exception} instead of @code{IOException} to match @code{
 
 @c ----------------------------------------------------------------
 @node 5.7, 5.2, 6.0, How to Upgrade
-@section Notes About Version 5.2
+@section Notes About Version 5.7
 
 Added some provisional @code{Stream} support to lazy foreign collections to help with the proper closing
 of the underlying iterator and marking of it as unsized.
