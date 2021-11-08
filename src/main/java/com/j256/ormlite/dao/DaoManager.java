@@ -10,7 +10,6 @@ import java.util.Map;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
-import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.DatabaseTableConfig;
@@ -93,7 +92,7 @@ public class DaoManager {
 				dao = (Dao<?, ?>) daoConstructor.newInstance(arguments);
 				logger.debug("created dao for class {} from constructor", clazz);
 			} catch (Exception e) {
-				throw SqlExceptionUtil.create("Could not call the constructor in class " + daoClass, e);
+				throw new SQLException("Could not call the constructor in class " + daoClass, e);
 			}
 		}
 
@@ -392,7 +391,7 @@ public class DaoManager {
 			try {
 				dao = (Dao<?, ?>) constructor.newInstance(arguments);
 			} catch (Exception e) {
-				throw SqlExceptionUtil.create("Could not call the constructor in class " + daoClass, e);
+				throw new SQLException("Could not call the constructor in class " + daoClass, e);
 			}
 		}
 

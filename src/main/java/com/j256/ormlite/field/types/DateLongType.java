@@ -5,7 +5,6 @@ import java.util.Date;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
@@ -41,8 +40,8 @@ public class DateLongType extends BaseDateType {
 		try {
 			return Long.parseLong(defaultStr);
 		} catch (NumberFormatException e) {
-			throw SqlExceptionUtil
-					.create("Problems with field " + fieldType + " parsing default date-long value: " + defaultStr, e);
+			throw new SQLException(
+					"Problems with field " + fieldType + " parsing default date-long value: " + defaultStr, e);
 		}
 	}
 

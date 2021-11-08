@@ -5,8 +5,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import com.j256.ormlite.misc.SqlExceptionUtil;
-
 /**
  * Database field configuration loader which reads and writes {@link DatabaseFieldConfig} from a text file/stream.
  * 
@@ -36,7 +34,7 @@ public class DatabaseFieldConfigLoader {
 			try {
 				line = reader.readLine();
 			} catch (IOException e) {
-				throw SqlExceptionUtil.create("Could not read DatabaseFieldConfig from stream", e);
+				throw new SQLException("Could not read DatabaseFieldConfig from stream", e);
 			}
 			if (line == null) {
 				break;
@@ -72,7 +70,7 @@ public class DatabaseFieldConfigLoader {
 		try {
 			writeConfig(writer, config, tableName);
 		} catch (IOException e) {
-			throw SqlExceptionUtil.create("Could not write config to writer", e);
+			throw new SQLException("Could not write config to writer", e);
 		}
 	}
 

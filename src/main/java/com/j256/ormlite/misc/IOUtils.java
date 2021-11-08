@@ -45,7 +45,7 @@ public class IOUtils {
 			try {
 				closeable.close();
 			} catch (Exception e) {
-				throw SqlExceptionUtil.create("could not close " + label, e);
+				throw new SQLException("could not close " + label, e);
 			}
 		}
 	}
@@ -58,7 +58,7 @@ public class IOUtils {
 			try {
 				closeable.close();
 			} catch (IOException e) {
-				throw SqlExceptionUtil.create("could not close " + label, e);
+				throw new SQLException("could not close " + label, e);
 			}
 		}
 	}

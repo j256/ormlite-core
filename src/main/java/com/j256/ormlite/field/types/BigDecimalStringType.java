@@ -6,7 +6,6 @@ import java.sql.SQLException;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
@@ -40,7 +39,7 @@ public class BigDecimalStringType extends BaseDataType {
 		try {
 			return new BigDecimal(defaultStr).toString();
 		} catch (IllegalArgumentException e) {
-			throw SqlExceptionUtil.create(
+			throw new SQLException(
 					"Problems with field " + fieldType + " parsing default BigDecimal string '" + defaultStr + "'", e);
 		}
 	}
@@ -55,8 +54,8 @@ public class BigDecimalStringType extends BaseDataType {
 		try {
 			return new BigDecimal((String) sqlArg);
 		} catch (IllegalArgumentException e) {
-			throw SqlExceptionUtil
-					.create("Problems with column " + columnPos + " parsing BigDecimal string '" + sqlArg + "'", e);
+			throw new SQLException("Problems with column " + columnPos + " parsing BigDecimal string '" + sqlArg + "'",
+					e);
 		}
 	}
 

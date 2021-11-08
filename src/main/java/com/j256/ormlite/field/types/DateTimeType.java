@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
@@ -56,8 +55,8 @@ public class DateTimeType extends BaseDataType {
 		try {
 			return Long.parseLong(defaultStr);
 		} catch (NumberFormatException e) {
-			throw SqlExceptionUtil
-					.create("Problems with field " + fieldType + " parsing default DateTime value: " + defaultStr, e);
+			throw new SQLException(
+					"Problems with field " + fieldType + " parsing default DateTime value: " + defaultStr, e);
 		}
 	}
 
@@ -118,7 +117,7 @@ public class DateTimeType extends BaseDataType {
 			}
 			return millisConstructor.newInstance(sqlArg);
 		} catch (Exception e) {
-			throw SqlExceptionUtil.create("Could not use reflection to construct a Joda DateTime", e);
+			throw new SQLException("Could not use reflection to construct a Joda DateTime", e);
 		}
 	}
 
@@ -134,8 +133,7 @@ public class DateTimeType extends BaseDataType {
 				return (Long) getMillisMethod.invoke(javaObject);
 			}
 		} catch (Exception e) {
-			throw SqlExceptionUtil.create("Could not use reflection to get millis from Joda DateTime: " + javaObject,
-					e);
+			throw new SQLException("Could not use reflection to get millis from Joda DateTime: " + javaObject, e);
 		}
 	}
 

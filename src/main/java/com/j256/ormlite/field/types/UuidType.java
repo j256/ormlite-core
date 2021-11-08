@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
@@ -55,8 +54,7 @@ public class UuidType extends BaseDataType {
 		try {
 			return java.util.UUID.fromString(uuidStr);
 		} catch (IllegalArgumentException e) {
-			throw SqlExceptionUtil
-					.create("Problems with column " + columnPos + " parsing UUID-string '" + uuidStr + "'", e);
+			throw new SQLException("Problems with column " + columnPos + " parsing UUID-string '" + uuidStr + "'", e);
 		}
 	}
 

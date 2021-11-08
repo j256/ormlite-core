@@ -18,16 +18,16 @@ public class TestUtils {
 		if (!directory.exists()) {
 			return;
 		}
-		if (directory.isFile()) {
-			directory.delete();
-			return;
-		}
-		for (File file : directory.listFiles()) {
-			if (file.isDirectory()) {
-				deleteDirectory(file);
+		if (directory.isDirectory()) {
+			for (File file : directory.listFiles()) {
+				if (file.isDirectory()) {
+					deleteDirectory(file);
+				} else {
+					file.delete();
+				}
 			}
-			file.delete();
 		}
+		directory.delete();
 	}
 
 	public static String appendEscapedEntityName(DatabaseType databaseType, String word) {
