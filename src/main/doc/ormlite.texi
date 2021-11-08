@@ -4783,7 +4783,7 @@ Added some provisional @code{Stream} support to lazy foreign collections to help
 of the underlying iterator and marking of it as unsized.
 
 @c ----------------------------------------------------------------
-@node 5.2, 5.1, 6.0, How to Upgrade
+@node 5.2, 5.1, 5.7, How to Upgrade
 @section Notes About Version 5.2
 
 In version 5.2, we fixed issues with the boolean SQL types.  The boolean number type now correctly uses the
