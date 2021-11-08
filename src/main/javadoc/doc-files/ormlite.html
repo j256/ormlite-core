@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on June 22, 2021 by texi2html 1.82
+<!-- Created on November 7, 2021 by texi2html 1.82
 texi2html was written by: 
             Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -51,7 +51,7 @@ ul.toc {list-style: none}
 <a name="ORMLite"></a>
 <h1 class="settitle">ORMLite</h1>
 
-<p>Version 5.6 &ndash; June 2021
+<p>Version 5.7 &ndash; November 2021
 </p>
 <a name="index-introduction"></a>
 <a name="index-author"></a>
@@ -164,9 +164,9 @@ specific page after reading these pages here. See section <a href="#Use-With-And
 <p>To get started with ORMLite, you will need to download the jar files.  The <a href="http://ormlite.com/releases/">ORMLite release page</a>
 is the default repository but the jars are also available from the <a href="http://repo1.maven.org/maven2/com/j256/ormlite/">central maven repository</a> and from <a href="http://sourceforge.net/projects/ormlite/files/">Sourceforge</a>.
 </p>
-<p>Users that are connecting to SQL databases via JDBC connections will need to download the <code>ormlite-jdbc-5.6.jar</code>
-and <code>ormlite-core-5.6.jar</code> files.  For use with Android applications, you should download the
-<code>ormlite-android-5.6.jar</code> and <code>ormlite-core-5.6.jar</code> files instead.  For either JDBC or
+<p>Users that are connecting to SQL databases via JDBC connections will need to download the <code>ormlite-jdbc-5.7.jar</code>
+and <code>ormlite-core-5.7.jar</code> files.  For use with Android applications, you should download the
+<code>ormlite-android-5.7.jar</code> and <code>ormlite-core-5.7.jar</code> files instead.  For either JDBC or
 Android you will also need the ormlite-core release which has the ORMLite backend implementations.  ORMLite does not have
 any required external dependencies although there are some <em>optional</em> packages that you may want to use.  See section <a href="#Dependencies">External Dependencies</a>.  The
 code works with Java 5 or later.
@@ -1201,45 +1201,17 @@ of this type may not be possible depending on the database type.
 <dd>
 <p>Persisted as SQL type <code>BOOLEAN</code>.
 </p>
-<a name="index-Date"></a>
-<a name="index-java-date"></a>
-<p><a name="datatype-date"></a>
-</p></dd>
-<dt> <code>java.util.Date (DataType.DATE)</code></dt>
+<a name="index-boolean-character"></a>
+</dd>
+<dt> <code>boolean or Boolean (DataType.BOOLEAN or DataType.BOOLEAN_OBJ) as a character</code></dt>
 <dd>
-<p>Persisted as SQL type <code>TIMESTAMP</code>.  This type automatically uses an internal <code>?</code> argument because the string
-format of it is unreliable to match the database format.  See section <a href="#Select-Arguments">Using Select Arguments</a>.  See also <code>DATE_LONG</code> and
-<code>DATE_STRING</code>.
+<p>Persisted as SQL type <code>BOOLEAN</code>.
 </p>
-<p><em>NOTE:</em> This is a different class from <code>java.sql.Date</code> which is handled by <code>DataType.SQL_DATE</code>.
-</p>
-<p><em>NOTE:</em> Certain databases only provide seconds resolution so the milliseconds will be 0.
-</p>
-<a name="index-java-long-date"></a>
-<p><a name="datatype-date-long"></a>
-</p></dd>
-<dt> <code>java.util.Date (DataType.DATE_LONG)</code></dt>
+<a name="index-boolean-integer"></a>
+</dd>
+<dt> <code>boolean or Boolean (DataType.BOOLEAN or DataType.BOOLEAN_OBJ) as an integer</code></dt>
 <dd>
-<p>You can also specify the <code>dataType</code> field to the <code>@DatabaseField</code> annotation as a <code>DataType.DATE_LONG</code>
-in which case the milliseconds value of the <code>Date</code> will be stored as an LONG.  See also <code>DATE</code> and <code>DATE_STRING</code>.
-</p>
-<p><em>NOTE:</em> This is a different class from <code>java.sql.Date</code> which is handled by <code>DataType.SQL_DATE</code>.
-</p>
-<p><em>NOTE:</em> Certain databases only provide seconds resolution so the milliseconds will be 0.
-</p>
-<a name="index-java-string-date"></a>
-<a name="index-date-formats"></a>
-<p><a name="datatype-date-string"></a>
-</p></dd>
-<dt> <code>java.util.Date (DATE_STRING)</code></dt>
-<dd>
-<p>You can also specify the <code>dataType</code> field to the <code>@DatabaseField</code> annotation as a <code>DataType.DATE_STRING</code>
-in which case the date will be stored as a string in <code>yyyy-MM-dd HH:mm:ss.SSSSSS</code> format.  You can use the
-<code>format</code> field in <code>DatabaseField</code> to set the date to another format.  See also <code>DATE</code> and <code>DATE_LONG</code>.
-</p>
-<p><em>NOTE:</em> This is a different class from <code>java.sql.Date</code> which is handled by <code>DataType.SQL_DATE</code>.
-</p>
-<p><em>NOTE:</em> Certain databases only provide seconds resolution so the milliseconds will be 0.
+<p>Persisted as SQL type <code>INTEGER</code>.  False is 0 and every other value is true.
 </p>
 <a name="index-byte"></a>
 <p><a name="datatype-byte"></a>
@@ -1415,10 +1387,60 @@ and uses the string constructor to convert it back again.
 in which case a <code>java.math.BigDecimal</code> field will be persisted as a <code>NUMERIC</code> type.  This is only supported by some
 database types and with various default precision settings.  Android should use the default <code>DataType.BIG_DECIMAL</code>.
 </p>
+<a name="index-Date"></a>
+<a name="index-java-date"></a>
+<a name="index-date_002c-java"></a>
+<p><a name="datatype-date"></a>
+</p></dd>
+<dt> <code>java.util.Date (DataType.DATE)</code></dt>
+<dd>
+<p>Persisted as SQL type <code>TIMESTAMP</code>.  This type automatically uses an internal <code>?</code> argument because the string
+format of it is unreliable to match the database format.  See section <a href="#Select-Arguments">Using Select Arguments</a>.  See also <code>DATE_LONG</code> and
+<code>DATE_STRING</code>.
+</p>
+<p><em>NOTE:</em> This is a different class from <code>java.sql.Date</code> which is handled by <code>DataType.SQL_DATE</code>.
+</p>
+<p><em>NOTE:</em> Certain databases only provide seconds resolution so the milliseconds will be 0.
+</p>
+<a name="index-java-long-date"></a>
+<a name="index-date_002c-java-long"></a>
+<p><a name="datatype-date-long"></a>
+</p></dd>
+<dt> <code>java.util.Date (DataType.DATE_LONG)</code></dt>
+<dd>
+<p>You can also specify the <code>dataType</code> field to the <code>@DatabaseField</code> annotation as a <code>DataType.DATE_LONG</code>
+in which case the milliseconds value of the <code>Date</code> will be stored as an LONG.  See also <code>DATE</code> and <code>DATE_STRING</code>.
+</p>
+<p><em>NOTE:</em> This is a different class from <code>java.sql.Date</code> which is handled by <code>DataType.SQL_DATE</code>.
+</p>
+<p><em>NOTE:</em> Certain databases only provide seconds resolution so the milliseconds will be 0.
+</p>
+<a name="index-Date-integer"></a>
+<a name="index-java-date-integer"></a>
+<a name="index-date_002c-java-integer"></a>
+</dd>
+<dt> <code>java.util.Date (DataType.DATE_INTEGER)</code></dt>
+<dd>
+<p>Persisted as SQL type <code>INTEGER</code>.  This stores the date as integer seconds since epoch.
+</p>
+<a name="index-java-string-date"></a>
+<a name="index-date-formats"></a>
+<p><a name="datatype-date-string"></a>
+</p></dd>
+<dt> <code>java.util.Date (DATE_STRING)</code></dt>
+<dd>
+<p>You can also specify the <code>dataType</code> field to the <code>@DatabaseField</code> annotation as a <code>DataType.DATE_STRING</code>
+in which case the date will be stored as a string in <code>yyyy-MM-dd HH:mm:ss.SSSSSS</code> format.  You can use the
+<code>format</code> field in <code>DatabaseField</code> to set the date to another format.  See also <code>DATE</code> and <code>DATE_LONG</code>.
+</p>
+<p><em>NOTE:</em> This is a different class from <code>java.sql.Date</code> which is handled by <code>DataType.SQL_DATE</code>.
+</p>
+<p><em>NOTE:</em> Certain databases only provide seconds resolution so the milliseconds will be 0.
+</p>
 <a name="index-DateTime-Joda-type"></a>
 <a name="index-Joda-DateTime-type"></a>
 </dd>
-<dt> <code>DateTime (DataType.DATE_TIME)</code></dt>
+<dt> <code>org.joda.time.DateTime (DataType.DATE_TIME)</code></dt>
 <dd>
 <p>This stores the Joda <code>DateTime</code> into the database as long epoch millis.  This persister uses reflection to avoid
 setting up a dependency with Joda jars.  You can define a custom data persister if you want to natively use the class. 
@@ -1458,6 +1480,13 @@ time-stamp to another format.
 </p>
 <p><em>NOTE:</em> It is recommended that you use the <code>java.util.Date</code> class instead which is the
 <code>DataType.DATE_STRING</code> type.  See also <code>DATE_STRING</code>.
+</p>
+<a name="index-Currency"></a>
+<a name="index-SQL-Timestamp-type-1"></a>
+</dd>
+<dt> <code>java.util.Currency (DataType.CURRENCY)</code></dt>
+<dd>
+<p>Persisted as SQL type <code>STRING</code>.
 </p>
 </dd>
 </dl>
@@ -1754,18 +1783,19 @@ may have to set the right database type on your ConnectionSource directly if it 
 </dd>
 <dt> Netezza</dt>
 <dd>
-<p>As of August 2011, the driver should be considered alpha and possibly with bugs.  I do not currently have access to a server running a
-Netezza database. We will try to keep this driver up to date with the help of contributors.  Thanks to Richard Kooijman for the
-driver. Please contact us if you want to help with development of this driver.
+<p>There is some support for Netezza although it should be considered beta and possibly with bugs.  I do not currently have
+access to a server running a Netezza database. We will try to keep this driver up to date with the help of contributors.
+Thanks to Richard Kooijman for the driver. Please contact us if you want to help with development of this driver.
 </p>  
 <a name="index-ODBC-database"></a>
 <a name="index-Microsoft-ODBC-database"></a>
 </dd>
 <dt> ODBC</dt>
 <dd>
-<p>As of August 2011, the driver should be considered alpha and possibly with bugs.  I do not have access to a server running Microsoft&rsquo;s
-Open Database Connectivity.  We will try to keep this driver up to date with the help of contributors.  Thanks to Dale Asberry for
-the driver.  Please contact us if you want to help with development of this driver.
+<p>There also some support for ODBC although it should be considered beta and possibly with bugs.  I do not have access to
+a server running Microsoft&rsquo;s Open Database Connectivity.  We will try to keep this driver up to date with the help of
+contributors.  Thanks to Dale Asberry for the driver.  Please contact us if you want to help with development of this
+driver.
 </p>
 <a name="index-DB2-database"></a>
 </dd>
@@ -3916,6 +3946,9 @@ database specific features.
 <a name="index-query-arguments"></a>
 <a name="index-select-arguments"></a>
 <a name="index-arguments-to-queries"></a>
+<a name="index-argument-placeholders"></a>
+<a name="index-placeholders_002c-argument"></a>
+<a name="index-question-marks_002c-queries"></a>
 <a name="index-sql-_003f"></a>
 <p>Select Arguments are arguments that are used in WHERE operations can be specified directly as value arguments (as in the
 above examples) or as a <code>SelectArg</code> object.  SelectArgs are used to set the value of an argument at a later time &ndash;
@@ -3945,14 +3978,15 @@ accounts = accountDao.query(preparedQuery);
 <a name="index-string-quoting-in-queries"></a>
 <a name="index-escaping-arguments"></a>
 <a name="index-SQL-injection-bugs"></a>
-<p>It is a common problem for people to try to build queries or other statements with arguments that contain quote characters.
-These quotes can clash with the auto-generated SQL and result in syntax errors.  In these cases a <code>SelectArg</code> is required.
-In addition, if you are passing in arguments from user-input, you can use <code>SelectArg</code> to protect yourself from SQL
-injection security problems.  Lastly, certain data types use an internal <code>SelectArg</code> object because the string value
-of the object does not reliably match the database form of the object &ndash; <code>java.util.Date</code> is one example of such a type.
+<p>It is a common problem for people to try to build queries or other statements with arguments that contain quote
+characters.  These quotes can clash with the auto-generated SQL and result in syntax errors.  In these cases a
+<code>SelectArg</code> is required.  If you are passing in arguments from any user-input, you can use <code>SelectArg</code> to
+protect yourself from these so called SQL injection security problems.  Lastly, certain data types use an internal
+<code>SelectArg</code> object because the string value of the object does not reliably match the database form of the object
+&ndash; <code>java.util.Date</code> is one example of such a type.
 </p>
-<p><em>NOTE:</em> <code>SelectArg</code> objects have protection against being used in more than one column name.  You must instantiate
-a new object if you want to use a <code>SelectArg</code> with another column.
+<p><em>NOTE:</em> <code>SelectArg</code> objects have protection against being used in more than one column name.  You must
+instantiate a new object if you want to use a <code>SelectArg</code> with another column.
 </p>
 <hr size="6">
 <a name="Column-Arguments"></a>
@@ -4232,9 +4266,6 @@ especially in <code>Method.equals()</code>.  Because annotations use this method
 often garbage collecting thousands of objects and megabytes of space.  Android knows about the issues and a fix has been made but we have
 no idea when these performance improvements will make it into an Android release.
 </p>
-<p>We have made a couple of changes in ORMLite to help work around this issue.  Firstly, we added some reflection hacks to work around
-these problems in the short run.  Annotations using this mechanism run 20 times faster than with the native Android calls.
-</p>
 <p>With a little bit of work (and some caveats), you can remove all annotation work from your application and make DAO creation
 an extremely fast operation.  ORMLite supports the loading of the data configurations from a text configuration file.
 When a DAO is created, these configurations will be used, removing the need for any annotation method calls entirely.
@@ -4283,7 +4314,7 @@ Done.
 <p>The config file generated should look something like:
 </p>
 <table><tr><td>&nbsp;</td><td><pre class="example">#
-# generated on 2011/09/15 01:42:02
+# generated on 2020/09/15 01:42:02
 #
 # --table-start--
 dataClass=com.example.helloandroid.SimpleData
@@ -5638,9 +5669,8 @@ you are looking for performance of a large number of operations. See <a href="#c
 <a name="index-level-1-cache"></a>
 <a name="index-weak-reference-cache"></a>
 
-<p>As of September 2011, one of the newer features in ORMLite is the ability to enable an object cache for a DAO.  The object
-cache keeps an internal collection of objects that have been created or queried and will return a reference to the same
-object if it is handled in the future.  
+<p>ORMLite supports the ability to enable a basic object cache for a DAO.  The object cache keeps an internal collection of
+objects that have been created or queried and will return a reference to the same object if it is handled in the future.  
 </p>
 <p>For example:
 </p>
@@ -5750,7 +5780,7 @@ dependency list.  In this example we are using MySQL but any of the supported JD
         &lt;dependency&gt;
             &lt;groupId&gt;com.j256.ormlite&lt;/groupId&gt;
             &lt;artifactId&gt;ormlite-jdbc&lt;/artifactId&gt;
-            &lt;version&gt;5.6&lt;/version&gt;
+            &lt;version&gt;5.7&lt;/version&gt;
         &lt;/dependency&gt;
         &lt;!-- You will need to add some sort of database driver too.
              In this example we've used MySQL. --&gt;
@@ -7090,6 +7120,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-Android-SQLite-database">Android SQLite database</a></td><td valign="top"><a href="#Database-Notes">2.5 Supported Databases</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Android-strings-resources">Android strings resources</a></td><td valign="top"><a href="#Android-Basics">4.1 Android Basics</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-annotations">annotations</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-argument-placeholders">argument placeholders</a></td><td valign="top"><a href="#Select-Arguments">3.6 Using Select Arguments</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-arguments-to-queries">arguments to queries</a></td><td valign="top"><a href="#Select-Arguments">3.6 Using Select Arguments</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-array-of-bytes">array of bytes</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-assignEmptyForeignCollection">assignEmptyForeignCollection</a></td><td valign="top"><a href="#DAO-Methods">5.4 DAO Methods</a></td></tr>
@@ -7113,6 +7144,8 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-BigDecimal-type">BigDecimal type</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-BigIteger-type">BigIteger type</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-boolean">boolean</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-boolean-character">boolean character</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-boolean-integer">boolean integer</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-building-queries">building queries</a></td><td valign="top"><a href="#Building-Queries">3.2 Building Queries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-bulk-inserts">bulk inserts</a></td><td valign="top"><a href="#Batch-Operations">5.10 Running Batch Operations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-byte">byte</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
@@ -7179,6 +7212,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-creating-an-index">creating an index</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-creating-an-object">creating an object</a></td><td valign="top"><a href="#DAO-Methods">5.4 DAO Methods</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-creating-objects-with-foreign-fields">creating objects with foreign fields</a></td><td valign="top"><a href="#Foreign-Objects">2.12 Foreign Object Fields</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Currency">Currency</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-custom-column-definition">custom column definition</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-custom-column-definition-1">custom column definition</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-custom-data-persister-example">custom data persister example</a></td><td valign="top"><a href="#JDBC-Examples">7.1 JDBC Examples</a></td></tr>
@@ -7222,7 +7256,11 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-DataSourceConnectionSource">DataSourceConnectionSource</a></td><td valign="top"><a href="#Connection-Source">2.3 Connection Sources</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Date">Date</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-date-formats">date formats</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Date-integer">Date integer</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-date-row-last-modified">date row last modified</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-date_002c-java">date, java</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-date_002c-java-integer">date, java integer</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-date_002c-java-long">date, java long</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Date_002c-SQL-type">Date, SQL type</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-DateTime-Joda-type">DateTime Joda type</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-DB2-database">DB2 database</a></td><td valign="top"><a href="#Database-Notes">2.5 Supported Databases</a></td></tr>
@@ -7377,6 +7415,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><th><a name="Index-of-Concepts-1_cp_letter-J">J</a></th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-java-annotations">java annotations</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-java-date">java date</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-java-date-integer">java date integer</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-java-long-date">java long date</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-java-string-date">java string date</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-java_002esql_002eDate-type">java.sql.Date type</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
@@ -7495,6 +7534,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-persisted-field">persisted field</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-persisted-types">persisted types</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-persisting-an-object">persisting an object</a></td><td valign="top"><a href="#DAO-Usage">2.9 DAO Usage</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-placeholders_002c-argument">placeholders, argument</a></td><td valign="top"><a href="#Select-Arguments">3.6 Using Select Arguments</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-pooled-connection-source">pooled connection source</a></td><td valign="top"><a href="#Connection-Source">2.3 Connection Sources</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Postgres-database">Postgres database</a></td><td valign="top"><a href="#Database-Notes">2.5 Supported Databases</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-prepare-the-query">prepare the query</a></td><td valign="top"><a href="#QueryBuilder-Capabilities">3.4 QueryBuilder Capabilities</a></td></tr>
@@ -7531,6 +7571,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-queryForMatchingArgs">queryForMatchingArgs</a></td><td valign="top"><a href="#DAO-Methods">5.4 DAO Methods</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-queryForSameId">queryForSameId</a></td><td valign="top"><a href="#DAO-Methods">5.4 DAO Methods</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-querying-for-foreign-fields">querying for foreign fields</a></td><td valign="top"><a href="#Foreign-Objects">2.12 Foreign Object Fields</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-question-marks_002c-queries">question marks, queries</a></td><td valign="top"><a href="#Select-Arguments">3.6 Using Select Arguments</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-quotes-in-queries">quotes in queries</a></td><td valign="top"><a href="#Select-Arguments">3.6 Using Select Arguments</a></td></tr>
 <tr><td colspan="3"> <hr></td></tr>
 <tr><th><a name="Index-of-Concepts-1_cp_letter-R">R</a></th><td></td><td></td></tr>
@@ -7591,6 +7632,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-SQL-statements_002c-raw">SQL statements, raw</a></td><td valign="top"><a href="#Raw-Statements">2.11 Issuing Raw SQL Statements</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-SQL-Timestamp-string-type">SQL Timestamp string type</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-SQL-Timestamp-type">SQL Timestamp type</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-SQL-Timestamp-type-1">SQL Timestamp type</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-SQL-type">SQL type</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-SQLExceptionDao">SQLExceptionDao</a></td><td valign="top"><a href="#RuntimeExceptionDao">4.4 Runtime Versus SQL Exceptions</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-sqlite-alter-table">sqlite alter table</a></td><td valign="top"><a href="#Upgrading-Schema">4.5 Upgrading Your Schema</a></td></tr>
@@ -7871,7 +7913,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 </tr></table>
 <h1>About This Document</h1>
 <p>
-  This document was generated by <em>Gray Watson</em> on <em>June 22, 2021</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>November 7, 2021</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
 </p>
 <p>
   The buttons in the navigation panels have the following meaning:
@@ -7973,7 +8015,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <hr size="1">
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>June 22, 2021</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>November 7, 2021</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
  </font>
  <br>
 

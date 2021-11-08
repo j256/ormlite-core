@@ -1,4 +1,4 @@
-5.7: ?/??/2021
+5.7: 11/7/2021
 	* CORE: Fixed possible thread issue around field-name lookups.  Thanks to dlew.
 	* CORE: Fixed a number of flaky tests based on field order. Thanks CharlesZKQ, NanaOkada, hwang-pku, and chimo173.
 	* CORE: Upgraded SimpleLogging code to fix annoying startup messages.  Thanks to JayDi85.
