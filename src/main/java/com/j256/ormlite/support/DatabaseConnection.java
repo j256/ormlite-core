@@ -1,6 +1,5 @@
 package com.j256.ormlite.support;
 
-import java.io.Closeable;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Savepoint;
@@ -15,7 +14,7 @@ import com.j256.ormlite.stmt.StatementBuilder.StatementType;
  * 
  * @author graywatson
  */
-public interface DatabaseConnection extends Closeable {
+public interface DatabaseConnection extends AutoCloseable {
 
 	/** returned by {@link #queryForOne} if more than one result was found by the query */
 	public final static Object MORE_THAN_ONE = new Object();

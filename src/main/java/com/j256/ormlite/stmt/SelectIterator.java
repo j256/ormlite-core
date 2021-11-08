@@ -1,6 +1,5 @@
 package com.j256.ormlite.stmt;
 
-import java.io.IOException;
 import java.sql.SQLException;
 
 import com.j256.ormlite.dao.CloseableIterator;
@@ -256,7 +255,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 	}
 
 	@Override
-	public void close() throws IOException {
+	public void close() throws Exception {
 		if (!closed) {
 			compiledStmt.close();
 			closed = true;
@@ -265,7 +264,7 @@ public class SelectIterator<T, ID> implements CloseableIterator<T> {
 			try {
 				connectionSource.releaseConnection(connection);
 			} catch (SQLException e) {
-				throw new IOException("could not release connection", e);
+				throw new SQLException("could not release connection", e);
 			}
 		}
 	}

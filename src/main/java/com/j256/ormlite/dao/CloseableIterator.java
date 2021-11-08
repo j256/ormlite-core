@@ -1,6 +1,5 @@
 package com.j256.ormlite.dao;
 
-import java.io.Closeable;
 import java.sql.SQLException;
 import java.util.Iterator;
 
@@ -16,7 +15,7 @@ import com.j256.ormlite.support.DatabaseResults;
  * 
  * @author graywatson
  */
-public interface CloseableIterator<T> extends Iterator<T>, Closeable {
+public interface CloseableIterator<T> extends Iterator<T>, AutoCloseable {
 
 	/**
 	 * Close any underlying SQL statements but swallow any SQLExceptions.

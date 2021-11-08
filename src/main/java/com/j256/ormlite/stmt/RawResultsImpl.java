@@ -1,6 +1,5 @@
 package com.j256.ormlite.stmt;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,7 +81,7 @@ public class RawResultsImpl<T> implements GenericRawResults<T> {
 	}
 
 	@Override
-	public void close() throws IOException {
+	public void close() throws Exception {
 		if (iterator != null) {
 			iterator.close();
 			iterator = null;

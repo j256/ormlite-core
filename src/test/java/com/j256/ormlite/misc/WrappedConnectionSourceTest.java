@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.sql.SQLException;
 
 import org.junit.Test;
@@ -24,7 +23,7 @@ public class WrappedConnectionSourceTest {
 		cs.close();
 	}
 
-	@Test(expected = IOException.class)
+	@Test(expected = SQLException.class)
 	public void testNotClosedInterator() throws Exception {
 		WrappedConnectionSource cs = new WrappedConnectionSource(new H2ConnectionSource());
 		Dao<WrappedFoo, ?> dao = DaoManager.createDao(cs, WrappedFoo.class);
