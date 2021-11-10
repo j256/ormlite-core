@@ -4772,12 +4772,16 @@ ORMLite now requires Java 7 and no longer supports Java 6.  This allows us to ch
 @code{AutoCloseable} interface added in Java 7 which means that a number of the different close
 methods now throw @code{Exception} instead of @code{IOException} to match @code{AutoCloseable.close()}.
 
+Since we are moving to 6.0, we've removed some @code{@@Deprecated} methods that had been around for
+a while.
+
 @c ----------------------------------------------------------------
 @node 5.7, 5.2, 6.0, How to Upgrade
 @section Notes About Version 5.7
 
 Added some provisional @code{Stream} support to lazy foreign collections to help with the proper closing
-of the underlying iterator and marking of it as unsized.
+of the underlying iterator and marking of it as unsized.  We were able to support this while still keeping
+Java 6 compilation level.
 
 @c ----------------------------------------------------------------
 @node 5.2, 5.1, 5.7, How to Upgrade
