@@ -3,7 +3,6 @@ package com.j256.ormlite.table;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.support.ConnectionSource;
 
 /**
@@ -19,12 +18,6 @@ public abstract class BaseSchemaUtils {
 	protected abstract Class<?>[] getClasses();
 
 	/**
-	 * @deprecated Please use {@link #getConnectionSource()}.
-	 */
-	@Deprecated
-	protected abstract DatabaseType getDatabaseType();
-
-	/**
 	 * Return the connection-source to be used to general the schema statements.
 	 */
 	protected ConnectionSource getConnectionSource() {
@@ -32,18 +25,10 @@ public abstract class BaseSchemaUtils {
 		return null;
 	}
 
-	@SuppressWarnings("deprecation")
 	protected void dumpSchema() throws SQLException {
 		ConnectionSource connectionSource = getConnectionSource();
-		DatabaseType databaseType = getDatabaseType();
 		for (Class<?> clazz : getClasses()) {
-			List<String> statements;
-			if (connectionSource == null) {
-				// here for backwards compatibility
-				statements = TableUtils.getCreateTableStatements(databaseType, clazz);
-			} else {
-				statements = TableUtils.getCreateTableStatements(connectionSource, clazz);
-			}
+			List<String> statements = TableUtils.getCreateTableStatements(connectionSource, clazz);
 			for (String statement : statements) {
 				System.out.println(statement + ";");
 			}

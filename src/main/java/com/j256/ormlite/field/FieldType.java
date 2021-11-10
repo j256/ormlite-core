@@ -995,15 +995,6 @@ public class FieldType {
 	}
 
 	/**
-	 * @deprecated Use {@link #createFieldType(DatabaseType, String, Field, Class)}.
-	 */
-	@Deprecated
-	public static FieldType createFieldType(ConnectionSource connectionSource, String tableName, Field field,
-			Class<?> parentClass) throws SQLException {
-		return createFieldType(connectionSource.getDatabaseType(), tableName, field, parentClass);
-	}
-
-	/**
 	 * Return An instantiated {@link FieldType} or null if the field does not have a {@link DatabaseField} annotation.
 	 */
 	public static FieldType createFieldType(DatabaseType databaseType, String tableName, Field field,

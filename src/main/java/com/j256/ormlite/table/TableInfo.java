@@ -5,12 +5,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.support.ConnectionSource;
 
 /**
  * Information about a database table including the associated tableName, class, constructor, and the included fields.
@@ -37,15 +35,6 @@ public class TableInfo<T, ID> {
 	private final Map<String, FieldType> fieldNameMap;
 
 	/**
-	 * @deprecated Use {@link #TableInfo(DatabaseType, Class)}
-	 */
-	@Deprecated
-	public TableInfo(ConnectionSource connectionSource, BaseDaoImpl<T, ID> baseDaoImpl, Class<T> dataClass)
-			throws SQLException {
-		this(connectionSource.getDatabaseType(), dataClass);
-	}
-
-	/**
 	 * Creates a holder of information about a table/class.
 	 * 
 	 * @param databaseType
@@ -55,15 +44,6 @@ public class TableInfo<T, ID> {
 	 */
 	public TableInfo(DatabaseType databaseType, Class<T> dataClass) throws SQLException {
 		this(databaseType, DatabaseTableConfig.fromClass(databaseType, dataClass));
-	}
-
-	/**
-	 * @deprecated Use {@link #TableInfo(DatabaseType, DatabaseTableConfig)}
-	 */
-	@Deprecated
-	public TableInfo(DatabaseType databaseType, BaseDaoImpl<T, ID> baseDaoImpl, DatabaseTableConfig<T> tableConfig)
-			throws SQLException {
-		this(databaseType, tableConfig);
 	}
 
 	/**
