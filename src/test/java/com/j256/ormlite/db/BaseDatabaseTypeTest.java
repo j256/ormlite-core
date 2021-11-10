@@ -37,7 +37,6 @@ public class BaseDatabaseTypeTest extends BaseCoreTest {
 	@Test
 	public void testCoverage() {
 		TestDatabaseType databaseType = new TestDatabaseType();
-		assertNull(databaseType.getDriverClassName());
 		assertFalse(databaseType.isTruncateSupported());
 		assertFalse(databaseType.isCreateIfNotExistsSupported());
 		assertFalse(databaseType.isSelectSequenceBeforeInsert());
@@ -111,12 +110,6 @@ public class BaseDatabaseTypeTest extends BaseCoreTest {
 		@Override
 		public String getDatabaseName() {
 			return "foo";
-		}
-
-		@SuppressWarnings("deprecation")
-		@Override
-		public String getDriverClassName() {
-			return super.getDriverClassName();
 		}
 	}
 

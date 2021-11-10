@@ -1,6 +1,5 @@
 package com.j256.ormlite.table;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -12,7 +11,6 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.misc.JavaxPersistenceConfigurer;
-import com.j256.ormlite.support.ConnectionSource;
 
 /**
  * Database table configuration information either supplied by Spring or direct Java wiring or from a
@@ -164,22 +162,6 @@ public class DatabaseTableConfig<T> {
 
 	public List<DatabaseFieldConfig> getFieldConfigs() {
 		return fieldConfigs;
-	}
-
-	/**
-	 * @deprecated
-	 */
-	@Deprecated
-	public void setConstructor(Constructor<T> constructor) {
-	}
-
-	/**
-	 * @deprecated Use {@link #fromClass(DatabaseType, Class)}
-	 */
-	@Deprecated
-	public static <T> DatabaseTableConfig<T> fromClass(ConnectionSource connectionSource, Class<T> clazz)
-			throws SQLException {
-		return fromClass(connectionSource.getDatabaseType(), clazz);
 	}
 
 	/**
