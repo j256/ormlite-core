@@ -18,12 +18,9 @@ public abstract class BaseSchemaUtils {
 	protected abstract Class<?>[] getClasses();
 
 	/**
-	 * Return the connection-source to be used to general the schema statements.
+	 * Return the connection-source to be used to generate the schema statements.
 	 */
-	protected ConnectionSource getConnectionSource() {
-		// designed to be overridden but returning null here for backwards compatibility
-		return null;
-	}
+	protected abstract ConnectionSource getConnectionSource() throws SQLException;
 
 	protected void dumpSchema() throws SQLException {
 		ConnectionSource connectionSource = getConnectionSource();
