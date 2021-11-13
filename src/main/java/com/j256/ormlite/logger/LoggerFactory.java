@@ -4,10 +4,12 @@ package com.j256.ormlite.logger;
  * Factory that creates {@link Logger} instances. It uses reflection to see what logging backends are available on the
  * classpath and tries to find the most appropriate one.
  * 
+ * From SimpleLogging: https://github.com/j256/simplelogging
+ *
  * <p>
  * To set the logger to a particular type, set the system property ("com.j256.simplelogger.backend") contained in
- * {@link #LOG_TYPE_SYSTEM_PROPERTY} to be name of one of the enumerated types in {@link LoggerFactory.LogBackendType}.
- * You can also call {@link #setLogBackendType(LogBackendType)} or {@link #setLogBackendFactory(LogBackendFactory)}.
+ * {@link #LOG_TYPE_SYSTEM_PROPERTY} to be name of one of the enumerated types in {@link LogBackendType}. You can also
+ * call {@link #setLogBackendType(LogBackendType)} or {@link #setLogBackendFactory(LogBackendFactory)}.
  * </p>
  */
 public class LoggerFactory {

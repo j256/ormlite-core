@@ -6,9 +6,9 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set ormlite_version 5.6
+@set ormlite_version 6.0
 @set ormlite_year 2021
-@set ormlite_date June @value{ormlite_year}
+@set ormlite_date November @value{ormlite_year}
 @set package ORMLite
 @c ----------------------------------------------------------------
 
@@ -111,11 +111,9 @@ is the default repository but the jars are also available from the @uref{http://
 central maven repository} and from @uref{http://sourceforge.net/projects/ormlite/files/, Sourceforge}.
 
 Users that are connecting to SQL databases via JDBC connections will need to download the @code{ormlite-jdbc-@value{ormlite_version}.jar}
-and @code{ormlite-core-@value{ormlite_version}.jar} files.  For use with Android applications, you should download the
-@code{ormlite-android-@value{ormlite_version}.jar} and @code{ormlite-core-@value{ormlite_version}.jar} files instead.  For either JDBC or
-Android you will also need the ormlite-core release which has the ORMLite backend implementations.  ORMLite does not have
-any required external dependencies although there are some @emph{optional} packages that you may want to use.  @xref{Dependencies}.  The
-code works with Java 5 or later.
+file.  For use with Android applications, you should download the @code{ormlite-android-@value{ormlite_version}.jar}
+file instead.  ORMLite does not have any required external dependencies although there are some @emph{optional} packages
+that you may want to use.  @xref{Dependencies}.  The code works with Java 5 or later.
 
 @c ----------------------------------------------------------------
 @node Starting Class, Starting DAO, Downloading, Getting Started
@@ -3294,8 +3292,8 @@ it.
 
 @cindex Android basics
 Because of the lack of official support for JDBC in Android OS, ORMLite makes direct calls to the Android database APIs
-to access SQLite databases.  You should make sure that you have downloaded and are depending on the @code{ormlite-core.jar}
-and @code{ormlite-android.jar} files, but @emph{not} the @code{ormlite-jdbc.jar} version.  Although a number of developers
+to access SQLite databases.  You should make sure that you have downloaded and are depending on the
+@code{ormlite-android.jar} files, but @emph{not} the @code{ormlite-jdbc.jar} version.  Although a number of developers
 are using the package in their projects, we continue to improve how ORMLite integrates with the Android classes.
 Feedback on this would be welcome.
 
@@ -3407,7 +3405,7 @@ public class DatabaseConfigUtil extends OrmLiteConfigUtil @{
 @item You will need to run this utility locally on your development box (not in an Android device), whenever you make a change to one of
 your data classes.  This means that right now, this @emph{must} be done by hand to keep the configuration file in sync with your database
 classes.  To run the utility you will need to use the local Java runtime environment (JRE).  Under eclipse, edit the "Run Configuration" for
-the utility, select the JRE tab, and select an alternative JRE (1.5 or 1.6).  Your project's JRE should be undefined since it is an Android
+the utility, select the JRE tab, and select an alternative JRE (1.7 or above).  Your project's JRE should be undefined since it is an Android
 application.  You'll also need to remove the Android bootstrap entry from the Classpath tab.
 
 @item By default this utility will look in the current directory and below in files ending in @code{.java} for the existence of one of the
@@ -4615,7 +4613,6 @@ dependency list.  In this example we are using MySQL but any of the supported JD
 <project>
     @dots{}
     <dependencies>
-        <!-- this has a dependency on ormlite-core -->
         <dependency>
             <groupId>com.j256.ormlite</groupId>
             <artifactId>ormlite-jdbc</artifactId>
@@ -4631,9 +4628,6 @@ dependency list.  In this example we are using MySQL but any of the supported JD
     </dependencies>
 </project>
 @end example
-
-The @code{-jdbc} artifact mentioned in the example depends on the @code{-core} artifact, but that should be pulled
-in automatically by maven.
 
 @emph{NOTE:} I do not have any details about how to configure Android projects with maven.  If you are doing so
 then just replace the @code{ormlite-jdbc} artifact name with @code{ormlite-android}.
@@ -4737,7 +4731,7 @@ You probably would not want to register the @code{MyDatePersister} above because
 persistence behavior for @emph{all} @code{Date} types.
 
 @c ----------------------------------------------------------------
-@node How to Upgrade, 5.2, Custom Persisters, Top
+@node How to Upgrade, 6.0, Custom Persisters, Top
 @chapter Upgrade From Old Versions
 
 @cindex upgrading from previous versions
@@ -4749,6 +4743,8 @@ However, sometimes when a new version is released, changes are made that require
 and rarely the on-disk database formats. 
 
 @menu
+* 6.0::                 Notes about version 6.0
+* 5.7::                 Notes about version 5.7
 * 5.2::                 Notes about version 5.2
 * 5.1::                 Notes about version 5.1
 * 5.0::                 Notes about version 5.0
@@ -4766,7 +4762,29 @@ and rarely the on-disk database formats.
 @end menu
 
 @c ----------------------------------------------------------------
-@node 5.2, 5.1, How to Upgrade, How to Upgrade
+@node 6.0, 5.7, How to Upgrade, How to Upgrade
+@section Notes About Version 6.0
+
+ORMLite has [finally] moved to a shaded unified jar.  You no longer need to add @code{ormlite-core}
+to your mvn dependencies when you use @code{ormlite-jdbc} or @code{ormlite-android}.
+
+ORMLite now requires Java 7 and no longer supports Java 6.  This allows us to change to using the
+@code{AutoCloseable} interface added in Java 7 which means that a number of the different close
+methods now throw @code{Exception} instead of @code{IOException} to match @code{AutoCloseable.close()}.
+
+Since we are moving to 6.0, we've removed some @code{@@Deprecated} methods that had been around for
+a while.
+
+@c ----------------------------------------------------------------
+@node 5.7, 5.2, 6.0, How to Upgrade
+@section Notes About Version 5.7
+
+Added some provisional @code{Stream} support to lazy foreign collections to help with the proper closing
+of the underlying iterator and marking of it as unsized.  We were able to support this while still keeping
+Java 6 compilation level.
+
+@c ----------------------------------------------------------------
+@node 5.2, 5.1, 5.7, How to Upgrade
 @section Notes About Version 5.2
 
 In version 5.2, we fixed issues with the boolean SQL types.  The boolean number type now correctly uses the

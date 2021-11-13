@@ -1,6 +1,5 @@
 package com.j256.ormlite.dao;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collection;
 
@@ -77,7 +76,7 @@ public interface ForeignCollection<T> extends Collection<T>, CloseableIterable<T
 	 * iterable for each thread instead.
 	 * </p>
 	 */
-	public void closeLastIterator() throws IOException;
+	public void closeLastIterator() throws Exception;
 
 	/**
 	 * Returns true if this an eager collection otherwise false.

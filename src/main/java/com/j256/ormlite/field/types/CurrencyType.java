@@ -5,7 +5,6 @@ import java.util.Currency;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
@@ -47,7 +46,7 @@ public class CurrencyType extends BaseDataType {
 		try {
 			return Currency.getInstance(defaultStr).getCurrencyCode();
 		} catch (IllegalArgumentException iae) {
-			throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing default Currency '", iae);
+			throw new SQLException("Problems with field " + fieldType + " parsing default Currency '", iae);
 		}
 	}
 
@@ -64,8 +63,8 @@ public class CurrencyType extends BaseDataType {
 		try {
 			return Currency.getInstance(currencyStr);
 		} catch (IllegalArgumentException iae) {
-			throw SqlExceptionUtil
-					.create("Problems with column " + columnPos + " parsing Currency '" + currencyStr + "'", iae);
+			throw new SQLException("Problems with column " + columnPos + " parsing Currency '" + currencyStr + "'",
+					iae);
 		}
 	}
 

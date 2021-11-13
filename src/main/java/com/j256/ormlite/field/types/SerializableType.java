@@ -12,7 +12,6 @@ import java.util.Arrays;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.misc.IOUtils;
-import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
@@ -61,7 +60,7 @@ public class SerializableType extends BaseDataType {
 			objInStream = new ObjectInputStream(new ByteArrayInputStream(bytes));
 			return objInStream.readObject();
 		} catch (Exception e) {
-			throw SqlExceptionUtil.create("Could not read serialized object from byte array: " + Arrays.toString(bytes)
+			throw new SQLException("Could not read serialized object from byte array: " + Arrays.toString(bytes)
 					+ "(len " + bytes.length + ")", e);
 		} finally {
 			// we do this to give GC a hand with ObjectInputStream reference maps
@@ -80,7 +79,7 @@ public class SerializableType extends BaseDataType {
 			objOutStream = null;
 			return outStream.toByteArray();
 		} catch (Exception e) {
-			throw SqlExceptionUtil.create("Could not write serialized object to byte array: " + obj, e);
+			throw new SQLException("Could not write serialized object to byte array: " + obj, e);
 		} finally {
 			// we do this to give GC a hand with ObjectOutputStream reference maps
 			IOUtils.closeQuietly(objOutStream);

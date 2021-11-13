@@ -5,7 +5,6 @@ import java.sql.SQLException;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
@@ -42,7 +41,7 @@ public class StringBytesType extends BaseDataType {
 			try {
 				return defaultStr.getBytes(getCharsetName(fieldType));
 			} catch (UnsupportedEncodingException e) {
-				throw SqlExceptionUtil.create("Could not convert default string: " + defaultStr, e);
+				throw new SQLException("Could not convert default string: " + defaultStr, e);
 			}
 		}
 	}
@@ -60,7 +59,7 @@ public class StringBytesType extends BaseDataType {
 			// NOTE: I can't use new String(bytes, Charset) because it was introduced in 1.6.
 			return new String(bytes, charsetName);
 		} catch (UnsupportedEncodingException e) {
-			throw SqlExceptionUtil.create("Could not convert string with charset name: " + charsetName, e);
+			throw new SQLException("Could not convert string with charset name: " + charsetName, e);
 		}
 	}
 
@@ -72,7 +71,7 @@ public class StringBytesType extends BaseDataType {
 			// NOTE: I can't use string.getBytes(Charset) because it was introduced in 1.6.
 			return string.getBytes(charsetName);
 		} catch (UnsupportedEncodingException e) {
-			throw SqlExceptionUtil.create("Could not convert string with charset name: " + charsetName, e);
+			throw new SQLException("Could not convert string with charset name: " + charsetName, e);
 		}
 	}
 

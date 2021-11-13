@@ -5,6 +5,8 @@ import org.slf4j.ILoggerFactory;
 /**
  * Log backend that delegates to slf4j.
  * 
+ * From SimpleLogging: https://github.com/j256/simplelogging
+ *
  * @author graywatson
  */
 public class Slf4jLoggingLogBackend implements LogBackend {

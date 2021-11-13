@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.j256.ormlite</groupId>
 	<artifactId>ormlite-core</artifactId>
-	<version>5.7-SNAPSHOT</version>
+	<version>6.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>ORMLite Core</name>
 	<url>https://ormlite.com/</url>
@@ -183,8 +183,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.5.1</version>
 				<configuration>
-					<source>8</source>
-					<target>8</target>
+					<source>1.7</source>
+					<target>1.7</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -258,35 +258,6 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>com.google.code.maven-replacer-plugin</groupId>
-				<artifactId>replacer</artifactId>
-				<version>1.5.0</version>
-				<executions>
-					<execution>
-						<id>validate</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>replace</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>prepare-package</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>replace</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<ignoreMissingFile>false</ignoreMissingFile>
-					<file>src/main/java/com/j256/ormlite/misc/VersionUtils.java</file>
-					<outputFile>src/main/java/com/j256/ormlite/misc/VersionUtils.java</outputFile>
-					<regex>true</regex>
-					<token>(VERSION__).*(__)</token>
-					<value>$1${project.version}$2</value>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>

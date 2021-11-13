@@ -7,6 +7,10 @@ import com.j256.ormlite.logger.NullLogBackend.NullLogBackendFactory;
 /**
  * Type of logging backends that are supported. The classes are specified as strings so there is not a direct dependency
  * placed on them since these classes may reference types not on the classpath.
+ *
+ * From SimpleLogging: https://github.com/j256/simplelogging
+ *
+ * @author graywatson
  */
 public enum LogBackendType implements LogBackendFactory {
 	/**

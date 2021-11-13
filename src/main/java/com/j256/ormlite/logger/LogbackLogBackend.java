@@ -4,6 +4,8 @@ package com.j256.ormlite.logger;
  * Log backend that delegates to logback directly. The org.slf4j classes are part of the slf4j-api but not the actual
  * logger.
  * 
+ * From SimpleLogging: https://github.com/j256/simplelogging
+ *
  * @author graywatson
  */
 public class LogbackLogBackend implements LogBackend {

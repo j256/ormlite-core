@@ -12,6 +12,19 @@ import java.sql.SQLException;
 public class IOUtils {
 
 	/**
+	 * Close the auto-closeable if not null and ignore any exceptions.
+	 */
+	public static void closeQuietly(AutoCloseable closeable) {
+		if (closeable != null) {
+			try {
+				closeable.close();
+			} catch (Exception e) {
+				// ignored
+			}
+		}
+	}
+
+	/**
 	 * Close the closeable if not null and ignore any exceptions.
 	 */
 	public static void closeQuietly(Closeable closeable) {
@@ -27,12 +40,25 @@ public class IOUtils {
 	/**
 	 * Close it and ignore any exceptions.
 	 */
+	public static void closeThrowSqlException(AutoCloseable closeable, String label) throws SQLException {
+		if (closeable != null) {
+			try {
+				closeable.close();
+			} catch (Exception e) {
+				throw new SQLException("could not close " + label, e);
+			}
+		}
+	}
+
+	/**
+	 * Close it and ignore any exceptions.
+	 */
 	public static void closeThrowSqlException(Closeable closeable, String label) throws SQLException {
 		if (closeable != null) {
 			try {
 				closeable.close();
 			} catch (IOException e) {
-				throw SqlExceptionUtil.create("could not close " + label, e);
+				throw new SQLException("could not close " + label, e);
 			}
 		}
 	}

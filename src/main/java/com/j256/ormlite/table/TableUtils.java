@@ -18,7 +18,6 @@ import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.misc.IOUtils;
-import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.ConnectionSource;
@@ -393,7 +392,7 @@ public class TableUtils {
 				if (ignoreErrors) {
 					logger.info("ignoring {} error '{}' for statement: {}", label, e, statement);
 				} else {
-					throw SqlExceptionUtil.create("SQL statement failed: " + statement, e);
+					throw new SQLException("SQL statement failed: " + statement, e);
 				}
 			} finally {
 				IOUtils.closeThrowSqlException(compiledStmt, "compiled statement");
@@ -431,7 +430,7 @@ public class TableUtils {
 				logger.info("executing create table after-query got {} results: {}", rowC, query);
 			} catch (SQLException e) {
 				// we do this to make sure that the statement is in the exception
-				throw SqlExceptionUtil.create("executing create table after-query failed: " + query, e);
+				throw new SQLException("executing create table after-query failed: " + query, e);
 			} finally {
 				// result set is closed by the statement being closed
 				IOUtils.closeThrowSqlException(compiledStmt, "compiled statement");

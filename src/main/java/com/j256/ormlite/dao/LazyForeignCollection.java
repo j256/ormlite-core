@@ -1,6 +1,5 @@
 package com.j256.ormlite.dao;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -113,7 +112,7 @@ public class LazyForeignCollection<T, ID> extends BaseForeignCollection<T, ID> i
 	}
 
 	@Override
-	public void closeLastIterator() throws IOException {
+	public void closeLastIterator() throws Exception {
 		if (lastIterator != null) {
 			lastIterator.close();
 			lastIterator = null;

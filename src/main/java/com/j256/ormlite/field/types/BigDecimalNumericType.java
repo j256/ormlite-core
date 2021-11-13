@@ -6,7 +6,6 @@ import java.sql.SQLException;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
@@ -39,7 +38,7 @@ public class BigDecimalNumericType extends BaseDataType {
 		try {
 			return new BigDecimal(defaultStr);
 		} catch (IllegalArgumentException e) {
-			throw SqlExceptionUtil.create(
+			throw new SQLException(
 					"Problems with field " + fieldType + " parsing default BigDecimal string '" + defaultStr + "'", e);
 		}
 	}

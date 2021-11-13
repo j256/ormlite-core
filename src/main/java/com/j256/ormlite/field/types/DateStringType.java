@@ -7,7 +7,6 @@ import java.util.Date;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
@@ -44,7 +43,7 @@ public class DateStringType extends BaseDateType {
 			// we parse to make sure it works and then format it again
 			return normalizeDateString(formatConfig, defaultStr);
 		} catch (ParseException e) {
-			throw SqlExceptionUtil.create("Problems with field " + fieldType + " parsing default date-string '"
+			throw new SQLException("Problems with field " + fieldType + " parsing default date-string '"
 					+ defaultStr + "' using '" + formatConfig + "'", e);
 		}
 	}
@@ -61,7 +60,7 @@ public class DateStringType extends BaseDateType {
 		try {
 			return parseDateString(formatConfig, value);
 		} catch (ParseException e) {
-			throw SqlExceptionUtil.create("Problems with column " + columnPos + " parsing date-string '" + value
+			throw new SQLException("Problems with column " + columnPos + " parsing date-string '" + value
 					+ "' using '" + formatConfig + "'", e);
 		}
 	}

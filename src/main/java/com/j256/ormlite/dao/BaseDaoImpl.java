@@ -1,6 +1,5 @@
 package com.j256.ormlite.dao;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -18,7 +17,6 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.misc.BaseDaoEnabled;
-import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.stmt.PreparedDelete;
@@ -598,7 +596,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	@Override
-	public void closeLastIterator() throws IOException {
+	public void closeLastIterator() throws Exception {
 		if (lastIterator != null) {
 			lastIterator.close();
 			lastIterator = null;
@@ -624,7 +622,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		try {
 			return statementExecutor.queryRaw(connectionSource, query, arguments, objectCache);
 		} catch (SQLException e) {
-			throw SqlExceptionUtil.create("Could not perform raw query for " + query, e);
+			throw new SQLException("Could not perform raw query for " + query, e);
 		}
 	}
 
@@ -635,7 +633,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		try {
 			return statementExecutor.queryRaw(connectionSource, query, mapper, arguments, objectCache);
 		} catch (SQLException e) {
-			throw SqlExceptionUtil.create("Could not perform raw query for " + query, e);
+			throw new SQLException("Could not perform raw query for " + query, e);
 		}
 	}
 
@@ -646,7 +644,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		try {
 			return statementExecutor.queryRaw(connectionSource, query, columnTypes, mapper, arguments, objectCache);
 		} catch (SQLException e) {
-			throw SqlExceptionUtil.create("Could not perform raw query for " + query, e);
+			throw new SQLException("Could not perform raw query for " + query, e);
 		}
 	}
 
@@ -657,7 +655,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		try {
 			return statementExecutor.queryRaw(connectionSource, query, columnTypes, arguments, objectCache);
 		} catch (SQLException e) {
-			throw SqlExceptionUtil.create("Could not perform raw query for " + query, e);
+			throw new SQLException("Could not perform raw query for " + query, e);
 		}
 	}
 
@@ -668,7 +666,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		try {
 			return statementExecutor.queryRaw(connectionSource, query, mapper, arguments, objectCache);
 		} catch (SQLException e) {
-			throw SqlExceptionUtil.create("Could not perform raw query for " + query, e);
+			throw new SQLException("Could not perform raw query for " + query, e);
 		}
 	}
 
@@ -679,7 +677,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		try {
 			return statementExecutor.queryForLong(connection, query, arguments);
 		} catch (SQLException e) {
-			throw SqlExceptionUtil.create("Could not perform raw value query for " + query, e);
+			throw new SQLException("Could not perform raw value query for " + query, e);
 		} finally {
 			connectionSource.releaseConnection(connection);
 		}
@@ -692,7 +690,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		try {
 			return statementExecutor.executeRaw(connection, statement, arguments);
 		} catch (SQLException e) {
-			throw SqlExceptionUtil.create("Could not run raw execute statement " + statement, e);
+			throw new SQLException("Could not run raw execute statement " + statement, e);
 		} finally {
 			connectionSource.releaseConnection(connection);
 		}
@@ -705,7 +703,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		try {
 			return statementExecutor.executeRawNoArgs(connection, statement);
 		} catch (SQLException e) {
-			throw SqlExceptionUtil.create("Could not run raw execute statement " + statement, e);
+			throw new SQLException("Could not run raw execute statement " + statement, e);
 		} finally {
 			connectionSource.releaseConnection(connection);
 		}
@@ -718,7 +716,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		try {
 			return statementExecutor.updateRaw(connection, statement, arguments);
 		} catch (SQLException e) {
-			throw SqlExceptionUtil.create("Could not run raw update statement " + statement, e);
+			throw new SQLException("Could not run raw update statement " + statement, e);
 		} finally {
 			connectionSource.releaseConnection(connection);
 		}
@@ -1003,7 +1001,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			wireNewInstance(instance);
 			return instance;
 		} catch (Exception e) {
-			throw SqlExceptionUtil.create("Could not create object for " + constructor.getDeclaringClass(), e);
+			throw new SQLException("Could not create object for " + constructor.getDeclaringClass(), e);
 		}
 	}
 
@@ -1127,7 +1125,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 					statementExecutor.buildIterator(this, connectionSource, preparedQuery, objectCache, resultFlags);
 			return iterator;
 		} catch (SQLException e) {
-			throw SqlExceptionUtil.create("Could not build prepared-query iterator for " + dataClass, e);
+			throw new SQLException("Could not build prepared-query iterator for " + dataClass, e);
 		}
 	}
 

@@ -5,7 +5,6 @@ import java.util.Date;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
@@ -42,7 +41,7 @@ public class DateIntegerType extends BaseDateType {
 		try {
 			return Integer.parseInt(defaultStr);
 		} catch (NumberFormatException e) {
-			throw SqlExceptionUtil.create(
+			throw new SQLException(
 					"Problems with field " + fieldType + " parsing default date-integer value: " + defaultStr, e);
 		}
 	}

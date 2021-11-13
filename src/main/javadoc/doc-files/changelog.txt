@@ -1,9 +1,17 @@
-5.7: ?/??/2021
+6.0: ?/?/2021
+	* ALL: Added support for java 7.  Dropped support for Java 6.
+	* ALL: Migrated to supporting AutoCloseable.  Most close() methods now throw Exception not IOException.
+	* CORE: Removed some @Deprecated methods that had been with us for a while.
+	* JDBC: ormlite-jdbc jar now includes the -core classes.  No need to import ormlite-core jar anymore.
+	* ANDROID: ormlite-android jar now includes the -core classes.  No need to import ormlite-core jar anymore.
+
+5.7: 11/7/2021
 	* CORE: Fixed possible thread issue around field-name lookups.  Thanks to dlew.
 	* CORE: Fixed a number of flaky tests based on field order. Thanks CharlesZKQ, NanaOkada, hwang-pku, and chimo173.
 	* CORE: Upgraded SimpleLogging code to fix annoying startup messages.  Thanks to JayDi85.
 	* CORE: Removed broken getCreateTableStatements(DatabaseType, ...). ConnectionSource needed. Thanks to blacatena.
 	* CORE: Added WrappedConnectionSource and other support classes for tracing unclosed connections and statements.
+	* CORE: Added better support for JDK8+ streams with lazy foreign collections.  Thanks to zhemaituk.
 	* ANDROID: Fixed bug in number rows affected with executeUpdateDelete() in newer API versions.  Thanks to WonShaw.
 
 5.6: 6/22/2021
@@ -214,7 +222,7 @@
 	* ANDROID: Fixed the updating of serializable and other byte[] fields.  Thanks to Yossi Wasserman.  Bug #3527685.
 
 4.40: 4/16/2012 (svn r2516)
-	* CORE: Fixed a couple of missing field configuration entries.   Thanks to Jeremy Stone.  Bug #3518474.
+	* CORE: Fixed a couple of missing field configuration entries.  Thanks to Jeremy Stone.  Bug #3518474.
 	* CORE: Fixed a problem that was causing FieldType to always use reflection.  Thanks to Jeremy Stone.  Bug #3518472.
 	* ANDROID: Big performance bug fix when creating DAOs. Foreign fields always used reflection instead of table configs.
 
@@ -708,7 +716,7 @@
 1.7: 4/29/2010 (svn r236)
 	* Significant revamping of the junit tests.
 	* Initial take on a MS SQL Server port using the JTDS driver.  Kudos to the JTDS folks.
-	* Turns out that HSQLDB is a bit different from the rest (grrrr).   I added an appendLimitValue to database type.
+	* Turns out that HSQLDB is a bit different from the rest (grrrr).  I added an appendLimitValue to database type.
 	* Added LIMIT support to the package.  This caused a bunch of trickle down.
 	* Renamed some of the is fields in the DatabaseType.  Added isLimitSupported because of Derby.  Grrrrrr.
 	* Added an initial take on an Oracle database type.  No access to an Oracle db so some guesses.

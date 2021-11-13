@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on June 22, 2021 by texi2html 1.82
+<!-- Created on November 9, 2021 by texi2html 1.82
 texi2html was written by: 
             Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -51,7 +51,7 @@ ul.toc {list-style: none}
 <a name="ORMLite"></a>
 <h1 class="settitle">ORMLite</h1>
 
-<p>Version 5.6 &ndash; June 2021
+<p>Version 6.0 &ndash; November 2021
 </p>
 <a name="index-introduction"></a>
 <a name="index-author"></a>
@@ -164,12 +164,10 @@ specific page after reading these pages here. See section <a href="#Use-With-And
 <p>To get started with ORMLite, you will need to download the jar files.  The <a href="http://ormlite.com/releases/">ORMLite release page</a>
 is the default repository but the jars are also available from the <a href="http://repo1.maven.org/maven2/com/j256/ormlite/">central maven repository</a> and from <a href="http://sourceforge.net/projects/ormlite/files/">Sourceforge</a>.
 </p>
-<p>Users that are connecting to SQL databases via JDBC connections will need to download the <code>ormlite-jdbc-5.6.jar</code>
-and <code>ormlite-core-5.6.jar</code> files.  For use with Android applications, you should download the
-<code>ormlite-android-5.6.jar</code> and <code>ormlite-core-5.6.jar</code> files instead.  For either JDBC or
-Android you will also need the ormlite-core release which has the ORMLite backend implementations.  ORMLite does not have
-any required external dependencies although there are some <em>optional</em> packages that you may want to use.  See section <a href="#Dependencies">External Dependencies</a>.  The
-code works with Java 5 or later.
+<p>Users that are connecting to SQL databases via JDBC connections will need to download the <code>ormlite-jdbc-6.0.jar</code>
+file.  For use with Android applications, you should download the <code>ormlite-android-6.0.jar</code>
+file instead.  ORMLite does not have any required external dependencies although there are some <em>optional</em> packages
+that you may want to use.  See section <a href="#Dependencies">External Dependencies</a>.  The code works with Java 5 or later.
 </p>
 <hr size="6">
 <a name="Starting-Class"></a>
@@ -1201,45 +1199,17 @@ of this type may not be possible depending on the database type.
 <dd>
 <p>Persisted as SQL type <code>BOOLEAN</code>.
 </p>
-<a name="index-Date"></a>
-<a name="index-java-date"></a>
-<p><a name="datatype-date"></a>
-</p></dd>
-<dt> <code>java.util.Date (DataType.DATE)</code></dt>
+<a name="index-boolean-character"></a>
+</dd>
+<dt> <code>boolean or Boolean (DataType.BOOLEAN or DataType.BOOLEAN_OBJ) as a character</code></dt>
 <dd>
-<p>Persisted as SQL type <code>TIMESTAMP</code>.  This type automatically uses an internal <code>?</code> argument because the string
-format of it is unreliable to match the database format.  See section <a href="#Select-Arguments">Using Select Arguments</a>.  See also <code>DATE_LONG</code> and
-<code>DATE_STRING</code>.
+<p>Persisted as SQL type <code>BOOLEAN</code>.
 </p>
-<p><em>NOTE:</em> This is a different class from <code>java.sql.Date</code> which is handled by <code>DataType.SQL_DATE</code>.
-</p>
-<p><em>NOTE:</em> Certain databases only provide seconds resolution so the milliseconds will be 0.
-</p>
-<a name="index-java-long-date"></a>
-<p><a name="datatype-date-long"></a>
-</p></dd>
-<dt> <code>java.util.Date (DataType.DATE_LONG)</code></dt>
+<a name="index-boolean-integer"></a>
+</dd>
+<dt> <code>boolean or Boolean (DataType.BOOLEAN or DataType.BOOLEAN_OBJ) as an integer</code></dt>
 <dd>
-<p>You can also specify the <code>dataType</code> field to the <code>@DatabaseField</code> annotation as a <code>DataType.DATE_LONG</code>
-in which case the milliseconds value of the <code>Date</code> will be stored as an LONG.  See also <code>DATE</code> and <code>DATE_STRING</code>.
-</p>
-<p><em>NOTE:</em> This is a different class from <code>java.sql.Date</code> which is handled by <code>DataType.SQL_DATE</code>.
-</p>
-<p><em>NOTE:</em> Certain databases only provide seconds resolution so the milliseconds will be 0.
-</p>
-<a name="index-java-string-date"></a>
-<a name="index-date-formats"></a>
-<p><a name="datatype-date-string"></a>
-</p></dd>
-<dt> <code>java.util.Date (DATE_STRING)</code></dt>
-<dd>
-<p>You can also specify the <code>dataType</code> field to the <code>@DatabaseField</code> annotation as a <code>DataType.DATE_STRING</code>
-in which case the date will be stored as a string in <code>yyyy-MM-dd HH:mm:ss.SSSSSS</code> format.  You can use the
-<code>format</code> field in <code>DatabaseField</code> to set the date to another format.  See also <code>DATE</code> and <code>DATE_LONG</code>.
-</p>
-<p><em>NOTE:</em> This is a different class from <code>java.sql.Date</code> which is handled by <code>DataType.SQL_DATE</code>.
-</p>
-<p><em>NOTE:</em> Certain databases only provide seconds resolution so the milliseconds will be 0.
+<p>Persisted as SQL type <code>INTEGER</code>.  False is 0 and every other value is true.
 </p>
 <a name="index-byte"></a>
 <p><a name="datatype-byte"></a>
@@ -1415,10 +1385,60 @@ and uses the string constructor to convert it back again.
 in which case a <code>java.math.BigDecimal</code> field will be persisted as a <code>NUMERIC</code> type.  This is only supported by some
 database types and with various default precision settings.  Android should use the default <code>DataType.BIG_DECIMAL</code>.
 </p>
+<a name="index-Date"></a>
+<a name="index-java-date"></a>
+<a name="index-date_002c-java"></a>
+<p><a name="datatype-date"></a>
+</p></dd>
+<dt> <code>java.util.Date (DataType.DATE)</code></dt>
+<dd>
+<p>Persisted as SQL type <code>TIMESTAMP</code>.  This type automatically uses an internal <code>?</code> argument because the string
+format of it is unreliable to match the database format.  See section <a href="#Select-Arguments">Using Select Arguments</a>.  See also <code>DATE_LONG</code> and
+<code>DATE_STRING</code>.
+</p>
+<p><em>NOTE:</em> This is a different class from <code>java.sql.Date</code> which is handled by <code>DataType.SQL_DATE</code>.
+</p>
+<p><em>NOTE:</em> Certain databases only provide seconds resolution so the milliseconds will be 0.
+</p>
+<a name="index-java-long-date"></a>
+<a name="index-date_002c-java-long"></a>
+<p><a name="datatype-date-long"></a>
+</p></dd>
+<dt> <code>java.util.Date (DataType.DATE_LONG)</code></dt>
+<dd>
+<p>You can also specify the <code>dataType</code> field to the <code>@DatabaseField</code> annotation as a <code>DataType.DATE_LONG</code>
+in which case the milliseconds value of the <code>Date</code> will be stored as an LONG.  See also <code>DATE</code> and <code>DATE_STRING</code>.
+</p>
+<p><em>NOTE:</em> This is a different class from <code>java.sql.Date</code> which is handled by <code>DataType.SQL_DATE</code>.
+</p>
+<p><em>NOTE:</em> Certain databases only provide seconds resolution so the milliseconds will be 0.
+</p>
+<a name="index-Date-integer"></a>
+<a name="index-java-date-integer"></a>
+<a name="index-date_002c-java-integer"></a>
+</dd>
+<dt> <code>java.util.Date (DataType.DATE_INTEGER)</code></dt>
+<dd>
+<p>Persisted as SQL type <code>INTEGER</code>.  This stores the date as integer seconds since epoch.
+</p>
+<a name="index-java-string-date"></a>
+<a name="index-date-formats"></a>
+<p><a name="datatype-date-string"></a>
+</p></dd>
+<dt> <code>java.util.Date (DATE_STRING)</code></dt>
+<dd>
+<p>You can also specify the <code>dataType</code> field to the <code>@DatabaseField</code> annotation as a <code>DataType.DATE_STRING</code>
+in which case the date will be stored as a string in <code>yyyy-MM-dd HH:mm:ss.SSSSSS</code> format.  You can use the
+<code>format</code> field in <code>DatabaseField</code> to set the date to another format.  See also <code>DATE</code> and <code>DATE_LONG</code>.
+</p>
+<p><em>NOTE:</em> This is a different class from <code>java.sql.Date</code> which is handled by <code>DataType.SQL_DATE</code>.
+</p>
+<p><em>NOTE:</em> Certain databases only provide seconds resolution so the milliseconds will be 0.
+</p>
 <a name="index-DateTime-Joda-type"></a>
 <a name="index-Joda-DateTime-type"></a>
 </dd>
-<dt> <code>DateTime (DataType.DATE_TIME)</code></dt>
+<dt> <code>org.joda.time.DateTime (DataType.DATE_TIME)</code></dt>
 <dd>
 <p>This stores the Joda <code>DateTime</code> into the database as long epoch millis.  This persister uses reflection to avoid
 setting up a dependency with Joda jars.  You can define a custom data persister if you want to natively use the class. 
@@ -1458,6 +1478,13 @@ time-stamp to another format.
 </p>
 <p><em>NOTE:</em> It is recommended that you use the <code>java.util.Date</code> class instead which is the
 <code>DataType.DATE_STRING</code> type.  See also <code>DATE_STRING</code>.
+</p>
+<a name="index-Currency"></a>
+<a name="index-SQL-Timestamp-type-1"></a>
+</dd>
+<dt> <code>java.util.Currency (DataType.CURRENCY)</code></dt>
+<dd>
+<p>Persisted as SQL type <code>STRING</code>.
 </p>
 </dd>
 </dl>
@@ -1754,18 +1781,19 @@ may have to set the right database type on your ConnectionSource directly if it 
 </dd>
 <dt> Netezza</dt>
 <dd>
-<p>As of August 2011, the driver should be considered alpha and possibly with bugs.  I do not currently have access to a server running a
-Netezza database. We will try to keep this driver up to date with the help of contributors.  Thanks to Richard Kooijman for the
-driver. Please contact us if you want to help with development of this driver.
+<p>There is some support for Netezza although it should be considered beta and possibly with bugs.  I do not currently have
+access to a server running a Netezza database. We will try to keep this driver up to date with the help of contributors.
+Thanks to Richard Kooijman for the driver. Please contact us if you want to help with development of this driver.
 </p>  
 <a name="index-ODBC-database"></a>
 <a name="index-Microsoft-ODBC-database"></a>
 </dd>
 <dt> ODBC</dt>
 <dd>
-<p>As of August 2011, the driver should be considered alpha and possibly with bugs.  I do not have access to a server running Microsoft&rsquo;s
-Open Database Connectivity.  We will try to keep this driver up to date with the help of contributors.  Thanks to Dale Asberry for
-the driver.  Please contact us if you want to help with development of this driver.
+<p>There also some support for ODBC although it should be considered beta and possibly with bugs.  I do not have access to
+a server running Microsoft&rsquo;s Open Database Connectivity.  We will try to keep this driver up to date with the help of
+contributors.  Thanks to Dale Asberry for the driver.  Please contact us if you want to help with development of this
+driver.
 </p>
 <a name="index-DB2-database"></a>
 </dd>
@@ -3916,6 +3944,9 @@ database specific features.
 <a name="index-query-arguments"></a>
 <a name="index-select-arguments"></a>
 <a name="index-arguments-to-queries"></a>
+<a name="index-argument-placeholders"></a>
+<a name="index-placeholders_002c-argument"></a>
+<a name="index-question-marks_002c-queries"></a>
 <a name="index-sql-_003f"></a>
 <p>Select Arguments are arguments that are used in WHERE operations can be specified directly as value arguments (as in the
 above examples) or as a <code>SelectArg</code> object.  SelectArgs are used to set the value of an argument at a later time &ndash;
@@ -3945,14 +3976,15 @@ accounts = accountDao.query(preparedQuery);
 <a name="index-string-quoting-in-queries"></a>
 <a name="index-escaping-arguments"></a>
 <a name="index-SQL-injection-bugs"></a>
-<p>It is a common problem for people to try to build queries or other statements with arguments that contain quote characters.
-These quotes can clash with the auto-generated SQL and result in syntax errors.  In these cases a <code>SelectArg</code> is required.
-In addition, if you are passing in arguments from user-input, you can use <code>SelectArg</code> to protect yourself from SQL
-injection security problems.  Lastly, certain data types use an internal <code>SelectArg</code> object because the string value
-of the object does not reliably match the database form of the object &ndash; <code>java.util.Date</code> is one example of such a type.
+<p>It is a common problem for people to try to build queries or other statements with arguments that contain quote
+characters.  These quotes can clash with the auto-generated SQL and result in syntax errors.  In these cases a
+<code>SelectArg</code> is required.  If you are passing in arguments from any user-input, you can use <code>SelectArg</code> to
+protect yourself from these so called SQL injection security problems.  Lastly, certain data types use an internal
+<code>SelectArg</code> object because the string value of the object does not reliably match the database form of the object
+&ndash; <code>java.util.Date</code> is one example of such a type.
 </p>
-<p><em>NOTE:</em> <code>SelectArg</code> objects have protection against being used in more than one column name.  You must instantiate
-a new object if you want to use a <code>SelectArg</code> with another column.
+<p><em>NOTE:</em> <code>SelectArg</code> objects have protection against being used in more than one column name.  You must
+instantiate a new object if you want to use a <code>SelectArg</code> with another column.
 </p>
 <hr size="6">
 <a name="Column-Arguments"></a>
@@ -4125,8 +4157,8 @@ it.
 
 <a name="index-Android-basics"></a>
 <p>Because of the lack of official support for JDBC in Android OS, ORMLite makes direct calls to the Android database APIs
-to access SQLite databases.  You should make sure that you have downloaded and are depending on the <code>ormlite-core.jar</code>
-and <code>ormlite-android.jar</code> files, but <em>not</em> the <code>ormlite-jdbc.jar</code> version.  Although a number of developers
+to access SQLite databases.  You should make sure that you have downloaded and are depending on the
+<code>ormlite-android.jar</code> files, but <em>not</em> the <code>ormlite-jdbc.jar</code> version.  Although a number of developers
 are using the package in their projects, we continue to improve how ORMLite integrates with the Android classes.
 Feedback on this would be welcome.
 </p>
@@ -4232,9 +4264,6 @@ especially in <code>Method.equals()</code>.  Because annotations use this method
 often garbage collecting thousands of objects and megabytes of space.  Android knows about the issues and a fix has been made but we have
 no idea when these performance improvements will make it into an Android release.
 </p>
-<p>We have made a couple of changes in ORMLite to help work around this issue.  Firstly, we added some reflection hacks to work around
-these problems in the short run.  Annotations using this mechanism run 20 times faster than with the native Android calls.
-</p>
 <p>With a little bit of work (and some caveats), you can remove all annotation work from your application and make DAO creation
 an extremely fast operation.  ORMLite supports the loading of the data configurations from a text configuration file.
 When a DAO is created, these configurations will be used, removing the need for any annotation method calls entirely.
@@ -4254,7 +4283,7 @@ class.  It should look something like:
 </li><li> You will need to run this utility locally on your development box (not in an Android device), whenever you make a change to one of
 your data classes.  This means that right now, this <em>must</em> be done by hand to keep the configuration file in sync with your database
 classes.  To run the utility you will need to use the local Java runtime environment (JRE).  Under eclipse, edit the &quot;Run Configuration&quot; for
-the utility, select the JRE tab, and select an alternative JRE (1.5 or 1.6).  Your project&rsquo;s JRE should be undefined since it is an Android
+the utility, select the JRE tab, and select an alternative JRE (1.7 or above).  Your project&rsquo;s JRE should be undefined since it is an Android
 application.  You&rsquo;ll also need to remove the Android bootstrap entry from the Classpath tab.
 
 </li><li> By default this utility will look in the current directory and below in files ending in <code>.java</code> for the existence of one of the
@@ -4283,7 +4312,7 @@ Done.
 <p>The config file generated should look something like:
 </p>
 <table><tr><td>&nbsp;</td><td><pre class="example">#
-# generated on 2011/09/15 01:42:02
+# generated on 2020/09/15 01:42:02
 #
 # --table-start--
 dataClass=com.example.helloandroid.SimpleData
@@ -5638,9 +5667,8 @@ you are looking for performance of a large number of operations. See <a href="#c
 <a name="index-level-1-cache"></a>
 <a name="index-weak-reference-cache"></a>
 
-<p>As of September 2011, one of the newer features in ORMLite is the ability to enable an object cache for a DAO.  The object
-cache keeps an internal collection of objects that have been created or queried and will return a reference to the same
-object if it is handled in the future.  
+<p>ORMLite supports the ability to enable a basic object cache for a DAO.  The object cache keeps an internal collection of
+objects that have been created or queried and will return a reference to the same object if it is handled in the future.  
 </p>
 <p>For example:
 </p>
@@ -5746,11 +5774,10 @@ dependency list.  In this example we are using MySQL but any of the supported JD
 <table><tr><td>&nbsp;</td><td><pre class="example">&lt;project&gt;
     &hellip;
     &lt;dependencies&gt;
-        &lt;!-- this has a dependency on ormlite-core --&gt;
         &lt;dependency&gt;
             &lt;groupId&gt;com.j256.ormlite&lt;/groupId&gt;
             &lt;artifactId&gt;ormlite-jdbc&lt;/artifactId&gt;
-            &lt;version&gt;5.6&lt;/version&gt;
+            &lt;version&gt;6.0&lt;/version&gt;
         &lt;/dependency&gt;
         &lt;!-- You will need to add some sort of database driver too.
              In this example we've used MySQL. --&gt;
@@ -5763,9 +5790,6 @@ dependency list.  In this example we are using MySQL but any of the supported JD
 &lt;/project&gt;
 </pre></td></tr></table>
 
-<p>The <code>-jdbc</code> artifact mentioned in the example depends on the <code>-core</code> artifact, but that should be pulled
-in automatically by maven.
-</p>
 <p><em>NOTE:</em> I do not have any details about how to configure Android projects with maven.  If you are doing so
 then just replace the <code>ormlite-jdbc</code> artifact name with <code>ormlite-android</code>.
 </p>
@@ -5901,7 +5925,7 @@ persistence behavior for <em>all</em> <code>Date</code> types.
 <a name="How-to-Upgrade"></a>
 <table cellpadding="1" cellspacing="1" border="0">
 <tr><td valign="middle" align="left">[<a href="#Custom-Persisters" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#g_t5_002e2" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left">[<a href="#g_t6_002e0" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#Advanced" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#Top" title="Up section"> Up </a>]</td>
@@ -5927,40 +5951,100 @@ However, sometimes when a new version is released, changes are made that require
 and rarely the on-disk database formats. 
 </p>
 <table class="menu" border="0" cellspacing="0">
-<tr><td align="left" valign="top"><a href="#g_t5_002e2">6.1 Notes About Version 5.2</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Notes about version 5.2
+<tr><td align="left" valign="top"><a href="#g_t6_002e0">6.1 Notes About Version 6.0</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Notes about version 6.0
 </td></tr>
-<tr><td align="left" valign="top"><a href="#g_t5_002e1">6.2 Notes About Version 5.1</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Notes about version 5.1
+<tr><td align="left" valign="top"><a href="#g_t5_002e7">6.2 Notes About Version 5.7</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Notes about version 5.7
 </td></tr>
-<tr><td align="left" valign="top"><a href="#g_t5_002e0">6.3 Notes About Version 5.0</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Notes about version 5.0
+<tr><td align="left" valign="top"><a href="#g_t5_002e2">6.3 Notes About Version 5.2</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Notes about version 5.2
 </td></tr>
-<tr><td align="left" valign="top"><a href="#g_t4_002e49">6.4 Notes About Version 4.49</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Notes about version 4.49
+<tr><td align="left" valign="top"><a href="#g_t5_002e1">6.4 Notes About Version 5.1</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Notes about version 5.1
 </td></tr>
-<tr><td align="left" valign="top"><a href="#g_t4_002e45">6.5 Upgrade to Version 4.45</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.45
+<tr><td align="left" valign="top"><a href="#g_t5_002e0">6.5 Notes About Version 5.0</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Notes about version 5.0
 </td></tr>
-<tr><td align="left" valign="top"><a href="#g_t4_002e43">6.6 Problems With Version 4.43</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Problems with version 4.43
+<tr><td align="left" valign="top"><a href="#g_t4_002e49">6.6 Notes About Version 4.49</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Notes about version 4.49
 </td></tr>
-<tr><td align="left" valign="top"><a href="#g_t4_002e37">6.7 Upgrade to Version 4.37</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.37
+<tr><td align="left" valign="top"><a href="#g_t4_002e45">6.7 Upgrade to Version 4.45</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.45
 </td></tr>
-<tr><td align="left" valign="top"><a href="#g_t4_002e30">6.8 Upgrade to Version 4.30</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.30
+<tr><td align="left" valign="top"><a href="#g_t4_002e43">6.8 Problems With Version 4.43</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Problems with version 4.43
 </td></tr>
-<tr><td align="left" valign="top"><a href="#g_t4_002e20">6.9 Upgrade to Version 4.20</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.20
+<tr><td align="left" valign="top"><a href="#g_t4_002e37">6.9 Upgrade to Version 4.37</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.37
 </td></tr>
-<tr><td align="left" valign="top"><a href="#g_t4_002e14">6.10 Upgrade to Version 4.14</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.14
+<tr><td align="left" valign="top"><a href="#g_t4_002e30">6.10 Upgrade to Version 4.30</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.30
 </td></tr>
-<tr><td align="left" valign="top"><a href="#g_t4_002e10">6.11 Upgrade to Version 4.10</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.10
+<tr><td align="left" valign="top"><a href="#g_t4_002e20">6.11 Upgrade to Version 4.20</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.20
 </td></tr>
-<tr><td align="left" valign="top"><a href="#g_t4_002e0">6.12 Upgrade to Version 4.0</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Upgrade to version 4.0
+<tr><td align="left" valign="top"><a href="#g_t4_002e14">6.12 Upgrade to Version 4.14</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.14
 </td></tr>
-<tr><td align="left" valign="top"><a href="#g_t3_002e2">6.13 Upgrade to Version 3.2</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Upgrade to version 3.2
+<tr><td align="left" valign="top"><a href="#g_t4_002e10">6.13 Upgrade to Version 4.10</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Upgrade to version 4.10
 </td></tr>
-<tr><td align="left" valign="top"><a href="#g_t2_002e4">6.14 Upgrade to Version 2.4</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Upgrade to version 2.4
+<tr><td align="left" valign="top"><a href="#g_t4_002e0">6.14 Upgrade to Version 4.0</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Upgrade to version 4.0
+</td></tr>
+<tr><td align="left" valign="top"><a href="#g_t3_002e2">6.15 Upgrade to Version 3.2</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Upgrade to version 3.2
+</td></tr>
+<tr><td align="left" valign="top"><a href="#g_t2_002e4">6.16 Upgrade to Version 2.4</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 Upgrade to version 2.4
 </td></tr>
 </table>
 
 <hr size="6">
-<a name="g_t5_002e2"></a>
+<a name="g_t6_002e0"></a>
 <table cellpadding="1" cellspacing="1" border="0">
 <tr><td valign="middle" align="left">[<a href="#How-to-Upgrade" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#g_t5_002e7" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#How-to-Upgrade" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#How-to-Upgrade" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#Examples" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#Index-of-Concepts" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<a name="Notes-About-Version-6_002e0"></a>
+<h2 class="section">6.1 Notes About Version 6.0</h2>
+
+<p>ORMLite has [finally] moved to a shaded unified jar.  You no longer need to add <code>ormlite-core</code>
+to your mvn dependencies when you use <code>ormlite-jdbc</code> or <code>ormlite-android</code>.
+</p>
+<p>ORMLite now requires Java 7 and no longer supports Java 6.  This allows us to change to using the
+<code>AutoCloseable</code> interface added in Java 7 which means that a number of the different close
+methods now throw <code>Exception</code> instead of <code>IOException</code> to match <code>AutoCloseable.close()</code>.
+</p>
+<p>Since we are moving to 6.0, we&rsquo;ve removed some <code>@Deprecated</code> methods that had been around for
+a while.
+</p>
+<hr size="6">
+<a name="g_t5_002e7"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#g_t6_002e0" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#g_t5_002e2" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#How-to-Upgrade" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#How-to-Upgrade" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#Examples" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#Index-of-Concepts" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<a name="Notes-About-Version-5_002e7"></a>
+<h2 class="section">6.2 Notes About Version 5.7</h2>
+
+<p>Added some provisional <code>Stream</code> support to lazy foreign collections to help with the proper closing
+of the underlying iterator and marking of it as unsized.  We were able to support this while still keeping
+Java 6 compilation level.
+</p>
+<hr size="6">
+<a name="g_t5_002e2"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#g_t5_002e7" title="Previous section in reading order"> &lt; </a>]</td>
 <td valign="middle" align="left">[<a href="#g_t5_002e1" title="Next section in reading order"> &gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="#How-to-Upgrade" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
@@ -5976,7 +6060,7 @@ and rarely the on-disk database formats.
 <td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <a name="Notes-About-Version-5_002e2"></a>
-<h2 class="section">6.1 Notes About Version 5.2</h2>
+<h2 class="section">6.3 Notes About Version 5.2</h2>
 
 <p>In version 5.2, we fixed issues with the boolean SQL types.  The boolean number type now correctly uses the
 <code>BOOLEAN</code> SQL type instead of <code>BYTE</code>.  The  boolean character type now correctly uses the <code>CHAR</code> SQL
@@ -6007,7 +6091,7 @@ classes.
 <td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <a name="Notes-About-Version-5_002e1"></a>
-<h2 class="section">6.2 Notes About Version 5.1</h2>
+<h2 class="section">6.4 Notes About Version 5.1</h2>
 
 <p>In version 5.0, we moved to using English for the field and method name capitalization because of problems with how
 certain languages capitalize certain characters.  Some of the capitalization points were missed however and this
@@ -6044,7 +6128,7 @@ locale.  You can also specify a specific locale if necessary.
 <td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <a name="Notes-About-Version-5_002e0"></a>
-<h2 class="section">6.3 Notes About Version 5.0</h2>
+<h2 class="section">6.5 Notes About Version 5.0</h2>
 
 <p>A number of things have changed and it&rsquo;s been a long time since the last published ORMLite release, so a .0 number
 on the release seemed to be warranted.  See the following details.
@@ -6106,7 +6190,7 @@ setForeignCollectionOrderColumn(), setForeignCollectionForeignColumnName()
 <td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <a name="Notes-About-Version-4_002e49"></a>
-<h2 class="section">6.4 Notes About Version 4.49</h2>
+<h2 class="section">6.6 Notes About Version 4.49</h2>
 
 <p>The 4.49 release took a long time to put out unfortunately so it included a lot of changes, a couple of which need
 to be specifically enumerated.  For more details, please check the change-log.
@@ -6146,7 +6230,7 @@ Android users.
 <td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <a name="Upgrade-to-Version-4_002e45"></a>
-<h2 class="section">6.5 Upgrade to Version 4.45</h2>
+<h2 class="section">6.7 Upgrade to Version 4.45</h2>
 
 <p>To fix the date-string format bug introduced in version 4.43, I&rsquo;ve decided to revert back to the date-string of
 <code>yyyy-MM-dd HH:mm:ss.SSSSSS</code> from the one introduced in 4.43 which was <code>yyyy-MM-dd HH:mm:ss.SSS</code>.  This means
@@ -6188,7 +6272,7 @@ the data.  Something like the following <code>UPDATE</code> statement should wor
 <td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <a name="Problems-With-Version-4_002e43"></a>
-<h2 class="section">6.6 Problems With Version 4.43</h2>
+<h2 class="section">6.8 Problems With Version 4.43</h2>
 
 <p>In the process of looking into adding the timezone to the date-string, I made a change to the date-string format from
 <code>yyyy-MM-dd HH:mm:ss.SSSSSS</code> to <code>yyyy-MM-dd HH:mm:ss.SSS</code> &ndash; changing the milliseconds output from 6 digits to 3.
@@ -6226,7 +6310,7 @@ private Date date;
 <td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <a name="Upgrade-to-Version-4_002e37"></a>
-<h2 class="section">6.7 Upgrade to Version 4.37</h2>
+<h2 class="section">6.9 Upgrade to Version 4.37</h2>
 
 <a name="index-Android-case-sensitive-columns"></a>
 <a name="index-case-sensitive-columns_002c-Android"></a>
@@ -6278,7 +6362,7 @@ not work without the case matching the database.   If you were building a custom
 <td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <a name="Upgrade-to-Version-4_002e30"></a>
-<h2 class="section">6.8 Upgrade to Version 4.30</h2>
+<h2 class="section">6.10 Upgrade to Version 4.30</h2>
 
 <p>For Android users, in 4.30 we added some reflection hacks to make the processing of the <code>@DatabaseField</code> annotations
 a lot faster.  For this reason the following changes must be made:
@@ -6328,7 +6412,7 @@ they were also causing confusion.
 <td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <a name="Upgrade-to-Version-4_002e20"></a>
-<h2 class="section">6.9 Upgrade to Version 4.20</h2>
+<h2 class="section">6.11 Upgrade to Version 4.20</h2>
 
 <p>In 4.20 we made a couple of changes that bear some note.
 </p>
@@ -6368,7 +6452,7 @@ folks on the user list who significantly helped with this process.
 <td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <a name="Upgrade-to-Version-4_002e14"></a>
-<h2 class="section">6.10 Upgrade to Version 4.14</h2>
+<h2 class="section">6.12 Upgrade to Version 4.14</h2>
 
 <p>In 4.14 we added a <code>DatabaseType.BYTE_ARRAY</code> which stores <code>byte[]</code> directly.  See <a href="#BYTE_005fARRAY">BYTE_ARRAY</a>.  In the past, this array
 would have been stored as a serialized array of bytes.  To not break backwards compatibility with the database, fields with the
@@ -6413,7 +6497,7 @@ byte[] field;
 <td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <a name="Upgrade-to-Version-4_002e10"></a>
-<h2 class="section">6.11 Upgrade to Version 4.10</h2>
+<h2 class="section">6.13 Upgrade to Version 4.10</h2>
 
 <p>4.10 was a reasonably large release containing some feature upgrades and some bug fixes.  No data formats were changed, however
 the following API code was altered:
@@ -6450,7 +6534,7 @@ package to work.
 <td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <a name="Upgrade-to-Version-4_002e0"></a>
-<h2 class="section">6.12 Upgrade to Version 4.0</h2>
+<h2 class="section">6.14 Upgrade to Version 4.0</h2>
 
 <p>No data formats were changed, however the following API code was altered.  Removed any outside usage of the <code>DatabaseType</code> since
 the <code>ConnectionSource</code> now provides it.  Also added features to be able to prepare update and delete statements.  To provide
@@ -6515,7 +6599,7 @@ configurations.
 <td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <a name="Upgrade-to-Version-3_002e2"></a>
-<h2 class="section">6.13 Upgrade to Version 3.2</h2>
+<h2 class="section">6.15 Upgrade to Version 3.2</h2>
 
 <p>The 3.2 release involved a <em>very</em> large code reorganization and migration.  There were no on-disk changes unless you somehow
 managed to get ORMLite working previously on Android.  The project was basically split into 3 pieces: core functionality, JDBC
@@ -6569,7 +6653,7 @@ the lack of detail here.
 <td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <a name="Upgrade-to-Version-2_002e4"></a>
-<h2 class="section">6.14 Upgrade to Version 2.4</h2>
+<h2 class="section">6.16 Upgrade to Version 2.4</h2>
 
 <p>A bug was fixed in 2.4 with how we were handling Derby and Hsqldb.  Both of these databases seem to be capitalizing table and field
 names in certain situations which meant that customized queries of ORMLite generated tables were affected.  In version 2.4,
@@ -7082,7 +7166,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-AND_002c-many-arguments">AND, many arguments</a></td><td valign="top"><a href="#Where-Capabilities">3.5 Where Capabilities</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-AND_002c-SQL">AND, SQL</a></td><td valign="top"><a href="#Where-Capabilities">3.5 Where Capabilities</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Android-basics">Android basics</a></td><td valign="top"><a href="#Android-Basics">4.1 Android Basics</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Android-case-sensitive-columns">Android case sensitive columns</a></td><td valign="top"><a href="#g_t4_002e37">6.7 Upgrade to Version 4.37</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Android-case-sensitive-columns">Android case sensitive columns</a></td><td valign="top"><a href="#g_t4_002e37">6.9 Upgrade to Version 4.37</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Android-examples">Android examples</a></td><td valign="top"><a href="#Android-Examples">7.2 Android Examples</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Android-logging">Android logging</a></td><td valign="top"><a href="#Android-Logging">4.3 Android Logging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Android-OS-support">Android OS support</a></td><td valign="top"><a href="#Use-With-Android">4. Using With Android</a></td></tr>
@@ -7090,6 +7174,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-Android-SQLite-database">Android SQLite database</a></td><td valign="top"><a href="#Database-Notes">2.5 Supported Databases</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Android-strings-resources">Android strings resources</a></td><td valign="top"><a href="#Android-Basics">4.1 Android Basics</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-annotations">annotations</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-argument-placeholders">argument placeholders</a></td><td valign="top"><a href="#Select-Arguments">3.6 Using Select Arguments</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-arguments-to-queries">arguments to queries</a></td><td valign="top"><a href="#Select-Arguments">3.6 Using Select Arguments</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-array-of-bytes">array of bytes</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-assignEmptyForeignCollection">assignEmptyForeignCollection</a></td><td valign="top"><a href="#DAO-Methods">5.4 DAO Methods</a></td></tr>
@@ -7113,6 +7198,8 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-BigDecimal-type">BigDecimal type</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-BigIteger-type">BigIteger type</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-boolean">boolean</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-boolean-character">boolean character</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-boolean-integer">boolean integer</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-building-queries">building queries</a></td><td valign="top"><a href="#Building-Queries">3.2 Building Queries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-bulk-inserts">bulk inserts</a></td><td valign="top"><a href="#Batch-Operations">5.10 Running Batch Operations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-byte">byte</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
@@ -7126,7 +7213,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-callBatchTasks-1">callBatchTasks</a></td><td valign="top"><a href="#Batch-Operations">5.10 Running Batch Operations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-can-be-null">can be null</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-can-be-null-1">can be null</a></td><td valign="top"><a href="#Javax-Persistence-Annotations">2.1.2 Using javax.persistence Annotations</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-case-sensitive-columns_002c-Android">case sensitive columns, Android</a></td><td valign="top"><a href="#g_t4_002e37">6.7 Upgrade to Version 4.37</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-case-sensitive-columns_002c-Android">case sensitive columns, Android</a></td><td valign="top"><a href="#g_t4_002e37">6.9 Upgrade to Version 4.37</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-chain-query-methods">chain query methods</a></td><td valign="top"><a href="#Building-Queries">3.2 Building Queries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-change-id-value">change id value</a></td><td valign="top"><a href="#Id-Column">2.8.1 Fields With id</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-changes-with-ORMLite-versions">changes with ORMLite versions</a></td><td valign="top"><a href="#How-to-Upgrade">6. Upgrade From Old Versions</a></td></tr>
@@ -7179,6 +7266,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-creating-an-index">creating an index</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-creating-an-object">creating an object</a></td><td valign="top"><a href="#DAO-Methods">5.4 DAO Methods</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-creating-objects-with-foreign-fields">creating objects with foreign fields</a></td><td valign="top"><a href="#Foreign-Objects">2.12 Foreign Object Fields</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Currency">Currency</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-custom-column-definition">custom column definition</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-custom-column-definition-1">custom column definition</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-custom-data-persister-example">custom data persister example</a></td><td valign="top"><a href="#JDBC-Examples">7.1 JDBC Examples</a></td></tr>
@@ -7222,7 +7310,11 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-DataSourceConnectionSource">DataSourceConnectionSource</a></td><td valign="top"><a href="#Connection-Source">2.3 Connection Sources</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Date">Date</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-date-formats">date formats</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Date-integer">Date integer</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-date-row-last-modified">date row last modified</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-date_002c-java">date, java</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-date_002c-java-integer">date, java integer</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-date_002c-java-long">date, java long</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Date_002c-SQL-type">Date, SQL type</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-DateTime-Joda-type">DateTime Joda type</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-DB2-database">DB2 database</a></td><td valign="top"><a href="#Database-Notes">2.5 Supported Databases</a></td></tr>
@@ -7377,6 +7469,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><th><a name="Index-of-Concepts-1_cp_letter-J">J</a></th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-java-annotations">java annotations</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-java-date">java date</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-java-date-integer">java date integer</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-java-long-date">java long date</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-java-string-date">java string date</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-java_002esql_002eDate-type">java.sql.Date type</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
@@ -7495,6 +7588,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-persisted-field">persisted field</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-persisted-types">persisted types</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-persisting-an-object">persisting an object</a></td><td valign="top"><a href="#DAO-Usage">2.9 DAO Usage</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-placeholders_002c-argument">placeholders, argument</a></td><td valign="top"><a href="#Select-Arguments">3.6 Using Select Arguments</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-pooled-connection-source">pooled connection source</a></td><td valign="top"><a href="#Connection-Source">2.3 Connection Sources</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Postgres-database">Postgres database</a></td><td valign="top"><a href="#Database-Notes">2.5 Supported Databases</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-prepare-the-query">prepare the query</a></td><td valign="top"><a href="#QueryBuilder-Capabilities">3.4 QueryBuilder Capabilities</a></td></tr>
@@ -7531,6 +7625,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-queryForMatchingArgs">queryForMatchingArgs</a></td><td valign="top"><a href="#DAO-Methods">5.4 DAO Methods</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-queryForSameId">queryForSameId</a></td><td valign="top"><a href="#DAO-Methods">5.4 DAO Methods</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-querying-for-foreign-fields">querying for foreign fields</a></td><td valign="top"><a href="#Foreign-Objects">2.12 Foreign Object Fields</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-question-marks_002c-queries">question marks, queries</a></td><td valign="top"><a href="#Select-Arguments">3.6 Using Select Arguments</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-quotes-in-queries">quotes in queries</a></td><td valign="top"><a href="#Select-Arguments">3.6 Using Select Arguments</a></td></tr>
 <tr><td colspan="3"> <hr></td></tr>
 <tr><th><a name="Index-of-Concepts-1_cp_letter-R">R</a></th><td></td><td></td></tr>
@@ -7591,6 +7686,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-SQL-statements_002c-raw">SQL statements, raw</a></td><td valign="top"><a href="#Raw-Statements">2.11 Issuing Raw SQL Statements</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-SQL-Timestamp-string-type">SQL Timestamp string type</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-SQL-Timestamp-type">SQL Timestamp type</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-SQL-Timestamp-type-1">SQL Timestamp type</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-SQL-type">SQL type</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-SQLExceptionDao">SQLExceptionDao</a></td><td valign="top"><a href="#RuntimeExceptionDao">4.4 Runtime Versus SQL Exceptions</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-sqlite-alter-table">sqlite alter table</a></td><td valign="top"><a href="#Upgrading-Schema">4.5 Upgrading Your Schema</a></td></tr>
@@ -7836,20 +7932,22 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
   </ul></li>
   <li><a name="toc-Upgrade-From-Old-Versions" href="#How-to-Upgrade">6. Upgrade From Old Versions</a>
   <ul class="toc">
-    <li><a name="toc-Notes-About-Version-5_002e2" href="#g_t5_002e2">6.1 Notes About Version 5.2</a></li>
-    <li><a name="toc-Notes-About-Version-5_002e1" href="#g_t5_002e1">6.2 Notes About Version 5.1</a></li>
-    <li><a name="toc-Notes-About-Version-5_002e0" href="#g_t5_002e0">6.3 Notes About Version 5.0</a></li>
-    <li><a name="toc-Notes-About-Version-4_002e49" href="#g_t4_002e49">6.4 Notes About Version 4.49</a></li>
-    <li><a name="toc-Upgrade-to-Version-4_002e45" href="#g_t4_002e45">6.5 Upgrade to Version 4.45</a></li>
-    <li><a name="toc-Problems-With-Version-4_002e43" href="#g_t4_002e43">6.6 Problems With Version 4.43</a></li>
-    <li><a name="toc-Upgrade-to-Version-4_002e37" href="#g_t4_002e37">6.7 Upgrade to Version 4.37</a></li>
-    <li><a name="toc-Upgrade-to-Version-4_002e30" href="#g_t4_002e30">6.8 Upgrade to Version 4.30</a></li>
-    <li><a name="toc-Upgrade-to-Version-4_002e20" href="#g_t4_002e20">6.9 Upgrade to Version 4.20</a></li>
-    <li><a name="toc-Upgrade-to-Version-4_002e14" href="#g_t4_002e14">6.10 Upgrade to Version 4.14</a></li>
-    <li><a name="toc-Upgrade-to-Version-4_002e10" href="#g_t4_002e10">6.11 Upgrade to Version 4.10</a></li>
-    <li><a name="toc-Upgrade-to-Version-4_002e0" href="#g_t4_002e0">6.12 Upgrade to Version 4.0</a></li>
-    <li><a name="toc-Upgrade-to-Version-3_002e2" href="#g_t3_002e2">6.13 Upgrade to Version 3.2</a></li>
-    <li><a name="toc-Upgrade-to-Version-2_002e4" href="#g_t2_002e4">6.14 Upgrade to Version 2.4</a></li>
+    <li><a name="toc-Notes-About-Version-6_002e0" href="#g_t6_002e0">6.1 Notes About Version 6.0</a></li>
+    <li><a name="toc-Notes-About-Version-5_002e7" href="#g_t5_002e7">6.2 Notes About Version 5.7</a></li>
+    <li><a name="toc-Notes-About-Version-5_002e2" href="#g_t5_002e2">6.3 Notes About Version 5.2</a></li>
+    <li><a name="toc-Notes-About-Version-5_002e1" href="#g_t5_002e1">6.4 Notes About Version 5.1</a></li>
+    <li><a name="toc-Notes-About-Version-5_002e0" href="#g_t5_002e0">6.5 Notes About Version 5.0</a></li>
+    <li><a name="toc-Notes-About-Version-4_002e49" href="#g_t4_002e49">6.6 Notes About Version 4.49</a></li>
+    <li><a name="toc-Upgrade-to-Version-4_002e45" href="#g_t4_002e45">6.7 Upgrade to Version 4.45</a></li>
+    <li><a name="toc-Problems-With-Version-4_002e43" href="#g_t4_002e43">6.8 Problems With Version 4.43</a></li>
+    <li><a name="toc-Upgrade-to-Version-4_002e37" href="#g_t4_002e37">6.9 Upgrade to Version 4.37</a></li>
+    <li><a name="toc-Upgrade-to-Version-4_002e30" href="#g_t4_002e30">6.10 Upgrade to Version 4.30</a></li>
+    <li><a name="toc-Upgrade-to-Version-4_002e20" href="#g_t4_002e20">6.11 Upgrade to Version 4.20</a></li>
+    <li><a name="toc-Upgrade-to-Version-4_002e14" href="#g_t4_002e14">6.12 Upgrade to Version 4.14</a></li>
+    <li><a name="toc-Upgrade-to-Version-4_002e10" href="#g_t4_002e10">6.13 Upgrade to Version 4.10</a></li>
+    <li><a name="toc-Upgrade-to-Version-4_002e0" href="#g_t4_002e0">6.14 Upgrade to Version 4.0</a></li>
+    <li><a name="toc-Upgrade-to-Version-3_002e2" href="#g_t3_002e2">6.15 Upgrade to Version 3.2</a></li>
+    <li><a name="toc-Upgrade-to-Version-2_002e4" href="#g_t2_002e4">6.16 Upgrade to Version 2.4</a></li>
   </ul></li>
   <li><a name="toc-Example-Code" href="#Examples">7. Example Code</a>
   <ul class="toc">
@@ -7871,7 +7969,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 </tr></table>
 <h1>About This Document</h1>
 <p>
-  This document was generated by <em>Gray Watson</em> on <em>June 22, 2021</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>November 9, 2021</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
 </p>
 <p>
   The buttons in the navigation panels have the following meaning:
@@ -7973,7 +8071,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <hr size="1">
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>June 22, 2021</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>November 9, 2021</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
  </font>
  <br>
 

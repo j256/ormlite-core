@@ -595,56 +595,56 @@ public class FieldTypeTest extends BaseCoreTest {
 				FieldType.createFieldType(databaseType, DefaultTypes.class.getSimpleName(), field, DefaultTypes.class);
 		assertNull(fieldType.getFieldValueIfNotDefault(defaultTypes));
 		defaultTypes.booleanField = true;
-		assertEquals(defaultTypes.booleanField, fieldType.getFieldValueIfNotDefault(defaultTypes));
+		assertEquals((Object) defaultTypes.booleanField, fieldType.getFieldValueIfNotDefault(defaultTypes));
 
 		field = DefaultTypes.class.getDeclaredField("byteField");
 		fieldType =
 				FieldType.createFieldType(databaseType, DefaultTypes.class.getSimpleName(), field, DefaultTypes.class);
 		assertNull(fieldType.getFieldValueIfNotDefault(defaultTypes));
 		defaultTypes.byteField = 1;
-		assertEquals(defaultTypes.byteField, (byte) fieldType.getFieldValueIfNotDefault(defaultTypes));
+		assertEquals((Object) defaultTypes.byteField, fieldType.getFieldValueIfNotDefault(defaultTypes));
 
 		field = DefaultTypes.class.getDeclaredField("charField");
 		fieldType =
 				FieldType.createFieldType(databaseType, DefaultTypes.class.getSimpleName(), field, DefaultTypes.class);
 		assertNull(fieldType.getFieldValueIfNotDefault(defaultTypes));
 		defaultTypes.charField = '1';
-		assertEquals(defaultTypes.charField, (byte) fieldType.getFieldValueIfNotDefault(defaultTypes));
+		assertEquals((Object) defaultTypes.charField, fieldType.getFieldValueIfNotDefault(defaultTypes));
 
 		field = DefaultTypes.class.getDeclaredField("shortField");
 		fieldType =
 				FieldType.createFieldType(databaseType, DefaultTypes.class.getSimpleName(), field, DefaultTypes.class);
 		assertNull(fieldType.getFieldValueIfNotDefault(defaultTypes));
 		defaultTypes.shortField = 32000;
-		assertEquals(defaultTypes.shortField, (byte) fieldType.getFieldValueIfNotDefault(defaultTypes));
+		assertEquals((Object) defaultTypes.shortField, fieldType.getFieldValueIfNotDefault(defaultTypes));
 
 		field = DefaultTypes.class.getDeclaredField("intField");
 		fieldType =
 				FieldType.createFieldType(databaseType, DefaultTypes.class.getSimpleName(), field, DefaultTypes.class);
 		assertNull(fieldType.getFieldValueIfNotDefault(defaultTypes));
 		defaultTypes.intField = 1000000000;
-		assertEquals(defaultTypes.intField, (byte) fieldType.getFieldValueIfNotDefault(defaultTypes));
+		assertEquals((Object) defaultTypes.intField, fieldType.getFieldValueIfNotDefault(defaultTypes));
 
 		field = DefaultTypes.class.getDeclaredField("longField");
 		fieldType =
 				FieldType.createFieldType(databaseType, DefaultTypes.class.getSimpleName(), field, DefaultTypes.class);
 		assertNull(fieldType.getFieldValueIfNotDefault(defaultTypes));
 		defaultTypes.longField = 1000000000000000L;
-		assertEquals(defaultTypes.longField, (byte) fieldType.getFieldValueIfNotDefault(defaultTypes));
+		assertEquals((Object) defaultTypes.longField, fieldType.getFieldValueIfNotDefault(defaultTypes));
 
 		field = DefaultTypes.class.getDeclaredField("floatField");
 		fieldType =
 				FieldType.createFieldType(databaseType, DefaultTypes.class.getSimpleName(), field, DefaultTypes.class);
 		assertNull(fieldType.getFieldValueIfNotDefault(defaultTypes));
 		defaultTypes.floatField = 10.123213F;
-		assertEquals(defaultTypes.floatField, (byte) fieldType.getFieldValueIfNotDefault(defaultTypes));
+		assertEquals((Object) defaultTypes.floatField, fieldType.getFieldValueIfNotDefault(defaultTypes));
 
 		field = DefaultTypes.class.getDeclaredField("doubleField");
 		fieldType =
 				FieldType.createFieldType(databaseType, DefaultTypes.class.getSimpleName(), field, DefaultTypes.class);
 		assertNull(fieldType.getFieldValueIfNotDefault(defaultTypes));
 		defaultTypes.doubleField = 102123123123.123213;
-		assertEquals(defaultTypes.doubleField, (byte) fieldType.getFieldValueIfNotDefault(defaultTypes));
+		assertEquals((Object) defaultTypes.doubleField, fieldType.getFieldValueIfNotDefault(defaultTypes));
 	}
 
 	@Test

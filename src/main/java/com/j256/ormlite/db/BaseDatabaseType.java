@@ -31,25 +31,11 @@ public abstract class BaseDatabaseType implements DatabaseType {
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 
 	/**
-	 * @deprecated Use {@link #getDriverClassNames()}.
-	 */
-	@Deprecated
-	protected String getDriverClassName() {
-		// default is none to let the SPI or other mechanism do the load
-		return null;
-	}
-
-	/**
 	 * Return the name of the driver(s) class associated with this database type. They will be tried in order until one
 	 * class is found.
 	 */
 	protected String[] getDriverClassNames() {
-		String className = getDriverClassName();
-		if (className == null) {
-			return new String[0];
-		} else {
-			return new String[] { className };
-		}
+		return new String[0];
 	}
 
 	@Override
