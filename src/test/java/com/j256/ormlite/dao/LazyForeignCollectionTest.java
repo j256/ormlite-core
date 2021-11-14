@@ -73,7 +73,8 @@ public class LazyForeignCollectionTest extends BaseCoreTest {
 		assertEquals(0, connectionSource.getConnectionCount());
 
 		try (Stream<Foreign> foreign = result.foreign.stream()) {
-			Foreign foreignFromStream = foreign.findFirst().get();
+			assertEquals(1, connectionSource.getConnectionCount());
+			Foreign foreignFromStream = foreign.findFirst().orElse(null);
 			assertNotNull(foreignFromStream);
 		}
 

@@ -1,11 +1,10 @@
 package com.j256.ormlite.dao;
 
-import java.io.IOException;
+import com.j256.ormlite.misc.IOUtils;
+
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.Consumer;
-
-import com.j256.ormlite.misc.IOUtils;
 
 public class CloseableSpliteratorImpl<T> implements CloseableSpliterator<T> {
 
@@ -18,7 +17,7 @@ public class CloseableSpliteratorImpl<T> implements CloseableSpliterator<T> {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() throws Exception {
         iterator.close();
     }
 
