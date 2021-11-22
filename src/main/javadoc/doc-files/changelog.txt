@@ -2,7 +2,9 @@
 	* ALL: Added support for java 7.  Dropped support for Java 6.
 	* ALL: Migrated to supporting AutoCloseable.  Most close() methods now throw Exception not IOException.
 	* CORE: Removed some @Deprecated methods that had been with us for a while.
+	* CORE: Added closeable-spliterator for better handing of JDK8+ streams.  Thanks to zhemaituk.
 	* JDBC: ormlite-jdbc jar now includes the -core classes.  No need to import ormlite-core jar anymore.
+	* JDBC: Fixed exceptions in some JDBC drivers when working with chars.  Thanks to Bo98.
 	* ANDROID: ormlite-android jar now includes the -core classes.  No need to import ormlite-core jar anymore.
 
 5.7: 11/7/2021

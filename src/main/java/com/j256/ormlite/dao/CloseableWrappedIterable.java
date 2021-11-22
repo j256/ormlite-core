@@ -5,13 +5,10 @@ package com.j256.ormlite.dao;
  * {@link CloseableIterator} but also can be closed itself. This allows us to do something like this pattern:
  * 
  * <pre>
- * CloseableWrappedIterable&lt;Foo&gt; wrapperIterable = fooDao.getCloseableIterable();
- * try {
+ * try (CloseableWrappedIterable&lt;Foo&gt; wrapperIterable = fooDao.getCloseableIterable();) {
  *   for (Foo foo : wrapperIterable) {
  *       ...
  *   }
- * } finally {
- *   wrapperIterable.close();
  * }
  * </pre>
  * 
@@ -20,7 +17,7 @@ package com.j256.ormlite.dao;
 public interface CloseableWrappedIterable<T> extends CloseableIterable<T>, AutoCloseable {
 
 	/**
-	 * This will close the last iterator returned by the {@link #iterator()} method.
+	 * This will close the iterator that was wrapped.
 	 */
 	@Override
 	public void close() throws Exception;

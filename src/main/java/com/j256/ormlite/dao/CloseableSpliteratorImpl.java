@@ -1,14 +1,16 @@
 package com.j256.ormlite.dao;
 
-import com.j256.ormlite.misc.IOUtils;
-
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.Consumer;
 
+import com.j256.ormlite.misc.IOUtils;
+
 /**
  * Implementation of {@link CloseableSpliterator} which provides {@link CloseableSpliterator#close()} implementations,
  * and is based on unknown size spliterator (no {@link Spliterator#SIZED} characteristic).
+ * 
+ * @author zhemaituk
  */
 public class CloseableSpliteratorImpl<T> implements CloseableSpliterator<T> {
 
@@ -49,5 +51,4 @@ public class CloseableSpliteratorImpl<T> implements CloseableSpliterator<T> {
 	public int characteristics() {
 		return delegate.characteristics();
 	}
-
 }

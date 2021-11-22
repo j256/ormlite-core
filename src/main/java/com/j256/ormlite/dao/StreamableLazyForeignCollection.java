@@ -20,7 +20,7 @@ import com.j256.ormlite.misc.IOUtils;
  * 
  * <pre>
  * try (Stream<Document> stream = account.getOrders().stream();) {
- *    Order firstOrder = stream.findFirst().orElse(null);
+ * 	Order firstOrder = stream.findFirst().orElse(null);
  * }
  * </pre>
  * 
@@ -37,13 +37,14 @@ import com.j256.ormlite.misc.IOUtils;
  * WARNING: because we are currently building with a JDK before 8, this class cannot be unit tested.
  * </p>
  * 
- * @author graywatson
+ * @author graywatson, zhemaituk
  */
 public class StreamableLazyForeignCollection<T, ID> extends LazyForeignCollection<T, ID> {
 
 	private static final long serialVersionUID = 1288122099601287859L;
 
-	public StreamableLazyForeignCollection(Dao<T, ID> dao, Object parent, Object parentId, FieldType foreignFieldType, String orderColumn, boolean orderAscending) {
+	public StreamableLazyForeignCollection(Dao<T, ID> dao, Object parent, Object parentId, FieldType foreignFieldType,
+			String orderColumn, boolean orderAscending) {
 		super(dao, parent, parentId, foreignFieldType, orderColumn, orderAscending);
 	}
 
@@ -53,7 +54,7 @@ public class StreamableLazyForeignCollection<T, ID> extends LazyForeignCollectio
 		try {
 			return new CloseableSpliteratorImpl<>(iterator);
 		} catch (Error | RuntimeException e) {
-			// If something went wrong during spliterator creation we need to close the connection before re-throwing to caller.
+			// if something went wrong during spliterator creation, we close the connection before re-throwing to caller
 			iterator.closeQuietly();
 			throw e;
 		}
@@ -67,14 +68,15 @@ public class StreamableLazyForeignCollection<T, ID> extends LazyForeignCollectio
 			 * NOTE: we have to use a Runnable here because was want to compile via the JDK7 compiler which doesn't
 			 * understand lambdas.
 			 */
-			return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, 0), false).onClose(new Runnable() {
-				@Override
-				public void run() {
-					IOUtils.closeQuietly(iterator);
-				}
-			});
+			return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, 0), false)
+					.onClose(new Runnable() {
+						@Override
+						public void run() {
+							IOUtils.closeQuietly(iterator);
+						}
+					});
 		} catch (Error | RuntimeException e) {
-			// If something went wrong during stream creation we need to close the connection before re-throwing to caller.
+			// if something went wrong during spliterator creation, we close the connection before re-throwing to caller
 			iterator.closeQuietly();
 			throw e;
 		}
