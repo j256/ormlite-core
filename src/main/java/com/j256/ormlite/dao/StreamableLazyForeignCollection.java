@@ -43,28 +43,40 @@ public class StreamableLazyForeignCollection<T, ID> extends LazyForeignCollectio
 
 	private static final long serialVersionUID = 1288122099601287859L;
 
-	public StreamableLazyForeignCollection(Dao<T, ID> dao, Object parent, Object parentId, FieldType foreignFieldType,
-			String orderColumn, boolean orderAscending) {
+	public StreamableLazyForeignCollection(Dao<T, ID> dao, Object parent, Object parentId, FieldType foreignFieldType, String orderColumn, boolean orderAscending) {
 		super(dao, parent, parentId, foreignFieldType, orderColumn, orderAscending);
 	}
 
 	@Override
-	public Spliterator<T> spliterator() {
-		return Spliterators.spliteratorUnknownSize(iterator(), 0);
+	public CloseableSpliterator<T> spliterator() {
+		final CloseableIterator<T> iterator = closeableIterator();
+		try {
+			return new CloseableSpliteratorImpl<>(iterator);
+		} catch (Error | RuntimeException e) {
+			// If something went wrong during spliterator creation we need to close the connection before re-throwing to caller.
+			iterator.closeQuietly();
+			throw e;
+		}
 	}
 
 	@Override
 	public Stream<T> stream() {
 		final CloseableIterator<T> iterator = closeableIterator();
-		/*
-		 * NOTE: we have to use a Runnable here because was want to compile via the JDK6 compiler which doesn't
-		 * understand lambdas.
-		 */
-		return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, 0), false).onClose(new Runnable() {
-			@Override
-			public void run() {
-				IOUtils.closeQuietly(iterator);
-			}
-		});
+		try {
+			/*
+			 * NOTE: we have to use a Runnable here because was want to compile via the JDK7 compiler which doesn't
+			 * understand lambdas.
+			 */
+			return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, 0), false).onClose(new Runnable() {
+				@Override
+				public void run() {
+					IOUtils.closeQuietly(iterator);
+				}
+			});
+		} catch (Error | RuntimeException e) {
+			// If something went wrong during stream creation we need to close the connection before re-throwing to caller.
+			iterator.closeQuietly();
+			throw e;
+		}
 	}
 }
