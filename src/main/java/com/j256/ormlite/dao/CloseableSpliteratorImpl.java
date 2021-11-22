@@ -6,44 +6,48 @@ import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.Consumer;
 
+/**
+ * Implementation of {@link CloseableSpliterator} which provides {@link CloseableSpliterator#close()} implementations,
+ * and is based on unknown size spliterator (no {@link Spliterator#SIZED} characteristic).
+ */
 public class CloseableSpliteratorImpl<T> implements CloseableSpliterator<T> {
 
-    private final Spliterator<T> delegate;
-    private final CloseableIterator<? extends T> iterator;
+	private final Spliterator<T> delegate;
+	private final CloseableIterator<? extends T> iterator;
 
-    public CloseableSpliteratorImpl(CloseableIterator<? extends T> iterator) {
-        this.delegate = Spliterators.spliteratorUnknownSize(iterator, 0);
-        this.iterator = iterator;
-    }
+	public CloseableSpliteratorImpl(CloseableIterator<? extends T> iterator) {
+		this.delegate = Spliterators.spliteratorUnknownSize(iterator, 0);
+		this.iterator = iterator;
+	}
 
-    @Override
-    public void close() throws Exception {
-        iterator.close();
-    }
+	@Override
+	public void close() throws Exception {
+		iterator.close();
+	}
 
-    @Override
-    public void closeQuietly() {
-        IOUtils.closeQuietly(this);
-    }
+	@Override
+	public void closeQuietly() {
+		IOUtils.closeQuietly(this);
+	}
 
-    @Override
-    public boolean tryAdvance(Consumer<? super T> action) {
-        return delegate.tryAdvance(action);
-    }
+	@Override
+	public boolean tryAdvance(Consumer<? super T> action) {
+		return delegate.tryAdvance(action);
+	}
 
-    @Override
-    public Spliterator<T> trySplit() {
-        return delegate.trySplit();
-    }
+	@Override
+	public Spliterator<T> trySplit() {
+		return delegate.trySplit();
+	}
 
-    @Override
-    public long estimateSize() {
-        return delegate.estimateSize();
-    }
+	@Override
+	public long estimateSize() {
+		return delegate.estimateSize();
+	}
 
-    @Override
-    public int characteristics() {
-        return delegate.characteristics();
-    }
+	@Override
+	public int characteristics() {
+		return delegate.characteristics();
+	}
 
 }

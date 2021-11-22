@@ -12,9 +12,9 @@ import java.util.Spliterator;
  */
 public interface CloseableSpliterator<T> extends Spliterator<T>, AutoCloseable {
 
-    /**
-     * Close any underlying SQL statements but swallow any SQLExceptions.
-     */
-    void closeQuietly();
+	/**
+	 * Close any underlying SQL statements but swallow any SQLExceptions.
+	 */
+	public void closeQuietly();
 
 }
