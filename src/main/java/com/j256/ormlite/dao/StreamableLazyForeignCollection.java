@@ -1,29 +1,29 @@
 package com.j256.ormlite.dao;
 
-import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.misc.IOUtils;
-
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.misc.IOUtils;
 
 /**
  * Lazy foreign collection that provides better support for {@link Stream}s if running with JDK8+. Fortuitously this can
  * be compiled under JDK6 even with the unknown imports as long as the code doesn't use lambdas or any newer language
  * features. This allows ORMLite to stay compatible with older class files but still provide better stream support for
  * Java8+.
- *
+ * 
  * <p>
  * We are trying to fix the below code issue where Account.orders is a {@link LazyForeignCollection}.
  * </p>
- *
+ * 
  * <pre>
  * try (Stream<Document> stream = account.getOrders().stream();) {
  *    Order firstOrder = stream.findFirst().orElse(null);
  * }
  * </pre>
- *
+ * 
  * <p>
  * Without this class, the spliterator that is returned by {@link #spliterator()} has the {@link Spliterator#SIZED}
  * characteristic enabled which implies that the collection is in memory and it is cheap to estimate its size -- with a
@@ -32,11 +32,11 @@ import java.util.stream.StreamSupport;
  * {@link Stream#onClose(Runnable)} runnable to ensure that the iterator is properly closed once the
  * {@link Stream#close()} method is called.
  * </p>
- *
+ * 
  * <p>
  * WARNING: because we are currently building with a JDK before 8, this class cannot be unit tested.
  * </p>
- *
+ * 
  * @author graywatson
  */
 public class StreamableLazyForeignCollection<T, ID> extends LazyForeignCollection<T, ID> {
