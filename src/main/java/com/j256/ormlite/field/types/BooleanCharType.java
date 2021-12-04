@@ -42,6 +42,9 @@ public class BooleanCharType extends BooleanType {
 	@Override
 	public Object javaToSqlArg(FieldType fieldType, Object obj) {
 		String format = (String) fieldType.getDataTypeConfigObj();
+		if (format == null || format.length() < 2) {
+			format = DEFAULT_TRUE_FALSE_FORMAT;
+		}
 		return ((Boolean) obj ? format.charAt(0) : format.charAt(1));
 	}
 
@@ -53,6 +56,9 @@ public class BooleanCharType extends BooleanType {
 	@Override
 	public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
 		String format = (String) fieldType.getDataTypeConfigObj();
+		if (format == null || format.length() < 2) {
+			format = DEFAULT_TRUE_FALSE_FORMAT;
+		}
 		return ((Character) sqlArg == format.charAt(0) ? Boolean.TRUE : Boolean.FALSE);
 	}
 

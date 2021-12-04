@@ -20,8 +20,6 @@ import com.j256.ormlite.field.types.BigDecimalStringType;
  */
 public abstract class BaseSqliteDatabaseType extends BaseDatabaseType {
 
-	private final static FieldConverter booleanConverter = new BooleanNumberFieldConverter();
-
 	@Override
 	protected void appendLongType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		/*
@@ -77,7 +75,7 @@ public abstract class BaseSqliteDatabaseType extends BaseDatabaseType {
 		// we are only overriding certain types
 		switch (dataPersister.getSqlType()) {
 			case BOOLEAN:
-				return booleanConverter;
+				return BooleanNumberFieldConverter.getSingleton();
 			case BIG_DECIMAL:
 				return BigDecimalStringType.getSingleton();
 			default:
