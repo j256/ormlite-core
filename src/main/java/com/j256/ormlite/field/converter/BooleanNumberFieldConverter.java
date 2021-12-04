@@ -12,6 +12,12 @@ import com.j256.ormlite.support.DatabaseResults;
  */
 public class BooleanNumberFieldConverter extends BaseFieldConverter {
 
+	private static final BooleanNumberFieldConverter singleTon = new BooleanNumberFieldConverter();
+
+	public static BooleanNumberFieldConverter getSingleton() {
+		return singleTon;
+	}
+
 	@Override
 	public SqlType getSqlType() {
 		return SqlType.BYTE;
