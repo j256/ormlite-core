@@ -3558,6 +3558,27 @@ adb shell setprop log.tag.droidDatabaseConnection VERBOSE
 adb shell setprop log.tag.ndroidCompiledStatement VERBOSE
 @end example
 
+@cindex proguard, Android usage
+Proguard can cause the internal logging code to get confused and not log things to the Android log.
+You will need to add the following lien to your @code{proguard.cfg} to work around this:
+
+@example
+-keep class com.j256.ormlite.android.AndroidLog { *; }
+@end example
+
+To force the logging backend to use Android logging, you should call the following method as early as
+possible in your application.
+
+@example
+LoggerFactory.setLogBackendFactory(LogBackendType.ANDROID);
+@end example
+
+To disable all logs, you can use the following code also called as early as possible:
+
+@example
+LoggerFactory.setLogBackendFactory(LogBackendType.NULL);.
+@end example
+
 @c ----------------------------------------------------------------
 @node RuntimeExceptionDao, Upgrading Schema, Android Logging, Use With Android
 @section Runtime Versus SQL Exceptions
@@ -4415,15 +4436,31 @@ Logger.setGlobalLogLevel(Level.OFF);
 
 @cindex other loggers
 @cindex logging, custom implemenations
-@cindex null logging implementation
-@cindex dev-null logging implementation
 @cindex logging factory
 You can also implement your own logging implementation by using the @code{LoggerFactory.setLogFactory(...)} method.
 The the factory needs to implement a @code{Log createLog(String)} method and the @code{Log} class only has a couple
 methods to test the log level and log messages with optional throwables.
 
+@cindex logging, set backend
+To force the logging backend to use a particular logging system, you should call the following method as early as
+possible in your application.
+
+@example
+LoggerFactory.setLogBackendFactory(LogBackendType.SLF4J);
+@end example
+
 You can use the @code{NullLogFactory} as another way to disable all log messages by sending them to @code{NullLog}
 which ignores all log calls.
+
+@cindex dev-null logging implementation
+@cindex logging, disable
+@cindex logging, to dev-null
+@cindex disable logging
+To disable all logs, you can use the following code also called as early as possible which ignores all log messages.
+
+@example
+LoggerFactory.setLogBackendFactory(LogBackendType.NULL);.
+@end example
 
 For logging with Android, @xref{Android Logging}.  
 

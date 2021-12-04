@@ -75,6 +75,16 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public List<T> queryForAll() throws SQLException;
 
 	/**
+	 * Query for the first entry in the table returning null if none. This is a convenience method for calling
+	 * queryBuilder().queryForFirst().
+	 * 
+	 * @return The first entity in the table or null if none.
+	 * @throws SQLException
+	 *             on any SQL problems.
+	 */
+	public T queryForFirst() throws SQLException;
+
+	/**
 	 * Query for the items in the object table that match a simple where with a single field = value type of WHERE
 	 * clause. This is a convenience method for calling queryBuilder().where().eq(fieldName, value).query().
 	 * 
