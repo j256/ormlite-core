@@ -252,6 +252,12 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	@Override
+	public T queryForFirst() throws SQLException {
+		checkForInitialized();
+		return queryBuilder().queryForFirst();
+	}
+
+	@Override
 	public List<T> queryForEq(String fieldName, Object value) throws SQLException {
 		return queryBuilder().where().eq(fieldName, value).query();
 	}

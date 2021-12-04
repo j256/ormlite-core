@@ -17,6 +17,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -74,6 +75,10 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Foo result = dao.queryForId(foo.id);
 		assertNotNull(result);
 		assertEquals(equal, result.equal);
+		// check query-for-first
+		result = dao.queryForFirst();
+		assertNotNull(result);
+		assertEquals(equal, result.equal);
 	}
 
 	@Test(expected = SQLException.class)
@@ -105,6 +110,40 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		List<Foo> results = dao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertEquals(foo2.id, results.get(0).id);
+	}
+
+	@Test
+	public void testIterator() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		assertEquals(1, dao.create(foo2));
+
+		CloseableIterator<Foo> iterator = dao.iterator();
+		assertTrue(iterator.hasNext());
+		assertNotNull(iterator.next());
+		assertTrue(iterator.hasNext());
+		assertNotNull(iterator.next());
+		assertFalse(iterator.hasNext());
+		iterator.close();
+
+		iterator = dao.closeableIterator();
+		assertTrue(iterator.hasNext());
+		assertNotNull(iterator.next());
+		assertTrue(iterator.hasNext());
+		assertNotNull(iterator.next());
+		assertFalse(iterator.hasNext());
+		iterator.close();
+
+		try (CloseableWrappedIterable<Foo> iterable = dao.getWrappedIterable();) {
+			Iterator<Foo> iter = iterable.iterator();
+			assertTrue(iter.hasNext());
+			assertNotNull(iter.next());
+			assertTrue(iter.hasNext());
+			assertNotNull(iter.next());
+			assertFalse(iter.hasNext());
+		}
 	}
 
 	@Test(expected = SQLException.class)
@@ -578,6 +617,20 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		try {
 			conn.close();
 			dao.queryForFirst(dao.queryBuilder().prepare());
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
+	}
+
+	@Test(expected = SQLException.class)
+	public void testQueryForFirstNoArgThrow() throws Exception {
+		Dao<CreateOrUpdateObjectId, Integer> dao = createDao(CreateOrUpdateObjectId.class, true);
+		CreateOrUpdateObjectId foo = new CreateOrUpdateObjectId();
+		assertEquals(1, dao.create(foo));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.queryForFirst();
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
@@ -1492,7 +1545,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(1, dao.create(foo));
 
 		Foo match = new Foo();
-		match.stringField = "this id has a quote '";
+		match.stringField = "this id has a quote ' and \"";
 		dao.queryForMatching(match);
 	}
 
@@ -1509,7 +1562,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(1, dao.create(foo2));
 
 		Foo match = new Foo();
-		match.stringField = "this id has a quote '";
+		match.stringField = "this id has a quote ' and \"";
 		List<Foo> results = dao.queryForMatchingArgs(match);
 		assertEquals(0, results.size());
 	}
@@ -1559,7 +1612,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(1, dao.create(foo1));
 
 		Map<String, Object> fieldValues = new HashMap<String, Object>();
-		fieldValues.put(Foo.ID_COLUMN_NAME, "this id has a quote '");
+		fieldValues.put(Foo.ID_COLUMN_NAME, "this id has a quote ' \"");
 		dao.queryForFieldValues(fieldValues);
 	}
 
@@ -1567,7 +1620,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	public void testQueryForFieldValuesArgs() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Map<String, Object> fieldValues = new HashMap<String, Object>();
-		fieldValues.put(Foo.STRING_COLUMN_NAME, "this id has a quote '");
+		fieldValues.put(Foo.STRING_COLUMN_NAME, "this id has a quote ' \"");
 		dao.queryForFieldValuesArgs(fieldValues);
 	}
 
@@ -1834,6 +1887,16 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	}
 
 	@Test
+	public void testQueryForSameIdNullId() throws Exception {
+		Dao<CreateOrUpdateObjectId, Integer> dao = createDao(CreateOrUpdateObjectId.class, true);
+		CreateOrUpdateObjectId foo = new CreateOrUpdateObjectId();
+		assertEquals(1, dao.create(foo));
+		assertNotNull(dao.queryForSameId(foo));
+		foo.id = null;
+		assertNull(dao.queryForSameId(foo));
+	}
+
+	@Test
 	public void testCreateIfNotExists() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
@@ -1860,6 +1923,10 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	public void testReplaceCache() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
 		ReferenceObjectCache cache1 = new ReferenceObjectCache(true);
+		// coverage
+		dao.clearObjectCache();
+		dao.setObjectCache(cache1);
+		// coverage
 		dao.setObjectCache(cache1);
 
 		Foo foo = new Foo();
@@ -1877,6 +1944,8 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 		result = dao.queryForId(foo.id);
 		assertNotSame(foo, result);
+		
+		dao.clearObjectCache();
 	}
 
 	@Test
@@ -2320,6 +2389,17 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Dao<Foo, String> dao = createDao(Foo.class, false);
 		Foo foo = dao.createObjectInstance();
 		assertNotNull(foo);
+	}
+
+	@Test
+	public void testInsertObjectWithQuotes() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		foo.stringField = "quotes in here \" and \'";
+		assertSame(foo, dao.createIfNotExists(foo));
+		List<Foo> results = dao.queryForAll();
+		assertEquals(1, results.size());
+		assertEquals(foo.stringField, results.get(0).stringField);
 	}
 
 	/* ============================================================================================== */

@@ -112,6 +112,19 @@ public class RuntimeExceptionDao<T, ID> implements Dao<T, ID> {
 	}
 
 	/**
+	 * @see Dao#queryForFirst()
+	 */
+	@Override
+	public T queryForFirst() {
+		try {
+			return dao.queryForFirst();
+		} catch (SQLException e) {
+			logMessage(e, "queryForFirst threw exception");
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
 	 * @see Dao#queryForEq(String, Object)
 	 */
 	@Override
