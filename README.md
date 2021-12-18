@@ -64,8 +64,6 @@ The following is a quick code example to give you a taste on how to use the libr
 
 For JDBC usage, you should depend on [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.j256.ormlite/ormlite-jdbc/badge.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/com.j256.ormlite/ormlite-jdbc/) which includes the core classes.
 
-For JDBC usage:
-
 ``` xml
 <dependency>
 	<groupId>com.j256.ormlite</groupId>
