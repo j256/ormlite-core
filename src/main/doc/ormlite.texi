@@ -8,7 +8,7 @@
 @c ----------------------------------------------------------------
 @set ormlite_version 6.0
 @set ormlite_year 2021
-@set ormlite_date November @value{ormlite_year}
+@set ormlite_date December @value{ormlite_year}
 @set package ORMLite
 @c ----------------------------------------------------------------
 
@@ -3563,7 +3563,7 @@ Proguard can cause the internal logging code to get confused and not log things 
 You will need to add the following lien to your @code{proguard.cfg} to work around this:
 
 @example
--keep class com.j256.ormlite.android.AndroidLog { *; }
+-keep class com.j256.ormlite.android.AndroidLog @{ *; @}
 @end example
 
 To force the logging backend to use Android logging, you should call the following method as early as
