@@ -62,9 +62,7 @@ The following is a quick code example to give you a taste on how to use the libr
 
 # Maven Configuration
 
-Maven packages are published via [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.j256.ormlite/ormlite-jdbc/badge.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/com.j256.ormlite/ormlite-jdbc/)
-or [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.j256.ormlite/ormlite-android/badge.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/com.j256.ormlite/ormlite-android/) packages which include
-these core classes.
+For JDBC usage, you should depend on [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.j256.ormlite/ormlite-jdbc/badge.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/com.j256.ormlite/ormlite-jdbc/) which includes the core classes.
 
 For JDBC usage:
 
@@ -76,7 +74,7 @@ For JDBC usage:
 </dependency>
 ```
 
-For Android usage:
+For Android usage, you should depend on [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.j256.ormlite/ormlite-android/badge.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/com.j256.ormlite/ormlite-android/) which includes the core classes.
 
 ``` xml
 <dependency>
