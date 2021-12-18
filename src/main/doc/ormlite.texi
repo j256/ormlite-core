@@ -4803,14 +4803,14 @@ and rarely the on-disk database formats.
 @section Notes About Version 6.0
 
 ORMLite has [finally] moved to a shaded unified jar.  You no longer need to add @code{ormlite-core}
-to your mvn dependencies when you use @code{ormlite-jdbc} or @code{ormlite-android}.
+to your classpath when you use @code{ormlite-jdbc} or @code{ormlite-android}.
 
 ORMLite now requires Java 7 and no longer supports Java 6.  This allows us to change to using the
 @code{AutoCloseable} interface added in Java 7 which means that a number of the different close
 methods now throw @code{Exception} instead of @code{IOException} to match @code{AutoCloseable.close()}.
 
-Since we are moving to 6.0, we've removed some @code{@@Deprecated} methods that had been around for
-a while.
+Since we are moving to 6.0, we've removed some of the @code{@@Deprecated} methods that had been around
+for a while.
 
 @c ----------------------------------------------------------------
 @node 5.7, 5.2, 6.0, How to Upgrade

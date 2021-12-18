@@ -6039,14 +6039,14 @@ and rarely the on-disk database formats.
 <h2 class="section">6.1 Notes About Version 6.0</h2>
 
 <p>ORMLite has [finally] moved to a shaded unified jar.  You no longer need to add <code>ormlite-core</code>
-to your mvn dependencies when you use <code>ormlite-jdbc</code> or <code>ormlite-android</code>.
+to your classpath when you use <code>ormlite-jdbc</code> or <code>ormlite-android</code>.
 </p>
 <p>ORMLite now requires Java 7 and no longer supports Java 6.  This allows us to change to using the
 <code>AutoCloseable</code> interface added in Java 7 which means that a number of the different close
 methods now throw <code>Exception</code> instead of <code>IOException</code> to match <code>AutoCloseable.close()</code>.
 </p>
-<p>Since we are moving to 6.0, we&rsquo;ve removed some <code>@Deprecated</code> methods that had been around for
-a while.
+<p>Since we are moving to 6.0, we&rsquo;ve removed some of the <code>@Deprecated</code> methods that had been around
+for a while.
 </p>
 <hr size="6">
 <a name="g_t5_002e7"></a>
