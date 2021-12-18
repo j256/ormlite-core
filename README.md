@@ -2,8 +2,9 @@ ORMLite Core
 ============
 
 This package provides the core functionality for the JDBC and Android packages.  Users that are connecting to SQL
-databases via JDBC will need to download the [ormlite-jdbc](https://github.com/j256/ormlite-jdbc) package as well. Android
-users should download the [ormlite-android](https://github.com/j256/ormlite-android) package as well as this core package.
+databases via JDBC should download the [ormlite-jdbc](https://github.com/j256/ormlite-jdbc) package instead which
+includes these core classes. Android users should download the
+[ormlite-android](https://github.com/j256/ormlite-android) package instead which also includes these core classes.
 
 * For more information, visit the [ORMLite home page](http://ormlite.com/).	
 * Online documentation can be found off the home page.  Here's the [getting started information](http://ormlite.com/docs/getting-started).
