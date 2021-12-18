@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on November 9, 2021 by texi2html 1.82
+<!-- Created on December 18, 2021 by texi2html 1.82
 texi2html was written by: 
             Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -51,7 +51,7 @@ ul.toc {list-style: none}
 <a name="ORMLite"></a>
 <h1 class="settitle">ORMLite</h1>
 
-<p>Version 6.0 &ndash; November 2021
+<p>Version 6.0 &ndash; December 2021
 </p>
 <a name="index-introduction"></a>
 <a name="index-author"></a>
@@ -4441,6 +4441,24 @@ you would do:
 adb shell setprop log.tag.ndroidCompiledStatement VERBOSE
 </pre></td></tr></table>
 
+<a name="index-proguard_002c-Android-usage"></a>
+<p>Proguard can cause the internal logging code to get confused and not log things to the Android log.
+You will need to add the following lien to your <code>proguard.cfg</code> to work around this:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">-keep class com.j256.ormlite.android.AndroidLog { *; }
+</pre></td></tr></table>
+
+<p>To force the logging backend to use Android logging, you should call the following method as early as
+possible in your application.
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">LoggerFactory.setLogBackendFactory(LogBackendType.ANDROID);
+</pre></td></tr></table>
+
+<p>To disable all logs, you can use the following code also called as early as possible:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">LoggerFactory.setLogBackendFactory(LogBackendType.NULL);.
+</pre></td></tr></table>
+
 <hr size="6">
 <a name="RuntimeExceptionDao"></a>
 <table cellpadding="1" cellspacing="1" border="0">
@@ -5510,16 +5528,30 @@ Logger.setGlobalLogLevel(Level.OFF);
 
 <a name="index-other-loggers"></a>
 <a name="index-logging_002c-custom-implemenations"></a>
-<a name="index-null-logging-implementation"></a>
-<a name="index-dev_002dnull-logging-implementation"></a>
 <a name="index-logging-factory"></a>
 <p>You can also implement your own logging implementation by using the <code>LoggerFactory.setLogFactory(...)</code> method.
 The the factory needs to implement a <code>Log createLog(String)</code> method and the <code>Log</code> class only has a couple
 methods to test the log level and log messages with optional throwables.
 </p>
+<a name="index-logging_002c-set-backend"></a>
+<p>To force the logging backend to use a particular logging system, you should call the following method as early as
+possible in your application.
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">LoggerFactory.setLogBackendFactory(LogBackendType.SLF4J);
+</pre></td></tr></table>
+
 <p>You can use the <code>NullLogFactory</code> as another way to disable all log messages by sending them to <code>NullLog</code>
 which ignores all log calls.
 </p>
+<a name="index-dev_002dnull-logging-implementation"></a>
+<a name="index-logging_002c-disable"></a>
+<a name="index-logging_002c-to-dev_002dnull"></a>
+<a name="index-disable-logging"></a>
+<p>To disable all logs, you can use the following code also called as early as possible which ignores all log messages.
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">LoggerFactory.setLogBackendFactory(LogBackendType.NULL);.
+</pre></td></tr></table>
+
 <p>For logging with Android, See section <a href="#Android-Logging">Android Logging</a>.  
 </p>
 <hr size="6">
@@ -7334,6 +7366,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-dev_002dnull-logging-implementation">dev-null logging implementation</a></td><td valign="top"><a href="#Logging">5.5 ORMLite Logging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-different-databases">different databases</a></td><td valign="top"><a href="#Database-Notes">2.5 Supported Databases</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-disable-all-log-messages">disable all log messages</a></td><td valign="top"><a href="#Logging">5.5 ORMLite Logging</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-disable-logging">disable logging</a></td><td valign="top"><a href="#Logging">5.5 ORMLite Logging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-distinct">distinct</a></td><td valign="top"><a href="#QueryBuilder-Capabilities">3.4 QueryBuilder Capabilities</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-does-id-exist-already">does id exist already</a></td><td valign="top"><a href="#DAO-Methods">5.4 DAO Methods</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-don_0027t-insert-field">don&rsquo;t insert field</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
@@ -7514,6 +7547,9 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-logging-sql-arguments">logging sql arguments</a></td><td valign="top"><a href="#Logging">5.5 ORMLite Logging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-logging-under-Android">logging under Android</a></td><td valign="top"><a href="#Android-Logging">4.3 Android Logging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-logging_002c-custom-implemenations">logging, custom implemenations</a></td><td valign="top"><a href="#Logging">5.5 ORMLite Logging</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-logging_002c-disable">logging, disable</a></td><td valign="top"><a href="#Logging">5.5 ORMLite Logging</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-logging_002c-set-backend">logging, set backend</a></td><td valign="top"><a href="#Logging">5.5 ORMLite Logging</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-logging_002c-to-dev_002dnull">logging, to dev-null</a></td><td valign="top"><a href="#Logging">5.5 ORMLite Logging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-long">long</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-long-string">long string</a></td><td valign="top"><a href="#Persisted-Types">2.2 Persisted Data Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-LRU-cache">LRU cache</a></td><td valign="top"><a href="#Object-Caches">5.8 Object Caches</a></td></tr>
@@ -7553,7 +7589,6 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-NOT_002c-SQL">NOT, SQL</a></td><td valign="top"><a href="#Where-Capabilities">3.5 Where Capabilities</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-null-comparison_002c-SQL">null comparison, SQL</a></td><td valign="top"><a href="#Where-Capabilities">3.5 Where Capabilities</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-null-comparison_002c-SQL-1">null comparison, SQL</a></td><td valign="top"><a href="#Where-Capabilities">3.5 Where Capabilities</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-null-logging-implementation">null logging implementation</a></td><td valign="top"><a href="#Logging">5.5 ORMLite Logging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-null-value-allowed">null value allowed</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-null-value-allowed-1">null value allowed</a></td><td valign="top"><a href="#Javax-Persistence-Annotations">2.1.2 Using javax.persistence Annotations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-null-values-and-primitives">null values and primitives</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
@@ -7596,6 +7631,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <tr><td></td><td valign="top"><a href="#index-primary-key-field">primary key field</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-primary-key-field-1">primary key field</a></td><td valign="top"><a href="#Javax-Persistence-Annotations">2.1.2 Using javax.persistence Annotations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-primitive-null-values">primitive null values</a></td><td valign="top"><a href="#Local-Annotations">2.1.1 Adding ORMLite Annotations</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-proguard_002c-Android-usage">proguard, Android usage</a></td><td valign="top"><a href="#Android-Logging">4.3 Android Logging</a></td></tr>
 <tr><td colspan="3"> <hr></td></tr>
 <tr><th><a name="Index-of-Concepts-1_cp_letter-Q">Q</a></th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-query-arguments">query arguments</a></td><td valign="top"><a href="#Select-Arguments">3.6 Using Select Arguments</a></td></tr>
@@ -7969,7 +8005,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 </tr></table>
 <h1>About This Document</h1>
 <p>
-  This document was generated by <em>Gray Watson</em> on <em>November 9, 2021</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>December 18, 2021</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
 </p>
 <p>
   The buttons in the navigation panels have the following meaning:
@@ -8071,7 +8107,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <hr size="1">
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>November 9, 2021</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>December 18, 2021</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
  </font>
  <br>
 
