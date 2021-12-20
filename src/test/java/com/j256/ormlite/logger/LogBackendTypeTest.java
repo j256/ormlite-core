@@ -11,7 +11,7 @@ public class LogBackendTypeTest {
 	@Test
 	public void test() {
 		for (LogBackendType type : LogBackendType.values()) {
-			if (type == LogBackendType.ANDROID || type == LogBackendType.NULL) {
+			if (type == LogBackendType.ANDROID || type == LogBackendType.NULL || type == LogBackendType.LOG4J2) {
 				assertFalse(type + " should not be available", type.isAvailable());
 				// NOTE: type.createLogBackend() defers to LocalLog
 				continue;

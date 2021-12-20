@@ -6,7 +6,7 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set ormlite_version 6.0
+@set ormlite_version 6.1
 @set ormlite_year 2021
 @set ormlite_date December @value{ormlite_year}
 @set package ORMLite
@@ -4768,7 +4768,7 @@ You probably would not want to register the @code{MyDatePersister} above because
 persistence behavior for @emph{all} @code{Date} types.
 
 @c ----------------------------------------------------------------
-@node How to Upgrade, 6.0, Custom Persisters, Top
+@node How to Upgrade, 6.1, Custom Persisters, Top
 @chapter Upgrade From Old Versions
 
 @cindex upgrading from previous versions
@@ -4780,6 +4780,7 @@ However, sometimes when a new version is released, changes are made that require
 and rarely the on-disk database formats. 
 
 @menu
+* 6.1::                 Notes about version 6.1
 * 6.0::                 Notes about version 6.0
 * 5.7::                 Notes about version 5.7
 * 5.2::                 Notes about version 5.2
@@ -4799,7 +4800,17 @@ and rarely the on-disk database formats.
 @end menu
 
 @c ----------------------------------------------------------------
-@node 6.0, 5.7, How to Upgrade, How to Upgrade
+@node 6.1, 6.0, How to Upgrade, How to Upgrade
+@section Notes About Version 6.1
+
+Because of the fervor around the #Log4Shell bug, I've bumped the log4j2 release to 2.17.0.
+For the record ORMLite uses the @uref{https://256stuff.com/sources/simplelogging/, SimpleLogging}
+shim between it and the logging backends that would only access log4j2 if someone else provided
+the dependency.  Also log4j2 2.17.0 depends on Java 8 while we are still on Java 7 so the tests
+have been ignored.
+
+@c ----------------------------------------------------------------
+@node 6.0, 5.7, 6.1, How to Upgrade
 @section Notes About Version 6.0
 
 ORMLite has [finally] moved to a shaded unified jar.  You no longer need to add @code{ormlite-core}

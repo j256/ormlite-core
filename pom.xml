@@ -53,7 +53,7 @@
 		<slf4j-version>1.7.2</slf4j-version>
 		<!-- yes we know this is an issue but it is here for backwards compatibility -->
 		<log4j-version>1.2.17</log4j-version>
-		<log4j2-version>2.0-beta4</log4j2-version>
+		<log4j2-version>2.17.0</log4j2-version>
 	</properties>
 	<profiles>
 		<profile>
@@ -344,42 +344,42 @@
 		</extensions>
 	</build>
 	<dependencies>
-		<!-- provided dependencies for optional features -->
+		<!-- optional dependencies that will only be used if you add dependencies yourself -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j-version}</version>
-			<scope>provided</scope>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>${slf4j-version}</version>
-			<scope>provided</scope>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>javax.persistence</groupId>
 			<artifactId>persistence-api</artifactId>
 			<version>${persistence-api-version}</version>
-			<scope>provided</scope>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
 			<version>${commons-logging-version}</version>
-			<scope>provided</scope>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>${log4j-version}</version>
-			<scope>provided</scope>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
 			<version>${log4j2-version}</version>
-			<scope>provided</scope>
+			<optional>true</optional>
 		</dependency>
 
 		<!-- test dependencies -->
