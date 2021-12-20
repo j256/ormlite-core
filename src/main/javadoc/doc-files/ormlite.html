@@ -6043,7 +6043,8 @@ and rarely the on-disk database formats.
 <p>Because of the fervor around the #Log4Shell bug, I&rsquo;ve bumped the log4j2 release to 2.17.0.
 For the record ORMLite uses the <a href="https://256stuff.com/sources/simplelogging/">SimpleLogging</a>
 shim between it and the logging backends that would only access log4j2 if someone else provided
-the dependency.
+the dependency.  Also log4j2 2.17.0 depends on Java 8 while we are still on Java 7 so the tests
+have been ignored.
 </p>
 <hr size="6">
 <a name="g_t6_002e0"></a>
