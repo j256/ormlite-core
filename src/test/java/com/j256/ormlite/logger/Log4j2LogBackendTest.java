@@ -1,7 +1,10 @@
 package com.j256.ormlite.logger;
 
+import org.junit.Ignore;
+
 import com.j256.ormlite.logger.Log4j2LogBackend.Log4j2LogBackendFactory;
 
+@Ignore("ignored because this requires java8")
 public class Log4j2LogBackendTest extends BaseLogBackendTest {
 
 	public Log4j2LogBackendTest() {
