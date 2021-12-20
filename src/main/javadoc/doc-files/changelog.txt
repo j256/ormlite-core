@@ -1,5 +1,5 @@
 6.1: 12/20/2021
-	* ALL: Bumped the log4j2 versions to 2.17.0 even though there was no direct calls to the code.
+	* ALL: Bumped the optional dependency to log4j2 to version 2.17.0.  No direct references to log4j2 code in ormlite.
 
 6.0: 12/18/2021
 	* ALL: Added support for Java 7.  Dropped support for Java 6.
