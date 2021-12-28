@@ -5,7 +5,7 @@ import java.lang.reflect.Array;
 /**
  * Class which wraps our {@link LogBackend} interface and provides {} argument features like slf4j. It allows us to plug
  * in additional log backends if necessary.
- *
+ * 
  * From SimpleLogging: https://github.com/j256/simplelogging
  *
  * <p>

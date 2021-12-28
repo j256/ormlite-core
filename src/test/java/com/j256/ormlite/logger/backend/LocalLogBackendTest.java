@@ -1,4 +1,4 @@
-package com.j256.ormlite.logger;
+package com.j256.ormlite.logger.backend;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -12,7 +12,10 @@ import java.io.StringWriter;
 
 import org.junit.Test;
 
-import com.j256.ormlite.logger.LocalLogBackend.LocalLogBackendFactory;
+import com.j256.ormlite.logger.BaseLogBackendTest;
+import com.j256.ormlite.logger.Level;
+import com.j256.ormlite.logger.LogBackend;
+import com.j256.ormlite.logger.backend.LocalLogBackend.LocalLogBackendFactory;
 
 public class LocalLogBackendTest extends BaseLogBackendTest {
 

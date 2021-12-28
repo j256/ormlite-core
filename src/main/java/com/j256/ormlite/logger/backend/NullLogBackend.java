@@ -1,4 +1,9 @@
-package com.j256.ormlite.logger;
+package com.j256.ormlite.logger.backend;
+
+import com.j256.ormlite.logger.Level;
+import com.j256.ormlite.logger.LogBackend;
+import com.j256.ormlite.logger.LogBackendFactory;
+import com.j256.ormlite.logger.LoggerFactory;
 
 /**
  * Log backend that ignores all log requests.

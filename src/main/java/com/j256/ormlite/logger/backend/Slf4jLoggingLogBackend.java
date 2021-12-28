@@ -1,6 +1,10 @@
-package com.j256.ormlite.logger;
+package com.j256.ormlite.logger.backend;
 
 import org.slf4j.ILoggerFactory;
+
+import com.j256.ormlite.logger.Level;
+import com.j256.ormlite.logger.LogBackend;
+import com.j256.ormlite.logger.LogBackendFactory;
 
 /**
  * Log backend that delegates to slf4j.

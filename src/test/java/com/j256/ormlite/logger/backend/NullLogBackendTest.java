@@ -1,8 +1,11 @@
-package com.j256.ormlite.logger;
+package com.j256.ormlite.logger.backend;
 
 import org.junit.Test;
 
-import com.j256.ormlite.logger.NullLogBackend.NullLogBackendFactory;
+import com.j256.ormlite.logger.BaseLogBackendTest;
+import com.j256.ormlite.logger.Logger;
+import com.j256.ormlite.logger.LoggerFactory;
+import com.j256.ormlite.logger.backend.NullLogBackend.NullLogBackendFactory;
 
 public class NullLogBackendTest extends BaseLogBackendTest {
 
