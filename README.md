@@ -68,7 +68,7 @@ For JDBC usage, you should depend on [![Maven Central](https://maven-badges.hero
 <dependency>
 	<groupId>com.j256.ormlite</groupId>
 	<artifactId>ormlite-jdbc</artifactId>
-	<version>6.0</version>
+	<version>6.1</version>
 </dependency>
 ```
 
@@ -78,7 +78,7 @@ For Android usage, you should depend on [![Maven Central](https://maven-badges.h
 <dependency>
 	<groupId>com.j256.ormlite</groupId>
 	<artifactId>ormlite-android</artifactId>
-	<version>6.0</version>
+	<version>6.1</version>
 </dependency>
 ```
 
