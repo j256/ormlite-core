@@ -1,8 +1,12 @@
-package com.j256.ormlite.logger;
+package com.j256.ormlite.logger.backend;
 
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+
+import com.j256.ormlite.logger.Level;
+import com.j256.ormlite.logger.LogBackend;
+import com.j256.ormlite.logger.LogBackendFactory;
 
 public abstract class BaseLogBackendTest {
 
