@@ -1,19 +1,22 @@
-package com.j256.ormlite.logger;
+package com.j256.ormlite.logger.backend;
+
+import com.j256.ormlite.logger.Level;
+import com.j256.ormlite.logger.LogBackend;
+import com.j256.ormlite.logger.LogBackendFactory;
 
 /**
- * Log backend that delegates to logback directly. The org.slf4j classes are part of the slf4j-api but not the actual
- * logger.
+ * Log backend that delegates to Apache Log4j2.
  * 
  * From SimpleLogging: https://github.com/j256/simplelogging
  *
  * @author graywatson
  */
-public class LogbackLogBackend implements LogBackend {
+public class Log4j2LogBackend implements LogBackend {
 
-	private final org.slf4j.Logger logger;
+	private final org.apache.logging.log4j.Logger logger;
 
-	public LogbackLogBackend(org.slf4j.Logger logger) {
-		this.logger = logger;
+	public Log4j2LogBackend(String className) {
+		this.logger = org.apache.logging.log4j.LogManager.getLogger(className);
 	}
 
 	@Override
@@ -29,7 +32,7 @@ public class LogbackLogBackend implements LogBackend {
 			case ERROR:
 				return logger.isErrorEnabled();
 			case FATAL:
-				return logger.isErrorEnabled();
+				return logger.isFatalEnabled();
 			case INFO:
 			default:
 				return logger.isInfoEnabled();
@@ -53,7 +56,7 @@ public class LogbackLogBackend implements LogBackend {
 				logger.error(msg);
 				break;
 			case FATAL:
-				logger.error(msg);
+				logger.fatal(msg);
 				break;
 			case INFO:
 			default:
@@ -79,8 +82,7 @@ public class LogbackLogBackend implements LogBackend {
 				logger.error(msg, t);
 				break;
 			case FATAL:
-				// no level higher than error
-				logger.error(msg, t);
+				logger.fatal(msg, t);
 				break;
 			case INFO:
 			default:
@@ -90,19 +92,12 @@ public class LogbackLogBackend implements LogBackend {
 	}
 
 	/**
-	 * Factory for generating LogbackLogBackend instances.
+	 * Factory for generating Log4j2LogBackend instances.
 	 */
-	public static class LogbackLogBackendFactory implements LogBackendFactory {
-
-		private final org.slf4j.ILoggerFactory factory;
-
-		public LogbackLogBackendFactory() {
-			this.factory = org.slf4j.impl.StaticLoggerBinder.getSingleton().getLoggerFactory();
-		}
-
+	public static class Log4j2LogBackendFactory implements LogBackendFactory {
 		@Override
 		public LogBackend createLogBackend(String classLabel) {
-			return new LogbackLogBackend(factory.getLogger(classLabel));
+			return new Log4j2LogBackend(classLabel);
 		}
 	}
 }

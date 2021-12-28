@@ -12,6 +12,13 @@ import java.lang.reflect.Constructor;
 
 import org.junit.Test;
 
+import com.j256.ormlite.logger.backend.CommonsLoggingLogBackend;
+import com.j256.ormlite.logger.backend.JavaUtilLogBackend;
+import com.j256.ormlite.logger.backend.LocalLogBackend;
+import com.j256.ormlite.logger.backend.Log4jLogBackend;
+import com.j256.ormlite.logger.backend.NullLogBackend;
+import com.j256.ormlite.logger.backend.Slf4jLoggingLogBackend;
+
 public class LoggerFactoryTest {
 
 	@Test

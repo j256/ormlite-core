@@ -1,4 +1,4 @@
-package com.j256.ormlite.logger;
+package com.j256.ormlite.logger.backend;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,6 +15,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
+
+import com.j256.ormlite.logger.Level;
+import com.j256.ormlite.logger.LogBackend;
+import com.j256.ormlite.logger.LogBackendFactory;
+import com.j256.ormlite.logger.LoggerFactory;
 
 /**
  * Log backend that uses logging classes if they are not available.

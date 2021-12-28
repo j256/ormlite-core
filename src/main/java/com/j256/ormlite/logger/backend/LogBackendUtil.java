@@ -1,4 +1,4 @@
-package com.j256.ormlite.logger;
+package com.j256.ormlite.logger.backend;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
