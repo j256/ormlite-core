@@ -4359,23 +4359,19 @@ method instead unless you know what you are doing.
 @section ORMLite Logging
 
 @cindex logging information
-ORMLite uses a log system which can plug into Apache commons logging, Log4j, Android Log, or its own internal
-log implementations.  The logger code first looks for the @code{android.util.Log} and if found will use the Android internal
-logger.  Next it looks for @code{org.apache.commons.logging.LogFactory} class in the class-path -- if found it will use Apache
-commons logging.  If that class is not found it then looks for @code{org.apache.log4j.Logger} and if found will use Log4j.
-If none of these classes are available it will use an internal logger -- see @code{LocalLog}.  The logger code also provides
-simple @{@} argument expansion like @code{slf4j} which means that you can save on @code{toString()} calls and
-@code{StringBuilder} operations if the log level is not high enough.  This allows us to do something like the following:
+@cindex SimpleLogging
+@cindex slf4j logging
+@cindex logback logging
+@cindex commons logging
+ORMLite has copied in code from @uref{https://256stuff.com/sources/simplelogging/, SimpleLogging} to handle its log
+messages.  SimpleLogging can backend to slf4j, Android Log, logback, Apache commons logging, Log4j2, Log4j, console,
+Java util logging, or its own internal log implementations.  It looks in the classpath for the various different logging
+backends and will use the first one it finds.  SimpleLogging provides @{@} argument expansion like @code{slf4j} which
+means that you can save on @code{toString()} calls and @code{StringBuilder} operations if the log level is not high
+enough.
 
-@example
-private static Logger logger =
-  LoggerFactory.getLogger(QueryBuilder.class);
-@dots{}
-logger.debug("built statement @{@}", statement);
-@end example
-
-If you are using log4j (through Apache commons logging or directly), you can use something
-like the following as your @code{log4j.properties} file to see details about the SQL calls.
+If you are using log4j, you can use something like the following as your @code{log4j.properties} file to see details
+about the SQL calls.  Similar configs for slf4j, logback, log4j2, etc. can be used.
 
 @cindex log4j properties file
 @example

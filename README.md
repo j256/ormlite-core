@@ -30,7 +30,7 @@ ORMLite is easy to use and provides the following features:
 
 Enjoy, Gray Watson
 
-## Code Example
+# Code Example
 
 The following is a quick code example to give you a taste on how to use the library.
 
@@ -59,6 +59,10 @@ The following is a quick code example to give you a taste on how to use the libr
     
     // close the connection source
     connectionSource.close();
+
+# Logging Information
+
+ORMLite has copied in logging code from [SimpleLogging](https://256stuff.com/sources/simplelogging/) which backends to a number of different logging systems and is configurable via code or configuration.  For more details see the [logging documentation](https://ormlite.com/docs/logging).
 
 # Maven Configuration
 
