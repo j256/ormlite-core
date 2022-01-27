@@ -13,6 +13,8 @@
 	* JDBC: Fixed boolean char type handling in Derby.
 	* ANDROID: ormlite-android jar now includes the -core classes.  No need to import ormlite-core jar anymore.
 
+------------------------------------------------------------------------------------------------------------------------
+
 5.7: 11/7/2021
 	* CORE: Fixed possible thread issue around field-name lookups.  Thanks to dlew.
 	* CORE: Fixed a number of flaky tests based on field order. Thanks CharlesZKQ, NanaOkada, hwang-pku, and chimo173.

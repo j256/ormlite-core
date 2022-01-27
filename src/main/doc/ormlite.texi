@@ -3570,13 +3570,13 @@ To force the logging backend to use Android logging, you should call the followi
 possible in your application.
 
 @example
-LoggerFactory.setLogBackendFactory(LogBackendType.ANDROID);
+LoggerFactory.setLogBackendType(LogBackendType.ANDROID);
 @end example
 
 To disable all logs, you can use the following code also called as early as possible:
 
 @example
-LoggerFactory.setLogBackendFactory(LogBackendType.NULL);.
+LoggerFactory.setLogBackendType(LogBackendType.NULL);.
 @end example
 
 @c ----------------------------------------------------------------
@@ -4442,7 +4442,7 @@ To force the logging backend to use a particular logging system, you should call
 possible in your application.
 
 @example
-LoggerFactory.setLogBackendFactory(LogBackendType.SLF4J);
+LoggerFactory.setLogBackendType(LogBackendType.SLF4J);
 @end example
 
 You can use the @code{NullLogFactory} as another way to disable all log messages by sending them to @code{NullLog}
@@ -4455,7 +4455,7 @@ which ignores all log calls.
 To disable all logs, you can use the following code also called as early as possible which ignores all log messages.
 
 @example
-LoggerFactory.setLogBackendFactory(LogBackendType.NULL);.
+LoggerFactory.setLogBackendType(LogBackendType.NULL);.
 @end example
 
 For logging with Android, @xref{Android Logging}.  
