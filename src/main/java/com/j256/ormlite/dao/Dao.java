@@ -13,6 +13,7 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.misc.functional.Supplier;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.stmt.PreparedDelete;
@@ -196,6 +197,23 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 *         data element that existed already in the database.
 	 */
 	public T createIfNotExists(T data) throws SQLException;
+
+	/**
+	 * This is a convenience method to creating a data item but only if the ID does not already exist in the table. This
+	 * extracts the id from the data parameter, does a {@link #queryForId(Object)} on it, returning the data if it
+	 * exists. If it does not exist {@link #create(Object)} will be called with the parameter.
+	 *
+	 * Unlike {@link #createIfNotExists(Object)}, this method able to initialize a new object lazily.
+	 *
+	 * <p>
+	 * <b>NOTE:</b> This method is synchronized because otherwise race conditions would be encountered if this is used
+	 * by multiple threads.
+	 * </p>
+	 *
+	 * @return Either the data parameter if it was inserted (now with the ID field set via the create method) or the
+	 *         data element that existed already in the database.
+	 */
+	public T createIfNotExists(ID key, Supplier<T> dataSupplier) throws SQLException;
 
 	/**
 	 * This is a convenience method for creating an item in the database if it does not exist. The id is extracted from
