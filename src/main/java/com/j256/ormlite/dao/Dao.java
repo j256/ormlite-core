@@ -202,17 +202,15 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	 * This is a convenience method to creating a data item but only if the ID does not already exist in the table. This
 	 * extracts the id from the data parameter, does a {@link #queryForId(Object)} on it, returning the data if it
 	 * exists. If it does not exist {@link #create(Object)} will be called with the parameter obtained
-	 * from {@code dataSupplier}.
+	 * from {@code entityCreator}.
 	 * <p>
 	 * Unlike {@link #createIfNotExists(Object)}, this method creates a new object lazily (only if it's really necessary).
-	 * </p>
 	 * <p>
 	 * <b>NOTE:</b> This method is synchronized because otherwise race conditions would be encountered if this is used
 	 * by multiple threads.
-	 * </p>
 	 *
-	 * @return Either the data parameter if it was inserted (now with the ID field set via the create method) or the
-	 *         data element that existed already in the database.
+	 * @return A data parameter that already existed in the database or
+	 * the result of an {@code entityCreator} sent to the database.
 	 */
 	public T createIfNotExists(ID key, Supplier<T> entityCreator) throws SQLException;
 
