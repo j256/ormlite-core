@@ -387,7 +387,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	@Override
-	public synchronized T createIfNotExists(ID key, Supplier<T> entityCreator) throws SQLException {
+	public synchronized T createIfNotExists(final ID key, final Supplier<T> entityCreator) throws SQLException {
 		if (key == null) {
 			return null;
 		}
