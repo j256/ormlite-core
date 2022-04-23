@@ -373,7 +373,7 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	@Override
-	public synchronized T createIfNotExists(final T data) throws SQLException {
+	public synchronized T createIfNotExists(T data) throws SQLException {
 		if (data == null) {
 			return null;
 		}
@@ -387,13 +387,13 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	@Override
-	public synchronized T createIfNotExists(final ID key, final Supplier<T> entityCreator) throws SQLException {
+	public synchronized T createIfNotExists(ID key, final Supplier<T> entitySupplier) throws SQLException {
 		if (key == null) {
 			return null;
 		}
 		T existing = queryForId(key);
 		if (existing == null) {
-			final T data = entityCreator.get();
+			final T data = entitySupplier.get();
 			create(data);
 			return data;
 		} else {
