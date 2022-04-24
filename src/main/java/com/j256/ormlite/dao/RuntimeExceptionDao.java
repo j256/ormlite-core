@@ -11,6 +11,7 @@ import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
+import com.j256.ormlite.misc.Supplier;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.stmt.PreparedDelete;
@@ -274,6 +275,16 @@ public class RuntimeExceptionDao<T, ID> implements Dao<T, ID> {
 			return dao.createIfNotExists(data);
 		} catch (SQLException e) {
 			logMessage(e, "createIfNotExists threw exception on: " + data);
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public T createIfNotExists(ID key, Supplier<T> entitySupplier) {
+		try {
+			return dao.createIfNotExists(key, entitySupplier);
+		} catch (SQLException e) {
+			logMessage(e, "createIfNotExists with entitySupplier threw exception on: " + key);
 			throw new RuntimeException(e);
 		}
 	}

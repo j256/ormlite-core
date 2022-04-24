@@ -1,6 +1,10 @@
 package com.j256.ormlite.dao;
 
 import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.reset;
+import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -34,6 +38,7 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.misc.Supplier;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -1915,8 +1920,53 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 	@Test
 	public void testCreateIfNotExistsNull() throws Exception {
-		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Dao<Foo, Integer> dao = createDao(Foo.class, false);
 		assertNull(dao.createIfNotExists(null));
+	}
+
+	@Test
+	public void testCreateIfNotExistsSupplier() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		foo1.equal = 198412893;
+		assertEquals(1, dao.create(foo1));
+
+		// the one that will be returned by our supplier
+		final Foo foo2 = new Foo();
+		foo2.equal = 2343443;
+
+		@SuppressWarnings("unchecked")
+		Supplier<Foo> supplier = createMock(Supplier.class);
+
+		// no calls to supplier here
+		replay(supplier);
+
+		// foo1 already created so this should be the same as foo1
+		Foo fooResult = dao.createIfNotExists(foo1.id, supplier);
+		assertEquals(foo1.id, fooResult.id);
+		assertEquals(foo1.equal, fooResult.equal);
+
+		verify(supplier);
+
+		// reset our mock so we can add more expected stuff
+		reset(supplier);
+		expect(supplier.get()).andReturn(foo2);
+
+		replay(supplier);
+
+		// but if we try to create one with an id that doesn't exist then the supplier should be called
+		int createdId = foo1.id + 1;
+		fooResult = dao.createIfNotExists(createdId, supplier);
+		assertSame(foo2, fooResult);
+		assertEquals(createdId, foo2.id);
+
+		verify(supplier);
+	}
+
+	@Test
+	public void testCreateIfNotExistsSupplierKeyNull() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, false);
+		assertNull(dao.createIfNotExists(null, null));
 	}
 
 	@Test
@@ -1944,7 +1994,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 		result = dao.queryForId(foo.id);
 		assertNotSame(foo, result);
-		
+
 		dao.clearObjectCache();
 	}
 
