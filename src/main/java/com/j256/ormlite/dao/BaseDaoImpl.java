@@ -17,6 +17,7 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.misc.BaseDaoEnabled;
+import com.j256.ormlite.misc.functional.Supplier;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.stmt.PreparedDelete;
@@ -378,6 +379,21 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 		}
 		T existing = queryForSameId(data);
 		if (existing == null) {
+			create(data);
+			return data;
+		} else {
+			return existing;
+		}
+	}
+
+	@Override
+	public synchronized T createIfNotExists(ID key, final Supplier<T> entitySupplier) throws SQLException {
+		if (key == null) {
+			return null;
+		}
+		T existing = queryForId(key);
+		if (existing == null) {
+			final T data = entitySupplier.get();
 			create(data);
 			return data;
 		} else {
