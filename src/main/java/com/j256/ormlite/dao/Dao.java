@@ -13,7 +13,7 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.ForeignCollectionField;
-import com.j256.ormlite.misc.functional.Supplier;
+import com.j256.ormlite.misc.Supplier;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.stmt.PreparedDelete;
@@ -199,19 +199,17 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public T createIfNotExists(T data) throws SQLException;
 
 	/**
-	 * This is a convenience method to creating a data item but only if the ID does not already exist in the table. This
-	 * extracts the id from the data parameter, does a {@link #queryForId(Object)} on it, returning the data if it
-	 * exists. If it does not exist {@link #create(Object)} will be called with the parameter obtained
-	 * from {@code entitySupplier}.
-	 * <p>
-	 * Unlike {@link #createIfNotExists(Object)}, this method creates a new object lazily
-	 * (only if the object does not exist in the database).
-	 * <p>
+	 * This method creates a data item but only if the ID does not already exist in the table. It extracts the id from
+	 * the data parameter, does a {@link #queryForId(Object)} on it, returning the data if it exists. If it does not
+	 * exist the {@code entitySupplier} will be called to supply and entity that is then passed to
+	 * {@link #create(Object)}. Unlike {@link #createIfNotExists(Object)}, this method creates the new data item lazily
+	 * only if the object does not already exist in the database.
+	 *
 	 * <b>NOTE:</b> This method is synchronized because otherwise race conditions would be encountered if this is used
 	 * by multiple threads.
 	 *
-	 * @return A data parameter that already existed in the database or
-	 * the result of an {@code entitySupplier} sent to the database.
+	 * @return The entity that already existed in the database or the result of an {@code entitySupplier} that was
+	 *         created and inserted in the database.
 	 */
 	public T createIfNotExists(ID key, Supplier<T> entitySupplier) throws SQLException;
 
