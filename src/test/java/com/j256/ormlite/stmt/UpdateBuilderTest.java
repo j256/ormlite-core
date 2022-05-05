@@ -241,6 +241,57 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 		assertNotEquals(num, count);
 	}
 
+	@Test
+	public void testPrepareUpdateSetArguments() throws SQLException {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		foo.val = 10;
+		assertEquals(1, dao.create(foo));
+
+		UpdateBuilder<Foo, Integer> ub = dao.updateBuilder();
+		SelectArg whereArg = new SelectArg();
+		ub.where().eq(Foo.ID_COLUMN_NAME, whereArg);
+		SelectArg updateArg = new SelectArg();
+		ub.updateColumnValue(Foo.VAL_COLUMN_NAME, updateArg);
+		PreparedUpdate<Foo> preparedUpdate = ub.prepare();
+
+		whereArg.setValue(foo.id);
+		int updateVal = foo.val + 1;
+		updateArg.setValue(updateVal);
+
+		assertEquals(1, dao.update(preparedUpdate));
+
+		Foo result = dao.queryForFirst();
+		assertEquals(updateVal, result.val);
+
+		// #1 argument is in the WHERE() clause
+		int idArgIndex = preparedUpdate.getColumnNameIndex(Foo.ID_COLUMN_NAME);
+
+		preparedUpdate.setArgumentHolderValue(idArgIndex, foo.id + 1);
+		updateArg.setValue(updateVal + 1);
+		assertEquals(0, dao.update(preparedUpdate));
+
+		// should not change
+		result = dao.queryForFirst();
+		assertEquals(updateVal, result.val);
+
+		int valArgIndex = preparedUpdate.getColumnNameIndex(Foo.VAL_COLUMN_NAME);
+		assertNotEquals(idArgIndex, valArgIndex);
+
+		// now it should change
+		preparedUpdate.setArgumentHolderValue(Foo.ID_COLUMN_NAME, foo.id);
+		updateVal++;
+		preparedUpdate.setArgumentHolderValue(valArgIndex, updateVal);
+		assertEquals(1, dao.update(preparedUpdate));
+
+		updateVal *= 2;
+		preparedUpdate.setArgumentHolderValue(Foo.VAL_COLUMN_NAME, updateVal);
+		assertEquals(1, dao.update(preparedUpdate));
+
+		result = dao.queryForFirst();
+		assertEquals(updateVal, result.val);
+	}
+
 	protected static class OurForeignCollection {
 		public static final String FOOS_FIELD_NAME = "foos";
 		@DatabaseField(generatedId = true)
