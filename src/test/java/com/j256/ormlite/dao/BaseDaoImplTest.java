@@ -2452,7 +2452,30 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(foo.stringField, results.get(0).stringField);
 	}
 
+	@Test
+	public void testInsertDouble() throws Exception {
+		Dao<DoubleField, Integer> dao = createDao(DoubleField.class, true);
+		DoubleField foo = new DoubleField();
+		foo.doubleField = 7.527E7D;
+		assertEquals(1, dao.create(foo));
+		DoubleField result = getFirstResult(dao);
+		assertEquals(foo.doubleField, result.doubleField, 0.0);
+		dao.delete(result);
+
+		dao.updateRaw("INSERT INTO DoubleField" + " (" + DoubleField.DOUBLE_FIELD_NAME + ") " + "VALUES " + "(?)",
+				((Double) foo.doubleField).toString());
+		result = getFirstResult(dao);
+		assertEquals(foo.doubleField, result.doubleField, 0.0);
+		dao.delete(result);
+	}
+
 	/* ============================================================================================== */
+
+	private <T> T getFirstResult(Dao<T, ?> dao) throws SQLException {
+		List<T> results = dao.queryForAll();
+		assertEquals(1, results.size());
+		return results.get(0);
+	}
 
 	private static class ResultsMapper implements DatabaseResultsMapper<Foo> {
 		@Override
@@ -2809,6 +2832,19 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		int id;
 
 		public TableExists() {
+		}
+	}
+
+	protected static class DoubleField {
+
+		static final String DOUBLE_FIELD_NAME = "doubleField";
+
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(columnName = DOUBLE_FIELD_NAME)
+		double doubleField;
+
+		public DoubleField() {
 		}
 	}
 

@@ -54,6 +54,23 @@ public interface PreparedStmt<T> extends GenericRowMapper<T> {
 	public void setArgumentHolderValue(int index, Object value) throws SQLException;
 
 	/**
+	 * Same as {@link #setArgumentHolderValue(int, Object)} but using the column-name instead of the index. This may do
+	 * a linear search through the arguments so the index should be more efficient.
+	 * 
+	 * @param columnName
+	 *            The name of the argument column-name that we will be setting.
+	 * @param value
+	 *            Object to set in the argument holder.
+	 */
+	public void setArgumentHolderValue(String columnName, Object value) throws SQLException;
+
+	/**
+	 * Returns the index of the argument associated with the column-name or -1 if not found. This may do a linear search
+	 * through the arguments.
+	 */
+	public int getColumnNameIndex(String columnName);
+
+	/**
 	 * Return the number of associated arguments with the statement.
 	 */
 	public int getNumArgs();

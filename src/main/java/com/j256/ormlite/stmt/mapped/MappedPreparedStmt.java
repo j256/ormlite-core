@@ -76,9 +76,27 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID>
 		}
 		if (argHolders.length <= index) {
 			throw new SQLException("argument holder index " + index + " is not valid, only " + argHolders.length
-					+ " in statement (index starts at 0)");
+					+ " arguments in statement (index starts at 0)");
 		}
 		argHolders[index].setValue(value);
+	}
+
+	@Override
+	public void setArgumentHolderValue(String columnName, Object value) throws SQLException {
+		for (int i = 0; i < argHolders.length; i++) {
+			if (argHolders[i].getColumnName().equals(columnName)) {
+				argHolders[i].setValue(value);
+				return;
+			}
+		}
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < argHolders.length; i++) {
+			if (sb.length() > 0) {
+				sb.append(", ");
+			}
+			sb.append(argHolders[i].getColumnName());
+		}
+		throw new SQLException("argument holder column-name `" + columnName + "' is unknown, valid names are: " + sb);
 	}
 
 	@Override
@@ -88,6 +106,16 @@ public class MappedPreparedStmt<T, ID> extends BaseMappedQuery<T, ID>
 		} else {
 			return argHolders.length;
 		}
+	}
+
+	@Override
+	public int getColumnNameIndex(String columnName) {
+		for (int i = 0; i < argHolders.length; i++) {
+			if (argHolders[i].getColumnName().equals(columnName)) {
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	/**
