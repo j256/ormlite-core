@@ -12,6 +12,7 @@ import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.misc.Supplier;
+import com.j256.ormlite.stmt.ArgumentHolder;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.stmt.PreparedDelete;
@@ -499,6 +500,32 @@ public class RuntimeExceptionDao<T, ID> implements Dao<T, ID> {
 	}
 
 	/**
+	 * @see Dao#queryRaw(String)
+	 */
+	@Override
+	public GenericRawResults<String[]> queryRaw(String query) {
+		try {
+			return dao.queryRaw(query);
+		} catch (SQLException e) {
+			logMessage(e, "queryRaw threw exception on: " + query);
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * @see Dao#queryRaw(String, ArgumentHolder...)
+	 */
+	@Override
+	public GenericRawResults<String[]> queryRaw(String query, ArgumentHolder... arguments) {
+		try {
+			return dao.queryRaw(query, arguments);
+		} catch (SQLException e) {
+			logMessage(e, "queryRaw threw exception on: " + query);
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
 	 * @see Dao#queryRaw(String, String...)
 	 */
 	@Override
@@ -507,6 +534,32 @@ public class RuntimeExceptionDao<T, ID> implements Dao<T, ID> {
 			return dao.queryRaw(query, arguments);
 		} catch (SQLException e) {
 			logMessage(e, "queryRaw threw exception on: " + query);
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * @see Dao#queryRawValue(String)
+	 */
+	@Override
+	public long queryRawValue(String query) {
+		try {
+			return dao.queryRawValue(query);
+		} catch (SQLException e) {
+			logMessage(e, "queryRawValue threw exception on: " + query);
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * @see Dao#queryRawValue(String, ArgumentHolder...)
+	 */
+	@Override
+	public long queryRawValue(String query, ArgumentHolder... arguments) {
+		try {
+			return dao.queryRawValue(query, arguments);
+		} catch (SQLException e) {
+			logMessage(e, "queryRawValue threw exception on: " + query);
 			throw new RuntimeException(e);
 		}
 	}
@@ -525,12 +578,65 @@ public class RuntimeExceptionDao<T, ID> implements Dao<T, ID> {
 	}
 
 	/**
+	 * @see Dao#queryRaw(String, RawRowMapper)
+	 */
+	@Override
+	public <UO> GenericRawResults<UO> queryRaw(String query, RawRowMapper<UO> mapper) {
+		try {
+			return dao.queryRaw(query, mapper);
+		} catch (SQLException e) {
+			logMessage(e, "queryRaw threw exception on: " + query);
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * @see Dao#queryRaw(String, RawRowMapper, ArgumentHolder...)
+	 */
+	@Override
+	public <UO> GenericRawResults<UO> queryRaw(String query, RawRowMapper<UO> mapper, ArgumentHolder... arguments) {
+		try {
+			return dao.queryRaw(query, mapper, arguments);
+		} catch (SQLException e) {
+			logMessage(e, "queryRaw threw exception on: " + query);
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
 	 * @see Dao#queryRaw(String, RawRowMapper, String...)
 	 */
 	@Override
 	public <UO> GenericRawResults<UO> queryRaw(String query, RawRowMapper<UO> mapper, String... arguments) {
 		try {
 			return dao.queryRaw(query, mapper, arguments);
+		} catch (SQLException e) {
+			logMessage(e, "queryRaw threw exception on: " + query);
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * @see Dao#queryRaw(String, DataType[], RawRowObjectMapper)
+	 */
+	@Override
+	public <UO> GenericRawResults<UO> queryRaw(String query, DataType[] columnTypes, RawRowObjectMapper<UO> mapper) {
+		try {
+			return dao.queryRaw(query, columnTypes, mapper);
+		} catch (SQLException e) {
+			logMessage(e, "queryRaw threw exception on: " + query);
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * @see Dao#queryRaw(String, DataType[], RawRowObjectMapper, ArgumentHolder...)
+	 */
+	@Override
+	public <UO> GenericRawResults<UO> queryRaw(String query, DataType[] columnTypes, RawRowObjectMapper<UO> mapper,
+			ArgumentHolder... arguments) {
+		try {
+			return dao.queryRaw(query, columnTypes, mapper, arguments);
 		} catch (SQLException e) {
 			logMessage(e, "queryRaw threw exception on: " + query);
 			throw new RuntimeException(e);
@@ -552,12 +658,65 @@ public class RuntimeExceptionDao<T, ID> implements Dao<T, ID> {
 	}
 
 	/**
+	 * @see Dao#queryRaw(String, DataType[])
+	 */
+	@Override
+	public GenericRawResults<Object[]> queryRaw(String query, DataType[] columnTypes) {
+		try {
+			return dao.queryRaw(query, columnTypes);
+		} catch (SQLException e) {
+			logMessage(e, "queryRaw threw exception on: " + query);
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * @see Dao#queryRaw(String, DataType[], ArgumentHolder...)
+	 */
+	@Override
+	public GenericRawResults<Object[]> queryRaw(String query, DataType[] columnTypes, ArgumentHolder... arguments) {
+		try {
+			return dao.queryRaw(query, columnTypes, arguments);
+		} catch (SQLException e) {
+			logMessage(e, "queryRaw threw exception on: " + query);
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
 	 * @see Dao#queryRaw(String, DataType[], String...)
 	 */
 	@Override
 	public GenericRawResults<Object[]> queryRaw(String query, DataType[] columnTypes, String... arguments) {
 		try {
 			return dao.queryRaw(query, columnTypes, arguments);
+		} catch (SQLException e) {
+			logMessage(e, "queryRaw threw exception on: " + query);
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * @see Dao#queryRaw(String, DatabaseResultsMapper)
+	 */
+	@Override
+	public <UO> GenericRawResults<UO> queryRaw(String query, DatabaseResultsMapper<UO> mapper) {
+		try {
+			return dao.queryRaw(query, mapper);
+		} catch (SQLException e) {
+			logMessage(e, "queryRaw threw exception on: " + query);
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * @see Dao#queryRaw(String, DatabaseResultsMapper, ArgumentHolder...)
+	 */
+	@Override
+	public <UO> GenericRawResults<UO> queryRaw(String query, DatabaseResultsMapper<UO> mapper,
+			ArgumentHolder... arguments) {
+		try {
+			return dao.queryRaw(query, mapper, arguments);
 		} catch (SQLException e) {
 			logMessage(e, "queryRaw threw exception on: " + query);
 			throw new RuntimeException(e);
@@ -578,6 +737,32 @@ public class RuntimeExceptionDao<T, ID> implements Dao<T, ID> {
 	}
 
 	/**
+	 * @see Dao#executeRaw(String)
+	 */
+	@Override
+	public int executeRaw(String statement) {
+		try {
+			return dao.executeRaw(statement);
+		} catch (SQLException e) {
+			logMessage(e, "executeRaw threw exception on: " + statement);
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * @see Dao#executeRaw(String, ArgumentHolder...)
+	 */
+	@Override
+	public int executeRaw(String statement, ArgumentHolder... arguments) {
+		try {
+			return dao.executeRaw(statement, arguments);
+		} catch (SQLException e) {
+			logMessage(e, "executeRaw threw exception on: " + statement);
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
 	 * @see Dao#executeRaw(String, String...)
 	 */
 	@Override
@@ -593,12 +778,39 @@ public class RuntimeExceptionDao<T, ID> implements Dao<T, ID> {
 	/**
 	 * @see Dao#executeRawNoArgs(String)
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public int executeRawNoArgs(String statement) {
 		try {
 			return dao.executeRawNoArgs(statement);
 		} catch (SQLException e) {
 			logMessage(e, "executeRawNoArgs threw exception on: " + statement);
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * @see Dao#updateRaw(String)
+	 */
+	@Override
+	public int updateRaw(String statement) {
+		try {
+			return dao.updateRaw(statement);
+		} catch (SQLException e) {
+			logMessage(e, "updateRaw threw exception on: " + statement);
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * @see Dao#updateRaw(String, ArgumentHolder...)
+	 */
+	@Override
+	public int updateRaw(String statement, ArgumentHolder... arguments) {
+		try {
+			return dao.updateRaw(statement, arguments);
+		} catch (SQLException e) {
+			logMessage(e, "updateRaw threw exception on: " + statement);
 			throw new RuntimeException(e);
 		}
 	}

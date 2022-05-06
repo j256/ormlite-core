@@ -1,6 +1,8 @@
 6.2: ?/?/2022
 	* CORE: Added a Dao.createIfNotExists() for lazy entity creation.  Thanks much to BlackBaroness.
 	* CORE: Added PreparedStmt.setArgumentHolderValue(...) to set argument by name.
+	* CORE: added Dao raw methods that take ArgumentHolder... for specifying SqlType to raw statement arguments.
+	* JDBC: Added additional properties to JdbcConnectionSource.  Thanks to danielferraz.
 
 6.1: 12/20/2021
 	* ALL: Bumped the optional dependency to log4j2 to version 2.17.0.  No direct references to log4j2 code in ormlite.

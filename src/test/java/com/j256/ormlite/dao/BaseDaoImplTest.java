@@ -38,10 +38,12 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.misc.Supplier;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
@@ -1067,7 +1069,35 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.updateRaw("DELETE FROM FOO");
+			dao.updateRaw("DELETE FROM FOO", new String[0]);
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
+	}
+
+	@Test
+	public void testUpdateRawArgumentHolders() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		assertEquals(1, dao.create(foo2));
+
+		assertEquals(2, dao.queryForAll().size());
+		SelectArg arg = new SelectArg(SqlType.INTEGER, foo1.id);
+		dao.updateRaw("DELETE FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", arg);
+		assertEquals(1, dao.queryForAll().size());
+	}
+
+	@Test(expected = SQLException.class)
+	public void testUpdateRawArgumentHoldersThrow() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		assertEquals(1, dao.create(foo));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.updateRaw("DELETE FROM FOO", new SelectArg[0]);
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
