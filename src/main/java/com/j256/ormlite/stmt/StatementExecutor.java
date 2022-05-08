@@ -704,8 +704,13 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		for (int i = 0; i < arguments.length; i++) {
 			Object argument = arguments[i];
 			if (argument instanceof ArgumentHolder) {
-				compiledStatement.setObject(i, ((ArgumentHolder) argument).getSqlArgValue(),
-						((ArgumentHolder) argument).getSqlType());
+				ArgumentHolder holder = (ArgumentHolder) argument;
+				SqlType sqlType = holder.getSqlType();
+				if (sqlType == null) {
+					throw new SQLException("Setting argument #" + i + " on compiled statement has no SqlType set: "
+							+ compiledStatement);
+				}
+				compiledStatement.setObject(i, holder.getSqlArgValue(), sqlType);
 			} else {
 				compiledStatement.setObject(i, String.valueOf(arguments[i]), SqlType.STRING);
 			}
