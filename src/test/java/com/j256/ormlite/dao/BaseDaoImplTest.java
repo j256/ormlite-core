@@ -1266,10 +1266,18 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(1, dao.create(foo1));
 		Foo foo2 = new Foo();
 		assertEquals(1, dao.create(foo2));
+		Foo foo3 = new Foo();
+		assertEquals(1, dao.create(foo3));
+		assertEquals(3, dao.queryForAll().size());
 
+		dao.updateRaw("DELETE FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = " + foo1.id);
 		assertEquals(2, dao.queryForAll().size());
-		dao.updateRaw("DELETE FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", Integer.toString(foo1.id));
+
+		dao.updateRaw("DELETE FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", Integer.toString(foo2.id));
 		assertEquals(1, dao.queryForAll().size());
+
+		dao.updateRaw("DELETE FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", new SelectArg(SqlType.INTEGER, foo3.id));
+		assertEquals(0, dao.queryForAll().size());
 	}
 
 	@Test(expected = SQLException.class)
@@ -1281,6 +1289,34 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		try {
 			conn.close();
 			dao.updateRaw("DELETE FROM FOO");
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
+	}
+
+	@Test(expected = SQLException.class)
+	public void testUpdateRawStringsThrow() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		assertEquals(1, dao.create(foo));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.updateRaw("DELETE FROM FOO", "arg");
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
+	}
+
+	@Test(expected = SQLException.class)
+	public void testUpdateRawArgumentHoldersThrow() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		assertEquals(1, dao.create(foo));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.updateRaw("DELETE FROM FOO", new SelectArg());
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
@@ -1321,9 +1357,22 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(1, dao.create(foo1));
 		Foo foo2 = new Foo();
 		assertEquals(1, dao.create(foo2));
+		Foo foo3 = new Foo();
+		assertEquals(1, dao.create(foo3));
 
+		assertEquals(3, dao.queryForAll().size());
+
+		dao.executeRaw("delete from " + FOO_TABLE_NAME + " where " + Foo.ID_COLUMN_NAME + " = ?",
+				Integer.toString(foo1.id));
 		assertEquals(2, dao.queryForAll().size());
+
+		dao.executeRaw("delete from " + FOO_TABLE_NAME + " where " + Foo.ID_COLUMN_NAME + " = ?",
+				new SelectArg(SqlType.INTEGER, foo2.id));
+		assertEquals(1, dao.queryForAll().size());
+
 		dao.executeRaw("TRUNCATE TABLE FOO");
+		// coverage
+		dao.executeRawNoArgs("TRUNCATE TABLE FOO");
 		assertEquals(0, dao.queryForAll().size());
 	}
 
@@ -1336,6 +1385,48 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		try {
 			conn.close();
 			dao.executeRaw("TRUNCATE TABLE FOO");
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
+	}
+
+	@Test(expected = SQLException.class)
+	public void testExecuteRawNoArgsThrow() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		assertEquals(1, dao.create(foo));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.executeRawNoArgs("TRUNCATE TABLE FOO");
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
+	}
+
+	@Test(expected = SQLException.class)
+	public void testExecuteRawStringsThrow() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		assertEquals(1, dao.create(foo));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.executeRaw("TRUNCATE TABLE FOO", "1");
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
+	}
+
+	@Test(expected = SQLException.class)
+	public void testExecuteRawArgumentHoldersThrow() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		assertEquals(1, dao.create(foo));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.executeRaw("TRUNCATE TABLE FOO", new SelectArg());
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
@@ -2538,12 +2629,56 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	@Test
 	public void testQueryRawValue() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
-		assertEquals(1, dao.create(new Foo()));
-		assertEquals(1, dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from foo"));
-		assertEquals(1, dao.create(new Foo()));
-		assertEquals(2, dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from foo"));
-		assertEquals(1, dao.create(new Foo()));
-		assertEquals(3, dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from foo"));
+		Foo foo1 = new Foo();
+		Foo foo2 = new Foo();
+		Foo foo3 = new Foo();
+		assertEquals(1, dao.create(foo1));
+		assertEquals(foo1.id, dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from " + FOO_TABLE_NAME));
+		assertEquals(1, dao.create(foo2));
+		assertEquals(foo2.id, dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from " + FOO_TABLE_NAME));
+		assertEquals(1, dao.create(foo3));
+		assertEquals(foo3.id, dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from " + FOO_TABLE_NAME));
+
+		assertEquals(foo2.id, dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from " + FOO_TABLE_NAME
+				+ " where " + Foo.ID_COLUMN_NAME + " < ?", Integer.toString(foo3.id)));
+		assertEquals(foo1.id, dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from " + FOO_TABLE_NAME
+				+ " where " + Foo.ID_COLUMN_NAME + " < ?", new SelectArg(SqlType.INTEGER, foo2.id)));
+	}
+
+	@Test(expected = SQLException.class)
+	public void testQueryRawValueThrow() throws Exception {
+		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from " + FOO_TABLE_NAME);
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
+	}
+
+	@Test(expected = SQLException.class)
+	public void testQueryRawValueStringsThrow() throws Exception {
+		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from " + FOO_TABLE_NAME, "1");
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
+	}
+
+	@Test(expected = SQLException.class)
+	public void testQueryRawValueArgumentHoldersThrow() throws Exception {
+		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from " + FOO_TABLE_NAME, new SelectArg());
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test
@@ -2687,7 +2822,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.queryRaw(dao.queryBuilder().prepareStatementString(), new ResultsMapper(), "");
+			dao.queryRaw(dao.queryBuilder().prepareStatementString(), new ResultsMapper(), "arg");
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
