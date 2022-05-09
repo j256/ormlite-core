@@ -1336,20 +1336,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(1, dao.queryForAll().size());
 	}
 
-	@Test(expected = SQLException.class)
-	public void testUpdateRawArgumentHoldersThrow() throws Exception {
-		Dao<Foo, Integer> dao = createDao(Foo.class, true);
-		Foo foo = new Foo();
-		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
-		try {
-			conn.close();
-			dao.updateRaw("DELETE FROM FOO", new SelectArg[0]);
-		} finally {
-			connectionSource.releaseConnection(conn);
-		}
-	}
-
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testExecuteRaw() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
@@ -1390,6 +1377,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test(expected = SQLException.class)
 	public void testExecuteRawNoArgsThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
