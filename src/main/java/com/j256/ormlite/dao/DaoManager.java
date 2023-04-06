@@ -97,6 +97,7 @@ public class DaoManager {
 			}
 		}
 
+		@SuppressWarnings("unchecked")
 		D castDao = (D) registerDao(connectionSource, dao);
 		return castDao;
 	}
@@ -141,11 +142,11 @@ public class DaoManager {
 		Dao<?, ?> dao = lookupDao(key);
 		if (dao == null) {
 			return null;
-		} else {
-			@SuppressWarnings("unchecked")
-			D castDao = (D) dao;
-			return castDao;
 		}
+
+		@SuppressWarnings("unchecked")
+		D castDao = (D) dao;
+		return castDao;
 	}
 
 	/**
@@ -243,9 +244,9 @@ public class DaoManager {
 		Dao<?, ?> old = classMap.putIfAbsent(key, dao);
 		if (old != null) {
 			return old;
-		} else {
-			return dao;
 		}
+		
+		return dao;	
 	}
 
 	private static void removeDaoToClassMap(ClassConnectionSource key) {
@@ -267,9 +268,9 @@ public class DaoManager {
 		Dao<?, ?> old = tableConfigMap.putIfAbsent(key, dao);
 		if (old != null) {
 			return old;
-		} else {
-			return dao;
 		}
+
+		return dao;
 	}
 
 	private static <T> Dao<?, ?> lookupDao(ClassConnectionSource key) {
