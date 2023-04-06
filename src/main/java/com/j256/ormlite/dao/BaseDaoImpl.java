@@ -57,7 +57,7 @@ import com.j256.ormlite.table.TableInfo;
  *            needs an ID parameter however so you can use Void or Object to satisfy the compiler.
  * @author graywatson
  */
-public class BaseDaoImpl<T, ID> implements Dao<T, ID> {
+public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 
 	private static final ThreadLocal<List<BaseDaoImpl<?, ?>>> daoConfigLevelLocal =
 			new ThreadLocal<List<BaseDaoImpl<?, ?>>>() {
