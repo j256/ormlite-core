@@ -244,9 +244,9 @@ public class DaoManager {
 		Dao<?, ?> old = classMap.putIfAbsent(key, dao);
 		if (old != null) {
 			return old;
+		} else {			
+			return dao;
 		}
-		
-		return dao;	
 	}
 
 	private static void removeDaoToClassMap(ClassConnectionSource key) {
@@ -268,9 +268,9 @@ public class DaoManager {
 		Dao<?, ?> old = tableConfigMap.putIfAbsent(key, dao);
 		if (old != null) {
 			return old;
+		} else {
+			return dao;
 		}
-
-		return dao;
 	}
 
 	private static <T> Dao<?, ?> lookupDao(ClassConnectionSource key) {
