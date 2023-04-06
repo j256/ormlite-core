@@ -142,11 +142,11 @@ public class DaoManager {
 		Dao<?, ?> dao = lookupDao(key);
 		if (dao == null) {
 			return null;
+		} else {
+			@SuppressWarnings("unchecked")
+			D castDao = (D) dao;
+			return castDao;
 		}
-
-		@SuppressWarnings("unchecked")
-		D castDao = (D) dao;
-		return castDao;
 	}
 
 	/**
@@ -163,13 +163,12 @@ public class DaoManager {
 	 * <b>NOTE:</b> You should maybe use the {@link DatabaseTable#daoClass()} and have the DaoManager construct the DAO
 	 * if possible.
 	 * </p>
-	 * @return 
 	 */
 	public static Dao<?, ?> registerDao(ConnectionSource connectionSource, Dao<?, ?> dao) {
 		if (connectionSource == null) {
 			throw new IllegalArgumentException("connectionSource argument cannot be null");
 		}
-		return addDaoToClassMap(new ClassConnectionSource(connectionSource, dao.getDataClass()), dao);
+		return maybeAddDaoToClassMap(new ClassConnectionSource(connectionSource, dao.getDataClass()), dao);
 	}
 
 	/**
@@ -204,11 +203,11 @@ public class DaoManager {
 		if (dao instanceof BaseDaoImpl) {
 			DatabaseTableConfig<?> tableConfig = ((BaseDaoImpl<?, ?>) dao).getTableConfig();
 			if (tableConfig != null) {
-				addDaoToTableMap(new TableConfigConnectionSource(connectionSource, tableConfig), dao);
+				maybeAddDaoToTableMap(new TableConfigConnectionSource(connectionSource, tableConfig), dao);
 				return;
 			}
 		}
-		addDaoToClassMap(new ClassConnectionSource(connectionSource, dao.getDataClass()), dao);
+		maybeAddDaoToClassMap(new ClassConnectionSource(connectionSource, dao.getDataClass()), dao);
 	}
 
 	/**
@@ -232,15 +231,13 @@ public class DaoManager {
 	 * This is especially true of Android and other mobile platforms.
 	 */
 	public static void addCachedDatabaseConfigs(Collection<DatabaseTableConfig<?>> configs) {
-		Map<Class<?>, DatabaseTableConfig<?>> newMap = new HashMap<Class<?>, DatabaseTableConfig<?>>(configMap);
 		for (DatabaseTableConfig<?> config : configs) {
-			newMap.put(config.getDataClass(), config);
+			configMap.put(config.getDataClass(), config);
 			logger.info("Loaded configuration for {}", config.getDataClass());
 		}
-		configMap.putAll(newMap);
 	}
 
-	private static Dao<?, ?> addDaoToClassMap(ClassConnectionSource key, Dao<?, ?> dao) {
+	private static Dao<?, ?> maybeAddDaoToClassMap(ClassConnectionSource key, Dao<?, ?> dao) {
 		Dao<?, ?> old = classMap.putIfAbsent(key, dao);
 		if (old != null) {
 			return old;
@@ -264,7 +261,7 @@ public class DaoManager {
 		}
 	}
 
-	private static Dao<?, ?> addDaoToTableMap(TableConfigConnectionSource key, Dao<?, ?> dao) {
+	private static Dao<?, ?> maybeAddDaoToTableMap(TableConfigConnectionSource key, Dao<?, ?> dao) {
 		Dao<?, ?> old = tableConfigMap.putIfAbsent(key, dao);
 		if (old != null) {
 			return old;
@@ -341,7 +338,7 @@ public class DaoManager {
 		if (dao != null) {
 			// if it is not in the table map but is in the class map, add it
 			@SuppressWarnings("unchecked")
-			D castDao = (D) addDaoToTableMap(tableKey, dao);
+			D castDao = (D) maybeAddDaoToTableMap(tableKey, dao);
 			return castDao;
 		}
 
@@ -367,12 +364,12 @@ public class DaoManager {
 			}
 		}
 
-		addDaoToTableMap(tableKey, dao);
+		maybeAddDaoToTableMap(tableKey, dao);
 		logger.debug("created dao for class {} from table config", dataClass);
 
 		// if it is not in the class config either then add it
 		@SuppressWarnings("unchecked")
-		D castDao = (D) addDaoToClassMap(classKey, dao);
+		D castDao = (D) maybeAddDaoToClassMap(classKey, dao);
 
 		return castDao;
 	}
