@@ -38,10 +38,12 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.misc.Supplier;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
@@ -125,21 +127,21 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		Foo foo2 = new Foo();
 		assertEquals(1, dao.create(foo2));
 
-		CloseableIterator<Foo> iterator = dao.iterator();
-		assertTrue(iterator.hasNext());
-		assertNotNull(iterator.next());
-		assertTrue(iterator.hasNext());
-		assertNotNull(iterator.next());
-		assertFalse(iterator.hasNext());
-		iterator.close();
+		try (CloseableIterator<Foo> iterator = dao.iterator();) {
+			assertTrue(iterator.hasNext());
+			assertNotNull(iterator.next());
+			assertTrue(iterator.hasNext());
+			assertNotNull(iterator.next());
+			assertFalse(iterator.hasNext());
+		}
 
-		iterator = dao.closeableIterator();
-		assertTrue(iterator.hasNext());
-		assertNotNull(iterator.next());
-		assertTrue(iterator.hasNext());
-		assertNotNull(iterator.next());
-		assertFalse(iterator.hasNext());
-		iterator.close();
+		try (CloseableIterator<Foo> iterator = dao.closeableIterator();) {
+			assertTrue(iterator.hasNext());
+			assertNotNull(iterator.next());
+			assertTrue(iterator.hasNext());
+			assertNotNull(iterator.next());
+			assertFalse(iterator.hasNext());
+		}
 
 		try (CloseableWrappedIterable<Foo> iterable = dao.getWrappedIterable();) {
 			Iterator<Foo> iter = iterable.iterator();
@@ -149,6 +151,25 @@ public class BaseDaoImplTest extends BaseCoreTest {
 			assertNotNull(iter.next());
 			assertFalse(iter.hasNext());
 		}
+
+		// wrapped iterable with prepared query
+		PreparedQuery<Foo> pq = dao.queryBuilder().where().eq(Foo.ID_COLUMN_NAME, foo2.id).prepare();
+		try (CloseableWrappedIterable<Foo> iterable = dao.getWrappedIterable(pq);) {
+			Iterator<Foo> iter = iterable.iterator();
+			assertTrue(iter.hasNext());
+			assertNotNull(iter.next());
+			assertFalse(iter.hasNext());
+		}
+
+		// wrapped iterable with prepared query
+		try (CloseableIterator<Foo> iterator = dao.iterator(pq);) {
+			assertTrue(iterator.hasNext());
+			assertNotNull(iterator.next());
+			assertFalse(iterator.hasNext());
+		}
+
+		dao.closeLastIterator();
+		dao.closeLastIterator();
 	}
 
 	@Test(expected = SQLException.class)
@@ -731,7 +752,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	}
 
 	@Test
-	public void testQueryRawStrings() throws Exception {
+	public void testQueryRaw() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
 		int equal1 = 1231231232;
@@ -757,6 +778,88 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(2, row.length);
 		assertEquals(Integer.toString(foo2.id), row[0]);
 		assertEquals(foo2.equal, Integer.parseInt(row[1]));
+
+		// string arguments
+		results = dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME + " FROM FOO WHERE "
+				+ Foo.ID_COLUMN_NAME + " = ?", Integer.toString(foo1.id));
+		resultList = results.getResults();
+		assertEquals(1, resultList.size());
+		row = resultList.get(0);
+		assertEquals(2, row.length);
+		assertEquals(Integer.toString(foo1.id), row[0]);
+		assertEquals(foo1.equal, Integer.parseInt(row[1]));
+
+		// argument holder arguments
+		results = dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME + " FROM FOO WHERE "
+				+ Foo.ID_COLUMN_NAME + " = ?", new SelectArg(SqlType.INTEGER, foo1.id));
+		resultList = results.getResults();
+		assertEquals(1, resultList.size());
+		row = resultList.get(0);
+		assertEquals(2, row.length);
+		assertEquals(Integer.toString(foo1.id), row[0]);
+		assertEquals(foo1.equal, Integer.parseInt(row[1]));
+	}
+
+	@Test(expected = SQLException.class)
+	public void testQueryRawThrow() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		assertEquals(1, dao.create(foo));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.queryRaw("SELECT * FROM FOO");
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
+	}
+
+	@Test(expected = SQLException.class)
+	public void testQueryRawStringsThrow() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		assertEquals(1, dao.create(foo));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.queryRaw("SELECT * FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", Integer.toString(foo.id));
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
+	}
+
+	@Test(expected = SQLException.class)
+	public void testQueryRawArgumentHoldersThrow() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		assertEquals(1, dao.create(foo));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.queryRaw("SELECT * FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?",
+					new SelectArg(SqlType.INTEGER, foo.id));
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
+	}
+
+	@Test(expected = SQLException.class)
+	public void testQueryArgumentHolderNoSqltype() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		int equal1 = 1231231232;
+		foo1.equal = equal1;
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		int equal2 = 1231232;
+		foo2.equal = equal2;
+		assertEquals(1, dao.create(foo2));
+
+		QueryBuilder<Foo, Integer> queryBuilder = dao.queryBuilder();
+		queryBuilder.where().eq(Foo.ID_COLUMN_NAME, foo1.id);
+
+		dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME + " FROM FOO WHERE "
+				+ Foo.ID_COLUMN_NAME + " = ?", new SelectArg(Foo.ID_COLUMN_NAME, foo1.id));
 	}
 
 	@Test
@@ -782,51 +885,66 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(0, resultList.get(0).equal);
 		assertEquals(foo2.id, resultList.get(1).id);
 		assertEquals(0, resultList.get(0).equal);
+
+		// string arguments
+		results = dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + " FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?",
+				dao.getRawRowMapper(), Integer.toString(foo1.id));
+		resultList = results.getResults();
+		assertEquals(1, resultList.size());
+		assertEquals(foo1.id, resultList.get(0).id);
+		assertEquals(0, resultList.get(0).equal);
+
+		// argument holder arguments
+		results = dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + " FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?",
+				dao.getRawRowMapper(), new SelectArg(SqlType.INTEGER, foo1.id));
+		resultList = results.getResults();
+		assertEquals(1, resultList.size());
+		assertEquals(foo1.id, resultList.get(0).id);
+		assertEquals(0, resultList.get(0).equal);
 	}
 
 	@Test(expected = SQLException.class)
-	public void testQueryRawStringsThrow() throws Exception {
+	public void testQueryRawRowMapperThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		assertEquals(1, dao.create(foo));
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.queryRaw("SELECT * FROM FOO");
+			dao.queryRaw("SELECT * FROM FOO", dao.getRawRowMapper());
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
 	}
 
-	@Test
-	public void testQueryRawStringsArguments() throws Exception {
+	@Test(expected = SQLException.class)
+	public void testQueryRawRowMapperStringsThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
-		Foo foo1 = new Foo();
-		int equal1 = 1231231232;
-		foo1.equal = equal1;
-		assertEquals(1, dao.create(foo1));
-		Foo foo2 = new Foo();
-		int equal2 = 1231232;
-		foo2.equal = equal2;
-		assertEquals(1, dao.create(foo2));
+		Foo foo = new Foo();
+		assertEquals(1, dao.create(foo));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.queryRaw("SELECT * FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", dao.getRawRowMapper(),
+					Integer.toString(foo.id));
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
+	}
 
-		QueryBuilder<Foo, Integer> queryBuilder = dao.queryBuilder();
-		queryBuilder.where().eq(Foo.ID_COLUMN_NAME, foo1.id);
-
-		GenericRawResults<String[]> results = dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME
-				+ " FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", Integer.toString(foo2.id));
-		assertEquals(2, results.getNumberColumns());
-		String[] names = results.getColumnNames();
-		assertEquals(2, names.length);
-		assertEquals(Foo.ID_COLUMN_NAME.toUpperCase(), names[0]);
-		assertEquals(Foo.EQUAL_COLUMN_NAME.toUpperCase(), names[1]);
-		List<String[]> resultList = results.getResults();
-		assertEquals(1, resultList.size());
-		String[] row = resultList.get(0);
-		assertEquals(2, row.length);
-		assertEquals(Integer.toString(foo2.id), row[0]);
-		assertEquals(foo2.equal, Integer.parseInt(row[1]));
-		results.close();
+	@Test(expected = SQLException.class)
+	public void testQueryRawRowMapperArgumentHoldersThrow() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		assertEquals(1, dao.create(foo));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.queryRaw("SELECT * FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", dao.getRawRowMapper(),
+					new SelectArg(SqlType.INTEGER, foo.id));
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test
@@ -857,6 +975,31 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(2, row.length);
 		assertEquals(Integer.toString(foo2.id), row[0]);
 		assertEquals(foo2.equal, row[1]);
+
+		// string arguments
+		results =
+				dao.queryRaw(
+						"SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME + " FROM FOO WHERE "
+								+ Foo.ID_COLUMN_NAME + " = ?",
+						new DataType[] { DataType.STRING, DataType.INTEGER }, Integer.toString(foo2.id));
+		resultList = results.getResults();
+		assertEquals(1, resultList.size());
+		row = resultList.get(0);
+		assertEquals(2, row.length);
+		assertEquals(Integer.toString(foo2.id), row[0]);
+		assertEquals(foo2.equal, row[1]);
+
+		// ArgumentHolder arguments
+		results = dao.queryRaw(
+				"SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME + " FROM FOO WHERE " + Foo.ID_COLUMN_NAME
+						+ " = ?",
+				new DataType[] { DataType.STRING, DataType.INTEGER }, new SelectArg(SqlType.INTEGER, foo1.id));
+		resultList = results.getResults();
+		assertEquals(1, resultList.size());
+		row = resultList.get(0);
+		assertEquals(2, row.length);
+		assertEquals(Integer.toString(foo1.id), row[0]);
+		assertEquals(foo1.equal, row[1]);
 	}
 
 	@Test(expected = SQLException.class)
@@ -873,32 +1016,135 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		}
 	}
 
+	@Test(expected = SQLException.class)
+	public void testQueryRawObjectsStringsThrow() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		assertEquals(1, dao.create(foo));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.queryRaw("SELECT * FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", new DataType[0],
+					Integer.toString(foo.id));
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
+	}
+
+	@Test(expected = SQLException.class)
+	public void testQueryRawObjectsArgumentHoldersThrow() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		assertEquals(1, dao.create(foo));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.queryRaw("SELECT * FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", new DataType[0],
+					new SelectArg(SqlType.INTEGER, foo.id));
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
+	}
+
 	@Test
-	public void testQueryRawObjectsArguments() throws Exception {
+	public void testQueryRawDataTypesRawRowMapper() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
-		int equal1 = 1231231232;
-		foo1.equal = equal1;
+		foo1.val = 1231232;
 		assertEquals(1, dao.create(foo1));
 		Foo foo2 = new Foo();
-		int equal2 = 1231232;
-		foo2.equal = equal2;
+		foo2.val = 324423;
 		assertEquals(1, dao.create(foo2));
 
 		QueryBuilder<Foo, Integer> queryBuilder = dao.queryBuilder();
 		queryBuilder.where().eq(Foo.ID_COLUMN_NAME, foo1.id);
 
-		GenericRawResults<Object[]> results =
-				dao.queryRaw(
-						"SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME + " FROM FOO WHERE "
-								+ Foo.ID_COLUMN_NAME + " = ?",
-						new DataType[] { DataType.STRING, DataType.INTEGER }, Integer.toString(foo2.id));
-		List<Object[]> resultList = results.getResults();
+		RawRowObjectMapper<RawResult> rowMapper = new RawRowObjectMapper<RawResult>() {
+			@Override
+			public RawResult mapRow(String[] columnNames, DataType[] dataTypes, Object[] resultColumns) {
+				RawResult result = new RawResult();
+				assertEquals(1, resultColumns.length);
+				result.val = (Integer) resultColumns[0];
+				return result;
+			}
+		};
+		GenericRawResults<RawResult> results = dao.queryRaw("SELECT (" + Foo.VAL_COLUMN_NAME + " * 2) FROM FOO",
+				new DataType[] { DataType.INTEGER }, rowMapper);
+		List<RawResult> resultList = results.getResults();
+		assertEquals(2, resultList.size());
+		assertEquals(foo1.val * 2, resultList.get(0).val);
+		assertEquals(foo2.val * 2, resultList.get(1).val);
+
+		results = dao.queryRaw("SELECT (" + Foo.VAL_COLUMN_NAME + " * 2) FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?",
+				new DataType[] { DataType.INTEGER }, rowMapper, Integer.toString(foo1.id));
+		resultList = results.getResults();
 		assertEquals(1, resultList.size());
-		Object[] row = resultList.get(0);
-		assertEquals(2, row.length);
-		assertEquals(Integer.toString(foo2.id), row[0]);
-		assertEquals(foo2.equal, row[1]);
+		assertEquals(foo1.val * 2, resultList.get(0).val);
+
+		results = dao.queryRaw("SELECT (" + Foo.VAL_COLUMN_NAME + " * 2) FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?",
+				new DataType[] { DataType.INTEGER }, rowMapper, new SelectArg(SqlType.INTEGER, foo2.id));
+		resultList = results.getResults();
+		assertEquals(1, resultList.size());
+		assertEquals(foo2.val * 2, resultList.get(0).val);
+	}
+
+	@Test(expected = SQLException.class)
+	public void testQueryRawDataTypesRowMapperThrow() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		assertEquals(1, dao.create(foo));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.queryRaw("SELECT * FROM FOO", new DataType[0], new RawRowObjectMapper<Object>() {
+				@Override
+				public Object mapRow(String[] columnNames, DataType[] dataTypes, Object[] resultColumns) {
+					return new Object();
+				}
+			});
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
+	}
+
+	@Test(expected = SQLException.class)
+	public void testQueryRawDataTypesRowMapperStringsThrow() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		assertEquals(1, dao.create(foo));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.queryRaw("SELECT * FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", new DataType[0],
+					new RawRowObjectMapper<Object>() {
+						@Override
+						public Object mapRow(String[] columnNames, DataType[] dataTypes, Object[] resultColumns) {
+							return new Object();
+						}
+					}, Integer.toString(foo.id));
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
+	}
+
+	@Test(expected = SQLException.class)
+	public void testQueryRawDataTypesRowMapperArgumentHoldersThrow() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		assertEquals(1, dao.create(foo));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.queryRaw("SELECT * FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", new DataType[0],
+					new RawRowObjectMapper<Object>() {
+						@Override
+						public Object mapRow(String[] columnNames, DataType[] dataTypes, Object[] resultColumns) {
+							return new Object();
+						}
+					}, new SelectArg(SqlType.INTEGER, foo.id));
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test
@@ -953,39 +1199,6 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
-	}
-
-	@Test
-	public void testQueryRawMappedArguments() throws Exception {
-		Dao<Foo, Integer> dao = createDao(Foo.class, true);
-		Foo foo1 = new Foo();
-		int equal1 = 1231231232;
-		foo1.equal = equal1;
-		assertEquals(1, dao.create(foo1));
-		Foo foo2 = new Foo();
-		int equal2 = 1231232;
-		foo2.equal = equal2;
-		assertEquals(1, dao.create(foo2));
-
-		QueryBuilder<Foo, Integer> queryBuilder = dao.queryBuilder();
-		queryBuilder.where().eq(Foo.ID_COLUMN_NAME, foo1.id);
-
-		GenericRawResults<Foo> results = dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME
-				+ " FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", new RawRowMapper<Foo>() {
-					@Override
-					public Foo mapRow(String[] columnNames, String[] resultColumns) {
-						assertEquals(2, columnNames.length);
-						assertEquals(2, resultColumns.length);
-						Foo foo = new Foo();
-						foo.id = Integer.parseInt(resultColumns[0]);
-						foo.equal = Integer.parseInt(resultColumns[1]);
-						return foo;
-					}
-				}, Integer.toString(foo2.id));
-		List<Foo> resultList = results.getResults();
-		assertEquals(1, resultList.size());
-		assertEquals(foo2.id, resultList.get(0).id);
-		assertEquals(foo2.equal, resultList.get(0).equal);
 	}
 
 	@Test
@@ -1053,10 +1266,18 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(1, dao.create(foo1));
 		Foo foo2 = new Foo();
 		assertEquals(1, dao.create(foo2));
+		Foo foo3 = new Foo();
+		assertEquals(1, dao.create(foo3));
+		assertEquals(3, dao.queryForAll().size());
 
+		dao.updateRaw("DELETE FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = " + foo1.id);
 		assertEquals(2, dao.queryForAll().size());
-		dao.updateRaw("DELETE FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", Integer.toString(foo1.id));
+
+		dao.updateRaw("DELETE FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", Integer.toString(foo2.id));
 		assertEquals(1, dao.queryForAll().size());
+
+		dao.updateRaw("DELETE FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", new SelectArg(SqlType.INTEGER, foo3.id));
+		assertEquals(0, dao.queryForAll().size());
 	}
 
 	@Test(expected = SQLException.class)
@@ -1073,8 +1294,36 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		}
 	}
 
+	@Test(expected = SQLException.class)
+	public void testUpdateRawStringsThrow() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		assertEquals(1, dao.create(foo));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.updateRaw("DELETE FROM FOO", "arg");
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
+	}
+
+	@Test(expected = SQLException.class)
+	public void testUpdateRawArgumentHoldersThrow() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		assertEquals(1, dao.create(foo));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.updateRaw("DELETE FROM FOO", new SelectArg());
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
+	}
+
 	@Test
-	public void testExecuteRaw() throws Exception {
+	public void testUpdateRawArgumentHolders() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
 		assertEquals(1, dao.create(foo1));
@@ -1082,7 +1331,35 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(1, dao.create(foo2));
 
 		assertEquals(2, dao.queryForAll().size());
+		SelectArg arg = new SelectArg(SqlType.INTEGER, foo1.id);
+		dao.updateRaw("DELETE FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", arg);
+		assertEquals(1, dao.queryForAll().size());
+	}
+
+	@SuppressWarnings("deprecation")
+	@Test
+	public void testExecuteRaw() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		assertEquals(1, dao.create(foo2));
+		Foo foo3 = new Foo();
+		assertEquals(1, dao.create(foo3));
+
+		assertEquals(3, dao.queryForAll().size());
+
+		dao.executeRaw("delete from " + FOO_TABLE_NAME + " where " + Foo.ID_COLUMN_NAME + " = ?",
+				Integer.toString(foo1.id));
+		assertEquals(2, dao.queryForAll().size());
+
+		dao.executeRaw("delete from " + FOO_TABLE_NAME + " where " + Foo.ID_COLUMN_NAME + " = ?",
+				new SelectArg(SqlType.INTEGER, foo2.id));
+		assertEquals(1, dao.queryForAll().size());
+
 		dao.executeRaw("TRUNCATE TABLE FOO");
+		// coverage
+		dao.executeRawNoArgs("TRUNCATE TABLE FOO");
 		assertEquals(0, dao.queryForAll().size());
 	}
 
@@ -1095,6 +1372,49 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		try {
 			conn.close();
 			dao.executeRaw("TRUNCATE TABLE FOO");
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	@Test(expected = SQLException.class)
+	public void testExecuteRawNoArgsThrow() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		assertEquals(1, dao.create(foo));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.executeRawNoArgs("TRUNCATE TABLE FOO");
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
+	}
+
+	@Test(expected = SQLException.class)
+	public void testExecuteRawStringsThrow() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		assertEquals(1, dao.create(foo));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.executeRaw("TRUNCATE TABLE FOO", "1");
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
+	}
+
+	@Test(expected = SQLException.class)
+	public void testExecuteRawArgumentHoldersThrow() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		assertEquals(1, dao.create(foo));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.executeRaw("TRUNCATE TABLE FOO", new SelectArg());
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
@@ -2297,12 +2617,56 @@ public class BaseDaoImplTest extends BaseCoreTest {
 	@Test
 	public void testQueryRawValue() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
-		assertEquals(1, dao.create(new Foo()));
-		assertEquals(1, dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from foo"));
-		assertEquals(1, dao.create(new Foo()));
-		assertEquals(2, dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from foo"));
-		assertEquals(1, dao.create(new Foo()));
-		assertEquals(3, dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from foo"));
+		Foo foo1 = new Foo();
+		Foo foo2 = new Foo();
+		Foo foo3 = new Foo();
+		assertEquals(1, dao.create(foo1));
+		assertEquals(foo1.id, dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from " + FOO_TABLE_NAME));
+		assertEquals(1, dao.create(foo2));
+		assertEquals(foo2.id, dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from " + FOO_TABLE_NAME));
+		assertEquals(1, dao.create(foo3));
+		assertEquals(foo3.id, dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from " + FOO_TABLE_NAME));
+
+		assertEquals(foo2.id, dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from " + FOO_TABLE_NAME
+				+ " where " + Foo.ID_COLUMN_NAME + " < ?", Integer.toString(foo3.id)));
+		assertEquals(foo1.id, dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from " + FOO_TABLE_NAME
+				+ " where " + Foo.ID_COLUMN_NAME + " < ?", new SelectArg(SqlType.INTEGER, foo2.id)));
+	}
+
+	@Test(expected = SQLException.class)
+	public void testQueryRawValueThrow() throws Exception {
+		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from " + FOO_TABLE_NAME);
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
+	}
+
+	@Test(expected = SQLException.class)
+	public void testQueryRawValueStringsThrow() throws Exception {
+		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from " + FOO_TABLE_NAME, "1");
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
+	}
+
+	@Test(expected = SQLException.class)
+	public void testQueryRawValueArgumentHoldersThrow() throws Exception {
+		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from " + FOO_TABLE_NAME, new SelectArg());
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test
@@ -2391,17 +2755,79 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertNotNull(list);
 		assertEquals(2, list.size());
 
-		Foo foo = list.get(0);
-		assertNotSame(foo1, foo);
-		assertEquals(foo1.id, foo.id);
-		assertEquals(foo1.val, foo.val);
-		assertEquals(foo1.stringField, foo.stringField);
+		assertNotSame(foo1, list.get(0));
+		assertEquals(foo1.id, list.get(0).id);
+		assertEquals(foo1.val, list.get(0).val);
+		assertEquals(foo1.stringField, list.get(0).stringField);
 
-		foo = list.get(1);
-		assertNotSame(foo2, foo);
-		assertEquals(foo2.id, foo.id);
-		assertEquals(foo2.val, foo.val);
-		assertEquals(foo2.stringField, foo.stringField);
+		assertNotSame(foo2, list.get(1));
+		assertEquals(foo2.id, list.get(1).id);
+		assertEquals(foo2.val, list.get(1).val);
+		assertEquals(foo2.stringField, list.get(1).stringField);
+
+		SelectArg selectArg = new SelectArg(SqlType.INTEGER);
+		String queryString =
+				dao.queryBuilder().where().eq(Foo.ID_COLUMN_NAME, selectArg).queryBuilder().prepareStatementString();
+		results = dao.queryRaw(queryString, new ResultsMapper(), Integer.toString(foo1.id));
+		list = results.getResults();
+		assertEquals(1, list.size());
+
+		assertNotSame(foo1, list.get(0));
+		assertEquals(foo1.id, list.get(0).id);
+		assertEquals(foo1.val, list.get(0).val);
+		assertEquals(foo1.stringField, list.get(0).stringField);
+
+		selectArg.setValue(foo2.id);
+		results = dao.queryRaw(queryString, new ResultsMapper(), selectArg);
+		list = results.getResults();
+		assertEquals(1, list.size());
+
+		assertNotSame(foo2, list.get(0));
+		assertEquals(foo2.id, list.get(0).id);
+		assertEquals(foo2.val, list.get(0).val);
+		assertEquals(foo2.stringField, list.get(0).stringField);
+	}
+
+	@Test(expected = SQLException.class)
+	public void testQueryRawDataResultsMapperThrow() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		assertEquals(1, dao.create(foo));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.queryRaw(dao.queryBuilder().prepareStatementString(), new ResultsMapper());
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
+	}
+
+	@Test(expected = SQLException.class)
+	public void testQueryRawDataResultsMapperStringsThrow() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		assertEquals(1, dao.create(foo));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.queryRaw(dao.queryBuilder().prepareStatementString(), new ResultsMapper(), "arg");
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
+	}
+
+	@Test(expected = SQLException.class)
+	public void testQueryRawDataResultsMapperArgumentHoldersThrow() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		assertEquals(1, dao.create(foo));
+		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
+		try {
+			conn.close();
+			dao.queryRaw(dao.queryBuilder().prepareStatementString(), new ResultsMapper(), new SelectArg());
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test
@@ -2832,6 +3258,16 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		int id;
 
 		public TableExists() {
+		}
+	}
+
+	protected static class RawResult {
+		@DatabaseField(generatedId = true)
+		public int id;
+		@DatabaseField
+		public int val;
+
+		public RawResult() {
 		}
 	}
 

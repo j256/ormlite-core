@@ -18,6 +18,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.misc.BaseDaoEnabled;
 import com.j256.ormlite.misc.Supplier;
+import com.j256.ormlite.stmt.ArgumentHolder;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.stmt.PreparedDelete;
@@ -639,10 +640,51 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	@Override
+	public GenericRawResults<String[]> queryRaw(String query) throws SQLException {
+		checkForInitialized();
+		try {
+			return statementExecutor.queryRaw(connectionSource, query, null, objectCache);
+		} catch (SQLException e) {
+			throw new SQLException("Could not perform raw query for " + query, e);
+		}
+	}
+
+	@Override
+	public GenericRawResults<String[]> queryRaw(String query, ArgumentHolder... arguments) throws SQLException {
+		checkForInitialized();
+		try {
+			return statementExecutor.queryRaw(connectionSource, query, arguments, objectCache);
+		} catch (SQLException e) {
+			throw new SQLException("Could not perform raw query for " + query, e);
+		}
+	}
+
+	@Override
 	public GenericRawResults<String[]> queryRaw(String query, String... arguments) throws SQLException {
 		checkForInitialized();
 		try {
 			return statementExecutor.queryRaw(connectionSource, query, arguments, objectCache);
+		} catch (SQLException e) {
+			throw new SQLException("Could not perform raw query for " + query, e);
+		}
+	}
+
+	@Override
+	public <GR> GenericRawResults<GR> queryRaw(String query, RawRowMapper<GR> mapper) throws SQLException {
+		checkForInitialized();
+		try {
+			return statementExecutor.queryRaw(connectionSource, query, mapper, null, objectCache);
+		} catch (SQLException e) {
+			throw new SQLException("Could not perform raw query for " + query, e);
+		}
+	}
+
+	@Override
+	public <GR> GenericRawResults<GR> queryRaw(String query, RawRowMapper<GR> mapper, ArgumentHolder... arguments)
+			throws SQLException {
+		checkForInitialized();
+		try {
+			return statementExecutor.queryRaw(connectionSource, query, mapper, arguments, objectCache);
 		} catch (SQLException e) {
 			throw new SQLException("Could not perform raw query for " + query, e);
 		}
@@ -660,11 +702,54 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	@Override
+	public <UO> GenericRawResults<UO> queryRaw(String query, DataType[] columnTypes, RawRowObjectMapper<UO> mapper)
+			throws SQLException {
+		checkForInitialized();
+		try {
+			return statementExecutor.queryRaw(connectionSource, query, columnTypes, mapper, null, objectCache);
+		} catch (SQLException e) {
+			throw new SQLException("Could not perform raw query for " + query, e);
+		}
+	}
+
+	@Override
+	public <UO> GenericRawResults<UO> queryRaw(String query, DataType[] columnTypes, RawRowObjectMapper<UO> mapper,
+			ArgumentHolder... arguments) throws SQLException {
+		checkForInitialized();
+		try {
+			return statementExecutor.queryRaw(connectionSource, query, columnTypes, mapper, arguments, objectCache);
+		} catch (SQLException e) {
+			throw new SQLException("Could not perform raw query for " + query, e);
+		}
+	}
+
+	@Override
 	public <UO> GenericRawResults<UO> queryRaw(String query, DataType[] columnTypes, RawRowObjectMapper<UO> mapper,
 			String... arguments) throws SQLException {
 		checkForInitialized();
 		try {
 			return statementExecutor.queryRaw(connectionSource, query, columnTypes, mapper, arguments, objectCache);
+		} catch (SQLException e) {
+			throw new SQLException("Could not perform raw query for " + query, e);
+		}
+	}
+
+	@Override
+	public GenericRawResults<Object[]> queryRaw(String query, DataType[] columnTypes) throws SQLException {
+		checkForInitialized();
+		try {
+			return statementExecutor.queryRaw(connectionSource, query, columnTypes, null, objectCache);
+		} catch (SQLException e) {
+			throw new SQLException("Could not perform raw query for " + query, e);
+		}
+	}
+
+	@Override
+	public GenericRawResults<Object[]> queryRaw(String query, DataType[] columnTypes, ArgumentHolder... arguments)
+			throws SQLException {
+		checkForInitialized();
+		try {
+			return statementExecutor.queryRaw(connectionSource, query, columnTypes, arguments, objectCache);
 		} catch (SQLException e) {
 			throw new SQLException("Could not perform raw query for " + query, e);
 		}
@@ -682,6 +767,27 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	@Override
+	public <UO> GenericRawResults<UO> queryRaw(String query, DatabaseResultsMapper<UO> mapper) throws SQLException {
+		checkForInitialized();
+		try {
+			return statementExecutor.queryRaw(connectionSource, query, mapper, null, objectCache);
+		} catch (SQLException e) {
+			throw new SQLException("Could not perform raw query for " + query, e);
+		}
+	}
+
+	@Override
+	public <UO> GenericRawResults<UO> queryRaw(String query, DatabaseResultsMapper<UO> mapper,
+			ArgumentHolder... arguments) throws SQLException {
+		checkForInitialized();
+		try {
+			return statementExecutor.queryRaw(connectionSource, query, mapper, arguments, objectCache);
+		} catch (SQLException e) {
+			throw new SQLException("Could not perform raw query for " + query, e);
+		}
+	}
+
+	@Override
 	public <UO> GenericRawResults<UO> queryRaw(String query, DatabaseResultsMapper<UO> mapper, String... arguments)
 			throws SQLException {
 		checkForInitialized();
@@ -693,6 +799,32 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	@Override
+	public long queryRawValue(String query) throws SQLException {
+		checkForInitialized();
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection(tableInfo.getTableName());
+		try {
+			return statementExecutor.queryForLong(connection, query, null);
+		} catch (SQLException e) {
+			throw new SQLException("Could not perform raw value query for " + query, e);
+		} finally {
+			connectionSource.releaseConnection(connection);
+		}
+	}
+
+	@Override
+	public long queryRawValue(String query, ArgumentHolder... arguments) throws SQLException {
+		checkForInitialized();
+		DatabaseConnection connection = connectionSource.getReadOnlyConnection(tableInfo.getTableName());
+		try {
+			return statementExecutor.queryForLong(connection, query, arguments);
+		} catch (SQLException e) {
+			throw new SQLException("Could not perform raw value query for " + query, e);
+		} finally {
+			connectionSource.releaseConnection(connection);
+		}
+	}
+
+	@Override
 	public long queryRawValue(String query, String... arguments) throws SQLException {
 		checkForInitialized();
 		DatabaseConnection connection = connectionSource.getReadOnlyConnection(tableInfo.getTableName());
@@ -700,6 +832,32 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			return statementExecutor.queryForLong(connection, query, arguments);
 		} catch (SQLException e) {
 			throw new SQLException("Could not perform raw value query for " + query, e);
+		} finally {
+			connectionSource.releaseConnection(connection);
+		}
+	}
+
+	@Override
+	public int executeRaw(String statement) throws SQLException {
+		checkForInitialized();
+		DatabaseConnection connection = connectionSource.getReadWriteConnection(tableInfo.getTableName());
+		try {
+			return statementExecutor.executeRaw(connection, statement, null);
+		} catch (SQLException e) {
+			throw new SQLException("Could not run raw execute statement " + statement, e);
+		} finally {
+			connectionSource.releaseConnection(connection);
+		}
+	}
+
+	@Override
+	public int executeRaw(String statement, ArgumentHolder... arguments) throws SQLException {
+		checkForInitialized();
+		DatabaseConnection connection = connectionSource.getReadWriteConnection(tableInfo.getTableName());
+		try {
+			return statementExecutor.executeRaw(connection, statement, arguments);
+		} catch (SQLException e) {
+			throw new SQLException("Could not run raw execute statement " + statement, e);
 		} finally {
 			connectionSource.releaseConnection(connection);
 		}
@@ -726,6 +884,32 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 			return statementExecutor.executeRawNoArgs(connection, statement);
 		} catch (SQLException e) {
 			throw new SQLException("Could not run raw execute statement " + statement, e);
+		} finally {
+			connectionSource.releaseConnection(connection);
+		}
+	}
+
+	@Override
+	public int updateRaw(String statement) throws SQLException {
+		checkForInitialized();
+		DatabaseConnection connection = connectionSource.getReadWriteConnection(tableInfo.getTableName());
+		try {
+			return statementExecutor.updateRaw(connection, statement, null);
+		} catch (SQLException e) {
+			throw new SQLException("Could not run raw update statement " + statement, e);
+		} finally {
+			connectionSource.releaseConnection(connection);
+		}
+	}
+
+	@Override
+	public int updateRaw(String statement, ArgumentHolder... arguments) throws SQLException {
+		checkForInitialized();
+		DatabaseConnection connection = connectionSource.getReadWriteConnection(tableInfo.getTableName());
+		try {
+			return statementExecutor.updateRaw(connection, statement, arguments);
+		} catch (SQLException e) {
+			throw new SQLException("Could not run raw update statement " + statement, e);
 		} finally {
 			connectionSource.releaseConnection(connection);
 		}

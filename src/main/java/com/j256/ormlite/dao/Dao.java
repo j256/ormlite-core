@@ -13,7 +13,9 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.misc.Supplier;
+import com.j256.ormlite.stmt.ArgumentHolder;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.stmt.PreparedDelete;
@@ -466,12 +468,24 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public void closeLastIterator() throws Exception;
 
 	/**
+	 * Similar to {@link #queryRaw(String, String...)} except with no arguments.
+	 */
+	public GenericRawResults<String[]> queryRaw(String query) throws SQLException;
+
+	/**
+	 * Similar to {@link #queryRaw(String, String...)} except the arguments are {@link ArgumentHolder}s which you can
+	 * use to set the {@link SqlType} on for specifying the type of the argument.
+	 */
+	public GenericRawResults<String[]> queryRaw(String query, ArgumentHolder... arguments) throws SQLException;
+
+	/**
 	 * <p>
 	 * Similar to the {@link #iterator(PreparedQuery)} except it returns a GenericRawResults object associated with the
 	 * SQL select query argument. Although you should use the {@link #iterator()} for most queries, this method allows
 	 * you to do special queries that aren't supported otherwise. Like the above iterator methods, you must call close
 	 * on the returned RawResults object once you are done with it. The arguments are optional but can be set with
-	 * strings to expand ? type of SQL.
+	 * objects to expand ? type of SQL as _string_ values. Use {@link #queryRaw(String, ArgumentHolder...)} to set the
+	 * {@link SqlType} of the arguments.
 	 * </p>
 	 *
 	 * <p>
@@ -506,63 +520,168 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public GenericRawResults<String[]> queryRaw(String query, String... arguments) throws SQLException;
 
 	/**
+	 * Similar to {@link #queryRaw(String, RawRowMapper, String...)} except with no arguments.
+	 */
+	public <UO> GenericRawResults<UO> queryRaw(String query, RawRowMapper<UO> mapper) throws SQLException;
+
+	/**
+	 * Similar to {@link #queryRaw(String, RawRowMapper, String...)} except the arguments are {@link ArgumentHolder}s
+	 * which you can use to set the {@link SqlType} on for specifying the type of the argument.
+	 */
+	public <UO> GenericRawResults<UO> queryRaw(String query, RawRowMapper<UO> mapper, ArgumentHolder... arguments)
+			throws SQLException;
+
+	/**
 	 * Similar to the {@link #queryRaw(String, String...)} but this iterator returns rows that you can map yourself. For
 	 * every result that is returned by the database, the {@link RawRowMapper#mapRow(String[], String[])} method is
 	 * called so you can convert the result columns into an object to be returned by the iterator. The arguments are
-	 * optional but can be set with strings to expand ? type of SQL. For a simple implementation of a raw row mapper,
-	 * see {@link #getRawRowMapper()}.
+	 * optional but can be set with objects to expand ? type of SQL as _string_ values. Use
+	 * {@link #queryRaw(String, RawRowMapper, ArgumentHolder...)} to set the {@link SqlType} of the arguments. For a
+	 * simple implementation of a raw row mapper, see {@link #getRawRowMapper()}.
 	 */
 	public <UO> GenericRawResults<UO> queryRaw(String query, RawRowMapper<UO> mapper, String... arguments)
 			throws SQLException;
 
 	/**
-	 * Similar to the {@link #queryRaw(String, RawRowMapper, String...)} but uses the column-types array to present an
-	 * array of object results to the mapper instead of strings. The arguments are optional but can be set with strings
-	 * to expand ? type of SQL.
+	 * Similar to {@link #queryRaw(String, DataType[], RawRowObjectMapper, String...)} except with no arguments.
+	 */
+	public <UO> GenericRawResults<UO> queryRaw(String query, DataType[] columnTypes, RawRowObjectMapper<UO> mapper)
+			throws SQLException;
+
+	/**
+	 * Similar to {@link #queryRaw(String, DataType[], RawRowObjectMapper, String...)} except the arguments are
+	 * {@link ArgumentHolder}s which you can use to set the {@link SqlType} on for specifying the type of the argument.
+	 */
+	public <UO> GenericRawResults<UO> queryRaw(String query, DataType[] columnTypes, RawRowObjectMapper<UO> mapper,
+			ArgumentHolder... arguments) throws SQLException;
+
+	/**
+	 * Similar to the {@link #queryRaw(String, DataType[], RawRowObjectMapper, String...)} but uses the column-types
+	 * array to present an array of object results to the mapper instead of strings. The arguments are optional but can
+	 * be set with objects to expand ? type of SQL as _string_ values. Use
+	 * {@link #queryRaw(String, DataType[], RawRowObjectMapper, ArgumentHolder...)} to set the {@link SqlType} of the
+	 * arguments.
 	 */
 	public <UO> GenericRawResults<UO> queryRaw(String query, DataType[] columnTypes, RawRowObjectMapper<UO> mapper,
 			String... arguments) throws SQLException;
 
 	/**
+	 * Similar to {@link #queryRaw(String, DataType[], String...)} except with no arguments.
+	 */
+	public GenericRawResults<Object[]> queryRaw(String query, DataType[] columnTypes) throws SQLException;
+
+	/**
+	 * Similar to {@link #queryRaw(String, DataType[], String...)} except the arguments are {@link ArgumentHolder}s
+	 * which you can use to set the {@link SqlType} on for specifying the type of the argument.
+	 */
+	public GenericRawResults<Object[]> queryRaw(String query, DataType[] columnTypes, ArgumentHolder... arguments)
+			throws SQLException;
+
+	/**
 	 * Similar to the {@link #queryRaw(String, String...)} but instead of an array of String results being returned by
 	 * the iterator, this uses the column-types parameter to return an array of Objects instead. The arguments are
-	 * optional but can be set with strings to expand ? type of SQL.
+	 * optional but can be set with objects to expand ? type of SQL as _string_ values. Use
+	 * {@link #queryRaw(String, DataType[], ArgumentHolder...)} to set the {@link SqlType} of the arguments.
 	 */
 	public GenericRawResults<Object[]> queryRaw(String query, DataType[] columnTypes, String... arguments)
 			throws SQLException;
 
 	/**
+	 * Similar to {@link #queryRaw(String, DatabaseResultsMapper, String...)} except with no arguments.
+	 */
+	public <UO> GenericRawResults<UO> queryRaw(String query, DatabaseResultsMapper<UO> mapper) throws SQLException;
+
+	/**
+	 * Similar to {@link #queryRaw(String, DatabaseResultsMapper, String...)} except the arguments are
+	 * {@link ArgumentHolder}s which you can use to set the {@link SqlType} on for specifying the type of the argument.
+	 */
+	public <UO> GenericRawResults<UO> queryRaw(String query, DatabaseResultsMapper<UO> mapper,
+			ArgumentHolder... arguments) throws SQLException;
+
+	/**
 	 * Similar to the {@link #queryRaw(String, RawRowMapper, String...)} but this iterator returns rows that you can map
-	 * yourself using {@link DatabaseResultsMapper}.
+	 * yourself using {@link DatabaseResultsMapper}. The arguments are optional but can be set with objects to expand ?
+	 * type of SQL as _string_ values. Use {@link #queryRaw(String, DatabaseResultsMapper, ArgumentHolder...)} to set
+	 * the {@link SqlType} of the arguments.
 	 */
 	public <UO> GenericRawResults<UO> queryRaw(String query, DatabaseResultsMapper<UO> mapper, String... arguments)
 			throws SQLException;
 
 	/**
+	 * Similar to {@link #queryRawValue(String, String...)} except with no arguments.
+	 * 
+	 * @return a single long value.
+	 */
+	public long queryRawValue(String query) throws SQLException;
+
+	/**
+	 * Similar to {@link #queryRawValue(String, String...)} except the arguments are {@link ArgumentHolder}s which you
+	 * can use to set the {@link SqlType} on for specifying the type of the argument.
+	 * 
+	 * @return a single long value.
+	 */
+	public long queryRawValue(String query, ArgumentHolder... arguments) throws SQLException;
+
+	/**
 	 * Perform a raw query that returns a single value (usually an aggregate function like MAX or COUNT). If the query
-	 * does not return a single long value then it will throw a SQLException.
+	 * does not return a single long value then it will throw a SQLException. The arguments are optional but can be set
+	 * with objects to expand ? type of SQL as _string_ values. Use {@link #queryRawValue(String, ArgumentHolder...)} to
+	 * set the {@link SqlType} of the arguments.
+	 * 
+	 * @return a single long value.
 	 */
 	public long queryRawValue(String query, String... arguments) throws SQLException;
 
 	/**
-	 * Run a raw execute SQL statement to the database. The arguments are optional but can be set with strings to expand
-	 * ? type of SQL. If you have no arguments, you may want to call {@link #executeRawNoArgs(String)}.
+	 * Similar to {@link #executeRaw(String, String...)} except with no arguments.
+	 *
+	 * @return number of rows affected.
+	 */
+	public int executeRaw(String statement) throws SQLException;
+
+	/**
+	 * Similar to {@link #executeRaw(String, String...)} except the arguments are {@link ArgumentHolder}s which you can
+	 * use to set the {@link SqlType} on for specifying the type of the argument.
+	 *
+	 * @return number of rows affected.
+	 */
+	public int executeRaw(String statement, ArgumentHolder... arguments) throws SQLException;
+
+	/**
+	 * Run a raw execute SQL statement to the database. The arguments are optional but can be set with objects to expand
+	 * ? type of SQL as _string_ values. If you pass in an array of {@link ArgumentHolder}s then you can set the
+	 * {@link SqlType} of the arguments. Use {@link #executeRaw(String, ArgumentHolder...)} to set the {@link SqlType}
+	 * of the arguments.
 	 *
 	 * @return number of rows affected.
 	 */
 	public int executeRaw(String statement, String... arguments) throws SQLException;
 
 	/**
-	 * Run a raw execute SQL statement on the database without any arguments. This may use a different mechanism to
-	 * execute the query depending on the database backend.
-	 *
-	 * @return number of rows affected.
+	 * @deprecated Please use {@link #executeRaw(String)}.
 	 */
+	@Deprecated
 	public int executeRawNoArgs(String statement) throws SQLException;
 
 	/**
-	 * Run a raw update SQL statement to the database. The statement must be an SQL INSERT, UPDATE or DELETE
-	 * statement.The arguments are optional but can be set with strings to expand ? type of SQL.
+	 * Similar to {@link #updateRaw(String, String...)} except with no arguments.
+	 *
+	 * @return number of rows affected.
+	 */
+	public int updateRaw(String statement) throws SQLException;
+
+	/**
+	 * Similar to {@link #updateRaw(String, String...)} except the arguments are {@link ArgumentHolder}s which you can
+	 * use to set the {@link SqlType} on for specifying the type of the argument.
+	 *
+	 * @return number of rows affected.
+	 */
+	public int updateRaw(String statement, ArgumentHolder... arguments) throws SQLException;
+
+	/**
+	 * Run a raw update SQL statement to the database. The statement must be an SQL INSERT, UPDATE or DELETE statement.
+	 * The arguments are optional but can be set with objects to expand ? type of SQL as _string_ values. Use
+	 * {@link #updateRaw(String, ArgumentHolder...)} to set the {@link SqlType} of the arguments.
 	 *
 	 * @return number of rows affected.
 	 */

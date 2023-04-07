@@ -70,7 +70,7 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 					|| daoMethod.getName().equals("forEach") /* java 8 method */) {
 				continue;
 			}
-			
+
 			Iterator<Method> runtimeIterator = runtimeMethods.iterator();
 			while (runtimeIterator.hasNext()) {
 				Method runtimeMethod = runtimeIterator.next();
@@ -728,7 +728,7 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		String query = "fkeowjfkewfewf";
-		expect(dao.queryRawValue(query, new String[0])).andReturn(0L);
+		expect(dao.queryRawValue(query)).andReturn(0L);
 		replay(dao);
 		rtDao.queryRawValue(query);
 		verify(dao);
@@ -817,9 +817,9 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
-		expect(dao.executeRawNoArgs(null)).andReturn(0);
+		expect(dao.executeRaw(null)).andReturn(0);
 		replay(dao);
-		rtDao.executeRawNoArgs(null);
+		rtDao.executeRaw(null);
 		verify(dao);
 	}
 
@@ -828,9 +828,9 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
-		expect(dao.executeRawNoArgs(null)).andThrow(new SQLException("Testing catch"));
+		expect(dao.executeRaw(null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.executeRawNoArgs(null);
+		rtDao.executeRaw(null);
 		verify(dao);
 	}
 

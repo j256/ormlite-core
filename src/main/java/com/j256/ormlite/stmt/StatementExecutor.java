@@ -166,12 +166,12 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	}
 
 	/**
-	 * Return a long from a raw query with String[] arguments.
+	 * Return a long from a raw query with Object[] arguments.
 	 */
-	public long queryForLong(DatabaseConnection databaseConnection, String query, String[] arguments)
+	public long queryForLong(DatabaseConnection databaseConnection, String query, Object[] arguments)
 			throws SQLException {
 		logger.debug("executing raw query for long: {}", query);
-		if (arguments.length > 0) {
+		if (arguments != null && arguments.length > 0) {
 			// need to do the (Object) cast to force args to be a single object
 			logger.trace("query arguments: {}", (Object) arguments);
 		}
@@ -232,7 +232,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	}
 
 	/**
-	 * Return a raw row mapper suitable for use with {@link Dao#queryRaw(String, RawRowMapper, String...)}.
+	 * Return a raw row mapper suitable for use with {@link Dao#queryRaw(String, RawRowMapper, Object...)}.
 	 */
 	public RawRowMapper<T> getRawRowMapper() {
 		if (rawRowMapper == null) {
@@ -266,10 +266,10 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	/**
 	 * Return a results object associated with an internal iterator that returns String[] results.
 	 */
-	public GenericRawResults<String[]> queryRaw(ConnectionSource connectionSource, String query, String[] arguments,
+	public GenericRawResults<String[]> queryRaw(ConnectionSource connectionSource, String query, Object[] arguments,
 			ObjectCache objectCache) throws SQLException {
 		logger.debug("executing raw query for: {}", query);
-		if (arguments.length > 0) {
+		if (arguments != null && arguments.length > 0) {
 			// need to do the (Object) cast to force args to be a single object
 			logger.trace("query arguments: {}", (Object) arguments);
 		}
@@ -296,9 +296,9 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 * Return a results object associated with an internal iterator is mapped by the user's rowMapper.
 	 */
 	public <UO> GenericRawResults<UO> queryRaw(ConnectionSource connectionSource, String query,
-			RawRowMapper<UO> rowMapper, String[] arguments, ObjectCache objectCache) throws SQLException {
+			RawRowMapper<UO> rowMapper, Object[] arguments, ObjectCache objectCache) throws SQLException {
 		logger.debug("executing raw query for: {}", query);
-		if (arguments.length > 0) {
+		if (arguments != null && arguments.length > 0) {
 			// need to do the (Object) cast to force args to be a single object
 			logger.trace("query arguments: {}", (Object) arguments);
 		}
@@ -325,9 +325,9 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 * Return a results object associated with an internal iterator is mapped by the user's rowMapper.
 	 */
 	public <UO> GenericRawResults<UO> queryRaw(ConnectionSource connectionSource, String query, DataType[] columnTypes,
-			RawRowObjectMapper<UO> rowMapper, String[] arguments, ObjectCache objectCache) throws SQLException {
+			RawRowObjectMapper<UO> rowMapper, Object[] arguments, ObjectCache objectCache) throws SQLException {
 		logger.debug("executing raw query for: {}", query);
-		if (arguments.length > 0) {
+		if (arguments != null && arguments.length > 0) {
 			// need to do the (Object) cast to force args to be a single object
 			logger.trace("query arguments: {}", (Object) arguments);
 		}
@@ -354,9 +354,9 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 * Return a results object associated with an internal iterator that returns Object[] results.
 	 */
 	public GenericRawResults<Object[]> queryRaw(ConnectionSource connectionSource, String query, DataType[] columnTypes,
-			String[] arguments, ObjectCache objectCache) throws SQLException {
+			Object[] arguments, ObjectCache objectCache) throws SQLException {
 		logger.debug("executing raw query for: {}", query);
-		if (arguments.length > 0) {
+		if (arguments != null && arguments.length > 0) {
 			// need to do the (Object) cast to force args to be a single object
 			logger.trace("query arguments: {}", (Object) arguments);
 		}
@@ -383,9 +383,9 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	 * Return a results object associated with an internal iterator is mapped by the user's rowMapper.
 	 */
 	public <UO> GenericRawResults<UO> queryRaw(ConnectionSource connectionSource, String query,
-			DatabaseResultsMapper<UO> mapper, String[] arguments, ObjectCache objectCache) throws SQLException {
+			DatabaseResultsMapper<UO> mapper, Object[] arguments, ObjectCache objectCache) throws SQLException {
 		logger.debug("executing raw query for: {}", query);
-		if (arguments.length > 0) {
+		if (arguments != null && arguments.length > 0) {
 			// need to do the (Object) cast to force args to be a single object
 			logger.trace("query arguments: {}", (Object) arguments);
 		}
@@ -411,9 +411,9 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	/**
 	 * Return the number of rows affected.
 	 */
-	public int updateRaw(DatabaseConnection connection, String statement, String[] arguments) throws SQLException {
+	public int updateRaw(DatabaseConnection connection, String statement, Object[] arguments) throws SQLException {
 		logger.debug("running raw update statement: {}", statement);
-		if (arguments.length > 0) {
+		if (arguments != null && arguments.length > 0) {
 			// need to do the (Object) cast to force args to be a single object
 			logger.trace("update arguments: {}", (Object) arguments);
 		}
@@ -438,9 +438,9 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	/**
 	 * Return true if it worked else false.
 	 */
-	public int executeRaw(DatabaseConnection connection, String statement, String[] arguments) throws SQLException {
+	public int executeRaw(DatabaseConnection connection, String statement, Object[] arguments) throws SQLException {
 		logger.debug("running raw execute statement: {}", statement);
-		if (arguments.length > 0) {
+		if (arguments != null && arguments.length > 0) {
 			// need to do the (Object) cast to force args to be a single object
 			logger.trace("execute arguments: {}", (Object) arguments);
 		}
@@ -697,9 +697,23 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 		return (count != 0);
 	}
 
-	private void assignStatementArguments(CompiledStatement compiledStatement, String[] arguments) throws SQLException {
+	private void assignStatementArguments(CompiledStatement compiledStatement, Object[] arguments) throws SQLException {
+		if (arguments == null) {
+			return;
+		}
 		for (int i = 0; i < arguments.length; i++) {
-			compiledStatement.setObject(i, arguments[i], SqlType.STRING);
+			Object argument = arguments[i];
+			if (argument instanceof ArgumentHolder) {
+				ArgumentHolder holder = (ArgumentHolder) argument;
+				SqlType sqlType = holder.getSqlType();
+				if (sqlType == null) {
+					throw new SQLException("Setting argument #" + i + " on compiled statement has no SqlType set: "
+							+ compiledStatement);
+				}
+				compiledStatement.setObject(i, holder.getSqlArgValue(), sqlType);
+			} else {
+				compiledStatement.setObject(i, String.valueOf(arguments[i]), SqlType.STRING);
+			}
 		}
 	}
 
