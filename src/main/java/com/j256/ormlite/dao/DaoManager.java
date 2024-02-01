@@ -3,7 +3,6 @@ package com.j256.ormlite.dao;
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
