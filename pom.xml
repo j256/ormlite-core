@@ -46,7 +46,7 @@
 		<!-- external test package versions -->
 		<persistence-api-version>1.0</persistence-api-version>
 		<easymock-version>3.4</easymock-version>
-		<h2-version>1.4.200</h2-version>
+		<h2-version>2.1.210</h2-version>
 		<junit-version>4.13.1</junit-version>
 		<commons-lang-version>2.1</commons-lang-version>
 		<commons-logging-version>1.1.1</commons-logging-version>
@@ -214,13 +214,11 @@
 							<goal>jar</goal>
 						</goals>
 						<configuration>
-							<showPackage>false</showPackage>
 							<additionalparam>-tag inheritDoc:X ${disableDoclint}</additionalparam>
 						</configuration>
 					</execution>
 				</executions>
 				<configuration>
-					<showPackage>false</showPackage>
 					<bottom>
 						This documentation is licensed by Gray Watson under the
 						&lt;a
@@ -291,48 +289,6 @@
 				<version>0.8</version>
 			</plugin>
 		</plugins>
-		<pluginManagement>
-			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>com.google.code.maven-replacer-plugin</groupId>
-										<artifactId>replacer</artifactId>
-										<versionRange>[1.5.0,)</versionRange>
-										<goals>
-											<goal>replace</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.apache.maven.plugins</groupId>
-										<artifactId>maven-enforcer-plugin</artifactId>
-										<versionRange>[1.0,)</versionRange>
-										<goals>
-											<goal>enforce</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 		<extensions>
 			<extension>
 				<!-- this gives us the ability to contact our s3://j256.com/ repo -->
