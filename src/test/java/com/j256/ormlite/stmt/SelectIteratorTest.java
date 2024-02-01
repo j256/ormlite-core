@@ -145,7 +145,6 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 
 		assertEquals(1, dao.queryForAll().size());
 
-		@SuppressWarnings("unchecked")
 		SelectIterator<Foo, String> iterator = (SelectIterator<Foo, String>) dao.iterator();
 		DatabaseResults results = iterator.getRawResults();
 		assertTrue(results.next());
