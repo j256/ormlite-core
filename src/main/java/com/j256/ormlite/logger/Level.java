@@ -8,17 +8,17 @@ package com.j256.ormlite.logger;
  * @author graywatson
  */
 public enum Level {
-	/** for tracing messages that are very verbose, such as the protocol level */
+	/** for tracing messages that are very verbose, such as those from the protocol level */
 	TRACE(1),
-	/** messages suitable for debugging purposes */
+	/** messages suitable for debugging purposes that aren't protocol verbose but provide more than info level */
 	DEBUG(2),
-	/** information messages */
+	/** information messages for tracking normal application progress */
 	INFO(3),
-	/** warning messages */
+	/** warning messages about conditions (maybe recoverable) that should be noticed but aren't errors */
 	WARNING(4),
 	/** error messages */
 	ERROR(5),
-	/** severe fatal messages */
+	/** severe error messages from which the application can't recover */
 	FATAL(6),
 	/** for turning off all log messages */
 	OFF(7),

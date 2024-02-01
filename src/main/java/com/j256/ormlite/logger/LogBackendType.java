@@ -5,8 +5,8 @@ import com.j256.ormlite.logger.backend.LocalLogBackend.LocalLogBackendFactory;
 import com.j256.ormlite.logger.backend.NullLogBackend.NullLogBackendFactory;
 
 /**
- * Type of logging backends that are supported. The classes are specified as strings so there is not a direct dependency
- * placed on them since these classes may reference types not on the classpath.
+ * Default logging backends that are supported. The class names are specified as strings in the constructor so there is
+ * not a direct dependency placed on them since these classes may reference types not on the classpath.
  * 
  * From SimpleLogging: https://github.com/j256/simplelogging
  *
@@ -31,10 +31,6 @@ public enum LogBackendType implements LogBackendFactory {
 	 */
 	LOGBACK("LogbackLogBackend$LogbackLogBackendFactory"),
 	/**
-	 * Apache commons logging. See https://commons.apache.org/proper/commons-logging/
-	 */
-	COMMONS_LOGGING("CommonsLoggingLogBackend$CommonsLoggingLogBackendFactory"),
-	/**
 	 * Version 2 of the log4j package. See https://logging.apache.org/log4j/2.x/
 	 */
 	LOG4J2("Log4j2LogBackend$Log4j2LogBackendFactory"),
@@ -42,6 +38,14 @@ public enum LogBackendType implements LogBackendFactory {
 	 * Old version of the log4j package. See https://logging.apache.org/log4j/2.x/
 	 */
 	LOG4J("Log4jLogBackend$Log4jLogBackendFactory"),
+	/**
+	 * Support for the logger available inside AWS lambda SDK.
+	 */
+	LAMBDA("LambdaLoggerLogBackend$LambdaLoggerLogBackendFactory"),
+	/**
+	 * Apache commons logging. See https://commons.apache.org/proper/commons-logging/
+	 */
+	COMMONS_LOGGING("CommonsLoggingLogBackend$CommonsLoggingLogBackendFactory"),
 	/**
 	 * Local simple log backend that writes to a output file.
 	 * 
@@ -73,9 +77,14 @@ public enum LogBackendType implements LogBackendFactory {
 		this.factory = factory;
 	}
 
-	private LogBackendType(String factoryClassNameSuffix) {
-		this.factory =
-				detectFactory(LocalLogBackendFactory.class.getPackage().getName() + '.' + factoryClassNameSuffix);
+	private LogBackendType(String factoryClassName) {
+		if (factoryClassName.contains(".")) {
+			// NOTE: may not get here but others could add full class names to this list
+			this.factory = detectFactory(factoryClassName);
+		} else {
+			// the name is a suffix and we tack on the package from the local log factory
+			this.factory = detectFactory(LocalLogBackendFactory.class.getPackage().getName() + '.' + factoryClassName);
+		}
 	}
 
 	@Override

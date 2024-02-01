@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.logger.LogBackend;
+import com.j256.ormlite.logger.LoggerConstants;
 import com.j256.ormlite.logger.backend.LocalLogBackend.LocalLogBackendFactory;
 
 public class LocalLogBackendTest extends BaseLogBackendTest {
@@ -28,22 +29,22 @@ public class LocalLogBackendTest extends BaseLogBackendTest {
 		if (log.isLevelEnabled(Level.TRACE)) {
 			return;
 		}
-		System.setProperty(LocalLogBackend.LOCAL_LOG_LEVEL_PROPERTY, "TRACE");
+		System.setProperty(LoggerConstants.LOCAL_LOG_LEVEL_PROPERTY, "TRACE");
 		try {
 			log = new LocalLogBackend("foo");
 			assertTrue(log.isLevelEnabled(Level.TRACE));
 		} finally {
-			System.clearProperty(LocalLogBackend.LOCAL_LOG_LEVEL_PROPERTY);
+			System.clearProperty(LoggerConstants.LOCAL_LOG_LEVEL_PROPERTY);
 		}
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidLevelProperty() {
-		System.setProperty(LocalLogBackend.LOCAL_LOG_LEVEL_PROPERTY, "not a valid level");
+		System.setProperty(LoggerConstants.LOCAL_LOG_LEVEL_PROPERTY, "not a valid level");
 		try {
 			new LocalLogBackend("foo");
 		} finally {
-			System.clearProperty(LocalLogBackend.LOCAL_LOG_LEVEL_PROPERTY);
+			System.clearProperty(LoggerConstants.LOCAL_LOG_LEVEL_PROPERTY);
 		}
 	}
 
@@ -111,6 +112,8 @@ public class LocalLogBackendTest extends BaseLogBackendTest {
 		StringWriter stringWriter = new StringWriter();
 		// invalid line
 		stringWriter.write("x\n");
+		// blank line
+		stringWriter.write("\n");
 		// invalid level
 		stringWriter.write("com\\.foo\\.myclass\\.StatementExecutor = INFO\n");
 		LocalLogBackend.readLevelResourceFile(new ByteArrayInputStream(stringWriter.toString().getBytes()));
@@ -149,5 +152,4 @@ public class LocalLogBackendTest extends BaseLogBackendTest {
 	public void testInputStreamNull() {
 		LocalLogBackend.readLevelResourceFile(null);
 	}
-
 }

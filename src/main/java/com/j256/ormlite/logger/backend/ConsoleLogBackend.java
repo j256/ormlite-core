@@ -41,10 +41,8 @@ public class ConsoleLogBackend implements LogBackend {
 	@Override
 	public void log(Level level, String msg, Throwable throwable) {
 		log(level, msg);
-		if (throwable != null) {
-			// we use this instead of printStackTrace() directly because we want one IO operation
-			log(level, LogBackendUtil.throwableToString(throwable));
-		}
+		// we use this instead of printStackTrace() directly because we want one IO operation
+		log(level, LogBackendUtil.throwableToString(throwable));
 	}
 
 	/**
