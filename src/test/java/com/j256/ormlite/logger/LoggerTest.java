@@ -6,6 +6,7 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reset;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -19,46 +20,51 @@ import org.junit.Test;
 public class LoggerTest {
 
 	private Logger logger;
-	private LogBackend mockLog;
+	private LogBackend mockBackend;
 	private Throwable throwable = new Throwable();
+
+	static {
+		Logger.setGlobalLogLevel(null);
+	}
 
 	@Before
 	public void before() {
-		mockLog = createMock(LogBackend.class);
-		logger = new Logger(mockLog);
+		mockBackend = createMock(LogBackend.class);
+		logger = new Logger(mockBackend);
+		assertSame(mockBackend, logger.getLogBackend());
 	}
 
 	@Test
 	public void testArgAtStart() {
 		String arg = "x";
 		String end = " yyy";
-		expect(mockLog.isLevelEnabled(Level.TRACE)).andReturn(true);
-		mockLog.log(Level.TRACE, arg + end);
-		replay(mockLog);
+		expect(mockBackend.isLevelEnabled(Level.TRACE)).andReturn(true);
+		mockBackend.log(Level.TRACE, arg + end);
+		replay(mockBackend);
 		logger.trace("{}" + end, arg);
-		verify(mockLog);
+		verify(mockBackend);
 	}
 
 	@Test
 	public void testArgAtEnd() {
 		String start = "yyy ";
 		String arg = "x";
-		expect(mockLog.isLevelEnabled(Level.TRACE)).andReturn(true);
-		mockLog.log(Level.TRACE, start + arg);
-		replay(mockLog);
+		expect(mockBackend.isLevelEnabled(Level.TRACE)).andReturn(true);
+		mockBackend.log(Level.TRACE, start + arg);
+		replay(mockBackend);
 		logger.trace(start + "{}", arg);
-		verify(mockLog);
+		verify(mockBackend);
 	}
 
 	@Test
 	public void testArgsNextToEachOther() {
 		String arg1 = "x";
 		String arg2 = "y";
-		expect(mockLog.isLevelEnabled(Level.TRACE)).andReturn(true);
-		mockLog.log(Level.TRACE, arg1 + arg2);
-		replay(mockLog);
+		expect(mockBackend.isLevelEnabled(Level.TRACE)).andReturn(true);
+		mockBackend.log(Level.TRACE, arg1 + arg2);
+		replay(mockBackend);
 		logger.trace("{}{}", arg1, arg2);
-		verify(mockLog);
+		verify(mockBackend);
 	}
 
 	@Test
@@ -66,55 +72,82 @@ public class LoggerTest {
 		String arg1 = "x";
 		String middle = " middle ";
 		String arg2 = "y";
-		expect(mockLog.isLevelEnabled(Level.TRACE)).andReturn(true);
-		mockLog.log(Level.TRACE, arg1 + middle + arg2);
-		replay(mockLog);
+		expect(mockBackend.isLevelEnabled(Level.TRACE)).andReturn(true);
+		mockBackend.log(Level.TRACE, arg1 + middle + arg2);
+		replay(mockBackend);
 		logger.trace("{}" + middle + "{}", arg1, arg2);
-		verify(mockLog);
+		verify(mockBackend);
 	}
 
 	@Test
 	public void testToManyArgs() {
 		String start = "yyy ";
 		String arg = "x";
-		expect(mockLog.isLevelEnabled(Level.TRACE)).andReturn(true).times(2);
-		mockLog.log(Level.TRACE, start + arg);
-		mockLog.log(Level.TRACE, start + arg);
-		replay(mockLog);
+		expect(mockBackend.isLevelEnabled(Level.TRACE)).andReturn(true).times(2);
+		mockBackend.log(Level.TRACE, start + arg);
+		mockBackend.log(Level.TRACE, start + arg);
+		replay(mockBackend);
 		logger.trace(start + "{}{}{}{}{}", arg);
 		logger.trace(start + "{}{}{}{}{}", new Object[] { arg });
-		verify(mockLog);
+		verify(mockBackend);
+	}
+
+	@Test
+	public void testNoArgs() {
+		String start = "yyy {}";
+		expect(mockBackend.isLevelEnabled(Level.TRACE)).andReturn(true);
+		// should get back the {} because no args specified
+		mockBackend.log(Level.TRACE, start);
+		replay(mockBackend);
+		logger.trace(start);
+		verify(mockBackend);
 	}
 
 	@Test
 	public void testNotEnoughArgs() {
 		String start = "yyy ";
-		expect(mockLog.isLevelEnabled(Level.TRACE)).andReturn(true);
-		mockLog.log(Level.TRACE, start);
-		replay(mockLog);
-		logger.trace(start + "{}");
-		verify(mockLog);
+		expect(mockBackend.isLevelEnabled(Level.TRACE)).andReturn(true);
+		// should get back the {} because no args specified
+		String arg = "hello";
+		mockBackend.log(Level.TRACE, start + arg);
+		replay(mockBackend);
+		// we have 2 {} but only one arg
+		logger.trace(start + "{}{}", arg);
+		verify(mockBackend);
+	}
+
+	@Test
+	public void testNoCurliesButArgs() {
+		String start = "yyy ";
+		expect(mockBackend.isLevelEnabled(Level.TRACE)).andReturn(true);
+		// should get back the {} because no args specified
+		String arg = "hello";
+		mockBackend.log(Level.TRACE, start);
+		replay(mockBackend);
+		// we have 2 {} but only one arg
+		logger.trace(start, arg);
+		verify(mockBackend);
 	}
 
 	@Test
 	public void testObjectToString() {
 		Foo arg = new Foo();
-		expect(mockLog.isLevelEnabled(Level.TRACE)).andReturn(true);
-		mockLog.log(Level.TRACE, Foo.TO_STRING);
-		replay(mockLog);
+		expect(mockBackend.isLevelEnabled(Level.TRACE)).andReturn(true);
+		mockBackend.log(Level.TRACE, Foo.TO_STRING);
+		replay(mockBackend);
 		logger.trace("{}", arg);
-		verify(mockLog);
+		verify(mockBackend);
 	}
 
 	@Test
 	public void testNullArg() {
-		expect(mockLog.isLevelEnabled(Level.TRACE)).andReturn(true);
+		expect(mockBackend.isLevelEnabled(Level.TRACE)).andReturn(true);
 		String prefix = "a";
 		String suffix = "b";
-		mockLog.log(Level.TRACE, prefix + "null" + suffix);
-		replay(mockLog);
+		mockBackend.log(Level.TRACE, prefix + "null" + suffix);
+		replay(mockBackend);
 		logger.trace(prefix + "{}" + suffix, (Object) null);
-		verify(mockLog);
+		verify(mockBackend);
 	}
 
 	@Test
@@ -125,34 +158,34 @@ public class LoggerTest {
 				continue;
 			}
 			Method method = Logger.class.getMethod(getNameFromLevel(level), String.class);
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, msg);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, msg);
+			replay(mockBackend);
 			method.invoke(logger, msg);
-			verify(mockLog);
+			verify(mockBackend);
 
 			method = Logger.class.getMethod(getNameFromLevel(level), Throwable.class, String.class);
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, msg, throwable);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, msg, throwable);
+			replay(mockBackend);
 			method.invoke(logger, throwable, msg);
-			verify(mockLog);
+			verify(mockBackend);
 
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, msg);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, msg);
+			replay(mockBackend);
 			logger.log(level, msg);
-			verify(mockLog);
+			verify(mockBackend);
 
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, msg, throwable);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, msg, throwable);
+			replay(mockBackend);
 			logger.log(level, throwable, msg);
-			verify(mockLog);
+			verify(mockBackend);
 		}
 	}
 
@@ -167,34 +200,34 @@ public class LoggerTest {
 				continue;
 			}
 			Method method = Logger.class.getMethod(getNameFromLevel(level), String.class, Object.class);
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, result);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result);
+			replay(mockBackend);
 			method.invoke(logger, pattern, arg0);
-			verify(mockLog);
+			verify(mockBackend);
 
 			method = Logger.class.getMethod(getNameFromLevel(level), Throwable.class, String.class, Object.class);
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, result, throwable);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result, throwable);
+			replay(mockBackend);
 			method.invoke(logger, throwable, pattern, arg0);
-			verify(mockLog);
+			verify(mockBackend);
 
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, result);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result);
+			replay(mockBackend);
 			logger.log(level, pattern, arg0);
-			verify(mockLog);
+			verify(mockBackend);
 
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, result, throwable);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result, throwable);
+			replay(mockBackend);
 			logger.log(level, throwable, pattern, arg0);
-			verify(mockLog);
+			verify(mockBackend);
 		}
 	}
 
@@ -210,35 +243,35 @@ public class LoggerTest {
 				continue;
 			}
 			Method method = Logger.class.getMethod(getNameFromLevel(level), String.class, Object.class, Object.class);
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, result);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result);
+			replay(mockBackend);
 			method.invoke(logger, pattern, arg0, arg1);
-			verify(mockLog);
+			verify(mockBackend);
 
 			method = Logger.class.getMethod(getNameFromLevel(level), Throwable.class, String.class, Object.class,
 					Object.class);
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, result, throwable);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result, throwable);
+			replay(mockBackend);
 			method.invoke(logger, throwable, pattern, arg0, arg1);
-			verify(mockLog);
+			verify(mockBackend);
 
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, result);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result);
+			replay(mockBackend);
 			logger.log(level, pattern, arg0, arg1);
-			verify(mockLog);
+			verify(mockBackend);
 
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, result, throwable);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result, throwable);
+			replay(mockBackend);
 			logger.log(level, throwable, pattern, arg0, arg1);
-			verify(mockLog);
+			verify(mockBackend);
 		}
 	}
 
@@ -256,35 +289,35 @@ public class LoggerTest {
 			}
 			Method method = Logger.class.getMethod(getNameFromLevel(level), String.class, Object.class, Object.class,
 					Object.class);
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, result);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result);
+			replay(mockBackend);
 			method.invoke(logger, pattern, arg0, arg1, arg2);
-			verify(mockLog);
+			verify(mockBackend);
 
 			method = Logger.class.getMethod(getNameFromLevel(level), Throwable.class, String.class, Object.class,
 					Object.class, Object.class);
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, result, throwable);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result, throwable);
+			replay(mockBackend);
 			method.invoke(logger, throwable, pattern, arg0, arg1, arg2);
-			verify(mockLog);
+			verify(mockBackend);
 
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, result);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result);
+			replay(mockBackend);
 			logger.log(level, pattern, arg0, arg1, arg2);
-			verify(mockLog);
+			verify(mockBackend);
 
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, result, throwable);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result, throwable);
+			replay(mockBackend);
 			logger.log(level, throwable, pattern, arg0, arg1, arg2);
-			verify(mockLog);
+			verify(mockBackend);
 		}
 	}
 
@@ -303,35 +336,35 @@ public class LoggerTest {
 			}
 			Method method = Logger.class.getMethod(getNameFromLevel(level), String.class, Object.class, Object.class,
 					Object.class, Object.class);
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, result);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result);
+			replay(mockBackend);
 			method.invoke(logger, pattern, arg0, arg1, arg2, arg3);
-			verify(mockLog);
+			verify(mockBackend);
 
 			method = Logger.class.getMethod(getNameFromLevel(level), Throwable.class, String.class, Object.class,
 					Object.class, Object.class, Object.class);
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, result, throwable);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result, throwable);
+			replay(mockBackend);
 			method.invoke(logger, throwable, pattern, arg0, arg1, arg2, arg3);
-			verify(mockLog);
+			verify(mockBackend);
 
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, result);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result);
+			replay(mockBackend);
 			logger.log(level, pattern, arg0, arg1, arg2, arg3);
-			verify(mockLog);
+			verify(mockBackend);
 
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, result, throwable);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result, throwable);
+			replay(mockBackend);
 			logger.log(level, throwable, pattern, arg0, arg1, arg2, arg3);
-			verify(mockLog);
+			verify(mockBackend);
 		}
 	}
 
@@ -350,34 +383,81 @@ public class LoggerTest {
 				continue;
 			}
 			Method method = Logger.class.getMethod(getNameFromLevel(level), String.class, Object[].class);
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, result);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result);
+			replay(mockBackend);
 			method.invoke(logger, pattern, argArray);
-			verify(mockLog);
+			verify(mockBackend);
 
 			method = Logger.class.getMethod(getNameFromLevel(level), Throwable.class, String.class, Object[].class);
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, result, throwable);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result, throwable);
+			replay(mockBackend);
 			method.invoke(logger, throwable, pattern, argArray);
-			verify(mockLog);
+			verify(mockBackend);
 
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, result);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result);
+			replay(mockBackend);
 			logger.log(level, pattern, argArray);
-			verify(mockLog);
+			verify(mockBackend);
 
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, result, throwable);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result, throwable);
+			replay(mockBackend);
 			logger.log(level, throwable, pattern, argArray);
-			verify(mockLog);
+			verify(mockBackend);
+		}
+	}
+
+	@Test
+	public void testMessageVarargs() throws Exception {
+		String msg = "123 ";
+		Object arg0 = "wow";
+		Object arg1 = "zebra";
+		Object arg2 = "wanker";
+		Object arg3 = "avatar";
+		Object[] argArray = new Object[] { arg0, arg1, arg2, arg3 };
+		String result = msg + "0" + arg0 + "01" + arg1 + "12" + arg2 + "23" + arg3 + "3";
+		String pattern = msg + "0{}01{}12{}23{}3";
+		for (Level level : Level.values()) {
+			if (level == Level.OFF) {
+				continue;
+			}
+			Method method = Logger.class.getMethod(getNameFromLevel(level) + "Args", String.class, Object[].class);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result);
+			replay(mockBackend);
+			method.invoke(logger, pattern, argArray);
+			verify(mockBackend);
+
+			method = Logger.class.getMethod(getNameFromLevel(level) + "Args", Throwable.class, String.class,
+					Object[].class);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result, throwable);
+			replay(mockBackend);
+			method.invoke(logger, throwable, pattern, argArray);
+			verify(mockBackend);
+
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result);
+			replay(mockBackend);
+			logger.logArgs(level, pattern, argArray);
+			verify(mockBackend);
+
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result, throwable);
+			replay(mockBackend);
+			logger.logArgs(level, throwable, pattern, argArray);
+			verify(mockBackend);
 		}
 	}
 
@@ -391,34 +471,34 @@ public class LoggerTest {
 				continue;
 			}
 			Method method = Logger.class.getMethod(getNameFromLevel(level), String.class, Object.class);
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, result);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result);
+			replay(mockBackend);
 			method.invoke(logger, pattern, argArray);
-			verify(mockLog);
+			verify(mockBackend);
 
 			method = Logger.class.getMethod(getNameFromLevel(level), Throwable.class, String.class, Object.class);
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, result, throwable);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result, throwable);
+			replay(mockBackend);
 			method.invoke(logger, throwable, pattern, argArray);
-			verify(mockLog);
+			verify(mockBackend);
 
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, result);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result);
+			replay(mockBackend);
 			logger.log(level, pattern, argArray);
-			verify(mockLog);
+			verify(mockBackend);
 
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, result, throwable);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result, throwable);
+			replay(mockBackend);
 			logger.log(level, throwable, pattern, argArray);
-			verify(mockLog);
+			verify(mockBackend);
 		}
 	}
 
@@ -432,34 +512,34 @@ public class LoggerTest {
 				continue;
 			}
 			Method method = Logger.class.getMethod(getNameFromLevel(level), String.class, Object.class);
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, result);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result);
+			replay(mockBackend);
 			method.invoke(logger, pattern, argArray);
-			verify(mockLog);
+			verify(mockBackend);
 
 			method = Logger.class.getMethod(getNameFromLevel(level), Throwable.class, String.class, Object.class);
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, result, throwable);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result, throwable);
+			replay(mockBackend);
 			method.invoke(logger, throwable, pattern, argArray);
-			verify(mockLog);
+			verify(mockBackend);
 
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, result);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result);
+			replay(mockBackend);
 			logger.log(level, pattern, (Object) argArray);
-			verify(mockLog);
+			verify(mockBackend);
 
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			mockLog.log(level, result, throwable);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			mockBackend.log(level, result, throwable);
+			replay(mockBackend);
 			logger.log(level, throwable, pattern, (Object) argArray);
-			verify(mockLog);
+			verify(mockBackend);
 		}
 	}
 
@@ -479,13 +559,13 @@ public class LoggerTest {
 	@Test
 	public void testIsEnabled() {
 		for (Level level : Level.values()) {
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			expect(mockLog.isLevelEnabled(level)).andReturn(false);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(false);
+			replay(mockBackend);
 			assertTrue(logger.isLevelEnabled(level));
 			assertFalse(logger.isLevelEnabled(level));
-			verify(mockLog);
+			verify(mockBackend);
 		}
 	}
 
@@ -496,11 +576,11 @@ public class LoggerTest {
 				continue;
 			}
 			Method method = Logger.class.getMethod(getNameFromLevel(level), String.class, Object.class);
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(false);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(false);
+			replay(mockBackend);
 			method.invoke(logger, "msg {}", new ToStringThrow());
-			verify(mockLog);
+			verify(mockBackend);
 		}
 	}
 
@@ -511,9 +591,9 @@ public class LoggerTest {
 				continue;
 			}
 			Method method = Logger.class.getMethod(getNameFromLevel(level), String.class, Object.class);
-			reset(mockLog);
-			expect(mockLog.isLevelEnabled(level)).andReturn(true);
-			replay(mockLog);
+			reset(mockBackend);
+			expect(mockBackend.isLevelEnabled(level)).andReturn(true);
+			replay(mockBackend);
 			try {
 				method.invoke(logger, "msg {}", new ToStringThrow());
 				fail("Should have thrown");
@@ -521,7 +601,7 @@ public class LoggerTest {
 				assertTrue("should have thrown an IllegalStateException",
 						e.getCause() instanceof IllegalStateException);
 			}
-			verify(mockLog);
+			verify(mockBackend);
 		}
 	}
 
@@ -535,12 +615,12 @@ public class LoggerTest {
 		Object[] argArray = new Object[] { arg0, arg1, arg2, arg3 };
 		String result = msg + "0" + Arrays.toString(argArray) + "0";
 		String pattern = msg + "0{}0";
-		reset(mockLog);
-		expect(mockLog.isLevelEnabled(Level.INFO)).andReturn(true);
-		mockLog.log(Level.INFO, result, throwable);
-		replay(mockLog);
+		reset(mockBackend);
+		expect(mockBackend.isLevelEnabled(Level.INFO)).andReturn(true);
+		mockBackend.log(Level.INFO, result, throwable);
+		replay(mockBackend);
 		logger.info(throwable, pattern, (Object) argArray);
-		verify(mockLog);
+		verify(mockBackend);
 	}
 
 	@Test
@@ -549,15 +629,15 @@ public class LoggerTest {
 		String msg2 = "this should not show up";
 		String msg3 = "this should show up";
 		String msg4 = "this should show up too";
-		reset(mockLog);
-		expect(mockLog.isLevelEnabled(Level.INFO)).andReturn(true);
-		mockLog.log(Level.INFO, msg1);
+		reset(mockBackend);
+		expect(mockBackend.isLevelEnabled(Level.INFO)).andReturn(true);
+		mockBackend.log(Level.INFO, msg1);
 		// no msg2
-		expect(mockLog.isLevelEnabled(Level.INFO)).andReturn(true);
-		mockLog.log(Level.INFO, msg3);
-		expect(mockLog.isLevelEnabled(Level.DEBUG)).andReturn(true);
-		mockLog.log(Level.DEBUG, msg4);
-		replay(mockLog);
+		expect(mockBackend.isLevelEnabled(Level.INFO)).andReturn(true);
+		mockBackend.log(Level.INFO, msg3);
+		expect(mockBackend.isLevelEnabled(Level.DEBUG)).andReturn(true);
+		mockBackend.log(Level.DEBUG, msg4);
+		replay(mockBackend);
 		logger.info(msg1);
 		Logger.setGlobalLogLevel(Level.OFF);
 		logger.fatal(msg2);
@@ -568,7 +648,26 @@ public class LoggerTest {
 		logger.info(msg3);
 		Logger.setGlobalLogLevel(null);
 		logger.debug(msg4);
-		verify(mockLog);
+		verify(mockBackend);
+	}
+
+	@Test
+	public void testNoMessage() {
+		String arg1 = "wefewf";
+		int arg2 = 123;
+		reset(mockBackend);
+		expect(mockBackend.isLevelEnabled(Level.INFO)).andReturn(true);
+		mockBackend.log(Level.INFO, "'" + arg1 + "', '" + arg2 + "'");
+		replay(mockBackend);
+		logger.info((String) null, arg1, arg2);
+		verify(mockBackend);
+
+		reset(mockBackend);
+		expect(mockBackend.isLevelEnabled(Level.INFO)).andReturn(true);
+		mockBackend.log(Level.INFO, Logger.NO_MESSAGE_MESSAGE);
+		replay(mockBackend);
+		logger.info((String) null);
+		verify(mockBackend);
 	}
 
 	private static class Foo {

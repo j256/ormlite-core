@@ -1,7 +1,7 @@
 package com.j256.ormlite.logger;
 
 /**
- * Class which fronts various log backend implementations which may or may not be in the classpath.
+ * Log backend classes which persist log messages. The implementations of this may or may not be in the classpath.
  * 
  * From SimpleLogging: https://github.com/j256/simplelogging
  *
@@ -10,7 +10,7 @@ package com.j256.ormlite.logger;
 public interface LogBackend {
 
 	/**
-	 * Returns true if the log level argument is enabled meaning that the log messages should be shown.
+	 * Returns true if the log level argument is enabled meaning that the log messages should be assembled and shown.
 	 */
 	public boolean isLevelEnabled(Level level);
 

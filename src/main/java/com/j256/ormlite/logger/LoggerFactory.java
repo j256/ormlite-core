@@ -1,30 +1,27 @@
 package com.j256.ormlite.logger;
 
-import com.j256.ormlite.logger.backend.LocalLogBackend;
+import java.util.Arrays;
 
 /**
- * Factory that creates {@link Logger} instances. It uses reflection to see what logging backends are available on the
- * classpath and tries to find the most appropriate one.
+ * Factory that creates {@link Logger} and {@link FluentLogger} instances. It uses reflection to see what logging
+ * backends are available on the classpath and tries to find the most appropriate one.
  * 
  * From SimpleLogging: https://github.com/j256/simplelogging
  *
  * <p>
- * To set the logger to a particular type, set the system property ("com.j256.simplelogger.backend") contained in
- * {@link #LOG_TYPE_SYSTEM_PROPERTY} to be name of one of the enumerated types in {@link LogBackendType}. You can also
- * call {@link LoggerFactory#setLogBackendType(LogBackendType)} or
- * {@link LoggerFactory#setLogBackendFactory(LogBackendFactory)}.
+ * To set the logger to a particular type, set the system property ("com.j256.simplelogger.backend") contained in to be
+ * name of one of the enumerated types in {@link LogBackendType}. You can also call
+ * {@link LoggerFactory#setLogBackendType(LogBackendType)} or
+ * {@link LoggerFactory#setLogBackendFactory(LogBackendFactory)} if you want to set it to a particular class which can
+ * be a custom backend.
  * </p>
  */
 public class LoggerFactory {
 
-	public static final String LOG_TYPE_SYSTEM_PROPERTY = "com.j256.simplelogger.backend";
-
 	private static LogBackendFactory logBackendFactory;
 
-	/**
-	 * For static calls only.
-	 */
 	private LoggerFactory() {
+		// only here for static usage
 	}
 
 	/**
@@ -42,6 +39,23 @@ public class LoggerFactory {
 			logBackendFactory = findLogBackendFactory();
 		}
 		return new Logger(logBackendFactory.createLogBackend(className));
+	}
+
+	/**
+	 * Return a logger associated with a particular class.
+	 */
+	public static FluentLogger getFluentLogger(Class<?> clazz) {
+		return getFluentLogger(clazz.getName());
+	}
+
+	/**
+	 * Return a logger associated with a particular class name.
+	 */
+	public static FluentLogger getFluentLogger(String className) {
+		if (logBackendFactory == null) {
+			logBackendFactory = findLogBackendFactory();
+		}
+		return new FluentLogger(logBackendFactory.createLogBackend(className));
 	}
 
 	/**
@@ -92,18 +106,67 @@ public class LoggerFactory {
 	 */
 	private static LogBackendFactory findLogBackendFactory() {
 
+		LogBackendType defaultBackend = chooseDefaultBackend();
+
 		// see if the log-type was specified as a system property
-		String logTypeString = System.getProperty(LOG_TYPE_SYSTEM_PROPERTY);
+		String logTypeString = System.getProperty(LoggerConstants.LOG_TYPE_SYSTEM_PROPERTY);
 		if (logTypeString != null) {
 			try {
+				// first we see if the log-type is an enum value
 				return LogBackendType.valueOf(logTypeString);
-			} catch (IllegalArgumentException e) {
-				LogBackend backend = new LocalLogBackend(LoggerFactory.class.getName());
-				backend.log(Level.WARNING, "Could not find valid log-type from system property '"
-						+ LOG_TYPE_SYSTEM_PROPERTY + "', value '" + logTypeString + "'");
+			} catch (IllegalArgumentException iae) {
+				// next we see if it is factory class
+				LogBackendFactory factory = constructFactoryFromClassName(defaultBackend, logTypeString);
+				if (factory != null) {
+					return factory;
+				}
+				LogBackend backend = defaultBackend.createLogBackend(LoggerFactory.class.getName());
+				backend.log(Level.WARNING,
+						"Could not find valid log-type from system property '"
+								+ LoggerConstants.LOG_TYPE_SYSTEM_PROPERTY + "', value '" + logTypeString
+								+ "' not one of " + Arrays.toString(LogBackendType.values())
+								+ " nor a class name that implements LogBackendFactory");
 			}
 		}
 
+		return defaultBackend;
+	}
+
+	/**
+	 * See if the log-type-name is a class name of a factory. If so then construct it and return it.
+	 */
+	private static LogBackendFactory constructFactoryFromClassName(LogBackendType defaultBackend,
+			String logTypeString) {
+		// next we see if it is factory class
+		Class<?> clazz;
+		try {
+			clazz = Class.forName(logTypeString);
+		} catch (ClassNotFoundException cnfe) {
+			// probably not a class name so ignore the exception
+			return null;
+		}
+
+		if (!LogBackendFactory.class.isAssignableFrom(clazz)) {
+			LogBackend backend = defaultBackend.createLogBackend(LoggerFactory.class.getName());
+			backend.log(Level.WARNING,
+					"Was expecting the name of a class that implements LogBackendFactory from " + "system property '"
+							+ LoggerConstants.LOG_TYPE_SYSTEM_PROPERTY + "', value '" + logTypeString + "'");
+			return null;
+		}
+
+		try {
+			// construct the factory by calling the no-arg contructor
+			Object instance = clazz.newInstance();
+			return (LogBackendFactory) instance;
+		} catch (Exception e) {
+			LogBackend backend = defaultBackend.createLogBackend(LoggerFactory.class.getName());
+			backend.log(Level.WARNING, "Could not construct an instance of class from system property '"
+					+ LoggerConstants.LOG_TYPE_SYSTEM_PROPERTY + "', value '" + logTypeString + "'", e);
+			return null;
+		}
+	}
+
+	private static LogBackendType chooseDefaultBackend() {
 		for (LogBackendType logType : LogBackendType.values()) {
 			if (logType.isAvailable()) {
 				return logType;

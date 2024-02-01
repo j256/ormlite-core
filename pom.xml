@@ -50,9 +50,8 @@
 		<junit-version>4.13.1</junit-version>
 		<commons-lang-version>2.1</commons-lang-version>
 		<commons-logging-version>1.1.1</commons-logging-version>
+		<logback.version>1.2.13</logback.version>
 		<slf4j-version>1.7.2</slf4j-version>
-		<!-- yes we know this is an issue but it is here for backwards compatibility -->
-		<log4j-version>1.2.17</log4j-version>
 		<log4j2-version>2.17.1</log4j2-version>
 	</properties>
 	<profiles>
@@ -346,14 +345,14 @@
 	<dependencies>
 		<!-- optional dependencies that will only be used if you add dependencies yourself -->
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j-version}</version>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
+			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j-version}</version>
 			<optional>true</optional>
 		</dependency>
@@ -367,12 +366,6 @@
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
 			<version>${commons-logging-version}</version>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>${log4j-version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
