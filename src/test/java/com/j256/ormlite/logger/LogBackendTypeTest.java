@@ -9,13 +9,13 @@ import org.junit.Test;
 public class LogBackendTypeTest {
 
 	@Test
-	public void test() {
+	public void testBackends() {
 		for (LogBackendType type : LogBackendType.values()) {
-			if (type == LogBackendType.LOG4J2) {
-				// we just skip this one because it will work under java8
+			if (type == LogBackendType.LOG4J) {
+				// we have to skip it because it is only enabled with a certain profile
 				continue;
 			}
-			if (type == LogBackendType.ANDROID || type == LogBackendType.NULL) {
+			if (type == LogBackendType.ANDROID || type == LogBackendType.NULL || type == LogBackendType.LAMBDA) {
 				assertFalse(type + " should not be available", type.isAvailable());
 				// NOTE: type.createLogBackend() defers to LocalLog
 				continue;

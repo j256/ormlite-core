@@ -10,7 +10,7 @@ import com.j256.ormlite.logger.LogBackendFactory;
 
 public abstract class BaseLogBackendTest {
 
-	private final LogBackend log;
+	protected final LogBackend log;
 
 	protected BaseLogBackendTest(LogBackendFactory factory) {
 		this.log = factory.createLogBackend(getClass().getSimpleName());
@@ -34,62 +34,62 @@ public abstract class BaseLogBackendTest {
 
 	@Test
 	public void testTraceString() {
-		log.log(Level.TRACE, "message");
+		log.log(Level.TRACE, "trace message");
 	}
 
 	@Test
 	public void testTraceStringThrowable() {
-		log.log(Level.TRACE, "message", new Throwable("log throwable"));
+		log.log(Level.TRACE, "trace message", new Throwable("trace throwable"));
 	}
 
 	@Test
 	public void testDebugString() {
-		log.log(Level.DEBUG, "message");
+		log.log(Level.DEBUG, "debug message");
 	}
 
 	@Test
 	public void testDebugStringThrowable() {
-		log.log(Level.DEBUG, "message", new Throwable("log throwable"));
+		log.log(Level.DEBUG, "debug message", new Throwable("debug throwable"));
 	}
 
 	@Test
 	public void testInfoString() {
-		log.log(Level.INFO, "message");
+		log.log(Level.INFO, "info message");
 	}
 
 	@Test
 	public void testInfoStringThrowable() {
-		log.log(Level.INFO, "message", new Throwable("log throwable"));
+		log.log(Level.INFO, "info message", new Throwable("info throwable"));
 	}
 
 	@Test
-	public void testWarnString() {
-		log.log(Level.WARNING, "message");
+	public void testWarningString() {
+		log.log(Level.WARNING, "warning message");
 	}
 
 	@Test
-	public void testWarnStringThrowable() {
-		log.log(Level.WARNING, "message", new Throwable("log throwable"));
+	public void testWarningStringThrowable() {
+		log.log(Level.WARNING, "warning message", new Throwable("warning throwable"));
 	}
 
 	@Test
 	public void testErrorString() {
-		log.log(Level.ERROR, "message");
+		log.log(Level.ERROR, "error message");
 	}
 
 	@Test
 	public void testErrorStringThrowable() {
-		log.log(Level.ERROR, "message", new Throwable("log throwable"));
+		log.log(Level.ERROR, "error message", new Throwable("error throwable"));
 	}
 
 	@Test
 	public void testFatalString() {
-		log.log(Level.FATAL, "message");
+		log.log(Level.FATAL, "fatal message");
 	}
 
 	@Test
 	public void testFatalStringThrowable() {
-		log.log(Level.FATAL, "message", new Throwable("log throwable"));
+		log.log(Level.FATAL, "fatal message", new Throwable("fatal throwable"));
 	}
 
 	private boolean checkEnabled(boolean enabled, boolean shouldBeEnabled) {

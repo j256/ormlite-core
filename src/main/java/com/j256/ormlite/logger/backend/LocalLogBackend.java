@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.logger.LogBackend;
 import com.j256.ormlite.logger.LogBackendFactory;
+import com.j256.ormlite.logger.LoggerConstants;
 import com.j256.ormlite.logger.LoggerFactory;
 
 /**
@@ -33,11 +34,12 @@ import com.j256.ormlite.logger.LoggerFactory;
  * </p>
  * 
  * <p>
- * It also supports a file ormliteLocalLog.properties file which contains lines such as:
+ * It also supports a properties file (name defined in {@link LoggerConstants#LOCAL_LOG_PROPERTIES_FILE} which contains
+ * lines such as:
  * </p>
  * 
  * <pre>
- * # regex-pattern = Level
+ * # line format: regex-pattern = Level
  * com\.foo\.yourclass.*=DEBUG
  * com\.foo\.yourclass\.BaseMappedStatement=TRACE
  * com\.foo\.yourclass\.MappedCreate=TRACE
@@ -47,10 +49,6 @@ import com.j256.ormlite.logger.LoggerFactory;
  * @author graywatson
  */
 public class LocalLogBackend implements LogBackend {
-
-	public static final String LOCAL_LOG_LEVEL_PROPERTY = "com.j256.simplelogging.level";
-	public static final String LOCAL_LOG_FILE_PROPERTY = "com.j256.simplelogging.file";
-	public static final String LOCAL_LOG_PROPERTIES_FILE = "/ormliteLocalLog.properties";
 
 	private static final Level DEFAULT_LEVEL = Level.DEBUG;
 	// used with clone()
@@ -62,15 +60,24 @@ public class LocalLogBackend implements LogBackend {
 	private final Level level;
 
 	static {
-		InputStream stream = LocalLogBackend.class.getResourceAsStream(LOCAL_LOG_PROPERTIES_FILE);
-		List<PatternLevel> levels = readLevelResourceFile(stream);
+		InputStream stream = LocalLogBackend.class.getResourceAsStream(LoggerConstants.LOCAL_LOG_PROPERTIES_FILE);
+		List<PatternLevel> levels;
+		try {
+			levels = readLevelResourceFile(stream);
+		} finally {
+			try {
+				stream.close();
+			} catch (IOException e) {
+				// ignored
+			}
+		}
 		classLevels = levels;
 
 		/*
 		 * We need to do this here otherwise each logger has their own open PrintStream to the file and the messages can
 		 * overlap. Not good.
 		 */
-		String logPath = System.getProperty(LOCAL_LOG_FILE_PROPERTY);
+		String logPath = System.getProperty(LoggerConstants.LOCAL_LOG_FILE_PROPERTY);
 		openLogFile(logPath);
 	}
 
@@ -92,7 +99,7 @@ public class LocalLogBackend implements LogBackend {
 
 		if (level == null) {
 			// see if we have a level set
-			String levelName = System.getProperty(LOCAL_LOG_LEVEL_PROPERTY);
+			String levelName = System.getProperty(LoggerConstants.LOCAL_LOG_LEVEL_PROPERTY);
 			if (levelName == null) {
 				level = DEFAULT_LEVEL;
 			} else {
@@ -155,24 +162,17 @@ public class LocalLogBackend implements LogBackend {
 	 * Read in our levels from our configuration file.
 	 */
 	static List<PatternLevel> readLevelResourceFile(InputStream stream) {
-		List<PatternLevel> levels = null;
-		if (stream != null) {
-			try {
-				levels = configureClassLevels(stream);
-			} catch (IOException e) {
-				System.err.println(
-						"IO exception reading the log properties file '" + LOCAL_LOG_PROPERTIES_FILE + "': " + e);
-			} finally {
-				if (stream != null) {
-					try {
-						stream.close();
-					} catch (IOException e) {
-						// ignored
-					}
-				}
-			}
+		if (stream == null) {
+			return null;
 		}
-		return levels;
+		try {
+			return configureClassLevels(stream);
+		} catch (IOException e) {
+			System.err.println("IO exception reading the log properties file '"
+					+ LoggerConstants.LOCAL_LOG_PROPERTIES_FILE + "': " + e);
+			return null;
+		}
+
 	}
 
 	private static List<PatternLevel> configureClassLevels(InputStream stream) throws IOException {
@@ -249,8 +249,8 @@ public class LocalLogBackend implements LogBackend {
 	}
 
 	private static class PatternLevel {
-		Pattern pattern;
-		Level level;
+		final Pattern pattern;
+		final Level level;
 
 		public PatternLevel(Pattern pattern, Level level) {
 			this.pattern = pattern;
