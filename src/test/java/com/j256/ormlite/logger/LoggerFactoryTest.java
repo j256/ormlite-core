@@ -24,10 +24,6 @@ import com.j256.ormlite.logger.backend.Slf4jLoggingLogBackend;
 
 public class LoggerFactoryTest {
 
-	static {
-		Logger.setGlobalLogLevel(null);
-	}
-
 	@Test
 	public void testGetLoggerClass() {
 		assertNotNull(LoggerFactory.getLogger(getClass()));
@@ -93,12 +89,12 @@ public class LoggerFactoryTest {
 		LogBackendFactory factory = LoggerFactory.getLogBackendFactory();
 		try {
 			LoggerFactory.setLogBackendFactory(null);
-			System.setProperty(LoggerConstants.LOG_TYPE_SYSTEM_PROPERTY, LogBackendType.NULL.name());
+			System.setProperty(LoggerConstants.LOG_BACKEND_SYSTEM_PROPERTY, LogBackendType.NULL.name());
 			LoggerFactory.getLogger("foo");
 			assertEquals(LogBackendType.NULL, LoggerFactory.getLogBackendFactory());
 		} finally {
 			LoggerFactory.setLogBackendFactory(factory);
-			System.clearProperty(LoggerConstants.LOG_TYPE_SYSTEM_PROPERTY);
+			System.clearProperty(LoggerConstants.LOG_BACKEND_SYSTEM_PROPERTY);
 		}
 	}
 
@@ -122,19 +118,19 @@ public class LoggerFactoryTest {
 	@Test
 	public void testLogFactoryProperty() {
 		LoggerFactory.setLogBackendFactory(null);
-		System.setProperty(LoggerConstants.LOG_TYPE_SYSTEM_PROPERTY, "some.wrong.class");
+		System.setProperty(LoggerConstants.LOG_BACKEND_SYSTEM_PROPERTY, "some.wrong.class");
 		try {
 			// this should work and not throw
 			LoggerFactory.getLogger(getClass());
 		} finally {
-			System.clearProperty(LoggerConstants.LOG_TYPE_SYSTEM_PROPERTY);
+			System.clearProperty(LoggerConstants.LOG_BACKEND_SYSTEM_PROPERTY);
 		}
 	}
 
 	@Test
 	public void testLogFactoryFind() {
 		LoggerFactory.setLogBackendFactory(null);
-		System.clearProperty(LoggerConstants.LOG_TYPE_SYSTEM_PROPERTY);
+		System.clearProperty(LoggerConstants.LOG_BACKEND_SYSTEM_PROPERTY);
 		// this should work and not throw
 		LoggerFactory.getLogger(getClass());
 	}
@@ -164,14 +160,14 @@ public class LoggerFactoryTest {
 	public void testLogFactoryAsClass() {
 		LoggerFactory.setLogBackendFactory(null);
 		try {
-			System.setProperty(LoggerConstants.LOG_TYPE_SYSTEM_PROPERTY, OurLogFactory.class.getName());
+			System.setProperty(LoggerConstants.LOG_BACKEND_SYSTEM_PROPERTY, OurLogFactory.class.getName());
 			OurLogFactory.lastClassLabel = null;
 			// this should work and not throw
 			String label = "fopwejfwejfwe";
 			LoggerFactory.getLogger(label);
 			assertSame(label, OurLogFactory.lastClassLabel);
 		} finally {
-			System.clearProperty(LoggerConstants.LOG_TYPE_SYSTEM_PROPERTY);
+			System.clearProperty(LoggerConstants.LOG_BACKEND_SYSTEM_PROPERTY);
 		}
 	}
 
@@ -179,13 +175,13 @@ public class LoggerFactoryTest {
 	public void testLogFactoryExample() {
 		LoggerFactory.setLogBackendFactory(null);
 		try {
-			System.setProperty(LoggerConstants.LOG_TYPE_SYSTEM_PROPERTY,
+			System.setProperty(LoggerConstants.LOG_BACKEND_SYSTEM_PROPERTY,
 					LogbackLogBackend.LogbackLogBackendFactory.class.getName());
 			// this should work and not throw
 			Logger logger = LoggerFactory.getLogger("fopwejfwejfwe");
 			assertTrue(logger.getLogBackend() instanceof LogbackLogBackend);
 		} finally {
-			System.clearProperty(LoggerConstants.LOG_TYPE_SYSTEM_PROPERTY);
+			System.clearProperty(LoggerConstants.LOG_BACKEND_SYSTEM_PROPERTY);
 		}
 	}
 
@@ -193,14 +189,14 @@ public class LoggerFactoryTest {
 	public void testLogFactoryAsClassPrivateConstructor() {
 		LoggerFactory.setLogBackendFactory(null);
 		try {
-			System.setProperty(LoggerConstants.LOG_TYPE_SYSTEM_PROPERTY, OurLogFactoryPrivate.class.getName());
+			System.setProperty(LoggerConstants.LOG_BACKEND_SYSTEM_PROPERTY, OurLogFactoryPrivate.class.getName());
 			OurLogFactoryPrivate.lastClassLabel = null;
 			// this shouldn't use the factory because constructor not public
 			String label = "fopwejfwejfwe";
 			LoggerFactory.getLogger(label);
 			assertNull(OurLogFactoryPrivate.lastClassLabel);
 		} finally {
-			System.clearProperty(LoggerConstants.LOG_TYPE_SYSTEM_PROPERTY);
+			System.clearProperty(LoggerConstants.LOG_BACKEND_SYSTEM_PROPERTY);
 		}
 	}
 
@@ -208,11 +204,49 @@ public class LoggerFactoryTest {
 	public void testLogFactoryAsClassNotLoggerFactoryBackend() {
 		LoggerFactory.setLogBackendFactory(null);
 		try {
-			System.setProperty(LoggerConstants.LOG_TYPE_SYSTEM_PROPERTY, Object.class.getName());
+			System.setProperty(LoggerConstants.LOG_BACKEND_SYSTEM_PROPERTY, Object.class.getName());
 			// this shouldn't use the factory because class is not a LoggerFactoryBackend
 			LoggerFactory.getLogger("fopwejfwejfwe");
 		} finally {
-			System.clearProperty(LoggerConstants.LOG_TYPE_SYSTEM_PROPERTY);
+			System.clearProperty(LoggerConstants.LOG_BACKEND_SYSTEM_PROPERTY);
+		}
+	}
+
+	@Test
+	public void testBackendPropertiesFile() {
+		LoggerFactory.setLogBackendFactory(null);
+		System.clearProperty(LoggerConstants.LOG_BACKEND_SYSTEM_PROPERTY);
+		try {
+			// this shouldn't use the factory because class is not a LoggerFactoryBackend
+			Logger logger = LoggerFactory.getLogger("fopwejfwejfwe");
+			logger.info("we are using the backend: " + logger.getLogBackend());
+		} finally {
+			System.clearProperty(LoggerConstants.LOG_BACKEND_SYSTEM_PROPERTY);
+		}
+	}
+
+	@Test
+	public void testGlobalProperty() {
+		String restore = System.getProperty(LoggerConstants.GLOBAL_LOG_LEVEL_SYSTEM_PROPERTY);
+		try {
+			System.clearProperty(LoggerConstants.GLOBAL_LOG_LEVEL_SYSTEM_PROPERTY);
+			Logger.setGlobalLogLevel(null);
+			LoggerFactory.maybeAssignGlobalLogLevelFromProperty();
+			assertNull(Logger.getGlobalLevel());
+			Level level = Level.DEBUG;
+			System.setProperty(LoggerConstants.GLOBAL_LOG_LEVEL_SYSTEM_PROPERTY, level.name());
+			LoggerFactory.maybeAssignGlobalLogLevelFromProperty();
+			assertEquals(level, Logger.getGlobalLevel());
+			System.setProperty(LoggerConstants.GLOBAL_LOG_LEVEL_SYSTEM_PROPERTY, "unknown");
+			LoggerFactory.maybeAssignGlobalLogLevelFromProperty();
+			assertEquals(level, Logger.getGlobalLevel());
+		} finally {
+			Logger.setGlobalLogLevel(null);
+			if (restore == null) {
+				System.clearProperty(LoggerConstants.GLOBAL_LOG_LEVEL_SYSTEM_PROPERTY);
+			} else {
+				System.setProperty(LoggerConstants.GLOBAL_LOG_LEVEL_SYSTEM_PROPERTY, restore);
+			}
 		}
 	}
 
@@ -220,6 +254,11 @@ public class LoggerFactoryTest {
 
 		LogBackend log;
 		static String lastClassLabel;
+
+		@Override
+		public boolean isAvailable() {
+			return true;
+		}
 
 		@Override
 		public LogBackend createLogBackend(String classLabel) {
@@ -232,6 +271,11 @@ public class LoggerFactoryTest {
 
 		LogBackend log;
 		static String lastClassLabel;
+
+		@Override
+		public boolean isAvailable() {
+			return true;
+		}
 
 		@Override
 		public LogBackend createLogBackend(String classLabel) {

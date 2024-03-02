@@ -4,11 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
 
 import org.junit.Test;
 
@@ -98,58 +94,15 @@ public class LocalLogBackendTest extends BaseLogBackendTest {
 	}
 
 	@Test
-	public void testInvalidLevelsFile() {
-		StringWriter stringWriter = new StringWriter();
-		// invalid line
-		stringWriter.write("x\n");
-		// invalid level
-		stringWriter.write("com\\.foo\\.myclass\\.StatementExecutor = INVALID_LEVEL\n");
-		LocalLogBackend.readLevelResourceFile(new ByteArrayInputStream(stringWriter.toString().getBytes()));
-	}
-
-	@Test
-	public void testValidLevelsFile() {
-		StringWriter stringWriter = new StringWriter();
-		// invalid line
-		stringWriter.write("x\n");
-		// blank line
-		stringWriter.write("\n");
-		// invalid level
-		stringWriter.write("com\\.foo\\.myclass\\.StatementExecutor = INFO\n");
-		LocalLogBackend.readLevelResourceFile(new ByteArrayInputStream(stringWriter.toString().getBytes()));
-	}
-
-	@Test
 	public void testMultipleLineMatches() {
 		/*
 		 * This depends on the contents of the simpleLoggingLocalLog.properties file.
 		 */
-		LocalLogBackend backend = new LocalLogBackend("com.j256.ormlite.Something");
+		LocalLogBackend backend = new LocalLogBackend("com.j256.simplelogging.Something");
 		assertTrue(backend.isLevelEnabled(Level.DEBUG));
 		assertFalse(backend.isLevelEnabled(Level.TRACE));
-		backend = new LocalLogBackend("com.j256.ormlite.LocalLogBackendTest");
+		backend = new LocalLogBackend("com.j256.simplelogging.LocalLogBackendTest");
 		assertTrue(backend.isLevelEnabled(Level.DEBUG));
 		assertTrue(backend.isLevelEnabled(Level.TRACE));
-	}
-
-	@Test
-	public void testIoErrorsReadingLevelFile() {
-		InputStream errorStream = new InputStream() {
-			@Override
-			public int read() throws IOException {
-				throw new IOException("simulated exception");
-			}
-
-			@Override
-			public void close() throws IOException {
-				throw new IOException("simulated exception");
-			}
-		};
-		LocalLogBackend.readLevelResourceFile(errorStream);
-	}
-
-	@Test
-	public void testInputStreamNull() {
-		LocalLogBackend.readLevelResourceFile(null);
 	}
 }

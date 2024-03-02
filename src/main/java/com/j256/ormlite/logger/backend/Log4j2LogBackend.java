@@ -102,6 +102,12 @@ public class Log4j2LogBackend implements LogBackend {
 			this.loggerNamePrefix = null;
 		}
 
+		@Override
+		public boolean isAvailable() {
+			// if we were able to load the classes here then it is available.
+			return true;
+		}
+
 		public Log4j2LogBackendFactory(String loggerNamePrefix) {
 			// this is used by the log4j reflection class to show if it is log4j or log4j2
 			this.loggerNamePrefix = loggerNamePrefix;

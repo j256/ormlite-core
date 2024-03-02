@@ -104,6 +104,12 @@ public class Slf4jLoggingLogBackend implements LogBackend {
 		}
 
 		@Override
+		public boolean isAvailable() {
+			// if the factory is null or if it is the no-op factory then the slf4j logs should not be used
+			return (factory != null && !factory.getClass().getSimpleName().contains("NOP"));
+		}
+
+		@Override
 		public LogBackend createLogBackend(String classLabel) {
 			return new Slf4jLoggingLogBackend(factory.getLogger(classLabel));
 		}

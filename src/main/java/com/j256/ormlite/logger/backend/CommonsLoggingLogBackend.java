@@ -96,6 +96,12 @@ public class CommonsLoggingLogBackend implements LogBackend {
 	 */
 	public static class CommonsLoggingLogBackendFactory implements LogBackendFactory {
 		@Override
+		public boolean isAvailable() {
+			// if we were able to load the classes here then it is available.
+			return true;
+		}
+
+		@Override
 		public LogBackend createLogBackend(String classLabel) {
 			return new CommonsLoggingLogBackend(classLabel);
 		}
