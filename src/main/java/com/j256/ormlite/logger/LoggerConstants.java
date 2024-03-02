@@ -17,11 +17,36 @@ public class LoggerConstants {
 	public static final Level DEFAULT_GLOBAL_LOG_LEVEL = Level.OFF;
 
 	/**
+	 * System property used to set the global log level. It can also be set in the properties file and via a call to
+	 * {@link Logger#setGlobalLogLevel(Level)}.
+	 */
+	public static final String GLOBAL_LOG_LEVEL_SYSTEM_PROPERTY = "com.j256.simplelogger.global.level";
+
+	/**
+	 * System property used to set the backend discovery order which is the order in which the various backend loggers
+	 * will be tried and the first one working will be used by the system. The default order is the order in the enum
+	 * {@link LogBackendType}.
+	 */
+	public static final String BACKEND_DISCOVERY_ORDER_SYSTEM_PROPERTY = "com.j256.simplelogger.dicovery.order";
+
+	/**
+	 * Default backend discovery order is the values in order from the {@link LogBackendType} enumerated type. You can
+	 * change the order, remove some of the discovery entries, or insert your own custom factory here.
+	 */
+	public static final LogBackendFactory[] DEFAULT_BACKEND_DISCOVERY_ORDER = LogBackendType.values();
+
+	/**
 	 * System property used to set the logger backend. Can be one of the values of {@link LogBackendType} (such as
 	 * "LOGBACK") or a class name that implements {@link LogBackendFactory} (such as
 	 * "com.j256.simplelogging.backend.LogbackLogBackend$LogbackLogBackendFactory").
 	 */
-	public static final String LOG_TYPE_SYSTEM_PROPERTY = "com.j256.simplelogger.backend";
+	public static final String LOG_BACKEND_SYSTEM_PROPERTY = "com.j256.simplelogger.backend";
+
+	/**
+	 * File path to the properties for the simplelogging library. Lines are in the form field = value. See the
+	 * {@link PropertyUtils} for what properties can be set.
+	 */
+	public static final String PROPERTIES_CONFIG_FILE = "/simplelogging.properties";
 
 	/**
 	 * Name of the Android tag that is used with android.util.Log#isLoggable(String, int) to determine if the global
@@ -40,19 +65,6 @@ public class LoggerConstants {
 	 * System.setProperty(LocalLogBackend.LOCAL_LOG_FILE_PROPERTY, "log.out"). Otherwise, log output will go to stdout.
 	 */
 	public static final String LOCAL_LOG_FILE_PROPERTY = "com.j256.simplelogging.file";
-
-	/**
-	 * It also supports a file simpleLoggingLocalLog.properties file which contains lines such as:
-	 * 
-	 * <pre>
-	 * # regex-pattern = Level
-	 * com\.foo\.yourclass.*=DEBUG
-	 * com\.foo\.yourclass\.BaseMappedStatement=TRACE
-	 * com\.foo\.yourclass\.MappedCreate=TRACE
-	 * com\.foo\.yourclass\.StatementExecutor=TRACE
-	 * </pre>
-	 */
-	public static final String LOCAL_LOG_PROPERTIES_FILE = "/ormliteLocalLog.properties";
 
 	private LoggerConstants() {
 		// only here for static usage

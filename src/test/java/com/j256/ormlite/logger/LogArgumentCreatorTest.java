@@ -6,24 +6,16 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertSame;
 
-import org.junit.Before;
 import org.junit.Test;
 
 public class LogArgumentCreatorTest {
 
-	private Logger logger;
-	private LogBackend mockBackend;
-
-	@Before
-	public void before() {
-		mockBackend = createMock(LogBackend.class);
-		Logger.setGlobalLogLevel(null);
-		logger = new Logger(mockBackend);
-		assertSame(mockBackend, logger.getLogBackend());
-	}
-
 	@Test
 	public void testArgAtStart() {
+		LogBackend mockBackend = createMock(LogBackend.class);
+		Logger logger = new Logger(mockBackend);
+		assertSame(mockBackend, logger.getLogBackend());
+
 		String arg = "x";
 		String end = " yyy";
 		expect(mockBackend.isLevelEnabled(Level.TRACE)).andReturn(false);

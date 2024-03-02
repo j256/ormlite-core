@@ -77,7 +77,7 @@ public interface DatabaseType {
 	public void appendEscapedWord(StringBuilder sb, String word);
 
 	/**
-	 * Return the name of an ID sequence based on the tabelName and the fieldType of the id.
+	 * Return the name of an ID sequence based on the tableName and the fieldType of the id.
 	 */
 	public String generateIdSequenceName(String tableName, FieldType idFieldType);
 

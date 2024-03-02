@@ -217,10 +217,11 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 		assertEquals(foo2.id, result.id);
 		assertFalse(foo2.id == foo.id);
 
+		int id = 10002;
 		AllowGeneratedIdInsertObject foo3 = new AllowGeneratedIdInsertObject();
-		foo3.id = 10002;
+		foo3.id = id;
 		assertEquals(1, dao.create(foo3));
-		result = dao.queryForId(foo3.id);
+		result = dao.queryForId(id);
 		assertNotNull(result);
 		assertEquals(foo3.id, result.id);
 		assertFalse(foo3.id == foo.id);

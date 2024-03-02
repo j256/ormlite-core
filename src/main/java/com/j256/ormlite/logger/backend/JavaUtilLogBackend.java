@@ -60,6 +60,12 @@ public class JavaUtilLogBackend implements LogBackend {
 	 */
 	public static class JavaUtilLogBackendFactory implements LogBackendFactory {
 		@Override
+		public boolean isAvailable() {
+			// probably always available
+			return true;
+		}
+
+		@Override
 		public LogBackend createLogBackend(String classLabel) {
 			return new JavaUtilLogBackend(classLabel);
 		}

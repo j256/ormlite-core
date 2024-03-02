@@ -12,6 +12,7 @@ import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.h2.H2ConnectionSource;
 import com.j256.ormlite.h2.H2DatabaseType;
+import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.misc.WrappedConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.DatabaseTable;
@@ -27,6 +28,10 @@ public abstract class BaseCoreTest {
 	protected DatabaseType databaseType;
 	protected WrappedConnectionSource connectionSource;
 
+	{
+		Logger.setGlobalLogLevel(null);
+	}
+	
 	/**
 	 * @throws Exception
 	 *             For sub-classes.

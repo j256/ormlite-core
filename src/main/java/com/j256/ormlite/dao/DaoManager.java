@@ -238,10 +238,10 @@ public class DaoManager {
 
 	private static Dao<?, ?> maybeAddDaoToClassMap(ClassConnectionSource key, Dao<?, ?> dao) {
 		Dao<?, ?> old = classMap.putIfAbsent(key, dao);
-		if (old != null) {
-			return old;
-		} else {			
+		if (old == null) {
 			return dao;
+		} else {			
+			return old;
 		}
 	}
 
@@ -262,10 +262,10 @@ public class DaoManager {
 
 	private static Dao<?, ?> maybeAddDaoToTableMap(TableConfigConnectionSource key, Dao<?, ?> dao) {
 		Dao<?, ?> old = tableConfigMap.putIfAbsent(key, dao);
-		if (old != null) {
-			return old;
-		} else {
+		if (old == null) {
 			return dao;
+		} else {
+			return old;
 		}
 	}
 

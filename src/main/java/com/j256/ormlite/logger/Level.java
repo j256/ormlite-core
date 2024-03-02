@@ -1,5 +1,7 @@
 package com.j256.ormlite.logger;
 
+import java.util.Locale;
+
 /**
  * Level of log messages being sent.
  *
@@ -39,5 +41,25 @@ public enum Level {
 	 */
 	public boolean isEnabled(Level otherLevel) {
 		return (this != Level.OFF && otherLevel != Level.OFF && value <= otherLevel.value);
+	}
+
+	/**
+	 * Like {{@link #valueOf(String)}} but tries to capitalize it first with the current locale and then English.
+	 * 
+	 * @return null if it is invalid.
+	 */
+	public static Level fromString(String str) {
+		if (str == null || str.isEmpty()) {
+			return null;
+		}
+		String upper = str.toUpperCase();
+		String upperEnglish = str.toUpperCase(Locale.ENGLISH);
+		for (Level level : values()) {
+			if (level.name().equals(upper)
+					|| level.name().equals(upperEnglish)) {
+				return level;
+			}
+		}
+		return null;
 	}
 }

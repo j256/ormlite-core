@@ -23,10 +23,6 @@ public class LoggerTest {
 	private LogBackend mockBackend;
 	private Throwable throwable = new Throwable();
 
-	static {
-		Logger.setGlobalLogLevel(null);
-	}
-
 	@Before
 	public void before() {
 		mockBackend = createMock(LogBackend.class);
@@ -637,18 +633,22 @@ public class LoggerTest {
 		mockBackend.log(Level.INFO, msg3);
 		expect(mockBackend.isLevelEnabled(Level.DEBUG)).andReturn(true);
 		mockBackend.log(Level.DEBUG, msg4);
-		replay(mockBackend);
-		logger.info(msg1);
-		Logger.setGlobalLogLevel(Level.OFF);
-		logger.fatal(msg2);
-		Logger.setGlobalLogLevel(Level.INFO);
-		// global log does not match this so it should not be shown
-		logger.debug(msg2);
-		// global log matches info so this should be shown
-		logger.info(msg3);
-		Logger.setGlobalLogLevel(null);
-		logger.debug(msg4);
-		verify(mockBackend);
+		try {
+			replay(mockBackend);
+			logger.info(msg1);
+			Logger.setGlobalLogLevel(Level.OFF);
+			logger.fatal(msg2);
+			Logger.setGlobalLogLevel(Level.INFO);
+			// global log does not match this so it should not be shown
+			logger.debug(msg2);
+			// global log matches info so this should be shown
+			logger.info(msg3);
+			Logger.setGlobalLogLevel(null);
+			logger.debug(msg4);
+			verify(mockBackend);
+		} finally {
+			Logger.setGlobalLogLevel(null);
+		}
 	}
 
 	@Test

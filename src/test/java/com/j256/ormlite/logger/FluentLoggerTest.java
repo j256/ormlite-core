@@ -32,26 +32,34 @@ public class FluentLoggerTest {
 	@Test
 	public void testNormal() {
 		FluentLogger.setGlobalLogLevel(Level.TRACE);
-		expect(mockBackend.isLevelEnabled(Level.TRACE)).andReturn(true);
-		int arg = 123;
-		mockBackend.log(Level.TRACE, "hello " + arg);
-		replay(mockBackend);
-		fluentLogger.atLevel(Level.TRACE).msg("hello {}").arg(arg).log();
-		verify(mockBackend);
+		try {
+			expect(mockBackend.isLevelEnabled(Level.TRACE)).andReturn(true);
+			int arg = 123;
+			mockBackend.log(Level.TRACE, "hello " + arg);
+			replay(mockBackend);
+			fluentLogger.atLevel(Level.TRACE).msg("hello {}").arg(arg).log();
+			verify(mockBackend);
+		} finally {
+			FluentLogger.setGlobalLogLevel(null);
+		}
 	}
 
 	@Test
 	public void testArgs() {
 		FluentLogger.setGlobalLogLevel(Level.TRACE);
-		expect(mockBackend.isLevelEnabled(Level.TRACE)).andReturn(true);
-		int arg1 = 123;
-		boolean arg2 = false;
-		long arg3 = 456;
-		float arg4 = 789;
-		mockBackend.log(Level.TRACE, "hello " + arg1 + " " + arg2);
-		replay(mockBackend);
-		fluentLogger.atLevel(Level.TRACE).msg("hello {} {}").arg(123).args(new Object[] { arg2, arg3, arg4 }).log();
-		verify(mockBackend);
+		try {
+			expect(mockBackend.isLevelEnabled(Level.TRACE)).andReturn(true);
+			int arg1 = 123;
+			boolean arg2 = false;
+			long arg3 = 456;
+			float arg4 = 789;
+			mockBackend.log(Level.TRACE, "hello " + arg1 + " " + arg2);
+			replay(mockBackend);
+			fluentLogger.atLevel(Level.TRACE).msg("hello {} {}").arg(123).args(new Object[] { arg2, arg3, arg4 }).log();
+			verify(mockBackend);
+		} finally {
+			FluentLogger.setGlobalLogLevel(null);
+		}
 	}
 
 	@Test

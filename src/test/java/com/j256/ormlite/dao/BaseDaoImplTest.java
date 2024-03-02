@@ -1621,12 +1621,17 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		One anonterOne = new One();
 		String anonterOneOneStuff = "e24fweggwgee";
 		anonterOne.stuff = anonterOneOneStuff;
-		assertEquals(1, oneDao.create(anonterOne));
+		try {
+			oneDao.create(anonterOne);
+			fail("should have thrown because no id was specified");
+		} catch (SQLException se) {
+			// expected
+		}
+
 		assertNotNull(oneDao.queryForId(one.id));
 		assertNotNull(oneDao.queryForId(two.id));
-		assertNotNull(oneDao.queryForId(anonterOne.id));
-		assertEquals(3, anonterOne.id);
-		assertEquals(3, oneDao.queryForAll().size());
+		assertNull(oneDao.queryForId(anonterOne.id));
+		assertEquals(2, oneDao.queryForAll().size());
 	}
 
 	@Test

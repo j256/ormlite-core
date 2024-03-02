@@ -14,10 +14,6 @@ import com.j256.ormlite.logger.backend.NullLogBackend.NullLogBackendFactory;
  */
 public enum LogBackendType implements LogBackendFactory {
 	/**
-	 * SLF4J which is often paired with logback. See: http://www.slf4j.org/
-	 */
-	SLF4J("Slf4jLoggingLogBackend$Slf4jLoggingLogBackendFactory"),
-	/**
 	 * Android Log mechanism. See: https://developer.android.com/reference/android/util/Log
 	 * 
 	 * <p>
@@ -34,6 +30,11 @@ public enum LogBackendType implements LogBackendFactory {
 	 * Version 2 of the log4j package. See https://logging.apache.org/log4j/2.x/
 	 */
 	LOG4J2("Log4j2LogBackend$Log4j2LogBackendFactory"),
+	/**
+	 * SLF4J which is often paired with logback. See: http://www.slf4j.org/ This should be below logback and log4j2
+	 * since those are typical backends used by slf4j.
+	 */
+	SLF4J("Slf4jLoggingLogBackend$Slf4jLoggingLogBackendFactory"),
 	/**
 	 * Old version of the log4j package. See https://logging.apache.org/log4j/2.x/
 	 */
@@ -67,7 +68,7 @@ public enum LogBackendType implements LogBackendFactory {
 	/**
 	 * Logging backend which ignores all messages. Used to disable all logging. This is never chosen automatically.
 	 */
-	NULL(new NullLogBackendFactory()),
+	NULL(NullLogBackendFactory.getSingleton()),
 	// end
 	;
 
@@ -78,8 +79,9 @@ public enum LogBackendType implements LogBackendFactory {
 	}
 
 	private LogBackendType(String factoryClassName) {
+		// is the specified class a full package or is it relative to the location of the LocalLogBackendFactory.class
 		if (factoryClassName.contains(".")) {
-			// NOTE: may not get here but others could add full class names to this list
+			// NOTE: may not get here but others could add full class names to the above list
 			this.factory = detectFactory(factoryClassName);
 		} else {
 			// the name is a suffix and we tack on the package from the local log factory
@@ -96,13 +98,38 @@ public enum LogBackendType implements LogBackendFactory {
 	 * Return true if the log class is available. This typically is testing to see if a class is available on the
 	 * classpath.
 	 */
+	@Override
 	public boolean isAvailable() {
-		/*
-		 * If this is LogBackendType.LOCAL then it is always available. LogBackendType.NULL is never available. If it is
-		 * another LogBackendType then we might have defaulted to using the local-log backend if it was not available.
-		 */
-		return (this == LogBackendType.LOCAL
-				|| (this != LogBackendType.NULL && !(factory instanceof LocalLogBackendFactory)));
+		if (this == LogBackendType.LOCAL) {
+			// always available
+			return true;
+		} else if (this == LogBackendType.NULL || !this.factory.isAvailable()) {
+			// LogBackendType.NULL is never available or check the factory availability method
+			return false;
+		} else {
+			// we might have defaulted to using the local-log backend if it was not available
+			return !(factory instanceof LocalLogBackendFactory);
+		}
+	}
+
+	/**
+	 * Return true if the log class is available. This typically is testing to see if a class is available on the
+	 * classpath.
+	 */
+	public static boolean isAvailable(LogBackendFactory logBackendFactory) {
+		if (logBackendFactory instanceof LogBackendType) {
+			return ((LogBackendType) logBackendFactory).isAvailable();
+		}
+		try {
+			if (!logBackendFactory.isAvailable()) {
+				return false;
+			} else {
+				logBackendFactory.createLogBackend("test").isLevelEnabled(Level.INFO);
+				return true;
+			}
+		} catch (Throwable th) {
+			return false;
+		}
 	}
 
 	/**
@@ -114,7 +141,13 @@ public enum LogBackendType implements LogBackendFactory {
 			LogBackendFactory factory = (LogBackendFactory) Class.forName(factoryClassName).newInstance();
 			// we may really need to use the class before we see issues
 			factory.createLogBackend("test").isLevelEnabled(Level.INFO);
-			return factory;
+			if (factory.isAvailable()) {
+				return factory;
+			} else {
+				String queuedWarning = "Factory class " + factoryClassName + " for log type " + this
+						+ ", is not available, using local log";
+				return new LocalLogBackendFactory(queuedWarning);
+			}
 		} catch (Throwable th) {
 			/*
 			 * We catch throwable here because we could get linkage errors. We don't immediately report on this issue

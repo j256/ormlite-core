@@ -123,18 +123,24 @@ public class Log4jLogBackend implements LogBackend {
 	 * Factory for generating Log4jLogBackend instances.
 	 */
 	public static class Log4jLogBackendFactory implements LogBackendFactory {
-		
+
 		private final String loggerNamePrefix;
-		
+
 		public Log4jLogBackendFactory() {
 			this.loggerNamePrefix = null;
 		}
-		
+
+		@Override
+		public boolean isAvailable() {
+			// if we were able to load the classes here then it is available.
+			return true;
+		}
+
 		public Log4jLogBackendFactory(String loggerNamePrefix) {
 			// this is used by the log4j reflection class to show if it is log4j or log4j2
-			this.loggerNamePrefix = loggerNamePrefix; 
+			this.loggerNamePrefix = loggerNamePrefix;
 		}
-		
+
 		@Override
 		public LogBackend createLogBackend(String classLabel) {
 			if (loggerNamePrefix == null) {
