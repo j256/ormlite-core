@@ -18,6 +18,7 @@ public class FluentContextImpl implements FluentContext {
 	private final FluentLogger logger;
 	private final Level level;
 	private String msg;
+	/** message builder only used if {@link FluentContext#appendMsg(String)} is called */
 	private StringBuilder msgBuilder;
 	private Throwable throwable;
 	private Object[] args;

@@ -14,6 +14,7 @@ import com.j256.ormlite.logger.LogBackendFactory;
 public class ConsoleLogBackend implements LogBackend {
 
 	private static final String LINE_SEPARATOR = System.lineSeparator();
+	private static final Level SYSTEM_ERROR_LEVEL = Level.WARNING;
 
 	private String className;
 
@@ -31,7 +32,7 @@ public class ConsoleLogBackend implements LogBackend {
 	public void log(Level level, String msg) {
 		// we do this so the print is one IO operation and not 2 with the newline
 		String output = className + ' ' + level + ' ' + msg + LINE_SEPARATOR;
-		if (Level.WARNING.isEnabled(level)) {
+		if (SYSTEM_ERROR_LEVEL.isEnabled(level)) {
 			System.err.print(output);
 		} else {
 			System.out.print(output);
@@ -49,6 +50,12 @@ public class ConsoleLogBackend implements LogBackend {
 	 * Factory for generating ConsoleLogBackend instances.
 	 */
 	public static class ConsoleLogBackendFactory implements LogBackendFactory {
+		@Override
+		public boolean isAvailable() {
+			// always available
+			return true;
+		}
+
 		@Override
 		public LogBackend createLogBackend(String classLabel) {
 			return new ConsoleLogBackend(classLabel);

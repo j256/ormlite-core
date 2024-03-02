@@ -1,49 +1,47 @@
 package com.j256.ormlite.logger.backend;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.regex.Pattern;
 
 import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.logger.LogBackend;
 import com.j256.ormlite.logger.LogBackendFactory;
+import com.j256.ormlite.logger.LogBackendType;
 import com.j256.ormlite.logger.LoggerConstants;
 import com.j256.ormlite.logger.LoggerFactory;
+import com.j256.ormlite.logger.PropertyUtils;
+import com.j256.ormlite.logger.PropertyUtils.PatternLevel;
 
 /**
- * Log backend that uses logging classes if they are not available.
+ * Simple log backend that uses logging classes if they are not available.
  * 
  * From SimpleLogging: https://github.com/j256/simplelogging
  *
  * <p>
- * You can set the log level by setting the System.setProperty(LocalLogBackend.LOCAL_LOG_LEVEL_PROPERTY, "trace").
- * Acceptable values are: TRACE, DEBUG, INFO, WARN, ERROR, and FATAL. You can also redirect the log to a file by setting
- * the System.setProperty(LocalLogBackend.LOCAL_LOG_FILE_PROPERTY, "log.out"). Otherwise, log output will go to stdout.
+ * You can set the log level by setting the System.setProperty({@link LoggerConstants#LOCAL_LOG_LEVEL_PROPERTY},
+ * "TRACE"). Acceptable values are: TRACE, DEBUG, INFO, WARN, ERROR, and FATAL. You can also redirect the log to a file
+ * by setting the System.setProperty(LocalLogBackend.LOCAL_LOG_FILE_PROPERTY, "log.out"). Otherwise, log output will go
+ * to stdout.
  * </p>
  * 
  * <p>
- * It also supports a properties file (name defined in {@link LoggerConstants#LOCAL_LOG_PROPERTIES_FILE} which contains
- * lines such as:
+ * You can also set the log levels for your code packages with the simplelogging properties file (name defined in
+ * {@link LoggerConstants#PROPERTIES_CONFIG_FILE}. The level values are: TRACE, DEBUG, INFO, WARN, ERROR, and FATAL. The
+ * lines in the config file are in the form:
  * </p>
  * 
  * <pre>
  * # line format: regex-pattern = Level
- * com\.foo\.yourclass.*=DEBUG
- * com\.foo\.yourclass\.BaseMappedStatement=TRACE
- * com\.foo\.yourclass\.MappedCreate=TRACE
- * com\.foo\.yourclass\.StatementExecutor=TRACE
+ * localog.com\.foo\.yourclass.*=DEBUG
+ * localog.com\.foo\.yourclass\.BaseMappedStatement=TRACE
+ * localog.com\.foo\.yourclass\.MappedCreate=TRACE
+ * localog.com\.foo\.yourclass\.StatementExecutor = TRACE
  * </pre>
  * 
  * @author graywatson
@@ -60,18 +58,7 @@ public class LocalLogBackend implements LogBackend {
 	private final Level level;
 
 	static {
-		InputStream stream = LocalLogBackend.class.getResourceAsStream(LoggerConstants.LOCAL_LOG_PROPERTIES_FILE);
-		List<PatternLevel> levels;
-		try {
-			levels = readLevelResourceFile(stream);
-		} finally {
-			try {
-				stream.close();
-			} catch (IOException e) {
-				// ignored
-			}
-		}
-		classLevels = levels;
+		classLevels = PropertyUtils.readLocalLogPatterns(LogBackendType.NULL);
 
 		/*
 		 * We need to do this here otherwise each logger has their own open PrintStream to the file and the messages can
@@ -88,10 +75,11 @@ public class LocalLogBackend implements LogBackend {
 		Level level = null;
 		if (classLevels != null) {
 			for (PatternLevel patternLevel : classLevels) {
-				if (patternLevel.pattern.matcher(className).matches()) {
-					// if level has not been set or the level is lower...
-					if (level == null || patternLevel.level.ordinal() < level.ordinal()) {
-						level = patternLevel.level;
+				if (patternLevel.getPattern().matcher(className).matches()) {
+					Level levelWithPattern = patternLevel.getLevel();
+					// if level has not been set or the level does not cover the pattern level
+					if (level == null || !levelWithPattern.isEnabled(level)) {
+						level = levelWithPattern;
 					}
 				}
 			}
@@ -103,19 +91,11 @@ public class LocalLogBackend implements LogBackend {
 			if (levelName == null) {
 				level = DEFAULT_LEVEL;
 			} else {
-				Level matchedLevel;
-				try {
-					// try default locale first
-					matchedLevel = Level.valueOf(levelName.toUpperCase());
-				} catch (IllegalArgumentException e1) {
-					try {
-						// then try english locale
-						matchedLevel = Level.valueOf(levelName.toUpperCase(Locale.ENGLISH));
-					} catch (IllegalArgumentException e2) {
-						throw new IllegalArgumentException("Level '" + levelName + "' was not found", e2);
-					}
+				level = Level.fromString(levelName);
+				if (level == null) {
+					throw new IllegalArgumentException("Level '" + levelName + "' set in '"
+							+ LoggerConstants.LOCAL_LOG_LEVEL_PROPERTY + "' system property is invalid");
 				}
-				level = matchedLevel;
 			}
 		}
 		this.level = level;
@@ -158,53 +138,6 @@ public class LocalLogBackend implements LogBackend {
 		printStream.flush();
 	}
 
-	/**
-	 * Read in our levels from our configuration file.
-	 */
-	static List<PatternLevel> readLevelResourceFile(InputStream stream) {
-		if (stream == null) {
-			return null;
-		}
-		try {
-			return configureClassLevels(stream);
-		} catch (IOException e) {
-			System.err.println("IO exception reading the log properties file '"
-					+ LoggerConstants.LOCAL_LOG_PROPERTIES_FILE + "': " + e);
-			return null;
-		}
-
-	}
-
-	private static List<PatternLevel> configureClassLevels(InputStream stream) throws IOException {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-		List<PatternLevel> list = new ArrayList<PatternLevel>();
-		while (true) {
-			String line = reader.readLine();
-			if (line == null) {
-				break;
-			}
-			// skip empty lines or comments
-			if (line.length() == 0 || line.charAt(0) == '#') {
-				continue;
-			}
-			String[] parts = line.split("=");
-			if (parts.length != 2) {
-				System.err.println("Line is not in the format of 'pattern = level': " + line);
-				continue;
-			}
-			Pattern pattern = Pattern.compile(parts[0].trim());
-			Level level;
-			try {
-				level = Level.valueOf(parts[1].trim());
-			} catch (IllegalArgumentException e) {
-				System.err.println("Level '" + parts[1] + "' was not found");
-				continue;
-			}
-			list.add(new PatternLevel(pattern, level));
-		}
-		return list;
-	}
-
 	private void printMessage(Level level, String message, Throwable throwable) {
 		if (!isLevelEnabled(level)) {
 			return;
@@ -230,10 +163,17 @@ public class LocalLogBackend implements LogBackend {
 		private final AtomicReference<String> queuedWarning = new AtomicReference<String>();
 
 		public LocalLogBackendFactory() {
+			// no-arg
 		}
 
 		public LocalLogBackendFactory(String queuedWarning) {
 			this.queuedWarning.set(queuedWarning);
+		}
+
+		@Override
+		public boolean isAvailable() {
+			// always available
+			return true;
 		}
 
 		@Override
@@ -245,16 +185,6 @@ public class LocalLogBackend implements LogBackend {
 				backend.log(Level.WARNING, queuedWarning);
 			}
 			return backend;
-		}
-	}
-
-	private static class PatternLevel {
-		final Pattern pattern;
-		final Level level;
-
-		public PatternLevel(Pattern pattern, Level level) {
-			this.pattern = pattern;
-			this.level = level;
 		}
 	}
 }
