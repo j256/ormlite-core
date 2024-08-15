@@ -60,7 +60,7 @@ public class TableInfo<T, ID> {
 		this.dataClass = tableConfig.getDataClass();
 		this.schemaName = tableConfig.getSchemaName();
 		this.tableName = tableConfig.getTableName();
-		this.fieldTypes = tableConfig.getFieldTypes(databaseType);
+		this.fieldTypes = tableConfig.getFieldTypes();
 		// find the id field
 		FieldType findIdFieldType = null;
 		boolean foreignAutoCreate = false;

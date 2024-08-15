@@ -1,13 +1,14 @@
 package com.j256.ormlite.field.types;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
@@ -34,9 +35,11 @@ public class BigIntegerTypeTest extends BaseTypeTest {
 				true, false, false, false, true, true);
 	}
 
-	@Test(expected = SQLException.class)
-	public void testBigIntegerBadDefault() throws Exception {
-		createDao(BigIntegerBadDefault.class, true);
+	@Test
+	public void testBigIntegerBadDefault() {
+		assertThrowsExactly(SQLException.class, () -> {
+			createDao(BigIntegerBadDefault.class, true);
+		});
 	}
 
 	@Test
@@ -50,7 +53,7 @@ public class BigIntegerTypeTest extends BaseTypeTest {
 		assertNull(results.get(0).bigInteger);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testBigIntegerInvalidDbValue() throws Exception {
 		Dao<LocalBigInteger, Object> dao = createDao(LocalBigInteger.class, true);
 		Dao<NotBigInteger, Object> notDao = createDao(NotBigInteger.class, false);
@@ -59,7 +62,9 @@ public class BigIntegerTypeTest extends BaseTypeTest {
 		notFoo.bigInteger = "not valid form";
 		assertEquals(1, notDao.create(notFoo));
 
-		dao.queryForAll();
+		assertThrowsExactly(SQLException.class, () -> {
+			dao.queryForAll();
+		});
 	}
 
 	@Test

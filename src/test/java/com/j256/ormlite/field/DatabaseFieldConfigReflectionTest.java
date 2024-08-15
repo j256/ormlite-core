@@ -1,16 +1,15 @@
 package com.j256.ormlite.field;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 
-import org.apache.commons.lang.StringUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 
@@ -76,7 +75,7 @@ public class DatabaseFieldConfigReflectionTest extends BaseCoreTest {
 			return;
 		}
 		if (methodNamePrefix != null) {
-			methodName = methodNamePrefix + StringUtils.capitalize(methodName);
+			methodName = methodNamePrefix + capitalize(methodName);
 		}
 		Class<?> clazz = method.getReturnType();
 		String line;
@@ -99,14 +98,14 @@ public class DatabaseFieldConfigReflectionTest extends BaseCoreTest {
 		DatabaseFieldConfig config = testConfigLine(line);
 		Method getMethod;
 		if (method.getReturnType() == boolean.class) {
-			getMethod = DatabaseFieldConfig.class.getMethod("is" + StringUtils.capitalize(methodName));
+			getMethod = DatabaseFieldConfig.class.getMethod("is" + capitalize(methodName));
 		} else {
-			getMethod = DatabaseFieldConfig.class.getMethod("get" + StringUtils.capitalize(methodName));
+			getMethod = DatabaseFieldConfig.class.getMethod("get" + capitalize(methodName));
 		}
 		Object methodValue = getMethod.invoke(config);
-		assertEquals(methodName, equalsValue, methodValue);
-		assertFalse(methodName + " not-equals " + notEqualsValue + " should not be == " + methodValue,
-				notEqualsValue.equals(methodValue));
+		assertEquals(equalsValue, methodValue, methodName);
+		assertFalse(notEqualsValue.equals(methodValue),
+				methodName + " not-equals " + notEqualsValue + " should not be == " + methodValue);
 	}
 
 	private DatabaseFieldConfig testConfigLine(String line) throws SQLException {
@@ -125,24 +124,31 @@ public class DatabaseFieldConfigReflectionTest extends BaseCoreTest {
 			return;
 		}
 		if (methodNamePrefix != null) {
-			methodName = methodNamePrefix + StringUtils.capitalize(methodName);
+			methodName = methodNamePrefix + capitalize(methodName);
 		}
 		// test getter
 		if (method.getReturnType() == boolean.class) {
-			DatabaseFieldConfig.class.getMethod("is" + StringUtils.capitalize(methodName));
+			DatabaseFieldConfig.class.getMethod("is" + capitalize(methodName));
 		} else {
 			if (getArg == null) {
-				DatabaseFieldConfig.class.getMethod("get" + StringUtils.capitalize(methodName));
+				DatabaseFieldConfig.class.getMethod("get" + capitalize(methodName));
 			} else {
-				DatabaseFieldConfig.class.getMethod("get" + StringUtils.capitalize(methodName), getArg);
+				DatabaseFieldConfig.class.getMethod("get" + capitalize(methodName), getArg);
 			}
 		}
 		// test setter
-		DatabaseFieldConfig.class.getMethod("set" + StringUtils.capitalize(methodName), setArg);
+		DatabaseFieldConfig.class.getMethod("set" + capitalize(methodName), setArg);
 	}
 
 	private boolean isObjectMethodName(String name) {
 		return (name.equals("equals") || name.equals("toString") || name.equals("hashCode")
 				|| name.equals("annotationType"));
+	}
+
+	private String capitalize(String str) {
+		StringBuilder sb = new StringBuilder(str.length());
+		sb.append(Character.toUpperCase(str.charAt(0)));
+		sb.append(str, 1, str.length());
+		return sb.toString();
 	}
 }

@@ -1,14 +1,15 @@
 package com.j256.ormlite.db;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.field.DataType;
@@ -16,14 +17,16 @@ import com.j256.ormlite.field.FieldType;
 
 public class BaseSqliteDatabaseTypeTest extends BaseCoreTest {
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testConfigureGeneratedIdNotInteger() throws Exception {
 		Field field = Foo.class.getField("stringField");
 		FieldType fieldType = FieldType.createFieldType(databaseType, "foo", field, Foo.class);
 		OurSqliteDatabaseType dbType = new OurSqliteDatabaseType();
 		StringBuilder sb = new StringBuilder();
-		dbType.configureGeneratedId(null, sb, fieldType, new ArrayList<String>(), null, new ArrayList<String>(),
-				new ArrayList<String>());
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			dbType.configureGeneratedId(null, sb, fieldType, new ArrayList<String>(), null, new ArrayList<String>(),
+					new ArrayList<String>());
+		});
 	}
 
 	@Test

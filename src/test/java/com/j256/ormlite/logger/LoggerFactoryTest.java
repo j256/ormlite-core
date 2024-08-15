@@ -4,15 +4,15 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Constructor;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.logger.backend.CommonsLoggingLogBackend;
 import com.j256.ormlite.logger.backend.JavaUtilLogBackend;
@@ -150,9 +150,9 @@ public class LoggerFactoryTest {
 	}
 
 	private void checkLog(LogBackendType logType, Class<?> logClass, boolean available) {
-		assertEquals(logType + " available should be " + available, available, logType.isAvailable());
+		assertEquals(available, logType.isAvailable(), logType + " available should be " + available);
 		LogBackend backend = logType.createLogBackend(getClass().getName());
-		assertNotNull(logType + " should not general null log", backend);
+		assertNotNull(backend, logType + " should not general null log");
 		assertEquals(logClass, backend.getClass());
 	}
 

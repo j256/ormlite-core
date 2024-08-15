@@ -3,15 +3,16 @@ package com.j256.ormlite.stmt.query;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
@@ -54,9 +55,11 @@ public class BaseComparisonTest extends BaseCoreStmtTest {
 		}
 	}
 
-	@Test(expected = SQLException.class)
-	public void testAppendArgOrValueNull() throws Exception {
+	@Test
+	public void testAppendArgOrValueNull()  {
+		assertThrowsExactly(SQLException.class, () -> {
 		cmpInt.appendArgOrValue(null, numberFieldType, new StringBuilder(), new ArrayList<ArgumentHolder>(), null);
+		});
 	}
 
 	@Test
@@ -115,7 +118,7 @@ public class BaseComparisonTest extends BaseCoreStmtTest {
 		assertEquals(expectSb.toString(), sb.toString());
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testForeignIdNull() throws Exception {
 		StringBuilder sb = new StringBuilder();
 		Field field = ForeignNull.class.getDeclaredField("foreign");
@@ -123,7 +126,9 @@ public class BaseComparisonTest extends BaseCoreStmtTest {
 		fieldType.configDaoInformation(connectionSource, ForeignNull.class);
 		ForeignNullForeign foo = new ForeignNullForeign();
 		foo.id = null;
+		assertThrowsExactly(SQLException.class, () -> {
 		cmpForeign.appendArgOrValue(databaseType, fieldType, sb, new ArrayList<ArgumentHolder>(), foo);
+		});
 	}
 
 	protected static class ForeignNull {

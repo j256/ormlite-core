@@ -1,7 +1,8 @@
 package com.j256.ormlite.logger;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -9,14 +10,14 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.List;
 
-import org.junit.AfterClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.logger.PropertyUtils.PatternLevel;
 
 public class PropertiesUtilsTest {
 
-	@AfterClass
+	@AfterAll
 	public static void afterClass() {
 		Logger.setGlobalLogLevel(null);
 		PropertyUtils.clearProperties();

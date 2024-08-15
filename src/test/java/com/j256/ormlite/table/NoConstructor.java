@@ -1,7 +1,5 @@
 package com.j256.ormlite.table;
 
-import org.junit.Ignore;
-
 import com.j256.ormlite.field.DatabaseField;
 
 /**
@@ -9,7 +7,6 @@ import com.j256.ormlite.field.DatabaseField;
  * 
  * @author graywatson
  */
-@Ignore
 public class NoConstructor {
 	@DatabaseField
 	String stuff;

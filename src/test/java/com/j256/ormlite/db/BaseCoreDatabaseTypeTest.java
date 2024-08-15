@@ -4,9 +4,10 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.Serializable;
 import java.sql.SQLException;
@@ -15,7 +16,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.TestUtils;
@@ -147,9 +148,11 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 		testFooColumn(databaseType, "genId", "BIGINT AUTO_INCREMENT");
 	}
 
-	@Test(expected = SQLException.class)
-	public void testAppendColumnGenIdSeq() throws Exception {
+	@Test
+	public void testAppendColumnGenIdSeq() {
+		assertThrowsExactly(SQLException.class, () -> {
 		testFooColumn(databaseType, "genIdSeq", "");
+		});
 	}
 
 	private final static String DEFAULT_VALUE_NUMBER = "0";

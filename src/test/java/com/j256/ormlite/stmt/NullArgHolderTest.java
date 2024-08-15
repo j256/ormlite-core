@@ -1,8 +1,9 @@
 package com.j256.ormlite.stmt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.field.FieldType;
 
@@ -16,8 +17,10 @@ public class NullArgHolderTest {
 		holder.setMetaInfo((FieldType) null);
 	}
 
-	@Test(expected = UnsupportedOperationException.class)
+	@Test
 	public void testSetValueThrows() {
-		new NullArgHolder().setValue(null);
+		assertThrowsExactly(UnsupportedOperationException.class, () -> {
+			new NullArgHolder().setValue(null);
+		});
 	}
 }

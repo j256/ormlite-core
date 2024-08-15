@@ -1,12 +1,13 @@
 package com.j256.ormlite.misc;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.SQLException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
@@ -23,7 +24,7 @@ public class WrappedConnectionSourceTest {
 		cs.close();
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testNotClosedInterator() throws Exception {
 		WrappedConnectionSource cs = new WrappedConnectionSource(new H2ConnectionSource());
 		Dao<WrappedFoo, ?> dao = DaoManager.createDao(cs, WrappedFoo.class);
@@ -37,13 +38,19 @@ public class WrappedConnectionSourceTest {
 		WrappedFoo result = iterator.next();
 		assertNotNull(result);
 		assertEquals(foo1.id, result.id);
-		cs.close();
+		assertThrowsExactly(SQLException.class, () -> {
+			cs.close();
+		});
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testCloseBad() throws Exception {
+		@SuppressWarnings("resource")
 		WrappedConnectionSource cs = new WrappedConnectionSource(new H2ConnectionSource());
-		cs.releaseConnection(null);
+		assertThrowsExactly(SQLException.class, () -> {
+			cs.releaseConnection(null);
+			cs.close();
+		});
 	}
 
 	private static class WrappedFoo {

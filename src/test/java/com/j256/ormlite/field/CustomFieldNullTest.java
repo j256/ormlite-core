@@ -1,11 +1,12 @@
 package com.j256.ormlite.field;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.sql.SQLException;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.Dao;
@@ -36,14 +37,16 @@ public class CustomFieldNullTest extends BaseCoreTest {
 		}
 
 		// try to use insert nulls directly
-		dao.executeRaw("INSERT INTO " + FOO_TABLE_NAME + " (" + Foo.ID_FIELD + "," + Foo.VALUE_FIELD
-				+ ") VALUES (NULL, NULL)");
-
-		results = dao.queryForAll();
-		for (Foo result : results) {
-			System.out.println("Result value = '" + result.getValue() + "', length = " + result.getValue().length());
+		try {
+			dao.executeRaw("INSERT INTO " + FOO_TABLE_NAME + " (" + Foo.ID_FIELD + "," + Foo.VALUE_FIELD
+					+ ") VALUES (NULL, NULL)");
+			fail("new h2 doesn't like the null id");
+		} catch (SQLException se) {
+			// expected
 		}
 
+		results = dao.queryForAll();
+		assertEquals(1, results.size());
 	}
 
 	@DatabaseTable(tableName = FOO_TABLE_NAME)

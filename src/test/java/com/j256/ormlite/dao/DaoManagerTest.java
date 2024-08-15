@@ -3,18 +3,19 @@ package com.j256.ormlite.dao;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.field.DataType;
@@ -37,14 +38,18 @@ public class DaoManagerTest extends BaseCoreTest {
 		testTable(tableConfig);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testCreateDaoNull() throws Exception {
-		DaoManager.createDao(null, Foo.class);
+	@Test
+	public void testCreateDaoNull() {
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			DaoManager.createDao(null, Foo.class);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testLookupDaoNull() {
-		DaoManager.lookupDao(null, Foo.class);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			DaoManager.lookupDao(null, Foo.class);
+		});
 	}
 
 	@Test
@@ -52,14 +57,18 @@ public class DaoManagerTest extends BaseCoreTest {
 		assertNull(DaoManager.lookupDao(connectionSource, getClass()));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testCreateDaoTableNull() throws Exception {
-		DaoManager.createDao(null, new DatabaseTableConfig<Foo>());
+	@Test
+	public void testCreateDaoTableNull() {
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			DaoManager.createDao(null, new DatabaseTableConfig<Foo>());
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testLookupDaoTableNull() {
-		DaoManager.lookupDao(null, new DatabaseTableConfig<Foo>());
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			DaoManager.lookupDao(null, new DatabaseTableConfig<Foo>());
+		});
 	}
 
 	@Test
@@ -86,9 +95,11 @@ public class DaoManagerTest extends BaseCoreTest {
 		assertSame(daoImpl, dao);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testRegisterNull() {
-		DaoManager.registerDao(null, null);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			DaoManager.registerDao(null, null);
+		});
 	}
 
 	@Test

@@ -1,15 +1,16 @@
 package com.j256.ormlite.field.types;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
@@ -50,17 +51,21 @@ public class DateTypeTest extends BaseTypeTest {
 				false, true, false);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testDateParseInvalid() throws Exception {
 		FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME,
 				LocalDate.class.getDeclaredField(DATE_COLUMN), LocalDate.class);
-		DataType.DATE.getDataPersister().parseDefaultString(fieldType, "not valid date string");
+		assertThrowsExactly(SQLException.class, () -> {
+			DataType.DATE.getDataPersister().parseDefaultString(fieldType, "not valid date string");
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testInvalidDateField() throws Exception {
-		FieldType.createFieldType(databaseType, TABLE_NAME, InvalidDate.class.getDeclaredField("notDate"),
-				LocalDate.class);
+	@Test
+	public void testInvalidDateField() {
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			FieldType.createFieldType(databaseType, TABLE_NAME, InvalidDate.class.getDeclaredField("notDate"),
+					LocalDate.class);
+		});
 	}
 
 	@Test

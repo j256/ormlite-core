@@ -1,15 +1,16 @@
 package com.j256.ormlite.db;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.field.DataPersisterManager;
@@ -21,10 +22,12 @@ public class BaseDatabaseTypeTest extends BaseCoreTest {
 		assertFalse(new TestDatabaseType().loadDriver());
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testConfigureGeneratedId() {
-		new TestDatabaseType().configureGeneratedId(null, new StringBuilder(), null, new ArrayList<String>(), null,
-				new ArrayList<String>(), new ArrayList<String>());
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			new TestDatabaseType().configureGeneratedId(null, new StringBuilder(), null, new ArrayList<String>(), null,
+					new ArrayList<String>(), new ArrayList<String>());
+		});
 	}
 
 	@Test

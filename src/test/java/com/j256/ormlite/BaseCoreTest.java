@@ -2,8 +2,8 @@ package com.j256.ormlite;
 
 import java.sql.SQLException;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
@@ -31,14 +31,14 @@ public abstract class BaseCoreTest {
 	 * @throws Exception
 	 *             For sub-classes.
 	 */
-	@Before
+	@BeforeEach
 	public void before() throws Exception {
 		connectionSource = new WrappedConnectionSource(new H2ConnectionSource());
 		databaseType = connectionSource.getDatabaseType();
 		DaoManager.clearCache();
 	}
 
-	@After
+	@AfterEach
 	public void after() throws Exception {
 		connectionSource.close();
 		connectionSource = null;

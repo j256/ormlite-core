@@ -1,13 +1,14 @@
 package com.j256.ormlite.field.types;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
@@ -32,9 +33,11 @@ public class BigDecimalTypeTest extends BaseTypeTest {
 				true, false, false, false, true, false);
 	}
 
-	@Test(expected = SQLException.class)
-	public void testBigDecimalBadDefault() throws Exception {
-		createDao(BigDecimalBadDefault.class, true);
+	@Test
+	public void testBigDecimalBadDefault() {
+		assertThrowsExactly(SQLException.class, () -> {
+			createDao(BigDecimalBadDefault.class, true);
+		});
 	}
 
 	@Test
@@ -48,7 +51,7 @@ public class BigDecimalTypeTest extends BaseTypeTest {
 		assertNull(results.get(0).bigDecimal);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testBigDecimalInvalidDbValue() throws Exception {
 		Dao<LocalBigDecimal, Object> dao = createDao(LocalBigDecimal.class, true);
 		Dao<NotBigDecimal, Object> notDao = createDao(NotBigDecimal.class, false);
@@ -57,7 +60,9 @@ public class BigDecimalTypeTest extends BaseTypeTest {
 		notFoo.bigDecimal = "not valid form";
 		assertEquals(1, notDao.create(notFoo));
 
-		dao.queryForAll();
+		assertThrowsExactly(SQLException.class, () -> {
+			dao.queryForAll();
+		});
 	}
 
 	@Test

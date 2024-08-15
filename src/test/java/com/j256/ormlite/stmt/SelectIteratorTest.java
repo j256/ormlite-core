@@ -4,18 +4,19 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
@@ -69,18 +70,20 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 		assertNull(iterator.nextThrow());
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testIteratorRemoveNoNext() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
 		CloseableIterator<Foo> iterator = dao.iterator();
 		try {
-			iterator.remove();
+			assertThrowsExactly(IllegalStateException.class, () -> {
+				iterator.remove();
+			});
 		} finally {
 			iterator.close();
 		}
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testIteratorNextRemoveRemoveNoNext() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
@@ -91,7 +94,9 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 		try {
 			iterator.next();
 			iterator.remove();
-			iterator.remove();
+			assertThrowsExactly(IllegalStateException.class, () -> {
+				iterator.remove();
+			});
 		} finally {
 			iterator.close();
 		}
@@ -151,7 +156,7 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 		iterator.close();
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testIteratorRawResults() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
@@ -162,7 +167,9 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 		try {
 			assertTrue(iterator.hasNext());
 			iterator.next();
-			iterator.remove();
+			assertThrowsExactly(IllegalStateException.class, () -> {
+				iterator.remove();
+			});
 		} finally {
 			iterator.close();
 		}
@@ -182,7 +189,7 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 		assertFalse(iterator.hasNext());
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testHasNextThrow() throws Exception {
 		ConnectionSource cs = createMock(ConnectionSource.class);
 		cs.releaseConnection(null);
@@ -196,19 +203,20 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 		SelectIterator<Foo, Integer> iterator =
 				new SelectIterator<Foo, Integer>(Foo.class, null, null, cs, null, stmt, null);
 		try {
-			iterator.hasNext();
+			assertThrowsExactly(IllegalStateException.class, () -> {
+				iterator.hasNext();
+			});
 		} finally {
 			iterator.close();
 		}
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testNextThrow() throws Exception {
 		ConnectionSource cs = createMock(ConnectionSource.class);
 		cs.releaseConnection(null);
 		CompiledStatement stmt = createMock(CompiledStatement.class);
 		DatabaseResults results = createMock(DatabaseResults.class);
-		expect(stmt.getStatement()).andReturn("statement");
 		expect(stmt.runQuery(null)).andReturn(results);
 		expect(results.first()).andThrow(new SQLException("some result problem"));
 		@SuppressWarnings("unchecked")
@@ -218,14 +226,16 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 		SelectIterator<Foo, Integer> iterator =
 				new SelectIterator<Foo, Integer>(Foo.class, null, mapper, cs, null, stmt, null);
 		try {
-			iterator.hasNext();
+			assertThrowsExactly(IllegalStateException.class, () -> {
+				iterator.hasNext();
+			});
 		} finally {
 			iterator.close();
 		}
 		verify(stmt, mapper, cs, results);
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testRemoveThrow() throws Exception {
 		ConnectionSource cs = createMock(ConnectionSource.class);
 		cs.releaseConnection(null);
@@ -248,7 +258,9 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 		try {
 			iterator.hasNext();
 			iterator.next();
-			iterator.remove();
+			assertThrowsExactly(IllegalStateException.class, () -> {
+				iterator.remove();
+			});
 		} finally {
 			iterator.close();
 		}
@@ -292,7 +304,7 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testIteratorJdbcMoveBack() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -303,14 +315,15 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 		CloseableIterator<Foo> iterator = dao.iterator(qb.prepare());
 		try {
 			assertEquals(foo, iterator.first());
-			iterator.first();
-			fail("Should have thrown");
+			assertThrows(SQLException.class, () -> {
+				iterator.first();
+			});
 		} finally {
 			iterator.close();
 		}
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testIteratorNextOnly() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -319,8 +332,9 @@ public class SelectIteratorTest extends BaseCoreStmtTest {
 		CloseableIterator<Foo> iterator = dao.iterator();
 		try {
 			assertEquals(foo, iterator.next());
-			iterator.next();
-			fail("Should have thrown");
+			assertThrowsExactly(IllegalStateException.class, () -> {
+				iterator.next();
+			});
 		} finally {
 			iterator.close();
 		}

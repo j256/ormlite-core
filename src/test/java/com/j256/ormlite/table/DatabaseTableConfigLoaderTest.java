@@ -1,7 +1,8 @@
 package com.j256.ormlite.table;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -10,9 +11,9 @@ import java.io.StringWriter;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.field.DatabaseFieldConfig;
 import com.j256.ormlite.field.DatabaseFieldConfigLoader;
@@ -86,16 +87,19 @@ public class DatabaseTableConfigLoaderTest {
 		assertEquals(fieldName, fields.get(0).getFieldName());
 	}
 
-	@Test(expected = SQLException.class)
-	public void testConfigInvalidLine() throws Exception {
+	@Test
+	public void testConfigInvalidLine() {
 		StringBuilder value = new StringBuilder();
 		value.append(TABLE_START);
 		value.append("dataClass").append(LINE_SEP);
-		DatabaseTableConfigLoader.loadDatabaseConfigFromReader(new BufferedReader(new StringReader(value.toString())));
+		assertThrowsExactly(SQLException.class, () -> {
+			DatabaseTableConfigLoader
+					.loadDatabaseConfigFromReader(new BufferedReader(new StringReader(value.toString())));
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testConfigUnknownClass() throws Exception {
+	@Test
+	public void testConfigUnknownClass() {
 		StringBuilder value = new StringBuilder();
 		value.append(TABLE_START);
 		value.append("dataClass=unknown.class.name.okay").append(LINE_SEP);
@@ -105,7 +109,10 @@ public class DatabaseTableConfigLoaderTest {
 		value.append("# --field-end--").append(LINE_SEP);
 		value.append("# --table-fields-end--").append(LINE_SEP);
 		value.append(TABLE_END);
-		DatabaseTableConfigLoader.loadDatabaseConfigFromReader(new BufferedReader(new StringReader(value.toString())));
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			DatabaseTableConfigLoader
+					.loadDatabaseConfigFromReader(new BufferedReader(new StringReader(value.toString())));
+		});
 	}
 
 	@Test
@@ -147,10 +154,8 @@ public class DatabaseTableConfigLoaderTest {
 	}
 
 	private boolean isConfigEquals(DatabaseTableConfig<?> config1, DatabaseTableConfig<?> config2) {
-		EqualsBuilder eb = new EqualsBuilder();
-		eb.append(config1.getDataClass(), config2.getDataClass());
-		eb.append(config1.getTableName(), config2.getTableName());
-		return eb.isEquals();
+		return ((config1.getDataClass() == config2.getDataClass())
+				&& (Objects.equals(config1.getTableName(), config2.getTableName())));
 	}
 
 	protected static class Foo {

@@ -1,11 +1,12 @@
 package com.j256.ormlite.table;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.SQLException;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.Dao;
@@ -17,7 +18,7 @@ public class SchemaUtilsTest extends BaseCoreTest {
 	private final static String SCHEMA_NAME = "schema";
 
 	@Override
-	@Before
+	@BeforeEach
 	public void before() throws Exception {
 		super.before();
 	}
@@ -65,12 +66,14 @@ public class SchemaUtilsTest extends BaseCoreTest {
 		assertTrue(SchemaUtils.dropSchema(connectionSource, Schema.class, true) > 0);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testDropSchemaThrow() throws SQLException {
 		// make sure it is gone
 		SchemaUtils.dropSchema(connectionSource, Schema.class, true);
 		// now drop it while _not_ ignoring errors
-		SchemaUtils.dropSchema(connectionSource, Schema.class, false);
+		assertThrowsExactly(SQLException.class, () -> {
+			SchemaUtils.dropSchema(connectionSource, Schema.class, false);
+		});
 	}
 
 	@DatabaseTable(tableName = "table", schemaName = SCHEMA_NAME)

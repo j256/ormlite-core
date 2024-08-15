@@ -1,13 +1,13 @@
 package com.j256.ormlite.support;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.SQLException;
 
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.Dao;
@@ -18,20 +18,20 @@ public class ReflectionDatabaseConnectionProxyFactoryTest extends BaseCoreTest {
 
 	private static final int VALUE_INCREMENT = 13;
 
-	@BeforeClass
+	@BeforeAll
 	public static void beforeClass() {
 		ReflectionDatabaseConnectionProxyFactory factory =
 				new ReflectionDatabaseConnectionProxyFactory(OurConnectionProxy.class);
 		H2ConnectionSource.setDatabaseConnectionProxyFactory(factory);
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void afterClass() {
 		H2ConnectionSource.setDatabaseConnectionProxyFactory(null);
 	}
 
 	@Override
-	@Before
+	@BeforeEach
 	public void before() throws Exception {
 		super.before();
 		OurConnectionProxy.insertCount = 0;

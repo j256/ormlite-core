@@ -1,11 +1,12 @@
 package com.j256.ormlite.field.types;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import java.sql.SQLException;
 import java.util.Date;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
@@ -42,11 +43,13 @@ public class DateLongTypeTest extends BaseTypeTest {
 				false, false, true, false);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testDateLongParseInvalid() throws Exception {
 		FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME,
 				LocalDateLong.class.getDeclaredField(DATE_COLUMN), LocalDateLong.class);
-		DataType.DATE_LONG.getDataPersister().parseDefaultString(fieldType, "not valid long number");
+		assertThrowsExactly(SQLException.class, () -> {
+			DataType.DATE_LONG.getDataPersister().parseDefaultString(fieldType, "not valid long number");
+		});
 	}
 
 	@Test

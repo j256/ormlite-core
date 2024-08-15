@@ -4,18 +4,19 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
@@ -231,34 +232,40 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		verify(connectionSource, connection);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testUpdateIdNoId() throws Exception {
 		Dao<NoId, Object> noIdDao = createDao(NoId.class, true);
 		NoId noId = new NoId();
 		noId.stuff = "1";
 		assertEquals(1, noIdDao.create(noId));
-		noIdDao.updateId(noId, "something else");
+		assertThrowsExactly(SQLException.class, () -> {
+			noIdDao.updateId(noId, "something else");
+		});
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testRefreshNoId() throws Exception {
 		Dao<NoId, Object> noIdDao = createDao(NoId.class, true);
 		NoId noId = new NoId();
 		noId.stuff = "1";
 		assertEquals(1, noIdDao.create(noId));
-		noIdDao.refresh(noId);
+		assertThrowsExactly(SQLException.class, () -> {
+			noIdDao.refresh(noId);
+		});
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testDeleteNoId() throws Exception {
 		Dao<NoId, Object> noIdDao = createDao(NoId.class, true);
 		NoId noId = new NoId();
 		noId.stuff = "1";
 		assertEquals(1, noIdDao.create(noId));
-		noIdDao.delete(noId);
+		assertThrowsExactly(SQLException.class, () -> {
+			noIdDao.delete(noId);
+		});
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testDeleteObjectsNoId() throws Exception {
 		Dao<NoId, Object> noIdDao = createDao(NoId.class, true);
 		NoId noId = new NoId();
@@ -266,10 +273,12 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		assertEquals(1, noIdDao.create(noId));
 		ArrayList<NoId> noIdList = new ArrayList<NoId>();
 		noIdList.add(noId);
-		noIdDao.delete(noIdList);
+		assertThrowsExactly(SQLException.class, () -> {
+			noIdDao.delete(noIdList);
+		});
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testDeleteIdsNoId() throws Exception {
 		Dao<NoId, Object> noIdDao = createDao(NoId.class, true);
 		NoId noId = new NoId();
@@ -277,7 +286,9 @@ public class StatementExecutorTest extends BaseCoreStmtTest {
 		assertEquals(1, noIdDao.create(noId));
 		ArrayList<Object> noIdList = new ArrayList<Object>();
 		noIdList.add(noId);
-		noIdDao.deleteIds(noIdList);
+		assertThrowsExactly(SQLException.class, () -> {
+			noIdDao.deleteIds(noIdList);
+		});
 	}
 
 	@Test

@@ -1,10 +1,10 @@
 package com.j256.ormlite.logger;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.logger.backend.NullLogBackend.NullLogBackendFactory;
 
@@ -18,12 +18,12 @@ public class LogBackendTypeTest {
 				continue;
 			}
 			if (type == LogBackendType.ANDROID || type == LogBackendType.NULL || type == LogBackendType.LAMBDA) {
-				assertFalse(type + " should not be available", type.isAvailable());
+				assertFalse(type.isAvailable(), type + " should not be available");
 				// NOTE: type.createLogBackend() defers to LocalLog
 				continue;
 			}
 
-			assertTrue(type + " should be available", type.isAvailable());
+			assertTrue(type.isAvailable(), type + " should be available");
 			assertNotNull(type.createLogBackend(getClass().getSimpleName()));
 		}
 	}
@@ -36,12 +36,12 @@ public class LogBackendTypeTest {
 				continue;
 			}
 			if (type == LogBackendType.ANDROID || type == LogBackendType.NULL || type == LogBackendType.LAMBDA) {
-				assertFalse(type + " should not be available", LogBackendType.isAvailable(type));
+				assertFalse(LogBackendType.isAvailable(type), type + " should not be available");
 				// NOTE: type.createLogBackend() defers to LocalLog
 				continue;
 			}
 
-			assertTrue(type + " should be available", LogBackendType.isAvailable(type));
+			assertTrue(LogBackendType.isAvailable(type), type + " should be available");
 		}
 	}
 

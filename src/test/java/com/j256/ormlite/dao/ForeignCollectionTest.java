@@ -1,13 +1,14 @@
 package com.j256.ormlite.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -23,7 +24,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.field.DatabaseField;
@@ -190,19 +191,25 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		}
 	}
 
-	@Test(expected = SQLException.class)
-	public void testNotProperCollection() throws Exception {
-		createDao(NoProperCollection.class, true);
+	@Test
+	public void testNotProperCollection() {
+		assertThrowsExactly(SQLException.class, () -> {
+			createDao(NoProperCollection.class, true);
+		});
 	}
 
-	@Test(expected = SQLException.class)
-	public void testNotParamaterized() throws Exception {
-		createDao(NotParamaterized.class, true);
+	@Test
+	public void testNotParamaterized() {
+		assertThrowsExactly(SQLException.class, () -> {
+			createDao(NotParamaterized.class, true);
+		});
 	}
 
-	@Test(expected = SQLException.class)
-	public void testNoForeignRelationship() throws Exception {
-		createDao(NoForeign.class, true);
+	@Test
+	public void testNoForeignRelationship() {
+		assertThrowsExactly(SQLException.class, () -> {
+			createDao(NoForeign.class, true);
+		});
 	}
 
 	@Test
@@ -378,10 +385,12 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		iterator.close();
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testUnknownEmptyCollection() throws Exception {
 		Dao<Account, Object> dao = createDao(Account.class, true);
-		dao.getEmptyForeignCollection("unknown field name");
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			dao.getEmptyForeignCollection("unknown field name");
+		});
 	}
 
 	@Test
@@ -703,9 +712,11 @@ public class ForeignCollectionTest extends BaseCoreTest {
 		assertSame(foreign1, array[0].from);
 	}
 
-	@Test(expected = SQLException.class)
-	public void testMultipleForeignUnknownField() throws Exception {
-		createDao(InvalidColumnNameForeign.class, true);
+	@Test
+	public void testMultipleForeignUnknownField() {
+		assertThrowsExactly(SQLException.class, () -> {
+			createDao(InvalidColumnNameForeign.class, true);
+		});
 	}
 
 	@Test

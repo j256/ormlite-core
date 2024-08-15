@@ -1,14 +1,15 @@
 package com.j256.ormlite.field.types;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
@@ -62,11 +63,13 @@ public class DateIntegerTypeTest extends BaseTypeTest {
 				false, false, true, false);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testDateIntegerParseInvalid() throws Exception {
 		FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME,
 				LocalDateInteger.class.getDeclaredField(DATE_COLUMN), LocalDateInteger.class);
-		DataType.DATE_INTEGER.getDataPersister().parseDefaultString(fieldType, "not valid int number");
+		assertThrowsExactly(SQLException.class, () -> {
+			DataType.DATE_INTEGER.getDataPersister().parseDefaultString(fieldType, "not valid int number");
+		});
 	}
 
 	@Test

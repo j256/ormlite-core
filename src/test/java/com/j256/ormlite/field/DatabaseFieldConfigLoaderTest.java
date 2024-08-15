@@ -1,7 +1,8 @@
 package com.j256.ormlite.field;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -10,7 +11,7 @@ import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 
@@ -190,6 +191,12 @@ public class DatabaseFieldConfigLoaderTest extends BaseCoreTest {
 		body.append("readOnly=true").append(LINE_SEP);
 		checkConfigOutput(config, body, writer, buffer);
 
+		config.setJavaxEntity(false);
+		checkConfigOutput(config, body, writer, buffer);
+		config.setJavaxEntity(true);
+		body.append("javaxEntity=true").append(LINE_SEP);
+		checkConfigOutput(config, body, writer, buffer);
+
 		/*
 		 * Test foreign collection
 		 */
@@ -233,10 +240,12 @@ public class DatabaseFieldConfigLoaderTest extends BaseCoreTest {
 		assertNull(DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value))));
 	}
 
-	@Test(expected = SQLException.class)
-	public void testBadLine() throws Exception {
+	@Test
+	public void testBadLine() {
 		String value = "not a good line";
-		DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value)));
+		assertThrowsExactly(SQLException.class, () -> {
+			DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value)));
+		});
 	}
 
 	@Test
@@ -251,34 +260,44 @@ public class DatabaseFieldConfigLoaderTest extends BaseCoreTest {
 		assertNull(DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value))));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testBadPersisterClass() throws Exception {
+	@Test
+	public void testBadPersisterClass() {
 		String value = "persisterClass=unknown class name" + LINE_SEP;
-		DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value)));
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value)));
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testBadEnumValue() throws Exception {
+	@Test
+	public void testBadEnumValue() {
 		String value = "unknownEnumValue=notvalidclass" + LINE_SEP;
-		DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value)));
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value)));
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testBadEnumClass() throws Exception {
+	@Test
+	public void testBadEnumClass() {
 		String value = "unknownEnumValue=notvalidclass#somevalue" + LINE_SEP;
-		DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value)));
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value)));
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testBadEnumClassNotAnEnum() throws Exception {
+	@Test
+	public void testBadEnumClassNotAnEnum() {
 		String value = "unknownEnumValue=java.lang.Object#somevalue" + LINE_SEP;
-		DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value)));
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value)));
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testBadEnumClassInvalidEnumValue() throws Exception {
+	@Test
+	public void testBadEnumClassInvalidEnumValue() {
 		String value = "unknownEnumValue=" + OurEnum.class.getName() + "#notvalid" + LINE_SEP;
-		DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value)));
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			DatabaseFieldConfigLoader.fromReader(new BufferedReader(new StringReader(value)));
+		});
 	}
 
 	@Test

@@ -1,11 +1,12 @@
 package com.j256.ormlite.stmt.mapped;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import java.sql.SQLException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
@@ -17,23 +18,29 @@ import com.j256.ormlite.table.TableInfo;
 
 public class MappedQueryForIdTest extends BaseCoreStmtTest {
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryNoId() throws Exception {
 		StatementExecutor<NoId, String> se = new StatementExecutor<NoId, String>(databaseType,
 				new TableInfo<NoId, String>(databaseType, NoId.class), null);
-		se.queryForId(null, "1", null);
+		assertThrowsExactly(SQLException.class, () -> {
+			se.queryForId(null, "1", null);
+		});
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testNoIdBuildUpdater() throws Exception {
 		Dao<NoId, Void> dao = createDao(NoId.class, false);
-		MappedUpdate.build(dao, new TableInfo<NoId, Void>(databaseType, NoId.class));
+		assertThrowsExactly(SQLException.class, () -> {
+			MappedUpdate.build(dao, new TableInfo<NoId, Void>(databaseType, NoId.class));
+		});
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testNoIdBuildQueryForId() throws Exception {
 		Dao<NoId, Void> dao = createDao(NoId.class, false);
-		MappedQueryForFieldEq.build(dao, new TableInfo<NoId, Void>(databaseType, NoId.class), null);
+		assertThrowsExactly(SQLException.class, () -> {
+			MappedQueryForFieldEq.build(dao, new TableInfo<NoId, Void>(databaseType, NoId.class), null);
+		});
 	}
 
 	@Test
@@ -76,7 +83,7 @@ public class MappedQueryForIdTest extends BaseCoreStmtTest {
 		assertNull(whereDao.queryForId(id));
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testTooManyFooId() throws Exception {
 		Dao<LocalFoo, String> fooDao = createDao(LocalFoo.class, true);
 		String stuff = "zing";
@@ -94,7 +101,9 @@ public class MappedQueryForIdTest extends BaseCoreStmtTest {
 		// it doesn't create the new table
 		Dao<FakeFoo, String> fakeFooDao = createDao(FakeFoo.class, false);
 		// this fails because >1 item is returned from an id search -- baaaaad
-		fakeFooDao.queryForId(stuff);
+		assertThrowsExactly(SQLException.class, () -> {
+			fakeFooDao.queryForId(stuff);
+		});
 	}
 
 	// for testing reserved words as field names

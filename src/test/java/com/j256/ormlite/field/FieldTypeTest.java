@@ -6,13 +6,14 @@ import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.isNull;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -22,7 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.Dao;
@@ -78,23 +79,31 @@ public class FieldTypeTest extends BaseCoreTest {
 		assertEquals(DataType.LONG.getDataPersister(), fieldType.getDataPersister());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testUnknownFieldType() throws Exception {
 		Field field = UnknownFieldType.class.getDeclaredField("oops");
-		FieldType.createFieldType(databaseType, UnknownFieldType.class.getSimpleName(), field, UnknownFieldType.class);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			FieldType.createFieldType(databaseType, UnknownFieldType.class.getSimpleName(), field,
+					UnknownFieldType.class);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testIdAndGeneratedId() throws Exception {
 		Field field = IdAndGeneratedId.class.getDeclaredField("id");
-		FieldType.createFieldType(databaseType, IdAndGeneratedId.class.getSimpleName(), field, IdAndGeneratedId.class);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			FieldType.createFieldType(databaseType, IdAndGeneratedId.class.getSimpleName(), field,
+					IdAndGeneratedId.class);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testGeneratedIdAndSequence() throws Exception {
 		Field field = GeneratedIdAndSequence.class.getDeclaredField("id");
-		FieldType.createFieldType(databaseType, GeneratedIdAndSequence.class.getSimpleName(), field,
-				GeneratedIdAndSequence.class);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			FieldType.createFieldType(databaseType, GeneratedIdAndSequence.class.getSimpleName(), field,
+					GeneratedIdAndSequence.class);
+		});
 	}
 
 	@Test
@@ -126,11 +135,13 @@ public class FieldTypeTest extends BaseCoreTest {
 		assertTrue(fieldType.isGeneratedIdSequence());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testGeneratedIdCantBeGenerated() throws Exception {
 		Field field = GeneratedIdCantBeGenerated.class.getDeclaredField("id");
-		FieldType.createFieldType(databaseType, GeneratedIdCantBeGenerated.class.getSimpleName(), field,
-				GeneratedIdCantBeGenerated.class);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			FieldType.createFieldType(databaseType, GeneratedIdCantBeGenerated.class.getSimpleName(), field,
+					GeneratedIdCantBeGenerated.class);
+		});
 	}
 
 	@Test
@@ -221,65 +232,83 @@ public class FieldTypeTest extends BaseCoreTest {
 		assertTrue(fieldType.isForeign());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testPrimitiveForeign() throws Exception {
 		Field idField = ForeignPrimitive.class.getDeclaredField("id");
-		FieldType.createFieldType(databaseType, ForeignPrimitive.class.getSimpleName(), idField,
-				ForeignPrimitive.class);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			FieldType.createFieldType(databaseType, ForeignPrimitive.class.getSimpleName(), idField,
+					ForeignPrimitive.class);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testForeignNoId() throws Exception {
 		Field fooField = ForeignNoId.class.getDeclaredField("foo");
 		FieldType fieldType =
 				FieldType.createFieldType(databaseType, ForeignNoId.class.getSimpleName(), fooField, ForeignNoId.class);
-		fieldType.configDaoInformation(connectionSource, ForeignNoId.class);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			fieldType.configDaoInformation(connectionSource, ForeignNoId.class);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testForeignAlsoId() throws Exception {
 		Field fooField = ForeignAlsoId.class.getDeclaredField("foo");
-		FieldType.createFieldType(databaseType, ForeignAlsoId.class.getSimpleName(), fooField, ForeignAlsoId.class);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			FieldType.createFieldType(databaseType, ForeignAlsoId.class.getSimpleName(), fooField, ForeignAlsoId.class);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testObjectFieldNotForeign() throws Exception {
 		Field fooField = ObjectFieldNotForeign.class.getDeclaredField("foo");
-		FieldType.createFieldType(databaseType, ObjectFieldNotForeign.class.getSimpleName(), fooField,
-				ObjectFieldNotForeign.class);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			FieldType.createFieldType(databaseType, ObjectFieldNotForeign.class.getSimpleName(), fooField,
+					ObjectFieldNotForeign.class);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testGetSetNoGet() throws Exception {
 		Field idField = GetSetNoGet.class.getDeclaredField("id");
-		FieldType.createFieldType(databaseType, GetSetNoGet.class.getSimpleName(), idField, GetSetNoGet.class);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			FieldType.createFieldType(databaseType, GetSetNoGet.class.getSimpleName(), idField, GetSetNoGet.class);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testGetSetGetWrongType() throws Exception {
 		Field idField = GetSetGetWrongType.class.getDeclaredField("id");
-		FieldType.createFieldType(databaseType, GetSetGetWrongType.class.getSimpleName(), idField,
-				GetSetGetWrongType.class);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			FieldType.createFieldType(databaseType, GetSetGetWrongType.class.getSimpleName(), idField,
+					GetSetGetWrongType.class);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testGetSetNoSet() throws Exception {
 		Field idField = GetSetNoSet.class.getDeclaredField("id");
-		FieldType.createFieldType(databaseType, GetSetNoSet.class.getSimpleName(), idField, GetSetNoSet.class);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			FieldType.createFieldType(databaseType, GetSetNoSet.class.getSimpleName(), idField, GetSetNoSet.class);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testGetSetSetWrongType() throws Exception {
 		Field idField = GetSetSetWrongType.class.getDeclaredField("id");
-		FieldType.createFieldType(databaseType, GetSetSetWrongType.class.getSimpleName(), idField,
-				GetSetSetWrongType.class);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			FieldType.createFieldType(databaseType, GetSetSetWrongType.class.getSimpleName(), idField,
+					GetSetSetWrongType.class);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testGetSetSetReturnNotVoid() throws Exception {
 		Field idField = GetSetReturnNotVoid.class.getDeclaredField("id");
-		FieldType.createFieldType(databaseType, GetSetReturnNotVoid.class.getSimpleName(), idField,
-				GetSetReturnNotVoid.class);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			FieldType.createFieldType(databaseType, GetSetReturnNotVoid.class.getSimpleName(), idField,
+					GetSetReturnNotVoid.class);
+		});
 	}
 
 	@Test
@@ -302,7 +331,7 @@ public class FieldTypeTest extends BaseCoreTest {
 		assertEquals(id2, fieldType.extractJavaFieldToSqlArgValue(getSet));
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testFieldSetNull() throws Exception {
 		Field field = LocalFoo.class.getDeclaredField("intLong");
 		FieldType fieldType =
@@ -315,23 +344,29 @@ public class FieldTypeTest extends BaseCoreTest {
 		fieldType.assignField(connectionSource, foo, value2, false, null);
 		assertEquals(value2, foo.intLong);
 		// this should throw a illegal argument exception _not_ a NPE, thanks @hrach
-		fieldType.assignField(connectionSource, foo, null, false, null);
+		assertThrowsExactly(SQLException.class, () -> {
+			fieldType.assignField(connectionSource, foo, null, false, null);
+		});
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testGetWrongObject() throws Exception {
 		Field idField = GetSet.class.getDeclaredField("id");
 		FieldType fieldType =
 				FieldType.createFieldType(databaseType, GetSet.class.getSimpleName(), idField, GetSet.class);
-		fieldType.extractJavaFieldToSqlArgValue(new Object());
+		assertThrowsExactly(SQLException.class, () -> {
+			fieldType.extractJavaFieldToSqlArgValue(new Object());
+		});
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testSetWrongObject() throws Exception {
 		Field idField = GetSet.class.getDeclaredField("id");
 		FieldType fieldType =
 				FieldType.createFieldType(databaseType, GetSet.class.getSimpleName(), idField, GetSet.class);
-		fieldType.assignField(connectionSource, new Object(), 10, false, null);
+		assertThrowsExactly(SQLException.class, () -> {
+			fieldType.assignField(connectionSource, new Object(), 10, false, null);
+		});
 	}
 
 	@Test
@@ -363,12 +398,14 @@ public class FieldTypeTest extends BaseCoreTest {
 		assertEquals(id, foo.id);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testSetIdFieldString() throws Exception {
 		Field nameField = LocalFoo.class.getDeclaredField("name");
 		FieldType fieldType =
 				FieldType.createFieldType(databaseType, LocalFoo.class.getSimpleName(), nameField, LocalFoo.class);
-		fieldType.assignIdValue(connectionSource, new LocalFoo(), 10, null);
+		assertThrowsExactly(SQLException.class, () -> {
+			fieldType.assignIdValue(connectionSource, new LocalFoo(), 10, null);
+		});
 	}
 
 	@Test
@@ -410,28 +447,34 @@ public class FieldTypeTest extends BaseCoreTest {
 		assertEquals(newId, parent.foreign.id);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testGeneratedIdDefaultValue() throws Exception {
 		Class<GeneratedIdDefault> clazz = GeneratedIdDefault.class;
 		Field idField = clazz.getDeclaredField("id");
-		FieldType.createFieldType(databaseType, clazz.getSimpleName(), idField, clazz);
+		assertThrowsExactly(SQLException.class, () -> {
+			FieldType.createFieldType(databaseType, clazz.getSimpleName(), idField, clazz);
+		});
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testThrowIfNullNotPrimitive() throws Exception {
 		Class<ThrowIfNullNonPrimitive> clazz = ThrowIfNullNonPrimitive.class;
 		Field field = clazz.getDeclaredField("notPrimitive");
-		FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
+		assertThrowsExactly(SQLException.class, () -> {
+			FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
+		});
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testBadDateDefaultValue() throws Exception {
 		Class<DateDefaultBad> clazz = DateDefaultBad.class;
 		Field field = clazz.getDeclaredField("date");
-		FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
+		assertThrowsExactly(SQLException.class, () -> {
+			FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
+		});
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testNullPrimitiveThrow() throws Exception {
 		Field field = ThrowIfNullNonPrimitive.class.getDeclaredField("primitive");
 		FieldType fieldType = FieldType.createFieldType(databaseType, ThrowIfNullNonPrimitive.class.getSimpleName(),
@@ -442,7 +485,9 @@ public class FieldTypeTest extends BaseCoreTest {
 		expect(results.getInt(fieldNum)).andReturn(0);
 		expect(results.wasNull(fieldNum)).andReturn(true);
 		replay(results);
-		fieldType.resultToJava(results, new HashMap<String, Integer>());
+		assertThrowsExactly(SQLException.class, () -> {
+			fieldType.resultToJava(results, new HashMap<String, Integer>());
+		});
 		verify(results);
 	}
 
@@ -461,18 +506,12 @@ public class FieldTypeTest extends BaseCoreTest {
 		verify(results);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testInvalidFieldType() throws Exception {
 		Field field = InvalidType.class.getDeclaredField("intField");
-		FieldType fieldType =
-				FieldType.createFieldType(databaseType, InvalidType.class.getSimpleName(), field, InvalidType.class);
-		DatabaseResults results = createMock(DatabaseResults.class);
-		int fieldNum = 1;
-		expect(results.findColumn(field.getName())).andReturn(fieldNum);
-		expect(results.wasNull(fieldNum)).andReturn(true);
-		replay(results);
-		assertNull(fieldType.resultToJava(results, new HashMap<String, Integer>()));
-		verify(results);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			FieldType.createFieldType(databaseType, InvalidType.class.getSimpleName(), field, InvalidType.class);
+		});
 	}
 
 	@Test
@@ -498,11 +537,13 @@ public class FieldTypeTest extends BaseCoreTest {
 		assertTrue(fieldType.isForeign());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testInvalidEnumField() throws Exception {
 		Class<InvalidEnumType> clazz = InvalidEnumType.class;
 		Field field = clazz.getDeclaredField("stuff");
-		FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
+		});
 	}
 
 	@Test
@@ -543,48 +584,60 @@ public class FieldTypeTest extends BaseCoreTest {
 		verify(results, connectionSource, connection);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testForeignAutoRefreshOnNormalField() throws Exception {
 		Class<ForeignAutoRefreshWrong> clazz = ForeignAutoRefreshWrong.class;
 		Field field = clazz.getDeclaredField("notForeign");
-		FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testForeignColumnOnNormalField() throws Exception {
 		Class<ForeignColumnNameWrong> clazz = ForeignColumnNameWrong.class;
 		Field field = clazz.getDeclaredField("notForeign");
-		FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
+		});
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testSerializableNoDataType() throws Exception {
 		Class<SerializableNoDataType> clazz = SerializableNoDataType.class;
 		Field field = clazz.getDeclaredField("serial");
 		// this will throw without the recursive fix
-		FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
+		assertThrowsExactly(SQLException.class, () -> {
+			FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
+		});
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testByteArrayNoDataType() throws Exception {
 		Class<ByteArrayNoDataType> clazz = ByteArrayNoDataType.class;
 		Field field = clazz.getDeclaredField("bytes");
 		// this will throw without the recursive fix
-		FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
+		assertThrowsExactly(SQLException.class, () -> {
+			FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
+		});
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testForeignCollectionNoGeneric() throws Exception {
 		Class<ForeignCollectionNoGeneric> clazz = ForeignCollectionNoGeneric.class;
 		Field field = clazz.getDeclaredField("foreignStuff");
-		FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
+		assertThrowsExactly(SQLException.class, () -> {
+			FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
+		});
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testImproperId() throws Exception {
 		Class<ImproperIdType> clazz = ImproperIdType.class;
 		Field field = clazz.getDeclaredField("id");
-		FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
+		assertThrowsExactly(SQLException.class, () -> {
+			FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
+		});
 	}
 
 	@Test
@@ -680,33 +733,43 @@ public class FieldTypeTest extends BaseCoreTest {
 		assertEquals(fieldType3.hashCode(), fieldType4.hashCode());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testAllowGeneratedIdInsertPrimitive() throws Exception {
 		Class<AllowGeneratedIdNotGeneratedId> clazz = AllowGeneratedIdNotGeneratedId.class;
 		Field field = clazz.getDeclaredField("stuff");
-		FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testVersionFieldWrongType() throws Exception {
 		Class<VersionFieldWrongType> clazz = VersionFieldWrongType.class;
 		Field field = clazz.getDeclaredField("version");
-		FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			FieldType.createFieldType(databaseType, clazz.getSimpleName(), field, clazz);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testForeignAutoCreateNotForeign() throws Exception {
-		createDao(ForeignAutoCreateNoForeign.class, true);
+	@Test
+	public void testForeignAutoCreateNotForeign() {
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			createDao(ForeignAutoCreateNoForeign.class, true);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testForeignAutoCreateNotGeneratedId() throws Exception {
-		createDao(ForeignAutoCreateNoGeneratedId.class, true);
+	@Test
+	public void testForeignAutoCreateNotGeneratedId() {
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			createDao(ForeignAutoCreateNoGeneratedId.class, true);
+		});
 	}
 
-	@Test(expected = SQLException.class)
-	public void testForeignCollectionForeign() throws Exception {
-		createDao(ForeignCollectionForeign.class, true);
+	@Test
+	public void testForeignCollectionForeign() {
+		assertThrowsExactly(SQLException.class, () -> {
+			createDao(ForeignCollectionForeign.class, true);
+		});
 	}
 
 	@Test
