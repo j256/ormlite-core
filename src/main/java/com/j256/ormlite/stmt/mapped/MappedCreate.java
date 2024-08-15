@@ -19,14 +19,16 @@ import com.j256.ormlite.table.TableInfo;
 public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 
 	private final String queryNextSequenceStmt;
+	private final String generatedIdNullStmt;
 	private String dataClassName;
 	private int versionFieldTypeIndex;
 
-	private MappedCreate(Dao<T, ID> dao, TableInfo<T, ID> tableInfo, String statement, FieldType[] argFieldTypes,
-			String queryNextSequenceStmt, int versionFieldTypeIndex) {
+	private MappedCreate(Dao<T, ID> dao, TableInfo<T, ID> tableInfo, String statement, String generatedIdNullStmt,
+			FieldType[] argFieldTypes, String queryNextSequenceStmt, int versionFieldTypeIndex) {
 		super(dao, tableInfo, statement, argFieldTypes);
-		this.dataClassName = tableInfo.getDataClass().getSimpleName();
 		this.queryNextSequenceStmt = queryNextSequenceStmt;
+		this.generatedIdNullStmt = generatedIdNullStmt;
+		this.dataClassName = tableInfo.getDataClass().getSimpleName();
 		this.versionFieldTypeIndex = versionFieldTypeIndex;
 	}
 
@@ -76,7 +78,7 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 				}
 			}
 
-			Object[] args = getFieldObjects(data);
+			Object[] args = getFieldObjects(data, true);
 			Object versionDefaultValue = null;
 			// implement {@link DatabaseField#version()}
 			if (versionFieldTypeIndex >= 0 && args[versionFieldTypeIndex] == null) {
@@ -88,7 +90,16 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 
 			int rowC;
 			try {
-				rowC = databaseConnection.insert(statement, args, argFieldTypes, keyHolder);
+				/*
+				 * If the args length is the ame as the arg-field-types length then we call the normal insert. But if
+				 * they are different then the ID must not have been added to the array since it was null and we were
+				 * doing an insert into a generated-id-insert field. So we should use the alternative statement.
+				 */
+				if (args.length == argFieldTypes.length) {
+					rowC = databaseConnection.insert(statement, args, argFieldTypes, keyHolder);
+				} else {
+					rowC = databaseConnection.insert(generatedIdNullStmt, args, argFieldTypes, keyHolder);
+				}
 			} catch (SQLException e) {
 				// NOTE: don't log full exception here
 				logger.debug("insert data with statement '{}' and {} args, threw exception: {}", statement, args.length,
@@ -142,8 +153,10 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 
 	public static <T, ID> MappedCreate<T, ID> build(Dao<T, ID> dao, TableInfo<T, ID> tableInfo) {
 		DatabaseType databaseType = dao.getConnectionSource().getDatabaseType();
-		StringBuilder sb = new StringBuilder(128);
-		appendTableName(databaseType, sb, "INSERT INTO ", tableInfo);
+		StringBuilder insertSb = new StringBuilder(128);
+		StringBuilder insertNoIdSb = new StringBuilder(128);
+		appendTableName(databaseType, insertSb, "INSERT INTO ", tableInfo);
+		appendTableName(databaseType, insertNoIdSb, "INSERT INTO ", tableInfo);
 		int argFieldC = 0;
 		int versionFieldTypeIndex = -1;
 		// first we count up how many arguments we are going to have
@@ -157,41 +170,65 @@ public class MappedCreate<T, ID> extends BaseMappedStatement<T, ID> {
 		}
 		FieldType[] argFieldTypes = new FieldType[argFieldC];
 		if (argFieldC == 0) {
-			databaseType.appendInsertNoColumns(sb);
+			databaseType.appendInsertNoColumns(insertSb);
+			databaseType.appendInsertNoColumns(insertNoIdSb);
 		} else {
 			argFieldC = 0;
-			boolean first = true;
-			sb.append('(');
+			boolean insertFirst = true;
+			boolean insertNoIdFirst = true;
+			insertSb.append('(');
+			insertNoIdSb.append('(');
 			for (FieldType fieldType : tableInfo.getFieldTypes()) {
 				if (!isFieldCreatable(databaseType, fieldType)) {
 					continue;
 				}
-				if (first) {
-					first = false;
+				if (insertFirst) {
+					insertFirst = false;
 				} else {
-					sb.append(',');
+					insertSb.append(',');
 				}
-				appendFieldColumnName(databaseType, sb, fieldType, null);
+				appendFieldColumnName(databaseType, insertSb, fieldType, null);
+				if (!fieldType.isAllowGeneratedIdInsert()) {
+					if (insertNoIdFirst) {
+						insertNoIdFirst = false;
+					} else {
+						insertNoIdSb.append(',');
+					}
+					appendFieldColumnName(databaseType, insertNoIdSb, fieldType, null);
+				}
 				argFieldTypes[argFieldC++] = fieldType;
 			}
-			sb.append(") VALUES (");
-			first = true;
+			insertSb.append(") VALUES (");
+			insertNoIdSb.append(") VALUES (");
+			insertFirst = true;
+			insertNoIdFirst = true;
 			for (FieldType fieldType : tableInfo.getFieldTypes()) {
 				if (!isFieldCreatable(databaseType, fieldType)) {
 					continue;
 				}
-				if (first) {
-					first = false;
+				if (insertFirst) {
+					insertFirst = false;
 				} else {
-					sb.append(',');
+					insertSb.append(',');
 				}
-				sb.append('?');
+				insertSb.append('?');
+				if (!fieldType.isAllowGeneratedIdInsert()) {
+					if (insertNoIdFirst) {
+						insertNoIdFirst = false;
+					} else {
+						insertNoIdSb.append(',');
+					}
+					insertNoIdSb.append('?');
+				}
 			}
-			sb.append(')');
+			insertSb.append(')');
+			insertNoIdSb.append(')');
 		}
+
 		FieldType idField = tableInfo.getIdField();
 		String queryNext = buildQueryNextSequence(databaseType, idField);
-		return new MappedCreate<T, ID>(dao, tableInfo, sb.toString(), argFieldTypes, queryNext, versionFieldTypeIndex);
+		return new MappedCreate<T, ID>(dao, tableInfo, insertSb.toString(), insertNoIdSb.toString(), argFieldTypes,
+				queryNext, versionFieldTypeIndex);
 	}
 
 	private boolean foreignCollectionsAreAssigned(FieldType[] foreignCollections, Object data) throws SQLException {

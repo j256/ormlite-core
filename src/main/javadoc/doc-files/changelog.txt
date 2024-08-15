@@ -1,8 +1,9 @@
-7.0: ?/?/2022
+7.0: ?/?/2024
 	* CORE: Added a Dao.createIfNotExists() for lazy entity creation.  Thanks much to BlackBaroness.
 	* CORE: Added PreparedStmt.setArgumentHolderValue(...) to set argument by name.
 	* CORE: Added Dao raw methods that take ArgumentHolder... for specifying SqlType to raw statement arguments.
 	* CORE: Added afterField to DatabaseField to being specific about schema field order.  Thanks to ComBatVision.
+	* CORE: Fixed issues with inserting of null for generated-ids.  Now we don't insert anything.
 	* JDBC: Added additional properties to JdbcConnectionSource.  Thanks to danielferraz.
 	* JDBC: Added support for testing for generate keys.
 	* ALL: Switched to using Junit5 from 4.  What a slog but everything in a better place. 
