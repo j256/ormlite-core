@@ -5,9 +5,9 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class FluentLoggerTest {
 
@@ -15,7 +15,7 @@ public class FluentLoggerTest {
 	private LogBackend mockBackend;
 	private final Throwable throwable = new Throwable();
 
-	@Before
+	@BeforeEach
 	public void before() {
 		mockBackend = createMock(LogBackend.class);
 		fluentLogger = new FluentLogger(mockBackend);
@@ -381,7 +381,7 @@ public class FluentLoggerTest {
 	}
 
 	@Test
-	@Ignore("Only to be run once and a while")
+	@Disabled
 	public void testPerformance() {
 		/*
 		 * Not really a fair test because hotswap might take out some of the method calls but I thought it would be

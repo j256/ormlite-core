@@ -1,13 +1,14 @@
 package com.j256.ormlite.field;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.Dao;
@@ -16,9 +17,11 @@ import com.j256.ormlite.support.DatabaseResults;
 
 public class DataPersisterManagerTest extends BaseCoreTest {
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testCustomTypeNoPersister() throws Exception {
-		createDao(PersistedStored.class, true);
+	@Test
+	public void testCustomTypeNoPersister() {
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			createDao(PersistedStored.class, true);
+		});
 	}
 
 	@Test
@@ -52,9 +55,11 @@ public class DataPersisterManagerTest extends BaseCoreTest {
 		assertEquals(stuff, wrapperResult.storedClass.stuff);
 	}
 
-	@Test(expected = SQLException.class)
-	public void testCustomTypeBadPersister() throws Exception {
-		createDao(PersistedStoredBadPersister.class, true);
+	@Test
+	public void testCustomTypeBadPersister() {
+		assertThrowsExactly(SQLException.class, () -> {
+			createDao(PersistedStoredBadPersister.class, true);
+		});
 	}
 
 	@Test

@@ -1,11 +1,12 @@
 package com.j256.ormlite.stmt.query;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.stmt.ArgumentHolder;
@@ -16,7 +17,7 @@ import com.j256.ormlite.stmt.BaseCoreStmtTest;
  */
 public class NotTest extends BaseCoreStmtTest {
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void test() {
 		Not not = new Not();
 		Clause clause = new Comparison() {
@@ -39,19 +40,25 @@ public class NotTest extends BaseCoreStmtTest {
 			}
 		};
 		not.setMissingClause(clause);
-		not.setMissingClause(clause);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			not.setMissingClause(clause);
+		});
 	}
 
-	@Test(expected = IllegalStateException.class)
-	public void testNoClause() throws Exception {
+	@Test
+	public void testNoClause() {
 		Not not = new Not();
-		not.appendSql(databaseType, null, new StringBuilder(), new ArrayList<ArgumentHolder>(), null);
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			not.appendSql(databaseType, null, new StringBuilder(), new ArrayList<ArgumentHolder>(), null);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testBaseNotClause() {
 		Not not = new Not();
-		not.setMissingClause(new ManyClause((Clause) null, ManyClause.Operation.AND));
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			not.setMissingClause(new ManyClause((Clause) null, ManyClause.Operation.AND));
+		});
 	}
 
 	@Test

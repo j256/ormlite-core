@@ -1,19 +1,22 @@
 package com.j256.ormlite.stmt;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.SQLException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SelectArgTest extends BaseCoreStmtTest {
 
-	@Test(expected = SQLException.class)
-	public void testGetBeforeSetValue() throws Exception {
+	@Test
+	public void testGetBeforeSetValue() {
 		SelectArg selectArg = new SelectArg();
-		selectArg.getSqlArgValue();
+		assertThrowsExactly(SQLException.class, () -> {
+			selectArg.getSqlArgValue();
+		});
 	}
 
 	@Test
@@ -41,11 +44,13 @@ public class SelectArgTest extends BaseCoreStmtTest {
 		assertSame(name, selectArg.getColumnName());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testGetColumnNameTwice() {
 		SelectArg selectArg = new SelectArg();
 		selectArg.setMetaInfo("1", numberFieldType);
-		selectArg.setMetaInfo("2", numberFieldType);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			selectArg.setMetaInfo("2", numberFieldType);
+		});
 	}
 
 	@Test
@@ -62,7 +67,7 @@ public class SelectArgTest extends BaseCoreStmtTest {
 		Foo foo = new Foo();
 		selectArg.setValue(foo);
 		selectArg.setMetaInfo("id", foreignFieldType);
-		assertTrue(selectArg + " wrong value", selectArg.toString().contains(Integer.toString(foo.id)));
+		assertTrue(selectArg.toString().contains(Integer.toString(foo.id)), selectArg + " wrong value");
 	}
 
 	@Test
@@ -76,10 +81,12 @@ public class SelectArgTest extends BaseCoreStmtTest {
 		assertTrue(selectArg.toString().contains(value));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testDoubleSet() {
 		SelectArg selectArg = new SelectArg();
 		selectArg.setMetaInfo("id", numberFieldType);
-		selectArg.setMetaInfo("id", stringFieldType);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			selectArg.setMetaInfo("id", stringFieldType);
+		});
 	}
 }

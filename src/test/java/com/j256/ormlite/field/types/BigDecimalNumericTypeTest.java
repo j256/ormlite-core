@@ -1,13 +1,14 @@
 package com.j256.ormlite.field.types;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
@@ -32,9 +33,11 @@ public class BigDecimalNumericTypeTest extends BaseTypeTest {
 				false, false, false, false, true, false);
 	}
 
-	@Test(expected = SQLException.class)
-	public void testBigDecimalBadDefault() throws Exception {
-		createDao(BigDecimalNumericBadDefault.class, true);
+	@Test
+	public void testBigDecimalBadDefault() {
+		assertThrowsExactly(SQLException.class, () -> {
+			createDao(BigDecimalNumericBadDefault.class, true);
+		});
 	}
 
 	@Test
@@ -48,16 +51,16 @@ public class BigDecimalNumericTypeTest extends BaseTypeTest {
 		assertNull(results.get(0).bigDecimal);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testBigDecimalInvalidDbValue() throws Exception {
-		Dao<LocalBigDecimalNumeric, Object> dao = createDao(LocalBigDecimalNumeric.class, true);
 		Dao<NotBigDecimalNumeric, Object> notDao = createDao(NotBigDecimalNumeric.class, false);
 
 		NotBigDecimalNumeric notFoo = new NotBigDecimalNumeric();
 		notFoo.bigDecimal = "not valid form";
-		assertEquals(1, notDao.create(notFoo));
 
-		dao.queryForAll();
+		assertThrowsExactly(SQLException.class, () -> {
+			notDao.create(notFoo);
+		});
 	}
 
 	@Test
@@ -69,7 +72,8 @@ public class BigDecimalNumericTypeTest extends BaseTypeTest {
 
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalBigDecimalNumeric {
-		@DatabaseField(columnName = BIGDECIMAL_COLUMN, dataType = DataType.BIG_DECIMAL_NUMERIC)
+		@DatabaseField(columnName = BIGDECIMAL_COLUMN, dataType = DataType.BIG_DECIMAL_NUMERIC,
+				columnDefinition = "NUMERIC(60,57)")
 		BigDecimal bigDecimal;
 	}
 

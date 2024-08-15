@@ -1,10 +1,10 @@
 package com.j256.ormlite.field.types;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.Field;
 import java.sql.SQLException;
@@ -84,14 +84,14 @@ public abstract class BaseTypeTest extends BaseCoreTest {
 			} else {
 				assertEquals(sqlArg, dataPersister.javaToSqlArg(fieldType, javaVal));
 			}
-			assertEquals("is-valid-generated", isValidGeneratedType, dataPersister.isValidGeneratedType());
-			assertEquals("is-appropriate-id", isAppropriateId, dataPersister.isAppropriateId());
-			assertEquals("is-escaped-value", isEscapedValue, dataPersister.isEscapedValue());
-			assertEquals("is-escaped-default-value", isEscapedValue, dataPersister.isEscapedDefaultValue());
-			assertEquals("is-primitive", isPrimitive, dataPersister.isPrimitive());
-			assertEquals("select-arg required", isSelectArgRequired, dataPersister.isArgumentHolderRequired());
-			assertEquals("is-stream", isStreamType, dataPersister.isStreamType());
-			assertEquals("is-comparable", isComparable, dataPersister.isComparable());
+			assertEquals(isValidGeneratedType, dataPersister.isValidGeneratedType(), "is-valid-generated");
+			assertEquals(isAppropriateId, dataPersister.isAppropriateId(), "is-appropriate-id");
+			assertEquals(isEscapedValue, dataPersister.isEscapedValue(), "is-escaped-value");
+			assertEquals(isEscapedValue, dataPersister.isEscapedDefaultValue(), "is-escaped-default-value");
+			assertEquals(isPrimitive, dataPersister.isPrimitive(), "is-primitive");
+			assertEquals(isSelectArgRequired, dataPersister.isArgumentHolderRequired(), "select-arg required");
+			assertEquals(isStreamType, dataPersister.isStreamType(), "is-stream");
+			assertEquals(isComparable, dataPersister.isComparable(), "is-comparable");
 			if (isConvertableId) {
 				assertNotNull(dataPersister.convertIdNumber(10));
 			} else {

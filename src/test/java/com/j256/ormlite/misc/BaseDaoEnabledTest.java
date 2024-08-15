@@ -1,13 +1,14 @@
 package com.j256.ormlite.misc;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.SQLException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.Dao;
@@ -25,12 +26,14 @@ public class BaseDaoEnabledTest extends BaseCoreTest {
 		assertEquals(1, one.create());
 	}
 
-	@Test(expected = SQLException.class)
-	public void testCreateNoDao() throws Exception {
+	@Test
+	public void testCreateNoDao() {
 		One one = new One();
 		String stuff = "fewpfjewfew";
 		one.stuff = stuff;
-		one.create();
+		assertThrowsExactly(SQLException.class, () -> {
+			one.create();
+		});
 	}
 
 	@Test
@@ -95,12 +98,14 @@ public class BaseDaoEnabledTest extends BaseCoreTest {
 		assertTrue(one.objectsEqual(one));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testObjectEqualsNoDao() {
 		One one = new One();
 		String stuff1 = "fewpfjewfew";
 		one.stuff = stuff1;
-		one.objectToString();
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			one.objectToString();
+		});
 	}
 
 	@Test

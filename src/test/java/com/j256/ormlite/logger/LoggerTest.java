@@ -5,17 +5,17 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reset;
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class LoggerTest {
 
@@ -23,7 +23,7 @@ public class LoggerTest {
 	private LogBackend mockBackend;
 	private Throwable throwable = new Throwable();
 
-	@Before
+	@BeforeEach
 	public void before() {
 		mockBackend = createMock(LogBackend.class);
 		logger = new Logger(mockBackend);
@@ -594,8 +594,8 @@ public class LoggerTest {
 				method.invoke(logger, "msg {}", new ToStringThrow());
 				fail("Should have thrown");
 			} catch (InvocationTargetException e) {
-				assertTrue("should have thrown an IllegalStateException",
-						e.getCause() instanceof IllegalStateException);
+				assertTrue(e.getCause() instanceof IllegalStateException,
+						"should have thrown an IllegalStateException");
 			}
 			verify(mockBackend);
 		}

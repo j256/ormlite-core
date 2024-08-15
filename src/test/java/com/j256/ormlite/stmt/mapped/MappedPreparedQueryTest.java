@@ -1,12 +1,13 @@
 package com.j256.ormlite.stmt.mapped;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.Dao;
@@ -99,13 +100,11 @@ public class MappedPreparedQueryTest extends BaseCoreTest {
 		}
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testObjectNoConstructor() throws Exception {
-		TableInfo<NoConstructor, Void> tableInfo =
-				new TableInfo<NoConstructor, Void>(databaseType, NoConstructor.class);
-		Dao<NoConstructor, Void> dao = createDao(NoConstructor.class, false);
-		new MappedPreparedStmt<NoConstructor, Void>(dao, tableInfo, null, new FieldType[0], new FieldType[0],
-				new ArgumentHolder[0], null, StatementType.SELECT, false);
+	@Test
+	public void testObjectNoConstructor() {
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			createDao(NoConstructor.class, false);
+		});
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

@@ -1,14 +1,15 @@
 package com.j256.ormlite.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.sql.SQLException;
 import java.util.Iterator;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -96,7 +97,7 @@ public class CloseableIteratorTest extends BaseCoreTest {
 		wrapped.close();
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testIteratorThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -104,17 +105,21 @@ public class CloseableIteratorTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.iterator();
+			assertThrowsExactly(IllegalStateException.class, () -> {
+				dao.iterator();
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testIteratorNoInit() throws Exception {
 		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
-		dao.iterator();
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			dao.iterator();
+		});
 	}
 
 	@Test
@@ -139,14 +144,16 @@ public class CloseableIteratorTest extends BaseCoreTest {
 		assertFalse(iterator.hasNext());
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testIteratorPreparedNoInit() throws Exception {
 		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
-		dao.iterator((PreparedQuery<Foo>) null);
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			dao.iterator((PreparedQuery<Foo>) null);
+		});
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testIteratorPreparedThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -154,7 +161,9 @@ public class CloseableIteratorTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.iterator(dao.queryBuilder().prepare());
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.iterator(dao.queryBuilder().prepare());
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}

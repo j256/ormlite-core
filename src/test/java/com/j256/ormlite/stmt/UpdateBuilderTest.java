@@ -1,14 +1,15 @@
 package com.j256.ormlite.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import java.sql.SQLException;
 import java.util.Date;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.ForeignCollection;
@@ -103,26 +104,32 @@ public class UpdateBuilderTest extends BaseCoreStmtTest {
 		stmtb.where().raw(whereBuilder.toString());
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testUpdateForeignCollection() throws Exception {
 		UpdateBuilder<OurForeignCollection, Integer> stmtb =
 				new UpdateBuilder<OurForeignCollection, Integer>(databaseType,
 						new TableInfo<OurForeignCollection, Integer>(databaseType, OurForeignCollection.class), null);
-		stmtb.updateColumnValue(OurForeignCollection.FOOS_FIELD_NAME, null);
+		assertThrowsExactly(SQLException.class, () -> {
+			stmtb.updateColumnValue(OurForeignCollection.FOOS_FIELD_NAME, null);
+		});
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testUpdateForeignCollectionColumnExpression() throws Exception {
 		UpdateBuilder<OurForeignCollection, Integer> stmtb =
 				new UpdateBuilder<OurForeignCollection, Integer>(databaseType,
 						new TableInfo<OurForeignCollection, Integer>(databaseType, OurForeignCollection.class), null);
-		stmtb.updateColumnExpression(OurForeignCollection.FOOS_FIELD_NAME, "1");
+		assertThrowsExactly(SQLException.class, () -> {
+			stmtb.updateColumnExpression(OurForeignCollection.FOOS_FIELD_NAME, "1");
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testPrepareStatementUpdateNotSets() throws Exception {
+	@Test
+	public void testPrepareStatementUpdateNotSets() {
 		UpdateBuilder<Foo, Integer> stmtb = new UpdateBuilder<Foo, Integer>(databaseType, baseFooTableInfo, null);
-		stmtb.prepare();
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			stmtb.prepare();
+		});
 	}
 
 	@Test

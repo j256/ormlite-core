@@ -6,13 +6,14 @@ import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -27,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.Dao.CreateOrUpdateStatus;
@@ -391,124 +392,146 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		assertEquals(0, dao.countOf());
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testQueryForIdThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.queryForId(isA(String.class))).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.queryForId("wow");
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.queryForId("wow");
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testQueryForFirstPreparedThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.queryForFirst(null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.queryForFirst(null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.queryForFirst(null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testQueryForAllThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.queryForAll()).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.queryForAll();
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.queryForAll();
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testQueryForEqThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.queryForEq(null, null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.queryForEq(null, null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.queryForEq(null, null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testQueryForMatchingThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.queryForMatching(null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.queryForMatching(null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.queryForMatching(null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testQueryForMatchingArgsThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.queryForMatchingArgs(null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.queryForMatchingArgs(null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.queryForMatchingArgs(null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testQueryForFieldsValuesThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.queryForFieldValues(null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.queryForFieldValues(null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.queryForFieldValues(null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testQueryForFieldsValuesArgsThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.queryForFieldValuesArgs(null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.queryForFieldValuesArgs(null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.queryForFieldValuesArgs(null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testQueryForSameIdThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.queryForSameId(null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.queryForSameId(null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.queryForSameId(null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testQueryThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.query(null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.query(null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.query(null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testCreateThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.create((Foo) null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.create((Foo) null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.create((Foo) null);
+		});
 		verify(dao);
 	}
 
@@ -524,138 +547,162 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testCreateCollectionThrow() throws Exception {
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.create((Collection) null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.create((Collection) null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.create((Collection) null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testCreateIfNotExistsThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.createIfNotExists(null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.createIfNotExists(null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.createIfNotExists(null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testCreateOrUpdateThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.createOrUpdate(null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.createOrUpdate(null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.createOrUpdate(null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testUpdateThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.update((Foo) null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.update((Foo) null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.update((Foo) null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testUpdateIdThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.updateId(null, null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.updateId(null, null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.updateId(null, null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testUpdatePreparedThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.update((PreparedUpdate<Foo>) null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.update((PreparedUpdate<Foo>) null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.update((PreparedUpdate<Foo>) null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testRefreshThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.refresh(null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.refresh(null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.refresh(null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testDeleteThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.delete((Foo) null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.delete((Foo) null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.delete((Foo) null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testDeleteByIdThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.deleteById(null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.deleteById(null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.deleteById(null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testDeleteCollectionThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.delete((Collection<Foo>) null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.delete((Collection<Foo>) null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.delete((Collection<Foo>) null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testDeleteIdsThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.deleteIds(null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.deleteIds(null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.deleteIds(null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testDeletePreparedThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.delete((PreparedDelete<Foo>) null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.delete((PreparedDelete<Foo>) null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.delete((PreparedDelete<Foo>) null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testCloseLastIteratorThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
@@ -663,18 +710,22 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		dao.closeLastIterator();
 		expectLastCall().andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.closeLastIterator();
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.closeLastIterator();
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testIteratorThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.iterator(null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.iterator(null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.iterator(null);
+		});
 		verify(dao);
 	}
 
@@ -689,36 +740,42 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testCloseableIteratorThrow() {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
-		expect(dao.closeableIterator()).andThrow(new SQLException("Testing catch"));
+		expect(dao.closeableIterator()).andThrow(new RuntimeException("Testing catch"));
 		replay(dao);
-		rtDao.closeableIterator();
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.closeableIterator();
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testIteratorQueryFlags() {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(rtDao.iterator(null, 0)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.iterator(null, 0);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.iterator(null, 0);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testQueryRawThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.queryRaw(null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.queryRaw(null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.queryRaw(null);
+		});
 		verify(dao);
 	}
 
@@ -734,36 +791,42 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testQueryRawValueThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.queryRawValue(null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.queryRawValue(null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.queryRawValue(null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testQueryRawRowMapperThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.queryRaw(null, (RawRowMapper<String>) null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.queryRaw(null, (RawRowMapper<String>) null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.queryRaw(null, (RawRowMapper<String>) null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testQueryRawDateTypesThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.queryRaw(null, (DataType[]) null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.queryRaw(null, (DataType[]) null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.queryRaw(null, (DataType[]) null);
+		});
 		verify(dao);
 	}
 
@@ -778,14 +841,16 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testExecuteRawThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.executeRaw(null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.executeRaw(null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.executeRaw(null);
+		});
 		verify(dao);
 	}
 
@@ -800,7 +865,7 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testAssignEmptyForeignCollectionThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
@@ -808,7 +873,9 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		dao.assignEmptyForeignCollection(null, null);
 		expectLastCall().andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.assignEmptyForeignCollection(null, null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.assignEmptyForeignCollection(null, null);
+		});
 		verify(dao);
 	}
 
@@ -823,14 +890,16 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testExecuteRawNoArgsThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.executeRaw(null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.executeRaw(null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.executeRaw(null);
+		});
 		verify(dao);
 	}
 
@@ -845,7 +914,7 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testSetObjectCacheThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
@@ -853,7 +922,9 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		dao.setObjectCache(false);
 		expectLastCall().andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.setObjectCache(false);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.setObjectCache(false);
+		});
 		verify(dao);
 	}
 
@@ -868,7 +939,7 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testSetObjectCacheCacheThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
@@ -876,77 +947,91 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		dao.setObjectCache(null);
 		expectLastCall().andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.setObjectCache(null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.setObjectCache(null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testUpdateRawThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.updateRaw(null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.updateRaw(null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.updateRaw(null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testCallBatchTasksThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.callBatchTasks(null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.callBatchTasks(null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.callBatchTasks(null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testObjectsEqualThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.objectsEqual(null, null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.objectsEqual(null, null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.objectsEqual(null, null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testExtractIdThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.extractId(null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.extractId(null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.extractId(null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testIsTableExistsThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.isTableExists()).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.isTableExists();
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.isTableExists();
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testCountOfThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.countOf()).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.countOf();
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.countOf();
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testCountOfPreparedThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
@@ -955,22 +1040,26 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		PreparedQuery<Foo> prepared = (PreparedQuery<Foo>) createMock(PreparedQuery.class);
 		expect(dao.countOf(prepared)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.countOf(prepared);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.countOf(prepared);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testGetEmptyForeignCollectionThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.getEmptyForeignCollection(null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.getEmptyForeignCollection(null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.getEmptyForeignCollection(null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testMapSelectStarRowThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
@@ -978,22 +1067,26 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		DatabaseResults results = createMock(DatabaseResults.class);
 		expect(dao.mapSelectStarRow(results)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.mapSelectStarRow(results);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.mapSelectStarRow(results);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testGetSelectStarRowMapperThrow() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.getSelectStarRowMapper()).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.getSelectStarRowMapper();
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.getSelectStarRowMapper();
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testIdExistsThrows() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
@@ -1001,22 +1094,26 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		String id = "eopwjfpwejf";
 		expect(dao.idExists(id)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.idExists(id);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.idExists(id);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testStartThreadConnectionThrows() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.startThreadConnection()).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.startThreadConnection();
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.startThreadConnection();
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testEndThreadConnectionThrows() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
@@ -1024,11 +1121,13 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		dao.endThreadConnection(null);
 		expectLastCall().andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.endThreadConnection(null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.endThreadConnection(null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testSetAutoCommitThrows() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
@@ -1036,22 +1135,26 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		dao.setAutoCommit(null, true);
 		expectLastCall().andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.setAutoCommit(null, true);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.setAutoCommit(null, true);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testIsAutoCommitThrows() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.isAutoCommit(null)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.isAutoCommit(null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.isAutoCommit(null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testCommitThrows() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
@@ -1059,11 +1162,13 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		dao.commit(null);
 		expectLastCall().andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.commit(null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.commit(null);
+		});
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testRollbackThrows() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
@@ -1071,7 +1176,9 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		dao.rollBack(null);
 		expectLastCall().andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.rollBack(null);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.rollBack(null);
+		});
 		verify(dao);
 	}
 
@@ -1132,7 +1239,7 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testCloseLastIteratorThrows() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
@@ -1140,7 +1247,9 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		dao.closeLastIterator();
 		expectLastCall().andThrow(new IOException("Testing catch"));
 		replay(dao);
-		rtDao.closeLastIterator();
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.closeLastIterator();
+		});
 		verify(dao);
 	}
 
@@ -1158,7 +1267,7 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testQueryRawDatatypesThrows() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
@@ -1168,7 +1277,9 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		String[] args = new String[0];
 		expect(dao.queryRaw(query, datatypes, null, args)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.queryRaw(query, datatypes, null, args);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.queryRaw(query, datatypes, null, args);
+		});
 		verify(dao);
 	}
 
@@ -1185,7 +1296,7 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testQueryRawMapperThrows() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
@@ -1194,7 +1305,9 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		String[] args = new String[0];
 		expect(dao.queryRaw(query, (DatabaseResultsMapper<?>) null, args)).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.queryRaw(query, (DatabaseResultsMapper<?>) null, args);
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.queryRaw(query, (DatabaseResultsMapper<?>) null, args);
+		});
 		verify(dao);
 	}
 
@@ -1209,14 +1322,16 @@ public class RuntimeExceptionDaoTest extends BaseCoreTest {
 		verify(dao);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testCreateObjectInstanceThrows() throws Exception {
 		@SuppressWarnings("unchecked")
 		Dao<Foo, String> dao = (Dao<Foo, String>) createMock(Dao.class);
 		RuntimeExceptionDao<Foo, String> rtDao = new RuntimeExceptionDao<Foo, String>(dao);
 		expect(dao.createObjectInstance()).andThrow(new SQLException("Testing catch"));
 		replay(dao);
-		rtDao.createObjectInstance();
+		assertThrowsExactly(RuntimeException.class, () -> {
+			rtDao.createObjectInstance();
+		});
 		verify(dao);
 	}
 

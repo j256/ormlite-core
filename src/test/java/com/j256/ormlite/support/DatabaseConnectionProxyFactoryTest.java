@@ -1,13 +1,13 @@
 package com.j256.ormlite.support;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.SQLException;
 
-import org.junit.AfterClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.Dao;
@@ -41,7 +41,7 @@ public class DatabaseConnectionProxyFactoryTest extends BaseCoreTest {
 	/**
 	 * For testing purposes we have to un-wire our proxy after the tests run.
 	 */
-	@AfterClass
+	@AfterAll
 	public static void afterClass() {
 		H2ConnectionSource.setDatabaseConnectionProxyFactory(null);
 	}

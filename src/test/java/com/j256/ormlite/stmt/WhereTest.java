@@ -1,15 +1,16 @@
 package com.j256.ormlite.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.BaseDaoImpl;
@@ -40,53 +41,60 @@ public class WhereTest extends BaseCoreTest {
 		assertTrue(where.toString().contains(eq.toString()));
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testAlreadyNeedsClause() throws Exception {
 		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		where.eq(Foo.VAL_COLUMN_NAME, "bar");
 		where.and();
-		where.and();
-		StringBuilder sb = new StringBuilder();
-		where.appendSql(null, sb, null);
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			where.and();
+		});
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testNoClauses() throws Exception {
 		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
-		where.appendSql(null, new StringBuilder(), new ArrayList<ArgumentHolder>());
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			where.appendSql(null, new StringBuilder(), new ArrayList<ArgumentHolder>());
+		});
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testMissingAndOr() throws Exception {
 		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int val = 1;
 		where.eq(Foo.VAL_COLUMN_NAME, val);
 		where.eq(Foo.VAL_COLUMN_NAME, val);
-		where.appendSql(null, new StringBuilder(), new ArrayList<ArgumentHolder>());
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			where.appendSql(null, new StringBuilder(), new ArrayList<ArgumentHolder>());
+		});
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testMissingClause() throws Exception {
 		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
-		int val = 1;
-		where.and();
-		where.eq(Foo.VAL_COLUMN_NAME, val);
-		where.appendSql(null, new StringBuilder(), new ArrayList<ArgumentHolder>());
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			where.and();
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testComparisonUnknownField() throws Exception {
 		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		int val = 1;
-		where.eq("unknown-field", val);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			where.eq("unknown-field", val);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testComparisonFieldNameNotColumnName() throws Exception {
 		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		assertNotNull(Foo.class.getDeclaredField(Foo.ID_COLUMN_NAME));
 		int val = 1;
-		where.eq("stringField", val);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			where.eq("stringField", val);
+		});
 	}
 
 	@Test
@@ -300,11 +308,13 @@ public class WhereTest extends BaseCoreTest {
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testInArrayWithinArray() throws Exception {
 		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
 		// NOTE: we can't pass in vals here
-		where.in(Foo.VAL_COLUMN_NAME, new int[] { 112 });
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			where.in(Foo.VAL_COLUMN_NAME, new int[] { 112 });
+		});
 	}
 
 	@Test
@@ -459,10 +469,12 @@ public class WhereTest extends BaseCoreTest {
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
-	@Test(expected = SQLException.class)
-	public void testIdEqNoId() throws Exception {
-		new Where<FooNoId, Integer>(new TableInfo<FooNoId, Integer>(databaseType, FooNoId.class), null, databaseType)
-				.idEq(100);
+	@Test
+	public void testIdEqNoId() {
+		assertThrowsExactly(SQLException.class, () -> {
+			new Where<FooNoId, Integer>(new TableInfo<FooNoId, Integer>(databaseType, FooNoId.class), null,
+					databaseType).idEq(100);
+		});
 	}
 
 	@Test
@@ -484,11 +496,13 @@ public class WhereTest extends BaseCoreTest {
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
-	@Test(expected = SQLException.class)
-	public void testIdEqObjectIdNoId() throws Exception {
-		new Where<FooNoId, Integer>(new TableInfo<FooNoId, Integer>(databaseType, FooNoId.class), null, databaseType)
-				.idEq(new BaseDaoImpl<FooNoId, Integer>(connectionSource, FooNoId.class) {
-				}, new FooNoId());
+	@Test
+	public void testIdEqObjectIdNoId() {
+		assertThrowsExactly(SQLException.class, () -> {
+			new Where<FooNoId, Integer>(new TableInfo<FooNoId, Integer>(databaseType, FooNoId.class), null,
+					databaseType).idEq(new BaseDaoImpl<FooNoId, Integer>(connectionSource, FooNoId.class) {
+					}, new FooNoId());
+		});
 	}
 
 	@Test
@@ -537,7 +551,7 @@ public class WhereTest extends BaseCoreTest {
 		assertEquals(foo1.val, results.get(0).val);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testInSubQueryToManySubColumns() throws Exception {
 		TableInfo<ForeignFoo, Integer> tableInfo = new TableInfo<ForeignFoo, Integer>(databaseType, ForeignFoo.class);
 		Where<ForeignFoo, Integer> where = new Where<ForeignFoo, Integer>(tableInfo, null, databaseType);
@@ -546,7 +560,9 @@ public class WhereTest extends BaseCoreTest {
 				};
 		QueryBuilder<ForeignFoo, Integer> qb = foreignDao.queryBuilder();
 		qb.selectColumns(ID_COLUMN_NAME, FOREIGN_COLUMN_NAME);
-		where.in(ID_COLUMN_NAME, qb);
+		assertThrowsExactly(SQLException.class, () -> {
+			where.in(ID_COLUMN_NAME, qb);
+		});
 	}
 
 	@Test
@@ -672,10 +688,12 @@ public class WhereTest extends BaseCoreTest {
 		assertEquals(val, results.get(0).val);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testRawArgsNoColumnName() throws Exception {
 		Dao<Foo, String> dao = createDao(Foo.class, true);
-		dao.queryBuilder().where().raw("id = ?", new SelectArg(7));
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			dao.queryBuilder().where().raw("id = ?", new SelectArg(7));
+		});
 	}
 
 	@Test
@@ -812,10 +830,12 @@ public class WhereTest extends BaseCoreTest {
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testOrManyZero() throws Exception {
 		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
-		where.or(0);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			where.or(0);
+		});
 	}
 
 	@Test
@@ -835,10 +855,12 @@ public class WhereTest extends BaseCoreTest {
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testAndManyZero() throws Exception {
 		Where<Foo, String> where = new Where<Foo, String>(createTableInfo(), null, databaseType);
-		where.and(0);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			where.and(0);
+		});
 	}
 
 	@Test
@@ -858,28 +880,32 @@ public class WhereTest extends BaseCoreTest {
 		assertEquals(sb.toString(), whereSb.toString());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testInnerQuerySubQueryWhere() throws Exception {
 		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 
-		fooDao.queryBuilder()
-				.where()
-				.in(Foo.ID_COLUMN_NAME,
-						// this is a problem because eq() returns a Where not a QueryBuilder
-						fooDao.queryBuilder().selectColumns(Foo.ID_COLUMN_NAME).where().eq(Foo.ID_COLUMN_NAME, 1))
-				.query();
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			fooDao.queryBuilder()
+					.where()
+					.in(Foo.ID_COLUMN_NAME,
+							// this is a problem because eq() returns a Where not a QueryBuilder
+							fooDao.queryBuilder().selectColumns(Foo.ID_COLUMN_NAME).where().eq(Foo.ID_COLUMN_NAME, 1))
+					.query();
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testInnerQuerySubQueryPrepared() throws Exception {
 		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 
-		fooDao.queryBuilder()
-				.where()
-				.in(Foo.ID_COLUMN_NAME,
-						// this is a problem because prepare() returns a PreparedStmt not a QueryBuilder
-						fooDao.queryBuilder().selectColumns(Foo.ID_COLUMN_NAME).prepare())
-				.query();
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			fooDao.queryBuilder()
+					.where()
+					.in(Foo.ID_COLUMN_NAME,
+							// this is a problem because prepare() returns a PreparedStmt not a QueryBuilder
+							fooDao.queryBuilder().selectColumns(Foo.ID_COLUMN_NAME).prepare())
+					.query();
+		});
 	}
 
 	@Test

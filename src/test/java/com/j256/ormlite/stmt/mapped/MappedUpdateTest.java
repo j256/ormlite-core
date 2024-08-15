@@ -3,11 +3,12 @@ package com.j256.ormlite.stmt.mapped;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import java.sql.SQLException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.Dao;
@@ -29,13 +30,15 @@ public class MappedUpdateTest extends BaseCoreTest {
 		replay(connectionSource);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testUpdateNoId() throws Exception {
 		StatementExecutor<NoId, String> se = new StatementExecutor<NoId, String>(databaseType,
 				new TableInfo<NoId, String>(databaseType, NoId.class), null);
 		NoId noId = new NoId();
 		noId.stuff = "1";
-		se.update(null, noId, null);
+		assertThrowsExactly(SQLException.class, () -> {
+			se.update(null, noId, null);
+		});
 	}
 
 	@Test
@@ -48,16 +51,20 @@ public class MappedUpdateTest extends BaseCoreTest {
 		assertEquals(0, se.update(null, justId, null));
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testNoIdBuildUpdater() throws Exception {
 		Dao<NoId, Void> dao = createDao(NoId.class, false);
-		MappedUpdate.build(dao, new TableInfo<NoId, Void>(databaseType, NoId.class));
+		assertThrowsExactly(SQLException.class, () -> {
+			MappedUpdate.build(dao, new TableInfo<NoId, Void>(databaseType, NoId.class));
+		});
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testJustIdBuildUpdater() throws Exception {
 		Dao<NoId, Void> dao = createDao(NoId.class, false);
-		MappedUpdate.build(dao, new TableInfo<NoId, Void>(databaseType, NoId.class));
+		assertThrowsExactly(SQLException.class, () -> {
+			MappedUpdate.build(dao, new TableInfo<NoId, Void>(databaseType, NoId.class));
+		});
 	}
 
 	protected static class JustId {

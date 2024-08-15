@@ -1,10 +1,11 @@
 package com.j256.ormlite.field.types;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import java.sql.SQLException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
@@ -38,9 +39,11 @@ public class CharObjectTypeTest extends BaseTypeTest {
 				false, false, true, false);
 	}
 
-	@Test(expected = SQLException.class)
-	public void testInvalidDefault() throws Exception {
-		createDao(InvalidDefault.class, true);
+	@Test
+	public void testInvalidDefault() {
+		assertThrowsExactly(SQLException.class, () -> {
+			createDao(InvalidDefault.class, true);
+		});
 	}
 
 	/* ============================================================================================ */

@@ -1,11 +1,12 @@
 package com.j256.ormlite.stmt.query;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.stmt.ArgumentHolder;
 import com.j256.ormlite.stmt.BaseCoreStmtTest;
@@ -27,15 +28,19 @@ public class BetweenTest extends BaseCoreStmtTest {
 		assertEquals(low + " AND " + high + " ", sb.toString());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testAppendValueLowNull() throws Exception {
-		new Between(COLUMN_NAME, numberFieldType, null, 20L).appendValue(null, new StringBuilder(),
-				new ArrayList<ArgumentHolder>());
+	@Test
+	public void testAppendValueLowNull() {
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			new Between(COLUMN_NAME, numberFieldType, null, 20L).appendValue(null, new StringBuilder(),
+					new ArrayList<ArgumentHolder>());
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testAppendValueHighNull() throws Exception {
-		new Between(COLUMN_NAME, numberFieldType, 10L, null).appendValue(null, new StringBuilder(),
-				new ArrayList<ArgumentHolder>());
+	@Test
+	public void testAppendValueHighNull() {
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			new Between(COLUMN_NAME, numberFieldType, 10L, null).appendValue(null, new StringBuilder(),
+					new ArrayList<ArgumentHolder>());
+		});
 	}
 }

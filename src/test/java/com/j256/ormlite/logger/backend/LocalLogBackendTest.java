@@ -1,12 +1,15 @@
 package com.j256.ormlite.logger.backend;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTimeout;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.time.Duration;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.logger.LogBackend;
@@ -34,18 +37,20 @@ public class LocalLogBackendTest extends BaseLogBackendTest {
 		}
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testInvalidLevelProperty() {
 		System.setProperty(LoggerConstants.LOCAL_LOG_LEVEL_PROPERTY, "not a valid level");
 		try {
-			new LocalLogBackend("foo");
+			assertThrowsExactly(IllegalArgumentException.class, () -> {
+				new LocalLogBackend("foo");
+			});
 		} finally {
 			System.clearProperty(LoggerConstants.LOCAL_LOG_LEVEL_PROPERTY);
 		}
 	}
 
-	@Test(timeout = 10000)
-	public void testFileProperty() throws Exception {
+	@Test
+	public void testFileProperty() {
 		String logPath = "target/foo.txt";
 		File logFile = new File(logPath);
 		logFile.delete();
@@ -57,18 +62,22 @@ public class LocalLogBackendTest extends BaseLogBackendTest {
 			log.log(Level.FATAL, msg);
 			log.flush();
 			assertTrue(logFile.exists());
-			while (logFile.length() < msg.length()) {
-				Thread.sleep(100);
-			}
+			assertTimeout(Duration.ofSeconds(10), () -> {
+				while (logFile.length() < msg.length()) {
+					Thread.sleep(100);
+				}
+			});
 		} finally {
 			LocalLogBackend.openLogFile(null);
 			logFile.delete();
 		}
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testInvalidFileProperty() {
-		LocalLogBackend.openLogFile("not-a-proper-directory-name-we-hope/foo.txt");
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			LocalLogBackend.openLogFile("not-a-proper-directory-name-we-hope/foo.txt");
+		});
 	}
 
 	@Test

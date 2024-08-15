@@ -8,16 +8,17 @@ import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.isNull;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import java.sql.SQLException;
 import java.util.List;
 
 import org.easymock.IAnswer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
@@ -104,7 +105,7 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 		MappedCreate.build(dao, new TableInfo<GeneratedId, Integer>(databaseType, GeneratedId.class));
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testSequenceZero() throws Exception {
 		DatabaseConnection databaseConnection = createMock(DatabaseConnection.class);
 		expect(databaseConnection.queryForLong(isA(String.class))).andReturn(0L);
@@ -113,7 +114,9 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 		Dao<GeneratedIdSequence, Integer> dao = createDao(GeneratedIdSequence.class, false);
 		MappedCreate<GeneratedIdSequence, Integer> mappedCreate = MappedCreate.build(dao,
 				new TableInfo<GeneratedIdSequence, Integer>(databaseType, GeneratedIdSequence.class));
-		mappedCreate.insert(needsSequence, databaseConnection, new GeneratedIdSequence(), null);
+		assertThrowsExactly(SQLException.class, () -> {
+			mappedCreate.insert(needsSequence, databaseConnection, new GeneratedIdSequence(), null);
+		});
 		verify(databaseConnection);
 	}
 
@@ -217,10 +220,11 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 		assertEquals(foo2.id, result.id);
 		assertFalse(foo2.id == foo.id);
 
+		int id = 10002;
 		AllowGeneratedIdInsertObject foo3 = new AllowGeneratedIdInsertObject();
-		foo3.id = 10002;
+		foo3.id = id;
 		assertEquals(1, dao.create(foo3));
-		result = dao.queryForId(foo3.id);
+		result = dao.queryForId(id);
 		assertNotNull(result);
 		assertEquals(foo3.id, result.id);
 		assertFalse(foo3.id == foo.id);
@@ -267,7 +271,7 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 		assertEquals(foreign.id, results.get(0).id);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testArgumentHolderDoubleSet() throws Exception {
 		TableInfo<Foo, Integer> tableInfo = new TableInfo<Foo, Integer>(databaseType, Foo.class);
 		Dao<Foo, Integer> dao = createDao(Foo.class, false);
@@ -284,10 +288,13 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 					}
 				});
 		replay(conn);
-		mappedCreate.insert(databaseType, conn, new Foo(), null);
+		assertThrowsExactly(SQLException.class, () -> {
+			mappedCreate.insert(databaseType, conn, new Foo(), null);
+		});
+		verify(conn);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testArgumentHolderSetZero() throws Exception {
 		TableInfo<Foo, Integer> tableInfo = new TableInfo<Foo, Integer>(databaseType, Foo.class);
 		Dao<Foo, Integer> dao = createDao(Foo.class, false);
@@ -303,10 +310,13 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 					}
 				});
 		replay(conn);
-		mappedCreate.insert(databaseType, conn, new Foo(), null);
+		assertThrowsExactly(SQLException.class, () -> {
+			mappedCreate.insert(databaseType, conn, new Foo(), null);
+		});
+		verify(conn);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testArgumentHolderNotSet() throws Exception {
 		TableInfo<Foo, Integer> tableInfo = new TableInfo<Foo, Integer>(databaseType, Foo.class);
 		Dao<Foo, Integer> dao = createDao(Foo.class, false);
@@ -315,7 +325,10 @@ public class MappedCreateTest extends BaseCoreStmtTest {
 		expect(conn.insert(isA(String.class), isA(Object[].class), isA(FieldType[].class),
 				isA(GeneratedKeyHolder.class))).andReturn(1);
 		replay(conn);
-		mappedCreate.insert(databaseType, conn, new Foo(), null);
+		assertThrowsExactly(SQLException.class, () -> {
+			mappedCreate.insert(databaseType, conn, new Foo(), null);
+		});
+		verify(conn);
 	}
 
 	@Test

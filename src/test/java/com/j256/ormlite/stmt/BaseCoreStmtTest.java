@@ -1,10 +1,10 @@
 package com.j256.ormlite.stmt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.lang.reflect.Field;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.field.FieldType;
@@ -19,7 +19,7 @@ public abstract class BaseCoreStmtTest extends BaseCoreTest {
 	protected FieldType foreignFieldType;
 
 	@Override
-	@Before
+	@BeforeEach
 	public void before() throws Exception {
 		super.before();
 

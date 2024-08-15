@@ -8,10 +8,11 @@ import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;
@@ -21,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.Dao;
@@ -85,36 +86,42 @@ public class TableUtilsTest extends BaseCoreTest {
 		});
 	}
 
-	@Test(expected = SQLException.class)
-	public void testCreateTableThrow() throws Exception {
+	@Test
+	public void testCreateTableThrow() {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
-		testCreate("localfoo", connectionSource, databaseType, 1, true, null, new Callable<Integer>() {
-			@Override
-			public Integer call() throws Exception {
-				return TableUtils.createTable(connectionSource, LocalFoo.class);
-			}
+		assertThrowsExactly(SQLException.class, () -> {
+			testCreate("localfoo", connectionSource, databaseType, 1, true, null, new Callable<Integer>() {
+				@Override
+				public Integer call() throws Exception {
+					return TableUtils.createTable(connectionSource, LocalFoo.class);
+				}
+			});
 		});
 	}
 
-	@Test(expected = SQLException.class)
-	public void testCreateTableAboveZero() throws Exception {
+	@Test
+	public void testCreateTableAboveZero() {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
-		testCreate("localfoo", connectionSource, databaseType, 1, false, null, new Callable<Integer>() {
-			@Override
-			public Integer call() throws Exception {
-				return TableUtils.createTable(connectionSource, LocalFoo.class);
-			}
+		assertThrowsExactly(SQLException.class, () -> {
+			testCreate("localfoo", connectionSource, databaseType, 1, false, null, new Callable<Integer>() {
+				@Override
+				public Integer call() throws Exception {
+					return TableUtils.createTable(connectionSource, LocalFoo.class);
+				}
+			});
 		});
 	}
 
-	@Test(expected = SQLException.class)
-	public void testCreateTableBelowZero() throws Exception {
+	@Test
+	public void testCreateTableBelowZero() {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
-		testCreate("localfoo", connectionSource, databaseType, -1, false, null, new Callable<Integer>() {
-			@Override
-			public Integer call() throws Exception {
-				return TableUtils.createTable(connectionSource, LocalFoo.class);
-			}
+		assertThrowsExactly(SQLException.class, () -> {
+			testCreate("localfoo", connectionSource, databaseType, -1, false, null, new Callable<Integer>() {
+				@Override
+				public Integer call() throws Exception {
+					return TableUtils.createTable(connectionSource, LocalFoo.class);
+				}
+			});
 		});
 	}
 
@@ -141,14 +148,16 @@ public class TableUtilsTest extends BaseCoreTest {
 		});
 	}
 
-	@Test(expected = SQLException.class)
-	public void testDropTableThrow() throws Exception {
+	@Test
+	public void testDropTableThrow() {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
-		testDrop("localfoo", connectionSource, 0, true, new Callable<Integer>() {
-			@Override
-			public Integer call() throws Exception {
-				return (int) TableUtils.dropTable(connectionSource, LocalFoo.class, false);
-			}
+		assertThrowsExactly(SQLException.class, () -> {
+			testDrop("localfoo", connectionSource, 0, true, new Callable<Integer>() {
+				@Override
+				public Integer call() throws Exception {
+					return (int) TableUtils.dropTable(connectionSource, LocalFoo.class, false);
+				}
+			});
 		});
 	}
 
@@ -163,14 +172,16 @@ public class TableUtilsTest extends BaseCoreTest {
 		});
 	}
 
-	@Test(expected = SQLException.class)
-	public void testDropTableNegRows() throws Exception {
+	@Test
+	public void testDropTableNegRows() {
 		final ConnectionSource connectionSource = createMock(ConnectionSource.class);
-		testDrop("localfoo", connectionSource, -1, false, new Callable<Integer>() {
-			@Override
-			public Integer call() throws Exception {
-				return (int) TableUtils.dropTable(connectionSource, LocalFoo.class, false);
-			}
+		assertThrowsExactly(SQLException.class, () -> {
+			testDrop("localfoo", connectionSource, -1, false, new Callable<Integer>() {
+				@Override
+				public Integer call() throws Exception {
+					return (int) TableUtils.dropTable(connectionSource, LocalFoo.class, false);
+				}
+			});
 		});
 	}
 
@@ -201,7 +212,7 @@ public class TableUtilsTest extends BaseCoreTest {
 					public CompiledStatement answer() {
 						Object[] args = EasyMock.getCurrentArguments();
 						assertNotNull(args);
-						assertEquals("was expecting a call with 5 args", 5, args.length);
+						assertEquals(5, args.length, "was expecting a call with 5 args");
 						if (stmtC == 0) {
 							assertEquals("CREATE TABLE `index` (`stuff` VARCHAR(255) ) ", args[0]);
 						} else if (stmtC == 1) {
@@ -247,7 +258,7 @@ public class TableUtilsTest extends BaseCoreTest {
 					public CompiledStatement answer() {
 						Object[] args = EasyMock.getCurrentArguments();
 						assertNotNull(args);
-						assertEquals("was expecting a call with 5 args", 5, args.length);
+						assertEquals(5, args.length, "was expecting a call with 5 args");
 						String statement = (String) args[0];
 						if (stmtC == 0) {
 							assertTrue(statement.startsWith("CREATE TABLE `comboindex` ("));
@@ -299,7 +310,7 @@ public class TableUtilsTest extends BaseCoreTest {
 					public CompiledStatement answer() {
 						Object[] args = EasyMock.getCurrentArguments();
 						assertNotNull(args);
-						assertEquals("was expecting a call with 5 args", 5, args.length);
+						assertEquals(5, args.length, "was expecting a call with 5 args");
 						if (stmtC == 0) {
 							assertEquals("CREATE TABLE `uniqueindex` (`stuff` VARCHAR(255) ) ", args[0]);
 						} else if (stmtC == 1) {
@@ -509,7 +520,7 @@ public class TableUtilsTest extends BaseCoreTest {
 		sb.setLength(0);
 		databaseType.appendEscapedEntityName(sb, LocalFoo.ID_FIELD_NAME);
 		sb.append(" INTEGER ");
-		assertTrue(statement + " should have the id field", statement.contains(sb.toString()));
+		assertTrue(statement.contains(sb.toString()), statement + " should have the id field");
 
 		sb.setLength(0);
 		databaseType.appendEscapedEntityName(sb, LocalFoo.NAME_FIELD_NAME);

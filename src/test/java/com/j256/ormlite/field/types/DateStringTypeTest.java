@@ -1,9 +1,10 @@
 package com.j256.ormlite.field.types;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -16,7 +17,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.LockedConnectionSource;
 import com.j256.ormlite.dao.Dao;
@@ -63,14 +64,16 @@ public class DateStringTypeTest extends BaseTypeTest {
 				false, false, true, false);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testDateStringParseInvalid() throws Exception {
 		FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME,
 				LocalDateString.class.getDeclaredField(DATE_COLUMN), LocalDateString.class);
-		DataType.DATE_STRING.getDataPersister().parseDefaultString(fieldType, "not valid date string");
+		assertThrowsExactly(SQLException.class, () -> {
+			DataType.DATE_STRING.getDataPersister().parseDefaultString(fieldType, "not valid date string");
+		});
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testDateStringResultInvalid() throws Exception {
 		Class<LocalString> clazz = LocalString.class;
 		Dao<LocalString, Object> dao = createDao(clazz, true);
@@ -85,7 +88,9 @@ public class DateStringTypeTest extends BaseTypeTest {
 			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
 			int colNum = results.findColumn(STRING_COLUMN);
-			DataType.DATE_STRING.getDataPersister().resultToJava(null, results, colNum);
+			assertThrowsExactly(SQLException.class, () -> {
+				DataType.DATE_STRING.getDataPersister().resultToJava(null, results, colNum);
+			});
 		} finally {
 			if (stmt != null) {
 				stmt.close();

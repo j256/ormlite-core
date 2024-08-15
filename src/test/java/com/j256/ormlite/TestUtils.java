@@ -2,8 +2,6 @@ package com.j256.ormlite;
 
 import java.io.File;
 
-import org.junit.Ignore;
-
 import com.j256.ormlite.db.DatabaseType;
 
 /**
@@ -11,7 +9,6 @@ import com.j256.ormlite.db.DatabaseType;
  * 
  * @author graywatson
  */
-@Ignore("Test utilities and not tests")
 public class TestUtils {
 
 	public static void deleteDirectory(File directory) {

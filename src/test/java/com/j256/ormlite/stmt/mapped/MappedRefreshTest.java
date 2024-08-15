@@ -1,10 +1,11 @@
 package com.j256.ormlite.stmt.mapped;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import java.sql.SQLException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.Dao;
@@ -26,7 +27,7 @@ public class MappedRefreshTest extends BaseCoreTest {
 		assertEquals(1, fooDao.refresh(foo1));
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testRefreshDouble() throws Exception {
 		// don't try this at home folks
 
@@ -49,7 +50,9 @@ public class MappedRefreshTest extends BaseCoreTest {
 		assertEquals(1, fooNotIdDao.create(fooNotId));
 
 		// refresh should not work becaue there are 2 classes which match this id
-		fooDao.refresh(foo);
+		assertThrowsExactly(SQLException.class, () -> {
+			fooDao.refresh(foo);
+		});
 	}
 
 	private final static String FOO_TABLE_NAME = "foo";

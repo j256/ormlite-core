@@ -1,6 +1,6 @@
 package com.j256.ormlite.logger.backend;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;

@@ -1,13 +1,14 @@
 package com.j256.ormlite.field.types;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import java.sql.SQLException;
 import java.util.UUID;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
@@ -59,17 +60,19 @@ public class UuidTypeTest extends BaseTypeTest {
 		assertEquals(UUID.fromString(DEFAULT_VALUE), foo.uuid);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testUuidInvalidDefault() throws Exception {
 		Dao<UuidClassInvalidDefault, Object> dao = createDao(UuidClassInvalidDefault.class, true);
 		UuidClassInvalidDefault foo = new UuidClassInvalidDefault();
 		dao.create(foo);
 
 		assertNull(foo.uuid);
-		dao.refresh(foo);
+		assertThrowsExactly(SQLException.class, () -> {
+			dao.refresh(foo);
+		});
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testUuidString() throws Exception {
 		Dao<UuidString, Integer> stringDao = createDao(UuidString.class, true);
 		UuidString uuidString = new UuidString();
@@ -77,7 +80,9 @@ public class UuidTypeTest extends BaseTypeTest {
 		assertEquals(1, stringDao.create(uuidString));
 
 		Dao<UuidClass, Integer> uuidDao = createDao(UuidClass.class, false);
-		uuidDao.queryForId(uuidString.id);
+		assertThrowsExactly(SQLException.class, () -> {
+			uuidDao.queryForId(uuidString.id);
+		});
 	}
 
 	@Test

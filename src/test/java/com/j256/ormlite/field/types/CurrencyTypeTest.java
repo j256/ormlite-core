@@ -1,14 +1,15 @@
 package com.j256.ormlite.field.types;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import java.sql.SQLException;
 import java.util.Currency;
 import java.util.Locale;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
@@ -45,14 +46,11 @@ public class CurrencyTypeTest extends BaseTypeTest {
 		assertEquals(Currency.getInstance(DEFAULT_VALUE), foo.currency);
 	}
 
-	@Test(expected = SQLException.class)
-	public void testCurrencyInvalidDefault() throws Exception {
-		Dao<CurrencyInvalidDefault, Object> dao = createDao(CurrencyInvalidDefault.class, true);
-		CurrencyInvalidDefault foo = new CurrencyInvalidDefault();
-		dao.create(foo);
-
-		assertNull(foo.currency);
-		dao.refresh(foo);
+	@Test
+	public void testCurrencyInvalidDefault() {
+		assertThrowsExactly(SQLException.class, () -> {
+			createDao(CurrencyInvalidDefault.class, true);
+		});
 	}
 
 	@Test

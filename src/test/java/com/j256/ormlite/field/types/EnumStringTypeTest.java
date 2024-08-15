@@ -1,12 +1,13 @@
 package com.j256.ormlite.field.types;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.SQLException;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
@@ -70,14 +71,16 @@ public class EnumStringTypeTest extends BaseTypeTest {
 		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testUnknownEnumValue() throws Exception {
 		Dao<LocalEnumString, Object> dao = createDao(LocalEnumString.class, true);
 		LocalEnumString localEnumString = new LocalEnumString();
 		localEnumString.ourEnum = OurEnum.FIRST;
 		assertEquals(1, dao.create(localEnumString));
 		assertEquals(1, dao.updateRaw("UPDATE Foo set ourEnum = 'THIRD'"));
-		dao.queryForAll();
+		assertThrowsExactly(SQLException.class, () -> {
+			dao.queryForAll();
+		});
 	}
 
 	@Test
@@ -102,9 +105,11 @@ public class EnumStringTypeTest extends BaseTypeTest {
 		assertEquals(OurEnum.SECOND, unknowns.get(0).ourEnum);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testNotEnum() throws Exception {
-		createDao(NotEnum.class, true);
+	@Test
+	public void testNotEnum() {
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			createDao(NotEnum.class, true);
+		});
 	}
 
 	@Test
@@ -112,9 +117,11 @@ public class EnumStringTypeTest extends BaseTypeTest {
 		new EnumStringType(SqlType.STRING, new Class[0]);
 	}
 
-	@Test(expected = SQLException.class)
-	public void testGenericEnum() throws Exception {
-		createDao(InvalidGenericEnumField.class, true);
+	@Test
+	public void testGenericEnum() {
+		assertThrowsExactly(SQLException.class, () -> {
+			createDao(InvalidGenericEnumField.class, true);
+		});
 	}
 
 	/* ================================================================================ */

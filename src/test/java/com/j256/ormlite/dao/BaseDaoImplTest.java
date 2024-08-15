@@ -5,14 +5,16 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reset;
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.Constructor;
 import java.sql.Connection;
@@ -29,7 +31,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.h2.api.Trigger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.Dao.CreateOrUpdateStatus;
@@ -65,11 +67,13 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		dao.initialize();
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testInitNoConnectionSource() throws Exception {
 		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
-		dao.initialize();
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			dao.initialize();
+		});
 	}
 
 	@Test
@@ -88,7 +92,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(equal, result.equal);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryForIdThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -99,7 +103,9 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.queryForId(foo.id);
+			assertThrows(SQLException.class, () -> {
+				dao.queryForId(foo.id);
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
@@ -172,14 +178,16 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		dao.closeLastIterator();
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testCreateThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.create(foo);
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.create(foo);
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
@@ -191,12 +199,14 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(0, dao.create((Foo) null));
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testCreateNoInit() throws Exception {
 		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		dao.setConnectionSource(connectionSource);
-		assertEquals(0, dao.create((Foo) null));
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			dao.create((Foo) null);
+		});
 	}
 
 	@Test
@@ -208,7 +218,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(1, dao.update(foo));
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testUpdateThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -216,7 +226,9 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.update(foo);
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.update(foo);
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
@@ -230,12 +242,14 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(0, dao.update((Foo) null));
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testUpdateNoInit() throws Exception {
 		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		dao.setConnectionSource(connectionSource);
-		assertEquals(0, dao.update((Foo) null));
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			dao.update((Foo) null);
+		});
 	}
 
 	@Test
@@ -251,7 +265,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertNotNull(dao.queryForId(id + 1));
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testUpdateIdThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -260,7 +274,9 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		try {
 			// close connection
 			conn.close();
-			dao.updateId(foo, foo.id + 1);
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.updateId(foo, foo.id + 1);
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
@@ -274,12 +290,14 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(0, dao.updateId(null, null));
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testUpdateIdNoInit() throws Exception {
 		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		dao.setConnectionSource(connectionSource);
-		assertEquals(0, dao.updateId(null, null));
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			dao.updateId(null, null);
+		});
 	}
 
 	@Test
@@ -306,7 +324,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(2, dao.queryForAll().size());
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testUpdatePreparedThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -316,7 +334,9 @@ public class BaseDaoImplTest extends BaseCoreTest {
 			conn.close();
 			UpdateBuilder<Foo, Integer> ub = dao.updateBuilder();
 			ub.updateColumnValue(Foo.EQUAL_COLUMN_NAME, 1);
-			dao.update(ub.prepare());
+			assertThrows(SQLException.class, () -> {
+				dao.update(ub.prepare());
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
@@ -333,7 +353,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(0, dao.queryForAll().size());
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testDeleteThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -341,7 +361,9 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.delete(foo);
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.delete(foo);
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
@@ -355,12 +377,14 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(0, dao.delete((Foo) null));
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testDeleteNoInit() throws Exception {
 		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		dao.setConnectionSource(connectionSource);
-		assertEquals(0, dao.delete((Foo) null));
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			dao.delete((Foo) null);
+		});
 	}
 
 	@Test
@@ -374,7 +398,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(0, dao.queryForAll().size());
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testDeleteByIdThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -382,7 +406,9 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.deleteById(foo.id);
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.deleteById(foo.id);
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
@@ -415,7 +441,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertNull(dao.queryForId(foo2.id));
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testDeleteCollectionThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -425,7 +451,9 @@ public class BaseDaoImplTest extends BaseCoreTest {
 			conn.close();
 			List<Foo> foos = new ArrayList<Foo>();
 			foos.add(foo);
-			dao.delete(foos);
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.delete(foos);
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
@@ -448,12 +476,14 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertNotNull(dao.queryForId(foo2.id));
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testDeleteCollectionNoInit() throws Exception {
 		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		dao.setConnectionSource(connectionSource);
-		assertEquals(0, dao.delete((List<Foo>) null));
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			dao.delete((List<Foo>) null);
+		});
 	}
 
 	@Test
@@ -476,7 +506,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertNull(dao.queryForId(foo2.id));
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testDeleteIdsThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -486,7 +516,9 @@ public class BaseDaoImplTest extends BaseCoreTest {
 			conn.close();
 			List<Integer> foos = new ArrayList<Integer>();
 			foos.add(foo.id);
-			dao.deleteIds(foos);
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.deleteIds(foos);
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
@@ -501,12 +533,14 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(0, dao.deleteIds(fooList));
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testDeleteIdsNoInit() throws Exception {
 		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		dao.setConnectionSource(connectionSource);
-		assertEquals(0, dao.deleteIds((List<Integer>) null));
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			dao.deleteIds((List<Integer>) null);
+		});
 	}
 
 	@Test
@@ -529,7 +563,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertNotNull(dao.queryForId(foo2.id));
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testDeletePreparedThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -537,7 +571,9 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.delete(dao.deleteBuilder().prepare());
+			assertThrows(SQLException.class, () -> {
+				dao.delete(dao.deleteBuilder().prepare());
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
@@ -564,7 +600,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(equal2, foo.equal);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testRefreshThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -572,7 +608,9 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.refresh(foo);
+			assertThrows(SQLException.class, () -> {
+				dao.refresh(foo);
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
@@ -586,12 +624,14 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(0, dao.refresh(null));
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testRefreshNoInit() throws Exception {
 		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		dao.setConnectionSource(connectionSource);
-		assertEquals(0, dao.refresh(null));
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			dao.refresh(null);
+		});
 	}
 
 	@Test
@@ -600,18 +640,22 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		};
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testNoDatabaseType() throws Exception {
 		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
-		dao.initialize();
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			dao.initialize();
+		});
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testQueryForIdNoInit() throws Exception {
 		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
-		dao.queryForId(1);
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			dao.queryForId(1);
+		});
 	}
 
 	@Test
@@ -631,7 +675,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(foo1.id, foo3.id);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryForFirstThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -642,13 +686,15 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.queryForFirst(dao.queryBuilder().prepare());
+			assertThrows(SQLException.class, () -> {
+				dao.queryForFirst(dao.queryBuilder().prepare());
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryForFirstNoArgThrow() throws Exception {
 		Dao<CreateOrUpdateObjectId, Integer> dao = createDao(CreateOrUpdateObjectId.class, true);
 		CreateOrUpdateObjectId foo = new CreateOrUpdateObjectId();
@@ -656,7 +702,9 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.queryForFirst();
+			assertThrows(SQLException.class, () -> {
+				dao.queryForFirst();
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
@@ -668,25 +716,31 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertNull(dao.queryForFirst(dao.queryBuilder().prepare()));
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testStatementBuilderNoInit() throws Exception {
 		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
-		dao.queryBuilder();
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			dao.queryBuilder();
+		});
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testQueryForFirstNoInit() throws Exception {
 		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
-		dao.queryForFirst(null);
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			dao.queryForFirst(null);
+		});
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testQueryForPreparedNoInit() throws Exception {
 		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
-		dao.query((PreparedQuery<Foo>) null);
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			dao.query((PreparedQuery<Foo>) null);
+		});
 	}
 
 	@Test
@@ -699,12 +753,14 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertTrue(objStr.contains("id=" + foo.id));
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testObjectToStringNoInit() throws Exception {
 		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		dao.setConnectionSource(connectionSource);
-		dao.objectToString(new Foo());
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			dao.objectToString(new Foo());
+		});
 	}
 
 	@Test
@@ -725,12 +781,14 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertFalse(dao.objectsEqual(bar, foo));
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testObjectsEqualNoInit() throws Exception {
 		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		dao.setConnectionSource(connectionSource);
-		dao.objectsEqual(new Foo(), new Foo());
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			dao.objectsEqual(new Foo(), new Foo());
+		});
 	}
 
 	@Test
@@ -800,7 +858,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(foo1.equal, Integer.parseInt(row[1]));
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryRawThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -808,13 +866,15 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.queryRaw("SELECT * FROM FOO");
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.queryRaw("SELECT * FROM FOO");
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryRawStringsThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -822,13 +882,15 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.queryRaw("SELECT * FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", Integer.toString(foo.id));
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.queryRaw("SELECT * FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", Integer.toString(foo.id));
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryRawArgumentHoldersThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -836,14 +898,16 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.queryRaw("SELECT * FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?",
-					new SelectArg(SqlType.INTEGER, foo.id));
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.queryRaw("SELECT * FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?",
+						new SelectArg(SqlType.INTEGER, foo.id));
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryArgumentHolderNoSqltype() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
@@ -858,8 +922,10 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		QueryBuilder<Foo, Integer> queryBuilder = dao.queryBuilder();
 		queryBuilder.where().eq(Foo.ID_COLUMN_NAME, foo1.id);
 
-		dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME + " FROM FOO WHERE "
-				+ Foo.ID_COLUMN_NAME + " = ?", new SelectArg(Foo.ID_COLUMN_NAME, foo1.id));
+		assertThrowsExactly(SQLException.class, () -> {
+			dao.queryRaw("SELECT " + Foo.ID_COLUMN_NAME + "," + Foo.EQUAL_COLUMN_NAME + " FROM FOO WHERE "
+					+ Foo.ID_COLUMN_NAME + " = ?", new SelectArg(Foo.ID_COLUMN_NAME, foo1.id));
+		});
 	}
 
 	@Test
@@ -903,7 +969,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(0, resultList.get(0).equal);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryRawRowMapperThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -911,13 +977,15 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.queryRaw("SELECT * FROM FOO", dao.getRawRowMapper());
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.queryRaw("SELECT * FROM FOO", dao.getRawRowMapper());
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryRawRowMapperStringsThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -925,14 +993,16 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.queryRaw("SELECT * FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", dao.getRawRowMapper(),
-					Integer.toString(foo.id));
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.queryRaw("SELECT * FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", dao.getRawRowMapper(),
+						Integer.toString(foo.id));
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryRawRowMapperArgumentHoldersThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -940,8 +1010,10 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.queryRaw("SELECT * FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", dao.getRawRowMapper(),
-					new SelectArg(SqlType.INTEGER, foo.id));
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.queryRaw("SELECT * FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", dao.getRawRowMapper(),
+						new SelectArg(SqlType.INTEGER, foo.id));
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
@@ -1002,7 +1074,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(foo1.equal, row[1]);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryRawObjectsThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -1010,13 +1082,15 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.queryRaw("SELECT * FROM FOO", new DataType[0]);
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.queryRaw("SELECT * FROM FOO", new DataType[0]);
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryRawObjectsStringsThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -1024,14 +1098,16 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.queryRaw("SELECT * FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", new DataType[0],
-					Integer.toString(foo.id));
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.queryRaw("SELECT * FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", new DataType[0],
+						Integer.toString(foo.id));
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryRawObjectsArgumentHoldersThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -1039,8 +1115,10 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.queryRaw("SELECT * FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", new DataType[0],
-					new SelectArg(SqlType.INTEGER, foo.id));
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.queryRaw("SELECT * FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", new DataType[0],
+						new SelectArg(SqlType.INTEGER, foo.id));
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
@@ -1088,7 +1166,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(foo2.val * 2, resultList.get(0).val);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryRawDataTypesRowMapperThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -1096,18 +1174,20 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.queryRaw("SELECT * FROM FOO", new DataType[0], new RawRowObjectMapper<Object>() {
-				@Override
-				public Object mapRow(String[] columnNames, DataType[] dataTypes, Object[] resultColumns) {
-					return new Object();
-				}
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.queryRaw("SELECT * FROM FOO", new DataType[0], new RawRowObjectMapper<Object>() {
+					@Override
+					public Object mapRow(String[] columnNames, DataType[] dataTypes, Object[] resultColumns) {
+						return new Object();
+					}
+				});
 			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryRawDataTypesRowMapperStringsThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -1115,19 +1195,21 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.queryRaw("SELECT * FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", new DataType[0],
-					new RawRowObjectMapper<Object>() {
-						@Override
-						public Object mapRow(String[] columnNames, DataType[] dataTypes, Object[] resultColumns) {
-							return new Object();
-						}
-					}, Integer.toString(foo.id));
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.queryRaw("SELECT * FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", new DataType[0],
+						new RawRowObjectMapper<Object>() {
+							@Override
+							public Object mapRow(String[] columnNames, DataType[] dataTypes, Object[] resultColumns) {
+								return new Object();
+							}
+						}, Integer.toString(foo.id));
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryRawDataTypesRowMapperArgumentHoldersThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -1135,13 +1217,15 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.queryRaw("SELECT * FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", new DataType[0],
-					new RawRowObjectMapper<Object>() {
-						@Override
-						public Object mapRow(String[] columnNames, DataType[] dataTypes, Object[] resultColumns) {
-							return new Object();
-						}
-					}, new SelectArg(SqlType.INTEGER, foo.id));
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.queryRaw("SELECT * FROM FOO WHERE " + Foo.ID_COLUMN_NAME + " = ?", new DataType[0],
+						new RawRowObjectMapper<Object>() {
+							@Override
+							public Object mapRow(String[] columnNames, DataType[] dataTypes, Object[] resultColumns) {
+								return new Object();
+							}
+						}, new SelectArg(SqlType.INTEGER, foo.id));
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
@@ -1182,7 +1266,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(foo2.equal, resultList.get(1).equal);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryRawMappedThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -1190,11 +1274,13 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.queryRaw("SELECT * FROM FOO", new RawRowMapper<Foo>() {
-				@Override
-				public Foo mapRow(String[] columnNames, String[] resultColumns) {
-					return null;
-				}
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.queryRaw("SELECT * FROM FOO", new RawRowMapper<Foo>() {
+					@Override
+					public Foo mapRow(String[] columnNames, String[] resultColumns) {
+						return null;
+					}
+				});
 			});
 		} finally {
 			connectionSource.releaseConnection(conn);
@@ -1217,7 +1303,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertFalse(dao.isTableExists());
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testIsTableExistsThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -1225,17 +1311,21 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.isTableExists();
+			assertThrows(SQLException.class, () -> {
+				dao.isTableExists();
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
 	}
 
-	@Test(expected = IllegalStateException.class)
-	public void testBadConnectionSource() throws Exception {
+	@Test
+	public void testBadConnectionSource() {
 		ConnectionSource cs = createMock(ConnectionSource.class);
-		new BaseDaoImpl<Foo, Integer>(cs, Foo.class) {
-		};
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			new BaseDaoImpl<Foo, Integer>(cs, Foo.class) {
+			};
+		});
 	}
 
 	@Test
@@ -1280,7 +1370,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(0, dao.queryForAll().size());
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testUpdateRawThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -1288,13 +1378,15 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.updateRaw("DELETE FROM FOO");
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.updateRaw("DELETE FROM FOO");
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testUpdateRawStringsThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -1302,13 +1394,15 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.updateRaw("DELETE FROM FOO", "arg");
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.updateRaw("DELETE FROM FOO", "arg");
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testUpdateRawArgumentHoldersThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -1316,7 +1410,9 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.updateRaw("DELETE FROM FOO", new SelectArg());
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.updateRaw("DELETE FROM FOO", new SelectArg());
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
@@ -1363,7 +1459,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(0, dao.queryForAll().size());
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testExecuteRawThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -1371,14 +1467,16 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.executeRaw("TRUNCATE TABLE FOO");
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.executeRaw("TRUNCATE TABLE FOO");
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
 	}
 
 	@SuppressWarnings("deprecation")
-	@Test(expected = SQLException.class)
+	@Test
 	public void testExecuteRawNoArgsThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -1386,13 +1484,15 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.executeRawNoArgs("TRUNCATE TABLE FOO");
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.executeRawNoArgs("TRUNCATE TABLE FOO");
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testExecuteRawStringsThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -1400,13 +1500,15 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.executeRaw("TRUNCATE TABLE FOO", "1");
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.executeRaw("TRUNCATE TABLE FOO", "1");
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testExecuteRawArgumentHoldersThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -1414,7 +1516,9 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.executeRaw("TRUNCATE TABLE FOO", new SelectArg());
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.executeRaw("TRUNCATE TABLE FOO", new SelectArg());
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
@@ -1427,13 +1531,15 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals((Integer) foo.id, dao.extractId(foo));
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testExtractIdBadClass() throws Exception {
 		Dao<NoId, Void> dao = createDao(NoId.class, true);
 		NoId foo = new NoId();
 		String stuff = "stuff1";
 		foo.stuff = stuff;
-		dao.extractId(foo);
+		assertThrowsExactly(SQLException.class, () -> {
+			dao.extractId(foo);
+		});
 	}
 
 	@Test
@@ -1466,17 +1572,19 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(1, dao.queryForAll().size());
 	}
 
-	@Test(expected = Exception.class)
+	@Test
 	public void testCallBatchThrow() throws Exception {
 		final Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		assertEquals(0, dao.queryForAll().size());
 
 		// this should be none
-		dao.callBatchTasks(new Callable<Void>() {
-			@Override
-			public Void call() throws Exception {
-				throw new Exception("for the hell of it");
-			}
+		assertThrowsExactly(SQLException.class, () -> {
+			dao.callBatchTasks(new Callable<Void>() {
+				@Override
+				public Void call() throws Exception {
+					throw new Exception("for the hell of it");
+				}
+			});
 		});
 	}
 
@@ -1582,12 +1690,14 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertNull(foreign2.foo.stringField);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testForeignCantBeNull() throws Exception {
 		Dao<ForeignNotNull, Integer> dao = createDao(ForeignNotNull.class, true);
 		ForeignNotNull foreign = new ForeignNotNull();
 		foreign.foo = null;
-		dao.create(foreign);
+		assertThrowsExactly(SQLException.class, () -> {
+			dao.create(foreign);
+		});
 	}
 
 	/**
@@ -1618,15 +1728,20 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(2, two.id);
 		assertEquals(2, oneDao.queryForAll().size());
 
-		One anonterOne = new One();
+		One anotherOne = new One();
 		String anonterOneOneStuff = "e24fweggwgee";
-		anonterOne.stuff = anonterOneOneStuff;
-		assertEquals(1, oneDao.create(anonterOne));
+		anotherOne.stuff = anonterOneOneStuff;
+		try {
+			oneDao.create(anotherOne);
+			fail("should have thrown because no id was specified");
+		} catch (SQLException se) {
+			// expected
+		}
+
 		assertNotNull(oneDao.queryForId(one.id));
 		assertNotNull(oneDao.queryForId(two.id));
-		assertNotNull(oneDao.queryForId(anonterOne.id));
-		assertEquals(3, anonterOne.id);
-		assertEquals(3, oneDao.queryForAll().size());
+		assertNull(oneDao.queryForId(anotherOne.id));
+		assertEquals(2, oneDao.queryForAll().size());
 	}
 
 	@Test
@@ -1682,11 +1797,13 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(1, dao.countOf(qb.prepare()));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testCountOfPreparedNoCountOf() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		QueryBuilder<Foo, Integer> qb = dao.queryBuilder();
-		dao.countOf(qb.prepare());
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			dao.countOf(qb.prepare());
+		});
 	}
 
 	@Test
@@ -1861,7 +1978,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(0, results.size());
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryForMatchingQuotes() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		assertEquals(0, dao.countOf());
@@ -1871,7 +1988,9 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 		Foo match = new Foo();
 		match.stringField = "this id has a quote ' and \"";
-		dao.queryForMatching(match);
+		assertThrows(SQLException.class, () -> {
+			dao.queryForMatching(match);
+		});
 	}
 
 	@Test
@@ -1928,7 +2047,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(0, results.size());
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryForFieldValuesQuotes() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		assertEquals(0, dao.countOf());
@@ -1938,7 +2057,9 @@ public class BaseDaoImplTest extends BaseCoreTest {
 
 		Map<String, Object> fieldValues = new HashMap<String, Object>();
 		fieldValues.put(Foo.ID_COLUMN_NAME, "this id has a quote ' \"");
-		dao.queryForFieldValues(fieldValues);
+		assertThrows(SQLException.class, () -> {
+			dao.queryForFieldValues(fieldValues);
+		});
 	}
 
 	@Test
@@ -1993,14 +2114,16 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals("1", array[0]);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testSelectRawNotQuery() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		assertEquals(1, dao.create(foo));
 		QueryBuilder<Foo, Integer> qb = dao.queryBuilder();
 		qb.selectRaw("COUNTOF(*)");
-		qb.query();
+		assertThrowsExactly(SQLException.class, () -> {
+			qb.query();
+		});
 	}
 
 	/**
@@ -2633,37 +2756,43 @@ public class BaseDaoImplTest extends BaseCoreTest {
 				+ " where " + Foo.ID_COLUMN_NAME + " < ?", new SelectArg(SqlType.INTEGER, foo2.id)));
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryRawValueThrow() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from " + FOO_TABLE_NAME);
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from " + FOO_TABLE_NAME);
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryRawValueStringsThrow() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from " + FOO_TABLE_NAME, "1");
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from " + FOO_TABLE_NAME, "1");
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryRawValueArgumentHoldersThrow() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from " + FOO_TABLE_NAME, new SelectArg());
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.queryRawValue("select max(" + Foo.ID_COLUMN_NAME + ") from " + FOO_TABLE_NAME, new SelectArg());
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
@@ -2788,7 +2917,7 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertEquals(foo2.stringField, list.get(0).stringField);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryRawDataResultsMapperThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -2796,13 +2925,15 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.queryRaw(dao.queryBuilder().prepareStatementString(), new ResultsMapper());
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.queryRaw(dao.queryBuilder().prepareStatementString(), new ResultsMapper());
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryRawDataResultsMapperStringsThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -2810,13 +2941,15 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.queryRaw(dao.queryBuilder().prepareStatementString(), new ResultsMapper(), "arg");
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.queryRaw(dao.queryBuilder().prepareStatementString(), new ResultsMapper(), "arg");
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryRawDataResultsMapperArgumentHoldersThrow() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		Foo foo = new Foo();
@@ -2824,7 +2957,9 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		DatabaseConnection conn = connectionSource.getReadWriteConnection(FOO_TABLE_NAME);
 		try {
 			conn.close();
-			dao.queryRaw(dao.queryBuilder().prepareStatementString(), new ResultsMapper(), new SelectArg());
+			assertThrowsExactly(SQLException.class, () -> {
+				dao.queryRaw(dao.queryBuilder().prepareStatementString(), new ResultsMapper(), new SelectArg());
+			});
 		} finally {
 			connectionSource.releaseConnection(conn);
 		}
@@ -2855,9 +2990,11 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		assertTrue(!after.before(result.createdDate));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testNoConstructor() throws SQLException {
-		createDao(NoNoArgConstructor.class, false);
+	@Test
+	public void testNoConstructor() {
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			createDao(NoNoArgConstructor.class, false);
+		});
 	}
 
 	@Test

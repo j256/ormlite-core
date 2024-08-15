@@ -1,12 +1,13 @@
 package com.j256.ormlite.stmt;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.Serializable;
 import java.sql.SQLException;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.CloseableIterator;
@@ -29,11 +30,20 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.h2.H2ConnectionSource;
 import com.j256.ormlite.h2.H2DatabaseType;
+import com.j256.ormlite.logger.BaseLogger;
+import com.j256.ormlite.logger.Level;
+import com.j256.ormlite.logger.LogBackendType;
+import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.stmt.QueryBuilder.JoinType;
 import com.j256.ormlite.stmt.QueryBuilder.JoinWhereOperation;
 import com.j256.ormlite.support.ConnectionSource;
 
 public class QueryBuilderTest extends BaseCoreStmtTest {
+
+	static {
+		BaseLogger.setGlobalLogLevel(Level.TRACE);
+		LoggerFactory.setLogBackendType(LogBackendType.CONSOLE);
+	}
 
 	@Test
 	public void testSelectAll() throws Exception {
@@ -63,10 +73,12 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(sb.toString(), qb.prepareStatementString());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testAddBadColumn() {
 		QueryBuilder<Foo, Integer> qb = new QueryBuilder<Foo, Integer>(databaseType, baseFooTableInfo, null);
-		qb.selectColumns("unknown-column");
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			qb.selectColumns("unknown-column");
+		});
 	}
 
 	@Test
@@ -167,18 +179,22 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(sb.toString(), qb.prepareStatementString());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testOrderByForeignCollection() throws Exception {
 		Dao<Project, Integer> dao = createDao(Project.class, false);
 		QueryBuilder<Project, Integer> qb = dao.queryBuilder();
-		qb.orderBy("categories", false);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			qb.orderBy("categories", false);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testGroupByForeignCollection() throws Exception {
 		Dao<Project, Integer> dao = createDao(Project.class, false);
 		QueryBuilder<Project, Integer> qb = dao.queryBuilder();
-		qb.groupBy("categories");
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			qb.groupBy("categories");
+		});
 	}
 
 	@Test
@@ -323,7 +339,7 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(sb.toString(), qb.prepareStatementString());
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testOffsetThrows() throws Exception {
 		H2DatabaseType ourType = new H2DatabaseType() {
 			@Override
@@ -336,7 +352,9 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		BaseDaoImpl<Foo, Integer> dao = (BaseDaoImpl<Foo, Integer>) DaoManager.createDao(ourSource, Foo.class);
 		configDao(dao, true);
 		QueryBuilder<Foo, Integer> qb = dao.queryBuilder();
-		qb.offset(200L);
+		assertThrowsExactly(SQLException.class, () -> {
+			qb.offset(200L);
+		});
 	}
 
 	@Test
@@ -463,13 +481,15 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(foreign.id, results2.get(0).id);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryRawColumnsNotQuery() throws Exception {
 		Dao<Foo, String> dao = createDao(Foo.class, true);
 		QueryBuilder<Foo, String> qb = dao.queryBuilder();
 		qb.selectRaw("COUNT(*)");
 		// we can't get Foo objects with the COUNT(*)
-		dao.query(qb.prepare());
+		assertThrowsExactly(SQLException.class, () -> {
+			dao.query(qb.prepare());
+		});
 	}
 
 	@Test
@@ -971,11 +991,13 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 		assertEquals(bar1.id, results.get(0).baz.bar.id);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testBadJoin() throws Exception {
 		Dao<Bar, Integer> barDao = createDao(Bar.class, true);
 		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
-		fooDao.queryBuilder().join(barDao.queryBuilder()).query();
+		assertThrowsExactly(SQLException.class, () -> {
+			fooDao.queryBuilder().join(barDao.queryBuilder()).query();
+		});
 	}
 
 	@Test
@@ -1721,8 +1743,8 @@ public class QueryBuilderTest extends BaseCoreStmtTest {
 				stringFound = true;
 			}
 		}
-		assertTrue("should have found the id field", idFound);
-		assertTrue("should have found the string field", stringFound);
+		assertTrue(idFound, "should have found the id field");
+		assertTrue(stringFound, "should have found the string field");
 	}
 
 	@Test

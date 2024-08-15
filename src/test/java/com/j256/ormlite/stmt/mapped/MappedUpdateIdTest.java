@@ -3,10 +3,11 @@ package com.j256.ormlite.stmt.mapped;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import java.sql.SQLException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.Dao;
@@ -26,10 +27,12 @@ public class MappedUpdateIdTest extends BaseCoreTest {
 		replay(connectionSource);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testUpdateIdNoId() throws Exception {
 		Dao<NoId, Void> dao = createDao(NoId.class, false);
-		MappedUpdateId.build(dao, new TableInfo<NoId, Void>(databaseType, NoId.class));
+		assertThrowsExactly(SQLException.class, () -> {
+			MappedUpdateId.build(dao, new TableInfo<NoId, Void>(databaseType, NoId.class));
+		});
 	}
 
 	private static class StubDatabaseType extends BaseDatabaseType {

@@ -1,10 +1,11 @@
 package com.j256.ormlite.stmt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import java.sql.SQLException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.dao.Dao;
 
@@ -38,13 +39,15 @@ public class QueryBuilderWithSchemaTest extends BaseCoreStmtTest {
 		assertEquals(sb.toString(), qb.prepareStatementString());
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryRawColumnsNotQuery() throws Exception {
 		Dao<SchemaFoo, String> dao = createDao(SchemaFoo.class, true);
 		QueryBuilder<SchemaFoo, String> qb = dao.queryBuilder();
 		qb.selectRaw("COUNT(*)");
 		// we can't get SchemaFoo objects with the COUNT(*)
-		dao.query(qb.prepare());
+		assertThrowsExactly(SQLException.class, () -> {
+			dao.query(qb.prepare());
+		});
 	}
 
 	@Test

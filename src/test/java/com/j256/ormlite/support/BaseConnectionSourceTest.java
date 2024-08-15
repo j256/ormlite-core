@@ -1,16 +1,17 @@
 package com.j256.ormlite.support;
 
 import static org.easymock.EasyMock.createMock;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.SQLException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.db.DatabaseType;
@@ -53,12 +54,14 @@ public class BaseConnectionSourceTest extends BaseCoreTest {
 		cs.close();
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testSaveDifferentConnection() throws Exception {
 		OurConnectionSource cs = new OurConnectionSource();
 		DatabaseConnection conn = cs.getReadOnlyConnection(null);
 		cs.saveSpecialConnection(conn);
-		cs.saveSpecialConnection(createMock(DatabaseConnection.class));
+		assertThrowsExactly(SQLException.class, () -> {
+			cs.saveSpecialConnection(createMock(DatabaseConnection.class));
+		});
 		cs.close();
 	}
 

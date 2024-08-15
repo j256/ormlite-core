@@ -3,9 +3,9 @@ package com.j256.ormlite.table;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -13,7 +13,8 @@ import java.util.List;
 
 import javax.persistence.Entity;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.db.BaseDatabaseType;
 import com.j256.ormlite.db.DatabaseType;
@@ -42,7 +43,7 @@ public class DatabaseTableConfigTest {
 		assertEquals(DatabaseTableAnno.class, dbTableConf.getDataClass());
 		assertEquals(TABLE_NAME, dbTableConf.getTableName());
 		dbTableConf.extractFieldTypes(databaseType);
-		FieldType[] fieldTypes = dbTableConf.getFieldTypes(databaseType);
+		FieldType[] fieldTypes = dbTableConf.getFieldTypes();
 		assertEquals(1, fieldTypes.length);
 		assertEquals("stuff", fieldTypes[0].getColumnName());
 	}
@@ -63,7 +64,7 @@ public class DatabaseTableConfigTest {
 		assertEquals(DatabaseTableAnno.class, dbTableConf.getDataClass());
 		assertEquals(TABLE_NAME, dbTableConf.getTableName());
 		dbTableConf.extractFieldTypes(databaseType);
-		FieldType[] fieldTypes = dbTableConf.getFieldTypes(databaseType);
+		FieldType[] fieldTypes = dbTableConf.getFieldTypes();
 		assertEquals(1, fieldTypes.length);
 		assertEquals("stuff", fieldTypes[0].getColumnName());
 	}
@@ -88,7 +89,7 @@ public class DatabaseTableConfigTest {
 		assertEquals(DatabaseTableAnno.class, dbTableConf.getDataClass());
 		assertEquals(TABLE_NAME, dbTableConf.getTableName());
 		dbTableConf.extractFieldTypes(databaseType);
-		FieldType[] fieldTypes = dbTableConf.getFieldTypes(databaseType);
+		FieldType[] fieldTypes = dbTableConf.getFieldTypes();
 		assertEquals(1, fieldTypes.length);
 		assertEquals("stuff", fieldTypes[0].getColumnName());
 	}
@@ -116,13 +117,13 @@ public class DatabaseTableConfigTest {
 		assertEquals(DatabaseTableAnno.class, dbTableConf.getDataClass());
 		assertEquals(TABLE_NAME, dbTableConf.getTableName());
 		dbTableConf.extractFieldTypes(databaseType);
-		FieldType[] fieldTypes = dbTableConf.getFieldTypes(databaseType);
+		FieldType[] fieldTypes = dbTableConf.getFieldTypes();
 		assertEquals(1, fieldTypes.length);
 		assertEquals("stuff", fieldTypes[0].getColumnName());
 	}
 
-	@Test(expected = SQLException.class)
-	public void testSetFieldConfigsNoMatchingField() throws SQLException {
+	@Test
+	public void testSetFieldConfigsNoMatchingField() {
 		DatabaseTableConfig<DatabaseTableAnno> dbTableConf = new DatabaseTableConfig<DatabaseTableAnno>();
 		dbTableConf.setDataClass(DatabaseTableAnno.class);
 		dbTableConf.setTableName(TABLE_NAME);
@@ -133,31 +134,39 @@ public class DatabaseTableConfigTest {
 		dbTableConf.initialize();
 		assertEquals(DatabaseTableAnno.class, dbTableConf.getDataClass());
 		assertEquals(TABLE_NAME, dbTableConf.getTableName());
-		dbTableConf.extractFieldTypes(databaseType);
+		assertThrowsExactly(SQLException.class, () -> {
+			dbTableConf.extractFieldTypes(databaseType);
+		});
 	}
 
-	@Test(expected = SQLException.class)
-	public void testSetNoFields() throws SQLException {
+	@Test
+	public void testSetNoFields() {
 		DatabaseTableConfig<DatabaseTableAnno> dbTableConf = new DatabaseTableConfig<DatabaseTableAnno>();
 		dbTableConf.setDataClass(DatabaseTableAnno.class);
 		dbTableConf.setTableName(TABLE_NAME);
 		dbTableConf.setFieldConfigs(new ArrayList<DatabaseFieldConfig>());
 		dbTableConf.initialize();
-		dbTableConf.extractFieldTypes(databaseType);
+		assertThrowsExactly(SQLException.class, () -> {
+			dbTableConf.extractFieldTypes(databaseType);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testNoFieldsClass() throws SQLException {
+	@Test
+	public void testNoFieldsClass() {
 		DatabaseTableConfig<NoFields> dbTableConf = new DatabaseTableConfig<NoFields>();
 		dbTableConf.setDataClass(NoFields.class);
 		dbTableConf.initialize();
-		dbTableConf.extractFieldTypes(databaseType);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			dbTableConf.extractFieldTypes(databaseType);
+		});
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testBadSpringWiring() {
 		DatabaseTableConfig<NoFields> dbTableConf = new DatabaseTableConfig<NoFields>();
-		dbTableConf.initialize();
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			dbTableConf.initialize();
+		});
 	}
 
 	@Test
@@ -166,7 +175,7 @@ public class DatabaseTableConfigTest {
 		dbTableConf.setDataClass(Sub.class);
 		dbTableConf.initialize();
 		dbTableConf.extractFieldTypes(databaseType);
-		FieldType[] fieldTypes = dbTableConf.getFieldTypes(databaseType);
+		FieldType[] fieldTypes = dbTableConf.getFieldTypes();
 		assertEquals(2, fieldTypes.length);
 		boolean seeId = false;
 		boolean seeStuff = false;
@@ -177,7 +186,7 @@ public class DatabaseTableConfigTest {
 			} else if (fieldType.getFieldName().equals("stuff")) {
 				seeStuff = true;
 			} else {
-				fail("Unknown field type " + fieldType);
+				Assertions.fail("Unknown field type " + fieldType);
 			}
 		}
 		assertTrue(seeId);
@@ -196,7 +205,7 @@ public class DatabaseTableConfigTest {
 				new DatabaseTableConfig<SubWithoutAnno>(databaseType, SubWithoutAnno.class, fieldConfigs);
 		dbTableConf.extractFieldTypes(databaseType);
 
-		FieldType[] fieldTypes = dbTableConf.getFieldTypes(databaseType);
+		FieldType[] fieldTypes = dbTableConf.getFieldTypes();
 		assertTrue(fieldTypes.length >= 2);
 		boolean seeId = false;
 		boolean seeStuff = false;
@@ -230,9 +239,43 @@ public class DatabaseTableConfigTest {
 		assertEquals(tableName, tableConfig.getTableName());
 	}
 
-	@Test(expected = SQLException.class)
-	public void testNoFields() throws SQLException {
-		new DatabaseTableConfig<DatabaseTableAnno>().getFieldTypes(databaseType);
+	@Test
+	public void testNoFields() {
+		assertThrowsExactly(SQLException.class, () -> {
+			new DatabaseTableConfig<DatabaseTableAnno>().getFieldTypes();
+		});
+	}
+
+	@Test
+	public void testUnknownAfterField() {
+		assertThrowsExactly(SQLException.class, () -> {
+			DatabaseTableConfig.fromClass(databaseType, UnknownAfter.class);
+		});
+	}
+
+	@Test
+	public void testAllAfter() {
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			DatabaseTableConfig.fromClass(databaseType, AllAfter.class);
+		});
+	}
+
+	@Test
+	public void testAfterFieldLoop() {
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			DatabaseTableConfig.fromClass(databaseType, AfterLoop.class);
+		});
+	}
+
+	@Test
+	public void testMultiAfter() throws SQLException {
+		DatabaseTableConfig<MultipleAfterField> config =
+				DatabaseTableConfig.fromClass(databaseType, MultipleAfterField.class);
+		FieldType[] fieldTypes = config.getFieldTypes();
+		assertEquals(3, fieldTypes.length);
+		assertEquals(MultipleAfterField.FIELD_NAME3, fieldTypes[0].getColumnName());
+		assertEquals(MultipleAfterField.FIELD_NAME1, fieldTypes[1].getColumnName());
+		assertEquals(MultipleAfterField.FIELD_NAME2, fieldTypes[2].getColumnName());
 	}
 
 	/* ======================================================================================= */
@@ -301,6 +344,56 @@ public class DatabaseTableConfigTest {
 		String stuff;
 
 		public SubWithoutAnno() {
+			// for ormlite
+		}
+	}
+
+	protected static class UnknownAfter {
+		@DatabaseField(afterField = "unknown")
+		String stuff;
+
+		public UnknownAfter() {
+			// for ormlite
+		}
+	}
+
+	protected static class AllAfter {
+		@DatabaseField(afterField = "a2")
+		String a1;
+		@DatabaseField(afterField = "a1")
+		String a2;
+
+		public AllAfter() {
+			// for ormlite
+		}
+	}
+
+	protected static class AfterLoop {
+		@DatabaseField(afterField = "a2")
+		String a1;
+		@DatabaseField(afterField = "a1")
+		String a2;
+		@DatabaseField
+		String a3;
+
+		public AfterLoop() {
+			// for ormlite
+		}
+	}
+
+	protected static class MultipleAfterField {
+		static final String FIELD_NAME1 = "a1";
+		static final String FIELD_NAME2 = "a2";
+		static final String FIELD_NAME3 = "a3";
+
+		@DatabaseField(columnName = FIELD_NAME1, afterField = FIELD_NAME3)
+		String a1;
+		@DatabaseField(columnName = FIELD_NAME2, afterField = FIELD_NAME3)
+		String a2;
+		@DatabaseField(columnName = FIELD_NAME3)
+		String a3;
+
+		public MultipleAfterField() {
 			// for ormlite
 		}
 	}

@@ -1,9 +1,10 @@
 package com.j256.ormlite.field.types;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
@@ -12,7 +13,7 @@ import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.Collection;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
@@ -84,7 +85,7 @@ public class SerializableTypeTest extends BaseTypeTest {
 		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testSerializableInvalidResult() throws Exception {
 		Class<LocalByteArray> clazz = LocalByteArray.class;
 		Dao<LocalByteArray, Object> dao = createDao(clazz, true);
@@ -100,7 +101,9 @@ public class SerializableTypeTest extends BaseTypeTest {
 			assertTrue(results.next());
 			FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME,
 					LocalSerializable.class.getDeclaredField(SERIALIZABLE_COLUMN), LocalSerializable.class);
+			assertThrowsExactly(SQLException.class, () -> {
 			DataType.SERIALIZABLE.getDataPersister().resultToJava(fieldType, results, results.findColumn(BYTE_COLUMN));
+			});
 		} finally {
 			if (stmt != null) {
 				stmt.close();
@@ -109,9 +112,11 @@ public class SerializableTypeTest extends BaseTypeTest {
 		}
 	}
 
-	@Test(expected = SQLException.class)
-	public void testSerializableParseDefault() throws Exception {
-		DataType.SERIALIZABLE.getDataPersister().parseDefaultString(null, null);
+	@Test
+	public void testSerializableParseDefault() {
+		assertThrowsExactly(SQLException.class, () -> {
+			DataType.SERIALIZABLE.getDataPersister().parseDefaultString(null, null);
+		});
 	}
 
 	@Test

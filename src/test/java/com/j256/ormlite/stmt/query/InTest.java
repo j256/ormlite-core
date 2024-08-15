@@ -1,24 +1,27 @@
 package com.j256.ormlite.stmt.query;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.stmt.ArgumentHolder;
 import com.j256.ormlite.stmt.BaseCoreStmtTest;
 
 public class InTest extends BaseCoreStmtTest {
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testAppendValueNull() throws Exception {
 		List<Object> objList = new ArrayList<Object>();
 		objList.add(null);
 		In in = new In("foo", numberFieldType, objList, true);
-		in.appendValue(null, new StringBuilder(), null);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			in.appendValue(null, new StringBuilder(), null);
+		});
 	}
 
 	@Test

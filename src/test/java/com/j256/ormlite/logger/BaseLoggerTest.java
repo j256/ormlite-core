@@ -4,7 +4,7 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class BaseLoggerTest {
 

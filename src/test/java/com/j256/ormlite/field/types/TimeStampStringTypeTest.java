@@ -1,15 +1,16 @@
 package com.j256.ormlite.field.types;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
@@ -47,11 +48,13 @@ public class TimeStampStringTypeTest extends BaseTypeTest {
 				true, false, false, false, true, false);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testTimeStampStringParseInvalid() throws Exception {
 		FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME,
 				LocalTimeStampString.class.getDeclaredField(TIMESTAMP_COLUMN), LocalTimeStampString.class);
-		TimeStampStringType.getSingleton().parseDefaultString(fieldType, "not valid date string");
+		assertThrowsExactly(SQLException.class, () -> {
+			TimeStampStringType.getSingleton().parseDefaultString(fieldType, "not valid date string");
+		});
 	}
 
 	@Test

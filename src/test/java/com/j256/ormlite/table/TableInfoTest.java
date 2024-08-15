@@ -1,15 +1,16 @@
 package com.j256.ormlite.table;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.BaseDaoImpl;
@@ -22,24 +23,32 @@ public class TableInfoTest extends BaseCoreTest {
 	private final static String TABLE_NAME = "tablename";
 	private final static String COLUMN_NAME = "column2";
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testTableInfo() throws SQLException {
-		new TableInfo<NoFieldAnnotations, Void>(databaseType, NoFieldAnnotations.class);
+	@Test
+	public void testTableInfo() {
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			new TableInfo<NoFieldAnnotations, Void>(databaseType, NoFieldAnnotations.class);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testNoNoArgConstructor() throws SQLException {
-		new TableInfo<NoNoArgConstructor, Void>(databaseType, NoNoArgConstructor.class);
+	@Test
+	public void testNoNoArgConstructor() {
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			new TableInfo<NoNoArgConstructor, Void>(databaseType, NoNoArgConstructor.class);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testObjectNoFields() throws SQLException {
-		new TableInfo<NoFields, Void>(databaseType, NoFields.class);
+	@Test
+	public void testObjectNoFields() {
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			new TableInfo<NoFields, Void>(databaseType, NoFields.class);
+		});
 	}
 
-	@Test(expected = SQLException.class)
-	public void testObjectDoubleId() throws SQLException {
-		new TableInfo<DoubleId, String>(databaseType, DoubleId.class);
+	@Test
+	public void testObjectDoubleId() {
+		assertThrowsExactly(SQLException.class, () -> {
+			new TableInfo<DoubleId, String>(databaseType, DoubleId.class);
+		});
 	}
 
 	@Test
@@ -70,12 +79,13 @@ public class TableInfoTest extends BaseCoreTest {
 		assertEquals(NoTableNameAnnotation.class.getSimpleName().toLowerCase(), tableInfo.getTableName());
 	}
 
-	@Test(expected = SQLException.class)
-	public void testZeroFieldConfigsSpecified() throws Exception {
+	@Test
+	public void testZeroFieldConfigsSpecified() {
 		DatabaseTableConfig<NoTableNameAnnotation> tableConfig = new DatabaseTableConfig<NoTableNameAnnotation>(
 				databaseType, NoTableNameAnnotation.class, new ArrayList<DatabaseFieldConfig>());
-		tableConfig.extractFieldTypes(databaseType);
-		new TableInfo<NoTableNameAnnotation, Void>(databaseType, tableConfig);
+		assertThrowsExactly(SQLException.class, () -> {
+			tableConfig.extractFieldTypes(databaseType);
+		});
 	}
 
 	@Test
@@ -84,7 +94,7 @@ public class TableInfoTest extends BaseCoreTest {
 		String wrongName = "foo";
 		try {
 			tableInfo.getFieldTypeByColumnName(wrongName);
-			fail("expected exception");
+			Assertions.fail("expected exception");
 		} catch (IllegalArgumentException e) {
 			assertTrue(e.getMessage().contains("'" + Foreign.FOREIGN_FIELD_NAME + "'"));
 			assertTrue(e.getMessage().contains("'" + wrongName + "'"));

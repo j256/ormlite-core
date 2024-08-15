@@ -1,11 +1,12 @@
 package com.j256.ormlite.field;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -16,7 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.db.BaseDatabaseType;
@@ -172,10 +173,12 @@ public class DatabaseFieldConfigTest extends BaseCoreTest {
 		assertEquals(field.getName(), config.getFieldName());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testUnknownEnumVal() throws Exception {
 		Field field = BadUnknownVal.class.getDeclaredField("ourEnum");
-		DatabaseFieldConfig.fromField(databaseType, "foo", field);
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			DatabaseFieldConfig.fromField(databaseType, "foo", field);
+		});
 	}
 
 	@Test
