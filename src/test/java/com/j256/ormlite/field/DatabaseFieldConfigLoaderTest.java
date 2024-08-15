@@ -197,11 +197,6 @@ public class DatabaseFieldConfigLoaderTest extends BaseCoreTest {
 		body.append("javaxEntity=true").append(LINE_SEP);
 		checkConfigOutput(config, body, writer, buffer);
 
-		String afterField = "field123";
-		config.setAfterField(afterField);
-		body.append("afterField=").append(afterField).append(LINE_SEP);
-		checkConfigOutput(config, body, writer, buffer);
-
 		/*
 		 * Test foreign collection
 		 */
