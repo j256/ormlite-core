@@ -3,8 +3,10 @@ package com.j256.ormlite.table;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseField;
@@ -229,6 +231,7 @@ public class DatabaseTableConfig<T> {
 			throw new IllegalArgumentException(
 					"No fields have a " + DatabaseField.class.getSimpleName() + " annotation in " + clazz);
 		}
+		orderFieldTypes(tableName, fieldTypes);
 		return fieldTypes.toArray(new FieldType[fieldTypes.size()]);
 	}
 
@@ -261,6 +264,80 @@ public class DatabaseTableConfig<T> {
 		if (fieldTypes.isEmpty()) {
 			throw new SQLException("No fields were configured for class " + dataClass);
 		}
+		orderFieldTypes(tableName, fieldTypes);
 		return fieldTypes.toArray(new FieldType[fieldTypes.size()]);
+	}
+
+	private static void orderFieldTypes(String tableName, List<FieldType> fieldTypes) throws SQLException {
+
+		boolean ordered = false;
+		for (FieldType fieldType : fieldTypes) {
+			if (fieldType.getFieldConfig().getAfterField() != null) {
+				ordered = true;
+				break;
+			}
+		}
+
+		if (!ordered) {
+			return;
+		}
+
+		Map<String, FieldType> fieldNameMap = new HashMap<>();
+		for (FieldType fieldType : fieldTypes) {
+			fieldNameMap.put(fieldType.getColumnName(), fieldType);
+		}
+		List<FieldType> noAfterList = new ArrayList<>();
+		Map<FieldType, FieldType> afterMap = new HashMap<>();
+		for (FieldType fieldType : fieldTypes) {
+			String afterFieldName = fieldType.getFieldConfig().getAfterField();
+			if (afterFieldName == null) {
+				noAfterList.add(fieldType);
+				continue;
+			}
+			FieldType previousAfter = fieldNameMap.get(afterFieldName);
+			if (previousAfter == null) {
+				throw new SQLException("Could not find an after column with the name '" + afterFieldName
+						+ "' configured in field " + fieldType);
+			}
+
+			// find the end of the linked list
+			while (true) {
+				FieldType nextAfter = afterMap.get(previousAfter);
+				if (nextAfter == null) {
+					break;
+				}
+				previousAfter = nextAfter;
+			}
+			afterMap.put(previousAfter, fieldType);
+		}
+
+		if (noAfterList.isEmpty()) {
+			throw new IllegalStateException(
+					"At least one of the fields must not have an after-column set in table '" + tableName + "'");
+		}
+
+		// now clear and rebuild our ordered list
+		int numTypes = fieldTypes.size();
+		fieldTypes.clear();
+		for (FieldType fieldType : noAfterList) {
+			fieldTypes.add(fieldType);
+			FieldType afterType = afterMap.get(fieldType);
+			while (afterType != null) {
+				fieldTypes.add(afterType);
+				if (fieldTypes.size() > numTypes) {
+					throw new IllegalStateException(
+							"Some sort of after-column loop has been detected, check all after-column settings in table "
+									+ tableName + "'");
+				}
+				afterType = afterMap.get(afterType);
+			}
+		}
+
+		// this could happen if we have one field that no one is after and other fields are after each other
+		if (fieldTypes.size() != numTypes) {
+			throw new IllegalStateException(
+					"Some sort of after-column loop has been detected, check all after-column settings in table "
+							+ tableName + "'");
+		}
 	}
 }
