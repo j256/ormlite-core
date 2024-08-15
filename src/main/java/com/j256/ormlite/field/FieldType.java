@@ -144,8 +144,10 @@ public class FieldType {
 				try {
 					dataPersister = (DataPersister) result;
 				} catch (Exception e) {
-					throw new SQLException("Could not cast result of static getSingleton method to DataPersister from class "
-									+ persisterClass, e);
+					throw new SQLException(
+							"Could not cast result of static getSingleton method to DataPersister from class "
+									+ persisterClass,
+							e);
 				}
 			}
 		} else {
@@ -593,7 +595,8 @@ public class FieldType {
 			try {
 				fieldSetMethod.invoke(data, val);
 			} catch (Exception e) {
-				throw new SQLException("Could not call " + fieldSetMethod + " on object with '" + val + "' for " + this, e);
+				throw new SQLException("Could not call " + fieldSetMethod + " on object with '" + val + "' for " + this,
+						e);
 			}
 		}
 	}
@@ -986,7 +989,7 @@ public class FieldType {
 	}
 
 	/**
-	 * Get the associated field configuration for this field-type. 
+	 * Get the associated field configuration for this field-type.
 	 */
 	public DatabaseFieldConfig getFieldConfig() {
 		return fieldConfig;

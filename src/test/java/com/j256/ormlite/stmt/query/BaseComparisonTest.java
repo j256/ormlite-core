@@ -56,9 +56,9 @@ public class BaseComparisonTest extends BaseCoreStmtTest {
 	}
 
 	@Test
-	public void testAppendArgOrValueNull()  {
+	public void testAppendArgOrValueNull() {
 		assertThrowsExactly(SQLException.class, () -> {
-		cmpInt.appendArgOrValue(null, numberFieldType, new StringBuilder(), new ArrayList<ArgumentHolder>(), null);
+			cmpInt.appendArgOrValue(null, numberFieldType, new StringBuilder(), new ArrayList<ArgumentHolder>(), null);
 		});
 	}
 
@@ -127,7 +127,7 @@ public class BaseComparisonTest extends BaseCoreStmtTest {
 		ForeignNullForeign foo = new ForeignNullForeign();
 		foo.id = null;
 		assertThrowsExactly(SQLException.class, () -> {
-		cmpForeign.appendArgOrValue(databaseType, fieldType, sb, new ArrayList<ArgumentHolder>(), foo);
+			cmpForeign.appendArgOrValue(databaseType, fieldType, sb, new ArrayList<ArgumentHolder>(), foo);
 		});
 	}
 

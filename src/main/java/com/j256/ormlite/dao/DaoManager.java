@@ -240,7 +240,7 @@ public class DaoManager {
 		Dao<?, ?> old = classMap.putIfAbsent(key, dao);
 		if (old == null) {
 			return dao;
-		} else {			
+		} else {
 			return old;
 		}
 	}

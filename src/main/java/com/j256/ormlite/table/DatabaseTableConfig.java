@@ -269,7 +269,7 @@ public class DatabaseTableConfig<T> {
 	}
 
 	/**
-	 * Change the field types list by reordered them if any of the fields have the after-field specified. 
+	 * Change the field types list by reordered them if any of the fields have the after-field specified.
 	 */
 	private static void orderFieldTypes(String tableName, List<FieldType> fieldTypes) throws SQLException {
 

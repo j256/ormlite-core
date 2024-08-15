@@ -151,7 +151,7 @@ public class BaseCoreDatabaseTypeTest extends BaseCoreTest {
 	@Test
 	public void testAppendColumnGenIdSeq() {
 		assertThrowsExactly(SQLException.class, () -> {
-		testFooColumn(databaseType, "genIdSeq", "");
+			testFooColumn(databaseType, "genIdSeq", "");
 		});
 	}
 

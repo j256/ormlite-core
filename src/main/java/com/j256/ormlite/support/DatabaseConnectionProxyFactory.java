@@ -14,9 +14,10 @@ import java.sql.SQLException;
  * 
  * <pre>
  * private static class MyConnectionProxy extends DatabaseConnectionProxy {
- * 	public ConnectionProxy(DatabaseConnection conn) {
- * 		super(conn);
+ * 	public ConnectionProxy(DatabaseConnection conn){
+ * 	super(conn);
  * 	}
+ * 
  * 	&#064;Override
  * 	public int insert(String statement, Object[] args, FieldType[] argfieldTypes, GeneratedKeyHolder keyHolder)
  * 			throws SQLException {

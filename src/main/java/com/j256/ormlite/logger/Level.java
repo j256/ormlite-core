@@ -55,8 +55,7 @@ public enum Level {
 		String upper = str.toUpperCase();
 		String upperEnglish = str.toUpperCase(Locale.ENGLISH);
 		for (Level level : values()) {
-			if (level.name().equals(upper)
-					|| level.name().equals(upperEnglish)) {
+			if (level.name().equals(upper) || level.name().equals(upperEnglish)) {
 				return level;
 			}
 		}

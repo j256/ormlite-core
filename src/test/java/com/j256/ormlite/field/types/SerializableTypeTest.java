@@ -102,7 +102,8 @@ public class SerializableTypeTest extends BaseTypeTest {
 			FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME,
 					LocalSerializable.class.getDeclaredField(SERIALIZABLE_COLUMN), LocalSerializable.class);
 			assertThrowsExactly(SQLException.class, () -> {
-			DataType.SERIALIZABLE.getDataPersister().resultToJava(fieldType, results, results.findColumn(BYTE_COLUMN));
+				DataType.SERIALIZABLE.getDataPersister()
+						.resultToJava(fieldType, results, results.findColumn(BYTE_COLUMN));
 			});
 		} finally {
 			if (stmt != null) {

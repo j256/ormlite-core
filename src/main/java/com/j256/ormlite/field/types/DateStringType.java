@@ -43,8 +43,8 @@ public class DateStringType extends BaseDateType {
 			// we parse to make sure it works and then format it again
 			return normalizeDateString(formatConfig, defaultStr);
 		} catch (ParseException e) {
-			throw new SQLException("Problems with field " + fieldType + " parsing default date-string '"
-					+ defaultStr + "' using '" + formatConfig + "'", e);
+			throw new SQLException("Problems with field " + fieldType + " parsing default date-string '" + defaultStr
+					+ "' using '" + formatConfig + "'", e);
 		}
 	}
 
@@ -60,8 +60,8 @@ public class DateStringType extends BaseDateType {
 		try {
 			return parseDateString(formatConfig, value);
 		} catch (ParseException e) {
-			throw new SQLException("Problems with column " + columnPos + " parsing date-string '" + value
-					+ "' using '" + formatConfig + "'", e);
+			throw new SQLException("Problems with column " + columnPos + " parsing date-string '" + value + "' using '"
+					+ formatConfig + "'", e);
 		}
 	}
 

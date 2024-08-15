@@ -1,6 +1,5 @@
 package com.j256.ormlite.logger;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
