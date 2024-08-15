@@ -1,8 +1,6 @@
 6.2: ?/?/2022
 	* CORE: Added a Dao.createIfNotExists() for lazy entity creation.  Thanks much to BlackBaroness.
 	* CORE: Added PreparedStmt.setArgumentHolderValue(...) to set argument by name.
-	* CORE: Added Dao raw methods that take ArgumentHolder... for specifying SqlType to raw statement arguments.
-	* CORE: Added afterField to DatabaseField to being specific about schema field order.  Thanks to ComBatVision.
 	* JDBC: Added additional properties to JdbcConnectionSource.  Thanks to danielferraz.
 	* ALL: Switched to using Junit5 from 4.  What a slog but everything in a better place. 
 
