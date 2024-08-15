@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
 	<!-- ormlite configuration file for Maven (https://maven.apache.org/) -->
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.j256.ormlite</groupId>
@@ -8,7 +10,8 @@
 	<packaging>jar</packaging>
 	<name>ORMLite Core</name>
 	<url>https://ormlite.com/</url>
-	<description>Lightweight Object Relational Model (ORM) for persisting objects to SQL databases.</description>
+	<description>Lightweight Object Relational Model (ORM) for persisting
+		objects to SQL databases.</description>
 	<licenses>
 		<license>
 			<name>ISC License</name>
@@ -38,8 +41,10 @@
 		</developer>
 	</developers>
 	<properties>
-		<!-- default empty string that can be overridden on command line. due to surefire's parser bug, if we don't have this here 
-			and have any other characters where this is used, it'll get replaced with string "null" -->
+		<!-- default empty string that can be overridden on command line. due to
+		surefire's parser bug, if we don't have this here 
+			and have any other characters where this is used, it'll get replaced with
+		string "null" -->
 		<surefire.argLine />
 		<disableDoclint />
 
@@ -61,12 +66,14 @@
 				<repository>
 					<id>sonatype-nexus-staging</id>
 					<name>Nexus Release Repository</name>
-					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+					<url>
+						https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 				</repository>
 				<snapshotRepository>
 					<id>sonatype-nexus-snapshots</id>
 					<name>Sonatype Nexus Snapshots</name>
-					<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+					<url>
+						https://oss.sonatype.org/content/repositories/snapshots/</url>
 				</snapshotRepository>
 			</distributionManagement>
 			<build>
@@ -222,7 +229,9 @@
 					<bottom>
 						This documentation is licensed by Gray Watson under the
 						&lt;a
-						href="https://creativecommons.org/licenses/by-sa/3.0/" &gt;Creative Commons Attribution-Share Alike 3.0 License.
+						href="https://creativecommons.org/licenses/by-sa/3.0/"
+						&gt;Creative Commons Attribution-Share Alike 3.0
+						License.
 						&lt;/a&gt; </bottom>
 					<additionalparam>-tag inheritDoc:X ${disableDoclint}</additionalparam>
 					<excludePackageNames>
@@ -278,10 +287,17 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.22.1</version>
+				<version>3.3.1</version>
 				<configuration>
 					<useSystemClassLoader>false</useSystemClassLoader>
 				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.junit.jupiter</groupId>
+						<artifactId>junit-jupiter-engine</artifactId>
+						<version>5.9.1</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>com.j256.testcheckpublisher</groupId>
@@ -291,7 +307,8 @@
 		</plugins>
 		<extensions>
 			<extension>
-				<!-- this gives us the ability to contact our s3://j256.com/ repo -->
+				<!-- this gives us the ability to contact our s3://j256.com/
+				repo -->
 				<groupId>org.springframework.build</groupId>
 				<artifactId>aws-maven</artifactId>
 				<version>5.0.0.RELEASE</version>
@@ -299,7 +316,8 @@
 		</extensions>
 	</build>
 	<dependencies>
-		<!-- optional dependencies that will only be used if you add dependencies yourself -->
+		<!-- optional dependencies that will only be used if you add
+		dependencies yourself -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
