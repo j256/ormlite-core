@@ -986,6 +986,13 @@ public class FieldType {
 	}
 
 	/**
+	 * Get the associated field configuration for this field-type. 
+	 */
+	public DatabaseFieldConfig getFieldConfig() {
+		return fieldConfig;
+	}
+
+	/**
 	 * Pass the foreign data argument to the foreign {@link Dao#create(Object)} method.
 	 */
 	public <T> int createWithForeignDao(T foreignData) throws SQLException {

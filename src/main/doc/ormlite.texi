@@ -709,6 +709,16 @@ properly escaped and in proper case depending on your database type. This can be
 describe the schema to enable some per-database feature or to override the default SQL generated. If you just need
 to specify the schema for a column then the @code{columnDefinition} should be used instead.
 
+@cindex field order
+@cindex order of fields
+@cindex after field
+@item afterField
+
+Used to set the order of the fields by setting the column-name that this field comes after. If this is not
+specified then the order in which the fields and methods are discovered in the classes will determine their order
+in the database schema. If two fields say they come after the same field then you will get an undefined order. If
+there is an loop in the after columns then an exception will be thrown.
+
 @end table
 
 @c ----------------------------------------------------------------

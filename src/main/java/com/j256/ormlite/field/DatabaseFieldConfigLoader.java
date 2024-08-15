@@ -107,6 +107,7 @@ public class DatabaseFieldConfigLoader {
 	private static final String FIELD_NAME_FOREIGN_COLUMN_NAME = "foreignColumnName";
 	private static final String FIELD_NAME_READ_ONLY = "readOnly";
 	private static final String FIELD_NAME_JAVAX_ENTITY = "javaxEntity";
+	private static final String FIELD_NAME_AFTER_FIELD = "afterField";
 
 	private static final String FIELD_NAME_FOREIGN_COLLECTION = "foreignCollection";
 	private static final String FIELD_NAME_FOREIGN_COLLECTION_EAGER = "foreignCollectionEager";
@@ -274,6 +275,10 @@ public class DatabaseFieldConfigLoader {
 			writer.append(FIELD_NAME_JAVAX_ENTITY).append('=').append("true");
 			writer.newLine();
 		}
+		if (config.getAfterField() != null) {
+			writer.append(FIELD_NAME_AFTER_FIELD).append('=').append(config.getAfterField());
+			writer.newLine();
+		}
 
 		/*
 		 * Foreign collection settings:
@@ -426,6 +431,8 @@ public class DatabaseFieldConfigLoader {
 			config.setReadOnly(Boolean.parseBoolean(value));
 		} else if (field.equals(FIELD_NAME_JAVAX_ENTITY)) {
 			config.setJavaxEntity(Boolean.parseBoolean(value));
+		} else if (field.equals(FIELD_NAME_AFTER_FIELD)) {
+			config.setAfterField(value);
 		}
 		/**
 		 * foreign collection field information
