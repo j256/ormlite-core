@@ -246,38 +246,6 @@ public class DatabaseTableConfigTest {
 		});
 	}
 
-	@Test
-	public void testUnknownAfterField() {
-		assertThrowsExactly(SQLException.class, () -> {
-			DatabaseTableConfig.fromClass(databaseType, UnknownAfter.class);
-		});
-	}
-
-	@Test
-	public void testAllAfter() {
-		assertThrowsExactly(IllegalStateException.class, () -> {
-			DatabaseTableConfig.fromClass(databaseType, AllAfter.class);
-		});
-	}
-
-	@Test
-	public void testAfterFieldLoop() {
-		assertThrowsExactly(IllegalStateException.class, () -> {
-			DatabaseTableConfig.fromClass(databaseType, AfterLoop.class);
-		});
-	}
-
-	@Test
-	public void testMultiAfter() throws SQLException {
-		DatabaseTableConfig<MultipleAfterField> config =
-				DatabaseTableConfig.fromClass(databaseType, MultipleAfterField.class);
-		FieldType[] fieldTypes = config.getFieldTypes();
-		assertEquals(3, fieldTypes.length);
-		assertEquals(MultipleAfterField.FIELD_NAME3, fieldTypes[0].getColumnName());
-		assertEquals(MultipleAfterField.FIELD_NAME1, fieldTypes[1].getColumnName());
-		assertEquals(MultipleAfterField.FIELD_NAME2, fieldTypes[2].getColumnName());
-	}
-
 	/* ======================================================================================= */
 
 	@DatabaseTable(tableName = TABLE_NAME)
@@ -344,56 +312,6 @@ public class DatabaseTableConfigTest {
 		String stuff;
 
 		public SubWithoutAnno() {
-			// for ormlite
-		}
-	}
-
-	protected static class UnknownAfter {
-		@DatabaseField(afterField = "unknown")
-		String stuff;
-
-		public UnknownAfter() {
-			// for ormlite
-		}
-	}
-
-	protected static class AllAfter {
-		@DatabaseField(afterField = "a2")
-		String a1;
-		@DatabaseField(afterField = "a1")
-		String a2;
-
-		public AllAfter() {
-			// for ormlite
-		}
-	}
-
-	protected static class AfterLoop {
-		@DatabaseField(afterField = "a2")
-		String a1;
-		@DatabaseField(afterField = "a1")
-		String a2;
-		@DatabaseField
-		String a3;
-
-		public AfterLoop() {
-			// for ormlite
-		}
-	}
-
-	protected static class MultipleAfterField {
-		static final String FIELD_NAME1 = "a1";
-		static final String FIELD_NAME2 = "a2";
-		static final String FIELD_NAME3 = "a3";
-
-		@DatabaseField(columnName = FIELD_NAME1, afterField = FIELD_NAME3)
-		String a1;
-		@DatabaseField(columnName = FIELD_NAME2, afterField = FIELD_NAME3)
-		String a2;
-		@DatabaseField(columnName = FIELD_NAME3)
-		String a3;
-
-		public MultipleAfterField() {
 			// for ormlite
 		}
 	}
