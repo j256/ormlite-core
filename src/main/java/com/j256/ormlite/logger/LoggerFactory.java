@@ -26,7 +26,7 @@ public class LoggerFactory {
 		// only here for static usage
 	}
 
-	{
+	static {
 		PropertyUtils.assignGlobalLevelFromProperty(LogBackendType.NULL);
 		// system property overrides property setting
 		maybeAssignGlobalLogLevelFromProperty();
