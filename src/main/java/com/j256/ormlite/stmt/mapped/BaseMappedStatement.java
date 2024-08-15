@@ -1,6 +1,7 @@
 package com.j256.ormlite.stmt.mapped;
 
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 
 import com.j256.ormlite.dao.Dao;
@@ -43,18 +44,37 @@ public abstract class BaseMappedStatement<T, ID> {
 	 * Return the array of field objects pulled from the data object.
 	 */
 	protected Object[] getFieldObjects(Object data) throws SQLException {
+		return getFieldObjects(data, false);
+	}
+
+	/**
+	 * Return the array of field objects pulled from the data object.
+	 */
+	protected Object[] getFieldObjects(Object data, boolean inserting) throws SQLException {
 		Object[] objects = new Object[argFieldTypes.length];
-		for (int i = 0; i < argFieldTypes.length; i++) {
-			FieldType fieldType = argFieldTypes[i];
+		int insertC = 0;
+		for (FieldType fieldType : argFieldTypes) {
 			if (fieldType.isAllowGeneratedIdInsert()) {
-				objects[i] = fieldType.getFieldValueIfNotDefault(data);
+				Object obj = fieldType.getFieldValueIfNotDefault(data);
+				if (inserting && obj == null) {
+					/*
+					 * If we are inserting into a field marked as allowGeneratedIdInsert then it may have a value or
+					 * not. If it doesn't have a value then we should not generate an argument for it so we reduced the
+					 * number of field types by one. This is then the cue for the insert runner to use the special
+					 * insert generated id null statement.
+					 */
+					objects = Arrays.copyOf(objects, argFieldTypes.length - 1);
+					continue;
+				}
+				objects[insertC] = obj;
 			} else {
-				objects[i] = fieldType.extractJavaFieldToSqlArgValue(data);
+				objects[insertC] = fieldType.extractJavaFieldToSqlArgValue(data);
 			}
-			if (objects[i] == null) {
+			if (objects[insertC] == null) {
 				// NOTE: the default value could be null as well
-				objects[i] = fieldType.getDefaultValue();
+				objects[insertC] = fieldType.getDefaultValue();
 			}
+			insertC++;
 		}
 		return objects;
 	}
