@@ -198,4 +198,13 @@ public class DatabaseConnectionProxy implements DatabaseConnection {
 			return proxy.getUnderlyingConnection();
 		}
 	}
+
+	@Override
+	public boolean isSupportsGetGeneratedKeys() throws SQLException {
+		if (proxy == null) {
+			return true;
+		} else {
+			return proxy.isSupportsGetGeneratedKeys();
+		}
+	}
 }

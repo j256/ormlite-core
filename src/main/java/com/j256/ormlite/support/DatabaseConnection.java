@@ -194,4 +194,9 @@ public interface DatabaseConnection extends AutoCloseable {
 	 * not supported under Android.
 	 */
 	public Connection getUnderlyingConnection();
+
+	/**
+	 * Returns whether or not the underlying database supports the getting of generated keys.  
+	 */
+	public boolean isSupportsGetGeneratedKeys() throws SQLException;
 }
