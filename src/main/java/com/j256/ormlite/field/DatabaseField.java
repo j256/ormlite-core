@@ -315,6 +315,14 @@ public @interface DatabaseField {
 	 */
 	String fullColumnDefinition() default "";
 
+	/**
+	 * Used to set the order of the fields by setting the column-name that this field comes after. If this is not
+	 * specified then the order in which the fields and methods are discovered in the classes will determine their order
+	 * in the database schema. If two fields say they come after the same field then you will get an undefined order. If
+	 * there is an loop in the after columns then an exception will be thrown.
+	 */
+	String afterField() default "";
+
 	/*
 	 * NOTE to developers: if you add fields here you have to add them to the DatabaseFieldConfig,
 	 * DatabaseFieldConfigLoader, DatabaseFieldConfigLoaderTest, DatabaseTableConfigUtil, and ormlite.texi.

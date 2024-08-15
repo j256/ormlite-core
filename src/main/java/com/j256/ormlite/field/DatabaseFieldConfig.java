@@ -69,6 +69,7 @@ public class DatabaseFieldConfig {
 	private String foreignCollectionForeignFieldName;
 	private String fullColumnDefinition;
 	private boolean javaxEntity;
+	private String afterField;
 
 	static {
 		try {
@@ -512,6 +513,14 @@ public class DatabaseFieldConfig {
 		this.javaxEntity = javaxEntity;
 	}
 
+	public String getAfterField() {
+		return afterField;
+	}
+
+	public void setAfterField(String afterField) {
+		this.afterField = afterField;
+	}
+
 	/**
 	 * Create and return a config converted from a {@link Field} that may have one of the following annotations:
 	 * {@link DatabaseField}, {@link ForeignCollectionField}, or javax.persistence...
@@ -640,6 +649,7 @@ public class DatabaseFieldConfig {
 		config.foreignColumnName = valueIfNotBlank(databaseField.foreignColumnName());
 		config.readOnly = databaseField.readOnly();
 		config.fullColumnDefinition = valueIfNotBlank(databaseField.fullColumnDefinition());
+		config.afterField = valueIfNotBlank(databaseField.afterField());
 
 		return config;
 	}
