@@ -225,11 +225,6 @@ public class H2DatabaseConnection implements DatabaseConnection {
 		return connection;
 	}
 
-	@Override
-	public boolean isSupportsGetGeneratedKeys() {
-		return true;
-	}
-
 	/**
 	 * Return the id associated with the column.
 	 */
