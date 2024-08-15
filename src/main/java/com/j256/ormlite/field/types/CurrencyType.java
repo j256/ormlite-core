@@ -46,7 +46,8 @@ public class CurrencyType extends BaseDataType {
 		try {
 			return Currency.getInstance(defaultStr).getCurrencyCode();
 		} catch (IllegalArgumentException iae) {
-			throw new SQLException("Problems with field " + fieldType + " parsing default Currency '", iae);
+			throw new SQLException(
+					"Problems with field " + fieldType + " parsing default Currency '" + defaultStr + "'", iae);
 		}
 	}
 
