@@ -302,7 +302,7 @@
 			<plugin>
 				<groupId>com.j256.testcheckpublisher</groupId>
 				<artifactId>test-check-publisher-maven-plugin</artifactId>
-				<version>0.8</version>
+				<version>1.5</version>
 			</plugin>
 		</plugins>
 		<extensions>
