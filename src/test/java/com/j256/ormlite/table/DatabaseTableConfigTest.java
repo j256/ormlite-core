@@ -9,6 +9,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -272,10 +274,12 @@ public class DatabaseTableConfigTest {
 		DatabaseTableConfig<MultipleAfterField> config =
 				DatabaseTableConfig.fromClass(databaseType, MultipleAfterField.class);
 		FieldType[] fieldTypes = config.getFieldTypes();
+		Arrays.sort(fieldTypes, Comparator.comparing(FieldType::getColumnName));
+
 		assertEquals(3, fieldTypes.length);
-		assertEquals(MultipleAfterField.FIELD_NAME3, fieldTypes[0].getColumnName());
-		assertEquals(MultipleAfterField.FIELD_NAME1, fieldTypes[1].getColumnName());
-		assertEquals(MultipleAfterField.FIELD_NAME2, fieldTypes[2].getColumnName());
+		assertEquals(MultipleAfterField.FIELD_NAME1, fieldTypes[0].getColumnName());
+		assertEquals(MultipleAfterField.FIELD_NAME2, fieldTypes[1].getColumnName());
+		assertEquals(MultipleAfterField.FIELD_NAME3, fieldTypes[2].getColumnName());
 	}
 
 	/* ======================================================================================= */
