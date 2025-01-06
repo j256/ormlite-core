@@ -252,7 +252,7 @@ public class TransactionManager {
 					}
 				}
 				return result;
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				if (levelCount != null && levelCount.decrementAndGet() <= 0) {
 					transactionLevelThreadLocal.remove();
 				}
