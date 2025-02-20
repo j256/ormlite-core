@@ -12,6 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Constructor;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.logger.backend.CommonsLoggingLogBackend;
@@ -23,6 +25,17 @@ import com.j256.ormlite.logger.backend.NullLogBackend;
 import com.j256.ormlite.logger.backend.Slf4jLoggingLogBackend;
 
 public class LoggerFactoryTest {
+	private LogBackendFactory initial;
+
+	@BeforeEach
+	public void before() {
+		initial = LoggerFactory.getLogBackendFactory();
+	}
+
+	@AfterEach
+	public void after() {
+		LoggerFactory.setLogBackendFactory(initial);
+	}
 
 	@Test
 	public void testGetLoggerClass() {
