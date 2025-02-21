@@ -83,7 +83,7 @@ public abstract class BaseLogger {
 			Object arg3, Object[] argArray, int argArrayLength) {
 		if (globalLevel != null && !globalLevel.isEnabled(level)) {
 			// don't log the message if the global-level is set and not enabled
-		} else if (backend.isLevelEnabled(level)) {
+		} else if (backend != null && backend.isLevelEnabled(level)) {
 			doLog(level, throwable, msg, arg0, arg1, arg2, arg3, argArray, argArrayLength);
 		}
 	}
