@@ -175,7 +175,7 @@ public class PropertyUtils {
 		// now try to load in properties
 		InputStream stream = propertiesInputStream;
 		if (stream == null) {
-			stream = LoggerFactory.class.getResourceAsStream(LoggerConstants.PROPERTIES_CONFIG_FILE);
+			stream = PropertyUtils.class.getResourceAsStream(LoggerConstants.PROPERTIES_CONFIG_FILE);
 			if (stream == null) {
 				// file not found
 				return Collections.emptyList();
@@ -220,7 +220,7 @@ public class PropertyUtils {
 	}
 
 	private static void logWarning(LogBackendFactory defaultBackendFactory, String msg, Throwable th) {
-		LogBackend backend = defaultBackendFactory.createLogBackend(LoggerFactory.class.getName());
+		LogBackend backend = defaultBackendFactory.createLogBackend(PropertyUtils.class.getName());
 		if (th == null) {
 			backend.log(Level.WARNING, msg);
 		} else {

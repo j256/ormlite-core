@@ -76,12 +76,12 @@ public class LoggerFactoryTest {
 	@Test
 	public void testGetSimpleClassName() {
 		String first = "foo";
-		assertEquals(first, LoggerFactory.getSimpleClassName(first));
+		assertEquals(first, extractSimpleClassName(first));
 		String second = "bar";
 		String className = first + "." + second;
-		assertEquals(second, LoggerFactory.getSimpleClassName(className));
+		assertEquals(second, extractSimpleClassName(className));
 		className = first + ".";
-		assertEquals(className, LoggerFactory.getSimpleClassName(className));
+		assertEquals(className, extractSimpleClassName(className));
 	}
 
 	@Test
@@ -247,6 +247,16 @@ public class LoggerFactoryTest {
 			} else {
 				System.setProperty(LoggerConstants.GLOBAL_LOG_LEVEL_SYSTEM_PROPERTY, restore);
 			}
+		}
+	}
+
+	private String extractSimpleClassName(String className) {
+		// get the last part of the class name
+		int index = className.lastIndexOf('.');
+		if (index < 0 || index == className.length() - 1) {
+			return className;
+		} else {
+			return className.substring(index + 1);
 		}
 	}
 
