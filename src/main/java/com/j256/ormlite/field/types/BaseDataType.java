@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import com.j256.ormlite.field.BaseFieldConverter;
 import com.j256.ormlite.field.DataPersister;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 
@@ -33,6 +34,7 @@ public abstract class BaseDataType extends BaseFieldConverter implements DataPer
 	 * this to be a {@link SqlType#LONG} if you are storing it as epoche milliseconds.
 	 */
 	private final SqlType sqlType;
+	private DataType dataType;
 	private final Class<?>[] classes;
 
 	/**
@@ -188,5 +190,14 @@ public abstract class BaseDataType extends BaseFieldConverter implements DataPer
 	public String getSqlOtherType() {
 		// here to be overridden by custom persisters
 		return null;
+	}
+	
+	public void setDataType(DataType dataType) {
+		this.dataType = dataType;
+	}
+
+	@Override
+	public DataType getDataType() {
+		return dataType;
 	}
 }

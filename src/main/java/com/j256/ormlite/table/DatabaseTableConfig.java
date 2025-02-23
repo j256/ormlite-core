@@ -153,7 +153,8 @@ public class DatabaseTableConfig<T> {
 	}
 
 	/**
-	 * Return the field types associated with this configuration.
+	 * Return the field types associated with this configuration. The {@link #extractFieldTypes(DatabaseType)} should
+	 * have been called before now.
 	 */
 	public FieldType[] getFieldTypes() throws SQLException {
 		if (fieldTypes == null) {

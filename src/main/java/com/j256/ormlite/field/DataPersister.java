@@ -115,4 +115,9 @@ public interface DataPersister extends FieldConverter {
 	 * Get the type that should be used when defining this.
 	 */
 	public String getSqlOtherType();
+
+	/**
+	 * Returns the associated {@link DataType} or {@link DataType#UNKNOWN} if not known.
+	 */
+	public DataType getDataType();
 }
