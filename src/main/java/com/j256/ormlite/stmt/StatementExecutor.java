@@ -232,7 +232,7 @@ public class StatementExecutor<T, ID> implements GenericRowMapper<String[]> {
 	}
 
 	/**
-	 * Return a raw row mapper suitable for use with {@link Dao#queryRaw(String, RawRowMapper, Object...)}.
+	 * Return a raw row mapper suitable for use with {@link Dao#queryRaw(String, RawRowMapper, String...)}.
 	 */
 	public RawRowMapper<T> getRawRowMapper() {
 		if (rawRowMapper == null) {
