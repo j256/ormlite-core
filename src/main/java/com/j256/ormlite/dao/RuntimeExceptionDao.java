@@ -1200,6 +1200,16 @@ public class RuntimeExceptionDao<T, ID> implements Dao<T, ID> {
 		return dao.getTableInfo();
 	}
 
+	@Override
+	public DataType[] extractTableDataTypes() {
+		try {
+			return dao.extractTableDataTypes();
+		} catch (SQLException e) {
+			logMessage(e, "extractTableDataTypes() threw exception");
+			throw new RuntimeException(e);
+		}
+	}
+
 	private void logMessage(Exception e, String message) {
 		logger.log(LOG_LEVEL, e, message);
 	}

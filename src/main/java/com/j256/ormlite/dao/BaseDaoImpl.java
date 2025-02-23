@@ -1225,6 +1225,19 @@ public abstract class BaseDaoImpl<T, ID> implements Dao<T, ID> {
 	}
 
 	/**
+	 * Returns the table configuration information associated with the Dao's class or null if none.
+	 */
+	@Override
+	public DataType[] extractTableDataTypes() throws SQLException {
+		FieldType[] fieldTypes = tableConfig.getFieldTypes();
+		List<DataType> dataTypes = new ArrayList<>(fieldTypes.length);
+		for (FieldType fieldType : fieldTypes) {
+			dataTypes.add(fieldType.getDataPersister().getDataType());
+		}
+		return dataTypes.toArray(new DataType[dataTypes.size()]);
+	}
+
+	/**
 	 * Used by internal classes to get the table information structure for the Dao's class.
 	 */
 	@Override

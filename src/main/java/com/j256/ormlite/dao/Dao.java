@@ -1014,6 +1014,11 @@ public interface Dao<T, ID> extends CloseableIterable<T> {
 	public TableInfo<T, ID> getTableInfo();
 
 	/**
+	 * Extract the {@link DataType}
+	 */
+	public DataType[] extractTableDataTypes() throws SQLException;
+
+	/**
 	 * Return class for the {@link Dao#createOrUpdate(Object)} method.
 	 */
 	public static class CreateOrUpdateStatus {

@@ -5,6 +5,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reset;
 import static org.easymock.EasyMock.verify;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -797,6 +798,17 @@ public class BaseDaoImplTest extends BaseCoreTest {
 		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(connectionSource, config) {
 		};
 		assertSame(config, dao.getTableConfig());
+	}
+
+	@Test
+	public void testTableExtactDataTypes() throws Exception {
+		DatabaseTableConfig<Foo> config = DatabaseTableConfig.fromClass(databaseType, Foo.class);
+		BaseDaoImpl<Foo, Integer> dao = new BaseDaoImpl<Foo, Integer>(connectionSource, config) {
+		};
+		DataType[] dataTypes = dao.extractTableDataTypes();
+		assertNotNull(dataTypes);
+		assertArrayEquals(new DataType[] { DataType.INTEGER, DataType.INTEGER, DataType.INTEGER, DataType.STRING },
+				dataTypes);
 	}
 
 	@Test

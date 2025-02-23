@@ -3,6 +3,7 @@ package com.j256.ormlite.field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import com.j256.ormlite.field.types.BaseDataType;
 import com.j256.ormlite.field.types.BigDecimalNumericType;
 import com.j256.ormlite.field.types.BigDecimalStringType;
 import com.j256.ormlite.field.types.BigIntegerType;
@@ -264,6 +265,9 @@ public enum DataType {
 
 	private DataType(DataPersister dataPersister) {
 		this.dataPersister = dataPersister;
+		if (dataPersister instanceof BaseDataType) {
+			((BaseDataType)dataPersister).setDataType(this);
+		}
 	}
 
 	public DataPersister getDataPersister() {
