@@ -97,19 +97,6 @@ public class LoggerFactory {
 	}
 
 	/**
-	 * Return the single class name from a class-name string.
-	 */
-	public static String getSimpleClassName(String className) {
-		// get the last part of the class name
-		int index = className.lastIndexOf('.');
-		if (index < 0 || index == className.length() - 1) {
-			return className;
-		} else {
-			return className.substring(index + 1);
-		}
-	}
-
-	/**
 	 * Maybe assign the global log level based on the system property. Exposed for testing purposes.
 	 */
 	static void maybeAssignGlobalLogLevelFromProperty() {

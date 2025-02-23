@@ -14,7 +14,6 @@ import com.j256.ormlite.logger.LogBackend;
 import com.j256.ormlite.logger.LogBackendFactory;
 import com.j256.ormlite.logger.LogBackendType;
 import com.j256.ormlite.logger.LoggerConstants;
-import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.logger.PropertyUtils;
 import com.j256.ormlite.logger.PropertyUtils.PatternLevel;
 
@@ -70,7 +69,12 @@ public class LocalLogBackend implements LogBackend {
 
 	public LocalLogBackend(String className) {
 		// get the last part of the class name
-		this.className = LoggerFactory.getSimpleClassName(className);
+		int index = className.lastIndexOf('.');
+		if (index < 0 || index == className.length() - 1) {
+			this.className = className;
+		} else {
+			this.className = className.substring(index + 1);
+		}
 
 		Level level = null;
 		if (classLevels != null) {
@@ -156,7 +160,7 @@ public class LocalLogBackend implements LogBackend {
 
 	/**
 	 * Internal factory for LocalLogBackend instances. This can be used with the
-	 * {@link LoggerFactory#setLogBackendFactory(LogBackendFactory)} method to send all log messages to a file.
+	 * LoggerFactory.setLogBackendFactory(LogBackendFactory) method to send all log messages to a file.
 	 */
 	public static class LocalLogBackendFactory implements LogBackendFactory {
 

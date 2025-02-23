@@ -31,7 +31,7 @@ public abstract class BaseLogger {
 	}
 
 	/**
-	 * Get the global log level. For testing purposes.
+	 * Get the global log level.  For testing purposes. 
 	 */
 	public static Level getGlobalLevel() {
 		return globalLevel;

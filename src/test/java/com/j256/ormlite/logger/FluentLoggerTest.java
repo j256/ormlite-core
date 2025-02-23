@@ -381,7 +381,7 @@ public class FluentLoggerTest {
 	}
 
 	@Test
-	@Disabled
+	@Disabled("Only to be run once and a while")
 	public void testPerformance() {
 		/*
 		 * Not really a fair test because hotswap might take out some of the method calls but I thought it would be
