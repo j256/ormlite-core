@@ -42,6 +42,11 @@ public class H2DatabaseType extends BaseDatabaseType {
 	}
 
 	@Override
+        protected void appendUuidNativeType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
+                sb.append("UUID");
+        }
+
+	@Override
 	protected void configureGeneratedId(String tableName, StringBuilder sb, FieldType fieldType,
 			List<String> statementsBefore, List<String> statementsAfter, List<String> additionalArgs,
 			List<String> queriesAfter) {
