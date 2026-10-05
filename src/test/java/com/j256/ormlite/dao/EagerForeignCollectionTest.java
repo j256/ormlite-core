@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Collections;
@@ -151,6 +152,51 @@ public class EagerForeignCollectionTest extends BaseCoreTest {
 		assertTrue(iterator.hasNext());
 		assertEquals(f2.id, iterator.next().id);
 		assertFalse(iterator.hasNext());
+	}
+
+	@Test
+	public void testRemoveByIndexDeletesSelectedRow() throws Exception {
+		Dao<Eager, Integer> eagerDao = createDao(Eager.class, true);
+		Dao<Foreign, Integer> foreignDao = createDao(Foreign.class, true);
+		Eager eager = new Eager();
+		eagerDao.create(eager);
+		for (int i = 0; i < 3; i++) {
+			Foreign foreign = new Foreign();
+			foreign.eager = eager;
+			foreignDao.create(foreign);
+		}
+		EagerForeignCollection<Foreign, Integer> collection = eagerDao.queryForId(eager.id).foreignCollection;
+		int firstId = collection.get(0).id;
+		int selectedId = collection.get(1).id;
+		int lastId = collection.get(2).id;
+
+		assertEquals(selectedId, collection.remove(1).id);
+		assertEquals(2, collection.size());
+		assertNull(foreignDao.queryForId(selectedId));
+		assertNotNull(foreignDao.queryForId(firstId));
+		assertNotNull(foreignDao.queryForId(lastId));
+
+		assertEquals(lastId, collection.remove(1).id);
+		assertEquals(1, collection.size());
+		assertNull(foreignDao.queryForId(lastId));
+		assertNotNull(foreignDao.queryForId(firstId));
+	}
+
+	@Test
+	public void testRemoveInvalidIndexDoesNotDeleteRows() throws Exception {
+		Dao<Eager, Integer> eagerDao = createDao(Eager.class, true);
+		Dao<Foreign, Integer> foreignDao = createDao(Foreign.class, true);
+		Eager eager = new Eager();
+		eagerDao.create(eager);
+		Foreign foreign = new Foreign();
+		foreign.eager = eager;
+		foreignDao.create(foreign);
+		EagerForeignCollection<Foreign, Integer> collection = eagerDao.queryForId(eager.id).foreignCollection;
+
+		assertThrows(IndexOutOfBoundsException.class, () -> collection.remove(-1));
+		assertThrows(IndexOutOfBoundsException.class, () -> collection.remove(collection.size()));
+		assertEquals(1, collection.size());
+		assertNotNull(foreignDao.queryForId(foreign.id));
 	}
 
 	protected static class Eager {

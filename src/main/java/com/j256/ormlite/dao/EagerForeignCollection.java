@@ -348,7 +348,7 @@ public class EagerForeignCollection<T, ID> extends BaseForeignCollection<T, ID>
 
 	@Override
 	public T remove(int index) {
-		T result = results.get(0);
+		T result = results.get(index);
 		remove(result);
 		return result;
 	}
