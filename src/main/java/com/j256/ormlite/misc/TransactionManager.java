@@ -173,12 +173,14 @@ public class TransactionManager {
 
 		DatabaseConnection connection = connectionSource.getReadWriteConnection(tableName);
 		boolean saved = false;
+		boolean saveCompleted = false;
 		try {
 			saved = connectionSource.saveSpecialConnection(connection);
+			saveCompleted = true;
 			return callInTransaction(connection, saved, connectionSource.getDatabaseType(), callable);
 		} finally {
-			// we should clear aggressively
-			if (saved) {
+			// balance each completed save, including nested saves that return false
+			if (saveCompleted) {
 				connectionSource.clearSpecialConnection(connection);
 			}
 			connectionSource.releaseConnection(connection);

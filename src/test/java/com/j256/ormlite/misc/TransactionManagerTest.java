@@ -421,8 +421,9 @@ public class TransactionManagerTest extends BaseCoreTest {
 		expect(connectionSource.getReadWriteConnection(null)).andReturn(conn).times(2);
 		expect(connectionSource.saveSpecialConnection(conn)).andReturn(true);
 		expect(connectionSource.saveSpecialConnection(conn)).andReturn(false);
-		// should only get one of these because we only returned save once
+		// clear both saves, including the nested save that returned false
 		connectionSource.clearSpecialConnection(conn);
+		expectLastCall().times(2);
 		conn.releaseSavePoint(savePoint);
 		expectLastCall().andThrow(new SQLException("testing the release to fail"));
 		conn.rollback(savePoint);

@@ -1,6 +1,10 @@
 package com.j256.ormlite.support;
 
 import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -17,6 +21,7 @@ import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
+import com.j256.ormlite.misc.TransactionManager;
 
 public class BaseConnectionSourceTest extends BaseCoreTest {
 
@@ -55,6 +60,31 @@ public class BaseConnectionSourceTest extends BaseCoreTest {
 	}
 
 	@Test
+	public void testNestedTransactionsReleaseConnection() throws Exception {
+		final DatabaseConnection conn = createMock(DatabaseConnection.class);
+		expect(conn.isAutoCommitSupported()).andReturn(false).times(2);
+		expect(conn.setSavePoint(isA(String.class))).andReturn(null).times(2);
+		conn.releaseSavePoint(null);
+		conn.commit(null);
+		replay(conn);
+		final OurConnectionSource cs = new OurConnectionSource() {
+			@Override
+			public DatabaseConnection getReadWriteConnection(String tableName) {
+				return conn;
+			}
+		};
+		TransactionManager.callInTransaction(cs, () -> {
+			TransactionManager.callInTransaction(cs, () -> null);
+			assertSame(conn, cs.getSpecialConnection(null));
+			assertEquals(0, cs.releasedConnections);
+			return null;
+		});
+		assertNull(cs.getSpecialConnection(null));
+		assertEquals(1, cs.releasedConnections);
+		verify(conn);
+	}
+
+	@Test
 	public void testSaveDifferentConnection() throws Exception {
 		OurConnectionSource cs = new OurConnectionSource();
 		DatabaseConnection conn = cs.getReadOnlyConnection(null);
@@ -83,6 +113,8 @@ public class BaseConnectionSourceTest extends BaseCoreTest {
 
 	private class OurConnectionSource extends BaseConnectionSource {
 
+		private int releasedConnections;
+
 		@Override
 		public DatabaseConnection getReadOnlyConnection(String tableName) {
 			return getReadWriteConnection(tableName);
@@ -100,7 +132,9 @@ public class BaseConnectionSourceTest extends BaseCoreTest {
 
 		@Override
 		public void releaseConnection(DatabaseConnection connection) {
-			// noop
+			if (!isSavedConnection(connection)) {
+				releasedConnections++;
+			}
 		}
 
 		@Override
